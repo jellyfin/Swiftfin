@@ -11,15 +11,10 @@ import JellyfinAPI
 struct ResumeItemsLibrary: PagingLibrary {
 
     let mediaTypes: [MediaType]
-    let parent: _TitledLibraryParent
-
-    init(mediaTypes: [MediaType]) {
-        self.mediaTypes = mediaTypes
-        self.parent = _TitledLibraryParent(
-            displayTitle: "Continue Watching",
-            libraryID: "continue-watching"
-        )
-    }
+    let parent: _TitledLibraryParent = .init(
+        displayTitle: "Continue Watching",
+        libraryID: "continue-watching"
+    )
 
     func retrievePage(
         environment: Empty,
@@ -37,5 +32,22 @@ struct ResumeItemsLibrary: PagingLibrary {
         let response = try await pageState.userSession.client.send(request)
 
         return response.value.items ?? []
+    }
+
+    func onItemUserDataChanged(
+        viewModel: PagingLibraryViewModel<ResumeItemsLibrary>,
+        userData: UserItemDataDto
+    ) {
+        guard let itemID = userData.itemID else { return }
+
+        if userData.isPlayed == true {
+            viewModel.elements.remove(id: itemID)
+            return
+        }
+
+        guard !viewModel.elements.ids.contains(itemID) else { return }
+        guard userData.playbackPosition.map({ $0 > .zero }) == true else { return }
+
+        viewModel.scheduleRefreshForItemUserData(minimumInterval: 30)
     }
 }

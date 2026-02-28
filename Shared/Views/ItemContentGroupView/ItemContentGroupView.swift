@@ -15,7 +15,7 @@ struct ItemContentGroupView<Provider: ContentGroupProvider>: View {
     private var router
 
     @State
-    private var ContentGroupOptions: ContentGroupParentOption = .init()
+    private var contentGroupOptions: ContentGroupParentOption = .init()
     @State
     private var carriedHeaderFrame: CGRect = .zero
 
@@ -23,7 +23,7 @@ struct ItemContentGroupView<Provider: ContentGroupProvider>: View {
     private var viewModel: ContentGroupViewModel<Provider>
 
     private var carriedUseOffsetNavigationBar: Bool {
-        ContentGroupOptions.contains(.useOffsetNavigationBar)
+        contentGroupOptions.contains(.useOffsetNavigationBar)
     }
 
     init(provider: Provider) {
@@ -48,7 +48,7 @@ struct ItemContentGroupView<Provider: ContentGroupProvider>: View {
                                 .eraseToAnyView()
                         }
                         .onPreferenceChange(ContentGroupCustomizationKey.self) { value in
-                            ContentGroupOptions = value
+                            contentGroupOptions = value
                         }
                         .onPreferenceChange(ScrollViewHeaderFrameKey.self) { value in
                             carriedHeaderFrame = value.frame

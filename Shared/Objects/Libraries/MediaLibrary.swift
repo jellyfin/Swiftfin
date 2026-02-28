@@ -10,21 +10,11 @@ import JellyfinAPI
 
 struct MediaLibrary: PagingLibrary {
 
-    let displayTitle: String
-    let id: String
     let hasNextPage: Bool = false
-
-    var parent: _TitledLibraryParent
-
-    init() {
-        self.displayTitle = L10n.media
-        self.id = "media-library"
-
-        self.parent = _TitledLibraryParent(
-            displayTitle: L10n.media,
-            libraryID: "media-library"
-        )
-    }
+    let parent: _TitledLibraryParent = .init(
+        displayTitle: L10n.media,
+        libraryID: "media-library"
+    )
 
     func retrievePage(
         environment: Empty,

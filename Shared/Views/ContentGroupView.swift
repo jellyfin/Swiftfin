@@ -112,17 +112,17 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         .onFirstAppear {
             viewModel.refresh()
         }
+        .sinceLastDisappear { _ in
+//            viewModel.refreshIfNeeded(sinceLastDisappear: interval)
+        }
+        .onSceneWillEnterForeground {
+//            viewModel.refreshIfPendingChanges()
+        }
         .topBarTrailing {
 
             if viewModel.background.is(.refreshing) {
                 ProgressView()
             }
         }
-//        .sinceLastDisappear { interval in
-//            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
-//                viewModel.send(.backgroundRefresh)
-//                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
-//            }
-//        }
     }
 }

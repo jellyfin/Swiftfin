@@ -98,7 +98,6 @@ struct StoredContentGroupProvider: ContentGroupProvider, Equatable, Hashable, St
 
     var displayTitle: String
     var id: String
-    var systemImage: String
     var groups: [ContentGroupSetting]
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
@@ -116,7 +115,6 @@ extension StoredValues.Keys.User {
                 .init(
                     displayTitle: "Custom \(id)",
                     id: id,
-                    systemImage: "heart.fill",
                     groups: [.nextUp(
                         id: UUID().uuidString,
                         posterDisplayType: .portrait,

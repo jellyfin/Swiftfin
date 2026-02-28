@@ -82,6 +82,8 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, @MainAct
     var environment: Environment
 
     private var hasNextPage = true
+    private var itemUserDataRefreshTask: Task<Void, Never>?
+    private var lastItemUserDataRefresh = Date.distantPast
 
     let library: _PagingLibrary
     let pageSize: Int
@@ -109,6 +111,13 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, @MainAct
             .publisher
             .sink { [weak self] userData in
                 self?.updateItemUserData(userData)
+
+                guard let self else { return }
+
+                library.onItemUserDataChanged(
+                    viewModel: self,
+                    userData: userData
+                )
             }
             .store(in: &cancellables)
     }
@@ -136,6 +145,31 @@ class PagingLibraryViewModel<_PagingLibrary: PagingLibrary>: ViewModel, @MainAct
             if shouldNotify {
                 Notifications[.itemUserDataDidChange].post(userData)
             }
+        }
+    }
+
+    func scheduleRefreshForItemUserData(
+        debounce: TimeInterval = 0.35,
+        minimumInterval: TimeInterval = 5
+    ) {
+        guard Date.now.timeIntervalSince(lastItemUserDataRefresh) >= minimumInterval else {
+            return
+        }
+
+        itemUserDataRefreshTask?.cancel()
+
+        itemUserDataRefreshTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            if debounce > 0 {
+                try? await Task.sleep(for: .seconds(1))
+            }
+
+            guard !Task.isCancelled else { return }
+
+            await self.background.refresh()
+            self.lastItemUserDataRefresh = Date.now
+            self.itemUserDataRefreshTask = nil
         }
     }
 

@@ -124,24 +124,12 @@ extension Notifications.Key {
 
     // MARK: - App Flow
 
-    static var processDeepLink: Key<Void> {
-        Key("processDeepLink")
-    }
-
-    static var didPurge: Key<Void> {
-        Key("didPurge")
-    }
-
     static var didChangeCurrentServerURL: Key<ServerState> {
         Key("didChangeCurrentServerURL")
     }
 
     static var didSendStopReport: Key<Void> {
         Key("didSendStopReport")
-    }
-
-    static var didRequestGlobalRefresh: Key<Void> {
-        Key("didRequestGlobalRefresh")
     }
 
     static var didFailMigration: Key<Void> {

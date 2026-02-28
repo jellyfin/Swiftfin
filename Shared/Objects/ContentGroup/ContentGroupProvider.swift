@@ -11,8 +11,8 @@ protocol ContentGroupProvider: Displayable {
 
     associatedtype Environment = Empty
 
-    var id: String { get }
     var environment: Environment { get set }
+    var id: String { get }
 
     @ContentGroupBuilder
     func makeGroups(environment: Environment) async throws -> [any ContentGroup]

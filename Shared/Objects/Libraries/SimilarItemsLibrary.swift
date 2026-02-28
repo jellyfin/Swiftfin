@@ -11,15 +11,10 @@ import JellyfinAPI
 struct SimilarItemsLibrary: PagingLibrary {
 
     let itemID: String
-    let parent: _TitledLibraryParent
-
-    init(itemID: String) {
-        self.itemID = itemID
-        self.parent = .init(
-            displayTitle: L10n.recommended,
-            libraryID: "similar-items"
-        )
-    }
+    let parent: _TitledLibraryParent = .init(
+        displayTitle: L10n.recommended,
+        libraryID: "similar-items"
+    )
 
     func retrievePage(
         environment: Empty,

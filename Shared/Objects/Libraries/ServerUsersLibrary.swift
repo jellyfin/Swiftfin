@@ -19,14 +19,10 @@ struct ServerUsersLibrary: PagingLibrary {
         }
     }
 
-    let parent: _TitledLibraryParent
-
-    init() {
-        self.parent = .init(
-            displayTitle: L10n.users,
-            libraryID: "server-users"
-        )
-    }
+    let parent: _TitledLibraryParent = .init(
+        displayTitle: L10n.users,
+        libraryID: "server-users"
+    )
 
     func retrievePage(
         environment: Environment,

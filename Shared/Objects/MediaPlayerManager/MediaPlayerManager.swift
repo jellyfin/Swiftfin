@@ -8,6 +8,7 @@
 
 import Combine
 import Defaults
+import Engine
 import Factory
 import Foundation
 import JellyfinAPI

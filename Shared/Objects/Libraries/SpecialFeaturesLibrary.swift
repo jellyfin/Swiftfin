@@ -11,15 +11,10 @@ import JellyfinAPI
 struct SpecialFeaturesLibrary: PagingLibrary {
 
     let itemID: String
-    let parent: _TitledLibraryParent
-
-    init(itemID: String) {
-        self.itemID = itemID
-        self.parent = .init(
-            displayTitle: L10n.specialFeatures,
-            libraryID: "special-features"
-        )
-    }
+    let parent: _TitledLibraryParent = .init(
+        displayTitle: L10n.specialFeatures,
+        libraryID: "special-features"
+    )
 
     func retrievePage(
         environment: Empty,

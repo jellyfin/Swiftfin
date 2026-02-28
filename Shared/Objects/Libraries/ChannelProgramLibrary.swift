@@ -12,14 +12,10 @@ import JellyfinAPI
 
 struct ChannelProgramLibrary: PagingLibrary {
 
-    let parent: _TitledLibraryParent
-
-    init() {
-        self.parent = _TitledLibraryParent(
-            displayTitle: L10n.channels,
-            libraryID: "channels"
-        )
-    }
+    let parent: _TitledLibraryParent = .init(
+        displayTitle: L10n.channels,
+        libraryID: "channels"
+    )
 
     func retrievePage(
         environment: Empty,

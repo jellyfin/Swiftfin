@@ -23,14 +23,10 @@ struct NextUpLibrary: PagingLibrary {
         }
     }
 
-    let parent: _TitledLibraryParent
-
-    init() {
-        self.parent = _TitledLibraryParent(
-            displayTitle: L10n.nextUp,
-            libraryID: "next-up"
-        )
-    }
+    let parent: _TitledLibraryParent = .init(
+        displayTitle: L10n.nextUp,
+        libraryID: "next-up"
+    )
 
     func retrievePage(
         environment: Environment,
@@ -38,6 +34,7 @@ struct NextUpLibrary: PagingLibrary {
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetNextUpParameters()
         parameters.enableRewatching = environment.enableRewatching
+        parameters.enableResumable = false
         parameters.enableUserData = true
 
         if environment.maxNextUp > 0 {
@@ -51,5 +48,24 @@ struct NextUpLibrary: PagingLibrary {
         let response = try await pageState.userSession.client.send(request)
 
         return response.value.items ?? []
+    }
+
+    func onItemUserDataChanged(
+        viewModel: PagingLibraryViewModel<NextUpLibrary>,
+        userData: UserItemDataDto
+    ) {
+        guard let itemID = userData.itemID else { return }
+
+        if viewModel.elements.ids.contains(itemID) {
+            viewModel.scheduleRefreshForItemUserData(minimumInterval: 3)
+            return
+        }
+
+        let canAffectMembership = userData.playbackPosition.map { $0 > .zero } == true
+            || userData.isPlayed != nil
+
+        guard canAffectMembership else { return }
+
+        viewModel.scheduleRefreshForItemUserData(minimumInterval: 30)
     }
 }

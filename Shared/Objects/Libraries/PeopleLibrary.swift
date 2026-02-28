@@ -19,14 +19,13 @@ struct PeopleLibrary: PagingLibrary {
     }
 
     let environment: Environment
-    let parent: _TitledLibraryParent
+    let parent: _TitledLibraryParent = .init(
+        displayTitle: L10n.people,
+        libraryID: "people"
+    )
 
     init(environment: Environment = .default) {
         self.environment = environment
-        parent = .init(
-            displayTitle: L10n.people,
-            libraryID: "people"
-        )
     }
 
     func retrievePage(

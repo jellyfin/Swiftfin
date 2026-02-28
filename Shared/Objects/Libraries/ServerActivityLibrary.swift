@@ -20,14 +20,10 @@ struct ServerActivityLibrary: PagingLibrary {
         }
     }
 
-    let parent: _TitledLibraryParent
-
-    init() {
-        self.parent = .init(
-            displayTitle: L10n.activity,
-            libraryID: "server-activity"
-        )
-    }
+    let parent: _TitledLibraryParent = .init(
+        displayTitle: L10n.activity,
+        libraryID: "server-activity"
+    )
 
     func retrievePage(
         environment: Environment,

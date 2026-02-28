@@ -13,8 +13,8 @@ struct PillGroup<Element: Displayable>: ContentGroup {
 
     let action: (Router.Wrapper, Element) -> Void
     let displayTitle: String
-    let id: String
     let elements: [Element]
+    let id: String
 
     var _shouldBeResolved: Bool {
         elements.isNotEmpty
@@ -32,12 +32,10 @@ struct PillGroup<Element: Displayable>: ContentGroup {
         self.elements = elements
     }
 
-    #if os(tvOS)
     func body(with viewModel: Empty) -> some View {
+        #if os(tvOS)
         EmptyView()
-    }
-    #else
-    func body(with viewModel: Empty) -> some View {
+        #else
         WithRouter { router in
             PillHStack(
                 title: displayTitle,
@@ -46,6 +44,6 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                 action(router, element)
             }
         }
+        #endif
     }
-    #endif
 }

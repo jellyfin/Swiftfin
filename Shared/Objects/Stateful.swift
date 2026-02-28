@@ -6,8 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-// TODO: remove, apply the Stateful macro
-
+@available(*, deprecated, message: "Apply the `Stateful` macro instead")
 protocol Stateful: AnyObject {
 
     associatedtype Action: Equatable

@@ -10,14 +10,10 @@ import JellyfinAPI
 
 struct RecommendedProgramsLibrary: PagingLibrary {
 
-    let parent: _TitledLibraryParent
-
-    init() {
-        self.parent = _TitledLibraryParent(
-            displayTitle: L10n.onNow,
-            libraryID: "programs-recommended"
-        )
-    }
+    let parent: _TitledLibraryParent = .init(
+        displayTitle: L10n.onNow,
+        libraryID: "programs-recommended"
+    )
 
     func retrievePage(
         environment: Empty,

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct LibraryPageState {
@@ -42,6 +43,11 @@ protocol PagingLibrary<Element> {
 
     @MenuContentGroupBuilder
     func menuContent(environment: Binding<Environment>) -> [MenuContentGroup]
+
+    func onItemUserDataChanged(
+        viewModel: PagingLibraryViewModel<Self>,
+        userData: UserItemDataDto
+    )
 }
 
 extension PagingLibrary {
@@ -64,6 +70,11 @@ extension PagingLibrary {
 
     @MenuContentGroupBuilder
     func menuContent(environment: Binding<Environment>) -> [MenuContentGroup] {}
+
+    func onItemUserDataChanged(
+        viewModel: PagingLibraryViewModel<Self>,
+        userData: UserItemDataDto
+    ) {}
 }
 
 protocol WithRandomElementLibrary<Element, Environment>: PagingLibrary {

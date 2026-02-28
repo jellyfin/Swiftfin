@@ -10,15 +10,11 @@ import JellyfinAPI
 
 struct ParentalRatingLibrary: PagingLibrary {
 
-    let parent: _TitledLibraryParent
     let hasNextPage: Bool = false
-
-    init() {
-        self.parent = .init(
-            displayTitle: "",
-            libraryID: "parental-ratings"
-        )
-    }
+    let parent: _TitledLibraryParent = .init(
+        displayTitle: "",
+        libraryID: "parental-ratings"
+    )
 
     func retrievePage(
         environment: Empty,

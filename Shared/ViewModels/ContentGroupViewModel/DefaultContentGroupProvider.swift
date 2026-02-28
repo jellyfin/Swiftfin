@@ -11,8 +11,6 @@ import Factory
 import Foundation
 import JellyfinAPI
 
-// TODO: rename `HomeContentGroupProvider`
-
 struct DefaultContentGroupProvider: ContentGroupProvider {
 
     @Injected(\.currentUserSession)
@@ -20,7 +18,6 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
 
     let displayTitle: String = L10n.home
     let id: String = "default-content-group-provider"
-    let systemImage: String = "house.fill"
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
         guard let userSession else { return [] }
