@@ -81,6 +81,7 @@ struct ServerUserMediaAccessView: View {
 
     // MARK: - Content View
 
+    @ViewBuilder
     var contentView: some View {
         List {
             accessView

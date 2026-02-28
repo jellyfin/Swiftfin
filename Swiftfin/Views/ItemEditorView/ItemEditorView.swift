@@ -97,6 +97,7 @@ struct ItemEditorView: View {
 
     // MARK: - Refresh Button
 
+    @ViewBuilder
     private var refreshButtonView: some View {
         Section {
             Button {
@@ -162,6 +163,7 @@ struct ItemEditorView: View {
 
     // MARK: - Editable Metadata Components Routing Buttons
 
+    @ViewBuilder
     private var editComponentsView: some View {
         Section {
             ChevronButton(L10n.genres) {

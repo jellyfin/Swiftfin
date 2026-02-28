@@ -110,6 +110,7 @@ struct ItemSubtitleUploadView: View {
 
     // MARK: - Content View
 
+    @ViewBuilder
     private var contentView: some View {
         Form {
             Section(L10n.options) {

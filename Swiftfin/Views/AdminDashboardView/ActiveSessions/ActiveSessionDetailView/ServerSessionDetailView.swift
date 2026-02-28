@@ -21,6 +21,7 @@ struct ActiveSessionDetailView: View {
 
     // MARK: Create Idle Content View
 
+    @ViewBuilder
     private func idleContent(session: SessionInfoDto) -> some View {
         List {
             if let userID = session.userID {
@@ -44,6 +45,7 @@ struct ActiveSessionDetailView: View {
 
     // MARK: Create Session Content View
 
+    @ViewBuilder
     private func sessionContent(
         session: SessionInfoDto,
         nowPlayingItem: BaseItemDto,

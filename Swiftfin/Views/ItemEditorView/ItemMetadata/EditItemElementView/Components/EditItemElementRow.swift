@@ -51,6 +51,7 @@ extension EditItemElementView {
 
         // MARK: - Row Content
 
+        @ViewBuilder
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {

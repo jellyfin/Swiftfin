@@ -87,6 +87,7 @@ struct IdentifyItemView: View {
 
     // MARK: - Content View
 
+    @ViewBuilder
     private var contentView: some View {
         Form {
             ListTitleSection(
@@ -171,6 +172,7 @@ struct IdentifyItemView: View {
 
     // MARK: - Result Image
 
+    @ViewBuilder
     static func resultImage(_ url: URL?) -> some View {
         ZStack {
             Color.clear

@@ -84,6 +84,7 @@ struct ItemImageDetailsView: View {
 
     // MARK: - Content View
 
+    @ViewBuilder
     private var contentView: some View {
         List {
             HeaderSection(

@@ -22,6 +22,7 @@ extension SelectUserView {
         let servers: OrderedSet<ServerState>
         let action: (ServerState) -> Void
 
+        @ViewBuilder
         private var rowContent: some View {
             Text(L10n.addUser)
                 .font(.title3)
@@ -32,6 +33,7 @@ extension SelectUserView {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
 
+        @ViewBuilder
         private var rowLeading: some View {
             ZStack {
                 Group {
@@ -52,6 +54,7 @@ extension SelectUserView {
             .padding(.vertical, 8)
         }
 
+        @ViewBuilder
         private var label: some View {
             ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
                 rowLeading

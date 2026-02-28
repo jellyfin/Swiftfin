@@ -46,6 +46,7 @@ struct ServerTasksView: View {
 
     // MARK: - Body
 
+    @ViewBuilder
     private var contentView: some View {
         List {
 

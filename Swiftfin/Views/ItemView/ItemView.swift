@@ -125,6 +125,7 @@ struct ItemView: View {
         }
     }
 
+    @ViewBuilder
     private var innerBody: some View {
         scrollContainerView(viewModel: viewModel) {
             scrollContentView

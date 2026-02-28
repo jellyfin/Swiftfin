@@ -21,6 +21,7 @@ extension SeriesEpisodeSelector {
         @FocusState
         private var isFocused: Bool
 
+        @ViewBuilder
         private var overlayView: some View {
             ZStack {
                 if let progressLabel = episode.progressLabel {

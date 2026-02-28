@@ -33,6 +33,7 @@ extension ItemView {
             self.viewModel = viewModel
         }
 
+        @ViewBuilder
         private var shelfView: some View {
             VStack(alignment: .center, spacing: 10) {
                 if let parentTitle = viewModel.item.parentTitle {
@@ -99,6 +100,7 @@ extension ItemView {
             }
         }
 
+        @ViewBuilder
         private var header: some View {
             VStack(alignment: .center) {
                 ZStack {

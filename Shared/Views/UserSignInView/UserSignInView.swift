@@ -208,6 +208,7 @@ struct UserSignInView: View {
 
     // MARK: - Public Users Section
 
+    @ViewBuilder
     private var publicUsersSection: some View {
         Section(L10n.publicUsers) {
             if viewModel.publicUsers.isEmpty {

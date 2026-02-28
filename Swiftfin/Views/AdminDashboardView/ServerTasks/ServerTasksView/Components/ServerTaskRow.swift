@@ -27,6 +27,7 @@ extension ServerTasksView {
 
         // MARK: - Task Details Section
 
+        @ViewBuilder
         private var taskView: some View {
             VStack(alignment: .leading, spacing: 4) {
 
@@ -68,6 +69,7 @@ extension ServerTasksView {
             }
         }
 
+        @ViewBuilder
         var body: some View {
             Button {
                 isPresentingConfirmation = true

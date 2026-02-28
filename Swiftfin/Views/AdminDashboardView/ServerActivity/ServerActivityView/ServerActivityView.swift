@@ -96,6 +96,7 @@ struct ServerActivityView: View {
 
     // MARK: - User Filter Button
 
+    @ViewBuilder
     private var userFilterButton: some View {
         Picker(selection: $viewModel.hasUserId) {
             Label(
@@ -132,6 +133,7 @@ struct ServerActivityView: View {
 
     // MARK: - Start Date Button
 
+    @ViewBuilder
     private var startDateButton: some View {
         Button {
             router.route(to: .activityFilters(viewModel: viewModel))

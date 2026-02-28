@@ -49,6 +49,7 @@ struct QuickConnectAuthorizeView: View {
 
     // MARK: Display the User Being Authenticated
 
+    @ViewBuilder
     private var loginUserRow: some View {
         HStack {
             UserProfileImage(

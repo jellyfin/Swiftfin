@@ -99,6 +99,7 @@ struct ChannelLibraryView: View {
         }
     }
 
+    @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
             uniqueElements: viewModel.elements,

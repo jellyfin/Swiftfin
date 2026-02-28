@@ -54,6 +54,7 @@ extension ServerActivityView {
 
         // MARK: - User Image
 
+        @ViewBuilder
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {

@@ -103,6 +103,7 @@ extension MediaChaptersSupplement {
             }
         }
 
+        @ViewBuilder
         private var iOSCompactView: some View {
             // TODO: scroll to current chapter
             CollectionVGrid(
@@ -122,6 +123,7 @@ extension MediaChaptersSupplement {
             }
         }
 
+        @ViewBuilder
         private var iOSRegularView: some View {
             // TODO: change to continuousLeadingEdge after
             // layout inset fix in CollectionHStack

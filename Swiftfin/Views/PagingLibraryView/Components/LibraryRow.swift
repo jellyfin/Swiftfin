@@ -33,6 +33,7 @@ extension PagingLibraryView {
             self.posterType = posterType
         }
 
+        @ViewBuilder
         private func itemAccessoryView(item: BaseItemDto) -> some View {
             DotHStack {
                 if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLabel {
@@ -70,6 +71,7 @@ extension PagingLibraryView {
             }
         }
 
+        @ViewBuilder
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
@@ -89,6 +91,7 @@ extension PagingLibraryView {
             }
         }
 
+        @ViewBuilder
         private var rowLeading: some View {
             PosterImage(
                 item: item,

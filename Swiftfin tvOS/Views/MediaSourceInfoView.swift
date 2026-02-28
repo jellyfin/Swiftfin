@@ -19,6 +19,7 @@ struct MediaSourceInfoView: View {
 
     let source: MediaSourceInfo
 
+    @ViewBuilder
     private var content: some View {
         GeometryReader { proxy in
             VStack(alignment: .center) {

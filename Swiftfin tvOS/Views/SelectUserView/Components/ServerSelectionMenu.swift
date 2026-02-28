@@ -38,6 +38,7 @@ extension SelectUserView {
             self.servers = servers
         }
 
+        @ViewBuilder
         private var label: some View {
             HStack(spacing: 16) {
                 if let selectedServer {

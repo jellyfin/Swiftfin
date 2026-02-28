@@ -50,6 +50,7 @@ extension SelectUserView {
             return isSelected ? .primary : .secondary
         }
 
+        @ViewBuilder
         private var personView: some View {
             ZStack {
                 Group {
@@ -68,6 +69,7 @@ extension SelectUserView {
             .aspectRatio(1, contentMode: .fill)
         }
 
+        @ViewBuilder
         private var rowContent: some View {
             HStack {
 

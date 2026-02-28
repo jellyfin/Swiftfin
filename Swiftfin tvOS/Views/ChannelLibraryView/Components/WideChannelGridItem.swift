@@ -25,6 +25,7 @@ extension ChannelLibraryView {
         private var onSelect: () -> Void
         private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
+        @ViewBuilder
         private var channelLogo: some View {
             VStack {
                 ZStack {
@@ -50,6 +51,7 @@ extension ChannelLibraryView {
             }
         }
 
+        @ViewBuilder
         private func programLabel(for program: BaseItemDto) -> some View {
             HStack(alignment: .top, spacing: EdgeInsets.edgePadding / 2) {
                 AlternateLayoutView(alignment: .leading) {
@@ -69,6 +71,7 @@ extension ChannelLibraryView {
             .lineLimit(1)
         }
 
+        @ViewBuilder
         private var programListView: some View {
             VStack(alignment: .leading, spacing: 0) {
                 if let currentProgram = channel.currentProgram {

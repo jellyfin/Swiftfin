@@ -32,6 +32,7 @@ extension IdentifyItemView {
 
         // MARK: - Body
 
+        @ViewBuilder
         private var header: some View {
             Section {
                 HStack(alignment: .bottom, spacing: 12) {

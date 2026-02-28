@@ -166,6 +166,7 @@ struct SelectUserView: View {
 
     // MARK: - Advanced Menu
 
+    @ViewBuilder
     private var advancedMenu: some View {
         Menu(L10n.advanced, systemImage: "gearshape.fill") {
 
@@ -222,6 +223,7 @@ struct SelectUserView: View {
         }
     }
 
+    @ViewBuilder
     private var addUserGridButtonView: some View {
         AddUserGridButton(
             selectedServer: selectedServer,
@@ -303,6 +305,7 @@ struct SelectUserView: View {
 
     // MARK: - List Content View
 
+    @ViewBuilder
     private var listContentView: some View {
         List {
             let userItems = self.userItems
@@ -357,6 +360,7 @@ struct SelectUserView: View {
 
     // MARK: - User View
 
+    @ViewBuilder
     private var contentView: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -424,6 +428,7 @@ struct SelectUserView: View {
 
     // MARK: - Connect to Server View
 
+    @ViewBuilder
     private var connectToServerView: some View {
         VStack(spacing: 10) {
             Text(L10n.connectToJellyfinServerStart)

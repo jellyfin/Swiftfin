@@ -58,6 +58,7 @@ extension SelectUserView {
 
         // MARK: - Advanced Menu
 
+        @ViewBuilder
         private var advancedMenu: some View {
             Menu {
                 Button(L10n.editUsers, systemImage: "person.crop.circle") {
@@ -95,6 +96,7 @@ extension SelectUserView {
 
         // MARK: - Delete User Button
 
+        @ViewBuilder
         private var deleteUsersButton: some View {
             Button(
                 L10n.delete,
@@ -108,6 +110,7 @@ extension SelectUserView {
 
         // MARK: - Content View
 
+        @ViewBuilder
         private var contentView: some View {
             HStack(alignment: .top, spacing: 20) {
                 if isEditing {

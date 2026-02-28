@@ -22,6 +22,7 @@ extension SelectUserView {
         let servers: OrderedSet<ServerState>
         let action: (ServerState) -> Void
 
+        @ViewBuilder
         private var label: some View {
             VStack(alignment: .center) {
                 ZStack {

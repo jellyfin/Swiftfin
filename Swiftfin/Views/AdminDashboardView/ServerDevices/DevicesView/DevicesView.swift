@@ -103,6 +103,7 @@ struct DevicesView: View {
 
     // MARK: - Device List View
 
+    @ViewBuilder
     private var contentView: some View {
         List {
             InsetGroupedListHeader(
