@@ -22,6 +22,8 @@ struct GestureSettingsView: View {
     private var horizontalSwipeAction
     @Default(.VideoPlayer.Gesture.longPressAction)
     private var longPressGesture
+    @Default(.VideoPlayer.Gesture.longPressSpeedMultiplier)
+    private var longPressSpeedMultiplier
     @Default(.VideoPlayer.Gesture.multiTapGesture)
     private var multiTapGesture
     @Default(.VideoPlayer.Gesture.doubleTouchGesture)
@@ -47,6 +49,10 @@ struct GestureSettingsView: View {
                     .disabled(horizontalPanAction != .none)
 
                 Picker(L10n.longPress, selection: $longPressGesture)
+
+                if longPressGesture == .playbackSpeed {
+                    PlaybackSpeedPicker(L10n.playbackSpeed, selection: $longPressSpeedMultiplier)
+                }
 
                 Picker(L10n.multiTap, selection: $multiTapGesture)
 

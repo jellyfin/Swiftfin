@@ -8,22 +8,20 @@
 
 import SwiftUI
 
-extension Button where Label: View {
-
-    @available(*, deprecated, message: "Use normal `Button.init` instead")
-    init(role: ButtonRole? = nil, @ViewBuilder label: @escaping () -> Label) {
-        self.init {} label: {
-            label()
-        }
-    }
+@available(*, deprecated, message: "Use Button directly with an empty action")
+func Button(
+    role: ButtonRole? = nil,
+    @ViewBuilder label: @escaping () -> some View
+) -> some View {
+    Button(role: role, action: {}, label: label)
+        .foregroundStyle(.primary, .secondary)
 }
 
-extension Button where Label == Text {
-
-    @available(*, deprecated, message: "Use normal `Button.init` instead")
-    init(_ title: String, role: ButtonRole? = nil) {
-        self.init(role: role) {
-            Text(title)
-        }
-    }
+@available(*, deprecated, message: "Use Button directly with an empty action")
+func Button(
+    _ title: String,
+    role: ButtonRole? = nil
+) -> some View {
+    Button(title, role: role, action: {})
+        .foregroundStyle(.primary, .secondary)
 }

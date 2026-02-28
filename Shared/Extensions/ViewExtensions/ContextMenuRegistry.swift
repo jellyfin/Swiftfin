@@ -107,7 +107,7 @@ extension View {
     /// Identifies this view as the source of a context menu
     /// associated with the data type when used with `contextMenu(for:content:)`
     /// or `contextMenu(for:content:preview:)`.
-    func matchedContextMenu<V>(for value: V) -> some View {
+    func matchedContextMenu(for value: some Any) -> some View {
         modifier(
             ForTypeInEnvironment<V, (Any) -> EnvironmentContextMenuPair>.GetValue(
                 for: \.contextMenuRegistry
@@ -134,8 +134,8 @@ extension View {
     /// associated with the data type when used with `contextMenu(for:content:)`
     /// or `contextMenu(for:content:preview:)` with local preview
     /// creation.
-    func matchedContextMenu<V>(
-        for value: V,
+    func matchedContextMenu(
+        for value: some Any,
         @ViewBuilder preview: @escaping () -> some View
     ) -> some View {
         modifier(
