@@ -57,19 +57,15 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
     @Published
     var libraries: [BaseItemDto] = []
 
-    init(user: UserDto? = nil) {
-
-        self.user = .init()
+    init(user: UserDto) {
+        self.user = user
 
         super.init()
-
-        self.user = user ?? userSession.user.data
 
         Notifications[.didChangeUserProfile]
             .publisher
             .sink { [weak self] userID in
                 guard let self, userID == self.user.id else { return }
-
                 self.refresh()
             }
             .store(in: &cancellables)
