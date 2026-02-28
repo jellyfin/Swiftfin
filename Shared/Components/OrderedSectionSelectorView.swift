@@ -16,7 +16,6 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     @StateObject
     private var selection: BindingBox<[Element]>
 
-    private var label: (Element) -> any View
     private let sources: [Element]
     private var systemImage: String
 
@@ -26,14 +25,6 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 
     private var isReordering: Bool {
         editMode?.wrappedValue.isEditing == true
-    }
-
-    private var editButton: some View {
-        Button(isReordering ? L10n.done : L10n.edit) {
-            withAnimation {
-                editMode?.wrappedValue = isReordering ? .inactive : .active
-            }
-        }
     }
 
     // MARK: - Actions
@@ -52,6 +43,41 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
         UIDevice.impact(.light)
     }
 
+    // MARK: - Components
+
+    @ViewBuilder
+    private var editButton: some View {
+        Button(isReordering ? L10n.done : L10n.edit) {
+            withAnimation {
+                editMode?.wrappedValue = isReordering ? .inactive : .active
+            }
+        }
+        #if os(iOS)
+        .buttonStyle(.toolbarPill)
+        #endif
+    }
+
+    @ViewBuilder
+    private func rowLabel(for element: Element) -> some View {
+        if let imageable = element as? SystemImageable {
+            Label(element.displayTitle, systemImage: imageable.systemImage)
+        } else {
+            Text(element.displayTitle)
+        }
+    }
+
+    // MARK: - Initializer
+
+    init(
+        _ systemImage: String = "filemenu.and.selection",
+        selection: Binding<[Element]>,
+        sources: [Element]
+    ) {
+        self._selection = StateObject(wrappedValue: BindingBox(source: selection))
+        self.sources = sources
+        self.systemImage = systemImage
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -66,8 +92,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                             select(element: element)
                         } label: {
                             HStack {
-                                label(element)
-                                    .eraseToAnyView()
+                                rowLabel(for: element)
 
                                 Spacer()
 
@@ -94,8 +119,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                             select(element: element)
                         } label: {
                             HStack {
-                                label(element)
-                                    .eraseToAnyView()
+                                rowLabel(for: element)
 
                                 Spacer()
 
@@ -115,23 +139,5 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
         .toolbar {
             editButton
         }
-    }
-}
-
-extension OrderedSectionSelectorView {
-
-    init(_ systemImage: String = "filemenu.and.selection", selection: Binding<[Element]>, sources: [Element]) {
-        self._selection = StateObject(wrappedValue: BindingBox(source: selection))
-
-        self.sources = sources
-        self.systemImage = "filemenu.and.selection"
-
-        self.label = {
-            Text($0.displayTitle).foregroundColor(.primary).eraseToAnyView()
-        }
-    }
-
-    func label(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
-        copy(modifying: \.label, with: content)
     }
 }
