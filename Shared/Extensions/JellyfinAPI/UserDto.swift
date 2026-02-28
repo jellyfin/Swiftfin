@@ -24,4 +24,15 @@ extension UserDto {
             client: client
         )
     }
+
+    func getFullUser(userSession: UserSession) async throws -> UserDto {
+        guard let id else {
+            throw ErrorMessage(L10n.unknownError)
+        }
+
+        let request = Paths.getUserByID(userID: id)
+        let response = try await userSession.client.send(request)
+
+        return response.value
+    }
 }

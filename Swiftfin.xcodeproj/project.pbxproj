@@ -231,7 +231,6 @@
 				ViewModels/AdminDashboard/ServerActivityViewModel.swift,
 				ViewModels/AdminDashboard/ServerTaskObserver.swift,
 				ViewModels/AdminDashboard/ServerTasksViewModel.swift,
-				ViewModels/AdminDashboard/ServerUserAdminViewModel.swift,
 				ViewModels/AdminDashboard/ServerUsersViewModel.swift,
 				ViewModels/DownloadListViewModel.swift,
 				ViewModels/ItemAdministration/IdentifyItemViewModel.swift,
@@ -689,6 +688,7 @@
 				peo,
 				fa,
 				et,
+				enm,
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (

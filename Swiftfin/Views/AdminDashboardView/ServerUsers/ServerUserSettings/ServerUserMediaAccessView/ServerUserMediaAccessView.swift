@@ -12,25 +12,14 @@ import SwiftUI
 
 struct ServerUserMediaAccessView: View {
 
-    // MARK: - Observed & Environment Objects
-
     @Router
     private var router
 
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
 
-    // MARK: - Policy Variable
-
     @State
     private var tempPolicy: UserPolicy
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
@@ -42,8 +31,6 @@ struct ServerUserMediaAccessView: View {
         self.tempPolicy = policy
     }
 
-    // MARK: - Body
-
     var body: some View {
         contentView
             .navigationTitle(L10n.mediaAccess.localizedCapitalized)
@@ -52,34 +39,33 @@ struct ServerUserMediaAccessView: View {
                 router.dismiss()
             }
             .topBarTrailing {
-                if viewModel.backgroundStates.contains(.updating) {
+                if viewModel.background.is(.updating) {
                     ProgressView()
                 }
                 Button(L10n.save) {
                     if tempPolicy != viewModel.user.policy {
-                        viewModel.send(.updatePolicy(tempPolicy))
+                        viewModel.updatePolicy(tempPolicy)
                     }
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(viewModel.user.policy == tempPolicy)
             }
             .onFirstAppear {
-                viewModel.send(.loadLibraries())
+                viewModel.getLibraries(isHidden: false)
+            }
+            .refreshable {
+                viewModel.getLibraries(isHidden: false)
+                viewModel.refresh()
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case let .error(eventError):
-                    UIDevice.feedback(.error)
-                    error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
                     router.dismiss()
                 }
             }
-            .errorMessage($error)
+            .errorMessage($viewModel.error)
     }
-
-    // MARK: - Content View
 
     @ViewBuilder
     var contentView: some View {
@@ -88,8 +74,6 @@ struct ServerUserMediaAccessView: View {
             deletionView
         }
     }
-
-    // MARK: - Media Access View
 
     @ViewBuilder
     var accessView: some View {
@@ -113,8 +97,6 @@ struct ServerUserMediaAccessView: View {
             }
         }
     }
-
-    // MARK: - Media Deletion View
 
     @ViewBuilder
     var deletionView: some View {
