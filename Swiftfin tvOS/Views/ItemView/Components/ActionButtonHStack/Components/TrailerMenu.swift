@@ -70,7 +70,6 @@ extension ItemView {
             }
         }
 
-        @ViewBuilder
         private var trailerMenu: some View {
             Menu(L10n.trailers, systemImage: "movieclapper") {
 

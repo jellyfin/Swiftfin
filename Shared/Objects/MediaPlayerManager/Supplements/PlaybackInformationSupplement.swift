@@ -54,7 +54,17 @@ extension PlaybackInformationSupplement {
             }
         }
 
-        var tvOSView: some View {}
+        var tvOSView: some View {
+            VStack {
+                if let session = viewModel.currentSession {
+                    Text(session.userName ?? "Unknown User")
+                        .font(.caption)
+                        .padding(6)
+                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .padding()
+                }
+            }
+        }
     }
 }
 

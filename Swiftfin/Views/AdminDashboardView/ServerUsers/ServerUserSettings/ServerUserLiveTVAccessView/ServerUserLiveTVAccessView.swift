@@ -83,7 +83,6 @@ struct ServerUserLiveTVAccessView: View {
 
     // MARK: - Content View
 
-    @ViewBuilder
     var contentView: some View {
         List {
             Section(L10n.access) {

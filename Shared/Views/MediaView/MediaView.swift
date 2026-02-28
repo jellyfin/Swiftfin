@@ -30,7 +30,6 @@ struct MediaView: View {
         }
     }
 
-    @ViewBuilder
     private var content: some View {
         CollectionVGrid(
             uniqueElements: viewModel.mediaItems,

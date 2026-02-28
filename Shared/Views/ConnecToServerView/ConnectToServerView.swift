@@ -80,7 +80,6 @@ struct ConnectToServerView: View {
 
     // MARK: - Local Servers Section
 
-    @ViewBuilder
     private var localServersSection: some View {
         Section(L10n.localServers) {
             if viewModel.localServers.isEmpty {

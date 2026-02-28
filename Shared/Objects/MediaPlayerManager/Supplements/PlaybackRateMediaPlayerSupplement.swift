@@ -27,7 +27,6 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @ViewBuilder
         private var compactView: some View {
             VStack {
 
@@ -67,8 +66,10 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
             }
         }
 
-        @ViewBuilder
-        private var regularView: some View {}
+        private var regularView: some View {
+            Color.orange
+                .opacity(0.5)
+        }
 
         var iOSView: some View {
             CompactOrRegularView(
@@ -76,11 +77,12 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
             ) {
                 compactView
             } regularView: {
-                Color.orange
-                    .opacity(0.5)
+                regularView
             }
         }
 
-        var tvOSView: some View {}
+        var tvOSView: some View {
+            regularView
+        }
     }
 }

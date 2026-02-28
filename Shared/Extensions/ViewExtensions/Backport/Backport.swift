@@ -15,7 +15,6 @@ struct Backport<Content> {
 
 extension Backport where Content: View {
 
-    @ViewBuilder
     func buttonBorderShape(_ shape: ButtonBorderShape) -> some View {
         content.buttonBorderShape(shape.swiftUIValue)
     }

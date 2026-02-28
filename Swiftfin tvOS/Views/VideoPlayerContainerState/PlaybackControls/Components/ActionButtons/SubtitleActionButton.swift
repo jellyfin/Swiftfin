@@ -29,7 +29,6 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
             }
         }
 
-        @ViewBuilder
         private func content(playbackItem: MediaPlayerItem) -> some View {
             ForEach(playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
                 Button {

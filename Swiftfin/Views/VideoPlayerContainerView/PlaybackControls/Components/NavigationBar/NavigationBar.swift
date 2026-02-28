@@ -85,7 +85,6 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             return (title: item.displayTitle, subtitle: nil)
         }
 
-        @ViewBuilder
         private func _subtitle(_ subtitle: String) -> some View {
             Text(subtitle)
                 .font(.subheadline)

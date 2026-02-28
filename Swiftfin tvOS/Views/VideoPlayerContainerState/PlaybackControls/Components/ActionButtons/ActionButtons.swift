@@ -85,7 +85,6 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             }
         }
 
-        @ViewBuilder
         private var menuButtons: some View {
             Menu(
                 "Menu",

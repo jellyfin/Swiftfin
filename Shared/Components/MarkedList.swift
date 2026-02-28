@@ -47,7 +47,6 @@ extension MarkedList {
         let spacing: CGFloat
         let marker: (Int) -> Marker
 
-        @ViewBuilder
         func body(children: _VariadicView.Children) -> some View {
             VStack(alignment: .leading, spacing: spacing) {
                 ForEach(Array(zip(children.indices, children)), id: \.0) { child in

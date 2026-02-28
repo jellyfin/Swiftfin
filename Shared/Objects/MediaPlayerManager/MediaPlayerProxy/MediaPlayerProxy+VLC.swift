@@ -93,7 +93,6 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         vlcUIProxy.setSubtitleSize(.absolute(fontSize))
     }
 
-    @ViewBuilder
     var videoPlayerBody: some View {
         VLCPlayerView()
             .environmentObject(vlcUIProxy)

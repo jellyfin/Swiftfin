@@ -85,7 +85,6 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             }
         }
 
-        @ViewBuilder
         private var compactView: some View {
             Menu(
                 L10n.menu,
@@ -107,7 +106,6 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             }
         }
 
-        @ViewBuilder
         private var regularView: some View {
             HStack(spacing: 0) {
                 ForEach(

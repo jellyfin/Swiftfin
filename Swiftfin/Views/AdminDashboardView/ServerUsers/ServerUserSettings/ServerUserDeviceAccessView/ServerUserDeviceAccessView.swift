@@ -88,7 +88,6 @@ struct ServerUserDeviceAccessView: View {
 
     // MARK: - Content View
 
-    @ViewBuilder
     var contentView: some View {
         List {
             InsetGroupedListHeader {

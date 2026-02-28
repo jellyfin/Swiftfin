@@ -29,7 +29,6 @@ struct SupplementContainerView: View {
     @State
     private var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
 
-    @ViewBuilder
     private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
         AlternateLayoutView(alignment: .topLeading) {
             Color.clear

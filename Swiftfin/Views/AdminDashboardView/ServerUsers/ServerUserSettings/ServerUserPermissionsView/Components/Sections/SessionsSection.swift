@@ -25,7 +25,6 @@ extension ServerUserPermissionsView {
 
         // MARK: - Failed Login Selection View
 
-        @ViewBuilder
         private var FailedLoginsView: some View {
             Section {
                 Picker(
@@ -72,7 +71,6 @@ extension ServerUserPermissionsView {
 
         // MARK: - Failed Login Selection Button
 
-        @ViewBuilder
         private func MaxFailedLoginsButton() -> some View {
             ChevronButton(
                 L10n.customFailedLogins,
@@ -92,7 +90,6 @@ extension ServerUserPermissionsView {
 
         // MARK: - Failed Login Validation
 
-        @ViewBuilder
         private var MaxSessionsView: some View {
             Section {
                 Picker(
@@ -125,7 +122,6 @@ extension ServerUserPermissionsView {
             }
         }
 
-        @ViewBuilder
         private func MaxSessionsButton() -> some View {
             ChevronButton(
                 L10n.customSessions,

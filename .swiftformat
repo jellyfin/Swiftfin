@@ -42,7 +42,6 @@
     redundantFileprivate,   \
     redundantSelf,          \
     redundantType,          \
-    redundantViewBuilder,   \
     strongOutlets,          \
     trailingCommas,         \
     yodaConditions

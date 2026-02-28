@@ -59,7 +59,6 @@ extension VideoPlayer.PlaybackControls {
             scrubbedSecondsBox.value
         }
 
-        @ViewBuilder
         private var liveIndicator: some View {
             Text("Live")
                 .font(.subheadline)

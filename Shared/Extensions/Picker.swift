@@ -8,7 +8,6 @@
 
 import SwiftUI
 
-@ViewBuilder
 func Picker<Element: CaseIterable & Displayable & Hashable>(
     _ title: String,
     selection: Binding<Element?>,
@@ -25,7 +24,6 @@ func Picker<Element: CaseIterable & Displayable & Hashable>(
     }
 }
 
-@ViewBuilder
 func Picker<Element: CaseIterable & Displayable & Hashable>(
     _ title: String,
     selection: Binding<Element>
@@ -55,7 +53,6 @@ func Picker<Element: SupportedCaseIterable & Displayable & Hashable>(
     }
 }
 
-@ViewBuilder
 func Picker<Element: Identifiable & Displayable & Hashable, Data: RandomAccessCollection>(
     _ title: String,
     sources: Data,

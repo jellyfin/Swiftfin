@@ -22,7 +22,6 @@ struct HomeView: View {
     @Default(.Customization.Home.showRecentlyAdded)
     private var showRecentlyAdded
 
-    @ViewBuilder
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {

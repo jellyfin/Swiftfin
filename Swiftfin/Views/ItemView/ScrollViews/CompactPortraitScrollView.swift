@@ -51,7 +51,6 @@ extension ItemView {
                 .animation(.linear(duration: 0.1), value: imageSource.url?.hashValue)
         }
 
-        @ViewBuilder
         private var headerView: some View {
             GeometryReader { proxy in
                 withHeaderImageItem { imageSource, bottomColor in
@@ -114,7 +113,6 @@ extension ItemView.CompactPosterScrollView {
         @ObservedObject
         var viewModel: ItemViewModel
 
-        @ViewBuilder
         private var rightShelfView: some View {
             VStack(alignment: .leading) {
 
