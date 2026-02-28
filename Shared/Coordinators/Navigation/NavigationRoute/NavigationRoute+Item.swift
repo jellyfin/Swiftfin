@@ -63,17 +63,15 @@ extension NavigationRoute {
     }
     #endif
 
+    @MainActor
     static func castAndCrew(people: [BaseItemPerson], itemID: String?) -> NavigationRoute {
-        let id: String? = itemID == nil ? nil : "castAndCrew-\(itemID!)"
-        let viewModel = PagingLibraryViewModel(
+        let library = StaticLibrary(
             title: L10n.castAndCrew,
-            id: id,
-            people
+            id: "castAndCrew",
+            elements: people
         )
 
-        return NavigationRoute(id: "castAndCrew") {
-            PagingLibraryView(viewModel: viewModel)
-        }
+        return .library(library: library)
     }
 
     #if os(iOS)
@@ -192,22 +190,60 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
+    static func person(_ person: BaseItemPerson) -> NavigationRoute {
+        .item(item: .init(person: person))
+    }
+
+    @MainActor
     static func item(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
             id: "item-\(item.id ?? "Unknown")",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            ItemView(item: item)
+//            ItemView(item: item)
+            ItemContentGroupView(
+                provider: ItemGroupProvider(
+                    displayTitle: item.displayTitle,
+                    id: item.id!
+                )
+            )
+        }
+    }
+
+    @MainActor
+    static func item(displayTitle: String, id: String) -> NavigationRoute {
+        NavigationRoute(
+            id: "item-\(id)",
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
+        ) {
+            ItemContentGroupView(
+                provider: ItemGroupProvider(
+                    displayTitle: displayTitle,
+                    id: id
+                )
+            )
         }
     }
 
     #if os(iOS)
-    static func itemEditor(viewModel: ItemViewModel) -> NavigationRoute {
+    @MainActor
+    static func itemEditor(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
             id: "itemEditor",
             style: .sheet
         ) {
-            ItemEditorView(viewModel: viewModel)
+            ItemEditorView(item: item)
+        }
+    }
+
+    @MainActor
+    static func editItem(_ item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemEditor",
+            style: .sheet
+        ) {
+            ItemEditorView(item: item)
         }
     }
 

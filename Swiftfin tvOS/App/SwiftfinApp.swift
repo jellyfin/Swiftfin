@@ -53,6 +53,7 @@ struct SwiftfinApp: App {
         // UIKit
 
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.label]
+        UINavigationBar.appearance().isHidden = true
 
         // don't keep last user id
         if Defaults[.signOutOnClose] {
@@ -77,5 +78,14 @@ struct SwiftfinApp: App {
                     }
                 }
         }
+    }
+}
+
+extension UINavigationController {
+
+    // Remove back button text
+    override open func viewWillLayoutSubviews() {
+//        navigationBar.topItem?.backButtonDisplayMode = .minimal
+        isNavigationBarHidden = true
     }
 }

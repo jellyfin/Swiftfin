@@ -52,6 +52,21 @@ extension FormatStyle where Self == Duration.UnitsFormatStyle {
     }
 }
 
+struct RuntimeUnitsFormatStyle: FormatStyle {
+
+    let width: Duration.UnitsFormatStyle.UnitWidth
+
+    func format(_ value: Duration) -> String {
+        let formatStyle = Duration.UnitsFormatStyle(
+            allowedUnits: [.hours, .minutes],
+            width: width
+        )
+        return formatStyle.format(value)
+    }
+}
+
+// TODO: rename `RuntimeTimeFormatStyle`
+// TODO: make one for units
 struct RuntimeFormatStyle: FormatStyle {
 
     func format(_ value: Duration) -> String {

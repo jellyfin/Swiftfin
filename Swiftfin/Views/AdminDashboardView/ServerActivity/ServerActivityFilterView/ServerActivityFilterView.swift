@@ -12,42 +12,25 @@ import SwiftUI
 
 struct ServerActivityFilterView: View {
 
-    // MARK: - Environment Objects
-
     @Router
     private var router
 
-    // MARK: - State Objects
-
-    @ObservedObject
-    private var viewModel: ServerActivityViewModel
-
-    // MARK: - Dialog States
-
     @State
-    private var tempDate: Date?
+    private var activeDate: Date
 
-    // MARK: - Initializer
+    private let environmentBinding: Binding<ServerActivityLibrary.Environment>
 
-    init(viewModel: ServerActivityViewModel) {
-
-        self.viewModel = viewModel
-
-        if let minDate = viewModel.minDate {
-            tempDate = minDate
-        } else {
-            tempDate = .now
-        }
+    init(environment: Binding<ServerActivityLibrary.Environment>) {
+        self.environmentBinding = environment
+        self.activeDate = environment.wrappedValue.minDate ?? .now
     }
-
-    // MARK: - Body
 
     var body: some View {
         List {
             Section {
                 DatePicker(
                     L10n.date,
-                    selection: $tempDate.coalesce(.now),
+                    selection: $activeDate,
                     in: ...Date.now,
                     displayedComponents: .date
                 )
@@ -56,17 +39,17 @@ struct ServerActivityFilterView: View {
             }
 
             /// Reset button to remove the filter
-            if viewModel.minDate != nil {
-                Section {
-                    Button(L10n.reset, role: .destructive) {
-                        viewModel.minDate = nil
-                        router.dismiss()
-                    }
-                    .buttonStyle(.primary)
-                } footer: {
-                    Text(L10n.resetFilterFooter)
-                }
-            }
+//            if viewModel.minDate != nil {
+//                Section {
+//                    Button(L10n.reset, role: .destructive) {
+//                        viewModel.minDate = nil
+//                        router.dismiss()
+//                    }
+//                    .buttonStyle(.primary)
+//                } footer: {
+//                    Text(L10n.resetFilterFooter)
+//                }
+//            }
         }
         .navigationTitle(L10n.startDate.localizedCapitalized)
         .navigationBarTitleDisplayMode(.inline)
@@ -75,14 +58,15 @@ struct ServerActivityFilterView: View {
         }
         .topBarTrailing {
             let startOfDay = Calendar.current
-                .startOfDay(for: tempDate ?? .now)
+                .startOfDay(for: activeDate)
 
             Button(L10n.save) {
-                viewModel.minDate = startOfDay
+                environmentBinding.wrappedValue.minDate = startOfDay
                 router.dismiss()
             }
             .buttonStyle(.toolbarPill)
-            .disabled(viewModel.minDate != nil && startOfDay == viewModel.minDate)
+            .disabled(activeDate == environmentBinding.wrappedValue.minDate)
+//            .disabled(viewModel.minDate != nil && startOfDay == viewModel.minDate)
         }
     }
 }

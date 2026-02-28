@@ -28,7 +28,7 @@ extension Section where Parent == Text, Footer == Text, Content: View {
 func Section(
     _ title: String,
     @ViewBuilder content: @escaping () -> some View,
-    @LabeledContentBuilder learnMore: @escaping () -> AnyView
+    @LabeledContentBuilder learnMore: @escaping () -> some View
 ) -> some View {
     Section(
         title,
@@ -42,7 +42,7 @@ func Section(
     _ title: String,
     @ViewBuilder content: @escaping () -> some View,
     @ViewBuilder footer: @escaping () -> some View,
-    @LabeledContentBuilder learnMore: @escaping () -> AnyView
+    @LabeledContentBuilder learnMore: @escaping () -> some View
 ) -> some View {
     InlinePlatformView {
         Section {
@@ -62,7 +62,7 @@ func Section(
     } tvOSView: {
         Section {
             content()
-                .focusedValue(\.formLearnMore, learnMore())
+                .focusedValue(\.formLearnMore, learnMore().eraseToAnyView())
         } header: {
             Text(title)
         } footer: {
@@ -74,17 +74,17 @@ func Section(
 // MARK: - LearnMoreButton
 
 // TODO: Rename to `LearnMoreButton` once the original `LearnMoreButton` is removed
-private struct _LearnMoreButton: View {
+private struct _LearnMoreButton<Content: View>: View {
 
     @State
     private var isPresented = false
 
-    private let content: AnyView
+    private let content: Content
     private let title: String
 
     init(
         _ title: String,
-        @LabeledContentBuilder learnMore: @escaping () -> AnyView
+        @LabeledContentBuilder learnMore: @escaping () -> Content
     ) {
         self.content = learnMore()
         self.title = title

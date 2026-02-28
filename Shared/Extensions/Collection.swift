@@ -10,8 +10,8 @@ import Foundation
 
 extension Collection {
 
-    var asArray: [Element] {
-        Array(self)
+    var nilIfEmpty: Self? {
+        isEmpty ? nil : self
     }
 
     var isNotEmpty: Bool {

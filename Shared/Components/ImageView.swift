@@ -19,38 +19,26 @@ import SwiftUI
 //       the blur hash view is at full opacity.
 //       - refactor for option
 //       - take a look at `RotateContentView`
-// TODO: make Image and Placeholder generic constraints rather than any View
-struct ImageView<Failure: View>: View {
+struct ImageView<_Image: View, Placeholder: View, Failure: View>: View {
 
     @State
     private var sources: [ImageSource]
 
-    private var image: (Image) -> any View
+    private let failure: Failure
+    private let image: (Image) -> _Image
     private var pipeline: ImagePipeline
-    private var placeholder: ((ImageSource) -> any View)?
-    private var failure: Failure
-
-    @ViewBuilder
-    private func _placeholder(_ currentSource: ImageSource) -> some View {
-        if let placeholder {
-            placeholder(currentSource)
-                .eraseToAnyView()
-        } else {
-            DefaultPlaceholderView(blurHash: currentSource.blurHash)
-        }
-    }
+    private let placeholder: (ImageSource) -> Placeholder
 
     var body: some View {
         if let currentSource = sources.first {
             LazyImage(url: currentSource.url, transaction: .init(animation: .linear)) { state in
                 if state.isLoading {
-                    _placeholder(currentSource)
+                    placeholder(currentSource)
                 } else if let _image = state.image {
                     if let data = state.imageContainer?.data {
                         FastSVGView(data: data)
                     } else {
                         image(_image.resizable())
-                            .eraseToAnyView()
                     }
                 } else if state.error != nil {
                     failure
@@ -67,7 +55,7 @@ struct ImageView<Failure: View>: View {
     }
 }
 
-extension ImageView where Failure == EmptyView {
+extension ImageView where _Image == Image, Placeholder == DefaultPlaceholderView, Failure == EmptyView {
 
     init(_ source: ImageSource) {
         self.init([source].compacted(using: \.url))
@@ -76,10 +64,10 @@ extension ImageView where Failure == EmptyView {
     init(_ sources: [ImageSource]) {
         self.init(
             sources: sources.compacted(using: \.url),
+            failure: EmptyView(),
             image: { $0 },
             pipeline: .shared,
-            placeholder: nil,
-            failure: EmptyView()
+            placeholder: { DefaultPlaceholderView(blurHash: $0.blurHash) }
         )
     }
 
@@ -100,38 +88,48 @@ extension ImageView where Failure == EmptyView {
 
 extension ImageView {
 
-    func image(@ViewBuilder _ content: @escaping (Image) -> any View) -> Self {
-        copy(modifying: \.image, with: content)
+    func failure<F: View>(
+        @ViewBuilder _ content: @escaping () -> F
+    ) -> ImageView<_Image, Placeholder, F> {
+        ImageView<_Image, Placeholder, F>(
+            sources: sources,
+            failure: content(),
+            image: image,
+            pipeline: pipeline,
+            placeholder: placeholder
+        )
+    }
+
+    func image<I: View>(
+        @ViewBuilder _ content: @escaping (Image) -> I
+    ) -> ImageView<I, Placeholder, Failure> {
+        ImageView<I, Placeholder, Failure>(
+            sources: sources,
+            failure: failure,
+            image: content,
+            pipeline: pipeline,
+            placeholder: placeholder
+        )
     }
 
     func pipeline(_ pipeline: ImagePipeline) -> Self {
         copy(modifying: \.pipeline, with: pipeline)
     }
 
-    func placeholder(@ViewBuilder _ content: @escaping (ImageSource) -> any View) -> Self {
-        copy(modifying: \.placeholder, with: content)
-    }
-
-    func failure<NewFailure: View>(@ViewBuilder _ content: @escaping () -> NewFailure) -> ImageView<NewFailure> {
-        ImageView<NewFailure>(
+    func placeholder<P: View>(
+        @ViewBuilder _ content: @escaping (ImageSource) -> P
+    ) -> ImageView<_Image, P, Failure> {
+        ImageView<_Image, P, Failure>(
             sources: sources,
+            failure: failure,
             image: image,
             pipeline: pipeline,
-            placeholder: placeholder,
-            failure: content()
+            placeholder: content
         )
     }
 }
 
 // MARK: Defaults
-
-struct DefaultFailureView: View {
-
-    var body: some View {
-        Color.secondarySystemFill
-            .opacity(0.75)
-    }
-}
 
 struct DefaultPlaceholderView: View {
 

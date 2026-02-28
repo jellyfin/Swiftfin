@@ -10,7 +10,8 @@ import Foundation
 import JellyfinAPI
 
 extension VideoRangeType: Displayable {
-    /// Dolby Vision is a proper noun so it is not localized
+
+    // Dolby Vision is a proper noun so it is not localized
     var displayTitle: String {
         switch self {
         case .unknown:

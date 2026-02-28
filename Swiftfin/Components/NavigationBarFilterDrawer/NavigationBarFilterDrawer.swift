@@ -12,61 +12,57 @@ import SwiftUI
 
 struct NavigationBarFilterDrawer: View {
 
-    struct Parameters {
-        let type: ItemFilterType
-        let viewModel: FilterViewModel
-    }
-
     @ObservedObject
     private var viewModel: FilterViewModel
 
-    private var filterTypes: [ItemFilterType]
-    private var onSelect: (Parameters) -> Void
+    @Router
+    private var router
+
+    private let filterTypes: [ItemFilterType]
+
+    init(
+        viewModel: FilterViewModel,
+        types: [ItemFilterType]
+    ) {
+        self.viewModel = viewModel
+        self.filterTypes = types
+    }
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                if viewModel.currentFilters.hasFilters {
-                    Menu {
+                if viewModel.currentFilters.isNotEmpty {
+                    Menu(L10n.reset, systemImage: "line.3.horizontal.decrease") {
                         Button(L10n.reset, role: .destructive) {
-                            viewModel.send(.reset())
+                            viewModel.reset(filterType: nil)
                         }
-                    } label: {
-                        FilterDrawerButton(systemName: "line.3.horizontal.decrease.circle.fill")
-                            .isSelected(true)
                     }
+                    .foregroundStyle(.primary, .secondary)
+                    .labelStyle(NavigationDrawerLabelStyle(isIconOnly: true))
                 }
 
                 ForEach(filterTypes, id: \.self) { type in
-                    FilterDrawerButton(
-                        title: type.displayTitle
-                    )
-                    .onSelect {
-                        onSelect(.init(type: type, viewModel: viewModel))
+                    Button {
+                        router.route(
+                            to: .filter(
+                                type: type,
+                                viewModel: viewModel
+                            )
+                        )
+                    } label: {
+                        Label {
+                            Text(type.displayTitle)
+                        } icon: {
+                            EmptyView()
+                        }
                     }
-                    .environment(
-                        \.isSelected,
-                        viewModel.isFilterSelected(type: type)
-                    )
+                    .foregroundStyle(.primary, .secondary)
+                    .isHighlighted(viewModel.isFilterSelected(type: type))
                 }
             }
             .padding(.horizontal)
-            .padding(.vertical, 1)
+            .padding(.bottom, 5)
+            .labelStyle(NavigationDrawerLabelStyle())
         }
-    }
-}
-
-extension NavigationBarFilterDrawer {
-
-    init(viewModel: FilterViewModel, types: [ItemFilterType]) {
-        self.init(
-            viewModel: viewModel,
-            filterTypes: types,
-            onSelect: { _ in }
-        )
-    }
-
-    func onSelect(_ action: @escaping (Parameters) -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

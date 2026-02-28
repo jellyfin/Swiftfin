@@ -13,14 +13,14 @@ import SwiftUI
 
 struct IndicatorSettingsView: View {
 
-    @Default(.Customization.Indicators.showFavorited)
-    private var showFavorited
-    @Default(.Customization.Indicators.showProgress)
-    private var showProgress
-    @Default(.Customization.Indicators.showUnplayed)
-    private var showUnwatched
-    @Default(.Customization.Indicators.showPlayed)
-    private var showWatched
+//    @Default(.Customization.Indicators.showFavorited)
+//    private var showFavorited
+//    @Default(.Customization.Indicators.showProgress)
+//    private var showProgress
+//    @Default(.Customization.Indicators.showUnplayed)
+//    private var showUnwatched
+//    @Default(.Customization.Indicators.showPlayed)
+//    private var showWatched
 
     var body: some View {
         SplitFormWindowView()
@@ -34,13 +34,13 @@ struct IndicatorSettingsView: View {
 
                 Section(L10n.posters) {
 
-                    Toggle(L10n.showFavorited, isOn: $showFavorited)
-
-                    Toggle(L10n.showProgress, isOn: $showProgress)
-
-                    Toggle(L10n.showUnwatched, isOn: $showUnwatched)
-
-                    Toggle(L10n.showWatched, isOn: $showWatched)
+//                    Toggle(L10n.showFavorited, isOn: $showFavorited)
+//
+//                    Toggle(L10n.showProgress, isOn: $showProgress)
+//
+//                    Toggle(L10n.showUnwatched, isOn: $showUnwatched)
+//
+//                    Toggle(L10n.showWatched, isOn: $showWatched)
                 }
             }
             .navigationTitle(L10n.indicators)

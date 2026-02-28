@@ -11,21 +11,34 @@ import SwiftUI
 
 struct SettingsBarButton: View {
 
-    let server: ServerState
-    let user: UserState
-    let action: () -> Void
+    @Injected(\.currentUserSession)
+    private var userSession
+
+    @Router
+    private var router
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            router.route(to: .settings)
+        } label: {
             AlternateLayoutView {
                 // Seems necessary for button layout
                 Image(systemName: "gearshape.fill")
             } content: {
-                UserProfileImage(
-                    userID: user.id,
-                    source: user.profileImageSource(
+
+                let imageSource: ImageSource = {
+                    guard let user = userSession?.user, let server = userSession?.server else {
+                        return .init()
+                    }
+
+                    return user.profileImageSource(
                         client: server.client
-                    ),
+                    )
+                }()
+
+                UserProfileImage(
+                    userID: userSession?.user.id,
+                    source: imageSource,
                     pipeline: .Swiftfin.local
                 )
             }

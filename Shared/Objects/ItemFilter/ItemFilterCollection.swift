@@ -6,7 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Foundation
 import JellyfinAPI
+
+// TODO: take parent id for libraries?
 
 /// A structure representing a collection of item filters
 struct ItemFilterCollection: Hashable, Storable {
@@ -14,11 +17,14 @@ struct ItemFilterCollection: Hashable, Storable {
     var genres: [ItemGenre] = []
     var itemTypes: [BaseItemKind] = []
     var letter: [ItemLetter] = []
+    var mediaTypes: [MediaType] = []
     var sortBy: [ItemSortBy] = [ItemSortBy.sortName]
     var sortOrder: [ItemSortOrder] = [ItemSortOrder.ascending]
     var tags: [ItemTag] = []
     var traits: [ItemTrait] = []
     var years: [ItemYear] = []
+
+    var query: String?
 
     /// The default collection of filters
     static let `default`: ItemFilterCollection = .init()
@@ -42,12 +48,17 @@ struct ItemFilterCollection: Hashable, Storable {
         traits: ItemTrait.supportedCases
     )
 
-    var hasFilters: Bool {
+    var isNotEmpty: Bool {
         self != Self.default
     }
 
     var hasQueryableFilters: Bool {
-        genres.isNotEmpty || itemTypes.isNotEmpty || letter.isNotEmpty || tags.isNotEmpty || traits.isNotEmpty || years.isNotEmpty
+        genres.isNotEmpty ||
+            itemTypes.isNotEmpty ||
+            letter.isNotEmpty ||
+            tags.isNotEmpty ||
+            traits.isNotEmpty ||
+            years.isNotEmpty
     }
 
     var activeFilterCount: Int {

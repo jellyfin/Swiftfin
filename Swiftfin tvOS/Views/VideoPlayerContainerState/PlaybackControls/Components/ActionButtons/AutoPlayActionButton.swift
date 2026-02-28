@@ -16,7 +16,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         @Default(.VideoPlayer.autoPlayEnabled)
         private var isAutoPlayEnabled
 
-        @Environment(\.isInMenu)
+        @ViewContextContains(.isInMenu)
         private var isInMenu
 
         @EnvironmentObject

@@ -19,6 +19,7 @@ import SwiftUI
 
 extension BaseItemDto {
 
+    // TODO: remove?
     init(person: BaseItemPerson) {
         self.init(
             id: person.id,
@@ -32,13 +33,6 @@ extension BaseItemDto: Displayable {
 
     var displayTitle: String {
         name ?? L10n.unknown
-    }
-}
-
-extension BaseItemDto: LibraryIdentifiable {
-
-    var unwrappedIDHashOrZero: Int {
-        id?.hashValue ?? 0
     }
 }
 
@@ -71,6 +65,148 @@ extension BaseItemDto {
 
                 return item.copy() as? AVMetadataItem
             }
+    }
+
+    var birthday: Date? {
+        guard type == .person else { return nil }
+        return premiereDate
+    }
+
+    var birthplace: String? {
+        guard type == .person else { return nil }
+        return productionLocations?.first
+    }
+
+    var deathday: Date? {
+        guard type == .person else { return nil }
+        return endDate
+    }
+
+    var episodeLocator: String? {
+        guard let episodeNo = indexNumber else { return nil }
+        return L10n.episodeNumber(episodeNo)
+    }
+
+    var itemGenres: [ItemGenre]? {
+        guard let genres else { return nil }
+        return genres.map(ItemGenre.init)
+    }
+
+    var itemStudios: [ItemStudio]? {
+        guard let studios else { return nil }
+        return studios.compactMap { pair in
+            guard let id = pair.id else { return nil }
+
+            return ItemStudio(
+                displayTitle: pair.displayTitle,
+                value: id
+            )
+        }
+    }
+
+    var isIdentifiable: Bool {
+        switch type {
+        case .boxSet, .movie, .person, .series:
+            true
+        default:
+            false
+        }
+    }
+
+    /// Differs from `isLive` to indicate an item
+    /// would be streaming from a live source.
+    var isLiveStream: Bool {
+        channelType == .tv
+    }
+
+    /// Whether the item has independent playable content, similar
+    /// to if an item can provide its own media sources.
+    ///
+    /// ie: A movie and an episode can be directly played,
+    ///     but a series is not as its episodes are playable.
+    var isPlayable: Bool {
+        guard !isMissing else { return false }
+
+        return switch type {
+        case .series:
+            false
+        default:
+            true
+        }
+    }
+
+    /// The primary image handler for building the
+    /// image used in the now playing system.
+    @MainActor
+    func getNowPlayingImage() async -> UIImage? {
+        let imageSources = imageSources(
+            for: preferredPosterDisplayType,
+            size: .small,
+            environment: .init(useParent: true)
+        )
+
+        guard let firstImage = await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageSources) else {
+            let failedSystemContentView = SystemImageContentView(
+                systemName: systemImage
+            )
+            .posterStyle(preferredPosterDisplayType)
+            .frame(width: 400)
+
+            return ImageRenderer(content: failedSystemContentView).uiImage
+        }
+
+        let image = Image(uiImage: firstImage)
+            .resizable()
+        let transformedImage = ZStack {
+            Rectangle()
+                .fill(Color.secondarySystemFill)
+
+            transform(image: image, displayType: preferredPosterDisplayType)
+        }
+        .posterAspectRatio(preferredPosterDisplayType, contentMode: .fit)
+        .frame(width: 400)
+
+        return ImageRenderer(content: transformedImage).uiImage
+    }
+
+    func getPlaybackItemProvider(
+        userSession: UserSession
+    ) -> MediaPlayerItemProvider {
+        switch type {
+        case .program:
+            MediaPlayerItemProvider(item: self) { program in
+                guard let channel = try? await self.getChannel(
+                    for: program,
+                    userSession: userSession
+                )
+                else {
+                    throw ErrorMessage(L10n.unknownError)
+                }
+                return try await MediaPlayerItem.build(for: channel)
+            }
+        default:
+            MediaPlayerItemProvider(item: self) { item in
+                try await MediaPlayerItem.build(for: item)
+            }
+        }
+    }
+
+    func getChannel(
+        for program: BaseItemDto,
+        userSession: UserSession
+    ) async throws -> BaseItemDto? {
+        guard type == .program else { return nil }
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.ids = [program.channelID ?? ""]
+
+        let request = Paths.getItemsByUserID(
+            userID: userSession.user.id,
+            parameters: parameters
+        )
+        let response = try await userSession.client.send(request)
+
+        return response.value.items?.first
     }
 
     func nowPlayableStaticMetadata(_ image: UIImage? = nil) -> NowPlayableStaticMetadata {
@@ -122,136 +258,28 @@ extension BaseItemDto {
         )
     }
 
-    var birthday: Date? {
-        guard type == .person else { return nil }
-        return premiereDate
+    var programDuration: TimeInterval? {
+        guard let startDate, let endDate else { return nil }
+        return endDate.timeIntervalSince(startDate)
     }
 
-    var birthplace: String? {
-        guard type == .person else { return nil }
-        return productionLocations?.first
+    func programProgress(relativeTo other: Date) -> Double? {
+        guard let startDate, let endDate else { return nil }
+
+        let length = endDate.timeIntervalSince(startDate)
+        let progress = other.timeIntervalSince(startDate)
+
+        return progress / length
     }
 
-    var deathday: Date? {
-        guard type == .person else { return nil }
-        return endDate
-    }
-
-    var episodeLocator: String? {
-        guard let episodeNo = indexNumber else { return nil }
-        return L10n.episodeNumber(episodeNo)
-    }
-
-    var itemGenres: [ItemGenre]? {
-        guard let genres else { return nil }
-        return genres.map(ItemGenre.init)
-    }
-
-    /// Differs from `isLive` to indicate an item
-    /// would be streaming from a live source.
-    var isLiveStream: Bool {
-        channelType == .tv
-    }
-
-    /// Whether the item has independent playable content, similar
-    /// to if an item can provide its own media sources.
-    ///
-    /// ie: A movie and an episode can be directly played,
-    ///     but a series is not as its episodes are playable.
-    var isPlayable: Bool {
-        guard !isMissing else { return false }
-
-        return switch type {
-        case .series:
-            false
-        default:
-            true
-        }
-    }
-
-    /// The primary image handler for building the
-    /// image used in the now playing system.
-    @MainActor
-    func getNowPlayingImage() async -> UIImage? {
-        let imageSources = thumbImageSources()
-
-        guard let firstImage = await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageSources) else {
-            let failedSystemContentView = SystemImageContentView(
-                systemName: systemImage
-            )
-            .posterStyle(preferredPosterDisplayType)
-            .frame(width: 400)
-
-            return ImageRenderer(content: failedSystemContentView).uiImage
-        }
-
-        let image = Image(uiImage: firstImage)
-            .resizable()
-        let transformedImage = ZStack {
-            Rectangle()
-                .fill(Color.secondarySystemFill)
-
-            transform(image: image)
-        }
-        .posterAspectRatio(preferredPosterDisplayType, contentMode: .fit)
-        .frame(width: 400)
-
-        return ImageRenderer(content: transformedImage).uiImage
-    }
-
-    func getPlaybackItemProvider(
-        userSession: UserSession
-    ) -> MediaPlayerItemProvider {
-        switch type {
-        case .program:
-            MediaPlayerItemProvider(item: self) { program in
-                guard let channel = try? await self.getChannel(
-                    for: program,
-                    userSession: userSession
-                ),
-                    let mediaSource = channel.mediaSources?.first
-                else {
-                    throw ErrorMessage(L10n.unknownError)
-                }
-                return try await MediaPlayerItem.build(for: program, mediaSource: mediaSource)
-            }
-        default:
-            MediaPlayerItemProvider(item: self) { item in
-                guard let mediaSource = item.mediaSources?.first else {
-                    throw ErrorMessage(L10n.unknownError)
-                }
-                return try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
-            }
-        }
-    }
-
-    func getChannel(
-        for program: BaseItemDto,
-        userSession: UserSession
-    ) async throws -> BaseItemDto? {
-        guard type == .program else { return nil }
-
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
-        parameters.ids = [program.channelID ?? ""]
-
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
-        )
-        let response = try await userSession.client.send(request)
-
-        return response.value.items?.first
+    var progress: Double? {
+        guard let startSeconds, let runtime, startSeconds > .zero, startSeconds < runtime else { return nil }
+        return startSeconds / runtime
     }
 
     var runtime: Duration? {
-        guard let ticks = runTimeTicks else { return nil }
-        return Duration.ticks(ticks)
-    }
-
-    var startSeconds: Duration? {
-        guard let ticks = userData?.playbackPositionTicks else { return nil }
-        return Duration.ticks(ticks)
+        guard let runTimeTicks else { return nil }
+        return Duration.ticks(runTimeTicks)
     }
 
     var seasonEpisodeLabel: String? {
@@ -259,8 +287,14 @@ extension BaseItemDto {
         return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
     }
 
+    @available(*, deprecated, message: "Use `userData?.playbackPosition` instead")
+    var startSeconds: Duration? {
+        userData?.playbackPosition
+    }
+
     // MARK: Calculations
 
+    @available(*, deprecated, message: "remove, use a formatter instead")
     var runTimeLabel: String? {
         let timeHMSFormatter: DateComponentsFormatter = {
             let formatter = DateComponentsFormatter()
@@ -275,57 +309,17 @@ extension BaseItemDto {
         return text
     }
 
-    var progressLabel: String? {
-        guard let playbackPositionTicks = userData?.playbackPositionTicks,
-              let totalTicks = runTimeTicks,
-              playbackPositionTicks != 0,
-              totalTicks != 0 else { return nil }
-
-        let remainingSeconds = (totalTicks - playbackPositionTicks) / 10_000_000
-
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.hour, .minute]
-        formatter.unitsStyle = .abbreviated
-
-        return formatter.string(from: .init(remainingSeconds))
-    }
-
-    var programDuration: TimeInterval? {
-        guard let startDate, let endDate else { return nil }
-        return endDate.timeIntervalSince(startDate)
-    }
-
-    var programProgress: Double? {
-        guard let startDate, let endDate else { return nil }
-
-        let length = endDate.timeIntervalSince(startDate)
-        let progress = Date.now.timeIntervalSince(startDate)
-
-        return progress / length
-    }
-
-    func programProgress(relativeTo other: Date) -> Double? {
-        guard let startDate, let endDate else { return nil }
-
-        let length = endDate.timeIntervalSince(startDate)
-        let progress = other.timeIntervalSince(startDate)
-
-        return progress / length
+    var audioStreams: [MediaStream] {
+        mediaStreams?.filter { $0.type == .audio } ?? []
     }
 
     var subtitleStreams: [MediaStream] {
         mediaStreams?.filter { $0.type == .subtitle } ?? []
     }
 
-    var audioStreams: [MediaStream] {
-        mediaStreams?.filter { $0.type == .audio } ?? []
-    }
-
     var videoStreams: [MediaStream] {
         mediaStreams?.filter { $0.type == .video } ?? []
     }
-
-    // MARK: Missing and Unaired
 
     var isMissing: Bool {
         locationType == .virtual
@@ -346,7 +340,6 @@ extension BaseItemDto {
 
     var premiereDateLabel: String? {
         guard let premiereDate else { return nil }
-
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
         return dateFormatter.string(from: premiereDate)
@@ -359,11 +352,6 @@ extension BaseItemDto {
         return dateFormatter.string(from: premiereDate)
     }
 
-    var hasExternalLinks: Bool {
-        guard let externalURLs else { return false }
-        return externalURLs.isNotEmpty
-    }
-
     var hasRatings: Bool {
         [
             criticRating,
@@ -371,8 +359,7 @@ extension BaseItemDto {
         ].contains { $0 != nil }
     }
 
-    // MARK: Chapter Images
-
+    // TODO: take userSession parameter
     var fullChapterInfo: [ChapterInfo.FullInfo]? {
 
         guard let chapters = chapters?
@@ -474,8 +461,15 @@ extension BaseItemDto {
             return L10n.missing
         }
 
-        if let progressLabel {
-            return progressLabel
+        if let seasonEpisodeLabel {
+            return seasonEpisodeLabel
+        }
+
+        if let runtime,
+           let playbackPosition = userData?.playbackPosition,
+           playbackPosition > .zero
+        {
+            return (runtime - playbackPosition).formatted(RuntimeUnitsFormatStyle(width: .narrow))
         }
 
         return L10n.play
@@ -485,6 +479,8 @@ extension BaseItemDto {
         switch type {
         case .audio:
             album
+        case .musicAlbum:
+            albumArtists?.first?.name
         case .episode:
             seriesName
         default:
@@ -509,7 +505,7 @@ extension BaseItemDto {
             throw ErrorMessage(L10n.unknownError)
         }
 
-        let request = Paths.getItem(itemID: id, userID: userSession.user.id)
+        let request = Paths.getItem(itemID: id)
         let response = try await userSession.client.send(request)
 
         // A check against `id` would typically be done, but a plugin
@@ -517,5 +513,10 @@ extension BaseItemDto {
         // be invariant over `id`.
 
         return response.value
+    }
+
+    static func getItem(id: String, userSession: UserSession) async throws -> BaseItemDto {
+        try await .init(id: id)
+            .getFullItem(userSession: userSession)
     }
 }

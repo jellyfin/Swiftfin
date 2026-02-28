@@ -112,23 +112,10 @@ extension Defaults.Keys {
 
     enum Customization {
 
-        static let itemViewType: Key<ItemViewType> = UserKey("itemViewType", default: .compactLogo)
+        static let itemViewType: Key<ItemViewType> = UserKey("mediaItemViewType", default: .enhanced)
 
-        static let showPosterLabels: Key<Bool> = UserKey("showPosterLabels", default: true)
-        static let nextUpPosterType: Key<PosterDisplayType> = UserKey("nextUpPosterType", default: .portrait)
-        static let recentlyAddedPosterType: Key<PosterDisplayType> = UserKey("recentlyAddedPosterType", default: .portrait)
-        static let latestInLibraryPosterType: Key<PosterDisplayType> = UserKey("latestInLibraryPosterType", default: .portrait)
         static let shouldShowMissingSeasons: Key<Bool> = UserKey("shouldShowMissingSeasons", default: true)
         static let shouldShowMissingEpisodes: Key<Bool> = UserKey("shouldShowMissingEpisodes", default: true)
-        static let similarPosterType: Key<PosterDisplayType> = UserKey("similarPosterType", default: .portrait)
-
-        // TODO: have search poster type by types of items if applicable
-        static let searchPosterType: Key<PosterDisplayType> = UserKey("searchPosterType", default: .portrait)
-
-        enum CinematicItemViewType {
-
-            static let usePrimaryImage: Key<Bool> = UserKey("cinematicItemViewTypeUsePrimaryImage", default: false)
-        }
 
         enum Episodes {
 
@@ -137,10 +124,10 @@ extension Defaults.Keys {
 
         enum Indicators {
 
-            static let showFavorited: Key<Bool> = UserKey("showFavoritedIndicator", default: true)
-            static let showProgress: Key<Bool> = UserKey("showProgressIndicator", default: true)
-            static let showUnplayed: Key<Bool> = UserKey("showUnplayedIndicator", default: true)
-            static let showPlayed: Key<Bool> = UserKey("showPlayedIndicator", default: true)
+            static let enabled: Key<PosterIndicator> = UserKey(
+                "enabledPosterIndicators",
+                default: [.favorited, .played, .progress, .unplayed]
+            )
         }
 
         enum Library {
@@ -154,14 +141,13 @@ extension Defaults.Keys {
             static let letterPickerOrientation: Key<LetterPickerOrientation> = .init(
                 "letterPickerOrientation", default: .trailing
             )
-            static let displayType: Key<LibraryDisplayType> = UserKey("libraryViewType", default: .grid)
-            static let posterType: Key<PosterDisplayType> = UserKey("libraryPosterType", default: .portrait)
-            static let listColumnCount: Key<Int> = UserKey("listColumnCount", default: 1)
             static let randomImage: Key<Bool> = UserKey("libraryRandomImage", default: true)
             static let showFavorites: Key<Bool> = UserKey("libraryShowFavorites", default: true)
 
             static let rememberLayout: Key<Bool> = UserKey("libraryRememberLayout", default: false)
             static let rememberSort: Key<Bool> = UserKey("libraryRememberSort", default: false)
+
+            static let _libraryStyle: Key<LibraryStyle> = UserKey("libraryStyle", default: .default)
         }
 
         enum Home {
@@ -243,12 +229,6 @@ extension Defaults.Keys {
         enum Transition {
             static let pauseOnBackground: Key<Bool> = UserKey("playInBackground", default: true)
         }
-    }
-
-    // Experimental settings
-    enum Experimental {
-
-        static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)
     }
 
     // tvos specific

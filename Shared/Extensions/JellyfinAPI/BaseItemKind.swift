@@ -195,18 +195,10 @@ extension BaseItemKind {
         switch self {
         case .audio, .channel, .musicAlbum, .tvChannel:
             .square
-        case .folder, .program, .musicVideo, .video, .userView:
+        case .episode, .folder, .liveTvProgram, .program, .musicVideo, .video, .userView:
             .landscape
         default:
             .portrait
         }
-    }
-}
-
-extension BaseItemKind {
-
-    /// Item types that can be identified on the server.
-    static var itemIdentifiableCases: [BaseItemKind] {
-        [.boxSet, .movie, .person, .series]
     }
 }

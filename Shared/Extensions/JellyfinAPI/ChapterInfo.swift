@@ -38,7 +38,6 @@ extension ChapterInfo {
         let imageSource: ImageSource
         let preferredPosterDisplayType: PosterDisplayType = .landscape
         let systemImage: String = "film"
-        let unwrappedIDHashOrZero: Int
 
         var subtitle: String?
         var showTitle: Bool = true
@@ -51,14 +50,13 @@ extension ChapterInfo {
             self.displayTitle = chapterInfo.displayTitle
             self.id = chapterInfo.hashValue
             self.imageSource = imageSource
-            self.unwrappedIDHashOrZero = chapterInfo.hashValue
         }
 
         func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
             [imageSource]
         }
 
-        func transform(image: Image) -> some View {
+        func transform(image: Image, displayType: PosterDisplayType) -> some View {
             ZStack {
                 Color.black
 

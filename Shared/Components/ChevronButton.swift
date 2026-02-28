@@ -371,7 +371,13 @@ private struct ChevronButtonLabeledContentStyle: LabeledContentStyle {
     }
 }
 
-private struct BoldIconLabelStyle: LabelStyle {
+extension LabelStyle where Self == BoldIconLabelStyle {
+    static var boldIcon: BoldIconLabelStyle {
+        BoldIconLabelStyle()
+    }
+}
+
+struct BoldIconLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         Label {
             configuration.title

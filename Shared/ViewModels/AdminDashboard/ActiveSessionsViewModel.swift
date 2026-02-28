@@ -49,7 +49,7 @@ final class ActiveSessionsViewModel: ViewModel {
     }
 
     @Published
-    private(set) var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
+    private(set) var sessions: OrderedDictionary<String, PublishedBox<SessionInfoDto?>> = [:]
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
@@ -80,7 +80,7 @@ final class ActiveSessionsViewModel: ViewModel {
                 return !sessions.keys.contains(id)
             }
             .map { s in
-                BindingBox<SessionInfoDto?>(
+                PublishedBox<SessionInfoDto?>(
                     source: .init(
                         get: { s },
                         set: { _ in }

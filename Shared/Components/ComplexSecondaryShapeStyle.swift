@@ -18,12 +18,15 @@ extension ShapeStyle where Self == ComplexSecondaryShapeStyle {
 struct ComplexSecondaryShapeStyle: ShapeStyle {
 
     func resolve(in environment: EnvironmentValues) -> some ShapeStyle {
-        if environment.isOverComplexContent {
+        if environment.viewContext.contains(.isOverComplexContent) {
             // TODO: different on tvOS
             AnyShapeStyle(Material.ultraThinMaterial)
         } else {
             // TODO: change to a solid color
-            AnyShapeStyle(Color.secondarySystemFill)
+//            AnyShapeStyle(Color.secondarySystemFill)
+            environment.colorScheme == .dark ?
+                AnyShapeStyle(Color(.sRGB, red: 0.18, green: 0.18, blue: 0.18, opacity: 1.0)) :
+                AnyShapeStyle(Color(.sRGB, red: 0.90, green: 0.90, blue: 0.90, opacity: 1.0))
         }
     }
 }

@@ -21,22 +21,4 @@ enum LetterPickerOrientation: String, CaseIterable, Displayable, Storable {
             L10n.right
         }
     }
-
-    var alignment: Alignment {
-        switch self {
-        case .leading:
-            .leading
-        case .trailing:
-            .trailing
-        }
-    }
-
-    var edge: Edge.Set {
-        switch self {
-        case .leading:
-            .leading
-        case .trailing:
-            .trailing
-        }
-    }
 }

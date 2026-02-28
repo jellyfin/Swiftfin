@@ -10,7 +10,7 @@
 
 typealias MediaPlayerItemProviderFunction = @Sendable (BaseItemDto) async throws -> MediaPlayerItem
 
-struct MediaPlayerItemProvider: Equatable, Sendable {
+struct MediaPlayerItemProvider: Equatable {
 
     let item: BaseItemDto
     let function: MediaPlayerItemProviderFunction

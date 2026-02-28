@@ -23,13 +23,15 @@ struct PlaybackProgressViewStyle: ProgressViewStyle {
 
     @ViewBuilder
     private func buildCapsule(for progress: Double) -> some View {
-        Rectangle()
-            .cornerRadius(
-                cornerStyle == .round ? contentSize.height / 2 : 0,
-                corners: [.topLeft, .bottomLeft]
-            )
-            .frame(width: contentSize.width * clamp(progress, min: 0, max: 1) + contentSize.height)
-            .offset(x: -contentSize.height)
+        Group {
+            if cornerStyle == .round {
+                Capsule()
+            } else {
+                Rectangle()
+            }
+        }
+        .frame(width: contentSize.width * clamp(progress, min: 0, max: 1) + contentSize.height)
+        .offset(x: -contentSize.height)
     }
 
     func makeBody(configuration: Configuration) -> some View {

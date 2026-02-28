@@ -90,14 +90,14 @@ struct UserSignInView: View {
                     logger.critical("QuickConnect called without necessary action!")
                     throw ErrorMessage(L10n.unknownError)
                 }
-                await viewModel.signInQuickConnect(
+                try? await viewModel.signInQuickConnect(
                     secret: secret
                 )
             } catch is CancellationError {
                 // ignore
             } catch {
                 logger.error("QuickConnect failed with error: \(error.localizedDescription)")
-                await viewModel.error(ErrorMessage(L10n.taskFailed))
+                try? await viewModel.error(ErrorMessage(L10n.taskFailed))
             }
         }
     }
@@ -242,7 +242,7 @@ struct UserSignInView: View {
                             password = ""
                             focusedTextField = .password
                         }
-                        .environment(\.isOverComplexContent, true)
+                        .withViewContext(.isOverComplexContent)
                     }
                 }
                 #endif

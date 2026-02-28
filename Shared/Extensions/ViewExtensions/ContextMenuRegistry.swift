@@ -6,11 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import SwiftUI
 
-// TODO: removeContextMenu
-
-typealias ContextMenuRegistry = TypeValueRegistry<(Any) -> (items: AnyView, preview: AnyView?)>
+typealias EnvironmentContextMenuPair = (items: AnyView, preview: AnyView?)
+typealias ContextMenuRegistry = TypeKeyedDictionary<(Any) -> EnvironmentContextMenuPair>
 
 extension EnvironmentValues {
 
@@ -18,76 +18,16 @@ extension EnvironmentValues {
     var contextMenuRegistry: ContextMenuRegistry = .init()
 }
 
-enum EnvironmentContextMenu<Value> {
-
-    struct Registar: ViewModifier {
-
-        @Environment(\.contextMenuRegistry)
-        private var contextMenuRegistry
-
-        let menuContent: (Any) -> (items: AnyView, preview: AnyView?)
-
-        init(menuContent: @escaping (Value) -> (menuContent: AnyView, preview: AnyView?)) {
-            self.menuContent = { value in
-                guard let value = value as? Value else {
-                    return (AnyView(EmptyView()), nil)
-                }
-                let content = menuContent(value)
-                return (AnyView(content.menuContent), AnyView(content.preview))
-            }
-        }
-
-        func body(content: Content) -> some View {
-            content
-                .environment(\.contextMenuRegistry, contextMenuRegistry.insertOrReplace(menuContent, for: Value.self))
-        }
-    }
-
-    struct Extractor: ViewModifier {
-
-        @Environment(\.contextMenuRegistry)
-        private var contextMenuRegistry
-
-        private let value: Value
-        private let previewOverride: ((Value) -> AnyView)?
-
-        init(
-            value: Value,
-            preview: ((Value) -> AnyView)? = nil
-        ) {
-            self.value = value
-            self.previewOverride = preview
-        }
-
-        func body(content: Content) -> some View {
-
-            if let contextMenu = contextMenuRegistry.getvalue(for: Value.self)?(value) {
-                if let previewOverride {
-                    content
-                        .contextMenu(
-                            menuItems: { contextMenu.0 },
-                            preview: { previewOverride(value) }
-                        )
-                } else if let preview = contextMenu.1 {
-                    content
-                        .contextMenu(
-                            menuItems: { contextMenu.0 },
-                            preview: { preview }
-                        )
-                } else {
-                    content
-                        .contextMenu(
-                            menuItems: { contextMenu.0 }
-                        )
-                }
-            } else {
-                content
-            }
-        }
-    }
-}
-
 extension View {
+
+    func removeContextMenu<V>(for type: V.Type) -> some View {
+        modifier(
+            ForTypeInEnvironment<V, (Any) -> EnvironmentContextMenuPair>.SetValue(
+                { _ in { _ in (AnyView(EmptyView()), nil) } },
+                for: \.contextMenuRegistry
+            )
+        )
+    }
 
     /// Associates a context menu with a data type for use within
     /// subviews within the container.
@@ -95,14 +35,22 @@ extension View {
         for type: V.Type,
         @ViewBuilder content: @escaping (V) -> some View
     ) -> some View {
-        modifier(
-            EnvironmentContextMenu.Registar(
-                menuContent: {
-                    let menuContent = content($0)
-                    return (AnyView(menuContent), nil)
-                }
-            )
+        contextMenu(
+            for: type,
+            content: { _, v in content(v) }
         )
+    }
+
+    func contextMenu<V>(
+        for type: V.Type,
+        @ViewBuilder content: @escaping (V, NavigationCoordinator.Router) -> some View
+    ) -> some View {
+        EnvironmentValueReader(\.router) { router in
+            contextMenu(
+                for: type,
+                content: { _, v in content(v, router) }
+            )
+        }
     }
 
     /// Associates a context menu and preview with a data type for
@@ -112,13 +60,46 @@ extension View {
         @ViewBuilder content: @escaping (V) -> some View,
         @ViewBuilder preview: @escaping (V) -> some View
     ) -> some View {
+        contextMenu(
+            for: type,
+            content: { _, v in content(v) },
+            preview: { _, v in preview(v) }
+        )
+    }
+
+    func contextMenu<V>(
+        for type: V.Type,
+        @ViewBuilder content: @escaping (EnvironmentContextMenuPair?, V) -> some View
+    ) -> some View {
         modifier(
-            EnvironmentContextMenu.Registar(
-                menuContent: {
-                    let menuContent = content($0)
-                    let previewContent = preview($0)
-                    return (AnyView(menuContent), AnyView(previewContent))
-                }
+            ForTypeInEnvironment<V, (Any) -> EnvironmentContextMenuPair>.SetValue(
+                { existing in
+                    { value in
+                        let content = content(existing?(value as! V), value as! V)
+                        return (AnyView(content), nil)
+                    }
+                },
+                for: \.contextMenuRegistry
+            )
+        )
+    }
+
+    func contextMenu<V>(
+        for type: V.Type,
+        @ViewBuilder content: @escaping (EnvironmentContextMenuPair?, V) -> some View,
+        @ViewBuilder preview: @escaping (EnvironmentContextMenuPair?, V) -> some View
+    ) -> some View {
+        modifier(
+            ForTypeInEnvironment<V, (Any) -> EnvironmentContextMenuPair>.SetValue(
+                { existing in
+                    { value in
+                        let content = content(existing?(value as! V), value as! V)
+                        let preview = preview(existing?(value as! V), value as! V)
+
+                        return (AnyView(content), AnyView(preview))
+                    }
+                },
+                for: \.contextMenuRegistry
             )
         )
     }
@@ -126,27 +107,49 @@ extension View {
     /// Identifies this view as the source of a context menu
     /// associated with the data type when used with `contextMenu(for:content:)`
     /// or `contextMenu(for:content:preview:)`.
-    func matchedContextMenu(for value: some Any) -> some View {
+    func matchedContextMenu<V>(for value: V) -> some View {
         modifier(
-            EnvironmentContextMenu.Extractor(
-                value: value
-            )
+            ForTypeInEnvironment<V, (Any) -> EnvironmentContextMenuPair>.GetValue(
+                for: \.contextMenuRegistry
+            ) { contextMenuFunction in
+                let evaluatedContextMenu = contextMenuFunction(value)
+
+                if let preview = evaluatedContextMenu.preview {
+                    self
+                        .contextMenu(
+                            menuItems: { evaluatedContextMenu.items },
+                            preview: { preview }
+                        )
+                } else {
+                    self
+                        .contextMenu(
+                            menuItems: { evaluatedContextMenu.items }
+                        )
+                }
+            }
         )
     }
 
     /// Identifies this view as the source of a context menu
     /// associated with the data type when used with `contextMenu(for:content:)`
-    /// or `contextMenu(for:content:preview:)` but allows local preview
+    /// or `contextMenu(for:content:preview:)` with local preview
     /// creation.
-    func matchedContextMenu(
-        for value: some Any,
+    func matchedContextMenu<V>(
+        for value: V,
         @ViewBuilder preview: @escaping () -> some View
     ) -> some View {
         modifier(
-            EnvironmentContextMenu.Extractor(
-                value: value,
-                preview: { _ in AnyView(preview()) }
-            )
+            ForTypeInEnvironment<V, (Any) -> EnvironmentContextMenuPair>.GetValue(
+                for: \.contextMenuRegistry
+            ) { contextMenuFunction in
+                let evaluatedContextMenu = contextMenuFunction(value)
+
+                self
+                    .contextMenu(
+                        menuItems: { evaluatedContextMenu.items },
+                        preview: preview
+                    )
+            }
         )
     }
 }

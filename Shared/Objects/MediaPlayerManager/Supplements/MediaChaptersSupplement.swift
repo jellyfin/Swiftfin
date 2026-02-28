@@ -220,7 +220,10 @@ extension MediaChaptersSupplement {
         }
 
         var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+            ListRow(
+                insets: .init(horizontal: EdgeInsets.edgePadding),
+                action: action
+            ) {
                 ChapterPreview(
                     chapter: chapter
                 )
@@ -229,7 +232,6 @@ extension MediaChaptersSupplement {
             } content: {
                 ChapterContent(chapter: chapter)
             }
-            .onSelect(perform: action)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
             .isSelected(isCurrentChapter)
         }

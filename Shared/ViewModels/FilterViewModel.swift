@@ -12,117 +12,58 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-final class FilterViewModel: ViewModel, Stateful {
+@MainActor
+@Stateful
+final class FilterViewModel: ViewModel {
 
-    // MARK: - Action
-
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
         case cancel
         case getQueryFilters
-        case reset(ItemFilterType? = nil)
-        case update(ItemFilterType, [AnyItemFilter])
+        case reset(filterType: ItemFilterType?)
+
+        var transition: Transition {
+            switch self {
+            case .cancel, .reset: .none
+            case .getQueryFilters:
+                .background(.retrievingQueryFilters)
+            }
+        }
     }
 
-    // MARK: - Background State
-
-    enum BackgroundState: Hashable {
-        case gettingQueryFilters
-        case failedToGetQueryFilters
+    enum BackgroundState {
+        case retrievingQueryFilters
     }
 
-    // MARK: - State
-
-    enum State: Hashable {
-        case content
-    }
-
-    /// Tracks the current filters
-    @Published
-    private(set) var currentFilters: ItemFilterCollection
-
-    /// All filters available
     @Published
     private(set) var allFilters: ItemFilterCollection = .all
-
-    /// ViewModel Background State(s)
     @Published
-    var backgroundStates: Set<BackgroundState> = []
+    var currentFilters: ItemFilterCollection
 
-    /// ViewModel State
-    @Published
-    var state: State = .content
-
-    private let parent: (any LibraryParent)?
-
-    private var queryFiltersTask: AnyCancellable?
-
-    // MARK: - Initialize from Library Parent
+    private let parent: (any _LibraryParent)?
 
     init(
-        parent: (any LibraryParent)? = nil,
+        parent: (any _LibraryParent)? = nil,
         currentFilters: ItemFilterCollection = .default
     ) {
         self.parent = parent
         self.currentFilters = currentFilters
 
         super.init()
-
-        if let parent {
-            self.allFilters.itemTypes = parent.supportedItemTypes
-        }
     }
 
     func isFilterSelected(type: ItemFilterType) -> Bool {
         currentFilters[keyPath: type.collectionAnyKeyPath] != ItemFilterCollection.default[keyPath: type.collectionAnyKeyPath]
     }
 
-    // MARK: - Respond to Action
+    @Function(\Action.Cases.reset)
+    private func resetCurrentFilters(_ type: ItemFilterType?) {
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case .cancel:
-            queryFiltersTask?.cancel()
-            backgroundStates.removeAll()
-
-        case .getQueryFilters:
-            queryFiltersTask?.cancel()
-            queryFiltersTask = Task {
-                do {
-                    await MainActor.run {
-                        _ = self.backgroundStates.insert(.gettingQueryFilters)
-                    }
-
-                    try await setQueryFilters()
-                } catch {
-                    await MainActor.run {
-                        _ = self.backgroundStates.insert(.failedToGetQueryFilters)
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self.backgroundStates.remove(.gettingQueryFilters)
-                }
-            }
-            .asAnyCancellable()
-
-        case let .reset(type):
-            if let type {
-                resetCurrentFilters(for: type)
-            } else {
-                currentFilters = .default
-            }
-
-        case let .update(type, filters):
-            updateCurrentFilters(for: type, with: filters)
+        guard let type else {
+            currentFilters = .default
+            return
         }
 
-        return state
-    }
-
-    // MARK: - Reset Current Filters
-
-    /// Reset the filter for a specific type to its default value
-    private func resetCurrentFilters(for type: ItemFilterType) {
         switch type {
         case .genres:
             currentFilters.genres = ItemFilterCollection.default.genres
@@ -141,49 +82,12 @@ final class FilterViewModel: ViewModel, Stateful {
         }
     }
 
-    // MARK: - Update Current Filters
-
-    /// Update the filter for a specific type with new values
-    private func updateCurrentFilters(for type: ItemFilterType, with newValue: [AnyItemFilter]) {
-        switch type {
-        case .genres:
-            currentFilters.genres = newValue.map(ItemGenre.init)
-        case .letter:
-            currentFilters.letter = newValue.map(ItemLetter.init)
-        case .sortBy:
-            currentFilters.sortBy = newValue.map(ItemSortBy.init)
-        case .sortOrder:
-            currentFilters.sortOrder = newValue.map(ItemSortOrder.init)
-        case .tags:
-            currentFilters.tags = newValue.map(ItemTag.init)
-        case .traits:
-            currentFilters.traits = newValue.map(ItemTrait.init)
-        case .years:
-            currentFilters.years = newValue.map(ItemYear.init)
-        }
-    }
-
-    // MARK: - Set Query Filters
-
-    /// Sets the query filters from the parent
-    private func setQueryFilters() async throws {
-        let queryFilters = try await getQueryFilters()
-
-        await MainActor.run {
-            allFilters.genres = queryFilters.genres
-            allFilters.tags = queryFilters.tags
-            allFilters.years = queryFilters.years
-        }
-    }
-
-    // MARK: - Get Query Filters
-
-    /// Gets the query filters from the parent
-    private func getQueryFilters() async throws -> (genres: [ItemGenre], tags: [ItemTag], years: [ItemYear]) {
+    @Function(\Action.Cases.getQueryFilters)
+    private func _getQueryFilters() async throws {
 
         let parameters = Paths.GetQueryFiltersLegacyParameters(
             userID: userSession.user.id,
-            parentID: parent?.id
+            parentID: parent?.libraryID
         )
 
         let request = Paths.getQueryFiltersLegacy(parameters: parameters)
@@ -200,6 +104,8 @@ final class FilterViewModel: ViewModel, Stateful {
             .sorted(by: >)
             .map(ItemYear.init)
 
-        return (genres, tags, years)
+        allFilters.genres = genres
+        allFilters.tags = tags
+        allFilters.years = years
     }
 }

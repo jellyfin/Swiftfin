@@ -22,7 +22,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
     struct PlaybackQuality: View {
 
-        @Environment(\.isInMenu)
+        @ViewContextContains(.isInMenu)
         private var isInMenu
 
         @EnvironmentObject

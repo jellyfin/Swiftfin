@@ -25,10 +25,7 @@ extension EditMetadataView {
                     format: .nilIfEmptyString
                 )
 
-                Video3DFormatPicker(
-                    title: L10n.format3D,
-                    selectedFormat: $item.video3DFormat
-                )
+                Picker(L10n.format3D, selection: $item.video3DFormat)
             }
         }
     }

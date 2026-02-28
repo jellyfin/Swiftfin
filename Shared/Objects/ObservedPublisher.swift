@@ -31,7 +31,7 @@ final class ObservedPublisher<Value>: ObservableObject {
         self.wrappedValue = wrappedValue
 
         publisher
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.main)
             .sink { [weak self] newValue in
                 self?.wrappedValue = newValue
             }

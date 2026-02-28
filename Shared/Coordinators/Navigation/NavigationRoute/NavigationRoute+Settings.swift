@@ -120,32 +120,28 @@ extension NavigationRoute {
     }
     #endif
 
-    static let indicatorSettings = NavigationRoute(
-        id: "indicatorSettings"
+    static let itemSettings = NavigationRoute(
+        id: "itemSettings"
     ) {
-        IndicatorSettingsView()
+        CustomizeViewsSettings.ItemSection()
+    }
+
+    static let librarySettings = NavigationRoute(
+        id: "librarySettings"
+    ) {
+        CustomizeViewsSettings.LibrarySection()
+    }
+
+    static let posterSettings = NavigationRoute(
+        id: "posterSettings"
+    ) {
+        CustomizeViewsSettings.PosterSection()
     }
 
     static func itemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> NavigationRoute {
         NavigationRoute(id: "itemFilterDrawerSelector") {
             OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
                 .navigationTitle(L10n.filters)
-        }
-    }
-
-    static func itemOverviewView(item: BaseItemDto) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemOverviewView",
-            style: .sheet
-        ) {
-            ItemOverviewView(item: item)
-        }
-    }
-
-    static func itemViewAttributes(selection: Binding<[ItemViewAttribute]>) -> NavigationRoute {
-        NavigationRoute(id: "itemViewAttributes") {
-            OrderedSectionSelectorView(selection: selection, sources: ItemViewAttribute.allCases)
-                .navigationTitle(L10n.mediaAttributes.localizedCapitalized)
         }
     }
 

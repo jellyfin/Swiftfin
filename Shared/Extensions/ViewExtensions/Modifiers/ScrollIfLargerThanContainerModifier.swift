@@ -12,27 +12,30 @@ import SwiftUI
 
 struct ScrollIfLargerThanContainerModifier: ViewModifier {
 
+    @ViewContextContains(.withConstrainedSize)
+    private var withConstrainedSize: Bool
+
     @State
-    private var contentSize: CGSize = .zero
-    @State
-    private var layoutSize: CGSize = .zero
+    private var contentFrame: CGRect = .zero
 
     let padding: CGFloat
 
     func body(content: Content) -> some View {
         AlternateLayoutView {
             Color.clear
-                .trackingSize($layoutSize)
-        } content: {
+        } content: { layoutSize in
             ScrollView {
                 content
-                    .trackingSize($contentSize)
+                    .trackingFrame($contentFrame)
             }
-            .frame(maxHeight: contentSize.height >= layoutSize.height ? .infinity : contentSize.height)
+            .frame(maxHeight: contentFrame.height >= layoutSize.height ? .infinity : contentFrame.height)
             .backport // iOS 17
             .scrollClipDisabled()
-            .scrollDisabled(contentSize.height < layoutSize.height)
+            .scrollDisabled(contentFrame.height < layoutSize.height)
             .scrollIndicators(.never)
+        }
+        .if(withConstrainedSize) { view in
+            view.frame(maxWidth: contentFrame.width)
         }
     }
 }

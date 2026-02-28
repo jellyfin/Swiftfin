@@ -7,10 +7,10 @@
 //
 
 import CollectionVGrid
-import Defaults
-import Engine
 import JellyfinAPI
 import SwiftUI
+
+// TODO: find way to consolidate with PagingLibraryView
 
 struct MediaView: View {
 
@@ -39,23 +39,34 @@ struct MediaView: View {
             MediaItem(viewModel: viewModel, type: mediaType) { namespace in
                 switch mediaType {
                 case let .collectionFolder(item):
-                    let viewModel = ItemLibraryViewModel(
-                        parent: item,
-                        filters: .default
-                    )
-                    router.route(to: .library(viewModel: viewModel), in: namespace)
-                case .downloads:
-                    router.route(to: .downloadList)
+                    let pagingLibrary = ItemLibrary(parent: item)
+                    router.route(to: .library(library: pagingLibrary), in: namespace)
                 case .favorites:
-                    // TODO: favorites should have its own view instead of a library
-                    let viewModel = ItemLibraryViewModel(
-                        title: L10n.favorites,
-                        id: "favorites",
-                        filters: .favorites
+                    router.route(
+                        to: .contentGroup(
+                            provider: ItemTypeContentGroupProvider(
+                                itemTypes: [
+                                    BaseItemKind.movie,
+                                    .series,
+                                    .boxSet,
+                                    .episode,
+                                    .musicVideo,
+                                    .video,
+                                    .liveTvProgram,
+                                    .tvChannel,
+                                    .musicArtist,
+                                    .person,
+                                ],
+                                parent: .init(name: L10n.favorites),
+                                environment: .init(
+                                    filters: .favorites
+                                )
+                            )
+                        ),
+                        in: namespace
                     )
-                    router.route(to: .library(viewModel: viewModel), in: namespace)
                 case .liveTV:
-                    router.route(to: .liveTV)
+                    router.route(to: .liveTV, in: namespace)
                 }
             }
         }
@@ -76,9 +87,11 @@ struct MediaView: View {
                 ProgressView()
             }
         }
-        .animation(.linear(duration: 0.1), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia.localizedCapitalized)
+        .backport
+        .toolbarTitleDisplayMode(.inlineLarge)
         .refreshable {
             viewModel.refresh()
         }

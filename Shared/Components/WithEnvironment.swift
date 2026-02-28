@@ -1,0 +1,29 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+import SwiftUI
+
+struct WithEnvironment<Content: View, EnvironmentValue>: View {
+
+    @Environment
+    private var environment: EnvironmentValue
+
+    private let content: (EnvironmentValue) -> Content
+
+    init(
+        _ keyPath: KeyPath<EnvironmentValues, EnvironmentValue>,
+        @ViewBuilder content: @escaping (EnvironmentValue) -> Content
+    ) {
+        self._environment = Environment(keyPath)
+        self.content = content
+    }
+
+    var body: some View {
+        content(environment)
+    }
+}

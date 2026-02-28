@@ -48,7 +48,6 @@ extension MediaView {
 
         private var useTitleLabel: Bool {
             useRandomImage ||
-                mediaType == .downloads ||
                 mediaType == .favorites
         }
 
@@ -72,9 +71,8 @@ extension MediaView {
             Text(mediaType.displayTitle)
                 .font(.title2)
                 .fontWeight(.semibold)
-                .lineLimit(1)
+                .lineLimit(2)
                 .multilineTextAlignment(.center)
-                .frame(alignment: .center)
         }
 
         private func titleLabelOverlay(with content: some View) -> some View {
@@ -105,19 +103,21 @@ extension MediaView {
                         titleLabelOverlay(with: DefaultPlaceholderView(blurHash: imageSource.blurHash))
                     }
                     .failure {
-                        Color.secondarySystemFill
-                            .opacity(0.75)
-                            .overlay {
+                        Rectangle()
+                            .fill(.complexSecondary)
+                            .overlay(ratio: 0.95) {
                                 titleLabel
-                                    .foregroundColor(.primary)
+                                    .foregroundStyle(.primary)
                             }
                     }
                     .id(imageSources.hashValue)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .posterStyle(.landscape)
+                    .posterShadow()
                     .backport
                     .matchedTransitionSource(id: "item", in: namespace)
             }
+            .foregroundStyle(.primary, .secondary)
             .onFirstAppear(perform: setImageSources)
             .backport
             .onChange(of: useRandomImage) { _, _ in

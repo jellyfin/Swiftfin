@@ -14,7 +14,7 @@ extension NavigationRoute {
 
     // MARK: - Active Sessions
 
-    static func activeDeviceDetails(box: BindingBox<SessionInfoDto?>) -> NavigationRoute {
+    static func activeDeviceDetails(box: PublishedBox<SessionInfoDto?>) -> NavigationRoute {
         NavigationRoute(id: "activeDeviceDetails") {
             ActiveSessionDetailView(box: box)
         }
@@ -40,12 +40,14 @@ extension NavigationRoute {
         }
     }
 
+    // TODO: remove, make date selection popover
     static func activityFilters(viewModel: ServerActivityViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "activityFilters",
             style: .sheet
         ) {
-            ServerActivityFilterView(viewModel: viewModel)
+            EmptyView()
+//            ServerActivityFilterView(viewModel: viewModel)
         }
     }
 
