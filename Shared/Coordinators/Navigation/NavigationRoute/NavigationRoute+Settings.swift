@@ -12,7 +12,6 @@ import SwiftUI
 
 extension NavigationRoute {
 
-    #if os(iOS)
     static func actionBarButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
         NavigationRoute(id: "actionBarButtonSelector") {
             OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: VideoPlayerActionButton.allCases)
@@ -27,6 +26,7 @@ extension NavigationRoute {
         }
     }
 
+    #if os(iOS)
     static let adminDashboard = NavigationRoute(
         id: "adminDashboard"
     ) {
