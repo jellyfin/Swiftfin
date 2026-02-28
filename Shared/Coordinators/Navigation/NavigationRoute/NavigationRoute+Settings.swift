@@ -12,21 +12,21 @@ import SwiftUI
 
 extension NavigationRoute {
 
-    #if os(iOS)
     static func actionBarButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
-        NavigationRoute(id: "actionButtonSelector") {
-            ActionButtonSelectorView(selection: selectedButtonsBinding)
+        NavigationRoute(id: "actionBarButtonSelector") {
+            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: VideoPlayerActionButton.allCases)
                 .navigationTitle(L10n.barButtons.localizedCapitalized)
         }
     }
 
     static func actionMenuButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
-        NavigationRoute(id: "actionButtonSelector") {
-            ActionButtonSelectorView(selection: selectedButtonsBinding)
+        NavigationRoute(id: "actionMenuButtonSelector") {
+            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: VideoPlayerActionButton.allCases)
                 .navigationTitle(L10n.menuButtons.localizedCapitalized)
         }
     }
 
+    #if os(iOS)
     static let adminDashboard = NavigationRoute(
         id: "adminDashboard"
     ) {
@@ -74,21 +74,21 @@ extension NavigationRoute {
 
     static func editDeviceProfileAudio(selection: Binding<[AudioCodec]>) -> NavigationRoute {
         NavigationRoute(id: "editDeviceProfileAudio") {
-            OrderedSectionSelectorView(selection: selection, sources: AudioCodec.allCases)
+            OrderedSectionSelectorView("waveform", selection: selection, sources: AudioCodec.allCases)
                 .navigationTitle(L10n.audio)
         }
     }
 
     static func editDeviceProfileContainer(selection: Binding<[MediaContainer]>) -> NavigationRoute {
         NavigationRoute(id: "editDeviceProfileContainer") {
-            OrderedSectionSelectorView(selection: selection, sources: MediaContainer.allCases)
+            OrderedSectionSelectorView("archivebox", selection: selection, sources: MediaContainer.allCases)
                 .navigationTitle(L10n.containers)
         }
     }
 
     static func editDeviceProfileVideo(selection: Binding<[VideoCodec]>) -> NavigationRoute {
         NavigationRoute(id: "editDeviceProfileVideo") {
-            OrderedSectionSelectorView(selection: selection, sources: VideoCodec.allCases)
+            OrderedSectionSelectorView("play.rectangle", selection: selection, sources: VideoCodec.allCases)
                 .navigationTitle(L10n.video)
         }
     }
@@ -128,7 +128,7 @@ extension NavigationRoute {
 
     static func itemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> NavigationRoute {
         NavigationRoute(id: "itemFilterDrawerSelector") {
-            OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
+            OrderedSectionSelectorView("line.3.horizontal.decrease", selection: selection, sources: ItemFilterType.allCases)
                 .navigationTitle(L10n.filters)
         }
     }
@@ -144,7 +144,7 @@ extension NavigationRoute {
 
     static func itemViewAttributes(selection: Binding<[ItemViewAttribute]>) -> NavigationRoute {
         NavigationRoute(id: "itemViewAttributes") {
-            OrderedSectionSelectorView(selection: selection, sources: ItemViewAttribute.allCases)
+            OrderedSectionSelectorView("tag", selection: selection, sources: ItemViewAttribute.allCases)
                 .navigationTitle(L10n.mediaAttributes.localizedCapitalized)
         }
     }
