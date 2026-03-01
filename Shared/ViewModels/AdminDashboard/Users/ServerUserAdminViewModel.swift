@@ -94,6 +94,11 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
         try await userSession.client.send(request)
 
         user.policy = policy
+
+        if userID == userSession.user.id {
+            userSession.user.data.policy = policy
+        }
+
         events.send(.updated)
     }
 
@@ -107,6 +112,11 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
         try await userSession.client.send(request)
 
         user.configuration = configuration
+
+        if userID == userSession.user.id {
+            userSession.user.data.configuration = configuration
+        }
+
         events.send(.updated)
     }
 
@@ -123,6 +133,10 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
         try await userSession.client.send(request)
 
         user.name = username
+
+        if userID == userSession.user.id {
+            userSession.user.data.name = username
+        }
 
         Notifications[.didChangeUserProfile].post(userID)
         events.send(.updated)
