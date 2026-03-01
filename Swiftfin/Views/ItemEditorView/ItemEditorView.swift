@@ -12,45 +12,21 @@ import SwiftUI
 
 struct ItemEditorView: View {
 
-    // MARK: - Router
-
     @Router
     private var router
 
-    // MARK: - ViewModel
-
     @ObservedObject
-    var viewModel: ItemViewModel
-
-    @StateObject
-    private var metadataViewModel: RefreshMetadataViewModel
-
-    private var canEditMetadata: Bool {
-        viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) == true
-    }
-
-    private var canManageSubtitles: Bool {
-        viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
-    }
-
-    private var canManageLyrics: Bool {
-        viewModel.userSession.user.permissions.items.canManageLyrics(item: viewModel.item) == true
-    }
-
-    init(viewModel: ItemViewModel) {
-        self.viewModel = viewModel
-        _metadataViewModel = StateObject(wrappedValue: RefreshMetadataViewModel(item: viewModel.item))
-    }
-
-    // MARK: - Body
+    var viewModel: ItemEditorViewModel<BaseItemDto>
 
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .initial, .content, .refreshing:
+            case .initial:
                 contentView
-            case let .error(error):
-                ErrorView(error: error)
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             }
         }
         .navigationTitle(L10n.metadata)
@@ -58,8 +34,12 @@ struct ItemEditorView: View {
         .navigationBarCloseButton {
             router.dismiss()
         }
+        .onFirstAppear {
+            // Ensure we have a full `BaseItemDto` or some non-required metadata may be missing
+            viewModel.refreshItem(sendNotification: false)
+        }
         .refreshable {
-            viewModel.send(.refresh)
+            viewModel.refreshItem(sendNotification: false)
         }
     }
 
@@ -72,111 +52,39 @@ struct ItemEditorView: View {
                 description: viewModel.item.path
             )
 
-            /// Hide metadata options to Lyric/Subtitle only users
-            if canEditMetadata {
-
-                refreshButtonView
-
-                Section(L10n.edit) {
-                    editMetadataView
-                    editTextView
-                }
-
-                if viewModel.item.hasComponents {
-                    editComponentsView
-                }
-            } /*  else if canManageSubtitles || canManageLyrics {
-
-                 // TODO: Enable when Subtitle / Lyric Editing is added
-                 Section(L10n.edit) {
-                     editTextView
-                 }
-             }*/
-        }
-    }
-
-    // MARK: - Refresh Button
-
-    @ViewBuilder
-    private var refreshButtonView: some View {
-        Section {
-            Button {
-                router.route(to: .itemMetadataRefresh(viewModel: metadataViewModel))
-            } label: {
-                HStack {
-                    Text(L10n.refreshMetadata)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundStyle(.primary)
-
-                    if metadataViewModel.state == .refreshing {
-                        ProgressView(value: metadataViewModel.progress)
-                            .progressViewStyle(.gauge)
-                            .transition(.opacity.combined(with: .scale).animation(.bouncy))
-                            .frame(width: 25, height: 25)
-                    } else {
-                        Image(systemName: "arrow.clockwise")
-                            .foregroundStyle(.secondary)
-                            .fontWeight(.semibold)
+            Section(L10n.edit) {
+                if let itemKind = viewModel.item.type,
+                   BaseItemKind.itemIdentifiableCases.contains(itemKind)
+                {
+                    ChevronButton(L10n.identify) {
+                        router.route(to: .identifyItem(item: viewModel.item))
                     }
                 }
+
+                ChevronButton(L10n.images) {
+                    router.route(to: .itemImages(viewModel: ItemImagesViewModel(item: viewModel.item)))
+                }
+
+                ChevronButton(L10n.metadata) {
+                    router.route(to: .editMetadata(viewModel: viewModel))
+                }
             }
-            .foregroundStyle(.primary, .secondary)
-            .disabled(metadataViewModel.state == .refreshing)
-        }
-    }
 
-    // MARK: - Editable Metadata Routing Buttons
-
-    @ViewBuilder
-    private var editMetadataView: some View {
-
-        if let itemKind = viewModel.item.type,
-           BaseItemKind.itemIdentifiableCases.contains(itemKind)
-        {
-            ChevronButton(L10n.identify) {
-                router.route(to: .identifyItem(item: viewModel.item))
-            }
-        }
-        ChevronButton(L10n.images) {
-            router.route(to: .itemImages(viewModel: ItemImagesViewModel(item: viewModel.item)))
-        }
-        ChevronButton(L10n.metadata) {
-            router.route(to: .editMetadata(item: viewModel.item))
-        }
-    }
-
-    // MARK: - Editable Text Routing Buttons
-
-    @ViewBuilder
-    private var editTextView: some View {
-        if canManageSubtitles {
-            ChevronButton(L10n.subtitles) {
-                router.route(to: .editSubtitles(item: viewModel.item))
-            }
-        }
-        if canManageLyrics {
-//          ChevronButton(L10n.lyrics) {
-//              router.route(to: \.editLyrics, viewModel.item)
-//          }
-        }
-    }
-
-    // MARK: - Editable Metadata Components Routing Buttons
-
-    @ViewBuilder
-    private var editComponentsView: some View {
-        Section {
-            ChevronButton(L10n.genres) {
-                router.route(to: .editGenres(item: viewModel.item))
-            }
-            ChevronButton(L10n.people) {
-                router.route(to: .editPeople(item: viewModel.item))
-            }
-            ChevronButton(L10n.tags) {
-                router.route(to: .editTags(item: viewModel.item))
-            }
-            ChevronButton(L10n.studios) {
-                router.route(to: .editStudios(item: viewModel.item))
+            if viewModel.item.hasComponents {
+                Section {
+                    ChevronButton(L10n.genres) {
+                        router.route(to: .editGenres(item: viewModel.item))
+                    }
+                    ChevronButton(L10n.people) {
+                        router.route(to: .editPeople(item: viewModel.item))
+                    }
+                    ChevronButton(L10n.tags) {
+                        router.route(to: .editTags(item: viewModel.item))
+                    }
+                    ChevronButton(L10n.studios) {
+                        router.route(to: .editStudios(item: viewModel.item))
+                    }
+                }
             }
         }
     }

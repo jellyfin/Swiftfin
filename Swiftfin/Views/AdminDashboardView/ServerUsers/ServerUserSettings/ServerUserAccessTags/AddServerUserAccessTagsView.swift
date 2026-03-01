@@ -11,8 +11,6 @@ import SwiftUI
 
 struct AddServerUserAccessTagsView: View {
 
-    // MARK: - Observed & Environment Objects
-
     @Router
     private var router
 
@@ -22,8 +20,6 @@ struct AddServerUserAccessTagsView: View {
     @StateObject
     private var tagViewModel: TagEditorViewModel
 
-    // MARK: - Access Tag Variables
-
     @State
     private var tempPolicy: UserPolicy
     @State
@@ -31,34 +27,29 @@ struct AddServerUserAccessTagsView: View {
     @State
     private var access: Bool = false
 
-    // MARK: - Error State
+    private var alreadyOnItem: Bool {
+        let blocked = tempPolicy.blockedTags ?? []
+        let allowed = tempPolicy.allowedTags ?? []
+        return blocked.contains { $0.caseInsensitiveCompare(tempTag) == .orderedSame }
+            || allowed.contains { $0.caseInsensitiveCompare(tempTag) == .orderedSame }
+    }
 
-    @State
-    private var error: Error?
-
-    // MARK: - Name is Valid
+    private var existsOnServer: Bool {
+        tempTag.isNotEmpty && tagViewModel.matchExists(named: tempTag)
+    }
 
     private var isValid: Bool {
-        tempTag.isNotEmpty && !tagIsDuplicate
-    }
-
-    // MARK: - Tag is Already Blocked/Allowed
-
-    private var tagIsDuplicate: Bool {
-        viewModel.user.policy!.blockedTags!.contains(tempTag) || viewModel.user.policy!.allowedTags!.contains(tempTag)
-    }
-
-    // MARK: - Tag Already Exists on Jellyfin
-
-    private var tagAlreadyExists: Bool {
-        tagViewModel.trie.contains(key: tempTag.localizedLowercase)
+        tempTag.isNotEmpty && !alreadyOnItem
     }
 
     // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
-        self.tempPolicy = viewModel.user.policy!
+        self.tempPolicy = viewModel.user.policy ?? UserPolicy(
+            authenticationProviderID: "",
+            passwordResetProviderID: ""
+        )
         self._tagViewModel = StateObject(wrappedValue: TagEditorViewModel(item: .init()))
     }
 
@@ -72,7 +63,9 @@ struct AddServerUserAccessTagsView: View {
                 router.dismiss()
             }
             .topBarTrailing {
-                if viewModel.backgroundStates.contains(.refreshing) {
+                if viewModel.backgroundStates.contains(.refreshing) ||
+                    tagViewModel.background.states.contains(.searching)
+                {
                     ProgressView()
                 }
                 if viewModel.backgroundStates.contains(.updating) {
@@ -96,53 +89,49 @@ struct AddServerUserAccessTagsView: View {
                     .disabled(!isValid)
                 }
             }
-            .onFirstAppear {
-                tagViewModel.send(.load)
-            }
-            .onChange(of: tempTag) { _ in
-                if !tagViewModel.backgroundStates.contains(.loading) {
-                    tagViewModel.send(.search(tempTag))
-                }
+            .onChange(of: tempTag) { newTag in
+                tagViewModel.search(newTag)
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case let .error(eventError):
+                case .error:
                     UIDevice.feedback(.error)
-                    error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
                     router.dismiss()
                 }
             }
-            .onReceive(tagViewModel.events) { event in
-                switch event {
-                case .updated:
-                    break
-                case .loaded:
-                    tagViewModel.send(.search(tempTag))
-                case let .error(eventError):
-                    UIDevice.feedback(.error)
-                    error = eventError
-                }
-            }
-            .errorMessage($error)
+        // TODO: Add when moved to @Stateful
+        // .errorMessage($viewModel.error)
     }
 
     // MARK: - Content View
 
     private var contentView: some View {
         Form {
-            TagInput(
-                access: $access,
-                tag: $tempTag,
-                tagIsDuplicate: tagIsDuplicate,
-                tagAlreadyExists: tagAlreadyExists
-            )
+            Section(L10n.access) {
+                Picker(L10n.access, selection: $access) {
+                    Text(L10n.allowed).tag(true)
+                    Text(L10n.blocked).tag(false)
+                }
+            } learnMore: {
+                LabeledContent(
+                    L10n.allowed,
+                    value: L10n.accessTagAllowDescription
+                )
 
-            SearchResultsSection(
-                tag: $tempTag,
-                tags: tagViewModel.matches,
-                isSearching: tagViewModel.backgroundStates.contains(.searching)
+                LabeledContent(
+                    L10n.blocked,
+                    value: L10n.accessTagBlockDescription
+                )
+            }
+
+            ItemElementSearchView(
+                name: $tempTag,
+                population: tagViewModel.matches,
+                isSearching: tagViewModel.background.states.contains(.searching),
+                alreadyOnItem: alreadyOnItem,
+                existsOnServer: existsOnServer
             )
         }
     }

@@ -442,13 +442,15 @@ extension BaseItemDto {
 
     /// Can this `BaseItemDto` be played
     var presentPlayButton: Bool {
+        guard Container.shared.currentUserSession()?.user.data.policy?.enableMediaPlayback == true else { return false }
+
         switch type {
         case .audio, .audioBook, .book, .channel, .channelFolderItem, .episode,
              .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist,
              .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
-            true
+            return true
         default:
-            false
+            return false
         }
     }
 
@@ -504,7 +506,7 @@ extension BaseItemDto {
         }
     }
 
-    func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
+    func getFullItem(userSession: UserSession, sendNotification: Bool = false) async throws -> BaseItemDto {
         guard let id else {
             throw ErrorMessage(L10n.unknownError)
         }
@@ -515,6 +517,10 @@ extension BaseItemDto {
         // A check against `id` would typically be done, but a plugin
         // may have provided `self` or the response item and may not
         // be invariant over `id`.
+
+        if sendNotification {
+            Notifications[.itemMetadataDidChange].post(response.value)
+        }
 
         return response.value
     }

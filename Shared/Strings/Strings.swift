@@ -28,8 +28,6 @@ internal enum L10n {
   internal static let accessSchedulesDescription = L10n.tr("Localizable", "accessSchedulesDescription", fallback: "Define the allowed hours for usage and restrict access outside those times.")
   /// User will have access to no media unless it contains at least one allowed tag.
   internal static let accessTagAllowDescription = L10n.tr("Localizable", "accessTagAllowDescription", fallback: "User will have access to no media unless it contains at least one allowed tag.")
-  /// Access tag already exists
-  internal static let accessTagAlreadyExists = L10n.tr("Localizable", "accessTagAlreadyExists", fallback: "Access tag already exists")
   /// User will have access to all media except when it contains any blocked tag.
   internal static let accessTagBlockDescription = L10n.tr("Localizable", "accessTagBlockDescription", fallback: "User will have access to all media except when it contains any blocked tag.")
   /// Access tags
@@ -292,6 +290,10 @@ internal enum L10n {
   internal static let chapters = L10n.tr("Localizable", "chapters", fallback: "Chapters")
   /// Chapter slider
   internal static let chapterSlider = L10n.tr("Localizable", "chapterSlider", fallback: "Chapter slider")
+  /// All child items (seasons, episodes, etc.) will be deleted
+  internal static let childDeletionWarning = L10n.tr("Localizable", "childDeletionWarning", fallback: "All child items (seasons, episodes, etc.) will be deleted")
+  /// Children
+  internal static let children = L10n.tr("Localizable", "children", fallback: "Children")
   /// Cinematic
   internal static let cinematic = L10n.tr("Localizable", "cinematic", fallback: "Cinematic")
   /// Cinematic background
@@ -776,6 +778,8 @@ internal enum L10n {
   internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted dark")
   /// Inverted light
   internal static let invertedLight = L10n.tr("Localizable", "invertedLight", fallback: "Inverted light")
+  /// Item already exists
+  internal static let itemAlreadyExists = L10n.tr("Localizable", "itemAlreadyExists", fallback: "Item already exists")
   /// %1$@ at %2$@
   internal static func itemAtItem(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "itemAtItem", String(describing: p1), String(describing: p2), fallback: "%1$@ at %2$@")
@@ -1230,8 +1234,6 @@ internal enum L10n {
   internal static let replace = L10n.tr("Localizable", "replace", fallback: "Replace")
   /// Replace all metadata
   internal static let replaceAllMetadata = L10n.tr("Localizable", "replaceAllMetadata", fallback: "Replace all metadata")
-  /// Current profile values may cause playback issues
-  internal static let replaceDeviceProfileWarning = L10n.tr("Localizable", "replaceDeviceProfileWarning", fallback: "Current profile values may cause playback issues")
   /// Are you sure you want to replace this item?
   internal static let replaceItemConfirmation = L10n.tr("Localizable", "replaceItemConfirmation", fallback: "Are you sure you want to replace this item?")
   /// Replace subtitle
