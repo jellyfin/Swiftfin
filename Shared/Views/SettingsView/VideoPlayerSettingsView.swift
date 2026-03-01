@@ -192,7 +192,7 @@ struct VideoPlayerSettingsView: View {
     @ViewBuilder
     private var audioSettings: some View {
         Section(L10n.audio) {
-            CulturePicker("Default language", threeLetterISOLanguageName: Binding(
+            CulturePicker("Preferred language", threeLetterISOLanguageName: Binding(
                 get: { viewModel.user.configuration?.audioLanguagePreference },
                 set: { newValue in
                     var configuration = viewModel.user.configuration ?? UserConfiguration()
@@ -233,7 +233,7 @@ struct VideoPlayerSettingsView: View {
     @ViewBuilder
     private var subtitleSettings: some View {
         Section(L10n.subtitles) {
-            CulturePicker("Default language", threeLetterISOLanguageName: Binding(
+            CulturePicker("Preferred language", threeLetterISOLanguageName: Binding(
                 get: { viewModel.user.configuration?.subtitleLanguagePreference },
                 set: { newValue in
                     var configuration = viewModel.user.configuration ?? UserConfiguration()
