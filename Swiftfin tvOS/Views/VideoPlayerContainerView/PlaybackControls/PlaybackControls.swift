@@ -156,6 +156,7 @@ extension VideoPlayer {
                     )
                     .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
                     .disabled(isPresentingSupplement)
+                    .animation(.easeInOut(duration: 0.35), value: isPresentingSupplement)
 
                 PlaybackProgress(
                     onPanScrubChanged: { isPanning in
@@ -176,6 +177,7 @@ extension VideoPlayer {
                 )
                 .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
                 .disabled(isPresentingSupplement)
+                .animation(.easeInOut(duration: 0.35), value: isPresentingSupplement)
 
                 Color.clear
                     .frame(height: 0)
@@ -221,6 +223,7 @@ extension VideoPlayer {
                         bottom: isPresentingSupplement ? "supplementContent" : nil
                     )
                     .isVisible(isPresentingOverlay && !currentSupplements.isEmpty)
+                    .transaction { $0.animation = nil }
             }
         }
 
@@ -247,7 +250,6 @@ extension VideoPlayer {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .animation(.linear(duration: 0.1), value: isScrubbing)
-            .animation(.easeInOut(duration: 0.3), value: isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: isPresentingOverlay)
             .alert(L10n.closePlayer, isPresented: $containerState.isPresentingCloseConfirmation) {
                 Button(L10n.cancel, role: .cancel) {}

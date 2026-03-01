@@ -342,10 +342,10 @@ extension VideoPlayer {
                 }
             } else {
                 UIView.animate(
-                    withDuration: 0.75,
+                    withDuration: 0.55,
                     delay: 0,
-                    usingSpringWithDamping: 0.8,
-                    initialSpringVelocity: 0.4,
+                    usingSpringWithDamping: 0.85,
+                    initialSpringVelocity: 0.3,
                     options: .allowUserInteraction
                 ) { [weak self] in
                     self?.view.layoutIfNeeded()

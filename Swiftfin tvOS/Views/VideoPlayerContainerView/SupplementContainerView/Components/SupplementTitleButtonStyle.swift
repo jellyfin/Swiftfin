@@ -38,12 +38,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                     RoundedRectangle(cornerRadius: 10)
                         .strokeBorder(isFocused ? accentColor : .white, lineWidth: 4)
                 }
-                .if(isFocused) { button in
-                    button
-                        .posterShadow()
-                }
-                .scaleEffect(isFocused ? 1.2 : 1)
-                .animation(.bouncy(duration: 0.4), value: isFocused)
+                .shadow(color: isFocused ? .black.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
         }
     }
 }

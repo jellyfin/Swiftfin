@@ -1234,8 +1234,6 @@ internal enum L10n {
   internal static let replace = L10n.tr("Localizable", "replace", fallback: "Replace")
   /// Replace all metadata
   internal static let replaceAllMetadata = L10n.tr("Localizable", "replaceAllMetadata", fallback: "Replace all metadata")
-  /// Current profile values may cause playback issues
-  internal static let replaceDeviceProfileWarning = L10n.tr("Localizable", "replaceDeviceProfileWarning", fallback: "Current profile values may cause playback issues")
   /// Are you sure you want to replace this item?
   internal static let replaceItemConfirmation = L10n.tr("Localizable", "replaceItemConfirmation", fallback: "Are you sure you want to replace this item?")
   /// Replace subtitle
