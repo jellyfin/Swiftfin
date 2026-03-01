@@ -49,11 +49,11 @@ extension ItemView {
             {
                 seasonEpisodeLabel
 
-                // Use a Play/Resume label for single Media Source items that are not Series
+                /// Use a Play/Resume label for single Media Source items that are not Series
             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
                 playButtonLabel
 
-                // Fallback to a generic `Play` label
+                /// Fallback to a generic `Play` label
             } else {
                 L10n.play
             }
