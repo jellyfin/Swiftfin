@@ -26,10 +26,15 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         private var manager: MediaPlayerManager
 
         #if os(tvOS)
-        var focusedActionButton: FocusState<VideoPlayerActionButton?>.Binding?
+        enum FocusTarget: Hashable {
+            case button(VideoPlayerActionButton)
+            case menu
+        }
 
-        init(focusedActionButton: FocusState<VideoPlayerActionButton?>.Binding? = nil) {
-            self.focusedActionButton = focusedActionButton
+        var focusTarget: FocusState<FocusTarget?>.Binding?
+
+        init(focusTarget: FocusState<FocusTarget?>.Binding? = nil) {
+            self.focusTarget = focusTarget
         }
         #endif
 
@@ -125,8 +130,8 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 ForEach(barActionButtons) { button in
                     view(for: button)
                     #if os(tvOS)
-                        .if(focusedActionButton != nil) { view in
-                            view.focused(focusedActionButton!, equals: button)
+                        .if(focusTarget != nil) { view in
+                            view.focused(focusTarget!, equals: .button(button))
                         }
                     #endif
                 }
@@ -142,6 +147,11 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                         )
                         .environment(\.isInMenu, true)
                     }
+                    #if os(tvOS)
+                    .if(focusTarget != nil) { view in
+                        view.focused(focusTarget!, equals: .menu)
+                    }
+                    #endif
                 }
             }
         }

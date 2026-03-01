@@ -24,10 +24,10 @@ extension VideoPlayer.PlaybackControls {
         private var router
 
         #if os(tvOS)
-        var focusedActionButton: FocusState<VideoPlayerActionButton?>.Binding?
+        var focusTarget: FocusState<ActionButtons.FocusTarget?>.Binding?
 
-        init(focusedActionButton: FocusState<VideoPlayerActionButton?>.Binding? = nil) {
-            self.focusedActionButton = focusedActionButton
+        init(focusTarget: FocusState<ActionButtons.FocusTarget?>.Binding? = nil) {
+            self.focusTarget = focusTarget
         }
         #endif
 
@@ -77,7 +77,7 @@ extension VideoPlayer.PlaybackControls {
                     ActionButtons()
                 } content: {
                     #if os(tvOS)
-                    ActionButtons(focusedActionButton: focusedActionButton)
+                    ActionButtons(focusTarget: focusTarget)
                         .focusSection()
                     #else
                     ActionButtons()

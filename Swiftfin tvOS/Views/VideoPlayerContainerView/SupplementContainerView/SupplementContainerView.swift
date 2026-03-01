@@ -63,8 +63,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             )
             .isVisible(containerState.isPresentingSupplement)
             .disabled(!containerState.isPresentingSupplement)
-            .animation(.easeInOut(duration: 0.45), value: containerState.isPresentingSupplement)
-            .animation(.easeInOut(duration: 0.2), value: containerState.selectedSupplement?.id)
+            .animation(VideoPlayer.PlaybackControls.supplementTransition, value: containerState.isPresentingSupplement)
+            .animation(VideoPlayer.PlaybackControls.supplementSwap, value: containerState.selectedSupplement?.id)
             .padding(.top, 10)
             .background {
                 LinearGradient(

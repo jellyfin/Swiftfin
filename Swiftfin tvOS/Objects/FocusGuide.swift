@@ -27,7 +27,9 @@ struct FocusGuideModifier: ViewModifier {
                 .frame(height: 1)
                 .padding(.top, 1)
                 .if(focusConstructor.topTarget != nil, transform: { boundary in
-                    boundary.focusable().focusEffectDisabled()
+                    boundary
+                        .focusable()
+                        .focusEffectDisabled()
                 })
                 .focused($focusDirection, equals: .top)
 
@@ -36,7 +38,9 @@ struct FocusGuideModifier: ViewModifier {
                     .frame(width: 1)
                     .padding(.leading, 1)
                     .if(focusConstructor.leftTarget != nil, transform: { boundary in
-                        boundary.focusable().focusEffectDisabled()
+                        boundary
+                            .focusable()
+                            .focusEffectDisabled()
                     })
                     .focused($focusDirection, equals: .left)
 
@@ -47,7 +51,9 @@ struct FocusGuideModifier: ViewModifier {
                     .frame(width: 1)
                     .padding(.trailing, 1)
                     .if(focusConstructor.rightTarget != nil, transform: { boundary in
-                        boundary.focusable().focusEffectDisabled()
+                        boundary
+                            .focusable()
+                            .focusEffectDisabled()
                     })
                     .focused($focusDirection, equals: .right)
             }
@@ -56,7 +62,9 @@ struct FocusGuideModifier: ViewModifier {
                 .frame(height: 1)
                 .padding(.bottom, 1)
                 .if(focusConstructor.bottomTarget != nil, transform: { boundary in
-                    boundary.focusable().focusEffectDisabled()
+                    boundary
+                        .focusable()
+                        .focusEffectDisabled()
                 })
                 .focused($focusDirection, equals: .bottom)
         }
@@ -77,11 +85,14 @@ struct FocusGuideModifier: ViewModifier {
         }
         .onChange(of: focusGuide.focusedTag) { _, newTag in
             if newTag == focusConstructor.tag {
+                focusDirection = nil
+
                 if let onContentFocus {
                     onContentFocus()
                 } else {
-                    focusDirection = nil
-                    focusDirection = .content
+                    DispatchQueue.main.async {
+                        focusDirection = .content
+                    }
                 }
             }
         }

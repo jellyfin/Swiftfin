@@ -14,6 +14,10 @@ extension VideoPlayer {
 
     struct PlaybackControls: View {
 
+        static let supplementTransition: Animation = .easeInOut(duration: 0.35)
+        static let supplementSwap: Animation = .easeInOut(duration: 0.2)
+
+        typealias ActionBarFocusTarget = NavigationBar.ActionButtons.FocusTarget
         private typealias SupplementTitleButtonStyle = VideoPlayer.UIVideoPlayerContainerViewController
             .SupplementContainerView.SupplementTitleButtonStyle
 
@@ -62,13 +66,13 @@ extension VideoPlayer {
         var focusGuide: FocusGuide
 
         @FocusState
-        var focusedActionButton: VideoPlayerActionButton?
+        var focusedBarTarget: ActionBarFocusTarget?
 
         @FocusState
         var focusedSupplementID: AnyMediaPlayerSupplement.ID?
 
         @State
-        private var lastFocusedActionButton: VideoPlayerActionButton?
+        private var lastFocusedBarTarget: ActionBarFocusTarget?
 
         @State
         private var lastFocusedSupplementID: AnyMediaPlayerSupplement.ID?
@@ -143,20 +147,23 @@ extension VideoPlayer {
 
         private var bottomContent: some View {
             VStack(spacing: 0) {
-                NavigationBar(focusedActionButton: $focusedActionButton)
+                NavigationBar(focusTarget: $focusedBarTarget)
                     .focusGuide(
                         focusGuide,
                         tag: "navigationBar",
                         fixedSize: (horizontal: false, vertical: true),
                         onContentFocus: {
-                            focusedActionButton = lastFocusedActionButton
-                                ?? Defaults[.VideoPlayer.barActionButtons].first
+                            if let target = lastFocusedBarTarget {
+                                focusedBarTarget = target
+                            } else if let firstButton = Defaults[.VideoPlayer.barActionButtons].first {
+                                focusedBarTarget = .button(firstButton)
+                            }
                         },
                         bottom: "progressBar"
                     )
                     .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
                     .disabled(isPresentingSupplement)
-                    .animation(.easeInOut(duration: 0.35), value: isPresentingSupplement)
+                    .animation(Self.supplementTransition, value: isPresentingSupplement)
 
                 PlaybackProgress(
                     onPanScrubChanged: { isPanning in
@@ -177,7 +184,7 @@ extension VideoPlayer {
                 )
                 .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
                 .disabled(isPresentingSupplement)
-                .animation(.easeInOut(duration: 0.35), value: isPresentingSupplement)
+                .animation(Self.supplementTransition, value: isPresentingSupplement)
 
                 Color.clear
                     .frame(height: 0)
@@ -293,9 +300,9 @@ extension VideoPlayer {
                 guard newSupplements.ids != currentSupplements.ids else { return }
                 currentSupplements = newSupplements
             }
-            .onChange(of: focusedActionButton) { _, newValue in
+            .onChange(of: focusedBarTarget) { _, newValue in
                 if let newValue {
-                    lastFocusedActionButton = newValue
+                    lastFocusedBarTarget = newValue
                 }
             }
             .onChange(of: containerState.isProgressBarFocused) { _, newValue in
