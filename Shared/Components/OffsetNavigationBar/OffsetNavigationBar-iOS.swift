@@ -1,0 +1,140 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+import SwiftUI
+
+struct OffsetNavigationBar<Content: View>: View {
+
+    @Environment(\.frameForParentView)
+    private var frameForParentView
+
+    private let content: Content
+    private let headerMaxY: CGFloat?
+    private let start: CGFloat
+
+    init(
+        headerMaxY: CGFloat?,
+        start: CGFloat = 25,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.content = content()
+        self.headerMaxY = headerMaxY
+        self.start = start
+    }
+
+    var body: some View {
+        if let headerMaxY {
+            NavigationBarOffsetView(
+                headerOffset: headerMaxY,
+                start: frameForParentView[.scrollView, default: .zero].safeAreaInsets.top + start,
+                end: frameForParentView[.scrollView, default: .zero].safeAreaInsets.top
+            ) {
+                content
+            }
+            .ignoresSafeArea()
+        } else {
+            content
+        }
+    }
+}
+
+private struct NavigationBarOffsetView<Content: View>: UIViewControllerRepresentable {
+
+    private let content: Content
+    private let headerOffset: CGFloat
+    private let start: CGFloat
+    private let end: CGFloat
+
+    init(
+        headerOffset: CGFloat,
+        start: CGFloat,
+        end: CGFloat,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.content = content()
+        self.headerOffset = headerOffset
+        self.start = start
+        self.end = end
+    }
+
+    func makeUIViewController(context: Context) -> UINavigationBarOffsetHostingController<Content> {
+        UINavigationBarOffsetHostingController<Content>(rootView: content)
+    }
+
+    func updateUIViewController(_ uiViewController: UINavigationBarOffsetHostingController<Content>, context: Context) {
+        uiViewController.scrollViewDidScroll(
+            headerOffset,
+            start: start,
+            end: end
+        )
+    }
+}
+
+private class UINavigationBarOffsetHostingController<Content: View>: UIHostingController<Content> {
+
+    private var lastAlpha: CGFloat = 0
+
+    // scrollview offset will trigger during transitions
+    private var hasCalledWillDisappear = false
+
+    private lazy var blurView: UIVisualEffectView = {
+        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
+        blurView.translatesAutoresizingMaskIntoConstraints = false
+        return blurView
+    }()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = nil
+        view.addSubview(blurView)
+        blurView.alpha = 0
+
+        NSLayoutConstraint.activate([
+            blurView.topAnchor.constraint(equalTo: view.topAnchor),
+            blurView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            blurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            blurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
+    }
+
+    func scrollViewDidScroll(_ offset: CGFloat, start: CGFloat, end: CGFloat) {
+
+        guard !hasCalledWillDisappear else { return }
+
+        let diff = end - start
+        let currentProgress = (offset - start) / diff
+        let alpha = clamp(currentProgress, min: 0, max: 1)
+
+        navigationController?.navigationBar
+            .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(alpha)]
+        blurView.alpha = alpha
+        lastAlpha = alpha
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        hasCalledWillDisappear = false
+
+        navigationController?.navigationBar
+            .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(lastAlpha)]
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        hasCalledWillDisappear = true
+
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
+        navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        navigationController?.navigationBar.shadowImage = nil
+    }
+}

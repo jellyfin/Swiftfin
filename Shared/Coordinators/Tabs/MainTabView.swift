@@ -6,26 +6,30 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
+import JellyfinAPI
 import SwiftUI
 
-// TODO: move popup to router
-//       - or, make tab view environment object
-
-// TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
+
+    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
+
+    @Default(.Customization.Library._libraryStyle)
+    private var defaultLibraryStyle
 
     #if os(iOS)
     @StateObject
     private var tabCoordinator = TabCoordinator {
-        TabItem.home
-        TabItem.search
-        TabItem.media
+        TabItemSetting.contentGroup(.default)
+        TabItemSetting.search
+        TabItemSetting.media
     }
     #else
     @StateObject
     private var tabCoordinator = TabCoordinator {
-        TabItem.home
+        TabItem.contentGroup(provider: DefaultContentGroupProvider())
         TabItem.library(
             title: L10n.tvShowsCapitalized,
             systemName: "tv",
@@ -42,7 +46,6 @@ struct MainTabView: View {
     }
     #endif
 
-    @ViewBuilder
     var body: some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
@@ -50,20 +53,69 @@ struct MainTabView: View {
                     coordinator: tab.coordinator
                 ) {
                     tab.item.content
+                    #if os(iOS)
+                        .topBarTrailing {
+                            if tab.item.id != "settings" {
+                                SettingsBarButton()
+                            }
+                        }
+                    #endif
                 }
                 .environmentObject(tabCoordinator)
                 .environment(\.tabItemSelected, tab.publisher)
                 .tabItem {
                     Label(
-                        tab.item.title,
+                        tab.item.displayTitle,
                         systemImage: tab.item.systemImage
                     )
-                    .labelStyle(tab.item.labelStyle)
                     .symbolRenderingMode(.monochrome)
-                    .eraseToAnyView()
                 }
                 .tag(tab.item.id)
             }
         }
+        .contextMenu(for: BaseItemDto.self) { item in
+            if item.type == .episode {
+                WithRouter { router in
+                    Button("Go to Episode", systemImage: "info.circle") {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            router.route(to: .item(item: item))
+                        }
+                    }
+                }
+
+                if let seriesID = item.seriesID {
+                    WithRouter { router in
+                        Button("Go to Show", systemImage: "info.circle") {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                router.route(
+                                    to: .item(
+                                        displayTitle: item.displayTitle,
+                                        id: seriesID
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            } else {
+                WithRouter { router in
+                    Button("Go to Item", systemImage: "info.circle") {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            router.route(to: .item(item: item))
+                        }
+                    }
+                }
+            }
+        }
+        .libraryStyle(for: BaseItemDto.self) { _, _ in
+            (defaultLibraryStyle, $defaultLibraryStyle)
+        }
+        .libraryStyle(for: ChannelProgram.self) { _, _ in
+            (defaultLibraryStyle, $defaultLibraryStyle)
+        }
+        .customEnvironment(
+            for: BaseItemDto.self,
+            value: .init(useParent: useSeriesLandscapeBackdrop)
+        )
     }
 }

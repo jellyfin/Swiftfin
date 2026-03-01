@@ -15,7 +15,7 @@ import VLCUI
 
 // TODO: proper error catching
 
-typealias MediaPlayerManagerPublisher = LegacyEventPublisher<MediaPlayerManager?>
+typealias MediaPlayerManagerPublisher = PassthroughSubject<MediaPlayerManager?, Never>
 
 extension Scope {
     static let session = Cached()
@@ -42,8 +42,6 @@ extension Container {
         .scope(.session)
     }
 }
-
-import StatefulMacros
 
 @MainActor
 @Stateful
@@ -303,7 +301,7 @@ final class MediaPlayerManager: ViewModel {
     }
 
     @Function(\Action.Cases.stop)
-    private func _stop() async throws {
+    private func _stop() async {
         await self.cancel()
 
         // TODO: remove playback item?

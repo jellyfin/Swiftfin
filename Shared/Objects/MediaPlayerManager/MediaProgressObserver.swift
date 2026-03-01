@@ -8,14 +8,17 @@
 
 import Combine
 import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
 
 // TODO: respond properly to end of playback
 //       - when item changes
-// TODO: only send stop on manager stop, not per-item
 
 class MediaProgressObserver: ViewModel, MediaPlayerObserver {
+
+    @Injected(\.itemUserDataHandler)
+    private var itemUserDataHandler: ItemUserDataHandler
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -147,9 +150,16 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
     private func sendProgressReport(for item: MediaPlayerItem, seconds: Duration?, isPaused: Bool = false) {
 
+        guard let seconds else { return }
+
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
         #endif
+
+        itemUserDataHandler.setPlaybackProgress(
+            for: item.baseItem,
+            progress: seconds
+        )
 
         Task {
             var info = PlaybackProgressInfo()
@@ -158,7 +168,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             info.itemID = item.baseItem.id
             info.mediaSourceID = item.mediaSource.id
             info.playSessionID = item.playSessionID
-            info.positionTicks = seconds?.ticks
+            info.positionTicks = seconds.ticks
             info.sessionID = item.playSessionID
             info.subtitleStreamIndex = item.selectedSubtitleStreamIndex
 

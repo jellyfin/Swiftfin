@@ -9,19 +9,19 @@
 import SwiftUI
 
 @available(*, deprecated, message: "Use `Section(:content:learnMore:)` instead")
-struct LearnMoreButton: View {
+struct LearnMoreButton<Content: View>: View {
 
     @State
     private var isPresented: Bool = false
 
     private let title: String
-    private let content: AnyView
+    private let content: Content
 
     // MARK: - Initializer
 
     init(
         _ title: String,
-        @LabeledContentBuilder content: () -> AnyView
+        @LabeledContentBuilder content: () -> Content
     ) {
         self.title = title
         self.content = content()

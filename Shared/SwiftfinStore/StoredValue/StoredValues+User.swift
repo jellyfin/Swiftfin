@@ -97,27 +97,27 @@ extension StoredValues.Keys {
             )
         }
 
-        static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
-            CurrentUserKey(
-                parentID,
-                domain: "setting-libraryDisplayType",
-                default: Defaults[.Customization.Library.displayType]
-            )
+        static func libraryStyle(id: String?) -> Key<LibraryStyle> {
+            if let id {
+                CurrentUserKey(
+                    id,
+                    domain: "setting-libraryStyle",
+                    default: .default
+                )
+            } else {
+                CurrentUserKey(
+                    "swiftfin-default",
+                    domain: "setting-libraryStyle",
+                    default: .default
+                )
+            }
         }
 
-        static func libraryListColumnCount(parentID: String?) -> Key<Int> {
+        static func posterButtonStyle(parentID: String?) -> Key<PosterDisplayConfiguration> {
             CurrentUserKey(
                 parentID,
-                domain: "setting-libraryListColumnCount",
-                default: Defaults[.Customization.Library.listColumnCount]
-            )
-        }
-
-        static func libraryPosterType(parentID: String?) -> Key<PosterDisplayType> {
-            CurrentUserKey(
-                parentID,
-                domain: "setting-libraryPosterType",
-                default: Defaults[.Customization.Library.posterType]
+                domain: "setting-posterButtonStyle",
+                default: .default
             )
         }
 
@@ -149,6 +149,7 @@ extension StoredValues.Keys {
             )
         }
 
+        // TODO: move edit/delete item + edit collections to an OptionSet
         static var enableItemEditing: Key<Bool> {
             CurrentUserKey(
                 "enableItemEditing",
@@ -181,14 +182,6 @@ extension StoredValues.Keys {
             )
         }
 
-        static var itemViewAttributes: Key<[ItemViewAttribute]> {
-            CurrentUserKey(
-                "itemViewAttributes",
-                domain: "itemViewAttributes",
-                default: ItemViewAttribute.allCases
-            )
-        }
-
         static var previewImageScrubbing: Key<PreviewImageScrubbingOption> {
             CurrentUserKey(
                 "previewImageScrubbing",
@@ -212,34 +205,5 @@ extension StoredValues.Keys {
                 default: false
             )
         }
-    }
-}
-
-// TODO: chapters fallback
-enum PreviewImageScrubbingOption: CaseIterable, Displayable, Hashable, Storable {
-
-    case trickplay(fallbackToChapters: Bool = true)
-    case chapters
-    case disabled
-
-    var displayTitle: String {
-        switch self {
-        case .trickplay: "Trickplay"
-        case .disabled: L10n.disabled
-        case .chapters: "Chapters"
-        }
-    }
-
-    // TODO: enhance full screen determination
-    //       - allow checking against image size?
-    var supportsFullscreen: Bool {
-        switch self {
-        case .trickplay: true
-        case .disabled, .chapters: false
-        }
-    }
-
-    static var allCases: [PreviewImageScrubbingOption] {
-        [.trickplay(), .chapters, .disabled]
     }
 }

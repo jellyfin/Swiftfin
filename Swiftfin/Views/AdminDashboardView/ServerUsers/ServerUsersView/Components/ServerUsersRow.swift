@@ -131,13 +131,11 @@ extension ServerUsersView {
         // MARK: - Body
 
         var body: some View {
-            ListRow {
+            ListRow(action: onSelect) {
                 userImage
             } content: {
                 rowContent
             }
-            .onSelect(perform: onSelect)
-            .isSeparatorVisible(false)
             .swipeActions {
                 Button(
                     L10n.delete,

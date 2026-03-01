@@ -16,8 +16,13 @@ extension PrimitiveButtonStyle where Self == PrimaryButtonStyle {
 
 struct PrimaryButtonStyle: PrimitiveButtonStyle {
 
+    @ViewContextContains(.isOverComplexContent)
+    private var isOverComplexContent
+
     @Environment(\.isEnabled)
     private var isEnabled
+    @Environment(\.isHighlighted)
+    private var isHighlighted
 
     @FocusState
     private var isFocused: Bool
@@ -41,7 +46,15 @@ struct PrimaryButtonStyle: PrimitiveButtonStyle {
             )
         } else {
             if isEnabled {
-                return AnyShapeStyle(HierarchicalShapeStyle.secondary)
+                if isHighlighted {
+                    return AnyShapeStyle(HierarchicalShapeStyle.secondary)
+                } else {
+                    if isOverComplexContent {
+                        return AnyShapeStyle(Material.ultraThinMaterial)
+                    } else {
+                        return AnyShapeStyle(HierarchicalShapeStyle.secondary)
+                    }
+                }
             } else {
                 return AnyShapeStyle(Color.gray)
             }

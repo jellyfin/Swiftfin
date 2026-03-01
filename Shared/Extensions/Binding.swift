@@ -37,6 +37,19 @@ extension Binding {
         )
     }
 
+    func contains<V: Equatable>(_ value: V) -> Binding<Bool> where Value == Set<V> {
+        Binding<Bool>(
+            get: { wrappedValue.contains(value) },
+            set: { shouldBeContained in
+                if shouldBeContained {
+                    wrappedValue.insert(value)
+                } else {
+                    wrappedValue.remove(value)
+                }
+            }
+        )
+    }
+
     func map<V>(getter: @escaping (Value) -> V, setter: @escaping (V) -> Value) -> Binding<V> {
         Binding<V>(
             get: { getter(wrappedValue) },
@@ -53,6 +66,22 @@ extension Binding {
 
     func negate() -> Binding<Bool> where Value == Bool {
         map(getter: { !$0 }, setter: { $0 })
+    }
+}
+
+extension Binding where Value: OptionSet {
+
+    func contains(_ element: Value.Element) -> Binding<Bool> {
+        Binding<Bool>(
+            get: { wrappedValue.contains(element) },
+            set: { newValue in
+                if newValue {
+                    wrappedValue.insert(element)
+                } else {
+                    wrappedValue.remove(element)
+                }
+            }
+        )
     }
 }
 

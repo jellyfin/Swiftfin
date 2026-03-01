@@ -8,43 +8,112 @@
 
 import SwiftUI
 
-struct BackgroundParallaxHeaderModifier<Header: View>: ViewModifier {
+extension View {
 
-    @Binding
-    private var scrollViewOffset: CGFloat
+    func backgroundParallaxHeader(
+        multiplier: CGFloat = 1,
+        _backgroundColor: Color? = nil,
+        @ViewBuilder header: @escaping () -> some View
+    ) -> some View {
+        modifier(
+            BackgroundParallaxHeaderModifier(
+                multiplier: multiplier,
+                _backgroundColor: _backgroundColor,
+                header: header
+            )
+        )
+    }
+}
+
+struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
+
+    @Environment(\.frameForParentView)
+    private var frameForParentView
 
     @State
-    private var contentSize: CGSize = .zero
+    private var headerFrame: CGRect = .zero
 
-    private let height: CGFloat
+    private let _backgroundColor: Color?
+    private let background: Background
     private let multiplier: CGFloat
-    private let header: () -> Header
 
     init(
-        _ scrollViewOffset: Binding<CGFloat>,
-        height: CGFloat,
         multiplier: CGFloat = 1,
-        @ViewBuilder header: @escaping () -> Header
+        _backgroundColor: Color? = nil,
+        @ViewBuilder header: @escaping () -> Background
     ) {
-        self._scrollViewOffset = scrollViewOffset
-        self.height = height
+        self.background = header()
+        self._backgroundColor = _backgroundColor
         self.multiplier = multiplier
-        self.header = header
+    }
+
+    private var contentFrame: CGRect {
+        frameForParentView[.scrollViewHeader, default: .zero].frame
+    }
+
+    private var scrollViewOffset: CGFloat {
+        -frameForParentView[.scrollViewHeader, default: .zero].frame.minY
+    }
+
+    private var scrollViewSafeAreaInsets: EdgeInsets {
+        frameForParentView[.scrollView, default: .zero].safeAreaInsets
+    }
+
+    private var maskHeight: CGFloat {
+        max(0, contentFrame.height + scrollViewSafeAreaInsets.top - offset)
+    }
+
+    private var offset: CGFloat {
+        let position = scrollViewOffset + frameForParentView[.navigationStack, default: .zero].safeAreaInsets.top
+
+        return if scrollViewOffset < 0, abs(scrollViewOffset) >= scrollViewSafeAreaInsets.top {
+            position
+        } else {
+            position - (abs(scrollViewOffset + scrollViewSafeAreaInsets.top) * multiplier)
+        }
+    }
+
+    private var navigationBarHeight: CGFloat {
+        abs(frameForParentView[.navigationStack, default: .zero].safeAreaInsets.top - scrollViewSafeAreaInsets.top)
+    }
+
+    private var adjustedHeaderHeight: CGFloat {
+        headerFrame.height + max(
+            0, navigationBarHeight
+        )
+    }
+
+    private var scaleEffect: CGFloat {
+        var t: CGFloat {
+            if scrollViewOffset < 0, abs(scrollViewOffset) >= scrollViewSafeAreaInsets.top {
+                (adjustedHeaderHeight + abs(scrollViewOffset + scrollViewSafeAreaInsets.top)) / headerFrame.height
+            } else {
+                adjustedHeaderHeight / headerFrame.height
+            }
+        }
+
+        return max(1, t)
     }
 
     func body(content: Content) -> some View {
         content
-            .trackingSize($contentSize)
             .background(alignment: .top) {
-                header()
-                    .offset(y: scrollViewOffset > 0 ? -scrollViewOffset * multiplier : 0)
-                    .scaleEffect(scrollViewOffset < 0 ? (height - scrollViewOffset) / height : 1, anchor: .top)
-                    .frame(width: contentSize.width)
-                    .mask(alignment: .top) {
-                        Color.black
-                            .frame(height: max(0, height - scrollViewOffset))
+                MirrorExtensionView(edges: .top) {
+                    background
+                }
+                .onFrameChanged { frame, _ in
+                    if headerFrame == .zero || headerFrame.height.isNaN {
+                        headerFrame = frame
                     }
-                    .ignoresSafeArea()
+                }
+                .scaleEffect(scaleEffect, anchor: .top)
+                .mask(alignment: .top) {
+                    Color.black
+                        .frame(height: maskHeight)
+                        .offset(y: -scrollViewSafeAreaInsets.top)
+                }
+                .offset(y: offset)
             }
+            .background(_backgroundColor)
     }
 }

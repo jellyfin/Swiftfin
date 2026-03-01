@@ -20,25 +20,9 @@ struct RootView: View {
 
     var body: some View {
         ZStack {
-            if rootCoordinator.root.id == RootItem.appLoading.id {
-                RootItem.appLoading.content
-            }
-
-            if rootCoordinator.root.id == RootItem.mainTab.id {
-                RootItem.mainTab.content
-            }
-
-            if rootCoordinator.root.id == RootItem.selectUser.id {
-                RootItem.selectUser.content
-            }
-
-            #if os(iOS)
-            if rootCoordinator.root.id == RootItem.serverCheck.id {
-                RootItem.serverCheck.content
-            }
-            #endif
+            rootCoordinator.root.content
         }
-        .animation(.linear(duration: 0.1), value: rootCoordinator.root.id)
+        .animation(.linear(duration: 0.2), value: rootCoordinator.root.id)
         .environmentObject(rootCoordinator)
         .prefersStatusBarHidden(isStatusBarHidden)
         .onPreferenceChange(IsStatusBarHiddenKey.self) { newValue in

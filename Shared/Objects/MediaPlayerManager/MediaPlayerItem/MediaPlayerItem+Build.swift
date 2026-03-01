@@ -89,7 +89,15 @@ extension MediaPlayerItem {
 
         let mediaSource: MediaSourceInfo? = {
 
-            guard let mediaSources = response.value.mediaSources else { return nil }
+            guard let mediaSources = response.value.mediaSources, mediaSources.isNotEmpty else {
+                logger.error(
+                    "No media sources returned for item \(itemID)!",
+                    metadata: ["mediaSourceID": .string(
+                        initialMediaSource.id ?? "nil"
+                    )]
+                )
+                return nil
+            }
 
             if let matchingTag = mediaSources.first(where: { $0.eTag == initialMediaSource.eTag }) {
                 return matchingTag
