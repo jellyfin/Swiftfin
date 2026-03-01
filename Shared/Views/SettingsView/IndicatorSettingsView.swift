@@ -9,8 +9,6 @@
 import Defaults
 import SwiftUI
 
-// TODO: show a sample poster to model indicators
-
 struct IndicatorSettingsView: View {
 
     @Default(.Customization.Indicators.showFavorited)
@@ -24,16 +22,22 @@ struct IndicatorSettingsView: View {
 
     var body: some View {
         Form {
-            Section {
+            Section(L10n.posters) {
 
-                Toggle(L10n.favorited, isOn: $showFavorited)
+                Toggle(L10n.showFavorited, isOn: $showFavorited)
 
-                Toggle(L10n.progress, isOn: $showProgress)
+                Toggle(L10n.showProgress, isOn: $showProgress)
 
-                Toggle(L10n.unplayed, isOn: $showUnplayed)
+                Toggle(L10n.showUnwatched, isOn: $showUnplayed)
 
-                Toggle(L10n.played, isOn: $showPlayed)
+                Toggle(L10n.showWatched, isOn: $showPlayed)
             }
+        } image: {
+            // TODO: Show a sample poster to model indicators
+            Image(systemName: "checkmark.circle.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(maxWidth: 400)
         }
         .navigationTitle(L10n.indicators)
     }

@@ -19,14 +19,12 @@ struct SettingsView: View {
     #if os(iOS)
     @Default(.userAppearance)
     private var appearance
-    #endif
-
-    #if os(iOS)
     @Default(.userAccentColor)
+    private var accentColor
     #else
     @Default(.accentColor)
-    #endif
     private var accentColor
+    #endif
 
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
@@ -136,33 +134,20 @@ struct SettingsView: View {
 
     @ViewBuilder
     private var customizationSection: some View {
-        Section(L10n.accessibility) {
+        Section {
             #if os(iOS)
             Picker(L10n.appearance, selection: $appearance)
             #endif
+            ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
 
-            ChevronButton(L10n.customize) {
-                router.route(to: .customizeViewsSettings)
+            ChevronButton(L10n.advanced) {
+                router.route(to: .customizationSettingsView)
             }
-        }
-
-        #if os(iOS)
-        Section {
-            ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
-        } footer: {
-            Text(L10n.viewsMayRequireRestart)
-        }
-        #endif
-
-        #if os(tvOS)
-        Section {
-            ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
         } header: {
-            Text(L10n.appearance)
+            Text(L10n.customization)
         } footer: {
             Text(L10n.viewsMayRequireRestart)
         }
-        #endif
     }
 
     // MARK: - Diagnostics Section
