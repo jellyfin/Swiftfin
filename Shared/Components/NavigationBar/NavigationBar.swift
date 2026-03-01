@@ -23,6 +23,17 @@ extension VideoPlayer.PlaybackControls {
         @Router
         private var router
 
+        #if os(tvOS)
+        var focusedActionButton: FocusState<VideoPlayerActionButton?>.Binding?
+
+        init(focusedActionButton: FocusState<VideoPlayerActionButton?>.Binding? = nil) {
+            self.focusedActionButton = focusedActionButton
+        }
+        #endif
+
+        private var fontSize: CGFloat = !UIDevice.isTV ? 24 : 36
+        private var fontWeight: Font.Weight = !UIDevice.isTV ? .semibold : .regular
+
         private func onPressed(isPressed: Bool) {
             if isPressed {
                 containerState.timer.stop()
@@ -31,37 +42,55 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        private var closeButton: some View {
+            Button {
+                if containerState.isPresentingSupplement {
+                    containerState.select(supplement: nil)
+                } else {
+                    manager.stop()
+                    router.dismiss()
+                }
+            } label: {
+                AlternateLayoutView {
+                    Image(systemName: "xmark")
+                } content: {
+                    Label(
+                        L10n.close,
+                        systemImage: containerState.isPresentingSupplement ? "chevron.down" : "xmark"
+                    )
+                }
+                .contentShape(Rectangle())
+            }
+        }
+
         var body: some View {
-            HStack(alignment: .center) {
-                Button {
-                    if containerState.isPresentingSupplement {
-                        containerState.select(supplement: nil)
-                    } else {
-                        manager.stop()
-                        router.dismiss()
-                    }
-                } label: {
-                    AlternateLayoutView {
-                        Image(systemName: "xmark")
-                    } content: {
-                        Label(
-                            L10n.close,
-                            systemImage: containerState.isPresentingSupplement ? "chevron.down" : "xmark"
-                        )
-                    }
-                    .contentShape(Rectangle())
+            HStack(alignment: UIDevice.isTV ? .bottom : .center) {
+
+                if !UIDevice.isTV {
+                    closeButton
                 }
 
                 TitleView(item: manager.item)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                ActionButtons()
+                AlternateLayoutView {
+                    ActionButtons()
+                } content: {
+                    #if os(tvOS)
+                    ActionButtons(focusedActionButton: focusedActionButton)
+                        .focusSection()
+                    #else
+                    ActionButtons()
+                    #endif
+                }
             }
-            .background {
-                EmptyHitTestView()
-            }
-            .font(.system(size: 24, weight: .semibold))
+            .font(.system(size: fontSize, weight: fontWeight))
             .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
+            #if os(iOS)
+                .background {
+                    EmptyHitTestView()
+                }
+            #endif
         }
     }
 }
@@ -97,7 +126,9 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         var body: some View {
             let titleSubtitle = self._titleSubtitle
 
+            #if os(iOS)
             Text(titleSubtitle.title)
+                .font(.headline)
                 .fontWeight(.semibold)
                 .lineLimit(1)
                 .frame(minWidth: max(50, subtitleContentSize.width))
@@ -108,6 +139,20 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                             .offset(y: subtitleContentSize.height)
                     }
                 }
+            #else
+            VStack(alignment: .leading) {
+                Text(titleSubtitle.title)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+
+                if let subtitle = titleSubtitle.subtitle {
+                    _subtitle(subtitle)
+                        .lineLimit(1)
+                }
+            }
+            .frame(minWidth: max(50, subtitleContentSize.width))
+            #endif
         }
     }
 }

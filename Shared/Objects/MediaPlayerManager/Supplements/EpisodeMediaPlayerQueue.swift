@@ -183,7 +183,21 @@ extension EpisodeMediaPlayerQueue {
         }
 
         var tvOSView: some View {
-            EmptyView()
+            TVOSSeasonStackObserver(
+                selection: $selection,
+                action: select
+            )
+            .environmentObject(viewModel)
+            .onAppear {
+                if let seasonID = manager.item.seasonID, let season = viewModel.seasons[id: seasonID] {
+                    if season.elements.isEmpty {
+                        season.send(.refresh)
+                    }
+                    selection = season.id
+                } else {
+                    selection = viewModel.seasons.first?.id
+                }
+            }
         }
 
         var iOSView: some View {
@@ -292,127 +306,174 @@ extension EpisodeMediaPlayerQueue {
             self.action = action
         }
 
-        private struct _Body: View {
-
-            @Environment(\.safeAreaInsets)
-            private var safeAreaInsets: EdgeInsets
-
-            @ObservedObject
-            var selectionViewModel: SeasonItemViewModel
-
-            let action: (BaseItemDto) -> Void
-
-            var body: some View {
-                CollectionHStack(
-                    uniqueElements: selectionViewModel.elements,
-                    id: \.unwrappedIDHashOrZero
-                ) { item in
-                    EpisodeButton(episode: item) {
-                        action(item)
-                    }
-                    .frame(height: 150)
-                }
-                .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-            }
-        }
-
         var body: some View {
-            if let selectionViewModel {
-                _Body(
-                    selectionViewModel: selectionViewModel,
-                    action: action
-                )
-                .frame(height: 150)
+            Group {
+                if let selectionViewModel {
+                    #if os(tvOS)
+                    PosterHStack(
+                        type: .landscape,
+                        items: selectionViewModel.elements
+                    ) { episode in
+                        action(episode)
+                    } label: { episode in
+                        PosterButton<BaseItemDto>.TitleSubtitleContentView(item: episode)
+                            .lineLimit(2, reservesSpace: true)
+                    }
+                    #else
+                    CollectionHStack(
+                        uniqueElements: selectionViewModel.elements,
+                        id: \.unwrappedIDHashOrZero
+                    ) { item in
+                        EpisodeButton(episode: item) {
+                            action(item)
+                        }
+                        .frame(height: 150)
+                    }
+                    .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
+                    #endif
+                }
+            }
+            .onReceive(seriesViewModel.$seasons) { newSeasons in
+                guard selection.wrappedValue == nil, !newSeasons.isEmpty else { return }
+                selection.wrappedValue = newSeasons.first?.id
+                newSeasons.first?.send(.refresh)
             }
         }
+    }
 
-        // TODO: make experimental setting to enable
-        private struct _ButtonStack: View {
+    private struct TVOSSeasonStackObserver: View {
+
+        @EnvironmentObject
+        private var seriesViewModel: SeriesItemViewModel
+
+        private let selection: Binding<SeasonItemViewModel.ID?>
+        private let action: (BaseItemDto) -> Void
+
+        private var selectionViewModel: SeasonItemViewModel? {
+            guard let id = selection.wrappedValue else { return nil }
+            return seriesViewModel.seasons[id: id]
+        }
+
+        init(
+            selection: Binding<SeasonItemViewModel.ID?>,
+            action: @escaping (BaseItemDto) -> Void
+        ) {
+            self.selection = selection
+            self.action = action
+        }
+
+        private struct _Body: View {
 
             @EnvironmentObject
             private var containerState: VideoPlayerContainerState
             @EnvironmentObject
             private var manager: MediaPlayerManager
+
+            #if os(tvOS)
             @EnvironmentObject
-            private var seriesViewModel: SeriesItemViewModel
+            private var focusGuide: FocusGuide
 
-            let selection: Binding<SeasonItemViewModel.ID?>
-            let selectionViewModel: SeasonItemViewModel
+            @FocusState
+            private var focusedEpisodeID: String?
 
-            init(
-                selection: Binding<SeasonItemViewModel.ID?>,
-                selectionViewModel: SeasonItemViewModel
-            ) {
-                self.selection = selection
-                self.selectionViewModel = selectionViewModel
+            @State
+            private var lastFocusedEpisodeID: String?
+            #endif
+
+            @ObservedObject
+            var selectionViewModel: SeasonItemViewModel
+
+            @StateObject
+            private var collectionHStackProxy: CollectionHStackProxy = .init()
+
+            let action: (BaseItemDto) -> Void
+
+            #if os(tvOS)
+            private func getContentFocus() {
+                if let lastFocusedEpisodeID,
+                   selectionViewModel.elements.contains(where: { $0.id == lastFocusedEpisodeID })
+                {
+                    focusedEpisodeID = lastFocusedEpisodeID
+                } else {
+                    focusedEpisodeID = selectionViewModel.elements.first?.id
+                }
             }
+            #endif
 
             var body: some View {
-                VStack {
-                    Menu {
-                        ForEach(seriesViewModel.seasons, id: \.season.id) { season in
-                            Button {
-                                selection.wrappedValue = season.id
-                                if season.elements.isEmpty {
-                                    season.send(.refresh)
+                Group {
+                    switch selectionViewModel.state {
+                    case .content:
+                        if !selectionViewModel.elements.isEmpty {
+                            CollectionHStack(
+                                uniqueElements: selectionViewModel.elements,
+                                id: \.unwrappedIDHashOrZero,
+                                columns: 4
+                            ) { episode in
+                                EpisodeButton(episode: episode) {
+                                    action(episode)
                                 }
-                            } label: {
-                                if season.id == selection.wrappedValue {
-                                    Label(season.season.displayTitle, systemImage: "checkmark")
-                                } else {
-                                    Text(season.season.displayTitle)
-                                }
+                                #if os(tvOS)
+                                .focused($focusedEpisodeID, equals: episode.id)
+                                .padding(.horizontal, 4)
+                                #endif
                             }
-                        }
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
+                            .insets(horizontal: EdgeInsets.edgePadding)
+                            .itemSpacing(EdgeInsets.edgePadding)
+                            .proxy(collectionHStackProxy)
+                            #if os(tvOS)
+                                .focusSection()
+                                .onChange(of: focusedEpisodeID) { _, newValue in
+                                    guard let newValue else { return }
+                                    lastFocusedEpisodeID = newValue
+                                }
+                                .onChange(of: containerState.isPresentingSupplement) { _, newValue in
+                                    if newValue {
+                                        getContentFocus()
+                                    }
+                                }
+                                .onChange(of: focusGuide.focusedTag) { _, newTag in
+                                    if newTag == "supplementContent" {
+                                        getContentFocus()
+                                    }
+                                }
+                            #endif
+                                .onFirstAppear {
+                                        #if os(tvOS)
+                                        lastFocusedEpisodeID = manager.item.id
+                                        #endif
 
-                            Label(selectionViewModel.season.displayTitle, systemImage: "chevron.down")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            collectionHStackProxy.scrollTo(
+                                                id: manager.item.unwrappedIDHashOrZero,
+                                                animated: false
+                                            )
+                                        }
+                                    }
                         }
+                    case .initial, .refreshing:
+                        ProgressView()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    case .error:
+                        ErrorView(error: ErrorMessage(L10n.unknownError))
                     }
-                    .frame(maxHeight: .infinity)
-
-                    Button {
-                        guard let nextItem = manager.queue?.nextItem else { return }
-                        manager.playNewItem(provider: nextItem)
-                        manager.setPlaybackRequestStatus(status: .playing)
-                        containerState.select(supplement: nil)
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
-
-                            Label("Next", systemImage: "forward.end.fill")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .frame(maxHeight: .infinity)
-
-                    Button {
-                        guard let previousItem = manager.queue?.previousItem else { return }
-                        manager.playNewItem(provider: previousItem)
-                        manager.setPlaybackRequestStatus(status: .playing)
-                        containerState.select(supplement: nil)
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
-
-                            Label("Previous", systemImage: "backward.end.fill")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .frame(maxHeight: .infinity)
                 }
-                .frame(width: 150)
-                .edgePadding(.horizontal)
-//                .padding(.trailing, safeAreaInsets.trailing)
+            }
+        }
+
+        var body: some View {
+            Group {
+                if let selectionViewModel {
+                    _Body(
+                        selectionViewModel: selectionViewModel,
+                        action: action
+                    )
+                }
+            }
+            .onReceive(seriesViewModel.$seasons) { newSeasons in
+                guard selection.wrappedValue == nil, !newSeasons.isEmpty else { return }
+                selection.wrappedValue = newSeasons.first?.id
+                newSeasons.first?.send(.refresh)
             }
         }
     }
@@ -426,6 +487,14 @@ extension EpisodeMediaPlayerQueue {
         private var isSelected: Bool
 
         let episode: BaseItemDto
+
+        private var strokeLineWidth: CGFloat {
+            #if os(tvOS)
+            12
+            #else
+            8
+            #endif
+        }
 
         var body: some View {
             ZStack {
@@ -442,12 +511,14 @@ extension EpisodeMediaPlayerQueue {
                     ContainerRelativeShape()
                         .stroke(
                             accentColor,
-                            lineWidth: 8
+                            lineWidth: strokeLineWidth
                         )
                         .clipped()
                 }
             }
             .posterStyle(.landscape)
+            .posterShadow()
+            .hoverEffect(.highlight)
         }
     }
 
@@ -471,9 +542,6 @@ extension EpisodeMediaPlayerQueue {
     }
 
     private struct EpisodeRow: View {
-
-        @Default(.accentColor)
-        private var accentColor
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
@@ -510,22 +578,22 @@ extension EpisodeMediaPlayerQueue {
 
     private struct EpisodeButton: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
         @EnvironmentObject
         private var manager: MediaPlayerManager
+
+        @State
+        private var activeItemID: String?
 
         let episode: BaseItemDto
         let action: () -> Void
 
         private var isCurrentEpisode: Bool {
-            manager.item.id == episode.id
+            activeItemID == episode.id
         }
 
         var body: some View {
             Button(action: action) {
-                VStack(alignment: .leading, spacing: 5) {
+                VStack(alignment: .leading, spacing: UIDevice.isTV ? 15 : 5) {
                     EpisodePreview(episode: episode)
 
                     VStack(alignment: .leading, spacing: 5) {
@@ -534,15 +602,20 @@ extension EpisodeMediaPlayerQueue {
                             .fontWeight(.semibold)
                             .lineLimit(1)
                             .foregroundStyle(.primary)
-                            .frame(height: 15)
 
                         EpisodeDescription(episode: episode)
-                            .frame(height: 20, alignment: .top)
+                            .lineLimit(1)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
+            #if os(tvOS)
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.roundedRectangle)
+            #endif
             .foregroundStyle(.primary, .secondary)
+            .onReceive(manager.$item) { newItem in
+                activeItemID = newItem.id
+            }
             .isSelected(isCurrentEpisode)
         }
     }

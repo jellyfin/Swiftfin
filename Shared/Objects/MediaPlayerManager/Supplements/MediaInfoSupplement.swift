@@ -37,40 +37,70 @@ extension MediaInfoSupplement {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        #if os(tvOS)
+        @EnvironmentObject
+        private var focusGuide: FocusGuide
+
+        @FocusState
+        private var isResetButtonFocused: Bool
+        #endif
+
         let item: BaseItemDto
 
         @ViewBuilder
         private var accessoryView: some View {
-            DotHStack {
-                if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLabel {
-                    Text(seasonEpisodeLocator)
-                } else if let premiereYear = item.premiereDateYear {
-                    Text(premiereYear)
-                }
+            VStack(alignment: .leading) {
+                DotHStack {
+                    if item.type == .episode {
+                        if let premiereDateLabel = item.premiereDateLabel {
+                            Text(premiereDateLabel)
+                        }
+                        if let seasonEpisodeLocator = item.seasonEpisodeLabel {
+                            Text(seasonEpisodeLocator)
+                        }
 
-                if let runtime = item.runTimeLabel {
-                    Text(runtime)
-                }
+                    } else if let premiereYear = item.premiereDateYear {
+                        Text(premiereYear)
+                    }
 
-                if let officialRating = item.officialRating {
-                    Text(officialRating)
+                    if let runtime = item.runTimeLabel {
+                        Text(runtime)
+                    }
+                    if let officialRating = item.officialRating {
+                        Text(officialRating)
+                    }
                 }
             }
         }
 
-        @ViewBuilder
-        private var fromBeginningButton: some View {
-            Button("From Beginning", systemImage: "play.fill") {
-                manager.proxy?.setSeconds(.zero)
-                manager.setPlaybackRequestStatus(status: .playing)
-                containerState.select(supplement: nil)
+        private func resetPlayback() {
+            manager.proxy?.setSeconds(.zero)
+            manager.setPlaybackRequestStatus(status: .playing)
+            containerState.select(supplement: nil)
+        }
+
+        // TODO: Localize
+        private var resetPlaybackButton: some View {
+            AlternateLayoutView {
+                Button(action: resetPlayback) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 7)
+                            .foregroundStyle(.white)
+
+                        Label("From Beginning", systemImage: "play.fill")
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.black)
+                    }
+                }
+            } content: {
+                Button(action: resetPlayback) {
+                    Label("From Beginning", systemImage: "play.fill")
+                        .padding()
+                }
+                .buttonStyle(.material)
+                .font(.subheadline)
+                .fontWeight(.semibold)
             }
-            #if os(iOS)
-            .buttonStyle(.material)
-            #endif
-            .frame(width: 200, height: 50)
-            .font(.subheadline)
-            .fontWeight(.semibold)
         }
 
         // TODO: may need to be a layout for correct overview frame
@@ -111,22 +141,9 @@ extension MediaInfoSupplement {
                 .allowsHitTesting(false)
 
                 if !item.isLiveStream {
-                    Button {
-                        manager.proxy?.setSeconds(.zero)
-                        manager.setPlaybackRequestStatus(status: .playing)
-                        containerState.select(supplement: nil)
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
-
-                            Label("From Beginning", systemImage: "play.fill")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 40)
+                    resetPlaybackButton
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 40)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -166,14 +183,62 @@ extension MediaInfoSupplement {
 
                 if !item.isLiveStream {
                     VStack {
-                        fromBeginningButton
+                        resetPlaybackButton
+                            .frame(width: 200, height: 50)
                     }
                 }
             }
         }
 
         var tvOSView: some View {
-            EmptyView()
+            HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
+                // TODO: determine what to do with non-portrait (channel, home video) images
+                //       - use aspect ratio?
+                PosterImage(
+                    item: item,
+                    type: item.preferredPosterDisplayType,
+                    contentMode: .fit
+                )
+                .environment(\.isOverComplexContent, true)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Marquee(item.displayTitle, speed: 120, delay: 3, fade: 5)
+                        .font(.title)
+                        .fontWeight(.semibold)
+
+                    accessoryView
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    if let overview = item.overview {
+                        Text(overview)
+                            .font(.body)
+                            .lineLimit(3)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                if !item.isLiveStream {
+                    resetPlaybackButton
+                        .frame(height: 75)
+                        .fixedSize(horizontal: true, vertical: false)
+                    #if os(tvOS)
+                        .focused($isResetButtonFocused)
+                    #endif
+                }
+            }
+            .padding(safeAreaInsets)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            #if os(tvOS)
+                .focusSection()
+                .onChange(of: focusGuide.focusedTag) { _, newTag in
+                    if newTag == "supplementContent" {
+                        isResetButtonFocused = true
+                    }
+                }
+            #endif
         }
     }
 }
