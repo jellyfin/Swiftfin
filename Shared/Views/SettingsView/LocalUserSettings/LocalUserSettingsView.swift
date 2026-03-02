@@ -11,13 +11,14 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
-struct UserProfileSettingsView: View {
+struct LocalUserSettingsView: View {
 
     @Router
     private var router
 
     @ObservedObject
     private var viewModel: SettingsViewModel
+
     @StateObject
     private var profileImageViewModel: UserProfileImageViewModel
 
@@ -30,7 +31,8 @@ struct UserProfileSettingsView: View {
     }
 
     var body: some View {
-        List {
+        Form {
+            #if os(iOS)
             UserProfileHeroImage(
                 user: profileImageViewModel.user,
                 source: viewModel.userSession.user.profileImageSource(
@@ -51,24 +53,34 @@ struct UserProfileSettingsView: View {
                     router.route(to: .resetUserPassword(userID: viewModel.userSession.user.id))
                 }
             }
+            #endif
 
             Section {
                 ChevronButton(L10n.security) {
-                    router.route(to: .localSecurity)
+                    router.route(to: .localUserSecurity)
                 }
             }
 
             Section {
                 // TODO: move under future "Storage" tab
                 //       when downloads implemented
-                Button(L10n.resetSettings) {
+                Button(L10n.resetSettings, role: .destructive) {
                     isPresentingConfirmReset = true
                 }
-                .foregroundStyle(.red)
             } footer: {
                 Text(L10n.resetSettingsDescription)
             }
+        } image: {
+            UserProfileImage(
+                userID: viewModel.userSession.user.id,
+                source: viewModel.userSession.user.profileImageSource(
+                    client: viewModel.userSession.client
+                )
+            )
+            .aspectRatio(contentMode: .fit)
+            .frame(maxWidth: 400)
         }
+        .navigationTitle(L10n.user)
         .confirmationDialog(
             L10n.resetSettings,
             isPresented: $isPresentingConfirmReset,
