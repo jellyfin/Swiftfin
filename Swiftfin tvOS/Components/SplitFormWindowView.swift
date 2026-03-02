@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-@available(*, deprecated, message: "Use the PlatformForm protocol instead")
+@available(*, deprecated, message: "Use the Form(systemImage:) overload instead")
 struct SplitFormWindowView: View {
 
     private var contentView: () -> any View
