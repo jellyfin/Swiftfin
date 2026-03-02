@@ -13,12 +13,8 @@ import SwiftUI
 
 struct ResetUserPasswordView: View {
 
-    // MARK: - Defaults
-
     @Default(.accentColor)
     private var accentColor
-
-    // MARK: - Focus Fields
 
     private enum Field: Hashable {
         case currentPassword
@@ -29,15 +25,11 @@ struct ResetUserPasswordView: View {
     @FocusState
     private var focusedField: Field?
 
-    // MARK: - State & Environment Objects
-
     @Router
     private var router
 
     @StateObject
     private var viewModel: ResetUserPasswordViewModel
-
-    // MARK: - Password Variables
 
     @State
     private var currentPassword: String = ""
@@ -48,24 +40,16 @@ struct ResetUserPasswordView: View {
 
     private let requiresCurrentPassword: Bool
 
-    // MARK: - Dialog States
-
     @State
     private var isPresentingSuccess: Bool = false
 
-    // MARK: - Error State
-
     @State
     private var error: Error? = nil
-
-    // MARK: - Initializer
 
     init(userID: String, requiresCurrentPassword: Bool) {
         self._viewModel = StateObject(wrappedValue: ResetUserPasswordViewModel(userID: userID))
         self.requiresCurrentPassword = requiresCurrentPassword
     }
-
-    // MARK: - Body
 
     var body: some View {
         List {
