@@ -16,41 +16,36 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     @StateObject
     private var selection: BindingBox<[Element]>
 
-    private let sources: [Element]
-    private var systemImage: String
+    private let data: [Element]
+    private let systemImage: String
+
+    init(
+        systemImage: String = "filemenu.and.selection",
+        selection: Binding<[Element]>,
+        sources: [Element]
+    ) {
+        self._selection = StateObject(wrappedValue: BindingBox(source: selection))
+        self.data = sources
+        self.systemImage = systemImage
+    }
 
     private var disabledSelection: [Element] {
-        sources.subtracting(selection.value)
+        data.subtracting(selection.value)
     }
 
     private var isReordering: Bool {
         editMode?.wrappedValue.isEditing == true
     }
 
-    // MARK: - Actions
-
-    private func move(from source: IndexSet, to destination: Int) {
-        selection.value.move(fromOffsets: source, toOffset: destination)
-        UIDevice.impact(.light)
-    }
-
     private func select(element: Element) {
-        if selection.value.contains(element) {
-            selection.value.removeAll(where: { $0 == element })
-        } else {
-            selection.value.append(element)
-        }
+        selection.value.toggle(element)
         UIDevice.impact(.light)
     }
-
-    // MARK: - Components
 
     @ViewBuilder
     private var editButton: some View {
         Button(isReordering ? L10n.done : L10n.edit) {
-            withAnimation {
-                editMode?.wrappedValue = isReordering ? .inactive : .active
-            }
+            editMode?.wrappedValue = isReordering ? .inactive : .active
         }
         #if os(iOS)
         .buttonStyle(.toolbarPill)
@@ -58,27 +53,25 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     }
 
     @ViewBuilder
-    private func rowLabel(for element: Element) -> some View {
-        if let imageable = element as? SystemImageable {
-            Label(element.displayTitle, systemImage: imageable.systemImage)
-        } else {
-            Text(element.displayTitle)
+    private func button(
+        for element: Element,
+        @ViewBuilder content: () -> some View
+    ) -> some View {
+        Button {
+            select(element: element)
+        } label: {
+            LabeledContent(content: content) {
+                if let imageable = element as? SystemImageable {
+                    Label(element.displayTitle, systemImage: imageable.systemImage)
+                        .symbolRenderingMode(.monochrome)
+                } else {
+                    Text(element.displayTitle)
+                }
+            }
         }
+        .disabled(isReordering)
+        .foregroundStyle(.primary, .secondary)
     }
-
-    // MARK: - Initializer
-
-    init(
-        _ systemImage: String = "filemenu.and.selection",
-        selection: Binding<[Element]>,
-        sources: [Element]
-    ) {
-        self._selection = StateObject(wrappedValue: BindingBox(source: selection))
-        self.sources = sources
-        self.systemImage = systemImage
-    }
-
-    // MARK: - Body
 
     var body: some View {
         Form(systemImage: systemImage) {
@@ -88,24 +81,16 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(selection.value, id: \.self) { element in
-                        Button {
-                            select(element: element)
-                        } label: {
-                            HStack {
-                                rowLabel(for: element)
-
-                                Spacer()
-
-                                if !isReordering {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.red)
-                                }
+                        button(for: element) {
+                            if !isReordering {
+                                Image(systemName: "minus.circle.fill")
+                                    .foregroundStyle(.red)
                             }
-                            .foregroundColor(.primary)
                         }
-                        .disabled(isReordering)
                     }
-                    .onMove(perform: move)
+                    .onMove {
+                        selection.value.move(fromOffsets: $0, toOffset: $1)
+                    }
                 }
             }
 
@@ -115,27 +100,18 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(disabledSelection, id: \.self) { element in
-                        Button {
-                            select(element: element)
-                        } label: {
-                            HStack {
-                                rowLabel(for: element)
-
-                                Spacer()
-
-                                if !isReordering {
-                                    Image(systemName: "plus.circle.fill")
-                                        .foregroundColor(.green)
-                                }
+                        button(for: element) {
+                            if !isReordering {
+                                Image(systemName: "plus.circle.fill")
+                                    .foregroundStyle(.green)
                             }
-                            .foregroundColor(.primary)
                         }
-                        .disabled(isReordering)
                     }
                 }
             }
         }
         .animation(.linear(duration: 0.2), value: selection.value)
+        .animation(.linear(duration: 0.2), value: editMode?.wrappedValue)
         .toolbar {
             editButton
         }
