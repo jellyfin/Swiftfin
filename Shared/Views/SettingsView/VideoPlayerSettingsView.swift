@@ -107,8 +107,6 @@ struct VideoPlayerSettingsView: View {
             JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
             JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
 
-            // TODO: Migrate these routes to tvOS with Player UI
-            #if iOS
             ChevronButton(L10n.barButtons) {
                 router.route(to: .actionBarButtonSelector(
                     selectedButtonsBinding: $barActionButtons
@@ -120,16 +118,13 @@ struct VideoPlayerSettingsView: View {
                     selectedButtonsBinding: $menuActionButtons
                 ))
             }
-            #endif
         }
-        #if iOS
         .onChange(of: barActionButtons) { newValue in
-                autoPlayEnabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
-            }
-            .onChange(of: menuActionButtons) { newValue in
-                autoPlayEnabled = newValue.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
-            }
-        #endif
+            autoPlayEnabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
+        }
+        .onChange(of: menuActionButtons) { newValue in
+            autoPlayEnabled = newValue.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
+        }
     }
 
     // MARK: - Resume Settings
