@@ -13,41 +13,26 @@ import SwiftUI
 
 struct QuickConnectAuthorizeView: View {
 
-    // MARK: - Defaults
-
     @Default(.accentColor)
     private var accentColor
-
-    // MARK: - Focus Fields
-
-    @FocusState
-    private var isCodeFocused: Bool
 
     @Router
     private var router
 
-    // MARK: - State & Environment Objects
+    @FocusState
+    private var isCodeFocused: Bool
 
     @StateObject
     private var viewModel: QuickConnectAuthorizeViewModel
 
-    // MARK: - Quick Connect Variables
-
     @State
     private var code: String = ""
-
-    // MARK: - Dialog State
-
     @State
     private var isPresentingSuccess: Bool = false
-
-    // MARK: - Initialize
 
     init(user: UserDto) {
         self._viewModel = StateObject(wrappedValue: QuickConnectAuthorizeViewModel(user: user))
     }
-
-    // MARK: Display the User Being Authenticated
 
     @ViewBuilder
     private var loginUserRow: some View {
@@ -68,8 +53,6 @@ struct QuickConnectAuthorizeView: View {
             Spacer()
         }
     }
-
-    // MARK: - Body
 
     var body: some View {
         Form {
