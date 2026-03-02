@@ -26,7 +26,7 @@ struct LocalUserSecurityView: View {
     private var router
 
     @StateObject
-    private var viewModel = UserLocalSecurityViewModel()
+    private var viewModel = LocalUserSecurityViewModel()
 
     @State
     private var signInPolicy: UserAccessPolicy = .none
@@ -62,7 +62,6 @@ struct LocalUserSecurityView: View {
     }
 
     #if os(iOS)
-    @MainActor
     private func performDeviceAuthentication(reason: String) async throws {
         let context = LAContext()
         var policyError: NSError?
@@ -83,7 +82,8 @@ struct LocalUserSecurityView: View {
     }
     #endif
 
-    private func handleEvent(_ event: UserLocalSecurityViewModel.Event) {
+    @MainActor
+    private func handleEvent(_ event: LocalUserSecurityViewModel.Event) async throws {
         switch event {
         case let .error(eventError):
             UIDevice.feedback(.error)
@@ -91,12 +91,10 @@ struct LocalUserSecurityView: View {
 
         case .promptForOldDeviceAuth:
             #if os(iOS)
-            Task { @MainActor in
-                try await performDeviceAuthentication(
-                    reason: L10n.userRequiresDeviceAuthentication(viewModel.userSession.user.username)
-                )
-                checkNewPolicy()
-            }
+            try await performDeviceAuthentication(
+                reason: L10n.userRequiresDeviceAuthentication(viewModel.userSession.user.username)
+            )
+            checkNewPolicy()
             #endif
 
         case .promptForOldPin:
@@ -105,13 +103,11 @@ struct LocalUserSecurityView: View {
 
         case .promptForNewDeviceAuth:
             #if os(iOS)
-            Task { @MainActor in
-                try await performDeviceAuthentication(
-                    reason: L10n.userRequiresDeviceAuthentication(viewModel.userSession.user.username)
-                )
-                viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: "")
-                router.dismiss()
-            }
+            try await performDeviceAuthentication(
+                reason: L10n.userRequiresDeviceAuthentication(viewModel.userSession.user.username)
+            )
+            viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: "")
+            router.dismiss()
             #endif
 
         case .promptForNewPin:
@@ -160,10 +156,20 @@ struct LocalUserSecurityView: View {
             pinHint = viewModel.userSession.user.pinHint
         }
         .onReceive(viewModel.events) { event in
-            handleEvent(event)
+            Task {
+                try await handleEvent(event)
+            }
         }
         .topBarTrailing {
-            saveButton
+            Button(
+                signInPolicy == .requirePin && signInPolicy == viewModel.userSession.user.accessPolicy
+                    ? L10n.changePin
+                    : L10n.save,
+                action: checkOldPolicy
+            )
+            #if os(iOS)
+            .buttonStyle(.toolbarPill)
+            #endif
         }
         .alert(
             L10n.enterPin,
@@ -209,26 +215,6 @@ struct LocalUserSecurityView: View {
             .keyboardType(.numberPad)
     }
 
-    private var saveButton: some View {
-        Button {
-            checkOldPolicy()
-        } label: {
-            Text(
-                signInPolicy == .requirePin && signInPolicy == viewModel.userSession.user.accessPolicy
-                    ? L10n.changePin
-                    : L10n.save
-            )
-            .foregroundStyle(accentColor.overlayColor)
-            .font(.headline)
-            .padding(.vertical, 5)
-            .padding(.horizontal, 10)
-            .background {
-                accentColor
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-        }
-    }
-
     @ViewBuilder
     private var securitySection: some View {
         Section(L10n.security) {
@@ -237,9 +223,9 @@ struct LocalUserSecurityView: View {
             #else
             Toggle(
                 L10n.pin,
-                isOn: Binding<Bool>(
-                    get: { signInPolicy == .requirePin },
-                    set: { signInPolicy = $0 ? .requirePin : .none }
+                isOn: $signInPolicy.map(
+                    getter: { $0 == .requirePin },
+                    setter: { $0 ? .requirePin : .none }
                 )
             )
             #endif
