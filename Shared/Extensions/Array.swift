@@ -66,4 +66,12 @@ extension Array where Element: Equatable {
     mutating func removeAll(equalTo element: Element) {
         removeAll { $0 == element }
     }
+
+    mutating func toggle(_ element: Element) {
+        if contains(element) {
+            removeAll(equalTo: element)
+        } else {
+            append(element)
+        }
+    }
 }
