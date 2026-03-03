@@ -21,6 +21,37 @@ extension SelectUserView {
         let servers: OrderedSet<ServerState>
         let action: (ServerState) -> Void
 
+        var body: some View {
+            ConditionalMenu(
+                tracking: selectedServer,
+                action: action
+            ) {
+                Text(L10n.selectServer)
+
+                ForEach(servers) { server in
+                    Button {
+                        action(server)
+                    } label: {
+                        Text(server.name)
+                        Text(server.currentURL.absoluteString)
+                    }
+                }
+            } label: {
+                switch displayType {
+                case .list:
+                    listLabel
+                default:
+                    gridLabel
+                }
+            }
+            #if os(iOS)
+            .buttonStyle(.plain)
+            #else
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.circle)
+            #endif
+        }
+
         @ViewBuilder
         private var plusIcon: some View {
             ZStack {
@@ -76,37 +107,6 @@ extension SelectUserView {
                     action(selectedServer)
                 }
             }
-        }
-
-        var body: some View {
-            ConditionalMenu(
-                tracking: selectedServer,
-                action: action
-            ) {
-                Text(L10n.selectServer)
-
-                ForEach(servers) { server in
-                    Button {
-                        action(server)
-                    } label: {
-                        Text(server.name)
-                        Text(server.currentURL.absoluteString)
-                    }
-                }
-            } label: {
-                switch displayType {
-                case .list:
-                    listLabel
-                default:
-                    gridLabel
-                }
-            }
-            #if os(iOS)
-            .buttonStyle(.plain)
-            #else
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
-            #endif
         }
     }
 }

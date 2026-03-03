@@ -29,6 +29,13 @@ extension SelectUserView {
         private let action: () -> Void
         private let onDelete: () -> Void
 
+        private var labelForegroundStyle: some ShapeStyle {
+            guard isEditing else {
+                return .primary
+            }
+            return isSelected ? .primary : .secondary
+        }
+
         init(
             displayType: LibraryDisplayType,
             user: UserState,
@@ -45,12 +52,13 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
-        private var labelForegroundStyle: some ShapeStyle {
-            guard isEditing else {
-                return .primary
+        var body: some View {
+            switch (displayType, UIDevice.isTV) {
+            case (.list, false):
+                listView
+            default:
+                gridView
             }
-
-            return isSelected ? .primary : .secondary
         }
 
         @ViewBuilder
@@ -98,14 +106,15 @@ extension SelectUserView {
                     }
                 }
             }
-            .contextMenu {
-                if !isEditing {
-                    Button(
-                        L10n.delete,
-                        role: .destructive,
-                        action: onDelete
-                    )
-                }
+            .if(!isEditing) { button in
+                button
+                    .contextMenu {
+                        Button(
+                            L10n.delete,
+                            role: .destructive,
+                            action: onDelete
+                        )
+                    }
             }
             #if os(iOS)
             .buttonStyle(.plain)
@@ -144,23 +153,15 @@ extension SelectUserView {
                 }
             }
             .onSelect(perform: action)
-            .contextMenu {
-                if !isEditing {
-                    Button(
-                        L10n.delete,
-                        role: .destructive,
-                        action: onDelete
-                    )
-                }
-            }
-        }
-
-        var body: some View {
-            switch (displayType, UIDevice.isTV) {
-            case (.list, false):
-                listView
-            default:
-                gridView
+            .if(!isEditing) { button in
+                button
+                    .contextMenu {
+                        Button(
+                            L10n.delete,
+                            role: .destructive,
+                            action: onDelete
+                        )
+                    }
             }
         }
     }

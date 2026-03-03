@@ -11,7 +11,7 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct SelectUserBottomBar: View {
+    struct SelectUserBottomBar: PlatformView {
 
         @Environment(\.isEditing)
         private var isEditing
@@ -51,8 +51,7 @@ extension SelectUserView {
             self.toggleAllUsersSelected = toggleAllUsersSelected
         }
 
-        var body: some View {
-            #if os(iOS)
+        var iOSView: some View {
             if !isEditing {
                 ServerSelectionMenu(
                     selection: $serverSelection,
@@ -63,101 +62,114 @@ extension SelectUserView {
                 .frame(maxWidth: 400)
                 .edgePadding([.bottom, .horizontal])
             }
-            #else
+        }
 
+        var tvOSView: some View {
             AlternateLayoutView(alignment: .top) {
                 Color.clear
-                    .frame(height: 75)
+                    .frame(height: 100)
             } content: {
                 HStack(alignment: .top, spacing: 30) {
                     if isEditing {
-                        Button(
-                            L10n.delete,
-                            role: .destructive,
-                            action: onDelete
-                        )
-                        .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .primary))
-                        .frame(height: 100)
-                        .frame(minWidth: 100, maxWidth: 400)
-                        .disabled(!areUsersSelected)
-
-                        Button {
-                            toggleAllUsersSelected()
-                        } label: {
-                            Text(areUsersSelected ? L10n.removeAll : L10n.selectAll)
-                        }
-                        .buttonStyle(.material)
-                        .frame(height: 100)
-                        .frame(minWidth: 100, maxWidth: 400)
-
-                        Button {
-                            onEditingChanged(false)
-                        } label: {
-                            Text(L10n.cancel)
-                        }
-                        .buttonStyle(.material)
-                        .frame(height: 100)
-                        .frame(minWidth: 100, maxWidth: 400)
+                        editView
                     } else {
-                        ConditionalMenu(
-                            tracking: selectedServer,
-                            action: { server in
-                                router.route(to: .userSignIn(server: server))
-                            }
-                        ) {
-                            Text(L10n.selectServer)
-
-                            ForEach(servers) { server in
-                                Button {
-                                    router.route(to: .userSignIn(server: server))
-                                } label: {
-                                    Text(server.name)
-                                    Text(server.currentURL.absoluteString)
-                                }
-                            }
-                        } label: {
-                            Label(L10n.addUser, systemImage: "plus")
-                                .labelStyle(.iconOnly)
-                        }
-                        .buttonStyle(.material)
-                        .menuOrder(.fixed)
-                        .frame(width: 100, height: 100)
-                        .hidden(!hasUsers)
-
-                        ServerSelectionMenu(
-                            selection: $serverSelection,
-                            selectedServer: selectedServer,
-                            servers: servers
-                        )
-                        .frame(maxWidth: 600)
-                        .frame(height: 100)
-
-                        Menu {
-                            Section {
-                                Button(L10n.editUsers, systemImage: "person.crop.circle") {
-                                    onEditingChanged(true)
-                                }
-                            }
-
-                            Section {
-                                Button(L10n.advanced, systemImage: "gearshape.fill") {
-                                    router.route(to: .appSettings)
-                                }
-                            }
-                        } label: {
-                            Label(L10n.advanced, systemImage: "gearshape.fill")
-                                .labelStyle(.iconOnly)
-                        }
-                        .buttonStyle(.material)
-                        .menuOrder(.fixed)
-                        .frame(width: 100, height: 100)
+                        contentView
                     }
                 }
-                .edgePadding([.bottom, .horizontal])
+                .animation(.easeInOut, value: areUsersSelected)
+                .edgePadding(.horizontal)
                 .font(.body.weight(.semibold))
                 .foregroundStyle(Color.primary)
             }
-            #endif
+            .edgePadding(.bottom)
+        }
+
+        @ViewBuilder
+        private var editView: some View {
+            if areUsersSelected {
+                Button(
+                    L10n.delete,
+                    action: onDelete
+                )
+                .isSelected(true)
+                .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .primary))
+                .frame(height: 100)
+                .frame(minWidth: 100, maxWidth: 400)
+            }
+
+            Button {
+                toggleAllUsersSelected()
+            } label: {
+                Text(areUsersSelected ? L10n.removeAll : L10n.selectAll)
+            }
+            .buttonStyle(.material)
+            .frame(height: 100)
+            .frame(minWidth: 100, maxWidth: 400)
+
+            Button {
+                onEditingChanged(false)
+            } label: {
+                Text(L10n.cancel)
+            }
+            .buttonStyle(.material)
+            .frame(height: 100)
+            .frame(minWidth: 100, maxWidth: 400)
+        }
+
+        @ViewBuilder
+        private var contentView: some View {
+            ConditionalMenu(
+                tracking: selectedServer,
+                action: { server in
+                    router.route(to: .userSignIn(server: server))
+                }
+            ) {
+                Text(L10n.selectServer)
+
+                ForEach(servers) { server in
+                    Button {
+                        router.route(to: .userSignIn(server: server))
+                    } label: {
+                        Text(server.name)
+                        Text(server.currentURL.absoluteString)
+                    }
+                }
+            } label: {
+                Label(L10n.addUser, systemImage: "plus")
+                    .labelStyle(.iconOnly)
+            }
+            .buttonStyle(.material)
+            .menuOrder(.fixed)
+            .frame(width: 100, height: 100)
+            .hidden(!hasUsers)
+
+            ServerSelectionMenu(
+                selection: $serverSelection,
+                selectedServer: selectedServer,
+                servers: servers
+            )
+            .frame(maxWidth: 600)
+            .frame(height: 100)
+
+            Menu {
+                Section {
+                    Button(L10n.editUsers, systemImage: "person.crop.circle") {
+                        onEditingChanged(true)
+                    }
+                }
+
+                Section {
+                    Button(L10n.advanced, systemImage: "gearshape.fill") {
+                        router.route(to: .appSettings)
+                    }
+                }
+            } label: {
+                Label(L10n.advanced, systemImage: "gearshape.fill")
+                    .labelStyle(.iconOnly)
+            }
+            .buttonStyle(.material)
+            .menuOrder(.fixed)
+            .frame(width: 100, height: 100)
         }
     }
 }

@@ -86,7 +86,6 @@ extension SelectUserView {
                 }
                 .font(.body.weight(.semibold))
                 .foregroundStyle(Color.primary)
-                .padding()
             }
             .buttonStyle(.material)
             .menuOrder(.fixed)
