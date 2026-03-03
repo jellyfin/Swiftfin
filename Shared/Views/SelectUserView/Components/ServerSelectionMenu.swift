@@ -13,17 +13,14 @@ extension SelectUserView {
 
     struct ServerSelectionMenu: View {
 
-        @Environment(\.colorScheme)
-        private var colorScheme
-
         @Router
         private var router
 
         @Binding
         private var serverSelection: SelectUserServerSelection
 
-        let selectedServer: ServerState?
-        let servers: OrderedSet<ServerState>
+        private let selectedServer: ServerState?
+        private let servers: OrderedSet<ServerState>
 
         init(
             selection: Binding<SelectUserServerSelection>,
@@ -59,45 +56,40 @@ extension SelectUserView {
                             .tag(SelectUserServerSelection.all)
                     }
 
-                    ForEach(servers.reversed()) { server in
-                        Button {
+                    ForEach(servers) { server in
+                        VStack(alignment: .leading) {
                             Text(server.name)
+                                .foregroundStyle(Color.primary)
+
                             Text(server.currentURL.absoluteString)
+                                .foregroundStyle(Color.secondary)
                         }
                         .tag(SelectUserServerSelection.server(id: server.id))
                     }
                 }
             } label: {
-                ZStack {
-
-                    if colorScheme == .light {
-                        Color.secondarySystemFill
-                    } else {
-                        Color.tertiarySystemBackground
-                    }
-
-                    HStack {
-                        switch serverSelection {
-                        case .all:
-                            Label(L10n.allServers, systemImage: "person.2.fill")
-                        case let .server(id):
-                            if let server = servers.first(where: { $0.id == id }) {
-                                Label(server.name, systemImage: "server.rack")
-                            }
+                HStack(spacing: UIDevice.isTV ? 16 : nil) {
+                    switch serverSelection {
+                    case .all:
+                        Label(L10n.allServers, systemImage: "person.2.fill")
+                    case let .server(id):
+                        if let server = servers.first(where: { $0.id == id }) {
+                            Label(server.name, systemImage: "server.rack")
+                        } else {
+                            Label(L10n.unknown, systemImage: "server.rack")
                         }
-
-                        Image(systemName: "chevron.up.chevron.down")
-                            .foregroundStyle(.secondary)
-                            .font(.subheadline.weight(.semibold))
                     }
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(Color.primary)
+
+                    Image(systemName: "chevron.up.chevron.down")
+                        .foregroundStyle(.secondary)
+                        .font(.subheadline.weight(.semibold))
                 }
-                .frame(height: 50)
-                .frame(maxWidth: 400)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .font(.body.weight(.semibold))
+                .foregroundStyle(Color.primary)
+                .padding()
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.material)
+            .menuOrder(.fixed)
         }
     }
 }
