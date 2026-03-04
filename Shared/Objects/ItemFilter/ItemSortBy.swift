@@ -80,7 +80,15 @@ extension ItemSortBy: Displayable, SupportedCaseIterable {
             .premiereDate,
             .name,
             .sortName,
+            .communityRating,
+            .criticRating,
+            .dateCreated,
             .dateLastContentAdded,
+            .datePlayed,
+            .officialRating,
+            .playCount,
+            .productionYear,
+            .runtime,
             .random,
         ]
     }
