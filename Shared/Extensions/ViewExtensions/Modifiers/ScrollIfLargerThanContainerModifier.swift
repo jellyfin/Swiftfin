@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-// TODO: both axes
-
 struct ScrollIfLargerThanContainerModifier: ViewModifier {
 
     @State
@@ -17,21 +15,33 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
     @State
     private var layoutSize: CGSize = .zero
 
+    let axes: Axis.Set
     let padding: CGFloat
+
+    private var isVerticallyLarger: Bool {
+        contentSize.height >= layoutSize.height
+    }
+
+    private var isHorizontallyLarger: Bool {
+        contentSize.width >= layoutSize.width
+    }
 
     func body(content: Content) -> some View {
         AlternateLayoutView {
             Color.clear
                 .trackingSize($layoutSize)
         } content: {
-            ScrollView {
+            ScrollView(axes) {
                 content
                     .trackingSize($contentSize)
             }
-            .frame(maxHeight: contentSize.height >= layoutSize.height ? .infinity : contentSize.height)
+            .frame(
+                maxWidth: axes.contains(.horizontal) ? (isHorizontallyLarger ? .infinity : contentSize.width) : nil,
+                maxHeight: axes.contains(.vertical) ? (isVerticallyLarger ? .infinity : contentSize.height) : nil
+            )
             .backport // iOS 17
             .scrollClipDisabled()
-            .scrollDisabled(contentSize.height < layoutSize.height)
+            .scrollDisabled(!(axes.contains(.vertical) && isVerticallyLarger) || (axes.contains(.horizontal) && isHorizontallyLarger))
             .scrollIndicators(.never)
         }
     }

@@ -219,7 +219,7 @@ struct UserSignInView: View {
             } else {
                 #if os(iOS)
                 ForEach(viewModel.publicUsers) { user in
-                    PublicUserRow(
+                    UserRow(
                         user: user,
                         client: viewModel.server.client
                     ) {
@@ -228,13 +228,16 @@ struct UserSignInView: View {
                         focusedTextField = .password
                     }
                 }
+                .listRowBackground(EmptyView())
+                .listRowInsets(.zero)
+                .listRowSeparator(.hidden)
                 #else
                 LazyVGrid(
                     columns: Array(repeating: GridItem(.flexible()), count: 4),
                     spacing: 30
                 ) {
                     ForEach(viewModel.publicUsers) { user in
-                        PublicUserButton(
+                        UserButton(
                             user: user,
                             client: viewModel.server.client
                         ) {

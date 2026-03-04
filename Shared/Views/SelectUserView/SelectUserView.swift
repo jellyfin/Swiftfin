@@ -227,6 +227,27 @@ struct SelectUserView: PlatformView {
 
     @ViewBuilder
     private func addUserGridButton() -> some View {
+        #if os(tvOS)
+        UserButton {
+            if let selectedServer {
+                addUserAction(server: selectedServer)
+            }
+        }
+        .if(selectedServer == nil) { button in
+            button.contextMenu {
+                Text(L10n.selectServer)
+
+                ForEach(viewModel.servers.keys) { server in
+                    Button {
+                        addUserAction(server: server)
+                    } label: {
+                        Text(server.name)
+                        Text(server.currentURL.absoluteString)
+                    }
+                }
+            }
+        }
+        #else
         ConditionalMenu(
             tracking: selectedServer,
             action: addUserAction
@@ -242,32 +263,19 @@ struct SelectUserView: PlatformView {
                 }
             }
         } label: {
-            GridUserButton {
+            UserButton {
                 if let selectedServer {
                     addUserAction(server: selectedServer)
                 }
             }
         }
-        #if os(iOS)
         .buttonStyle(.plain)
-        #else
-        .buttonStyle(.borderless)
-        .buttonBorderShape(.circle)
         #endif
     }
 
     @ViewBuilder
-    private func addUserListButton() -> some View {
-        ListUserButton {
-            if let selectedServer {
-                addUserAction(server: selectedServer)
-            }
-        }
-    }
-
-    @ViewBuilder
     private func userGridButton(for item: UserItem) -> some View {
-        GridUserButton(
+        UserButton(
             user: item.user,
             server: item.server,
             showServer: serverSelection == .all
@@ -285,7 +293,7 @@ struct SelectUserView: PlatformView {
 
     @ViewBuilder
     private func userListButton(for item: UserItem) -> some View {
-        ListUserButton(
+        UserRow(
             user: item.user,
             server: item.server,
             showServer: serverSelection == .all
@@ -299,6 +307,29 @@ struct SelectUserView: PlatformView {
             delete(user: item.user)
         }
         .isSelected(selectedUsers.contains(item.user))
+    }
+
+    @ViewBuilder
+    private func gridContentView(columns: Int) -> some View {
+        if userItems.isEmpty {
+            CenteredLazyVGrid(
+                data: [0],
+                id: \.self,
+                columns: columns,
+                spacing: EdgeInsets.edgePadding
+            ) { _ in
+                addUserGridButton()
+            }
+        } else {
+            CenteredLazyVGrid(
+                data: userItems,
+                id: \.user.id,
+                columns: columns,
+                spacing: EdgeInsets.edgePadding
+            ) { item in
+                userGridButton(for: item)
+            }
+        }
     }
 
     // MARK: - Shared Alerts
@@ -348,6 +379,44 @@ struct SelectUserView: PlatformView {
 
             Text(L10n.enterPinForUser(username))
         }
+    }
+
+    // MARK: - Shared Event Handling
+
+    private func withSharedEventHandlers(_ view: some View) -> some View {
+        view
+            .onAppear {
+                viewModel.getServers()
+            }
+            .onChange(of: isEditingUsers) { newValue in
+                guard !newValue else { return }
+                selectedUsers.removeAll()
+            }
+            .onChange(of: viewModel.servers.keys) { newValue in
+                onServersChanged(newValue)
+            }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case let .signedIn(user):
+                    onSignedIn(user)
+                }
+            }
+            .onNotification(.didConnectToServer) { server in
+                viewModel.getServers()
+                serverSelection = .server(id: server.id)
+            }
+            .onNotification(.didChangeCurrentServerURL) { _ in
+                viewModel.getServers()
+            }
+            .onNotification(.didDeleteServer) { _ in
+                viewModel.getServers()
+            }
+            .alert(L10n.signIn, isPresented: $isPresentingLocalPin) {
+                pinAlertContent
+            } message: {
+                pinAlertMessage
+            }
+            .errorMessage($viewModel.error)
     }
 
     // MARK: - iOS Helper Views
@@ -425,52 +494,14 @@ struct SelectUserView: PlatformView {
 
     @ViewBuilder
     private var padGridContentView: some View {
-        if userItems.isEmpty {
-            CenteredLazyVGrid(
-                data: [0],
-                id: \.self,
-                columns: 5,
-                spacing: EdgeInsets.edgePadding
-            ) { _ in
-                addUserGridButton()
-            }
+        gridContentView(columns: 5)
             .edgePadding(.horizontal)
-        } else {
-            CenteredLazyVGrid(
-                data: userItems,
-                id: \.user.id,
-                columns: 5,
-                spacing: EdgeInsets.edgePadding
-            ) { item in
-                userGridButton(for: item)
-            }
-            .edgePadding(.horizontal)
-        }
     }
 
     @ViewBuilder
     private var phoneGridContentView: some View {
-        if userItems.isEmpty {
-            CenteredLazyVGrid(
-                data: [0],
-                id: \.self,
-                columns: 2,
-                spacing: EdgeInsets.edgePadding
-            ) { _ in
-                addUserGridButton()
-            }
+        gridContentView(columns: 2)
             .edgePadding()
-        } else {
-            CenteredLazyVGrid(
-                data: userItems,
-                id: \.user.id,
-                columns: 2,
-                spacing: EdgeInsets.edgePadding
-            ) { item in
-                userGridButton(for: item)
-            }
-            .edgePadding()
-        }
     }
 
     @ViewBuilder
@@ -479,10 +510,7 @@ struct SelectUserView: PlatformView {
             let userItems = self.userItems
 
             if userItems.isEmpty {
-                addUserListButton()
-                    .listRowBackground(EmptyView())
-                    .listRowInsets(.zero)
-                    .listRowSeparator(.hidden)
+                addUserGridButton()
             }
 
             ForEach(userItems, id: \.user.id) { item in
@@ -549,19 +577,11 @@ struct SelectUserView: PlatformView {
                 serverSelection: $serverSelection,
                 selectedServer: selectedServer,
                 servers: viewModel.servers.keys,
-                areUsersSelected: selectedUsers.isNotEmpty,
-                hasUsers: userItems.isNotEmpty
-            ) {
-                isPresentingConfirmDeleteUsers = true
-            } onEditingChanged: { editing in
-                isEditingUsers = editing
-            } toggleAllUsersSelected: {
-                if selectedUsers.isNotEmpty {
-                    selectedUsers.removeAll()
-                } else {
-                    selectedUsers.insert(contentsOf: userItems.map(\.user))
-                }
-            }
+                isEditingUsers: $isEditingUsers,
+                selectedUsers: $selectedUsers,
+                isPresentingConfirmDeleteUsers: $isPresentingConfirmDeleteUsers,
+                userItems: userItems
+            )
         }
         .isEditing(isEditingUsers)
         .background {
@@ -586,44 +606,6 @@ struct SelectUserView: PlatformView {
     #else
 
     @ViewBuilder
-    private var tvOSGridContentView: some View {
-        Group {
-            if userItems.isEmpty {
-                CenteredLazyVGrid(
-                    data: [0],
-                    id: \.self,
-                    columns: 5,
-                    spacing: EdgeInsets.edgePadding
-                ) { _ in
-                    addUserGridButton()
-                }
-            } else {
-                CenteredLazyVGrid(
-                    data: userItems,
-                    id: \.user.id,
-                    columns: 5,
-                    spacing: EdgeInsets.edgePadding
-                ) { item in
-                    userGridButton(for: item)
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var tvOSListContentView: some View {
-        LazyVStack(spacing: 16) {
-            if userItems.isEmpty {
-                addUserListButton()
-            }
-
-            ForEach(userItems, id: \.user.id) { item in
-                userListButton(for: item)
-            }
-        }
-    }
-
-    @ViewBuilder
     private var tvOSContentView: some View {
         VStack {
             VStack(spacing: 0) {
@@ -631,20 +613,19 @@ struct SelectUserView: PlatformView {
                 Color.clear
                     .frame(height: 200)
 
-                Group {
-                    switch userListDisplayType {
-                    case .grid:
-                        tvOSGridContentView
-                    case .list:
-                        tvOSListContentView
-                            .frame(maxWidth: contentMaxWidth)
+                HStack(spacing: EdgeInsets.edgePadding) {
+                    if userItems.isEmpty {
+                        addUserGridButton()
+                    }
+
+                    ForEach(userItems, id: \.user.id) { item in
+                        userGridButton(for: item)
                     }
                 }
                 .edgePadding(.horizontal)
-                .animation(.linear(duration: 0.1), value: userListDisplayType)
                 .focusSection()
             }
-            .scrollIfLargerThanContainer(padding: 100)
+            .scrollIfLargerThanContainer(axes: .horizontal, padding: 100)
             .scrollViewOffset($scrollViewOffset)
 
             UserActionButtonBar(
@@ -652,19 +633,11 @@ struct SelectUserView: PlatformView {
                 serverSelection: $serverSelection,
                 selectedServer: selectedServer,
                 servers: viewModel.servers.keys,
-                areUsersSelected: selectedUsers.isNotEmpty,
-                hasUsers: userItems.isNotEmpty
-            ) {
-                isPresentingConfirmDeleteUsers = true
-            } onEditingChanged: { editing in
-                isEditingUsers = editing
-            } toggleAllUsersSelected: {
-                if selectedUsers.isNotEmpty {
-                    selectedUsers.removeAll()
-                } else {
-                    selectedUsers.insert(contentsOf: userItems.map(\.user))
-                }
-            }
+                isEditingUsers: $isEditingUsers,
+                selectedUsers: $selectedUsers,
+                isPresentingConfirmDeleteUsers: $isPresentingConfirmDeleteUsers,
+                userItems: userItems
+            )
             .focusSection()
         }
         .isEditing(isEditingUsers)
@@ -693,215 +666,159 @@ struct SelectUserView: PlatformView {
     // MARK: - iOS View
 
     var iOSView: some View {
-        ZStack {
-            if viewModel.servers.isEmpty {
-                VStack(spacing: 10) {
-                    Text(L10n.connectToJellyfinServerStart)
-                        .frame(minWidth: 50, maxWidth: 240)
-                        .multilineTextAlignment(.center)
+        withSharedEventHandlers(
+            ZStack {
+                if viewModel.servers.isEmpty {
+                    VStack(spacing: 10) {
+                        Text(L10n.connectToJellyfinServerStart)
+                            .frame(minWidth: 50, maxWidth: 240)
+                            .multilineTextAlignment(.center)
 
-                    Button(L10n.connect) {
-                        router.route(to: .connectToServer)
+                        Button(L10n.connect) {
+                            router.route(to: .connectToServer)
+                        }
+                        .foregroundStyle(
+                            accentColor.overlayColor,
+                            accentColor
+                        )
+                        .buttonStyle(.primary)
+                        .frame(height: 50)
+                        .frame(maxWidth: 300)
                     }
-                    .foregroundStyle(
-                        accentColor.overlayColor,
-                        accentColor
-                    )
-                    .buttonStyle(.primary)
-                    .frame(height: 50)
-                    .frame(maxWidth: 300)
+                } else {
+                    #if os(iOS)
+                    iOSContentView
+                    #endif
                 }
-            } else {
-                #if os(iOS)
-                iOSContentView
-                #endif
             }
-        }
-        #if os(iOS)
-        .ignoresSafeArea(.keyboard, edges: .bottom)
-        .navigationTitle(L10n.users)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Image(uiImage: .jellyfinBlobBlue)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 30)
-            }
+            #if os(iOS)
+            .ignoresSafeArea(.keyboard, edges: .bottom)
+            .navigationTitle(L10n.users)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Image(uiImage: .jellyfinBlobBlue)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 30)
+                }
 
-            if horizontalSizeClass == .compact {
-                ToolbarItem(placement: .topBarLeading) {
-                    if isEditingUsers {
-                        if selectedUsers.count == userItems.count {
-                            Button(L10n.removeAll) {
-                                selectedUsers.removeAll()
+                if horizontalSizeClass == .compact {
+                    ToolbarItem(placement: .topBarLeading) {
+                        if isEditingUsers {
+                            if selectedUsers.count == userItems.count {
+                                Button(L10n.removeAll) {
+                                    selectedUsers.removeAll()
+                                }
+                                .buttonStyle(.toolbarPill)
+                            } else {
+                                Button(L10n.selectAll) {
+                                    selectedUsers.insert(contentsOf: userItems.map(\.user))
+                                }
+                                .buttonStyle(.toolbarPill)
+                            }
+                        }
+                    }
+
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        if isEditingUsers {
+                            Button(isEditingUsers ? L10n.cancel : L10n.edit) {
+                                isEditingUsers.toggle()
+
+                                UIDevice.impact(.light)
+
+                                if !isEditingUsers {
+                                    selectedUsers.removeAll()
+                                }
                             }
                             .buttonStyle(.toolbarPill)
                         } else {
-                            Button(L10n.selectAll) {
-                                selectedUsers.insert(contentsOf: userItems.map(\.user))
+                            advancedMenu
+                        }
+                    }
+
+                    ToolbarItem(placement: .bottomBar) {
+                        if isEditingUsers {
+                            Button(L10n.delete) {
+                                isPresentingConfirmDeleteUsers = true
                             }
-                            .buttonStyle(.toolbarPill)
+                            .buttonStyle(.toolbarPill(.red))
+                            .disabled(selectedUsers.isEmpty)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                         }
                     }
                 }
-
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    if isEditingUsers {
-                        Button(isEditingUsers ? L10n.cancel : L10n.edit) {
-                            isEditingUsers.toggle()
-
-                            UIDevice.impact(.light)
-
-                            if !isEditingUsers {
-                                selectedUsers.removeAll()
-                            }
-                        }
-                        .buttonStyle(.toolbarPill)
-                    } else {
-                        advancedMenu
-                    }
-                }
-
-                ToolbarItem(placement: .bottomBar) {
-                    if isEditingUsers {
-                        Button(L10n.delete) {
-                            isPresentingConfirmDeleteUsers = true
-                        }
-                        .buttonStyle(.toolbarPill(.red))
-                        .disabled(selectedUsers.isEmpty)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                    }
-                }
+            }
+            #endif
+        )
+        .onChange(of: isPresentingLocalPin) { newValue in
+            if newValue {
+                pin = ""
             }
         }
-        #endif
-        .onAppear {
-                viewModel.getServers()
-            }
-            .onChange(of: isEditingUsers) { newValue in
-                guard !newValue else { return }
-                selectedUsers.removeAll()
-            }
-            .onChange(of: isPresentingLocalPin) { newValue in
-                if newValue {
-                    pin = ""
-                }
-            }
         #if os(iOS)
-            .onChange(of: isPresentingConfirmDeleteUsers) { newValue in
-                guard !newValue else { return }
-                isEditingUsers = false
-                selectedUsers.removeAll()
+        .onChange(of: isPresentingConfirmDeleteUsers) { newValue in
+            guard !newValue else { return }
+            isEditingUsers = false
+            selectedUsers.removeAll()
+        }
+        .onReceive(viewModel.$error) { error in
+            guard error != nil else { return }
+            UIDevice.feedback(.error)
+        }
+        .alert(
+            L10n.delete,
+            isPresented: $isPresentingConfirmDeleteUsers
+        ) {
+            Button(L10n.delete, role: .destructive) {
+                viewModel.deleteUsers(selectedUsers)
             }
-            .onReceive(viewModel.$error) { error in
-                guard error != nil else { return }
-                UIDevice.feedback(.error)
-            }
+        } message: {
+            deleteConfirmationMessage
+        }
         #endif
-            .onChange(of: viewModel.servers.keys) { newValue in
-                    onServersChanged(newValue)
-                }
-                .onReceive(viewModel.events) { event in
-                    switch event {
-                    case let .signedIn(user):
-                        onSignedIn(user)
-                    }
-                }
-                .onNotification(.didConnectToServer) { server in
-                    viewModel.getServers()
-                    serverSelection = .server(id: server.id)
-                }
-                .onNotification(.didChangeCurrentServerURL) { _ in
-                    viewModel.getServers()
-                }
-                .onNotification(.didDeleteServer) { _ in
-                    viewModel.getServers()
-                }
-        #if os(iOS)
-                .alert(
-                    L10n.delete,
-                    isPresented: $isPresentingConfirmDeleteUsers
-                ) {
-                    Button(L10n.delete, role: .destructive) {
-                        viewModel.deleteUsers(selectedUsers)
-                    }
-                } message: {
-                    deleteConfirmationMessage
-                }
-        #endif
-                .alert(L10n.signIn, isPresented: $isPresentingLocalPin) {
-                        pinAlertContent
-                    } message: {
-                        pinAlertMessage
-                    }
-                    .errorMessage($viewModel.error)
     }
 
     // MARK: - tvOS View
 
     var tvOSView: some View {
-        ZStack {
-            if viewModel.servers.isEmpty {
-                VStack(spacing: 50) {
-                    Text(L10n.connectToJellyfinServerStart)
-                        .font(.body)
-                        .frame(minWidth: 50, maxWidth: 500)
-                        .multilineTextAlignment(.center)
+        withSharedEventHandlers(
+            ZStack {
+                if viewModel.servers.isEmpty {
+                    VStack(spacing: 50) {
+                        Text(L10n.connectToJellyfinServerStart)
+                            .font(.body)
+                            .frame(minWidth: 50, maxWidth: 500)
+                            .multilineTextAlignment(.center)
 
-                    Button {
-                        router.route(to: .connectToServer)
-                    } label: {
-                        Text(L10n.connect)
-                            .font(.callout)
-                            .fontWeight(.bold)
-                            .frame(width: 400, height: 75)
-                            .background(accentColor)
+                        Button {
+                            router.route(to: .connectToServer)
+                        } label: {
+                            Text(L10n.connect)
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .frame(width: 400, height: 75)
+                                .background(accentColor)
+                        }
+                        .buttonStyle(.card)
                     }
-                    .buttonStyle(.card)
+                } else {
+                    #if os(tvOS)
+                    tvOSContentView
+                    #endif
                 }
-            } else {
-                #if os(tvOS)
-                tvOSContentView
-                #endif
             }
-        }
-        #if os(tvOS)
-        .ignoresSafeArea()
-        .navigationBarBranding()
-        #endif
-        .onAppear {
-            viewModel.getServers()
-        }
-        .onChange(of: isEditingUsers) { newValue in
-            guard !newValue else { return }
-            selectedUsers.removeAll()
-        }
+            #if os(tvOS)
+            .ignoresSafeArea()
+            .navigationBarBranding()
+            #endif
+        )
         .onChange(of: isPresentingLocalPin) { newValue in
             if newValue {
                 pin = ""
             } else {
                 selectedUsers.removeAll()
             }
-        }
-        .onChange(of: viewModel.servers.keys) { newValue in
-            onServersChanged(newValue)
-        }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case let .signedIn(user):
-                onSignedIn(user)
-            }
-        }
-        .onNotification(.didConnectToServer) { server in
-            viewModel.getServers()
-            serverSelection = .server(id: server.id)
-        }
-        .onNotification(.didChangeCurrentServerURL) { _ in
-            viewModel.getServers()
-        }
-        .onNotification(.didDeleteServer) { _ in
-            viewModel.getServers()
         }
         #if os(tvOS)
         .confirmationDialog(
@@ -915,11 +832,5 @@ struct SelectUserView: PlatformView {
             deleteConfirmationMessage
         }
         #endif
-        .alert(L10n.signIn, isPresented: $isPresentingLocalPin) {
-                pinAlertContent
-            } message: {
-                pinAlertMessage
-            }
-            .errorMessage($viewModel.error)
     }
 }

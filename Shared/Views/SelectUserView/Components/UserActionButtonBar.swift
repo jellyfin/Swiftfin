@@ -22,41 +22,46 @@ extension SelectUserView {
         @Router
         private var router
 
-        @Environment(\.isEditing)
-        private var isEditing
-
         @Binding
         private var serverSelection: SelectUserServerSelection
+        @Binding
+        private var isEditingUsers: Bool
+        @Binding
+        private var selectedUsers: Set<UserState>
+        @Binding
+        private var isPresentingConfirmDeleteUsers: Bool
 
-        private let areUsersSelected: Bool
-        private let hasUsers: Bool
         private let isCompact: Bool
         private let selectedServer: ServerState?
         private let servers: OrderedSet<ServerState>
-        private let onDelete: () -> Void
-        private let onEditingChanged: (Bool) -> Void
-        private let toggleAllUsersSelected: () -> Void
+        private let userItems: [UserItem]
+
+        private var areUsersSelected: Bool {
+            selectedUsers.isNotEmpty
+        }
+
+        private var hasUsers: Bool {
+            userItems.isNotEmpty
+        }
 
         init(
             isCompact: Bool,
             serverSelection: Binding<SelectUserServerSelection>,
             selectedServer: ServerState?,
             servers: OrderedSet<ServerState>,
-            areUsersSelected: Bool,
-            hasUsers: Bool,
-            onDelete: @escaping () -> Void,
-            onEditingChanged: @escaping (Bool) -> Void,
-            toggleAllUsersSelected: @escaping () -> Void
+            isEditingUsers: Binding<Bool>,
+            selectedUsers: Binding<Set<UserState>>,
+            isPresentingConfirmDeleteUsers: Binding<Bool>,
+            userItems: [UserItem]
         ) {
             self._serverSelection = serverSelection
-            self.areUsersSelected = areUsersSelected
-            self.hasUsers = hasUsers
+            self._isEditingUsers = isEditingUsers
+            self._selectedUsers = selectedUsers
+            self._isPresentingConfirmDeleteUsers = isPresentingConfirmDeleteUsers
             self.isCompact = isCompact
             self.selectedServer = selectedServer
             self.servers = servers
-            self.onDelete = onDelete
-            self.onEditingChanged = onEditingChanged
-            self.toggleAllUsersSelected = toggleAllUsersSelected
+            self.userItems = userItems
         }
 
         var body: some View {
@@ -128,7 +133,7 @@ extension SelectUserView {
 
         @ViewBuilder
         private var compactView: some View {
-            if !isEditing {
+            if !isEditingUsers {
                 Menu {
                     serverMenuItems
                 } label: {
@@ -152,7 +157,7 @@ extension SelectUserView {
                     .frame(height: regularButtonHeight)
             } content: {
                 HStack(alignment: .top, spacing: 30) {
-                    if isEditing {
+                    if isEditingUsers {
                         editView
                     } else {
                         contentView
@@ -170,9 +175,10 @@ extension SelectUserView {
             if areUsersSelected {
                 Button(
                     L10n.delete,
-                    role: .destructive,
-                    action: onDelete
-                )
+                    role: .destructive
+                ) {
+                    isPresentingConfirmDeleteUsers = true
+                }
                 .isSelected(true)
                 .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .primary))
                 .frame(height: regularButtonHeight)
@@ -181,7 +187,11 @@ extension SelectUserView {
             }
 
             Button {
-                toggleAllUsersSelected()
+                if selectedUsers.isNotEmpty {
+                    selectedUsers.removeAll()
+                } else {
+                    selectedUsers.insert(contentsOf: userItems.map(\.user))
+                }
             } label: {
                 Text(areUsersSelected ? L10n.removeAll : L10n.selectAll)
             }
@@ -190,7 +200,7 @@ extension SelectUserView {
             .frame(minWidth: 100, maxWidth: 400)
 
             Button {
-                onEditingChanged(false)
+                isEditingUsers = false
             } label: {
                 Text(L10n.cancel)
             }
@@ -242,10 +252,11 @@ extension SelectUserView {
             Menu {
                 Section {
                     Button(L10n.editUsers, systemImage: "person.crop.circle") {
-                        onEditingChanged(true)
+                        isEditingUsers = true
                     }
                 }
 
+                #if os(iOS)
                 Picker(selection: $userListDisplayType) {
                     ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
                         Label($0.displayTitle, systemImage: $0.systemImage)
@@ -257,6 +268,7 @@ extension SelectUserView {
                     Image(systemName: userListDisplayType.systemImage)
                 }
                 .pickerStyle(.menu)
+                #endif
 
                 Picker(selection: $userSortOrder) {
                     ForEach(SelectUserSortOrder.allCases, id: \.hashValue) {
