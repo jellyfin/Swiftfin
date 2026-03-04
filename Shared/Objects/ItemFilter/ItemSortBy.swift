@@ -77,10 +77,18 @@ extension ItemSortBy: Displayable, SupportedCaseIterable {
 
     static var supportedCases: [ItemSortBy] {
         [
-            .premiereDate,
+            .default,
             .name,
             .sortName,
+            .premiereDate,
+            .dateCreated,
             .dateLastContentAdded,
+            .communityRating,
+            .criticRating,
+            .productionYear,
+            .runtime,
+            .playCount,
+            .datePlayed,
             .random,
         ]
     }
