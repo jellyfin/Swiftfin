@@ -228,9 +228,6 @@ struct UserSignInView: View {
                         focusedTextField = .password
                     }
                 }
-                .listRowBackground(EmptyView())
-                .listRowInsets(.zero)
-                .listRowSeparator(.hidden)
                 #else
                 LazyVGrid(
                     columns: Array(repeating: GridItem(.flexible()), count: 4),

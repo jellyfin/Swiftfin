@@ -506,32 +506,38 @@ struct SelectUserView: PlatformView {
 
     @ViewBuilder
     private var listContentView: some View {
-        List {
-            let userItems = self.userItems
-
-            if userItems.isEmpty {
+        if userItems.isEmpty {
+            CenteredLazyVGrid(
+                data: [0],
+                id: \.self,
+                columns: 1,
+                spacing: EdgeInsets.edgePadding
+            ) { _ in
                 addUserGridButton()
             }
+        } else {
+            List {
+                let userItems = self.userItems
 
-            ForEach(userItems, id: \.user.id) { item in
-                userListButton(for: item)
-                    .swipeActions {
-                        if !isEditingUsers {
-                            Button(
-                                L10n.delete,
-                                systemImage: "trash"
-                            ) {
-                                delete(user: item.user)
+                ForEach(userItems, id: \.user.id) { item in
+                    userListButton(for: item)
+                        .swipeActions {
+                            if !isEditingUsers {
+                                Button(
+                                    L10n.delete,
+                                    systemImage: "trash"
+                                ) {
+                                    delete(user: item.user)
+                                }
+                                .tint(.red)
                             }
-                            .tint(.red)
                         }
-                    }
+                }
+                .listRowBackground(EmptyView())
+                .listRowSeparator(.hidden)
             }
-            .listRowBackground(EmptyView())
-            .listRowInsets(.zero)
-            .listRowSeparator(.hidden)
+            .listStyle(.plain)
         }
-        .listStyle(.plain)
     }
 
     @ViewBuilder

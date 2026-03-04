@@ -28,11 +28,11 @@ struct UserRow<Icon: View>: View {
     private let action: () -> Void
     private let onDelete: (() -> Void)?
 
-    private var labelForegroundStyle: HierarchicalShapeStyle {
+    private var labelForegroundStyle: Color {
         if onDelete == nil {
-            isEnabled ? .primary : .secondary
+            isEnabled ? Color.primary : Color.secondary
         } else {
-            isSelected || !isEditing ? .primary : .secondary
+            isSelected || !isEditing ? Color.primary : Color.secondary
         }
     }
 
@@ -54,42 +54,41 @@ struct UserRow<Icon: View>: View {
         self.onDelete = onDelete
     }
 
-    // MARK: - Body
-
     var body: some View {
-        ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
-            icon
-                .frame(width: profileWidth)
-                .padding(.vertical, profileWidth / 10)
-        } content: {
-            HStack {
-                VStack(alignment: .leading, spacing: 5) {
+        Button(action: action) {
+            HStack(spacing: EdgeInsets.edgePadding) {
+                icon
+                    .frame(width: profileWidth)
+
+                VStack(alignment: .leading) {
                     Text(title)
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundStyle(labelForegroundStyle)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
+                        .lineLimit(1)
 
                     if let subtitle {
                         Text(subtitle)
                             .font(.footnote)
-                            .foregroundColor(Color(UIColor.lightGray))
+                            .foregroundStyle(Color.secondary)
+                            .lineLimit(1)
                     }
                 }
 
                 Spacer()
 
-                if onDelete != nil {
+                if onDelete != nil, isEditing {
                     ListRowCheckbox()
+                } else {
+                    Image(systemName: "chevron.right")
+                        .font(.body)
+                        .fontWeight(.regular)
+                        .foregroundStyle(Color.secondary)
                 }
             }
-            .padding(.horizontal, 0)
         }
-        .isSeparatorVisible(onDelete != nil)
-        .onSelect(perform: action)
-        .if(onDelete != nil && !isEditing) { row in
-            row.contextMenu {
+        .if(onDelete != nil) { button in
+            button.contextMenu {
                 if let onDelete {
                     Button(
                         L10n.delete,
