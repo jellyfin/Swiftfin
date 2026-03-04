@@ -12,27 +12,50 @@ import SwiftUI
 
 struct ScrollIfLargerThanContainerModifier: ViewModifier {
 
-    @State
-    private var contentSize: CGSize = .zero
-    @State
-    private var layoutSize: CGSize = .zero
-
     let padding: CGFloat
+    let fadeOut: Bool
+    let focusBinding: FocusState<Bool>.Binding?
 
     func body(content: Content) -> some View {
-        AlternateLayoutView {
-            Color.clear
-                .trackingSize($layoutSize)
-        } content: {
+        ViewThatFits(in: .vertical) {
+            // if content is small
+            content
+
+            // if content too tall
             ScrollView {
                 content
-                    .trackingSize($contentSize)
             }
-            .frame(maxHeight: contentSize.height >= layoutSize.height ? .infinity : contentSize.height)
+            .optionallyFocused(focusBinding)
+            .mask {
+                if fadeOut {
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black, location: 0.0),
+                            .init(color: .black, location: 0.88),
+                            .init(color: .clear, location: 1.0),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                } else {
+                    Color.black
+                }
+            }
             .backport // iOS 17
             .scrollClipDisabled()
-            .scrollDisabled(contentSize.height < layoutSize.height)
             .scrollIndicators(.never)
+        }
+    }
+}
+
+extension View {
+
+    @ViewBuilder
+    func optionallyFocused(_ binding: FocusState<Bool>.Binding?) -> some View {
+        if let binding {
+            focused(binding)
+        } else {
+            self
         }
     }
 }
