@@ -16,10 +16,6 @@ import SwiftUI
 import LocalAuthentication
 #endif
 
-// TODO: user ordering
-//       - name
-//       - last signed in date
-
 struct SelectUserView: PlatformView {
 
     typealias UserItem = (user: UserState, server: ServerState)
@@ -34,11 +30,14 @@ struct SelectUserView: PlatformView {
     private var serverSelection
     @Default(.selectUserDisplayType)
     private var userListDisplayType
-
-    // MARK: - State & Environment Objects
+    @Default(.selectUserSortOrder)
+    private var userSortOrder
 
     @Router
     private var router
+
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
 
     @State
     private var isEditingUsers: Bool = false
@@ -88,26 +87,42 @@ struct SelectUserView: PlatformView {
         }
     }
 
-    private var userItems: [UserItem] {
-        switch serverSelection {
-        case .all:
-            return viewModel.servers
-                .map { server, users in
-                    users.map { (server: server, user: $0) }
-                }
-                .flatMap(\.self)
-                .sorted(using: \.user.username)
-                .reversed()
-                .map { UserItem(user: $0.user, server: $0.server) }
-        case let .server(id: id):
-            guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
-                return []
-            }
+    private var contentMaxWidth: CGFloat {
+        min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+    }
 
-            return viewModel.servers[server]!
-                .sorted(using: \.username)
-                .map { UserItem(user: $0, server: server) }
-        }
+    private var userItems: [UserItem] {
+        let items: [UserItem] = {
+            switch serverSelection {
+            case .all:
+                return viewModel.servers
+                    .map { server, users in
+                        users.map { (server: server, user: $0) }
+                    }
+                    .flatMap(\.self)
+                    .map { UserItem(user: $0.user, server: $0.server) }
+            case let .server(id: id):
+                guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
+                    return []
+                }
+
+                return viewModel.servers[server]!
+                    .map { UserItem(user: $0, server: server) }
+            }
+        }()
+
+        return {
+            switch userSortOrder {
+            case .name:
+                items.sorted(using: \.user.username)
+            case .lastSeen:
+                items.sorted { lhs, rhs in
+                    let lhsDate = lhs.user.data.lastActivityDate ?? .distantPast
+                    let rhsDate = rhs.user.data.lastActivityDate ?? .distantPast
+                    return lhsDate < rhsDate
+                }
+            }
+        }()
     }
 
     // MARK: - Shared Functions
@@ -206,36 +221,84 @@ struct SelectUserView: PlatformView {
     }
     #endif
 
-    @ViewBuilder
-    private func addUserButtonView(displayType: LibraryDisplayType) -> some View {
-        AddUserButton(
-            displayType: displayType,
-            selectedServer: selectedServer,
-            servers: viewModel.servers.keys,
-            action: addUserSelected
-        )
+    private func addUserAction(server: ServerState) {
+        addUserSelected(server: server)
     }
 
     @ViewBuilder
-    private func userButtonView(for item: UserItem, displayType: LibraryDisplayType) -> some View {
-        let user = item.user
-        let server = item.server
+    private func addUserGridButton() -> some View {
+        ConditionalMenu(
+            tracking: selectedServer,
+            action: addUserAction
+        ) {
+            Text(L10n.selectServer)
 
-        UserButton(
-            displayType: displayType,
-            user: user,
-            server: server,
+            ForEach(viewModel.servers.keys) { server in
+                Button {
+                    addUserAction(server: server)
+                } label: {
+                    Text(server.name)
+                    Text(server.currentURL.absoluteString)
+                }
+            }
+        } label: {
+            GridUserButton {
+                if let selectedServer {
+                    addUserAction(server: selectedServer)
+                }
+            }
+        }
+        #if os(iOS)
+        .buttonStyle(.plain)
+        #else
+        .buttonStyle(.borderless)
+        .buttonBorderShape(.circle)
+        #endif
+    }
+
+    @ViewBuilder
+    private func addUserListButton() -> some View {
+        ListUserButton {
+            if let selectedServer {
+                addUserAction(server: selectedServer)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func userGridButton(for item: UserItem) -> some View {
+        GridUserButton(
+            user: item.user,
+            server: item.server,
             showServer: serverSelection == .all
         ) {
             if isEditingUsers {
-                selectedUsers.toggle(value: user)
+                selectedUsers.toggle(value: item.user)
             } else {
-                select(user: user)
+                select(user: item.user)
             }
         } onDelete: {
-            delete(user: user)
+            delete(user: item.user)
         }
-        .isSelected(selectedUsers.contains(user))
+        .isSelected(selectedUsers.contains(item.user))
+    }
+
+    @ViewBuilder
+    private func userListButton(for item: UserItem) -> some View {
+        ListUserButton(
+            user: item.user,
+            server: item.server,
+            showServer: serverSelection == .all
+        ) {
+            if isEditingUsers {
+                selectedUsers.toggle(value: item.user)
+            } else {
+                select(user: item.user)
+            }
+        } onDelete: {
+            delete(user: item.user)
+        }
+        .isSelected(selectedUsers.contains(item.user))
     }
 
     // MARK: - Shared Alerts
@@ -338,6 +401,18 @@ struct SelectUserView: PlatformView {
                     Image(systemName: userListDisplayType.systemImage)
                 }
                 .pickerStyle(.menu)
+
+                Picker(selection: $userSortOrder) {
+                    ForEach(SelectUserSortOrder.allCases, id: \.hashValue) {
+                        Label($0.displayTitle, systemImage: $0.systemImage)
+                            .tag($0)
+                    }
+                } label: {
+                    Text(L10n.sort)
+                    Text(userSortOrder.displayTitle)
+                    Image(systemName: userSortOrder.systemImage)
+                }
+                .pickerStyle(.menu)
             }
 
             Section {
@@ -354,22 +429,22 @@ struct SelectUserView: PlatformView {
             CenteredLazyVGrid(
                 data: [0],
                 id: \.self,
-                minimum: 150,
-                maximum: 300,
+                columns: 5,
                 spacing: EdgeInsets.edgePadding
             ) { _ in
-                addUserButtonView(displayType: .grid)
+                addUserGridButton()
             }
+            .edgePadding(.horizontal)
         } else {
             CenteredLazyVGrid(
                 data: userItems,
                 id: \.user.id,
-                minimum: 150,
-                maximum: 300,
+                columns: 5,
                 spacing: EdgeInsets.edgePadding
             ) { item in
-                userButtonView(for: item, displayType: .grid)
+                userGridButton(for: item)
             }
+            .edgePadding(.horizontal)
         }
     }
 
@@ -379,10 +454,12 @@ struct SelectUserView: PlatformView {
             CenteredLazyVGrid(
                 data: [0],
                 id: \.self,
-                columns: 2
+                columns: 2,
+                spacing: EdgeInsets.edgePadding
             ) { _ in
-                addUserButtonView(displayType: .grid)
+                addUserGridButton()
             }
+            .edgePadding()
         } else {
             CenteredLazyVGrid(
                 data: userItems,
@@ -390,7 +467,7 @@ struct SelectUserView: PlatformView {
                 columns: 2,
                 spacing: EdgeInsets.edgePadding
             ) { item in
-                userButtonView(for: item, displayType: .grid)
+                userGridButton(for: item)
             }
             .edgePadding()
         }
@@ -402,15 +479,14 @@ struct SelectUserView: PlatformView {
             let userItems = self.userItems
 
             if userItems.isEmpty {
-                addUserButtonView(displayType: .list)
+                addUserListButton()
                     .listRowBackground(EmptyView())
                     .listRowInsets(.zero)
                     .listRowSeparator(.hidden)
             }
 
             ForEach(userItems, id: \.user.id) { item in
-                userButtonView(for: item, displayType: .list)
-                    .isSelected(selectedUsers.contains(item.user))
+                userListButton(for: item)
                     .swipeActions {
                         if !isEditingUsers {
                             Button(
@@ -444,6 +520,7 @@ struct SelectUserView: PlatformView {
                         }
                     }
                     .scrollIfLargerThanContainer(padding: 100)
+                    .frame(maxWidth: contentMaxWidth)
                 case .list:
                     listContentView
                 }
@@ -467,7 +544,8 @@ struct SelectUserView: PlatformView {
                 }
             }
 
-            SelectUserBottomBar(
+            UserActionButtonBar(
+                isCompact: horizontalSizeClass == .compact,
                 serverSelection: $serverSelection,
                 selectedServer: selectedServer,
                 servers: viewModel.servers.keys,
@@ -508,40 +586,69 @@ struct SelectUserView: PlatformView {
     #else
 
     @ViewBuilder
+    private var tvOSGridContentView: some View {
+        Group {
+            if userItems.isEmpty {
+                CenteredLazyVGrid(
+                    data: [0],
+                    id: \.self,
+                    columns: 5,
+                    spacing: EdgeInsets.edgePadding
+                ) { _ in
+                    addUserGridButton()
+                }
+            } else {
+                CenteredLazyVGrid(
+                    data: userItems,
+                    id: \.user.id,
+                    columns: 5,
+                    spacing: EdgeInsets.edgePadding
+                ) { item in
+                    userGridButton(for: item)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var tvOSListContentView: some View {
+        LazyVStack(spacing: 16) {
+            if userItems.isEmpty {
+                addUserListButton()
+            }
+
+            ForEach(userItems, id: \.user.id) { item in
+                userListButton(for: item)
+            }
+        }
+    }
+
+    @ViewBuilder
     private var tvOSContentView: some View {
         VStack {
             VStack(spacing: 0) {
 
                 Color.clear
-                    .frame(height: 100)
+                    .frame(height: 200)
 
                 Group {
-                    if userItems.isEmpty {
-                        CenteredLazyVGrid(
-                            data: [0],
-                            id: \.self,
-                            columns: 5
-                        ) { _ in
-                            addUserButtonView(displayType: .grid)
-                        }
-                    } else {
-                        CenteredLazyVGrid(
-                            data: userItems,
-                            id: \.user.id,
-                            columns: 5,
-                            spacing: EdgeInsets.edgePadding
-                        ) { item in
-                            userButtonView(for: item, displayType: .grid)
-                                .isSelected(selectedUsers.contains(item.user))
-                        }
+                    switch userListDisplayType {
+                    case .grid:
+                        tvOSGridContentView
+                    case .list:
+                        tvOSListContentView
+                            .frame(maxWidth: contentMaxWidth)
                     }
                 }
+                .edgePadding(.horizontal)
+                .animation(.linear(duration: 0.1), value: userListDisplayType)
                 .focusSection()
             }
             .scrollIfLargerThanContainer(padding: 100)
             .scrollViewOffset($scrollViewOffset)
 
-            SelectUserBottomBar(
+            UserActionButtonBar(
+                isCompact: horizontalSizeClass == .compact,
                 serverSelection: $serverSelection,
                 selectedServer: selectedServer,
                 servers: viewModel.servers.keys,
@@ -622,47 +729,49 @@ struct SelectUserView: PlatformView {
                     .frame(width: 30)
             }
 
-            ToolbarItem(placement: .topBarLeading) {
-                if isEditingUsers {
-                    if selectedUsers.count == userItems.count {
-                        Button(L10n.removeAll) {
-                            selectedUsers.removeAll()
+            if horizontalSizeClass == .compact {
+                ToolbarItem(placement: .topBarLeading) {
+                    if isEditingUsers {
+                        if selectedUsers.count == userItems.count {
+                            Button(L10n.removeAll) {
+                                selectedUsers.removeAll()
+                            }
+                            .buttonStyle(.toolbarPill)
+                        } else {
+                            Button(L10n.selectAll) {
+                                selectedUsers.insert(contentsOf: userItems.map(\.user))
+                            }
+                            .buttonStyle(.toolbarPill)
+                        }
+                    }
+                }
+
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    if isEditingUsers {
+                        Button(isEditingUsers ? L10n.cancel : L10n.edit) {
+                            isEditingUsers.toggle()
+
+                            UIDevice.impact(.light)
+
+                            if !isEditingUsers {
+                                selectedUsers.removeAll()
+                            }
                         }
                         .buttonStyle(.toolbarPill)
                     } else {
-                        Button(L10n.selectAll) {
-                            selectedUsers.insert(contentsOf: userItems.map(\.user))
-                        }
-                        .buttonStyle(.toolbarPill)
+                        advancedMenu
                     }
                 }
-            }
 
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                if isEditingUsers {
-                    Button(isEditingUsers ? L10n.cancel : L10n.edit) {
-                        isEditingUsers.toggle()
-
-                        UIDevice.impact(.light)
-
-                        if !isEditingUsers {
-                            selectedUsers.removeAll()
+                ToolbarItem(placement: .bottomBar) {
+                    if isEditingUsers {
+                        Button(L10n.delete) {
+                            isPresentingConfirmDeleteUsers = true
                         }
+                        .buttonStyle(.toolbarPill(.red))
+                        .disabled(selectedUsers.isEmpty)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .buttonStyle(.toolbarPill)
-                } else {
-                    advancedMenu
-                }
-            }
-
-            ToolbarItem(placement: .bottomBar) {
-                if isEditingUsers {
-                    Button(L10n.delete) {
-                        isPresentingConfirmDeleteUsers = true
-                    }
-                    .buttonStyle(.toolbarPill(.red))
-                    .disabled(selectedUsers.isEmpty)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
         }
