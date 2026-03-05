@@ -431,8 +431,8 @@ extension View {
         onNotification(.sceneWillEnterForeground, perform: action)
     }
 
-    func scrollIfLargerThanContainer(padding: CGFloat = 0) -> some View {
-        modifier(ScrollIfLargerThanContainerModifier(padding: padding))
+    func scrollIfLargerThanContainer(axes: Axis.Set = .vertical, padding: CGFloat = 0) -> some View {
+        modifier(ScrollIfLargerThanContainerModifier(axes: axes, padding: padding))
     }
 
     func maskLinearGradient(
