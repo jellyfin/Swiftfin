@@ -125,6 +125,22 @@ struct SelectUserView: PlatformView {
         }()
     }
 
+    private var isCompact: Bool {
+        horizontalSizeClass == .compact
+    }
+
+    private var areAllUsersSelected: Bool {
+        selectedUsers.count == userItems.count
+    }
+
+    private func toggleAllUsersSelected() {
+        if areAllUsersSelected {
+            selectedUsers.removeAll()
+        } else {
+            selectedUsers.insert(contentsOf: userItems.map(\.user))
+        }
+    }
+
     // MARK: - Shared Functions
 
     private func addUserSelected(server: ServerState) {
@@ -293,18 +309,49 @@ struct SelectUserView: PlatformView {
 
     @ViewBuilder
     private func userListButton(for item: UserItem) -> some View {
-        UserRow(
-            user: item.user,
-            server: item.server,
-            showServer: serverSelection == .all
-        ) {
+        ChevronButton {
             if isEditingUsers {
                 selectedUsers.toggle(value: item.user)
             } else {
                 select(user: item.user)
             }
-        } onDelete: {
-            delete(user: item.user)
+        } label: {
+            LabeledContent {
+                EmptyView()
+            } label: {
+                HStack(spacing: EdgeInsets.edgePadding) {
+                    UserProfileImage(
+                        userID: item.user.id,
+                        source: item.user.profileImageSource(
+                            client: item.server.client
+                        ),
+                        pipeline: .Swiftfin.local
+                    )
+                    .posterShadow()
+                    .frame(width: 80)
+
+                    VStack(alignment: .leading) {
+                        Text(item.user.username)
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .lineLimit(1)
+
+                        if serverSelection == .all {
+                            Text(item.server.name)
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
+                    }
+                }
+            }
+        }
+        .contextMenu {
+            if !isEditingUsers {
+                Button(L10n.delete, role: .destructive) {
+                    delete(user: item.user)
+                }
+            }
         }
         .isSelected(selectedUsers.contains(item.user))
     }
@@ -419,78 +466,46 @@ struct SelectUserView: PlatformView {
             .errorMessage($viewModel.error)
     }
 
-    // MARK: - iOS Helper Views
-
-    #if os(iOS)
+    // MARK: - Advanced Menu Content
 
     @ViewBuilder
-    private var advancedMenu: some View {
-        Menu(L10n.advanced, systemImage: "gearshape.fill") {
-
-            Section {
-
-                if userItems.isNotEmpty {
-                    ConditionalMenu(
-                        tracking: selectedServer,
-                        action: addUserSelected
-                    ) {
-                        Section(L10n.servers) {
-                            let servers = viewModel.servers.keys
-
-                            ForEach(servers) { server in
-                                Button {
-                                    addUserSelected(server: server)
-                                } label: {
-                                    Text(server.name)
-                                    Text(server.currentURL.absoluteString)
-                                }
-                            }
-                        }
-                    } label: {
-                        Label(L10n.addUser, systemImage: "plus")
-                    }
-
-                    Toggle(
-                        L10n.editUsers,
-                        systemImage: "person.crop.circle",
-                        isOn: $isEditingUsers
-                    )
-                }
+    private var advancedMenuContent: some View {
+        #if os(iOS)
+        Picker(selection: $userListDisplayType) {
+            ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
+                Label($0.displayTitle, systemImage: $0.systemImage)
+                    .tag($0)
             }
+        } label: {
+            Text(L10n.layout)
+            Text(userListDisplayType.displayTitle)
+            Image(systemName: userListDisplayType.systemImage)
+        }
+        .pickerStyle(.menu)
+        #endif
 
-            if viewModel.servers.isNotEmpty {
-                Picker(selection: $userListDisplayType) {
-                    ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
-                        Label($0.displayTitle, systemImage: $0.systemImage)
-                            .tag($0)
-                    }
-                } label: {
-                    Text(L10n.layout)
-                    Text(userListDisplayType.displayTitle)
-                    Image(systemName: userListDisplayType.systemImage)
-                }
-                .pickerStyle(.menu)
-
-                Picker(selection: $userSortOrder) {
-                    ForEach(SelectUserSortOrder.allCases, id: \.hashValue) {
-                        Label($0.displayTitle, systemImage: $0.systemImage)
-                            .tag($0)
-                    }
-                } label: {
-                    Text(L10n.sort)
-                    Text(userSortOrder.displayTitle)
-                    Image(systemName: userSortOrder.systemImage)
-                }
-                .pickerStyle(.menu)
+        Picker(selection: $userSortOrder) {
+            ForEach(SelectUserSortOrder.allCases, id: \.hashValue) {
+                Label($0.displayTitle, systemImage: $0.systemImage)
+                    .tag($0)
             }
+        } label: {
+            Text(L10n.sort)
+            Text(userSortOrder.displayTitle)
+            Image(systemName: userSortOrder.systemImage)
+        }
+        .pickerStyle(.menu)
 
-            Section {
-                Button(L10n.advanced, systemImage: "gearshape.fill") {
-                    router.route(to: .appSettings)
-                }
+        Section {
+            Button(L10n.advanced, systemImage: "gearshape.fill") {
+                router.route(to: .appSettings)
             }
         }
     }
+
+    // MARK: - iOS Helper Views
+
+    #if os(iOS)
 
     @ViewBuilder
     private var padGridContentView: some View {
@@ -579,15 +594,14 @@ struct SelectUserView: PlatformView {
             }
 
             UserActionButtonBar(
-                isCompact: horizontalSizeClass == .compact,
-                serverSelection: $serverSelection,
-                selectedServer: selectedServer,
                 servers: viewModel.servers.keys,
                 isEditingUsers: $isEditingUsers,
                 selectedUsers: $selectedUsers,
                 isPresentingConfirmDeleteUsers: $isPresentingConfirmDeleteUsers,
                 userItems: userItems
-            )
+            ) {
+                advancedMenuContent
+            }
         }
         .isEditing(isEditingUsers)
         .background {
@@ -617,15 +631,17 @@ struct SelectUserView: PlatformView {
             VStack(spacing: 0) {
 
                 Color.clear
-                    .frame(height: 200)
+                    .frame(height: 300)
 
                 HStack(spacing: EdgeInsets.edgePadding) {
                     if userItems.isEmpty {
                         addUserGridButton()
+                            .frame(width: 300)
                     }
 
                     ForEach(userItems, id: \.user.id) { item in
                         userGridButton(for: item)
+                            .frame(width: 300)
                     }
                 }
                 .edgePadding(.horizontal)
@@ -635,15 +651,14 @@ struct SelectUserView: PlatformView {
             .scrollViewOffset($scrollViewOffset)
 
             UserActionButtonBar(
-                isCompact: horizontalSizeClass == .compact,
-                serverSelection: $serverSelection,
-                selectedServer: selectedServer,
                 servers: viewModel.servers.keys,
                 isEditingUsers: $isEditingUsers,
                 selectedUsers: $selectedUsers,
                 isPresentingConfirmDeleteUsers: $isPresentingConfirmDeleteUsers,
                 userItems: userItems
-            )
+            ) {
+                advancedMenuContent
+            }
             .focusSection()
         }
         .isEditing(isEditingUsers)
@@ -709,37 +724,56 @@ struct SelectUserView: PlatformView {
                         .frame(width: 30)
                 }
 
-                if horizontalSizeClass == .compact {
+                if isCompact {
                     ToolbarItem(placement: .topBarLeading) {
                         if isEditingUsers {
-                            if selectedUsers.count == userItems.count {
-                                Button(L10n.removeAll) {
-                                    selectedUsers.removeAll()
-                                }
-                                .buttonStyle(.toolbarPill)
-                            } else {
-                                Button(L10n.selectAll) {
-                                    selectedUsers.insert(contentsOf: userItems.map(\.user))
-                                }
-                                .buttonStyle(.toolbarPill)
+                            Button(areAllUsersSelected ? L10n.removeAll : L10n.selectAll) {
+                                toggleAllUsersSelected()
                             }
+                            .buttonStyle(.toolbarPill)
                         }
                     }
 
                     ToolbarItemGroup(placement: .topBarTrailing) {
                         if isEditingUsers {
-                            Button(isEditingUsers ? L10n.cancel : L10n.edit) {
-                                isEditingUsers.toggle()
-
-                                UIDevice.impact(.light)
-
-                                if !isEditingUsers {
-                                    selectedUsers.removeAll()
-                                }
+                            Button(L10n.cancel) {
+                                isEditingUsers = false
                             }
                             .buttonStyle(.toolbarPill)
                         } else {
-                            advancedMenu
+                            Menu {
+                                if userItems.isNotEmpty {
+                                    Section {
+                                        ConditionalMenu(
+                                            tracking: selectedServer,
+                                            action: { server in
+                                                router.route(to: .userSignIn(server: server))
+                                            }
+                                        ) {
+                                            ForEach(viewModel.servers.keys) { server in
+                                                Button {
+                                                    router.route(to: .userSignIn(server: server))
+                                                } label: {
+                                                    Text(server.name)
+                                                    Text(server.currentURL.absoluteString)
+                                                }
+                                            }
+                                        } label: {
+                                            Label(L10n.addUser, systemImage: "plus")
+                                        }
+
+                                        Toggle(
+                                            L10n.editUsers,
+                                            systemImage: "person.crop.circle",
+                                            isOn: $isEditingUsers
+                                        )
+                                    }
+                                }
+
+                                advancedMenuContent
+                            } label: {
+                                Label(L10n.advanced, systemImage: "gearshape.fill")
+                            }
                         }
                     }
 
@@ -778,6 +812,8 @@ struct SelectUserView: PlatformView {
         ) {
             Button(L10n.delete, role: .destructive) {
                 viewModel.deleteUsers(selectedUsers)
+                selectedUsers.removeAll()
+                isEditingUsers = false
             }
         } message: {
             deleteConfirmationMessage
@@ -833,6 +869,8 @@ struct SelectUserView: PlatformView {
         ) {
             Button(L10n.delete, role: .destructive) {
                 viewModel.deleteUsers(selectedUsers)
+                selectedUsers.removeAll()
+                isEditingUsers = false
             }
         } message: {
             deleteConfirmationMessage

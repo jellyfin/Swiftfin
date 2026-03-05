@@ -12,18 +12,17 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct UserActionButtonBar: View {
+    struct UserActionButtonBar<AdvancedContent: View>: View {
 
-        @Default(.selectUserDisplayType)
-        private var userListDisplayType
-        @Default(.selectUserSortOrder)
-        private var userSortOrder
+        @Default(.selectUserServerSelection)
+        private var serverSelection
 
         @Router
         private var router
 
-        @Binding
-        private var serverSelection: SelectUserServerSelection
+        @Environment(\.horizontalSizeClass)
+        private var horizontalSizeClass
+
         @Binding
         private var isEditingUsers: Bool
         @Binding
@@ -31,37 +30,48 @@ extension SelectUserView {
         @Binding
         private var isPresentingConfirmDeleteUsers: Bool
 
-        private let isCompact: Bool
-        private let selectedServer: ServerState?
         private let servers: OrderedSet<ServerState>
         private let userItems: [UserItem]
+        private let advancedContent: () -> AdvancedContent
+
+        private var isCompact: Bool {
+            horizontalSizeClass == .compact
+        }
 
         private var areUsersSelected: Bool {
             selectedUsers.isNotEmpty
+        }
+
+        private var areAllUsersSelected: Bool {
+            selectedUsers.count == userItems.count
         }
 
         private var hasUsers: Bool {
             userItems.isNotEmpty
         }
 
+        private var selectedServer: ServerState? {
+            serverSelection.server(from: servers)
+        }
+
+        private var regularButtonHeight: CGFloat {
+            UIDevice.isTV ? 100 : 75
+        }
+
         init(
-            isCompact: Bool,
-            serverSelection: Binding<SelectUserServerSelection>,
-            selectedServer: ServerState?,
             servers: OrderedSet<ServerState>,
             isEditingUsers: Binding<Bool>,
             selectedUsers: Binding<Set<UserState>>,
             isPresentingConfirmDeleteUsers: Binding<Bool>,
-            userItems: [UserItem]
+            userItems: [UserItem],
+            @ViewBuilder advancedContent: @escaping () -> AdvancedContent
         ) {
-            self._serverSelection = serverSelection
             self._isEditingUsers = isEditingUsers
             self._selectedUsers = selectedUsers
             self._isPresentingConfirmDeleteUsers = isPresentingConfirmDeleteUsers
-            self.isCompact = isCompact
-            self.selectedServer = selectedServer
             self.servers = servers
             self.userItems = userItems
+            self.advancedContent = advancedContent
         }
 
         var body: some View {
@@ -71,6 +81,56 @@ extension SelectUserView {
                 regularView
             }
         }
+
+        private func toggleAllUsersSelected() {
+            if areAllUsersSelected {
+                selectedUsers.removeAll()
+            } else {
+                selectedUsers.insert(contentsOf: userItems.map(\.user))
+            }
+        }
+
+        @ViewBuilder
+        private var addUserContent: some View {
+            ForEach(servers) { server in
+                Button {
+                    router.route(to: .userSignIn(server: server))
+                } label: {
+                    Text(server.name)
+                    Text(server.currentURL.absoluteString)
+                }
+            }
+        }
+
+        // MARK: - Advanced Menu Content
+
+        @ViewBuilder
+        private var advancedMenuContent: some View {
+            if hasUsers {
+                Section {
+                    ConditionalMenu(
+                        tracking: selectedServer,
+                        action: { server in
+                            router.route(to: .userSignIn(server: server))
+                        }
+                    ) {
+                        addUserContent
+                    } label: {
+                        Label(L10n.addUser, systemImage: "plus")
+                    }
+
+                    Toggle(
+                        L10n.editUsers,
+                        systemImage: "person.crop.circle",
+                        isOn: $isEditingUsers
+                    )
+                }
+            }
+
+            advancedContent()
+        }
+
+        // MARK: - Server Menu
 
         @ViewBuilder
         private var serverMenuItems: some View {
@@ -131,6 +191,8 @@ extension SelectUserView {
             .foregroundStyle(Color.primary)
         }
 
+        // MARK: - Compact View
+
         @ViewBuilder
         private var compactView: some View {
             if !isEditingUsers {
@@ -141,15 +203,16 @@ extension SelectUserView {
                         .padding()
                 }
                 .menuOrder(.fixed)
-                .frame(height: 50)
-                .frame(maxWidth: 400)
-                .edgePadding([.bottom, .horizontal])
+                #if os(iOS)
+                    .buttonStyle(.material)
+                #endif
+                    .frame(height: 50)
+                    .frame(maxWidth: 400)
+                    .edgePadding([.bottom, .horizontal])
             }
         }
 
-        private var regularButtonHeight: CGFloat {
-            UIDevice.isTV ? 100 : 75
-        }
+        // MARK: - Regular View
 
         private var regularView: some View {
             AlternateLayoutView(alignment: .top) {
@@ -163,8 +226,10 @@ extension SelectUserView {
                         contentView
                     }
                 }
+                #if os(iOS)
+                .buttonStyle(.material)
+                #endif
                 .animation(.easeInOut, value: areUsersSelected)
-                .font(.title3.weight(.semibold))
                 .foregroundStyle(Color.primary)
             }
             .edgePadding([.bottom, .horizontal])
@@ -173,29 +238,27 @@ extension SelectUserView {
         @ViewBuilder
         private var editView: some View {
             if areUsersSelected {
-                Button(
-                    L10n.delete,
-                    role: .destructive
-                ) {
+                Button(role: .destructive) {
                     isPresentingConfirmDeleteUsers = true
+                } label: {
+                    Text(L10n.delete)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 .isSelected(true)
-                .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .primary))
-                .frame(height: regularButtonHeight)
-                .frame(minWidth: 100, maxWidth: 400)
-                .transition(.move(edge: .leading).combined(with: .opacity))
+                #if os(iOS)
+                    .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .primary))
+                #endif
+                    .frame(height: regularButtonHeight)
+                    .frame(minWidth: 100, maxWidth: 400)
+                    .transition(.move(edge: .leading).combined(with: .opacity))
             }
 
             Button {
-                if selectedUsers.isNotEmpty {
-                    selectedUsers.removeAll()
-                } else {
-                    selectedUsers.insert(contentsOf: userItems.map(\.user))
-                }
+                toggleAllUsersSelected()
             } label: {
-                Text(areUsersSelected ? L10n.removeAll : L10n.selectAll)
+                Text(areAllUsersSelected ? L10n.removeAll : L10n.selectAll)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .buttonStyle(.material)
             .frame(height: regularButtonHeight)
             .frame(minWidth: 100, maxWidth: 400)
 
@@ -203,8 +266,8 @@ extension SelectUserView {
                 isEditingUsers = false
             } label: {
                 Text(L10n.cancel)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .buttonStyle(.material)
             .frame(height: regularButtonHeight)
             .frame(minWidth: 100, maxWidth: 400)
         }
@@ -217,22 +280,12 @@ extension SelectUserView {
                     router.route(to: .userSignIn(server: server))
                 }
             ) {
-                Text(L10n.selectServer)
-
-                ForEach(servers) { server in
-                    Button {
-                        router.route(to: .userSignIn(server: server))
-                    } label: {
-                        Text(server.name)
-                        Text(server.currentURL.absoluteString)
-                    }
-                }
+                addUserContent
             } label: {
                 Label(L10n.addUser, systemImage: "plus")
                     .labelStyle(.iconOnly)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .buttonStyle(.material)
             .menuOrder(.fixed)
             .frame(width: regularButtonHeight, height: regularButtonHeight)
             .hidden(!hasUsers)
@@ -244,55 +297,17 @@ extension SelectUserView {
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .buttonStyle(.material)
             .menuOrder(.fixed)
             .frame(maxWidth: 600)
             .frame(height: regularButtonHeight)
 
             Menu {
-                Section {
-                    Button(L10n.editUsers, systemImage: "person.crop.circle") {
-                        isEditingUsers = true
-                    }
-                }
-
-                #if os(iOS)
-                Picker(selection: $userListDisplayType) {
-                    ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
-                        Label($0.displayTitle, systemImage: $0.systemImage)
-                            .tag($0)
-                    }
-                } label: {
-                    Text(L10n.layout)
-                    Text(userListDisplayType.displayTitle)
-                    Image(systemName: userListDisplayType.systemImage)
-                }
-                .pickerStyle(.menu)
-                #endif
-
-                Picker(selection: $userSortOrder) {
-                    ForEach(SelectUserSortOrder.allCases, id: \.hashValue) {
-                        Label($0.displayTitle, systemImage: $0.systemImage)
-                            .tag($0)
-                    }
-                } label: {
-                    Text(L10n.sort)
-                    Text(userSortOrder.displayTitle)
-                    Image(systemName: userSortOrder.systemImage)
-                }
-                .pickerStyle(.menu)
-
-                Section {
-                    Button(L10n.advanced, systemImage: "gearshape.fill") {
-                        router.route(to: .appSettings)
-                    }
-                }
+                advancedMenuContent
             } label: {
                 Label(L10n.advanced, systemImage: "gearshape.fill")
                     .labelStyle(.iconOnly)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .buttonStyle(.material)
             .menuOrder(.fixed)
             .frame(width: regularButtonHeight, height: regularButtonHeight)
         }

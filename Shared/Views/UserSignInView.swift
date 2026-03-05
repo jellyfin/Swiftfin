@@ -219,13 +219,29 @@ struct UserSignInView: View {
             } else {
                 #if os(iOS)
                 ForEach(viewModel.publicUsers) { user in
-                    UserRow(
-                        user: user,
-                        client: viewModel.server.client
-                    ) {
+                    ChevronButton {
                         username = user.name ?? ""
                         password = ""
                         focusedTextField = .password
+                    } label: {
+                        LabeledContent {
+                            EmptyView()
+                        } label: {
+                            HStack {
+                                UserProfileImage(
+                                    userID: user.id,
+                                    source: user.profileImageSource(
+                                        client: viewModel.server.client,
+                                        maxWidth: 120
+                                    )
+                                )
+                                .frame(width: 50, height: 50)
+
+                                Text(user.name ?? .emptyDash)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+                            }
+                        }
                     }
                 }
                 #else
