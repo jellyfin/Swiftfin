@@ -12,25 +12,18 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
 
     @State
     private var contentSize: CGSize = .zero
-    @State
-    private var layoutSize: CGSize = .zero
 
     let axes: Axis.Set
     let padding: CGFloat
 
-    private var isVerticallyLarger: Bool {
-        contentSize.height >= layoutSize.height
-    }
-
-    private var isHorizontallyLarger: Bool {
-        contentSize.width >= layoutSize.width
-    }
-
     func body(content: Content) -> some View {
         AlternateLayoutView {
             Color.clear
-                .trackingSize($layoutSize)
-        } content: {
+        } content: { layoutSize in
+
+            let isHorizontallyLarger: Bool = (contentSize.width + padding >= layoutSize.width) && axes.contains(.horizontal)
+            let isVerticallyLarger: Bool = (contentSize.height + padding >= layoutSize.height) && axes.contains(.vertical)
+
             ScrollView(axes) {
                 content
                     .trackingSize($contentSize)
@@ -41,7 +34,7 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
             )
             .backport // iOS 17
             .scrollClipDisabled()
-            .scrollDisabled(!((axes.contains(.vertical) && isVerticallyLarger) || (axes.contains(.horizontal) && isHorizontallyLarger)))
+            .scrollDisabled((axes.contains(.horizontal) && !isHorizontallyLarger) || (axes.contains(.vertical) && !isVerticallyLarger))
             .scrollIndicators(.never)
         }
     }
