@@ -153,8 +153,10 @@ extension SelectUserView {
                 .frame(height: buttonHeight)
 
             Menu {
-                EditUsersMenu()
-                    .environment(\.editMode, editMode)
+                Section {
+                    EditUsersMenu(hasUsers: !allUsers.isEmpty)
+                        .environment(\.editMode, editMode)
+                }
                 AdvancedMenu()
             } label: {
                 Label(L10n.advanced, systemImage: "gearshape.fill")

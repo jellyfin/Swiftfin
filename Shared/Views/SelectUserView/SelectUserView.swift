@@ -307,7 +307,7 @@ struct SelectUserView: PlatformView {
                 ImageView(splashScreenImageSources)
                     .pipeline(.Swiftfin.local)
                     .aspectRatio(contentMode: .fill)
-                    .id(splashScreenImageSources)
+                    // .id(splashScreenImageSources)
                     .transition(.opacity.animation(.linear(duration: 0.1)))
                     .animation(.linear, value: splashScreenImageSources)
 
@@ -354,6 +354,20 @@ struct SelectUserView: PlatformView {
                     .frame(maxHeight: .infinity)
                     .mask {
                         VStack(spacing: 0) {
+                            #if os(tvOS)
+                            if userListDisplayType == .list {
+                                LinearGradient(
+                                    stops: [
+                                        .init(color: .clear, location: 0),
+                                        .init(color: .white, location: 1),
+                                    ],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                                .frame(height: 30)
+                            }
+                            #endif
+
                             Color.white
 
                             LinearGradient(
@@ -395,16 +409,12 @@ struct SelectUserView: PlatformView {
         .background {
             splashScreenBackground
         }
-        .onAppear {
+        .onFirstAppear {
             viewModel.getServers()
         }
         .onChange(of: editMode?.wrappedValue) { newValue in
-            guard newValue?.isEditing != true else { return }
-            selectedUsers.removeAll()
-        }
-        .onChange(of: isPresentingConfirmDeleteUsers) { newValue in
-            guard !newValue else { return }
-            editMode?.wrappedValue = .inactive
+            guard newValue?.isEditing != true,
+                  !isPresentingConfirmDeleteUsers else { return }
             selectedUsers.removeAll()
         }
         .onReceive(viewModel.$error) { error in
@@ -482,10 +492,12 @@ struct SelectUserView: PlatformView {
                             .buttonStyle(.toolbarPill)
                         } else {
                             Menu {
-                                AddUserMenu(servers: viewModel.servers.keys)
+                                Section(L10n.users) {
+                                    AddUserMenu(servers: viewModel.servers.keys)
 
-                                EditUsersMenu()
-                                    .environment(\.editMode, editMode)
+                                    EditUsersMenu(hasUsers: userItems.isNotEmpty)
+                                        .environment(\.editMode, editMode)
+                                }
 
                                 AdvancedMenu()
                             } label: {

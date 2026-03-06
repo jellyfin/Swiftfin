@@ -59,15 +59,23 @@ extension SelectUserView {
         @Environment(\.editMode)
         private var editMode
 
+        private let hasUsers: Bool
+
+        init(hasUsers: Bool) {
+            self.hasUsers = hasUsers
+        }
+
         var body: some View {
-            Toggle(
-                L10n.editUsers,
-                systemImage: "person.crop.circle",
-                isOn: Binding(
-                    get: { editMode?.wrappedValue.isEditing == true },
-                    set: { editMode?.wrappedValue = $0 ? .active : .inactive }
+            if hasUsers {
+                Toggle(
+                    L10n.editUsers,
+                    systemImage: "person.crop.circle",
+                    isOn: Binding(
+                        get: { editMode?.wrappedValue.isEditing == true },
+                        set: { editMode?.wrappedValue = $0 ? .active : .inactive }
+                    )
                 )
-            )
+            }
         }
     }
 }
