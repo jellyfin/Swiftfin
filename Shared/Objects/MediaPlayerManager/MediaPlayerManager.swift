@@ -123,7 +123,12 @@ final class MediaPlayerManager: ViewModel {
     @Published
     private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
     @Published
-    var rate: Float = 1.0
+    var rate: Float = Defaults[.VideoPlayer.Playback.playbackRate] {
+        didSet {
+            Defaults[.VideoPlayer.Playback.playbackRate] = rate
+        }
+    }
+
     @Published
     var queue: AnyMediaPlayerQueue? = nil
 
