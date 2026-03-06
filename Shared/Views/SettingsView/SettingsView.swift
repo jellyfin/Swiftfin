@@ -55,7 +55,7 @@ struct SettingsView: View {
     private var serverSection: some View {
         Section {
             UserProfileRow(user: viewModel.userSession.user.data) {
-                router.route(to: .userProfile(viewModel: viewModel))
+                router.route(to: .localUserSettings(viewModel: viewModel))
             }
 
             ChevronButton(

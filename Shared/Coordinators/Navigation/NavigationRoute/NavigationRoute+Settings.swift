@@ -149,10 +149,16 @@ extension NavigationRoute {
         }
     }
 
-    static let localSecurity = NavigationRoute(
-        id: "localSecurity"
+    static let localUserSecurity = NavigationRoute(
+        id: "localUserSecurity"
     ) {
-        UserLocalSecurityView()
+        LocalUserSecurityView()
+    }
+
+    static func localUserSettings(viewModel: SettingsViewModel) -> NavigationRoute {
+        NavigationRoute(id: "localUserSettings") {
+            LocalUserSettingsView(viewModel: viewModel)
+        }
     }
 
     static let log = NavigationRoute(
@@ -197,12 +203,6 @@ extension NavigationRoute {
         style: .sheet
     ) {
         SettingsView()
-    }
-
-    static func userProfile(viewModel: SettingsViewModel) -> NavigationRoute {
-        NavigationRoute(id: "userProfile") {
-            UserProfileSettingsView(viewModel: viewModel)
-        }
     }
 
     static let videoPlayerSettings = NavigationRoute(
