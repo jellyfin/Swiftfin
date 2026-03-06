@@ -87,6 +87,13 @@ struct ItemEditorView: View {
                     }
                 }
             }
+
+            if viewModel.item.canDelete == true {
+                Button(L10n.delete, role: .destructive) {
+                    router.route(to: .itemDeletion(viewModel: viewModel))
+                }
+                .buttonStyle(.primary)
+            }
         }
     }
 }

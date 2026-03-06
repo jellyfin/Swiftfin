@@ -12,18 +12,6 @@ import SwiftUI
 
 extension BaseItemDto {
 
-    /// Indicates whether the item can be deleted by the current user
-    var canBeDeleted: Bool {
-        switch type {
-        case .playlist:
-            canDelete == true
-        case .boxSet:
-            StoredValues[.User.enableCollectionManagement] && canDelete == true
-        default:
-            StoredValues[.User.enableItemDeletion] && canDelete == true
-        }
-    }
-
     /// Indicates whether the item can be downloaded by the current user
     var canBeDownloaded: Bool {
         guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
@@ -74,7 +62,6 @@ extension BaseItemDto {
     var showEditorMenu: Bool {
         canEditMetadata
             || canEditSubtitles
-            || canBeDeleted
         // TODO: Enable with Lyrics and/or Downloads
         // || canEditLyrics
         // || (!UIDevice.isTV && canBeDownloaded)

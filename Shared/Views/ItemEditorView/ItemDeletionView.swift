@@ -9,6 +9,9 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: just move to a confirmation dialog on `ItemEditorView`
+//       with additional warning message if deleting children
+
 struct ItemDeletionView: View {
 
     @ObservedObject

@@ -25,7 +25,7 @@ struct ItemEditorMenu: View {
     var body: some View {
         contentView
             .onNotification(.didDeleteItem) { _ in
-                UIDevice.feedback(.error)
+                UIDevice.feedback(.success)
                 router.dismiss()
             }
             .errorMessage($viewModel.error)
@@ -61,14 +61,6 @@ struct ItemEditorMenu: View {
                 #else
                 router.route(to: .searchSubtitle(viewModel: .init(item: viewModel.item)))
                 #endif
-            }
-        }
-
-        if viewModel.item.canBeDeleted {
-            Section {
-                Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                    router.route(to: .itemDeletion(viewModel: viewModel))
-                }
             }
         }
     }
