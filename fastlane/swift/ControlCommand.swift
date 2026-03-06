@@ -1,5 +1,5 @@
 // ControlCommand.swift
-// Copyright (c) 2026 FastlaneTools
+// Copyright (c) 2025 FastlaneTools
 
 //
 //  ** NOTE **
@@ -12,9 +12,7 @@ import Foundation
 
 struct ControlCommand: RubyCommandable {
     static let commandKey = "command"
-    var type: CommandType {
-        return .control
-    }
+    var type: CommandType { return .control }
 
     enum ShutdownCommandType {
         static let userMessageKey: String = "userMessage"
@@ -61,7 +59,8 @@ struct ControlCommand: RubyCommandable {
         }
 
         let jsonData = try! JSONSerialization.data(withJSONObject: jsonDictionary, options: [])
-        return String(data: jsonData, encoding: .utf8)!
+        let jsonString = String(data: jsonData, encoding: .utf8)!
+        return jsonString
     }
 
     init(commandType: ShutdownCommandType, message: String? = nil) {

@@ -1,5 +1,5 @@
 // RubyCommand.swift
-// Copyright (c) 2026 FastlaneTools
+// Copyright (c) 2025 FastlaneTools
 
 //
 //  ** NOTE **
@@ -11,9 +11,7 @@
 import Foundation
 
 struct RubyCommand: RubyCommandable {
-    var type: CommandType {
-        return .action
-    }
+    var type: CommandType { return .action }
 
     struct Argument {
         enum ArgType {
@@ -64,7 +62,8 @@ struct RubyCommand: RubyCommandable {
                         "value": someValue,
                     ]
                     let jsonData = try! JSONSerialization.data(withJSONObject: dictionary, options: [])
-                    return String(data: jsonData, encoding: .utf8)!
+                    let jsonString = String(data: jsonData, encoding: .utf8)!
+                    return jsonString
                 }
             } else {
                 // Just exclude this arg if it doesn't have a value
@@ -147,7 +146,9 @@ struct RubyCommand: RubyCommandable {
             jsonParts.append(classNameJson)
         }
 
-        return "{\(jsonParts.joined(separator: ","))}"
+        let commandJsonString = "{\(jsonParts.joined(separator: ","))}"
+
+        return commandJsonString
     }
 }
 
