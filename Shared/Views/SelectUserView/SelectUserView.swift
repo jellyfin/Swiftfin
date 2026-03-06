@@ -16,7 +16,7 @@ import SwiftUI
 import LocalAuthentication
 #endif
 
-struct SelectUserView: View {
+struct SelectUserView: PlatformView {
 
     typealias UserItem = (user: UserState, server: ServerState)
 
@@ -328,7 +328,11 @@ struct SelectUserView: View {
             } else {
                 VStack(spacing: 0) {
                     ZStack {
-                        if userListDisplayType == .list, userItems.isNotEmpty {
+                        if userItems.isEmpty {
+                            UserEmptyView {
+                                addUserGridButton()
+                            }
+                        } else if userListDisplayType == .list {
                             ListView(
                                 userItems: userItems,
                                 selectedUsers: $selectedUsers,
@@ -343,9 +347,7 @@ struct SelectUserView: View {
                                 serverSelection: serverSelection,
                                 onSelect: { select(user: $0) },
                                 onDelete: { delete(user: $0) }
-                            ) {
-                                addUserGridButton()
-                            }
+                            )
                         }
                     }
                     .animation(.linear(duration: 0.1), value: userListDisplayType)
@@ -364,6 +366,7 @@ struct SelectUserView: View {
                             )
                             .frame(height: 30)
                         }
+                        .ignoresSafeArea(.all, edges: .horizontal)
                     }
 
                     UserActionButtonBar(
@@ -381,169 +384,132 @@ struct SelectUserView: View {
         .environment(\.editMode, editMode)
         .isEditing(editMode?.wrappedValue.isEditing == true)
         .environment(\.isOverComplexContent, true)
-        .background { splashScreenBackground }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Image(uiImage: .jellyfinBlobBlue)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: UIDevice.isTV ? 100 : 30)
+            }
+        }
+        .background {
+            splashScreenBackground
+        }
+        .onAppear {
+            viewModel.getServers()
+        }
+        .onChange(of: editMode?.wrappedValue) { newValue in
+            guard newValue?.isEditing != true else { return }
+            selectedUsers.removeAll()
+        }
+        .onChange(of: isPresentingConfirmDeleteUsers) { newValue in
+            guard !newValue else { return }
+            editMode?.wrappedValue = .inactive
+            selectedUsers.removeAll()
+        }
+        .onReceive(viewModel.$error) { error in
+            guard error != nil else { return }
+            UIDevice.feedback(.error)
+        }
+        .onChange(of: viewModel.servers.keys) { newValue in
+            onServersChanged(newValue)
+        }
+        .onChange(of: isPresentingLocalPin) { newValue in
+            if newValue {
+                pin = ""
+            } else {
+                selectedUsers.removeAll()
+            }
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .signedIn(user):
+                onSignedIn(user)
+            }
+        }
+        .onNotification(.didConnectToServer) { server in
+            viewModel.getServers()
+            serverSelection = .server(id: server.id)
+        }
+        .onNotification(.didChangeCurrentServerURL) { _ in
+            viewModel.getServers()
+        }
+        .onNotification(.didDeleteServer) { _ in
+            viewModel.getServers()
+        }
+        .alert(L10n.signIn, isPresented: $isPresentingLocalPin) {
+            pinAlertContent
+        } message: {
+            pinAlertMessage
+        }
+        .alert(
+            L10n.delete,
+            isPresented: $isPresentingConfirmDeleteUsers
+        ) {
+            Button(L10n.delete, role: .destructive) {
+                viewModel.deleteUsers(selectedUsers)
+                selectedUsers.removeAll()
+                editMode?.wrappedValue = .inactive
+            }
+        } message: {
+            deleteConfirmationMessage
+        }
+        .errorMessage($viewModel.error)
     }
 
-    // MARK: - Shared Modifiers
-
-    private func applySharedModifiers(_ view: some View) -> some View {
-        view
-            .onAppear {
-                viewModel.getServers()
-            }
-            .onChange(of: viewModel.servers.keys) { newValue in
-                onServersChanged(newValue)
-            }
-            .onChange(of: isPresentingLocalPin) { newValue in
-                if newValue {
-                    pin = ""
-                } else {
-                    selectedUsers.removeAll()
-                }
-            }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case let .signedIn(user):
-                    onSignedIn(user)
-                }
-            }
-            .onNotification(.didConnectToServer) { server in
-                viewModel.getServers()
-                serverSelection = .server(id: server.id)
-            }
-            .onNotification(.didChangeCurrentServerURL) { _ in
-                viewModel.getServers()
-            }
-            .onNotification(.didDeleteServer) { _ in
-                viewModel.getServers()
-            }
-            .alert(L10n.signIn, isPresented: $isPresentingLocalPin) {
-                pinAlertContent
-            } message: {
-                pinAlertMessage
-            }
-            .errorMessage($viewModel.error)
-    }
-
-    // MARK: - iOS Body
-
-    #if os(iOS)
-    private var iOSBody: some View {
-        applySharedModifiers(
-            contentView
-                .ignoresSafeArea(.keyboard, edges: .bottom)
-                .navigationTitle(L10n.users)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        Image(uiImage: .jellyfinBlobBlue)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 30)
+    var iOSView: some View {
+        contentView
+            .ignoresSafeArea(.keyboard, edges: .bottom)
+            .navigationTitle(L10n.users)
+            .navigationBarTitleDisplayMode(.inline)
+        #if os(iOS)
+            .toolbar {
+                if horizontalSizeClass == .compact {
+                    ToolbarItem(placement: .topBarLeading) {
+                        if editMode?.wrappedValue.isEditing == true {
+                            Button(areAllUsersSelected ? L10n.removeAll : L10n.selectAll) {
+                                toggleAllUsersSelected()
+                            }
+                            .buttonStyle(.toolbarPill)
+                        }
                     }
 
-                    if horizontalSizeClass == .compact {
-                        ToolbarItem(placement: .topBarLeading) {
-                            if editMode?.wrappedValue.isEditing == true {
-                                Button(areAllUsersSelected ? L10n.removeAll : L10n.selectAll) {
-                                    toggleAllUsersSelected()
-                                }
-                                .buttonStyle(.toolbarPill)
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        if editMode?.wrappedValue.isEditing == true {
+                            Button(L10n.cancel) {
+                                editMode?.wrappedValue = .inactive
                             }
-                        }
+                            .buttonStyle(.toolbarPill)
+                        } else {
+                            Menu {
+                                AddUserMenu(servers: viewModel.servers.keys)
 
-                        ToolbarItemGroup(placement: .topBarTrailing) {
-                            if editMode?.wrappedValue.isEditing == true {
-                                Button(L10n.cancel) {
-                                    editMode?.wrappedValue = .inactive
-                                }
-                                .buttonStyle(.toolbarPill)
-                            } else {
-                                Menu {
-                                    NewUserMenu(
-                                        servers: viewModel.servers.keys,
-                                        hasUsers: userItems.isNotEmpty
-                                    )
+                                EditUsersMenu()
                                     .environment(\.editMode, editMode)
 
-                                    AdvancedMenu()
-                                } label: {
-                                    Label(L10n.advanced, systemImage: "gearshape.fill")
-                                }
-                            }
-                        }
-
-                        ToolbarItem(placement: .bottomBar) {
-                            if editMode?.wrappedValue.isEditing == true {
-                                Button(L10n.delete) {
-                                    isPresentingConfirmDeleteUsers = true
-                                }
-                                .buttonStyle(.toolbarPill(.red))
-                                .disabled(selectedUsers.isEmpty)
-                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                AdvancedMenu()
+                            } label: {
+                                Label(L10n.advanced, systemImage: "gearshape.fill")
                             }
                         }
                     }
-                }
-                .onChange(of: editMode?.wrappedValue) { newValue in
-                    guard newValue?.isEditing != true else { return }
-                    selectedUsers.removeAll()
-                }
-                .onChange(of: isPresentingConfirmDeleteUsers) { newValue in
-                    guard !newValue else { return }
-                    editMode?.wrappedValue = .inactive
-                    selectedUsers.removeAll()
-                }
-                .onReceive(viewModel.$error) { error in
-                    guard error != nil else { return }
-                    UIDevice.feedback(.error)
-                }
-                .alert(
-                    L10n.delete,
-                    isPresented: $isPresentingConfirmDeleteUsers
-                ) {
-                    Button(L10n.delete, role: .destructive) {
-                        viewModel.deleteUsers(selectedUsers)
-                        selectedUsers.removeAll()
-                        editMode?.wrappedValue = .inactive
+
+                    ToolbarItem(placement: .bottomBar) {
+                        if editMode?.wrappedValue.isEditing == true {
+                            Button(L10n.delete) {
+                                isPresentingConfirmDeleteUsers = true
+                            }
+                            .buttonStyle(.toolbarPill(.red))
+                            .disabled(selectedUsers.isEmpty)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                        }
                     }
-                } message: {
-                    deleteConfirmationMessage
                 }
-        )
-    }
-    #endif
-
-    // MARK: - tvOS Body
-
-    #if os(tvOS)
-    private var tvOSBody: some View {
-        applySharedModifiers(
-            contentView
-                .ignoresSafeArea()
-                .navigationBarBranding()
-                .confirmationDialog(
-                    Text(L10n.deleteUser),
-                    isPresented: $isPresentingConfirmDeleteUsers
-                ) {
-                    Button(L10n.delete, role: .destructive) {
-                        viewModel.deleteUsers(selectedUsers)
-                        selectedUsers.removeAll()
-                    }
-                } message: {
-                    deleteConfirmationMessage
-                }
-        )
-    }
-    #endif
-
-    // MARK: - Body
-
-    var body: some View {
-        #if os(iOS)
-        iOSBody
-        #elseif os(tvOS)
-        tvOSBody
+            }
         #endif
+    }
+
+    var tvOSView: some View {
+        contentView
     }
 }

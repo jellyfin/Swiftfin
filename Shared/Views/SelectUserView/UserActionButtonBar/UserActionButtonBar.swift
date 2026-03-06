@@ -141,24 +141,19 @@ extension SelectUserView {
 
         @ViewBuilder
         private var contentView: some View {
-            Menu {
-                NewUserMenu(servers: servers, hasUsers: !allUsers.isEmpty)
-                    .environment(\.editMode, editMode)
-            } label: {
-                Label(L10n.addUser, systemImage: "plus")
-                    .labelStyle(.iconOnly)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .menuOrder(.fixed)
-            .frame(width: buttonHeight, height: buttonHeight)
-            .hidden(allUsers.isEmpty)
+            AddUserMenu(servers: servers)
+                .labelStyle(.iconOnly)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .menuOrder(.fixed)
+                .frame(width: buttonHeight, height: buttonHeight)
+                .hidden(allUsers.isEmpty)
 
             ServerMenu(servers: servers)
                 .frame(maxWidth: 600)
                 .frame(height: buttonHeight)
 
             Menu {
-                NewUserMenu(servers: servers, hasUsers: !allUsers.isEmpty)
+                EditUsersMenu()
                     .environment(\.editMode, editMode)
                 AdvancedMenu()
             } label: {

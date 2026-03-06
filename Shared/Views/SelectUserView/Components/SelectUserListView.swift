@@ -42,71 +42,73 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
+        @ViewBuilder
         var body: some View {
-            List {
-                ForEach(userItems, id: \.user.id) { item in
-                    ChevronButton {
-                        if editMode?.wrappedValue.isEditing == true {
-                            selectedUsers.toggle(value: item.user)
-                        } else {
-                            onSelect(item.user)
-                        }
+            ForEach(userItems, id: \.user.id) { item in
+                ChevronButton {
+                    if editMode?.wrappedValue.isEditing == true {
+                        selectedUsers.toggle(value: item.user)
+                    } else {
+                        onSelect(item.user)
+                    }
+                } label: {
+                    LabeledContent {
+                        EmptyView()
                     } label: {
-                        LabeledContent {
-                            EmptyView()
-                        } label: {
-                            HStack(spacing: EdgeInsets.edgePadding) {
-                                UserProfileImage(
-                                    userID: item.user.id,
-                                    source: item.user.profileImageSource(
-                                        client: item.server.client
-                                    ),
-                                    pipeline: .Swiftfin.local
-                                )
-                                .posterShadow()
-                                .frame(width: profileImageWidth)
+                        HStack(spacing: EdgeInsets.edgePadding) {
+                            UserProfileImage(
+                                userID: item.user.id,
+                                source: item.user.profileImageSource(
+                                    client: item.server.client
+                                ),
+                                pipeline: .Swiftfin.local
+                            )
+                            .posterShadow()
+                            .frame(width: profileImageWidth)
 
-                                VStack(alignment: .leading) {
-                                    Text(item.user.username)
-                                        .font(UIDevice.isTV ? .title2 : .title3)
-                                        .fontWeight(.semibold)
+                            VStack(alignment: .leading) {
+                                Text(item.user.username)
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+
+                                if serverSelection == .all {
+                                    Text(item.server.name)
+                                        .font(UIDevice.isTV ? .body : .footnote)
+                                        .foregroundStyle(.secondary)
                                         .lineLimit(1)
-
-                                    if serverSelection == .all {
-                                        Text(item.server.name)
-                                            .font(UIDevice.isTV ? .body : .footnote)
-                                            .foregroundStyle(.secondary)
-                                            .lineLimit(1)
-                                    }
                                 }
                             }
                         }
                     }
-                    .contextMenu {
+                }
+                .contextMenu {
+                    if editMode?.wrappedValue.isEditing != true {
+                        Button(L10n.delete, role: .destructive) {
+                            onDelete(item.user)
+                        }
+                    }
+                }
+                .isSelected(selectedUsers.contains(item.user))
+                #if os(iOS)
+                    .swipeActions {
                         if editMode?.wrappedValue.isEditing != true {
-                            Button(L10n.delete, role: .destructive) {
+                            Button(
+                                L10n.delete,
+                                systemImage: "trash"
+                            ) {
                                 onDelete(item.user)
                             }
+                            .tint(.red)
                         }
                     }
-                    .isSelected(selectedUsers.contains(item.user))
-                    #if os(iOS)
-                        .swipeActions {
-                            if editMode?.wrappedValue.isEditing != true {
-                                Button(
-                                    L10n.delete,
-                                    systemImage: "trash"
-                                ) {
-                                    onDelete(item.user)
-                                }
-                                .tint(.red)
-                            }
-                        }
-                    #endif
-                }
-                .listRowBackground(EmptyView())
+                #endif
             }
-            .listStyle(.plain)
+            .listRowBackground(EmptyView())
+            #if os(tvOS)
+                .scrollClipDisabled()
+                .edgePadding()
+            #endif
         }
     }
 }
