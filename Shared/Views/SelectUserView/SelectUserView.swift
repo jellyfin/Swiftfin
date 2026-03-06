@@ -391,10 +391,6 @@ struct SelectUserView: View {
             .onAppear {
                 viewModel.getServers()
             }
-            .onChange(of: editMode) { _, newValue in
-                guard !newValue.isEditing else { return }
-                selectedUsers.removeAll()
-            }
             .onChange(of: viewModel.servers.keys) { newValue in
                 onServersChanged(newValue)
             }
@@ -448,7 +444,7 @@ struct SelectUserView: View {
 
                     if horizontalSizeClass == .compact {
                         ToolbarItem(placement: .topBarLeading) {
-                            if editMode.wrappedValue.isEditing == true {
+                            if editMode?.wrappedValue.isEditing == true {
                                 Button(areAllUsersSelected ? L10n.removeAll : L10n.selectAll) {
                                     toggleAllUsersSelected()
                                 }
@@ -457,9 +453,9 @@ struct SelectUserView: View {
                         }
 
                         ToolbarItemGroup(placement: .topBarTrailing) {
-                            if editMode.isEditing {
+                            if editMode?.wrappedValue.isEditing == true {
                                 Button(L10n.cancel) {
-                                    editMode = .inactive
+                                    editMode?.wrappedValue = .inactive
                                 }
                                 .buttonStyle(.toolbarPill)
                             } else {
@@ -478,7 +474,7 @@ struct SelectUserView: View {
                         }
 
                         ToolbarItem(placement: .bottomBar) {
-                            if editMode.isEditing {
+                            if editMode?.wrappedValue.isEditing == true {
                                 Button(L10n.delete) {
                                     isPresentingConfirmDeleteUsers = true
                                 }
@@ -489,9 +485,13 @@ struct SelectUserView: View {
                         }
                     }
                 }
+                .onChange(of: editMode?.wrappedValue) { newValue in
+                    guard newValue?.isEditing != true else { return }
+                    selectedUsers.removeAll()
+                }
                 .onChange(of: isPresentingConfirmDeleteUsers) { newValue in
                     guard !newValue else { return }
-                    editMode.wrappedValue = .inactive
+                    editMode?.wrappedValue = .inactive
                     selectedUsers.removeAll()
                 }
                 .onReceive(viewModel.$error) { error in
@@ -505,7 +505,7 @@ struct SelectUserView: View {
                     Button(L10n.delete, role: .destructive) {
                         viewModel.deleteUsers(selectedUsers)
                         selectedUsers.removeAll()
-                        editMode.wrappedValue = .inactive
+                        editMode?.wrappedValue = .inactive
                     }
                 } message: {
                     deleteConfirmationMessage
@@ -529,7 +529,6 @@ struct SelectUserView: View {
                     Button(L10n.delete, role: .destructive) {
                         viewModel.deleteUsers(selectedUsers)
                         selectedUsers.removeAll()
-                        editMode = .inactive
                     }
                 } message: {
                     deleteConfirmationMessage

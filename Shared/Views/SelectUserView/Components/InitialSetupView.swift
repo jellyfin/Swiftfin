@@ -16,6 +16,9 @@ extension SelectUserView {
         @Router
         private var router
 
+        @Default(.accentColor)
+        private var accentColor
+
         private var maxWidth: CGFloat {
             UIDevice.isTV ? 500 : 250
         }
@@ -35,8 +38,8 @@ extension SelectUserView {
                         .fontWeight(.bold)
                 }
                 .foregroundStyle(
-                    Color.accentColor.overlayColor,
-                    Color.accentColor
+                    accentColor.overlayColor,
+                    accentColor
                 )
                 .buttonStyle(.primary)
                 .frame(

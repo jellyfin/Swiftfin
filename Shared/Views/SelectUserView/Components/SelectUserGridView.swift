@@ -75,14 +75,8 @@ extension SelectUserView {
         var iOSView: some View {
             Group {
                 if userItems.isEmpty {
-                    CenteredLazyVGrid(
-                        data: [0],
-                        id: \.self,
-                        columns: columns,
-                        spacing: EdgeInsets.edgePadding
-                    ) { _ in
-                        addUserButton()
-                    }
+                    addUserButton()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 } else {
                     CenteredLazyVGrid(
                         data: userItems,
