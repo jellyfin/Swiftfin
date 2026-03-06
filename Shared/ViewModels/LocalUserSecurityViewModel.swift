@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import KeychainSwift
 
-final class UserLocalSecurityViewModel: ViewModel, Eventful {
+final class LocalUserSecurityViewModel: ViewModel, Eventful {
 
     enum Event: Hashable {
         case error(ErrorMessage)
