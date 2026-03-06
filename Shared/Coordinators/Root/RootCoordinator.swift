@@ -18,6 +18,7 @@ final class RootCoordinator: ObservableObject {
     var root: RootItem = .appLoading
 
     private let logger = Logger.swiftfin()
+    private var webSocketClient: ServerWebSocketClient?
 
     init() {
         Task {
@@ -25,6 +26,9 @@ final class RootCoordinator: ObservableObject {
                 try await SwiftfinStore.setupDataStack()
 
                 if Container.shared.currentUserSession() != nil, !Defaults[.signOutOnClose] {
+                    await MainActor.run {
+                        startWebSocket()
+                    }
                     #if os(tvOS)
                     await MainActor.run {
                         root(.mainTab)
@@ -61,6 +65,8 @@ final class RootCoordinator: ObservableObject {
     private func didSignIn() {
         logger.info("Signed in")
 
+        startWebSocket()
+
         #if os(tvOS)
         root(.mainTab)
         #else
@@ -72,6 +78,7 @@ final class RootCoordinator: ObservableObject {
     private func didSignOut() {
         logger.info("Signed out")
 
+        stopWebSocket()
         root(.selectUser)
     }
 
@@ -80,7 +87,27 @@ final class RootCoordinator: ObservableObject {
 
         guard Container.shared.currentUserSession() != nil else { return }
 
+        stopWebSocket()
         Container.shared.currentUserSession.reset()
         Notifications[.didSignIn].post()
+    }
+
+    // MARK: - WebSocket
+
+    private func startWebSocket() {
+        guard let session = Container.shared.currentUserSession() else { return }
+        stopWebSocket()
+
+        let client = ServerWebSocketClient(
+            jellyfinClient: session.client,
+            serverMessageProxy: Container.shared.mainServerMessageProxy()
+        )
+        client.connect()
+        self.webSocketClient = client
+    }
+
+    private func stopWebSocket() {
+        webSocketClient?.disconnect()
+        webSocketClient = nil
     }
 }

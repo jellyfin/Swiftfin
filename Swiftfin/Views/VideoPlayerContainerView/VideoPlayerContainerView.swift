@@ -132,6 +132,11 @@ extension VideoPlayer {
                     // inject box explicitly
                     .environmentObject(containerState.scrubbedSeconds)
                 }
+                .overlay(alignment: .bottomLeading) {
+                    ServerMessageOverlayView()
+                        .padding(.leading, 24)
+                        .padding(.bottom, 60)
+                }
                 .environment(
                     \.longPressAction,
                     .init(

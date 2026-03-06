@@ -44,5 +44,12 @@ struct RootView: View {
         .onPreferenceChange(IsStatusBarHiddenKey.self) { newValue in
             isStatusBarHidden = newValue
         }
+        #if os(iOS)
+        .overlay(alignment: .bottomLeading) {
+            ServerMessageOverlayView()
+                .padding(.leading, 20)
+                .padding(.bottom, 36)
+        }
+        #endif
     }
 }
