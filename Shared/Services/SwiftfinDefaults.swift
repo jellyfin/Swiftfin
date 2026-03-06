@@ -231,6 +231,7 @@ extension Defaults.Keys {
             static let compatibilityMode: Key<PlaybackCompatibility> = UserKey("compatibilityMode", default: .auto)
             static let customDeviceProfileAction: Key<CustomDeviceProfileAction> = UserKey("customDeviceProfileAction", default: .add)
             static let rates: Key<[Float]> = UserKey("videoPlayerPlaybackRates", default: [0.5, 1.0, 1.25, 1.5, 2.0])
+            static let playbackRate: Key<Float> = UserKey("playbackRate", default: Float(1.0))
         }
 
         // TODO: transition into a SubtitleConfiguration instead of multiple types
