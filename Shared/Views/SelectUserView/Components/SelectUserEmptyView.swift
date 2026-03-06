@@ -14,6 +14,10 @@ extension SelectUserView {
 
         private let addUserButton: () -> AddUserButton
 
+        private var columns: Int {
+            UIDevice.isPhone ? 2 : 5
+        }
+
         init(
             @ViewBuilder addUserButton: @escaping () -> AddUserButton
         ) {
@@ -21,8 +25,11 @@ extension SelectUserView {
         }
 
         var iOSView: some View {
-            addUserButton()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            GeometryReader { geometry in
+                addUserButton()
+                    .frame(maxWidth: (geometry.size.width - EdgeInsets.edgePadding * (CGFloat(columns) + 1)) / CGFloat(columns))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            }
         }
 
         var tvOSView: some View {

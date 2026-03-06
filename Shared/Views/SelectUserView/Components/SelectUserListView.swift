@@ -25,7 +25,7 @@ extension SelectUserView {
         private let onDelete: (UserState) -> Void
 
         private var profileImageWidth: CGFloat {
-            UIDevice.isTV ? 120 : 50
+            UIDevice.isTV ? 120 : UIDevice.isPad ? 80 : 50
         }
 
         init(
