@@ -6,17 +6,16 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct ItemDeletionView: View {
 
-    @Router
-    private var router
-
     @ObservedObject
     private var viewModel: ItemEditorViewModel<BaseItemDto>
+
+    @Router
+    private var router
 
     @State
     private var isPresentingConfirmation: Bool = false
@@ -45,9 +44,12 @@ struct ItemDeletionView: View {
                 isPresented: $isPresentingConfirmation,
                 titleVisibility: .visible
             ) {
-                Button(L10n.confirm, role: .destructive) {
-                    viewModel.delete()
-                }
+                Button(
+                    L10n.confirm,
+                    role: .destructive,
+                    action: viewModel.delete
+                )
+
                 Button(L10n.cancel, role: .cancel) {}
             }
             .errorMessage($viewModel.error)
@@ -62,6 +64,7 @@ struct ItemDeletionView: View {
                     if let taglines = viewModel.item.taglines, let tagline = taglines.first {
                         Text(tagline)
                     }
+
                     Text(overview)
                 }
             }

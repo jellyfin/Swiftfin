@@ -11,6 +11,8 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
+// TODO: Have component actions be a separate view model instead of subclassing this one
+
 @MainActor
 @Stateful
 class ItemEditorViewModel<Element: Equatable>: ViewModel {
@@ -179,6 +181,8 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
     }
 
     // MARK: - Update Item
+
+    // TODO: call update(_:) instead
 
     func updateItem(_ newItem: BaseItemDto) async throws {
         guard let itemId = item.id else { return }

@@ -11,21 +11,21 @@ import SwiftUI
 
 struct AddServerUserAccessTagsView: View {
 
-    @Router
-    private var router
-
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
 
-    @StateObject
-    private var tagViewModel: TagEditorViewModel
+    @Router
+    private var router
 
+    @State
+    private var access: Bool = false
     @State
     private var tempPolicy: UserPolicy
     @State
     private var tempTag: String = ""
-    @State
-    private var access: Bool = false
+
+    @StateObject
+    private var tagViewModel: TagEditorViewModel
 
     private var alreadyOnItem: Bool {
         let blocked = tempPolicy.blockedTags ?? []
@@ -56,58 +56,6 @@ struct AddServerUserAccessTagsView: View {
     // MARK: - Body
 
     var body: some View {
-        contentView
-            .navigationTitle(L10n.addAccessTag.localizedCapitalized)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                router.dismiss()
-            }
-            .topBarTrailing {
-                if viewModel.backgroundStates.contains(.refreshing) ||
-                    tagViewModel.background.states.contains(.searching)
-                {
-                    ProgressView()
-                }
-                if viewModel.backgroundStates.contains(.updating) {
-                    Button(L10n.cancel) {
-                        viewModel.send(.cancel)
-                    }
-                    .buttonStyle(.toolbarPill(.red))
-                } else {
-                    Button(L10n.save) {
-                        if access {
-                            tempPolicy.allowedTags = tempPolicy.allowedTags
-                                .appendedOrInit(tempTag)
-                        } else {
-                            tempPolicy.blockedTags = tempPolicy.blockedTags
-                                .appendedOrInit(tempTag)
-                        }
-
-                        viewModel.send(.updatePolicy(tempPolicy))
-                    }
-                    .buttonStyle(.toolbarPill)
-                    .disabled(!isValid)
-                }
-            }
-            .onChange(of: tempTag) { newTag in
-                tagViewModel.search(newTag)
-            }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case .error:
-                    UIDevice.feedback(.error)
-                case .updated:
-                    UIDevice.feedback(.success)
-                    router.dismiss()
-                }
-            }
-        // TODO: Add when moved to @Stateful
-        // .errorMessage($viewModel.error)
-    }
-
-    // MARK: - Content View
-
-    private var contentView: some View {
         Form {
             Section(L10n.access) {
                 Picker(L10n.access, selection: $access) {
@@ -134,5 +82,52 @@ struct AddServerUserAccessTagsView: View {
                 existsOnServer: existsOnServer
             )
         }
+        .navigationTitle(L10n.addAccessTag.localizedCapitalized)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
+        .topBarTrailing {
+            if viewModel.backgroundStates.contains(.refreshing) ||
+                tagViewModel.background.states.contains(.searching)
+            {
+                ProgressView()
+            }
+
+            if viewModel.backgroundStates.contains(.updating) {
+                Button(L10n.cancel) {
+                    viewModel.send(.cancel)
+                }
+                .buttonStyle(.toolbarPill(.red))
+            } else {
+                Button(L10n.save) {
+                    if access {
+                        tempPolicy.allowedTags = tempPolicy.allowedTags
+                            .appendedOrInit(tempTag)
+                    } else {
+                        tempPolicy.blockedTags = tempPolicy.blockedTags
+                            .appendedOrInit(tempTag)
+                    }
+
+                    viewModel.send(.updatePolicy(tempPolicy))
+                }
+                .buttonStyle(.toolbarPill)
+                .disabled(!isValid)
+            }
+        }
+        .onChange(of: tempTag) { newTag in
+            tagViewModel.search(newTag)
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .error:
+                UIDevice.feedback(.error)
+            case .updated:
+                UIDevice.feedback(.success)
+                router.dismiss()
+            }
+        }
+        // TODO: Add when moved to @Stateful
+        // .errorMessage($viewModel.error)
     }
 }

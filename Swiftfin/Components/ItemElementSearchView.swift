@@ -54,7 +54,7 @@ struct ItemElementSearchView<Element: Hashable>: View {
                         .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
                 }
             }
-            .animation(.easeInOut, value: name)
+            .animation(.linear, value: name)
         }
         .onFirstAppear {
             isNameFocused = true
@@ -104,7 +104,7 @@ struct ItemElementSearchView<Element: Hashable>: View {
                         ProgressView()
                     }
                 }
-                .animation(.easeInOut, value: isSearching)
+                .animation(.linear, value: isSearching)
             }
         }
     }
@@ -113,22 +113,17 @@ struct ItemElementSearchView<Element: Hashable>: View {
 
     @ViewBuilder
     private func rowLabel(_ match: Element) -> some View {
-        switch type {
-        case .people:
-            let person = match as! BaseItemPerson
-            HStack {
-                ZStack {
-                    Color.clear
-                    ImageView(person.portraitImageSources(maxWidth: 30, quality: 90))
-                        .failure {
-                            SystemImageContentView(systemName: "person.fill")
-                        }
-                }
-                .posterStyle(.portrait)
-                .frame(width: 30, height: 90)
-                .padding(.horizontal)
+        switch match {
+        case let person as BaseItemPerson:
+            HStack(spacing: EdgeInsets.edgePadding) {
+                PosterImage(
+                    item: person,
+                    type: .portrait
+                )
+                .frame(width: 60)
+                .posterShadow()
 
-                Text(type.getName(for: match))
+                Text(type.getName(for: person))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         default:

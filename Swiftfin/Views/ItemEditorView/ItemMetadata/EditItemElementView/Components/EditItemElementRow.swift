@@ -17,9 +17,9 @@ extension EditItemElementView {
         // MARK: - Enviroment Variables
 
         @Environment(\.isEditing)
-        var isEditing
+        private var isEditing
         @Environment(\.isSelected)
-        var isSelected
+        private var isSelected
 
         // MARK: - Metadata Variables
 
@@ -44,8 +44,12 @@ extension EditItemElementView {
             .onSelect(perform: onSelect)
             .isSeparatorVisible(false)
             .swipeActions {
-                Button(L10n.delete, systemImage: "trash", action: onDelete)
-                    .tint(.red)
+                Button(
+                    L10n.delete,
+                    systemImage: "trash",
+                    action: onDelete
+                )
+                .tint(.red)
             }
         }
 
@@ -56,9 +60,6 @@ extension EditItemElementView {
             HStack {
                 VStack(alignment: .leading) {
                     Text(type.getName(for: item))
-                        .foregroundStyle(
-                            isEditing ? (isSelected ? .primary : .secondary) : .primary
-                        )
                         .font(.headline)
                         .lineLimit(1)
 
@@ -69,14 +70,13 @@ extension EditItemElementView {
                             person.type?.displayTitle ?? .emptyDash,
                             value: person.role ?? .emptyDash
                         )
-                        .foregroundStyle(
-                            isEditing ? (isSelected ? .primary : .secondary) : .primary,
-                            .secondary
-                        )
                         .font(.subheadline)
                         .lineLimit(1)
                     }
                 }
+                .foregroundStyle(
+                    isEditing ? (isSelected ? .primary : .secondary) : .primary
+                )
 
                 if isEditing {
                     Spacer()
@@ -96,18 +96,12 @@ extension EditItemElementView {
         private var personImage: some View {
             let person = (item as! BaseItemPerson)
 
-            ZStack {
-                Color.clear
-
-                ImageView(person.portraitImageSources(maxWidth: 30, quality: 90))
-                    .failure {
-                        SystemImageContentView(systemName: "person.fill")
-                    }
-            }
-            .posterStyle(.portrait)
-            .frame(width: 30, height: 90)
+            PosterImage(
+                item: person,
+                type: .portrait
+            )
+            .frame(width: 60)
             .posterShadow()
-            .padding(.horizontal)
         }
     }
 }

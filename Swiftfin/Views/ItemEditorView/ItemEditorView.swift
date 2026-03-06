@@ -12,11 +12,11 @@ import SwiftUI
 
 struct ItemEditorView: View {
 
-    @Router
-    private var router
-
     @ObservedObject
     var viewModel: ItemEditorViewModel<BaseItemDto>
+
+    @Router
+    private var router
 
     var body: some View {
         ZStack {
@@ -42,8 +42,6 @@ struct ItemEditorView: View {
             viewModel.refreshItem(sendNotification: false)
         }
     }
-
-    // MARK: - Content View
 
     private var contentView: some View {
         List {
@@ -75,12 +73,15 @@ struct ItemEditorView: View {
                     ChevronButton(L10n.genres) {
                         router.route(to: .editGenres(item: viewModel.item))
                     }
+
                     ChevronButton(L10n.people) {
                         router.route(to: .editPeople(item: viewModel.item))
                     }
+
                     ChevronButton(L10n.tags) {
                         router.route(to: .editTags(item: viewModel.item))
                     }
+
                     ChevronButton(L10n.studios) {
                         router.route(to: .editStudios(item: viewModel.item))
                     }

@@ -67,10 +67,12 @@ struct EditItemElementView<Element: Hashable>: View {
                             if isEditing {
                                 isEditing.toggle()
                             }
+
                             if isReordering {
                                 elements = type.getElement(for: viewModel.item)
                                 isReordering.toggle()
                             }
+
                             UIDevice.impact(.light)
                             selectedElements.removeAll()
                         }
@@ -87,6 +89,7 @@ struct EditItemElementView<Element: Hashable>: View {
                         .disabled(selectedElements.isEmpty)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                     }
+
                     if isReordering {
                         Button(L10n.save) {
                             viewModel.reorder(elements)

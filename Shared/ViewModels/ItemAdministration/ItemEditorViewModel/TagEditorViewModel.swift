@@ -12,22 +12,14 @@ import JellyfinAPI
 
 final class TagEditorViewModel: ItemEditorViewModel<String> {
 
-    private var allTags: [String] = []
-    private var trie = Trie<String, String>()
-
-    // MARK: - Trie Creation and/or Searching
+    private let trie: Trie<String, String> = .init()
 
     override func searchElements(_ searchTerm: String) async throws -> [String] {
-        if allTags.isEmpty {
+        if trie.isEmpty {
             let parameters = Paths.GetQueryFiltersLegacyParameters(userID: userSession.user.id)
             let request = Paths.getQueryFiltersLegacy(parameters: parameters)
             let response = try await userSession.client.send(request)
-            allTags = response.value.tags ?? []
-            trie.insert(contentsOf: allTags.keyed(using: \.localizedLowercase))
-        }
-
-        guard searchTerm.isNotEmpty else {
-            return allTags
+            trie.insert(contentsOf: (response.value.tags ?? []).keyed(using: \.localizedLowercase))
         }
 
         return trie.search(prefix: searchTerm.localizedLowercase)
@@ -35,16 +27,16 @@ final class TagEditorViewModel: ItemEditorViewModel<String> {
 
     override func addComponents(_ tags: [String]) async throws {
         var updatedItem = item
+
         if updatedItem.tags == nil {
             updatedItem.tags = []
         }
+
         updatedItem.tags?.append(contentsOf: tags)
+
         try await updateItem(updatedItem)
 
-        for tag in tags where !allTags.contains(tag) {
-            allTags.append(tag)
-            trie.insert(key: tag, element: tag.localizedLowercase)
-        }
+        trie.insert(contentsOf: tags.keyed(using: \.localizedLowercase))
     }
 
     override func removeComponents(_ tags: [String]) async throws {

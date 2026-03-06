@@ -13,16 +13,11 @@ import SwiftUI
 
 struct AddItemElementView<Element: Hashable>: View {
 
-    @Default(.accentColor)
-    private var accentColor
-
-    @Router
-    private var router
-
     @ObservedObject
     var viewModel: ItemEditorViewModel<Element>
 
-    let type: ItemArrayElements
+    @Router
+    private var router
 
     @State
     private var id: String?
@@ -35,6 +30,8 @@ struct AddItemElementView<Element: Hashable>: View {
 
     @State
     private var error: Error?
+
+    let type: ItemArrayElements
 
     // MARK: - Validation
 
@@ -53,44 +50,6 @@ struct AddItemElementView<Element: Hashable>: View {
     // MARK: - Body
 
     var body: some View {
-        contentView
-            .navigationTitle(type.displayTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                router.dismiss()
-            }
-            .topBarTrailing {
-                if viewModel.background.states.contains(where: { $0 == .searching || $0 == .updating }) {
-                    ProgressView()
-                }
-
-                Button(L10n.save) {
-                    viewModel.add([type.createElement(
-                        name: name,
-                        id: id,
-                        personRole: personRole.isEmpty ? (personKind == .unknown ? nil : personKind.rawValue) : personRole,
-                        personKind: personKind
-                    )])
-                }
-                .buttonStyle(.toolbarPill)
-                .disabled(!isValid)
-            }
-            .onChange(of: name) { newName in
-                viewModel.search(newName)
-            }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case .deleted, .metadataRefreshStarted:
-                    break
-                case .updated:
-                    UIDevice.feedback(.success)
-                    router.dismiss()
-                }
-            }
-            .errorMessage($viewModel.error)
-    }
-
-    private var contentView: some View {
         List {
             ItemElementSearchView(
                 name: $name,
@@ -104,5 +63,39 @@ struct AddItemElementView<Element: Hashable>: View {
                 existsOnServer: existsOnServer
             )
         }
+        .navigationTitle(type.displayTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
+        .topBarTrailing {
+            if viewModel.background.states.contains(where: { $0 == .searching || $0 == .updating }) {
+                ProgressView()
+            }
+
+            Button(L10n.save) {
+                viewModel.add([type.createElement(
+                    name: name,
+                    id: id,
+                    personRole: personRole.isEmpty ? (personKind == .unknown ? nil : personKind.rawValue) : personRole,
+                    personKind: personKind
+                )])
+            }
+            .buttonStyle(.toolbarPill)
+            .enabled(isValid)
+        }
+        .onChange(of: name) { newName in
+            viewModel.search(newName)
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .deleted, .metadataRefreshStarted:
+                break
+            case .updated:
+                UIDevice.feedback(.success)
+                router.dismiss()
+            }
+        }
+        .errorMessage($viewModel.error)
     }
 }
