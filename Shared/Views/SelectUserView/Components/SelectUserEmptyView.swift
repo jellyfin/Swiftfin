@@ -28,7 +28,7 @@ extension SelectUserView {
             GeometryReader { geometry in
                 addUserButton()
                     .frame(maxWidth: (geometry.size.width - EdgeInsets.edgePadding * (CGFloat(columns) + 1)) / CGFloat(columns))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .frame(maxWidth: min(geometry.size.width, geometry.size.height), maxHeight: .infinity, alignment: .center)
             }
         }
 

@@ -25,10 +25,6 @@ extension SelectUserView {
 
         private let servers: OrderedSet<ServerState>
 
-        private var selectedServer: ServerState? {
-            serverSelection.server(from: servers)
-        }
-
         init(servers: OrderedSet<ServerState>) {
             self.servers = servers
         }
@@ -51,7 +47,7 @@ extension SelectUserView {
                     router.route(to: .connectToServer)
                 }
 
-                if let selectedServer {
+                if let selectedServer = serverSelection.server(from: servers) {
                     Button(L10n.editServer, systemImage: "server.rack") {
                         router.route(
                             to: .editServer(server: selectedServer, isEditing: true),
@@ -97,7 +93,7 @@ extension SelectUserView {
 
                 Image(systemName: "chevron.up.chevron.down")
                     .foregroundStyle(.secondary)
-                    .font(.subheadline.weight(.semibold))
+                    .font(.subheadline)
             }
             .fontWeight(.semibold)
             .foregroundStyle(Color.primary)

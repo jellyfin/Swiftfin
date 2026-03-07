@@ -66,16 +66,19 @@ extension SelectUserView {
         }
 
         var iOSView: some View {
-            CenteredLazyVGrid(
-                data: userItems,
-                id: \.user.id,
-                columns: columns,
-                spacing: EdgeInsets.edgePadding
-            ) { item in
-                userGridButton(for: item)
+            GeometryReader { geometry in
+                CenteredLazyVGrid(
+                    data: userItems,
+                    id: \.user.id,
+                    columns: columns,
+                    spacing: EdgeInsets.edgePadding
+                ) { item in
+                    userGridButton(for: item)
+                }
+                .frame(maxWidth: min(geometry.size.width, geometry.size.height), maxHeight: .infinity, alignment: .center)
+                .edgePadding(UIDevice.isPhone ? [.horizontal, .vertical] : .horizontal)
+                .scrollIfLargerThanContainer(axes: .vertical, padding: 100)
             }
-            .edgePadding(UIDevice.isPhone ? [.horizontal, .vertical] : .horizontal)
-            .scrollIfLargerThanContainer(axes: .vertical, padding: 100)
         }
 
         var tvOSView: some View {

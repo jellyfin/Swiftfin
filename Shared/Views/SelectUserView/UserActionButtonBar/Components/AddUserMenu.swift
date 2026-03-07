@@ -22,10 +22,6 @@ extension SelectUserView {
 
         private let servers: OrderedSet<ServerState>
 
-        private var selectedServer: ServerState? {
-            serverSelection.server(from: servers)
-        }
-
         init(
             servers: OrderedSet<ServerState>
         ) {
@@ -34,7 +30,7 @@ extension SelectUserView {
 
         var body: some View {
             ConditionalMenu(
-                tracking: selectedServer,
+                tracking: serverSelection.server(from: servers),
                 action: { server in
                     router.route(to: .userSignIn(server: server))
                 }
@@ -50,31 +46,6 @@ extension SelectUserView {
             } label: {
                 Label(L10n.addUser, systemImage: "plus")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-        }
-    }
-
-    struct EditUsersMenu: View {
-
-        @Environment(\.editMode)
-        private var editMode
-
-        private let hasUsers: Bool
-
-        init(hasUsers: Bool) {
-            self.hasUsers = hasUsers
-        }
-
-        var body: some View {
-            if hasUsers {
-                Toggle(
-                    L10n.editUsers,
-                    systemImage: "person.crop.circle",
-                    isOn: Binding(
-                        get: { editMode?.wrappedValue.isEditing == true },
-                        set: { editMode?.wrappedValue = $0 ? .active : .inactive }
-                    )
-                )
             }
         }
     }

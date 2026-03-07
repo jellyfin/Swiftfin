@@ -149,7 +149,7 @@ extension SelectUserView {
                 .hidden(allUsers.isEmpty)
 
             ServerMenu(servers: servers)
-                .frame(maxWidth: 600)
+                .frame(maxWidth: UIDevice.isTV ? 600 : 400)
                 .frame(height: buttonHeight)
 
             Menu {

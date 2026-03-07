@@ -19,15 +19,11 @@ extension SelectUserView {
         @Default(.accentColor)
         private var accentColor
 
-        private var maxWidth: CGFloat {
-            UIDevice.isTV ? 500 : 250
-        }
-
         var body: some View {
             VStack(spacing: UIDevice.isTV ? 50 : 10) {
                 Text(L10n.connectToJellyfinServerStart)
                     .font(.body)
-                    .frame(minWidth: 50, maxWidth: maxWidth)
+                    .frame(minWidth: 50, maxWidth: 250)
                     .multilineTextAlignment(.center)
 
                 Button {
@@ -43,7 +39,7 @@ extension SelectUserView {
                 )
                 .buttonStyle(.primary)
                 .frame(
-                    width: maxWidth,
+                    width: 250,
                     height: UIDevice.isTV ? 75 : 50
                 )
             }

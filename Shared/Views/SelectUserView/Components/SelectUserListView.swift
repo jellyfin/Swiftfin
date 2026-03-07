@@ -111,8 +111,11 @@ extension SelectUserView {
             #if os(iOS)
                 .scrollContentBackground(.hidden)
             #else
-                .scrollClipDisabled()
-                .edgePadding()
+                // This is required to allow the list to be focusable during `EditMode`
+                    .edgePadding()
+                    .environment(\.editMode, .constant(.inactive))
+                    .scrollClipDisabled()
+                    .focusSection()
             #endif
         }
     }
