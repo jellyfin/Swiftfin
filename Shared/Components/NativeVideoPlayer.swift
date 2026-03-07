@@ -28,6 +28,9 @@ struct NativeVideoPlayer: View {
     @Router
     private var router
 
+    @State
+    private var isBeingDismissedByTransition = false
+
     init() {
         self._proxy = .init(wrappedValue: AVMediaPlayerProxy())
     }
@@ -51,9 +54,14 @@ struct NativeVideoPlayer: View {
         .preference(key: IsStatusBarHiddenKey.self, value: true)
         .backport
         .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
-            Container.shared.mediaPlayerManager.reset()
             guard !isPresented else { return }
+            isBeingDismissedByTransition = true
             manager.stop()
+        }
+        .onReceive(manager.$state) { newState in
+            if newState == .stopped, !isBeingDismissedByTransition {
+                router.dismiss()
+            }
         }
         .alert(
             L10n.error,
@@ -102,6 +110,12 @@ extension NativeVideoPlayer {
             #if !os(tvOS)
             updatesNowPlayingInfoCenter = false
             #endif
+        }
+
+        override func viewDidDisappear(_ animated: Bool) {
+            super.viewDidDisappear(animated)
+            player?.pause()
+            player?.replaceCurrentItem(with: nil)
         }
 
         @available(*, unavailable)
