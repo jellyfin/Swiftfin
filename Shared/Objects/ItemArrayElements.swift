@@ -11,6 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 enum ItemArrayElements: Displayable {
+
     case studios
     case genres
     case tags
