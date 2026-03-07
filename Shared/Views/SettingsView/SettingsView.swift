@@ -144,7 +144,7 @@ struct SettingsView: View {
                 router.route(to: .customizationSettingsView)
             }
         } header: {
-            Text(L10n.customization)
+            Text(L10n.customize)
         } footer: {
             Text(L10n.viewsMayRequireRestart)
         }

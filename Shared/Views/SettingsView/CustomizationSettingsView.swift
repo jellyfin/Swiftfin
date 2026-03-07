@@ -7,11 +7,18 @@
 //
 
 import Defaults
+import Engine
 import Factory
 import JellyfinAPI
 import SwiftUI
 
 struct CustomizationSettingsView: View {
+
+    #if os(tvOS)
+    typealias PlatformPicker = ListRowMenu
+    #else
+    typealias PlatformPicker = Picker
+    #endif
 
     // MARK: - Home Defaults
 
@@ -122,9 +129,11 @@ struct CustomizationSettingsView: View {
 
             itemViewSettings
 
+            #if os(iOS)
             itemManagementSettings
+            #endif
         }
-        .navigationTitle(L10n.customization)
+        .navigationTitle(L10n.customize)
     }
 
     // MARK: - Home Settings
@@ -136,24 +145,32 @@ struct CustomizationSettingsView: View {
 
             Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
 
-            ChevronButton(
-                L10n.nextUpDays,
-                subtitle: {
-                    if maxNextUp > 0 {
-                        let duration = Duration.seconds(TimeInterval(maxNextUp))
-                        return Text(duration, format: .units(allowed: [.days], width: .abbreviated))
-                    } else {
-                        return Text(L10n.disabled)
+            StateAdapter(initialValue: false) { isPresented in
+                ChevronButton {
+                    isPresented.wrappedValue = true
+                } label: {
+                    LabeledContent(L10n.nextUpDays) {
+                        if maxNextUp > 0 {
+                            let duration = Duration.seconds(TimeInterval(maxNextUp))
+                            return Text(duration, format: .units(allowed: [.days], width: .abbreviated))
+                        } else {
+                            return Text(L10n.disabled)
+                        }
                     }
-                }(),
-                description: L10n.nextUpDaysDescription
-            ) {
-                TextField(
-                    L10n.days,
-                    value: $maxNextUp,
-                    format: .dayInterval(range: 0 ... 1000)
-                )
-                .keyboardType(.numberPad)
+                }
+                .alert(
+                    L10n.nextUpDays,
+                    isPresented: isPresented
+                ) {
+                    TextField(
+                        L10n.days,
+                        value: $maxNextUp,
+                        format: .dayInterval(range: 0 ... 1000)
+                    )
+                    .keyboardType(.numberPad)
+                } message: {
+                    Text(L10n.nextUpDaysDescription)
+                }
             }
         }
     }
@@ -177,11 +194,7 @@ struct CustomizationSettingsView: View {
             Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
 
             if letterPickerEnabled {
-                #if os(iOS)
-                Picker(L10n.orientation, selection: $letterPickerOrientation)
-                #else
-                ListRowMenu(L10n.orientation, selection: $letterPickerOrientation)
-                #endif
+                PlatformPicker(L10n.orientation, selection: $letterPickerOrientation)
             }
 
             ChevronButton(L10n.library) {
@@ -199,28 +212,17 @@ struct CustomizationSettingsView: View {
     @ViewBuilder
     private var librarySettings: some View {
         Section(L10n.libraries) {
-            #if os(iOS)
-            Picker(L10n.posters, selection: $libraryPosterType)
-            Picker(L10n.defaultLayout, selection: $libraryDisplayType)
-            #else
-            ListRowMenu(L10n.posters, selection: $libraryPosterType)
-            ListRowMenu(L10n.defaultLayout, selection: $libraryDisplayType)
-            #endif
+            PlatformPicker(L10n.posters, selection: $libraryPosterType)
+
+            PlatformPicker(L10n.defaultLayout, selection: $libraryDisplayType)
 
             if libraryDisplayType == .list, UIDevice.isPad {
-                #if os(iOS)
-                Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 3, step: 1) { _ in
-                    LabeledContent(L10n.columns) {
-                        Text(listColumnCount.description)
-                    }
+                Stepper(value: $listColumnCount, in: 1 ... 4, step: 1) {
+                    LabeledContent(
+                        L10n.columns,
+                        value: listColumnCount.description
+                    )
                 }
-                #else
-                Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 4, step: 1) {
-                    LabeledContent(L10n.columns) {
-                        Text(listColumnCount.description)
-                    }
-                }
-                #endif
             }
 
             Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
@@ -240,19 +242,15 @@ struct CustomizationSettingsView: View {
                 router.route(to: .indicatorSettings)
             }
 
-            #if os(iOS)
-            Picker(L10n.nextUp, selection: $nextUpPosterType)
-            Picker(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
-            Picker(L10n.latestWithString(L10n.library.localizedLowercase), selection: $latestInLibraryPosterType)
-            Picker(L10n.recommended, selection: $similarPosterType)
-            Picker(L10n.search, selection: $searchPosterType)
-            #else
-            ListRowMenu(L10n.nextUp, selection: $nextUpPosterType)
-            ListRowMenu(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
-            ListRowMenu(L10n.latestWithString(L10n.library.localizedLowercase), selection: $latestInLibraryPosterType)
-            ListRowMenu(L10n.recommended, selection: $similarPosterType)
-            ListRowMenu(L10n.search, selection: $searchPosterType)
-            #endif
+            PlatformPicker(L10n.nextUp, selection: $nextUpPosterType)
+
+            PlatformPicker(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
+
+            PlatformPicker(L10n.latestWithString(L10n.library.localizedLowercase), selection: $latestInLibraryPosterType)
+
+            PlatformPicker(L10n.recommended, selection: $similarPosterType)
+
+            PlatformPicker(L10n.search, selection: $searchPosterType)
         }
     }
 
@@ -265,11 +263,7 @@ struct CustomizationSettingsView: View {
                 router.route(to: .itemViewAttributes(selection: $itemViewAttributes))
             }
 
-            #if os(iOS)
-            Picker(L10n.enabledTrailers, selection: $enabledTrailers)
-            #else
-            ListRowMenu(L10n.enabledTrailers, selection: $enabledTrailers)
-            #endif
+            PlatformPicker(L10n.enabledTrailers, selection: $enabledTrailers)
 
             Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
@@ -283,11 +277,7 @@ struct CustomizationSettingsView: View {
     private var itemViewSettings: some View {
         if UIDevice.isPhone {
             Section {
-                #if os(iOS)
-                Picker(L10n.type, selection: $itemViewType)
-                #else
-                ListRowMenu(L10n.type, selection: $itemViewType)
-                #endif
+                PlatformPicker(L10n.type, selection: $itemViewType)
 
                 if itemViewType == .cinematic {
                     Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
@@ -308,28 +298,26 @@ struct CustomizationSettingsView: View {
 
     @ViewBuilder
     private var itemManagementSettings: some View {
-        if UIDevice.isPhone {
-            Section(L10n.itemManagement) {
+        Section(L10n.itemManagement) {
 
-                /// Collections can be edited by users or by setting
-                if userPolicy?.isAdministrator == true ||
-                    userPolicy?.enableCollectionManagement == true
-                {
-                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
-                }
+            /// Collections can be edited by users or by setting
+            if userPolicy?.isAdministrator == true ||
+                userPolicy?.enableCollectionManagement == true
+            {
+                Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
+            }
 
-                /// Only allow editing if administrator
-                /// - Does NOT include subtitle / lyric editing
-                if userPolicy?.isAdministrator == true {
-                    Toggle(L10n.editMedia, isOn: $enableItemEditing)
-                }
+            /// Only allow editing if administrator
+            /// - Does NOT include subtitle / lyric editing
+            if userPolicy?.isAdministrator == true {
+                Toggle(L10n.editMedia, isOn: $enableItemEditing)
+            }
 
-                /// Only allow deletion if there is someting to delete from
-                if userPolicy?.enableContentDeletion == true ||
-                    userPolicy?.enableContentDeletionFromFolders?.isNotEmpty == true
-                {
-                    Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
-                }
+            /// Only allow deletion if there is someting to delete from
+            if userPolicy?.enableContentDeletion == true ||
+                userPolicy?.enableContentDeletionFromFolders?.isNotEmpty == true
+            {
+                Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
             }
         }
     }
