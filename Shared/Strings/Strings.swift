@@ -28,6 +28,8 @@ internal enum L10n {
   internal static let accessSchedulesDescription = L10n.tr("Localizable", "accessSchedulesDescription", fallback: "Define the allowed hours for usage and restrict access outside those times.")
   /// User will have access to no media unless it contains at least one allowed tag.
   internal static let accessTagAllowDescription = L10n.tr("Localizable", "accessTagAllowDescription", fallback: "User will have access to no media unless it contains at least one allowed tag.")
+  /// Access tag already exists
+  internal static let accessTagAlreadyExists = L10n.tr("Localizable", "accessTagAlreadyExists", fallback: "Access tag already exists")
   /// User will have access to all media except when it contains any blocked tag.
   internal static let accessTagBlockDescription = L10n.tr("Localizable", "accessTagBlockDescription", fallback: "User will have access to all media except when it contains any blocked tag.")
   /// Access tags
@@ -304,6 +306,10 @@ internal enum L10n {
   internal static let clip = L10n.tr("Localizable", "clip", fallback: "Clip")
   /// Close
   internal static let close = L10n.tr("Localizable", "close", fallback: "Close")
+  /// Close player
+  internal static let closePlayer = L10n.tr("Localizable", "closePlayer", fallback: "Close player")
+  /// Are you sure you want to close the player?
+  internal static let closePlayerWarning = L10n.tr("Localizable", "closePlayerWarning", fallback: "Are you sure you want to close the player?")
   /// Collection
   internal static let collection = L10n.tr("Localizable", "collection", fallback: "Collection")
   /// Collection folder

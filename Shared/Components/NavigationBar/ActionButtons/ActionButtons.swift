@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// TODO: ensure changes on playback item change
+
 extension VideoPlayer.PlaybackControls.NavigationBar {
 
     struct ActionButtons: View {
@@ -22,6 +24,19 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
+
+        #if os(tvOS)
+        enum FocusTarget: Hashable {
+            case button(VideoPlayerActionButton)
+            case menu
+        }
+
+        var focusTarget: FocusState<FocusTarget?>.Binding?
+
+        init(focusTarget: FocusState<FocusTarget?>.Binding? = nil) {
+            self.focusTarget = focusTarget
+        }
+        #endif
 
         private func filteredActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
             var filteredButtons = rawButtons
@@ -69,11 +84,13 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             case .autoPlay:
                 AutoPlay()
             case .gestureLock:
+                #if os(iOS)
+                GestureLock()
+                #else
                 EmptyView()
-//                GestureLock()
+                #endif
             case .playbackSpeed:
-                EmptyView()
-//                PlaybackRateMenu()
+                PlaybackRateMenu()
 //            case .playbackQuality:
 //                PlaybackQuality()
             case .playNextItem:
@@ -86,23 +103,38 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         }
 
         @ViewBuilder
-        private var menuButtons: some View {
+        private var compactView: some View {
             Menu(
-                "Menu",
+                L10n.menu,
                 systemImage: "ellipsis.circle"
             ) {
-                ForEach(menuActionButtons) { actionButton in
-                    view(for: actionButton)
-                }
-            }
-        }
-
-        var body: some View {
-            HStack(spacing: 10) {
                 ForEach(
                     barActionButtons,
                     content: view(for:)
                 )
+                .environment(\.isInMenu, true)
+
+                Divider()
+
+                ForEach(
+                    menuActionButtons,
+                    content: view(for:)
+                )
+                .environment(\.isInMenu, true)
+            }
+        }
+
+        @ViewBuilder
+        private var regularView: some View {
+            HStack(spacing: 0) {
+                ForEach(barActionButtons) { button in
+                    view(for: button)
+                    #if os(tvOS)
+                        .if(focusTarget != nil) { view in
+                            view.focused(focusTarget!, equals: .button(button))
+                        }
+                    #endif
+                }
 
                 if menuActionButtons.isNotEmpty {
                     Menu(
@@ -115,12 +147,21 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                         )
                         .environment(\.isInMenu, true)
                     }
+                    #if os(tvOS)
+                    .if(focusTarget != nil) { view in
+                        view.focused(focusTarget!, equals: .menu)
+                    }
+                    #endif
                 }
             }
-            .menuStyle(.button)
-            .labelStyle(.iconOnly)
-            .buttonBorderShape(.circle)
-            .buttonStyle(.plain)
+        }
+
+        var body: some View {
+            if containerState.isCompact {
+                compactView
+            } else {
+                regularView
+            }
         }
     }
 }

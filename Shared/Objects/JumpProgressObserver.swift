@@ -33,6 +33,10 @@ class JumpProgressObserver: ObservableObject {
             }
     }
 
+    func reset() {
+        jumps = 0
+    }
+
     func jumpForward(interval: TimeInterval? = nil) {
         if isForward {
             jumps += 1
