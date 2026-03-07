@@ -216,8 +216,8 @@ struct CustomizationSettingsView: View {
 
             PlatformPicker(L10n.defaultLayout, selection: $libraryDisplayType)
 
-            if libraryDisplayType == .list, UIDevice.isPad {
-                Stepper(value: $listColumnCount, in: 1 ... 4, step: 1) {
+            if libraryDisplayType == .list, UIDevice.isPad || UIDevice.isTV {
+                Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 3, step: 1) {
                     LabeledContent(
                         L10n.columns,
                         value: listColumnCount.description
