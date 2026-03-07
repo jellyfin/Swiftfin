@@ -14,15 +14,23 @@ extension NavigationRoute {
 
     static func actionBarButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
         NavigationRoute(id: "actionBarButtonSelector") {
-            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: VideoPlayerActionButton.allCases)
-                .navigationTitle(L10n.barButtons.localizedCapitalized)
+            OrderedSectionSelectorView(
+                systemImage: "button.programmable",
+                selection: selectedButtonsBinding,
+                sources: VideoPlayerActionButton.allCases
+            )
+            .navigationTitle(L10n.barButtons.localizedCapitalized)
         }
     }
 
     static func actionMenuButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
         NavigationRoute(id: "actionMenuButtonSelector") {
-            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: VideoPlayerActionButton.allCases)
-                .navigationTitle(L10n.menuButtons.localizedCapitalized)
+            OrderedSectionSelectorView(
+                systemImage: "button.programmable.square",
+                selection: selectedButtonsBinding,
+                sources: VideoPlayerActionButton.allCases
+            )
+            .navigationTitle(L10n.menuButtons.localizedCapitalized)
         }
     }
 

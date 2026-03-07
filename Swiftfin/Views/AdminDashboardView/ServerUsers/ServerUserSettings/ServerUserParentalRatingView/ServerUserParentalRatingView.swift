@@ -12,8 +12,6 @@ import SwiftUI
 
 struct ServerUserParentalRatingView: View {
 
-    // MARK: - Observed, State, & Environment Objects
-
     @Router
     private var router
 
@@ -22,17 +20,8 @@ struct ServerUserParentalRatingView: View {
     @StateObject
     private var parentalRatingsViewModel: ParentalRatingsViewModel
 
-    // MARK: - Policy Variable
-
     @State
     private var tempPolicy: UserPolicy
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -44,8 +33,6 @@ struct ServerUserParentalRatingView: View {
 
         self.tempPolicy = policy
     }
-
-    // MARK: - Body
 
     var body: some View {
         List {
@@ -59,13 +46,13 @@ struct ServerUserParentalRatingView: View {
             router.dismiss()
         }
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.updating) {
+            if viewModel.background.is(.updating) {
                 ProgressView()
             }
 
             Button(L10n.save) {
                 if tempPolicy != viewModel.user.policy {
-                    viewModel.send(.updatePolicy(tempPolicy))
+                    viewModel.updatePolicy(tempPolicy)
                 }
             }
             .buttonStyle(.toolbarPill)
@@ -74,24 +61,23 @@ struct ServerUserParentalRatingView: View {
         .onFirstAppear {
             parentalRatingsViewModel.refresh()
         }
+        .refreshable {
+            parentalRatingsViewModel.refresh()
+            viewModel.refresh()
+        }
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-                error = eventError
             case .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()
             }
         }
-        .errorMessage($error)
+        .errorMessage($viewModel.error)
     }
-
-    // MARK: - Maximum Parental Ratings View
 
     @ViewBuilder
     private var maxParentalRatingsView: some View {
-        Section {
+        Section(L10n.maxParentalRating) {
             Picker(L10n.parentalRating, selection: $tempPolicy.maxParentalRating) {
                 ForEach(
                     reducedParentalRatings(),
@@ -101,21 +87,15 @@ struct ServerUserParentalRatingView: View {
                         .tag(rating.value)
                 }
             }
-        } header: {
-            Text(L10n.maxParentalRating)
         } footer: {
-            VStack(alignment: .leading) {
-                Text(L10n.maxParentalRatingDescription)
-
-                LearnMoreButton(
-                    L10n.parentalRating,
-                    content: parentalRatingLabeledContent
-                )
-            }
+            Text(L10n.maxParentalRatingDescription)
+        } learnMore: {
+            LabeledContent(
+                L10n.parentalRating,
+                content: parentalRatingLabeledContent
+            )
         }
     }
-
-    // MARK: - Block Unrated Items View
 
     @ViewBuilder
     private var blockUnratedItemsView: some View {
@@ -156,8 +136,6 @@ struct ServerUserParentalRatingView: View {
             }
             .sorted(using: \.value)
     }
-
-    // MARK: - Parental Rating Learn More
 
     @LabeledContentBuilder
     private func parentalRatingLabeledContent() -> AnyView {
