@@ -12,30 +12,19 @@ import SwiftUI
 
 struct EditMetadataView: View {
 
-    // MARK: - Observed & Environment Objects
-
     @Router
     private var router
 
     @ObservedObject
     private var viewModel: ItemEditorViewModel<BaseItemDto>
 
-    // MARK: - Metadata Variables
-
     @Binding
-    var item: BaseItemDto
+    private var item: BaseItemDto
 
     @State
     private var tempItem: BaseItemDto
 
     private let itemType: BaseItemKind
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Initializer
 
     init(viewModel: ItemEditorViewModel<BaseItemDto>) {
         self.viewModel = viewModel
@@ -48,40 +37,34 @@ struct EditMetadataView: View {
 
     @ViewBuilder
     var body: some View {
-        ZStack {
-            switch viewModel.state {
-            case .initial, .content, .updating:
-                contentView
-            case let .error(error):
-                ErrorView(error: error)
+        contentView
+            .navigationTitle(L10n.metadata)
+            .navigationBarTitleDisplayMode(.inline)
+            .topBarTrailing {
+                if viewModel.background.states.contains(.updating) {
+                    ProgressView()
+                }
+
+                Button(L10n.save) {
+                    item = tempItem
+                    viewModel.update(tempItem)
+                }
+                .buttonStyle(.toolbarPill)
+                .disabled(viewModel.item == tempItem)
             }
-        }
-        .navigationTitle(L10n.metadata)
-        .navigationBarTitleDisplayMode(.inline)
-        .refreshable {
-            viewModel.send(.load)
-        }
-        .topBarTrailing {
-            Button(L10n.save) {
-                item = tempItem
-                viewModel.send(.update(tempItem))
+            .navigationBarCloseButton {
                 router.dismiss()
             }
-            .buttonStyle(.toolbarPill)
-            .disabled(viewModel.item == tempItem)
-        }
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
-        .onReceive(viewModel.events) { events in
-            switch events {
-            case let .error(eventError):
-                error = eventError
-            default:
-                break
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .deleted, .metadataRefreshStarted:
+                    break
+                case .updated:
+                    UIDevice.feedback(.success)
+                    router.dismiss()
+                }
             }
-        }
-        .errorMessage($error)
+            .errorMessage($viewModel.error)
     }
 
     // MARK: - Content View

@@ -19,6 +19,10 @@ class Trie<Key: Collection & Hashable, Element> where Key.Element: Hashable {
 
 extension Trie {
 
+    var isEmpty: Bool {
+        root.children.isEmpty
+    }
+
     func contains(key: Key) -> Bool {
         var currentNode = root
 

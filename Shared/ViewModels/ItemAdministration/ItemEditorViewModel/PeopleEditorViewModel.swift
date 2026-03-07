@@ -12,19 +12,15 @@ import JellyfinAPI
 
 final class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
 
-    // MARK: - Populate the Trie
+    override func searchElements(_ searchTerm: String) async throws -> [BaseItemPerson] {
+        let parameters = Paths.GetPersonsParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
+        let request = Paths.getPersons(parameters: parameters)
+        let response = try await userSession.client.send(request)
 
-    override func populateTrie() {
-        let elements = elements
-            .compacted(using: \.name)
-            .reduce(into: [String: BaseItemPerson]()) { result, element in
-                result[element.name!.localizedLowercase] = element
-            }
-
-        trie.insert(contentsOf: elements)
+        return response.value.items?.map { person in
+            BaseItemPerson(id: person.id, name: person.name)
+        } ?? []
     }
-
-    // MARK: - Add People(s)
 
     override func addComponents(_ people: [BaseItemPerson]) async throws {
         var updatedItem = item
@@ -35,15 +31,11 @@ final class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Remove People(s)
-
     override func removeComponents(_ people: [BaseItemPerson]) async throws {
         var updatedItem = item
         updatedItem.people?.removeAll { people.contains($0) }
         try await updateItem(updatedItem)
     }
-
-    // MARK: - Reorder Tag(s)
 
     override func reorderComponents(_ people: [BaseItemPerson]) async throws {
         var updatedItem = item
@@ -51,18 +43,11 @@ final class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Fetch All Possible People
+    override func containsElement(named name: String) -> Bool {
+        item.people?.contains { $0.name?.caseInsensitiveCompare(name) == .orderedSame } ?? false
+    }
 
-    override func fetchElements() async throws -> [BaseItemPerson] {
-        let request = Paths.getPersons()
-        let response = try await userSession.client.send(request)
-
-        if let people = response.value.items {
-            return people.map { person in
-                BaseItemPerson(id: person.id, name: person.name)
-            }
-        } else {
-            return []
-        }
+    override func matchExists(named name: String) -> Bool {
+        matches.contains { $0.name?.caseInsensitiveCompare(name) == .orderedSame }
     }
 }
