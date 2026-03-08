@@ -272,7 +272,6 @@ struct UserSignInView: View {
         #if os(iOS)
         List {
             signInSection
-
             publicUsersSection
         }
         .navigationBarTitleDisplayMode(.inline)
