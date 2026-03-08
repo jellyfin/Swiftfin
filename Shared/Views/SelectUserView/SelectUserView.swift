@@ -212,22 +212,20 @@ struct SelectUserView: View {
                     ZStack {
                         if userItems.isEmpty {
                             UserEmptyView {
-                                UserButton {
-                                    if let selectedServer {
-                                        addUser(server: selectedServer)
-                                    }
+                                if let selectedServer {
+                                    addUser(server: selectedServer)
                                 }
-                                .if(selectedServer == nil) { button in
-                                    button.contextMenu {
-                                        Text(L10n.selectServer)
+                            }
+                            .if(selectedServer == nil) { view in
+                                view.contextMenu {
+                                    Text(L10n.selectServer)
 
-                                        ForEach(viewModel.servers.keys) { server in
-                                            Button {
-                                                addUser(server: server)
-                                            } label: {
-                                                Text(server.name)
-                                                Text(server.currentURL.absoluteString)
-                                            }
+                                    ForEach(viewModel.servers.keys) { server in
+                                        Button {
+                                            addUser(server: server)
+                                        } label: {
+                                            Text(server.name)
+                                            Text(server.currentURL.absoluteString)
                                         }
                                     }
                                 }

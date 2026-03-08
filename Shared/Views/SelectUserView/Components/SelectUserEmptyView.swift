@@ -10,30 +10,58 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct UserEmptyView<AddUserButton: View>: PlatformView {
+    struct UserEmptyView: PlatformView {
 
-        private let addUserButton: () -> AddUserButton
+        private let action: () -> Void
 
         private var columns: Int {
             UIDevice.isPhone ? 2 : 5
         }
 
-        init(
-            @ViewBuilder addUserButton: @escaping () -> AddUserButton
-        ) {
-            self.addUserButton = addUserButton
+        init(action: @escaping () -> Void) {
+            self.action = action
+        }
+
+        @ViewBuilder
+        private var addUserButton: some View {
+            Button(action: action) {
+                VStack {
+                    RelativeSystemImageView(systemName: "plus")
+                        .foregroundStyle(Color.secondary)
+                        .background(.thinMaterial)
+                        .clipShape(.circle)
+                        .aspectRatio(1, contentMode: .fit)
+                        .posterShadow()
+
+                    Text(L10n.addUser)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+
+                    AlternateLayoutView {
+                        Text("Hidden")
+                    } content: {}
+                        .font(.footnote)
+                }
+            }
+            .foregroundStyle(.primary, .secondary)
+            #if os(tvOS)
+                .buttonStyle(.borderless)
+                .backport
+                .buttonBorderShape(.circle)
+            #endif
         }
 
         var iOSView: some View {
             GeometryReader { geometry in
-                addUserButton()
+                addUserButton
                     .frame(maxWidth: (geometry.size.width - EdgeInsets.edgePadding * (CGFloat(columns) + 1)) / CGFloat(columns))
                     .frame(maxWidth: min(geometry.size.width, geometry.size.height), maxHeight: .infinity, alignment: .center)
             }
         }
 
         var tvOSView: some View {
-            addUserButton()
+            addUserButton
                 .frame(width: 300)
                 .focusSection()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
