@@ -48,10 +48,10 @@ extension NavigationRoute {
         CustomDeviceProfilesView()
     }
 
-    static let customizeViewsSettings = NavigationRoute(
-        id: "customizeViewsSettings"
+    static let customizeSettingsView = NavigationRoute(
+        id: "customizeSettingsView"
     ) {
-        CustomizeViewsSettings()
+        CustomizeSettingsView()
     }
 
     #if DEBUG
