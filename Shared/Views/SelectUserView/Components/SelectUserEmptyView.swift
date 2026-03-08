@@ -23,26 +23,41 @@ extension SelectUserView {
         }
 
         @ViewBuilder
+        private var imageView: some View {
+            RelativeSystemImageView(systemName: "plus")
+                .foregroundStyle(Color.secondary)
+                .background(.thinMaterial)
+                .clipShape(.circle)
+                .aspectRatio(1, contentMode: .fit)
+                .posterShadow()
+                .hoverEffect(.highlight)
+        }
+
+        @ViewBuilder
+        private var titleView: some View {
+            Text(L10n.addUser)
+                .font(.headline)
+                .fontWeight(.semibold)
+                .lineLimit(1)
+
+            AlternateLayoutView {
+                Text("Hidden")
+            } content: {}
+                .font(.footnote)
+        }
+
+        @ViewBuilder
         private var addUserButton: some View {
             Button(action: action) {
+                #if os(tvOS)
+                imageView
+                titleView
+                #else
                 VStack {
-                    RelativeSystemImageView(systemName: "plus")
-                        .foregroundStyle(Color.secondary)
-                        .background(.thinMaterial)
-                        .clipShape(.circle)
-                        .aspectRatio(1, contentMode: .fit)
-                        .posterShadow()
-
-                    Text(L10n.addUser)
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .lineLimit(1)
-
-                    AlternateLayoutView {
-                        Text("Hidden")
-                    } content: {}
-                        .font(.footnote)
+                    imageView
+                    titleView
                 }
+                #endif
             }
             .foregroundStyle(.primary, .secondary)
             #if os(tvOS)
