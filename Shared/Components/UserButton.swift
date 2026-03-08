@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct UserButton<Icon: View>: View {
+struct UserButton: View {
 
     @Default(.accentColor)
     private var accentColor
@@ -22,7 +22,7 @@ struct UserButton<Icon: View>: View {
     @Environment(\.isSelected)
     private var isSelected
 
-    private let icon: Icon
+    private let image: UserProfileImage
     private let title: String
     private let subtitle: String?
     private let action: () -> Void
@@ -36,63 +36,46 @@ struct UserButton<Icon: View>: View {
         }
     }
 
-    init(
-        title: String,
-        subtitle: String? = nil,
-        action: @escaping () -> Void,
-        onDelete: (() -> Void)? = nil,
-        @ViewBuilder icon: () -> Icon
-    ) {
-        self.icon = icon()
-        self.title = title
-        self.subtitle = subtitle
-        self.action = action
-        self.onDelete = onDelete
-    }
-
     var body: some View {
         Button(action: action) {
             labelView
         }
-        .if(onDelete != nil && !isEditing) { button in
-            button.contextMenu {
-                if let onDelete {
-                    Button(
-                        L10n.delete,
-                        role: .destructive,
-                        action: onDelete
-                    )
-                }
+        .contextMenu {
+            if let onDelete, !isEditing {
+                Button(
+                    L10n.delete,
+                    role: .destructive,
+                    action: onDelete
+                )
             }
         }
-        #if os(iOS)
-        .buttonStyle(.plain)
-        #else
-        .buttonStyle(.borderless)
-        .backport
-        .buttonBorderShape(.circle)
         .foregroundStyle(.primary, .secondary)
+        #if os(tvOS)
+            .buttonStyle(.borderless)
+            .backport
+            .buttonBorderShape(.circle)
         #endif
     }
 
     @ViewBuilder
     private var labelView: some View {
-        // iOS places button tuples horizontally by default
         // tvOS breaks HoverEffects when using a VStack
         #if os(tvOS)
-        iconView
+        imageView
+
         titleView
         #else
         VStack {
-            iconView
+            imageView
+
             titleView
         }
         #endif
     }
 
     @ViewBuilder
-    private var iconView: some View {
-        icon
+    private var imageView: some View {
+        image
             .hoverEffect(.highlight)
             .overlay(alignment: .bottomTrailing) {
                 if onDelete != nil, isEditing, isSelected {
@@ -118,87 +101,60 @@ struct UserButton<Icon: View>: View {
             .foregroundStyle(labelForegroundStyle)
             .lineLimit(1)
 
-        if let subtitle {
-            Text(subtitle)
-                .font(.footnote)
-                .foregroundStyle(Color.secondary)
-        } else {
-            // For layout, not to be localized
+        AlternateLayoutView {
             Text("Hidden")
-                .font(.footnote)
-                .hidden()
+        } content: {
+            if let subtitle {
+                Text(subtitle)
+                    .foregroundStyle(.secondary)
+            }
         }
+        .font(.footnote)
     }
 }
 
-extension UserButton where Icon == AnyView {
+extension UserButton {
 
-    /// Add User - `SelectUserView`
-    init(
-        action: @escaping () -> Void
-    ) where Icon == AnyView {
-        self.init(
-            title: L10n.addUser,
-            action: action
-        ) {
-            AnyView(
-                RelativeSystemImageView(systemName: "plus")
-                    .foregroundStyle(Color.secondary)
-                    .background(.thinMaterial)
-                    .clipShape(.circle)
-                    .aspectRatio(1, contentMode: .fit)
-                    .posterShadow()
-            )
-        }
-    }
-
-    /// Local User - `SelectUserView`
     init(
         user: UserState,
         server: ServerState,
         showServer: Bool,
         action: @escaping () -> Void,
         onDelete: @escaping () -> Void
-    ) where Icon == AnyView {
+    ) {
         self.init(
+            image: .init(
+                userID: user.id,
+                source: user.profileImageSource(
+                    client: server.client
+                ),
+                pipeline: .Swiftfin.local
+            ),
             title: user.username,
             subtitle: showServer ? server.name : nil,
             action: action,
             onDelete: onDelete
-        ) {
-            AnyView(
-                UserProfileImage(
-                    userID: user.id,
-                    source: user.profileImageSource(
-                        client: server.client
-                    ),
-                    pipeline: .Swiftfin.local
-                )
-                .posterShadow()
-            )
-        }
+        )
     }
 
-    /// Public Server User - `UserSigninView`
     init(
         user: UserDto,
         client: JellyfinClient,
         action: @escaping () -> Void
-    ) where Icon == AnyView {
+    ) {
         self.init(
+            image: .init(
+                userID: user.id,
+                source: user.profileImageSource(
+                    client: client,
+                    maxWidth: 240
+                ),
+                pipeline: .Swiftfin.local
+            ),
             title: user.name ?? .emptyDash,
-            action: action
-        ) {
-            AnyView(
-                UserProfileImage(
-                    userID: user.id,
-                    source: user.profileImageSource(
-                        client: client,
-                        maxWidth: 240
-                    )
-                )
-                .posterShadow()
-            )
-        }
+            subtitle: nil,
+            action: action,
+            onDelete: nil
+        )
     }
 }
