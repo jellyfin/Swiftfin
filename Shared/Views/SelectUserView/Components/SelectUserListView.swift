@@ -112,8 +112,8 @@ extension SelectUserView {
                 .scrollContentBackground(.hidden)
             #else
                 // This is required to allow the list to be focusable during `EditMode`
-                    .edgePadding()
                     .environment(\.editMode, .constant(.inactive))
+                    .edgePadding()
                     .scrollClipDisabled()
                     .focusSection()
             #endif
