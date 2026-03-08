@@ -38,7 +38,7 @@ struct SettingsView: View {
         Form(image: .jellyfinBlobBlue) {
             serverSection
             videoPlayerSection
-            customizationSection
+            customizeSection
             diagnosticsSection
         }
         #if os(iOS)
@@ -133,7 +133,7 @@ struct SettingsView: View {
     // MARK: - Customization Section
 
     @ViewBuilder
-    private var customizationSection: some View {
+    private var customizeSection: some View {
         Section {
             #if os(iOS)
             Picker(L10n.appearance, selection: $appearance)
@@ -141,7 +141,7 @@ struct SettingsView: View {
             ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
 
             ChevronButton(L10n.advanced) {
-                router.route(to: .customizationSettingsView)
+                router.route(to: .customizeSettingsView)
             }
         } header: {
             Text(L10n.customize)

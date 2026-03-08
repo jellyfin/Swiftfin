@@ -12,7 +12,7 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
-struct CustomizationSettingsView: View {
+struct CustomizeSettingsView: View {
 
     #if os(tvOS)
     typealias PlatformPicker = ListRowMenu
