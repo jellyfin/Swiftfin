@@ -27,6 +27,7 @@ extension ServerActivityView {
         var body: some View {
             ListRow {
                 userImage
+                    .frame(width: 60, height: 60)
             } content: {
                 rowContent
                     .padding(.bottom, 8)
@@ -38,18 +39,29 @@ extension ServerActivityView {
 
         @ViewBuilder
         private var userImage: some View {
-            let imageSource = viewModel.user?.profileImageSource(client: viewModel.userSession.client, maxWidth: 60) ?? .init()
-
-            UserProfileImage(
-                userID: viewModel.log.userID ?? viewModel.userSession?.user.id,
-                source: imageSource
-            ) {
-                SystemImageContentView(
-                    systemName: viewModel.user != nil ? "person.fill" : "gearshape.fill",
-                    ratio: 0.5
+            if let user = viewModel.user {
+                UserProfileImage(
+                    userID: user.id,
+                    source: user.profileImageSource(
+                        client: viewModel.userSession.client,
+                        maxWidth: 60
+                    )
                 )
+            } else {
+                ZStack {
+                    Rectangle()
+                        .fill(.complexSecondary)
+
+                    SystemImageContentView(
+                        systemName: "gearshape.fill",
+                        ratio: 0.5
+                    )
+                }
+                .posterBorder()
+                .clipShape(.circle)
+                .aspectRatio(1, contentMode: .fit)
+                .shadow(radius: 5)
             }
-            .frame(width: 60, height: 60)
         }
 
         // MARK: - User Image
