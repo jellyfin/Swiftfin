@@ -60,7 +60,7 @@ struct EditServerView: View {
 
             Section {
                 #if os(tvOS)
-                ListRowMenu(L10n.serverURL, subtitle: currentServerURL.absoluteString) {
+                ListRowMenu(L10n.url, subtitle: currentServerURL.absoluteString) {
                     Picker(L10n.serverURL, selection: $currentServerURL) {
                         ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                             Text(url.absoluteString)
@@ -69,7 +69,7 @@ struct EditServerView: View {
                     }
                 }
                 #else
-                Picker(L10n.serverURL, selection: $currentServerURL) {
+                Picker(L10n.url, selection: $currentServerURL) {
                     ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                         Text(url.absoluteString)
                             .tag(url)
@@ -77,7 +77,7 @@ struct EditServerView: View {
                 }
                 #endif
             } header: {
-                Text(L10n.url)
+                Text(L10n.serverURL)
             } footer: {
                 if !viewModel.server.isVersionCompatible {
                     Label(
