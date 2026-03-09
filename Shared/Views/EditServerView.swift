@@ -68,18 +68,12 @@ struct EditServerView: View {
                         }
                     }
                 }
-                .onChange(of: currentServerURL) { newValue in
-                    viewModel.setCurrentURL(to: newValue)
-                }
                 #else
                 Picker(L10n.serverURL, selection: $currentServerURL) {
                     ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                         Text(url.absoluteString)
                             .tag(url)
                     }
-                }
-                .onChange(of: currentServerURL) { newValue in
-                    viewModel.setCurrentURL(to: newValue)
                 }
                 #endif
             } header: {
@@ -104,6 +98,9 @@ struct EditServerView: View {
             }
         }
         .navigationTitle(L10n.server)
+        .onChange(of: currentServerURL) { newValue in
+            viewModel.setCurrentURL(to: newValue)
+        }
         .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {
             Button(L10n.delete, role: .destructive) {
                 viewModel.delete()
