@@ -6,12 +6,15 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct AboutAppView: View {
 
     var body: some View {
-        List {
+        Form(image: .jellyfinBlobBlue) {
+
+            #if os(iOS)
             Section {
                 VStack(alignment: .center, spacing: 10) {
 
@@ -27,20 +30,39 @@ struct AboutAppView: View {
                 .frame(maxWidth: .infinity)
                 .listRowBackground(Color.clear)
             }
+            #endif
 
             Section {
-
                 LabeledContent(
                     L10n.version,
                     value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
 
+                LabeledContent(
+                    "Server requirement",
+                    value: JellyfinClient.sdkVersion.description
+                )
+            }
+
+            Section {
+
+                // tvOS cannot open generic web links
+                #if !os(tvOS)
                 ChevronButton(
                     L10n.sourceCode,
                     image: .logoGithub,
                     external: true
                 ) {
                     UIApplication.shared.open(.swiftfinGithub)
+                }
+
+                ChevronButton(
+                    L10n.license,
+                    subtitle: "MLP 2.0",
+                    systemName: "text.document",
+                    external: true
+                ) {
+                    UIApplication.shared.open(.swiftfinGithubLicense)
                 }
 
                 ChevronButton(
@@ -51,6 +73,7 @@ struct AboutAppView: View {
                     UIApplication.shared.open(.swiftfinGithubIssues)
                 }
                 .symbolRenderingMode(.monochrome)
+                #endif
 
                 ChevronButton(
                     L10n.settings,
@@ -62,5 +85,6 @@ struct AboutAppView: View {
                 }
             }
         }
+        .navigationTitle(L10n.about)
     }
 }
