@@ -13,19 +13,28 @@ import SwiftUI
 
 struct AppSettingsView: View {
 
-    @Default(.accentColor)
-    private var accentColor
-
-    @Default(.appAppearance)
-    private var appearance
+    #if os(tvOS)
+    typealias PlatformPicker = ListRowMenu
+    #else
+    typealias PlatformPicker = Picker
+    #endif
 
     @Default(.selectUserUseSplashscreen)
     private var selectUserUseSplashscreen
     @Default(.selectUserAllServersSplashscreen)
     private var selectUserAllServersSplashscreen
 
+    @Default(.backgroundSignOutInterval)
+    private var backgroundSignOutInterval
+    @Default(.signOutOnBackground)
+    private var signOutOnBackground
     @Default(.signOutOnClose)
     private var signOutOnClose
+
+    #if os(iOS)
+    @Default(.appAppearance)
+    private var appearance
+    #endif
 
     @Router
     private var router
@@ -34,13 +43,16 @@ struct AppSettingsView: View {
     private var viewModel = SettingsViewModel()
 
     var body: some View {
-        Form {
+        Form(image: .jellyfinBlobBlue) {
 
-            ChevronButton(L10n.about) {
-                router.route(to: .aboutApp)
+            Section("Swiftfin") {
+                ChevronButton(L10n.about) {
+                    router.route(to: .aboutApp)
+                }
             }
 
-            Section(L10n.accessibility) {
+            #if os(iOS)
+            Section(L10n.customize) {
 
                 ChevronButton(L10n.appIcon) {
                     // TODO: Create NavigationRoute.appIconSelector
@@ -54,18 +66,15 @@ struct AppSettingsView: View {
                     )
                 }
             }
+            #endif
 
             Section {
-
                 Toggle(L10n.useSplashscreen, isOn: $selectUserUseSplashscreen)
 
                 if selectUserUseSplashscreen {
-                    Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
-
-                        Section {
-                            Label(L10n.random, systemImage: "dice.fill")
-                                .tag(SelectUserServerSelection.all)
-                        }
+                    PlatformPicker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
+                        Label(L10n.random, systemImage: "dice.fill")
+                            .tag(SelectUserServerSelection.all)
 
                         ForEach(viewModel.servers) { server in
                             Text(server.name)
@@ -81,7 +90,21 @@ struct AppSettingsView: View {
                 }
             }
 
-            SignOutIntervalSection()
+            Section {
+                Toggle(L10n.signoutClose, isOn: $signOutOnClose)
+            } footer: {
+                Text(L10n.signoutCloseFooter)
+            }
+
+            Section {
+                Toggle(L10n.signoutBackground, isOn: $signOutOnBackground)
+
+                if signOutOnBackground {
+                    HourMinutePicker(L10n.duration, interval: $backgroundSignOutInterval)
+                }
+            } footer: {
+                Text(L10n.signoutBackgroundFooter)
+            }
 
             ChevronButton(L10n.logs) {
                 router.route(to: .log)
@@ -89,7 +112,6 @@ struct AppSettingsView: View {
         }
         .animation(.linear, value: selectUserUseSplashscreen)
         .navigationTitle(L10n.advanced)
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }
