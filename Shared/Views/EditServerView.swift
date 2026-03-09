@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
 import JellyfinAPI
 import SwiftUI
 
@@ -36,28 +35,49 @@ struct EditServerView: View {
     }
 
     var body: some View {
-        List {
-            Section {
+        Form(systemImage: "server.rack") {
+
+            Section(L10n.server) {
 
                 LabeledContent(
                     L10n.name,
                     value: viewModel.server.name
                 )
+                #if os(tvOS)
+                .focusable(false)
+                #endif
 
-                if let serverVerion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
+                if let serverVersion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
                     LabeledContent(
                         L10n.version,
-                        value: serverVerion
+                        value: serverVersion
                     )
+                    #if os(tvOS)
+                    .focusable(false)
+                    #endif
                 }
+            }
 
+            Section {
+                #if os(tvOS)
+                ListRowMenu(L10n.url, subtitle: currentServerURL.absoluteString) {
+                    Picker(L10n.serverURL, selection: $currentServerURL) {
+                        ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
+                            Text(url.absoluteString)
+                                .tag(url)
+                        }
+                    }
+                }
+                #else
                 Picker(L10n.url, selection: $currentServerURL) {
                     ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                         Text(url.absoluteString)
                             .tag(url)
-                            .foregroundColor(.secondary)
                     }
                 }
+                #endif
+            } header: {
+                Text(L10n.serverURL)
             } footer: {
                 if !viewModel.server.isVersionCompatible {
                     Label(
@@ -69,14 +89,15 @@ struct EditServerView: View {
             }
 
             if isEditing {
-                Button(L10n.delete, role: .destructive) {
-                    isPresentingConfirmDeletion = true
+                Section {
+                    Button(L10n.delete, role: .destructive) {
+                        isPresentingConfirmDeletion = true
+                    }
+                    .buttonStyle(.primary)
                 }
-                .buttonStyle(.primary)
             }
         }
         .navigationTitle(L10n.server)
-        .navigationBarTitleDisplayMode(.inline)
         .onChange(of: currentServerURL) { newValue in
             viewModel.setCurrentURL(to: newValue)
         }
