@@ -27,23 +27,9 @@ extension SelectUserView {
             RelativeSystemImageView(systemName: "plus")
                 .foregroundStyle(Color.secondary)
                 .background(.thinMaterial)
-                .clipShape(.circle)
                 .aspectRatio(1, contentMode: .fit)
+                .clipShape(.circle)
                 .posterShadow()
-                .hoverEffect(.highlight)
-        }
-
-        @ViewBuilder
-        private var titleView: some View {
-            Text(L10n.addUser)
-                .font(.headline)
-                .fontWeight(.semibold)
-                .lineLimit(1)
-
-            AlternateLayoutView {
-                Text("Hidden")
-            } content: {}
-                .font(.footnote)
         }
 
         @ViewBuilder
@@ -51,17 +37,28 @@ extension SelectUserView {
             Button(action: action) {
                 #if os(tvOS)
                 imageView
-                titleView
+                    .hoverEffect(.highlight)
+
+                Text(L10n.addUser)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
                 #else
                 VStack {
                     imageView
-                    titleView
+
+                    Text(L10n.addUser)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
                 }
                 #endif
             }
             .foregroundStyle(.primary, .secondary)
             #if os(tvOS)
                 .buttonStyle(.borderless)
+                .backport
+                .buttonBorderShape(.circle)
             #endif
         }
 
