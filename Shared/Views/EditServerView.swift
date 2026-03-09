@@ -43,18 +43,35 @@ struct EditServerView: View {
                     L10n.name,
                     value: viewModel.server.name
                 )
+                #if os(tvOS)
                 .focusable(false)
+                #endif
 
                 if let serverVersion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
                     LabeledContent(
                         L10n.version,
                         value: serverVersion
                     )
+                    #if os(tvOS)
                     .focusable(false)
+                    #endif
                 }
             }
 
             Section {
+                #if os(tvOS)
+                ListRowMenu(L10n.serverURL, subtitle: currentServerURL.absoluteString) {
+                    Picker(L10n.serverURL, selection: $currentServerURL) {
+                        ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
+                            Text(url.absoluteString)
+                                .tag(url)
+                        }
+                    }
+                }
+                .onChange(of: currentServerURL) { newValue in
+                    viewModel.setCurrentURL(to: newValue)
+                }
+                #else
                 Picker(L10n.serverURL, selection: $currentServerURL) {
                     ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                         Text(url.absoluteString)
@@ -64,6 +81,7 @@ struct EditServerView: View {
                 .onChange(of: currentServerURL) { newValue in
                     viewModel.setCurrentURL(to: newValue)
                 }
+                #endif
             } header: {
                 Text(L10n.url)
             } footer: {
