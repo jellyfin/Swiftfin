@@ -132,6 +132,7 @@ struct AppSettingsView: View {
             }
         }
         .animation(.linear, value: selectUserUseSplashscreen)
+        .animation(.linear, value: signOutOnBackground)
         .navigationTitle(L10n.advanced)
         .navigationBarCloseButton {
             router.dismiss()
