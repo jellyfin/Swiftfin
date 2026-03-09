@@ -11,13 +11,13 @@ import SwiftUI
 
 extension NavigationRoute {
 
-    #if os(iOS)
     static let aboutApp = NavigationRoute(
         id: "about-app"
     ) {
         AboutAppView()
     }
 
+    #if os(iOS)
     static func appIconSelector(viewModel: SettingsViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "app-icon-selector"
@@ -33,18 +33,4 @@ extension NavigationRoute {
     ) {
         AppSettingsView()
     }
-
-    #if os(tvOS)
-    static let hourPicker = NavigationRoute(
-        id: "hour-picker",
-        style: .fullscreen
-    ) {
-        ZStack {
-            BlurView()
-                .ignoresSafeArea()
-
-            HourMinutePicker()
-        }
-    }
-    #endif
 }
