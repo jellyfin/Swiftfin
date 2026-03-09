@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
 import JellyfinAPI
 import SwiftUI
 
@@ -36,28 +35,37 @@ struct EditServerView: View {
     }
 
     var body: some View {
-        List {
-            Section {
+        Form(systemImage: "server.rack") {
+
+            Section(L10n.server) {
 
                 LabeledContent(
                     L10n.name,
                     value: viewModel.server.name
                 )
+                .focusable(false)
 
-                if let serverVerion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
+                if let serverVersion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
                     LabeledContent(
                         L10n.version,
-                        value: serverVerion
+                        value: serverVersion
                     )
+                    .focusable(false)
                 }
+            }
 
-                Picker(L10n.url, selection: $currentServerURL) {
+            Section {
+                Picker(L10n.serverURL, selection: $currentServerURL) {
                     ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                         Text(url.absoluteString)
                             .tag(url)
-                            .foregroundColor(.secondary)
                     }
                 }
+                .onChange(of: currentServerURL) { newValue in
+                    viewModel.setCurrentURL(to: newValue)
+                }
+            } header: {
+                Text(L10n.url)
             } footer: {
                 if !viewModel.server.isVersionCompatible {
                     Label(
@@ -69,17 +77,15 @@ struct EditServerView: View {
             }
 
             if isEditing {
-                Button(L10n.delete, role: .destructive) {
-                    isPresentingConfirmDeletion = true
+                Section {
+                    Button(L10n.delete, role: .destructive) {
+                        isPresentingConfirmDeletion = true
+                    }
+                    .buttonStyle(.primary)
                 }
-                .buttonStyle(.primary)
             }
         }
         .navigationTitle(L10n.server)
-        .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: currentServerURL) { newValue in
-            viewModel.setCurrentURL(to: newValue)
-        }
         .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {
             Button(L10n.delete, role: .destructive) {
                 viewModel.delete()
