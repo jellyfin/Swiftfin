@@ -51,7 +51,7 @@ struct MediaStreamInfoView: View {
         }
         .labeledContentStyle(.focusable)
         #if os(iOS)
-            // tvOS shares this view with another so this can cause overrides
+            // tvOS shares this view with another so this title updates with focus and overrides that title
                 .navigationTitle(mediaStream?.displayTitle ?? .emptyDash)
                 .navigationBarTitleDisplayMode(.inline)
         #endif
