@@ -12,24 +12,14 @@ struct FontPickerView: View {
 
     let selection: Binding<String>
 
-    private var elements: [DisplayableBox<String>] {
-        UIFont.familyNames
-            .map(DisplayableBox.init)
-    }
-
     var body: some View {
         Form(systemImage: "textformat.characters") {
             SelectorView(
-                selection: selection.map(
-                    getter: DisplayableBox.init,
-                    setter: { $0.displayTitle }
-                ),
-                sources: elements
-            )
-            .label { fontFamily in
-                Text(fontFamily.displayTitle)
-                    .foregroundColor(.primary)
-                    .font(.custom(fontFamily.displayTitle, size: UIDevice.isTV ? 30 : 18))
+                selection: selection,
+                sources: UIFont.familyNames
+            ) { fontFamily in
+                Text(fontFamily)
+                    .font(.custom(fontFamily, size: UIDevice.isTV ? 30 : 18))
             }
         }
         .navigationTitle(L10n.subtitleFont.localizedCapitalized)
