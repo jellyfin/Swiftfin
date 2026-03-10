@@ -23,10 +23,10 @@ struct ExperimentalSettingsView: View {
 
     #if os(iOS)
     // Enable if `ExperimentalSettingsView` is needed for iOS Settings
-    private static let hasPlatformSettings = true
+    private static let hasPlatformSettings = false
     #elseif os(tvOS)
     // Enable if `ExperimentalSettingsView` is needed for tvOS Settings
-    private static let hasPlatformSettings = true
+    private static let hasPlatformSettings = false
     #endif
 
     // MARK: - iOS Settings
