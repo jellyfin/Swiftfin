@@ -84,12 +84,12 @@ struct MediaSourceInfoView: PlatformView {
                 NavigationStack {
                     if let selectedStream {
                         MediaStreamInfoView(mediaStream: selectedStream)
+                            .navigationBarCloseButton {
+                                self.selectedStream = nil
+                            }
                     }
                 }
                 .presentationDetents([.medium, .large])
-                .navigationBarCloseButton {
-                    selectedStream = nil
-                }
             }
     }
 
