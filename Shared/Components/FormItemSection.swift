@@ -9,11 +9,11 @@
 import JellyfinAPI
 import SwiftUI
 
-struct FormItemSection: View {
+struct FormItemSection: PlatformView {
 
     let item: BaseItemDto
 
-    var body: some View {
+    var iOSView: some View {
         Section {
             HStack(alignment: .bottom, spacing: 12) {
                 PosterImage(
@@ -27,13 +27,13 @@ struct FormItemSection: View {
                 VStack(alignment: .leading) {
 
                     if let parent = item.parentTitle {
-                        Text(parent)
+                        Marquee(parent)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
-                            .lineLimit(2)
+                            .lineLimit(1)
                     }
 
-                    Text(item.displayTitle)
+                    Marquee(item.displayTitle)
                         .font(.title2)
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
@@ -43,6 +43,10 @@ struct FormItemSection: View {
                         Text(subtitle)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
+                    } else if let year = item.productionYear {
+                        Text(year.description)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .padding(.bottom)
@@ -50,6 +54,41 @@ struct FormItemSection: View {
         }
         .listRowBackground(Color.clear)
         .listRowInsets(.zero)
-        .listRowCornerRadius(0)
+        #if os(iOS)
+            .listRowCornerRadius(0)
+        #endif
+    }
+
+    var tvOSView: some View {
+        Section(L10n.media) {
+            if let parentLabel = item.parentLabel,
+               let parentValue = item.parentTitle
+            {
+                LabeledContent(
+                    parentLabel,
+                    value: parentValue
+                )
+            }
+
+            LabeledContent(
+                L10n.title,
+                value: item.displayTitle
+            )
+
+            if let subtitleLabel = item.type?.displayTitle,
+               let subtitleValue = item.subtitle
+            {
+                LabeledContent(
+                    subtitleLabel,
+                    value: subtitleValue
+                )
+            } else if let year = item.productionYear {
+                LabeledContent(
+                    L10n.year,
+                    value: year.description
+                )
+            }
+        }
+        .labeledContentStyle(.focusable)
     }
 }

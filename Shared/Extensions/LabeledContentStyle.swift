@@ -74,3 +74,31 @@ struct DeviceProfileLabeledContentStyle: LabeledContentStyle {
         .font(.subheadline)
     }
 }
+
+extension LabeledContentStyle where Self == FocusableLabeledContentStyle {
+
+    static var focusable: FocusableLabeledContentStyle {
+        FocusableLabeledContentStyle()
+    }
+}
+
+struct FocusableLabeledContentStyle: LabeledContentStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        #if os(tvOS)
+        Button {} label: {
+            LabeledContent {
+                configuration.content
+            } label: {
+                configuration.label
+            }
+        }
+        #else
+        LabeledContent {
+            configuration.content
+        } label: {
+            configuration.label
+        }
+        #endif
+    }
+}
