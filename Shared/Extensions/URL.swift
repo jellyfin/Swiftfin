@@ -32,6 +32,8 @@ extension URL {
 
     static let swiftfinGithub: URL = URL(string: "https://github.com/jellyfin/Swiftfin")!
 
+    static let swiftfinGithubLicense: URL = URL(string: "https://github.com/jellyfin/Swiftfin/blob/main/LICENSE.md")!
+
     static let swiftfinGithubIssues: URL = URL(string: "https://github.com/jellyfin/Swiftfin/issues")!
 
     static let jellyfinDocsDevices: URL = URL(string: "https://jellyfin.org/docs/general/server/devices")!
