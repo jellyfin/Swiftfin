@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 enum SelectorType {
@@ -14,44 +13,50 @@ enum SelectorType {
     case multi
 }
 
-struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
+struct SelectorView<Element: Hashable, Label: View>: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @StateObject
+    private var box: BindingBox<Set<Element>>
 
-    @State
-    private var selectedItems: Set<Element>
-
-    private let selectionBinding: Binding<Set<Element>>
     private let sources: [Element]
     private var label: (Element) -> Label
     private let type: SelectorType
 
-    private init(
-        selection: Binding<Set<Element>>,
+    init(
+        selection: Binding<[Element]>,
         sources: [Element],
+        type: SelectorType,
         label: @escaping (Element) -> Label,
-        type: SelectorType
     ) {
-        self.selectionBinding = selection
-        self._selectedItems = State(initialValue: selection.wrappedValue)
+        self._box = StateObject(
+            wrappedValue: BindingBox(
+                source: selection.map(
+                    getter: { Set($0) },
+                    setter: { Array($0) }
+                )
+            )
+        )
         self.sources = sources
         self.label = label
         self.type = type
     }
 
-    private func handleSingleSelect(with element: Element) {
-        selectedItems = [element]
-        selectionBinding.wrappedValue = selectedItems
-    }
-
-    private func handleMultiSelect(with element: Element) {
-        if selectedItems.contains(element) {
-            selectedItems.remove(element)
-        } else {
-            selectedItems.insert(element)
-        }
-        selectionBinding.wrappedValue = selectedItems
+    init(
+        selection: Binding<Element>,
+        sources: [Element],
+        label: @escaping (Element) -> Label,
+    ) {
+        self._box = StateObject(
+            wrappedValue: BindingBox(
+                source: selection.map(
+                    getter: { Set([$0]) },
+                    setter: { $0.first! }
+                )
+            )
+        )
+        self.sources = sources
+        self.label = label
+        self.type = .single
     }
 
     var body: some View {
@@ -59,73 +64,52 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
             Button {
                 switch type {
                 case .single:
-                    handleSingleSelect(with: element)
+                    box.value = [element]
                 case .multi:
-                    handleMultiSelect(with: element)
+                    box.value.toggle(value: element)
                 }
             } label: {
                 HStack {
                     label(element)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    if selectedItems.contains(element) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .fontWeight(.bold)
-                            .aspectRatio(1, contentMode: .fit)
-                            .frame(width: 24, height: 24)
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(accentColor.overlayColor, accentColor)
+                    let isSelected = box.value.contains(element)
+
+                    if isSelected {
+                        ListRowCheckbox()
+                            .isEditing(true)
+                            .isSelected(isSelected)
                     }
                 }
             }
-        }
-        .backport
-        .onChange(of: selectionBinding.wrappedValue) { _, newValue in
-            selectedItems = newValue
+            .foregroundStyle(.primary, .secondary)
         }
     }
 }
 
-extension SelectorView where Label == Text {
+extension SelectorView where Element: Displayable, Label == Text {
 
     init(selection: Binding<[Element]>, sources: [Element], type: SelectorType) {
-        let setBinding = Binding<Set<Element>>(
-            get: { Set(selection.wrappedValue) },
-            set: { newValue in
-                selection.wrappedValue = Array(newValue)
-            }
-        )
-
         self.init(
-            selection: setBinding,
+            selection: selection,
             sources: sources,
-            label: { Text($0.displayTitle).foregroundColor(.primary) },
-            type: type
+            type: type,
+            label: { Text($0.displayTitle) }
         )
     }
 
     init(selection: Binding<Element>, sources: [Element]) {
-        let setBinding = Binding<Set<Element>>(
-            get: { Set([selection.wrappedValue]) },
-            set: { newValue in
-                if let first = newValue.first {
-                    selection.wrappedValue = first
-                }
-            }
-        )
-
         self.init(
-            selection: setBinding,
+            selection: selection,
             sources: sources,
-            label: { Text($0.displayTitle).foregroundColor(.primary) },
-            type: .single
+            label: { Text($0.displayTitle) }
         )
     }
 }
 
 extension SelectorView {
 
+    @available(*, deprecated, message: "Use SelectorView(selection:sources:type:label:) instead")
     func label(@ViewBuilder _ content: @escaping (Element) -> Label) -> Self {
         copy(modifying: \.label, with: content)
     }
