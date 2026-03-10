@@ -14,7 +14,11 @@ struct ItemOverviewView: View {
     @Router
     private var router
 
-    let item: BaseItemDto
+    private let item: BaseItemDto
+
+    init(item: BaseItemDto) {
+        self.item = item
+    }
 
     var body: some View {
         Form {

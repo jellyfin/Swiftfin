@@ -22,6 +22,10 @@ struct MediaSourceInfoView: PlatformView {
 
     let source: MediaSourceInfo
 
+    init(source: MediaSourceInfo) {
+        self.source = source
+    }
+
     @ViewBuilder
     private func streamRow(_ stream: MediaStream) -> some View {
         ChevronButton(stream.displayTitle ?? .emptyDash) {
