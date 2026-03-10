@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct FontPickerView: PlatformView {
+struct FontPickerView: View {
 
     let selection: Binding<String>
 
@@ -17,25 +17,20 @@ struct FontPickerView: PlatformView {
             .map(DisplayableBox.init)
     }
 
-    var iOSView: some View {
-        SelectorView(
-            selection: selection.map(
-                getter: DisplayableBox.init,
-                setter: { $0.displayTitle }
-            ),
-            sources: elements
-        )
-        .label { fontFamily in
-            Text(fontFamily.displayTitle)
-                .foregroundColor(.primary)
-                .font(.custom(fontFamily.displayTitle, size: UIDevice.isTV ? 30 : 18))
-        }
-        .navigationTitle(L10n.subtitleFont.localizedCapitalized)
-    }
-
-    var tvOSView: some View {
+    var body: some View {
         Form(systemImage: "textformat.characters") {
-            iOSView
+            SelectorView(
+                selection: selection.map(
+                    getter: DisplayableBox.init,
+                    setter: { $0.displayTitle }
+                ),
+                sources: elements
+            )
+            .label { fontFamily in
+                Text(fontFamily.displayTitle)
+                    .foregroundColor(.primary)
+                    .font(.custom(fontFamily.displayTitle, size: UIDevice.isTV ? 30 : 18))
+            }
         }
         .navigationTitle(L10n.subtitleFont.localizedCapitalized)
     }
