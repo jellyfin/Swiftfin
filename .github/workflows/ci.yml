@@ -30,7 +30,7 @@ jobs:
       TVOS_SIMULATOR: "Apple TV 4K"
       IPHONE_SIMULATOR: "iPhone 16 Pro"
 
-    steps:    
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
 
