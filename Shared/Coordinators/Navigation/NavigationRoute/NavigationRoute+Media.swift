@@ -39,10 +39,6 @@ extension NavigationRoute {
     static func mediaStreamInfo(mediaStream: MediaStream) -> NavigationRoute {
         NavigationRoute(id: "mediaStreamInfo") {
             MediaStreamInfoView(mediaStream: mediaStream)
-                .navigationTitle(mediaStream.displayTitle ?? L10n.mediaAttributes.localizedCapitalized)
-            #if os(iOS)
-                .navigationBarTitleDisplayMode(.inline)
-            #endif
         }
     }
 
