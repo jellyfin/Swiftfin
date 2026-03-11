@@ -91,48 +91,54 @@ extension VideoPlayer.PlaybackControls {
             return clamp((origin.seconds / runtime.seconds) * resolution, min: 0, max: resolution)
         }
 
-        @ViewBuilder
-        private var capsuleSlider: some View {
-
-            let resolution: Double = 100
-
-            CapsuleSlider(
-                value: $scrubbedSecondsBox.value.map(
-                    getter: {
-                        guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
-                        return clamp(($0.seconds / runtime.seconds) * resolution, min: 0, max: resolution)
-                    },
-                    setter: { (manager.item.runtime ?? .zero) * ($0 / resolution) }
-                ),
-                total: resolution
-            )
-            .originProgress(originProgress(resolution: resolution))
-            .onEditingChanged { isEditing in
-                if isEditing {
-                    isScrubbing = true
-                    onPanScrubChanged?(true)
-                } else {
-                    onPanScrubChanged?(false)
-                }
-            }
-            .frame(height: 50)
-        }
-
         var body: some View {
             VStack(spacing: 10) {
                 if manager.item.isLiveStream {
                     liveIndicator
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
-                    capsuleSlider
-                        .trackingSize($sliderSize)
+                    CapsuleSlider(
+                        value: $scrubbedSecondsBox.value.map(
+                            getter: {
+                                guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+                                return clamp(($0.seconds / runtime.seconds) * 100, min: 0, max: 100)
+                            },
+                            setter: { (manager.item.runtime ?? .zero) * ($0 / 100) }
+                        ),
+                        total: 100
+                    )
+                    .originProgress(originProgress(resolution: 100))
+                    .onEditingChanged { isEditing in
+                        if isEditing {
+                            isScrubbing = true
+                            onPanScrubChanged?(true)
+                        } else {
+                            onPanScrubChanged?(false)
+                        }
+                    }
+                    .frame(height: 16)
+                    .trackingSize($sliderSize)
+                    .overlay {
+                        if let runtime = manager.item.runtime, runtime > .zero {
+                            GeometryReader { geometry in
+                                let fraction = clamp(manager.seconds.seconds / runtime.seconds, min: 0, max: 1)
+
+                                RoundedRectangle(cornerRadius: 1)
+                                    .fill(Color.white.opacity(0.85))
+                                    .frame(width: 2, height: geometry.size.height)
+                                    .shadow(color: .black.opacity(0.6), radius: 2)
+                                    .position(x: geometry.size.width * fraction, y: geometry.size.height / 2)
+                            }
+                            .allowsHitTesting(false)
+                        }
+                    }
 
                     SplitTimeStamp()
+                        .foregroundStyle(Color.white)
                 }
             }
             .focused($isFocused)
-            .scaleEffect(isFocused ? 1.025 : 1.0)
-            .foregroundStyle(isFocused ? Color.white : Color.white.opacity(0.8))
+            .foregroundStyle(isFocused ? Color.white : Color.gray.opacity(0.75))
             .animation(.easeInOut(duration: 0.2), value: isFocused)
             .overlay(alignment: .topLeading) {
                 if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {

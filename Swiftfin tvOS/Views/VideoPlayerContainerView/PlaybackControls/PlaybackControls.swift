@@ -21,14 +21,10 @@ extension VideoPlayer {
         private typealias SupplementTitleButtonStyle = VideoPlayer.UIVideoPlayerContainerViewController
             .SupplementContainerView.SupplementTitleButtonStyle
 
-        // MARK: - Defaults
-
         @Default(.VideoPlayer.jumpBackwardInterval)
         var jumpBackwardInterval
         @Default(.VideoPlayer.jumpForwardInterval)
         var jumpForwardInterval
-
-        // MARK: - Environment
 
         // since this view ignores safe area, it must
         // get safe area insets from parent views
@@ -46,12 +42,8 @@ extension VideoPlayer {
         @Toaster
         var toaster: ToastProxy
 
-        // MARK: - State (Layout)
-
         @State
         private var bottomContentFrame: CGRect = .zero
-
-        // MARK: - State (Speed Boost / Jump)
 
         @State
         var speedBoostTimer: Timer?
@@ -59,8 +51,6 @@ extension VideoPlayer {
         var isSpeedBoosting: Bool = false
         @State
         var pendingJumpWork: DispatchWorkItem?
-
-        // MARK: - Focus
 
         @EnvironmentObject
         var focusGuide: FocusGuide
@@ -81,12 +71,8 @@ extension VideoPlayer {
             containerState.isProgressBarFocused
         }
 
-        // MARK: - State (Supplements)
-
         @State
         private var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
-
-        // MARK: - Computed Properties
 
         var isPresentingOverlay: Bool {
             containerState.isPresentingOverlay
@@ -109,8 +95,6 @@ extension VideoPlayer {
             get { containerState.scrubOriginSeconds }
             nonmutating set { containerState.scrubOriginSeconds = newValue }
         }
-
-        // MARK: - View Builders
 
         // TODO: scroll if larger than horizontal
         private var supplementTabButtons: some View {
@@ -146,12 +130,11 @@ extension VideoPlayer {
         }
 
         private var bottomContent: some View {
-            VStack(spacing: 0) {
+            VStack(spacing: 10) {
                 NavigationBar(focusTarget: $focusedBarTarget)
                     .focusGuide(
                         focusGuide,
                         tag: "navigationBar",
-                        fixedSize: (horizontal: false, vertical: true),
                         onContentFocus: {
                             if let target = lastFocusedBarTarget {
                                 focusedBarTarget = target
@@ -161,6 +144,7 @@ extension VideoPlayer {
                         },
                         bottom: "progressBar"
                     )
+                    .fixedSize(horizontal: false, vertical: true)
                     .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
                     .disabled(isPresentingSupplement)
                     .animation(Self.supplementTransition, value: isPresentingSupplement)
@@ -178,10 +162,10 @@ extension VideoPlayer {
                 .focusGuide(
                     focusGuide,
                     tag: "progressBar",
-                    fixedSize: (horizontal: false, vertical: true),
                     top: "navigationBar",
                     bottom: currentSupplements.isEmpty ? nil : "dividerZone"
                 )
+                .fixedSize(horizontal: false, vertical: true)
                 .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
                 .disabled(isPresentingSupplement)
                 .animation(Self.supplementTransition, value: isPresentingSupplement)
@@ -191,11 +175,9 @@ extension VideoPlayer {
                     .focusGuide(
                         focusGuide,
                         tag: "dividerZone",
-                        fixedSize: (horizontal: false, vertical: true),
                         onContentFocus: {
                             if focusGuide.lastFocusedTag == "tabButtons" {
                                 if isPresentingSupplement {
-                                    // Dismiss supplement then redirect after hierarchy updates
                                     containerState.selectedSupplement = nil
                                     containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
 
@@ -206,20 +188,19 @@ extension VideoPlayer {
                                     focusGuide.transition(to: "progressBar")
                                 }
                             } else {
-                                // Coming from above (progressBar) pass through to tabs
                                 focusGuide.transition(to: "tabButtons")
                             }
                         },
                         top: "progressBar",
                         bottom: "tabButtons"
                     )
+                    .fixedSize(horizontal: false, vertical: true)
                     .isVisible(isPresentingOverlay)
 
                 supplementTabButtons
                     .focusGuide(
                         focusGuide,
                         tag: "tabButtons",
-                        fixedSize: (horizontal: false, vertical: true),
                         onContentFocus: {
                             let targetID = lastFocusedSupplementID
                                 ?? containerState.selectedSupplement?.id
@@ -229,12 +210,12 @@ extension VideoPlayer {
                         top: "dividerZone",
                         bottom: isPresentingSupplement ? "supplementContent" : nil
                     )
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(alignment: .leading)
                     .isVisible(isPresentingOverlay && !currentSupplements.isEmpty)
                     .transaction { $0.animation = nil }
             }
         }
-
-        // MARK: body
 
         var body: some View {
             VStack(spacing: 0) {
@@ -318,6 +299,13 @@ extension VideoPlayer {
             .onReceive(manager.secondsBox.$value) { newSeconds in
                 if hasEnteredScrubMode {
                     scrubOriginSeconds = newSeconds
+                }
+            }
+            .onReceive(manager.$playbackItem) { newItem in
+                guard newItem != nil else { return }
+
+                DispatchQueue.main.async {
+                    focusGuide.transition(to: focusGuide.focusedTag)
                 }
             }
             .onChange(of: focusedSupplementID) { oldValue, newValue in

@@ -17,8 +17,6 @@ extension VideoPlayer.PlaybackControls {
         case backward
     }
 
-    // MARK: - Speed Boost
-
     func startSpeedBoost() {
         guard !isSpeedBoosting else { return }
 
@@ -60,8 +58,6 @@ extension VideoPlayer.PlaybackControls {
         }
     }
 
-    // MARK: - Jumping
-
     func jumpForward() {
         containerState.jumpProgressObserver.jumpForward()
         toaster.present(
@@ -85,8 +81,6 @@ extension VideoPlayer.PlaybackControls {
         )
         scheduleJump(direction: .backward)
     }
-
-    // MARK: - Scrubbing
 
     func cancelScrubbing() {
         if let origin = scrubOriginSeconds {

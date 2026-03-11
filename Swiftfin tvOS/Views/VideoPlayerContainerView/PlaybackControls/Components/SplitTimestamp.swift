@@ -54,6 +54,7 @@ extension VideoPlayer.PlaybackControls {
                     .trackingSize($leadingTimestampSize)
                     .offset(x: previewXOffset)
             }
+            .font(.callout)
             .monospacedDigit()
             .trackingSize($contentSize)
         }

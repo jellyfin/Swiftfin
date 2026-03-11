@@ -39,8 +39,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             supplement.videoPlayerBody
         }
 
-        // MARK: body
-
         var body: some View {
             ZStack {
                 if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {

@@ -24,9 +24,8 @@ import SwiftUI
 //       - helps with not rendering before ready
 //       - would require refactor so that video players take media player items
 
-// MARK: - VideoPlayerContainerView
-
 extension VideoPlayer {
+
     struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: UIViewControllerRepresentable {
 
         private let containerState: VideoPlayerContainerState
@@ -61,11 +60,7 @@ extension VideoPlayer {
         ) {}
     }
 
-    // MARK: - UIVideoPlayerContainerViewController
-
     class UIVideoPlayerContainerViewController: UIViewController {
-
-        // MARK: - Views
 
         // TODO: preview image while scrubbing option
         private struct PlayerContainerView: View {
@@ -80,7 +75,6 @@ extension VideoPlayer {
 
             var body: some View {
                 player
-                    .overlay(Color.black.opacity(containerState.isPresentingPlaybackControls ? 0.3 : 0.0))
                     .overlay {
                         if manager.playbackRequestStatus == .paused {
                             Label(L10n.pause, systemImage: "pause.fill")
@@ -165,20 +159,14 @@ extension VideoPlayer {
             supplementContainerViewController.view
         }
 
-        // MARK: - Constants
-
         private var supplementContainerOffset: CGFloat {
             (view.bounds.height / 3) + EdgeInsets.edgePadding * 2
         }
 
         private let minimumTranslation: CGFloat = 100.0
 
-        // MARK: - Constraints
-
         private var supplementHeightAnchor: NSLayoutConstraint!
         private var supplementBottomAnchor: NSLayoutConstraint!
-
-        // MARK: - Properties
 
         private let manager: MediaPlayerManager
         private let player: AnyView
@@ -187,8 +175,6 @@ extension VideoPlayer {
         private let focusGuide = FocusGuide()
 
         let onPressEvent = OnPressEvent()
-
-        // MARK: - Pan Gesture State
 
         private var verticalPanGestureStartConstant: CGFloat?
         private var isPanning: Bool = false
@@ -216,8 +202,6 @@ extension VideoPlayer {
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-
-        // MARK: - Supplement Pan Action
 
         func handleSupplementPanAction(
             translation: CGPoint,
@@ -296,8 +280,6 @@ extension VideoPlayer {
             containerState.supplementOffset = supplementBottomAnchor.constant
         }
 
-        // MARK: - present
-
         func presentSupplementContainer(
             _ didPresent: Bool,
             redirectFocus: Bool = true,
@@ -352,8 +334,6 @@ extension VideoPlayer {
                 }
             }
         }
-
-        // MARK: - viewDidLoad
 
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -447,8 +427,6 @@ extension VideoPlayer {
             NSLayoutConstraint.activate(playbackControlsConstraints)
         }
 
-        // MARK: - Touch Handling
-
         override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
             super.touchesBegan(touches, with: event)
 
@@ -462,8 +440,6 @@ extension VideoPlayer {
                 containerState.timer.poke()
             }
         }
-
-        // MARK: - Press Handling
 
         @objc
         private func menuPressed() {
@@ -532,8 +508,6 @@ extension VideoPlayer {
             }
         }
 
-        // MARK: - Play/Pause
-
         private func handlePlayPauseEnded() {
             if containerState.hasEnteredScrubMode {
                 containerState.cancelScrub()
@@ -557,8 +531,6 @@ extension VideoPlayer {
             containerState.timer.poke()
         }
 
-        // MARK: - Select
-
         private func handleSelectEnded(_ press: UIPress, event: UIPressesEvent?) {
             if !containerState.isPresentingOverlay {
                 containerState.isPresentingOverlay = true
@@ -581,8 +553,6 @@ extension VideoPlayer {
                 forwardPressesEnded([press], event: event)
             }
         }
-
-        // MARK: - Menu
 
         private func handleMenuEnded() {
             if !containerState.isPresentingOverlay {
@@ -609,8 +579,6 @@ extension VideoPlayer {
     }
 }
 
-// MARK: - PressEvent
-
 extension VideoPlayer.UIVideoPlayerContainerViewController {
 
     struct PressEvent {
@@ -634,8 +602,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
     typealias OnPressEvent = LegacyEventPublisher<PressEvent>
 }
-
-// MARK: - OnPressEvent Property Wrapper
 
 @propertyWrapper
 struct OnPressEvent: DynamicProperty {

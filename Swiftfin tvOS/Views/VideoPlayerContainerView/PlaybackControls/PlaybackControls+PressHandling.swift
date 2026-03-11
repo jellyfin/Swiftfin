@@ -10,8 +10,6 @@ import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
-    // MARK: - Press Event Router
-
     func handlePressEvent(_ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent) {
 
         if !isPresentingOverlay {
@@ -30,8 +28,6 @@ extension VideoPlayer.PlaybackControls {
             press.resolve(.fallback)
         }
     }
-
-    // MARK: - Left Arrow
 
     private func handleLeftArrow(
         _ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent
@@ -53,8 +49,6 @@ extension VideoPlayer.PlaybackControls {
             press.resolve(.fallback)
         }
     }
-
-    // MARK: - Right Arrow
 
     private func handleRightArrow(
         _ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent
