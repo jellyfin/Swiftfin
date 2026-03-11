@@ -29,7 +29,7 @@ struct MediaSourceInfoView: PlatformView {
     @ViewBuilder
     private func streamRow(_ stream: MediaStream) -> some View {
         ChevronButton(stream.displayTitle ?? .emptyDash) {
-            selectedStream = stream
+            router.route(to: .mediaStreamInfo(mediaStream: stream))
         }
         #if os(tvOS)
         .focused($focusedStream, equals: stream)
@@ -77,23 +77,6 @@ struct MediaSourceInfoView: PlatformView {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismiss()
-            }
-            .sheet(
-                isPresented: Binding(
-                    get: { selectedStream != nil },
-                    set: { if !$0 { selectedStream = nil } }
-                ),
-                onDismiss: { selectedStream = nil }
-            ) {
-                NavigationStack {
-                    if let selectedStream {
-                        MediaStreamInfoView(mediaStream: selectedStream)
-                            .navigationBarCloseButton {
-                                self.selectedStream = nil
-                            }
-                    }
-                }
-                .presentationDetents([.medium, .large])
             }
     }
 
