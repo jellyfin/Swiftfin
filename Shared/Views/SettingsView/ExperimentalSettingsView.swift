@@ -12,7 +12,7 @@ import SwiftUI
 /// `Note`: Used for experimental settings that may be removed or implemented officially. Keep for future settings.
 struct ExperimentalSettingsView: View {
 
-    private static let isEnabled = false
+    static let isEnabled = false
 
     @ViewBuilder
     var body: some View {
