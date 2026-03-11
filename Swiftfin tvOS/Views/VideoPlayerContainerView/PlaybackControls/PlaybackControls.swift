@@ -97,6 +97,7 @@ extension VideoPlayer {
         }
 
         // TODO: scroll if larger than horizontal
+        // Just adding `.scrollIfLargerThanContainer()` breaks the FocusGuide
         private var supplementTabButtons: some View {
             HStack(spacing: 20) {
                 if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
@@ -304,8 +305,16 @@ extension VideoPlayer {
             .onReceive(manager.$playbackItem) { newItem in
                 guard newItem != nil else { return }
 
+                // Supplment IDs change with the playbackItem
+                // Reset these to prevent FocusGuide breakages where the lastFocused IDs are invalid
+                containerState.selectedSupplement = nil
+                containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
+                focusedSupplementID = nil
+                lastFocusedSupplementID = nil
+
                 DispatchQueue.main.async {
-                    focusGuide.transition(to: focusGuide.focusedTag)
+                    focusGuide.transition(to: nil)
+                    focusGuide.transition(to: focusGuide.lastFocusedTag)
                 }
             }
             .onChange(of: focusedSupplementID) { oldValue, newValue in
