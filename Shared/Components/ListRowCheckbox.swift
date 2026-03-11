@@ -9,19 +9,17 @@
 import Defaults
 import SwiftUI
 
+// TODO: remove isEditing observation
+
 struct ListRowCheckbox: View {
 
     @Default(.accentColor)
     private var accentColor
 
-    // MARK: - Environment Variables
-
     @Environment(\.isEditing)
     private var isEditing
     @Environment(\.isSelected)
     private var isSelected
-
-    // MARK: - Sizing Variable
 
     #if os(tvOS)
     private let size: CGFloat = 36
@@ -29,26 +27,25 @@ struct ListRowCheckbox: View {
     private let size: CGFloat = 24
     #endif
 
-    // MARK: - Body
-
-    @ViewBuilder
     var body: some View {
-        if isEditing, isSelected {
-            Image(systemName: "checkmark.circle.fill")
-                .resizable()
-                .fontWeight(.bold)
-                .aspectRatio(1, contentMode: .fit)
-                .frame(width: size, height: size)
-                .symbolRenderingMode(.palette)
-                .foregroundStyle(accentColor.overlayColor, accentColor)
+        if isEditing {
+            if isSelected {
+                Image(systemName: "checkmark.circle.fill")
+                    .resizable()
+                    .fontWeight(.bold)
+                    .aspectRatio(1, contentMode: .fit)
+                    .frame(width: size, height: size)
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(accentColor.overlayColor, accentColor)
 
-        } else if isEditing {
-            Image(systemName: "circle")
-                .resizable()
-                .fontWeight(.bold)
-                .aspectRatio(1, contentMode: .fit)
-                .frame(width: size, height: size)
-                .foregroundStyle(.secondary)
+            } else {
+                Image(systemName: "circle")
+                    .resizable()
+                    .fontWeight(.bold)
+                    .aspectRatio(1, contentMode: .fit)
+                    .frame(width: size, height: size)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }
