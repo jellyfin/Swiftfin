@@ -36,7 +36,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         }
     }
 
-    /// Jellyfin stream index → player track index
     private(set) var indexMap: [Int: Int]
 
     private var externalSubtitlesResolved = false
@@ -93,7 +92,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         self.subtitleStreams = mediaStreams?.filter {
             $0.type == .subtitle
                 && $0.deliveryMethod != .drop
-                /// Hide external image subtitles in direct play — they require transcoding to burn in
                 && !(Defaults[.VideoPlayer.Playback.compatibilityMode] == .directPlay
                     && $0.isExternal == true
                     && $0.isTextSubtitleStream != true)
@@ -120,7 +118,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         observers.append(MediaProgressObserver(item: self))
     }
 
-    /// Encoded or image-based (PGS) subtitles require a server rebuild to burn in
     func isRebuildRequired(from oldIndex: Int?, to newIndex: Int?) -> Bool {
         let needsRebuild: (MediaStream?) -> Bool = { stream in
             guard let stream else { return false }
@@ -136,7 +133,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         return needsRebuild(oldStream) || needsRebuild(newStream)
     }
 
-    /// Switch subtitle track directly without rebuilding
     func switchSubtitleTrack(index: Int?) {
         let playerIndex: Int
         if index == nil || index == -1 {
@@ -152,7 +148,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         }
     }
 
-    /// Resolve sidecar subtitle indexes once the player reports its actual tracks
     func getSubtitleIndexes(subtitleTracks: [(index: Int, title: String)]) {
         guard !externalSubtitlesResolved else { return }
         externalSubtitlesResolved = true
@@ -167,7 +162,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
             isTranscoding: mediaSource.transcodingURL != nil
         )
 
-        // re-apply current subtitle now that we have real indexes
         if let currentSubtitle = selectedSubtitleStreamIndex,
            let playerIndex = indexMap[currentSubtitle]
         {

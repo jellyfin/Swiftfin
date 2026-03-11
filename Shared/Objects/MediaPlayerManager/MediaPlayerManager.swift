@@ -390,7 +390,7 @@ final class MediaPlayerManager: ViewModel {
 
         itemUpdateTask?.cancel()
 
-        /// Capture the current playback position before stopping
+        // Capture the current playback position before stopping
         let currentSeconds = self.seconds
 
         logger.info(

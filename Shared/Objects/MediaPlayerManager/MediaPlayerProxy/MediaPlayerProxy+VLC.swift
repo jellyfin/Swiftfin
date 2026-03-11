@@ -136,7 +136,6 @@ extension VLCMediaPlayerProxy {
 
                 let subtitleIndex = item.indexMap[item.selectedSubtitleStreamIndex] ?? -1
 
-                /// Check if the Media Source being transcoded
                 if mediaSource.transcodingURL != nil {
                     configuration.audioIndex = .auto
                 } else {
