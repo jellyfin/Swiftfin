@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import IdentifiedCollections
 import SwiftUI
 
 extension VideoPlayer {
@@ -18,8 +17,6 @@ extension VideoPlayer {
         static let supplementSwap: Animation = .easeInOut(duration: 0.2)
 
         typealias ActionBarFocusTarget = NavigationBar.ActionButtons.FocusTarget
-        private typealias SupplementTitleButtonStyle = VideoPlayer.UIVideoPlayerContainerViewController
-            .SupplementContainerView.SupplementTitleButtonStyle
 
         @Default(.VideoPlayer.jumpBackwardInterval)
         var jumpBackwardInterval
@@ -58,21 +55,12 @@ extension VideoPlayer {
         @FocusState
         var focusedBarTarget: ActionBarFocusTarget?
 
-        @FocusState
-        var focusedSupplementID: AnyMediaPlayerSupplement.ID?
-
         @State
         private var lastFocusedBarTarget: ActionBarFocusTarget?
-
-        @State
-        private var lastFocusedSupplementID: AnyMediaPlayerSupplement.ID?
 
         var isProgressBarFocused: Bool {
             containerState.isProgressBarFocused
         }
-
-        @State
-        private var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
 
         var isPresentingOverlay: Bool {
             containerState.isPresentingOverlay
@@ -94,40 +82,6 @@ extension VideoPlayer {
         var scrubOriginSeconds: Duration? {
             get { containerState.scrubOriginSeconds }
             nonmutating set { containerState.scrubOriginSeconds = newValue }
-        }
-
-        // TODO: scroll if larger than horizontal
-        // Just adding `.scrollIfLargerThanContainer()` breaks the FocusGuide
-        private var supplementTabButtons: some View {
-            HStack(spacing: 20) {
-                if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
-                    Button {
-                        containerState.select(supplement: nil)
-                    } label: {
-                        Text(supplement.displayTitle)
-                    }
-                    .buttonStyle(SupplementTitleButtonStyle())
-                    .isSelected(true)
-                    .focused($focusedSupplementID, equals: supplement.id)
-                } else {
-                    ForEach(currentSupplements) { supplement in
-                        Button {
-                            containerState.selectedSupplement = supplement.supplement
-                            containerState.containerView?.presentSupplementContainer(true)
-                        } label: {
-                            Text(supplement.displayTitle)
-                        }
-                        .buttonStyle(SupplementTitleButtonStyle())
-                        .isSelected(
-                            focusedSupplementID == supplement.id ||
-                                (focusedSupplementID == nil && containerState.selectedSupplement?.id == supplement.id)
-                        )
-                        .focused($focusedSupplementID, equals: supplement.id)
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .focusSection()
         }
 
         private var bottomContent: some View {
@@ -164,7 +118,7 @@ extension VideoPlayer {
                     focusGuide,
                     tag: "progressBar",
                     top: "navigationBar",
-                    bottom: currentSupplements.isEmpty ? nil : "dividerZone"
+                    bottom: "dividerZone"
                 )
                 .fixedSize(horizontal: false, vertical: true)
                 .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
@@ -197,24 +151,6 @@ extension VideoPlayer {
                     )
                     .fixedSize(horizontal: false, vertical: true)
                     .isVisible(isPresentingOverlay)
-
-                supplementTabButtons
-                    .focusGuide(
-                        focusGuide,
-                        tag: "tabButtons",
-                        onContentFocus: {
-                            let targetID = lastFocusedSupplementID
-                                ?? containerState.selectedSupplement?.id
-                                ?? currentSupplements.first?.id
-                            focusedSupplementID = targetID
-                        },
-                        top: "dividerZone",
-                        bottom: isPresentingSupplement ? "supplementContent" : nil
-                    )
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(alignment: .leading)
-                    .isVisible(isPresentingOverlay && !currentSupplements.isEmpty)
-                    .transaction { $0.animation = nil }
             }
         }
 
@@ -267,21 +203,6 @@ extension VideoPlayer {
             .onReceive(onPressEvent) { press in
                 handlePressEvent(press)
             }
-            .onAppear {
-                let initial = IdentifiedArray(
-                    uniqueElements: manager.supplements.map(AnyMediaPlayerSupplement.init)
-                )
-                if currentSupplements.isEmpty && !initial.isEmpty {
-                    currentSupplements = initial
-                }
-            }
-            .onReceive(manager.$supplements) { newValue in
-                let newSupplements = IdentifiedArray(
-                    uniqueElements: newValue.map(AnyMediaPlayerSupplement.init)
-                )
-                guard newSupplements.ids != currentSupplements.ids else { return }
-                currentSupplements = newSupplements
-            }
             .onChange(of: focusedBarTarget) { _, newValue in
                 if let newValue {
                     lastFocusedBarTarget = newValue
@@ -300,34 +221,6 @@ extension VideoPlayer {
             .onReceive(manager.secondsBox.$value) { newSeconds in
                 if hasEnteredScrubMode {
                     scrubOriginSeconds = newSeconds
-                }
-            }
-            .onReceive(manager.$playbackItem) { newItem in
-                guard newItem != nil else { return }
-
-                // Supplment IDs change with the playbackItem
-                // Reset these to prevent FocusGuide breakages where the lastFocused IDs are invalid
-                containerState.selectedSupplement = nil
-                containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
-                focusedSupplementID = nil
-                lastFocusedSupplementID = nil
-
-                DispatchQueue.main.async {
-                    focusGuide.transition(to: nil)
-                    focusGuide.transition(to: focusGuide.lastFocusedTag)
-                }
-            }
-            .onChange(of: focusedSupplementID) { oldValue, newValue in
-                if let newValue {
-                    lastFocusedSupplementID = newValue
-                }
-
-                guard oldValue != newValue else { return }
-                guard let supplementID = newValue else { return }
-
-                if let supplement = currentSupplements[id: supplementID] {
-                    containerState.selectedSupplement = supplement.supplement
-                    containerState.containerView?.presentSupplementContainer(true, redirectFocus: false)
                 }
             }
         }

@@ -163,6 +163,10 @@ extension VideoPlayer {
             (view.bounds.height / 3) + EdgeInsets.edgePadding * 2
         }
 
+        /// Resting offset for the supplement container when dismissed,
+        /// tall enough to show the tab buttons above the screen bottom edge.
+        private let supplementTabRestingOffset: CGFloat = 80
+
         private let minimumTranslation: CGFloat = 100.0
 
         private var supplementHeightAnchor: NSLayoutConstraint!
@@ -223,7 +227,7 @@ extension VideoPlayer {
                 isPanning = true
 
                 let shouldHaveSupplementPresented = self.supplementBottomAnchor
-                    .constant < -(minimumTranslation + EdgeInsets.edgePadding)
+                    .constant < -(minimumTranslation + supplementTabRestingOffset)
 
                 if shouldHaveSupplementPresented, !containerState.isPresentingSupplement {
                     containerState.selectedSupplement = manager.supplements.first
@@ -262,17 +266,17 @@ extension VideoPlayer {
             clampedOffset = clamp(
                 newOffset,
                 min: -supplementContainerOffset,
-                max: -EdgeInsets.edgePadding
+                max: -supplementTabRestingOffset
             )
 
             if newOffset < clampedOffset {
                 let excess = clampedOffset - newOffset
                 let resistance = pow(excess, 0.7)
                 supplementBottomAnchor.constant = clampedOffset - resistance
-            } else if newOffset > -EdgeInsets.edgePadding {
+            } else if newOffset > -supplementTabRestingOffset {
                 let excess = newOffset - clampedOffset
                 let resistance = pow(excess, 0.5)
-                supplementBottomAnchor.constant = clamp(clampedOffset + resistance, min: -EdgeInsets.edgePadding, max: -50)
+                supplementBottomAnchor.constant = clamp(clampedOffset + resistance, min: -supplementTabRestingOffset, max: -50)
             } else {
                 supplementBottomAnchor.constant = clampedOffset
             }
@@ -292,7 +296,7 @@ extension VideoPlayer {
                 containerState.isPresentingOverlay = true
                 supplementContainerView.isUserInteractionEnabled = true
             } else {
-                self.supplementBottomAnchor.constant = -EdgeInsets.edgePadding
+                self.supplementBottomAnchor.constant = -supplementTabRestingOffset
                 supplementContainerView.isUserInteractionEnabled = false
             }
 
@@ -402,7 +406,7 @@ extension VideoPlayer {
 
             supplementBottomAnchor = supplementContainerView.topAnchor.constraint(
                 equalTo: view.bottomAnchor,
-                constant: -EdgeInsets.edgePadding
+                constant: -supplementTabRestingOffset
             )
             containerState.supplementOffset = supplementBottomAnchor.constant
 
