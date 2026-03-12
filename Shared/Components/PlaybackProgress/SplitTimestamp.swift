@@ -88,6 +88,7 @@ extension VideoPlayer.PlaybackControls {
                 }
             }
         }
+
         #elseif os(tvOS)
         private var scrubbedProgress: Double {
             guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
