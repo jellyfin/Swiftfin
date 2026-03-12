@@ -165,7 +165,7 @@ extension VideoPlayer {
 
         /// Resting offset for the supplement container when dismissed,
         /// tall enough to show the tab buttons above the screen bottom edge.
-        private let supplementTabRestingOffset: CGFloat = 80
+        private let supplementTabRestingOffset: CGFloat = 65
 
         private let minimumTranslation: CGFloat = 100.0
 

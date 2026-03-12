@@ -133,7 +133,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .animation(VideoPlayer.PlaybackControls.supplementTransition, value: isPresentingSupplement)
                 .animation(VideoPlayer.PlaybackControls.supplementSwap, value: containerState.selectedSupplement?.id)
             }
-            .padding(.top, 10)
             .background {
                 LinearGradient(
                     stops: [

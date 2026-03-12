@@ -16,10 +16,12 @@ import SwiftUI
 //       - current running time
 // TODO: show chapter title under preview image
 //       - have max width, on separate offset track
+// TODO: bar color default to style
+// TODO: live tv
 
 extension VideoPlayer.PlaybackControls {
 
-    struct PlaybackProgress: View {
+    struct PlaybackProgress: PlatformView {
 
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
@@ -32,10 +34,20 @@ extension VideoPlayer.PlaybackControls {
         private var scrubbedSecondsBox: PublishedBox<Duration>
 
         @State
-        private var currentTranslation: CGPoint = .zero
-
-        @State
         private var sliderSize: CGSize = .zero
+
+        #if os(iOS)
+        @State
+        private var currentTranslation: CGPoint = .zero
+        #elseif os(tvOS)
+        @Toaster
+        private var toaster: ToastProxy
+
+        var onPanScrubChanged: ((Bool) -> Void)?
+
+        @FocusState
+        private var isFocused: Bool
+        #endif
 
         private var isScrubbing: Bool {
             get {
@@ -46,27 +58,13 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        private var isSlowScrubbing: Bool {
-            isScrubbing && (currentTranslation.y >= 60)
-        }
-
-        private var previewXOffset: CGFloat {
-            let videoWidth = 85 * videoSizeAspectRatio
-            let p = (sliderSize.width * scrubbedProgress) - (videoWidth / 2)
-            return clamp(p, min: 0, max: sliderSize.width - videoWidth)
-        }
-
-        private var progress: Double {
-            scrubbedSeconds / (manager.item.runtime ?? .seconds(1))
+        private var scrubbedSeconds: Duration {
+            scrubbedSecondsBox.value
         }
 
         private var scrubbedProgress: Double {
             guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
             return scrubbedSeconds / runtime
-        }
-
-        private var scrubbedSeconds: Duration {
-            scrubbedSecondsBox.value
         }
 
         private var videoSizeAspectRatio: CGFloat {
@@ -77,25 +75,46 @@ extension VideoPlayer.PlaybackControls {
             return clamp(videoPlayerProxy.videoSize.value.aspectRatio, min: 0.25, max: 4)
         }
 
+        #if os(iOS)
+        private let previewImageHeight: CGFloat = 85
+        #else
+        private let previewImageHeight: CGFloat = 85
+        #endif
+
+        private var previewXOffset: CGFloat {
+            let videoWidth = previewImageHeight * videoSizeAspectRatio
+            let p = (sliderSize.width * scrubbedProgress) - (videoWidth / 2)
+            return clamp(p, min: 0, max: sliderSize.width - videoWidth)
+        }
+
         @ViewBuilder
         private var liveIndicator: some View {
             Text("Live")
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundStyle(.white)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 2)
+                .padding(.horizontal, UIDevice.isTV ? 16 : 8)
+                .padding(.vertical, UIDevice.isTV ? 4 : 2)
                 .background {
                     Capsule()
                         .fill(Color.gray)
                 }
         }
 
+        #if os(iOS)
+        private var isSlowScrubbing: Bool {
+            isScrubbing && (currentTranslation.y >= 60)
+        }
+
+        private var progress: Double {
+            scrubbedSeconds / (manager.item.runtime ?? .seconds(1))
+        }
+
         @ViewBuilder
         private var slowScrubbingIndicator: some View {
             HStack {
                 Image(systemName: "backward.fill")
-                Text("Slow Scrubbing")
+                Text(L10n.slowScrubbing.localizedCapitalized)
                 Image(systemName: "forward.fill")
             }
             .font(.caption)
@@ -143,7 +162,16 @@ extension VideoPlayer.PlaybackControls {
             .disabled(manager.state == .loadingItem)
         }
 
-        var body: some View {
+        #elseif os(tvOS)
+        private func originProgress(resolution: Double) -> Double? {
+            guard let origin = containerState.scrubOriginSeconds,
+                  let runtime = manager.item.runtime, runtime > .zero else { return nil }
+            return clamp((origin.seconds / runtime.seconds) * resolution, min: 0, max: resolution)
+        }
+        #endif
+
+        var iOSView: some View {
+            #if os(iOS)
             VStack(spacing: 5) {
                 if manager.item.isLiveStream {
                     liveIndicator
@@ -164,7 +192,7 @@ extension VideoPlayer.PlaybackControls {
                 if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
                     PreviewImageView(previewImageProvider: previewImageProvider)
                         .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
-                        .frame(height: 85)
+                        .frame(height: previewImageHeight)
                         .posterBorder()
                         .cornerRadius(ratio: 1 / 30, of: \.width)
                         .offset(x: previewXOffset, y: -100)
@@ -181,6 +209,75 @@ extension VideoPlayer.PlaybackControls {
                 guard isScrubbing else { return }
                 UIDevice.impact(.soft)
             }
+            #endif
+        }
+
+        var tvOSView: some View {
+            #if os(tvOS)
+            VStack(spacing: 10) {
+                if manager.item.isLiveStream {
+                    liveIndicator
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    CapsuleSlider(
+                        value: $scrubbedSecondsBox.value.map(
+                            getter: {
+                                guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+                                return clamp(($0.seconds / runtime.seconds) * 100, min: 0, max: 100)
+                            },
+                            setter: { (manager.item.runtime ?? .zero) * ($0 / 100) }
+                        ),
+                        total: 100
+                    )
+                    .originProgress(originProgress(resolution: 100))
+                    .onEditingChanged { isEditing in
+                        if isEditing {
+                            isScrubbing = true
+                            onPanScrubChanged?(true)
+                        } else {
+                            onPanScrubChanged?(false)
+                        }
+                    }
+                    .if(chapterSlider) { view in
+                        view.ifLet(manager.item.fullChapterInfo) { view, chapters in
+                            if chapters.isEmpty {
+                                view
+                            } else {
+                                view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
+                            }
+                        }
+                    }
+                    .frame(height: 16)
+                    .trackingSize($sliderSize)
+                    .overlay {
+                        CurrentSecondTick()
+                            .allowsHitTesting(false)
+                    }
+                    .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
+                    .disabled(manager.state == .loadingItem)
+
+                    SplitTimeStamp()
+                        .foregroundStyle(Color.white)
+                }
+            }
+            .focused($isFocused)
+            .foregroundStyle(isFocused ? Color.white : Color.gray.opacity(0.75))
+            .animation(.easeInOut(duration: 0.2), value: isFocused)
+            .overlay(alignment: .topLeading) {
+                if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
+                    PreviewImageView(previewImageProvider: previewImageProvider)
+                        .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
+                        .frame(height: previewImageHeight)
+                        .posterBorder()
+                        .cornerRadius(ratio: 1 / 30, of: \.width)
+                        .offset(x: previewXOffset, y: -220)
+                        .shadow(color: Color.black.opacity(0.5), radius: 4, x: 0, y: 4)
+                }
+            }
+            .onChange(of: isFocused) { _, newValue in
+                containerState.isProgressBarFocused = newValue
+            }
+            #endif
         }
     }
 }

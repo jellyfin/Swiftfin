@@ -13,25 +13,36 @@ extension VideoPlayer.PlaybackControls {
 
     struct SplitTimeStamp: View {
 
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var scrubbedSecondsBox: PublishedBox<Duration>
+
+        #if os(iOS)
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
 
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
-        @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<Duration>
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
 
         @State
         private var activeSeconds: Duration = .zero
-
-        private var isScrubbing: Bool {
-            containerState.isScrubbing
-        }
+        #elseif os(tvOS)
+        @State
+        private var contentSize: CGSize = .zero
+        @State
+        private var leadingTimestampSize: CGSize = .zero
+        @State
+        private var trailingTimestampSize: CGSize = .zero
+        #endif
 
         private var scrubbedSeconds: Duration {
             scrubbedSecondsBox.value
+        }
+
+        #if os(iOS)
+        private var isScrubbing: Bool {
+            containerState.isScrubbing
         }
 
         @ViewBuilder
@@ -77,8 +88,20 @@ extension VideoPlayer.PlaybackControls {
                 }
             }
         }
+        #elseif os(tvOS)
+        private var scrubbedProgress: Double {
+            guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+            return scrubbedSeconds / runtime
+        }
+
+        private var previewXOffset: CGFloat {
+            let p = contentSize.width * scrubbedProgress - (leadingTimestampSize.width / 2)
+            return clamp(p, min: 0, max: contentSize.width - (trailingTimestampSize.width + leadingTimestampSize.width))
+        }
+        #endif
 
         var body: some View {
+            #if os(iOS)
             HStack {
                 Button {
                     switch trailingTimestampType {
@@ -111,6 +134,26 @@ extension VideoPlayer.PlaybackControls {
             .lineLimit(1)
             .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
+            #else
+            ZStack {
+                if let runtime = manager.item.runtime {
+                    Text(.zero - (runtime - scrubbedSeconds), format: .runtime)
+                } else {
+                    Text(verbatim: .emptyRuntime)
+                }
+            }
+            .trackingSize($trailingTimestampSize)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .debugBackground()
+            .overlay(alignment: .leading) {
+                Text(scrubbedSeconds, format: .runtime)
+                    .trackingSize($leadingTimestampSize)
+                    .offset(x: previewXOffset)
+            }
+            .font(.callout)
+            .monospacedDigit()
+            .trackingSize($contentSize)
+            #endif
         }
     }
 }
