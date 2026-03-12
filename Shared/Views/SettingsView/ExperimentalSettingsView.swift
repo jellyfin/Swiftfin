@@ -9,20 +9,14 @@
 import Defaults
 import SwiftUI
 
-// Note: Used for experimental settings that may be removed or implemented
-//       officially. Keep for future settings.
-
+/// `Note`: Used for experimental settings that may be removed or implemented officially. Keep for future settings.
 struct ExperimentalSettingsView: View {
 
+    static let isEnabled = false
+
+    @ViewBuilder
     var body: some View {
-        SplitFormWindowView()
-            .descriptionView {
-                Image(systemName: "gearshape")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 400)
-            }
-            .contentView {}
+        Form(systemImage: "flask") {}
             .navigationTitle(L10n.experimental)
     }
 }
