@@ -14,43 +14,37 @@ struct ItemOverviewView: View {
     @Router
     private var router
 
-    private let item: BaseItemDto
-
-    init(item: BaseItemDto) {
-        self.item = item
-    }
+    let item: BaseItemDto
 
     var body: some View {
-        Form {
-            FormItemSection(item: item)
+        ScrollView {
+            VStack(alignment: UIDevice.isTV ? .center : .leading, spacing: 10) {
 
-            if let firstTagline = item.taglines?.first {
-                Section(L10n.tagline) {
-                    Button {} label: {
-                        Text(firstTagline)
-                            .foregroundStyle(Color.primary)
-                    }
+                #if os(tvOS)
+                Text(item.displayTitle)
+                    .font(.title)
+                #endif
+
+                if let firstTagline = item.taglines?.first {
+                    Text(firstTagline)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.leading)
+                }
+
+                if let itemOverview = item.overview {
+                    Text(itemOverview)
+                        .font(.body)
+                        .multilineTextAlignment(.leading)
                 }
             }
-
-            Section(L10n.overview) {
-                Button {} label: {
-                    if let itemOverview = item.overview {
-                        Text(itemOverview)
-                            .foregroundStyle(Color.primary)
-                    } else {
-                        Text(L10n.noOverviewAvailable)
-                            .foregroundStyle(Color.secondary)
-                    }
-                }
-            }
-        } image: {
-            PosterImage(item: item, type: item.preferredPosterDisplayType)
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: 400)
-                .cornerRadius(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .edgePadding()
         }
-        .navigationTitle(L10n.overview)
+        .scrollIndicators(.hidden)
+        .navigationTitle(item.displayTitle)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }
