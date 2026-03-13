@@ -78,7 +78,7 @@ extension VideoPlayer.PlaybackControls {
         #if os(iOS)
         private let previewImageHeight: CGFloat = 85
         #else
-        private let previewImageHeight: CGFloat = 85
+        private let previewImageHeight: CGFloat = 200
         #endif
 
         private var previewXOffset: CGFloat {
@@ -270,7 +270,7 @@ extension VideoPlayer.PlaybackControls {
                         .frame(height: previewImageHeight)
                         .posterBorder()
                         .cornerRadius(ratio: 1 / 30, of: \.width)
-                        .offset(x: previewXOffset, y: -220)
+                        .offset(x: previewXOffset, y: -(previewImageHeight + 10))
                         .shadow(color: Color.black.opacity(0.5), radius: 4, x: 0, y: 4)
                 }
             }
