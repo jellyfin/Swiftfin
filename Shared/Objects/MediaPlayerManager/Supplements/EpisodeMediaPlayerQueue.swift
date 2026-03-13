@@ -372,13 +372,13 @@ extension EpisodeMediaPlayerQueue {
             #if os(tvOS)
             @EnvironmentObject
             private var focusGuide: FocusGuide
+            #endif
 
             @FocusState
             private var focusedEpisodeID: String?
 
             @State
             private var lastFocusedEpisodeID: String?
-            #endif
 
             @ObservedObject
             var selectionViewModel: SeasonItemViewModel
@@ -388,7 +388,6 @@ extension EpisodeMediaPlayerQueue {
 
             let action: (BaseItemDto) -> Void
 
-            #if os(tvOS)
             private func getContentFocus() {
                 if let lastFocusedEpisodeID,
                    selectionViewModel.elements.contains(where: { $0.id == lastFocusedEpisodeID })
@@ -398,7 +397,6 @@ extension EpisodeMediaPlayerQueue {
                     focusedEpisodeID = selectionViewModel.elements.first?.id
                 }
             }
-            #endif
 
             var body: some View {
                 Group {
@@ -413,15 +411,22 @@ extension EpisodeMediaPlayerQueue {
                                 EpisodeButton(episode: episode) {
                                     action(episode)
                                 }
-                                #if os(tvOS)
                                 .focused($focusedEpisodeID, equals: episode.id)
-                                .padding(.horizontal, 4)
-                                #endif
+                                .padding(.horizontal, UIDevice.isTV ? 4 : nil)
                             }
                             .insets(horizontal: EdgeInsets.edgePadding)
                             .itemSpacing(EdgeInsets.edgePadding)
                             .proxy(collectionHStackProxy)
-                            #if os(tvOS)
+                            #if os(iOS)
+                                .onFirstAppear {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        collectionHStackProxy.scrollTo(
+                                            id: manager.item.unwrappedIDHashOrZero,
+                                            animated: false
+                                        )
+                                    }
+                                }
+                            #else
                                 .focusSection()
                                 .onChange(of: focusedEpisodeID) { _, newValue in
                                     guard let newValue else { return }
@@ -437,19 +442,17 @@ extension EpisodeMediaPlayerQueue {
                                         getContentFocus()
                                     }
                                 }
-                            #endif
                                 .onFirstAppear {
-                                        #if os(tvOS)
-                                        lastFocusedEpisodeID = manager.item.id
-                                        #endif
+                                    lastFocusedEpisodeID = manager.item.id
 
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            collectionHStackProxy.scrollTo(
-                                                id: manager.item.unwrappedIDHashOrZero,
-                                                animated: false
-                                            )
-                                        }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        collectionHStackProxy.scrollTo(
+                                            id: manager.item.unwrappedIDHashOrZero,
+                                            animated: false
+                                        )
                                     }
+                                }
+                            #endif
                         }
                     case .initial, .refreshing:
                         ProgressView()
@@ -488,13 +491,11 @@ extension EpisodeMediaPlayerQueue {
 
         let episode: BaseItemDto
 
-        private var strokeLineWidth: CGFloat {
-            #if os(tvOS)
-            12
-            #else
-            8
-            #endif
-        }
+        #if os(iOS)
+        private let strokeLineWidth: CGFloat = 8
+        #else
+        private let strokeLineWidth: CGFloat = 12
+        #endif
 
         var body: some View {
             ZStack {

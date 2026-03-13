@@ -32,6 +32,9 @@ extension MediaInfoSupplement {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
+        @FocusState
+        private var isResetButtonFocused: Bool
+
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
@@ -40,9 +43,6 @@ extension MediaInfoSupplement {
         #if os(tvOS)
         @EnvironmentObject
         private var focusGuide: FocusGuide
-
-        @FocusState
-        private var isResetButtonFocused: Bool
         #endif
 
         let item: BaseItemDto
@@ -202,9 +202,11 @@ extension MediaInfoSupplement {
                 .environment(\.isOverComplexContent, true)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Marquee(item.displayTitle, speed: 120, delay: 3, fade: 5)
+                    Text(item.displayTitle)
                         .font(.title)
                         .fontWeight(.semibold)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
 
                     accessoryView
                         .font(.caption)
@@ -224,9 +226,7 @@ extension MediaInfoSupplement {
                     resetPlaybackButton
                         .frame(height: 75)
                         .fixedSize(horizontal: true, vertical: false)
-                    #if os(tvOS)
                         .focused($isResetButtonFocused)
-                    #endif
                 }
             }
             .padding(safeAreaInsets)

@@ -39,14 +39,20 @@ extension VideoPlayer.PlaybackControls {
         #if os(iOS)
         @State
         private var currentTranslation: CGPoint = .zero
+
+        private let previewImageHeight: CGFloat = 85
+
         #elseif os(tvOS)
+
         @Toaster
         private var toaster: ToastProxy
 
-        var onPanScrubChanged: ((Bool) -> Void)?
-
         @FocusState
         private var isFocused: Bool
+
+        private let previewImageHeight: CGFloat = 200
+
+        var onPanScrubChanged: ((Bool) -> Void)?
         #endif
 
         private var isScrubbing: Bool {
@@ -74,12 +80,6 @@ extension VideoPlayer.PlaybackControls {
 
             return clamp(videoPlayerProxy.videoSize.value.aspectRatio, min: 0.25, max: 4)
         }
-
-        #if os(iOS)
-        private let previewImageHeight: CGFloat = 85
-        #else
-        private let previewImageHeight: CGFloat = 200
-        #endif
 
         private var previewXOffset: CGFloat {
             let videoWidth = previewImageHeight * videoSizeAspectRatio

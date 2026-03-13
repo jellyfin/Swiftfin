@@ -63,12 +63,13 @@ extension MediaChaptersSupplement {
         #if os(tvOS)
         @EnvironmentObject
         private var focusGuide: FocusGuide
+        #endif
 
         @FocusState
         private var focusedChapterID: ChapterInfo.FullInfo.ID?
+
         @State
         private var lastFocusedChapterID: ChapterInfo.FullInfo.ID?
-        #endif
 
         @ObservedObject
         private var supplement: MediaChaptersSupplement
@@ -78,6 +79,16 @@ extension MediaChaptersSupplement {
 
         init(supplement: MediaChaptersSupplement) {
             self.supplement = supplement
+        }
+
+        private func getContentFocus() {
+            if let lastFocusedChapterID,
+               chapters.contains(where: { $0.id == lastFocusedChapterID })
+            {
+                focusedChapterID = lastFocusedChapterID
+            } else {
+                focusedChapterID = currentChapter?.id ?? chapters.first?.id
+            }
         }
 
         private var chapters: [ChapterInfo.FullInfo] {
@@ -147,18 +158,6 @@ extension MediaChaptersSupplement {
             }
         }
 
-        #if os(tvOS)
-        private func getContentFocus() {
-            if let lastFocusedChapterID,
-               chapters.contains(where: { $0.id == lastFocusedChapterID })
-            {
-                focusedChapterID = lastFocusedChapterID
-            } else {
-                focusedChapterID = currentChapter?.id ?? chapters.first?.id
-            }
-        }
-        #endif
-
         var tvOSView: some View {
             CollectionHStack(
                 uniqueElements: chapters,
@@ -171,15 +170,20 @@ extension MediaChaptersSupplement {
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
                 .environmentObject(supplement)
-                #if os(tvOS)
-                    .focused($focusedChapterID, equals: chapter.id)
-                    .padding(.horizontal, 4)
-                #endif
+                .focused($focusedChapterID, equals: chapter.id)
+                .padding(.horizontal, UIDevice.isTV ? 4 : nil)
             }
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding)
             .proxy(collectionHStackProxy)
-            #if os(tvOS)
+            #if os(iOS)
+                .onFirstAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        guard let currentChapter else { return }
+                        collectionHStackProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+                    }
+                }
+            #else
                 .focusSection()
                 .onChange(of: focusedChapterID) { _, newValue in
                     guard let newValue else { return }
@@ -195,17 +199,15 @@ extension MediaChaptersSupplement {
                         getContentFocus()
                     }
                 }
-            #endif
                 .onFirstAppear {
-                        #if os(tvOS)
-                        lastFocusedChapterID = currentChapter?.id
-                        #endif
+                    lastFocusedChapterID = currentChapter?.id
 
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            guard let currentChapter else { return }
-                            collectionHStackProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
-                        }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        guard let currentChapter else { return }
+                        collectionHStackProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
                     }
+                }
+            #endif
         }
     }
 
@@ -219,13 +221,11 @@ extension MediaChaptersSupplement {
 
         let chapter: ChapterInfo.FullInfo
 
-        private var strokeLineWidth: CGFloat {
-            #if os(tvOS)
-            12
-            #else
-            8
-            #endif
-        }
+        #if os(iOS)
+        private let strokeLineWidth: CGFloat = 8
+        #else
+        private let strokeLineWidth: CGFloat = 12
+        #endif
 
         var body: some View {
             PosterImage(

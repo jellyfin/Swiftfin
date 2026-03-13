@@ -19,6 +19,7 @@ extension VideoPlayer.PlaybackControls {
         private var scrubbedSecondsBox: PublishedBox<Duration>
 
         #if os(iOS)
+
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
 
@@ -27,13 +28,16 @@ extension VideoPlayer.PlaybackControls {
 
         @State
         private var activeSeconds: Duration = .zero
+
         #elseif os(tvOS)
+
         @State
         private var contentSize: CGSize = .zero
         @State
         private var leadingTimestampSize: CGSize = .zero
         @State
         private var trailingTimestampSize: CGSize = .zero
+
         #endif
 
         private var scrubbedSeconds: Duration {
@@ -41,9 +45,6 @@ extension VideoPlayer.PlaybackControls {
         }
 
         #if os(iOS)
-        private var isScrubbing: Bool {
-            containerState.isScrubbing
-        }
 
         @ViewBuilder
         private var leadingTimestamp: some View {
@@ -57,7 +58,7 @@ extension VideoPlayer.PlaybackControls {
                     Text(activeSeconds, format: .runtime)
                 }
                 .foregroundStyle(.secondary)
-                .isVisible(isScrubbing)
+                .isVisible(containerState.isScrubbing)
             }
         }
 
@@ -74,7 +75,7 @@ extension VideoPlayer.PlaybackControls {
                     Text("/")
                 }
                 .foregroundStyle(.secondary)
-                .isVisible(isScrubbing)
+                .isVisible(containerState.isScrubbing)
 
                 if let runtime = manager.item.runtime {
                     switch trailingTimestampType {
@@ -133,7 +134,7 @@ extension VideoPlayer.PlaybackControls {
             .monospacedDigit()
             .font(.caption2)
             .lineLimit(1)
-            .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
+            .foregroundStyle(containerState.isScrubbing ? .primary : .secondary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
             #else
             ZStack {
