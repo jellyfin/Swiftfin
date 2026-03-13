@@ -83,7 +83,6 @@ struct MediaSourceInfoView: PlatformView {
                 }
             }
         }
-        .edgePadding(.top)
         .backport
         .scrollClipDisabled()
         .navigationTitle(source.displayTitle)
