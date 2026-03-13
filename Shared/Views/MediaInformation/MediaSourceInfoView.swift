@@ -14,6 +14,9 @@ struct MediaSourceInfoView: PlatformView {
     @FocusState
     private var focusedStream: MediaStream?
 
+    @State
+    private var selectedStream: MediaStream?
+
     @Router
     private var router
 
@@ -25,6 +28,11 @@ struct MediaSourceInfoView: PlatformView {
             router.route(to: .mediaStreamInfo(mediaStream: stream))
         }
         .focused($focusedStream, equals: stream)
+        .onChange(of: focusedStream) { newValue in
+            if let newValue {
+                selectedStream = newValue
+            }
+        }
     }
 
     @ViewBuilder
@@ -78,8 +86,8 @@ struct MediaSourceInfoView: PlatformView {
             AlternateLayoutView {
                 Color.clear
             } content: {
-                if let focusedStream {
-                    MediaStreamInfoView(mediaStream: focusedStream)
+                if let selectedStream {
+                    MediaStreamInfoView(mediaStream: selectedStream)
                 }
             }
         }
