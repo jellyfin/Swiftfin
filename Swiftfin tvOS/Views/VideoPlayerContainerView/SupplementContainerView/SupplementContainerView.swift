@@ -114,12 +114,13 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         supplementContainer(for: supplement)
                             .eraseToAnyView()
                             .transition(.opacity)
-                    } else if let selected = containerState.selectedSupplement,
-                              let anySupplement = currentSupplements[id: selected.id]
-                    {
-                        supplementContainer(for: anySupplement.supplement)
-                            .eraseToAnyView()
-                            .transition(.opacity)
+                    } else {
+                        ForEach(currentSupplements) { anySupplement in
+                            supplementContainer(for: anySupplement.supplement)
+                                .eraseToAnyView()
+                                .opacity(containerState.selectedSupplement?.id == anySupplement.id ? 1 : 0)
+                                .disabled(containerState.selectedSupplement?.id != anySupplement.id)
+                        }
                     }
                 }
                 .focusSection()
