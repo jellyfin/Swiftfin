@@ -17,8 +17,13 @@ struct ItemOverviewView: View {
     let item: BaseItemDto
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 10) {
+        ScrollView {
+            VStack(alignment: UIDevice.isTV ? .center : .leading, spacing: 10) {
+
+                #if os(tvOS)
+                Text(item.displayTitle)
+                    .font(.title)
+                #endif
 
                 if let firstTagline = item.taglines?.first {
                     Text(firstTagline)
@@ -36,8 +41,10 @@ struct ItemOverviewView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .edgePadding()
         }
+        .scrollIndicators(.hidden)
         .navigationTitle(item.displayTitle)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }
