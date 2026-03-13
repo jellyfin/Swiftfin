@@ -117,8 +117,7 @@ struct DevicesView: View {
             .padding(.vertical, 24)
 
             if viewModel.devices.isEmpty {
-                Text(L10n.none)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                ContentUnavailableView.content
                     .listRowSeparator(.hidden)
                     .listRowInsets(.zero)
             } else {

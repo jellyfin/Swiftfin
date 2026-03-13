@@ -37,7 +37,7 @@ struct ActiveSessionsView: View {
     @ViewBuilder
     private var contentView: some View {
         if viewModel.sessions.isEmpty {
-            Text(L10n.none)
+            ContentUnavailableView.content
         } else {
             CollectionVGrid(
                 uniqueElements: viewModel.sessions.keys,

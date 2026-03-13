@@ -131,7 +131,7 @@ struct AddItemImageView: View {
     @ViewBuilder
     private var gridView: some View {
         if remoteImageInfoViewModel.elements.isEmpty {
-            Text(L10n.none)
+            ContentUnavailableView.search
         } else {
             CollectionVGrid(
                 uniqueElements: remoteImageInfoViewModel.elements,

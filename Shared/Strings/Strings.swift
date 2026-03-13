@@ -1010,6 +1010,8 @@ internal enum L10n {
   internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
   /// No
   internal static let no = L10n.tr("Localizable", "no", fallback: "No")
+  /// No content
+  internal static let noContent = L10n.tr("Localizable", "noContent", fallback: "No content")
   /// No profiles defined. Playback issues may occur.
   internal static let noDeviceProfileWarning = L10n.tr("Localizable", "noDeviceProfileWarning", fallback: "No profiles defined. Playback issues may occur.")
   /// No episodes available
@@ -1024,8 +1026,8 @@ internal enum L10n {
   internal static let noOverviewAvailable = L10n.tr("Localizable", "noOverviewAvailable", fallback: "No overview available")
   /// No public users
   internal static let noPublicUsers = L10n.tr("Localizable", "noPublicUsers", fallback: "No public users")
-  /// No results.
-  internal static let noResults = L10n.tr("Localizable", "noResults", fallback: "No results.")
+  /// No results
+  internal static let noResults = L10n.tr("Localizable", "noResults", fallback: "No results")
   /// Normal
   internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
   /// No runtime limit

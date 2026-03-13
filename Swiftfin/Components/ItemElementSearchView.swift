@@ -88,9 +88,7 @@ struct ItemElementSearchView<Element: Hashable>: View {
                         .disabled(name == type.getName(for: result))
                     }
                 } else if !isSearching {
-                    Text(L10n.none)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .center)
+                    ContentUnavailableView.search
                 }
             } header: {
                 HStack(spacing: 4) {
