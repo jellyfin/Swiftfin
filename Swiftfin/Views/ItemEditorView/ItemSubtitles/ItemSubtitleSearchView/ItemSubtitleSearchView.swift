@@ -137,7 +137,7 @@ struct ItemSubtitleSearchView: View {
     private var resultsSection: some View {
         Section(L10n.search) {
             if viewModel.searchResults.isEmpty {
-                ContentUnavailableView.search
+                ContentUnavailableView(L10n.noResults.localizedCapitalized, systemImage: "magnifyingglass")
             }
             ForEach(viewModel.searchResults, id: \.id) { subtitle in
                 let isSelected = subtitle.id.map { selectedSubtitles.contains($0) } ?? false
