@@ -21,6 +21,15 @@ extension Backport where Content: View {
     }
 
     @ViewBuilder
+    func toolbarTitleDisplayMode(_ mode: ToolbarTitleDisplayMode) -> some View {
+        if #available(iOS 17, tvOS 17, *) {
+            content.toolbarTitleDisplayMode(mode.swiftUIValue)
+        } else {
+            content.navigationBarTitleDisplayMode(mode.navigationBarTitleDisplayMode)
+        }
+    }
+
+    @ViewBuilder
     func matchedTransitionSource(id: String, in namespace: Namespace.ID) -> some View {
         if #available(iOS 18.0, tvOS 18.0, *) {
             content.matchedTransitionSource(

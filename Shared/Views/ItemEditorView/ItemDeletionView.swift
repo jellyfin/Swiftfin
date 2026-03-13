@@ -60,7 +60,7 @@ struct ItemDeletionView: View {
 
     private var contentView: some View {
         Form {
-            headerView
+            FormItemSection(item: viewModel.item)
 
             if let overview = viewModel.item.overview {
                 Section(L10n.overview) {
@@ -80,15 +80,24 @@ struct ItemDeletionView: View {
                     )
                 }
 
+                if let runtime = viewModel.item.runtime {
+                    LabeledContent(
+                        L10n.runtime,
+                        value: runtime.formatted(.minuteSecondsNarrow)
+                    )
+                }
+
                 if let startDate = viewModel.item.startDate {
                     LabeledContent(
                         L10n.startDate,
                         value: startDate.formatted(date: .complete, time: .omitted)
                     )
-                } else if let year = viewModel.item.premiereDateYear {
+                }
+
+                if let endDate = viewModel.item.endDate {
                     LabeledContent(
-                        L10n.year,
-                        value: year.description
+                        L10n.endDate,
+                        value: endDate.formatted(date: .complete, time: .omitted)
                     )
                 }
             }
@@ -117,58 +126,6 @@ struct ItemDeletionView: View {
             )
             .cornerRadius(20)
             .frame(maxWidth: 400)
-        }
-    }
-
-    @ViewBuilder
-    private var headerView: some View {
-        #if os(tvOS)
-        Section(L10n.media) {
-            if let parentLabel,
-               let parentValue = viewModel.item.parentTitle
-            {
-                LabeledContent(
-                    parentLabel,
-                    value: parentValue
-                )
-            }
-
-            LabeledContent(
-                L10n.title,
-                value: viewModel.item.displayTitle
-            )
-
-            if let subtitleLabel,
-               let subtitleValue = viewModel.item.subtitle
-            {
-                LabeledContent(
-                    subtitleLabel,
-                    value: subtitleValue
-                )
-            }
-        }
-        #else
-        FormItemSection(item: viewModel.item)
-        #endif
-    }
-
-    // TODO: Move to `BaseItemDto`
-    private var parentLabel: String? {
-        switch viewModel.item.type {
-        case .episode:
-            L10n.series
-        default:
-            nil
-        }
-    }
-
-    // TODO: Move to `BaseItemDto`
-    private var subtitleLabel: String? {
-        switch viewModel.item.type {
-        case .episode:
-            L10n.episode
-        default:
-            nil
         }
     }
 }

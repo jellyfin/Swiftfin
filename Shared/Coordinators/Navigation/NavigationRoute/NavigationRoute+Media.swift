@@ -36,13 +36,11 @@ extension NavigationRoute {
         }
     }
 
-    #if os(iOS)
     static func mediaStreamInfo(mediaStream: MediaStream) -> NavigationRoute {
         NavigationRoute(id: "mediaStreamInfo") {
             MediaStreamInfoView(mediaStream: mediaStream)
         }
     }
-    #endif
 
     @MainActor
     static func videoPlayer(
