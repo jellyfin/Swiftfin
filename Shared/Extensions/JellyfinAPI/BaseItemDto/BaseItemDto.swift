@@ -483,12 +483,28 @@ extension BaseItemDto {
         return L10n.play
     }
 
+    /// Label for the parent's type
+    var parentLabel: String? {
+        switch type {
+        case .audio:
+            L10n.album
+        case .episode:
+            L10n.series
+        case .musicAlbum:
+            L10n.artist
+        default:
+            nil
+        }
+    }
+
     var parentTitle: String? {
         switch type {
         case .audio:
             album
         case .episode:
             seriesName
+        case .musicAlbum:
+            albumArtist
         default:
             nil
         }
