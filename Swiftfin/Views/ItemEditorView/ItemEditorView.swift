@@ -18,6 +18,9 @@ struct ItemEditorView: View {
     @Router
     private var router
 
+    @State
+    private var isPresentingDeleteConfirmation = false
+
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -41,6 +44,11 @@ struct ItemEditorView: View {
         .refreshable {
             viewModel.refreshItem(sendNotification: false)
         }
+        .onNotification(.didDeleteItem) { _ in
+            UIDevice.feedback(.success)
+            router.dismiss()
+        }
+        .errorMessage($viewModel.error)
     }
 
     private var contentView: some View {
@@ -90,9 +98,22 @@ struct ItemEditorView: View {
 
             if viewModel.item.canDelete == true {
                 Button(L10n.delete, role: .destructive) {
-                    router.route(to: .itemDeletion(viewModel: viewModel))
+                    isPresentingDeleteConfirmation = true
                 }
                 .buttonStyle(.primary)
+                .confirmationDialog(
+                    L10n.deleteItemConfirmationMessage,
+                    isPresented: $isPresentingDeleteConfirmation,
+                    titleVisibility: .visible
+                ) {
+                    Button(
+                        L10n.confirm,
+                        role: .destructive,
+                        action: viewModel.delete
+                    )
+
+                    Button(L10n.cancel, role: .cancel) {}
+                }
             }
         }
     }

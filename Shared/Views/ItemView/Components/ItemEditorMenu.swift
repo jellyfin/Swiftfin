@@ -6,6 +6,8 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -63,5 +65,29 @@ struct ItemEditorMenu: View {
                 #endif
             }
         }
+
+        // Deletion for tvOS
+        #if os(tvOS)
+        if UIDevice.isTV && StoredValues[.User.enableItemDeletion] && viewModel.item.canDelete == true {
+            StateAdapter(initialValue: false) { isPresentingConfirmation in
+                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                    isPresentingConfirmation.wrappedValue = true
+                }
+                .confirmationDialog(
+                    L10n.deleteItemConfirmationMessage,
+                    isPresented: isPresentingConfirmation,
+                    titleVisibility: .visible
+                ) {
+                    Button(
+                        L10n.confirm,
+                        role: .destructive,
+                        action: viewModel.delete
+                    )
+
+                    Button(L10n.cancel, role: .cancel) {}
+                }
+            }
+        }
+        #endif
     }
 }

@@ -209,15 +209,6 @@ extension NavigationRoute {
         }
     }
 
-    static func itemDeletion(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemDeletion",
-            style: .sheet
-        ) {
-            ItemDeletionView(viewModel: viewModel)
-        }
-    }
-
     #if os(iOS)
     static func itemEditor(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
         NavigationRoute(
