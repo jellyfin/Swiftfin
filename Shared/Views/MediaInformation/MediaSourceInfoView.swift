@@ -14,11 +14,11 @@ struct MediaSourceInfoView: PlatformView {
     @FocusState
     private var focusedStream: MediaStream?
 
-    @State
-    private var selectedStream: MediaStream?
-
     @Router
     private var router
+
+    @State
+    private var selectedStream: MediaStream?
 
     let source: MediaSourceInfo
 
@@ -28,7 +28,8 @@ struct MediaSourceInfoView: PlatformView {
             router.route(to: .mediaStreamInfo(mediaStream: stream))
         }
         .focused($focusedStream, equals: stream)
-        .onChange(of: focusedStream) { newValue in
+        .backport
+        .onChange(of: focusedStream) { _, newValue in
             if let newValue {
                 selectedStream = newValue
             }
