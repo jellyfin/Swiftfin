@@ -80,17 +80,26 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
             Form {
                 content
             }
-            .edgePadding(.top)
             .backport
             .scrollClipDisabled()
-            .mask {
+            .mask(extendedBy: .init(vertical: 20, horizontal: 100)) {
                 VStack(spacing: 0) {
-                    LinearGradient(colors: [.clear, .white], startPoint: .top, endPoint: .bottom)
-                        .frame(height: 30)
+                    LinearGradient(
+                        colors: [.clear, .white],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 20)
 
                     Color.white
+
+                    LinearGradient(
+                        colors: [.white, .clear],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 20)
                 }
-                .scaleEffect(x: 1.5, y: 1)
             }
         }
     }
