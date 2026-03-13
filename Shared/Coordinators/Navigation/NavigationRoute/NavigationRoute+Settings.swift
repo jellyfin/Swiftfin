@@ -133,15 +133,6 @@ extension NavigationRoute {
         }
     }
 
-    static func itemOverviewView(item: BaseItemDto) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemOverviewView",
-            style: .sheet
-        ) {
-            ItemOverviewView(item: item)
-        }
-    }
-
     static func itemViewAttributes(selection: Binding<[ItemViewAttribute]>) -> NavigationRoute {
         NavigationRoute(id: "itemViewAttributes") {
             OrderedSectionSelectorView(systemImage: "tag", selection: selection, sources: ItemViewAttribute.allCases)
