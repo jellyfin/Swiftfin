@@ -154,7 +154,9 @@ struct ItemSubtitleSearchView: View {
     private var resultsSection: some View {
         Section(L10n.search) {
             if viewModel.searchResults.isEmpty {
-                ContentUnavailableView.search
+                Text(L10n.none)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
             ForEach(viewModel.searchResults, id: \.id) { subtitle in
                 let isSelected = subtitle.id.map { selectedSubtitles.contains($0) } ?? false
