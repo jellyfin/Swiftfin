@@ -11,29 +11,20 @@ import SwiftUI
 
 struct MediaSourceInfoView: PlatformView {
 
-    @Router
-    private var router
-
     @FocusState
     private var focusedStream: MediaStream?
 
-    @State
-    private var selectedStream: MediaStream?
+    @Router
+    private var router
 
     let source: MediaSourceInfo
-
-    init(source: MediaSourceInfo) {
-        self.source = source
-    }
 
     @ViewBuilder
     private func streamRow(_ stream: MediaStream) -> some View {
         ChevronButton(stream.displayTitle ?? .emptyDash) {
             router.route(to: .mediaStreamInfo(mediaStream: stream))
         }
-        #if os(tvOS)
         .focused($focusedStream, equals: stream)
-        #endif
     }
 
     @ViewBuilder
@@ -83,17 +74,18 @@ struct MediaSourceInfoView: PlatformView {
     var tvOSView: some View {
         HStack {
             contentView
-            MediaStreamInfoView(mediaStream: selectedStream)
+
+            AlternateLayoutView {
+                Color.clear
+            } content: {
+                if let focusedStream {
+                    MediaStreamInfoView(mediaStream: focusedStream)
+                }
+            }
         }
         .edgePadding(.top)
         .backport
         .scrollClipDisabled()
         .navigationTitle(source.displayTitle)
-        #if os(tvOS)
-            .onChange(of: focusedStream) { _, newValue in
-                guard let newValue else { return }
-                selectedStream = newValue
-            }
-        #endif
     }
 }
