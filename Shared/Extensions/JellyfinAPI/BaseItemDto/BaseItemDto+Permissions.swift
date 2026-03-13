@@ -40,8 +40,7 @@ extension BaseItemDto {
 
         switch type {
         case .audio:
-            return (userPolicy.enableLyricManagement == true || userPolicy.isAdministrator == true)
-                && StoredValues[.User.enableItemEditing]
+            return userPolicy.enableLyricManagement == true || userPolicy.isAdministrator == true
         default:
             return false
         }
@@ -53,8 +52,7 @@ extension BaseItemDto {
 
         switch type {
         case .episode, .movie, .musicVideo, .trailer, .video:
-            return (userPolicy.enableSubtitleManagement == true || userPolicy.isAdministrator == true)
-                && StoredValues[.User.enableItemEditing]
+            return userPolicy.enableSubtitleManagement == true || userPolicy.isAdministrator == true
         default:
             return false
         }

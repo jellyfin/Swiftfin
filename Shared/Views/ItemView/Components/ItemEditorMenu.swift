@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -66,28 +65,26 @@ struct ItemEditorMenu: View {
             }
         }
 
-        // Deletion for tvOS
-        #if os(tvOS)
-        if UIDevice.isTV && StoredValues[.User.enableItemDeletion] && viewModel.item.canDelete == true {
-            StateAdapter(initialValue: false) { isPresentingConfirmation in
-                Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                    isPresentingConfirmation.wrappedValue = true
-                }
-                .confirmationDialog(
-                    L10n.deleteItemConfirmationMessage,
-                    isPresented: isPresentingConfirmation,
-                    titleVisibility: .visible
-                ) {
-                    Button(
-                        L10n.confirm,
-                        role: .destructive,
-                        action: viewModel.delete
-                    )
+        // TODO: Enable & Complete Deletion for tvOS after
+        /* #if os(tvOS)
+        if StoredValues[.User.enableItemDeletion] && viewModel.item.canDelete == true {
+            Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                isPresentingDeleteConfirmation.wrappedValue = true
+            }
+            .confirmationDialog(
+                L10n.deleteItemConfirmationMessage,
+                isPresented: $isPresentingDeleteConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button(
+                    L10n.confirm,
+                    role: .destructive,
+                    action: viewModel.delete
+                )
 
-                    Button(L10n.cancel, role: .cancel) {}
-                }
+                Button(L10n.cancel, role: .cancel) {}
             }
         }
-        #endif
+        #endif */
     }
 }

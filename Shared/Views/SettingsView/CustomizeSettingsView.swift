@@ -85,12 +85,6 @@ struct CustomizeSettingsView: View {
     private var shouldShowMissingSeasons
     @Default(.Customization.shouldShowMissingEpisodes)
     private var shouldShowMissingEpisodes
-    @StoredValue(.User.enableCollectionManagement)
-    private var enableCollectionManagement
-    @StoredValue(.User.enableItemEditing)
-    private var enableItemEditing
-    @StoredValue(.User.enableItemDeletion)
-    private var enableItemDeletion
 
     // MARK: - Item View Defaults
 
@@ -100,6 +94,15 @@ struct CustomizeSettingsView: View {
     private var cinematicItemViewTypeUsePrimaryImage
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
+
+    // MARK: - Item Management Defaults
+
+    @StoredValue(.User.enableCollectionManagement)
+    private var enableCollectionManagement
+    @StoredValue(.User.enableItemEditing)
+    private var enableItemEditing
+    @StoredValue(.User.enableItemDeletion)
+    private var enableItemDeletion
 
     // MARK: - User Permissions
 
@@ -129,9 +132,7 @@ struct CustomizeSettingsView: View {
 
             itemViewSettings
 
-            #if os(iOS)
             itemManagementSettings
-            #endif
         }
         .navigationTitle(L10n.customize)
     }
@@ -300,24 +301,24 @@ struct CustomizeSettingsView: View {
     private var itemManagementSettings: some View {
         Section(L10n.itemManagement) {
 
-            /// Collections can be edited by users or by setting
             if userPolicy?.isAdministrator == true ||
                 userPolicy?.enableCollectionManagement == true
             {
                 Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
             }
 
-            /// Only allow editing if administrator
-            /// - Does NOT include subtitle / lyric editing
+            // Does NOT include subtitle / lyric editing
             if userPolicy?.isAdministrator == true {
                 Toggle(L10n.editMedia, isOn: $enableItemEditing)
             }
 
-            /// Only allow deletion if there is someting to delete from
             if userPolicy?.enableContentDeletion == true ||
                 userPolicy?.enableContentDeletionFromFolders?.isNotEmpty == true
             {
-                Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
+                // TODO: Enable when tvOS Deletion is available
+                if !UIDevice.isTV {
+                    Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
+                }
             }
         }
     }
