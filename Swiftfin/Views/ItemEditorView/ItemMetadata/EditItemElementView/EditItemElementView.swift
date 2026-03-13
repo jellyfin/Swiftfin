@@ -196,6 +196,9 @@ struct EditItemElementView<Element: Hashable>: View {
                 }
             } else {
                 Text(L10n.none)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(.zero)
             }
         }
         .listStyle(.plain)

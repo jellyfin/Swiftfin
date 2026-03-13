@@ -63,6 +63,9 @@ struct ServerActivityView: View {
     private var contentView: some View {
         if viewModel.elements.isEmpty {
             Text(L10n.none)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .listRowSeparator(.hidden)
+                .listRowInsets(.zero)
         } else {
             CollectionVGrid(
                 uniqueElements: viewModel.elements,

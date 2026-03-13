@@ -118,6 +118,9 @@ struct DevicesView: View {
 
             if viewModel.devices.isEmpty {
                 Text(L10n.none)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(.zero)
             } else {
                 ForEach(viewModel.devices, id: \.self) { device in
                     DeviceRow(device: device) {
