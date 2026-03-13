@@ -262,7 +262,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         switch viewModel.state {
         case .content:
             if viewModel.elements.isEmpty {
-                ContentUnavailableView.content
+                ContentUnavailableView(L10n.noItems.localizedCapitalized, systemImage: "rectangle.on.rectangle.slash")
             } else {
                 gridView
             }

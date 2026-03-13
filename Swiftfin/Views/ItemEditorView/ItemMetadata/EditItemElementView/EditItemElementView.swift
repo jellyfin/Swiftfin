@@ -195,9 +195,7 @@ struct EditItemElementView<Element: Hashable>: View {
                     elements.move(fromOffsets: source, toOffset: destination)
                 }
             } else {
-                ContentUnavailableView.content
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.zero)
+                Text(L10n.none)
             }
         }
         .listStyle(.plain)

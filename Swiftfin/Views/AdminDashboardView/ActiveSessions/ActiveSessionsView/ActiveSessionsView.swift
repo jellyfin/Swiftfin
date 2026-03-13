@@ -37,7 +37,7 @@ struct ActiveSessionsView: View {
     @ViewBuilder
     private var contentView: some View {
         if viewModel.sessions.isEmpty {
-            ContentUnavailableView.content
+            ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
         } else {
             CollectionVGrid(
                 uniqueElements: viewModel.sessions.keys,

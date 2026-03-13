@@ -8,13 +8,7 @@
 
 import SwiftUI
 
-extension ContentUnavailableView {
-    static var content: ContentUnavailableView {
-        ContentUnavailableView(L10n.noContent.localizedCapitalized, systemImage: "questionmark.circle")
-    }
-}
-
-// TODO: Remove for iOS 17
+// TODO: Delete this entire file for iOS 17+
 struct ContentUnavailableView: View {
 
     private let title: String
@@ -55,7 +49,6 @@ struct ContentUnavailableView: View {
     }
 }
 
-// TODO: Remove for iOS 17
 /// This is a fallback view for iOS 16 and below
 private struct _ContentUnavailableView: View {
 

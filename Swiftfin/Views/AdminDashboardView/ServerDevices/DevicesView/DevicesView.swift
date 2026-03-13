@@ -117,9 +117,7 @@ struct DevicesView: View {
             .padding(.vertical, 24)
 
             if viewModel.devices.isEmpty {
-                ContentUnavailableView.content
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.zero)
+                Text(L10n.none)
             } else {
                 ForEach(viewModel.devices, id: \.self) { device in
                     DeviceRow(device: device) {

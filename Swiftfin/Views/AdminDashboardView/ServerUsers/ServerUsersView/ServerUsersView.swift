@@ -172,9 +172,7 @@ struct ServerUsersView: View {
             .padding(.vertical, 24)
 
             if viewModel.users.isEmpty {
-                ContentUnavailableView.content
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.zero)
+                Text(L10n.none)
             } else {
                 ForEach(viewModel.users, id: \.self) { user in
                     if let userID = user.id {

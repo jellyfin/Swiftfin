@@ -124,7 +124,7 @@ struct ChannelLibraryView: View {
             switch viewModel.state {
             case .content:
                 if viewModel.elements.isEmpty {
-                    ContentUnavailableView.search
+                    ContentUnavailableView(L10n.noChannels.localizedCapitalized, systemImage: "antenna.radiowaves.left.and.right")
                 } else {
                     contentView
                 }

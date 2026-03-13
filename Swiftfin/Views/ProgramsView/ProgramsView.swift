@@ -63,7 +63,7 @@ struct ProgramsView: View {
                 liveTVSectionScrollView
 
                 if programsViewModel.hasNoResults {
-                    ContentUnavailableView.content
+                    ContentUnavailableView(L10n.noPrograms.localizedCapitalized, systemImage: "tv")
                 }
 
                 if programsViewModel.recommended.isNotEmpty {

@@ -62,9 +62,7 @@ struct ServerActivityView: View {
     @ViewBuilder
     private var contentView: some View {
         if viewModel.elements.isEmpty {
-            ContentUnavailableView.content
-                .listRowSeparator(.hidden)
-                .listRowInsets(.zero)
+            Text(L10n.none)
         } else {
             CollectionVGrid(
                 uniqueElements: viewModel.elements,
