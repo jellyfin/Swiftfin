@@ -27,13 +27,13 @@ struct FormItemSection: PlatformView {
                 VStack(alignment: .leading) {
 
                     if let parent = item.parentTitle {
-                        Marquee(parent)
+                        Text(parent)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
-                            .lineLimit(1)
+                            .lineLimit(2)
                     }
 
-                    Marquee(item.displayTitle)
+                    Text(item.displayTitle)
                         .font(.title2)
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
