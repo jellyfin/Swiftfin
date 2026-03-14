@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -129,22 +129,22 @@ struct ItemSubtitleSearchView: View {
 
         Section {
             if viewModel.backgroundStates.contains(.updating) {
-                ListRowButton(L10n.cancel) {
+                Button(L10n.cancel, role: .destructive) {
                     viewModel.send(.cancel)
                 }
+                .buttonStyle(.primary)
                 .listRowInsets(.zero)
-                .foregroundStyle(.red, .red.opacity(0.2))
             } else {
-                ListRowButton(L10n.save) {
+                Button(L10n.save) {
                     setSubtitles()
                 }
+                .buttonStyle(.primary)
                 .foregroundStyle(
                     accentColor.overlayColor,
                     accentColor
                 )
                 .listRowInsets(.zero)
                 .disabled(selectedSubtitles.isEmpty)
-                .opacity(selectedSubtitles.isEmpty ? 0.5 : 1)
             }
         }
     }
@@ -176,7 +176,7 @@ struct ItemSubtitleSearchView: View {
 
     private func setSubtitles() {
         guard selectedSubtitles.isNotEmpty else {
-            error = JellyfinAPIError(L10n.noItemSelected)
+            error = ErrorMessage(L10n.noItemSelected)
             return
         }
 

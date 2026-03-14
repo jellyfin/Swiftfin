@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -11,7 +11,7 @@ import JellyfinAPI
 
 extension VideoPlayerType {
 
-    // MARK: direct play
+    // MARK: - Direct Play
 
     @ArrayBuilder<DirectPlayProfile>
     static var _swiftfinDirectPlayProfiles: [DirectPlayProfile] {
@@ -45,10 +45,41 @@ extension VideoPlayerType {
             AudioCodec.wmapro
             AudioCodec.wmav1
             AudioCodec.wmav2
+        } videoCodecs: {
+
+            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices
+            ///  - Defaulting to disabled but can be enabled in custom profiles if desired.
+            if PlaybackCapabilities.supportsAV1 {
+                VideoCodec.av1
+            }
+
+            VideoCodec.dirac
+            VideoCodec.dv
+            VideoCodec.ffv1
+            VideoCodec.flv1
+            VideoCodec.h261
+            VideoCodec.h263
+            VideoCodec.h264
+            VideoCodec.hevc
+            VideoCodec.mjpeg
+            VideoCodec.mpeg1video
+            VideoCodec.mpeg2video
+            VideoCodec.mpeg4
+            VideoCodec.msmpeg4v1
+            VideoCodec.msmpeg4v2
+            VideoCodec.msmpeg4v3
+            VideoCodec.prores
+            VideoCodec.theora
+            VideoCodec.vc1
+            VideoCodec.vp8
+            VideoCodec.vp9
+            VideoCodec.wmv1
+            VideoCodec.wmv2
+            VideoCodec.wmv3
         }
     }
 
-    // MARK: transcoding
+    // MARK: - Transcoding
 
     @ArrayBuilder<TranscodingProfile>
     static var _swiftfinTranscodingProfiles: [TranscodingProfile] {
@@ -72,7 +103,14 @@ extension VideoPlayerType {
             AudioCodec.opus
             AudioCodec.vorbis
         } videoCodecs: {
-            VideoCodec.av1
+
+            /// - Note: Transcode Profiles prioritizes codecs by order
+            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices
+            ///  - Defaulting to disabled but can be enabled in custom profiles if desired.
+            if PlaybackCapabilities.supportsAV1 {
+                VideoCodec.av1
+            }
+
             VideoCodec.h263
             VideoCodec.h264
             VideoCodec.hevc
@@ -87,7 +125,7 @@ extension VideoPlayerType {
         }
     }
 
-    // MARK: subtitle
+    // MARK: - Subtitle
 
     @ArrayBuilder<SubtitleProfile>
     static var _swiftfinSubtitleProfiles: [SubtitleProfile] {
@@ -135,6 +173,130 @@ extension VideoPlayerType {
             SubtitleFormat.vplayer
             SubtitleFormat.vtt
             SubtitleFormat.xsub
+        }
+    }
+
+    // MARK: - Codec Profiles
+
+    @ArrayBuilder<CodecProfile>
+    static var _swiftfinCodecProfiles: [CodecProfile] {
+        CodecProfile(
+            codec: VideoCodec.h264.rawValue,
+            type: .video,
+            conditions: {
+                _h264BaseConditions
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: true,
+                    property: .videoRangeType
+                ) {
+                    VideoRangeType.sdr
+                    VideoRangeType.doviWithSDR
+                }
+            }
+        )
+
+        CodecProfile(
+            codec: VideoCodec.hevc.rawValue,
+            type: .video,
+            conditions: {
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isAnamorphic,
+                    value: "true"
+                )
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: false,
+                    property: .videoProfile
+                ) {
+                    HEVCProfile.main
+                    HEVCProfile.main10
+                }
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isInterlaced,
+                    value: "true"
+                )
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: true,
+                    property: .videoRangeType
+                ) {
+                    swiftfinHDRProfiles
+                }
+            }
+        )
+
+        CodecProfile(
+            codec: VideoCodec.av1.rawValue,
+            type: .video,
+            conditions: {
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isAnamorphic,
+                    value: "true"
+                )
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isInterlaced,
+                    value: "true"
+                )
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: true,
+                    property: .videoRangeType
+                ) {
+                    swiftfinHDRProfiles
+                }
+            }
+        )
+
+        CodecProfile(
+            codec: VideoCodec.vp9.rawValue,
+            type: .video,
+            conditions: {
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isAnamorphic,
+                    value: "true"
+                )
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isInterlaced,
+                    value: "true"
+                )
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: true,
+                    property: .videoRangeType
+                ) {
+                    swiftfinHDRProfiles
+                }
+            }
+        )
+    }
+
+    @ArrayBuilder<VideoRangeType>
+    private static var swiftfinHDRProfiles: [VideoRangeType] {
+
+        VideoRangeType.sdr
+        VideoRangeType.doviWithSDR
+
+        if PlaybackCapabilities.hdrEnabled {
+            VideoRangeType.hlg
+            VideoRangeType.hdr10
+            VideoRangeType.hdr10Plus
+            VideoRangeType.doviWithHLG
+            VideoRangeType.doviWithHDR10
+            VideoRangeType.doviWithHDR10Plus
+            VideoRangeType.doviWithELHDR10Plus
         }
     }
 }

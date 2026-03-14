@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -126,9 +126,10 @@ struct ItemSubtitleUploadView: View {
             }
 
             Section {
-                ListRowButton(subtitleData == nil ? L10n.uploadFile : L10n.replaceSubtitle) {
+                Button(subtitleData == nil ? L10n.uploadFile : L10n.replaceSubtitle) {
                     isPresentingFileUpload = true
                 }
+                .buttonStyle(.primary)
                 .foregroundStyle(accentColor.overlayColor, accentColor)
             }
         }
@@ -145,7 +146,7 @@ struct ItemSubtitleUploadView: View {
                 self.subtitleFormat = format
                 self.subtitleData = try Data(contentsOf: fileURL)
             } else {
-                error = JellyfinAPIError(L10n.invalidFormat)
+                error = ErrorMessage(L10n.invalidFormat)
             }
         } catch {
             self.error = error
@@ -155,10 +156,10 @@ struct ItemSubtitleUploadView: View {
     // MARK: - Upload Subtitle
 
     private func uploadSubtitle() {
-        guard let subtitleData = subtitleData,
-              let subtitleFormat = subtitleFormat
+        guard let subtitleData,
+              let subtitleFormat
         else {
-            error = JellyfinAPIError(L10n.noItemSelected)
+            error = ErrorMessage(L10n.noItemSelected)
             return
         }
 
@@ -175,7 +176,7 @@ struct ItemSubtitleUploadView: View {
 
             viewModel.send(.upload(subtitle))
         } else {
-            error = JellyfinAPIError(L10n.noItemSelected)
+            error = ErrorMessage(L10n.noItemSelected)
         }
     }
 }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import CoreStore
@@ -61,7 +61,7 @@ final class ServerConnectionViewModel: ViewModel {
         do {
             let newState = try dataStack.perform { transaction in
                 guard let storedServer = try transaction.fetchOne(From<ServerModel>().where(\.$id == self.server.id)) else {
-                    throw JellyfinAPIError("Unable to find server for URL change: \(self.server.name)")
+                    throw ErrorMessage("Unable to find server for URL change: \(self.server.name)")
                 }
                 storedServer.currentURL = url
 

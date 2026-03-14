@@ -26,7 +26,7 @@ jobs:
 
     - name: Update Carthage
       run: carthage update --use-xcframeworks --cache-builds
-    
+
     - name: Install the Apple certificate and provisioning profile
       env:
         BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -58,7 +58,7 @@ jobs:
         sudo mkdir -p /Library/MobileDevice/Provisioning\ Profiles
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
         sudo cp $PP_PATH /Library/MobileDevice/Provisioning\ Profiles
-    
+
     - name: Build and Upload to TestFlight
       run: sudo fastlane testFlightLane \
         keyID:${{ secrets.APP_STORE_KEY_ID }} \

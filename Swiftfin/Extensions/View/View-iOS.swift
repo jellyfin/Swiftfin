@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -16,11 +16,16 @@ extension View {
         modifier(DetectOrientation(orientation: orientation))
     }
 
+    /// - Important: This does nothing on iOS.
+    func focusSection() -> some View {
+        self
+    }
+
     func navigationBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
         modifier(NavigationBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
     }
 
-    func navigationBarDrawer<Drawer: View>(@ViewBuilder _ drawer: @escaping () -> Drawer) -> some View {
+    func navigationBarDrawer(@ViewBuilder _ drawer: @escaping () -> some View) -> some View {
         modifier(NavigationBarDrawerModifier(drawer: drawer))
     }
 
@@ -57,11 +62,11 @@ extension View {
     }
 
     @ViewBuilder
-    func navigationBarMenuButton<Content: View>(
+    func navigationBarMenuButton(
         isLoading: Bool = false,
         isHidden: Bool = false,
         @ViewBuilder
-        _ items: @escaping () -> Content
+        _ items: @escaping () -> some View
     ) -> some View {
         modifier(
             NavigationBarMenuButtonModifier(

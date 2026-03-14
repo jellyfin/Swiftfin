@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -80,7 +80,7 @@ final class ConnectToServerViewModel: ViewModel {
             .trimmingCharacters(in: ["/"])
             .prepending("http://", if: !url.contains("://"))
 
-        guard let url = URL(string: formattedURL) else { throw JellyfinAPIError("Invalid URL") }
+        guard let url = URL(string: formattedURL) else { throw ErrorMessage("Invalid URL") }
 
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: url),
@@ -93,7 +93,7 @@ final class ConnectToServerViewModel: ViewModel {
               let id = response.value.id
         else {
             logger.critical("Missing server data from network call")
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         let connectionURL = processConnectionURL(
@@ -166,7 +166,7 @@ final class ConnectToServerViewModel: ViewModel {
             let existingServer = try self.dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id))
             guard let editServer = transaction.edit(existingServer) else {
                 logger.critical("Could not find server to add new url")
-                throw JellyfinAPIError("An internal error has occurred")
+                throw ErrorMessage("An internal error has occurred")
             }
 
             editServer.urls.insert(server.currentURL)

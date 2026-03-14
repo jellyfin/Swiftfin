@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -12,12 +12,6 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
-        @StoredValue(.User.enableItemDeletion)
-        private var enableItemDeletion: Bool
-        @StoredValue(.User.enableItemEditing)
-        private var enableItemEditing: Bool
-        @StoredValue(.User.enableCollectionManagement)
-        private var enableCollectionManagement: Bool
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
@@ -28,45 +22,6 @@ extension ItemView {
 
         @ObservedObject
         var viewModel: ItemViewModel
-
-        @StateObject
-        private var deleteViewModel: DeleteItemViewModel
-
-        // MARK: - Dialog States
-
-        @State
-        private var showConfirmationDialog = false
-        @State
-        private var isPresentingEventAlert = false
-
-        // MARK: - Error State
-
-        @State
-        private var error: Error?
-
-        // MARK: - Can Delete Item
-
-        private var canDelete: Bool {
-            viewModel.userSession.user.permissions.items.canDelete(item: viewModel.item)
-        }
-
-        // MARK: - Can Refresh Item
-
-        private var canRefresh: Bool {
-            viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item)
-        }
-
-        // MARK: - Can Manage Subtitles
-
-        private var canManageSubtitles: Bool {
-            viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item)
-        }
-
-        // MARK: - Deletion or Refreshing is Enabled
-
-        private var enableMenu: Bool {
-            canDelete || canRefresh
-        }
 
         // MARK: - Has Trailers
 
@@ -86,27 +41,22 @@ extension ItemView {
 
         init(viewModel: ItemViewModel) {
             self.viewModel = viewModel
-            self._deleteViewModel = StateObject(wrappedValue: .init(item: viewModel.item))
         }
 
         // MARK: - Body
 
         var body: some View {
-            HStack(alignment: .center, spacing: 20) {
+            HStack(alignment: .center, spacing: 30) {
 
                 // MARK: Toggle Played
 
                 if viewModel.item.canBePlayed {
                     let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
-                    ActionButton(
-                        L10n.played,
-                        icon: "checkmark.circle",
-                        selectedIcon: "checkmark.circle.fill"
-                    ) {
+                    Button(L10n.played, systemImage: "checkmark") {
                         viewModel.send(.toggleIsPlayed)
                     }
-                    .foregroundStyle(Color.jellyfinPurple)
+                    .buttonStyle(.tintedMaterial(tint: Color.jellyfinPurple, foregroundColor: .primary))
                     .isSelected(isCheckmarkSelected)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
@@ -115,14 +65,10 @@ extension ItemView {
 
                 let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
-                ActionButton(
-                    L10n.favorited,
-                    icon: "heart.circle",
-                    selectedIcon: "heart.circle.fill"
-                ) {
+                Button(L10n.favorited, systemImage: isHeartSelected ? "heart.fill" : "heart") {
                     viewModel.send(.toggleIsFavorite)
                 }
-                .foregroundStyle(.pink)
+                .buttonStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
                 .isSelected(isHeartSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
@@ -133,63 +79,27 @@ extension ItemView {
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
+                    .buttonStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
+                    .frame(minWidth: 100, maxWidth: .infinity)
                 }
 
                 // MARK: Advanced Options
 
-                if enableMenu {
-                    ActionButton(L10n.advanced, icon: "ellipsis", isCompact: true) {
-                        if canRefresh || canManageSubtitles {
-                            Section(L10n.manage) {
-                                if canRefresh {
-                                    RefreshMetadataButton(item: viewModel.item)
-                                }
-
-                                if canManageSubtitles {
-                                    Button(L10n.subtitles, systemImage: "textformat") {
-                                        router.route(
-                                            to: .searchSubtitle(
-                                                viewModel: .init(item: viewModel.item)
-                                            )
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        if canDelete {
-                            Section {
-                                Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                                    showConfirmationDialog = true
-                                }
-                            }
-                        }
+                if viewModel.item.showEditorMenu {
+                    Menu {
+                        ItemEditorMenu(item: viewModel.item)
+                    } label: {
+                        Label(L10n.advanced, systemImage: "ellipsis")
+                            .rotationEffect(.degrees(90))
                     }
-                    .frame(width: 60)
+                    .buttonStyle(.material)
+                    .frame(width: 60, height: 100)
                 }
             }
             .frame(height: 100)
-            .padding(.top, 1)
-            .padding(.bottom, 10)
-            .confirmationDialog(
-                L10n.deleteItemConfirmationMessage,
-                isPresented: $showConfirmationDialog,
-                titleVisibility: .visible
-            ) {
-                Button(L10n.confirm, role: .destructive) {
-                    deleteViewModel.send(.delete)
-                }
-                Button(L10n.cancel, role: .cancel) {}
-            }
-            .onReceive(deleteViewModel.events) { event in
-                switch event {
-                case let .error(eventError):
-                    error = eventError
-                case .deleted:
-                    router.dismiss()
-                }
-            }
-            .errorMessage($error)
+            .labelStyle(.iconOnly)
+            .font(.title3)
+            .fontWeight(.semibold)
         }
     }
 }

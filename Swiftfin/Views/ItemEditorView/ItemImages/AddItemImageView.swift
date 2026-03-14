@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import BlurHashKit
@@ -55,19 +55,19 @@ struct AddItemImageView: View {
         ZStack {
             switch remoteImageInfoViewModel.state {
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             case .content:
                 gridView
             case let .error(error):
                 ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.refresh)
-                    }
             }
         }
         .animation(.linear(duration: 0.1), value: remoteImageInfoViewModel.state)
         .navigationTitle(remoteImageInfoViewModel.imageType.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            remoteImageInfoViewModel.send(.refresh)
+        }
         .navigationBarBackButtonHidden(viewModel.backgroundStates.contains(.updating))
         .navigationBarMenuButton(isLoading: viewModel.backgroundStates.contains(.updating)) {
             Button {

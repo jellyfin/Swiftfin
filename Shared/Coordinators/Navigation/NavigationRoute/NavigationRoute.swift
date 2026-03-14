@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -34,12 +34,12 @@ struct NavigationRoute: Identifiable, Hashable {
     var transitionStyle: TransitionStyle {
         switch transitionType {
         case let .automatic(style):
-            return style
+            style
         case let .withNamespace(builder):
             if let namespace {
-                return builder(namespace)
+                builder(namespace)
             } else {
-                return .push(.automatic)
+                .push(.automatic)
             }
         }
     }

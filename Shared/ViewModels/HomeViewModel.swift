@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -19,7 +19,7 @@ final class HomeViewModel: ViewModel, Stateful {
 
     enum Action: Equatable {
         case backgroundRefresh
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case setIsPlayed(Bool, BaseItemDto)
         case refresh
     }
@@ -34,7 +34,7 @@ final class HomeViewModel: ViewModel, Stateful {
 
     enum State: Hashable {
         case content
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case initial
         case refreshing
     }
@@ -195,7 +195,7 @@ final class HomeViewModel: ViewModel, Stateful {
         async let excludedLibraryIDs = getExcludedLibraries()
 
         return try await (userViews.value.items ?? [])
-            .intersection(
+            .intersecting(
                 [
                     .homevideos,
                     .movies,
@@ -217,15 +217,13 @@ final class HomeViewModel: ViewModel, Stateful {
     }
 
     private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {
-        let request: Request<UserItemDataDto>
-
-        if isPlayed {
-            request = Paths.markPlayedItem(
+        let request: Request<UserItemDataDto> = if isPlayed {
+            Paths.markPlayedItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )
         } else {
-            request = Paths.markUnplayedItem(
+            Paths.markUnplayedItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )

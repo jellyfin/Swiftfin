@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -22,7 +22,7 @@ class ItemViewModel: ViewModel, Stateful {
 
     enum Action: Equatable {
         case backgroundRefresh
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case refresh
         case replace(BaseItemDto)
         case toggleIsFavorite
@@ -40,7 +40,7 @@ class ItemViewModel: ViewModel, Stateful {
 
     enum State: Hashable {
         case content
-        case error(JellyfinAPIError)
+        case error(ErrorMessage)
         case initial
         case refreshing
     }
@@ -85,7 +85,7 @@ class ItemViewModel: ViewModel, Stateful {
         get throws {
             guard let id = item.id else {
                 logger.error("Item ID is nil")
-                throw JellyfinAPIError(L10n.unknownError)
+                throw ErrorMessage(L10n.unknownError)
             }
             return id
         }
@@ -304,7 +304,7 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     private func getFullItem() async throws -> BaseItemDto {
-        try await item.getFullItem(userSession: userSession)
+        try await item.getFullItem(userSession: userSession, sendNotification: true)
     }
 
     private func getSimilarItems() async -> [BaseItemDto] {
@@ -360,15 +360,13 @@ class ItemViewModel: ViewModel, Stateful {
 
         guard let itemID = item.id else { return }
 
-        let request: Request<UserItemDataDto>
-
-        if isPlayed {
-            request = Paths.markPlayedItem(
+        let request: Request<UserItemDataDto> = if isPlayed {
+            Paths.markPlayedItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )
         } else {
-            request = Paths.markUnplayedItem(
+            Paths.markUnplayedItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )
@@ -382,15 +380,13 @@ class ItemViewModel: ViewModel, Stateful {
 
         guard let itemID = item.id else { return }
 
-        let request: Request<UserItemDataDto>
-
-        if isFavorite {
-            request = Paths.markFavoriteItem(
+        let request: Request<UserItemDataDto> = if isFavorite {
+            Paths.markFavoriteItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )
         } else {
-            request = Paths.unmarkFavoriteItem(
+            Paths.unmarkFavoriteItem(
                 itemID: item.id!,
                 userID: userSession.user.id
             )

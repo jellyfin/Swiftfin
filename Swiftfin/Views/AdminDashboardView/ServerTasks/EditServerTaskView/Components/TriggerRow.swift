@@ -3,11 +3,10 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
-
 import SwiftUI
 
 extension EditServerTaskView {
@@ -29,8 +28,7 @@ extension EditServerTaskView {
                         if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
                             Text(
                                 L10n.timeLimitLabelWithValue(
-                                    ServerTicks(maxRuntimeTicks)
-                                        .seconds.formatted(.hourMinute)
+                                    Duration.ticks(maxRuntimeTicks).formatted(.hourMinuteAbbreviated)
                                 )
                             )
                         } else {
@@ -76,8 +74,7 @@ extension EditServerTaskView {
             case .intervalTrigger:
                 if let intervalTicks = taskTriggerInfo.intervalTicks {
                     return L10n.everyInterval(
-                        ServerTicks(intervalTicks)
-                            .seconds.formatted(.hourMinute)
+                        Duration.ticks(intervalTicks).formatted(.hourMinuteAbbreviated)
                     )
                 }
             case .startupTrigger:

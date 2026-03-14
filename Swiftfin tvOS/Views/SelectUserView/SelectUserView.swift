@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -24,6 +24,8 @@ struct SelectUserView: View {
     private var selectUserAllServersSplashscreen
     @Default(.selectUserServerSelection)
     private var serverSelection
+    @Default(.accentColor)
+    private var accentColor
 
     // MARK: - State & Environment Objects
 
@@ -82,7 +84,7 @@ struct SelectUserView: View {
                 .map { server, users in
                     users.map { (server: server, user: $0) }
                 }
-                .flatMap { $0 }
+                .flatMap(\.self)
                 .sorted(using: \.user.username)
                 .reversed()
                 .map { UserItem(user: $0.user, server: $0.server) }
@@ -243,7 +245,7 @@ struct SelectUserView: View {
     @ViewBuilder
     private var connectToServerView: some View {
         VStack(spacing: 50) {
-            L10n.connectToJellyfinServerStart.text
+            Text(L10n.connectToJellyfinServerStart)
                 .font(.body)
                 .frame(minWidth: 50, maxWidth: 500)
                 .multilineTextAlignment(.center)
@@ -251,11 +253,11 @@ struct SelectUserView: View {
             Button {
                 router.route(to: .connectToServer)
             } label: {
-                L10n.connect.text
+                Text(L10n.connect)
                     .font(.callout)
                     .fontWeight(.bold)
                     .frame(width: 400, height: 75)
-                    .background(Color.jellyfinPurple)
+                    .background(accentColor)
             }
             .buttonStyle(.card)
         }

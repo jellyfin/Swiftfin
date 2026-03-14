@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -17,22 +17,22 @@ enum AppAppearance: String, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .system:
-            return L10n.system
+            L10n.system
         case .dark:
-            return L10n.dark
+            L10n.dark
         case .light:
-            return L10n.light
+            L10n.light
         }
     }
 
     var style: UIUserInterfaceStyle {
         switch self {
         case .system:
-            return .unspecified
+            .unspecified
         case .dark:
-            return .dark
+            .dark
         case .light:
-            return .light
+            .light
         }
     }
 }

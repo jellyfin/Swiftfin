@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
@@ -12,43 +12,21 @@ import SwiftUI
 
 struct ItemEditorView: View {
 
-    // MARK: - Router
+    @ObservedObject
+    var viewModel: ItemEditorViewModel<BaseItemDto>
 
     @Router
     private var router
 
-    // MARK: - ViewModel
-
-    @ObservedObject
-    var viewModel: ItemViewModel
-
-    // MARK: - Can Edit Metadata
-
-    private var canEditMetadata: Bool {
-        viewModel.userSession.user.permissions.items.canEditMetadata(item: viewModel.item) == true
-    }
-
-    // MARK: - Can Manage Subtitles
-
-    private var canManageSubtitles: Bool {
-        viewModel.userSession.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
-    }
-
-    // MARK: - Can Manage Lyrics
-
-    private var canManageLyrics: Bool {
-        viewModel.userSession.user.permissions.items.canManageLyrics(item: viewModel.item) == true
-    }
-
-    // MARK: - Body
-
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .initial, .content, .refreshing:
+            case .initial:
                 contentView
-            case let .error(error):
-                errorView(with: error)
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             }
         }
         .navigationTitle(L10n.metadata)
@@ -56,9 +34,14 @@ struct ItemEditorView: View {
         .navigationBarCloseButton {
             router.dismiss()
         }
+        .onFirstAppear {
+            // Ensure we have a full `BaseItemDto` or some non-required metadata may be missing
+            viewModel.refreshItem(sendNotification: false)
+        }
+        .refreshable {
+            viewModel.refreshItem(sendNotification: false)
+        }
     }
-
-    // MARK: - Content View
 
     private var contentView: some View {
         List {
@@ -67,119 +50,49 @@ struct ItemEditorView: View {
                 description: viewModel.item.path
             )
 
-            /// Hide metadata options to Lyric/Subtitle only users
-            if canEditMetadata {
-
-                refreshButtonView
-
-                Section(L10n.edit) {
-                    editMetadataView
-                    editTextView
+            Section(L10n.edit) {
+                if let itemKind = viewModel.item.type,
+                   BaseItemKind.itemIdentifiableCases.contains(itemKind)
+                {
+                    ChevronButton(L10n.identify) {
+                        router.route(to: .identifyItem(item: viewModel.item))
+                    }
                 }
 
-                if viewModel.item.hasComponents {
-                    editComponentsView
+                ChevronButton(L10n.images) {
+                    router.route(to: .itemImages(viewModel: ItemImagesViewModel(item: viewModel.item)))
                 }
-            } /*  else if canManageSubtitles || canManageLyrics {
 
-                 // TODO: Enable when Subtitle / Lyric Editing is added
-                 Section(L10n.edit) {
-                     editTextView
-                 }
-             }*/
-        }
-    }
-
-    // MARK: - ErrorView
-
-    @ViewBuilder
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
+                ChevronButton(L10n.metadata) {
+                    router.route(to: .editMetadata(viewModel: viewModel))
+                }
             }
-    }
 
-    // MARK: - Refresh Menu Button
+            if viewModel.item.hasComponents {
+                Section {
+                    ChevronButton(L10n.genres) {
+                        router.route(to: .editGenres(item: viewModel.item))
+                    }
 
-    @ViewBuilder
-    private var refreshButtonView: some View {
-        Section {
-            RefreshMetadataButton(item: viewModel.item)
-        } footer: {
-            LearnMoreButton(L10n.metadata) {
-                LabeledContent(
-                    L10n.findMissing,
-                    value: L10n.findMissingDescription
-                )
-                LabeledContent(
-                    L10n.replaceMetadata,
-                    value: L10n.replaceMetadataDescription
-                )
-                LabeledContent(
-                    L10n.replaceImages,
-                    value: L10n.replaceImagesDescription
-                )
-                LabeledContent(
-                    L10n.replaceAll,
-                    value: L10n.replaceAllDescription
-                )
+                    ChevronButton(L10n.people) {
+                        router.route(to: .editPeople(item: viewModel.item))
+                    }
+
+                    ChevronButton(L10n.tags) {
+                        router.route(to: .editTags(item: viewModel.item))
+                    }
+
+                    ChevronButton(L10n.studios) {
+                        router.route(to: .editStudios(item: viewModel.item))
+                    }
+                }
             }
-        }
-    }
 
-    // MARK: - Editable Metadata Routing Buttons
-
-    @ViewBuilder
-    private var editMetadataView: some View {
-
-        if let itemKind = viewModel.item.type,
-           BaseItemKind.itemIdentifiableCases.contains(itemKind)
-        {
-            ChevronButton(L10n.identify) {
-                router.route(to: .identifyItem(item: viewModel.item))
-            }
-        }
-        ChevronButton(L10n.images) {
-            router.route(to: .itemImages(viewModel: ItemImagesViewModel(item: viewModel.item)))
-        }
-        ChevronButton(L10n.metadata) {
-            router.route(to: .editMetadata(item: viewModel.item))
-        }
-    }
-
-    // MARK: - Editable Text Routing Buttons
-
-    @ViewBuilder
-    private var editTextView: some View {
-        if canManageSubtitles {
-            ChevronButton(L10n.subtitles) {
-                router.route(to: .editSubtitles(item: viewModel.item))
-            }
-        }
-        if canManageLyrics {
-//          ChevronButton(L10n.lyrics) {
-//              router.route(to: \.editLyrics, viewModel.item)
-//          }
-        }
-    }
-
-    // MARK: - Editable Metadata Components Routing Buttons
-
-    @ViewBuilder
-    private var editComponentsView: some View {
-        Section {
-            ChevronButton(L10n.genres) {
-                router.route(to: .editGenres(item: viewModel.item))
-            }
-            ChevronButton(L10n.people) {
-                router.route(to: .editPeople(item: viewModel.item))
-            }
-            ChevronButton(L10n.tags) {
-                router.route(to: .editTags(item: viewModel.item))
-            }
-            ChevronButton(L10n.studios) {
-                router.route(to: .editStudios(item: viewModel.item))
+            if viewModel.item.canDelete == true {
+                Button(L10n.delete, role: .destructive) {
+                    router.route(to: .itemDeletion(viewModel: viewModel))
+                }
+                .buttonStyle(.primary)
             }
         }
     }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -129,18 +129,19 @@ struct IdentifyItemView: View {
         }
 
         if viewModel.state == .searching {
-            ListRowButton(L10n.cancel) {
+            Button(L10n.cancel, role: .destructive) {
                 viewModel.send(.cancel)
             }
-            .foregroundStyle(.red, .red.opacity(0.2))
+            .buttonStyle(.primary)
         } else {
-            ListRowButton(L10n.search) {
+            Button(L10n.search) {
                 viewModel.send(.search(
                     name: search.name,
                     originalTitle: search.originalTitle,
                     year: search.year
                 ))
             }
+            .buttonStyle(.primary)
             .disabled(search.isEmpty)
             .foregroundStyle(
                 accentColor.overlayColor,

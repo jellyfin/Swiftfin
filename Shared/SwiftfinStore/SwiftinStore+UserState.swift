@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import CoreStore
@@ -64,10 +64,6 @@ extension UserState {
         }
     }
 
-    var permissions: UserPermissions {
-        UserPermissions(data.policy)
-    }
-
     var pin: String {
         get {
             guard let pin = Container.shared.keychainService().get("\(id)-pin") else {
@@ -108,7 +104,7 @@ extension UserState {
     func delete() throws {
         try SwiftfinStore.dataStack.perform { transaction in
             guard let storedUser = try transaction.fetchOne(From<UserModel>().where(\.$id == id)) else {
-                throw JellyfinAPIError("Unable to find user to delete")
+                throw ErrorMessage("Unable to find user to delete")
             }
 
             let storedDataClause = AnyStoredData.fetchClause(ownerID: id)

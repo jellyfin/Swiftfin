@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -38,7 +38,7 @@ struct LocalUserAccessPolicyView: View {
     var body: some View {
         List {
             Section {
-                CaseIterablePicker(L10n.security, selection: $updateSignInPolicy)
+                Picker(L10n.security, selection: $updateSignInPolicy)
             } footer: {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(

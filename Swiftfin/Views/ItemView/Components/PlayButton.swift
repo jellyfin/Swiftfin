@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -39,15 +39,15 @@ extension ItemView {
             if let seriesViewModel = viewModel as? SeriesItemViewModel,
                let seasonEpisodeLabel = seriesViewModel.playButtonItem?.seasonEpisodeLabel
             {
-                return seasonEpisodeLabel
+                seasonEpisodeLabel
 
                 /// Use a Play/Resume label for single Media Source items that are not Series
             } else if let playButtonLabel = viewModel.playButtonItem?.playButtonLabel {
-                return playButtonLabel
+                playButtonLabel
 
                 /// Fallback to a generic `Play` label
             } else {
-                return L10n.play
+                L10n.play
             }
         }
 
@@ -70,21 +70,28 @@ extension ItemView {
                 play()
             } label: {
                 HStack {
-                    Label(title, systemImage: "play.fill")
-                        .font(.callout)
-                        .fontWeight(.semibold)
+                    Image(systemName: "play.fill")
 
-                    if let source {
-                        Marquee(source, speed: 40, delay: 3, fade: 5)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .frame(maxWidth: 175)
+                    VStack {
+                        Text(title)
+
+                        if let source {
+                            Marquee(source, speed: 40, delay: 3, fade: 5)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                        }
                     }
                 }
-                .padding(.horizontal, 5)
+                .padding(.horizontal, 20)
+                .font(.callout)
+                .fontWeight(.semibold)
             }
-            .buttonStyle(.tintedMaterial(tint: accentColor, foregroundColor: accentColor.overlayColor))
-            .isSelected(true)
+            .buttonStyle(
+                .tintedMaterial(
+                    tint: accentColor,
+                    foregroundColor: accentColor.overlayColor
+                )
+            )
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
@@ -92,7 +99,8 @@ extension ItemView {
                     }
                 }
             }
-            .disabled(!isEnabled)
+            .isSelected(true)
+            .enabled(isEnabled)
         }
 
         // MARK: - Play Content

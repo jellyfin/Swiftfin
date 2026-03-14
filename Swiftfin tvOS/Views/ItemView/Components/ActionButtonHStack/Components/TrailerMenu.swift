@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
@@ -56,10 +56,9 @@ extension ItemView {
         }
 
         private var trailerButton: some View {
-            ActionButton(
+            Button(
                 L10n.trailers,
-                icon: "movieclapper",
-                selectedIcon: "movieclapper"
+                systemImage: "movieclapper"
             ) {
                 if showLocalTrailers, let firstTrailer = localTrailers.first {
                     playLocalTrailer(firstTrailer)
@@ -73,7 +72,7 @@ extension ItemView {
 
         @ViewBuilder
         private var trailerMenu: some View {
-            ActionButton(L10n.trailers, icon: "movieclapper") {
+            Menu(L10n.trailers, systemImage: "movieclapper") {
 
                 if showLocalTrailers {
                     Section(L10n.local) {
@@ -108,7 +107,7 @@ extension ItemView {
         private func playLocalTrailer(_ trailer: BaseItemDto) {
             guard let selectedMediaSource = trailer.mediaSources?.first else {
                 logger.log(level: .error, "No media sources found")
-                error = JellyfinAPIError(L10n.unknownError)
+                error = ErrorMessage(L10n.unknownError)
                 return
             }
 
@@ -123,23 +122,23 @@ extension ItemView {
 
         private func playExternalTrailer(_ trailer: MediaURL) {
             guard let urlString = trailer.url else {
-                error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                error = ErrorMessage(L10n.unableToOpenTrailer)
                 return
             }
 
             guard let externalURL = ExternalTrailerURL(string: urlString) else {
-                error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                error = ErrorMessage(L10n.unableToOpenTrailer)
                 return
             }
 
             if externalURL.canBeOpened {
                 UIApplication.shared.open(externalURL.deepLink) { success in
                     if !success {
-                        error = JellyfinAPIError(L10n.unableToOpenTrailerApp(externalURL.source.displayTitle))
+                        error = ErrorMessage(L10n.unableToOpenTrailerApp(externalURL.source.displayTitle))
                     }
                 }
             } else {
-                error = JellyfinAPIError(L10n.unableToOpenTrailer)
+                error = ErrorMessage(L10n.unableToOpenTrailer)
             }
         }
     }

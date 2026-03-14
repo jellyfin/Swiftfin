@@ -3,28 +3,12 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
 
 // TODO: break into separate files
-
-struct HourMinuteFormatStyle: FormatStyle {
-
-    func format(_ value: TimeInterval) -> String {
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .abbreviated
-        formatter.allowedUnits = [.hour, .minute]
-        return formatter.string(from: value) ?? .emptyDash
-    }
-}
-
-extension FormatStyle where Self == HourMinuteFormatStyle {
-
-    @available(*, deprecated, message: "Use `Duration` instead.")
-    static var hourMinute: HourMinuteFormatStyle { HourMinuteFormatStyle() }
-}
 
 struct MinuteSecondsFormatStyle: FormatStyle {
 
@@ -39,7 +23,9 @@ struct MinuteSecondsFormatStyle: FormatStyle {
 extension FormatStyle where Self == MinuteSecondsFormatStyle {
 
     @available(*, deprecated, message: "Use `Duration` instead.")
-    static var minuteSeconds: MinuteSecondsFormatStyle { MinuteSecondsFormatStyle() }
+    static var minuteSeconds: MinuteSecondsFormatStyle {
+        MinuteSecondsFormatStyle()
+    }
 }
 
 extension FormatStyle where Self == Duration.UnitsFormatStyle {
@@ -70,12 +56,10 @@ struct RuntimeFormatStyle: FormatStyle {
 
     func format(_ value: Duration) -> String {
 
-        let formatStyle: Duration.TimeFormatStyle
-
-        if value.components.seconds.magnitude >= 3600 {
-            formatStyle = Duration.TimeFormatStyle(pattern: .hourMinuteSecond)
+        let formatStyle: Duration.TimeFormatStyle = if value.components.seconds.magnitude >= 3600 {
+            Duration.TimeFormatStyle(pattern: .hourMinuteSecond)
         } else {
-            formatStyle = Duration.TimeFormatStyle(pattern: .minuteSecond)
+            Duration.TimeFormatStyle(pattern: .minuteSecond)
         }
 
         return formatStyle.format(value)
@@ -108,13 +92,23 @@ extension FormatStyle where Self == PlaybackRateStyle {
     static var playbackRate: PlaybackRateStyle {
         PlaybackRateStyle()
     }
+
+    static func playbackRate(precision: Int) -> PlaybackRateStyle {
+        PlaybackRateStyle(precision: precision)
+    }
 }
 
 struct PlaybackRateStyle: FormatStyle {
 
+    private let precision: Int
+
+    init(precision: Int = 2) {
+        self.precision = precision
+    }
+
     func format(_ value: Float) -> String {
         FloatingPointFormatStyle<Float>()
-            .precision(.significantDigits(1 ... 3))
+            .precision(.fractionLength(0 ... precision))
             .format(value)
             .appending("\u{00D7}")
     }
@@ -221,12 +215,16 @@ struct LastSeenFormatStyle: FormatStyle {
 
 extension FormatStyle where Self == LastSeenFormatStyle {
 
-    static var lastSeen: LastSeenFormatStyle { LastSeenFormatStyle() }
+    static var lastSeen: LastSeenFormatStyle {
+        LastSeenFormatStyle()
+    }
 }
 
 extension FormatStyle where Self == AgeFormatStyle {
 
-    static var age: AgeFormatStyle { AgeFormatStyle() }
+    static var age: AgeFormatStyle {
+        AgeFormatStyle()
+    }
 }
 
 struct AgeFormatStyle: FormatStyle {
@@ -266,5 +264,7 @@ struct IntBitRateFormatStyle: FormatStyle {
 }
 
 extension FormatStyle where Self == IntBitRateFormatStyle {
-    static var bitRate: IntBitRateFormatStyle { IntBitRateFormatStyle() }
+    static var bitRate: IntBitRateFormatStyle {
+        IntBitRateFormatStyle()
+    }
 }

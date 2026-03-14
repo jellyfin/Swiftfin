@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Algorithms
@@ -50,7 +50,7 @@ extension BaseItemDto {
         let description = overview
 
         if type == .episode,
-           let seriesName = seriesName
+           let seriesName
         {
             title = seriesName
             subtitle = displayTitle
@@ -84,29 +84,29 @@ extension BaseItemDto {
 
         let title: String = {
             if type == .episode,
-               let seriesName = seriesName
+               let seriesName
             {
-                return seriesName
+                seriesName
             } else {
-                return displayTitle
+                displayTitle
             }
         }()
 
         let albumArtist: String? = {
             switch type {
             case .audio:
-                return artists?.joined(separator: ", ")
+                artists?.joined(separator: ", ")
             default:
-                return nil
+                nil
             }
         }()
 
         let albumTitle: String? = {
             switch type {
             case .audio:
-                return album
+                album
             default:
-                return nil
+                nil
             }
         }()
 
@@ -211,14 +211,14 @@ extension BaseItemDto {
                 ),
                     let mediaSource = channel.mediaSources?.first
                 else {
-                    throw JellyfinAPIError(L10n.unknownError)
+                    throw ErrorMessage(L10n.unknownError)
                 }
                 return try await MediaPlayerItem.build(for: program, mediaSource: mediaSource)
             }
         default:
             MediaPlayerItemProvider(item: self) { item in
                 guard let mediaSource = item.mediaSources?.first else {
-                    throw JellyfinAPIError(L10n.unknownError)
+                    throw ErrorMessage(L10n.unknownError)
                 }
                 return try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
             }
@@ -269,7 +269,7 @@ extension BaseItemDto {
             return formatter
         }()
 
-        guard let runTimeTicks = runTimeTicks,
+        guard let runTimeTicks,
               let text = timeHMSFormatter.string(from: Double(runTimeTicks / 10_000_000)) else { return nil }
 
         return text
@@ -333,9 +333,9 @@ extension BaseItemDto {
 
     var isUnaired: Bool {
         if let premierDate = premiereDate {
-            return premierDate > Date()
+            premierDate > Date()
         } else {
-            return false
+            false
         }
     }
 
@@ -345,7 +345,7 @@ extension BaseItemDto {
     }
 
     var premiereDateLabel: String? {
-        guard let premiereDate = premiereDate else { return nil }
+        guard let premiereDate else { return nil }
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
@@ -353,7 +353,7 @@ extension BaseItemDto {
     }
 
     var premiereDateYear: String? {
-        guard let premiereDate = premiereDate else { return nil }
+        guard let premiereDate else { return nil }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY"
         return dateFormatter.string(from: premiereDate)
@@ -379,6 +379,8 @@ extension BaseItemDto {
             .sorted(using: \.startPositionTicks)
             .compacted(using: \.startPositionTicks) else { return nil }
 
+        guard let userSession = Container.shared.currentUserSession() else { return nil }
+
         return chapters
             .enumerated()
             .map { i, chapter in
@@ -395,7 +397,7 @@ extension BaseItemDto {
                     parameters: parameters
                 )
 
-                let imageURL = Container.shared.currentUserSession()!
+                let imageURL = userSession
                     .client
                     .fullURL(with: request)
 
@@ -440,6 +442,8 @@ extension BaseItemDto {
 
     /// Can this `BaseItemDto` be played
     var presentPlayButton: Bool {
+        guard Container.shared.currentUserSession()?.user.data.policy?.enableMediaPlayback == true else { return false }
+
         switch type {
         case .audio, .audioBook, .book, .channel, .channelFolderItem, .episode,
              .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist,
@@ -456,9 +460,9 @@ extension BaseItemDto {
         case .audio, .audioBook, .book, .boxSet, .channel, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder,
              .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder,
              .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
@@ -496,15 +500,15 @@ extension BaseItemDto {
         case .audio, .audioBook, .book, .boxSet, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder, .movie,
              .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder, .program, .recording, .season,
              .series, .trailer, .tvProgram, .video:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
-    func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
+    func getFullItem(userSession: UserSession, sendNotification: Bool = false) async throws -> BaseItemDto {
         guard let id else {
-            throw JellyfinAPIError(L10n.unknownError)
+            throw ErrorMessage(L10n.unknownError)
         }
 
         let request = Paths.getItem(itemID: id, userID: userSession.user.id)
@@ -513,6 +517,10 @@ extension BaseItemDto {
         // A check against `id` would typically be done, but a plugin
         // may have provided `self` or the response item and may not
         // be invariant over `id`.
+
+        if sendNotification {
+            Notifications[.itemMetadataDidChange].post(response.value)
+        }
 
         return response.value
     }

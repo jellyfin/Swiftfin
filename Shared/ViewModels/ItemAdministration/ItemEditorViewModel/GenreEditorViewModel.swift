@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -12,13 +12,13 @@ import JellyfinAPI
 
 final class GenreEditorViewModel: ItemEditorViewModel<String> {
 
-    // MARK: - Populate the Trie
+    override func searchElements(_ searchTerm: String) async throws -> [String] {
+        let parameters = Paths.GetGenresParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
+        let request = Paths.getGenres(parameters: parameters)
+        let response = try await userSession.client.send(request)
 
-    override func populateTrie() {
-        trie.insert(contentsOf: elements.keyed(using: \.localizedLowercase))
+        return response.value.items?.compactMap(\.name) ?? []
     }
-
-    // MARK: - Add Genre(s)
 
     override func addComponents(_ genres: [String]) async throws {
         var updatedItem = item
@@ -29,15 +29,11 @@ final class GenreEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Remove Genre(s)
-
     override func removeComponents(_ genres: [String]) async throws {
         var updatedItem = item
         updatedItem.genres?.removeAll { genres.contains($0) }
         try await updateItem(updatedItem)
     }
-
-    // MARK: - Reorder Tag(s)
 
     override func reorderComponents(_ genres: [String]) async throws {
         var updatedItem = item
@@ -45,16 +41,11 @@ final class GenreEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Fetch All Possible Genres
+    override func containsElement(named name: String) -> Bool {
+        item.genres?.contains { $0.caseInsensitiveCompare(name) == .orderedSame } ?? false
+    }
 
-    override func fetchElements() async throws -> [String] {
-        let request = Paths.getGenres()
-        let response = try await userSession.client.send(request)
-
-        if let genres = response.value.items {
-            return genres.compactMap(\.name).compactMap { $0 }
-        } else {
-            return []
-        }
+    override func matchExists(named name: String) -> Bool {
+        matches.contains { $0.caseInsensitiveCompare(name) == .orderedSame }
     }
 }
