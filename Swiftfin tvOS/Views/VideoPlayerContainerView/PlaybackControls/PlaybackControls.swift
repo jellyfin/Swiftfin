@@ -87,6 +87,7 @@ extension VideoPlayer {
                         }
                     }
                 )
+                .focusSection()
                 .focusGuide(
                     focusGuide,
                     tag: "progressBar",

@@ -32,6 +32,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         private var focusedSupplementID: AnyMediaPlayerSupplement.ID?
 
         @State
+        private var lastFocusedSupplementID: AnyMediaPlayerSupplement.ID?
+        @State
         private var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
 
         private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
@@ -79,7 +81,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         focusGuide,
                         tag: "tabButtons",
                         onContentFocus: {
-                            focusedSupplementID = containerState.selectedSupplement?.id
+                            focusedSupplementID = lastFocusedSupplementID
+                                ?? containerState.selectedSupplement?.id
                                 ?? currentSupplements.first?.id
                         },
                         top: "dividerZone",
@@ -156,6 +159,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 containerState.selectedSupplement = nil
                 containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
                 focusedSupplementID = nil
+                lastFocusedSupplementID = nil
 
                 DispatchQueue.main.async {
                     focusGuide.transition(to: nil)
@@ -164,6 +168,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             }
             .onChange(of: focusedSupplementID) { oldValue, newValue in
                 guard oldValue != newValue, let newValue else { return }
+
+                lastFocusedSupplementID = newValue
 
                 if let supplement = currentSupplements[id: newValue] {
                     containerState.selectedSupplement = supplement.supplement
