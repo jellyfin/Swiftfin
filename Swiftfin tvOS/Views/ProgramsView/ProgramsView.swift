@@ -80,7 +80,7 @@ struct ProgramsView: View {
             switch programsViewModel.state {
             case .content:
                 if programsViewModel.hasNoResults {
-                    Text(L10n.noResults)
+                    ContentUnavailableView(L10n.noPrograms.localizedCapitalized, systemImage: "tv")
                 } else {
                     contentView
                 }
