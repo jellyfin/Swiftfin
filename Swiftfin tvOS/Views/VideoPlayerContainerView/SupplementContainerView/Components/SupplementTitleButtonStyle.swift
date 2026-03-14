@@ -36,7 +36,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay {
                     RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(isFocused ? accentColor : .white, lineWidth: 4)
+                        .strokeBorder(isFocused ? .clear : .white, lineWidth: 4)
                 }
                 .shadow(color: isFocused ? .black.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
         }

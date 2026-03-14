@@ -41,7 +41,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         }
 
         // TODO: scroll if larger than horizontal
-        // Just adding `.scrollIfLargerThanContainer()` breaks the FocusGuide
+        // - Just adding `.scrollIfLargerThanContainer()` breaks the FocusGuide
         private var supplementTabButtons: some View {
             HStack(spacing: 20) {
                 if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
