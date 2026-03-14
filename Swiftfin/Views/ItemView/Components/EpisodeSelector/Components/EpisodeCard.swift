@@ -16,8 +16,6 @@ extension SeriesEpisodeSelector {
 
         @Default(.accentColor)
         private var accentColor
-        @Default(.Customization.Indicators.showUnplayed)
-        private var showUnplayed
         @Default(.Customization.Indicators.showPlayed)
         private var showPlayed
 
@@ -36,13 +34,8 @@ extension SeriesEpisodeSelector {
                     title: progressLabel,
                     progress: (episode.userData?.playedPercentage ?? 0) / 100
                 )
-            } else if episode.userData?.isPlayed ?? false {
+            } else if episode.userData?.isPlayed ?? false, showPlayed {
                 WatchedIndicator(size: 25)
-                    .isVisible(showPlayed)
-            } else if episode.canBePlayed && !episode.isLiveStream {
-                UnwatchedIndicator(size: 25)
-                    .foregroundColor(accentColor)
-                    .isVisible(showUnplayed)
             }
         }
 
