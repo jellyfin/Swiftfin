@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -19,10 +19,12 @@ struct SettingsView: View {
     #if os(iOS)
     @Default(.userAppearance)
     private var appearance
-    #endif
-
     @Default(.userAccentColor)
     private var accentColor
+    #else
+    @Default(.accentColor)
+    private var accentColor
+    #endif
 
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
@@ -36,7 +38,7 @@ struct SettingsView: View {
         Form(image: .jellyfinBlobBlue) {
             serverSection
             videoPlayerSection
-            customizationSection
+            customizeSection
             diagnosticsSection
         }
         #if os(iOS)
@@ -53,7 +55,7 @@ struct SettingsView: View {
     private var serverSection: some View {
         Section {
             UserProfileRow(user: viewModel.userSession.user.data) {
-                router.route(to: .userProfile(viewModel: viewModel))
+                router.route(to: .localUserSettings(viewModel: viewModel))
             }
 
             ChevronButton(
@@ -75,7 +77,7 @@ struct SettingsView: View {
             }
 
             #if os(iOS)
-            if viewModel.userSession.user.permissions.isAdministrator {
+            if viewModel.userSession?.user.data.policy?.isAdministrator == true {
                 ChevronButton(L10n.dashboard) {
                     router.route(to: .adminDashboard)
                 }
@@ -131,24 +133,21 @@ struct SettingsView: View {
     // MARK: - Customization Section
 
     @ViewBuilder
-    private var customizationSection: some View {
-        Section(L10n.accessibility) {
+    private var customizeSection: some View {
+        Section {
             #if os(iOS)
             Picker(L10n.appearance, selection: $appearance)
             #endif
-
-            ChevronButton(L10n.customize) {
-                router.route(to: .customizeViewsSettings)
-            }
-        }
-
-        #if os(iOS)
-        Section {
             ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
+
+            ChevronButton(L10n.advanced) {
+                router.route(to: .customizeSettingsView)
+            }
+        } header: {
+            Text(L10n.customize)
         } footer: {
             Text(L10n.viewsMayRequireRestart)
         }
-        #endif
     }
 
     // MARK: - Diagnostics Section
@@ -156,11 +155,18 @@ struct SettingsView: View {
     @ViewBuilder
     private var diagnosticsSection: some View {
         Section {
+
+            if ExperimentalSettingsView.isEnabled {
+                ChevronButton(L10n.experimental) {
+                    router.route(to: .experimentalSettings)
+                }
+            }
+
             ChevronButton(L10n.logs) {
                 router.route(to: .log)
             }
 
-            #if DEBUG && os(iOS)
+            #if DEBUG
             ChevronButton("Debug") {
                 router.route(to: .debugSettings)
             }

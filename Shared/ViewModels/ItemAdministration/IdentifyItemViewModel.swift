@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -205,23 +205,6 @@ final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
         let request = Paths.applySearchCriteria(itemID: itemID, match)
         _ = try await userSession.client.send(request)
 
-        try await refreshItem()
-    }
-
-    // MARK: - Refresh Item
-
-    private func refreshItem() async throws {
-        guard let itemID = item.id else { return }
-
-        let request = Paths.getItem(
-            itemID: itemID,
-            userID: userSession.user.id
-        )
-        let response = try await userSession.client.send(request)
-
-        await MainActor.run {
-            self.item = response.value
-            Notifications[.itemShouldRefreshMetadata].post(itemID)
-        }
+        try await item = item.getFullItem(userSession: userSession, sendNotification: true)
     }
 }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -192,7 +192,7 @@ struct SearchView: View {
             case .initial:
                 if viewModel.hasNoResults {
                     if viewModel.canSearch {
-                        Text(L10n.noResults)
+                        ContentUnavailableView.search
                     } else {
                         suggestionsView
                     }

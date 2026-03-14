@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -27,7 +27,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         // 2 - if parent is type `folder`, then we are in a folder-view
         //     context so change `collectionFolder` types to `folder`
         //     for better view handling
-        let items = (response.value.items ?? [])
+        return (response.value.items ?? [])
             .filter { item in
                 if let collectionType = item.collectionType {
                     return CollectionType.supportedCases.contains(collectionType)
@@ -42,8 +42,6 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
                 return item
             }
-
-        return items
     }
 
     // MARK: item parameters

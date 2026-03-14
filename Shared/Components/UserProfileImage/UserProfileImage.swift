@@ -3,13 +3,13 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Nuke
 import SwiftUI
 
-struct UserProfileImage<Placeholder: View>: View {
+struct UserProfileImage: View {
 
     @Environment(\.isEditing)
     private var isEditing
@@ -21,14 +21,23 @@ struct UserProfileImage<Placeholder: View>: View {
     private let userID: String?
     private let source: ImageSource
     private let pipeline: ImagePipeline
-    private let placeholder: Placeholder
+
+    init(
+        userID: String?,
+        source: ImageSource,
+        pipeline: ImagePipeline = .Swiftfin.posters
+    ) {
+        self.userID = userID
+        self.source = source
+        self.pipeline = pipeline
+    }
 
     private var overlayOpacity: Double {
         /// Dim the Profile Image if Editing & Unselected or if Disabled
         if (isEditing && !isSelected) || !isEnabled {
-            return 0.5
+            0.5
         } else {
-            return 0.0
+            0.0
         }
     }
 
@@ -52,10 +61,16 @@ struct UserProfileImage<Placeholder: View>: View {
                             image.aspectRatio(contentMode: .fill)
                         }
                         .placeholder { _ in
-                            placeholder
+                            SystemImageContentView(
+                                systemName: "person.fill",
+                                ratio: 0.5
+                            )
                         }
                         .failure {
-                            placeholder
+                            SystemImageContentView(
+                                systemName: "person.fill",
+                                ratio: 0.5
+                            )
                         }
                         .overlay {
                             Color.black
@@ -69,37 +84,5 @@ struct UserProfileImage<Placeholder: View>: View {
         .clipShape(.circle)
         .aspectRatio(1, contentMode: .fit)
         .shadow(radius: 5)
-    }
-}
-
-extension UserProfileImage {
-
-    init(
-        userID: String?,
-        source: ImageSource,
-        pipeline: ImagePipeline = .Swiftfin.posters,
-        @ViewBuilder placeholder: @escaping () -> Placeholder
-    ) {
-        self.userID = userID
-        self.source = source
-        self.pipeline = pipeline
-        self.placeholder = placeholder()
-    }
-}
-
-extension UserProfileImage where Placeholder == SystemImageContentView {
-
-    init(
-        userID: String?,
-        source: ImageSource,
-        pipeline: ImagePipeline = .Swiftfin.posters
-    ) {
-        self.userID = userID
-        self.source = source
-        self.pipeline = pipeline
-        self.placeholder = SystemImageContentView(
-            systemName: "person.fill",
-            ratio: 0.5
-        )
     }
 }

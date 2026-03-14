@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwizzleSwift
@@ -30,18 +30,18 @@ extension UIViewController {
     @objc
     func swizzled_childForScreenEdgesDeferringSystemGestures() -> UIViewController? {
         if self is UIPreferencesHostingController {
-            return nil
+            nil
         } else {
-            return search()
+            search()
         }
     }
 
     @objc
     func swizzled_childForHomeIndicatorAutoHidden() -> UIViewController? {
         if self is UIPreferencesHostingController {
-            return nil
+            nil
         } else {
-            return search()
+            search()
         }
     }
 

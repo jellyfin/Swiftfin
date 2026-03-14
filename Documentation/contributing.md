@@ -4,6 +4,8 @@
 
 > Even if you can't contribute code, you can still help Jellyfin (Swiftfin)! The two main things you can help with are testing and creating issues. Contributing to code, documentation, ..., and other non-code components are all outlined in the sections below.
 
+> Please note [Jellyfin's LLM/AI Development Policy](https://jellyfin.org/docs/general/contributing/llm-policies/) applies to all Swiftfin contributions.
+
 ## Setup
 
 Fork the Swiftfin repo and install the necessary dependencies with Xcode 15:

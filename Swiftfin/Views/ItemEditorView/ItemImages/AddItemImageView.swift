@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import BlurHashKit
@@ -131,7 +131,7 @@ struct AddItemImageView: View {
     @ViewBuilder
     private var gridView: some View {
         if remoteImageInfoViewModel.elements.isEmpty {
-            Text(L10n.none)
+            ContentUnavailableView(L10n.noResults.localizedCapitalized, systemImage: "photo")
         } else {
             CollectionVGrid(
                 uniqueElements: remoteImageInfoViewModel.elements,

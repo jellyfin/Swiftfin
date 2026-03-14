@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 enum DoubleTouchGestureAction: String, GestureAction {
@@ -16,13 +16,13 @@ enum DoubleTouchGestureAction: String, GestureAction {
     var displayTitle: String {
         switch self {
         case .none:
-            return L10n.none
+            L10n.none
         case .aspectFill:
-            return L10n.aspectFill
+            L10n.aspectFill
         case .gestureLock:
-            return L10n.gestureLock
+            L10n.gestureLock
         case .pausePlay:
-            return L10n.playAndPause
+            L10n.playAndPause
         }
     }
 }

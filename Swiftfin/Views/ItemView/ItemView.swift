@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -27,37 +27,6 @@ struct ItemView: View {
 
     @StateObject
     private var viewModel: ItemViewModel
-    @StateObject
-    private var deleteViewModel: DeleteItemViewModel
-
-    @State
-    private var isPresentingConfirmationDialog = false
-    @State
-    private var isPresentingEventAlert = false
-    @State
-    private var error: ErrorMessage?
-
-    // MARK: - Can Delete Item
-
-    private var canDelete: Bool {
-        viewModel.userSession?.user.permissions.items.canDelete(item: viewModel.item) == true
-    }
-
-    // MARK: - Can Edit Item
-
-    private var canEdit: Bool {
-        viewModel.userSession?.user.permissions.items.canEditMetadata(item: viewModel.item) == true ||
-            viewModel.userSession?.user.permissions.items.canManageSubtitles(item: viewModel.item) == true
-
-        // TODO: Enable whenLyric Editing is added
-        // || viewModel.userSession.user.permissions.items.canManageLyrics(item: viewModel.item)
-    }
-
-    // MARK: - Deletion or Editing is Enabled
-
-    private var enableMenu: Bool {
-        canEdit || canDelete
-    }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
@@ -79,7 +48,6 @@ struct ItemView: View {
 
     init(item: BaseItemDto) {
         self._viewModel = StateObject(wrappedValue: Self.typeViewModel(for: item))
-        self._deleteViewModel = StateObject(wrappedValue: DeleteItemViewModel(item: item))
     }
 
     @ViewBuilder
@@ -99,9 +67,9 @@ struct ItemView: View {
     }
 
     // TODO: break out into pad vs phone views based on item type
-    private func scrollContainerView<Content: View>(
+    private func scrollContainerView(
         viewModel: ItemViewModel,
-        content: @escaping () -> Content
+        content: @escaping () -> some View
     ) -> any ScrollContainerView {
 
         if UIDevice.isPad {
@@ -155,48 +123,9 @@ struct ItemView: View {
         }
         .navigationBarMenuButton(
             isLoading: viewModel.backgroundStates.contains(.refresh),
-            isHidden: !enableMenu
+            isHidden: !viewModel.item.showEditorMenu
         ) {
-            if canEdit {
-                Button(L10n.edit, systemImage: "pencil") {
-                    router.route(to: .itemEditor(viewModel: viewModel))
-                }
-            }
-
-            if canDelete {
-                Section {
-                    Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                        isPresentingConfirmationDialog = true
-                    }
-                }
-            }
-        }
-        .confirmationDialog(
-            L10n.deleteItemConfirmationMessage,
-            isPresented: $isPresentingConfirmationDialog,
-            titleVisibility: .visible
-        ) {
-            Button(L10n.confirm, role: .destructive) {
-                deleteViewModel.send(.delete)
-            }
-            Button(L10n.cancel, role: .cancel) {}
-        }
-        .onReceive(deleteViewModel.events) { event in
-            switch event {
-            case let .error(eventError):
-                error = eventError
-                isPresentingEventAlert = true
-            case .deleted:
-                router.dismiss()
-            }
-        }
-        .alert(
-            L10n.error,
-            isPresented: $isPresentingEventAlert,
-            presenting: error
-        ) { _ in
-        } message: { error in
-            Text(error.localizedDescription)
+            ItemEditorMenu(item: viewModel.item)
         }
     }
 }

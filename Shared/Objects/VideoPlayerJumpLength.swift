@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -24,26 +24,26 @@ enum VideoPlayerJumpLength: Int, CaseIterable, Defaults.Serializable, Displayabl
     var forwardImageLabel: String {
         switch self {
         case .thirty:
-            return "goforward.30"
+            "goforward.30"
         case .fifteen:
-            return "goforward.15"
+            "goforward.15"
         case .ten:
-            return "goforward.10"
+            "goforward.10"
         case .five:
-            return "goforward.5"
+            "goforward.5"
         }
     }
 
     var backwardImageLabel: String {
         switch self {
         case .thirty:
-            return "gobackward.30"
+            "gobackward.30"
         case .fifteen:
-            return "gobackward.15"
+            "gobackward.15"
         case .ten:
-            return "gobackward.10"
+            "gobackward.10"
         case .five:
-            return "gobackward.5"
+            "gobackward.5"
         }
     }
 }

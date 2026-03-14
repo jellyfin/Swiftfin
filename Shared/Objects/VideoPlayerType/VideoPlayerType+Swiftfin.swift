@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -45,6 +45,37 @@ extension VideoPlayerType {
             AudioCodec.wmapro
             AudioCodec.wmav1
             AudioCodec.wmav2
+        } videoCodecs: {
+
+            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices
+            ///  - Defaulting to disabled but can be enabled in custom profiles if desired.
+            if PlaybackCapabilities.supportsAV1 {
+                VideoCodec.av1
+            }
+
+            VideoCodec.dirac
+            VideoCodec.dv
+            VideoCodec.ffv1
+            VideoCodec.flv1
+            VideoCodec.h261
+            VideoCodec.h263
+            VideoCodec.h264
+            VideoCodec.hevc
+            VideoCodec.mjpeg
+            VideoCodec.mpeg1video
+            VideoCodec.mpeg2video
+            VideoCodec.mpeg4
+            VideoCodec.msmpeg4v1
+            VideoCodec.msmpeg4v2
+            VideoCodec.msmpeg4v3
+            VideoCodec.prores
+            VideoCodec.theora
+            VideoCodec.vc1
+            VideoCodec.vp8
+            VideoCodec.vp9
+            VideoCodec.wmv1
+            VideoCodec.wmv2
+            VideoCodec.wmv3
         }
     }
 
@@ -72,7 +103,14 @@ extension VideoPlayerType {
             AudioCodec.opus
             AudioCodec.vorbis
         } videoCodecs: {
-            VideoCodec.av1
+
+            /// - Note: Transcode Profiles prioritizes codecs by order
+            /// This is possible with non-AV1 supported devices but the FPS is terrible on some devices
+            ///  - Defaulting to disabled but can be enabled in custom profiles if desired.
+            if PlaybackCapabilities.supportsAV1 {
+                VideoCodec.av1
+            }
+
             VideoCodec.h263
             VideoCodec.h264
             VideoCodec.hevc
@@ -153,6 +191,7 @@ extension VideoPlayerType {
                     property: .videoRangeType
                 ) {
                     VideoRangeType.sdr
+                    VideoRangeType.doviWithSDR
                 }
             }
         )
@@ -186,12 +225,7 @@ extension VideoPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    VideoRangeType.sdr
-                    VideoRangeType.hdr10
-                    VideoRangeType.hdr10Plus
-                    VideoRangeType.doviWithSDR
-                    VideoRangeType.doviWithHDR10
-                    VideoRangeType.doviWithHDR10Plus
+                    swiftfinHDRProfiles
                 }
             }
         )
@@ -217,12 +251,7 @@ extension VideoPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    VideoRangeType.sdr
-                    VideoRangeType.hdr10
-                    VideoRangeType.hdr10Plus
-                    VideoRangeType.doviWithSDR
-                    VideoRangeType.doviWithHDR10
-                    VideoRangeType.doviWithHDR10Plus
+                    swiftfinHDRProfiles
                 }
             }
         )
@@ -248,14 +277,26 @@ extension VideoPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    VideoRangeType.sdr
-                    VideoRangeType.hdr10
-                    VideoRangeType.hdr10Plus
-                    VideoRangeType.doviWithSDR
-                    VideoRangeType.doviWithHDR10
-                    VideoRangeType.doviWithHDR10Plus
+                    swiftfinHDRProfiles
                 }
             }
         )
+    }
+
+    @ArrayBuilder<VideoRangeType>
+    private static var swiftfinHDRProfiles: [VideoRangeType] {
+
+        VideoRangeType.sdr
+        VideoRangeType.doviWithSDR
+
+        if PlaybackCapabilities.hdrEnabled {
+            VideoRangeType.hlg
+            VideoRangeType.hdr10
+            VideoRangeType.hdr10Plus
+            VideoRangeType.doviWithHLG
+            VideoRangeType.doviWithHDR10
+            VideoRangeType.doviWithHDR10Plus
+            VideoRangeType.doviWithELHDR10Plus
+        }
     }
 }

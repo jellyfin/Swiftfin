@@ -3,18 +3,16 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
 
-@ViewBuilder
-func Picker<Element: CaseIterable & Displayable & Hashable>(
-    _ title: String,
-    selection: Binding<Element?>,
-    noneStyle: Picker<EmptyView, Element, EmptyView>.NoneStyle = .text
-) -> some View {
-    SwiftUI.Picker(title, selection: selection) {
+struct _OptionalCaseIterablePickerContent<Element: CaseIterable & Displayable & Hashable>: View {
+
+    let noneStyle: NoneStyle
+
+    var body: some View {
         Text(noneStyle.displayTitle)
             .tag(nil as Element?)
 
@@ -25,12 +23,9 @@ func Picker<Element: CaseIterable & Displayable & Hashable>(
     }
 }
 
-@ViewBuilder
-func Picker<Element: CaseIterable & Displayable & Hashable>(
-    _ title: String,
-    selection: Binding<Element>
-) -> some View {
-    SwiftUI.Picker(title, selection: selection) {
+struct _CaseIterablePickerContent<Element: CaseIterable & Displayable & Hashable>: View {
+
+    var body: some View {
         ForEach(Element.allCases.asArray, id: \.hashValue) {
             Text($0.displayTitle)
                 .tag($0 as Element)
@@ -38,16 +33,15 @@ func Picker<Element: CaseIterable & Displayable & Hashable>(
     }
 }
 
-@ViewBuilder
-func Picker<Element: SupportedCaseIterable & Displayable & Hashable>(
-    _ title: String,
-    selection: Binding<Element>,
-    onlySupported: Bool = false
-) -> some View {
+struct _SupportedCaseIterablePickerContent<Element: SupportedCaseIterable & Displayable & Hashable>: View {
 
-    let elements = onlySupported ? Element.supportedCases.asArray : Element.allCases.asArray
+    let onlySupported: Bool
 
-    SwiftUI.Picker(title, selection: selection) {
+    private var elements: [Element] {
+        onlySupported ? Element.supportedCases.asArray : Element.allCases.asArray
+    }
+
+    var body: some View {
         ForEach(elements, id: \.hashValue) {
             Text($0.displayTitle)
                 .tag($0 as Element)
@@ -55,14 +49,13 @@ func Picker<Element: SupportedCaseIterable & Displayable & Hashable>(
     }
 }
 
-@ViewBuilder
-func Picker<Element: Identifiable & Displayable & Hashable, Data: RandomAccessCollection>(
-    _ title: String,
-    sources: Data,
-    selection: Binding<Element?>,
-    noneStyle: Picker<EmptyView, Element, EmptyView>.NoneStyle = .text
-) -> some View where Data.Element == Element {
-    SwiftUI.Picker(title, selection: selection) {
+struct _OptionalSourcesPickerContent<Element: Identifiable & Displayable & Hashable, Data: RandomAccessCollection>: View
+where Data.Element == Element {
+
+    let sources: Data
+    let noneStyle: NoneStyle
+
+    var body: some View {
         Text(noneStyle.displayTitle)
             .tag(nil as Element?)
 
@@ -73,25 +66,45 @@ func Picker<Element: Identifiable & Displayable & Hashable, Data: RandomAccessCo
     }
 }
 
-extension Picker {
+extension Picker where Label == Text {
 
-    enum NoneStyle: Displayable {
+    init<E: CaseIterable & Displayable & Hashable>(
+        _ title: String,
+        selection: Binding<E?>,
+        noneStyle: NoneStyle = .text
+    ) where SelectionValue == E?, Content == _OptionalCaseIterablePickerContent<E> {
+        self.init(title, selection: selection) {
+            _OptionalCaseIterablePickerContent<E>(noneStyle: noneStyle)
+        }
+    }
 
-        case text
-        case dash(Int)
-        case custom(String)
+    init(
+        _ title: String,
+        selection: Binding<SelectionValue>
+    ) where SelectionValue: CaseIterable & Displayable & Hashable, Content == _CaseIterablePickerContent<SelectionValue> {
+        self.init(title, selection: selection) {
+            _CaseIterablePickerContent<SelectionValue>()
+        }
+    }
 
-        var displayTitle: String {
-            switch self {
-            case .text:
-                return L10n.none
-            case let .dash(length):
-                assert(length >= 1, "Dash must have length of at least 1.")
-                return String(repeating: "-", count: length)
-            case let .custom(text):
-                assert(text.isNotEmpty, "Custom text must have length of at least 1.")
-                return text
-            }
+    init(
+        _ title: String,
+        selection: Binding<SelectionValue>,
+        onlySupported: Bool = false
+    ) where SelectionValue: Displayable & Hashable & SupportedCaseIterable, Content == _SupportedCaseIterablePickerContent<SelectionValue> {
+        self.init(title, selection: selection) {
+            _SupportedCaseIterablePickerContent<SelectionValue>(onlySupported: onlySupported)
+        }
+    }
+
+    init<E: Displayable & Hashable & Identifiable, Data: RandomAccessCollection>(
+        _ title: String,
+        sources: Data,
+        selection: Binding<E?>,
+        noneStyle: NoneStyle = .text
+    ) where SelectionValue == E?, Content == _OptionalSourcesPickerContent<E, Data>, Data.Element == E {
+        self.init(title, selection: selection) {
+            _OptionalSourcesPickerContent(sources: sources, noneStyle: noneStyle)
         }
     }
 }

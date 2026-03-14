@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Algorithms
@@ -50,7 +50,7 @@ extension BaseItemDto {
         let description = overview
 
         if type == .episode,
-           let seriesName = seriesName
+           let seriesName
         {
             title = seriesName
             subtitle = displayTitle
@@ -84,29 +84,29 @@ extension BaseItemDto {
 
         let title: String = {
             if type == .episode,
-               let seriesName = seriesName
+               let seriesName
             {
-                return seriesName
+                seriesName
             } else {
-                return displayTitle
+                displayTitle
             }
         }()
 
         let albumArtist: String? = {
             switch type {
             case .audio:
-                return artists?.joined(separator: ", ")
+                artists?.joined(separator: ", ")
             default:
-                return nil
+                nil
             }
         }()
 
         let albumTitle: String? = {
             switch type {
             case .audio:
-                return album
+                album
             default:
-                return nil
+                nil
             }
         }()
 
@@ -269,7 +269,7 @@ extension BaseItemDto {
             return formatter
         }()
 
-        guard let runTimeTicks = runTimeTicks,
+        guard let runTimeTicks,
               let text = timeHMSFormatter.string(from: Double(runTimeTicks / 10_000_000)) else { return nil }
 
         return text
@@ -333,9 +333,9 @@ extension BaseItemDto {
 
     var isUnaired: Bool {
         if let premierDate = premiereDate {
-            return premierDate > Date()
+            premierDate > Date()
         } else {
-            return false
+            false
         }
     }
 
@@ -345,7 +345,7 @@ extension BaseItemDto {
     }
 
     var premiereDateLabel: String? {
-        guard let premiereDate = premiereDate else { return nil }
+        guard let premiereDate else { return nil }
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
@@ -353,7 +353,7 @@ extension BaseItemDto {
     }
 
     var premiereDateYear: String? {
-        guard let premiereDate = premiereDate else { return nil }
+        guard let premiereDate else { return nil }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY"
         return dateFormatter.string(from: premiereDate)
@@ -442,6 +442,8 @@ extension BaseItemDto {
 
     /// Can this `BaseItemDto` be played
     var presentPlayButton: Bool {
+        guard Container.shared.currentUserSession()?.user.data.policy?.enableMediaPlayback == true else { return false }
+
         switch type {
         case .audio, .audioBook, .book, .channel, .channelFolderItem, .episode,
              .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist,
@@ -458,9 +460,9 @@ extension BaseItemDto {
         case .audio, .audioBook, .book, .boxSet, .channel, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder,
              .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder,
              .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
@@ -481,12 +483,28 @@ extension BaseItemDto {
         return L10n.play
     }
 
+    /// Label for the parent's type
+    var parentLabel: String? {
+        switch type {
+        case .audio:
+            L10n.album
+        case .episode:
+            L10n.series
+        case .musicAlbum:
+            L10n.artist
+        default:
+            nil
+        }
+    }
+
     var parentTitle: String? {
         switch type {
         case .audio:
             album
         case .episode:
             seriesName
+        case .musicAlbum:
+            albumArtist
         default:
             nil
         }
@@ -498,13 +516,13 @@ extension BaseItemDto {
         case .audio, .audioBook, .book, .boxSet, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder, .movie,
              .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder, .program, .recording, .season,
              .series, .trailer, .tvProgram, .video:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
-    func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
+    func getFullItem(userSession: UserSession, sendNotification: Bool = false) async throws -> BaseItemDto {
         guard let id else {
             throw ErrorMessage(L10n.unknownError)
         }
@@ -515,6 +533,10 @@ extension BaseItemDto {
         // A check against `id` would typically be done, but a plugin
         // may have provided `self` or the response item and may not
         // be invariant over `id`.
+
+        if sendNotification {
+            Notifications[.itemMetadataDidChange].post(response.value)
+        }
 
         return response.value
     }

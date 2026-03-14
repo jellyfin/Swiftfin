@@ -236,7 +236,6 @@
 				ViewModels/DownloadListViewModel.swift,
 				ViewModels/ItemAdministration/IdentifyItemViewModel.swift,
 				ViewModels/ItemAdministration/ItemEditorViewModel/GenreEditorViewModel.swift,
-				ViewModels/ItemAdministration/ItemEditorViewModel/ItemEditorViewModel.swift,
 				ViewModels/ItemAdministration/ItemEditorViewModel/PeopleEditorViewModel.swift,
 				ViewModels/ItemAdministration/ItemEditorViewModel/StudioEditorViewModel.swift,
 				ViewModels/ItemAdministration/ItemEditorViewModel/TagEditorViewModel.swift,
@@ -686,6 +685,10 @@
 				mn,
 				km,
 				lv,
+				peo,
+				fa,
+				et,
+				enm,
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
