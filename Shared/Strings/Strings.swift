@@ -1004,10 +1004,16 @@ internal enum L10n {
   internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
   /// No
   internal static let no = L10n.tr("Localizable", "no", fallback: "No")
+  /// No activity
+  internal static let noActivity = L10n.tr("Localizable", "noActivity", fallback: "No activity")
+  /// No channels
+  internal static let noChannels = L10n.tr("Localizable", "noChannels", fallback: "No channels")
   /// No profiles defined. Playback issues may occur.
   internal static let noDeviceProfileWarning = L10n.tr("Localizable", "noDeviceProfileWarning", fallback: "No profiles defined. Playback issues may occur.")
   /// No episodes available
   internal static let noEpisodesAvailable = L10n.tr("Localizable", "noEpisodesAvailable", fallback: "No episodes available")
+  /// No items
+  internal static let noItems = L10n.tr("Localizable", "noItems", fallback: "No items")
   /// No item selected
   internal static let noItemSelected = L10n.tr("Localizable", "noItemSelected", fallback: "No item selected")
   /// No local servers found
@@ -1016,10 +1022,12 @@ internal enum L10n {
   internal static let `none` = L10n.tr("Localizable", "none", fallback: "None")
   /// No overview available
   internal static let noOverviewAvailable = L10n.tr("Localizable", "noOverviewAvailable", fallback: "No overview available")
+  /// No programs
+  internal static let noPrograms = L10n.tr("Localizable", "noPrograms", fallback: "No programs")
   /// No public users
   internal static let noPublicUsers = L10n.tr("Localizable", "noPublicUsers", fallback: "No public users")
-  /// No results.
-  internal static let noResults = L10n.tr("Localizable", "noResults", fallback: "No results.")
+  /// No results
+  internal static let noResults = L10n.tr("Localizable", "noResults", fallback: "No results")
   /// Normal
   internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
   /// No runtime limit
