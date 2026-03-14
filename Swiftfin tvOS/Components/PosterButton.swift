@@ -182,6 +182,7 @@ extension PosterButton {
 
     // TODO: Find better way for these indicators, see EpisodeCard
     struct DefaultOverlay: View {
+
         @Default(.accentColor)
         private var accentColor
         @Default(.Customization.Indicators.showFavorited)
