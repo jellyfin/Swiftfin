@@ -13,22 +13,24 @@ extension VideoPlayer.PlaybackControls {
 
     struct SplitTimeStamp: PlatformView {
 
-        @Default(.VideoPlayer.Overlay.trailingTimestampType)
-        private var trailingTimestampType
-
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
-
-        @State
-        private var activeSeconds: Duration = .zero
 
         private var scrubbedSeconds: Duration {
             scrubbedSecondsBox.value
         }
+
+        // MARK: - iOS
+
+        @Default(.VideoPlayer.Overlay.trailingTimestampType)
+        private var trailingTimestampType
+
+        @State
+        private var activeSeconds: Duration = .zero
 
         @ViewBuilder
         private var leadingTimestamp: some View {
@@ -74,23 +76,6 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        @State
-        private var contentSize: CGSize = .zero
-        @State
-        private var leadingTimestampSize: CGSize = .zero
-        @State
-        private var trailingTimestampSize: CGSize = .zero
-
-        private var scrubbedProgress: Double {
-            guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
-            return scrubbedSeconds / runtime
-        }
-
-        private var previewXOffset: CGFloat {
-            let p = contentSize.width * scrubbedProgress - (leadingTimestampSize.width / 2)
-            return clamp(p, min: 0, max: contentSize.width - (trailingTimestampSize.width + leadingTimestampSize.width))
-        }
-
         @ViewBuilder
         var iOSView: some View {
             HStack {
@@ -125,6 +110,25 @@ extension VideoPlayer.PlaybackControls {
             .lineLimit(1)
             .foregroundStyle(containerState.isScrubbing ? .primary : .secondary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
+        }
+
+        // MARK: - tvOS
+
+        @State
+        private var contentSize: CGSize = .zero
+        @State
+        private var leadingTimestampSize: CGSize = .zero
+        @State
+        private var trailingTimestampSize: CGSize = .zero
+
+        private var scrubbedProgress: Double {
+            guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+            return scrubbedSeconds / runtime
+        }
+
+        private var previewXOffset: CGFloat {
+            let p = contentSize.width * scrubbedProgress - (leadingTimestampSize.width / 2)
+            return clamp(p, min: 0, max: contentSize.width - (trailingTimestampSize.width + leadingTimestampSize.width))
         }
 
         @ViewBuilder

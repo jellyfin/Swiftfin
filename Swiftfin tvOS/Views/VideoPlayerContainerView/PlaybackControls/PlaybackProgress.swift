@@ -21,10 +21,13 @@ import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
-    struct PlaybackProgress: PlatformView {
+    struct PlaybackProgress: View {
 
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
+
+        @Toaster
+        private var toaster: ToastProxy
 
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
@@ -33,27 +36,13 @@ extension VideoPlayer.PlaybackControls {
         @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>
 
-        @State
-        private var sliderSize: CGSize = .zero
-
-        #if os(iOS)
-        @State
-        private var currentTranslation: CGPoint = .zero
-
-        private let previewImageHeight: CGFloat = 85
-
-        #elseif os(tvOS)
-
-        @Toaster
-        private var toaster: ToastProxy
-
         @FocusState
         private var isFocused: Bool
 
-        private let previewImageHeight: CGFloat = 200
+        @State
+        private var sliderSize: CGSize = .zero
 
-        var onPanScrubChanged: ((Bool) -> Void)?
-        #endif
+        private let previewImageHeight: CGFloat = 200
 
         private var isScrubbing: Bool {
             get {
@@ -64,13 +53,11 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        private var scrubbedSeconds: Duration {
-            scrubbedSecondsBox.value
-        }
+        var onPanScrubChanged: ((Bool) -> Void)?
 
         private var scrubbedProgress: Double {
             guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
-            return scrubbedSeconds / runtime
+            return scrubbedSecondsBox.value / runtime
         }
 
         private var videoSizeAspectRatio: CGFloat {
@@ -93,127 +80,21 @@ extension VideoPlayer.PlaybackControls {
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundStyle(.white)
-                .padding(.horizontal, UIDevice.isTV ? 16 : 8)
-                .padding(.vertical, UIDevice.isTV ? 4 : 2)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 4)
                 .background {
                     Capsule()
                         .fill(Color.gray)
                 }
         }
 
-        #if os(iOS)
-        private var isSlowScrubbing: Bool {
-            isScrubbing && (currentTranslation.y >= 60)
-        }
-
-        private var progress: Double {
-            scrubbedSeconds / (manager.item.runtime ?? .seconds(1))
-        }
-
-        @ViewBuilder
-        private var slowScrubbingIndicator: some View {
-            HStack {
-                Image(systemName: "backward.fill")
-                Text(L10n.slowScrubbing.localizedCapitalized)
-                Image(systemName: "forward.fill")
-            }
-            .font(.caption)
-        }
-
-        @ViewBuilder
-        private var capsuleSlider: some View {
-            AlternateLayoutView {
-                EmptyHitTestView()
-                    .frame(height: 10)
-                    .trackingSize($sliderSize)
-            } content: {
-                // Use scale effect, slider doesn't respond well to horizontal frame changes
-                let xScale = max(1, sliderSize.width / (sliderSize.width - EdgeInsets.edgePadding * 2))
-
-                CapsuleSlider(
-                    value: $scrubbedSecondsBox.value.map(
-                        getter: { $0.seconds },
-                        setter: { .seconds($0) }
-                    ),
-                    total: max(1, (manager.item.runtime ?? .zero).seconds),
-                    translation: $currentTranslation,
-                    valueDamping: isSlowScrubbing ? 0.1 : 1
-                )
-                .gesturePadding(30)
-                .onEditingChanged { newValue in
-                    isScrubbing = newValue
-                }
-                .if(chapterSlider) { view in
-                    view.ifLet(manager.item.fullChapterInfo) { view, chapters in
-                        if chapters.isEmpty {
-                            view
-                        } else {
-                            view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
-                        }
-                    }
-                }
-                .frame(maxWidth: sliderSize != .zero ? sliderSize.width - EdgeInsets.edgePadding * 2 : .infinity)
-                .scaleEffect(x: isScrubbing ? xScale : 1, y: 1, anchor: .center)
-                .frame(height: isScrubbing ? 20 : 10)
-                .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
-            }
-            .animation(.linear(duration: 0.05), value: scrubbedSeconds)
-            .frame(height: 10)
-            .disabled(manager.state == .loadingItem)
-        }
-
-        #elseif os(tvOS)
         private func originProgress(resolution: Double) -> Double? {
             guard let origin = containerState.scrubOriginSeconds,
                   let runtime = manager.item.runtime, runtime > .zero else { return nil }
             return clamp((origin.seconds / runtime.seconds) * resolution, min: 0, max: resolution)
         }
-        #endif
 
-        var iOSView: some View {
-            #if os(iOS)
-            VStack(spacing: 5) {
-                if manager.item.isLiveStream {
-                    liveIndicator
-                        .edgePadding(.horizontal)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                } else {
-                    capsuleSlider
-                        .trackingSize($sliderSize)
-
-                    SplitTimeStamp()
-                        .offset(y: isScrubbing ? 5 : 0)
-                        .frame(maxWidth: isScrubbing ? nil : max(0, sliderSize.width - EdgeInsets.edgePadding * 2))
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
-            .overlay(alignment: .topLeading) {
-                if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
-                    PreviewImageView(previewImageProvider: previewImageProvider)
-                        .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
-                        .frame(height: previewImageHeight)
-                        .posterBorder()
-                        .cornerRadius(ratio: 1 / 30, of: \.width)
-                        .offset(x: previewXOffset, y: -100)
-                }
-            }
-            .overlay(alignment: .bottom) {
-                if isSlowScrubbing {
-                    slowScrubbingIndicator
-                        .offset(y: EdgeInsets.edgePadding * 2)
-                        .transition(.opacity.animation(.linear(duration: 0.1)))
-                }
-            }
-            .onChange(of: isSlowScrubbing) { _ in
-                guard isScrubbing else { return }
-                UIDevice.impact(.soft)
-            }
-            #endif
-        }
-
-        var tvOSView: some View {
-            #if os(tvOS)
+        var body: some View {
             VStack(spacing: 10) {
                 if manager.item.isLiveStream {
                     liveIndicator
@@ -277,7 +158,6 @@ extension VideoPlayer.PlaybackControls {
             .onChange(of: isFocused) { _, newValue in
                 containerState.isProgressBarFocused = newValue
             }
-            #endif
         }
     }
 }
