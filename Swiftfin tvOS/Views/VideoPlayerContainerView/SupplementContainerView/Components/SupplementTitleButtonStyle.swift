@@ -24,13 +24,13 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .fontWeight(.semibold)
-                .foregroundStyle(isFocused || isSelected ? .black : .white)
+                .foregroundStyle(isFocused ? accentColor.overlayColor : isSelected ? .black : .white)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background {
                     if isFocused || isSelected {
                         RoundedRectangle(cornerRadius: 10)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(isFocused ? accentColor : .white)
                     }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 10))
