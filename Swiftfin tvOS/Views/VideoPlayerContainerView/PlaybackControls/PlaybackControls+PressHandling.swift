@@ -12,7 +12,7 @@ extension VideoPlayer.PlaybackControls {
 
     func handlePressEvent(_ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent) {
 
-        if !isPresentingOverlay {
+        if !containerState.isPresentingOverlay {
             containerState.isPresentingOverlay = true
             press.resolve(.handled)
             return
@@ -32,7 +32,7 @@ extension VideoPlayer.PlaybackControls {
     private func handleLeftArrow(
         _ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent
     ) {
-        guard isProgressBarFocused else {
+        guard containerState.isProgressBarFocused else {
             press.resolve(.fallback)
             return
         }
@@ -53,7 +53,7 @@ extension VideoPlayer.PlaybackControls {
     private func handleRightArrow(
         _ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent
     ) {
-        guard isProgressBarFocused else {
+        guard containerState.isProgressBarFocused else {
             press.resolve(.fallback)
             return
         }

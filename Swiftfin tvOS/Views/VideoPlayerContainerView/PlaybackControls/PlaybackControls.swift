@@ -53,32 +53,6 @@ extension VideoPlayer {
         @StateObject
         private var childFocusGuide = FocusGuide()
 
-        var isProgressBarFocused: Bool {
-            containerState.isProgressBarFocused
-        }
-
-        var isPresentingOverlay: Bool {
-            containerState.isPresentingOverlay
-        }
-
-        var isPresentingSupplement: Bool {
-            containerState.isPresentingSupplement
-        }
-
-        private var isScrubbing: Bool {
-            containerState.isScrubbing
-        }
-
-        var hasEnteredScrubMode: Bool {
-            get { containerState.hasEnteredScrubMode }
-            nonmutating set { containerState.hasEnteredScrubMode = newValue }
-        }
-
-        var scrubOriginSeconds: Duration? {
-            get { containerState.scrubOriginSeconds }
-            nonmutating set { containerState.scrubOriginSeconds = newValue }
-        }
-
         private var bottomContent: some View {
             VStack(spacing: 10) {
                 NavigationBar()
@@ -99,17 +73,17 @@ extension VideoPlayer {
                         bottom: "progressBar"
                     )
                     .fixedSize(horizontal: false, vertical: true)
-                    .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
-                    .disabled(isPresentingSupplement)
-                    .animation(Self.supplementTransition, value: isPresentingSupplement)
+                    .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
+                    .disabled(containerState.isPresentingSupplement)
+                    .animation(Self.supplementTransition, value: containerState.isPresentingSupplement)
 
                 PlaybackProgress(
                     onPanScrubChanged: { isPanning in
                         if isPanning {
-                            if scrubOriginSeconds == nil {
-                                scrubOriginSeconds = manager.seconds
+                            if containerState.scrubOriginSeconds == nil {
+                                containerState.scrubOriginSeconds = manager.seconds
                             }
-                            hasEnteredScrubMode = true
+                            containerState.hasEnteredScrubMode = true
                         }
                     }
                 )
@@ -120,9 +94,9 @@ extension VideoPlayer {
                     bottom: "dividerZone"
                 )
                 .fixedSize(horizontal: false, vertical: true)
-                .isVisible((isPresentingOverlay || isScrubbing) && !isPresentingSupplement)
-                .disabled(isPresentingSupplement)
-                .animation(Self.supplementTransition, value: isPresentingSupplement)
+                .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
+                .disabled(containerState.isPresentingSupplement)
+                .animation(Self.supplementTransition, value: containerState.isPresentingSupplement)
 
                 Color.clear
                     .frame(height: 0)
@@ -131,7 +105,7 @@ extension VideoPlayer {
                         tag: "dividerZone",
                         onContentFocus: {
                             if focusGuide.lastFocusedTag == "tabButtons" {
-                                if isPresentingSupplement {
+                                if containerState.isPresentingSupplement {
                                     containerState.selectedSupplement = nil
                                     containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
 
@@ -149,7 +123,7 @@ extension VideoPlayer {
                         bottom: "tabButtons"
                     )
                     .fixedSize(horizontal: false, vertical: true)
-                    .isVisible(isPresentingOverlay)
+                    .isVisible(containerState.isPresentingOverlay)
             }
         }
 
@@ -168,13 +142,14 @@ extension VideoPlayer {
                                 (location: 1, opacity: 0.5)
                             }
                             .frame(height: bottomContentFrame.height + 50 + EdgeInsets.edgePadding * 2)
-                            .isVisible((isScrubbing || isPresentingOverlay) && !isPresentingSupplement)
+                            .isVisible((containerState.isScrubbing || containerState.isPresentingOverlay) && !containerState
+                                .isPresentingSupplement)
                             .allowsHitTesting(false)
                     }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .animation(.linear(duration: 0.1), value: isScrubbing)
-            .animation(.easeInOut(duration: 0.25), value: isPresentingOverlay)
+            .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
+            .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
             .alert(L10n.closePlayer, isPresented: $containerState.isPresentingCloseConfirmation) {
                 Button(L10n.cancel, role: .cancel) {}
                 Button(L10n.ok, role: .destructive) {
@@ -195,7 +170,7 @@ extension VideoPlayer {
                 }
             }
             .onChange(of: manager.playbackRequestStatus) { _, newValue in
-                if newValue == .paused, !isPresentingOverlay {
+                if newValue == .paused, !containerState.isPresentingOverlay {
                     containerState.isPresentingOverlay = true
                 }
             }
@@ -204,7 +179,7 @@ extension VideoPlayer {
             }
             .onChange(of: containerState.isProgressBarFocused) { _, newValue in
                 if !newValue {
-                    if hasEnteredScrubMode {
+                    if containerState.hasEnteredScrubMode {
                         cancelScrubbing()
                     }
                     if isSpeedBoosting {
@@ -213,8 +188,8 @@ extension VideoPlayer {
                 }
             }
             .onReceive(manager.secondsBox.$value) { newSeconds in
-                if hasEnteredScrubMode {
-                    scrubOriginSeconds = newSeconds
+                if containerState.hasEnteredScrubMode {
+                    containerState.scrubOriginSeconds = newSeconds
                 }
             }
         }

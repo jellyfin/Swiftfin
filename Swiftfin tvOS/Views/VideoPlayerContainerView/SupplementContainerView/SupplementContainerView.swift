@@ -32,18 +32,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         private var focusedSupplementID: AnyMediaPlayerSupplement.ID?
 
         @State
-        private var lastFocusedSupplementID: AnyMediaPlayerSupplement.ID?
-
-        @State
         private var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
-
-        private var isPresentingSupplement: Bool {
-            containerState.isPresentingSupplement
-        }
-
-        private var isContainerVisible: Bool {
-            containerState.isPresentingOverlay && !containerState.isScrubbing
-        }
 
         private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
             supplement.videoPlayerBody
@@ -61,7 +50,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     }
                     .buttonStyle(SupplementTitleButtonStyle())
                     .isSelected(true)
-                    .focused($focusedSupplementID, equals: supplement.id)
                 } else {
                     ForEach(currentSupplements) { supplement in
                         Button {
@@ -71,10 +59,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                             Text(supplement.displayTitle)
                         }
                         .buttonStyle(SupplementTitleButtonStyle())
-                        .isSelected(
-                            focusedSupplementID == supplement.id ||
-                                (focusedSupplementID == nil && containerState.selectedSupplement?.id == supplement.id)
-                        )
+                        .isSelected(containerState.selectedSupplement?.id == supplement.id)
                         .focused($focusedSupplementID, equals: supplement.id)
                     }
                 }
@@ -94,17 +79,15 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         focusGuide,
                         tag: "tabButtons",
                         onContentFocus: {
-                            let targetID = lastFocusedSupplementID
-                                ?? containerState.selectedSupplement?.id
+                            focusedSupplementID = containerState.selectedSupplement?.id
                                 ?? currentSupplements.first?.id
-                            focusedSupplementID = targetID
                         },
                         top: "dividerZone",
-                        bottom: isPresentingSupplement ? "supplementContent" : nil
+                        bottom: containerState.isPresentingSupplement ? "supplementContent" : nil
                     )
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(alignment: .leading)
-                    .isVisible(isContainerVisible && !currentSupplements.isEmpty)
+                    .isVisible((containerState.isPresentingOverlay && !containerState.isScrubbing) && !currentSupplements.isEmpty)
                     .transaction { $0.animation = nil }
 
                 // MARK: Supplement Content
@@ -128,9 +111,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     tag: "supplementContent",
                     top: "tabButtons"
                 )
-                .isVisible(isPresentingSupplement)
-                .disabled(!isPresentingSupplement)
-                .animation(VideoPlayer.PlaybackControls.supplementTransition, value: isPresentingSupplement)
+                .isVisible(containerState.isPresentingSupplement)
+                .disabled(!containerState.isPresentingSupplement)
+                .animation(VideoPlayer.PlaybackControls.supplementTransition, value: containerState.isPresentingSupplement)
                 .animation(VideoPlayer.PlaybackControls.supplementSwap, value: containerState.selectedSupplement?.id)
             }
             .background {
@@ -144,11 +127,11 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     endPoint: .bottom
                 )
                 .padding(.bottom, -200)
-                .isVisible(isPresentingSupplement)
+                .isVisible(containerState.isPresentingSupplement)
                 .allowsHitTesting(false)
             }
-            .isVisible(isContainerVisible)
-            .animation(.linear(duration: 0.15), value: isContainerVisible)
+            .isVisible(containerState.isPresentingOverlay && !containerState.isScrubbing)
+            .animation(.linear(duration: 0.15), value: containerState.isPresentingOverlay && !containerState.isScrubbing)
             .environment(\.isOverComplexContent, true)
             .onAppear {
                 let initial = IdentifiedArray(
@@ -173,7 +156,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 containerState.selectedSupplement = nil
                 containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
                 focusedSupplementID = nil
-                lastFocusedSupplementID = nil
 
                 DispatchQueue.main.async {
                     focusGuide.transition(to: nil)
@@ -181,14 +163,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 }
             }
             .onChange(of: focusedSupplementID) { oldValue, newValue in
-                if let newValue {
-                    lastFocusedSupplementID = newValue
-                }
+                guard oldValue != newValue, let newValue else { return }
 
-                guard oldValue != newValue else { return }
-                guard let supplementID = newValue else { return }
-
-                if let supplement = currentSupplements[id: supplementID] {
+                if let supplement = currentSupplements[id: newValue] {
                     containerState.selectedSupplement = supplement.supplement
                     containerState.containerView?.presentSupplementContainer(true, redirectFocus: false)
                 }

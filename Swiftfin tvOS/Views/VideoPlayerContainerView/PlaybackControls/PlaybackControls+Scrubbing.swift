@@ -83,13 +83,13 @@ extension VideoPlayer.PlaybackControls {
     }
 
     func cancelScrubbing() {
-        if let origin = scrubOriginSeconds {
+        if let origin = containerState.scrubOriginSeconds {
             containerState.scrubbedSeconds.value = origin
         }
 
         containerState.isScrubbing = false
-        hasEnteredScrubMode = false
-        scrubOriginSeconds = nil
+        containerState.hasEnteredScrubMode = false
+        containerState.scrubOriginSeconds = nil
     }
 
     func scheduleJump(direction: JumpDirection) {
