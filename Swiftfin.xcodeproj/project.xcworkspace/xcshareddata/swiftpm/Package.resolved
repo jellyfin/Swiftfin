@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nathantannar4/Engine",
       "state" : {
-        "revision" : "bf88d1f0518200f4ee03af069b01edd3ba9f977d",
-        "version" : "2.5.0"
+        "revision" : "8062b68c43373af4abf1695bb8aba86cc013ec9d",
+        "version" : "2.3.2"
       }
     },
     {
