@@ -50,6 +50,9 @@ extension VideoPlayer {
         @EnvironmentObject
         var focusGuide: FocusGuide
 
+        @FocusState
+        private var isProgressBarFocused: Bool
+
         @StateObject
         private var childFocusGuide = FocusGuide()
 
@@ -87,10 +90,14 @@ extension VideoPlayer {
                         }
                     }
                 )
+                .focused($isProgressBarFocused)
                 .focusSection()
                 .focusGuide(
                     focusGuide,
                     tag: "progressBar",
+                    onContentFocus: {
+                        isProgressBarFocused = true
+                    },
                     top: "navigationBar",
                     bottom: "dividerZone"
                 )
@@ -164,10 +171,7 @@ extension VideoPlayer {
             }
             .onChange(of: containerState.isPresentingOverlay) { _, newValue in
                 if newValue {
-                    focusGuide.transition(to: nil)
-                    DispatchQueue.main.async {
-                        focusGuide.transition(to: "progressBar")
-                    }
+                    isProgressBarFocused = true
                 }
             }
             .onChange(of: manager.playbackRequestStatus) { _, newValue in
