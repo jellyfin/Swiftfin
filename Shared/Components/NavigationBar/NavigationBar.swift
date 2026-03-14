@@ -67,13 +67,11 @@ extension VideoPlayer.PlaybackControls {
 
                 AlternateLayoutView(alignment: .trailing) {
                     Color.clear
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 } content: {
                     ActionButtons()
-                    #if os(tvOS)
                         .focusSection()
-                    #endif
                 }
-                .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .font(.system(size: fontSize, weight: fontWeight))
             .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
