@@ -23,14 +23,6 @@ extension VideoPlayer.PlaybackControls {
         @Router
         private var router
 
-        #if os(tvOS)
-        var focusTarget: FocusState<ActionButtons.FocusTarget?>.Binding?
-
-        init(focusTarget: FocusState<ActionButtons.FocusTarget?>.Binding? = nil) {
-            self.focusTarget = focusTarget
-        }
-        #endif
-
         private var fontSize: CGFloat = !UIDevice.isTV ? 24 : 36
         private var fontWeight: Font.Weight = !UIDevice.isTV ? .semibold : .regular
 
@@ -73,16 +65,15 @@ extension VideoPlayer.PlaybackControls {
                 TitleView(item: manager.item)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                AlternateLayoutView {
-                    ActionButtons()
+                AlternateLayoutView(alignment: .trailing) {
+                    Color.clear
                 } content: {
-                    #if os(tvOS)
-                    ActionButtons(focusTarget: focusTarget)
-                        .focusSection()
-                    #else
                     ActionButtons()
+                    #if os(tvOS)
+                        .focusSection()
                     #endif
                 }
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .font(.system(size: fontSize, weight: fontWeight))
             .buttonStyle(OverlayButtonStyle(onPressed: onPressed))

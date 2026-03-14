@@ -26,16 +26,11 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         private var manager: MediaPlayerManager
 
         #if os(tvOS)
-        enum FocusTarget: Hashable {
-            case button(VideoPlayerActionButton)
-            case menu
-        }
+        @EnvironmentObject
+        private var focusGuide: FocusGuide
 
-        var focusTarget: FocusState<FocusTarget?>.Binding?
-
-        init(focusTarget: FocusState<FocusTarget?>.Binding? = nil) {
-            self.focusTarget = focusTarget
-        }
+        @FocusState
+        private var focusedButton: String?
         #endif
 
         private func filteredActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
@@ -130,9 +125,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 ForEach(barActionButtons) { button in
                     view(for: button)
                     #if os(tvOS)
-                        .if(focusTarget != nil) { view in
-                            view.focused(focusTarget!, equals: .button(button))
-                        }
+                        .focused($focusedButton, equals: button.rawValue)
                     #endif
                 }
 
@@ -148,12 +141,22 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                         .environment(\.isInMenu, true)
                     }
                     #if os(tvOS)
-                    .if(focusTarget != nil) { view in
-                        view.focused(focusTarget!, equals: .menu)
-                    }
+                    .focused($focusedButton, equals: "menu")
                     #endif
                 }
             }
+            #if os(tvOS)
+            .onChange(of: focusedButton) { _, newValue in
+                if focusGuide.focusedTag != newValue {
+                    focusGuide.transition(to: newValue)
+                }
+            }
+            .onChange(of: focusGuide.focusedTag) { _, newTag in
+                if let newTag, newTag != focusedButton {
+                    focusedButton = newTag
+                }
+            }
+            #endif
         }
 
         var body: some View {

@@ -16,8 +16,6 @@ extension VideoPlayer {
         static let supplementTransition: Animation = .easeInOut(duration: 0.35)
         static let supplementSwap: Animation = .easeInOut(duration: 0.2)
 
-        typealias ActionBarFocusTarget = NavigationBar.ActionButtons.FocusTarget
-
         @Default(.VideoPlayer.jumpBackwardInterval)
         var jumpBackwardInterval
         @Default(.VideoPlayer.jumpForwardInterval)
@@ -52,11 +50,8 @@ extension VideoPlayer {
         @EnvironmentObject
         var focusGuide: FocusGuide
 
-        @FocusState
-        var focusedBarTarget: ActionBarFocusTarget?
-
-        @State
-        private var lastFocusedBarTarget: ActionBarFocusTarget?
+        @StateObject
+        private var childFocusGuide = FocusGuide()
 
         var isProgressBarFocused: Bool {
             containerState.isProgressBarFocused
@@ -86,15 +81,19 @@ extension VideoPlayer {
 
         private var bottomContent: some View {
             VStack(spacing: 10) {
-                NavigationBar(focusTarget: $focusedBarTarget)
+                NavigationBar()
+                    .environmentObject(childFocusGuide)
                     .focusGuide(
                         focusGuide,
                         tag: "navigationBar",
                         onContentFocus: {
-                            if let target = lastFocusedBarTarget {
-                                focusedBarTarget = target
+                            if let lastTag = childFocusGuide.lastFocusedTag ?? childFocusGuide.focusedTag {
+                                childFocusGuide.transition(to: nil)
+                                DispatchQueue.main.async {
+                                    childFocusGuide.transition(to: lastTag)
+                                }
                             } else if let firstButton = Defaults[.VideoPlayer.barActionButtons].first {
-                                focusedBarTarget = .button(firstButton)
+                                childFocusGuide.transition(to: firstButton.rawValue)
                             }
                         },
                         bottom: "progressBar"
@@ -202,11 +201,6 @@ extension VideoPlayer {
             }
             .onReceive(onPressEvent) { press in
                 handlePressEvent(press)
-            }
-            .onChange(of: focusedBarTarget) { _, newValue in
-                if let newValue {
-                    lastFocusedBarTarget = newValue
-                }
             }
             .onChange(of: containerState.isProgressBarFocused) { _, newValue in
                 if !newValue {
