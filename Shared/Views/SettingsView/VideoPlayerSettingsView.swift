@@ -153,7 +153,7 @@ struct VideoPlayerSettingsView: View {
             }
 
             Toggle(L10n.autoPlay, isOn: Binding(
-                get: { viewModel.user.configuration?.enableNextEpisodeAutoPlay ?? true },
+                get: { userConfiguration.enableNextEpisodeAutoPlay == true },
                 set: { newValue in
                     userConfiguration.enableNextEpisodeAutoPlay = newValue
                     viewModel.updateConfiguration(userConfiguration)
@@ -190,22 +190,22 @@ struct VideoPlayerSettingsView: View {
     @ViewBuilder
     private var audioSettings: some View {
         Section(L10n.audio) {
-            CulturePicker("Preferred language", threeLetterISOLanguageName: Binding(
-                get: { viewModel.user.configuration?.audioLanguagePreference },
+            CulturePicker(L10n.preferredLanguage, threeLetterISOLanguageName: Binding(
+                get: { userConfiguration.audioLanguagePreference },
                 set: { newValue in
                     userConfiguration.audioLanguagePreference = newValue
                     viewModel.updateConfiguration(userConfiguration)
                 }
             ))
-            Toggle("Play default track", isOn: Binding(
-                get: { viewModel.user.configuration?.isPlayDefaultAudioTrack ?? true },
+            Toggle(L10n.playDefaultTrack, isOn: Binding(
+                get: { userConfiguration.isPlayDefaultAudioTrack == true },
                 set: { newValue in
                     userConfiguration.isPlayDefaultAudioTrack = newValue
                     viewModel.updateConfiguration(userConfiguration)
                 }
             ))
-            Toggle("Remember track selection", isOn: Binding(
-                get: { viewModel.user.configuration?.isRememberAudioSelections ?? true },
+            Toggle(L10n.rememberTrackSelection, isOn: Binding(
+                get: { userConfiguration.isRememberAudioSelections == true },
                 set: { newValue in
                     userConfiguration.isRememberAudioSelections = newValue
                     viewModel.updateConfiguration(userConfiguration)
@@ -213,12 +213,12 @@ struct VideoPlayerSettingsView: View {
             ))
         } learnMore: {
             LabeledContent(
-                "Play default",
-                value: "Always played the first track marks as Default, even if not in your language."
+                L10n.playDefault,
+                value: L10n.playDefaultTrackDescription
             )
             LabeledContent(
-                "Remember track selection",
-                value: "Remembers your selected track the next time you play this item."
+                L10n.rememberTrackSelection,
+                value: L10n.rememberTrackSelectionDescription
             )
         }
     }
@@ -228,24 +228,24 @@ struct VideoPlayerSettingsView: View {
     @ViewBuilder
     private var subtitleSettings: some View {
         Section(L10n.subtitles) {
-            CulturePicker("Preferred language", threeLetterISOLanguageName: Binding(
-                get: { viewModel.user.configuration?.subtitleLanguagePreference },
+            CulturePicker(L10n.preferredLanguage, threeLetterISOLanguageName: Binding(
+                get: { userConfiguration.subtitleLanguagePreference },
                 set: { newValue in
                     userConfiguration.subtitleLanguagePreference = newValue
                     viewModel.updateConfiguration(userConfiguration)
                 }
             ))
 
-            PlatformPicker("Subtitle mode", selection: Binding(
-                get: { viewModel.user.configuration?.subtitleMode ?? .default },
+            PlatformPicker(L10n.subtitleMode, selection: Binding(
+                get: { userConfiguration.subtitleMode ?? .default },
                 set: { newValue in
                     userConfiguration.subtitleMode = newValue
                     viewModel.updateConfiguration(userConfiguration)
                 }
             ))
 
-            Toggle("Remember track selection", isOn: Binding(
-                get: { viewModel.user.configuration?.isRememberSubtitleSelections ?? true },
+            Toggle(L10n.rememberTrackSelection, isOn: Binding(
+                get: { userConfiguration.isRememberSubtitleSelections == true },
                 set: { newValue in
                     userConfiguration.isRememberSubtitleSelections = newValue
                     viewModel.updateConfiguration(userConfiguration)
@@ -254,23 +254,23 @@ struct VideoPlayerSettingsView: View {
         } learnMore: {
             LabeledContent(
                 L10n.default,
-                value: "Play the subtitle track marked as Default, even if it doesn't match your preferred language."
+                value: L10n.subtitleModeDefaultDescription
             )
             LabeledContent(
-                "Always",
-                value: "Always show subtitles, preferring your preferred language when available."
+                L10n.always,
+                value: L10n.subtitleModeAlwaysDescription
             )
             LabeledContent(
-                "Only forced",
-                value: "Only show subtitles marked as Forced, typically for foreign language sections."
+                L10n.onlyForced,
+                value: L10n.subtitleModeOnlyForcedDescription
             )
             LabeledContent(
                 L10n.none,
-                value: "Never automatically display subtitles."
+                value: L10n.subtitleModeNoneDescription
             )
             LabeledContent(
-                "Smart",
-                value: "Show subtitles when the audio language differs from your preferred language."
+                L10n.smart,
+                value: L10n.subtitleModeSmartDescription
             )
         }
 

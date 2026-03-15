@@ -160,7 +160,7 @@ struct CustomizeSettingsView: View {
             Toggle(L10n.recentlyAdded, isOn: $showRecentlyAdded)
 
             Toggle(L10n.hidePlayedInLatest, isOn: Binding(
-                get: { viewModel.user.configuration?.isHidePlayedInLatest == true },
+                get: { userConfiguration.isHidePlayedInLatest == true },
                 set: { newValue in
                     userConfiguration.isHidePlayedInLatest = newValue
                     viewModel.updateConfiguration(userConfiguration)
@@ -292,7 +292,7 @@ struct CustomizeSettingsView: View {
             Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
             Toggle(L10n.showMissingEpisodes, isOn: Binding(
-                get: { viewModel.user.configuration?.isDisplayMissingEpisodes == true },
+                get: { userConfiguration.isDisplayMissingEpisodes == true },
                 set: { newValue in
                     userConfiguration.isDisplayMissingEpisodes = newValue
                     viewModel.updateConfiguration(userConfiguration)
