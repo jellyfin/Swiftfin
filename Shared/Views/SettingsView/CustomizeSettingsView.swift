@@ -299,25 +299,31 @@ struct CustomizeSettingsView: View {
 
     @ViewBuilder
     private var itemManagementSettings: some View {
-        Section(L10n.itemManagement) {
-
-            if userPolicy?.isAdministrator == true ||
-                userPolicy?.enableCollectionManagement == true
-            {
-                Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
-            }
-
-            // Does NOT include subtitle / lyric editing
-            if userPolicy?.isAdministrator == true {
-                Toggle(L10n.editMedia, isOn: $enableItemEditing)
-            }
-
-            if userPolicy?.enableContentDeletion == true ||
-                userPolicy?.enableContentDeletionFromFolders?.isNotEmpty == true
-            {
-                // TODO: Enable when tvOS Deletion is available
-                if !UIDevice.isTV {
-                    Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
+        if userPolicy?.isAdministrator == true ||
+            userPolicy?.enableCollectionManagement == true ||
+            userPolicy?.enableContentDeletion == true ||
+            userPolicy?.enableContentDeletionFromFolders?.isNotEmpty == true
+        {
+            Section(L10n.itemManagement) {
+    
+                if userPolicy?.isAdministrator == true ||
+                    userPolicy?.enableCollectionManagement == true
+                {
+                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
+                }
+    
+                // Does NOT include subtitle / lyric editing
+                if userPolicy?.isAdministrator == true {
+                    Toggle(L10n.editMedia, isOn: $enableItemEditing)
+                }
+    
+                if userPolicy?.enableContentDeletion == true ||
+                    userPolicy?.enableContentDeletionFromFolders?.isNotEmpty == true
+                {
+                    // TODO: Enable when tvOS Deletion is available
+                    if !UIDevice.isTV {
+                        Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
+                    }
                 }
             }
         }
