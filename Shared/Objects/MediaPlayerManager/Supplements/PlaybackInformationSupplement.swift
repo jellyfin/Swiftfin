@@ -49,8 +49,6 @@ extension PlaybackInformationSupplement {
         @ObservedObject
         var viewModel: PlaybackInformationProvider
 
-        // MARK: - Data Accessors
-
         private var mediaSource: MediaSourceInfo? {
             manager.playbackItem?.mediaSource
         }
@@ -67,12 +65,6 @@ extension PlaybackInformationSupplement {
             return playbackItem.audioStreams.first
         }
 
-        private var session: SessionInfoDto? {
-            viewModel.currentSession
-        }
-
-        // MARK: - Sections
-
         @ViewBuilder
         private var playbackInfoSection: some View {
             Text(L10n.mediaPlayback)
@@ -82,16 +74,16 @@ extension PlaybackInformationSupplement {
 
             LabeledContent(L10n.videoPlayer, value: Defaults[.VideoPlayer.videoPlayerType].displayTitle)
 
-            if let playMethod = session?.playMethodDisplayTitle {
+            if let playMethod = viewModel.currentSession?.playMethodDisplayTitle ?? viewModel.currentSession?.playState?.playMethod?.displayTitle {
                 LabeledContent(L10n.method, value: playMethod)
             }
 
-            if let scheme = manager.playbackItem?.url.scheme {
-                LabeledContent("Protocol", value: scheme)
+            if let deliveryProtocol = mediaSource?.protocol {
+                LabeledContent("Source", value: deliveryProtocol.rawValue.uppercased())
             }
 
             if let transcodingSubProtocol = mediaSource?.transcodingSubProtocol {
-                LabeledContent("Stream type", value: transcodingSubProtocol.rawValue.uppercased())
+                LabeledContent("Protocol", value: transcodingSubProtocol.rawValue.uppercased())
             }
         }
 
@@ -123,8 +115,8 @@ extension PlaybackInformationSupplement {
 
         @ViewBuilder
         private var streamingInfoSection: some View {
-            if let transcodingInfo = session?.transcodingInfo {
-                Text(session?.playMethodDisplayTitle.map { "\($0) Info" } ?? "Stream Info")
+            if let transcodingInfo = viewModel.currentSession?.transcodingInfo {
+                Text(viewModel.currentSession?.playMethodDisplayTitle.map { "\($0) Info" } ?? "Stream Info")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .padding(.vertical, 4)
@@ -145,6 +137,14 @@ extension PlaybackInformationSupplement {
                             ? "\(audioCodec.uppercased()) (direct)"
                             : audioCodec.uppercased()
                     )
+                }
+
+                if let hwAccel = transcodingInfo.hardwareAccelerationType {
+                    LabeledContent("HWA", value: hwAccel.rawValue)
+                }
+
+                if let completion = transcodingInfo.completionPercentage {
+                    LabeledContent("Transcode progress", value: "\(Int(completion))%")
                 }
             }
         }
@@ -202,7 +202,7 @@ extension PlaybackInformationSupplement {
 
         @ViewBuilder
         private var transcodeReasonsSection: some View {
-            if let transcodeReasons = session?.transcodingInfo?.transcodeReasons, transcodeReasons.isNotEmpty {
+            if let transcodeReasons = viewModel.currentSession?.transcodingInfo?.transcodeReasons, transcodeReasons.isNotEmpty {
                 Text(L10n.transcodeReasons)
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -216,15 +216,13 @@ extension PlaybackInformationSupplement {
             }
         }
 
-        // MARK: - Platform Views
-
         var iOSView: some View {
             CompactOrRegularView(
                 isCompact: containerState.isCompact
             ) {
-                iOSCompactView
+                compactView
             } regularView: {
-                iOSRegularView
+                regularView
             }
             .labeledContentStyle(.playbackInfo)
             .padding(.leading, safeAreaInsets.leading)
@@ -234,7 +232,7 @@ extension PlaybackInformationSupplement {
         }
 
         @ViewBuilder
-        private var iOSCompactView: some View {
+        private var compactView: some View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     playbackInfoSection
@@ -249,7 +247,7 @@ extension PlaybackInformationSupplement {
         }
 
         @ViewBuilder
-        private var iOSRegularView: some View {
+        private var regularView: some View {
             ScrollView {
                 HStack(alignment: .top, spacing: 24) {
                     VStack(alignment: .leading, spacing: 8) {
@@ -270,7 +268,7 @@ extension PlaybackInformationSupplement {
         }
 
         var tvOSView: some View {
-            iOSRegularView
+            regularView
         }
     }
 }
