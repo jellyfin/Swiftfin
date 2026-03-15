@@ -62,16 +62,16 @@ struct VideoPlayerSettingsView: View {
     @StateObject
     private var viewModel: ServerUserAdminViewModel
 
-    @State
-    private var userConfiguration: UserConfiguration
-
     init() {
         /// If there is no User or UserSession, updating the user on the server has the potential of nuking all settings.
         /// - Force Unwrap might crash but this is to prevent malformed UserDTO updating over real UserDTOs
-        let user = Container.shared.currentUserSession()!.user.data
+        _viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: Container.shared.currentUserSession()!.user.data))
+    }
 
-        self.userConfiguration = user.configuration!
-        self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
+    private func updateConfiguration(_ modify: (inout UserConfiguration) -> Void) {
+        guard var configuration = viewModel.user.configuration else { return }
+        modify(&configuration)
+        viewModel.updateConfiguration(configuration)
     }
 
     // MARK: - Body
@@ -129,15 +129,11 @@ struct VideoPlayerSettingsView: View {
         }
         .onChange(of: barActionButtons) { newValue in
             let enabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
-
-            userConfiguration.enableNextEpisodeAutoPlay = enabled
-            viewModel.updateConfiguration(userConfiguration)
+            updateConfiguration { $0.enableNextEpisodeAutoPlay = enabled }
         }
         .onChange(of: menuActionButtons) { newValue in
             let enabled = newValue.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
-
-            userConfiguration.enableNextEpisodeAutoPlay = enabled
-            viewModel.updateConfiguration(userConfiguration)
+            updateConfiguration { $0.enableNextEpisodeAutoPlay = enabled }
         }
     }
 
@@ -153,10 +149,9 @@ struct VideoPlayerSettingsView: View {
             }
 
             Toggle(L10n.autoPlay, isOn: Binding(
-                get: { userConfiguration.enableNextEpisodeAutoPlay == true },
+                get: { viewModel.user.configuration?.enableNextEpisodeAutoPlay == true },
                 set: { newValue in
-                    userConfiguration.enableNextEpisodeAutoPlay = newValue
-                    viewModel.updateConfiguration(userConfiguration)
+                    updateConfiguration { $0.enableNextEpisodeAutoPlay = newValue }
                 }
             ))
         } header: {
@@ -191,24 +186,21 @@ struct VideoPlayerSettingsView: View {
     private var audioSettings: some View {
         Section(L10n.audio) {
             CulturePicker(L10n.preferredLanguage, threeLetterISOLanguageName: Binding(
-                get: { userConfiguration.audioLanguagePreference },
+                get: { viewModel.user.configuration?.audioLanguagePreference },
                 set: { newValue in
-                    userConfiguration.audioLanguagePreference = newValue
-                    viewModel.updateConfiguration(userConfiguration)
+                    updateConfiguration { $0.audioLanguagePreference = newValue }
                 }
             ))
             Toggle(L10n.playDefaultTrack, isOn: Binding(
-                get: { userConfiguration.isPlayDefaultAudioTrack == true },
+                get: { viewModel.user.configuration?.isPlayDefaultAudioTrack == true },
                 set: { newValue in
-                    userConfiguration.isPlayDefaultAudioTrack = newValue
-                    viewModel.updateConfiguration(userConfiguration)
+                    updateConfiguration { $0.isPlayDefaultAudioTrack = newValue }
                 }
             ))
             Toggle(L10n.rememberTrackSelection, isOn: Binding(
-                get: { userConfiguration.isRememberAudioSelections == true },
+                get: { viewModel.user.configuration?.isRememberAudioSelections == true },
                 set: { newValue in
-                    userConfiguration.isRememberAudioSelections = newValue
-                    viewModel.updateConfiguration(userConfiguration)
+                    updateConfiguration { $0.isRememberAudioSelections = newValue }
                 }
             ))
         } learnMore: {
@@ -229,26 +221,23 @@ struct VideoPlayerSettingsView: View {
     private var subtitleSettings: some View {
         Section(L10n.subtitles) {
             CulturePicker(L10n.preferredLanguage, threeLetterISOLanguageName: Binding(
-                get: { userConfiguration.subtitleLanguagePreference },
+                get: { viewModel.user.configuration?.subtitleLanguagePreference },
                 set: { newValue in
-                    userConfiguration.subtitleLanguagePreference = newValue
-                    viewModel.updateConfiguration(userConfiguration)
+                    updateConfiguration { $0.subtitleLanguagePreference = newValue }
                 }
             ))
 
             PlatformPicker(L10n.subtitleMode, selection: Binding(
-                get: { userConfiguration.subtitleMode ?? .default },
+                get: { viewModel.user.configuration?.subtitleMode ?? .default },
                 set: { newValue in
-                    userConfiguration.subtitleMode = newValue
-                    viewModel.updateConfiguration(userConfiguration)
+                    updateConfiguration { $0.subtitleMode = newValue }
                 }
             ))
 
             Toggle(L10n.rememberTrackSelection, isOn: Binding(
-                get: { userConfiguration.isRememberSubtitleSelections == true },
+                get: { viewModel.user.configuration?.isRememberSubtitleSelections == true },
                 set: { newValue in
-                    userConfiguration.isRememberSubtitleSelections = newValue
-                    viewModel.updateConfiguration(userConfiguration)
+                    updateConfiguration { $0.isRememberSubtitleSelections = newValue }
                 }
             ))
         } learnMore: {

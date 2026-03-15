@@ -114,16 +114,16 @@ struct CustomizeSettingsView: View {
     @StateObject
     private var viewModel: ServerUserAdminViewModel
 
-    @State
-    private var userConfiguration: UserConfiguration
-
     init() {
         /// If there is no User or UserSession, updating the user on the server has the potential of nuking all settings.
         /// - Force Unwrap might crash but this is to prevent malformed UserDTO updating over real UserDTOs
-        let user = Container.shared.currentUserSession()!.user.data
+        _viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: Container.shared.currentUserSession()!.user.data))
+    }
 
-        self.userConfiguration = user.configuration!
-        self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
+    private func updateConfiguration(_ modify: (inout UserConfiguration) -> Void) {
+        guard var configuration = viewModel.user.configuration else { return }
+        modify(&configuration)
+        viewModel.updateConfiguration(configuration)
     }
 
     var body: some View {
@@ -160,10 +160,9 @@ struct CustomizeSettingsView: View {
             Toggle(L10n.recentlyAdded, isOn: $showRecentlyAdded)
 
             Toggle(L10n.hidePlayedInLatest, isOn: Binding(
-                get: { userConfiguration.isHidePlayedInLatest == true },
+                get: { viewModel.user.configuration?.isHidePlayedInLatest == true },
                 set: { newValue in
-                    userConfiguration.isHidePlayedInLatest = newValue
-                    viewModel.updateConfiguration(userConfiguration)
+                    updateConfiguration { $0.isHidePlayedInLatest = newValue }
                 }
             ))
 
@@ -292,10 +291,9 @@ struct CustomizeSettingsView: View {
             Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
             Toggle(L10n.showMissingEpisodes, isOn: Binding(
-                get: { userConfiguration.isDisplayMissingEpisodes == true },
+                get: { viewModel.user.configuration?.isDisplayMissingEpisodes == true },
                 set: { newValue in
-                    userConfiguration.isDisplayMissingEpisodes = newValue
-                    viewModel.updateConfiguration(userConfiguration)
+                    updateConfiguration { $0.isDisplayMissingEpisodes = newValue }
                 }
             ))
         }
