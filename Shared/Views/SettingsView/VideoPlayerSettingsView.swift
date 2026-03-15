@@ -81,11 +81,17 @@ struct VideoPlayerSettingsView: View {
             #if os(iOS)
             gestureSettings
             #endif
+
             buttonSettings
+
             resumeSettings
+
             sliderSettings
+
             timestampSettings
+
             audioSettings
+
             subtitleSettings
         }
         .onFirstAppear {
