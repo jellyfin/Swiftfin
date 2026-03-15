@@ -13,19 +13,22 @@ import SwiftUI
 
 struct VideoPlayerSettingsView: View {
 
+    #if os(tvOS)
+    typealias PlatformPicker = ListRowMenu
+    #else
+    typealias PlatformPicker = Picker
+    #endif
+
     // MARK: - Button Defaults
 
     @Default(.VideoPlayer.jumpBackwardInterval)
     private var jumpBackwardLength
     @Default(.VideoPlayer.jumpForwardInterval)
     private var jumpForwardLength
-
     @Default(.VideoPlayer.barActionButtons)
     private var barActionButtons
     @Default(.VideoPlayer.menuActionButtons)
     private var menuActionButtons
-    @Default(.VideoPlayer.autoPlayEnabled)
-    private var autoPlayEnabled
 
     // MARK: - Resume Defaults
 
@@ -36,7 +39,6 @@ struct VideoPlayerSettingsView: View {
 
     @Default(.VideoPlayer.Overlay.chapterSlider)
     private var chapterSlider
-
     @StoredValue(.User.previewImageScrubbing)
     private var previewImageScrubbing: PreviewImageScrubbingOption
 
@@ -54,16 +56,22 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.Overlay.trailingTimestampType)
     private var trailingTimestampType
 
+    @Router
+    private var router
+
     @StateObject
     private var viewModel: ServerUserAdminViewModel
 
-    @Router
-    private var router
+    @State
+    private var userConfiguration: UserConfiguration
 
     init() {
         /// If there is no User or UserSession, updating the user on the server has the potential of nuking all settings.
         /// - Force Unwrap might crash but this is to prevent malformed UserDTO updating over real UserDTOs
-        _viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: Container.shared.currentUserSession()!.user.data))
+        let user = Container.shared.currentUserSession()!.user.data
+
+        self.userConfiguration = user.configuration!
+        self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
     }
 
     // MARK: - Body
@@ -120,10 +128,16 @@ struct VideoPlayerSettingsView: View {
             }
         }
         .onChange(of: barActionButtons) { newValue in
-            autoPlayEnabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
+            let enabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
+
+            userConfiguration.enableNextEpisodeAutoPlay = enabled
+            viewModel.updateConfiguration(userConfiguration)
         }
         .onChange(of: menuActionButtons) { newValue in
-            autoPlayEnabled = newValue.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
+            let enabled = newValue.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
+
+            userConfiguration.enableNextEpisodeAutoPlay = enabled
+            viewModel.updateConfiguration(userConfiguration)
         }
     }
 
@@ -132,21 +146,19 @@ struct VideoPlayerSettingsView: View {
     @ViewBuilder
     private var resumeSettings: some View {
         Section {
-            #if os(iOS)
-            Stepper(value: $resumeOffset, in: 0 ... 30, step: 1) {
+            Stepper(L10n.resumeOffset, value: $resumeOffset, in: 0 ... 30, step: 1) {
                 LabeledContent(L10n.resumeOffset) {
                     Text(resumeOffset, format: SecondFormatter())
                 }
             }
-            #else
-            Stepper(L10n.resumeOffset, value: $resumeOffset, in: 0 ... 30, step: 1, format: SecondFormatter()) {
-                LabeledContent {
-                    Text(resumeOffset, format: SecondFormatter())
-                } label: {
-                    Text(L10n.resumeOffset)
+
+            Toggle(L10n.autoPlay, isOn: Binding(
+                get: { viewModel.user.configuration?.enableNextEpisodeAutoPlay ?? true },
+                set: { newValue in
+                    userConfiguration.enableNextEpisodeAutoPlay = newValue
+                    viewModel.updateConfiguration(userConfiguration)
                 }
-            }
-            #endif
+            ))
         } header: {
             Text(L10n.resume)
         } footer: {
@@ -160,12 +172,7 @@ struct VideoPlayerSettingsView: View {
     private var sliderSettings: some View {
         Section(L10n.slider) {
             Toggle(L10n.chapterSlider, isOn: $chapterSlider)
-
-            #if os(iOS)
-            Picker(L10n.previewImage, selection: $previewImageScrubbing)
-            #else
-            ListRowMenu(L10n.previewImage, selection: $previewImageScrubbing)
-            #endif
+            PlatformPicker(L10n.previewImage, selection: $previewImageScrubbing)
         }
     }
 
@@ -174,11 +181,7 @@ struct VideoPlayerSettingsView: View {
     @ViewBuilder
     private var timestampSettings: some View {
         Section(L10n.timestamp) {
-            #if os(iOS)
-            Picker(L10n.trailingValue, selection: $trailingTimestampType)
-            #else
-            ListRowMenu(L10n.trailingValue, selection: $trailingTimestampType)
-            #endif
+            PlatformPicker(L10n.trailingValue, selection: $trailingTimestampType)
         }
     }
 
@@ -190,25 +193,22 @@ struct VideoPlayerSettingsView: View {
             CulturePicker("Preferred language", threeLetterISOLanguageName: Binding(
                 get: { viewModel.user.configuration?.audioLanguagePreference },
                 set: { newValue in
-                    var configuration = viewModel.user.configuration ?? UserConfiguration()
-                    configuration.audioLanguagePreference = newValue
-                    viewModel.updateConfiguration(configuration)
+                    userConfiguration.audioLanguagePreference = newValue
+                    viewModel.updateConfiguration(userConfiguration)
                 }
             ))
             Toggle("Play default track", isOn: Binding(
                 get: { viewModel.user.configuration?.isPlayDefaultAudioTrack ?? true },
                 set: { newValue in
-                    var configuration = viewModel.user.configuration ?? UserConfiguration()
-                    configuration.isPlayDefaultAudioTrack = newValue
-                    viewModel.updateConfiguration(configuration)
+                    userConfiguration.isPlayDefaultAudioTrack = newValue
+                    viewModel.updateConfiguration(userConfiguration)
                 }
             ))
             Toggle("Remember track selection", isOn: Binding(
                 get: { viewModel.user.configuration?.isRememberAudioSelections ?? true },
                 set: { newValue in
-                    var configuration = viewModel.user.configuration ?? UserConfiguration()
-                    configuration.isRememberAudioSelections = newValue
-                    viewModel.updateConfiguration(configuration)
+                    userConfiguration.isRememberAudioSelections = newValue
+                    viewModel.updateConfiguration(userConfiguration)
                 }
             ))
         } learnMore: {
@@ -231,38 +231,24 @@ struct VideoPlayerSettingsView: View {
             CulturePicker("Preferred language", threeLetterISOLanguageName: Binding(
                 get: { viewModel.user.configuration?.subtitleLanguagePreference },
                 set: { newValue in
-                    var configuration = viewModel.user.configuration ?? UserConfiguration()
-                    configuration.subtitleLanguagePreference = newValue
-                    viewModel.updateConfiguration(configuration)
+                    userConfiguration.subtitleLanguagePreference = newValue
+                    viewModel.updateConfiguration(userConfiguration)
                 }
             ))
 
-            #if os(iOS)
-            Picker("Subtitle mode", selection: Binding(
+            PlatformPicker("Subtitle mode", selection: Binding(
                 get: { viewModel.user.configuration?.subtitleMode ?? .default },
                 set: { newValue in
-                    var configuration = viewModel.user.configuration ?? UserConfiguration()
-                    configuration.subtitleMode = newValue
-                    viewModel.updateConfiguration(configuration)
+                    userConfiguration.subtitleMode = newValue
+                    viewModel.updateConfiguration(userConfiguration)
                 }
             ))
-            #else
-            ListRowMenu("Subtitle mode", selection: Binding(
-                get: { viewModel.user.configuration?.subtitleMode ?? .default },
-                set: { newValue in
-                    var configuration = viewModel.user.configuration ?? UserConfiguration()
-                    configuration.subtitleMode = newValue
-                    viewModel.updateConfiguration(configuration)
-                }
-            ))
-            #endif
 
             Toggle("Remember track selection", isOn: Binding(
                 get: { viewModel.user.configuration?.isRememberSubtitleSelections ?? true },
                 set: { newValue in
-                    var configuration = viewModel.user.configuration ?? UserConfiguration()
-                    configuration.isRememberSubtitleSelections = newValue
-                    viewModel.updateConfiguration(configuration)
+                    userConfiguration.isRememberSubtitleSelections = newValue
+                    viewModel.updateConfiguration(userConfiguration)
                 }
             ))
         } learnMore: {
@@ -293,19 +279,11 @@ struct VideoPlayerSettingsView: View {
                 router.route(to: .fontPicker(selection: $subtitleFontName))
             }
 
-            #if os(iOS)
-            Stepper(value: $subtitleSize, in: 1 ... 20, step: 1) {
-                LabeledContent(L10n.subtitleSize) {
-                    Text(subtitleSize.description)
-                }
-            }
-            #else
             Stepper(L10n.subtitleSize, value: $subtitleSize, in: 1 ... 20, step: 1) {
                 LabeledContent(L10n.subtitleSize) {
                     Text(subtitleSize.description)
                 }
             }
-            #endif
 
             ColorPicker(L10n.subtitleColor, selection: $subtitleColor, supportsOpacity: false)
         } footer: {

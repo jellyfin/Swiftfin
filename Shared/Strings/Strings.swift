@@ -728,6 +728,10 @@ internal enum L10n {
   internal static let hexColor = L10n.tr("Localizable", "hexColor", fallback: "Hex color")
   /// Hidden
   internal static let hidden = L10n.tr("Localizable", "hidden", fallback: "Hidden")
+  /// Hide played in Latest
+  internal static let hidePlayedInLatest = L10n.tr("Localizable", "hidePlayedInLatest", fallback: "Hide played in Latest")
+  /// Hide watched items from the Latest In Library sections on the home screen.
+  internal static let hidePlayedInLatestDescription = L10n.tr("Localizable", "hidePlayedInLatestDescription", fallback: "Hide watched items from the Latest In Library sections on the home screen.")
   /// Hide user from login screen
   internal static let hideUserFromLoginScreen = L10n.tr("Localizable", "hideUserFromLoginScreen", fallback: "Hide user from login screen")
   /// Hint
