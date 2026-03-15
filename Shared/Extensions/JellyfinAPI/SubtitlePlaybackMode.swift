@@ -15,13 +15,28 @@ extension SubtitlePlaybackMode: Displayable {
         case .default:
             L10n.default
         case .always:
-            "Always"
+            L10n.always
         case .onlyForced:
-            "Forced only"
+            L10n.onlyForced
         case .none:
             L10n.none
         case .smart:
-            "Smart"
+            L10n.smart
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .default:
+            L10n.subtitleModeDefaultDescription
+        case .always:
+            L10n.subtitleModeAlwaysDescription
+        case .onlyForced:
+            L10n.subtitleModeOnlyForcedDescription
+        case .none:
+            L10n.subtitleModeNoneDescription
+        case .smart:
+            L10n.subtitleModeSmartDescription
         }
     }
 }

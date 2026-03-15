@@ -248,24 +248,24 @@ struct VideoPlayerSettingsView: View {
             ))
         } learnMore: {
             LabeledContent(
-                L10n.default,
-                value: L10n.subtitleModeDefaultDescription
+                SubtitlePlaybackMode.default.displayTitle,
+                value: SubtitlePlaybackMode.default.description
             )
             LabeledContent(
-                L10n.always,
-                value: L10n.subtitleModeAlwaysDescription
+                SubtitlePlaybackMode.always.displayTitle,
+                value: SubtitlePlaybackMode.always.description
             )
             LabeledContent(
-                L10n.onlyForced,
-                value: L10n.subtitleModeOnlyForcedDescription
+                SubtitlePlaybackMode.onlyForced.displayTitle,
+                value: SubtitlePlaybackMode.onlyForced.description
             )
             LabeledContent(
-                L10n.none,
-                value: L10n.subtitleModeNoneDescription
+                SubtitlePlaybackMode.none.displayTitle,
+                value: SubtitlePlaybackMode.none.description
             )
             LabeledContent(
-                L10n.smart,
-                value: L10n.subtitleModeSmartDescription
+                SubtitlePlaybackMode.smart.displayTitle,
+                value: SubtitlePlaybackMode.smart.description
             )
         }
 
