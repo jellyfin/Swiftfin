@@ -40,10 +40,6 @@ extension SeriesEpisodeSelector {
                 } else if episode.userData?.isPlayed ?? false {
                     WatchedIndicator(size: 45)
                         .isVisible(showPlayed)
-                } else if episode.canBePlayed && !episode.isLiveStream {
-                    UnwatchedIndicator(size: 45)
-                        .foregroundColor(accentColor)
-                        .isVisible(showUnplayed)
                 }
 
                 if isFocused {
