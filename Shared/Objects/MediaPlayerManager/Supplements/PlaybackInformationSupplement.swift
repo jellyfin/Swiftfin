@@ -74,7 +74,7 @@ extension PlaybackInformationSupplement {
 
             LabeledContent(L10n.videoPlayer, value: Defaults[.VideoPlayer.videoPlayerType].displayTitle)
 
-            if let playMethod = viewModel.currentSession?.playMethodDisplayTitle ?? viewModel.currentSession?.playState?.playMethod?.displayTitle {
+            if let playMethod = viewModel.currentSession?.playMethodDisplayTitle {
                 LabeledContent(L10n.method, value: playMethod)
             }
 
