@@ -119,7 +119,6 @@ extension Defaults.Keys {
         static let recentlyAddedPosterType: Key<PosterDisplayType> = UserKey("recentlyAddedPosterType", default: .portrait)
         static let latestInLibraryPosterType: Key<PosterDisplayType> = UserKey("latestInLibraryPosterType", default: .portrait)
         static let shouldShowMissingSeasons: Key<Bool> = UserKey("shouldShowMissingSeasons", default: true)
-        static let shouldShowMissingEpisodes: Key<Bool> = UserKey("shouldShowMissingEpisodes", default: true)
         static let similarPosterType: Key<PosterDisplayType> = UserKey("similarPosterType", default: .portrait)
 
         // TODO: have search poster type by types of items if applicable
@@ -186,7 +185,6 @@ extension Defaults.Keys {
 
         static let appMaximumBitrate: Key<PlaybackBitrate> = UserKey("appMaximumBitrate", default: .max)
         static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .regular)
-        static let autoPlayEnabled: Key<Bool> = UserKey("autoPlayEnabled", default: true)
         static let barActionButtons: Key<[VideoPlayerActionButton]> = UserKey(
             "barActionButtons",
             default: VideoPlayerActionButton.defaultBarActionButtons

@@ -83,8 +83,6 @@ struct CustomizeSettingsView: View {
     private var enabledTrailers
     @Default(.Customization.shouldShowMissingSeasons)
     private var shouldShowMissingSeasons
-    @Default(.Customization.shouldShowMissingEpisodes)
-    private var shouldShowMissingEpisodes
     @StoredValue(.User.enableCollectionManagement)
     private var enableCollectionManagement
     @StoredValue(.User.enableItemEditing)
@@ -113,6 +111,21 @@ struct CustomizeSettingsView: View {
     @Router
     private var router
 
+    @StateObject
+    private var viewModel: ServerUserAdminViewModel
+
+    init() {
+        /// If there is no User or UserSession, updating the user on the server has the potential of nuking all settings.
+        /// - Force Unwrap might crash but this is to prevent malformed UserDTO updating over real UserDTOs
+        _viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: Container.shared.currentUserSession()!.user.data))
+    }
+
+    private func updateConfiguration(_ modify: (inout UserConfiguration) -> Void) {
+        guard var configuration = viewModel.user.configuration else { return }
+        modify(&configuration)
+        viewModel.updateConfiguration(configuration)
+    }
+
     var body: some View {
         Form(systemImage: "gearshape") {
             homeSettings
@@ -133,6 +146,9 @@ struct CustomizeSettingsView: View {
             itemManagementSettings
             #endif
         }
+        .onFirstAppear {
+            viewModel.refresh()
+        }
         .navigationTitle(L10n.customize)
     }
 
@@ -142,6 +158,13 @@ struct CustomizeSettingsView: View {
     private var homeSettings: some View {
         Section(L10n.home) {
             Toggle(L10n.recentlyAdded, isOn: $showRecentlyAdded)
+
+            Toggle(L10n.hidePlayedInLatest, isOn: Binding(
+                get: { viewModel.user.configuration?.isHidePlayedInLatest == true },
+                set: { newValue in
+                    updateConfiguration { $0.isHidePlayedInLatest = newValue }
+                }
+            ))
 
             Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
 
@@ -267,7 +290,12 @@ struct CustomizeSettingsView: View {
 
             Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
-            Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
+            Toggle(L10n.showMissingEpisodes, isOn: Binding(
+                get: { viewModel.user.configuration?.isDisplayMissingEpisodes == true },
+                set: { newValue in
+                    updateConfiguration { $0.isDisplayMissingEpisodes = newValue }
+                }
+            ))
         }
     }
 
