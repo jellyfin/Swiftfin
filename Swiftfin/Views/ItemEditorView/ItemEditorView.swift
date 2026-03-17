@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import Factory
 import JellyfinAPI
 import SwiftUI
@@ -17,9 +18,6 @@ struct ItemEditorView: View {
 
     @Router
     private var router
-
-    @State
-    private var isPresentingDeleteConfirmation = false
 
     var body: some View {
         ZStack {
@@ -97,22 +95,24 @@ struct ItemEditorView: View {
             }
 
             if viewModel.item.canDelete == true {
-                Button(L10n.delete, role: .destructive) {
-                    isPresentingDeleteConfirmation = true
-                }
-                .buttonStyle(.primary)
-                .confirmationDialog(
-                    L10n.deleteItemConfirmationMessage,
-                    isPresented: $isPresentingDeleteConfirmation,
-                    titleVisibility: .visible
-                ) {
-                    Button(
-                        L10n.confirm,
-                        role: .destructive,
-                        action: viewModel.delete
-                    )
+                StateAdapter(initialValue: false) { isPresentingDeleteConfirmation in
+                    Button(L10n.delete, role: .destructive) {
+                        isPresentingDeleteConfirmation.wrappedValue = true
+                    }
+                    .buttonStyle(.primary)
+                    .confirmationDialog(
+                        L10n.deleteItemConfirmationMessage,
+                        isPresented: isPresentingDeleteConfirmation,
+                        titleVisibility: .visible
+                    ) {
+                        Button(
+                            L10n.confirm,
+                            role: .destructive,
+                            action: viewModel.delete
+                        )
 
-                    Button(L10n.cancel, role: .cancel) {}
+                        Button(L10n.cancel, role: .cancel) {}
+                    }
                 }
             }
         }
