@@ -297,7 +297,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 viewModel: filterViewModel,
                 types: enabledDrawerFilters
             ) {
-                router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
+                router.route(to: .filter(types: [$0.type], viewModel: $0.viewModel))
             }
         }
         .onChange(of: defaultDisplayType) { newValue in
