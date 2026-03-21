@@ -27,10 +27,6 @@ extension RemoteSearchResult: Poster {
     func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
         [ImageSource(url: imageURL?.url)]
     }
-
-    func transform(image: Image) -> some View {
-        image
-    }
 }
 
 extension RemoteSearchResult: Displayable {

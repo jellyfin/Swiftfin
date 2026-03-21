@@ -11,21 +11,17 @@ import SwiftUI
 
 struct IdentifyItemView: View {
 
-    @Router
-    private var router
-
     @FocusState
     private var isTitleFocused: Bool
 
-    @StateObject
-    private var viewModel: IdentifyItemViewModel
+    @Router
+    private var router
 
     @State
-    private var name: String = ""
-    @State
-    private var originalTitle: String = ""
-    @State
-    private var year: String = ""
+    private var query: IdentifyItemViewModel.SearchQuery = .init()
+
+    @StateObject
+    private var viewModel: IdentifyItemViewModel
 
     init(item: BaseItemDto) {
         self._viewModel = StateObject(wrappedValue: IdentifyItemViewModel(item: item))
@@ -39,20 +35,38 @@ struct IdentifyItemView: View {
             )
 
             Section(L10n.search) {
-                TextField(L10n.title, text: $name)
-                    .focused($isTitleFocused)
+                TextField(
+                    L10n.title,
+                    text: $query.name.map(
+                        getter: { $0 ?? "" },
+                        setter: { $0.isEmpty ? nil : $0 }
+                    )
+                )
+                .focused($isTitleFocused)
 
-                TextField(L10n.originalTitle, text: $originalTitle)
+                TextField(
+                    L10n.originalTitle,
+                    text: $query.originalTitle.map(
+                        getter: { $0 ?? "" },
+                        setter: { $0.isEmpty ? nil : $0 }
+                    )
+                )
 
-                TextField(L10n.year, text: $year)
-                    .keyboardType(.numberPad)
+                TextField(
+                    L10n.year,
+                    text: $query.year.map(
+                        getter: { $0.map(String.init) ?? "" },
+                        setter: { $0.isEmpty ? nil : Int($0) }
+                    )
+                )
+                .keyboardType(.numberPad)
             }
 
-            if name.isNotEmpty || originalTitle.isNotEmpty || year.isNotEmpty {
+            if query.isNotEmpty {
                 Section(L10n.items) {
                     if viewModel.searchResults.isNotEmpty {
                         ForEach(viewModel.searchResults) { result in
-                            ResultRow(result) {
+                            ResultRow(result: result) {
                                 router.route(
                                     to: .identifyItemResults(
                                         viewModel: viewModel,
@@ -72,7 +86,7 @@ struct IdentifyItemView: View {
         .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.identify)
-        .animation(.easeInOut, value: viewModel.searchResults)
+        .animation(.linear, value: viewModel.searchResults)
         .navigationBarBackButtonHidden(viewModel.background.is(.updating))
         .onFirstAppear {
             isTitleFocused = true
@@ -88,26 +102,9 @@ struct IdentifyItemView: View {
                 router.dismiss()
             }
         }
-        .onChange(of: name) { newValue in
-            viewModel.search(
-                name: newValue,
-                originalTitle: viewModel.searchParameters.value.originalTitle,
-                year: viewModel.searchParameters.value.year
-            )
-        }
-        .onChange(of: originalTitle) { newValue in
-            viewModel.search(
-                name: viewModel.searchParameters.value.name,
-                originalTitle: newValue,
-                year: viewModel.searchParameters.value.year
-            )
-        }
-        .onChange(of: year) { newValue in
-            viewModel.search(
-                name: viewModel.searchParameters.value.name,
-                originalTitle: viewModel.searchParameters.value.originalTitle,
-                year: Int(newValue)
-            )
+        .backport
+        .onChange(of: query) { _, newValue in
+            viewModel.search(query: newValue)
         }
         .errorMessage($viewModel.error)
     }

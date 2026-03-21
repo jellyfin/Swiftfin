@@ -13,13 +13,8 @@ extension IdentifyItemView {
 
     struct ResultRow: View {
 
-        private let result: RemoteSearchResult
-        private let action: () -> Void
-
-        init(_ result: RemoteSearchResult, action: @escaping () -> Void) {
-            self.result = result
-            self.action = action
-        }
+        let result: RemoteSearchResult
+        let action: () -> Void
 
         private var resultTitle: String {
             result.displayTitle

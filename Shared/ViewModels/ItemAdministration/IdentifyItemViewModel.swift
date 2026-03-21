@@ -16,14 +16,29 @@ import OrderedCollections
 @Stateful
 final class IdentifyItemViewModel: ViewModel {
 
+    struct SearchQuery: Equatable {
+        var name: String?
+        var originalTitle: String?
+        var year: Int?
+
+        var isEmpty: Bool {
+            name?.isEmpty != false && originalTitle?.isEmpty != false && year == nil
+        }
+
+        var isNotEmpty: Bool {
+            !isEmpty
+        }
+    }
+
     @CasePathable
     enum Action {
-        case search(name: String?, originalTitle: String?, year: Int?)
+        case _actuallySearch(query: SearchQuery)
+        case search(query: SearchQuery)
         case update(RemoteSearchResult)
 
         var transition: Transition {
             switch self {
-            case .search:
+            case ._actuallySearch, .search:
                 .background(.searching)
             case .update:
                 .background(.updating)
@@ -45,40 +60,44 @@ final class IdentifyItemViewModel: ViewModel {
         case error
     }
 
-    struct SearchParameters: Equatable {
-        var name: String?
-        var originalTitle: String?
-        var year: Int?
-    }
-
     @Published
-    var item: BaseItemDto
+    private(set) var searchResults: [RemoteSearchResult] = []
 
-    @Published
-    var searchResults: [RemoteSearchResult] = []
-
-    var searchParameters = CurrentValueSubject<SearchParameters, Never>(.init())
+    let item: BaseItemDto
+    private var searchQuery = CurrentValueSubject<SearchQuery, Never>(.init())
 
     init(item: BaseItemDto) {
         self.item = item
         super.init()
 
-        searchParameters
+        searchQuery
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .removeDuplicates()
-            .sink { [weak self] parameters in
-                guard let self else { return }
-                self.search(
-                    name: parameters.name,
-                    originalTitle: parameters.originalTitle,
-                    year: parameters.year
-                )
+            .sink { [weak self] query in
+                self?._actuallySearch(query: query)
             }
             .store(in: &cancellables)
     }
 
     @Function(\Action.Cases.search)
-    private func _search(_ name: String?, _ originalTitle: String?, _ year: Int?) async throws {
+    private func _search(_ query: SearchQuery) async throws {
+        searchQuery.send(query)
+
+        await cancel()
+    }
+
+    @Function(\Action.Cases._actuallySearch)
+    private func __actuallySearch(_ query: SearchQuery) async throws {
+
+        let name = query.name
+        let originalTitle = query.originalTitle
+        let year = query.year
+
+        guard name != nil || originalTitle != nil || year != nil else {
+            searchResults = []
+            return
+        }
+
         guard let itemID = item.id, let itemType = item.type else {
             searchResults = []
             return
@@ -153,7 +172,7 @@ final class IdentifyItemViewModel: ViewModel {
         let request = Paths.applySearchCriteria(itemID: itemID, searchResult)
         _ = try await userSession.client.send(request)
 
-        item = try await item.getFullItem(userSession: userSession, sendNotification: true)
+        _ = try await item.getFullItem(userSession: userSession, sendNotification: true)
 
         events.send(.updated)
     }

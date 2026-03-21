@@ -21,7 +21,6 @@ struct FormItemSection<Item: Poster>: PlatformView {
                     type: item.preferredPosterDisplayType,
                     contentMode: .fit
                 )
-                .cornerRadius(10) // Rounded more than default list to avoid lopsided rounding
                 .frame(width: 100)
                 .accessibilityIgnoresInvertColors()
 

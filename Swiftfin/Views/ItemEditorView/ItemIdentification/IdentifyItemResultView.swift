@@ -11,18 +11,13 @@ import SwiftUI
 
 struct IdentifyItemResultView: View {
 
+    @ObservedObject
+    var viewModel: IdentifyItemViewModel
+
     @Router
     private var router
 
-    @ObservedObject
-    private var viewModel: IdentifyItemViewModel
-
-    private let result: RemoteSearchResult
-
-    init(viewModel: IdentifyItemViewModel, result: RemoteSearchResult) {
-        self.viewModel = viewModel
-        self.result = result
-    }
+    let result: RemoteSearchResult
 
     var body: some View {
         List {
