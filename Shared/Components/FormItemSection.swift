@@ -23,7 +23,7 @@ struct FormItemSection<Item: Poster>: PlatformView {
                 )
                 .cornerRadius(10) // Rounded more than default list to avoid lopsided rounding
                 .frame(width: 100)
-                    .accessibilityIgnoresInvertColors()
+                .accessibilityIgnoresInvertColors()
 
                 VStack(alignment: .leading) {
                     if let baseItem = item as? BaseItemDto, let parent = baseItem.parentTitle {
