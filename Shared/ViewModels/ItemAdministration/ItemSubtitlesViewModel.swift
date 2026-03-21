@@ -17,7 +17,7 @@ final class ItemSubtitlesViewModel: ViewModel {
     @CasePathable
     enum Action {
         case refresh
-        case search
+        case search(isPerfectMatch: Bool)
         case set(Set<String>)
         case upload(URL, isForced: Bool, isHearingImpaired: Bool)
         case delete(Set<MediaStream>)
@@ -63,8 +63,8 @@ final class ItemSubtitlesViewModel: ViewModel {
     /// Default to user's language
     @Published
     var language: String? = Locale.current.language.languageCode?.identifier(.alpha3)
-    @Published
-    var isPerfectMatch = false
+
+    var searchParameters = CurrentValueSubject<Bool, Never>(false)
 
     init(item: BaseItemDto) {
         self.item = item
@@ -79,11 +79,13 @@ final class ItemSubtitlesViewModel: ViewModel {
 
         super.init()
 
-        Publishers.CombineLatest($language, $isPerfectMatch)
+        $language
+            .combineLatest(searchParameters)
             .debounce(for: 0.5, scheduler: RunLoop.main)
-            .sink { [weak self] _, _ in
+            .removeDuplicates(by: { $0.0 == $1.0 && $0.1 == $1.1 })
+            .sink { [weak self] _, isPerfectMatch in
                 guard let self else { return }
-                self.search()
+                self.search(isPerfectMatch: isPerfectMatch)
             }
             .store(in: &cancellables)
     }
@@ -106,7 +108,7 @@ final class ItemSubtitlesViewModel: ViewModel {
     }
 
     @Function(\Action.Cases.search)
-    private func _search() async throws {
+    private func _search(_ isPerfectMatch: Bool) async throws {
         guard let itemID = item.id else {
             throw ErrorMessage(L10n.unknownError)
         }
