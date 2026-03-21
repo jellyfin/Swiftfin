@@ -12,127 +12,76 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
-final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
+@MainActor
+@Stateful
+final class IdentifyItemViewModel: ViewModel {
 
-    // MARK: - Events
-
-    enum Event: Equatable {
-        case updated
-        case cancelled
-        case error(ErrorMessage)
-    }
-
-    // MARK: - Actions
-
-    enum Action: Equatable {
-        case cancel
-        case search(name: String? = nil, originalTitle: String? = nil, year: Int? = nil)
+    @CasePathable
+    enum Action {
+        case search(name: String?, originalTitle: String?, year: Int?)
         case update(RemoteSearchResult)
+
+        var transition: Transition {
+            switch self {
+            case .search:
+                .background(.searching)
+            case .update:
+                .background(.updating)
+            }
+        }
     }
 
-    // MARK: - State
-
-    enum State: Hashable {
-        case content
+    enum BackgroundState {
         case searching
         case updating
     }
 
-    @Published
-    var item: BaseItemDto
-    @Published
-    var searchResults: [RemoteSearchResult] = []
-    @Published
-    var state: State = .content
-
-    private var updateTask: AnyCancellable?
-    private var searchTask: AnyCancellable?
-
-    private let eventSubject = PassthroughSubject<Event, Never>()
-
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
+    enum Event {
+        case updated
     }
 
-    // MARK: - Initializer
+    enum State {
+        case initial
+        case error
+    }
+
+    struct SearchParameters: Equatable {
+        var name: String?
+        var originalTitle: String?
+        var year: Int?
+    }
+
+    @Published
+    var item: BaseItemDto
+
+    @Published
+    var searchResults: [RemoteSearchResult] = []
+
+    var searchParameters = CurrentValueSubject<SearchParameters, Never>(.init())
 
     init(item: BaseItemDto) {
         self.item = item
         super.init()
+
+        searchParameters
+            .debounce(for: 0.5, scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] parameters in
+                guard let self else { return }
+                self.search(
+                    name: parameters.name,
+                    originalTitle: parameters.originalTitle,
+                    year: parameters.year
+                )
+            }
+            .store(in: &cancellables)
     }
 
-    // MARK: - Respond to Actions
-
-    func respond(to action: Action) -> State {
-        switch action {
-
-        case .cancel:
-            updateTask?.cancel()
-            searchTask?.cancel()
-
-            return .content
-
-        case let .search(name, originalTitle, year):
-            searchTask?.cancel()
-
-            searchTask = Task {
-                do {
-                    let newResults = try await self.searchItem(
-                        name: name,
-                        originalTitle: originalTitle,
-                        year: year
-                    )
-
-                    await MainActor.run {
-                        self.searchResults = newResults
-                        self.state = .content
-                    }
-                } catch {
-                    let apiError = ErrorMessage(error.localizedDescription)
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.error(apiError))
-                    }
-                }
-            }.asAnyCancellable()
-            return .searching
-
-        case let .update(searchResult):
-            updateTask?.cancel()
-
-            updateTask = Task {
-                do {
-                    try await updateItem(searchResult)
-
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.updated)
-                    }
-                } catch {
-                    let apiError = ErrorMessage(error.localizedDescription)
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.error(apiError))
-                    }
-                }
-            }.asAnyCancellable()
-
-            return .updating
-        }
-    }
-
-    // MARK: - Return Matching Elements (To Be Overridden)
-
-    private func searchItem(
-        name: String?,
-        originalTitle: String?,
-        year: Int?
-    ) async throws -> [RemoteSearchResult] {
-
+    @Function(\Action.Cases.search)
+    private func _search(_ name: String?, _ originalTitle: String?, _ year: Int?) async throws {
         guard let itemID = item.id, let itemType = item.type else {
-            return []
+            searchResults = []
+            return
         }
 
         switch itemType {
@@ -148,7 +97,7 @@ final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
             let request = Paths.getBoxSetRemoteSearchResults(parameters)
             let response = try await userSession.client.send(request)
 
-            return response.value
+            searchResults = response.value
 
         case .movie:
             let parameters = MovieInfoRemoteSearchQuery(
@@ -162,7 +111,7 @@ final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
             let request = Paths.getMovieRemoteSearchResults(parameters)
             let response = try await userSession.client.send(request)
 
-            return response.value
+            searchResults = response.value
 
         case .person:
             let parameters = PersonLookupInfoRemoteSearchQuery(
@@ -176,7 +125,7 @@ final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
             let request = Paths.getPersonRemoteSearchResults(parameters)
             let response = try await userSession.client.send(request)
 
-            return response.value
+            searchResults = response.value
 
         case .series:
             let parameters = SeriesInfoRemoteSearchQuery(
@@ -190,21 +139,22 @@ final class IdentifyItemViewModel: ViewModel, Stateful, Eventful {
             let request = Paths.getSeriesRemoteSearchResults(parameters)
             let response = try await userSession.client.send(request)
 
-            return response.value
+            searchResults = response.value
 
         default:
-            return []
+            searchResults = []
         }
     }
 
-    // MARK: - Save Updated Item to Server
-
-    private func updateItem(_ match: RemoteSearchResult) async throws {
+    @Function(\Action.Cases.update)
+    private func _update(_ searchResult: RemoteSearchResult) async throws {
         guard let itemID = item.id else { return }
 
-        let request = Paths.applySearchCriteria(itemID: itemID, match)
+        let request = Paths.applySearchCriteria(itemID: itemID, searchResult)
         _ = try await userSession.client.send(request)
 
-        try await item = item.getFullItem(userSession: userSession, sendNotification: true)
+        item = try await item.getFullItem(userSession: userSession, sendNotification: true)
+
+        events.send(.updated)
     }
 }

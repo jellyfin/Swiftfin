@@ -10,6 +10,29 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
+extension RemoteSearchResult: Poster {
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        .portrait // Some exceptions (E.G. Music Videos)
+    }
+
+    var unwrappedIDHashOrZero: Int {
+        id.hashValue
+    }
+
+    var systemImage: String {
+        "questionmark"
+    }
+
+    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
+        [ImageSource(url: imageURL?.url)]
+    }
+
+    func transform(image: Image) -> some View {
+        image
+    }
+}
+
 extension RemoteSearchResult: Displayable {
 
     var displayTitle: String {
