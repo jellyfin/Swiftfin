@@ -133,10 +133,6 @@ final class ItemSubtitlesViewModel: ViewModel {
             throw ErrorMessage(L10n.unknownError)
         }
 
-        let previousSubtitles = (item.mediaSources ?? [])
-            .compactMap(\.subtitleStreams)
-            .flattened()
-
         try await withThrowingTaskGroup(of: Void.self) { group in
             for subtitleID in subtitles {
                 group.addTask {
@@ -155,16 +151,12 @@ final class ItemSubtitlesViewModel: ViewModel {
 
     @Function(\Action.Cases.upload)
     private func _upload(_ fileURL: URL, _ isForced: Bool, _ isHearingImpaired: Bool) async throws {
-        guard let itemID = item.id else {
+        guard let itemID = item.id, let language, language.isNotEmpty else {
             throw ErrorMessage(L10n.unknownError)
         }
 
         guard let format = SubtitleFormat(url: fileURL) else {
             throw ErrorMessage(L10n.invalidFormat)
-        }
-
-        guard let language, language.isNotEmpty else {
-            throw ErrorMessage(L10n.unknownError)
         }
 
         let data = try Data(contentsOf: fileURL)
@@ -176,10 +168,6 @@ final class ItemSubtitlesViewModel: ViewModel {
             isHearingImpaired: isHearingImpaired,
             language: language
         )
-
-        let previousSubtitles = (item.mediaSources ?? [])
-            .compactMap(\.subtitleStreams)
-            .flattened()
 
         let request = Paths.uploadSubtitle(itemID: itemID, subtitle)
         _ = try await userSession.client.send(request)
@@ -197,10 +185,6 @@ final class ItemSubtitlesViewModel: ViewModel {
 
         let indices = mediaStreams.compactMap(\.index)
             .sorted(by: >)
-
-        let previousSubtitles = (item.mediaSources ?? [])
-            .compactMap(\.subtitleStreams)
-            .flattened()
 
         for index in indices {
             let request = Paths.deleteSubtitle(itemID: itemID, index: index)
