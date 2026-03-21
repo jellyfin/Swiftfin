@@ -89,14 +89,14 @@ final class IdentifyItemViewModel: ViewModel {
     @Function(\Action.Cases._actuallySearch)
     private func __actuallySearch(_ query: SearchQuery) async throws {
 
-        let name = query.name
-        let originalTitle = query.originalTitle
-        let year = query.year
-
-        guard name != nil || originalTitle != nil || year != nil else {
+        guard query.isNotEmpty else {
             searchResults = []
             return
         }
+
+        let name = query.name
+        let originalTitle = query.originalTitle
+        let year = query.year
 
         guard let itemID = item.id, let itemType = item.type else {
             searchResults = []
