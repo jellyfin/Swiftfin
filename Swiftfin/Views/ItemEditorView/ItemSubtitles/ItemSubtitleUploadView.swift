@@ -69,7 +69,7 @@ struct ItemSubtitleUploadView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onReceive(viewModel.events) { event in
             switch event {
-            case .deleted, .updated:
+            case .deleted:
                 break
             case .uploaded:
                 router.dismiss()

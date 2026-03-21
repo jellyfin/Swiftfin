@@ -41,7 +41,6 @@ final class ItemSubtitlesViewModel: ViewModel {
 
     enum Event {
         case deleted
-        case updated
         case uploaded
     }
 
@@ -95,12 +94,7 @@ final class ItemSubtitlesViewModel: ViewModel {
     }
 
     private func refreshItem(sendNotification: Bool = false) async throws {
-        let newItem = try await item.getFullItem(userSession: userSession, sendNotification: sendNotification)
-
-        if item != newItem {
-            item = newItem
-            events.send(.updated)
-        }
+        let item = try await item.getFullItem(userSession: userSession, sendNotification: sendNotification)
 
         let subtitles = (item.mediaSources ?? [])
             .compactMap(\.subtitleStreams)

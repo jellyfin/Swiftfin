@@ -47,7 +47,7 @@ struct ItemSubtitleSearchView: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .deleted, .updated:
+            case .deleted:
                 break
             case .uploaded:
                 router.dismiss()
