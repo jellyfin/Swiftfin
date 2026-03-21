@@ -21,7 +21,7 @@ struct ExperimentalSettingsView: View {
     var body: some View {
         Form(systemImage: "flask") {
 
-            Section{
+            Section {
                 Toggle("Liquid Glass", isOn: $isLiquidGlassEnabled)
             } footer: {
                 Text("Requires app restart to take effect.")
