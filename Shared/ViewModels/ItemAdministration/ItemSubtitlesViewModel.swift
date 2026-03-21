@@ -60,7 +60,7 @@ final class ItemSubtitlesViewModel: ViewModel {
     @Published
     var searchResults: [RemoteSubtitleInfo] = []
 
-    /// Default to user's language & fallback to English
+    /// Default to user's language
     @Published
     var language: String? = Locale.current.language.languageCode?.identifier(.alpha3)
     @Published
