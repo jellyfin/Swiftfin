@@ -48,7 +48,9 @@ struct ItemSubtitlesView: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .initial, .content:
+            case .initial:
+                ProgressView()
+            case .content:
                 contentView
             case .error:
                 viewModel.error.map {

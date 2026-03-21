@@ -98,7 +98,11 @@ struct ItemSubtitleSearchView: View {
                     }
                 } else {
                     ForEach(viewModel.searchResults, id: \.id) { subtitle in
-                        resultRow(subtitle: subtitle)
+                        SearchResultRow(subtitle) {
+                            guard let subtitleID = subtitle.id else { return }
+                            selectedSubtitles.toggle(value: subtitleID)
+                        }
+                        .isSelected(subtitle.id.map { selectedSubtitles.contains($0) } == true)
                     }
                 }
             }
@@ -112,54 +116,5 @@ struct ItemSubtitleSearchView: View {
         }
         .foregroundStyle(accentColor.overlayColor, accentColor)
         .disabled(selectedSubtitles.isEmpty)
-    }
-
-    @ViewBuilder
-    private func resultRow(subtitle: RemoteSubtitleInfo) -> some View {
-
-        let isSelected = subtitle.id.map { selectedSubtitles.contains($0) } == true
-
-        Button {
-            guard let subtitleID = subtitle.id else { return }
-            selectedSubtitles.toggle(value: subtitleID)
-        } label: {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(subtitle.name ?? L10n.unknown)
-                        .font(.headline)
-                        .fontWeight(.semibold)
-
-                    LabeledContent(L10n.language, value: subtitle.threeLetterISOLanguageName ?? L10n.unknown)
-
-                    if let downloadCount = subtitle.downloadCount {
-                        LabeledContent(L10n.downloads, value: downloadCount.description)
-                    }
-
-                    if let rating = subtitle.communityRating {
-                        LabeledContent(L10n.communityRating, value: String(format: "%.1f", rating))
-                    }
-
-                    if let author = subtitle.author {
-                        LabeledContent(L10n.author, value: author)
-                    }
-
-                    if let format = subtitle.format {
-                        LabeledContent(L10n.format, value: format)
-                    }
-                }
-
-                Spacer()
-
-                ListRowCheckbox()
-            }
-            .if(UIDevice.isTV) { row in
-                row
-                    .padding(.vertical)
-            }
-        }
-        .foregroundStyle(isSelected ? Color.primary : Color.secondary, Color.secondary)
-        .font(.caption)
-        .isSelected(isSelected)
-        .isEditing(true)
     }
 }

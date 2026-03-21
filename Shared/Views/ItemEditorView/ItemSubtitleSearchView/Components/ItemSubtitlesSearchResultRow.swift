@@ -1,0 +1,70 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+import JellyfinAPI
+import SwiftUI
+
+extension ItemSubtitleSearchView {
+
+    struct SearchResultRow: View {
+
+        @Environment(\.isSelected)
+        private var isSelected
+
+        private let subtitle: RemoteSubtitleInfo
+
+        private let action: () -> Void
+
+        init(_ subtitle: RemoteSubtitleInfo, action: @escaping () -> Void) {
+            self.subtitle = subtitle
+            self.action = action
+        }
+
+        var body: some View {
+            Button(action: action) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(subtitle.name ?? L10n.unknown)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+
+                        LabeledContent(L10n.language, value: subtitle.threeLetterISOLanguageName ?? L10n.unknown)
+
+                        if let downloadCount = subtitle.downloadCount {
+                            LabeledContent(L10n.downloads, value: downloadCount.description)
+                        }
+
+                        if let rating = subtitle.communityRating {
+                            LabeledContent(L10n.communityRating, value: String(format: "%.1f", rating))
+                        }
+
+                        if let author = subtitle.author {
+                            LabeledContent(L10n.author, value: author)
+                        }
+
+                        if let format = subtitle.format {
+                            LabeledContent(L10n.format, value: format)
+                        }
+                    }
+
+                    Spacer()
+
+                    ListRowCheckbox()
+                }
+                .if(UIDevice.isTV) { row in
+                    row
+                        .padding(.vertical)
+                }
+            }
+            .foregroundStyle(isSelected ? Color.primary : Color.secondary, Color.secondary)
+            .font(.caption)
+            .isSelected(isSelected)
+            .isEditing(true)
+        }
+    }
+}
