@@ -95,7 +95,12 @@ final class ItemSubtitlesViewModel: ViewModel {
     }
 
     private func refreshItem(sendNotification: Bool = false) async throws {
-        item = try await item.getFullItem(userSession: userSession, sendNotification: sendNotification)
+        let newItem = try await item.getFullItem(userSession: userSession, sendNotification: sendNotification)
+
+        if item != newItem {
+            item = newItem
+            events.send(.updated)
+        }
 
         let subtitles = (item.mediaSources ?? [])
             .compactMap(\.subtitleStreams)
