@@ -174,7 +174,7 @@ extension NavigationRoute {
             id: "identifyItemResults",
             style: .sheet
         ) {
-            IdentifyItemView.RemoteSearchResultView(
+            IdentifyItemResultView(
                 viewModel: viewModel,
                 result: result
             )
