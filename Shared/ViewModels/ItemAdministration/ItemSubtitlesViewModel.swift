@@ -16,6 +16,7 @@ final class ItemSubtitlesViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+        case _actuallySearch(isPerfectMatch: Bool)
         case refresh
         case search(isPerfectMatch: Bool)
         case set(Set<String>)
@@ -26,7 +27,7 @@ final class ItemSubtitlesViewModel: ViewModel {
             switch self {
             case .refresh:
                 .to(.initial, then: .content)
-            case .search:
+            case ._actuallySearch, .search:
                 .background(.searching)
             case .set, .upload, .delete:
                 .background(.updating)
@@ -84,8 +85,7 @@ final class ItemSubtitlesViewModel: ViewModel {
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .removeDuplicates(by: { $0.0 == $1.0 && $0.1 == $1.1 })
             .sink { [weak self] _, isPerfectMatch in
-                guard let self else { return }
-                self.search(isPerfectMatch: isPerfectMatch)
+                self?._actuallySearch(isPerfectMatch: isPerfectMatch)
             }
             .store(in: &cancellables)
     }
@@ -109,6 +109,13 @@ final class ItemSubtitlesViewModel: ViewModel {
 
     @Function(\Action.Cases.search)
     private func _search(_ isPerfectMatch: Bool) async throws {
+        searchParameters.send(isPerfectMatch)
+
+        await cancel()
+    }
+
+    @Function(\Action.Cases._actuallySearch)
+    private func __actuallySearch(_ isPerfectMatch: Bool) async throws {
         guard let itemID = item.id else {
             throw ErrorMessage(L10n.unknownError)
         }
