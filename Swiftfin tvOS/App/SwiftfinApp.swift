@@ -76,6 +76,9 @@ struct SwiftfinApp: App {
                         Notifications[.didSignOut].post()
                     }
                 }
+                .onOpenURL { url in
+                    TopShelfRouter.shared.receive(url)
+                }
         }
     }
 }

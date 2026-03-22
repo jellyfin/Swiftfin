@@ -92,6 +92,15 @@ final class HomeViewModel: ViewModel, Stateful {
 
                     guard !Task.isCancelled else { return }
 
+                    #if os(tvOS)
+                    if let self {
+                        TopShelfSnapshotWriter.update(
+                            with: resumeItems,
+                            userSession: self.userSession
+                        )
+                    }
+                    #endif
+
                     await MainActor.run {
                         guard let self else { return }
                         self.resumeItems.elements = resumeItems
@@ -166,6 +175,13 @@ final class HomeViewModel: ViewModel, Stateful {
             await library.send(.refresh)
         }
 
+        #if os(tvOS)
+        TopShelfSnapshotWriter.update(
+            with: resumeItems,
+            userSession: userSession
+        )
+        #endif
+
         await MainActor.run {
             self.resumeItems.elements = resumeItems
             self.libraries = libraries
@@ -173,6 +189,10 @@ final class HomeViewModel: ViewModel, Stateful {
     }
 
     private func getResumeItems() async throws -> [BaseItemDto] {
+        guard let userSession else {
+            throw ErrorMessage("Missing user session")
+        }
+
         var parameters = Paths.GetResumeItemsParameters()
         parameters.userID = userSession.user.id
         parameters.enableUserData = true
@@ -187,6 +207,9 @@ final class HomeViewModel: ViewModel, Stateful {
     }
 
     private func getLibraries() async throws -> [LatestInLibraryViewModel] {
+        guard let userSession else {
+            throw ErrorMessage("Missing user session")
+        }
 
         let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
@@ -210,6 +233,10 @@ final class HomeViewModel: ViewModel, Stateful {
 
     // TODO: use the more updated server/user data when implemented
     private func getExcludedLibraries() async throws -> [String] {
+        guard let userSession else {
+            throw ErrorMessage("Missing user session")
+        }
+
         let currentUserPath = Paths.getCurrentUser
         let response = try await userSession.client.send(currentUserPath)
 
@@ -217,6 +244,10 @@ final class HomeViewModel: ViewModel, Stateful {
     }
 
     private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {
+        guard let userSession else {
+            throw ErrorMessage("Missing user session")
+        }
+
         let request: Request<UserItemDataDto> = if isPlayed {
             Paths.markPlayedItem(
                 itemID: item.id!,

@@ -72,6 +72,10 @@ final class RootCoordinator: ObservableObject {
     private func didSignOut() {
         logger.info("Signed out")
 
+        #if os(tvOS)
+        TopShelfSnapshotWriter.clear()
+        #endif
+
         root(.selectUser)
     }
 

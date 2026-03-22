@@ -7,6 +7,7 @@
 //
 
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 // TODO: move popup to router
@@ -40,6 +41,9 @@ struct MainTabView: View {
         TabItem.media
         TabItem.settings
     }
+
+    @StateObject
+    private var topShelfRouter = TopShelfRouter.shared
     #endif
 
     @ViewBuilder
@@ -65,5 +69,61 @@ struct MainTabView: View {
                 .tag(tab.item.id)
             }
         }
+        #if os(tvOS)
+        .task(id: topShelfRouter.pendingDeepLink) {
+            await handlePendingTopShelfDeepLinkIfNeeded()
+        }
+        #endif
     }
 }
+
+#if os(tvOS)
+extension MainTabView {
+
+    @MainActor
+    private func handlePendingTopShelfDeepLinkIfNeeded() async {
+        guard let deepLink = topShelfRouter.pendingDeepLink else { return }
+        guard let userSession = Container.shared.currentUserSession() else { return }
+
+        guard userSession.user.id == deepLink.userID else {
+            topShelfRouter.clear(deepLink)
+            return
+        }
+
+        do {
+            let request = Paths.getItem(
+                itemID: deepLink.itemID,
+                userID: userSession.user.id
+            )
+            let response = try await userSession.client.send(request)
+            let item = response.value
+
+            let route = route(for: deepLink.action, item: item)
+
+            let coordinator = tabCoordinator.select(tabID: TabItem.home.id)
+            coordinator?.reset()
+            coordinator?.push(route)
+
+            topShelfRouter.clear(deepLink)
+        } catch {
+            topShelfRouter.clear(deepLink)
+        }
+    }
+
+    @MainActor
+    private func route(
+        for action: TopShelfDeepLink.Action,
+        item: BaseItemDto
+    ) -> NavigationRoute {
+        switch action {
+        case .display:
+            .item(item: item)
+        case .play:
+            .videoPlayer(
+                item: item,
+                queue: item.type == .episode ? EpisodeMediaPlayerQueue(episode: item) : nil
+            )
+        }
+    }
+}
+#endif
