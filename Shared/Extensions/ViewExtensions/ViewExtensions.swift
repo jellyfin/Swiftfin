@@ -432,11 +432,9 @@ extension View {
     }
 
     func scrollIfLargerThanContainer(
-        padding: CGFloat = 0,
-        fadeOut: Bool = false,
-        focusBinding: FocusState<Bool>.Binding? = nil
+        padding: CGFloat = 0
     ) -> some View {
-        modifier(ScrollIfLargerThanContainerModifier(padding: padding, fadeOut: fadeOut, focusBinding: focusBinding))
+        modifier(ScrollIfLargerThanContainerModifier(padding: padding))
     }
 
     func maskLinearGradient(

@@ -71,6 +71,15 @@ func Section(
     }
 }
 
+// MARK: - LearnMore View Modifier
+
+extension View {
+
+    func learnMore(@LabeledContentBuilder _ content: () -> AnyView) -> some View {
+        focusedValue(\.formLearnMore, content())
+    }
+}
+
 // MARK: - LearnMoreButton
 
 // TODO: Rename to `LearnMoreButton` once the original `LearnMoreButton` is removed

@@ -54,12 +54,6 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
     @FocusedValue(\.formLearnMore)
     private var focusedLearnMore
 
-    @FocusState
-    private var isModalFocused: Bool
-
-    @State
-    private var learnMoreContent: AnyView?
-
     private let content: Content
     private let image: Image
 
@@ -90,18 +84,6 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
             .backport
             .scrollClipDisabled()
         }
-        .onChange(of: focusedLearnMore != nil) {
-            if let focusedLearnMore {
-                learnMoreContent = focusedLearnMore
-            } else if !isModalFocused {
-                learnMoreContent = nil
-            }
-        }
-        .onChange(of: isModalFocused) {
-            if !isModalFocused && focusedLearnMore == nil {
-                learnMoreContent = nil
-            }
-        }
     }
 
     @ViewBuilder
@@ -109,37 +91,28 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
         ZStack {
             image
 
-            if let learnMoreContent {
-                learnMoreModal(learnMoreContent)
+            if let focusedLearnMore {
+                learnMoreModal(focusedLearnMore)
             }
         }
-        .focusSection()
-        .animation(.linear(duration: 0.2), value: learnMoreContent == nil)
+        .animation(.linear(duration: 0.2), value: focusedLearnMore == nil)
     }
 
     @ViewBuilder
     private func learnMoreModal(_ content: AnyView) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            content
-                .labeledContentStyle(LearnMoreLabeledContentStyle())
-                .foregroundStyle(
-                    isModalFocused ? Color.black : Color.white,
-                    isModalFocused ? Color.black : Color.secondary
-                )
+        Ticker {
+            VStack(alignment: .leading, spacing: 16) {
+                content
+                    .labeledContentStyle(LearnMoreLabeledContentStyle())
+                    .foregroundStyle(Color.primary, Color.secondary)
+            }
+            .edgePadding()
         }
-        .edgePadding()
-        .scrollIfLargerThanContainer(fadeOut: true, focusBinding: $isModalFocused)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .background {
             RoundedRectangle(cornerRadius: 20)
                 .fill(Material.thick)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(isModalFocused ? Color.white : .clear)
-                }
         }
         .padding()
-        .scaleEffect(isModalFocused ? 1.04 : 1.0)
-        .animation(.easeInOut(duration: 0.125), value: isModalFocused)
     }
 }
