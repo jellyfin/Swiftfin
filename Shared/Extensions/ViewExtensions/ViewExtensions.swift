@@ -431,8 +431,15 @@ extension View {
         onNotification(.sceneWillEnterForeground, perform: action)
     }
 
+<<<<<<< HEAD
     func scrollIfLargerThanContainer(axes: Axis.Set = .vertical, padding: CGFloat = 0) -> some View {
         modifier(ScrollIfLargerThanContainerModifier(axes: axes, padding: padding))
+=======
+    func scrollIfLargerThanContainer(
+        padding: CGFloat = 0
+    ) -> some View {
+        modifier(ScrollIfLargerThanContainerModifier(padding: padding))
+>>>>>>> 5d546e03 (Add auto-scrolling Ticker to LearnMoreModal on tvOS)
     }
 
     func maskLinearGradient(

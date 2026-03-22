@@ -16,6 +16,7 @@
       let axes: Axis.Set
       let padding: CGFloat
 
+<<<<<<< HEAD
       func body(content: Content) -> some View {
           AlternateLayoutView {
               Color.clear
@@ -39,3 +40,24 @@
           }
       }
   }   
+=======
+struct ScrollIfLargerThanContainerModifier: ViewModifier {
+
+    let padding: CGFloat
+
+    func body(content: Content) -> some View {
+        ViewThatFits(in: .vertical) {
+            // if content is small
+            content
+
+            // if content too tall
+            ScrollView {
+                content
+            }
+            .backport // iOS 17
+            .scrollClipDisabled()
+            .scrollIndicators(.never)
+        }
+    }
+}
+>>>>>>> 5d546e03 (Add auto-scrolling Ticker to LearnMoreModal on tvOS)
