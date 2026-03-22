@@ -66,7 +66,8 @@ struct ItemSubtitleSearchView: View {
                 .buttonStyle(.toolbarPill)
             #endif
         }
-        .onChange(of: isPerfectMatch) { newValue in
+        .backport
+        .onChange(of: isPerfectMatch) { _, newValue in
             viewModel.searchParameters.value = newValue
         }
     }
@@ -92,8 +93,9 @@ struct ItemSubtitleSearchView: View {
             Section(L10n.search) {
 
                 if viewModel.searchResults.isEmpty {
-                    if viewModel.background.states.contains(.searching) {
+                    if viewModel.background.is(.searching) {
                         ProgressView()
+                            .frame(maxWidth: .infinity, alignment: .center)
                     } else {
                         Text(L10n.none)
                             .foregroundStyle(.secondary)
