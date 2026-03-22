@@ -6,31 +6,27 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
 import JellyfinAPI
 import SwiftUI
 
 extension ItemSubtitleSearchView {
 
-    struct SubtitleResultRow: View {
-
-        // MARK: - Environment Variables
+    struct SearchResultRow: View {
 
         @Environment(\.isSelected)
-        var isSelected
+        private var isSelected
 
-        // MARK: - Subtitle Variable
+        private let subtitle: RemoteSubtitleInfo
 
-        let subtitle: RemoteSubtitleInfo
+        private let action: () -> Void
 
-        // MARK: - Subtitle Action
-
-        let onSelect: () -> Void
-
-        // MARK: - Body
+        init(_ subtitle: RemoteSubtitleInfo, action: @escaping () -> Void) {
+            self.subtitle = subtitle
+            self.action = action
+        }
 
         var body: some View {
-            Button(action: onSelect) {
+            Button(action: action) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(subtitle.name ?? L10n.unknown)
@@ -55,14 +51,20 @@ extension ItemSubtitleSearchView {
                             LabeledContent(L10n.format, value: format)
                         }
                     }
-                    .foregroundStyle(isSelected ? .primary : .secondary, .secondary)
-                    .font(.caption)
 
                     Spacer()
 
                     ListRowCheckbox()
                 }
+                .if(UIDevice.isTV) { row in
+                    row
+                        .padding(.vertical)
+                }
             }
+            .foregroundStyle(isSelected ? Color.primary : Color.secondary, Color.secondary)
+            .font(.caption)
+            .isSelected(isSelected)
+            .isEditing(true)
         }
     }
 }
