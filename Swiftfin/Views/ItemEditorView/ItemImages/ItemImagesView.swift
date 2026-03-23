@@ -19,26 +19,24 @@ struct ItemImagesView: View {
     @Router
     private var router
 
-    @StateObject
-    var viewModel: ItemImagesViewModel
+    @ObservedObject
+    var viewModel: ItemImageViewModel
 
     @State
     private var selectedType: ImageType?
-    @State
-    private var isFilePickerPresented = false
     @State
     private var error: Error?
 
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .content:
-                imageView
             case .initial:
                 ProgressView()
+            case .content:
+                contentView
             case .error:
-                if let error = viewModel.error {
-                    ErrorView(error: error)
+                viewModel.error.map {
+                    ErrorView(error: $0)
                 }
             }
         }
@@ -53,34 +51,11 @@ struct ItemImagesView: View {
         .navigationBarCloseButton {
             router.dismiss()
         }
-        .fileImporter(
-            isPresented: $isFilePickerPresented,
-            allowedContentTypes: [.png, .jpeg, .heic],
-            allowsMultipleSelection: false
-        ) {
-            switch $0 {
-            case let .success(urls):
-                if let file = urls.first, let type = selectedType {
-                    viewModel.uploadFile(file: file, type: type)
-                    selectedType = nil
-                }
-            case let .failure(fileError):
-                error = fileError
-                selectedType = nil
-            }
-        }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case .updated: ()
-            }
-        }
         .errorMessage($viewModel.error)
     }
 
-    // MARK: - Image View
-
     @ViewBuilder
-    private var imageView: some View {
+    private var contentView: some View {
         ScrollView {
             ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
                 Section {
@@ -95,8 +70,6 @@ struct ItemImagesView: View {
         }
     }
 
-    // MARK: - Image Scroll View
-
     @ViewBuilder
     private func imageScrollView(for imageType: ImageType) -> some View {
         let images = viewModel.images[imageType] ?? []
@@ -106,10 +79,11 @@ struct ItemImagesView: View {
                 HStack {
                     ForEach(images, id: \.self) { imageInfo in
                         imageButton(imageInfo: imageInfo) {
+                            viewModel.imageType = imageInfo.imageType
                             router.route(
                                 to: .itemImageDetails(
                                     viewModel: viewModel,
-                                    imageInfo: imageInfo
+                                    imageDetail: imageInfo
                                 )
                             )
                         }
@@ -120,8 +94,6 @@ struct ItemImagesView: View {
         }
     }
 
-    // MARK: - Section Header
-
     @ViewBuilder
     private func sectionHeader(for imageType: ImageType) -> some View {
         HStack {
@@ -130,50 +102,66 @@ struct ItemImagesView: View {
 
             Spacer()
 
-            StateAdapter(initialValue: false) { isPhotoPickerPresented in
-                Menu(L10n.options, systemImage: "plus") {
-                    Button(L10n.search, systemImage: "magnifyingglass") {
-                        router.route(to: .addItemImage(viewModel: viewModel, imageType: imageType))
-                    }
+            Menu(L10n.options, systemImage: "plus") {
+                Button(L10n.search, systemImage: "magnifyingglass") {
+                    router.route(to: .addItemImage(viewModel: viewModel, imageType: imageType))
+                }
 
-                    Divider()
+                Divider()
 
+                StateAdapter(initialValue: false) { isFilePickerPresented in
                     Button(L10n.uploadFile, systemImage: "document.badge.plus") {
                         selectedType = imageType
-                        isFilePickerPresented = true
+                        isFilePickerPresented.wrappedValue = true
                     }
+                    .fileImporter(
+                        isPresented: isFilePickerPresented,
+                        allowedContentTypes: [.png, .jpeg, .heic],
+                        allowsMultipleSelection: false
+                    ) {
+                        switch $0 {
+                        case let .success(urls):
+                            if let filePath = urls.first?.absoluteString,
+                               let file = UIImage(contentsOfFile: filePath),
+                               let type = selectedType
+                            {
+                                viewModel.imageType = type
+                                viewModel.upload(file)
+                                selectedType = nil
+                            }
+                        case let .failure(fileError):
+                            error = fileError
+                            selectedType = nil
+                        }
+                    }
+                }
 
+                StateAdapter(initialValue: false) { isPhotoPickerPresented in
                     Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
-                        selectedType = imageType
+                        viewModel.imageType = imageType
                         isPhotoPickerPresented.wrappedValue = true
                     }
-                }
-                .font(.body)
-                .labelStyle(.iconOnly)
-                .fontWeight(.semibold)
-                .foregroundStyle(accentColor)
-                .photoPicker(
-                    isPresented: isPhotoPickerPresented
-                ) { cropped in
-                    if let type = selectedType {
-                        viewModel.uploadImage(image: cropped, type: type)
-                        selectedType = nil
-                    }
+                    .photoPicker(
+                        isPresented: isPhotoPickerPresented,
+                        viewModel: viewModel
+                    )
                 }
             }
+            .font(.body)
+            .labelStyle(.iconOnly)
+            .fontWeight(.semibold)
+            .foregroundStyle(accentColor)
         }
         .edgePadding(.horizontal)
     }
 
-    // MARK: - Image Button
-
-    // TODO: instead of using `posterStyle`, should be sized based on
-    //       the image type and just ignore and poster styling
     @ViewBuilder
     private func imageButton(
         imageInfo: ImageInfo,
         onSelect: @escaping () -> Void
     ) -> some View {
+        let posterType = imageInfo.imageType?.posterDisplayType(for: viewModel.item) ?? .landscape
+
         Button(action: onSelect) {
             ZStack {
                 Color.secondarySystemFill
@@ -192,7 +180,7 @@ struct ItemImagesView: View {
                 }
                 .pipeline(.Swiftfin.other)
             }
-            .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)
+            .posterStyle(posterType)
             .frame(maxHeight: 150)
             .posterShadow()
         }

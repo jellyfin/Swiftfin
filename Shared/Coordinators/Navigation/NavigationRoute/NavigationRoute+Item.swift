@@ -23,18 +23,6 @@ extension NavigationRoute {
         }
     }
 
-    static func addItemImage(viewModel: ItemImagesViewModel, imageType: ImageType) -> NavigationRoute {
-        NavigationRoute(
-            id: "addItemImage",
-            style: .push(.automatic)
-        ) {
-            AddItemImageView(
-                viewModel: viewModel,
-                imageType: imageType
-            )
-        }
-    }
-
     static func addPeople(viewModel: PeopleEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "addPeople",
@@ -207,25 +195,37 @@ extension NavigationRoute {
         }
     }
 
-    static func itemImageDetails(viewModel: ItemImagesViewModel, imageInfo: ImageInfo) -> NavigationRoute {
+    static func itemImageDetails(
+        viewModel: ItemImageViewModel,
+        imageDetail: any ItemImageDetail
+    ) -> NavigationRoute {
         NavigationRoute(
             id: "itemImageDetails",
             style: .sheet
         ) {
             ItemImageDetailsView(
                 viewModel: viewModel,
-                imageInfo: imageInfo
+                imageDetail: imageDetail
             )
-            .isEditing(true)
+            .isEditing(imageDetail is ImageInfo)
         }
     }
 
-    static func itemImages(viewModel: ItemImagesViewModel) -> NavigationRoute {
+    static func itemImages(viewModel: ItemImageViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemImages",
             style: .sheet
         ) {
             ItemImagesView(viewModel: viewModel)
+        }
+    }
+
+    static func searchItemImages(viewModel: ItemImageViewModel, imageType: ImageType) -> NavigationRoute {
+        NavigationRoute(
+            id: "searchItemImages",
+            style: .push(.automatic)
+        ) {
+            ItemImageSearchView(viewModel: viewModel, imageType: imageType)
         }
     }
 
@@ -248,21 +248,4 @@ extension NavigationRoute {
             ItemOverviewView(item: item)
         }
     }
-
-    #if os(iOS)
-
-    static func itemSearchImageDetails(viewModel: ItemImagesViewModel, remoteImageInfo: RemoteImageInfo) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemSearchImageDetails",
-            style: .sheet
-        ) {
-            ItemImageDetailsView(
-                viewModel: viewModel,
-                remoteImageInfo: remoteImageInfo
-            )
-            .isEditing(false)
-        }
-    }
-
-    #endif
 }

@@ -6,19 +6,22 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Mantis
 import PhotosUI
 import SwiftUI
 
 /// SwiftUI's PhotoPicker (iOS 16+) but with Mantis Cropping built into the workflow
-struct PhotoPickerModifier: ViewModifier {
+struct PhotoPickerModifier<Item>: ViewModifier {
 
     @Binding
     var isPresented: Bool
 
+    @ObservedObject
+    var viewModel: ServerImageViewModel<Item>
+
     let cropShape: Mantis.CropShapeType
     let presetRatio: Mantis.PresetFixedRatioType
-    let onSelect: (UIImage) -> Void
 
     @State
     private var selectedItem: PhotosPickerItem?
@@ -45,16 +48,22 @@ struct PhotoPickerModifier: ViewModifier {
                 if let image = selectedImage {
                     NavigationView {
                         PhotoCropView(
+                            viewModel: viewModel,
                             image: image,
                             cropShape: cropShape,
                             presetRatio: presetRatio
-                        ) { cropped in
-                            onSelect(cropped)
-                            selectedImage = nil
-                            selectedItem = nil
-                            isPresented = false
-                        }
+                        )
                     }
+                }
+            }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .updated:
+                    selectedImage = nil
+                    selectedItem = nil
+                    isPresented = false
+                case .deleted:
+                    break
                 }
             }
     }

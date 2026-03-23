@@ -10,7 +10,6 @@ import Defaults
 import Engine
 import Factory
 import JellyfinAPI
-import Mantis
 import SwiftUI
 
 struct LocalUserSettingsView: View {
@@ -22,11 +21,11 @@ struct LocalUserSettingsView: View {
     private var viewModel: SettingsViewModel
 
     @StateObject
-    private var profileImageViewModel: UserProfileImageViewModel
+    private var profileImageViewModel: UserImageViewModel
 
     init(viewModel: SettingsViewModel) {
         self.viewModel = viewModel
-        self._profileImageViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: viewModel.userSession.user.data))
+        self._profileImageViewModel = StateObject(wrappedValue: UserImageViewModel(item: viewModel.userSession.user.data))
     }
 
     var body: some View {
@@ -34,7 +33,7 @@ struct LocalUserSettingsView: View {
             #if os(iOS)
             StateAdapter(initialValue: false) { isPhotoPickerPresented in
                 UserProfileHeroImage(
-                    user: profileImageViewModel.user,
+                    user: profileImageViewModel.item,
                     source: viewModel.userSession.user.profileImageSource(
                         client: viewModel.userSession.client
                     )
@@ -45,10 +44,9 @@ struct LocalUserSettingsView: View {
                 }
                 .photoPicker(
                     isPresented: isPhotoPickerPresented,
+                    viewModel: profileImageViewModel,
                     presetRatio: .alwaysUsingOnePresetFixedRatio(ratio: 1)
-                ) { cropped in
-                    profileImageViewModel.upload(cropped)
-                }
+                )
             }
 
             Section {

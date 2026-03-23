@@ -6,11 +6,12 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import Mantis
 import SwiftUI
 
-struct PhotoCropView: View {
+struct PhotoCropView<Item>: View {
 
     @Default(.accentColor)
     private var accentColor
@@ -18,13 +19,15 @@ struct PhotoCropView: View {
     @Environment(\.dismiss)
     private var dismiss
 
+    @ObservedObject
+    var viewModel: ServerImageViewModel<Item>
+
     @StateObject
     private var proxy: _PhotoCropView.Proxy = .init()
 
     let image: UIImage
     let cropShape: Mantis.CropShapeType
     let presetRatio: Mantis.PresetFixedRatioType
-    let onSave: (UIImage) -> Void
 
     private var showsRatioPresets: Bool {
         switch presetRatio {
@@ -41,7 +44,10 @@ struct PhotoCropView: View {
             cropShape: cropShape,
             presetRatio: presetRatio,
             proxy: proxy,
-            onImageCropped: onSave
+            onImageCropped: { cropped in
+                viewModel.upload(cropped)
+            },
+            onCropFailed: {}
         )
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -53,7 +59,7 @@ struct PhotoCropView: View {
             if showsRatioPresets {
                 ToolbarItem(placement: .bottomBar) {
                     HStack(spacing: 8) {
-                        ForEach(AspectRatioPreset.allCases) { preset in
+                        ForEach(AspectRatios.allCases) { preset in
                             Button(preset.displayTitle) {
                                 proxy.setAspectRatio(preset.ratio)
                             }
@@ -82,6 +88,16 @@ struct PhotoCropView: View {
                 proxy.crop()
             }
             .buttonStyle(.toolbarPill)
+            .disabled(viewModel.background.is(.updating))
+            .opacity(viewModel.background.is(.updating) ? 0.5 : 1)
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .updated:
+                dismiss()
+            case .deleted:
+                break
+            }
         }
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarBackground(.visible, for: .bottomBar)
@@ -133,6 +149,7 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
     let presetRatio: Mantis.PresetFixedRatioType
     let proxy: Proxy
     let onImageCropped: (UIImage) -> Void
+    let onCropFailed: () -> Void
 
     func makeUIViewController(context: Context) -> some UIViewController {
         var config = Mantis.Config()
@@ -148,6 +165,7 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
         )
         cropViewController.delegate = context.coordinator
         context.coordinator.onImageCropped = onImageCropped
+        context.coordinator.onCropFailed = onCropFailed
         context.coordinator.proxy = proxy
         proxy.cropViewController = cropViewController
 
@@ -163,6 +181,7 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
     class Coordinator: CropViewControllerDelegate {
 
         var onImageCropped: ((UIImage) -> Void)?
+        var onCropFailed: (() -> Void)?
         weak var proxy: Proxy?
 
         func cropViewControllerDidCrop(
@@ -182,7 +201,9 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
         func cropViewControllerDidFailToCrop(
             _ cropViewController: CropViewController,
             original: UIImage
-        ) {}
+        ) {
+            onCropFailed?()
+        }
 
         func cropViewControllerDidBeginResize(
             _ cropViewController: CropViewController

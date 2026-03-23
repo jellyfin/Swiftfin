@@ -19,20 +19,26 @@ struct ItemImageDetailsView: View {
     private var isEditing
 
     @ObservedObject
-    private var viewModel: ItemImagesViewModel
+    private var viewModel: ItemImageViewModel
 
+    private let imageDetail: any ItemImageDetail
     private let imageSource: ImageSource
 
-    private let index: Int?
-    private let width: Int?
-    private let height: Int?
-    private let language: String?
-    private let provider: String?
-    private let rating: Double?
-    private let ratingVotes: Int?
+    private var isWorking: Bool {
+        viewModel.background.states.contains(.deleting) || viewModel.background.states.contains(.updating)
+    }
 
-    private let onSave: (() -> Void)?
-    private let onDelete: (() -> Void)?
+    init(
+        viewModel: ItemImageViewModel,
+        imageDetail: any ItemImageDetail
+    ) {
+        self.viewModel = viewModel
+        self.imageDetail = imageDetail
+        self.imageSource = imageDetail.imageSource(
+            itemID: viewModel.item.id!,
+            client: viewModel.userSession.client
+        )
+    }
 
     var body: some View {
         List {
@@ -54,31 +60,31 @@ struct ItemImageDetailsView: View {
             .listRowInsets(.zero)
 
             Section(L10n.details) {
-                if let provider {
+                if let provider = imageDetail.provider {
                     LabeledContent(L10n.provider, value: provider)
                 }
 
-                if let language {
+                if let language = imageDetail.language {
                     LabeledContent(L10n.language, value: language)
                 }
 
-                if let width, let height {
+                if let width = imageDetail.width, let height = imageDetail.height {
                     LabeledContent(
                         L10n.dimensions,
                         value: "\(width) x \(height)"
                     )
                 }
 
-                if let index {
+                if let index = imageDetail.index {
                     LabeledContent(L10n.index, value: index.description)
                 }
             }
 
-            if let rating {
+            if let rating = imageDetail.rating {
                 Section(L10n.ratings) {
                     LabeledContent(L10n.rating, value: rating.formatted(.number.precision(.fractionLength(2))))
 
-                    if let ratingVotes {
+                    if let ratingVotes = imageDetail.ratingVotes {
                         LabeledContent(L10n.votes, value: ratingVotes, format: .number)
                     }
                 }
@@ -95,30 +101,8 @@ struct ItemImageDetailsView: View {
                 }
             }
 
-            if isEditing, let onDelete {
-                StateAdapter(initialValue: false) { isPresentingConfirmation in
-                    Button(L10n.delete, role: .destructive) {
-                        isPresentingConfirmation.wrappedValue = true
-                    }
-                    .buttonStyle(.primary)
-                    .confirmationDialog(
-                        L10n.delete,
-                        isPresented: isPresentingConfirmation,
-                        titleVisibility: .visible
-                    ) {
-                        Button(
-                            L10n.delete,
-                            role: .destructive,
-                            action: onDelete
-                        )
-
-                        Button(L10n.cancel, role: .cancel) {
-                            isPresentingConfirmation.wrappedValue = false
-                        }
-                    } message: {
-                        Text(L10n.deleteItemConfirmationMessage)
-                    }
-                }
+            if isEditing {
+                deleteButton
             }
         }
         .navigationTitle(L10n.image)
@@ -127,72 +111,50 @@ struct ItemImageDetailsView: View {
             router.dismiss()
         }
         .topBarTrailing {
-            if viewModel.background.is(.updating) {
+            if isWorking {
                 ProgressView()
             }
 
-            if !isEditing, let onSave {
+            if !isEditing {
                 Button(L10n.save) {
-                    onSave()
+                    viewModel.save()
                 }
                 .buttonStyle(.toolbarPill)
+                .disabled(isWorking)
             }
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .updated:
+            case .deleted, .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()
             }
         }
         .errorMessage($viewModel.error)
     }
-}
 
-extension ItemImageDetailsView {
+    @ViewBuilder
+    private var deleteButton: some View {
+        StateAdapter(initialValue: false) { isPresentingConfirmation in
+            Button(L10n.delete, role: .destructive) {
+                isPresentingConfirmation.wrappedValue = true
+            }
+            .buttonStyle(.primary)
+            .confirmationDialog(
+                L10n.delete,
+                isPresented: isPresentingConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button(L10n.delete, role: .destructive) {
+                    viewModel.delete()
+                }
 
-    // Initialize as a Local Server Image
-
-    init(
-        viewModel: ItemImagesViewModel,
-        imageInfo: ImageInfo
-    ) {
-        self.viewModel = viewModel
-        self.imageSource = imageInfo.itemImageSource(
-            itemID: viewModel.item.id!,
-            client: viewModel.userSession.client
-        )
-        self.index = imageInfo.imageIndex
-        self.width = imageInfo.width
-        self.height = imageInfo.height
-        self.language = nil
-        self.provider = nil
-        self.rating = nil
-        self.ratingVotes = nil
-        self.onSave = nil
-        self.onDelete = {
-            viewModel.deleteImage(imageInfo)
+                Button(L10n.cancel, role: .cancel) {
+                    isPresentingConfirmation.wrappedValue = false
+                }
+            } message: {
+                Text(L10n.deleteItemConfirmationMessage)
+            }
         }
-    }
-
-    // Initialize as a Remote Search Image
-
-    init(
-        viewModel: ItemImagesViewModel,
-        remoteImageInfo: RemoteImageInfo
-    ) {
-        self.viewModel = viewModel
-        self.imageSource = ImageSource(url: remoteImageInfo.url?.url)
-        self.index = nil
-        self.width = remoteImageInfo.width
-        self.height = remoteImageInfo.height
-        self.language = remoteImageInfo.language
-        self.provider = remoteImageInfo.providerName
-        self.rating = remoteImageInfo.communityRating
-        self.ratingVotes = remoteImageInfo.voteCount
-        self.onSave = {
-            viewModel.setImage(remoteImageInfo)
-        }
-        self.onDelete = nil
     }
 }

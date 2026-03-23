@@ -6,7 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-enum AspectRatioPreset: Identifiable, Displayable, CaseIterable {
+enum AspectRatios: Identifiable, Displayable, CaseIterable {
 
     case free
     case oneToOne

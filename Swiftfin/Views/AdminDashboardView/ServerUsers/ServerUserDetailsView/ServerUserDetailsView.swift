@@ -28,7 +28,7 @@ struct ServerUserDetailsView: View {
     private var viewModel: ServerUserAdminViewModel
 
     @StateObject
-    private var profileViewModel: UserProfileImageViewModel
+    private var profileViewModel: UserImageViewModel
 
     @State
     private var error: Error?
@@ -37,7 +37,7 @@ struct ServerUserDetailsView: View {
 
     init(user: UserDto) {
         self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
-        self._profileViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: user))
+        self._profileViewModel = StateObject(wrappedValue: UserImageViewModel(item: user))
     }
 
     // MARK: - Body
@@ -58,10 +58,9 @@ struct ServerUserDetailsView: View {
                 }
                 .photoPicker(
                     isPresented: isPhotoPickerPresented,
+                    viewModel: profileViewModel,
                     presetRatio: .alwaysUsingOnePresetFixedRatio(ratio: 1)
-                ) { cropped in
-                    profileViewModel.upload(cropped)
-                }
+                )
             }
 
             Section {

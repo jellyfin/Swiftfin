@@ -92,16 +92,16 @@ extension View {
     /// Photo Picker with cropping after the selection
     func photoPicker(
         isPresented: Binding<Bool>,
+        viewModel: ServerImageViewModel<some Any>,
         cropShape: Mantis.CropShapeType = .rect,
-        presetRatio: Mantis.PresetFixedRatioType = .canUseMultiplePresetFixedRatio(defaultRatio: 0),
-        onSelect: @escaping (UIImage) -> Void
+        presetRatio: Mantis.PresetFixedRatioType = .canUseMultiplePresetFixedRatio(defaultRatio: 0)
     ) -> some View {
         modifier(
             PhotoPickerModifier(
                 isPresented: isPresented,
+                viewModel: viewModel,
                 cropShape: cropShape,
-                presetRatio: presetRatio,
-                onSelect: onSelect
+                presetRatio: presetRatio
             )
         )
     }

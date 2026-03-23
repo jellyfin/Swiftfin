@@ -41,4 +41,16 @@ extension ImageType: Displayable {
             L10n.profile
         }
     }
+
+    /// The poster display type for this image type based on the item.
+    func posterDisplayType(for item: BaseItemDto? = nil) -> PosterDisplayType {
+        switch self {
+        case .primary:
+            item?.preferredPosterDisplayType ?? .portrait
+        case .disc:
+            .square
+        default:
+            .landscape
+        }
+    }
 }

@@ -16,7 +16,31 @@ extension ImageInfo: @retroactive Identifiable {
     }
 }
 
-extension ImageInfo {
+extension ImageInfo: ItemImageDetail {
+
+    var index: Int? {
+        imageIndex
+    }
+
+    var language: String? {
+        nil
+    }
+
+    var provider: String? {
+        nil
+    }
+
+    var rating: Double? {
+        nil
+    }
+
+    var ratingVotes: Int? {
+        nil
+    }
+
+    func imageSource(itemID: String, client: JellyfinClient) -> ImageSource {
+        itemImageSource(itemID: itemID, client: client)
+    }
 
     func itemImageSource(itemID: String, client: JellyfinClient) -> ImageSource {
         let parameters = Paths.GetItemImageParameters(
