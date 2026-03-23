@@ -7,8 +7,10 @@
 //
 
 import Defaults
+import Engine
 import Factory
 import JellyfinAPI
+import Mantis
 import SwiftUI
 
 struct LocalUserSettingsView: View {
@@ -22,9 +24,6 @@ struct LocalUserSettingsView: View {
     @StateObject
     private var profileImageViewModel: UserProfileImageViewModel
 
-    @State
-    private var isPresentingConfirmReset: Bool = false
-
     init(viewModel: SettingsViewModel) {
         self.viewModel = viewModel
         self._profileImageViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: viewModel.userSession.user.data))
@@ -33,15 +32,23 @@ struct LocalUserSettingsView: View {
     var body: some View {
         Form {
             #if os(iOS)
-            UserProfileHeroImage(
-                user: profileImageViewModel.user,
-                source: viewModel.userSession.user.profileImageSource(
-                    client: viewModel.userSession.client
-                )
-            ) {
-                router.route(to: .userProfileImage(viewModel: profileImageViewModel))
-            } onDelete: {
-                profileImageViewModel.send(.delete)
+            StateAdapter(initialValue: false) { isPhotoPickerPresented in
+                UserProfileHeroImage(
+                    user: profileImageViewModel.user,
+                    source: viewModel.userSession.user.profileImageSource(
+                        client: viewModel.userSession.client
+                    )
+                ) {
+                    isPhotoPickerPresented.wrappedValue = true
+                } onDelete: {
+                    profileImageViewModel.delete()
+                }
+                .photoPicker(
+                    isPresented: isPhotoPickerPresented,
+                    presetRatio: .alwaysUsingOnePresetFixedRatio(ratio: 1)
+                ) { cropped in
+                    profileImageViewModel.upload(cropped)
+                }
             }
 
             Section {
@@ -64,8 +71,25 @@ struct LocalUserSettingsView: View {
             Section {
                 // TODO: move under future "Storage" tab
                 //       when downloads implemented
-                Button(L10n.resetSettings, role: .destructive) {
-                    isPresentingConfirmReset = true
+                StateAdapter(initialValue: false) { isPresentingConfirmReset in
+                    Button(L10n.resetSettings, role: .destructive) {
+                        isPresentingConfirmReset.wrappedValue = true
+                    }
+                    .confirmationDialog(
+                        L10n.resetSettings,
+                        isPresented: isPresentingConfirmReset,
+                        titleVisibility: .visible
+                    ) {
+                        Button(L10n.reset, role: .destructive) {
+                            do {
+                                try viewModel.userSession.user.deleteSettings()
+                            } catch {
+                                viewModel.logger.error("Unable to reset user settings: \(error.localizedDescription)")
+                            }
+                        }
+                    } message: {
+                        Text(L10n.resetSettingsMessage)
+                    }
                 }
             } footer: {
                 Text(L10n.resetSettingsDescription)
@@ -81,20 +105,5 @@ struct LocalUserSettingsView: View {
             .frame(maxWidth: 400)
         }
         .navigationTitle(L10n.user)
-        .confirmationDialog(
-            L10n.resetSettings,
-            isPresented: $isPresentingConfirmReset,
-            titleVisibility: .visible
-        ) {
-            Button(L10n.reset, role: .destructive) {
-                do {
-                    try viewModel.userSession.user.deleteSettings()
-                } catch {
-                    viewModel.logger.error("Unable to reset user settings: \(error.localizedDescription)")
-                }
-            }
-        } message: {
-            Text(L10n.resetSettingsMessage)
-        }
     }
 }

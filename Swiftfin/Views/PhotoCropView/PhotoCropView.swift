@@ -6,26 +6,34 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Mantis
 import SwiftUI
 
 struct PhotoCropView: View {
 
-    // MARK: - State, Observed, & Environment Objects
+    @Default(.accentColor)
+    private var accentColor
+
+    @Environment(\.dismiss)
+    private var dismiss
 
     @StateObject
     private var proxy: _PhotoCropView.Proxy = .init()
 
-    // MARK: - Image Variable
-
-    let isSaving: Bool
     let image: UIImage
     let cropShape: Mantis.CropShapeType
     let presetRatio: Mantis.PresetFixedRatioType
     let onSave: (UIImage) -> Void
-    let onCancel: () -> Void
 
-    // MARK: - Body
+    private var showsRatioPresets: Bool {
+        switch presetRatio {
+        case .canUseMultiplePresetFixedRatio:
+            true
+        case .alwaysUsingOnePresetFixedRatio:
+            false
+        }
+    }
 
     var body: some View {
         _PhotoCropView(
@@ -35,43 +43,52 @@ struct PhotoCropView: View {
             proxy: proxy,
             onImageCropped: onSave
         )
-        .topBarTrailing {
-
-            Button(L10n.rotate, systemImage: "rotate.right") {
-                proxy.rotate()
-            }
-
-            if isSaving {
-                Button(L10n.cancel, action: onCancel)
-                    .buttonStyle(.toolbarPill(.red))
-            } else {
-                Button(L10n.save) {
-                    proxy.crop()
-                }
-                .buttonStyle(.toolbarPill)
-            }
-        }
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                if isSaving {
-                    ProgressView()
-                } else {
-                    Button(L10n.reset) {
-                        proxy.reset()
+            ToolbarItem(placement: .topBarLeading) {
+                Button(L10n.rotate, systemImage: "rotate.right") {
+                    proxy.rotate()
+                }
+                .foregroundStyle(Color.accentColor)
+            }
+            if showsRatioPresets {
+                ToolbarItem(placement: .bottomBar) {
+                    HStack(spacing: 8) {
+                        ForEach(AspectRatioPreset.allCases) { preset in
+                            Button(preset.displayTitle) {
+                                proxy.setAspectRatio(preset.ratio)
+                            }
+                            .isSelected(proxy.selectedRatio == preset.ratio)
+                            .buttonStyle(.toolbarCapsule)
+                        }
                     }
-                    .foregroundStyle(.yellow)
-                    .disabled(isSaving)
+                    .scrollIfLargerThanContainer(axes: .horizontal)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity)
                 }
             }
         }
-        .ignoresSafeArea()
-        .background {
-            Color.black
+        .navigationBarCloseButton {
+            dismiss()
         }
+        .topBarTrailing {
+            if proxy.hasChanged {
+                Button(L10n.reset) {
+                    proxy.reset()
+                }
+                .buttonStyle(.toolbarPill(.red))
+            }
+
+            Button(L10n.save) {
+                proxy.crop()
+            }
+            .buttonStyle(.toolbarPill)
+        }
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(.visible, for: .bottomBar)
     }
 }
 
-// MARK: - Photo Crop View
+// MARK: - Controller View
 
 private struct _PhotoCropView: UIViewControllerRepresentable {
 
@@ -79,16 +96,35 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
 
         weak var cropViewController: CropViewController?
 
+        @Published
+        var hasChanged = false
+
+        @Published
+        var selectedRatio: Double?
+
         func crop() {
             cropViewController?.crop()
         }
 
         func reset() {
             cropViewController?.didSelectReset()
+            hasChanged = false
+            selectedRatio = nil
         }
 
         func rotate() {
             cropViewController?.didSelectClockwiseRotate()
+            hasChanged = true
+        }
+
+        func setAspectRatio(_ ratio: Double?) {
+            if let ratio {
+                cropViewController?.didSelectRatio(ratio: ratio)
+            } else {
+                cropViewController?.didSelectFreeRatio()
+            }
+            selectedRatio = ratio
+            hasChanged = true
         }
     }
 
@@ -100,9 +136,9 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> some UIViewController {
         var config = Mantis.Config()
-
         config.cropViewConfig.backgroundColor = .black.withAlphaComponent(0.9)
         config.cropViewConfig.cropShapeType = cropShape
+        config.cropViewConfig.rotateCropBoxFor90DegreeRotation = false
         config.presetFixedRatioType = presetRatio
         config.showAttachedCropToolbar = false
 
@@ -110,10 +146,9 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
             image: initialImage,
             config: config
         )
-
         cropViewController.delegate = context.coordinator
         context.coordinator.onImageCropped = onImageCropped
-
+        context.coordinator.proxy = proxy
         proxy.cropViewController = cropViewController
 
         return cropViewController
@@ -128,6 +163,7 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
     class Coordinator: CropViewControllerDelegate {
 
         var onImageCropped: ((UIImage) -> Void)?
+        weak var proxy: Proxy?
 
         func cropViewControllerDidCrop(
             _ cropViewController: CropViewController,
@@ -153,9 +189,11 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
         ) {}
 
         func cropViewControllerDidEndResize(
-            _ cropViewController: Mantis.CropViewController,
+            _ cropViewController: CropViewController,
             original: UIImage,
-            cropInfo: Mantis.CropInfo
-        ) {}
+            cropInfo: CropInfo
+        ) {
+            proxy?.hasChanged = true
+        }
     }
 }

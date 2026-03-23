@@ -16,8 +16,6 @@ import SwiftUI
 
 struct AddItemImageView: View {
 
-    // MARK: - Observed, & Environment Objects
-
     @Router
     private var router
 
@@ -68,8 +66,8 @@ struct AddItemImageView: View {
         .refreshable {
             remoteImageInfoViewModel.send(.refresh)
         }
-        .navigationBarBackButtonHidden(viewModel.backgroundStates.contains(.updating))
-        .navigationBarMenuButton(isLoading: viewModel.backgroundStates.contains(.updating)) {
+        .navigationBarBackButtonHidden(viewModel.background.is(.updating))
+        .navigationBarMenuButton(isLoading: viewModel.background.is(.updating)) {
             Button {
                 remoteImageInfoViewModel.includeAllLanguages.toggle()
             } label: {
@@ -118,12 +116,9 @@ struct AddItemImageView: View {
             case .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-                error = eventError
             }
         }
-        .errorMessage($error)
+        .errorMessage($viewModel.error)
     }
 
     // MARK: - Content Grid View

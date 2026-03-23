@@ -150,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/guoyingtao/Mantis",
       "state" : {
-        "revision" : "f15be5f37a54f1dbb11e739b62286c12ee644446",
-        "version" : "2.28.0"
+        "revision" : "2e7b43c8f4dd517c724c2b5392173dfe180ffccf",
+        "version" : "2.29.0"
       }
     },
     {

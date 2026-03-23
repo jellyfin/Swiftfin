@@ -12,121 +12,49 @@ import JellyfinAPI
 import Nuke
 import UIKit
 
-final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
+@MainActor
+@Stateful
+final class UserProfileImageViewModel: ViewModel {
 
-    // MARK: - Action
-
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
         case cancel
         case delete
         case upload(UIImage)
+
+        var transition: Transition {
+            switch self {
+            case .cancel:
+                .to(.initial)
+            case .delete:
+                .loop(.deleting)
+            case .upload:
+                .loop(.uploading)
+            }
+        }
     }
 
-    // MARK: - Event
-
-    enum Event: Hashable {
-        case error(ErrorMessage)
+    enum Event {
         case deleted
         case uploaded
     }
 
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
-    // MARK: - State
-
-    enum State: Hashable {
+    enum State {
         case initial
         case deleting
+        case error
         case uploading
     }
 
     @Published
-    var state: State = .initial
-
-    // MARK: - Published Values
-
-    let user: UserDto
-
-    // MARK: - Task Variables
-
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-    private var uploadCancellable: AnyCancellable?
-
-    // MARK: - Initializer
+    private(set) var user: UserDto
 
     init(user: UserDto) {
         self.user = user
     }
 
-    // MARK: - Respond to Action
-
-    func respond(to action: Action) -> State {
-        switch action {
-        case .cancel:
-            uploadCancellable?.cancel()
-            return .initial
-
-        case let .upload(image):
-            uploadCancellable = Task {
-                do {
-                    await MainActor.run {
-                        self.state = .uploading
-                    }
-
-                    try await upload(image)
-
-                    await MainActor.run {
-                        self.eventSubject.send(.uploaded)
-                        self.state = .initial
-                    }
-                } catch is CancellationError {
-                    // Cancel doesn't matter
-                } catch {
-                    await MainActor.run {
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
-                        self.state = .initial
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-
-        case .delete:
-            uploadCancellable = Task {
-                do {
-                    await MainActor.run {
-                        self.state = .deleting
-                    }
-
-                    try await delete()
-
-                    await MainActor.run {
-                        self.eventSubject.send(.deleted)
-                        self.state = .initial
-                    }
-                } catch is CancellationError {
-                    // Cancel doesn't matter
-                } catch {
-                    await MainActor.run {
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
-                        self.state = .initial
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-        }
-    }
-
-    // MARK: - Upload Image
-
-    private func upload(_ image: UIImage) async throws {
+    @Function(\Action.Cases.upload)
+    private func _upload(_ image: UIImage) async throws {
 
         guard let userID = user.id else { return }
 
@@ -160,14 +88,13 @@ final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         sweepProfileImageCache()
 
-        await MainActor.run {
-            Notifications[.didChangeUserProfile].post(userID)
-        }
+        Notifications[.didChangeUserProfile].post(userID)
+
+        events.send(.uploaded)
     }
 
-    // MARK: - Delete Image
-
-    private func delete() async throws {
+    @Function(\Action.Cases.delete)
+    private func _delete() async throws {
 
         guard let userID = user.id else { return }
 
@@ -176,9 +103,9 @@ final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         sweepProfileImageCache()
 
-        await MainActor.run {
-            Notifications[.didChangeUserProfile].post(userID)
-        }
+        Notifications[.didChangeUserProfile].post(userID)
+
+        events.send(.deleted)
     }
 
     private func sweepProfileImageCache() {

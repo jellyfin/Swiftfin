@@ -12,221 +12,95 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
+@MainActor
+@Stateful
+final class ItemImagesViewModel: ViewModel {
 
-    enum Event: Equatable {
-        case updated
-        case error(ErrorMessage)
-    }
-
-    enum Action: Equatable {
+    @CasePathable
+    enum Action {
         case cancel
         case refresh
         case setImage(RemoteImageInfo)
         case uploadImage(image: UIImage, type: ImageType)
         case uploadFile(file: URL, type: ImageType)
         case deleteImage(ImageInfo)
+
+        var transition: Transition {
+            switch self {
+            case .cancel:
+                .to(.initial)
+            case .refresh:
+                .to(.initial, then: .content)
+                    .whenBackground(.updating)
+            case .setImage, .uploadImage, .uploadFile, .deleteImage:
+                .background(.updating)
+            }
+        }
     }
 
-    enum BackgroundState: Hashable {
+    enum BackgroundState {
         case updating
     }
 
-    enum State: Hashable {
+    enum Event {
+        case updated
+    }
+
+    enum State {
         case initial
         case content
-        case error(ErrorMessage)
+        case error
     }
 
-    // MARK: - Published Variables
-
     @Published
-    var item: BaseItemDto
+    private(set) var item: BaseItemDto
     @Published
     var images: [ImageType: [ImageInfo]] = [:]
-
-    // MARK: - State Management
-
-    @Published
-    var state: State = .initial
-    @Published
-    var backgroundStates: Set<BackgroundState> = []
-
-    private var task: AnyCancellable?
-    private let eventSubject = PassthroughSubject<Event, Never>()
-
-    // MARK: - Eventful
-
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
-    // MARK: - Init
 
     init(item: BaseItemDto) {
         self.item = item
     }
 
-    // MARK: - Respond to Actions
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async throws {
+        images.removeAll()
+        try await getAllImages()
+    }
 
-    func respond(to action: Action) -> State {
-        switch action {
+    // MARK: - Set Image From URL
 
-        case .cancel:
-            task?.cancel()
-            return .initial
+    @Function(\Action.Cases.setImage)
+    private func _setImage(_ remoteImageInfo: RemoteImageInfo) async throws {
+        try await performSetImage(remoteImageInfo)
+        try await getAllImages()
+        events.send(.updated)
+    }
 
-        case .refresh:
-            task?.cancel()
+    // MARK: - Upload Image
 
-            task = Task { [weak self] in
-                guard let self else { return }
-                do {
-                    await MainActor.run {
-                        _ = self.backgroundStates.insert(.updating)
-                        self.images.removeAll()
-                    }
+    @Function(\Action.Cases.uploadImage)
+    private func _uploadImage(_ image: UIImage, _ type: ImageType) async throws {
+        try await uploadPhoto(image, type: type)
+        try await getAllImages()
+        events.send(.updated)
+    }
 
-                    try await self.getAllImages()
+    // MARK: - Upload File
 
-                    await MainActor.run {
-                        self.state = .content
-                        _ = self.backgroundStates.remove(.updating)
-                    }
-                } catch {
-                    let apiError = ErrorMessage(error.localizedDescription)
-                    await MainActor.run {
-                        self.state = .error(apiError)
-                        self.eventSubject.send(.error(apiError))
-                        self.backgroundStates.remove(.updating)
-                    }
-                }
-            }.asAnyCancellable()
+    @Function(\Action.Cases.uploadFile)
+    private func _uploadFile(_ file: URL, _ type: ImageType) async throws {
+        try await performUploadFile(file, type: type)
+        try await getAllImages()
+        events.send(.updated)
+    }
 
-            return .initial
+    // MARK: - Delete Image
 
-        case let .setImage(remoteImageInfo):
-            task?.cancel()
-
-            task = Task { [weak self] in
-                guard let self else { return }
-                do {
-                    await MainActor.run {
-                        _ = self.backgroundStates.insert(.updating)
-                    }
-
-                    try await self.setImage(remoteImageInfo)
-                    try await self.getAllImages()
-
-                    await MainActor.run {
-                        self.eventSubject.send(.updated)
-                    }
-                } catch {
-                    let apiError = ErrorMessage(error.localizedDescription)
-                    await MainActor.run {
-                        self.eventSubject.send(.error(apiError))
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self.backgroundStates.remove(.updating)
-                }
-            }.asAnyCancellable()
-
-            return .content
-
-        case let .uploadImage(image, type):
-            task?.cancel()
-
-            task = Task { [weak self] in
-                guard let self else { return }
-                do {
-                    await MainActor.run {
-                        _ = self.backgroundStates.insert(.updating)
-                    }
-
-                    try await self.uploadPhoto(image, type: type)
-                    try await self.getAllImages()
-
-                    await MainActor.run {
-                        self.eventSubject.send(.updated)
-                    }
-                } catch {
-                    let apiError = ErrorMessage(error.localizedDescription)
-                    await MainActor.run {
-                        self.eventSubject.send(.error(apiError))
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self.backgroundStates.remove(.updating)
-                }
-            }.asAnyCancellable()
-
-            return .content
-
-        case let .uploadFile(url, type):
-            task?.cancel()
-
-            task = Task { [weak self] in
-                guard let self else { return }
-                do {
-                    await MainActor.run {
-                        _ = self.backgroundStates.insert(.updating)
-                    }
-
-                    try await self.uploadFile(url, type: type)
-                    try await self.getAllImages()
-
-                    await MainActor.run {
-                        self.eventSubject.send(.updated)
-                    }
-                } catch {
-                    let apiError = ErrorMessage(error.localizedDescription)
-                    await MainActor.run {
-                        self.eventSubject.send(.error(apiError))
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self.backgroundStates.remove(.updating)
-                }
-            }.asAnyCancellable()
-
-            return .content
-
-        case let .deleteImage(imageInfo):
-            task?.cancel()
-
-            task = Task { [weak self] in
-                guard let self else { return }
-                do {
-                    await MainActor.run {
-                        _ = self.backgroundStates.insert(.updating)
-                    }
-
-                    try await deleteImage(imageInfo)
-                    try await item = item.getFullItem(userSession: userSession, sendNotification: true)
-
-                    await MainActor.run {
-                        self.eventSubject.send(.updated)
-                    }
-                } catch {
-                    let apiError = ErrorMessage(error.localizedDescription)
-                    await MainActor.run {
-                        self.eventSubject.send(.error(apiError))
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self.backgroundStates.remove(.updating)
-                }
-            }.asAnyCancellable()
-
-            return .content
-        }
+    @Function(\Action.Cases.deleteImage)
+    private func _deleteImage(_ imageInfo: ImageInfo) async throws {
+        try await performDeleteImage(imageInfo)
+        item = try await item.getFullItem(userSession: userSession, sendNotification: true)
+        events.send(.updated)
     }
 
     // MARK: - Get All Item Images
@@ -237,21 +111,15 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         let request = Paths.getItemImageInfos(itemID: itemID)
         let response = try await self.userSession.client.send(request)
 
-        let newImages: [ImageType: [ImageInfo]] = response.value.grouped(by: \.imageType)
+        images = response.value.grouped(by: \.imageType)
             .mapValues { $0.sorted(using: \.imageIndex) }
             .reduce(into: [:]) { partialResult, kv in
                 guard let k = kv.key else { return }
                 partialResult[k] = kv.value
             }
-
-        await MainActor.run {
-            self.images = newImages
-        }
     }
 
-    // MARK: - Set Image From URL
-
-    private func setImage(_ remoteImageInfo: RemoteImageInfo) async throws {
+    private func performSetImage(_ remoteImageInfo: RemoteImageInfo) async throws {
         guard let itemID = item.id,
               let type = remoteImageInfo.type,
               let imageURL = remoteImageInfo.url else { return }
@@ -260,8 +128,6 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         let imageRequest = Paths.downloadRemoteImage(itemID: itemID, parameters: parameters)
         try await userSession.client.send(imageRequest)
     }
-
-    // MARK: - Upload Image/File
 
     private func upload(imageData: Data, imageType: ImageType, contentType: String) async throws {
         guard let itemID = item.id else { return }
@@ -283,8 +149,6 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
         _ = try await userSession.client.send(request)
     }
-
-    // MARK: - Prepare Photo for Upload
 
     private func uploadPhoto(_ image: UIImage, type: ImageType) async throws {
         let contentType: String
@@ -308,9 +172,7 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         )
     }
 
-    // MARK: - Prepare Image for Upload
-
-    private func uploadFile(_ url: URL, type: ImageType) async throws {
+    private func performUploadFile(_ url: URL, type: ImageType) async throws {
         guard url.startAccessingSecurityScopedResource() else {
             logger.error("Unable to access file at \(url)")
             throw ErrorMessage("An internal error occurred.")
@@ -352,9 +214,7 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         )
     }
 
-    // MARK: - Delete Image
-
-    private func deleteImage(_ imageInfo: ImageInfo) async throws {
+    private func performDeleteImage(_ imageInfo: ImageInfo) async throws {
         guard let itemID = item.id,
               let imageType = imageInfo.imageType else { return }
 

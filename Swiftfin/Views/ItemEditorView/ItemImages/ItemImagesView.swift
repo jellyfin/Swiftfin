@@ -7,17 +7,14 @@
 //
 
 import Defaults
+import Engine
 import JellyfinAPI
 import SwiftUI
 
 struct ItemImagesView: View {
 
-    // MARK: - Defaults
-
     @Default(.accentColor)
     private var accentColor
-
-    // MARK: - Observed & Environment Objects
 
     @Router
     private var router
@@ -25,19 +22,12 @@ struct ItemImagesView: View {
     @StateObject
     var viewModel: ItemImagesViewModel
 
-    // MARK: - Dialog State
-
     @State
     private var selectedType: ImageType?
     @State
     private var isFilePickerPresented = false
-
-    // MARK: - Error State
-
     @State
     private var error: Error?
-
-    // MARK: - Body
 
     var body: some View {
         ZStack {
@@ -46,17 +36,19 @@ struct ItemImagesView: View {
                 imageView
             case .initial:
                 ProgressView()
-            case let .error(error):
-                ErrorView(error: error)
+            case .error:
+                if let error = viewModel.error {
+                    ErrorView(error: error)
+                }
             }
         }
         .navigationTitle(L10n.images)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
         .navigationBarCloseButton {
             router.dismiss()
@@ -69,7 +61,7 @@ struct ItemImagesView: View {
             switch $0 {
             case let .success(urls):
                 if let file = urls.first, let type = selectedType {
-                    viewModel.send(.uploadFile(file: file, type: type))
+                    viewModel.uploadFile(file: file, type: type)
                     selectedType = nil
                 }
             case let .failure(fileError):
@@ -80,11 +72,9 @@ struct ItemImagesView: View {
         .onReceive(viewModel.events) { event in
             switch event {
             case .updated: ()
-            case let .error(eventError):
-                self.error = eventError
             }
         }
-        .errorMessage($error)
+        .errorMessage($viewModel.error)
     }
 
     // MARK: - Image View
@@ -140,26 +130,37 @@ struct ItemImagesView: View {
 
             Spacer()
 
-            Menu(L10n.options, systemImage: "plus") {
-                Button(L10n.search, systemImage: "magnifyingglass") {
-                    router.route(to: .addItemImage(viewModel: viewModel, imageType: imageType))
+            StateAdapter(initialValue: false) { isPhotoPickerPresented in
+                Menu(L10n.options, systemImage: "plus") {
+                    Button(L10n.search, systemImage: "magnifyingglass") {
+                        router.route(to: .addItemImage(viewModel: viewModel, imageType: imageType))
+                    }
+
+                    Divider()
+
+                    Button(L10n.uploadFile, systemImage: "document.badge.plus") {
+                        selectedType = imageType
+                        isFilePickerPresented = true
+                    }
+
+                    Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
+                        selectedType = imageType
+                        isPhotoPickerPresented.wrappedValue = true
+                    }
                 }
-
-                Divider()
-
-                Button(L10n.uploadFile, systemImage: "document.badge.plus") {
-                    selectedType = imageType
-                    isFilePickerPresented = true
-                }
-
-                Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
-                    router.route(to: .itemImageSelector(viewModel: viewModel, imageType: imageType))
+                .font(.body)
+                .labelStyle(.iconOnly)
+                .fontWeight(.semibold)
+                .foregroundStyle(accentColor)
+                .photoPicker(
+                    isPresented: isPhotoPickerPresented
+                ) { cropped in
+                    if let type = selectedType {
+                        viewModel.uploadImage(image: cropped, type: type)
+                        selectedType = nil
+                    }
                 }
             }
-            .font(.body)
-            .labelStyle(.iconOnly)
-            .fontWeight(.semibold)
-            .foregroundStyle(accentColor)
         }
         .edgePadding(.horizontal)
     }

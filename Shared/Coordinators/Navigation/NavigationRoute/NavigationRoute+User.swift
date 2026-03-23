@@ -28,27 +28,6 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
-    static func userProfileImage(viewModel: UserProfileImageViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "userProfileImage",
-            style: .sheet
-        ) {
-            UserProfileImagePickerView(viewModel: viewModel)
-        }
-    }
-
-    static func userProfileImageCrop(viewModel: UserProfileImageViewModel, image: UIImage) -> NavigationRoute {
-        NavigationRoute(
-            id: "cropImage",
-            style: .sheet
-        ) {
-            UserProfileImageCropView(
-                viewModel: viewModel,
-                image: image
-            )
-        }
-    }
-
     // TODO: rename to `localUserAccessPolicy`
     static func userSecurity(pinHint: Binding<String>, accessPolicy: Binding<UserAccessPolicy>) -> NavigationRoute {
         NavigationRoute(

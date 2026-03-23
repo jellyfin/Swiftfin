@@ -9,6 +9,7 @@
 import Defaults
 import Engine
 import JellyfinAPI
+import Mantis
 import SwiftUI
 
 struct ServerUserDetailsView: View {
@@ -29,8 +30,6 @@ struct ServerUserDetailsView: View {
     @StateObject
     private var profileViewModel: UserProfileImageViewModel
 
-    // MARK: - Error State
-
     @State
     private var error: Error?
 
@@ -45,16 +44,24 @@ struct ServerUserDetailsView: View {
 
     var body: some View {
         List {
-            UserProfileHeroImage(
-                user: viewModel.user,
-                source: viewModel.user.profileImageSource(
-                    client: viewModel.userSession.client,
-                    maxWidth: 150
-                )
-            ) {
-                router.route(to: .userProfileImage(viewModel: profileViewModel))
-            } onDelete: {
-                profileViewModel.send(.delete)
+            StateAdapter(initialValue: false) { isPhotoPickerPresented in
+                UserProfileHeroImage(
+                    user: viewModel.user,
+                    source: viewModel.user.profileImageSource(
+                        client: viewModel.userSession.client,
+                        maxWidth: 150
+                    )
+                ) {
+                    isPhotoPickerPresented.wrappedValue = true
+                } onDelete: {
+                    profileViewModel.delete()
+                }
+                .photoPicker(
+                    isPresented: isPhotoPickerPresented,
+                    presetRatio: .alwaysUsingOnePresetFixedRatio(ratio: 1)
+                ) { cropped in
+                    profileViewModel.upload(cropped)
+                }
             }
 
             Section {

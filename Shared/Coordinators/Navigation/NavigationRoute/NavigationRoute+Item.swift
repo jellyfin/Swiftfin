@@ -77,18 +77,6 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
-    static func cropItemImage(viewModel: ItemImagesViewModel, image: UIImage, type: ImageType) -> NavigationRoute {
-        NavigationRoute(
-            id: "crop-Image"
-        ) {
-            ItemPhotoCropView(
-                viewModel: viewModel,
-                image: image,
-                type: type
-            )
-        }
-    }
-
     @MainActor
     static func editGenres(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editGenres") {
@@ -241,17 +229,6 @@ extension NavigationRoute {
         }
     }
 
-    static func itemImageSelector(viewModel: ItemImagesViewModel, imageType: ImageType) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemImageSelector",
-            style: .sheet
-        ) {
-            ItemImagePicker(
-                viewModel: viewModel,
-                type: imageType
-            )
-        }
-    }
     #endif
 
     static func itemMetadataRefresh(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
