@@ -122,6 +122,7 @@
 		E1FADDF12E84B63600FB310E /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1FADDF02E84B63600FB310E /* StatefulMacros */; };
 		F10000012F0A000100000001 /* SwiftfinTopShelfExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F10000012F0A000100000005 /* SwiftfinTopShelfExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F10000012F0A000100000002 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABFDDB267972BF00886593 /* TVServices.framework */; };
+		F10000012F0A000100000011 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = F10000012F0A000100000012 /* Logging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -427,6 +428,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F10000012F0A000100000011 /* Logging in Frameworks */,
 				F10000012F0A000100000002 /* TVServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -674,6 +676,7 @@
 			);
 			name = SwiftfinTopShelfExtension;
 			packageProductDependencies = (
+				F10000012F0A000100000012 /* Logging */,
 			);
 			productName = SwiftfinTopShelfExtension;
 			productReference = F10000012F0A000100000005 /* SwiftfinTopShelfExtension.appex */;
@@ -791,6 +794,7 @@
 				E164308A2E3AA9710028D4E8 /* XCRemoteSwiftPackageReference "Transmission" */,
 				E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */,
 				E1C404CB2EF61D4C00959C4F /* XCRemoteSwiftPackageReference "StatefulMacro" */,
+				F10000012F0A000100000013 /* XCRemoteSwiftPackageReference "swift-log" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -1562,6 +1566,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		F10000012F0A000100000013 /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1933,6 +1945,11 @@
 		E1FADDF02E84B63600FB310E /* StatefulMacros */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StatefulMacros;
+		};
+		F10000012F0A000100000012 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F10000012F0A000100000013 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

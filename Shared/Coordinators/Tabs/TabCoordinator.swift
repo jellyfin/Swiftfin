@@ -47,14 +47,4 @@ final class TabCoordinator: ObservableObject {
             return (tab, coordinator, event)
         }
     }
-
-    func coordinator(for tabID: String) -> NavigationCoordinator? {
-        tabs.first(where: { $0.item.id == tabID })?.coordinator
-    }
-
-    @discardableResult
-    func select(tabID: String) -> NavigationCoordinator? {
-        selectedTabID = tabID
-        return coordinator(for: tabID)
-    }
 }

@@ -36,7 +36,6 @@ Update the `DEVELOPMENT_TEAM` value with your Team ID. This can be found by:
 - Logging into your Apple Developer account and [view your membership details](https://developer.apple.com/account/#/membership). It will be listed next to `Team ID`.
 
 You can change the `PRODUCT_BUNDLE_IDENTIFIER` value to have multiple builds of Swiftfin on your devices or for provisioning purposes.
-The tvOS Top Shelf extension automatically derives its app group, extension bundle identifier, and deep-link URL scheme from `PRODUCT_BUNDLE_IDENTIFIER`, so a custom bundle identifier is enough for local device builds.
 
 `DevelopmentTeam.xcconfig` is already added to the `.gitignore`.
 

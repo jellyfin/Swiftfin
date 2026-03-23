@@ -100,9 +100,17 @@ extension MainTabView {
 
             let route = route(for: deepLink.action, item: item)
 
-            let coordinator = tabCoordinator.select(tabID: TabItem.home.id)
-            coordinator?.reset()
-            coordinator?.push(route)
+            guard let coordinator = tabCoordinator.tabs.first(where: { $0.item.id == TabItem.home.id })?.coordinator
+            else {
+                topShelfRouter.clear(deepLink)
+                return
+            }
+
+            tabCoordinator.selectedTabID = TabItem.home.id
+            coordinator.path.removeAll()
+            coordinator.presentedSheet = nil
+            coordinator.presentedFullScreen = nil
+            coordinator.push(route)
 
             topShelfRouter.clear(deepLink)
         } catch {

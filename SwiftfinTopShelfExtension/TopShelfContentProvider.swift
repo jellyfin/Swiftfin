@@ -7,42 +7,31 @@
 //
 
 import Foundation
+import Logging
 import TVServices
 
 final class TopShelfContentProvider: TVTopShelfContentProvider {
+
+    private let logger = Logger(label: "org.jellyfin.swiftfin")
 
     override func loadTopShelfContent() async -> (any TVTopShelfContent)? {
         do {
             guard let snapshot = try TopShelfSnapshotStore.load(),
                   !snapshot.items.isEmpty
             else {
-                #if DEBUG
-                NSLog("TopShelf: no snapshot content available for extension")
-                #endif
+                logger.debug("No top shelf snapshot content available")
                 return nil
             }
 
             let items = snapshot.items.map(makeSectionedItem)
-
-            guard !items.isEmpty else {
-                #if DEBUG
-                NSLog("TopShelf: snapshot was loaded but contained no renderable items")
-                #endif
-                return nil
-            }
-
             let collection = TVTopShelfItemCollection(items: items)
             collection.title = snapshot.sectionTitle
 
-            #if DEBUG
-            NSLog("TopShelf: extension returning %ld items", items.count)
-            #endif
-            return
-                TVTopShelfSectionedContent(sections: [collection])
+            logger.debug("Returning \(items.count) top shelf items")
+
+            return TVTopShelfSectionedContent(sections: [collection])
         } catch {
-            #if DEBUG
-            NSLog("TopShelf: extension failed to load content: %@", error.localizedDescription)
-            #endif
+            logger.error("Failed to load top shelf content: \(error.localizedDescription)")
             return nil
         }
     }

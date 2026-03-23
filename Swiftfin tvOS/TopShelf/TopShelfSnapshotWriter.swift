@@ -6,31 +6,44 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import JellyfinAPI
+import Logging
+import Nuke
 import TVServices
 import UIKit
 
 enum TopShelfSnapshotWriter {
 
+    fileprivate static let logger = Logger(label: "org.jellyfin.swiftfin")
     private static let maxItems = 4
     private static let stateLock = NSLock()
     private static var updateTask: Task<Void, Never>?
 
     static func update(
-        with items: [BaseItemDto],
-        userSession: UserSession
+        with items: [BaseItemDto]
     ) {
         let snapshotSourceItems = Array(items.prefix(maxItems))
 
         cancelInFlightUpdate()
 
         let task = Task(priority: .utility) {
+            guard let userSession = Container.shared.currentUserSession() else {
+                clearSnapshot(postChangeNotification: true)
+                return
+            }
+
             let snapshotItems = await buildSnapshotItems(
                 from: snapshotSourceItems,
-                userSession: userSession
+                userID: userSession.user.id
             )
 
             guard !Task.isCancelled else { return }
+
+            guard !snapshotItems.isEmpty else {
+                clearSnapshot(postChangeNotification: true)
+                return
+            }
 
             let snapshot = TopShelfSnapshot(
                 generatedAt: .now,
@@ -40,21 +53,9 @@ enum TopShelfSnapshotWriter {
             )
 
             do {
-                try TopShelfSnapshotStore.pruneCachedImages(
-                    keeping: snapshotItems.map(\.id)
-                )
                 try TopShelfSnapshotStore.save(snapshot)
-                #if DEBUG
-                NSLog(
-                    "TopShelf: prepared snapshot from %ld resume items, %ld renderable items",
-                    items.count,
-                    snapshotItems.count
-                )
-                #endif
             } catch {
-                #if DEBUG
-                NSLog("TopShelf: failed to save snapshot: %@", error.localizedDescription)
-                #endif
+                logger.error("Failed to save top shelf snapshot: \(error.localizedDescription)")
             }
 
             guard !Task.isCancelled else { return }
@@ -69,33 +70,41 @@ enum TopShelfSnapshotWriter {
 
     static func clear() {
         cancelInFlightUpdate()
-
-        do {
-            try TopShelfSnapshotStore.clear()
-        } catch {
-            #if DEBUG
-            NSLog("TopShelf: failed to clear snapshot: %@", error.localizedDescription)
-            #endif
-        }
-
-        TVTopShelfContentProvider.topShelfContentDidChange()
+        clearSnapshot(postChangeNotification: true)
     }
 
     private static func buildSnapshotItems(
         from items: [BaseItemDto],
-        userSession: UserSession
+        userID: String
     ) async -> [TopShelfSnapshot.Item] {
         var snapshotItems: [TopShelfSnapshot.Item] = []
 
         for item in items {
             guard !Task.isCancelled else { return snapshotItems }
 
-            if let snapshotItem = await item.topShelfSnapshotItem(userSession: userSession) {
+            if let snapshotItem = await item.topShelfSnapshotItem(userID: userID) {
                 snapshotItems.append(snapshotItem)
             }
         }
 
         return snapshotItems
+    }
+
+    private static func clearSnapshot(postChangeNotification: Bool) {
+        do {
+            try TopShelfSnapshotStore.clear()
+
+            if let topShelfCache = DataCache.Swiftfin.topShelf {
+                topShelfCache.removeAll()
+                topShelfCache.flush()
+            }
+        } catch {
+            logger.error("Failed to clear top shelf snapshot: \(error.localizedDescription)")
+        }
+
+        if postChangeNotification {
+            TVTopShelfContentProvider.topShelfContentDidChange()
+        }
     }
 
     private static func cancelInFlightUpdate() {
@@ -111,16 +120,11 @@ enum TopShelfSnapshotWriter {
 private extension BaseItemDto {
 
     func topShelfSnapshotItem(
-        userSession: UserSession
+        userID: String
     ) async -> TopShelfSnapshot.Item? {
         guard let id,
-              let remoteImageURL = topShelfImageURL(client: userSession.client)
+              let imageURL = await topShelfCachedImageURL()
         else { return nil }
-
-        let imageURL = await topShelfCachedImageURL(
-            from: remoteImageURL,
-            itemID: id
-        ) ?? remoteImageURL
 
         let normalizedProgress = clamp(
             (userData?.playedPercentage ?? 0) / 100,
@@ -136,12 +140,12 @@ private extension BaseItemDto {
             displayURL: TopShelfDeepLink(
                 action: .display,
                 itemID: id,
-                userID: userSession.user.id
+                userID: userID
             ).url,
             playURL: TopShelfDeepLink(
                 action: .play,
                 itemID: id,
-                userID: userSession.user.id
+                userID: userID
             ).url
         )
     }
@@ -162,127 +166,54 @@ private extension BaseItemDto {
         }
     }
 
-    func topShelfImageURL(client: JellyfinClient) -> URL? {
-        let imageWidth = UIScreen.main.scale(
-            TVTopShelfSectionedContent.imageSize(for: .hdtv).width
+    func topShelfCachedImageURL() async -> URL? {
+        guard let topShelfCache = DataCache.Swiftfin.topShelf else {
+            TopShelfSnapshotWriter.logger.warning("Top shelf image cache is unavailable")
+            return nil
+        }
+
+        let imageSize = TVTopShelfSectionedContent.imageSize(for: .hdtv)
+        let imageWidth = imageSize.width
+        let screenScale = await MainActor.run { UIScreen.main.nativeScale }
+        let targetSize = CGSize(
+            width: imageWidth * screenScale,
+            height: imageSize.height * screenScale
         )
 
-        for candidate in topShelfImageCandidates {
-            guard let itemID = candidate.itemID,
-                  itemID.isNotEmpty,
-                  let tag = candidate.tag,
-                  tag.isNotEmpty
-            else {
+        for source in landscapeImageSources(maxWidth: imageWidth, quality: 90) {
+            guard let sourceURL = source.url else { continue }
+
+            let request = ImageRequest(url: sourceURL)
+            let cacheKey = "top-shelf-\(ImagePipeline.Swiftfin.posters.cache.makeDataCacheKey(for: request))"
+
+            if topShelfCache.containsData(for: cacheKey) {
+                topShelfCache.flush(for: cacheKey)
+                return topShelfCache.url(for: cacheKey)
+            }
+
+            do {
+                let image = try await ImagePipeline.Swiftfin.posters.image(for: request)
+
+                guard !Task.isCancelled else { return nil }
+
+                let cachedImage = image.preparingThumbnail(of: targetSize) ?? image
+                guard let cachedImageData = cachedImage.jpegData(compressionQuality: 0.85) ?? cachedImage.pngData()
+                else {
+                    continue
+                }
+
+                topShelfCache.storeData(cachedImageData, for: cacheKey)
+                topShelfCache.flush(for: cacheKey)
+
+                return topShelfCache.url(for: cacheKey)
+            } catch is CancellationError {
+                return nil
+            } catch {
                 continue
             }
-
-            let parameters = Paths.GetItemImageParameters(
-                maxWidth: imageWidth,
-                quality: 90,
-                tag: tag
-            )
-
-            let request = Paths.getItemImage(
-                itemID: itemID,
-                imageType: candidate.type.rawValue,
-                parameters: parameters
-            )
-
-            if let url = client.fullURL(with: request, queryAPIKey: true) {
-                return url
-            }
         }
 
+        TopShelfSnapshotWriter.logger.debug("Unable to resolve a top shelf image for item \(displayTitle)")
         return nil
-    }
-
-    var topShelfImageCandidates: [(itemID: String?, type: ImageType, tag: String?)] {
-        switch type {
-        case .episode:
-            [
-                (parentBackdropItemID, .backdrop, parentBackdropImageTags?.first),
-                (seriesID, .thumb, seriesThumbImageTag),
-                (id, .primary, imageTags?[ImageType.primary.rawValue]),
-                (seriesID, .primary, seriesPrimaryImageTag),
-                (id, .thumb, imageTags?[ImageType.thumb.rawValue]),
-            ]
-        case .video:
-            if extraType != nil {
-                [
-                    (parentBackdropItemID, .backdrop, parentBackdropImageTags?.first),
-                    (id, .primary, imageTags?[ImageType.primary.rawValue]),
-                    (id, .thumb, imageTags?[ImageType.thumb.rawValue]),
-                ]
-            } else {
-                [
-                    (id, .primary, imageTags?[ImageType.primary.rawValue]),
-                    (id, .thumb, imageTags?[ImageType.thumb.rawValue]),
-                    (id, .backdrop, backdropImageTags?.first),
-                ]
-            }
-        default:
-            [
-                (id, .thumb, imageTags?[ImageType.thumb.rawValue]),
-                (id, .backdrop, backdropImageTags?.first),
-                (id, .primary, imageTags?[ImageType.primary.rawValue]),
-            ]
-        }
-    }
-
-    func topShelfCachedImageURL(
-        from sourceURL: URL,
-        itemID: String
-    ) async -> URL? {
-        do {
-            let (data, response) = try await URLSession.shared.data(from: sourceURL)
-
-            guard !Task.isCancelled else { return nil }
-            guard let image = UIImage(data: data) else {
-                #if DEBUG
-                NSLog("TopShelf: downloaded image for %@ could not be decoded", itemID)
-                #endif
-                return nil
-            }
-
-            let imageSize = TVTopShelfSectionedContent.imageSize(for: .hdtv)
-            let targetSize = CGSize(
-                width: UIScreen.main.scale(imageSize.width),
-                height: UIScreen.main.scale(imageSize.height)
-            )
-
-            let cachedImage = image.preparingThumbnail(of: targetSize) ?? image
-            let cachedImageData = cachedImage.jpegData(compressionQuality: 0.85) ?? data
-            let pathExtension = response.mimeType.flatMap(topShelfImagePathExtension) ?? "jpg"
-
-            return try TopShelfSnapshotStore.cacheImageData(
-                cachedImageData,
-                for: itemID,
-                pathExtension: pathExtension
-            )
-        } catch is CancellationError {
-            return nil
-        } catch {
-            #if DEBUG
-            NSLog(
-                "TopShelf: failed to cache image for %@: %@",
-                itemID,
-                error.localizedDescription
-            )
-            #endif
-            return nil
-        }
-    }
-
-    func topShelfImagePathExtension(from mimeType: String) -> String? {
-        switch mimeType.lowercased() {
-        case "image/jpeg", "image/jpg":
-            "jpg"
-        case "image/png":
-            "png"
-        case "image/webp":
-            "webp"
-        default:
-            nil
-        }
     }
 }

@@ -67,4 +67,19 @@ extension DataCache.Swiftfin {
             }
         }
     }()
+
+    /// A shared cache for tvOS Top Shelf artwork that must be readable by the
+    /// extension as well as the main app.
+    static let topShelf: DataCache? = {
+        guard let root = TopShelfSnapshotStore.storageDirectoryURL else {
+            return nil
+        }
+
+        let dataCache = try? DataCache(
+            path: root.appendingPathComponent("org.jellyfin.swiftfin.topShelf", isDirectory: true)
+        )
+        dataCache?.sizeLimit = 1024 * 1024 * 100 // 100 MB
+
+        return dataCache
+    }()
 }

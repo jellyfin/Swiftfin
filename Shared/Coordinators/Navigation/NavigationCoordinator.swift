@@ -44,10 +44,4 @@ final class NavigationCoordinator: ObservableObject {
         }
         #endif
     }
-
-    func reset() {
-        path.removeAll()
-        presentedSheet = nil
-        presentedFullScreen = nil
-    }
 }
