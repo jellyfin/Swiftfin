@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -22,6 +21,10 @@ struct ItemImagesView: View {
     @ObservedObject
     var viewModel: ItemImageViewModel
 
+    @State
+    private var isFilePickerPresented = false
+    @State
+    private var isPhotoPickerPresented = false
     @State
     private var selectedType: ImageType?
     @State
@@ -51,6 +54,30 @@ struct ItemImagesView: View {
         .navigationBarCloseButton {
             router.dismiss()
         }
+        .fileImporter(
+            isPresented: $isFilePickerPresented,
+            allowedContentTypes: [.png, .jpeg, .heic],
+            allowsMultipleSelection: false
+        ) {
+            switch $0 {
+            case let .success(urls):
+                if let filePath = urls.first?.absoluteString,
+                   let file = UIImage(contentsOfFile: filePath),
+                   let type = selectedType
+                {
+                    viewModel.imageType = type
+                    viewModel.upload(file)
+                    selectedType = nil
+                }
+            case let .failure(fileError):
+                error = fileError
+                selectedType = nil
+            }
+        }
+        .photoPicker(
+            isPresented: $isPhotoPickerPresented,
+            viewModel: viewModel
+        )
         .errorMessage($viewModel.error)
     }
 
@@ -109,42 +136,14 @@ struct ItemImagesView: View {
 
                 Divider()
 
-                StateAdapter(initialValue: false) { isFilePickerPresented in
-                    Button(L10n.uploadFile, systemImage: "document.badge.plus") {
-                        selectedType = imageType
-                        isFilePickerPresented.wrappedValue = true
-                    }
-                    .fileImporter(
-                        isPresented: isFilePickerPresented,
-                        allowedContentTypes: [.png, .jpeg, .heic],
-                        allowsMultipleSelection: false
-                    ) {
-                        switch $0 {
-                        case let .success(urls):
-                            if let filePath = urls.first?.absoluteString,
-                               let file = UIImage(contentsOfFile: filePath),
-                               let type = selectedType
-                            {
-                                viewModel.imageType = type
-                                viewModel.upload(file)
-                                selectedType = nil
-                            }
-                        case let .failure(fileError):
-                            error = fileError
-                            selectedType = nil
-                        }
-                    }
+                Button(L10n.uploadFile, systemImage: "document.badge.plus") {
+                    selectedType = imageType
+                    isFilePickerPresented = true
                 }
 
-                StateAdapter(initialValue: false) { isPhotoPickerPresented in
-                    Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
-                        viewModel.imageType = imageType
-                        isPhotoPickerPresented.wrappedValue = true
-                    }
-                    .photoPicker(
-                        isPresented: isPhotoPickerPresented,
-                        viewModel: viewModel
-                    )
+                Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
+                    viewModel.imageType = imageType
+                    isPhotoPickerPresented = true
                 }
             }
             .font(.body)

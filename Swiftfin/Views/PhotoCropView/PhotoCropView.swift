@@ -77,7 +77,7 @@ struct PhotoCropView<Item>: View {
             dismiss()
         }
         .topBarTrailing {
-            if proxy.hasChanged {
+            if proxy.hasChanges {
                 Button(L10n.reset) {
                     proxy.reset()
                 }
@@ -113,7 +113,7 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
         weak var cropViewController: CropViewController?
 
         @Published
-        var hasChanged = false
+        var hasChanges = false
 
         @Published
         var selectedRatio: Double?
@@ -124,13 +124,13 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
 
         func reset() {
             cropViewController?.didSelectReset()
-            hasChanged = false
+            hasChanges = false
             selectedRatio = nil
         }
 
         func rotate() {
             cropViewController?.didSelectClockwiseRotate()
-            hasChanged = true
+            hasChanges = true
         }
 
         func setAspectRatio(_ ratio: Double?) {
@@ -140,7 +140,7 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
                 cropViewController?.didSelectFreeRatio()
             }
             selectedRatio = ratio
-            hasChanged = true
+            hasChanges = true
         }
     }
 
@@ -214,7 +214,7 @@ private struct _PhotoCropView: UIViewControllerRepresentable {
             original: UIImage,
             cropInfo: CropInfo
         ) {
-            proxy?.hasChanged = true
+            proxy?.hasChanges = true
         }
     }
 }
