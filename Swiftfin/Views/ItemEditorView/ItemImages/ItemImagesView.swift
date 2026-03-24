@@ -61,8 +61,9 @@ struct ItemImagesView: View {
         ) {
             switch $0 {
             case let .success(urls):
-                if let filePath = urls.first?.absoluteString,
-                   let file = UIImage(contentsOfFile: filePath),
+                if let url = urls.first,
+                   let data = try? Data(contentsOf: url),
+                   let file = UIImage(data: data),
                    let type = selectedType
                 {
                     viewModel.imageType = type
