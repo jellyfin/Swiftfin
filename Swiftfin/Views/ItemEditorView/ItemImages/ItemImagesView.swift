@@ -104,7 +104,7 @@ struct ItemImagesView: View {
 
             Menu(L10n.options, systemImage: "plus") {
                 Button(L10n.search, systemImage: "magnifyingglass") {
-                    router.route(to: .addItemImage(viewModel: viewModel, imageType: imageType))
+                    router.route(to: .searchItemImages(viewModel: viewModel, imageType: imageType))
                 }
 
                 Divider()
@@ -151,6 +151,10 @@ struct ItemImagesView: View {
             .labelStyle(.iconOnly)
             .fontWeight(.semibold)
             .foregroundStyle(accentColor)
+            .backport
+            .buttonBorderShape(.circle)
+            .buttonStyle(.material)
+            .frame(width: 20, height: 20)
         }
         .edgePadding(.horizontal)
     }

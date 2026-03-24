@@ -12,13 +12,13 @@ import UIKit
 
 @MainActor
 @Stateful
-class ServerImageViewModel<Item>: ViewModel {
+class ImageViewModel<Item>: ViewModel {
 
     @CasePathable
     enum Action {
         case cancel
-        case refresh
         case delete
+        case refresh
         case save
         case upload(UIImage)
 
@@ -36,6 +36,11 @@ class ServerImageViewModel<Item>: ViewModel {
         }
     }
 
+    enum BackgroundState {
+        case deleting
+        case updating
+    }
+
     enum Event {
         case deleted
         case updated
@@ -45,11 +50,6 @@ class ServerImageViewModel<Item>: ViewModel {
         case initial
         case content
         case error
-    }
-
-    enum BackgroundState {
-        case updating
-        case deleting
     }
 
     @Published
@@ -63,7 +63,6 @@ class ServerImageViewModel<Item>: ViewModel {
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         try await performRefresh()
-        events.send(.updated)
     }
 
     @Function(\Action.Cases.upload)
@@ -85,9 +84,6 @@ class ServerImageViewModel<Item>: ViewModel {
         events.send(.deleted)
     }
 
-    // MARK: - Image Conversion
-
-    /// Converts a `UIImage` to base64-encoded PNG or JPEG data, validated against the 30 MB upload limit.
     func convertImage(_ image: UIImage) throws -> (data: Data, contentType: String) {
         let contentType: String
         let imageData: Data

@@ -92,7 +92,7 @@ extension View {
     /// Photo Picker with cropping after the selection
     func photoPicker(
         isPresented: Binding<Bool>,
-        viewModel: ServerImageViewModel<some Any>,
+        viewModel: ImageViewModel<some Any>,
         cropShape: Mantis.CropShapeType = .rect,
         presetRatio: Mantis.PresetFixedRatioType = .canUseMultiplePresetFixedRatio(defaultRatio: 0)
     ) -> some View {

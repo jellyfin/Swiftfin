@@ -20,7 +20,7 @@ struct PhotoCropView<Item>: View {
     private var dismiss
 
     @ObservedObject
-    var viewModel: ServerImageViewModel<Item>
+    var viewModel: ImageViewModel<Item>
 
     @StateObject
     private var proxy: _PhotoCropView.Proxy = .init()

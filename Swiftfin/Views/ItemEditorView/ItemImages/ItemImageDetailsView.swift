@@ -24,10 +24,6 @@ struct ItemImageDetailsView: View {
     private let imageDetail: any ItemImageDetail
     private let imageSource: ImageSource
 
-    private var isWorking: Bool {
-        viewModel.background.states.contains(.deleting) || viewModel.background.states.contains(.updating)
-    }
-
     init(
         viewModel: ItemImageViewModel,
         imageDetail: any ItemImageDetail
@@ -102,16 +98,40 @@ struct ItemImageDetailsView: View {
             }
 
             if isEditing {
-                deleteButton
+                StateAdapter(initialValue: false) { isPresentingConfirmation in
+                    Button(L10n.delete, role: .destructive) {
+                        isPresentingConfirmation.wrappedValue = true
+                    }
+                    .buttonStyle(.primary)
+                    .confirmationDialog(
+                        L10n.delete,
+                        isPresented: isPresentingConfirmation,
+                        titleVisibility: .visible
+                    ) {
+                        Button(L10n.delete, role: .destructive) {
+                            if let imageInfo = imageDetail as? ImageInfo {
+                                viewModel.deleteImageInfo = imageInfo
+                            }
+                            viewModel.delete()
+                        }
+
+                        Button(L10n.cancel, role: .cancel) {
+                            isPresentingConfirmation.wrappedValue = false
+                        }
+                    } message: {
+                        Text(L10n.deleteItemConfirmationMessage)
+                    }
+                }
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.image)
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }
         .topBarTrailing {
-            if isWorking {
+            if viewModel.background.is(.deleting) || viewModel.background.is(.updating) {
                 ProgressView()
             }
 
@@ -120,7 +140,7 @@ struct ItemImageDetailsView: View {
                     viewModel.save()
                 }
                 .buttonStyle(.toolbarPill)
-                .disabled(isWorking)
+                .disabled(viewModel.background.is(.deleting) || viewModel.background.is(.updating))
             }
         }
         .onReceive(viewModel.events) { event in
@@ -131,30 +151,5 @@ struct ItemImageDetailsView: View {
             }
         }
         .errorMessage($viewModel.error)
-    }
-
-    @ViewBuilder
-    private var deleteButton: some View {
-        StateAdapter(initialValue: false) { isPresentingConfirmation in
-            Button(L10n.delete, role: .destructive) {
-                isPresentingConfirmation.wrappedValue = true
-            }
-            .buttonStyle(.primary)
-            .confirmationDialog(
-                L10n.delete,
-                isPresented: isPresentingConfirmation,
-                titleVisibility: .visible
-            ) {
-                Button(L10n.delete, role: .destructive) {
-                    viewModel.delete()
-                }
-
-                Button(L10n.cancel, role: .cancel) {
-                    isPresentingConfirmation.wrappedValue = false
-                }
-            } message: {
-                Text(L10n.deleteItemConfirmationMessage)
-            }
-        }
     }
 }

@@ -18,7 +18,7 @@ struct PhotoPickerModifier<Item>: ViewModifier {
     var isPresented: Bool
 
     @ObservedObject
-    var viewModel: ServerImageViewModel<Item>
+    var viewModel: ImageViewModel<Item>
 
     let cropShape: Mantis.CropShapeType
     let presetRatio: Mantis.PresetFixedRatioType

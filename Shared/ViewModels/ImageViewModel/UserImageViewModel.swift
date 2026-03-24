@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 import Nuke
 
-final class UserImageViewModel: ServerImageViewModel<UserDto> {
+final class UserImageViewModel: ImageViewModel<UserDto> {
 
     override func performUpload(imageData: Data, contentType: String) async throws {
         guard let userID = item.id else { return }
