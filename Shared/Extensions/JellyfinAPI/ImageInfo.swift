@@ -38,23 +38,13 @@ extension ImageInfo: ItemImageDetail {
         nil
     }
 
-    func imageSource(itemID: String, client: JellyfinClient) -> ImageSource {
-        itemImageSource(itemID: itemID, client: client)
+    func imageSource(item: BaseItemDto?) -> ImageSource {
+        _imageSource(item: item)
     }
 
-    func itemImageSource(itemID: String, client: JellyfinClient) -> ImageSource {
-        let parameters = Paths.GetItemImageParameters(
-            tag: imageTag,
-            imageIndex: imageIndex
-        )
-        let request = Paths.getItemImage(
-            itemID: itemID,
-            imageType: imageType?.rawValue ?? "",
-            parameters: parameters
-        )
+    private func _imageSource(item: BaseItemDto?) -> ImageSource {
+        guard let item, let imageType else { return ImageSource() }
 
-        let itemImageURL = client.fullURL(with: request)
-
-        return ImageSource(url: itemImageURL)
+        return item.imageSource(imageType, index: imageIndex, tag: imageTag)
     }
 }

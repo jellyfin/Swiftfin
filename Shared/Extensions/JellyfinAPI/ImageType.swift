@@ -42,6 +42,37 @@ extension ImageType: Displayable {
         }
     }
 
+    var description: String {
+        switch self {
+        case .primary:
+            "The primary cover or artist image for this item."
+        case .backdrop:
+            "Background image displayed on the media page."
+        case .banner:
+            "Displayed when browsing the library in banner mode. Video only."
+        case .logo:
+            "Logo displayed on top of a media item."
+        case .thumb:
+            "Thumbnail for the homepage and for browsing the library in thumb mode. Video only."
+        case .art:
+            "Clear art or logo-style artwork used as a decorative element. Unused by official clients."
+        case .disc:
+            "Disc art for the item, typically a square image. Unused by official clients."
+        case .box:
+            "Front box art for the item. Unused by official clients."
+        case .screenshot:
+            "A screenshot captured from the item's content. Deprecated and unused."
+        case .menu:
+            "A menu image used for navigation. Unused by official clients."
+        case .chapter:
+            "An image associated with a chapter marker. Unused by official clients."
+        case .boxRear:
+            "Rear box art for the item. Unused by official clients."
+        case .profile:
+            "A profile image, typically used for people. Unused by official clients."
+        }
+    }
+
     func posterDisplayType(for item: BaseItemDto? = nil) -> PosterDisplayType {
         switch self {
         case .primary:

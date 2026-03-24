@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -26,9 +27,17 @@ struct ItemImagesView: View {
     @State
     private var isPhotoPickerPresented = false
     @State
-    private var selectedType: ImageType?
+    private var selectedType: ImageType = .primary
     @State
     private var error: Error?
+
+    private var selectedImages: [ImageInfo] {
+        viewModel.images[selectedType] ?? []
+    }
+
+    private var posterType: PosterDisplayType {
+        selectedType.posterDisplayType(for: viewModel.item)
+    }
 
     var body: some View {
         ZStack {
@@ -54,6 +63,23 @@ struct ItemImagesView: View {
         .navigationBarCloseButton {
             router.dismiss()
         }
+        .navigationBarMenuButton {
+            Button(L10n.search, systemImage: "magnifyingglass") {
+                router.route(to: .searchItemImages(viewModel: viewModel, imageType: selectedType))
+            }
+
+            Divider()
+
+            Button(L10n.uploadFile, systemImage: "document.badge.plus") {
+                viewModel.imageType = selectedType
+                isFilePickerPresented = true
+            }
+
+            Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
+                viewModel.imageType = selectedType
+                isPhotoPickerPresented = true
+            }
+        }
         .fileImporter(
             isPresented: $isFilePickerPresented,
             allowedContentTypes: [.png, .jpeg, .heic],
@@ -63,16 +89,12 @@ struct ItemImagesView: View {
             case let .success(urls):
                 if let url = urls.first,
                    let data = try? Data(contentsOf: url),
-                   let file = UIImage(data: data),
-                   let type = selectedType
+                   let file = UIImage(data: data)
                 {
-                    viewModel.imageType = type
                     viewModel.upload(file)
-                    selectedType = nil
                 }
             case let .failure(fileError):
                 error = fileError
-                selectedType = nil
             }
         }
         .photoPicker(
@@ -85,27 +107,50 @@ struct ItemImagesView: View {
     @ViewBuilder
     private var contentView: some View {
         ScrollView {
-            ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
-                Section {
-                    imageScrollView(for: imageType)
-
-                    RowDivider()
-                        .padding(.vertical, 16)
-                } header: {
-                    sectionHeader(for: imageType)
-                }
+            InsetGroupedListHeader(
+                selectedType.displayTitle,
+                description: selectedType.description
+            ) {
+                UIApplication.shared.open(.jellyfinDocsImages)
             }
+            .padding(.vertical, 24)
+            .edgePadding(.horizontal)
+
+            imageTypeSelector
         }
     }
 
     @ViewBuilder
-    private func imageScrollView(for imageType: ImageType) -> some View {
-        let images = viewModel.images[imageType] ?? []
+    private var imageTypeSelector: some View {
+        VStack(alignment: .leading, spacing: 10) {
 
-        if images.isNotEmpty {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(images, id: \.self) { imageInfo in
+            Menu {
+                ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
+                    Button {
+                        selectedType = imageType
+                    } label: {
+                        if imageType == selectedType {
+                            Label(imageType.displayTitle, systemImage: "checkmark")
+                        } else {
+                            Text(imageType.displayTitle)
+                        }
+                    }
+                }
+            } label: {
+                Label(
+                    selectedType.displayTitle,
+                    systemImage: "chevron.down"
+                )
+                .labelStyle(.episodeSelector)
+            }
+            .edgePadding([.horizontal, .bottom])
+
+            Group {
+                if selectedImages.isNotEmpty {
+                    CollectionHStack(
+                        uniqueElements: selectedImages,
+                        columns: UIDevice.isPhone ? (posterType == .landscape ? 1.5 : 3) : 3.5
+                    ) { imageInfo in
                         imageButton(imageInfo: imageInfo) {
                             viewModel.imageType = imageInfo.imageType
                             router.route(
@@ -116,61 +161,32 @@ struct ItemImagesView: View {
                             )
                         }
                     }
-                }
-                .edgePadding(.horizontal)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func sectionHeader(for imageType: ImageType) -> some View {
-        HStack {
-            Text(imageType.displayTitle)
-                .font(.headline)
-
-            Spacer()
-
-            Menu(L10n.options, systemImage: "plus") {
-                Button(L10n.search, systemImage: "magnifyingglass") {
-                    router.route(to: .searchItemImages(viewModel: viewModel, imageType: imageType))
-                }
-
-                Divider()
-
-                Button(L10n.uploadFile, systemImage: "document.badge.plus") {
-                    selectedType = imageType
-                    isFilePickerPresented = true
-                }
-
-                Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
-                    viewModel.imageType = imageType
-                    isPhotoPickerPresented = true
+                    .clipsToBounds(false)
+                    .scrollBehavior(.continuousLeadingEdge)
+                    .insets(horizontal: EdgeInsets.edgePadding)
+                    .itemSpacing(EdgeInsets.edgePadding / 2)
+                    .id(selectedType)
+                } else {
+                    Text(L10n.none)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 }
             }
-            .font(.body)
-            .labelStyle(.iconOnly)
-            .fontWeight(.semibold)
-            .foregroundStyle(accentColor)
+            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
-        .edgePadding(.horizontal)
     }
 
     @ViewBuilder
     private func imageButton(
         imageInfo: ImageInfo,
-        onSelect: @escaping () -> Void
+        action: @escaping () -> Void
     ) -> some View {
-        let posterType = imageInfo.imageType?.posterDisplayType(for: viewModel.item) ?? .landscape
-
-        Button(action: onSelect) {
+        Button(action: action) {
             ZStack {
                 Color.secondarySystemFill
 
                 ImageView(
-                    imageInfo.itemImageSource(
-                        itemID: viewModel.item.id!,
-                        client: viewModel.userSession.client
-                    )
+                    imageInfo.imageSource(item: viewModel.item)
                 )
                 .placeholder { _ in
                     Image(systemName: "photo")

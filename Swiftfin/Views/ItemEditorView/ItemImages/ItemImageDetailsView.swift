@@ -32,10 +32,7 @@ struct ItemImageDetailsView: View {
     ) {
         self.viewModel = viewModel
         self.imageDetail = imageDetail
-        self.imageSource = imageDetail.imageSource(
-            itemID: viewModel.item.id!,
-            client: viewModel.userSession.client
-        )
+        self.imageSource = imageDetail.imageSource(item: viewModel.item)
     }
 
     var body: some View {

@@ -20,5 +20,5 @@ protocol ItemImageDetail {
     var rating: Double? { get }
     var ratingVotes: Int? { get }
 
-    func imageSource(itemID: String, client: JellyfinClient) -> ImageSource
+    func imageSource(item: BaseItemDto?) -> ImageSource
 }

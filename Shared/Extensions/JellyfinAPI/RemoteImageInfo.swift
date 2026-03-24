@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-extension RemoteImageInfo: @retroactive Identifiable, ItemImageDetail, Poster {
+extension RemoteImageInfo: @retroactive Identifiable, ItemImageDetail {
 
     var index: Int? {
         nil
@@ -28,9 +28,12 @@ extension RemoteImageInfo: @retroactive Identifiable, ItemImageDetail, Poster {
         voteCount
     }
 
-    func imageSource(itemID: String, client: JellyfinClient) -> ImageSource {
+    func imageSource(item: BaseItemDto? = nil) -> ImageSource {
         ImageSource(url: url?.url)
     }
+}
+
+extension RemoteImageInfo: Poster {
 
     var preferredPosterDisplayType: PosterDisplayType {
         type?.posterDisplayType() ?? .landscape
