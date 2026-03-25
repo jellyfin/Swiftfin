@@ -66,7 +66,7 @@ struct ItemImagesView: View {
         }
         .navigationBarMenuButton(
             isLoading: viewModel.background.is(.updating) || viewModel.background.is(.deleting),
-            isHidden: selectedImages.isNotEmpty
+            isHidden: selectedImages.isEmpty
         ) {
             addImageMenu
         }
@@ -104,6 +104,7 @@ struct ItemImagesView: View {
             ) {
                 UIApplication.shared.open(.jellyfinDocsImages)
             }
+            .edgePadding(.horizontal)
             .padding(.vertical, 24)
 
             SeparatorVStack(alignment: .leading) {
