@@ -754,6 +754,8 @@ internal enum L10n {
   internal static let image = L10n.tr("Localizable", "image", fallback: "Images")
   /// Images
   internal static let images = L10n.tr("Localizable", "images", fallback: "Images")
+  /// Manage and customize the images associated with this media item. Select an image type to view, add, or replace images.
+  internal static let imagesDescription = L10n.tr("Localizable", "imagesDescription", fallback: "Manage and customize the images associated with this media item. Select an image type to view, add, or replace images.")
   /// Image source
   internal static let imageSource = L10n.tr("Localizable", "imageSource", fallback: "Image source")
   /// Inactive

@@ -29,7 +29,7 @@ struct ItemImagesView: View {
     @State
     private var selectedType: ImageType = .primary
     @State
-    private var error: Error?
+    private var uploadError: Error?
 
     private var selectedImages: [ImageInfo] {
         viewModel.images[selectedType] ?? []
@@ -52,8 +52,9 @@ struct ItemImagesView: View {
                 }
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.images)
-        .navigationBarTitleDisplayMode(.inline)
         .refreshable {
             viewModel.refresh()
         }
@@ -63,22 +64,11 @@ struct ItemImagesView: View {
         .navigationBarCloseButton {
             router.dismiss()
         }
-        .navigationBarMenuButton {
-            Button(L10n.search, systemImage: "magnifyingglass") {
-                router.route(to: .searchItemImages(viewModel: viewModel, imageType: selectedType))
-            }
-
-            Divider()
-
-            Button(L10n.uploadFile, systemImage: "document.badge.plus") {
-                viewModel.imageType = selectedType
-                isFilePickerPresented = true
-            }
-
-            Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
-                viewModel.imageType = selectedType
-                isPhotoPickerPresented = true
-            }
+        .navigationBarMenuButton(
+            isLoading: viewModel.background.is(.updating) || viewModel.background.is(.deleting),
+            isHidden: selectedImages.isNotEmpty
+        ) {
+            addImageMenu
         }
         .fileImporter(
             isPresented: $isFilePickerPresented,
@@ -94,13 +84,14 @@ struct ItemImagesView: View {
                     viewModel.upload(file)
                 }
             case let .failure(fileError):
-                error = fileError
+                uploadError = fileError
             }
         }
         .photoPicker(
             isPresented: $isPhotoPickerPresented,
             viewModel: viewModel
         )
+        .errorMessage($uploadError)
         .errorMessage($viewModel.error)
     }
 
@@ -108,22 +99,29 @@ struct ItemImagesView: View {
     private var contentView: some View {
         ScrollView {
             InsetGroupedListHeader(
-                selectedType.displayTitle,
-                description: selectedType.description
+                L10n.images,
+                description: L10n.imagesDescription
             ) {
                 UIApplication.shared.open(.jellyfinDocsImages)
             }
             .padding(.vertical, 24)
-            .edgePadding(.horizontal)
 
-            imageTypeSelector
+            SeparatorVStack(alignment: .leading) {
+                Divider()
+                    .padding(.vertical, 10)
+                    .edgePadding(.horizontal)
+            } content: {
+                imageTypeSelector
+                    .edgePadding(.bottom)
+
+                imageTypeDescription
+            }
         }
     }
 
     @ViewBuilder
     private var imageTypeSelector: some View {
-        VStack(alignment: .leading, spacing: 10) {
-
+        VStack(alignment: .leading, spacing: 24) {
             Menu {
                 ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
                     Button {
@@ -143,7 +141,7 @@ struct ItemImagesView: View {
                 )
                 .labelStyle(.episodeSelector)
             }
-            .edgePadding([.horizontal, .bottom])
+            .edgePadding(.horizontal)
 
             Group {
                 if selectedImages.isNotEmpty {
@@ -167,13 +165,57 @@ struct ItemImagesView: View {
                     .itemSpacing(EdgeInsets.edgePadding / 2)
                     .id(selectedType)
                 } else {
-                    Text(L10n.none)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    CollectionHStack(
+                        count: 1,
+                        columns: UIDevice.isPhone ? (posterType == .landscape ? 1.5 : 3) : 3.5
+                    ) { _ in
+                        addImageButton
+                    }
+                    .insets(horizontal: EdgeInsets.edgePadding)
+                    .itemSpacing(EdgeInsets.edgePadding / 2)
+                    .scrollDisabled(true)
+                    .id(selectedType)
                 }
             }
             .transition(.opacity.animation(.linear(duration: 0.1)))
         }
+    }
+
+    @ViewBuilder
+    private var addImageMenu: some View {
+        Button(L10n.search, systemImage: "magnifyingglass") {
+            router.route(to: .searchItemImages(viewModel: viewModel, imageType: selectedType))
+        }
+
+        Divider()
+
+        Button(L10n.uploadFile, systemImage: "document.badge.plus") {
+            viewModel.imageType = selectedType
+            isFilePickerPresented = true
+        }
+
+        Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
+            viewModel.imageType = selectedType
+            isPhotoPickerPresented = true
+        }
+    }
+
+    @ViewBuilder
+    private var imageTypeDescription: some View {
+        VStack(alignment: .leading, spacing: 10) {
+
+            Text(selectedType.description)
+
+            if !selectedType.isUsed {
+                Text("This type is not used in official Jellyfin Clients.")
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .font(.body)
+        .multilineTextAlignment(.leading)
+        .edgePadding()
+        .transition(.opacity.animation(.linear(duration: 0.1)))
     }
 
     @ViewBuilder
@@ -200,5 +242,30 @@ struct ItemImagesView: View {
             .frame(maxHeight: 150)
             .posterShadow()
         }
+    }
+
+    private var addImageButton: some View {
+        Menu {
+            addImageMenu
+        } label: {
+            ZStack {
+                Color.secondarySystemFill
+                    .opacity(0.75)
+
+                VStack {
+                    Image(systemName: "photo.badge.plus")
+                        .font(.title)
+                        .foregroundStyle(Color.primary)
+
+                    Text(L10n.add)
+                        .font(.callout)
+                        .foregroundStyle(Color.secondary)
+                }
+            }
+            .posterStyle(posterType)
+            .frame(maxHeight: 150)
+            .posterShadow()
+        }
+        .buttonStyle(.plain)
     }
 }
