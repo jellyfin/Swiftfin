@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -19,9 +20,6 @@ struct ItemImageDetailsView: View {
 
     @ObservedObject
     private var viewModel: ItemImageViewModel
-
-    @State
-    private var isPresentingDeleteConfirmation = false
 
     private let imageDetail: any ItemImageDetail
     private let imageSource: ImageSource
@@ -97,25 +95,27 @@ struct ItemImageDetailsView: View {
             }
 
             if isEditing {
-                Button(L10n.delete, role: .destructive) {
-                    isPresentingDeleteConfirmation = true
-                }
-                .buttonStyle(.primary)
-                .confirmationDialog(
-                    L10n.delete,
-                    isPresented: $isPresentingDeleteConfirmation,
-                    titleVisibility: .visible
-                ) {
+                StateAdapter(initialValue: false) { isPresentingDeleteConfirmation in
                     Button(L10n.delete, role: .destructive) {
-                        if let imageInfo = imageDetail as? ImageInfo {
-                            viewModel.deleteImageInfo = imageInfo
-                        }
-                        viewModel.delete()
+                        isPresentingDeleteConfirmation.wrappedValue = true
                     }
+                    .buttonStyle(.primary)
+                    .confirmationDialog(
+                        L10n.delete,
+                        isPresented: isPresentingDeleteConfirmation,
+                        titleVisibility: .visible
+                    ) {
+                        Button(L10n.delete, role: .destructive) {
+                            if let imageInfo = imageDetail as? ImageInfo {
+                                viewModel.deleteImageInfo = imageInfo
+                            }
+                            viewModel.delete()
+                        }
 
-                    Button(L10n.cancel, role: .cancel) {}
-                } message: {
-                    Text(L10n.deleteItemConfirmationMessage)
+                        Button(L10n.cancel, role: .cancel) {}
+                    } message: {
+                        Text(L10n.deleteItemConfirmationMessage)
+                    }
                 }
             }
         }
