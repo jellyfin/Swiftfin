@@ -118,7 +118,7 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
 
     @ViewBuilder
     private func learnMoreModal(_ content: AnyView) -> some View {
-        Ticker {
+        Marquee(axis: .vertical, resetType: .bounce, speed: 30, fade: 20) {
             VStack(alignment: .leading, spacing: 16) {
                 content
                     .labeledContentStyle(LearnMoreLabeledContentStyle())
@@ -131,6 +131,10 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
             RoundedRectangle(cornerRadius: 20)
                 .fill(Material.thick)
         }
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .strokeBorder(.white.opacity(0.1), lineWidth: 1)
+        )
         .padding()
     }
 }
