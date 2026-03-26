@@ -88,10 +88,14 @@ class ImageViewModel<Item>: ViewModel {
         let contentType: String
         let imageData: Data
 
-        if let pngData = image.pngData()?.base64EncodedData() {
+        let hasAlpha = image.cgImage.map {
+            [.alphaOnly, .first, .last, .premultipliedFirst, .premultipliedLast].contains($0.alphaInfo)
+        } ?? false
+
+        if hasAlpha, let pngData = image.pngData() {
             contentType = "image/png"
             imageData = pngData
-        } else if let jpgData = image.jpegData(compressionQuality: 1)?.base64EncodedData() {
+        } else if let jpgData = image.jpegData(compressionQuality: 1) {
             contentType = "image/jpeg"
             imageData = jpgData
         } else {

@@ -39,7 +39,7 @@ final class ItemImageViewModel: ImageViewModel<BaseItemDto> {
         var request = Paths.setItemImage(
             itemID: itemID,
             imageType: imageType.rawValue,
-            imageData
+            imageData.base64EncodedData()
         )
         request.headers = ["Content-Type": contentType]
 

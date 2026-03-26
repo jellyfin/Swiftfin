@@ -17,7 +17,7 @@ final class UserImageViewModel: ImageViewModel<UserDto> {
 
         var request = Paths.postUserImage(
             userID: userID,
-            imageData
+            imageData.base64EncodedData()
         )
         request.headers = ["Content-Type": contentType]
 

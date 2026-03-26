@@ -758,6 +758,8 @@ internal enum L10n {
   internal static let imagesDescription = L10n.tr("Localizable", "imagesDescription", fallback: "Manage and customize the images associated with this media item. Select an image type to view, add, or replace images.")
   /// Image source
   internal static let imageSource = L10n.tr("Localizable", "imageSource", fallback: "Image source")
+  /// Image is unused in official Jellyfin Clients.
+  internal static let imageTypeUnused = L10n.tr("Localizable", "imageTypeUnused", fallback: "Image is unused in official Jellyfin Clients.")
   /// Inactive
   internal static let inactive = L10n.tr("Localizable", "inactive", fallback: "Inactive")
   /// Incorrect pin for %@

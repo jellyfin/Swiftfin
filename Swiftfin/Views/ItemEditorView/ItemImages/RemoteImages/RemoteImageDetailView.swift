@@ -33,12 +33,13 @@ struct RemoteImageDetailView: View {
             Section {
                 // RemoteImageInfo conforms to `Poster` but do not use `PosterImage` here
                 // - This image is intentionally an unformatted version of the image
+                // TODO: Figure out `AlternativeLayoutView` to reserve room while loading
                 ImageView(remoteImageInfo.primaryImageSource)
                     .placeholder { _ in
                         Image(systemName: "photo")
                     }
                     .failure {
-                        Image(systemName: "photo")
+                        Image(systemName: "questionmark")
                     }
                     .pipeline(.Swiftfin.other)
             }

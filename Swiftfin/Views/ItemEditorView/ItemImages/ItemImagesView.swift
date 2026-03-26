@@ -188,13 +188,12 @@ struct ItemImagesView: View {
     }
 
     private var descriptionView: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 16) {
             Text(selectedType.description)
 
             if !selectedType.isUsed {
-                Text("Image type is not used in official Jellyfin Clients.")
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
+                Label(L10n.imageTypeUnused, systemImage: "exclamationmark.circle.fill")
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
             }
         }
         .font(.body)
