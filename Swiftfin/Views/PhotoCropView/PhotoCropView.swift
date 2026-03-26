@@ -77,11 +77,16 @@ struct PhotoCropView<Item>: View {
             dismiss()
         }
         .topBarTrailing {
+            if viewModel.background.is(.updating) {
+                ProgressView()
+            }
+
             if proxy.hasChanges {
                 Button(L10n.reset) {
                     proxy.reset()
                 }
                 .buttonStyle(.toolbarPill(.red))
+                .disabled(viewModel.background.is(.updating))
             }
 
             Button(L10n.save) {
@@ -89,7 +94,6 @@ struct PhotoCropView<Item>: View {
             }
             .buttonStyle(.toolbarPill)
             .disabled(viewModel.background.is(.updating))
-            .opacity(viewModel.background.is(.updating) ? 0.5 : 1)
         }
         .onReceive(viewModel.events) { event in
             switch event {
