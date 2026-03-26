@@ -27,7 +27,7 @@ struct ItemImageSearchView: View {
     }
 
     private var posterType: PosterDisplayType {
-        remoteImageInfoViewModel.imageType.posterDisplayType(for: viewModel.item)
+        remoteImageInfoViewModel.imageType.posterDisplayType(for: viewModel.item.type)
     }
 
     init(viewModel: ItemImageViewModel, imageType: ImageType) {

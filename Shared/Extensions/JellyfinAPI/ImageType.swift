@@ -82,10 +82,17 @@ extension ImageType: Displayable {
         }
     }
 
-    func posterDisplayType(for item: BaseItemDto? = nil) -> PosterDisplayType {
+    func posterDisplayType(for type: BaseItemKind? = nil) -> PosterDisplayType {
         switch self {
         case .primary:
-            item?.preferredPosterDisplayType ?? .portrait
+            switch type {
+            case .audio, .channel, .musicAlbum, .tvChannel:
+                .square
+            case .episode, .folder, .program, .musicVideo, .video, .userView:
+                .landscape
+            default:
+                .portrait
+            }
         case .disc:
             .square
         default:

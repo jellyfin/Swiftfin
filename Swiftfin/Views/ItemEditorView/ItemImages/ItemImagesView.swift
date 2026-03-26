@@ -23,11 +23,12 @@ struct ItemImagesView: View {
     var viewModel: ItemImageViewModel
 
     @State
+    private var selectedType: ImageType = .primary
+
+    @State
     private var isFilePickerPresented = false
     @State
     private var isPhotoPickerPresented = false
-    @State
-    private var selectedType: ImageType = .primary
     @State
     private var uploadError: Error?
 
@@ -36,7 +37,7 @@ struct ItemImagesView: View {
     }
 
     private var posterType: PosterDisplayType {
-        selectedType.posterDisplayType(for: viewModel.item)
+        selectedType.posterDisplayType(for: viewModel.item.type)
     }
 
     var body: some View {
@@ -98,86 +99,88 @@ struct ItemImagesView: View {
     @ViewBuilder
     private var contentView: some View {
         ScrollView {
-            InsetGroupedListHeader(
-                L10n.images,
-                description: L10n.imagesDescription
-            ) {
-                UIApplication.shared.open(.jellyfinDocsImages)
-            }
-            .edgePadding(.horizontal)
-            .padding(.vertical, 24)
+            VStack(alignment: .leading, spacing: 24) {
+                InsetGroupedListHeader(
+                    L10n.images,
+                    description: L10n.imagesDescription
+                ) {
+                    UIApplication.shared.open(.jellyfinDocsImages)
+                }
+                .frame(maxWidth: .infinity)
+                .edgePadding(.horizontal)
+                .padding(.top, 24)
 
-            SeparatorVStack(alignment: .leading) {
+                Menu {
+                    ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
+                        Button {
+                            selectedType = imageType
+                        } label: {
+                            if imageType == selectedType {
+                                Label(imageType.displayTitle, systemImage: "checkmark")
+                            } else {
+                                Text(imageType.displayTitle)
+                            }
+                        }
+                    }
+                } label: {
+                    Label(
+                        selectedType.displayTitle,
+                        systemImage: "chevron.down"
+                    )
+                    .labelStyle(.episodeSelector)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .edgePadding(.horizontal)
+
+                imageCarousel
+
                 Divider()
-                    .padding(.vertical, 10)
                     .edgePadding(.horizontal)
-            } content: {
-                imageTypeSelector
-                    .edgePadding(.bottom)
 
                 imageTypeDescription
+                    .edgePadding(.horizontal)
             }
         }
     }
 
-    @ViewBuilder
-    private var imageTypeSelector: some View {
-        VStack(alignment: .leading, spacing: 24) {
-            Menu {
-                ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
-                    Button {
-                        selectedType = imageType
-                    } label: {
-                        if imageType == selectedType {
-                            Label(imageType.displayTitle, systemImage: "checkmark")
-                        } else {
-                            Text(imageType.displayTitle)
-                        }
-                    }
-                }
-            } label: {
-                Label(
-                    selectedType.displayTitle,
-                    systemImage: "chevron.down"
-                )
-                .labelStyle(.episodeSelector)
-            }
-            .edgePadding(.horizontal)
+    private var columns: CGFloat {
+        UIDevice.isPhone ? (posterType == .landscape ? 1.5 : 3) : 3.5
+    }
 
-            Group {
-                if selectedImages.isNotEmpty {
-                    CollectionHStack(
-                        uniqueElements: selectedImages,
-                        columns: UIDevice.isPhone ? (posterType == .landscape ? 1.5 : 3) : 3.5
-                    ) { imageInfo in
-                        imageButton(imageInfo: imageInfo) {
-                            viewModel.imageType = imageInfo.imageType
-                            router.route(
-                                to: .itemImageDetails(
-                                    viewModel: viewModel,
-                                    imageDetail: imageInfo
-                                )
-                            )
-                        }
-                    }
-                    .clipsToBounds(false)
-                    .scrollBehavior(.continuousLeadingEdge)
-                    .insets(horizontal: EdgeInsets.edgePadding)
-                    .itemSpacing(EdgeInsets.edgePadding / 2)
-                    .id(selectedType)
-                } else {
-                    CollectionHStack(
-                        count: 1,
-                        columns: UIDevice.isPhone ? (posterType == .landscape ? 1.5 : 3) : 3.5
-                    ) { _ in
-                        addImageButton
-                    }
-                    .insets(horizontal: EdgeInsets.edgePadding)
-                    .itemSpacing(EdgeInsets.edgePadding / 2)
-                    .scrollDisabled(true)
-                    .id(selectedType)
+    @ViewBuilder
+    private var imageCarousel: some View {
+        if selectedImages.isNotEmpty {
+            CollectionHStack(
+                uniqueElements: selectedImages,
+                columns: columns
+            ) { imageInfo in
+                imageButton(imageInfo: imageInfo) {
+                    viewModel.imageType = imageInfo.imageType
+                    router.route(
+                        to: .itemImageDetails(
+                            viewModel: viewModel,
+                            imageDetail: imageInfo
+                        )
+                    )
                 }
             }
+            .clipsToBounds(false)
+            .scrollBehavior(.continuousLeadingEdge)
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .id(selectedType)
+            .transition(.opacity.animation(.linear(duration: 0.1)))
+        } else {
+            CollectionHStack(
+                count: 1,
+                columns: columns
+            ) { _ in
+                addImageButton
+            }
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
+            .id(selectedType)
             .transition(.opacity.animation(.linear(duration: 0.1)))
         }
     }
@@ -204,7 +207,6 @@ struct ItemImagesView: View {
     @ViewBuilder
     private var imageTypeDescription: some View {
         VStack(alignment: .leading, spacing: 10) {
-
             Text(selectedType.description)
 
             if !selectedType.isUsed {
@@ -214,8 +216,6 @@ struct ItemImagesView: View {
             }
         }
         .font(.body)
-        .multilineTextAlignment(.leading)
-        .edgePadding()
         .transition(.opacity.animation(.linear(duration: 0.1)))
     }
 
@@ -240,7 +240,6 @@ struct ItemImagesView: View {
                 .pipeline(.Swiftfin.other)
             }
             .posterStyle(posterType)
-            .frame(maxHeight: 150)
             .posterShadow()
         }
     }
@@ -264,7 +263,6 @@ struct ItemImagesView: View {
                 }
             }
             .posterStyle(posterType)
-            .frame(maxHeight: 150)
             .posterShadow()
         }
         .buttonStyle(.plain)
