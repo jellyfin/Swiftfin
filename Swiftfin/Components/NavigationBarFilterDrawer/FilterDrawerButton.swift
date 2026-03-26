@@ -6,18 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension NavigationBarFilterDrawer {
 
     struct FilterDrawerButton: View {
-
-        @Default(.accentColor)
-        private var accentColor
-
-        @Environment(\.isSelected)
-        private var isSelected
 
         private let systemName: String?
         private let title: String
@@ -35,24 +28,12 @@ extension NavigationBarFilterDrawer {
                             Text(title)
                         }
                     }
-                    .font(.footnote.weight(.semibold))
 
                     Image(systemName: "chevron.down")
                         .font(.caption)
                 }
-                .foregroundColor(.primary)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background {
-                    Capsule()
-                        .foregroundColor(isSelected ? accentColor : Color(UIColor.secondarySystemFill))
-                        .opacity(0.5)
-                }
-                .overlay {
-                    Capsule()
-                        .stroke(isSelected ? accentColor : Color(UIColor.secondarySystemFill), lineWidth: 1)
-                }
             }
+            .buttonStyle(.toolbarCapsule)
         }
     }
 }
