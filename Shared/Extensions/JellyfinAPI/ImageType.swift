@@ -45,31 +45,31 @@ extension ImageType: Displayable {
     var description: String {
         switch self {
         case .primary:
-            "The main cover image or poster for this item. This is the most prominent image shown across the app, including in libraries, search results, and detail pages."
+            L10n.primaryImageDescription
         case .backdrop:
-            "A wide background image displayed behind the item details on its media page. Multiple backdrops can be added and will cycle or be selected randomly."
+            L10n.backdropImageDescription
         case .banner:
-            "A wide horizontal image displayed when browsing the library in banner mode. Only applicable to video content."
+            L10n.bannerImageDescription
         case .logo:
-            "A transparent logo or title treatment overlaid on top of backdrops and other imagery. Used as a stylized alternative to plain text titles."
+            L10n.logoImageDescription
         case .thumb:
-            "A thumbnail image used on the homepage and when browsing the library in thumbnail mode. Only applicable to video content."
+            L10n.thumbImageDescription
         case .art:
-            "Clear art or logo-style decorative artwork, often with a transparent background. Typically sourced from fanart providers."
+            L10n.artImageDescription
         case .disc:
-            "Square disc art representing physical media like CDs, DVDs, or Blu-rays. Commonly used for music albums and movie collections."
+            L10n.discImageDescription
         case .box:
-            "Front box art representing the physical packaging of the item, similar to what you would see on a store shelf."
+            L10n.boxImageDescription
         case .screenshot:
-            "A screenshot or still frame captured directly from the item's video content. Deprecated and no longer actively used."
+            L10n.screenshotImageDescription
         case .menu:
-            "A menu image originally intended for DVD or Blu-ray style menu navigation screens."
+            L10n.menuImageDescription
         case .chapter:
-            "An image associated with a specific chapter marker within the item's timeline."
+            L10n.chapterImageDescription
         case .boxRear:
-            "Rear box art representing the back of the item's physical packaging, often showing descriptions or track listings."
+            L10n.boxRearImageDescription
         case .profile:
-            "A profile or headshot image, typically used for people such as actors, directors, or artists."
+            L10n.profileImageDescription
         }
     }
 
