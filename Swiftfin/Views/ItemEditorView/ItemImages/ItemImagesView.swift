@@ -26,6 +26,8 @@ struct ItemImagesView: View {
     private var selectedType: ImageType = .primary
 
     @State
+    private var deleteImageInfo: ImageInfo?
+    @State
     private var isFilePickerPresented = false
     @State
     private var isPhotoPickerPresented = false
@@ -94,6 +96,35 @@ struct ItemImagesView: View {
         )
         .errorMessage($uploadError)
         .errorMessage($viewModel.error)
+        .confirmationDialog(
+            L10n.delete,
+            isPresented: Binding<Bool>(
+                get: { deleteImageInfo != nil },
+                set: { if !$0 { deleteImageInfo = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button(L10n.delete, role: .destructive) {
+                if let deleteImageInfo {
+                    viewModel.deleteImageInfo = deleteImageInfo
+                    viewModel.delete()
+                }
+            }
+
+            Button(L10n.cancel, role: .cancel) {
+                deleteImageInfo = nil
+            }
+        } message: {
+            Text(L10n.deleteItemConfirmationMessage)
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .deleted:
+                UIDevice.feedback(.success)
+            case .updated:
+                break
+            }
+        }
     }
 
     @ViewBuilder
@@ -155,13 +186,7 @@ struct ItemImagesView: View {
                 columns: columns
             ) { imageInfo in
                 imageButton(imageInfo: imageInfo) {
-                    viewModel.imageType = imageInfo.imageType
-                    router.route(
-                        to: .itemImageDetails(
-                            viewModel: viewModel,
-                            imageDetail: imageInfo
-                        )
-                    )
+                    deleteImageInfo = imageInfo
                 }
             }
             .clipsToBounds(false)
@@ -188,7 +213,7 @@ struct ItemImagesView: View {
     @ViewBuilder
     private var addImageMenu: some View {
         Button(L10n.search, systemImage: "magnifyingglass") {
-            router.route(to: .searchItemImages(viewModel: viewModel, imageType: selectedType))
+            router.route(to: .remoteImageSearch(viewModel: viewModel, imageType: selectedType))
         }
 
         Divider()

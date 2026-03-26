@@ -11,7 +11,7 @@ import CollectionVGrid
 import JellyfinAPI
 import SwiftUI
 
-struct ItemImageSearchView: View {
+struct RemoteImageSearchView: View {
 
     @Router
     private var router
@@ -53,7 +53,7 @@ struct ItemImageSearchView: View {
         }
         .backport
         .toolbarTitleDisplayMode(.inline)
-        .navigationTitle(remoteImageInfoViewModel.imageType.displayTitle)
+        .navigationTitle(remoteImageInfoViewModel.imageType.displayTitle.localizedCapitalized)
         .animation(.linear(duration: 0.1), value: remoteImageInfoViewModel.state)
         .navigationBarBackButtonHidden(viewModel.background.is(.updating))
         .navigationBarMenuButton(isLoading: viewModel.background.is(.updating)) {
@@ -129,9 +129,9 @@ struct ItemImageSearchView: View {
                 Button {
                     viewModel.remoteImageInfo = image
                     router.route(
-                        to: .itemImageDetails(
+                        to: .remoteImageDetail(
                             viewModel: viewModel,
-                            imageDetail: image
+                            remoteImageInfo: image
                         )
                     )
                 } label: {

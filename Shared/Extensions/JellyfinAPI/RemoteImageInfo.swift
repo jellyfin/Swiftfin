@@ -10,25 +10,9 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-extension RemoteImageInfo: @retroactive Identifiable, ItemImageDetail {
+extension RemoteImageInfo: @retroactive Identifiable {
 
-    var index: Int? {
-        nil
-    }
-
-    var provider: String? {
-        providerName
-    }
-
-    var rating: Double? {
-        communityRating
-    }
-
-    var ratingVotes: Int? {
-        voteCount
-    }
-
-    func imageSource(item: BaseItemDto? = nil) -> ImageSource {
+    func imageSource() -> ImageSource {
         ImageSource(url: url?.url)
     }
 }

@@ -195,22 +195,6 @@ extension NavigationRoute {
         }
     }
 
-    static func itemImageDetails(
-        viewModel: ItemImageViewModel,
-        imageDetail: any ItemImageDetail
-    ) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemImageDetails",
-            style: .sheet
-        ) {
-            ItemImageDetailsView(
-                viewModel: viewModel,
-                imageDetail: imageDetail
-            )
-            .isEditing(imageDetail is ImageInfo)
-        }
-    }
-
     static func itemImages(viewModel: ItemImageViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemImages",
@@ -220,12 +204,27 @@ extension NavigationRoute {
         }
     }
 
-    static func searchItemImages(viewModel: ItemImageViewModel, imageType: ImageType) -> NavigationRoute {
+    static func remoteImageDetail(
+        viewModel: ItemImageViewModel,
+        remoteImageInfo: RemoteImageInfo
+    ) -> NavigationRoute {
         NavigationRoute(
-            id: "searchItemImages",
+            id: "remoteImageDetail",
+            style: .sheet
+        ) {
+            RemoteImageDetailView(
+                viewModel: viewModel,
+                remoteImageInfo: remoteImageInfo
+            )
+        }
+    }
+
+    static func remoteImageSearch(viewModel: ItemImageViewModel, imageType: ImageType) -> NavigationRoute {
+        NavigationRoute(
+            id: "remoteImageSearch",
             style: .push(.automatic)
         ) {
-            ItemImageSearchView(viewModel: viewModel, imageType: imageType)
+            RemoteImageSearchView(viewModel: viewModel, imageType: imageType)
         }
     }
 

@@ -10,27 +10,24 @@ import Engine
 import JellyfinAPI
 import SwiftUI
 
-struct ItemImageDetailsView: View {
+struct RemoteImageDetailView: View {
 
     @Router
     private var router
 
-    @Environment(\.isEditing)
-    private var isEditing
-
     @ObservedObject
     private var viewModel: ItemImageViewModel
 
-    private let imageDetail: any ItemImageDetail
+    private let remoteImageInfo: RemoteImageInfo
     private let imageSource: ImageSource
 
     init(
         viewModel: ItemImageViewModel,
-        imageDetail: any ItemImageDetail
+        remoteImageInfo: RemoteImageInfo
     ) {
         self.viewModel = viewModel
-        self.imageDetail = imageDetail
-        self.imageSource = imageDetail.imageSource(item: viewModel.item)
+        self.remoteImageInfo = remoteImageInfo
+        self.imageSource = remoteImageInfo.imageSource()
     }
 
     var body: some View {
@@ -53,31 +50,27 @@ struct ItemImageDetailsView: View {
             .listRowInsets(.zero)
 
             Section(L10n.details) {
-                if let provider = imageDetail.provider {
+                if let provider = remoteImageInfo.providerName {
                     LabeledContent(L10n.provider, value: provider)
                 }
 
-                if let language = imageDetail.language {
+                if let language = remoteImageInfo.language {
                     LabeledContent(L10n.language, value: language)
                 }
 
-                if let width = imageDetail.width, let height = imageDetail.height {
+                if let width = remoteImageInfo.width, let height = remoteImageInfo.height {
                     LabeledContent(
                         L10n.dimensions,
                         value: "\(width) x \(height)"
                     )
                 }
-
-                if let index = imageDetail.index {
-                    LabeledContent(L10n.index, value: index.description)
-                }
             }
 
-            if let rating = imageDetail.rating {
+            if let rating = remoteImageInfo.communityRating {
                 Section(L10n.ratings) {
                     LabeledContent(L10n.rating, value: rating.formatted(.number.precision(.fractionLength(2))))
 
-                    if let ratingVotes = imageDetail.ratingVotes {
+                    if let ratingVotes = remoteImageInfo.voteCount {
                         LabeledContent(L10n.votes, value: ratingVotes, format: .number)
                     }
                 }
@@ -93,31 +86,6 @@ struct ItemImageDetailsView: View {
                     }
                 }
             }
-
-            if isEditing {
-                StateAdapter(initialValue: false) { isPresentingDeleteConfirmation in
-                    Button(L10n.delete, role: .destructive) {
-                        isPresentingDeleteConfirmation.wrappedValue = true
-                    }
-                    .buttonStyle(.primary)
-                    .confirmationDialog(
-                        L10n.delete,
-                        isPresented: isPresentingDeleteConfirmation,
-                        titleVisibility: .visible
-                    ) {
-                        Button(L10n.delete, role: .destructive) {
-                            if let imageInfo = imageDetail as? ImageInfo {
-                                viewModel.deleteImageInfo = imageInfo
-                            }
-                            viewModel.delete()
-                        }
-
-                        Button(L10n.cancel, role: .cancel) {}
-                    } message: {
-                        Text(L10n.deleteItemConfirmationMessage)
-                    }
-                }
-            }
         }
         .backport
         .toolbarTitleDisplayMode(.inline)
@@ -126,23 +94,23 @@ struct ItemImageDetailsView: View {
             router.dismiss()
         }
         .topBarTrailing {
-            if viewModel.background.is(.deleting) || viewModel.background.is(.updating) {
+            if viewModel.background.is(.updating) {
                 ProgressView()
             }
 
-            if !isEditing {
-                Button(L10n.save) {
-                    viewModel.save()
-                }
-                .buttonStyle(.toolbarPill)
-                .disabled(viewModel.background.is(.deleting) || viewModel.background.is(.updating))
+            Button(L10n.save) {
+                viewModel.save()
             }
+            .buttonStyle(.toolbarPill)
+            .disabled(viewModel.background.is(.updating))
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .deleted, .updated:
+            case .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()
+            case .deleted:
+                break
             }
         }
         .errorMessage($viewModel.error)

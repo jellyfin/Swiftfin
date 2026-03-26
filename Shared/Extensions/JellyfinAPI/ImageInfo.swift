@@ -14,37 +14,9 @@ extension ImageInfo: @retroactive Identifiable {
     public var id: Int {
         hashValue
     }
-}
-
-extension ImageInfo: ItemImageDetail {
-
-    var index: Int? {
-        imageIndex
-    }
-
-    var language: String? {
-        nil
-    }
-
-    var provider: String? {
-        nil
-    }
-
-    var rating: Double? {
-        nil
-    }
-
-    var ratingVotes: Int? {
-        nil
-    }
 
     func imageSource(item: BaseItemDto?) -> ImageSource {
-        _imageSource(item: item)
-    }
-
-    private func _imageSource(item: BaseItemDto?) -> ImageSource {
         guard let item, let imageType else { return ImageSource() }
-
         return item.imageSource(imageType, index: imageIndex, tag: imageTag)
     }
 }
