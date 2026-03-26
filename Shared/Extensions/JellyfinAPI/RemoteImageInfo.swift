@@ -12,8 +12,20 @@ import SwiftUI
 
 extension RemoteImageInfo: @retroactive Identifiable {
 
-    func imageSource() -> ImageSource {
+    public var id: Int {
+        hashValue
+    }
+
+    var primaryImageSource: ImageSource {
         ImageSource(url: url?.url)
+    }
+
+    var thumbnailImageSource: ImageSource {
+        ImageSource(url: thumbnailURL?.url)
+    }
+
+    private var imageSources: [ImageSource] {
+        [thumbnailImageSource, primaryImageSource]
     }
 }
 
@@ -43,28 +55,20 @@ extension RemoteImageInfo: Poster {
         maxWidth: CGFloat?,
         quality: Int?
     ) -> [ImageSource] {
-        [ImageSource(url: thumbnailURL?.url), ImageSource(url: url?.url)]
+        imageSources
     }
 
     func landscapeImageSources(
         maxWidth: CGFloat?,
         quality: Int?
     ) -> [ImageSource] {
-        [ImageSource(url: thumbnailURL?.url), ImageSource(url: url?.url)]
+        imageSources
     }
 
     func squareImageSources(
         maxWidth: CGFloat?,
         quality: Int?
     ) -> [ImageSource] {
-        [ImageSource(url: thumbnailURL?.url), ImageSource(url: url?.url)]
-    }
-
-    public var id: Int {
-        hashValue
-    }
-
-    func transform(image: Image) -> some View {
-        image
+        imageSources
     }
 }

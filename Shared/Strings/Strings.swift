@@ -750,8 +750,8 @@ internal enum L10n {
   internal static let idle = L10n.tr("Localizable", "idle", fallback: "Idle")
   /// Illustrator
   internal static let illustrator = L10n.tr("Localizable", "illustrator", fallback: "Illustrator")
-  /// Images
-  internal static let image = L10n.tr("Localizable", "image", fallback: "Images")
+  /// Image
+  internal static let image = L10n.tr("Localizable", "image", fallback: "Image")
   /// Images
   internal static let images = L10n.tr("Localizable", "images", fallback: "Images")
   /// Manage and customize the images associated with this media item. Select an image type to view, add, or replace images.

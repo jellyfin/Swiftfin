@@ -198,7 +198,7 @@ extension NavigationRoute {
     static func itemImages(viewModel: ItemImageViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemImages",
-            style: .sheet
+            style: .push(.automatic)
         ) {
             ItemImagesView(viewModel: viewModel)
         }
@@ -210,7 +210,7 @@ extension NavigationRoute {
     ) -> NavigationRoute {
         NavigationRoute(
             id: "remoteImageDetail",
-            style: .sheet
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
             RemoteImageDetailView(
                 viewModel: viewModel,
@@ -222,7 +222,7 @@ extension NavigationRoute {
     static func remoteImageSearch(viewModel: ItemImageViewModel, imageType: ImageType) -> NavigationRoute {
         NavigationRoute(
             id: "remoteImageSearch",
-            style: .push(.automatic)
+            style: .sheet
         ) {
             RemoteImageSearchView(viewModel: viewModel, imageType: imageType)
         }

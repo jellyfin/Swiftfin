@@ -8,6 +8,7 @@
 
 import CollectionHStack
 import Defaults
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -26,20 +27,23 @@ struct ItemImagesView: View {
     private var selectedType: ImageType = .primary
 
     @State
-    private var deleteImageInfo: ImageInfo?
-    @State
     private var isFilePickerPresented = false
     @State
     private var isPhotoPickerPresented = false
+
     @State
     private var uploadError: Error?
 
-    private var selectedImages: [ImageInfo] {
-        viewModel.images[selectedType] ?? []
+    private var columns: CGFloat {
+        UIDevice.isPhone ? (posterType == .landscape ? 1.5 : 3) : 3.5
     }
 
     private var posterType: PosterDisplayType {
         selectedType.posterDisplayType(for: viewModel.item.type)
+    }
+
+    private var selectedImages: [ImageInfo] {
+        viewModel.images[selectedType] ?? []
     }
 
     var body: some View {
@@ -63,9 +67,6 @@ struct ItemImagesView: View {
         }
         .onFirstAppear {
             viewModel.refresh()
-        }
-        .navigationBarCloseButton {
-            router.dismiss()
         }
         .navigationBarMenuButton(
             isLoading: viewModel.background.is(.updating) || viewModel.background.is(.deleting),
@@ -94,29 +95,6 @@ struct ItemImagesView: View {
             isPresented: $isPhotoPickerPresented,
             viewModel: viewModel
         )
-        .errorMessage($uploadError)
-        .errorMessage($viewModel.error)
-        .confirmationDialog(
-            L10n.delete,
-            isPresented: Binding<Bool>(
-                get: { deleteImageInfo != nil },
-                set: { if !$0 { deleteImageInfo = nil } }
-            ),
-            titleVisibility: .visible
-        ) {
-            Button(L10n.delete, role: .destructive) {
-                if let deleteImageInfo {
-                    viewModel.deleteImageInfo = deleteImageInfo
-                    viewModel.delete()
-                }
-            }
-
-            Button(L10n.cancel, role: .cancel) {
-                deleteImageInfo = nil
-            }
-        } message: {
-            Text(L10n.deleteItemConfirmationMessage)
-        }
         .onReceive(viewModel.events) { event in
             switch event {
             case .deleted:
@@ -125,6 +103,7 @@ struct ItemImagesView: View {
                 break
             }
         }
+        .errorMessage($uploadError)
     }
 
     @ViewBuilder
@@ -137,57 +116,32 @@ struct ItemImagesView: View {
                 ) {
                     UIApplication.shared.open(.jellyfinDocsImages)
                 }
-                .frame(maxWidth: .infinity)
                 .edgePadding(.horizontal)
+                .frame(maxWidth: .infinity)
                 .padding(.top, 24)
 
-                Menu {
-                    ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
-                        Button {
-                            selectedType = imageType
-                        } label: {
-                            if imageType == selectedType {
-                                Label(imageType.displayTitle, systemImage: "checkmark")
-                            } else {
-                                Text(imageType.displayTitle)
-                            }
-                        }
-                    }
-                } label: {
-                    Label(
-                        selectedType.displayTitle,
-                        systemImage: "chevron.down"
-                    )
-                    .labelStyle(.episodeSelector)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .edgePadding(.horizontal)
+                typePicker
+                    .edgePadding(.horizontal)
 
-                imageCarousel
+                imagesView
 
                 Divider()
                     .edgePadding(.horizontal)
 
-                imageTypeDescription
+                descriptionView
                     .edgePadding(.horizontal)
             }
         }
     }
 
-    private var columns: CGFloat {
-        UIDevice.isPhone ? (posterType == .landscape ? 1.5 : 3) : 3.5
-    }
-
     @ViewBuilder
-    private var imageCarousel: some View {
+    private var imagesView: some View {
         if selectedImages.isNotEmpty {
             CollectionHStack(
                 uniqueElements: selectedImages,
                 columns: columns
             ) { imageInfo in
-                imageButton(imageInfo: imageInfo) {
-                    deleteImageInfo = imageInfo
-                }
+                imageButton(imageInfo: imageInfo)
             }
             .clipsToBounds(false)
             .scrollBehavior(.continuousLeadingEdge)
@@ -210,6 +164,44 @@ struct ItemImagesView: View {
         }
     }
 
+    private var typePicker: some View {
+        Menu {
+            ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
+                Button {
+                    selectedType = imageType
+                } label: {
+                    if imageType == selectedType {
+                        Label(imageType.displayTitle, systemImage: "checkmark")
+                    } else {
+                        Text(imageType.displayTitle)
+                    }
+                }
+            }
+        } label: {
+            Label(
+                selectedType.displayTitle,
+                systemImage: "chevron.down"
+            )
+            .labelStyle(.episodeSelector)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var descriptionView: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(selectedType.description)
+
+            if !selectedType.isUsed {
+                Text("Image type is not used in official Jellyfin Clients.")
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .font(.body)
+        .foregroundStyle(.secondary)
+        .transition(.opacity.animation(.linear(duration: 0.1)))
+    }
+
     @ViewBuilder
     private var addImageMenu: some View {
         Button(L10n.search, systemImage: "magnifyingglass") {
@@ -230,42 +222,44 @@ struct ItemImagesView: View {
     }
 
     @ViewBuilder
-    private var imageTypeDescription: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(selectedType.description)
+    private func imageButton(imageInfo: ImageInfo) -> some View {
+        StateAdapter(initialValue: false) { isPresentingConfirmDeletion in
+            Button {
+                isPresentingConfirmDeletion.wrappedValue = true
+            } label: {
+                ZStack {
+                    Color.secondarySystemFill
 
-            if !selectedType.isUsed {
-                Text("This type is not used in official Jellyfin Clients.")
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .font(.body)
-        .transition(.opacity.animation(.linear(duration: 0.1)))
-    }
-
-    @ViewBuilder
-    private func imageButton(
-        imageInfo: ImageInfo,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            ZStack {
-                Color.secondarySystemFill
-
-                ImageView(
-                    imageInfo.imageSource(item: viewModel.item)
-                )
-                .placeholder { _ in
-                    Image(systemName: "photo")
+                    ImageView(
+                        imageInfo.imageSource(item: viewModel.item)
+                    )
+                    .placeholder { _ in
+                        Image(systemName: "photo")
+                    }
+                    .failure {
+                        Image(systemName: "photo")
+                    }
+                    .pipeline(.Swiftfin.other)
                 }
-                .failure {
-                    Image(systemName: "photo")
-                }
-                .pipeline(.Swiftfin.other)
+                .posterStyle(posterType)
+                .posterShadow()
             }
-            .posterStyle(posterType)
-            .posterShadow()
+            .confirmationDialog(
+                L10n.delete,
+                isPresented: isPresentingConfirmDeletion,
+                titleVisibility: .visible
+            ) {
+                Button(L10n.delete, role: .destructive) {
+                    viewModel.deleteImageInfo = imageInfo
+                    viewModel.delete()
+                }
+
+                Button(L10n.cancel, role: .cancel) {
+                    isPresentingConfirmDeletion.wrappedValue = false
+                }
+            } message: {
+                Text(L10n.deleteItemConfirmationMessage)
+            }
         }
     }
 
@@ -275,17 +269,15 @@ struct ItemImagesView: View {
         } label: {
             ZStack {
                 Color.secondarySystemFill
-                    .opacity(0.75)
 
                 VStack {
                     Image(systemName: "photo.badge.plus")
                         .font(.title)
-                        .foregroundStyle(Color.primary)
 
                     Text(L10n.add)
-                        .font(.callout)
-                        .foregroundStyle(Color.secondary)
+                        .font(.body)
                 }
+                .foregroundStyle(accentColor)
             }
             .posterStyle(posterType)
             .posterShadow()

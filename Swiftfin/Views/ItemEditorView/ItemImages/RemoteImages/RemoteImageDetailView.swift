@@ -19,7 +19,6 @@ struct RemoteImageDetailView: View {
     private var viewModel: ItemImageViewModel
 
     private let remoteImageInfo: RemoteImageInfo
-    private let imageSource: ImageSource
 
     init(
         viewModel: ItemImageViewModel,
@@ -27,13 +26,14 @@ struct RemoteImageDetailView: View {
     ) {
         self.viewModel = viewModel
         self.remoteImageInfo = remoteImageInfo
-        self.imageSource = remoteImageInfo.imageSource()
     }
 
     var body: some View {
         List {
             Section {
-                ImageView(imageSource)
+                // RemoteImageInfo conforms to `Poster` but do not use `PosterImage` here
+                // - This image is intentionally an unformatted version of the image
+                ImageView(remoteImageInfo.primaryImageSource)
                     .placeholder { _ in
                         Image(systemName: "photo")
                     }
@@ -50,11 +50,11 @@ struct RemoteImageDetailView: View {
             .listRowInsets(.zero)
 
             Section(L10n.details) {
-                if let provider = remoteImageInfo.providerName {
+                if let provider = remoteImageInfo.providerName, provider.isNotEmpty {
                     LabeledContent(L10n.provider, value: provider)
                 }
 
-                if let language = remoteImageInfo.language {
+                if let language = remoteImageInfo.language, language.isNotEmpty {
                     LabeledContent(L10n.language, value: language)
                 }
 
@@ -76,7 +76,7 @@ struct RemoteImageDetailView: View {
                 }
             }
 
-            if let url = imageSource.url {
+            if let url = remoteImageInfo.url?.url {
                 Section {
                     ChevronButton(
                         L10n.imageSource,
@@ -90,9 +90,6 @@ struct RemoteImageDetailView: View {
         .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.image)
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
         .topBarTrailing {
             if viewModel.background.is(.updating) {
                 ProgressView()

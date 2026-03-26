@@ -23,7 +23,11 @@ struct RemoteImageSearchView: View {
     private var remoteImageInfoViewModel: RemoteImageInfoViewModel
 
     private var layout: CollectionVGridLayout {
-        posterType == .landscape ? .minWidth(150) : .minWidth(100)
+        guard UIDevice.isPhone else {
+            return .minWidth(150)
+        }
+
+        return posterType == .landscape ? .columns(2) : .columns(3)
     }
 
     private var posterType: PosterDisplayType {
@@ -96,6 +100,9 @@ struct RemoteImageSearchView: View {
                 }
             }
         }
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
         .onFirstAppear {
             remoteImageInfoViewModel.send(.refresh)
         }
@@ -105,13 +112,11 @@ struct RemoteImageSearchView: View {
         .onReceive(viewModel.events) { event in
             switch event {
             case .updated:
-                UIDevice.feedback(.success)
                 router.dismiss()
             case .deleted:
                 break
             }
         }
-        .errorMessage($viewModel.error)
     }
 
     @ViewBuilder
@@ -126,19 +131,19 @@ struct RemoteImageSearchView: View {
                 uniqueElements: remoteImageInfoViewModel.elements,
                 layout: layout
             ) { image in
-                Button {
+                PosterButton(
+                    item: image,
+                    type: posterType
+                ) { namespace in
                     viewModel.remoteImageInfo = image
                     router.route(
                         to: .remoteImageDetail(
                             viewModel: viewModel,
                             remoteImageInfo: image
-                        )
+                        ), in: namespace
                     )
                 } label: {
-                    PosterImage(
-                        item: image,
-                        type: posterType
-                    )
+                    EmptyView()
                 }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
