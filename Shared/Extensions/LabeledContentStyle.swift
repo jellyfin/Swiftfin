@@ -27,9 +27,6 @@ struct LearnMoreLabeledContentStyle: LabeledContentStyle {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
-        #if os(tvOS)
-        .focusable()
-        #endif
     }
 }
 
