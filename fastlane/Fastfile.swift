@@ -71,14 +71,38 @@ class Fastfile: LaneFile {
             bundleIdentifier: .userDefined(swiftfinBundleIdentifier)
         )
         
-        if let version = options["version"] {
+        let version = options["version"]
+
+        if let version {
             incrementVersionNumber(
                 versionNumber: .userDefined(version),
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         }
-        
-        if let build = options["build"] {
+
+        let build = options["build"]
+
+        if build == "auto" {
+            // Query App Store Connect for the latest build number for this version, then increment by 1.
+            // First build for a new version starts at 1.
+            // Example:
+            // - Current release is 1.4. TestFlight would be 1.5 (1)
+            // - The next TestFlight would be 1.5 (2)
+            guard let version else {
+                puts(message: "ERROR: build is 'auto' but no version was provided")
+                exit(1)
+            }
+            let latest = latestTestflightBuildNumber(
+                appIdentifier: .userDefined(swiftfinBundleIdentifier),
+                version: .userDefined(version)
+            )
+            let next = latest + 1
+            puts(message: "Auto-increment: latest build \(latest) → next build \(next)")
+            incrementBuildNumber(
+                buildNumber: .userDefined("\(next)"),
+                xcodeproj: .userDefined(swiftfinXcodeProject)
+            )
+        } else if let build {
             incrementBuildNumber(
                 buildNumber: .userDefined(build),
                 xcodeproj: .userDefined(swiftfinXcodeProject)
@@ -88,16 +112,19 @@ class Fastfile: LaneFile {
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         }
-        
+
         buildApp(
             scheme: .userDefined(scheme),
             skipArchive: .userDefined(false),
             xcargs: .userDefined("-skipMacroValidation"),
             skipProfileDetection: false
         )
-        
+
+        // Dynamic IPA name based on scheme
+        // - Eventually use for iOS & tvOS (& macOS?)
+        let ipaName = scheme.contains("tvOS") ? "Swiftfin tvOS.ipa" : "Swiftfin iOS.ipa"
         uploadToTestflight(
-            ipa: "Swiftfin iOS.ipa"
+            ipa: .userDefined(ipaName)
         )
     }
     
@@ -138,7 +165,9 @@ extension String {
     
     /// Trim the option value from whitespaces and newlines, which may
     /// accidentally be present in GitHub secrets.
-    func trimOption() -> String {
-        trimmingCharacters(in: .whitespacesAndNewlines)
+    /// Returns nil if the trimming result is empty or "" so we can `guard` or `if let`
+    func trimOption() -> String? {
+        let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
     }
 }
