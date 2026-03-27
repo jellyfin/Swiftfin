@@ -84,28 +84,45 @@ for directory in directoriesToScan {
     scanDirectory(directory)
 }
 
-// MARK: - Remove Unused Keys
+// MARK: - Find Unused Keys
+
+let shouldPurge = CommandLine.arguments.contains("--purge")
 
 // Identify keys in the localization file that are not used in the codebase
-let unusedKeys = localizationEntries.keys.filter { !usedKeys.contains($0) }
+let unusedKeys = localizationEntries.keys
+    .filter { !usedKeys.contains($0) }
+    .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
 
-// Remove unused keys from the dictionary
-unusedKeys.forEach { localizationEntries.removeValue(forKey: $0) }
+if unusedKeys.isEmpty {
+    print("No unused localization strings found.")
+} else {
+    print("Found \(unusedKeys.count) unused localization string(s):\n")
 
-// MARK: - Write Updated Localizable.strings
+    for key in unusedKeys {
+        print("  - \(key)")
+    }
 
-// Sort keys alphabetically for consistent formatting
-let sortedKeys = localizationEntries.keys.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+    if shouldPurge {
+        // Remove unused keys from the dictionary
+        unusedKeys.forEach { localizationEntries.removeValue(forKey: $0) }
 
-// Reconstruct the localization file with sorted and updated entries
-let updatedContent = sortedKeys.map { "/// \(localizationEntries[$0]!)\n\"\($0)\" = \"\(localizationEntries[$0]!)\";" }
-    .joined(separator: "\n\n")
+        // Sort keys alphabetically for consistent formatting
+        let sortedKeys = localizationEntries.keys.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
 
-// Attempt to write the updated content back to the localization file
-do {
-    try updatedContent.write(toFile: localizationFile, atomically: true, encoding: .utf16)
-    print("Localization file updated. Removed \(unusedKeys.count) unused keys.")
-} catch {
-    print("Error: Failed to write updated localization file.")
-    exit(1)
+        // Reconstruct the localization file with sorted and updated entries
+        let updatedContent = sortedKeys.map { "/// \(localizationEntries[$0]!)\n\"\($0)\" = \"\(localizationEntries[$0]!)\";" }
+            .joined(separator: "\n\n")
+
+        // Attempt to write the updated content back to the localization file
+        do {
+            try updatedContent.write(toFile: localizationFile, atomically: true, encoding: .utf16)
+            print("\nLocalization file updated. Removed \(unusedKeys.count) unused keys.")
+        } catch {
+            print("\nError: Failed to write updated localization file.")
+            exit(1)
+        }
+    } else {
+        print("\nRun 'swift Scripts/Translations/FindUnusedStrings.swift --purge' to remove them.")
+        exit(1)
+    }
 }
