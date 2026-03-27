@@ -9,9 +9,9 @@
 import JellyfinAPI
 import SwiftUI
 
-struct FormItemSection: PlatformView {
+struct FormItemSection<Item: Poster>: PlatformView {
 
-    let item: BaseItemDto
+    let item: Item
 
     var iOSView: some View {
         Section {
@@ -25,8 +25,7 @@ struct FormItemSection: PlatformView {
                 .accessibilityIgnoresInvertColors()
 
                 VStack(alignment: .leading) {
-
-                    if let parent = item.parentTitle {
+                    if let baseItem = item as? BaseItemDto, let parent = baseItem.parentTitle {
                         Text(parent)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -43,7 +42,7 @@ struct FormItemSection: PlatformView {
                         Text(subtitle)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
-                    } else if let year = item.productionYear {
+                    } else if let baseItem = item as? BaseItemDto, let year = baseItem.productionYear {
                         Text(year.description)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -61,8 +60,9 @@ struct FormItemSection: PlatformView {
 
     var tvOSView: some View {
         Section(L10n.media) {
-            if let parentLabel = item.parentLabel,
-               let parentValue = item.parentTitle
+            if let baseItem = item as? BaseItemDto,
+               let parentLabel = baseItem.parentLabel,
+               let parentValue = baseItem.parentTitle
             {
                 LabeledContent(
                     parentLabel,
@@ -75,14 +75,17 @@ struct FormItemSection: PlatformView {
                 value: item.displayTitle
             )
 
-            if let subtitleLabel = item.type?.displayTitle,
-               let subtitleValue = item.subtitle
+            if let baseItem = item as? BaseItemDto,
+               let subtitleLabel = baseItem.type?.displayTitle,
+               let subtitleValue = baseItem.subtitle
             {
                 LabeledContent(
                     subtitleLabel,
                     value: subtitleValue
                 )
-            } else if let year = item.productionYear {
+            } else if let baseItem = item as? BaseItemDto,
+                      let year = baseItem.productionYear
+            {
                 LabeledContent(
                     L10n.year,
                     value: year.description

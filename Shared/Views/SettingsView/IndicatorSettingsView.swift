@@ -11,34 +11,37 @@ import SwiftUI
 
 struct IndicatorSettingsView: View {
 
+    @Default(.Customization.Indicators.showUnplayed)
+    private var showUnplayed
+
+    @Default(.Customization.Indicators.showPlayed)
+    private var showPlayed
     @Default(.Customization.Indicators.showFavorited)
     private var showFavorited
     @Default(.Customization.Indicators.showProgress)
     private var showProgress
-    @Default(.Customization.Indicators.showUnplayed)
-    private var showUnplayed
-    @Default(.Customization.Indicators.showPlayed)
-    private var showPlayed
 
     var body: some View {
-        Form {
+        Form(systemImage: "checkmark.circle.fill") {
             Section(L10n.posters) {
+
+                #if os(tvOS)
+                ListRowMenu(L10n.showUnwatched, selection: $showUnplayed)
+                #else
+                Picker(L10n.showUnwatched, selection: $showUnplayed) {
+                    ForEach(UnplayedIndicatorType.allCases) { option in
+                        Text(option.displayTitle).tag(option)
+                    }
+                }
+                #endif
+
+                Toggle(L10n.showWatched, isOn: $showPlayed)
 
                 Toggle(L10n.showFavorited, isOn: $showFavorited)
 
                 Toggle(L10n.showProgress, isOn: $showProgress)
-
-                Toggle(L10n.showUnwatched, isOn: $showUnplayed)
-
-                Toggle(L10n.showWatched, isOn: $showPlayed)
             }
-        } image: {
-            // TODO: Show a sample poster to model indicators
-            Image(systemName: "checkmark.circle.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: 400)
+            .navigationTitle(L10n.indicators)
         }
-        .navigationTitle(L10n.indicators)
     }
 }
