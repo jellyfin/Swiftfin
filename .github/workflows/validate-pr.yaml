@@ -1,4 +1,4 @@
-name: "Lint 🧹"
+name: "Validate PR 🧹"
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: "Lint 🧹"
+    name: "Validate PR 🧹"
     if: github.event.pull_request.draft == false
     runs-on: macos-14
 
@@ -21,3 +21,6 @@ jobs:
 
       - name: Run Swiftformat
         run: swiftformat . --lint --config ".swiftformat"
+
+      - name: Find Unused Strings
+        run: swift Scripts/Translations/FindUnusedStrings.swift
