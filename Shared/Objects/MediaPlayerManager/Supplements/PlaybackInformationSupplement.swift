@@ -79,11 +79,11 @@ extension PlaybackInformationSupplement {
             }
 
             if let deliveryProtocol = mediaSource?.protocol {
-                LabeledContent("Source", value: deliveryProtocol.rawValue.uppercased())
+                LabeledContent(L10n.source, value: deliveryProtocol.rawValue.uppercased())
             }
 
             if let transcodingSubProtocol = mediaSource?.transcodingSubProtocol {
-                LabeledContent("Protocol", value: transcodingSubProtocol.rawValue.uppercased())
+                LabeledContent(L10n.protocol, value: transcodingSubProtocol.rawValue.uppercased())
             }
         }
 
@@ -98,17 +98,17 @@ extension PlaybackInformationSupplement {
                 if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
                     let size = proxy.videoSize.value
                     if size != .zero {
-                        LabeledContent("Player dimensions", value: "\(Int(size.width))x\(Int(size.height))")
+                        LabeledContent(L10n.playerDimensions, value: "\(Int(size.width))x\(Int(size.height))")
                     }
                 }
 
                 if let width = videoStream?.width, let height = videoStream?.height {
-                    LabeledContent("Video resolution", value: "\(width)x\(height)")
+                    LabeledContent(L10n.videoResolution, value: "\(width)x\(height)")
                 }
 
                 if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
-                    LabeledContent("Dropped frames", value: "\(proxy.droppedFrames.value)")
-                    LabeledContent("Corrupted frames", value: "\(proxy.corruptedFrames.value)")
+                    LabeledContent(L10n.droppedFrames, value: "\(proxy.droppedFrames.value)")
+                    LabeledContent(L10n.corruptedFrames, value: "\(proxy.corruptedFrames.value)")
                 }
             }
         }
@@ -116,35 +116,35 @@ extension PlaybackInformationSupplement {
         @ViewBuilder
         private var streamingInfoSection: some View {
             if let transcodingInfo = viewModel.currentSession?.transcodingInfo {
-                Text(viewModel.currentSession?.playMethodDisplayTitle.map { "\($0) Info" } ?? "Stream Info")
+                Text(viewModel.currentSession?.playMethodDisplayTitle.map { L10n.streamInfoWithMethod($0) } ?? L10n.streamInfo)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .padding(.vertical, 4)
 
                 if let videoCodec = transcodingInfo.videoCodec {
                     LabeledContent(
-                        "Video codec",
+                        L10n.videoCodec,
                         value: transcodingInfo.isVideoDirect == true
-                            ? "\(videoCodec.uppercased()) (direct)"
+                            ? "\(videoCodec.uppercased()) (\(L10n.direct))"
                             : videoCodec.uppercased()
                     )
                 }
 
                 if let audioCodec = transcodingInfo.audioCodec {
                     LabeledContent(
-                        "Audio codec",
+                        L10n.audioCodec,
                         value: transcodingInfo.isAudioDirect == true
-                            ? "\(audioCodec.uppercased()) (direct)"
+                            ? "\(audioCodec.uppercased()) (\(L10n.direct))"
                             : audioCodec.uppercased()
                     )
                 }
 
                 if let hwAccel = transcodingInfo.hardwareAccelerationType {
-                    LabeledContent("HWA", value: hwAccel.rawValue)
+                    LabeledContent(L10n.hardwareAcceleration, value: hwAccel.rawValue)
                 }
 
                 if let completion = transcodingInfo.completionPercentage {
-                    LabeledContent("Transcode progress", value: "\(Int(completion))%")
+                    LabeledContent(L10n.transcodeProgress, value: "\(Int(completion))%")
                 }
             }
         }
@@ -152,26 +152,26 @@ extension PlaybackInformationSupplement {
         @ViewBuilder
         private var originalMediaInfoSection: some View {
             if mediaSource != nil || videoStream != nil || audioStream != nil {
-                Text("Original Media Info")
+                Text(L10n.originalMediaInfo)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .padding(.vertical, 4)
 
                 if let container = mediaSource?.container {
-                    LabeledContent("Container", value: container)
+                    LabeledContent(L10n.container, value: container)
                 }
 
                 if let size = mediaSource?.size {
-                    LabeledContent("Size", value: Int64(size).formatted(.byteCount(style: .file)))
+                    LabeledContent(L10n.size, value: Int64(size).formatted(.byteCount(style: .file)))
                 }
 
                 if let bitrate = mediaSource?.bitrate {
-                    LabeledContent("Bitrate", value: bitrate.formatted(.bitRate))
+                    LabeledContent(L10n.bitrate, value: bitrate.formatted(.bitRate))
                 }
 
                 if let codec = videoStream?.codec {
                     let display = videoStream?.profile.map { "\(codec.uppercased()) \($0)" } ?? codec.uppercased()
-                    LabeledContent("Video codec", value: display)
+                    LabeledContent(L10n.videoCodec, value: display)
                 }
 
                 if let bitRate = videoStream?.bitRate {
@@ -179,15 +179,15 @@ extension PlaybackInformationSupplement {
                 }
 
                 if let videoRangeType = videoStream?.videoRangeType {
-                    LabeledContent("Video range type", value: videoRangeType.rawValue)
+                    LabeledContent(L10n.videoRangeType, value: videoRangeType.rawValue)
                 }
 
                 if let codec = audioStream?.codec {
-                    LabeledContent("Audio codec", value: codec.uppercased())
+                    LabeledContent(L10n.audioCodec, value: codec.uppercased())
                 }
 
                 if let bitRate = audioStream?.bitRate {
-                    LabeledContent("Audio bitrate", value: bitRate.formatted(.bitRate))
+                    LabeledContent(L10n.audioBitrate, value: bitRate.formatted(.bitRate))
                 }
 
                 if let channels = audioStream?.channels {
@@ -195,7 +195,7 @@ extension PlaybackInformationSupplement {
                 }
 
                 if let sampleRate = audioStream?.sampleRate {
-                    LabeledContent("Audio sample rate", value: "\(sampleRate) Hz")
+                    LabeledContent(L10n.audioSampleRate, value: "\(sampleRate) Hz")
                 }
             }
         }
