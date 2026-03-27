@@ -120,11 +120,19 @@ class Fastfile: LaneFile {
             skipProfileDetection: false
         )
 
+        // Read changelog from temp file if provided
+        var changelog: String?
+        if let changelogFile = options["changelogFile"]?.trimOption() {
+            changelog = try? String(contentsOfFile: changelogFile, encoding: .utf8)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
         // Dynamic IPA name based on scheme
         // - Eventually use for iOS & tvOS (& macOS?)
         let ipaName = scheme.contains("tvOS") ? "Swiftfin tvOS.ipa" : "Swiftfin iOS.ipa"
         uploadToTestflight(
-            ipa: .userDefined(ipaName)
+            ipa: .userDefined(ipaName),
+            changelog: .userDefined(changelog)
         )
     }
     
