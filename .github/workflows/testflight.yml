@@ -47,6 +47,36 @@ jobs:
         echo "Next TestFlight version: $NEXT_VERSION"
         echo "version=$NEXT_VERSION" >> $GITHUB_OUTPUT
 
+    - name: Generate Changelog
+      id: changelog
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # Get the date of the latest release to filter PRs merged after it
+        RELEASE_DATE=$(gh release view --json publishedAt -q '.publishedAt' 2>/dev/null || echo "")
+
+        if [ -n "$RELEASE_DATE" ]; then
+          echo "Finding 'release highlight' PRs merged after $RELEASE_DATE"
+          LOG=$(gh pr list \
+            --state merged \
+            --label "release highlight" \
+            --search "merged:>=$RELEASE_DATE" \
+            --json title \
+            --jq '.[].title' | sed 's/^/- /')
+        fi
+
+        # Fallback if no release found or no PR with "Release Highlight" tag
+        if [ -z "$LOG" ]; then
+          LOG="General performance changes, fixes, and localization changes."
+        fi
+
+        # Write to multiline output
+        {
+          echo "changelog<<CHANGELOG_EOF"
+          echo "$LOG"
+          echo "CHANGELOG_EOF"
+        } >> $GITHUB_OUTPUT
+
     - name: Install SwiftGen
       run: brew install swiftgen
 
@@ -98,6 +128,7 @@ jobs:
         PAYLOAD_VERSION: ${{ github.event.client_payload.version }}
         PAYLOAD_BRANCH: ${{ github.event.client_payload.branch }}
         AUTO_VERSION: ${{ steps.version.outputs.version }}
+        AUTO_CHANGELOG: ${{ steps.changelog.outputs.changelog }}
       run: |
         # Required parameters
         ARGS="keyID:$FL_KEY_ID issuerID:$FL_ISSUER_ID keyContents:$FL_KEY_CONTENTS"
@@ -122,5 +153,11 @@ jobs:
         if [ -n "$PAYLOAD_BRANCH" ]; then
           ARGS="$ARGS branch:$PAYLOAD_BRANCH"
         fi
+
+        # Write changelog from last release to present to a temp file
+        # This is to prevent issue with formatting when going directly from CLI
+        CHANGELOG_FILE=$(mktemp)
+        echo "$AUTO_CHANGELOG" > "$CHANGELOG_FILE"
+        ARGS="$ARGS changelogFile:$CHANGELOG_FILE"
 
         sudo fastlane testFlightLane $ARGS
