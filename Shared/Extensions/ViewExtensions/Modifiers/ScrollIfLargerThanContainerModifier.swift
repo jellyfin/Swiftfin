@@ -15,9 +15,10 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
 
     let axes: Axis.Set
     let padding: CGFloat
+    let alignment: Alignment
 
     func body(content: Content) -> some View {
-        AlternateLayoutView {
+        AlternateLayoutView(alignment: alignment) {
             Color.clear
         } content: { layoutSize in
 
@@ -30,7 +31,8 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
             }
             .frame(
                 maxWidth: axes.contains(.horizontal) ? (isHorizontallyLarger ? .infinity : contentSize.width) : nil,
-                maxHeight: axes.contains(.vertical) ? (isVerticallyLarger ? .infinity : contentSize.height) : nil
+                maxHeight: axes.contains(.vertical) ? (isVerticallyLarger ? .infinity : contentSize.height) : nil,
+                alignment: alignment
             )
             .backport // iOS 17
             .scrollClipDisabled()
