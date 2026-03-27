@@ -482,8 +482,6 @@ internal enum L10n {
   internal static let deleteSelectionUsersWarning = L10n.tr("Localizable", "deleteSelectionUsersWarning", fallback: "Are you sure you wish to delete all selected users?")
   /// Delete server
   internal static let deleteServer = L10n.tr("Localizable", "deleteServer", fallback: "Delete server")
-  /// Delete user
-  internal static let deleteUser = L10n.tr("Localizable", "deleteUser", fallback: "Delete user")
   /// Failed to delete user
   internal static let deleteUserFailed = L10n.tr("Localizable", "deleteUserFailed", fallback: "Failed to delete user")
   /// Are you sure you want to delete %d users?
