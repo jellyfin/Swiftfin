@@ -26,6 +26,9 @@ struct SwiftfinApp: App {
 
     init() {
 
+        SwizzleDefaults.install()
+        SwizzleDefaults.set(Defaults[.Experimental.isLiquidGlassEnabled], for: "com.apple.SwiftUI.IgnoreSolariumOptOut")
+
         // Logging
         LoggingSystem.bootstrap { label in
 
