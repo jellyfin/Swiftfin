@@ -14,17 +14,20 @@ struct SliderContainer<Value: BinaryFloatingPoint, Content: SliderContentView>: 
 
     private var value: Binding<Value>
     private let total: Value
+    private let originProgress: Value?
     private let onEditingChanged: (Bool) -> Void
     private let view: Content
 
     init(
         value: Binding<Value>,
         total: Value,
+        originProgress: Value? = nil,
         onEditingChanged: @escaping (Bool) -> Void = { _ in },
         @ViewBuilder view: @escaping () -> Content
     ) {
         self.value = value
         self.total = total
+        self.originProgress = originProgress
         self.onEditingChanged = onEditingChanged
         self.view = view()
     }
@@ -153,7 +156,7 @@ final class UISliderContainer<Value: BinaryFloatingPoint, Content: SliderContent
                 panDeceleratingVelocity = (abs(velocity) > decelerationMaxVelocity ? decelerationMaxVelocity * direction : velocity) /
                     panDampingValue
                 decelerationTimer = Timer.scheduledTimer(
-                    timeInterval: 0.01,
+                    timeInterval: 0.03,
                     target: self,
                     selector: #selector(handleDeceleratingTimer),
                     userInfo: nil,
@@ -170,21 +173,22 @@ final class UISliderContainer<Value: BinaryFloatingPoint, Content: SliderContent
 
     @objc
     private func handleDeceleratingTimer(time: Timer) {
-        let newValue = panStartValue + Value(panDeceleratingVelocity) * 0.01
+        let newValue = panStartValue + Value(panDeceleratingVelocity) * 0.03
         let clampedValue = clamp(newValue, min: 0, max: containerState.total)
 
         sendActions(for: .valueChanged)
         panStartValue = clampedValue
 
-        panDeceleratingVelocity *= 0.92
+        panDeceleratingVelocity *= 0.78
 
         if !isFocused || abs(panDeceleratingVelocity) < 1 {
             stopDeceleratingTimer()
+            onEditingChanged(false)
+            return
         }
 
         valueBinding.wrappedValue = clampedValue
         containerState.value = clampedValue
-        onEditingChanged(false)
     }
 
     private func stopDeceleratingTimer() {
