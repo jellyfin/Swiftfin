@@ -120,7 +120,7 @@ jobs:
           ARGS="$ARGS build:$PAYLOAD_BUILD"
         fi
 
-        # Version: only pass if explicitly provided, otherwise lane auto-increments
+        # Version if explicitly provided, otherwise FastLane auto-increments
         if [ -n "$PAYLOAD_VERSION" ]; then
           ARGS="$ARGS version:$PAYLOAD_VERSION"
         fi
