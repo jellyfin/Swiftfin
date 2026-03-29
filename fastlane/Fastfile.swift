@@ -15,8 +15,6 @@ class Fastfile: LaneFile {
     
     // MARK: TestFlight
     
-    // TODO: verify tvOS
-    /// - Important: Remember to pass in options from GitHub Actions
     func testFlightLane(withOptions options: [String: String]?) {
         
         guard let options,
@@ -41,15 +39,6 @@ class Fastfile: LaneFile {
             exit(1)
         }
         
-        if let branch = options["branch"] {
-            sh(
-                command: "git checkout \(branch)",
-                log: .userDefined(true)
-            ) { errorMessage in
-                puts(message: "ERROR: \(errorMessage)")
-            }
-        }
-        
         if let xcodeVersion = options["xcodeVersion"] {
             xcodes(version: xcodeVersion)
         }
@@ -71,33 +60,58 @@ class Fastfile: LaneFile {
             bundleIdentifier: .userDefined(swiftfinBundleIdentifier)
         )
         
-        if let version = options["version"] {
-            incrementVersionNumber(
-                versionNumber: .userDefined(version),
+        let version: String
+
+        if let providedVersion = options["version"] {
+            version = incrementVersionNumber(
+                versionNumber: .userDefined(providedVersion),
+                xcodeproj: .userDefined(swiftfinXcodeProject)
+            )
+        } else {
+            version = incrementVersionNumber(
+                bumpType: "minor",
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         }
-        
+
         if let build = options["build"] {
             incrementBuildNumber(
                 buildNumber: .userDefined(build),
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         } else {
+            let latest = latestTestflightBuildNumber(
+                appIdentifier: swiftfinBundleIdentifier,
+                version: .userDefined(version),
+                initialBuildNumber: 0
+            )
+            
+            let next = latest + 1
+            
             incrementBuildNumber(
+                buildNumber: .userDefined("\(next)"),
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         }
-        
+
         buildApp(
             scheme: .userDefined(scheme),
             skipArchive: .userDefined(false),
             xcargs: .userDefined("-skipMacroValidation"),
             skipProfileDetection: false
         )
-        
+
+        // Read changelog from temp file if provided
+        var changelog: String?
+
+        if let changelogFile = options["changelogFile"]?.trimOption() {
+            changelog = (try? String(contentsOfFile: changelogFile, encoding: .utf8))?
+                .trimOption()
+        }
+
         uploadToTestflight(
-            ipa: "Swiftfin iOS.ipa"
+            ipa: .userDefined("Swiftfin"),
+            changelog: .userDefined(changelog)
         )
     }
     
@@ -136,9 +150,12 @@ class Fastfile: LaneFile {
 
 extension String {
     
-    /// Trim the option value from whitespaces and newlines, which may
+    /// Trim whitespaces and newlines, which may
     /// accidentally be present in GitHub secrets.
-    func trimOption() -> String {
-        trimmingCharacters(in: .whitespacesAndNewlines)
+    ///
+    /// Returns nil if the trimmed result is empty.
+    func trimOption() -> String? {
+        let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
     }
 }
