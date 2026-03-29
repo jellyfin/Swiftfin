@@ -60,18 +60,39 @@ class Fastfile: LaneFile {
             bundleIdentifier: .userDefined(swiftfinBundleIdentifier)
         )
         
-        let version: String
+        appStoreBuildNumber(
+            initialBuildNumber: "1",
+            appIdentifier: swiftfinBundleIdentifier,
+            live: .userDefined(true)
+        )
+        
+        let liveVersion = laneContext()["SharedValues::LATEST_VERSION"] as? String
+        
+        let testFlightBuild = latestTestflightBuildNumber(
+            appIdentifier: swiftfinBundleIdentifier,
+            initialBuildNumber: 0
+        )
+        
+        let testFlightVersion = laneContext()["SharedValues::LATEST_TESTFLIGHT_VERSION"] as? String
 
         if let providedVersion = options["version"] {
-            version = incrementVersionNumber(
-                versionNumber: .userDefined(providedVersion),
-                xcodeproj: .userDefined(swiftfinXcodeProject)
+            incrementVersionNumber(
+                versionNumber: .userDefined(providedVersion)
             )
         } else {
-            version = incrementVersionNumber(
-                bumpType: "minor",
-                xcodeproj: .userDefined(swiftfinXcodeProject)
-            )
+            if liveVersion == testFlightVersion {
+                incrementVersionNumber(
+                    versionNumber: .userDefined(testFlightVersion)
+                )
+                
+                incrementVersionNumber(
+                    bumpType: "minor"
+                )
+            } else {
+                incrementVersionNumber(
+                    versionNumber: .userDefined(testFlightVersion)
+                )
+            }
         }
 
         if let build = options["build"] {
@@ -80,16 +101,8 @@ class Fastfile: LaneFile {
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         } else {
-            let latest = latestTestflightBuildNumber(
-                appIdentifier: swiftfinBundleIdentifier,
-                version: .userDefined(version),
-                initialBuildNumber: 0
-            )
-            
-            let next = latest + 1
-            
             incrementBuildNumber(
-                buildNumber: .userDefined("\(next)"),
+                buildNumber: .userDefined("\(testFlightBuild + 1)"),
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         }
