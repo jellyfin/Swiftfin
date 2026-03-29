@@ -2,8 +2,8 @@ name: "TestFlight ✈️"
 
 on:
   schedule:
-    # 1st and 15th of every month at 12pm EST / 1pm EDT (17:00 UTC)
-    - cron: '0 17 1,15 * *'
+    # 1st of every month at 12pm EST / 1pm EDT (17:00 UTC)
+    - cron: '0 17 1 * *'
   repository_dispatch:
     types: [testflight]
   workflow_dispatch:
