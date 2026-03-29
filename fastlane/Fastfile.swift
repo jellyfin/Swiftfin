@@ -39,15 +39,6 @@ class Fastfile: LaneFile {
             exit(1)
         }
         
-        if let branch = options["branch"] {
-            sh(
-                command: "git checkout \(branch)",
-                log: .userDefined(true)
-            ) { errorMessage in
-                puts(message: "ERROR: \(errorMessage)")
-            }
-        }
-        
         if let xcodeVersion = options["xcodeVersion"] {
             xcodes(version: xcodeVersion)
         }
@@ -69,36 +60,34 @@ class Fastfile: LaneFile {
             bundleIdentifier: .userDefined(swiftfinBundleIdentifier)
         )
         
-        let version = options["version"]
+        let version: String
 
-        if let version {
-            incrementVersionNumber(
-                versionNumber: .userDefined(version),
+        if let providedVersion = options["version"] {
+            version = incrementVersionNumber(
+                versionNumber: .userDefined(providedVersion),
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         } else {
-            incrementVersionNumber(
+            version = incrementVersionNumber(
                 bumpType: "minor",
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         }
 
-        let build = options["build"]
-
-        if let build {
+        if let build = options["build"] {
             incrementBuildNumber(
                 buildNumber: .userDefined(build),
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         } else {
-            let currentVersion = getVersionNumber(xcodeproj: .userDefined(swiftfinXcodeProject))
             let latest = latestTestflightBuildNumber(
                 appIdentifier: swiftfinBundleIdentifier,
-                version: .userDefined(currentVersion),
+                version: .userDefined(version),
                 initialBuildNumber: 0
             )
+            
             let next = latest + 1
-            puts(message: "Auto-increment: latest build \(latest) → next build \(next)")
+            
             incrementBuildNumber(
                 buildNumber: .userDefined("\(next)"),
                 xcodeproj: .userDefined(swiftfinXcodeProject)
@@ -114,16 +103,14 @@ class Fastfile: LaneFile {
 
         // Read changelog from temp file if provided
         var changelog: String?
+
         if let changelogFile = options["changelogFile"]?.trimOption() {
-            changelog = try? String(contentsOfFile: changelogFile, encoding: .utf8)
-                .trimmingCharacters(in: .whitespacesAndNewlines)
+            changelog = (try? String(contentsOfFile: changelogFile, encoding: .utf8))?
+                .trimOption()
         }
 
-        // Dynamic IPA name based on scheme
-        // - Eventually use for iOS & tvOS (& macOS?)
-        let ipaName = scheme.contains("tvOS") ? "Swiftfin tvOS.ipa" : "Swiftfin iOS.ipa"
         uploadToTestflight(
-            ipa: .userDefined(ipaName),
+            ipa: .userDefined("Swiftfin"),
             changelog: .userDefined(changelog)
         )
     }
@@ -163,9 +150,10 @@ class Fastfile: LaneFile {
 
 extension String {
     
-    /// Trim the option value from whitespaces and newlines, which may
+    /// Trim whitespaces and newlines, which may
     /// accidentally be present in GitHub secrets.
-    /// Returns nil if the trimming result is empty or "" so we can `guard` or `if let`
+    ///
+    /// Returns nil if the trimmed result is empty.
     func trimOption() -> String? {
         let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
