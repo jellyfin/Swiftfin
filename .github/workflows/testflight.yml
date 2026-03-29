@@ -25,28 +25,6 @@ jobs:
       run: |
         git checkout ${{ github.event.client_payload.commitSHA }}
 
-    - name: Determine Next Version
-      id: version
-      if: github.event_name != 'repository_dispatch'
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        # Get latest release tag (fallback to 1.0.0 if none exists)
-        LATEST_TAG=$(gh release view --json tagName -q '.tagName' 2>/dev/null || echo "1.0.0")
-        echo "Latest release tag: $LATEST_TAG"
-
-        VERSION="$LATEST_TAG"
-
-        # Extract major.minor (up to 2 digits each side of first decimal)
-        # This is to prevent weird number with minor versions like 1.0.1, 1.4.1, etc.
-        MAJOR=$(echo "$VERSION" | sed -E 's/^([0-9]{1,2})\..*/\1/')
-        MINOR=$(echo "$VERSION" | sed -E 's/^[0-9]{1,2}\.([0-9]{1,2}).*/\1/')
-
-        # Increment minor version
-        NEXT_VERSION="${MAJOR}.$((MINOR + 1))"
-        echo "Next TestFlight version: $NEXT_VERSION"
-        echo "version=$NEXT_VERSION" >> $GITHUB_OUTPUT
-
     - name: Generate Changelog
       id: changelog
       env:
@@ -127,7 +105,6 @@ jobs:
         PAYLOAD_BUILD: ${{ github.event.client_payload.build }}
         PAYLOAD_VERSION: ${{ github.event.client_payload.version }}
         PAYLOAD_BRANCH: ${{ github.event.client_payload.branch }}
-        AUTO_VERSION: ${{ steps.version.outputs.version }}
         AUTO_CHANGELOG: ${{ steps.changelog.outputs.changelog }}
       run: |
         # Required parameters
@@ -138,12 +115,15 @@ jobs:
         # Falls back to Swiftfin iOS if not provided
         ARGS="$ARGS scheme:${PAYLOAD_SCHEME:-Swiftfin iOS}"
 
-        # Build: payload or auto-increment
-        ARGS="$ARGS build:${PAYLOAD_BUILD:-auto}"
+        # Build: only pass if explicitly provided, otherwise lane auto-increments
+        if [ -n "$PAYLOAD_BUILD" ]; then
+          ARGS="$ARGS build:$PAYLOAD_BUILD"
+        fi
 
-        # Version parameter
-        # Manually make a version OR allow it to auto-increment
-        ARGS="$ARGS version:${PAYLOAD_VERSION:-$AUTO_VERSION}"
+        # Version: only pass if explicitly provided, otherwise lane auto-increments
+        if [ -n "$PAYLOAD_VERSION" ]; then
+          ARGS="$ARGS version:$PAYLOAD_VERSION"
+        fi
 
         # Optional parameters
         if [ -n "$PAYLOAD_XCODE_VERSION" ]; then
