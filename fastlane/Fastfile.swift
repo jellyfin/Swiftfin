@@ -15,8 +15,6 @@ class Fastfile: LaneFile {
     
     // MARK: TestFlight
     
-    // TODO: verify tvOS
-    /// - Important: Remember to pass in options from GitHub Actions
     func testFlightLane(withOptions options: [String: String]?) {
         
         guard let options,
@@ -78,37 +76,31 @@ class Fastfile: LaneFile {
                 versionNumber: .userDefined(version),
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
+        } else {
+            incrementVersionNumber(
+                bumpType: "minor",
+                xcodeproj: .userDefined(swiftfinXcodeProject)
+            )
         }
 
         let build = options["build"]
 
-        if build == "auto" {
-            // Query App Store Connect for the latest build number for this version, then increment by 1.
-            // First build for a new version starts at 1.
-            // Example:
-            // - Current release is 1.4. TestFlight would be 1.5 (1)
-            // - The next TestFlight would be 1.5 (2)
-            guard let version else {
-                puts(message: "ERROR: build is 'auto' but no version was provided")
-                exit(1)
-            }
-            let latest = latestTestflightBuildNumber(
-                appIdentifier: .userDefined(swiftfinBundleIdentifier),
-                version: .userDefined(version)
-            )
-            let next = latest + 1
-            puts(message: "Auto-increment: latest build \(latest) → next build \(next)")
-            incrementBuildNumber(
-                buildNumber: .userDefined("\(next)"),
-                xcodeproj: .userDefined(swiftfinXcodeProject)
-            )
-        } else if let build {
+        if let build {
             incrementBuildNumber(
                 buildNumber: .userDefined(build),
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         } else {
+            let currentVersion = getVersionNumber(xcodeproj: .userDefined(swiftfinXcodeProject))
+            let latest = latestTestflightBuildNumber(
+                appIdentifier: swiftfinBundleIdentifier,
+                version: .userDefined(currentVersion),
+                initialBuildNumber: 0
+            )
+            let next = latest + 1
+            puts(message: "Auto-increment: latest build \(latest) → next build \(next)")
             incrementBuildNumber(
+                buildNumber: .userDefined("\(next)"),
                 xcodeproj: .userDefined(swiftfinXcodeProject)
             )
         }
