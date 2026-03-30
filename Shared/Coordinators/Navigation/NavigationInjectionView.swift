@@ -69,6 +69,7 @@ struct NavigationInjectionView: View {
                 NavigationInjectionView(coordinator: newCoordinator) {
                     route.destination
                 }
+                .environmentObject(rootCoordinator)
                 .background(.regularMaterial)
             }
         #else // <- Start: Use this for both OS when fixed
@@ -82,6 +83,7 @@ struct NavigationInjectionView: View {
                 NavigationInjectionView(coordinator: newCoordinator) {
                     route.destination
                 }
+                .environmentObject(rootCoordinator)
             }
         #endif // <- End
         #if os(tvOS)
@@ -93,25 +95,29 @@ struct NavigationInjectionView: View {
             NavigationInjectionView(coordinator: newCoordinator) {
                 route.destination
             }
+            .environmentObject(rootCoordinator)
         }
         #else
         .presentation(
                 $coordinator.presentedFullScreen,
-                transition: .zoomIfAvailable(
-                    options: .init(
-                        dimmingVisualEffect: .systemThickMaterialDark,
+                // TODO: Validate on Transmission > 2.8.2
+                /* transition: .zoomIfAvailable(
                         options: .init(
-                            isInteractive: isPresentationInteractive
-                        )
-                    ),
-                    otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
-                )
+                            dimmingVisualEffect: .systemThickMaterialDark,
+                            options: .init(
+                                isInteractive: isPresentationInteractive
+                            )
+                        ),
+                        otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
+                    )*/
+                transition: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
             ) { routeBinding, _ in
                 let vc = UIPreferencesHostingController {
                     NavigationInjectionView(coordinator: .init()) {
                         routeBinding.wrappedValue.destination
                             .environment(\.presentationControllerShouldDismiss, $isPresentationInteractive)
                     }
+                    .environmentObject(rootCoordinator)
                 }
 
                 // TODO: presentation options for customizing background color, dimming effect, etc.

@@ -1,5 +1,5 @@
 {
-  "originHash" : "38a493503cb22432e1bf1b0b812569bb2bdd51f821207a74b6b78ff16a049011",
+  "originHash" : "4117aea6c512a3e43a7bb340fecc0d1cd1f5561733cee28088160bdbb312f092",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nathantannar4/Engine",
       "state" : {
-        "revision" : "8062b68c43373af4abf1695bb8aba86cc013ec9d",
-        "version" : "2.3.2"
+        "revision" : "e163a3d987c3ded7aba643ef0c6ffb623ea09663",
+        "version" : "2.6.3"
       }
     },
     {
@@ -285,8 +285,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nathantannar4/Transmission",
       "state" : {
-        "revision" : "2da5049d33111238ad4cb979ebce783af9586cef",
-        "version" : "2.4.5"
+        "revision" : "ca85f9edef5b3bdd5a05aaebffa8b84b5bbe5c2b",
+        "version" : "2.8.2"
       }
     },
     {
