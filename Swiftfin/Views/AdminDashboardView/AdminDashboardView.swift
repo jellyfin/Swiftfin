@@ -13,8 +13,6 @@ struct AdminDashboardView: View {
     @Router
     private var router
 
-    // MARK: - Body
-
     var body: some View {
         List {
 
@@ -26,6 +24,8 @@ struct AdminDashboardView: View {
             ChevronButton(L10n.sessions) {
                 router.route(to: .activeSessions)
             }
+
+            ServerStatisticsSection()
 
             Section(L10n.activity) {
                 ChevronButton(L10n.activity) {
@@ -54,7 +54,8 @@ struct AdminDashboardView: View {
                 }
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.dashboard)
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
