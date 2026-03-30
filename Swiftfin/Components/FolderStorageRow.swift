@@ -39,11 +39,6 @@ struct FolderStorageRow: View {
         clamp(Double(usedSpace) / Double(totalSpace), min: 0, max: 1)
     }
 
-    private var ratio: Double {
-        guard totalSpace > 0 else { return 0 }
-        return Double(usedSpace) / Double(totalSpace)
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
 
