@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		4E9338222F7B289700B87B77 /* Engine in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9338212F7B289700B87B77 /* Engine */; };
-		4E9338282F7B289800B87B77 /* EngineExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9338272F7B289800B87B77 /* EngineExtensions */; };
 		4E93382A2F7B289800B87B77 /* EngineMacros in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9338292F7B289800B87B77 /* EngineMacros */; };
 		53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABFDDB267972BF00886593 /* TVServices.framework */; };
 		62666DF727E5012C00EC0ECD /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; };
@@ -269,7 +268,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4E9338282F7B289800B87B77 /* EngineExtensions in Frameworks */,
 				E1137D312E090C230091EB60 /* VLCUI in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
@@ -527,7 +525,6 @@
 				E1137D302E090C230091EB60 /* VLCUI */,
 				E14000BC2EF622AC00354A3C /* StatefulMacros */,
 				4E9338212F7B289700B87B77 /* Engine */,
-				4E9338272F7B289800B87B77 /* EngineExtensions */,
 				4E9338292F7B289800B87B77 /* EngineMacros */,
 			);
 			productName = "JellyfinPlayer tvOS";
@@ -1401,11 +1398,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4E9338202F7B289700B87B77 /* XCRemoteSwiftPackageReference "Engine" */;
 			productName = Engine;
-		};
-		4E9338272F7B289800B87B77 /* EngineExtensions */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4E9338202F7B289700B87B77 /* XCRemoteSwiftPackageReference "Engine" */;
-			productName = EngineExtensions;
 		};
 		4E9338292F7B289800B87B77 /* EngineMacros */ = {
 			isa = XCSwiftPackageProductDependency;
