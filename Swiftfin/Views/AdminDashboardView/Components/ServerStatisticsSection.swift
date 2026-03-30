@@ -81,6 +81,7 @@ extension AdminDashboardView {
         private func pathRow(title: String, folder: FolderStorageDto?) -> some View {
             if let folder {
                 FolderStorageRow(title, folder: folder)
+                    .foregroundStyle(Color.primary, Color.secondary)
             }
         }
 

@@ -6,10 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct FolderStorageRow: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     private let title: String
     private let folder: FolderStorageDto
@@ -31,6 +35,10 @@ struct FolderStorageRow: View {
         usedSpace + freeSpace
     }
 
+    private var usagePercentage: Double {
+        clamp(Double(usedSpace) / Double(totalSpace), min: 0, max: 1)
+    }
+
     private var ratio: Double {
         guard totalSpace > 0 else { return 0 }
         return Double(usedSpace) / Double(totalSpace)
@@ -42,6 +50,7 @@ struct FolderStorageRow: View {
             Text(title)
                 .font(.headline)
                 .lineLimit(1)
+                .foregroundStyle(.primary)
 
             if let path = folder.path {
                 Text(path)
@@ -50,16 +59,10 @@ struct FolderStorageRow: View {
                     .lineLimit(1)
             }
 
-            GeometryReader { proxy in
-                ZStack(alignment: .leading) {
-                    Capsule()
-                        .fill(Color.secondary)
-                    Capsule()
-                        .fill(Color.accentColor)
-                        .frame(width: proxy.size.width * ratio)
-                }
-            }
-            .frame(height: 6)
+            ProgressView(value: usagePercentage)
+                .progressViewStyle(.playback)
+                .frame(height: 5)
+                .foregroundStyle(accentColor)
 
             HStack {
                 Text(usedSpace.formatted(.byteCount(style: .binary)))
