@@ -1544,6 +1544,8 @@ internal enum L10n {
   internal static let transcode = L10n.tr("Localizable", "transcode", fallback: "Transcode")
   /// Transcode reason(s)
   internal static let transcodeReasons = L10n.tr("Localizable", "transcodeReasons", fallback: "Transcode reason(s)")
+  /// Transcoding
+  internal static let transcoding = L10n.tr("Localizable", "transcoding", fallback: "Transcoding")
   /// Translator
   internal static let translator = L10n.tr("Localizable", "translator", fallback: "Translator")
   /// Trickplays
