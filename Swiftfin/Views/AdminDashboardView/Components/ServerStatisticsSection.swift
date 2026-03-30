@@ -37,17 +37,17 @@ extension AdminDashboardView {
 
         @ViewBuilder
         private var contentView: some View {
-            Section("Metrics") {
+            Section(L10n.statistics) {
 
                 if let systemStorage = viewModel.systemStorage {
                     DisclosureGroup(L10n.folders) {
-                        pathRow(title: "Cache", folder: systemStorage.cacheFolder)
-                        pathRow(title: "Image cache", folder: systemStorage.imageCacheFolder)
-                        pathRow(title: "Logs", folder: systemStorage.logFolder)
-                        pathRow(title: "Metadata", folder: systemStorage.internalMetadataFolder)
-                        pathRow(title: "Program data", folder: systemStorage.programDataFolder)
-                        pathRow(title: "Transcoding", folder: systemStorage.transcodingTempFolder)
-                        pathRow(title: "Web", folder: systemStorage.webFolder)
+                        pathRow(title: L10n.cache, folder: systemStorage.cacheFolder)
+                        pathRow(title: L10n.imageCache, folder: systemStorage.imageCacheFolder)
+                        pathRow(title: L10n.logs, folder: systemStorage.logFolder)
+                        pathRow(title: L10n.metadata, folder: systemStorage.internalMetadataFolder)
+                        pathRow(title: L10n.programData, folder: systemStorage.programDataFolder)
+                        pathRow(title: L10n.transcoding, folder: systemStorage.transcodingTempFolder)
+                        pathRow(title: L10n.web, folder: systemStorage.webFolder)
                     }
                 }
 
