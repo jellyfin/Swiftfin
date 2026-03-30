@@ -8,7 +8,9 @@
 
 import PreferencesView
 import SwiftUI
+#if os(iOS)
 import Transmission
+#endif
 
 // TODO: have full screen zoom presentation zoom from/to center
 //       - probably need to make mock view with matching ids

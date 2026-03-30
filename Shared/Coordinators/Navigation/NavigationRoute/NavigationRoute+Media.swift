@@ -11,7 +11,9 @@ import Factory
 import JellyfinAPI
 import PreferencesView
 import SwiftUI
+#if os(iOS)
 import Transmission
+#endif
 
 extension NavigationRoute {
 
