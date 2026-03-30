@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		4E9338222F7B289700B87B77 /* Engine in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9338212F7B289700B87B77 /* Engine */; };
-		4E9338242F7B289700B87B77 /* EngineCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9338232F7B289700B87B77 /* EngineCore */; };
-		4E9338262F7B289800B87B77 /* EngineCoreC in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9338252F7B289800B87B77 /* EngineCoreC */; };
 		4E9338282F7B289800B87B77 /* EngineExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9338272F7B289800B87B77 /* EngineExtensions */; };
 		4E93382A2F7B289800B87B77 /* EngineMacros in Frameworks */ = {isa = PBXBuildFile; productRef = 4E9338292F7B289800B87B77 /* EngineMacros */; };
 		53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABFDDB267972BF00886593 /* TVServices.framework */; };
@@ -281,13 +279,11 @@
 				62666E1D27E501DB00EC0ECD /* CoreMedia.framework in Frameworks */,
 				62666E3027E5021800EC0ECD /* VideoToolbox.framework in Frameworks */,
 				BD88CB422D77E6A0006BB5E3 /* TVOSPicker in Frameworks */,
-				4E9338262F7B289800B87B77 /* EngineCoreC in Frameworks */,
 				62666E2327E501EB00EC0ECD /* Foundation.framework in Frameworks */,
 				62666E2127E501E400EC0ECD /* CoreVideo.framework in Frameworks */,
 				E1392FED2BA218A80034110D /* SwiftUIIntrospect in Frameworks */,
 				E13AF3B828A0C598009093AB /* NukeExtensions in Frameworks */,
 				E1575E58293E7685001665B1 /* Files in Frameworks */,
-				4E9338242F7B289700B87B77 /* EngineCore in Frameworks */,
 				E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */,
 				E1A09F792D05935A00835265 /* CollectionHStack in Frameworks */,
 				E13AF3BA28A0C598009093AB /* NukeUI in Frameworks */,
@@ -531,8 +527,6 @@
 				E1137D302E090C230091EB60 /* VLCUI */,
 				E14000BC2EF622AC00354A3C /* StatefulMacros */,
 				4E9338212F7B289700B87B77 /* Engine */,
-				4E9338232F7B289700B87B77 /* EngineCore */,
-				4E9338252F7B289800B87B77 /* EngineCoreC */,
 				4E9338272F7B289800B87B77 /* EngineExtensions */,
 				4E9338292F7B289800B87B77 /* EngineMacros */,
 			);
@@ -1407,16 +1401,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4E9338202F7B289700B87B77 /* XCRemoteSwiftPackageReference "Engine" */;
 			productName = Engine;
-		};
-		4E9338232F7B289700B87B77 /* EngineCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4E9338202F7B289700B87B77 /* XCRemoteSwiftPackageReference "Engine" */;
-			productName = EngineCore;
-		};
-		4E9338252F7B289800B87B77 /* EngineCoreC */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4E9338202F7B289700B87B77 /* XCRemoteSwiftPackageReference "Engine" */;
-			productName = EngineCoreC;
 		};
 		4E9338272F7B289800B87B77 /* EngineExtensions */ = {
 			isa = XCSwiftPackageProductDependency;

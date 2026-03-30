@@ -8,9 +8,7 @@
 
 import Combine
 import SwiftUI
-#if os(iOS)
 import Transmission
-#endif
 
 // TODO: make enhanced toasting system
 //       - allow actions
