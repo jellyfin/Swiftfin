@@ -11,7 +11,7 @@ import SwiftUI
 @MainActor
 struct RootItem: Identifiable {
 
-    var id: String
+    let id: String
     let content: AnyView
 
     init(

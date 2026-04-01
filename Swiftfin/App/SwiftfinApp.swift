@@ -81,7 +81,7 @@ struct SwiftfinApp: App {
             OverlayToastView {
                 PreferencesView {
                     RootView()
-                        .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+                        .supportedOrientations(.portrait)
                 }
             }
             .ignoresSafeArea()
