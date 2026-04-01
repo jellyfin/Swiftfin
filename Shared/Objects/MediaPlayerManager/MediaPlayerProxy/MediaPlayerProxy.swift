@@ -12,7 +12,6 @@ import SwiftUI
 
 // TODO: feature implementations
 //       - PiP
-// TODO: Chromecast proxy
 
 /// The proxy for top-down communication to an
 /// underlying media player
