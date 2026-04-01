@@ -11,28 +11,26 @@ import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
-    struct SplitTimeStamp: View {
-
-        @Default(.VideoPlayer.Overlay.trailingTimestampType)
-        private var trailingTimestampType
+    struct SplitTimeStamp: PlatformView {
 
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<Duration>
-        @EnvironmentObject
         private var manager: MediaPlayerManager
-
-        @State
-        private var activeSeconds: Duration = .zero
-
-        private var isScrubbing: Bool {
-            containerState.isScrubbing
-        }
+        @EnvironmentObject
+        private var scrubbedSecondsBox: PublishedBox<Duration>
 
         private var scrubbedSeconds: Duration {
             scrubbedSecondsBox.value
         }
+
+        // MARK: - iOS
+
+        @Default(.VideoPlayer.Overlay.trailingTimestampType)
+        private var trailingTimestampType
+
+        @State
+        private var activeSeconds: Duration = .zero
 
         @ViewBuilder
         private var leadingTimestamp: some View {
@@ -46,7 +44,7 @@ extension VideoPlayer.PlaybackControls {
                     Text(activeSeconds, format: .runtime)
                 }
                 .foregroundStyle(.secondary)
-                .isVisible(isScrubbing)
+                .isVisible(containerState.isScrubbing)
             }
         }
 
@@ -63,7 +61,7 @@ extension VideoPlayer.PlaybackControls {
                     Text("/")
                 }
                 .foregroundStyle(.secondary)
-                .isVisible(isScrubbing)
+                .isVisible(containerState.isScrubbing)
 
                 if let runtime = manager.item.runtime {
                     switch trailingTimestampType {
@@ -78,7 +76,8 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        var body: some View {
+        @ViewBuilder
+        var iOSView: some View {
             HStack {
                 Button {
                     switch trailingTimestampType {
@@ -109,8 +108,48 @@ extension VideoPlayer.PlaybackControls {
             .monospacedDigit()
             .font(.caption2)
             .lineLimit(1)
-            .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
+            .foregroundStyle(containerState.isScrubbing ? .primary : .secondary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
+        }
+
+        // MARK: - tvOS
+
+        @State
+        private var contentSize: CGSize = .zero
+        @State
+        private var leadingTimestampSize: CGSize = .zero
+        @State
+        private var trailingTimestampSize: CGSize = .zero
+
+        private var scrubbedProgress: Double {
+            guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+            return scrubbedSeconds / runtime
+        }
+
+        private var previewXOffset: CGFloat {
+            let p = contentSize.width * scrubbedProgress - (leadingTimestampSize.width / 2)
+            return clamp(p, min: 0, max: contentSize.width - (trailingTimestampSize.width + leadingTimestampSize.width))
+        }
+
+        @ViewBuilder
+        var tvOSView: some View {
+            ZStack {
+                if let runtime = manager.item.runtime {
+                    Text(.zero - (runtime - scrubbedSeconds), format: .runtime)
+                } else {
+                    Text(verbatim: .emptyRuntime)
+                }
+            }
+            .trackingSize($trailingTimestampSize)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .overlay(alignment: .leading) {
+                Text(scrubbedSeconds, format: .runtime)
+                    .trackingSize($leadingTimestampSize)
+                    .offset(x: previewXOffset)
+            }
+            .font(.callout)
+            .monospacedDigit()
+            .trackingSize($contentSize)
         }
     }
 }
