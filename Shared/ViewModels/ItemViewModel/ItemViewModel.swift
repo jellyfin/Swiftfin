@@ -127,7 +127,8 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     convenience init(episode: BaseItemDto) {
-        let shellSeriesItem = BaseItemDto(id: episode.seriesID, name: episode.seriesName)
+        // `seriesID` can be nil for some API payloads; fall back so refresh tasks never see a nil item id.
+        let shellSeriesItem = BaseItemDto(id: episode.seriesID ?? episode.id, name: episode.seriesName)
         self.init(item: shellSeriesItem)
     }
 
@@ -309,13 +310,15 @@ class ItemViewModel: ViewModel, Stateful {
 
     private func getSimilarItems() async -> [BaseItemDto] {
 
+        guard let itemID = item.id else { return [] }
+
         var parameters = Paths.GetSimilarItemsParameters()
         parameters.fields = .MinimumFields
         parameters.limit = 20
         parameters.userID = userSession.user.id
 
         let request = Paths.getSimilarItems(
-            itemID: item.id!,
+            itemID: itemID,
             parameters: parameters
         )
 
@@ -326,8 +329,10 @@ class ItemViewModel: ViewModel, Stateful {
 
     private func getSpecialFeatures() async -> [BaseItemDto] {
 
+        guard let itemID = item.id else { return [] }
+
         let request = Paths.getSpecialFeatures(
-            itemID: item.id!,
+            itemID: itemID,
             userID: userSession.user.id
         )
         let response = try? await userSession.client.send(request)

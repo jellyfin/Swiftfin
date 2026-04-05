@@ -274,5 +274,8 @@ extension Defaults.Keys {
     }
 
     static let sendProgressReports: Key<Bool> = DebugKey("sendProgressReports", default: true)
+
+    /// Phase 1: use `ChromecastStubVideoMediaPlayerProxy` instead of VLC (DEBUG only; not for end users).
+    static let useChromecastStubVideoProxy: Key<Bool> = DebugKey("useChromecastStubVideoProxy", default: false)
 }
 #endif
