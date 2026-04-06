@@ -39,7 +39,8 @@ let entries = strings.reduce(into: [String: String]()) {
 
 // Sort the keys alphabetically for consistent ordering.
 let sortedKeys = entries.keys.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
-let newContent = sortedKeys.map { "/// \(entries[$0]!)\n\"\($0)\" = \"\(entries[$0]!)\";" }.joined(separator: "\n\n")
+let newContent = sortedKeys.map { "/// \(entries[$0]!)\n\"\($0)\" = \"\(entries[$0]!)\";" }
+    .joined(separator: "\n\n")
 
 // Write the updated, sorted, and commented localizations back to the file.
 do {

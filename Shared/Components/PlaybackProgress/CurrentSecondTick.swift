@@ -23,7 +23,7 @@ extension VideoPlayer.PlaybackControls {
             if let runtime = manager.item.runtime, runtime > .zero {
                 GeometryReader { proxy in
                     Color.white
-                        .frame(width: 1.5)
+                        .frame(width: UIDevice.isTV ? 3 : 1.5)
                         .offset(x: proxy.size.width * (activeSeconds / runtime) - 0.75)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }

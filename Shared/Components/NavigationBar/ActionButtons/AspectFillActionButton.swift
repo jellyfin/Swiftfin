@@ -36,7 +36,9 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                 isAspectFilled.toggle()
             }
             .videoPlayerActionButtonTransition()
-            .id(isAspectFilled)
+            #if os(iOS)
+                .id(isAspectFilled)
+            #endif
         }
     }
 }
