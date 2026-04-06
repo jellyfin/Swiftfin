@@ -74,6 +74,8 @@ struct SwiftfinApp: App {
         if Defaults[.signOutOnClose] {
             Defaults[.lastSignedInUserID] = .signedOut
         }
+
+        SwiftfinSpotlight().addSwiftfinToSpotlight()
     }
 
     var body: some Scene {
