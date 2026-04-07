@@ -17,7 +17,11 @@ struct SwiftfinSpotlight {
             let attributeSet = CSSearchableItemAttributeSet(contentType: UTType.application)
             attributeSet.title = "Jellyfin"
 
-            let searchableItem = CSSearchableItem(uniqueIdentifier: "org.jellyfin.swiftfin", domainIdentifier: nil, attributeSet: attributeSet)
+            let searchableItem = CSSearchableItem(
+                uniqueIdentifier: "org.jellyfin.swiftfin",
+                domainIdentifier: nil,
+                attributeSet: attributeSet
+            )
 
             try? await mainIndex.indexSearchableItems([searchableItem])
         }
