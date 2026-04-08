@@ -91,7 +91,6 @@ extension ItemSortBy: Displayable, SupportedCaseIterable, AssociatedCaseIterable
             .dateLastContentAdded,
             .datePlayed,
             .premiereDate,
-            .seriesDatePlayed,
             .startDate,
 
             // Ratings
