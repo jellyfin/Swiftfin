@@ -69,6 +69,7 @@ final class FilterViewModel: ViewModel, Stateful {
 
         if let parent {
             self.allFilters.itemTypes = parent.supportedItemTypes
+            self.allFilters.sortBy = ItemSortBy.associatedCases(for: parent.supportedItemTypes, requiringAll: true)
         }
     }
 
