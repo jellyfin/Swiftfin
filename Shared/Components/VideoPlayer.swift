@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Factory
 import SwiftUI
 
@@ -42,15 +41,7 @@ struct VideoPlayer: View {
     private var containerState: VideoPlayerContainerState = .init()
 
     init() {
-        #if DEBUG
-        if Defaults[.useChromecastStubVideoProxy] {
-            self._proxy = .init(wrappedValue: ChromecastStubVideoMediaPlayerProxy())
-        } else {
-            self._proxy = .init(wrappedValue: VLCMediaPlayerProxy())
-        }
-        #else
         self._proxy = .init(wrappedValue: VLCMediaPlayerProxy())
-        #endif
     }
 
     @ViewBuilder

@@ -18,22 +18,11 @@ struct DebugSettingsView: View {
     @Default(.sendProgressReports)
     private var sendProgressReports
 
-    @Default(.useChromecastStubVideoProxy)
-    private var useChromecastStubVideoProxy
-
     var body: some View {
         Form(systemImage: "ladybug") {
 
             Section("Settings") {
                 Toggle("Send Progress Reports", isOn: $sendProgressReports)
-            }
-
-            Section {
-                Toggle("Use Cast stub video proxy", isOn: $useChromecastStubVideoProxy)
-            } header: {
-                Text("Chromecast (Phase 1)")
-            } footer: {
-                Text("Wiring test only: replaces VLC with a no-op stub. Restart playback after toggling.")
             }
 
             Section("Device Details") {
