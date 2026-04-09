@@ -16,7 +16,6 @@ final class ChromecastStubProxyTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        // Avoid `MediaProgressObserver` hitting the network during tests (default is on in DEBUG).
         Defaults[.sendProgressReports] = false
     }
 
@@ -80,7 +79,6 @@ final class ChromecastStubProxyTests: XCTestCase {
         XCTAssertEqual(stub.recordedInvocations, ["stop"])
     }
 
-    /// `MediaPlayerManager.stop()` eventually calls `proxy?.stop()` after internal cancellation.
     func testManagerStopForwardsToProxy() async {
         let (manager, stub) = makeManagerWithStub()
         await manager.stop()

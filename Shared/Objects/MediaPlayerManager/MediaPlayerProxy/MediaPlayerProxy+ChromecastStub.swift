@@ -10,12 +10,14 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
+#if DEBUG
+
 // MARK: - Phase 1 stub (no Cast LOAD / session UI)
 
-/// Records transport calls from `MediaPlayerManager` for tests and DEBUG wiring.
-/// Real Chromecast commands are implemented in later phases.
+// Records transport calls from `MediaPlayerManager` for unit tests.
+// Real Chromecast commands are implemented in later phases.
 @MainActor
-final class ChromecastStubVideoMediaPlayerProxy: VideoMediaPlayerProxy {
+class ChromecastStubVideoMediaPlayerProxy: VideoMediaPlayerProxy {
 
     typealias VideoPlayerBody = ChromecastStubVideoPlaceHolder
 
@@ -24,14 +26,12 @@ final class ChromecastStubVideoMediaPlayerProxy: VideoMediaPlayerProxy {
 
     weak var manager: MediaPlayerManager?
 
-    /// Ordered record of proxy entry points invoked (for unit tests).
     private(set) var recordedInvocations: [String] = []
 
     private func record(_ name: String) {
         recordedInvocations.append(name)
     }
 
-    /// Resets the invocation log (e.g. between tests).
     func resetRecordedInvocations() {
         recordedInvocations.removeAll()
     }
@@ -60,19 +60,19 @@ final class ChromecastStubVideoMediaPlayerProxy: VideoMediaPlayerProxy {
         record("setRate")
     }
 
-    func setSeconds(_ seconds: Duration) {
+    func setSeconds(_: Duration) {
         record("setSeconds")
     }
 
     func setAspectFill(_ aspectFill: Bool) {
-        record("setAspectFill(\(aspectFill)")
+        record("setAspectFill(\(aspectFill))")
     }
 
-    func setAudioStream(_ stream: MediaStream) {
+    func setAudioStream(_: MediaStream) {
         record("setAudioStream")
     }
 
-    func setSubtitleStream(_ stream: MediaStream) {
+    func setSubtitleStream(_: MediaStream) {
         record("setSubtitleStream")
     }
 
@@ -85,11 +85,11 @@ struct ChromecastStubVideoPlaceHolder: View {
     var body: some View {
         Color.black
             .overlay {
-                #if DEBUG
                 Text("Cast stub")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                #endif
             }
     }
 }
+
+#endif
