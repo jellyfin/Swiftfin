@@ -8,11 +8,16 @@
 
 import Foundation
 
+/// Google Cast Web Receiver application IDs registered by the Jellyfin project.
+///
+/// These IDs identify which Cast receiver app runs on the Chromecast device when
+/// a session is started. They are registered at cast.google.com/publish and map to
+/// the hosted Jellyfin Web Receiver at https://github.com/jellyfin/jellyfin-chromecast.
 enum JellyfinCastReceiverID {
 
-    // stable channel
+    /// Production Web Receiver — use this in release builds.
     static let stable = "F007D354"
 
-    // unstable / master
+    /// Development Web Receiver built from the main branch — use this for testing unreleased receiver changes.
     static let unstable = "6F511C87"
 }
