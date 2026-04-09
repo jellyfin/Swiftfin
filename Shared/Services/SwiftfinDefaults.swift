@@ -251,6 +251,7 @@ extension Defaults.Keys {
 
         static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)
         static let isLiquidGlassEnabled: Key<Bool> = UserKey("experimentalLiquidGlass", default: false)
+        static let isChromecastEnabled: Key<Bool> = UserKey("experimentalChromecast", default: true)
     }
 
     // tvos specific
