@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import GoogleCast
 import PreferencesView
 import UIKit
@@ -17,11 +16,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        if Defaults[.Experimental.isChromecastEnabled] {
-            let discoveryCriteria = GCKDiscoveryCriteria(applicationID: JellyfinCastReceiverID.stable)
-            let options = GCKCastOptions(discoveryCriteria: discoveryCriteria)
-            GCKCastContext.setSharedInstanceWith(options)
-        }
+        let discoveryCriteria = GCKDiscoveryCriteria(applicationID: JellyfinCastReceiverID.stable)
+        let options = GCKCastOptions(discoveryCriteria: discoveryCriteria)
+        GCKCastContext.setSharedInstanceWith(options)
         return true
     }
 
