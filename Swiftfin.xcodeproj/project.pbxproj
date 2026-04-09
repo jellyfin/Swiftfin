@@ -120,6 +120,7 @@
 		E1FADDF12E84B63600FB310E /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1FADDF02E84B63600FB310E /* StatefulMacros */; };
 		E2F0GCK12EF60000047C2A1 /* GoogleCast.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */; };
 		E2F0GCK22EF60000047C2A2 /* GoogleCast.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E324C9CF2F8822F8004282DC /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E13DD3D227168E65009D4DAF /* Defaults */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -131,14 +132,6 @@
 			remoteInfo = "Swiftfin iOS";
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXTargetDependency section */
-		E2F0A0000001000047C3A09 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
-			targetProxy = E2F0A0000001000047C3A08 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		62666DF927E5012C00EC0ECD /* Embed Frameworks */ = {
@@ -205,7 +198,6 @@
 		62666E1E27E501DF00EC0ECD /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2027E501E400EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/CoreVideo.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2227E501EB00EC0ECD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		E2F0A0000001000047C3A00 /* SwiftfinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftfinTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		62666E2527E501FA00EC0ECD /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
 		62666E2627E501FE00EC0ECD /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		62666E2727E5020200EC0ECD /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libiconv.tbd; sourceTree = DEVELOPER_DIR; };
@@ -219,6 +211,7 @@
 		628B95232670CABD0091AF3B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
 		E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCast.xcframework; path = Carthage/Build/GoogleCast.xcframework; sourceTree = "<group>"; };
+		E2F0A0000001000047C3A00 /* SwiftfinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftfinTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -412,6 +405,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E324C9CF2F8822F8004282DC /* Defaults in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -940,6 +934,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		E2F0A0000001000047C3A09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
+			targetProxy = E2F0A0000001000047C3A08 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		535870722669D21700D05A09 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1155,6 +1157,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_CFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.ayman.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -1193,7 +1196,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = org.ayman.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
