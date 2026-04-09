@@ -8,11 +8,12 @@
 
 import Foundation
 
-/// Google Cast Web Receiver application IDs registered by the Jellyfin project.
+/// Google Cast application IDs registered by the Jellyfin project with Google.
 ///
 /// These IDs identify which Cast receiver app runs on the Chromecast device when
-/// a session is started. They are registered at cast.google.com/publish and map to
-/// the hosted Jellyfin Web Receiver at https://github.com/jellyfin/jellyfin-chromecast.
+/// a session is started. The canonical source for these values is jellyfin-web
+/// (`src/plugins/chromecastPlayer/plugin.js`); the receiver itself is hosted at
+/// https://github.com/jellyfin/jellyfin-chromecast.
 enum JellyfinCastReceiverID {
 
     /// Production Web Receiver — use this in release builds.
