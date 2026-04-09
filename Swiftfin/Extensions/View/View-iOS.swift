@@ -80,10 +80,11 @@ extension View {
     @ViewBuilder
     func listRowCornerRadius(_ radius: CGFloat) -> some View {
         introspect(.listCell, on: .iOS(.v16...)) { cell in
-            // Use layer-based rounding until the project builds with an SDK that declares
-            // `UICollectionViewCell.cornerConfiguration` (iOS 26+); `#available` alone does not
-            // skip typechecking of the unavailable branch on older SDKs.
-            cell.layer.cornerRadius = radius
+            if #available(iOS 26, *) {
+                cell.cornerConfiguration = .uniformCorners(radius: .fixed(radius))
+            } else {
+                cell.layer.cornerRadius = radius
+            }
         }
     }
 }
