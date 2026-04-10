@@ -258,6 +258,8 @@ internal enum L10n {
   internal static let bugsAndFeatures = L10n.tr("Localizable", "bugsAndFeatures", fallback: "Bugs and features")
   /// Buttons
   internal static let buttons = L10n.tr("Localizable", "buttons", fallback: "Buttons")
+  /// Cache
+  internal static let cache = L10n.tr("Localizable", "cache", fallback: "Cache")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "cancel", fallback: "Cancel")
   /// Cancelling...
@@ -742,6 +744,8 @@ internal enum L10n {
   internal static let illustrator = L10n.tr("Localizable", "illustrator", fallback: "Illustrator")
   /// Images
   internal static let image = L10n.tr("Localizable", "image", fallback: "Images")
+  /// Image cache
+  internal static let imageCache = L10n.tr("Localizable", "imageCache", fallback: "Image cache")
   /// Images
   internal static let images = L10n.tr("Localizable", "images", fallback: "Images")
   /// Image source
@@ -1162,6 +1166,8 @@ internal enum L10n {
   internal static let profiles = L10n.tr("Localizable", "profiles", fallback: "Profiles")
   /// Program
   internal static let program = L10n.tr("Localizable", "program", fallback: "Program")
+  /// Program data
+  internal static let programData = L10n.tr("Localizable", "programData", fallback: "Program data")
   /// Programs
   internal static let programs = L10n.tr("Localizable", "programs", fallback: "Programs")
   /// Progress
@@ -1432,6 +1438,8 @@ internal enum L10n {
   internal static let startDate = L10n.tr("Localizable", "startDate", fallback: "Start date")
   /// Start time
   internal static let startTime = L10n.tr("Localizable", "startTime", fallback: "Start time")
+  /// Statistics
+  internal static let statistics = L10n.tr("Localizable", "statistics", fallback: "Statistics")
   /// Status
   internal static let status = L10n.tr("Localizable", "status", fallback: "Status")
   /// Stop
@@ -1536,6 +1544,8 @@ internal enum L10n {
   internal static let transcode = L10n.tr("Localizable", "transcode", fallback: "Transcode")
   /// Transcode reason(s)
   internal static let transcodeReasons = L10n.tr("Localizable", "transcodeReasons", fallback: "Transcode reason(s)")
+  /// Transcoding
+  internal static let transcoding = L10n.tr("Localizable", "transcoding", fallback: "Transcoding")
   /// Translator
   internal static let translator = L10n.tr("Localizable", "translator", fallback: "Translator")
   /// Trickplays
@@ -1678,6 +1688,8 @@ internal enum L10n {
   internal static let volume = L10n.tr("Localizable", "volume", fallback: "Volume")
   /// Votes
   internal static let votes = L10n.tr("Localizable", "votes", fallback: "Votes")
+  /// Web
+  internal static let web = L10n.tr("Localizable", "web", fallback: "Web")
   /// Weekday
   internal static let weekday = L10n.tr("Localizable", "weekday", fallback: "Weekday")
   /// Weekend
