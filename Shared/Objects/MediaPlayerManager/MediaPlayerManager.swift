@@ -141,6 +141,10 @@ final class MediaPlayerManager: ViewModel {
 
         newSupplements.append(MediaInfoSupplement(item: item))
 
+        if let itemID = item.id {
+            newSupplements.append(PlaybackInformationSupplement(itemID: itemID))
+        }
+
         if let chapters = item.fullChapterInfo, chapters.isNotEmpty {
             newSupplements.append(
                 MediaChaptersSupplement(
