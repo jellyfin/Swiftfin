@@ -6,15 +6,13 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
+import Factory
+import JellyfinAPI
 import SwiftUI
 
 extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
     struct AutoPlay: View {
-
-        @Default(.VideoPlayer.autoPlayEnabled)
-        private var isAutoPlayEnabled
 
         @Environment(\.isInMenu)
         private var isInMenu
@@ -25,6 +23,16 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         @Toaster
         private var toaster
 
+        @StateObject
+        private var viewModel: ServerUserAdminViewModel
+
+        @State
+        private var userConfiguration: UserConfiguration
+
+        private var isAutoPlayEnabled: Bool {
+            manager.userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true
+        }
+
         private var systemImage: String {
             if isAutoPlayEnabled {
                 VideoPlayerActionButton.autoPlay.systemImage
@@ -33,11 +41,24 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
             }
         }
 
+        init() {
+            /// If there is no User or UserSession, updating the user on the server has the potential of nuking all settings.
+            /// - Force Unwrap might crash but this is to prevent malformed UserDTO updating over real UserDTOs
+            let user = Container.shared.currentUserSession()!.user.data
+
+            self.userConfiguration = user.configuration!
+            self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
+        }
+
         var body: some View {
             Button {
-                isAutoPlayEnabled.toggle()
+                let newValue = !isAutoPlayEnabled
 
-                if isAutoPlayEnabled {
+                userConfiguration.enableNextEpisodeAutoPlay = newValue
+                manager.userSession.user.data.configuration = userConfiguration
+                viewModel.updateConfiguration(userConfiguration)
+
+                if newValue {
                     toaster.present("Auto Play on", systemName: "play.circle.fill")
                 } else {
                     toaster.present("Auto Play off", systemName: "stop.circle")

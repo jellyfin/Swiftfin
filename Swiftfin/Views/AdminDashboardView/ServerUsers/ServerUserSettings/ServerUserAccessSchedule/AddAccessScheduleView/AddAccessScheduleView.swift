@@ -11,15 +11,11 @@ import SwiftUI
 
 struct AddAccessScheduleView: View {
 
-    // MARK: - Observed & Environment Objects
-
     @Router
     private var router
 
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
-
-    // MARK: - Access Schedule Variables
 
     @State
     private var tempPolicy: UserPolicy
@@ -29,13 +25,6 @@ struct AddAccessScheduleView: View {
     private var startTime: Date = Calendar.current.startOfDay(for: Date())
     @State
     private var endTime: Date = Calendar.current.startOfDay(for: Date()).addingTimeInterval(+3600)
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
@@ -61,11 +50,11 @@ struct AddAccessScheduleView: View {
             return nil
         }
 
-        // AccessSchedule Hours are formatted as 23.5 == 11:30pm or 8.25 == 8:15am
+        /// AccessSchedule Hours are formatted as 23.5 == 11:30pm or 8.25 == 8:15am
         let startDouble = Double(startHour) + Double(startMinute) / 60.0
         let endDouble = Double(endHour) + Double(endMinute) / 60.0
 
-        // AccessSchedule should have valid Start & End Hours
+        /// AccessSchedule should have valid Start & End Hours
         return AccessSchedule(
             dayOfWeek: selectedDay,
             endHour: endDouble,
@@ -86,8 +75,6 @@ struct AddAccessScheduleView: View {
         }
     }
 
-    // MARK: - Body
-
     var body: some View {
         contentView
             .navigationTitle(L10n.addAccessSchedule.localizedCapitalized)
@@ -95,37 +82,40 @@ struct AddAccessScheduleView: View {
             .navigationBarCloseButton {
                 router.dismiss()
             }
+            .refreshable {
+                viewModel.refresh()
+            }
             .topBarTrailing {
-                if viewModel.backgroundStates.contains(.refreshing) {
+                if viewModel.background.is(.refreshing) {
                     ProgressView()
                 }
-                if viewModel.backgroundStates.contains(.updating) {
+                if viewModel.background.is(.updating) {
                     Button(L10n.cancel) {
-                        viewModel.send(.cancel)
+                        viewModel.cancel()
                     }
                     .buttonStyle(.toolbarPill(.red))
                 } else {
                     Button(L10n.save) {
-                        saveSchedule()
+                        if let newSchedule {
+                            tempPolicy.accessSchedules = tempPolicy.accessSchedules
+                                .appendedOrInit(newSchedule)
+
+                            viewModel.updatePolicy(tempPolicy)
+                        }
                     }
                     .buttonStyle(.toolbarPill)
-                    .disabled(!isValidRange)
+                    .disabled(!isValidRange && !isDuplicateSchedule)
                 }
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case let .error(eventError):
-                    UIDevice.feedback(.error)
-                    error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
                     router.dismiss()
                 }
             }
-            .errorMessage($error)
+            .errorMessage($viewModel.error)
     }
-
-    // MARK: - Content View
 
     private var contentView: some View {
         Form {
@@ -162,25 +152,5 @@ struct AddAccessScheduleView: View {
                 }
             }
         }
-    }
-
-    // MARK: - Save Schedule
-
-    private func saveSchedule() {
-
-        guard isValidRange, let newSchedule else {
-            error = ErrorMessage(L10n.accessScheduleInvalidTime)
-            return
-        }
-
-        guard !isDuplicateSchedule else {
-            error = ErrorMessage(L10n.scheduleAlreadyExists)
-            return
-        }
-
-        tempPolicy.accessSchedules = tempPolicy.accessSchedules
-            .appendedOrInit(newSchedule)
-
-        viewModel.send(.updatePolicy(tempPolicy))
     }
 }
