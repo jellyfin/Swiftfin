@@ -69,7 +69,19 @@ final class FilterViewModel: ViewModel, Stateful {
 
         if let parent {
             self.allFilters.itemTypes = parent.supportedItemTypes
-            self.allFilters.sortBy = ItemSortBy.associatedCases(for: parent.supportedItemTypes, requiringAll: true)
+
+            let sortBySets = parent.supportedItemTypes.map {
+                Set($0.supportedItemSortBy)
+            }
+
+            self.allFilters.sortBy = ItemSortBy.supportedCases
+                .filter { sortBySets
+                    .dropFirst()
+                    .reduce(into: sortBySets.first ?? []) {
+                        $0.formIntersection($1)
+                    }
+                    .contains($0)
+                }
         }
     }
 
