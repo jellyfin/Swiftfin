@@ -102,10 +102,12 @@ struct UserButton: View {
             .lineLimit(1)
 
         AlternateLayoutView {
-            Text("Hidden")
+            // Setting the subtitle here ensures that we reserve the horizonal spacing
+            Text(subtitle ?? "hidden")
+                .lineLimit(1)
         } content: {
             if let subtitle {
-                Text(subtitle)
+                Marquee(subtitle)
                     .foregroundStyle(.secondary)
             }
         }

@@ -353,20 +353,42 @@ private struct ChevronButtonLabeledContentStyle: LabeledContentStyle {
     let isExternal: Bool
 
     func makeBody(configuration: Configuration) -> some View {
+        ChevronButtonLabeledContentView(
+            isExternal: isExternal,
+            label: configuration.label,
+            content: configuration.content
+        )
+    }
+}
+
+private struct ChevronButtonLabeledContentView<Label: View, Content: View>: View {
+
+    let isExternal: Bool
+    let label: Label
+    let content: Content
+
+    @Environment(\.isEditing)
+    private var isEditing
+
+    var body: some View {
         HStack {
 
-            configuration.label
+            label
                 .labelStyle(BoldIconLabelStyle())
 
             Spacer()
 
-            configuration.content
+            content
                 .foregroundStyle(.secondary)
 
-            Image(systemName: isExternal ? "arrow.up.forward" : "chevron.right")
-                .font(.body)
-                .fontWeight(.regular)
-                .foregroundStyle(.secondary)
+            if isEditing {
+                ListRowCheckbox()
+            } else {
+                Image(systemName: isExternal ? "arrow.up.forward" : "chevron.right")
+                    .font(.body)
+                    .fontWeight(.regular)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }
