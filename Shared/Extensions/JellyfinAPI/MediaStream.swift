@@ -229,14 +229,13 @@ extension [MediaStream] {
         for playMethod: PlayMethod,
         selectedAudioStreamIndex: Int
     ) -> [Int: Int] {
-        let playbackChildren = self.sidecarSubtitles
         var indexMap: [Int: Int] = [:]
 
         if playMethod == .transcode {
             var containerTracks: [MediaStream] = []
 
-            let videoTracks = self.filter { $0.type == .video && !($0.isExternal ?? false) }
-            let audioTracks = self.filter { $0.type == .audio && !($0.isExternal ?? false) }
+            let videoTracks = filter { $0.type == .video && !($0.isExternal == true) }
+            let audioTracks = filter { $0.type == .audio && !($0.isExternal == true) }
 
             if let firstVideo = videoTracks.first {
                 containerTracks.append(firstVideo)
@@ -251,8 +250,9 @@ extension [MediaStream] {
             }
 
             let playbackChildStartIndex = containerTracks.count
+            let sidecarSubtitles = self.sidecarSubtitles
 
-            for (offset, track) in playbackChildren.enumerated() {
+            for (offset, track) in sidecarSubtitles.enumerated() {
                 guard let oldIndex = track.index else { continue }
                 let playerIndex = playbackChildStartIndex + offset
                 indexMap[oldIndex] = playerIndex
@@ -306,7 +306,7 @@ extension [MediaStream] {
             let unmappedIndexes = playerIndexes
                 .filter { !mappedIndexes.contains($0) }
 
-            let externalIndexes = [Int](unmappedIndexes.suffix(playbackChildren.count))
+            let externalIndexes: [Int] = [Int](unmappedIndexes.suffix(playbackChildren.count))
 
             for (offset, stream) in playbackChildren.enumerated() {
                 guard let jellyfinIndex = stream.index else { continue }

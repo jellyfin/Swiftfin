@@ -175,9 +175,6 @@ final class MediaPlayerManager: ViewModel {
         }
     }
 
-    private var itemBuildTask: AnyCancellable?
-    private var itemUpdateTask: AnyCancellable?
-
     private var initialMediaPlayerItemProvider: MediaPlayerItemProvider?
 
     // MARK: init
@@ -312,35 +309,35 @@ final class MediaPlayerManager: ViewModel {
 
     @Function(\Action.Cases.setTrack)
     private func _setTrack(_ type: MediaStreamType, _ oldIndex: Int?, _ newIndex: Int?) async throws {
-        guard let currentItem = playbackItem else {
+        guard let playbackItem else {
             logger.warning("MediaPlayerManager.SetTrack call with an invalid playbackItem")
             return
         }
 
         switch type {
         case .audio:
-            guard currentItem.audioStreams.first(where: { $0.index == newIndex }) != nil else {
+            guard playbackItem.audioStreams.contains(where: { $0.index == oldIndex }) else {
                 logger.warning("MediaPlayerManager.SetTrack call with an invalid audio track index")
                 return
             }
 
             try await updateMediaPlayerItem(
-                currentItem: currentItem,
+                currentItem: playbackItem,
                 audioStreamIndex: newIndex
             )
         case .subtitle:
-            guard currentItem.subtitleStreams.first(where: { $0.index == newIndex }) != nil else {
+            guard playbackItem.subtitleStreams.contains(where: { $0.index == oldIndex }) else {
                 logger.warning("MediaPlayerManager.SetTrack call with an invalid subtitle track index")
                 return
             }
 
-            if currentItem.isRebuildRequired(from: oldIndex, to: newIndex) {
+            if playbackItem.isRebuildRequired(from: oldIndex, to: newIndex) {
                 try await updateMediaPlayerItem(
-                    currentItem: currentItem,
+                    currentItem: playbackItem,
                     subtitleStreamIndex: newIndex
                 )
             } else {
-                currentItem.switchSubtitleTrack(index: newIndex)
+                playbackItem.switchSubtitleTrack(index: newIndex)
             }
         default:
             logger.warning("MediaPlayerManager.SetTrack called with unsupported type: \(String(describing: type))")
@@ -357,14 +354,12 @@ final class MediaPlayerManager: ViewModel {
         playbackItem = try await initialMediaPlayerItemProvider()
     }
 
+    // TODO: remove playback item?
+    //       - check that observers would respond correctly to stopping
     @Function(\Action.Cases.stop)
     private func _stop() async throws {
         await self.cancel()
 
-        // TODO: remove playback item?
-        //       - check that observers would respond correctly to stopping
-        itemBuildTask?.cancel()
-        itemUpdateTask?.cancel()
         proxy?.stop()
         Container.shared.mediaPlayerManager.reset()
     }
@@ -381,6 +376,8 @@ final class MediaPlayerManager: ViewModel {
 
     /// Rebuilds the playback item with new stream indexes / bitrate.
     /// Stops the current proxy, requests new playback info from the server, and starts playback with the new configuration.
+    ///
+    /// Rebuilds the current item
     private func updateMediaPlayerItem(
         currentItem: MediaPlayerItem,
         audioStreamIndex: Int? = nil,
@@ -388,17 +385,15 @@ final class MediaPlayerManager: ViewModel {
         requestedBitrate: PlaybackBitrate? = nil
     ) async throws {
 
-        itemUpdateTask?.cancel()
-
         // Capture the current playback position before stopping
         let currentSeconds = self.seconds
 
         logger.info(
             "Rebuilding Media Player Item",
             metadata: [
-                "audioIndex": .stringConvertible(audioStreamIndex ?? -1),
-                "subtitleIndex": .stringConvertible(subtitleStreamIndex ?? -1),
-                "currentSeconds": .stringConvertible(currentSeconds),
+                "audioIndex": "\(audioStreamIndex ?? -1)",
+                "subtitleIndex": "\(subtitleStreamIndex ?? -1)",
+                "currentSeconds": "\(currentSeconds)",
             ]
         )
 
@@ -421,11 +416,12 @@ final class MediaPlayerManager: ViewModel {
         logger.info(
             "Built new playback item",
             metadata: [
-                "playSessionID": .stringConvertible(newItem.playSessionID),
-                "isTranscoding": .stringConvertible(newItem.mediaSource.transcodingURL != nil),
-                "url": .stringConvertible(newItem.url.absoluteString),
+                "playSessionID": "\(newItem.playSessionID)",
+                "isTranscoding": "\(newItem.mediaSource.transcodingURL != nil)",
+                "url": "\(newItem.url.absoluteString)",
             ]
         )
+
         self.playbackItem = newItem
         self.seconds = currentSeconds
     }

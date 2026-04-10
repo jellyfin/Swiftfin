@@ -118,8 +118,9 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         observers.append(MediaProgressObserver(item: self))
     }
 
+    // TODO: rename to have subtitle in name
     func isRebuildRequired(from oldIndex: Int?, to newIndex: Int?) -> Bool {
-        let needsRebuild: (MediaStream?) -> Bool = { stream in
+        func needsRebuild(_ stream: MediaStream?) -> Bool {
             guard let stream else { return false }
             return stream.deliveryMethod == .encode || (stream.isTextSubtitleStream == false && stream.isExternal == true)
         }
