@@ -74,6 +74,8 @@ struct SwiftfinApp: App {
         if Defaults[.signOutOnClose] {
             Defaults[.lastSignedInUserID] = .signedOut
         }
+
+        SwiftfinSpotlight().addSwiftfinToSpotlight()
     }
 
     var body: some Scene {
@@ -81,7 +83,7 @@ struct SwiftfinApp: App {
             OverlayToastView {
                 PreferencesView {
                     RootView()
-                        .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+                        .supportedOrientations(.portrait)
                 }
             }
             .ignoresSafeArea()

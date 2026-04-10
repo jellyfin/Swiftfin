@@ -1296,7 +1296,7 @@
 			repositoryURL = "https://github.com/nathantannar4/Transmission";
 			requirement = {
 				kind = exactVersion;
-				version = 2.4.5;
+				version = 2.8.3;
 			};
 		};
 		E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
