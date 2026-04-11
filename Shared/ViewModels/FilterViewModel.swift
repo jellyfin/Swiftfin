@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -69,6 +69,11 @@ final class FilterViewModel: ViewModel, Stateful {
 
         if let parent {
             self.allFilters.itemTypes = parent.supportedItemTypes
+            self.allFilters.sortBy = parent.supportedItemTypes
+                .map(\.supportedItemSortBy)
+                .reduce(ItemSortBy.supportedCases) {
+                    $0.intersection($1)
+                }
         }
     }
 

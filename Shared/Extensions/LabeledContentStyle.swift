@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -49,5 +49,56 @@ struct ItemAttributeLabeledContentStyle: LabeledContentStyle {
                 .font(.footnote)
                 .foregroundStyle(.secondary)
         }
+    }
+}
+
+extension LabeledContentStyle where Self == DeviceProfileLabeledContentStyle {
+
+    static var deviceProfile: DeviceProfileLabeledContentStyle {
+        DeviceProfileLabeledContentStyle()
+    }
+}
+
+struct DeviceProfileLabeledContentStyle: LabeledContentStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            configuration.label
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+
+            configuration.content
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.leading)
+        }
+        .font(.subheadline)
+    }
+}
+
+extension LabeledContentStyle where Self == FocusableLabeledContentStyle {
+
+    static var focusable: FocusableLabeledContentStyle {
+        FocusableLabeledContentStyle()
+    }
+}
+
+struct FocusableLabeledContentStyle: LabeledContentStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        #if os(tvOS)
+        Button {} label: {
+            LabeledContent {
+                configuration.content
+            } label: {
+                configuration.label
+            }
+        }
+        #else
+        LabeledContent {
+            configuration.content
+        } label: {
+            configuration.label
+        }
+        #endif
     }
 }

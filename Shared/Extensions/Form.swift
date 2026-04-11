@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -16,9 +16,9 @@ extension FocusedValues {
 
 // MARK: - Form Overloads
 
-func Form<Content: View>(
+func Form(
     systemImage: String,
-    @ViewBuilder content: @escaping () -> Content
+    @ViewBuilder content: @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content) {
         Image(systemName: systemImage)
@@ -28,9 +28,9 @@ func Form<Content: View>(
     }
 }
 
-func Form<Content: View>(
+func Form(
     image: ImageResource,
-    @ViewBuilder content: @escaping () -> Content
+    @ViewBuilder content: @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content) {
         Image(image)
@@ -40,9 +40,9 @@ func Form<Content: View>(
     }
 }
 
-func Form<Image: View, Content: View>(
-    @ViewBuilder content: @escaping () -> Content,
-    @ViewBuilder image: @escaping () -> Image
+func Form(
+    @ViewBuilder content: @escaping () -> some View,
+    @ViewBuilder image: @escaping () -> some View
 ) -> some View {
     PlatformForm(content: content, image: image)
 }
@@ -80,9 +80,27 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
             Form {
                 content
             }
-            .padding(.top)
             .backport
             .scrollClipDisabled()
+            .mask(extendedBy: .init(vertical: 20, horizontal: 100)) {
+                VStack(spacing: 0) {
+                    LinearGradient(
+                        colors: [.clear, .white],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 20)
+
+                    Color.white
+
+                    LinearGradient(
+                        colors: [.white, .clear],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 20)
+                }
+            }
         }
     }
 

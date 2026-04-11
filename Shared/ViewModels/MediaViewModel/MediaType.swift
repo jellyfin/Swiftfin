@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -21,26 +21,26 @@ extension MediaViewModel {
         var displayTitle: String {
             switch self {
             case let .collectionFolder(item):
-                return item.displayTitle
+                item.displayTitle
             case .downloads:
-                return L10n.downloads
+                L10n.downloads
             case .favorites:
-                return L10n.favorites
+                L10n.favorites
             case .liveTV:
-                return L10n.liveTV
+                L10n.liveTV
             }
         }
 
         var id: String? {
             switch self {
             case let .collectionFolder(item):
-                return item.id
+                item.id
             case .downloads:
-                return "downloads"
+                "downloads"
             case .favorites:
-                return "favorites"
+                "favorites"
             case let .liveTV(item):
-                return item.id
+                item.id
             }
         }
     }

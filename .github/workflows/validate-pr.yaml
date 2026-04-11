@@ -1,0 +1,26 @@
+name: "Validate PR 🧹"
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    branches: [ main ]
+
+jobs:
+  build:
+    name: "Validate PR 🧹"
+    if: github.event.pull_request.draft == false
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Swiftformat
+        run: swiftformat . --lint --config ".swiftformat"
+
+      - name: Find Unused Strings
+        run: swift Scripts/Translations/FindUnusedStrings.swift

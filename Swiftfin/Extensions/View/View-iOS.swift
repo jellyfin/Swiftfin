@@ -3,12 +3,12 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
 import SwiftUI
-import SwiftUIIntrospect
+@_spi(Advanced) import SwiftUIIntrospect
 
 extension View {
 
@@ -25,7 +25,7 @@ extension View {
         modifier(NavigationBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
     }
 
-    func navigationBarDrawer<Drawer: View>(@ViewBuilder _ drawer: @escaping () -> Drawer) -> some View {
+    func navigationBarDrawer(@ViewBuilder _ drawer: @escaping () -> some View) -> some View {
         modifier(NavigationBarDrawerModifier(drawer: drawer))
     }
 
@@ -62,11 +62,11 @@ extension View {
     }
 
     @ViewBuilder
-    func navigationBarMenuButton<Content: View>(
+    func navigationBarMenuButton(
         isLoading: Bool = false,
         isHidden: Bool = false,
         @ViewBuilder
-        _ items: @escaping () -> Content
+        _ items: @escaping () -> some View
     ) -> some View {
         modifier(
             NavigationBarMenuButtonModifier(
@@ -79,8 +79,12 @@ extension View {
 
     @ViewBuilder
     func listRowCornerRadius(_ radius: CGFloat) -> some View {
-        introspect(.listCell, on: .iOS(.v16), .iOS(.v17), .iOS(.v18)) { cell in
-            cell.layer.cornerRadius = radius
+        introspect(.listCell, on: .iOS(.v16...)) { cell in
+            if #available(iOS 26, *) {
+                cell.cornerConfiguration = .uniformCorners(radius: .fixed(radius))
+            } else {
+                cell.layer.cornerRadius = radius
+            }
         }
     }
 }

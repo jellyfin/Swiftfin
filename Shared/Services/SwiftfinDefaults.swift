@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2025 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -35,9 +35,9 @@ extension UserDefaults {
     static var currentUserSuite: UserDefaults {
         switch Defaults[.lastSignedInUserID] {
         case .signedOut:
-            return userSuite(id: "default")
+            userSuite(id: "default")
         case let .signedIn(userID):
-            return userSuite(id: userID)
+            userSuite(id: userID)
         }
     }
 
@@ -100,11 +100,15 @@ extension Defaults.Keys {
 
     /// The accent color default for user contexts.
     /// Only use for `set`, use `accentColor` for `get`.
-    static var userAccentColor: Key<Color> { UserKey("userAccentColor", default: .jellyfinPurple) }
+    static var userAccentColor: Key<Color> {
+        UserKey("userAccentColor", default: .jellyfinPurple)
+    }
 
     /// The appearance default for user contexts.
     /// /// Only use for `set`, use `appearance` for `get`.
-    static var userAppearance: Key<AppAppearance> { UserKey("userAppearance", default: .system) }
+    static var userAppearance: Key<AppAppearance> {
+        UserKey("userAppearance", default: .system)
+    }
 
     enum Customization {
 
@@ -135,7 +139,7 @@ extension Defaults.Keys {
 
             static let showFavorited: Key<Bool> = UserKey("showFavoritedIndicator", default: true)
             static let showProgress: Key<Bool> = UserKey("showProgressIndicator", default: true)
-            static let showUnplayed: Key<Bool> = UserKey("showUnplayedIndicator", default: true)
+            static let showUnplayed: Key<UnplayedIndicatorType> = UserKey("showUnplayedIndicator", default: .indicator)
             static let showPlayed: Key<Bool> = UserKey("showPlayedIndicator", default: true)
         }
 
@@ -201,6 +205,10 @@ extension Defaults.Keys {
             static let horizontalPanAction: Key<PanGestureAction> = UserKey("videoPlayerHorizontalPanGesture", default: .none)
             static let horizontalSwipeAction: Key<SwipeGestureAction> = UserKey("videoPlayerhorizontalSwipeAction", default: .none)
             static let longPressAction: Key<LongPressGestureAction> = UserKey("videoPlayerLongPressGesture", default: .gestureLock)
+            static let longPressSpeedMultiplier: Key<PlaybackSpeed> = UserKey(
+                "videoPlayerLongPressSpeedMultiplier",
+                default: .two
+            )
             static let multiTapGesture: Key<MultiTapGestureAction> = UserKey("videoPlayerMultiTapGesture", default: .none)
             static let doubleTouchGesture: Key<DoubleTouchGestureAction> = UserKey("videoPlayerDoubleTouchGesture", default: .none)
             static let pinchGesture: Key<PinchGestureAction> = UserKey("videoPlayerSwipeGesture", default: .aspectFill)
@@ -222,6 +230,7 @@ extension Defaults.Keys {
             static let compatibilityMode: Key<PlaybackCompatibility> = UserKey("compatibilityMode", default: .auto)
             static let customDeviceProfileAction: Key<CustomDeviceProfileAction> = UserKey("customDeviceProfileAction", default: .add)
             static let rates: Key<[Float]> = UserKey("videoPlayerPlaybackRates", default: [0.5, 1.0, 1.25, 1.5, 2.0])
+            static let playbackRate: Key<Float> = UserKey("playbackRate", default: Float(1.0))
         }
 
         // TODO: transition into a SubtitleConfiguration instead of multiple types
@@ -241,6 +250,7 @@ extension Defaults.Keys {
     enum Experimental {
 
         static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)
+        static let isLiquidGlassEnabled: Key<Bool> = UserKey("experimentalLiquidGlass", default: false)
     }
 
     // tvos specific
