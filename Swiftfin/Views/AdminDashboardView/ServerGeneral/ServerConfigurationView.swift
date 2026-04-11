@@ -79,13 +79,14 @@ struct ServerConfigurationView: View {
                 }
 
                 Section(L10n.settings) {
-                    CulturePicker(
-                        L10n.metadataLanguage,
-                        threeLetterISOLanguageName: Binding(
-                            get: { tempConfiguration?.uICulture ?? "" },
-                            set: { tempConfiguration?.uICulture = $0 }
-                        )
-                    )
+                    // TODO: `CulturePicker` doesn't work for this since it's EN-US/EN-UK instead of use EN/ENG
+                    // CulturePicker(
+                    //    L10n.metadataLanguage,
+                    //    newInitOrSomething: Binding(
+                    //        get: { tempConfiguration?.uICulture },
+                    //        set: { tempConfiguration?.uICulture = $0 }
+                    //    )
+                    // )
 
                     Toggle(
                         L10n.quickConnect,
@@ -97,48 +98,69 @@ struct ServerConfigurationView: View {
                 }
 
                 Section {
+                    StateAdapter(initialValue: false) { isPresented in
+                        ChevronButton {
+                            isPresented.wrappedValue = true
+                        } label: {
+                            LabeledContent(L10n.parallelImageEncodingLimit) {
+                                Text(tempConfiguration?.parallelImageEncodingLimit ?? 0, format: .number)
+                            }
+                        }
+                        .alert(
+                            L10n.parallelImageEncodingLimit,
+                            isPresented: isPresented
+                        ) {
+                            TextField(
+                                L10n.parallelImageEncodingLimit,
+                                value: Binding(
+                                    get: { tempConfiguration?.parallelImageEncodingLimit ?? 0 },
+                                    set: { tempConfiguration?.parallelImageEncodingLimit = $0 }
+                                ),
+                                format: .number
+                            )
+                            .keyboardType(.numberPad)
+                        } message: {
+                            Text(L10n.parallelImageEncodingLimitDescription)
+                        }
+                    }
+
+                    StateAdapter(initialValue: false) { isPresented in
+                        ChevronButton {
+                            isPresented.wrappedValue = true
+                        } label: {
+                            LabeledContent(L10n.libraryScanFanoutConcurrency) {
+                                Text(tempConfiguration?.libraryScanFanoutConcurrency ?? 0, format: .number)
+                            }
+                        }
+                        .alert(
+                            L10n.libraryScanFanoutConcurrency,
+                            isPresented: isPresented
+                        ) {
+                            TextField(
+                                L10n.libraryScanFanoutConcurrency,
+                                value: Binding(
+                                    get: { tempConfiguration?.libraryScanFanoutConcurrency ?? 0 },
+                                    set: { tempConfiguration?.libraryScanFanoutConcurrency = $0 }
+                                ),
+                                format: .number
+                            )
+                            .keyboardType(.numberPad)
+                        } message: {
+                            Text(L10n.libraryScanFanoutConcurrencyDescription)
+                        }
+                    }
+                } footer: {
+                    Label(L10n.concurrencyWarning, systemImage: "exclamationmark.circle.fill")
+                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                }
+
+                Section(L10n.customize) {
                     ChevronButton(L10n.logs) {
                         router.route(to: .serverLogsSettings(viewModel: viewModel))
                     }
                     ChevronButton(L10n.paths) {
-                        router.route(to: .serverPaths)
+                        router.route(to: .serverPaths(viewModel: viewModel))
                     }
-                }
-
-                Section {
-                    TextField(
-                        L10n.libraryScanFanoutConcurrency,
-                        value: Binding(
-                            get: { tempConfiguration?.libraryScanFanoutConcurrency ?? 0 },
-                            set: { tempConfiguration?.libraryScanFanoutConcurrency = $0 }
-                        ),
-                        format: .number
-                    )
-                    .keyboardType(.numberPad)
-                } header: {
-                    Text(L10n.libraryScanFanoutConcurrency)
-                } footer: {
-                    VStack(alignment: .leading) {
-                        Text(L10n.libraryScanFanoutConcurrencyDescription)
-                        Label(L10n.libraryScanFanoutConcurrencyWarning, systemImage: "exclamationmark.circle.fill")
-                            .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                    }
-                }
-
-                Section {
-                    TextField(
-                        L10n.parallelImageEncodingLimit,
-                        value: Binding(
-                            get: { tempConfiguration?.parallelImageEncodingLimit ?? 0 },
-                            set: { tempConfiguration?.parallelImageEncodingLimit = $0 }
-                        ),
-                        format: .number
-                    )
-                    .keyboardType(.numberPad)
-                } header: {
-                    Text(L10n.parallelImageEncodingLimit)
-                } footer: {
-                    Text(L10n.parallelImageEncodingLimitDescription)
                 }
             }
         }

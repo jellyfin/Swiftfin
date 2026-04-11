@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -19,13 +20,8 @@ extension ServerPathsView {
 
         private let title: String
         private let folder: FolderStorageDto
-        private let action: () -> Void
-
-        init(_ title: String, folder: FolderStorageDto, action: @escaping () -> Void) {
-            self.title = title
-            self.folder = folder
-            self.action = action
-        }
+        private let path: Binding<String>?
+        private let onSave: (() -> Void)?
 
         private var usedSpace: Int {
             folder.usedSpace ?? 0
@@ -44,37 +40,87 @@ extension ServerPathsView {
         }
 
         var body: some View {
-            Button {
-                action()
-            } label: {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(title)
-                        .font(.headline)
-                        .lineLimit(1)
-                        .foregroundStyle(.primary)
-
-                    if let path = folder.path {
-                        Text(path)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
+            if let path, let onSave {
+                StateAdapter(initialValue: false) { isPresented in
+                    ChevronButton {
+                        isPresented.wrappedValue = true
+                    } label: {
+                        LabeledContent {
+                            EmptyView()
+                        } label: {
+                            content
+                        }
                     }
+                    .alert(
+                        title,
+                        isPresented: isPresented
+                    ) {
+                        TextField(title, text: path)
 
-                    ProgressView(value: usagePercentage)
-                        .progressViewStyle(.playback)
-                        .frame(height: 5)
-                        .foregroundStyle(accentColor)
+                        Button(L10n.cancel, role: .cancel) {}
 
-                    HStack {
-                        Text(usedSpace.formatted(.byteCount(style: .binary)))
-                        Spacer()
-                        Text(totalSpace.formatted(.byteCount(style: .binary)))
+                        Button(L10n.save) {
+                            onSave()
+                        }
                     }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
                 }
+            } else {
+                content
             }
         }
+
+        private var content: some View {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(title)
+                    .font(.headline)
+                    .lineLimit(1)
+                    .foregroundStyle(.primary)
+
+                if let path = folder.path {
+                    Text(path)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+
+                ProgressView(value: usagePercentage)
+                    .progressViewStyle(.playback)
+                    .frame(height: 5)
+                    .foregroundStyle(accentColor)
+
+                HStack {
+                    Text(usedSpace.formatted(.byteCount(style: .binary)))
+                    Spacer()
+                    Text(totalSpace.formatted(.byteCount(style: .binary)))
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .monospacedDigit()
+            }
+        }
+    }
+}
+
+extension ServerPathsView.FolderStorageButton {
+
+    /// Editable folder with a path binding and save action
+    init(
+        _ title: String,
+        folder: FolderStorageDto,
+        path: Binding<String>,
+        onSave: @escaping () -> Void
+    ) {
+        self.title = title
+        self.folder = folder
+        self.path = path
+        self.onSave = onSave
+    }
+
+    /// Read-only folder display
+    init(_ title: String, folder: FolderStorageDto) {
+        self.title = title
+        self.folder = folder
+        self.path = nil
+        self.onSave = nil
     }
 }

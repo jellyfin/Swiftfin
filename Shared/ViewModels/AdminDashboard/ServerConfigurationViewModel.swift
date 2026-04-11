@@ -100,6 +100,7 @@ final class ServerConfigurationViewModel: ViewModel {
         _ = try await userSession.client.send(request)
 
         self.configuration = newConfiguration
+        try await _refresh()
 
         events.send(.updated)
     }

@@ -129,16 +129,19 @@ extension NavigationRoute {
     static func serverLogsSettings(viewModel: ServerConfigurationViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "serverLogsSettings",
-            style: .sheet
+            style: .push(.automatic)
         ) {
             ServerLogsSettingsView(viewModel: viewModel)
         }
     }
 
-    static let serverPaths = NavigationRoute(
-        id: "serverPaths"
-    ) {
-        ServerPathsView()
+    static func serverPaths(viewModel: ServerConfigurationViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "serverPaths",
+            style: .push(.automatic)
+        ) {
+            ServerPathsView(viewModel: viewModel)
+        }
     }
 
     // MARK: - Server Logs

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -22,12 +23,17 @@ struct ServerLogsSettingsView: View {
 
     init(viewModel: ServerConfigurationViewModel) {
         self.viewModel = viewModel
-        self.tempConfiguration = viewModel.configuration
     }
 
     var body: some View {
-
         List {
+            ListTitleSection(
+                L10n.logs,
+                description: L10n.logsDescription
+            ) {
+                UIApplication.shared.open(.jellyfinDocsTroubleshooting)
+            }
+
             Section(L10n.logs) {
                 Toggle(
                     L10n.enableSlowResponseWarning,
@@ -46,32 +52,79 @@ struct ServerLogsSettingsView: View {
                 )
             }
 
-            Section(L10n.logFileRetentionDays) {
-                TextField(
-                    L10n.logFileRetentionDays,
-                    value: Binding(
-                        get: { tempConfiguration?.logFileRetentionDays ?? 0 },
-                        set: { tempConfiguration?.logFileRetentionDays = $0 }
-                    ),
-                    format: .number
-                )
-                .keyboardType(.numberPad)
-            }
+            Section {
+                StateAdapter(initialValue: false) { isPresented in
+                    ChevronButton {
+                        isPresented.wrappedValue = true
+                    } label: {
+                        LabeledContent(L10n.logFileRetentionDays) {
+                            Text(tempConfiguration?.logFileRetentionDays ?? 0, format: .number)
+                        }
+                    }
+                    .alert(
+                        L10n.logFileRetentionDays,
+                        isPresented: isPresented
+                    ) {
+                        TextField(
+                            L10n.logFileRetentionDays,
+                            value: Binding(
+                                get: { tempConfiguration?.logFileRetentionDays ?? 0 },
+                                set: { tempConfiguration?.logFileRetentionDays = $0 }
+                            ),
+                            format: .number
+                        )
+                        .keyboardType(.numberPad)
+                    }
+                }
 
-            Section(L10n.activityLogRetentionDays) {
-                TextField(
-                    L10n.activityLogRetentionDays,
-                    value: Binding(
-                        get: { tempConfiguration?.activityLogRetentionDays ?? 0 },
-                        set: { tempConfiguration?.activityLogRetentionDays = $0 }
-                    ),
-                    format: .number
-                )
-                .keyboardType(.numberPad)
+                StateAdapter(initialValue: false) { isPresented in
+                    ChevronButton {
+                        isPresented.wrappedValue = true
+                    } label: {
+                        LabeledContent(L10n.activityLogRetentionDays) {
+                            Text(tempConfiguration?.activityLogRetentionDays ?? 0, format: .number)
+                        }
+                    }
+                    .alert(
+                        L10n.activityLogRetentionDays,
+                        isPresented: isPresented
+                    ) {
+                        TextField(
+                            L10n.activityLogRetentionDays,
+                            value: Binding(
+                                get: { tempConfiguration?.activityLogRetentionDays ?? 0 },
+                                set: { tempConfiguration?.activityLogRetentionDays = $0 }
+                            ),
+                            format: .number
+                        )
+                        .keyboardType(.numberPad)
+                    }
+                }
             }
         }
         .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.logs)
+        .topBarTrailing {
+            Button(L10n.save) {
+                if let tempConfiguration {
+                    viewModel.update(tempConfiguration)
+                }
+            }
+            .buttonStyle(.toolbarPill)
+            .disabled(tempConfiguration == viewModel.configuration)
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .updated:
+                UIDevice.feedback(.success)
+            }
+        }
+        .onChange(of: viewModel.configuration) { newValue in
+            tempConfiguration = newValue
+        }
+        .onFirstAppear {
+            tempConfiguration = viewModel.configuration
+        }
     }
 }

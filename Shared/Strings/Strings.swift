@@ -346,6 +346,8 @@ internal enum L10n {
   internal static let components = L10n.tr("Localizable", "components", fallback: "Components")
   /// Composer
   internal static let composer = L10n.tr("Localizable", "composer", fallback: "Composer")
+  /// Setting these values too high may cause issues.
+  internal static let concurrencyWarning = L10n.tr("Localizable", "concurrencyWarning", fallback: "Setting these values too high may cause issues.")
   /// Conductor
   internal static let conductor = L10n.tr("Localizable", "conductor", fallback: "Conductor")
   /// Confirm
@@ -874,8 +876,6 @@ internal enum L10n {
   internal static let libraryScanFanoutConcurrency = L10n.tr("Localizable", "libraryScanFanoutConcurrency", fallback: "Parallel library scan limit")
   /// Maximum number of parallel tasks during library scans.
   internal static let libraryScanFanoutConcurrencyDescription = L10n.tr("Localizable", "libraryScanFanoutConcurrencyDescription", fallback: "Maximum number of parallel tasks during library scans.")
-  /// Setting this number too high may cause issues.
-  internal static let libraryScanFanoutConcurrencyWarning = L10n.tr("Localizable", "libraryScanFanoutConcurrencyWarning", fallback: "Setting this number too high may cause issues.")
   /// License
   internal static let license = L10n.tr("Localizable", "license", fallback: "License")
   /// Light
@@ -1402,6 +1402,8 @@ internal enum L10n {
   internal static let serverLogs = L10n.tr("Localizable", "serverLogs", fallback: "Server logs")
   /// Server Name
   internal static let serverName = L10n.tr("Localizable", "serverName", fallback: "Server Name")
+  /// Folder paths for cache and storage locations.
+  internal static let serverPathsDescription = L10n.tr("Localizable", "serverPathsDescription", fallback: "Folder paths for cache and storage locations.")
   /// Servers
   internal static let servers = L10n.tr("Localizable", "servers", fallback: "Servers")
   /// Server URL
