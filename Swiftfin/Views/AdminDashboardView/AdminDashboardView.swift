@@ -21,11 +21,29 @@ struct AdminDashboardView: View {
                 description: L10n.dashboardDescription
             )
 
-            ChevronButton(L10n.sessions) {
-                router.route(to: .activeSessions)
+            Section {
+                ChevronButton(L10n.sessions) {
+                    router.route(to: .activeSessions)
+                }
             }
 
-            ServerStatisticsSection()
+            Section(L10n.settings) {
+                ChevronButton(L10n.general) {
+                    router.route(to: .serverGeneral)
+                }
+
+                // TODO: Settings for Libraries
+                // - Poster, Folders, Metadata Languagages, Etc.
+                // ChevronButton(L10n.libraries) {
+                //     router.route(to: .serverLibraries)
+                // }
+
+                // TODO: Settings for Playback
+                // - Resume %, Remote Bitrate, Etc.
+                // ChevronButton(L10n.playback) {
+                //     router.route(to: .serverPlayback)
+                // }
+            }
 
             Section(L10n.activity) {
                 ChevronButton(L10n.activity) {
@@ -40,15 +58,12 @@ struct AdminDashboardView: View {
             }
 
             Section(L10n.advanced) {
-
                 ChevronButton(L10n.apiKeys) {
                     router.route(to: .apiKeys)
                 }
-
                 ChevronButton(L10n.logs) {
                     router.route(to: .serverLogs)
                 }
-
                 ChevronButton(L10n.tasks) {
                     router.route(to: .tasks)
                 }
