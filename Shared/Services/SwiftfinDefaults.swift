@@ -250,7 +250,6 @@ extension Defaults.Keys {
     enum Experimental {
 
         static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)
-        static let isLiquidGlassEnabled: Key<Bool> = UserKey("experimentalLiquidGlass", default: false)
     }
 
     // tvos specific
@@ -273,6 +272,7 @@ extension Defaults.Keys {
         Key(name, default: `default`, suite: .appSuite)
     }
 
+    static let isLiquidGlassEnabled: Key<Bool> = DebugKey("experimentalLiquidGlass", default: false)
     static let sendProgressReports: Key<Bool> = DebugKey("sendProgressReports", default: true)
 }
 #endif
