@@ -11,9 +11,9 @@ import Defaults
 
 @MainActor
 final class DefaultsObservable<Value: Storable>: ObservableObject, _StoredValueObservable {
-    private var cancellable: AnyCancellable?
-    private var task: Task<Void, Never>?
+
     private var onObjectChanged: (() -> Void)?
+    private var task: Task<Void, Never>?
 
     let key: StoredValues.Key<Value>
 
@@ -36,15 +36,11 @@ final class DefaultsObservable<Value: Storable>: ObservableObject, _StoredValueO
     }
 
     func observe() {
-        // We only use this on the latest OSes (as of adding this) since the backdeploy library has a lot of bugs.
         task?.cancel()
 
-        // The `@MainActor` is important as the `.send()` method doesn't inherit the `@MainActor` from the class.
         task = .detached(priority: .userInitiated) { @MainActor [weak self, key] in
             for await _ in Defaults.updates(key._defaultKey) {
-                guard let self else {
-                    return
-                }
+                guard let self else { return }
 
                 self.onObjectChanged?()
             }

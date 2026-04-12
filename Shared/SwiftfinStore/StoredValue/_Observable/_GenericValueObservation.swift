@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Foundation
 
 @MainActor
 protocol _StoredValueObservable<Value>: ObservableObject {
@@ -21,10 +22,8 @@ protocol _StoredValueObservable<Value>: ObservableObject {
 @MainActor
 final class _GenericValueObservation<Value: Storable>: ObservableObject {
 
-    private var task: Task<Void, Never>?
+    private let key: StoredValues.Key<Value>
     private var observable: (any _StoredValueObservable<Value>)!
-
-    let key: StoredValues.Key<Value>
 
     var value: Value {
         get {
@@ -41,13 +40,13 @@ final class _GenericValueObservation<Value: Storable>: ObservableObject {
 
         switch key._storageDestination {
         case .defaults:
-            observable = DefaultsObservable<Value>(key, onObjectChanged: { [weak self] in
+            observable = DefaultsObservable<Value>(key) { [weak self] in
                 self?.objectWillChange.send()
-            })
+            }
         case .sql:
-            observable = SQLObservable<Value>(key, onObjectChanged: { [weak self] in
+            observable = SQLObservable<Value>(key) { [weak self] in
                 self?.objectWillChange.send()
-            })
+            }
         }
 
         observable.observe()

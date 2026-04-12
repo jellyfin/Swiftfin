@@ -17,10 +17,11 @@ import JellyfinAPI
 
 extension StoredValues.Keys {
 
-    static func ServerKey<Value: Codable>(
+    static func ServerKey<Value: Storable>(
         _ name: String?,
         ownerID: String,
         domain: String,
+        _storageDestination: StoredValues.Key<Value>._StorageDestination = .defaults,
         default defaultValue: Value
     ) -> Key<Value> {
         guard let name else {
@@ -31,23 +32,36 @@ extension StoredValues.Keys {
             name,
             ownerID: ownerID,
             domain: domain,
+            _storageDestination: _storageDestination,
             default: defaultValue
         )
     }
 
-    static func ServerKey<Value: Codable>(always: Value) -> Key<Value> {
+    static func ServerKey<Value: Storable>(always: Value) -> Key<Value> {
         Key(always: always)
     }
 }
 
 // MARK: values
 
+extension ServerState: _DefaultsSerializable {}
+extension ServerState: Storable {}
 extension PublicSystemInfo: @retroactive _DefaultsSerializable {}
 extension PublicSystemInfo: Storable {}
 
 extension StoredValues.Keys {
 
     enum Server {
+
+        static var servers: Key<[ServerState]> {
+            ServerKey(
+                "servers",
+                ownerID: "general",
+                domain: "servers",
+                _storageDestination: .sql,
+                default: []
+            )
+        }
 
         static func publicInfo(id: String) -> Key<PublicSystemInfo> {
             ServerKey(

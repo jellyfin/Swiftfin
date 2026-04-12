@@ -15,7 +15,6 @@ final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObserv
 
     let key: StoredValues.Key<Value>
 
-    private let logger = Logger.swiftfin()
     private var objectPublisher: ObjectPublisher<AnyStoredData>?
     private var shouldListenToPublish: Bool = true
     private var onObjectChanged: (() -> Void)?
@@ -75,7 +74,7 @@ final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObserv
             let publisher = first.asPublisher(in: SwiftfinStore.dataStack)
 
             publisher.addObserver(self) { [weak self] objectPublisher in
-                guard self?.shouldListenToPublish ?? false else { return }
+                guard self?.shouldListenToPublish == true else { return }
                 guard let data = objectPublisher.object?.data else { return }
                 guard let newValue = try? JSONDecoder().decode(Value.self, from: data) else { fatalError() }
 
@@ -100,7 +99,7 @@ final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObserv
                     domain: key.domain
                 )
             } catch {
-                logger.error("Unable to store and create publisher for: \(key)")
+                Logger.swiftfin().error("Unable to store and create publisher for: \(key)")
 
                 return nil
             }

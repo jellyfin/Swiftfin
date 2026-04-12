@@ -66,6 +66,8 @@ extension StoredValues.Keys {
 extension UserAccessPolicy: Storable {}
 extension UserDto: @retroactive _DefaultsSerializable {}
 extension UserDto: Storable {}
+extension UserState: _DefaultsSerializable {}
+extension UserState: Storable {}
 extension Array: Storable where Element: Storable {}
 extension Bool: Storable {}
 extension Int: Storable {}
@@ -74,6 +76,16 @@ extension String: Storable {}
 extension StoredValues.Keys {
 
     enum User {
+
+        static var users: Key<[UserState]> {
+            Key(
+                "users",
+                ownerID: "general",
+                domain: "users",
+                _storageDestination: .sql,
+                default: []
+            )
+        }
 
         // Doesn't use `CurrentUserKey` because data may be
         // retrieved and stored without a user session

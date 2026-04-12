@@ -19,7 +19,7 @@ import UIKit
 
 extension SwiftfinStore.State {
 
-    struct User: Hashable, Identifiable {
+    struct User: Hashable, Identifiable, Codable {
 
         let id: String
         let serverID: String
@@ -102,16 +102,25 @@ extension UserState {
     /// Deletes the model that this state represents and
     /// all settings from `Defaults` `Keychain`, and `StoredValues`
     func delete() throws {
-        try SwiftfinStore.dataStack.perform { transaction in
-            guard let storedUser = try transaction.fetchOne(From<UserModel>().where(\.$id == id)) else {
-                throw ErrorMessage("Unable to find user to delete")
-            }
+        var users = StoredValues[.User.users]
+        users.removeAll { $0.id == id }
+        StoredValues[.User.users] = users
 
-            let storedDataClause = AnyStoredData.fetchClause(ownerID: id)
-            let storedData = try transaction.fetchAll(storedDataClause)
+        try AnyStoredData.deleteAll(ownerID: id)
 
-            transaction.delete(storedUser)
-            transaction.delete(storedData)
+        var servers = StoredValues[.Server.servers]
+        if let index = servers.firstIndex(where: { $0.id == serverID }) {
+            let currentServer = servers[index]
+
+            servers[index] = ServerState(
+                urls: currentServer.urls,
+                currentURL: currentServer.currentURL,
+                name: currentServer.name,
+                id: currentServer.id,
+                usersIDs: currentServer.userIDs.filter { $0 != id }
+            )
+
+            StoredValues[.Server.servers] = servers
         }
 
         UserDefaults.userSuite(id: id).removeAll()
@@ -142,10 +151,9 @@ extension UserState {
     /// with an access token
     func getUserData(server: ServerState) async throws -> UserDto {
         let client = JellyfinClient(
-            configuration: .swiftfinConfiguration(url: server.currentURL),
+            configuration: .swiftfinConfiguration(url: server.currentURL, accessToken: accessToken),
             sessionConfiguration: .swiftfin,
-            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin()),
-            accessToken: accessToken
+            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
         )
 
         let request = Paths.getCurrentUser

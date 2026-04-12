@@ -14,7 +14,7 @@ import Pulse
 
 extension SwiftfinStore.State {
 
-    struct Server: Hashable, Identifiable {
+    struct Server: Hashable, Identifiable, Codable {
 
         let urls: Set<URL>
         let currentURL: URL
@@ -53,16 +53,24 @@ extension ServerState {
     /// Deletes the model that this state represents and
     /// all settings from `StoredValues`.
     func delete() throws {
-        try SwiftfinStore.dataStack.perform { transaction in
-            guard let storedServer = try transaction.fetchOne(From<ServerModel>().where(\.$id == id)) else {
-                throw ErrorMessage("Unable to find server to delete")
-            }
+        let users = StoredValues[.User.users]
+            .filter { $0.serverID == id }
 
-            let storedDataClause = AnyStoredData.fetchClause(ownerID: id)
-            let storedData = try transaction.fetchAll(storedDataClause)
+        for user in users {
+            try AnyStoredData.deleteAll(ownerID: user.id)
+        }
+        try AnyStoredData.deleteAll(ownerID: id)
 
-            transaction.delete(storedData)
-            transaction.delete(storedServer)
+        var storedUsers = StoredValues[.User.users]
+        storedUsers.removeAll { $0.serverID == id }
+        StoredValues[.User.users] = storedUsers
+
+        var servers = StoredValues[.Server.servers]
+        servers.removeAll { $0.id == id }
+        StoredValues[.Server.servers] = servers
+
+        for user in users {
+            UserDefaults.userSuite(id: user.id).removeAll()
         }
     }
 
@@ -81,20 +89,55 @@ extension ServerState {
 
     @MainActor
     func updateServerInfo() async throws {
-        guard let server = try? SwiftfinStore.dataStack.fetchOne(
-            From<ServerModel>().where(Where(\.$id == id))
-        ) else { return }
+        var servers = StoredValues[.Server.servers]
+        guard let index = servers.firstIndex(where: { $0.id == id }) else { return }
 
         let publicInfo = try await getPublicSystemInfo()
+        let currentServer = servers[index]
+        let updatedName = publicInfo.serverName ?? currentServer.name
+        let updatedID = publicInfo.id ?? currentServer.id
 
-        try SwiftfinStore.dataStack.perform { transaction in
-            guard let newServer = transaction.edit(server) else { return }
+        if updatedID != id {
+            var users = StoredValues[.User.users]
+            users = users.map {
+                guard $0.serverID == id else { return $0 }
+                return .init(
+                    id: $0.id,
+                    serverID: updatedID,
+                    username: $0.username
+                )
+            }
+            StoredValues[.User.users] = users
 
-            newServer.name = publicInfo.serverName ?? newServer.name
-            newServer.id = publicInfo.id ?? newServer.id
+            try SwiftfinStore.dataStack.perform { transaction in
+                let serverData = try transaction.fetchAll(AnyStoredData.fetchClause(ownerID: id))
+
+                for data in serverData {
+                    data.ownerID = updatedID
+                }
+            }
         }
 
-        StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
+        let updatedServer = ServerState(
+            urls: currentServer.urls,
+            currentURL: currentServer.currentURL,
+            name: updatedName,
+            id: updatedID,
+            usersIDs: currentServer.userIDs
+        )
+
+        servers[index] = updatedServer
+        StoredValues[.Server.servers] = servers
+
+        if updatedID != id {
+            try AnyStoredData.delete(
+                key: "publicInfo",
+                ownerID: id,
+                domain: "publicInfo"
+            )
+        }
+
+        StoredValues[.Server.publicInfo(id: updatedID)] = publicInfo
     }
 
     var isVersionCompatible: Bool {
