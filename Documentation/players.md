@@ -8,9 +8,10 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 | Feature                    | Swiftfin (VLCKit) | Native (AVPlayer) |
 |----------------------------|-------------------|----------------|
+| **External Audio Tracks**  | ❌                | ❌             |
 | **Framerate Matching**     | ❌                | ✅             |
 | **HDR to SDR Tonemapping** | ✅ [1]            | 🔶 [2]         |
-| **Player Controls**        | - Speed adjustment<br>- Aspect Fill<br>- Chapter Support<br>- Subtitle Support<br>- Audio Track Selection<br>- Customizable UI | - Speed adjustment<br>- Aspect Fill |
+| **Player Controls**        | - Speed Adjustment <br>- Aspect Fill <br>- Chapter Support <br>- Subtitle Support <br>- Trickplay Support <br>- Audio Track Selection <br>- Customizable UI | - Speed Adjustment <br>- Aspect Fill |
 | **Picture-in-Picture**     | ❌                | ✅             |
 | **TLS Support**            | 1.1, 1.2 [3]      | 1.1, 1.2, 1.3  |
 | **[Airplay Audio Output](https://support.apple.com/en-us/102357)** | 🔶 [4] | ✅ |
@@ -99,7 +100,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 | [FLV1](https://en.wikipedia.org/wiki/Sorenson_Spark)                     | ✅                | ❌                |
 | [H.261](https://en.wikipedia.org/wiki/H.261)                             | ✅                | ❌                |
 | [H.263](https://en.wikipedia.org/wiki/H.263)                             | ✅                | ❌                |
-| [H.264](https://en.wikipedia.org/wiki/Advanced_Video_Coding)             | ✅                | ✅                |
+| [H.264/AVC](https://en.wikipedia.org/wiki/Advanced_Video_Coding)         | ✅                | ✅                |
 | [H.265/HEVC](https://en.wikipedia.org/wiki/High_Efficiency_Video_Coding) | ✅                | ✅ [2]            |
 | [H.266/VVC](https://en.wikipedia.org/wiki/Versatile_Video_Coding)        | ❌ [3]            | ❌                |
 | [MJPEG](https://en.wikipedia.org/wiki/Motion_JPEG)                       | ✅                | ✅                |
@@ -136,12 +137,12 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 |---------------------------------------------------------------------------------|-------------------|-------------------|
 | [ASS](https://en.wikipedia.org/wiki/SubStation_Alpha#Advanced_SubStation_Alpha) | ✅                | ❌                |
 | [CC_DEC](https://en.wikipedia.org/wiki/Closed_captioning)                       | ✅                | ✅                |
-| [DVBSub](https://en.wikipedia.org/wiki/DVB_subtitles)                           | ✅                | 🔶 [1]            |
-| [DVDSub](https://en.wikipedia.org/wiki/VobSub)                                  | ✅                | 🔶 [1]            |
+| [DVBSub](https://en.wikipedia.org/wiki/DVB_subtitles)                           | ✅ [1]            | 🔶 [2]            |
+| [DVDSub](https://en.wikipedia.org/wiki/VobSub)                                  | ✅ [1]            | 🔶 [2]            |
 | [JacoSub](https://en.wikipedia.org/wiki/JACOsub)                                | ✅                | ❌                |
 | [MOV_Text](https://en.wikipedia.org/wiki/MPEG-4_Part_17)                        | ✅                | ❌                |
 | [MPL2](https://en.wikipedia.org/wiki/MPL2)                                      | ✅                | ❌                |
-| [PGSSub](https://en.wikipedia.org/wiki/Presentation_Graphic_Stream)             | ✅                | 🔶 [1]            |
+| [PGSSub](https://en.wikipedia.org/wiki/Presentation_Graphic_Stream)             | ✅ [1]            | 🔶 [2]            |
 | [PJS](https://en.wikipedia.org/wiki/Phoenix_Subtitle)                           | ✅                | ❌                |
 | [RealText](https://en.wikipedia.org/wiki/RealText)                              | ✅                | ❌                |
 | [SAMI](https://en.wikipedia.org/wiki/SAMI)                                      | ✅                | ❌                |
@@ -154,11 +155,12 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 | [TTML](https://en.wikipedia.org/wiki/Timed_Text_Markup_Language)                | ✅                | ✅                |
 | [VPlayer](https://en.wikipedia.org/wiki/VPlayer)                                | ✅                | ❌                |
 | [VTT](https://en.wikipedia.org/wiki/WebVTT)                                     | ✅                | ✅                |
-| [XSub](https://en.wikipedia.org/wiki/XSUB)                                      | ✅                | 🔶 [1]            |
+| [XSub](https://en.wikipedia.org/wiki/XSUB)                                      | ✅ [1]            | 🔶 [2]            |
 
 **Notes:**
 
-- [1] Subtitle format requires server-side encoding for Native (AVPlayer) playback.
+- [1] Subtitle format can be played if embedded in the container (MKV) but requres server-side encoding for playback is the source is an external file.
+- [2] Subtitle format requires server-side encoding for playback.
 
 - Subtitle track selection is not currently supported in Native (AVPlayer) due to issues with HLS file incompatibilities.
 
@@ -192,51 +194,11 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 --- 
 
-## Track Selection
-
-Swiftfin track selection is limited by compatibility with each player. In testing, as of Swiftfin 1.3, the following interactions have been tested.
-
-✅ Working correctly </br>
-🔶 Partially working with limitations </br>
-❌ Not working
-
-### Swiftfin Player
-
-| File Configuration                                       | DirectPlay | Transcode | Notes |
-|---------------------------------------------------------|------------|-----------|------------------------------------------------|
-| Internal Audio                                          | ✅         | ✅        |                                                |
-| Internal Audio + Internal Subtitles                     | ✅         | 🔶        | - Subtitles do not work if Non-External *(DVDSUB)* |
-| Internal Audio + External Subtitles                     | ✅         | ✅        |                                                |
-| Internal Audio + Internal Subtitles + External Subtitles| ✅         | 🔶        | - Subtitles do not work if Non-External *(DVDSUB)* |
-| Multiple Internal Audio + Multiple Internal Subtitles  | ✅         | 🔶        | - Subtitles do not work if Non-External *(DVDSUB)* |
-| Multiple Internal Audio + Multiple External Subtitles  | ✅         | ✅        |                                                |
-| Multiple Internal Audio + Internal Subtitles + External Subtitles | ✅ | 🔶 | - Subtitles do not work if Non-External *(DVDSUB)* |
-| External Audio + Internal Audio + External Subtitles   | ✅         | ✅        | - Cannot play external audio track if transcoding is required </br> - Subtitles do not work if Non-External *(DVDSUB)* |
-| External Audio + Internal Audio + Internal Subtitles   | ✅         | ✅        | - Cannot play external audio track if transcoding is required </br> - Subtitles do not work if Non-External *(DVDSUB)* |
-| External Audio + Internal Audio + Internal Subtitles + External Subtitles | ✅ | ✅ | - Cannot play external audio track if transcoding is required </br> - Subtitles do not work if Non-External *(DVDSUB)* |
-
-### Native Player
-
-| File Configuration                                      | DirectPlay | Transcode | Notes |
-|--------------------------------------------------------|------------|-----------|------------------------------------------------|
-| Internal Audio                                         | ✅         | ✅        |                                                |
-| Internal Audio + Internal Subtitles                   | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| Internal Audio + External Subtitles                   | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| Internal Audio + Internal Subtitles + External Subtitles | 🔶      | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| Multiple Internal Audio + Multiple Internal Subtitles | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| Multiple Internal Audio + Multiple External Subtitles | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| Multiple Internal Audio + Internal Subtitles + External Subtitles | 🔶 | ❌ | - The default audio track will played </br> - subtitles cannot be selected. |
-| External Audio + Internal Audio + External Subtitles  | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| External Audio + Internal Audio + Internal Subtitles  | 🔶         | ❌        | - The default audio track will played </br> - subtitles cannot be selected. |
-| External Audio + Internal Audio + Internal Subtitles + External Subtitles | 🔶 | ❌ | - The default audio track will played </br> - subtitles cannot be selected. |
-
---- 
-
 ### Miscellaneous
 
-| Feature | Swiftfin (VLCKit) | Native (AVPlayer) | Notes |
-|-------------|-------------------|----------------|----------------|
-| **External Display Support** | 🔶        | ✅        | Swiftfin Player can only be mirrored. As a result, the player will retain the source device dimensions. |
-| **Energy Consumption** | 🔶        | ✅        | Swiftfin Player will use a software decoder if the media cannot be handled by iOS natively. This results in higher power consumption. |
+| Feature                      | Swiftfin (VLCKit) | Native (AVPlayer) | Notes                                                                                                                                 |
+|------------------------------|-------------------|-------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| **External Display Support** | 🔶                | ✅                | Swiftfin Player can only be mirrored. As a result, the player will retain the source device dimensions.                               |
+| **Energy Consumption**       | 🔶                | ✅                | Swiftfin Player will use a software decoder if the media cannot be handled by iOS natively. This results in higher power consumption. |
 
 ---
