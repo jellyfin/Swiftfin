@@ -49,7 +49,7 @@ struct NativeVideoPlayer: View {
             manager.proxy = proxy
             manager.start()
         }
-        .prefersStatusBarHidden(true)
+        .prefersStatusBarHidden()
         .backport
         .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
             Container.shared.mediaPlayerManager.reset()

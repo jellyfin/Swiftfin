@@ -12,20 +12,14 @@ extension UIViewController {
 
     // MARK: Swizzle
 
-    #if os(iOS)
-
     static var swizzle = {
+        #if os(iOS)
         _swizzle(
             #selector(getter: supportedInterfaceOrientations),
             #selector(swizzled_supportedInterfaceOrientations)
         )
+        #endif
     }()
-
-    #elseif os(tvOS)
-
-    static var swizzle: Void = ()
-
-    #endif
 
     private static func _swizzle(
         _ original: Selector,
