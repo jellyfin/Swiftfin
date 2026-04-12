@@ -42,6 +42,9 @@ extension StoredValues.Keys {
 
 // MARK: values
 
+extension PublicSystemInfo: @retroactive _DefaultsSerializable {}
+extension PublicSystemInfo: Storable {}
+
 extension StoredValues.Keys {
 
     enum Server {

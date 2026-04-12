@@ -63,6 +63,14 @@ extension StoredValues.Keys {
 
 // MARK: values
 
+extension UserAccessPolicy: Storable {}
+extension UserDto: @retroactive _DefaultsSerializable {}
+extension UserDto: Storable {}
+extension Array: Storable where Element: Storable {}
+extension Bool: Storable {}
+extension Int: Storable {}
+extension String: Storable {}
+
 extension StoredValues.Keys {
 
     enum User {
