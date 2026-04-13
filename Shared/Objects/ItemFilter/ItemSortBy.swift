@@ -10,78 +10,121 @@ import Foundation
 import JellyfinAPI
 
 extension ItemSortBy: Displayable, SupportedCaseIterable {
+
     var displayTitle: String {
         switch self {
-        case .default:
-            L10n.default
         case .airedEpisodeOrder:
             L10n.airedEpisodeOrder
+        case .airTime:
+            L10n.airTime
         case .album:
             L10n.album
         case .albumArtist:
             L10n.albumArtist
         case .artist:
             L10n.artist
+        case .communityRating:
+            L10n.communityRating
+        case .criticRating:
+            L10n.criticRating
         case .dateCreated:
             L10n.dateCreated
-        case .officialRating:
-            L10n.officialRating
+        case .dateLastContentAdded:
+            L10n.dateLastContentAdded
         case .datePlayed:
             L10n.datePlayed
-        case .premiereDate:
-            L10n.premiereDate
-        case .startDate:
-            L10n.startDate
-        case .sortName:
-            L10n.sortName
+        case .default:
+            L10n.default
+        case .indexNumber:
+            L10n.indexNumber
+        case .isFavoriteOrLiked:
+            L10n.favorite
+        case .isFolder:
+            L10n.folder
+        case .isPlayed:
+            L10n.played
+        case .isUnplayed:
+            L10n.unplayed
         case .name:
             L10n.name
+        case .officialRating:
+            L10n.officialRating
+        case .parentIndexNumber:
+            L10n.parentIndexNumber
+        case .playCount:
+            L10n.playCount
+        case .premiereDate:
+            L10n.premiereDate
+        case .productionYear:
+            L10n.year
         case .random:
             L10n.random
         case .runtime:
             L10n.runtime
-        case .communityRating:
-            L10n.communityRating
-        case .productionYear:
-            L10n.year
-        case .playCount:
-            L10n.playCount
-        case .criticRating:
-            L10n.criticRating
-        case .isFolder:
-            L10n.folder
-        case .isUnplayed:
-            L10n.unplayed
-        case .isPlayed:
-            L10n.played
-        case .seriesSortName:
-            L10n.seriesName
-        case .videoBitRate:
-            L10n.videoBitRate
-        case .airTime:
-            L10n.airTime
-        case .studio:
-            L10n.studio
-        case .isFavoriteOrLiked:
-            L10n.favorite
-        case .dateLastContentAdded:
-            L10n.dateAdded
         case .seriesDatePlayed:
             L10n.seriesDatePlayed
-        case .parentIndexNumber:
-            L10n.parentIndexNumber
-        case .indexNumber:
-            L10n.indexNumber
+        case .seriesSortName:
+            L10n.seriesName
+        case .sortName:
+            L10n.sortName
+        case .startDate:
+            L10n.startDate
+        case .studio:
+            L10n.studio
+        case .videoBitRate:
+            L10n.videoBitRate
         }
     }
 
+    /// All `ItemSortBy` cases supported in Swiftfin
+    /// - This is the order displayed in `FilterView`s so order matters!
     static var supportedCases: [ItemSortBy] {
         [
-            .premiereDate,
+            // Generic
             .name,
-            .sortName,
-            .dateLastContentAdded,
             .random,
+            .sortName,
+
+            // Dates
+            .airTime,
+            .dateCreated,
+            .dateLastContentAdded,
+            .datePlayed,
+            .premiereDate,
+            .startDate,
+
+            // Ratings
+            .communityRating,
+            .criticRating,
+            .officialRating,
+
+            // Year
+            .productionYear,
+
+            // Episode / Series
+            .airedEpisodeOrder,
+            .indexNumber,
+            .parentIndexNumber,
+            .seriesSortName,
+
+            // Music
+            .album,
+            .albumArtist,
+            .artist,
+
+            // Status
+            .isFavoriteOrLiked,
+            .isFolder,
+            .isPlayed,
+            .isUnplayed,
+
+            // Stats
+            .playCount,
+            .runtime,
+            .videoBitRate,
+
+            // Other
+            .studio
         ]
     }
 }

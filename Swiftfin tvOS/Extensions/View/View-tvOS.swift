@@ -46,7 +46,7 @@ extension View {
 
     /// - Important: This does nothing on tvOS.
     @ViewBuilder
-    func prefersStatusBarHidden(_ hidden: Bool) -> some View {
+    func prefersStatusBarHidden(_ hidden: Bool = true) -> some View {
         self
     }
 }

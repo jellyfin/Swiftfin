@@ -7,25 +7,18 @@
 //
 
 import Foundation
-import ObjectiveC.runtime
 
 enum SwizzleDefaults {
 
-    private static var overrides: [String: Any?] = [:]
-    private static let lock = NSLock()
-    private static let activeKeys = NSMapTable<Thread, NSMutableSet>(
-        keyOptions: .weakMemory,
-        valueOptions: .strongMemory
-    )
-
-    static func install() {
-        _ = swizzleOnce
-    }
+    private static var overrides: [String: Any] = [:]
+    private static let overridesQueue = DispatchQueue(label: "SwizzleDefaults.overrides", attributes: .concurrent)
 
     private static func set(_ override: Any?, for key: String) {
-        lock.lock()
-        defer { lock.unlock() }
-        overrides[key] = override
+        _ = swizzle
+
+        overridesQueue.sync(flags: .barrier) {
+            overrides[key] = override
+        }
     }
 
     static func set(_ value: Bool, for key: String) {
@@ -48,50 +41,24 @@ enum SwizzleDefaults {
         set(nil, for: key)
     }
 
-    fileprivate static func resolve(_ key: String, in defaults: UserDefaults) -> Any?? {
-        guard beginResolving(key) else { return nil }
-        defer { endResolving(key) }
-
-        lock.lock()
-        let override = overrides[key]
-        lock.unlock()
-
-        guard let override else { return nil }
-        return override
+    fileprivate static func resolve(_ key: String) -> Any? {
+        overridesQueue.sync {
+            overrides[key]
+        }
     }
 
-    private static func beginResolving(_ key: String) -> Bool {
-        let thread = Thread.current
-        lock.lock()
-        defer { lock.unlock() }
-
-        let set = activeKeys.object(forKey: thread) ?? {
-            let s = NSMutableSet()
-            activeKeys.setObject(s, forKey: thread)
-            return s
-        }()
-
-        if set.contains(key) { return false }
-        set.add(key)
-        return true
-    }
-
-    private static func endResolving(_ key: String) {
-        let thread = Thread.current
-        lock.lock()
-        defer { lock.unlock() }
-        activeKeys.object(forKey: thread)?.remove(key)
-    }
-
-    private static let swizzleOnce: Void = {
-        swizzle(#selector(UserDefaults.object(forKey:)), #selector(UserDefaults._ds_object(forKey:)))
-        swizzle(#selector(UserDefaults.bool(forKey:)), #selector(UserDefaults._ds_bool(forKey:)))
-        swizzle(#selector(UserDefaults.string(forKey:)), #selector(UserDefaults._ds_string(forKey:)))
-        swizzle(#selector(UserDefaults.integer(forKey:)), #selector(UserDefaults._ds_integer(forKey:)))
-        swizzle(#selector(UserDefaults.double(forKey:)), #selector(UserDefaults._ds_double(forKey:)))
+    private static let swizzle: Void = {
+        _swizzle(#selector(UserDefaults.object(forKey:)), #selector(UserDefaults._ds_object(forKey:)))
+        _swizzle(#selector(UserDefaults.bool(forKey:)), #selector(UserDefaults._ds_bool(forKey:)))
+        _swizzle(#selector(UserDefaults.string(forKey:)), #selector(UserDefaults._ds_string(forKey:)))
+        _swizzle(#selector(UserDefaults.integer(forKey:)), #selector(UserDefaults._ds_integer(forKey:)))
+        _swizzle(#selector(UserDefaults.double(forKey:)), #selector(UserDefaults._ds_double(forKey:)))
     }()
 
-    private static func swizzle(_ original: Selector, _ replacement: Selector) {
+    private static func _swizzle(
+        _ original: Selector,
+        _ replacement: Selector
+    ) {
         guard let a = class_getInstanceMethod(UserDefaults.self, original),
               let b = class_getInstanceMethod(UserDefaults.self, replacement)
         else { return }
@@ -104,13 +71,13 @@ fileprivate extension UserDefaults {
 
     @objc
     func _ds_object(forKey key: String) -> Any? {
-        if let resolved = SwizzleDefaults.resolve(key, in: self) { return resolved }
+        if let resolved = SwizzleDefaults.resolve(key) { return resolved }
         return _ds_object(forKey: key)
     }
 
     @objc
     func _ds_bool(forKey key: String) -> Bool {
-        if let resolved = SwizzleDefaults.resolve(key, in: self) {
+        if let resolved = SwizzleDefaults.resolve(key) {
             switch resolved {
             case let n as NSNumber: return n.boolValue
             case let s as NSString: return s.boolValue
@@ -123,7 +90,7 @@ fileprivate extension UserDefaults {
 
     @objc
     func _ds_string(forKey key: String) -> String? {
-        if let resolved = SwizzleDefaults.resolve(key, in: self) {
+        if let resolved = SwizzleDefaults.resolve(key) {
             switch resolved {
             case let s as NSString: return s as String
             case let s as String: return s
@@ -136,7 +103,7 @@ fileprivate extension UserDefaults {
 
     @objc
     func _ds_integer(forKey key: String) -> Int {
-        if let resolved = SwizzleDefaults.resolve(key, in: self) {
+        if let resolved = SwizzleDefaults.resolve(key) {
             switch resolved {
             case let n as NSNumber: return n.intValue
             case let s as NSString: return s.integerValue
@@ -149,7 +116,7 @@ fileprivate extension UserDefaults {
 
     @objc
     func _ds_double(forKey key: String) -> Double {
-        if let resolved = SwizzleDefaults.resolve(key, in: self) {
+        if let resolved = SwizzleDefaults.resolve(key) {
             switch resolved {
             case let n as NSNumber: return n.doubleValue
             case let s as NSString: return s.doubleValue
