@@ -218,7 +218,7 @@ final class UserSignInViewModel: ViewModel {
                 currentURL: existingServer.currentURL,
                 name: existingServer.name,
                 id: existingServer.id,
-                usersIDs: userIDs
+                userIDs: userIDs
             )
 
             StoredValues[.Server.servers] = servers

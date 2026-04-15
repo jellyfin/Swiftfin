@@ -64,7 +64,7 @@ final class ServerConnectionViewModel: ViewModel {
                 currentURL: url,
                 name: existingServer.name,
                 id: existingServer.id,
-                usersIDs: existingServer.userIDs
+                userIDs: existingServer.userIDs
             )
 
             servers[index] = newState

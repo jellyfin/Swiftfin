@@ -105,7 +105,7 @@ final class ConnectToServerViewModel: ViewModel {
             currentURL: connectionURL,
             name: name,
             id: id,
-            usersIDs: []
+            userIDs: []
         )
 
         if isDuplicate(server: newServerState) {
@@ -166,7 +166,7 @@ final class ConnectToServerViewModel: ViewModel {
             currentURL: server.currentURL,
             name: currentServer.name,
             id: currentServer.id,
-            usersIDs: currentServer.userIDs
+            userIDs: currentServer.userIDs
         )
 
         servers[index] = newState

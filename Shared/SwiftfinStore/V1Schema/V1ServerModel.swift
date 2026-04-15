@@ -33,15 +33,5 @@ extension SwiftfinStore.V1 {
 
         @Field.Relationship("users", inverse: \StoredUser.$server)
         var users: Set<StoredUser>
-
-        var state: ServerState {
-            .init(
-                urls: urls,
-                currentURL: currentURL,
-                name: name,
-                id: id,
-                usersIDs: users.map(\.id)
-            )
-        }
     }
 }

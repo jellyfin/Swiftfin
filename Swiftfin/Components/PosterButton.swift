@@ -141,7 +141,7 @@ extension PosterButton {
     // Content specific for BaseItemDto episode items
     struct EpisodeContentSubtitleContent: View {
 
-        @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+        @StoredValue(.User.useSeriesLandscapeBackdrop)
         private var useSeriesLandscapeBackdrop
 
         let item: Item

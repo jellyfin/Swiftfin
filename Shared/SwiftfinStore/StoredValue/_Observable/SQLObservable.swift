@@ -24,9 +24,9 @@ final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObserv
             guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return key.defaultValue() }
 
             let fetchedValue: Value? = try? AnyStoredData.fetch(
-                key.name,
                 ownerID: key.ownerID,
-                domain: key.domain
+                field: key.field ?? key.name,
+                key: key.name
             )
 
             return fetchedValue ?? key.defaultValue()
@@ -39,9 +39,9 @@ final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObserv
 
             try? AnyStoredData.store(
                 value: newValue,
-                key: key.name,
                 ownerID: key.ownerID,
-                domain: key.domain ?? ""
+                field: key.field ?? key.name,
+                key: key.name
             )
 
             shouldListenToPublish = true
@@ -61,14 +61,14 @@ final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObserv
 
         guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return nil }
 
-        let domain = key.domain ?? "none"
+        let field = key.field ?? key.name
 
         let ownerFilter: Where<AnyStoredData> = Where(\.$ownerID == key.ownerID)
         let keyFilter: Where<AnyStoredData> = Where(\.$key == key.name)
-        let domainFilter: Where<AnyStoredData> = Where(\.$domain == domain)
+        let fieldFilter: Where<AnyStoredData> = Where(\.$field == field)
 
         let clause = From<AnyStoredData>()
-            .where(ownerFilter && keyFilter && domainFilter)
+            .where(ownerFilter && keyFilter && fieldFilter)
 
         if let values = try? SwiftfinStore.dataStack.fetchAll(clause), let first = values.first {
             let publisher = first.asPublisher(in: SwiftfinStore.dataStack)
@@ -94,9 +94,9 @@ final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObserv
             do {
                 try AnyStoredData.store(
                     value: key.defaultValue(),
-                    key: key.name,
                     ownerID: key.ownerID,
-                    domain: key.domain
+                    field: key.field ?? key.name,
+                    key: key.name
                 )
             } catch {
                 Logger.swiftfin().error("Unable to store and create publisher for: \(key)")

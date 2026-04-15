@@ -14,26 +14,12 @@ import KeychainSwift
 import Pulse
 import UIKit
 
-// Note: it is kind of backwards to have a "state" object with a mix of
-//       non-mutable and "mutable" values, but it just works.
-
 extension SwiftfinStore.State {
 
     struct User: Hashable, Identifiable, Codable {
-
         let id: String
         let serverID: String
         let username: String
-
-        init(
-            id: String,
-            serverID: String,
-            username: String
-        ) {
-            self.id = id
-            self.serverID = serverID
-            self.username = username
-        }
     }
 }
 
@@ -117,7 +103,7 @@ extension UserState {
                 currentURL: currentServer.currentURL,
                 name: currentServer.name,
                 id: currentServer.id,
-                usersIDs: currentServer.userIDs.filter { $0 != id }
+                userIDs: currentServer.userIDs.filter { $0 != id }
             )
 
             StoredValues[.Server.servers] = servers
@@ -135,15 +121,7 @@ extension UserState {
     ///       `AnyStoredData.fetchClause` instead within that transaction
     ///       and delete `Defaults` manually
     func deleteSettings() throws {
-        try SwiftfinStore.dataStack.perform { transaction in
-            let userData = try transaction.fetchAll(
-                From<AnyStoredData>()
-                    .where(combineByAnd: Where(\.$ownerID == id), Where("%K BEGINSWITH %@", "domain", "setting"))
-            )
-
-            transaction.delete(userData)
-        }
-
+        try AnyStoredData.deleteAll(ownerID: id)
         UserDefaults.userSuite(id: id).removeAll()
     }
 

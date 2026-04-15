@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 import JellyfinAPI
 
@@ -31,7 +30,7 @@ final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiab
         var parameters = Paths.GetEpisodesParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
-        parameters.isMissing = Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false
+        parameters.isMissing = StoredValues[.User.shouldShowMissingEpisodes] ? nil : false
         parameters.seasonID = parent!.id
         parameters.userID = userSession.user.id
 

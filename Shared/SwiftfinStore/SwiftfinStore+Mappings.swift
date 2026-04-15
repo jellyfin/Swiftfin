@@ -50,4 +50,27 @@ extension SwiftfinStore.Mappings {
             ]
         )
     }()
+
+    // MARK: AnyData V2 to V3
+
+    static let anyDataV2_V3 = {
+        CustomSchemaMappingProvider(
+            from: "V2",
+            to: "V3",
+            entityMappings: [
+                .transformEntity(
+                    sourceEntity: "AnyData",
+                    destinationEntity: "AnyData",
+                    transformer: { sourceObject, createDestinationObject in
+                        let destinationObject = createDestinationObject()
+
+                        destinationObject["data"] = sourceObject["data"]
+                        destinationObject["ownerID"] = sourceObject["ownerID"]
+                        destinationObject["field"] = sourceObject["domain"]
+                        destinationObject["key"] = sourceObject["key"]
+                    }
+                ),
+            ]
+        )
+    }()
 }

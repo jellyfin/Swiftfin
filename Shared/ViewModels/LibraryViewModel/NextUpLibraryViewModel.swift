@@ -36,7 +36,7 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         if maxNextUp > 0 {
             parameters.nextUpDateCutoff = Date.now.addingTimeInterval(-maxNextUp)
         }
-        parameters.enableRewatching = Defaults[.Customization.Home.resumeNextUp]
+        parameters.enableRewatching = StoredValues[.User.resumeNextUp]
         parameters.startIndex = page
         parameters.userID = userSession.user.id
 

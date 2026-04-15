@@ -23,7 +23,7 @@ import SwiftUI
 struct StoredValue<Value: Storable>: DynamicProperty {
 
     @ObservedObject
-    private var observable: _GenericValueObservation<Value>
+    private var observable: _GenericStoredValueObservation<Value>
 
     let key: StoredValues.Key<Value>
 
@@ -65,16 +65,16 @@ enum StoredValues {
     ///              will always be retrieved and nothing will be set.
     final class Key<Value: Storable>: _AnyKey {
 
-        enum _StorageDestination {
+        enum StorageDestination {
             case defaults
             case sql
         }
 
         let defaultValue: () -> Value
-        let domain: String?
+        let field: String?
         let name: String
         let ownerID: String
-        let _storageDestination: _StorageDestination
+        let storage: StorageDestination
 
         var _defaultKey: Defaults.Key<Value> {
             Defaults.Key(
@@ -84,44 +84,34 @@ enum StoredValues {
             )
         }
 
-        #if os(tvOS)
         init(
             _ name: String,
             ownerID: String,
-            domain: String?,
-            _storageDestination: _StorageDestination = .defaults,
+            field: String?,
+            storage: StorageDestination = .sql,
             default defaultValue: @autoclosure @escaping () -> Value
         ) {
             self.defaultValue = defaultValue
-            self.domain = domain
+            self.field = field
             self.name = name
             self.ownerID = ownerID
-            self._storageDestination = _storageDestination
+
+            // tvOS only supports user defaults storage
+            #if os(tvOS)
+            self.storage = .defaults
+            #else
+            self.storage = storage
+            #endif
         }
-        #else
-        init(
-            _ name: String,
-            ownerID: String,
-            domain: String?,
-            _storageDestination: _StorageDestination = .sql,
-            default defaultValue: @autoclosure @escaping () -> Value
-        ) {
-            self.defaultValue = defaultValue
-            self.domain = domain
-            self.name = name
-            self.ownerID = ownerID
-            self._storageDestination = _storageDestination
-        }
-        #endif
 
         /// Always returns the given value and does not
         /// set anything to storage.
         init(always: @autoclosure @escaping () -> Value) {
             defaultValue = always
-            domain = nil
+            field = nil
             name = "always"
             ownerID = ""
-            _storageDestination = .defaults
+            storage = .defaults
         }
     }
 
@@ -129,14 +119,14 @@ enum StoredValues {
         get {
             guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return key.defaultValue() }
 
-            switch key._storageDestination {
+            switch key.storage {
             case .defaults:
                 return Defaults[key._defaultKey]
             case .sql:
                 let fetchedValue: Value? = try? AnyStoredData.fetch(
-                    key.name,
                     ownerID: key.ownerID,
-                    domain: key.domain
+                    field: key.field ?? key.name,
+                    key: key.name
                 )
 
                 return fetchedValue ?? key.defaultValue()
@@ -145,15 +135,15 @@ enum StoredValues {
         set {
             guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return }
 
-            switch key._storageDestination {
+            switch key.storage {
             case .defaults:
                 Defaults[key._defaultKey] = newValue
             case .sql:
                 try? AnyStoredData.store(
                     value: newValue,
-                    key: key.name,
                     ownerID: key.ownerID,
-                    domain: key.domain ?? ""
+                    field: key.field ?? key.name,
+                    key: key.name
                 )
             }
         }

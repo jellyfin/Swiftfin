@@ -22,20 +22,6 @@ extension SwiftfinStore.State {
         let id: String
         let userIDs: [String]
 
-        init(
-            urls: Set<URL>,
-            currentURL: URL,
-            name: String,
-            id: String,
-            usersIDs: [String]
-        ) {
-            self.urls = urls
-            self.currentURL = currentURL
-            self.name = name
-            self.id = id
-            self.userIDs = usersIDs
-        }
-
         /// - Note: Since this is created from a server, it does not
         ///         have a user access token.
         var client: JellyfinClient {
@@ -123,7 +109,7 @@ extension ServerState {
             currentURL: currentServer.currentURL,
             name: updatedName,
             id: updatedID,
-            usersIDs: currentServer.userIDs
+            userIDs: currentServer.userIDs
         )
 
         servers[index] = updatedServer
@@ -131,9 +117,9 @@ extension ServerState {
 
         if updatedID != id {
             try AnyStoredData.delete(
-                key: "publicInfo",
                 ownerID: id,
-                domain: "publicInfo"
+                field: "publicInfo",
+                key: "publicInfo"
             )
         }
 

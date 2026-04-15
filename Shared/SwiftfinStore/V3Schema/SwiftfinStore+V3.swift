@@ -18,11 +18,11 @@ extension SwiftfinStore.V3 {
         ],
         versionLock: [
             "AnyData": [
-                0x749D_39C2_219D_4918,
-                0x9281_539F_1DFB_63E1,
-                0x293F_D0B7_B64C_E984,
-                0x8F2F_91F2_33EA_8EB5
-            ],
+                0xEB43_50DC_85D9_95A4,
+                0x1466_51A3_9170_C397,
+                0x86C4_769B_AAE9_9CB8,
+                0x513A_EBB8_CCC8_D48C
+            ]
         ]
     )
 }

@@ -18,21 +18,17 @@ import JellyfinAPI
 extension StoredValues.Keys {
 
     static func ServerKey<Value: Storable>(
-        _ name: String?,
+        _ name: String? = nil,
         ownerID: String,
-        domain: String,
-        _storageDestination: StoredValues.Key<Value>._StorageDestination = .defaults,
+        field: String,
+        storage: StoredValues.Key<Value>.StorageDestination = .defaults,
         default defaultValue: Value
     ) -> Key<Value> {
-        guard let name else {
-            return Key(always: defaultValue)
-        }
-
-        return Key(
-            name,
+        Key(
+            name ?? field,
             ownerID: ownerID,
-            domain: domain,
-            _storageDestination: _storageDestination,
+            field: field,
+            storage: storage,
             default: defaultValue
         )
     }
@@ -55,19 +51,17 @@ extension StoredValues.Keys {
 
         static var servers: Key<[ServerState]> {
             ServerKey(
-                "servers",
-                ownerID: "general",
-                domain: "servers",
-                _storageDestination: .sql,
+                ownerID: "swiftfinApp",
+                field: "servers",
+                storage: .sql,
                 default: []
             )
         }
 
         static func publicInfo(id: String) -> Key<PublicSystemInfo> {
             ServerKey(
-                "publicInfo",
                 ownerID: id,
-                domain: "publicInfo",
+                field: "publicInfo",
                 default: .init()
             )
         }

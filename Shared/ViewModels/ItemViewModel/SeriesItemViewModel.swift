@@ -7,7 +7,6 @@
 //
 
 import Combine
-import Defaults
 import Factory
 import Foundation
 import IdentifiedCollections
@@ -135,7 +134,7 @@ final class SeriesItemViewModel: ItemViewModel {
     private func getSeasons() async throws -> [BaseItemDto] {
 
         var parameters = Paths.GetSeasonsParameters()
-        parameters.isMissing = Defaults[.Customization.shouldShowMissingSeasons] ? nil : false
+        parameters.isMissing = StoredValues[.User.shouldShowMissingSeasons] ? nil : false
         parameters.userID = userSession.user.id
 
         let request = Paths.getSeasons(

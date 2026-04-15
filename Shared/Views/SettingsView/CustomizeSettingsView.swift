@@ -22,16 +22,18 @@ struct CustomizeSettingsView: View {
 
     // MARK: - Home Defaults
 
-    @Default(.Customization.Home.showRecentlyAdded)
+//    @Store(.Customization.Home.showRecentlyAdded)
+//    private var showRecentlyAdded
+    @StoredValue(.User.showRecentlyAdded)
     private var showRecentlyAdded
-    @Default(.Customization.Home.resumeNextUp)
+    @StoredValue(.User.resumeNextUp)
     private var resumeNextUp
     @Default(.Customization.Home.maxNextUp)
     private var maxNextUp
 
     // MARK: - Media Defaults
 
-    @Default(.Customization.Library.showFavorites)
+    @StoredValue(.User.showFavorites)
     private var showFavorites
     @Default(.Customization.Library.randomImage)
     private var libraryRandomImage
@@ -51,7 +53,7 @@ struct CustomizeSettingsView: View {
 
     // MARK: - Poster Defaults
 
-    @Default(.Customization.showPosterLabels)
+    @StoredValue(.User.showPosterLabels)
     private var showPosterLabels
     @Default(.Customization.nextUpPosterType)
     private var nextUpPosterType
@@ -81,9 +83,9 @@ struct CustomizeSettingsView: View {
     private var itemViewAttributes
     @StoredValue(.User.enabledTrailers)
     private var enabledTrailers
-    @Default(.Customization.shouldShowMissingSeasons)
+    @StoredValue(.User.shouldShowMissingSeasons)
     private var shouldShowMissingSeasons
-    @Default(.Customization.shouldShowMissingEpisodes)
+    @StoredValue(.User.shouldShowMissingEpisodes)
     private var shouldShowMissingEpisodes
 
     // MARK: - Item View Defaults
@@ -92,7 +94,7 @@ struct CustomizeSettingsView: View {
     private var itemViewType
     @Default(.Customization.CinematicItemViewType.usePrimaryImage)
     private var cinematicItemViewTypeUsePrimaryImage
-    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    @StoredValue(.User.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
 
     // MARK: - Item Management Defaults

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -33,7 +32,7 @@ extension BaseItemDto: Poster {
     var showTitle: Bool {
         switch type {
         case .episode, .series, .movie, .boxSet, .collectionFolder:
-            Defaults[.Customization.showPosterLabels]
+            StoredValues[.User.showPosterLabels]
         default:
             true
         }
@@ -89,7 +88,7 @@ extension BaseItemDto: Poster {
     func landscapeImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
         switch type {
         case .episode:
-            if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
+            if StoredValues[.User.useSeriesLandscapeBackdrop] {
                 [
                     seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
                     seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),

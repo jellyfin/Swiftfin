@@ -20,7 +20,7 @@ protocol _StoredValueObservable<Value>: ObservableObject {
 }
 
 @MainActor
-final class _GenericValueObservation<Value: Storable>: ObservableObject {
+final class _GenericStoredValueObservation<Value: Storable>: ObservableObject {
 
     private let key: StoredValues.Key<Value>
     private var observable: (any _StoredValueObservable<Value>)!
@@ -38,7 +38,7 @@ final class _GenericValueObservation<Value: Storable>: ObservableObject {
         self.key = key
         self.observable = nil
 
-        switch key._storageDestination {
+        switch key.storage {
         case .defaults:
             observable = DefaultsObservable<Value>(key) { [weak self] in
                 self?.objectWillChange.send()

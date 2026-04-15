@@ -63,7 +63,7 @@ extension SwiftfinStore {
     private static let storage: SQLiteStore = {
         SQLiteStore(
             fileName: "Swiftfin.sqlite",
-            migrationMappingProviders: [Mappings.userV1_V2]
+            migrationMappingProviders: [Mappings.userV1_V2, Mappings.anyDataV2_V3]
         )
     }()
 
