@@ -153,7 +153,6 @@ extension Defaults.Keys {
         }
 
         enum Home {
-//            static let showRecentlyAdded: Key<Bool> = UserKey("showRecentlyAdded", default: true)
             static let maxNextUp: Key<TimeInterval> = UserKey(
                 "homeMaxNextUp",
                 default: 366 * 86400
