@@ -17,14 +17,6 @@ typealias AnyStoredData = SwiftfinStore.V3.AnyData
 typealias ServerState = SwiftfinStore.State.Server
 typealias UserState = SwiftfinStore.State.User
 
-// MARK: Namespaces
-
-extension Container {
-    var dataStore: Factory<DataStack> {
-        self { SwiftfinStore.dataStack }.singleton
-    }
-}
-
 enum SwiftfinStore {
 
     enum V1 {}

@@ -75,55 +75,22 @@ extension ServerState {
 
     @MainActor
     func updateServerInfo() async throws {
-        var servers = StoredValues[.Server.servers]
-        guard let index = servers.firstIndex(where: { $0.id == id }) else { return }
+        let servers = StoredValues[.Server.servers]
+        guard let currentServer = servers.first(where: { $0.id == id }) else { return }
 
         let publicInfo = try await getPublicSystemInfo()
-        let currentServer = servers[index]
         let updatedName = publicInfo.serverName ?? currentServer.name
-        let updatedID = publicInfo.id ?? currentServer.id
-
-        if updatedID != id {
-            var users = StoredValues[.User.users]
-            users = users.map {
-                guard $0.serverID == id else { return $0 }
-                return .init(
-                    id: $0.id,
-                    serverID: updatedID,
-                    username: $0.username
-                )
-            }
-            StoredValues[.User.users] = users
-
-            try SwiftfinStore.dataStack.perform { transaction in
-                let serverData = try transaction.fetchAll(AnyStoredData.fetchClause(ownerID: id))
-
-                for data in serverData {
-                    data.ownerID = updatedID
-                }
-            }
-        }
 
         let updatedServer = ServerState(
             urls: currentServer.urls,
             currentURL: currentServer.currentURL,
             name: updatedName,
-            id: updatedID,
+            id: currentServer.id,
             userIDs: currentServer.userIDs
         )
 
-        servers[index] = updatedServer
-        StoredValues[.Server.servers] = servers
-
-        if updatedID != id {
-            try AnyStoredData.delete(
-                ownerID: id,
-                field: "publicInfo",
-                key: "publicInfo"
-            )
-        }
-
-        StoredValues[.Server.publicInfo(id: updatedID)] = publicInfo
+        StoredValues[.Server.servers] = servers.map { $0.id == id ? updatedServer : $0 }
+        StoredValues[.Server.publicInfo(id: currentServer.id)] = publicInfo
     }
 
     var isVersionCompatible: Bool {

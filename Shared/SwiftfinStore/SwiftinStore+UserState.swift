@@ -92,7 +92,7 @@ extension UserState {
         users.removeAll { $0.id == id }
         StoredValues[.User.users] = users
 
-        try AnyStoredData.deleteAll(ownerID: id)
+        try deleteSettings()
 
         var servers = StoredValues[.Server.servers]
         if let index = servers.firstIndex(where: { $0.id == serverID }) {
@@ -109,17 +109,11 @@ extension UserState {
             StoredValues[.Server.servers] = servers
         }
 
-        UserDefaults.userSuite(id: id).removeAll()
-
         let keychain = Container.shared.keychainService()
         keychain.delete("\(id)-pin")
     }
 
     /// Deletes user settings from `UserDefaults` and `StoredValues`
-    ///
-    /// Note: if performing deletion with another transaction, use
-    ///       `AnyStoredData.fetchClause` instead within that transaction
-    ///       and delete `Defaults` manually
     func deleteSettings() throws {
         try AnyStoredData.deleteAll(ownerID: id)
         UserDefaults.userSuite(id: id).removeAll()
