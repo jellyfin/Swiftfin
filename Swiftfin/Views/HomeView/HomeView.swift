@@ -18,7 +18,7 @@ struct HomeView: View {
 
     @Default(.Customization.nextUpPosterType)
     private var nextUpPosterType
-    @StoredValue(.User.showRecentlyAdded)
+    @Default(.Customization.Home.showRecentlyAdded)
     private var showRecentlyAdded
     @Default(.Customization.recentlyAddedPosterType)
     private var recentlyAddedPosterType

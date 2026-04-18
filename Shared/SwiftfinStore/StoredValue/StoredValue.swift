@@ -77,8 +77,15 @@ enum StoredValues {
         let storage: StorageDestination
 
         var _defaultKey: Defaults.Key<Value> {
-            Defaults.Key(
-                name,
+
+            let resolvedName: String = if field == name || field == nil {
+                name
+            } else {
+                "\(field!)-\(name)"
+            }
+
+            return Defaults.Key(
+                resolvedName,
                 suite: UserDefaults(suiteName: ownerID)!,
                 default: defaultValue
             )

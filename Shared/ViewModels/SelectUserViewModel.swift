@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 import KeychainSwift
@@ -15,6 +16,9 @@ import OrderedCollections
 @MainActor
 @Stateful
 final class SelectUserViewModel: ViewModel {
+
+    @Injected(\.keychainService)
+    var keychain
 
     @CasePathable
     enum Action {

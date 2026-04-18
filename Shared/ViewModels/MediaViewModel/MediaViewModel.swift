@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -45,7 +46,7 @@ final class MediaViewModel: ViewModel {
 
                 return .collectionFolder(userView)
             }
-            .prepending(.favorites, if: StoredValues[.User.showFavorites])
+            .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
 
         mediaItems.elements = media
     }

@@ -20,8 +20,6 @@ struct SwiftfinApp: App {
 
     init() {
 
-        print(URL.documents.absoluteString)
-
         SwizzleDefaults.set(Defaults[.isLiquidGlassEnabled], for: "com.apple.SwiftUI.IgnoreSolariumOptOut")
 
         // Logging

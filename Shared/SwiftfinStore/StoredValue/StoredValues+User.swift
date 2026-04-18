@@ -78,7 +78,7 @@ extension StoredValues.Keys {
         static var users: Key<[UserState]> {
             Key(
                 "users",
-                ownerID: "swiftfinApp",
+                ownerID: "SwiftfinApp",
                 field: "users",
                 storage: .sql,
                 default: []
@@ -215,68 +215,6 @@ extension StoredValues.Keys {
             CurrentUserKey(
                 field: "forceHDRTranscode",
                 default: false
-            )
-        }
-
-        static var showRecentlyAdded: Key<Bool> {
-            CurrentUserKey(
-                field: "showRecentlyAdded",
-                default: true,
-                storage: .defaults
-            )
-        }
-
-        static var resumeNextUp: Key<Bool> {
-            CurrentUserKey(
-                "homeResumeNextUp",
-                field: "setting-homeResumeNextUp",
-                default: false,
-                storage: .defaults
-            )
-        }
-
-        static var showFavorites: Key<Bool> {
-            CurrentUserKey(
-                "libraryShowFavorites",
-                field: "setting-libraryShowFavorites",
-                default: true,
-                storage: .defaults
-            )
-        }
-
-        static var showPosterLabels: Key<Bool> {
-            CurrentUserKey(
-                "showPosterLabels",
-                field: "setting-showPosterLabels",
-                default: true,
-                storage: .defaults
-            )
-        }
-
-        static var shouldShowMissingSeasons: Key<Bool> {
-            CurrentUserKey(
-                "shouldShowMissingSeasons",
-                field: "setting-shouldShowMissingSeasons",
-                default: true,
-                storage: .defaults
-            )
-        }
-
-        static var shouldShowMissingEpisodes: Key<Bool> {
-            CurrentUserKey(
-                "shouldShowMissingEpisodes",
-                field: "setting-shouldShowMissingEpisodes",
-                default: true,
-                storage: .defaults
-            )
-        }
-
-        static var useSeriesLandscapeBackdrop: Key<Bool> {
-            CurrentUserKey(
-                "useSeriesBackdrop",
-                field: "setting-useSeriesBackdrop",
-                default: true,
-                storage: .defaults
             )
         }
     }

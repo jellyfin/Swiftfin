@@ -111,9 +111,12 @@ extension Defaults.Keys {
 
         static let itemViewType: Key<ItemViewType> = UserKey("itemViewType", default: .compactLogo)
 
+        static let showPosterLabels: Key<Bool> = UserKey("showPosterLabels", default: true)
         static let nextUpPosterType: Key<PosterDisplayType> = UserKey("nextUpPosterType", default: .portrait)
         static let recentlyAddedPosterType: Key<PosterDisplayType> = UserKey("recentlyAddedPosterType", default: .portrait)
         static let latestInLibraryPosterType: Key<PosterDisplayType> = UserKey("latestInLibraryPosterType", default: .portrait)
+        static let shouldShowMissingSeasons: Key<Bool> = UserKey("shouldShowMissingSeasons", default: true)
+        static let shouldShowMissingEpisodes: Key<Bool> = UserKey("shouldShowMissingEpisodes", default: true)
         static let similarPosterType: Key<PosterDisplayType> = UserKey("similarPosterType", default: .portrait)
 
         // TODO: have search poster type by types of items if applicable
@@ -122,6 +125,11 @@ extension Defaults.Keys {
         enum CinematicItemViewType {
 
             static let usePrimaryImage: Key<Bool> = UserKey("cinematicItemViewTypeUsePrimaryImage", default: false)
+        }
+
+        enum Episodes {
+
+            static let useSeriesLandscapeBackdrop: Key<Bool> = UserKey("useSeriesBackdrop", default: true)
         }
 
         enum Indicators {
@@ -147,12 +155,15 @@ extension Defaults.Keys {
             static let posterType: Key<PosterDisplayType> = UserKey("libraryPosterType", default: .portrait)
             static let listColumnCount: Key<Int> = UserKey("listColumnCount", default: 1)
             static let randomImage: Key<Bool> = UserKey("libraryRandomImage", default: true)
+            static let showFavorites: Key<Bool> = UserKey("libraryShowFavorites", default: true)
 
             static let rememberLayout: Key<Bool> = UserKey("libraryRememberLayout", default: false)
             static let rememberSort: Key<Bool> = UserKey("libraryRememberSort", default: false)
         }
 
         enum Home {
+            static let showRecentlyAdded: Key<Bool> = UserKey("showRecentlyAdded", default: true)
+            static let resumeNextUp: Key<Bool> = UserKey("homeResumeNextUp", default: false)
             static let maxNextUp: Key<TimeInterval> = UserKey(
                 "homeMaxNextUp",
                 default: 366 * 86400
