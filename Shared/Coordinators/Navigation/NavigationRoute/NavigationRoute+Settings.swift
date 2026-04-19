@@ -27,38 +27,48 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
-    static let adminDashboard = NavigationRoute(
-        id: "adminDashboard"
-    ) {
-        AdminDashboardView()
+    static var adminDashboard: NavigationRoute {
+        NavigationRoute(
+            id: "adminDashboard"
+        ) {
+            AdminDashboardView()
+        }
     }
     #endif
 
-    static let createDeviceProfile = NavigationRoute(
-        id: "createDeviceProfile",
-        style: .sheet
-    ) {
-        CustomDeviceProfilesView.EditDeviceProfileView(profile: nil)
-            .navigationTitle(L10n.customProfile.localizedCapitalized)
+    static var createDeviceProfile: NavigationRoute {
+        NavigationRoute(
+            id: "createDeviceProfile",
+            style: .sheet
+        ) {
+            CustomDeviceProfilesView.EditDeviceProfileView(profile: nil)
+                .navigationTitle(L10n.customProfile.localizedCapitalized)
+        }
     }
 
-    static let customDeviceProfilesSettings = NavigationRoute(
-        id: "customDeviceProfilesSettings"
-    ) {
-        CustomDeviceProfilesView()
+    static var customDeviceProfilesSettings: NavigationRoute {
+        NavigationRoute(
+            id: "customDeviceProfilesSettings"
+        ) {
+            CustomDeviceProfilesView()
+        }
     }
 
-    static let customizeSettingsView = NavigationRoute(
-        id: "customizeSettingsView"
-    ) {
-        CustomizeSettingsView()
+    static var customizeSettingsView: NavigationRoute {
+        NavigationRoute(
+            id: "customizeSettingsView"
+        ) {
+            CustomizeSettingsView()
+        }
     }
 
     #if DEBUG
-    static let debugSettings = NavigationRoute(
-        id: "debugSettings"
-    ) {
-        DebugSettingsView()
+    static var debugSettings: NavigationRoute {
+        NavigationRoute(
+            id: "debugSettings"
+        ) {
+            DebugSettingsView()
+        }
     }
     #endif
 
@@ -100,10 +110,12 @@ extension NavigationRoute {
         }
     }
 
-    static let experimentalSettings = NavigationRoute(
-        id: "experimentalSettings"
-    ) {
-        ExperimentalSettingsView()
+    static var experimentalSettings: NavigationRoute {
+        NavigationRoute(
+            id: "experimentalSettings"
+        ) {
+            ExperimentalSettingsView()
+        }
     }
 
     static func fontPicker(selection: Binding<String>) -> NavigationRoute {
@@ -113,17 +125,21 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
-    static let gestureSettings = NavigationRoute(
-        id: "gestureSettings"
-    ) {
-        GestureSettingsView()
+    static var gestureSettings: NavigationRoute {
+        NavigationRoute(
+            id: "gestureSettings"
+        ) {
+            GestureSettingsView()
+        }
     }
     #endif
 
-    static let indicatorSettings = NavigationRoute(
-        id: "indicatorSettings"
-    ) {
-        IndicatorSettingsView()
+    static var indicatorSettings: NavigationRoute {
+        NavigationRoute(
+            id: "indicatorSettings"
+        ) {
+            IndicatorSettingsView()
+        }
     }
 
     static func itemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> NavigationRoute {
@@ -140,10 +156,12 @@ extension NavigationRoute {
         }
     }
 
-    static let localUserSecurity = NavigationRoute(
-        id: "localUserSecurity"
-    ) {
-        LocalUserSecurityView()
+    static var localUserSecurity: NavigationRoute {
+        NavigationRoute(
+            id: "localUserSecurity"
+        ) {
+            LocalUserSecurityView()
+        }
     }
 
     static func localUserSettings(viewModel: SettingsViewModel) -> NavigationRoute {
@@ -152,24 +170,30 @@ extension NavigationRoute {
         }
     }
 
-    static let log = NavigationRoute(
-        id: "log"
-    ) {
-        ConsoleView()
+    static var log: NavigationRoute {
+        NavigationRoute(
+            id: "log"
+        ) {
+            ConsoleView()
+        }
     }
 
     #if os(iOS)
-    static let nativePlayerSettings = NavigationRoute(
-        id: "nativePlayerSettings"
-    ) {
-        NativeVideoPlayerSettingsView()
+    static var nativePlayerSettings: NavigationRoute {
+        NavigationRoute(
+            id: "nativePlayerSettings"
+        ) {
+            NativeVideoPlayerSettingsView()
+        }
     }
     #endif
 
-    static let playbackQualitySettings = NavigationRoute(
-        id: "playbackQualitySettings"
-    ) {
-        PlaybackQualitySettingsView()
+    static var playbackQualitySettings: NavigationRoute {
+        NavigationRoute(
+            id: "playbackQualitySettings"
+        ) {
+            PlaybackQualitySettingsView()
+        }
     }
 
     #if os(iOS)
@@ -189,16 +213,20 @@ extension NavigationRoute {
         }
     }
 
-    static let settings = NavigationRoute(
-        id: "settings",
-        style: .sheet
-    ) {
-        SettingsView()
+    static var settings: NavigationRoute {
+        NavigationRoute(
+            id: "settings",
+            style: .sheet
+        ) {
+            SettingsView()
+        }
     }
 
-    static let videoPlayerSettings = NavigationRoute(
-        id: "videoPlayerSettings"
-    ) {
-        VideoPlayerSettingsView()
+    static var videoPlayerSettings: NavigationRoute {
+        NavigationRoute(
+            id: "videoPlayerSettings"
+        ) {
+            VideoPlayerSettingsView()
+        }
     }
 }

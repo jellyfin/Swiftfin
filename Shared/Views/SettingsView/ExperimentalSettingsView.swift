@@ -12,21 +12,11 @@ import SwiftUI
 /// `Note`: Used for experimental settings that may be removed or implemented officially. Keep for future settings.
 struct ExperimentalSettingsView: View {
 
-    static let isEnabled = true
-
-    @Default(.Experimental.isLiquidGlassEnabled)
-    private var isLiquidGlassEnabled
+    static let isEnabled = false
 
     @ViewBuilder
     var body: some View {
-        Form(systemImage: "flask") {
-
-            Section {
-                Toggle("Liquid Glass", isOn: $isLiquidGlassEnabled)
-            } footer: {
-                Text("Requires app restart to take effect.")
-            }
-        }
-        .navigationTitle(L10n.experimental)
+        Form(systemImage: "flask") {}
+            .navigationTitle(L10n.experimental)
     }
 }

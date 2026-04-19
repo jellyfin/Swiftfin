@@ -11,11 +11,13 @@ import SwiftUI
 
 extension NavigationRoute {
 
-    static let connectToServer = NavigationRoute(
-        id: "connectToServer",
-        style: .sheet
-    ) {
-        ConnectToServerView()
+    static var connectToServer: NavigationRoute {
+        NavigationRoute(
+            id: "connectToServer",
+            style: .sheet
+        ) {
+            ConnectToServerView()
+        }
     }
 
     static func quickConnect(quickConnect: QuickConnect) -> NavigationRoute {

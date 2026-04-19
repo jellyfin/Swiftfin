@@ -6,14 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import CoreStore
-import Defaults
-import Factory
 import Foundation
-import SwiftUI
 
-extension SwiftfinStore.V2 {
+extension SwiftfinStore.V3 {
 
     /// Used to store arbitrary data with a `name` and `ownerID`.
     ///
@@ -21,14 +17,14 @@ extension SwiftfinStore.V2 {
     /// storing larger objects or arbitrary collection elements.
     ///
     /// Relationships generally take the form below, where `ownerID` is like
-    /// an object, `domain`s are property names, and `key`s are values within
-    /// the `domain`. An instance where `domain == key` is like a single-value
-    /// property while a `domain` with many `keys` is like a dictionary.
+    /// an object, `field`s are property names, and `key`s are values within
+    /// the `field`. An instance where `field == key` is like a single-value
+    /// property while a `field` with many `keys` is like a dictionary.
     ///
     /// ownerID
-    /// - domain
+    /// - field
     ///   - key(s)
-    /// - domain
+    /// - field
     ///   - key(s)
     ///
     /// This can be useful to not require migrations on model objects for new
@@ -38,13 +34,13 @@ extension SwiftfinStore.V2 {
         @Field.Stored("data")
         var data: Data?
 
-        @Field.Stored("domain")
-        var domain: String = ""
+        @Field.Stored("ownerID")
+        var ownerID: String = ""
+
+        @Field.Stored("field")
+        var field: String = ""
 
         @Field.Stored("key")
         var key: String = ""
-
-        @Field.Stored("ownerID")
-        var ownerID: String = ""
     }
 }
