@@ -9,16 +9,9 @@
 import Combine
 import Factory
 import Foundation
-import KeychainSwift
 import Logging
 
 class ViewModel: ObservableObject {
-
-    @Injected(\.dataStore)
-    var dataStack
-
-    @Injected(\.keychainService)
-    var keychain
 
     let logger = Logger.swiftfin()
 
