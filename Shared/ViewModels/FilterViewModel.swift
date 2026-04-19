@@ -69,6 +69,11 @@ final class FilterViewModel: ViewModel, Stateful {
 
         if let parent {
             self.allFilters.itemTypes = parent.supportedItemTypes
+            self.allFilters.sortBy = parent.supportedItemTypes
+                .map(\.supportedItemSortBy)
+                .reduce(ItemSortBy.supportedCases) {
+                    $0.intersection($1)
+                }
         }
     }
 

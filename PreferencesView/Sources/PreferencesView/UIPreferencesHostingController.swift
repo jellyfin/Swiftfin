@@ -8,9 +8,15 @@
 
 import SwiftUI
 
+// TODO: Button recognizers for tvOS?
+//       - .menu, .select
+
 public class UIPreferencesHostingController: UIHostingController<AnyView> {
 
     public init(@ViewBuilder content: @escaping () -> some View) {
+
+        _ = UIViewController.swizzle
+
         let box = Box()
         let rootView = AnyView(
             content()
