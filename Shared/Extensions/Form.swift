@@ -126,15 +126,18 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
             }
             .edgePadding()
         }
-        .clipShape(RoundedRectangle(cornerRadius: 20))
         .background {
-            RoundedRectangle(cornerRadius: 20)
+            ContainerRelativeShape()
                 .fill(Material.thick)
         }
         .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .strokeBorder(.white.opacity(0.1), lineWidth: 1)
+            ContainerRelativeShape()
+                .stroke(
+                    .white.opacity(0.1),
+                    lineWidth: 1
+                )
         )
+        .containerShape(RoundedRectangle(cornerRadius: 20))
         .padding()
     }
 }

@@ -10,11 +10,6 @@
 
 import SwiftUI
 
-private enum MarqueeState {
-    case idle
-    case animating
-}
-
 struct Marquee<Content: View>: View {
 
     enum ResetType {
@@ -30,7 +25,7 @@ struct Marquee<Content: View>: View {
     @State
     private var isAppear = false
     @State
-    private var state: MarqueeState = .idle
+    private var isAnimating = false
 
     private let axis: Axis
     private let resetType: ResetType
@@ -162,8 +157,6 @@ struct Marquee<Content: View>: View {
                             }
                             .fixedSize(horizontal: false, vertical: true)
                             .marqueeOffset(x: 0, y: offsetY(proxy: proxy))
-                    } else {
-                        EmptyView()
                     }
                 }
                 .onAppear {
@@ -173,7 +166,8 @@ struct Marquee<Content: View>: View {
 
                     initializeAnimation(proxy: proxy)
                 }
-                .onChange(of: proxy.size.height) { _ in
+                .backport
+                .onChange(of: proxy.size.height) {
                     guard !isAppear, proxy.size.height != .zero else {
                         return
                     }
@@ -183,8 +177,9 @@ struct Marquee<Content: View>: View {
                 .onDisappear {
                     self.isAppear = false
                 }
-                .onChange(of: isFocused) { newFocused in
-                    resetAnimation(proxy: proxy, isFocused: newFocused)
+                .backport
+                .onChange(of: isFocused) { _, newValue in
+                    resetAnimation(proxy: proxy, isFocused: newValue)
                 }
             }
             .padding(.top, fade)
@@ -215,30 +210,28 @@ struct Marquee<Content: View>: View {
     }
 
     private func offsetX(proxy: GeometryProxy) -> CGFloat {
-        switch state {
-        case .idle:
-            0
-        case .animating:
+        if isAnimating {
             switch resetType {
             case .loop:
                 -(contentSize.width + gap(proxy))
             case .bounce:
                 -(contentSize.width - proxy.size.width)
             }
+        } else {
+            0
         }
     }
 
     private func offsetY(proxy: GeometryProxy) -> CGFloat {
-        switch state {
-        case .idle:
-            0
-        case .animating:
+        if isAnimating {
             switch resetType {
             case .loop:
                 -(contentSize.height + gap(proxy))
             case .bounce:
                 -(contentSize.height - proxy.size.height)
             }
+        } else {
+            0
         }
     }
 
@@ -289,14 +282,15 @@ struct Marquee<Content: View>: View {
         }
 
         withAnimation(.linear(duration: 0.005)) {
-            self.state = .idle
+            self.isAnimating = false
+
             withAnimation(
                 Animation
                     .linear(duration: distance / speed)
                     .delay(delay)
                     .repeatForever(autoreverses: resetType == .bounce)
             ) {
-                self.state = .animating
+                self.isAnimating = true
             }
         }
     }
@@ -312,7 +306,7 @@ struct Marquee<Content: View>: View {
 
     private func stopAnimation() {
         withAnimation(.linear(duration: 0.005)) {
-            self.state = .idle
+            self.isAnimating = false
         }
     }
 }
