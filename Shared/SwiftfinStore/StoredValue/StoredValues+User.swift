@@ -78,7 +78,7 @@ extension StoredValues.Keys {
         static var users: Key<[UserState]> {
             Key(
                 "users",
-                ownerID: "SwiftfinApp",
+                ownerID: "swiftfinApp",
                 field: "users",
                 storage: .sql,
                 default: []
