@@ -138,6 +138,8 @@ internal enum L10n {
   internal static let audio = L10n.tr("Localizable", "audio", fallback: "Audio")
   /// The audio bit depth is not supported
   internal static let audioBitDepthNotSupported = L10n.tr("Localizable", "audioBitDepthNotSupported", fallback: "The audio bit depth is not supported")
+  /// Audio bitrate
+  internal static let audioBitrate = L10n.tr("Localizable", "audioBitrate", fallback: "Audio bitrate")
   /// The audio bitrate is not supported
   internal static let audioBitrateNotSupported = L10n.tr("Localizable", "audioBitrateNotSupported", fallback: "The audio bitrate is not supported")
   /// Audio book
@@ -146,12 +148,16 @@ internal enum L10n {
   internal static let audioBooks = L10n.tr("Localizable", "audioBooks", fallback: "Audio books")
   /// The number of audio channels is not supported
   internal static let audioChannelsNotSupported = L10n.tr("Localizable", "audioChannelsNotSupported", fallback: "The number of audio channels is not supported")
+  /// Audio codec
+  internal static let audioCodec = L10n.tr("Localizable", "audioCodec", fallback: "Audio codec")
   /// The audio codec is not supported
   internal static let audioCodecNotSupported = L10n.tr("Localizable", "audioCodecNotSupported", fallback: "The audio codec is not supported")
   /// The audio track is external and requires transcoding
   internal static let audioIsExternal = L10n.tr("Localizable", "audioIsExternal", fallback: "The audio track is external and requires transcoding")
   /// The audio profile is not supported
   internal static let audioProfileNotSupported = L10n.tr("Localizable", "audioProfileNotSupported", fallback: "The audio profile is not supported")
+  /// Audio sample rate
+  internal static let audioSampleRate = L10n.tr("Localizable", "audioSampleRate", fallback: "Audio sample rate")
   /// The audio sample rate is not supported
   internal static let audioSampleRateNotSupported = L10n.tr("Localizable", "audioSampleRateNotSupported", fallback: "The audio sample rate is not supported")
   /// Audio transcoding
@@ -188,6 +194,8 @@ internal enum L10n {
   internal static let birthplace = L10n.tr("Localizable", "birthplace", fallback: "Birthplace")
   /// Birth year
   internal static let birthYear = L10n.tr("Localizable", "birthYear", fallback: "Birth year")
+  /// Bitrate
+  internal static let bitrate = L10n.tr("Localizable", "bitrate", fallback: "Bitrate")
   /// Auto
   internal static let bitrateAuto = L10n.tr("Localizable", "bitrateAuto", fallback: "Auto")
   /// Default bitrate
@@ -354,6 +362,8 @@ internal enum L10n {
   internal static let connectToJellyfinServerStart = L10n.tr("Localizable", "connectToJellyfinServerStart", fallback: "Connect to a Jellyfin server to get started")
   /// Connect to server
   internal static let connectToServer = L10n.tr("Localizable", "connectToServer", fallback: "Connect to server")
+  /// Container
+  internal static let container = L10n.tr("Localizable", "container", fallback: "Container")
   /// The container bitrate exceeds the allowed limit
   internal static let containerBitrateExceedsLimit = L10n.tr("Localizable", "containerBitrateExceedsLimit", fallback: "The container bitrate exceeds the allowed limit")
   /// The container format is not supported
@@ -368,6 +378,8 @@ internal enum L10n {
   internal static let controlOtherUsers = L10n.tr("Localizable", "controlOtherUsers", fallback: "Control other users")
   /// Control shared devices
   internal static let controlSharedDevices = L10n.tr("Localizable", "controlSharedDevices", fallback: "Control shared devices")
+  /// Corrupted frames
+  internal static let corruptedFrames = L10n.tr("Localizable", "corruptedFrames", fallback: "Corrupted frames")
   /// Count
   internal static let count = L10n.tr("Localizable", "count", fallback: "Count")
   /// Country
@@ -534,6 +546,8 @@ internal enum L10n {
   internal static let digital = L10n.tr("Localizable", "digital", fallback: "Digital")
   /// Dimensions
   internal static let dimensions = L10n.tr("Localizable", "dimensions", fallback: "Dimensions")
+  /// Direct
+  internal static let direct = L10n.tr("Localizable", "direct", fallback: "Direct")
   /// Plays content in its original format. May cause playback issues on unsupported media types.
   internal static let directDescription = L10n.tr("Localizable", "directDescription", fallback: "Plays content in its original format. May cause playback issues on unsupported media types.")
   /// Director
@@ -560,6 +574,8 @@ internal enum L10n {
   internal static let doubleTouch = L10n.tr("Localizable", "doubleTouch", fallback: "Double touch")
   /// Downloads
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
+  /// Dropped frames
+  internal static let droppedFrames = L10n.tr("Localizable", "droppedFrames", fallback: "Dropped frames")
   /// Duplicate user
   internal static let duplicateUser = L10n.tr("Localizable", "duplicateUser", fallback: "Duplicate user")
   /// %@ is already saved
@@ -716,6 +732,8 @@ internal enum L10n {
   internal static let halfSideBySide = L10n.tr("Localizable", "halfSideBySide", fallback: "Half side-by-side")
   /// Half top and bottom
   internal static let halfTopAndBottom = L10n.tr("Localizable", "halfTopAndBottom", fallback: "Half top and bottom")
+  /// HWA
+  internal static let hardwareAcceleration = L10n.tr("Localizable", "hardwareAcceleration", fallback: "HWA")
   /// Hearing impaired
   internal static let hearingImpaired = L10n.tr("Localizable", "hearingImpaired", fallback: "Hearing impaired")
   /// Hex color
@@ -1056,6 +1074,8 @@ internal enum L10n {
   internal static let originalAirDate = L10n.tr("Localizable", "originalAirDate", fallback: "Original air date")
   /// Original aspect ratio
   internal static let originalAspectRatio = L10n.tr("Localizable", "originalAspectRatio", fallback: "Original aspect ratio")
+  /// Original Media Info
+  internal static let originalMediaInfo = L10n.tr("Localizable", "originalMediaInfo", fallback: "Original Media Info")
   /// Original title
   internal static let originalTitle = L10n.tr("Localizable", "originalTitle", fallback: "Original title")
   /// Other
@@ -1116,6 +1136,8 @@ internal enum L10n {
   internal static let playCount = L10n.tr("Localizable", "playCount", fallback: "Play count")
   /// Played
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
+  /// Player dimensions
+  internal static let playerDimensions = L10n.tr("Localizable", "playerDimensions", fallback: "Player dimensions")
   /// Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.
   internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.")
   /// Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.
@@ -1168,6 +1190,8 @@ internal enum L10n {
   internal static let programs = L10n.tr("Localizable", "programs", fallback: "Programs")
   /// Progress
   internal static let progress = L10n.tr("Localizable", "progress", fallback: "Progress")
+  /// Protocol
+  internal static let `protocol` = L10n.tr("Localizable", "protocol", fallback: "Protocol")
   /// Provider
   internal static let provider = L10n.tr("Localizable", "provider", fallback: "Provider")
   /// Public users
@@ -1404,6 +1428,8 @@ internal enum L10n {
   internal static let signoutClose = L10n.tr("Localizable", "signoutClose", fallback: "Sign out on close")
   /// Signs out the last user when Swiftfin has been force closed.
   internal static let signoutCloseFooter = L10n.tr("Localizable", "signoutCloseFooter", fallback: "Signs out the last user when Swiftfin has been force closed.")
+  /// Size
+  internal static let size = L10n.tr("Localizable", "size", fallback: "Size")
   /// Slider
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slow scrub
@@ -1418,6 +1444,8 @@ internal enum L10n {
   internal static let sortName = L10n.tr("Localizable", "sortName", fallback: "Sort name")
   /// Sort title
   internal static let sortTitle = L10n.tr("Localizable", "sortTitle", fallback: "Sort title")
+  /// Source
+  internal static let source = L10n.tr("Localizable", "source", fallback: "Source")
   /// Source code
   internal static let sourceCode = L10n.tr("Localizable", "sourceCode", fallback: "Source code")
   /// Special features
@@ -1442,6 +1470,12 @@ internal enum L10n {
   internal static let storyArc = L10n.tr("Localizable", "storyArc", fallback: "Story arc")
   /// The stream count exceeds the allowed limit
   internal static let streamCountExceedsLimit = L10n.tr("Localizable", "streamCountExceedsLimit", fallback: "The stream count exceeds the allowed limit")
+  /// Stream Info
+  internal static let streamInfo = L10n.tr("Localizable", "streamInfo", fallback: "Stream Info")
+  /// %@ Info
+  internal static func streamInfoWithMethod(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "streamInfoWithMethod", String(describing: p1), fallback: "%@ Info")
+  }
   /// Streams
   internal static let streams = L10n.tr("Localizable", "streams", fallback: "Streams")
   /// Studio
@@ -1536,6 +1570,8 @@ internal enum L10n {
   internal static let trailingValue = L10n.tr("Localizable", "trailingValue", fallback: "Trailing value")
   /// Transcode
   internal static let transcode = L10n.tr("Localizable", "transcode", fallback: "Transcode")
+  /// Transcode progress
+  internal static let transcodeProgress = L10n.tr("Localizable", "transcodeProgress", fallback: "Transcode progress")
   /// Transcode reason(s)
   internal static let transcodeReasons = L10n.tr("Localizable", "transcodeReasons", fallback: "Transcode reason(s)")
   /// Translator
@@ -1650,6 +1686,8 @@ internal enum L10n {
   internal static let videoBitRate = L10n.tr("Localizable", "videoBitRate", fallback: "Video bitrate")
   /// The video bitrate is not supported
   internal static let videoBitrateNotSupported = L10n.tr("Localizable", "videoBitrateNotSupported", fallback: "The video bitrate is not supported")
+  /// Video codec
+  internal static let videoCodec = L10n.tr("Localizable", "videoCodec", fallback: "Video codec")
   /// The video codec is not supported
   internal static let videoCodecNotSupported = L10n.tr("Localizable", "videoCodecNotSupported", fallback: "The video codec is not supported")
   /// Video codec tag is not supported
@@ -1664,10 +1702,14 @@ internal enum L10n {
   internal static let videoPlayerType = L10n.tr("Localizable", "videoPlayerType", fallback: "Video player type")
   /// The video profile is not supported
   internal static let videoProfileNotSupported = L10n.tr("Localizable", "videoProfileNotSupported", fallback: "The video profile is not supported")
+  /// Video range type
+  internal static let videoRangeType = L10n.tr("Localizable", "videoRangeType", fallback: "Video range type")
   /// The video range type is not supported
   internal static let videoRangeTypeNotSupported = L10n.tr("Localizable", "videoRangeTypeNotSupported", fallback: "The video range type is not supported")
   /// Video remuxing
   internal static let videoRemuxing = L10n.tr("Localizable", "videoRemuxing", fallback: "Video remuxing")
+  /// Video resolution
+  internal static let videoResolution = L10n.tr("Localizable", "videoResolution", fallback: "Video resolution")
   /// The video resolution is not supported
   internal static let videoResolutionNotSupported = L10n.tr("Localizable", "videoResolutionNotSupported", fallback: "The video resolution is not supported")
   /// Videos
