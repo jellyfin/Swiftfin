@@ -84,8 +84,6 @@ struct Marquee<Content: View>: View {
                                     .frame(maxHeight: .infinity)
                             }
                         }
-                    } else {
-                        EmptyView()
                     }
                 }
                 .padding(.leading, fade)

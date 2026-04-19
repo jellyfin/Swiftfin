@@ -46,7 +46,7 @@ extension ServerDiscovery {
                 currentURL: url,
                 name: name,
                 id: id,
-                usersIDs: []
+                userIDs: []
             )
         }
 

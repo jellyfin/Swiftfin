@@ -6,12 +6,17 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
+import CoreStore
+import Foundation
 
-struct IsStatusBarHiddenKey: PreferenceKey {
-    static var defaultValue: Bool = false
+extension SwiftfinStore.V1 {
 
-    static func reduce(value: inout Bool, nextValue: () -> Bool) {
-        value = nextValue() || value
+    final class StoredAccessToken: CoreStoreObject {
+
+        @Field.Stored("value")
+        var value: String = ""
+
+        @Field.Relationship("user")
+        var user: StoredUser?
     }
 }
