@@ -168,8 +168,6 @@ internal enum L10n {
   internal static let auto = L10n.tr("Localizable", "auto", fallback: "Auto")
   /// Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.
   internal static let autoDescription = L10n.tr("Localizable", "autoDescription", fallback: "Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.")
-  /// Automatic refresh interval
-  internal static let automaticRefreshIntervalDays = L10n.tr("Localizable", "automaticRefreshIntervalDays", fallback: "Automatic refresh interval")
   /// Auto play
   internal static let autoPlay = L10n.tr("Localizable", "autoPlay", fallback: "Auto play")
   /// Backdrop
@@ -292,8 +290,6 @@ internal enum L10n {
   internal static let channels = L10n.tr("Localizable", "channels", fallback: "Channels")
   /// Chapter
   internal static let chapter = L10n.tr("Localizable", "chapter", fallback: "Chapter")
-  /// Chapter image extraction
-  internal static let chapterImageExtraction = L10n.tr("Localizable", "chapterImageExtraction", fallback: "Chapter image extraction")
   /// Chapters
   internal static let chapters = L10n.tr("Localizable", "chapters", fallback: "Chapters")
   /// Chapter slider
@@ -460,16 +456,10 @@ internal enum L10n {
   internal static let datePlayed = L10n.tr("Localizable", "datePlayed", fallback: "Date played")
   /// Dates
   internal static let dates = L10n.tr("Localizable", "dates", fallback: "Dates")
-  /// Day
-  internal static let day = L10n.tr("Localizable", "day", fallback: "Day")
   /// Day of week
   internal static let dayOfWeek = L10n.tr("Localizable", "dayOfWeek", fallback: "Day of week")
   /// Days
   internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
-  /// %@ days
-  internal static func daysWithCount(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "daysWithCount", String(describing: p1), fallback: "%@ days")
-  }
   /// Default
   internal static let `default` = L10n.tr("Localizable", "default", fallback: "Default")
   /// Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.
@@ -612,8 +602,6 @@ internal enum L10n {
   internal static let enabled = L10n.tr("Localizable", "enabled", fallback: "Enabled")
   /// Enabled trailers
   internal static let enabledTrailers = L10n.tr("Localizable", "enabledTrailers", fallback: "Enabled trailers")
-  /// Enable realtime monitor
-  internal static let enableRealtimeMonitor = L10n.tr("Localizable", "enableRealtimeMonitor", fallback: "Enable realtime monitor")
   /// Slow response warning
   internal static let enableSlowResponseWarning = L10n.tr("Localizable", "enableSlowResponseWarning", fallback: "Slow response warning")
   /// End date
@@ -978,8 +966,6 @@ internal enum L10n {
   internal static let menuButtons = L10n.tr("Localizable", "menuButtons", fallback: "Menu buttons")
   /// Metadata
   internal static let metadata = L10n.tr("Localizable", "metadata", fallback: "Metadata")
-  /// Metadata country
-  internal static let metadataCountryCode = L10n.tr("Localizable", "metadataCountryCode", fallback: "Metadata country")
   /// Metadata language
   internal static let metadataLanguage = L10n.tr("Localizable", "metadataLanguage", fallback: "Metadata language")
   /// Metadata preferences
@@ -1080,8 +1066,6 @@ internal enum L10n {
   internal static let ok = L10n.tr("Localizable", "ok", fallback: "OK")
   /// On application startup
   internal static let onApplicationStartup = L10n.tr("Localizable", "onApplicationStartup", fallback: "On application startup")
-  /// 1 day
-  internal static let oneDay = L10n.tr("Localizable", "oneDay", fallback: "1 day")
   /// On Now
   internal static let onNow = L10n.tr("Localizable", "onNow", fallback: "On Now")
   /// Options
@@ -1134,8 +1118,6 @@ internal enum L10n {
   internal static let peopleDescription = L10n.tr("Localizable", "peopleDescription", fallback: "People who helped create or perform specific media.")
   /// Perfect match
   internal static let perfectMatch = L10n.tr("Localizable", "perfectMatch", fallback: "Perfect match")
-  /// Performance
-  internal static let performance = L10n.tr("Localizable", "performance", fallback: "Performance")
   /// Permissions
   internal static let permissions = L10n.tr("Localizable", "permissions", fallback: "Permissions")
   /// Person
@@ -1390,8 +1372,6 @@ internal enum L10n {
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Series date played
   internal static let seriesDatePlayed = L10n.tr("Localizable", "seriesDatePlayed", fallback: "Series date played")
-  /// Automatic series grouping
-  internal static let seriesGrouping = L10n.tr("Localizable", "seriesGrouping", fallback: "Automatic series grouping")
   /// Series name
   internal static let seriesName = L10n.tr("Localizable", "seriesName", fallback: "Series name")
   /// Server
@@ -1490,14 +1470,10 @@ internal enum L10n {
   internal static let startDate = L10n.tr("Localizable", "startDate", fallback: "Start date")
   /// Start time
   internal static let startTime = L10n.tr("Localizable", "startTime", fallback: "Start time")
-  /// Statistics
-  internal static let statistics = L10n.tr("Localizable", "statistics", fallback: "Statistics")
   /// Status
   internal static let status = L10n.tr("Localizable", "status", fallback: "Status")
   /// Stop
   internal static let stop = L10n.tr("Localizable", "stop", fallback: "Stop")
-  /// Storage
-  internal static let storage = L10n.tr("Localizable", "storage", fallback: "Storage")
   /// Story arc
   internal static let storyArc = L10n.tr("Localizable", "storyArc", fallback: "Story arc")
   /// The stream count exceeds the allowed limit
