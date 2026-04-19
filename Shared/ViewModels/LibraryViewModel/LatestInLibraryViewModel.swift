@@ -29,6 +29,10 @@ final class LatestInLibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Ident
         parameters.enableUserData = true
         parameters.limit = pageSize
 
+        if userSession.user.data.configuration?.isHidePlayedInLatest == true {
+            parameters.isPlayed = false
+        }
+
         return parameters
     }
 }
