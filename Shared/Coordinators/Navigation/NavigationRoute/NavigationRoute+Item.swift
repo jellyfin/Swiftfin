@@ -102,24 +102,6 @@ extension NavigationRoute {
         }
     }
 
-    static func editSubtitles(item: BaseItemDto) -> NavigationRoute {
-        NavigationRoute(
-            id: "editSubtitles",
-            style: .sheet
-        ) {
-            ItemSubtitlesView(item: item)
-        }
-    }
-
-    static func uploadSubtitle(viewModel: SubtitleEditorViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "uploadSubtitle",
-            style: .sheet
-        ) {
-            ItemSubtitleUploadView(viewModel: viewModel)
-        }
-    }
-
     @MainActor
     static func editMetadata(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
         NavigationRoute(
@@ -156,6 +138,15 @@ extension NavigationRoute {
         }
     }
 
+    static func editSubtitles(item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "editSubtitles",
+            style: .sheet
+        ) {
+            ItemSubtitlesView(item: item)
+        }
+    }
+
     @MainActor
     static func editTags(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editTags") {
@@ -189,9 +180,19 @@ extension NavigationRoute {
             )
         }
     }
+
+    static func uploadSubtitle(viewModel: ItemSubtitlesViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "uploadSubtitle",
+            style: .sheet
+        ) {
+            ItemSubtitleUploadView(viewModel: viewModel)
+        }
+    }
+
     #endif
 
-    static func searchSubtitle(viewModel: SubtitleEditorViewModel) -> NavigationRoute {
+    static func searchSubtitle(viewModel: ItemSubtitlesViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "searchSubtitle",
             style: .sheet
