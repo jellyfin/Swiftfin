@@ -26,8 +26,7 @@ struct SwiftfinApp: App {
 
     init() {
 
-        SwizzleDefaults.install()
-        SwizzleDefaults.set(Defaults[.Experimental.isLiquidGlassEnabled], for: "com.apple.SwiftUI.IgnoreSolariumOptOut")
+        SwizzleDefaults.set(Defaults[.isLiquidGlassEnabled], for: "com.apple.SwiftUI.IgnoreSolariumOptOut")
 
         // Logging
         LoggingSystem.bootstrap { label in
@@ -83,7 +82,7 @@ struct SwiftfinApp: App {
             OverlayToastView {
                 PreferencesView {
                     RootView()
-                        .supportedOrientations(.portrait)
+                        .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
                 }
             }
             .ignoresSafeArea()
