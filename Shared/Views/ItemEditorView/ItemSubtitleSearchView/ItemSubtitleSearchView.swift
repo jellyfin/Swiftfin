@@ -15,21 +15,16 @@ struct ItemSubtitleSearchView: View {
     @Default(.accentColor)
     private var accentColor
 
+    @ObservedObject
+    var viewModel: ItemSubtitlesViewModel
+
     @Router
     private var router
 
-    @ObservedObject
-    private var viewModel: ItemSubtitlesViewModel
-
-    @State
-    private var selectedSubtitles: Set<String> = []
-
     @State
     private var isPerfectMatch = false
-
-    init(viewModel: ItemSubtitlesViewModel) {
-        self.viewModel = viewModel
-    }
+    @State
+    private var selectedSubtitles: Set<String> = []
 
     var body: some View {
         ZStack {
@@ -68,7 +63,7 @@ struct ItemSubtitleSearchView: View {
         }
         .backport
         .onChange(of: isPerfectMatch) { _, newValue in
-            viewModel.searchParameters.value = newValue
+            viewModel.search(isPerfectMatch: newValue)
         }
     }
 
@@ -92,7 +87,7 @@ struct ItemSubtitleSearchView: View {
 
             Section(L10n.search) {
 
-                if viewModel.searchResults.isEmpty {
+                if viewModel.results.isEmpty {
                     if viewModel.background.is(.searching) {
                         ProgressView()
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -102,8 +97,8 @@ struct ItemSubtitleSearchView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
                 } else {
-                    ForEach(viewModel.searchResults, id: \.id) { subtitle in
-                        SearchResultRow(subtitle) {
+                    ForEach(viewModel.results) { subtitle in
+                        SearchResultRow(subtitle: subtitle) {
                             guard let subtitleID = subtitle.id else { return }
                             selectedSubtitles.toggle(value: subtitleID)
                         }

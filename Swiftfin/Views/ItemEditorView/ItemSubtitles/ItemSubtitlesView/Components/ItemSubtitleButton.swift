@@ -18,26 +18,20 @@ extension ItemSubtitlesView {
         @Environment(\.isSelected)
         private var isSelected
 
-        private let subtitle: MediaStream
-        private let action: () -> Void
-
-        init(_ subtitle: MediaStream, action: @escaping () -> Void) {
-            self.subtitle = subtitle
-            self.action = action
-        }
+        let subtitle: MediaStream
+        let action: () -> Void
 
         var body: some View {
             Button(action: action) {
                 HStack {
                     Text(subtitle.displayTitle ?? L10n.unknown)
                         .foregroundStyle(isEditing && !isSelected ? .secondary : .primary)
-
-                    Spacer()
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     ListRowCheckbox()
                 }
             }
-            .foregroundStyle(Color.primary, Color.secondary)
+            .foregroundStyle(.primary, .secondary)
         }
     }
 }

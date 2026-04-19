@@ -14,20 +14,15 @@ struct ItemSubtitlesView: View {
     @Router
     private var router
 
-    @Environment(\.editMode)
-    private var editMode
+    @State
+    private var isEditing = false
+    @State
+    private var isPresentingDeleteConfirmation = false
+    @State
+    private var selectedSubtitles: Set<MediaStream> = []
 
     @StateObject
     private var viewModel: ItemSubtitlesViewModel
-
-    @State
-    private var selectedSubtitles: Set<MediaStream> = []
-    @State
-    private var isPresentingDeleteConfirmation = false
-
-    private var isEditing: Bool {
-        editMode?.wrappedValue.isEditing == true
-    }
 
     private var hasSubtitles: Bool {
         viewModel.externalSubtitles.isNotEmpty || viewModel.internalSubtitles.isNotEmpty
@@ -84,7 +79,7 @@ struct ItemSubtitlesView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
                     Button(L10n.cancel) {
-                        editMode?.wrappedValue = .inactive
+                        isEditing = false
                         selectedSubtitles.removeAll()
                     }
                     .buttonStyle(.toolbarPill)
@@ -105,21 +100,17 @@ struct ItemSubtitlesView: View {
             isLoading: viewModel.background.is(.updating),
             isHidden: isEditing || !hasSubtitles
         ) {
-            Section(L10n.add) {
-                Button(L10n.uploadFile, systemImage: "plus") {
-                    router.route(to: .uploadSubtitle(viewModel: viewModel))
-                }
+            Button(L10n.uploadFile, systemImage: "plus") {
+                router.route(to: .uploadSubtitle(viewModel: viewModel))
+            }
 
-                Button(L10n.search, systemImage: "magnifyingglass") {
-                    router.route(to: .searchSubtitle(viewModel: viewModel))
-                }
+            Button(L10n.search, systemImage: "magnifyingglass") {
+                router.route(to: .searchSubtitle(viewModel: viewModel))
             }
 
             if viewModel.externalSubtitles.isNotEmpty {
-                Section(L10n.manage) {
-                    Button(L10n.edit, systemImage: "checkmark.circle") {
-                        editMode?.wrappedValue = .active
-                    }
+                Button(L10n.edit, systemImage: "checkmark.circle") {
+                    isEditing = true
                 }
             }
         }
@@ -133,7 +124,7 @@ struct ItemSubtitlesView: View {
             Button(L10n.delete, role: .destructive) {
                 viewModel.delete(selectedSubtitles)
                 selectedSubtitles.removeAll()
-                editMode?.wrappedValue = .inactive
+                isEditing = false
             }
         } message: {
             Text(L10n.deleteSelectedConfirmation)
@@ -162,40 +153,38 @@ struct ItemSubtitlesView: View {
 
                 if viewModel.internalSubtitles.isNotEmpty {
                     Section {
-                        DisclosureGroup(L10n.embedded) {
-                            ForEach(viewModel.internalSubtitles, id: \.index) { subtitle in
-                                ItemSubtitleButton(subtitle) {
-                                    router.route(to: .mediaStreamInfo(mediaStream: subtitle))
-                                }
-                                .environment(\.isEnabled, !isEditing)
+                        ForEach(viewModel.internalSubtitles, id: \.index) { subtitle in
+                            ItemSubtitleButton(subtitle: subtitle) {
+                                router.route(to: .mediaStreamInfo(mediaStream: subtitle))
                             }
+                            .disabled(isEditing)
                         }
+                    } header: {
+                        Text(L10n.embedded)
                     } footer: {
                         Text(L10n.embeddedSubtitleFooter)
                     }
                 }
 
                 if viewModel.externalSubtitles.isNotEmpty {
-                    Section {
-                        DisclosureGroup(L10n.external) {
-                            ForEach(viewModel.externalSubtitles, id: \.index) { subtitle in
-                                ItemSubtitleButton(subtitle) {
-                                    if isEditing {
-                                        selectedSubtitles.toggle(value: subtitle)
-                                    } else {
-                                        router.route(to: .mediaStreamInfo(mediaStream: subtitle))
-                                    }
+                    Section(L10n.external) {
+                        ForEach(viewModel.externalSubtitles, id: \.index) { subtitle in
+                            ItemSubtitleButton(subtitle: subtitle) {
+                                if isEditing {
+                                    selectedSubtitles.toggle(value: subtitle)
+                                } else {
+                                    router.route(to: .mediaStreamInfo(mediaStream: subtitle))
                                 }
-                                .swipeActions {
-                                    Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                                        selectedSubtitles = [subtitle]
-                                        isPresentingDeleteConfirmation = true
-                                    }
-                                    .tint(.red)
-                                }
-                                .isEditing(isEditing)
-                                .isSelected(selectedSubtitles.contains(subtitle))
                             }
+                            .swipeActions {
+                                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                                    selectedSubtitles = [subtitle]
+                                    isPresentingDeleteConfirmation = true
+                                }
+                                .tint(.red)
+                            }
+                            .isEditing(isEditing)
+                            .isSelected(selectedSubtitles.contains(subtitle))
                         }
                     }
                 }

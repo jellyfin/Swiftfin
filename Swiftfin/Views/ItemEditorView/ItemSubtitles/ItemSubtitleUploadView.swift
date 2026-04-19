@@ -14,26 +14,21 @@ import UniformTypeIdentifiers
 
 struct ItemSubtitleUploadView: View {
 
-    @Router
-    private var router
-
     @Default(.accentColor)
     private var accentColor
 
     @ObservedObject
-    private var viewModel: ItemSubtitlesViewModel
+    var viewModel: ItemSubtitlesViewModel
 
-    @State
-    private var selectedFile: URL?
+    @Router
+    private var router
 
     @State
     private var isForced = false
     @State
     private var isHearingImpaired = false
-
-    init(viewModel: ItemSubtitlesViewModel) {
-        self.viewModel = viewModel
-    }
+    @State
+    private var selectedFile: URL?
 
     var body: some View {
         Form {
@@ -45,7 +40,7 @@ struct ItemSubtitleUploadView: View {
             }
 
             Section(L10n.file) {
-                Text(selectedFile?.lastPathComponent ?? L10n.noItemSelected)
+                Text(selectedFile?.lastPathComponent ?? L10n.none)
                     .foregroundStyle(.secondary)
             }
 
@@ -66,7 +61,8 @@ struct ItemSubtitleUploadView: View {
             }
         }
         .navigationTitle(L10n.subtitle)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .onReceive(viewModel.events) { event in
             switch event {
             case .deleted:
@@ -86,7 +82,7 @@ struct ItemSubtitleUploadView: View {
                 Button(L10n.save) {
                     guard let selectedFile else { return }
                     viewModel.upload(
-                        selectedFile,
+                        file: selectedFile,
                         isForced: isForced,
                         isHearingImpaired: isHearingImpaired
                     )

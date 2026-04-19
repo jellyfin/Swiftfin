@@ -17,11 +17,11 @@ final class ItemSubtitlesViewModel: ViewModel {
     @CasePathable
     enum Action {
         case _actuallySearch(isPerfectMatch: Bool)
+        case delete(Set<MediaStream>)
         case refresh
         case search(isPerfectMatch: Bool)
         case set(Set<String>)
-        case upload(URL, isForced: Bool, isHearingImpaired: Bool)
-        case delete(Set<MediaStream>)
+        case upload(file: URL, isForced: Bool, isHearingImpaired: Bool)
 
         var transition: Transition {
             switch self {
@@ -52,20 +52,19 @@ final class ItemSubtitlesViewModel: ViewModel {
     }
 
     @Published
-    var item: BaseItemDto
+    private(set) var internalSubtitles: [MediaStream]
     @Published
-    var internalSubtitles: [MediaStream]
+    private(set) var externalSubtitles: [MediaStream]
     @Published
-    var externalSubtitles: [MediaStream]
-
-    @Published
-    var searchResults: [RemoteSubtitleInfo] = []
+    private(set) var results: [RemoteSubtitleInfo] = []
 
     /// Default to user's language
     @Published
     var language: String? = Locale.current.language.languageCode?.identifier(.alpha3)
 
-    var searchParameters = CurrentValueSubject<Bool, Never>(false)
+    let item: BaseItemDto
+
+    private var query: CurrentValueSubject<Bool, Never> = .init(false)
 
     init(item: BaseItemDto) {
         self.item = item
@@ -73,15 +72,14 @@ final class ItemSubtitlesViewModel: ViewModel {
         let subtitles = (item.mediaSources ?? [])
             .compactMap(\.subtitleStreams)
             .flattened()
-            .grouped(by: \.isExternal)
 
-        self.internalSubtitles = subtitles[false] ?? []
-        self.externalSubtitles = subtitles[true] ?? []
+        self.internalSubtitles = subtitles.filter { $0.isExternal == false }
+        self.externalSubtitles = subtitles.filter { $0.isExternal == true }
 
         super.init()
 
         $language
-            .combineLatest(searchParameters)
+            .combineLatest(query)
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .removeDuplicates(by: { $0.0 == $1.0 && $0.1 == $1.1 })
             .sink { [weak self] _, isPerfectMatch in
@@ -109,7 +107,7 @@ final class ItemSubtitlesViewModel: ViewModel {
 
     @Function(\Action.Cases.search)
     private func _search(_ isPerfectMatch: Bool) async throws {
-        searchParameters.send(isPerfectMatch)
+        query.send(isPerfectMatch)
 
         await cancel()
     }
@@ -122,7 +120,7 @@ final class ItemSubtitlesViewModel: ViewModel {
 
         // Avoids errors when `None` is selected
         guard let language, language.isNotEmpty else {
-            searchResults = []
+            results = []
             return
         }
 
@@ -133,7 +131,7 @@ final class ItemSubtitlesViewModel: ViewModel {
         )
         let results = try await userSession.client.send(request)
 
-        self.searchResults = results.value
+        self.results = results.value
     }
 
     @Function(\Action.Cases.set)
@@ -159,16 +157,17 @@ final class ItemSubtitlesViewModel: ViewModel {
     }
 
     @Function(\Action.Cases.upload)
-    private func _upload(_ fileURL: URL, _ isForced: Bool, _ isHearingImpaired: Bool) async throws {
+    private func _upload(_ file: URL, _ isForced: Bool, _ isHearingImpaired: Bool) async throws {
+
         guard let itemID = item.id, let language, language.isNotEmpty else {
             throw ErrorMessage(L10n.unknownError)
         }
 
-        guard let format = SubtitleFormat(url: fileURL) else {
+        guard file.isFileURL, let format = SubtitleFormat(url: file) else {
             throw ErrorMessage(L10n.invalidFormat)
         }
 
-        let data = try Data(contentsOf: fileURL)
+        let data = try Data(contentsOf: file)
 
         let subtitle = UploadSubtitleDto(
             data: data.base64EncodedString(),

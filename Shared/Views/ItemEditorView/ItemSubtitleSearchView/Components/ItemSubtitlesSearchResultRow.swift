@@ -16,14 +16,8 @@ extension ItemSubtitleSearchView {
         @Environment(\.isSelected)
         private var isSelected
 
-        private let subtitle: RemoteSubtitleInfo
-
-        private let action: () -> Void
-
-        init(_ subtitle: RemoteSubtitleInfo, action: @escaping () -> Void) {
-            self.subtitle = subtitle
-            self.action = action
-        }
+        let subtitle: RemoteSubtitleInfo
+        let action: () -> Void
 
         var body: some View {
             Button(action: action) {
@@ -61,9 +55,8 @@ extension ItemSubtitleSearchView {
                         .padding(.vertical)
                 }
             }
-            .foregroundStyle(isSelected ? Color.primary : Color.secondary, Color.secondary)
+            .foregroundStyle(isSelected ? .primary : .secondary, .secondary)
             .font(.caption)
-            .isSelected(isSelected)
             .isEditing(true)
         }
     }
