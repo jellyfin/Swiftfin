@@ -9,6 +9,7 @@
 import Defaults
 import Engine
 import JellyfinAPI
+import Mantis
 import SwiftUI
 
 struct ServerUserDetailsView: View {
@@ -27,9 +28,7 @@ struct ServerUserDetailsView: View {
     private var viewModel: ServerUserAdminViewModel
 
     @StateObject
-    private var profileViewModel: UserProfileImageViewModel
-
-    // MARK: - Error State
+    private var profileViewModel: UserImageViewModel
 
     @State
     private var error: Error?
@@ -38,23 +37,30 @@ struct ServerUserDetailsView: View {
 
     init(user: UserDto) {
         self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
-        self._profileViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: user))
+        self._profileViewModel = StateObject(wrappedValue: UserImageViewModel(item: user))
     }
 
     // MARK: - Body
 
     var body: some View {
         List {
-            UserProfileHeroImage(
-                user: viewModel.user,
-                source: viewModel.user.profileImageSource(
-                    client: viewModel.userSession.client,
-                    maxWidth: 150
+            StateAdapter(initialValue: false) { isPhotoPickerPresented in
+                UserProfileHeroImage(
+                    user: viewModel.user,
+                    source: viewModel.user.profileImageSource(
+                        client: viewModel.userSession.client,
+                        maxWidth: 150
+                    )
+                ) {
+                    isPhotoPickerPresented.wrappedValue = true
+                } onDelete: {
+                    profileViewModel.delete()
+                }
+                .photoPicker(
+                    isPresented: isPhotoPickerPresented,
+                    viewModel: profileViewModel,
+                    presetRatio: .alwaysUsingOnePresetFixedRatio(ratio: 1)
                 )
-            ) {
-                router.route(to: .userProfileImage(viewModel: profileViewModel))
-            } onDelete: {
-                profileViewModel.send(.delete)
             }
 
             Section {

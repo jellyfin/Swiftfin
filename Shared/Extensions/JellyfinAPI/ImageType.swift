@@ -41,4 +41,62 @@ extension ImageType: Displayable {
             L10n.profile
         }
     }
+
+    var description: String {
+        switch self {
+        case .primary:
+            L10n.primaryImageDescription
+        case .backdrop:
+            L10n.backdropImageDescription
+        case .banner:
+            L10n.bannerImageDescription
+        case .logo:
+            L10n.logoImageDescription
+        case .thumb:
+            L10n.thumbImageDescription
+        case .art:
+            L10n.artImageDescription
+        case .disc:
+            L10n.discImageDescription
+        case .box:
+            L10n.boxImageDescription
+        case .screenshot:
+            L10n.screenshotImageDescription
+        case .menu:
+            L10n.menuImageDescription
+        case .chapter:
+            L10n.chapterImageDescription
+        case .boxRear:
+            L10n.boxRearImageDescription
+        case .profile:
+            L10n.profileImageDescription
+        }
+    }
+
+    var isUsed: Bool {
+        switch self {
+        case .primary, .thumb, .backdrop, .banner, .logo:
+            true
+        default:
+            false
+        }
+    }
+
+    func posterDisplayType(for type: BaseItemKind? = nil) -> PosterDisplayType {
+        switch self {
+        case .primary:
+            switch type {
+            case .audio, .channel, .musicAlbum, .tvChannel:
+                .square
+            case .episode, .folder, .program, .musicVideo, .video, .userView:
+                .landscape
+            default:
+                .portrait
+            }
+        case .disc:
+            .square
+        default:
+            .landscape
+        }
+    }
 }

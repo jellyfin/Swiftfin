@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Mantis
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
@@ -86,5 +87,22 @@ extension View {
                 cell.layer.cornerRadius = radius
             }
         }
+    }
+
+    /// Photo Picker with cropping after the selection
+    func photoPicker(
+        isPresented: Binding<Bool>,
+        viewModel: ImageViewModel<some Any>,
+        cropShape: Mantis.CropShapeType = .rect,
+        presetRatio: Mantis.PresetFixedRatioType = .canUseMultiplePresetFixedRatio(defaultRatio: 0)
+    ) -> some View {
+        modifier(
+            PhotoPickerModifier(
+                isPresented: isPresented,
+                viewModel: viewModel,
+                cropShape: cropShape,
+                presetRatio: presetRatio
+            )
+        )
     }
 }

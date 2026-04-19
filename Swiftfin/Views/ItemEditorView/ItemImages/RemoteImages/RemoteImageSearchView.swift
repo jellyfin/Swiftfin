@@ -11,35 +11,30 @@ import CollectionVGrid
 import JellyfinAPI
 import SwiftUI
 
-// TODO: different layouts per image type
-//       - also based on iOS vs iPadOS
-
-struct AddItemImageView: View {
-
-    // MARK: - Observed, & Environment Objects
+struct RemoteImageSearchView: View {
 
     @Router
     private var router
 
     @ObservedObject
-    private var viewModel: ItemImagesViewModel
+    private var viewModel: ItemImageViewModel
 
     @StateObject
     private var remoteImageInfoViewModel: RemoteImageInfoViewModel
 
-    // MARK: - Dialog State
+    private var layout: CollectionVGridLayout {
+        guard UIDevice.isPhone else {
+            return .minWidth(150)
+        }
 
-    @State
-    private var error: Error?
+        return posterType == .landscape ? .columns(2) : .columns(3)
+    }
 
-    // MARK: - Collection Layout
+    private var posterType: PosterDisplayType {
+        remoteImageInfoViewModel.imageType.posterDisplayType(for: viewModel.item.type)
+    }
 
-    @State
-    private var layout: CollectionVGridLayout = .minWidth(150)
-
-    // MARK: - Initializer
-
-    init(viewModel: ItemImagesViewModel, imageType: ImageType) {
+    init(viewModel: ItemImageViewModel, imageType: ImageType) {
         self.viewModel = viewModel
         self._remoteImageInfoViewModel = StateObject(
             wrappedValue: RemoteImageInfoViewModel(
@@ -49,27 +44,23 @@ struct AddItemImageView: View {
         )
     }
 
-    // MARK: - Body
-
     var body: some View {
         ZStack {
             switch remoteImageInfoViewModel.state {
             case .initial, .refreshing:
                 ProgressView()
             case .content:
-                gridView
+                contentView
             case let .error(error):
                 ErrorView(error: error)
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
+        .navigationTitle(remoteImageInfoViewModel.imageType.displayTitle.localizedCapitalized)
         .animation(.linear(duration: 0.1), value: remoteImageInfoViewModel.state)
-        .navigationTitle(remoteImageInfoViewModel.imageType.displayTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .refreshable {
-            remoteImageInfoViewModel.send(.refresh)
-        }
-        .navigationBarBackButtonHidden(viewModel.backgroundStates.contains(.updating))
-        .navigationBarMenuButton(isLoading: viewModel.backgroundStates.contains(.updating)) {
+        .navigationBarBackButtonHidden(viewModel.background.is(.updating))
+        .navigationBarMenuButton(isLoading: viewModel.background.is(.updating)) {
             Button {
                 remoteImageInfoViewModel.includeAllLanguages.toggle()
             } label: {
@@ -105,92 +96,59 @@ struct AddItemImageView: View {
                     }
                 } label: {
                     Text(L10n.provider)
-
                     Text(remoteImageInfoViewModel.provider ?? L10n.all)
                 }
             }
         }
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
         .onFirstAppear {
+            remoteImageInfoViewModel.send(.refresh)
+        }
+        .refreshable {
             remoteImageInfoViewModel.send(.refresh)
         }
         .onReceive(viewModel.events) { event in
             switch event {
             case .updated:
-                UIDevice.feedback(.success)
                 router.dismiss()
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-                error = eventError
+            case .deleted:
+                break
             }
         }
-        .errorMessage($error)
     }
 
-    // MARK: - Content Grid View
-
     @ViewBuilder
-    private var gridView: some View {
+    private var contentView: some View {
         if remoteImageInfoViewModel.elements.isEmpty {
-            ContentUnavailableView(L10n.noResults.localizedCapitalized, systemImage: "photo")
+            ContentUnavailableView(
+                L10n.noResults.localizedCapitalized,
+                systemImage: "photo"
+            )
         } else {
             CollectionVGrid(
                 uniqueElements: remoteImageInfoViewModel.elements,
                 layout: layout
             ) { image in
-                imageButton(image)
+                PosterButton(
+                    item: image,
+                    type: posterType
+                ) { namespace in
+                    viewModel.remoteImageInfo = image
+                    router.route(
+                        to: .remoteImageDetail(
+                            viewModel: viewModel,
+                            remoteImageInfo: image
+                        ), in: namespace
+                    )
+                } label: {
+                    EmptyView()
+                }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 remoteImageInfoViewModel.send(.getNextPage)
             }
         }
-    }
-
-    // MARK: - Poster Image Button
-
-    @ViewBuilder
-    private func imageButton(_ image: RemoteImageInfo) -> some View {
-        Button {
-            router.route(
-                to: .itemSearchImageDetails(
-                    viewModel: viewModel,
-                    remoteImageInfo: image
-                )
-            )
-        } label: {
-            posterImage(
-                image,
-                posterStyle: (image.height ?? 0) > (image.width ?? 0) ? .portrait : .landscape
-            )
-        }
-    }
-
-    // MARK: - Poster Image
-
-    @ViewBuilder
-    private func posterImage(
-        _ posterImageInfo: RemoteImageInfo?,
-        posterStyle: PosterDisplayType
-    ) -> some View {
-        ZStack {
-            Color.secondarySystemFill
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            ImageView(posterImageInfo?.url?.url)
-                .placeholder { source in
-                    if let blurHash = source.blurHash {
-                        BlurHashView(blurHash: blurHash)
-                            .scaledToFit()
-                    } else {
-                        Image(systemName: "photo")
-                    }
-                }
-                .failure {
-                    Image(systemName: "photo")
-                }
-                .pipeline(.Swiftfin.other)
-                .foregroundStyle(.secondary)
-                .font(.headline)
-        }
-        .posterStyle(posterStyle)
     }
 }

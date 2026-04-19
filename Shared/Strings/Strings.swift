@@ -126,6 +126,8 @@ internal enum L10n {
   internal static let arranger = L10n.tr("Localizable", "arranger", fallback: "Arranger")
   /// Art
   internal static let art = L10n.tr("Localizable", "art", fallback: "Art")
+  /// Clear art or logo-style decorative artwork, often with a transparent background. Typically sourced from fanart providers.
+  internal static let artImageDescription = L10n.tr("Localizable", "artImageDescription", fallback: "Clear art or logo-style decorative artwork, often with a transparent background. Typically sourced from fanart providers.")
   /// Artist
   internal static let artist = L10n.tr("Localizable", "artist", fallback: "Artist")
   /// Artists
@@ -168,8 +170,12 @@ internal enum L10n {
   internal static let autoPlay = L10n.tr("Localizable", "autoPlay", fallback: "Auto play")
   /// Backdrop
   internal static let backdrop = L10n.tr("Localizable", "backdrop", fallback: "Backdrop")
+  /// A wide background image displayed behind the item details on its media page. Multiple backdrops can be added and will cycle or be selected randomly.
+  internal static let backdropImageDescription = L10n.tr("Localizable", "backdropImageDescription", fallback: "A wide background image displayed behind the item details on its media page. Multiple backdrops can be added and will cycle or be selected randomly.")
   /// Banner
   internal static let banner = L10n.tr("Localizable", "banner", fallback: "Banner")
+  /// A wide horizontal image displayed when browsing the library in banner mode. Only applicable to video content.
+  internal static let bannerImageDescription = L10n.tr("Localizable", "bannerImageDescription", fallback: "A wide horizontal image displayed when browsing the library in banner mode. Only applicable to video content.")
   /// Bar buttons
   internal static let barButtons = L10n.tr("Localizable", "barButtons", fallback: "Bar buttons")
   /// Plugin folder
@@ -250,8 +256,12 @@ internal enum L10n {
   internal static let born = L10n.tr("Localizable", "born", fallback: "Born")
   /// Box
   internal static let box = L10n.tr("Localizable", "box", fallback: "Box")
+  /// Front box art representing the physical packaging of the item, similar to what you would see on a store shelf.
+  internal static let boxImageDescription = L10n.tr("Localizable", "boxImageDescription", fallback: "Front box art representing the physical packaging of the item, similar to what you would see on a store shelf.")
   /// Box rear
   internal static let boxRear = L10n.tr("Localizable", "boxRear", fallback: "Box rear")
+  /// Rear box art representing the back of the item's physical packaging, often showing descriptions or track listings.
+  internal static let boxRearImageDescription = L10n.tr("Localizable", "boxRearImageDescription", fallback: "Rear box art representing the back of the item's physical packaging, often showing descriptions or track listings.")
   /// Brightness
   internal static let brightness = L10n.tr("Localizable", "brightness", fallback: "Brightness")
   /// Bugs and features
@@ -284,6 +294,8 @@ internal enum L10n {
   internal static let channels = L10n.tr("Localizable", "channels", fallback: "Channels")
   /// Chapter
   internal static let chapter = L10n.tr("Localizable", "chapter", fallback: "Chapter")
+  /// An image associated with a specific chapter marker within the item's timeline.
+  internal static let chapterImageDescription = L10n.tr("Localizable", "chapterImageDescription", fallback: "An image associated with a specific chapter marker within the item's timeline.")
   /// Chapters
   internal static let chapters = L10n.tr("Localizable", "chapters", fallback: "Chapters")
   /// Chapter slider
@@ -548,6 +560,8 @@ internal enum L10n {
   internal static let disabled = L10n.tr("Localizable", "disabled", fallback: "Disabled")
   /// Disc
   internal static let disc = L10n.tr("Localizable", "disc", fallback: "Disc")
+  /// Square disc art representing physical media like CDs, DVDs, or Blu-rays. Commonly used for music albums and movie collections.
+  internal static let discImageDescription = L10n.tr("Localizable", "discImageDescription", fallback: "Square disc art representing physical media like CDs, DVDs, or Blu-rays. Commonly used for music albums and movie collections.")
   /// Disclaimer
   internal static let disclaimer = L10n.tr("Localizable", "disclaimer", fallback: "Disclaimer")
   /// Dismiss
@@ -742,20 +756,22 @@ internal enum L10n {
   internal static let idle = L10n.tr("Localizable", "idle", fallback: "Idle")
   /// Illustrator
   internal static let illustrator = L10n.tr("Localizable", "illustrator", fallback: "Illustrator")
-  /// Images
-  internal static let image = L10n.tr("Localizable", "image", fallback: "Images")
+  /// Image
+  internal static let image = L10n.tr("Localizable", "image", fallback: "Image")
   /// Images
   internal static let images = L10n.tr("Localizable", "images", fallback: "Images")
+  /// Manage and customize the images associated with this media item. Select an image type to view, add, or replace images.
+  internal static let imagesDescription = L10n.tr("Localizable", "imagesDescription", fallback: "Manage and customize the images associated with this media item. Select an image type to view, add, or replace images.")
   /// Image source
   internal static let imageSource = L10n.tr("Localizable", "imageSource", fallback: "Image source")
+  /// Image is unused in official Jellyfin Clients.
+  internal static let imageTypeUnused = L10n.tr("Localizable", "imageTypeUnused", fallback: "Image is unused in official Jellyfin Clients.")
   /// Inactive
   internal static let inactive = L10n.tr("Localizable", "inactive", fallback: "Inactive")
   /// Incorrect pin for %@
   internal static func incorrectPinForUser(_ p1: Any) -> String {
     return L10n.tr("Localizable", "incorrectPinForUser", String(describing: p1), fallback: "Incorrect pin for %@")
   }
-  /// Index
-  internal static let index = L10n.tr("Localizable", "index", fallback: "Index")
   /// Index number
   internal static let indexNumber = L10n.tr("Localizable", "indexNumber", fallback: "Index number")
   /// Indicator
@@ -886,6 +902,8 @@ internal enum L10n {
   internal static let lockedUsers = L10n.tr("Localizable", "lockedUsers", fallback: "Locked users")
   /// Logo
   internal static let logo = L10n.tr("Localizable", "logo", fallback: "Logo")
+  /// A transparent logo or title treatment overlaid on top of backdrops and other imagery. Used as a stylized alternative to plain text titles.
+  internal static let logoImageDescription = L10n.tr("Localizable", "logoImageDescription", fallback: "A transparent logo or title treatment overlaid on top of backdrops and other imagery. Used as a stylized alternative to plain text titles.")
   /// Logs
   internal static let logs = L10n.tr("Localizable", "logs", fallback: "Logs")
   /// Access the Jellyfin server logs for troubleshooting and monitoring purposes.
@@ -942,6 +960,8 @@ internal enum L10n {
   internal static let menu = L10n.tr("Localizable", "menu", fallback: "Menu")
   /// Menu buttons
   internal static let menuButtons = L10n.tr("Localizable", "menuButtons", fallback: "Menu buttons")
+  /// A menu image originally intended for DVD or Blu-ray style menu navigation screens.
+  internal static let menuImageDescription = L10n.tr("Localizable", "menuImageDescription", fallback: "A menu image originally intended for DVD or Blu-ray style menu navigation screens.")
   /// Metadata
   internal static let metadata = L10n.tr("Localizable", "metadata", fallback: "Metadata")
   /// Metadata preferences
@@ -1146,6 +1166,8 @@ internal enum L10n {
   internal static let previousItem = L10n.tr("Localizable", "previousItem", fallback: "Previous item")
   /// Primary
   internal static let primary = L10n.tr("Localizable", "primary", fallback: "Primary")
+  /// The main cover image or poster for this item. This is the most prominent image shown across the app, including in libraries, search results, and detail pages.
+  internal static let primaryImageDescription = L10n.tr("Localizable", "primaryImageDescription", fallback: "The main cover image or poster for this item. This is the most prominent image shown across the app, including in libraries, search results, and detail pages.")
   /// Producer
   internal static let producer = L10n.tr("Localizable", "producer", fallback: "Producer")
   /// Production
@@ -1158,6 +1180,8 @@ internal enum L10n {
   internal static let profile = L10n.tr("Localizable", "profile", fallback: "Profile")
   /// Profile image
   internal static let profileImage = L10n.tr("Localizable", "profileImage", fallback: "Profile image")
+  /// A profile or headshot image, typically used for people such as actors, directors, or artists.
+  internal static let profileImageDescription = L10n.tr("Localizable", "profileImageDescription", fallback: "A profile or headshot image, typically used for people such as actors, directors, or artists.")
   /// Profile not saved
   internal static let profileNotSaved = L10n.tr("Localizable", "profileNotSaved", fallback: "Profile not saved")
   /// Profiles
@@ -1308,6 +1332,8 @@ internal enum L10n {
   internal static let score = L10n.tr("Localizable", "score", fallback: "Score")
   /// Screenshot
   internal static let screenshot = L10n.tr("Localizable", "screenshot", fallback: "Screenshot")
+  /// A screenshot or still frame captured directly from the item's video content. Deprecated and no longer actively used.
+  internal static let screenshotImageDescription = L10n.tr("Localizable", "screenshotImageDescription", fallback: "A screenshot or still frame captured directly from the item's video content. Deprecated and no longer actively used.")
   /// Scrub
   internal static let scrub = L10n.tr("Localizable", "scrub", fallback: "Scrub")
   /// Search
@@ -1512,6 +1538,8 @@ internal enum L10n {
   internal static let themeVideo = L10n.tr("Localizable", "themeVideo", fallback: "Theme video")
   /// Thumb
   internal static let thumb = L10n.tr("Localizable", "thumb", fallback: "Thumb")
+  /// A thumbnail image used on the homepage and when browsing the library in thumbnail mode. Only applicable to video content.
+  internal static let thumbImageDescription = L10n.tr("Localizable", "thumbImageDescription", fallback: "A thumbnail image used on the homepage and when browsing the library in thumbnail mode. Only applicable to video content.")
   /// Time
   internal static let time = L10n.tr("Localizable", "time", fallback: "Time")
   /// Time left

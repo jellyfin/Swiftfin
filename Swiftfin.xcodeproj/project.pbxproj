@@ -237,7 +237,6 @@
 				ViewModels/ItemAdministration/ItemEditorViewModel/PeopleEditorViewModel.swift,
 				ViewModels/ItemAdministration/ItemEditorViewModel/StudioEditorViewModel.swift,
 				ViewModels/ItemAdministration/ItemEditorViewModel/TagEditorViewModel.swift,
-				ViewModels/ItemAdministration/ItemImagesViewModel.swift,
 				ViewModels/ItemAdministration/RemoteImageInfoViewModel.swift,
 				ViewModels/QuickConnectAuthorizeViewModel.swift,
 				ViewModels/ServerCheckViewModel.swift,

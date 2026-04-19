@@ -49,6 +49,40 @@ struct ToolbarPillButtonStyle: ButtonStyle {
     }
 }
 
+extension ButtonStyle where Self == ToolbarCapsuleButtonStyle {
+
+    static var toolbarCapsule: ToolbarCapsuleButtonStyle {
+        ToolbarCapsuleButtonStyle()
+    }
+}
+
+struct ToolbarCapsuleButtonStyle: ButtonStyle {
+
+    @Default(.accentColor)
+    private var accentColor
+
+    @Environment(\.isSelected)
+    private var isSelected
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.footnote.weight(.semibold))
+            .foregroundColor(.primary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background {
+                Capsule()
+                    .foregroundColor(isSelected ? accentColor : Color(UIColor.secondarySystemFill))
+                    .opacity(0.5)
+            }
+            .overlay {
+                Capsule()
+                    .stroke(isSelected ? accentColor : Color(UIColor.secondarySystemFill), lineWidth: 1)
+            }
+            .opacity(configuration.isPressed ? 0.5 : 1)
+    }
+}
+
 extension ButtonStyle where Self == IsPressedButtonStyle {
 
     static func isPressed(_ isPressed: @escaping (Bool) -> Void) -> IsPressedButtonStyle {
