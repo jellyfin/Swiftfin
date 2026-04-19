@@ -10,12 +10,12 @@
 
 import SwiftUI
 
-private enum MarqueeState {
-    case idle
-    case animating
-}
-
 struct Marquee<Content: View>: View {
+
+    enum ResetType {
+        case bounce
+        case loop
+    }
 
     @Environment(\.isFocused)
     private var isFocused: Bool
@@ -25,8 +25,10 @@ struct Marquee<Content: View>: View {
     @State
     private var isAppear = false
     @State
-    private var state: MarqueeState = .idle
+    private var isAnimating = false
 
+    private let axis: Axis
+    private let resetType: ResetType
     private let speed: CGFloat
     private let delay: Double
     private let gap: CGFloat
@@ -35,23 +37,18 @@ struct Marquee<Content: View>: View {
 
     private let content: Content
 
-    init(
-        _ title: String,
-        speed: CGFloat = 60.0,
-        delay: Double = 2.0,
-        gap: CGFloat = 50.0,
-        animateWhenFocused: Bool = false,
-        fade: CGFloat = 10.0
-    ) where Content == Text {
-        self.speed = speed
-        self.delay = delay
-        self.gap = gap
-        self.animateWhenFocused = animateWhenFocused
-        self.fade = fade
-        content = Text(title)
+    var body: some View {
+        switch axis {
+        case .horizontal:
+            horizontalBody
+        case .vertical:
+            verticalBody
+        }
     }
 
-    var body: some View {
+    // MARK: - Horizontal
+
+    private var horizontalBody: some View {
         ViewThatFits(in: .horizontal) {
             content
 
@@ -72,7 +69,7 @@ struct Marquee<Content: View>: View {
                                 .marqueeOffset(x: offsetX(proxy: proxy), y: 0)
                                 .frame(maxHeight: .infinity)
 
-                            if contentSize.width >= proxy.size.width {
+                            if resetType == .loop, contentSize.width >= proxy.size.width {
                                 content
                                     .fixedSize()
                                     .marqueeOffset(
@@ -96,24 +93,28 @@ struct Marquee<Content: View>: View {
 
                     initializeAnimation(proxy: proxy)
                 }
-                .onChange(of: proxy.size.width) { _ in
+                .backport
+                .onChange(of: proxy.size.width) {
                     guard !isAppear, proxy.size.width != .zero else {
                         return
                     }
 
                     initializeAnimation(proxy: proxy)
                 }
-                .onDisappear {
-                    self.isAppear = false
-                }
-                .onChange(of: isFocused) { newFocused in
+                .backport
+                .onChange(of: isFocused) { _, newFocused in
                     resetAnimation(proxy: proxy, isFocused: newFocused)
                 }
-                .onChange(of: speed) { newSpeed in
+                .backport
+                .onChange(of: speed) { _, newSpeed in
                     resetAnimation(proxy: proxy, speed: newSpeed)
                 }
-                .onChange(of: delay) { newDelay in
+                .backport
+                .onChange(of: delay) { _, newDelay in
                     resetAnimation(proxy: proxy, delay: newDelay)
+                }
+                .onDisappear {
+                    self.isAppear = false
                 }
             }
             .frame(height: contentSize.height)
@@ -136,17 +137,101 @@ struct Marquee<Content: View>: View {
         }
     }
 
+    // MARK: - Vertical
+
+    private var verticalBody: some View {
+        ViewThatFits(in: .vertical) {
+            content
+
+            GeometryReader { proxy in
+                VStack(alignment: .leading) {
+                    if isAppear {
+                        content
+                            .onSizeChanged { size, _ in
+                                let heightChanged = self.contentSize.height != size.height
+                                self.contentSize = size
+
+                                if heightChanged {
+                                    resetAnimation(proxy: proxy)
+                                }
+                            }
+                            .fixedSize(horizontal: false, vertical: true)
+                            .marqueeOffset(x: 0, y: offsetY(proxy: proxy))
+                    }
+                }
+                .onAppear {
+                    guard proxy.size.height != .zero else {
+                        return
+                    }
+
+                    initializeAnimation(proxy: proxy)
+                }
+                .backport
+                .onChange(of: proxy.size.height) {
+                    guard !isAppear, proxy.size.height != .zero else {
+                        return
+                    }
+
+                    initializeAnimation(proxy: proxy)
+                }
+                .onDisappear {
+                    self.isAppear = false
+                }
+                .backport
+                .onChange(of: isFocused) { _, newValue in
+                    resetAnimation(proxy: proxy, isFocused: newValue)
+                }
+            }
+            .padding(.top, fade)
+            .clipped()
+            .mask {
+                GeometryReader { proxy in
+                    LinearGradient(
+                        stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .black, location: fade / proxy.size.height),
+                            .init(color: .black, location: 1 - (fade / proxy.size.height)),
+                            .init(color: .clear, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+            }
+            .padding(.top, -fade)
+        }
+    }
+
+    // MARK: - Animation
+
     private func initializeAnimation(proxy: GeometryProxy) {
         isAppear = true
         resetAnimation(proxy: proxy)
     }
 
     private func offsetX(proxy: GeometryProxy) -> CGFloat {
-        switch state {
-        case .idle:
+        if isAnimating {
+            switch resetType {
+            case .loop:
+                -(contentSize.width + gap(proxy))
+            case .bounce:
+                -(contentSize.width - proxy.size.width)
+            }
+        } else {
             0
-        case .animating:
-            -(contentSize.width + gap(proxy))
+        }
+    }
+
+    private func offsetY(proxy: GeometryProxy) -> CGFloat {
+        if isAnimating {
+            switch resetType {
+            case .loop:
+                -(contentSize.height + gap(proxy))
+            case .bounce:
+                -(contentSize.height - proxy.size.height)
+            }
+        } else {
+            0
         }
     }
 
@@ -175,35 +260,99 @@ struct Marquee<Content: View>: View {
         delay: Double,
         proxy: GeometryProxy
     ) {
-        let contentFits = contentSize.width < proxy.size.width
+        let distance: CGFloat
+        let contentFits: Bool
+
+        switch axis {
+        case .horizontal:
+            contentFits = contentSize.width < proxy.size.width
+            distance = resetType == .loop
+                ? contentSize.width + gap(proxy)
+                : contentSize.width - proxy.size.width
+        case .vertical:
+            contentFits = contentSize.height <= proxy.size.height
+            distance = resetType == .loop
+                ? contentSize.height + gap(proxy)
+                : contentSize.height - proxy.size.height
+        }
+
         if contentFits {
             stopAnimation()
             return
         }
 
-        let duration = (contentSize.width + gap(proxy)) / speed
-
         withAnimation(.linear(duration: 0.005)) {
-            self.state = .idle
+            self.isAnimating = false
+
             withAnimation(
                 Animation
-                    .linear(duration: duration)
+                    .linear(duration: distance / speed)
                     .delay(delay)
-                    .repeatForever(autoreverses: false)
+                    .repeatForever(autoreverses: resetType == .bounce)
             ) {
-                self.state = .animating
+                self.isAnimating = true
             }
         }
     }
 
     private func gap(_ proxy: GeometryProxy) -> CGFloat {
-        max(0, proxy.size.width - contentSize.width) + gap
+        switch axis {
+        case .horizontal:
+            max(0, proxy.size.width - contentSize.width) + gap
+        case .vertical:
+            max(0, proxy.size.height - contentSize.height) + gap
+        }
     }
 
     private func stopAnimation() {
         withAnimation(.linear(duration: 0.005)) {
-            self.state = .idle
+            self.isAnimating = false
         }
+    }
+}
+
+extension Marquee {
+
+    /// Init from String
+    init(
+        _ title: String,
+        axis: Axis = .horizontal,
+        resetType: ResetType = .loop,
+        speed: CGFloat = 60.0,
+        delay: Double = 2.0,
+        gap: CGFloat = 50.0,
+        animateWhenFocused: Bool = false,
+        fade: CGFloat = 10.0
+    ) where Content == Text {
+        self.axis = axis
+        self.resetType = resetType
+        self.speed = speed
+        self.delay = delay
+        self.gap = gap
+        self.animateWhenFocused = animateWhenFocused
+        self.fade = fade
+        content = Text(title)
+    }
+
+    /// Init from View
+    init(
+        axis: Axis = .horizontal,
+        resetType: ResetType = .loop,
+        speed: CGFloat = 60.0,
+        delay: Double = 2.0,
+        gap: CGFloat = 50.0,
+        animateWhenFocused: Bool = false,
+        fade: CGFloat = 10.0,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.axis = axis
+        self.resetType = resetType
+        self.speed = speed
+        self.delay = delay
+        self.gap = gap
+        self.animateWhenFocused = animateWhenFocused
+        self.fade = fade
+        self.content = content()
     }
 }
 
