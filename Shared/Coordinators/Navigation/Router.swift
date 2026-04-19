@@ -77,6 +77,12 @@ struct Router: DynamicProperty {
                 in: namespace
             )
         }
+
+        func root(
+            _ root: RootItem
+        ) {
+            router.root(root)
+        }
     }
 
     // `.dismiss` causes changes on disappear

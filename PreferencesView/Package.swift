@@ -14,13 +14,9 @@ let package = Package(
             targets: ["PreferencesView"]
         ),
     ],
-    dependencies: [
-        .package(url: "https://github.com/MarioIannotta/SwizzleSwift", branch: "master"),
-    ],
     targets: [
         .target(
             name: "PreferencesView",
-            dependencies: [.product(name: "SwizzleSwift", package: "SwizzleSwift")]
         ),
     ]
 )
