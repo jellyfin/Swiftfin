@@ -43,7 +43,19 @@ struct SplitLoginWindowView<Leading: View, Trailing: View>: View {
             .frame(maxWidth: .infinity)
             .edgePadding(.vertical)
         }
-        .navigationBarBranding(isLoading: isLoading)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Image(uiImage: .jellyfinBlobBlue)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: UIDevice.isTV ? 100 : 30)
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                if isLoading {
+                    ProgressView()
+                }
+            }
+        }
         .background {
             if let backgroundImageSource {
                 ZStack {

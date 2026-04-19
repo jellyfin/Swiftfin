@@ -12,17 +12,6 @@ import SwiftUIIntrospect
 
 extension View {
 
-    @ViewBuilder
-    func navigationBarBranding(
-        isLoading: Bool = false
-    ) -> some View {
-        modifier(
-            NavigationBarBrandingModifier(
-                isLoading: isLoading
-            )
-        )
-    }
-
     /// - Important: This does nothing on tvOS.
     @ViewBuilder
     func navigationBarTitleDisplayMode(_ mode: NavigationBarItem.TitleDisplayMode) -> some View {

@@ -232,7 +232,7 @@ struct UserSignInView: View {
                                     userID: user.id,
                                     source: user.profileImageSource(
                                         client: viewModel.server.client,
-                                        maxWidth: 120
+                                        maxWidth: 50
                                     )
                                 )
                                 .frame(width: 50, height: 50)
