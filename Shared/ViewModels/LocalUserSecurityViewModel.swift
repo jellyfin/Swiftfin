@@ -7,10 +7,14 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import KeychainSwift
 
 final class LocalUserSecurityViewModel: ViewModel, Eventful {
+
+    @Injected(\.keychainService)
+    var keychain
 
     enum Event: Hashable {
         case error(ErrorMessage)
