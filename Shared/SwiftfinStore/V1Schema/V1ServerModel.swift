@@ -13,11 +13,11 @@ extension SwiftfinStore.V1 {
 
     final class StoredServer: CoreStoreObject {
 
-        @Field.Coded("urls", coder: FieldCoders.Json.self)
-        var urls: Set<URL> = []
+        @Field.Coded("uris", coder: FieldCoders.Json.self)
+        var uris: Set<String> = []
 
-        @Field.Stored("currentURL")
-        var currentURL: URL = .init(string: "/")!
+        @Field.Stored("currentURI")
+        var currentURI: String = ""
 
         @Field.Stored("name")
         var name: String = ""
@@ -33,15 +33,5 @@ extension SwiftfinStore.V1 {
 
         @Field.Relationship("users", inverse: \StoredUser.$server)
         var users: Set<StoredUser>
-
-        var state: ServerState {
-            .init(
-                urls: urls,
-                currentURL: currentURL,
-                name: name,
-                id: id,
-                usersIDs: users.map(\.id)
-            )
-        }
     }
 }

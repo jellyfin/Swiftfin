@@ -67,8 +67,8 @@ struct LocalUserSettingsView: View {
             }
 
             Section {
-                // TODO: move under future "Storage" tab
-                //       when downloads implemented
+                // TODO: Disabled as non-essential stored values and
+                // settings need to be migrated to be separate
                 StateAdapter(initialValue: false) { isPresentingConfirmReset in
                     Button(L10n.resetSettings, role: .destructive) {
                         isPresentingConfirmReset.wrappedValue = true

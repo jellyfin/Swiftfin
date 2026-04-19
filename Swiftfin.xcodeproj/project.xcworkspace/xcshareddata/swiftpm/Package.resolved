@@ -1,5 +1,5 @@
 {
-  "originHash" : "38a493503cb22432e1bf1b0b812569bb2bdd51f821207a74b6b78ff16a049011",
+  "originHash" : "87f00a2fd38eea48481d71fcaa199008fa1466d76cf3d82f16814ea8e085b1c6",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nathantannar4/Engine",
       "state" : {
-        "revision" : "8062b68c43373af4abf1695bb8aba86cc013ec9d",
-        "version" : "2.3.2"
+        "revision" : "34664a7b8131caf91f1de0a407dfc6a590a4c52e",
+        "version" : "2.6.5"
       }
     },
     {
@@ -272,21 +272,12 @@
       }
     },
     {
-      "identity" : "swizzleswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/MarioIannotta/SwizzleSwift",
-      "state" : {
-        "branch" : "master",
-        "revision" : "e2d31c646182bf94a496b173c6ee5ad191230e9a"
-      }
-    },
-    {
       "identity" : "transmission",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nathantannar4/Transmission",
       "state" : {
-        "revision" : "2da5049d33111238ad4cb979ebce783af9586cef",
-        "version" : "2.4.5"
+        "revision" : "6776b6b6dd2de5bb47253445ab698b700bd38175",
+        "version" : "2.8.3"
       }
     },
     {
