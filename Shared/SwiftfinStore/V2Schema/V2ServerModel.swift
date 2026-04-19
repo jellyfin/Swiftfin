@@ -36,7 +36,7 @@ extension SwiftfinStore.V2 {
                 currentURL: currentURL,
                 name: name,
                 id: id,
-                usersIDs: users.map(\.id)
+                userIDs: users.map(\.id)
             )
         }
     }

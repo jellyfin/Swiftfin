@@ -7,7 +7,7 @@
 //
 
 import Combine
-import CoreStore
+import Factory
 import Foundation
 import JellyfinAPI
 import KeychainSwift
@@ -16,6 +16,9 @@ import OrderedCollections
 @MainActor
 @Stateful
 final class SelectUserViewModel: ViewModel {
+
+    @Injected(\.keychainService)
+    var keychain
 
     @CasePathable
     enum Action {
@@ -44,32 +47,17 @@ final class SelectUserViewModel: ViewModel {
 
     @Function(\Action.Cases.getServers)
     private func _getServers() async throws {
-        let newServers = try SwiftfinStore
-            .dataStack
-            .fetchAll(From<ServerModel>())
-            .map(\.state)
-            .sorted(using: \.name)
-            .zipped(map: getUsers)
-            .reduce(into: OrderedDictionary<ServerState, [UserState]>()) { partialResult, pair in
-                partialResult[pair.0] = pair.1
+        let usersByServerID = StoredValues[.User.users]
+            .reduce(into: [String: [UserState]]()) { partialResult, user in
+                partialResult[user.serverID, default: []].append(user)
             }
 
-        servers = newServers
-    }
-
-    private func getUsers(for server: ServerState) throws -> [UserState] {
-        guard let storedServer = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
-            logger.critical(
-                "Unable to find server for users",
-                metadata: [
-                    "serverName": .string(server.name),
-                ]
-            )
-            throw ErrorMessage(L10n.unknownError)
-        }
-
-        return storedServer.users
-            .map(\.state)
+        servers = StoredValues[.Server.servers]
+            .sorted(using: \.name)
+            .reduce(into: .init()) { partialResult, server in
+                partialResult[server] = usersByServerID[server.id, default: []]
+                    .sorted(using: \.username)
+            }
     }
 
     @Function(\Action.Cases.signIn)
