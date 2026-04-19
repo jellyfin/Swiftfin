@@ -15,6 +15,8 @@ import SwiftUI
 #if DEBUG
 struct DebugSettingsView: View {
 
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
     @Default(.sendProgressReports)
     private var sendProgressReports
 
@@ -25,68 +27,59 @@ struct DebugSettingsView: View {
                 Toggle("Send Progress Reports", isOn: $sendProgressReports)
             }
 
-            Section("Device Details") {
-                Button {
-                    LabeledContent(
-                        "SoC & GPU",
-                        value: PlaybackCapabilities.gpuName
-                    )
-                }
+            Section {
+                Toggle("Liquid Glass", isOn: $isLiquidGlassEnabled)
+            } footer: {
+                Text("Requires app restart to take effect.")
+            }
 
-                Button {
-                    LabeledContent(
-                        "Device Reports HDR Capabilities",
-                        value: PlaybackCapabilities.isDeviceHDRCapable ? L10n.yes : L10n.no
-                    )
-                }
+            Section("Device Details") {
+                LabeledContent(
+                    "SoC & GPU",
+                    value: PlaybackCapabilities.gpuName
+                )
+
+                LabeledContent(
+                    "Device Reports HDR Capabilities",
+                    value: PlaybackCapabilities.isDeviceHDRCapable ? L10n.yes : L10n.no
+                )
             }
 
             Section("Video Codec Support") {
-                Button {
-                    LabeledContent(
-                        VideoCodec.av1.displayTitle,
-                        value: PlaybackCapabilities.supportsAV1 ? L10n.yes : L10n.no
-                    )
-                }
+                LabeledContent(
+                    VideoCodec.av1.displayTitle,
+                    value: PlaybackCapabilities.supportsAV1 ? L10n.yes : L10n.no
+                )
 
-                Button {
-                    LabeledContent(
-                        VideoCodec.hevc.displayTitle,
-                        value: PlaybackCapabilities.supportsHEVC ? L10n.yes : L10n.no
-                    )
-                }
+                LabeledContent(
+                    VideoCodec.hevc.displayTitle,
+                    value: PlaybackCapabilities.supportsHEVC ? L10n.yes : L10n.no
+                )
 
-                Button {
-                    LabeledContent(
-                        VideoCodec.vp9.displayTitle,
-                        value: PlaybackCapabilities.supportsVP9 ? L10n.yes : L10n.no
-                    )
-                }
+                LabeledContent(
+                    VideoCodec.vp9.displayTitle,
+                    value: PlaybackCapabilities.supportsVP9 ? L10n.yes : L10n.no
+                )
             }
 
             Section("Video Range Support") {
-                Button {
-                    LabeledContent(
-                        VideoRangeType.hdr10Plus.displayTitle,
-                        value: PlaybackCapabilities.supportsHDR10 ? L10n.yes : L10n.no
-                    )
-                }
+                LabeledContent(
+                    VideoRangeType.hdr10Plus.displayTitle,
+                    value: PlaybackCapabilities.supportsHDR10 ? L10n.yes : L10n.no
+                )
 
-                Button {
-                    LabeledContent(
-                        VideoRangeType.hlg.displayTitle,
-                        value: PlaybackCapabilities.supportsHLG ? L10n.yes : L10n.no
-                    )
-                }
+                LabeledContent(
+                    VideoRangeType.hlg.displayTitle,
+                    value: PlaybackCapabilities.supportsHLG ? L10n.yes : L10n.no
+                )
 
-                Button {
-                    LabeledContent(
-                        VideoRangeType.dovi.displayTitle,
-                        value: PlaybackCapabilities.supportsDolbyVision ? L10n.yes : L10n.no
-                    )
-                }
+                LabeledContent(
+                    VideoRangeType.dovi.displayTitle,
+                    value: PlaybackCapabilities.supportsDolbyVision ? L10n.yes : L10n.no
+                )
             }
         }
+        .labeledContentStyle(.focusable)
         .navigationTitle("Debug")
     }
 }
