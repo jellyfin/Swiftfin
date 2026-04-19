@@ -27,11 +27,8 @@ extension UserDefaults {
     /// Settings that should apply to the app
     static let appSuite = UserDefaults(suiteName: "swiftfinApp")!
 
-    // MARK: Usser
+    // MARK: User
 
-    // TODO: the Factory resolver cannot be used because it would cause freezes, but
-    //       the Defaults value should always be in sync with the latest user and what
-    //       views properly expect. However, this feels like a hack and should be changed?
     static var currentUserSuite: UserDefaults {
         switch Defaults[.lastSignedInUserID] {
         case .signedOut:
@@ -112,149 +109,316 @@ extension Defaults.Keys {
 
     enum Customization {
 
-        static let itemViewType: Key<ItemViewType> = UserKey("itemViewType", default: .compactLogo)
+        static var itemViewType: Key<ItemViewType> {
+            UserKey("itemViewType", default: .compactLogo)
+        }
 
-        static let showPosterLabels: Key<Bool> = UserKey("showPosterLabels", default: true)
-        static let nextUpPosterType: Key<PosterDisplayType> = UserKey("nextUpPosterType", default: .portrait)
-        static let recentlyAddedPosterType: Key<PosterDisplayType> = UserKey("recentlyAddedPosterType", default: .portrait)
-        static let latestInLibraryPosterType: Key<PosterDisplayType> = UserKey("latestInLibraryPosterType", default: .portrait)
-        static let shouldShowMissingSeasons: Key<Bool> = UserKey("shouldShowMissingSeasons", default: true)
-        static let shouldShowMissingEpisodes: Key<Bool> = UserKey("shouldShowMissingEpisodes", default: true)
-        static let similarPosterType: Key<PosterDisplayType> = UserKey("similarPosterType", default: .portrait)
+        static var showPosterLabels: Key<Bool> {
+            UserKey("showPosterLabels", default: true)
+        }
+
+        static var nextUpPosterType: Key<PosterDisplayType> {
+            UserKey("nextUpPosterType", default: .portrait)
+        }
+
+        static var recentlyAddedPosterType: Key<PosterDisplayType> {
+            UserKey("recentlyAddedPosterType", default: .portrait)
+        }
+
+        static var latestInLibraryPosterType: Key<PosterDisplayType> {
+            UserKey("latestInLibraryPosterType", default: .portrait)
+        }
+
+        static var shouldShowMissingSeasons: Key<Bool> {
+            UserKey("shouldShowMissingSeasons", default: true)
+        }
+
+        static var shouldShowMissingEpisodes: Key<Bool> {
+            UserKey("shouldShowMissingEpisodes", default: true)
+        }
+
+        static var similarPosterType: Key<PosterDisplayType> {
+            UserKey("similarPosterType", default: .portrait)
+        }
 
         // TODO: have search poster type by types of items if applicable
-        static let searchPosterType: Key<PosterDisplayType> = UserKey("searchPosterType", default: .portrait)
+        static var searchPosterType: Key<PosterDisplayType> {
+            UserKey("searchPosterType", default: .portrait)
+        }
 
         enum CinematicItemViewType {
 
-            static let usePrimaryImage: Key<Bool> = UserKey("cinematicItemViewTypeUsePrimaryImage", default: false)
+            static var usePrimaryImage: Key<Bool> {
+                UserKey("cinematicItemViewTypeUsePrimaryImage", default: false)
+            }
         }
 
         enum Episodes {
 
-            static let useSeriesLandscapeBackdrop: Key<Bool> = UserKey("useSeriesBackdrop", default: true)
+            static var useSeriesLandscapeBackdrop: Key<Bool> {
+                UserKey("useSeriesBackdrop", default: true)
+            }
         }
 
         enum Indicators {
 
-            static let showFavorited: Key<Bool> = UserKey("showFavoritedIndicator", default: true)
-            static let showProgress: Key<Bool> = UserKey("showProgressIndicator", default: true)
-            static let showUnplayed: Key<UnplayedIndicatorType> = UserKey("showUnplayedIndicator", default: .indicator)
-            static let showPlayed: Key<Bool> = UserKey("showPlayedIndicator", default: true)
+            static var showFavorited: Key<Bool> {
+                UserKey("showFavoritedIndicator", default: true)
+            }
+
+            static var showProgress: Key<Bool> {
+                UserKey("showProgressIndicator", default: true)
+            }
+
+            static var showUnplayed: Key<UnplayedIndicatorType> {
+                UserKey("showUnplayedIndicator", default: .indicator)
+            }
+
+            static var showPlayed: Key<Bool> {
+                UserKey("showPlayedIndicator", default: true)
+            }
         }
 
         enum Library {
 
-            static let cinematicBackground: Key<Bool> = UserKey("libraryCinematicBackground", default: true)
-            static let enabledDrawerFilters: Key<[ItemFilterType]> = UserKey(
-                "libraryEnabledDrawerFilters",
-                default: ItemFilterType.allCases
-            )
-            static let letterPickerEnabled: Key<Bool> = UserKey("letterPickerEnabled", default: false)
+            static var cinematicBackground: Key<Bool> {
+                UserKey("libraryCinematicBackground", default: true)
+            }
+
+            static var enabledDrawerFilters: Key<[ItemFilterType]> {
+                UserKey(
+                    "libraryEnabledDrawerFilters",
+                    default: ItemFilterType.allCases
+                )
+            }
+
+            static var letterPickerEnabled: Key<Bool> {
+                UserKey("letterPickerEnabled", default: false)
+            }
+
             static let letterPickerOrientation: Key<LetterPickerOrientation> = .init(
                 "letterPickerOrientation", default: .trailing
             )
-            static let displayType: Key<LibraryDisplayType> = UserKey("libraryViewType", default: .grid)
-            static let posterType: Key<PosterDisplayType> = UserKey("libraryPosterType", default: .portrait)
-            static let listColumnCount: Key<Int> = UserKey("listColumnCount", default: 1)
-            static let randomImage: Key<Bool> = UserKey("libraryRandomImage", default: true)
-            static let showFavorites: Key<Bool> = UserKey("libraryShowFavorites", default: true)
+            static var displayType: Key<LibraryDisplayType> {
+                UserKey("libraryViewType", default: .grid)
+            }
 
-            static let rememberLayout: Key<Bool> = UserKey("libraryRememberLayout", default: false)
-            static let rememberSort: Key<Bool> = UserKey("libraryRememberSort", default: false)
+            static var posterType: Key<PosterDisplayType> {
+                UserKey("libraryPosterType", default: .portrait)
+            }
+
+            static var listColumnCount: Key<Int> {
+                UserKey("listColumnCount", default: 1)
+            }
+
+            static var randomImage: Key<Bool> {
+                UserKey("libraryRandomImage", default: true)
+            }
+
+            static var showFavorites: Key<Bool> {
+                UserKey("libraryShowFavorites", default: true)
+            }
+
+            static var rememberLayout: Key<Bool> {
+                UserKey("libraryRememberLayout", default: false)
+            }
+
+            static var rememberSort: Key<Bool> {
+                UserKey("libraryRememberSort", default: false)
+            }
         }
 
         enum Home {
-            static let showRecentlyAdded: Key<Bool> = UserKey("showRecentlyAdded", default: true)
-            static let resumeNextUp: Key<Bool> = UserKey("homeResumeNextUp", default: false)
-            static let maxNextUp: Key<TimeInterval> = UserKey(
-                "homeMaxNextUp",
-                default: 366 * 86400
-            )
+            static var showRecentlyAdded: Key<Bool> {
+                UserKey("showRecentlyAdded", default: true)
+            }
+
+            static var resumeNextUp: Key<Bool> {
+                UserKey("homeResumeNextUp", default: false)
+            }
+
+            static var maxNextUp: Key<TimeInterval> {
+                UserKey(
+                    "homeMaxNextUp",
+                    default: 366 * 86400
+                )
+            }
         }
 
         enum Search {
 
-            static let enabledDrawerFilters: Key<[ItemFilterType]> = UserKey(
-                "searchEnabledDrawerFilters",
-                default: ItemFilterType.allCases
-            )
+            static var enabledDrawerFilters: Key<[ItemFilterType]> {
+                UserKey(
+                    "searchEnabledDrawerFilters",
+                    default: ItemFilterType.allCases
+                )
+            }
         }
     }
 
     enum VideoPlayer {
 
-        static let appMaximumBitrate: Key<PlaybackBitrate> = UserKey("appMaximumBitrate", default: .max)
-        static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .regular)
-        static let autoPlayEnabled: Key<Bool> = UserKey("autoPlayEnabled", default: true)
-        static let barActionButtons: Key<[VideoPlayerActionButton]> = UserKey(
-            "barActionButtons",
-            default: VideoPlayerActionButton.defaultBarActionButtons
-        )
-        static let jumpBackwardInterval: Key<MediaJumpInterval> = UserKey("jumpBackwardLength", default: .fifteen)
-        static let jumpForwardInterval: Key<MediaJumpInterval> = UserKey("jumpForwardLength", default: .fifteen)
-        static let menuActionButtons: Key<[VideoPlayerActionButton]> = UserKey(
-            "menuActionButtons",
-            default: VideoPlayerActionButton.defaultMenuActionButtons
-        )
-        static let resumeOffset: Key<Int> = UserKey("resumeOffset", default: 0)
-        static let videoPlayerType: Key<VideoPlayerType> = UserKey("videoPlayerType", default: .swiftfin)
+        static var appMaximumBitrate: Key<PlaybackBitrate> {
+            UserKey("appMaximumBitrate", default: .max)
+        }
+
+        static var appMaximumBitrateTest: Key<PlaybackBitrateTestSize> {
+            UserKey("appMaximumBitrateTest", default: .regular)
+        }
+
+        static var autoPlayEnabled: Key<Bool> {
+            UserKey("autoPlayEnabled", default: true)
+        }
+
+        static var barActionButtons: Key<[VideoPlayerActionButton]> {
+            UserKey(
+                "barActionButtons",
+                default: VideoPlayerActionButton.defaultBarActionButtons
+            )
+        }
+
+        static var jumpBackwardInterval: Key<MediaJumpInterval> {
+            UserKey("jumpBackwardLength", default: .fifteen)
+        }
+
+        static var jumpForwardInterval: Key<MediaJumpInterval> {
+            UserKey("jumpForwardLength", default: .fifteen)
+        }
+
+        static var menuActionButtons: Key<[VideoPlayerActionButton]> {
+            UserKey(
+                "menuActionButtons",
+                default: VideoPlayerActionButton.defaultMenuActionButtons
+            )
+        }
+
+        static var resumeOffset: Key<Int> {
+            UserKey("resumeOffset", default: 0)
+        }
+
+        static var videoPlayerType: Key<VideoPlayerType> {
+            UserKey("videoPlayerType", default: .swiftfin)
+        }
 
         enum Gesture {
 
-            static let horizontalPanAction: Key<PanGestureAction> = UserKey("videoPlayerHorizontalPanGesture", default: .none)
-            static let horizontalSwipeAction: Key<SwipeGestureAction> = UserKey("videoPlayerhorizontalSwipeAction", default: .none)
-            static let longPressAction: Key<LongPressGestureAction> = UserKey("videoPlayerLongPressGesture", default: .gestureLock)
-            static let longPressSpeedMultiplier: Key<PlaybackSpeed> = UserKey(
-                "videoPlayerLongPressSpeedMultiplier",
-                default: .two
-            )
-            static let multiTapGesture: Key<MultiTapGestureAction> = UserKey("videoPlayerMultiTapGesture", default: .none)
-            static let doubleTouchGesture: Key<DoubleTouchGestureAction> = UserKey("videoPlayerDoubleTouchGesture", default: .none)
-            static let pinchGesture: Key<PinchGestureAction> = UserKey("videoPlayerSwipeGesture", default: .aspectFill)
-            static let verticalPanLeftAction: Key<PanGestureAction> = UserKey("videoPlayerverticalPanLeftAction", default: .none)
-            static let verticalPanRightAction: Key<PanGestureAction> = UserKey("videoPlayerverticalPanRightAction", default: .none)
+            static var horizontalPanAction: Key<PanGestureAction> {
+                UserKey("videoPlayerHorizontalPanGesture", default: .none)
+            }
+
+            static var horizontalSwipeAction: Key<SwipeGestureAction> {
+                UserKey("videoPlayerhorizontalSwipeAction", default: .none)
+            }
+
+            static var longPressAction: Key<LongPressGestureAction> {
+                UserKey("videoPlayerLongPressGesture", default: .gestureLock)
+            }
+
+            static var longPressSpeedMultiplier: Key<PlaybackSpeed> {
+                UserKey(
+                    "videoPlayerLongPressSpeedMultiplier",
+                    default: .two
+                )
+            }
+
+            static var multiTapGesture: Key<MultiTapGestureAction> {
+                UserKey("videoPlayerMultiTapGesture", default: .none)
+            }
+
+            static var doubleTouchGesture: Key<DoubleTouchGestureAction> {
+                UserKey("videoPlayerDoubleTouchGesture", default: .none)
+            }
+
+            static var pinchGesture: Key<PinchGestureAction> {
+                UserKey("videoPlayerSwipeGesture", default: .aspectFill)
+            }
+
+            static var verticalPanLeftAction: Key<PanGestureAction> {
+                UserKey("videoPlayerverticalPanLeftAction", default: .none)
+            }
+
+            static var verticalPanRightAction: Key<PanGestureAction> {
+                UserKey("videoPlayerverticalPanRightAction", default: .none)
+            }
         }
 
         enum Overlay {
 
-            static let chapterSlider: Key<Bool> = UserKey("chapterSlider", default: true)
+            static var chapterSlider: Key<Bool> {
+                UserKey("chapterSlider", default: true)
+            }
 
             // Timestamp
-            static let trailingTimestampType: Key<TrailingTimestampType> = UserKey("trailingTimestamp", default: .timeLeft)
+            static var trailingTimestampType: Key<TrailingTimestampType> {
+                UserKey("trailingTimestamp", default: .timeLeft)
+            }
         }
 
         enum Playback {
-            static let appMaximumBitrate: Key<PlaybackBitrate> = UserKey("appMaximumBitrate", default: .auto)
-            static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .regular)
-            static let compatibilityMode: Key<PlaybackCompatibility> = UserKey("compatibilityMode", default: .auto)
-            static let customDeviceProfileAction: Key<CustomDeviceProfileAction> = UserKey("customDeviceProfileAction", default: .add)
-            static let rates: Key<[Float]> = UserKey("videoPlayerPlaybackRates", default: [0.5, 1.0, 1.25, 1.5, 2.0])
-            static let playbackRate: Key<Float> = UserKey("playbackRate", default: Float(1.0))
+            static var appMaximumBitrate: Key<PlaybackBitrate> {
+                UserKey("appMaximumBitrate", default: .auto)
+            }
+
+            static var appMaximumBitrateTest: Key<PlaybackBitrateTestSize> {
+                UserKey("appMaximumBitrateTest", default: .regular)
+            }
+
+            static var compatibilityMode: Key<PlaybackCompatibility> {
+                UserKey("compatibilityMode", default: .auto)
+            }
+
+            static var customDeviceProfileAction: Key<CustomDeviceProfileAction> {
+                UserKey("customDeviceProfileAction", default: .add)
+            }
+
+            static var rates: Key<[Float]> {
+                UserKey("videoPlayerPlaybackRates", default: [0.5, 1.0, 1.25, 1.5, 2.0])
+            }
+
+            static var playbackRate: Key<Float> {
+                UserKey("playbackRate", default: Float(1.0))
+            }
         }
 
         // TODO: transition into a SubtitleConfiguration instead of multiple types
         enum Subtitle {
 
-            static let subtitleColor: Key<Color> = UserKey("subtitleColor", default: .white)
-            static let subtitleFontName: Key<String> = UserKey("subtitleFontName", default: UIFont.systemFont(ofSize: 14).fontName)
-            static let subtitleSize: Key<Int> = UserKey("subtitleSize", default: 9)
+            static var subtitleColor: Key<Color> {
+                UserKey("subtitleColor", default: .white)
+            }
+
+            static var subtitleFontName: Key<String> {
+                UserKey("subtitleFontName", default: UIFont.systemFont(ofSize: 14).fontName)
+            }
+
+            static var subtitleSize: Key<Int> {
+                UserKey("subtitleSize", default: 9)
+            }
         }
 
         enum Transition {
-            static let pauseOnBackground: Key<Bool> = UserKey("playInBackground", default: true)
+            static var pauseOnBackground: Key<Bool> {
+                UserKey("playInBackground", default: true)
+            }
         }
     }
 
     // Experimental settings
     enum Experimental {
 
-        static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)
+        static var downloads: Key<Bool> {
+            UserKey("experimentalDownloads", default: false)
+        }
     }
 
     // tvos specific
-    static let downActionShowsMenu: Key<Bool> = UserKey("downActionShowsMenu", default: true)
-    static let confirmClose: Key<Bool> = UserKey("confirmClose", default: false)
+    static var downActionShowsMenu: Key<Bool> {
+        UserKey("downActionShowsMenu", default: true)
+    }
+
+    static var confirmClose: Key<Bool> {
+        UserKey("confirmClose", default: false)
+    }
 }
 
 // MARK: Debug
