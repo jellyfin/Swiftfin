@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: Option to remove `None` as an option
+// - Likely just an init for Binding<String> instead of Binding<String?>
 struct CulturePicker: View {
 
     @StateObject
