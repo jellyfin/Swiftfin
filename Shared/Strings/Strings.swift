@@ -296,6 +296,10 @@ internal enum L10n {
   internal static let clip = L10n.tr("Localizable", "clip", fallback: "Clip")
   /// Close
   internal static let close = L10n.tr("Localizable", "close", fallback: "Close")
+  /// Close player
+  internal static let closePlayer = L10n.tr("Localizable", "closePlayer", fallback: "Close player")
+  /// Are you sure you want to close the player?
+  internal static let closePlayerWarning = L10n.tr("Localizable", "closePlayerWarning", fallback: "Are you sure you want to close the player?")
   /// Collection
   internal static let collection = L10n.tr("Localizable", "collection", fallback: "Collection")
   /// Collection folder
@@ -896,6 +900,8 @@ internal enum L10n {
   internal static let lyricist = L10n.tr("Localizable", "lyricist", fallback: "Lyricist")
   /// Lyrics
   internal static let lyrics = L10n.tr("Localizable", "lyrics", fallback: "Lyrics")
+  /// Manage
+  internal static let manage = L10n.tr("Localizable", "manage", fallback: "Manage")
   /// Management
   internal static let management = L10n.tr("Localizable", "management", fallback: "Management")
   /// Delete, upload, or search for external subtitles.
@@ -1010,6 +1016,8 @@ internal enum L10n {
   internal static let noEpisodesAvailable = L10n.tr("Localizable", "noEpisodesAvailable", fallback: "No episodes available")
   /// No items
   internal static let noItems = L10n.tr("Localizable", "noItems", fallback: "No items")
+  /// No item selected
+  internal static let noItemSelected = L10n.tr("Localizable", "noItemSelected", fallback: "No item selected")
   /// No local servers found
   internal static let noLocalServersFound = L10n.tr("Localizable", "noLocalServersFound", fallback: "No local servers found")
   /// None
@@ -1404,6 +1412,8 @@ internal enum L10n {
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slow scrub
   internal static let slowScrub = L10n.tr("Localizable", "slowScrub", fallback: "Slow scrub")
+  /// Slow scrubbing
+  internal static let slowScrubbing = L10n.tr("Localizable", "slowScrubbing", fallback: "Slow scrubbing")
   /// Smaller
   internal static let smaller = L10n.tr("Localizable", "smaller", fallback: "Smaller")
   /// Smallest

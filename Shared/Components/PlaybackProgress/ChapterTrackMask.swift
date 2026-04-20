@@ -34,7 +34,7 @@ extension VideoPlayer.PlaybackControls.PlaybackProgress {
                     ForEach(unitPoints, id: \.self) { unitPoint in
                         if unitPoint > 0 {
                             Color.black
-                                .frame(width: 1.5)
+                                .frame(width: UIDevice.isTV ? 3 : 1.5)
                                 .offset(x: proxy.size.width * unitPoint - 0.75)
                         }
                     }
