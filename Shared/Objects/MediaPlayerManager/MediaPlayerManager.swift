@@ -321,23 +321,27 @@ final class MediaPlayerManager: ViewModel {
                 return
             }
 
-            try await updateMediaPlayerItem(
-                currentItem: playbackItem,
-                audioStreamIndex: newIndex
-            )
+            if playbackItem.isRebuildRequired(type: .audio, from: oldIndex, to: newIndex) {
+                try await updateMediaPlayerItem(
+                    currentItem: playbackItem,
+                    audioStreamIndex: newIndex
+                )
+            } else {
+                playbackItem.switchTrack(type: .audio, index: newIndex)
+            }
         case .subtitle:
             guard playbackItem.subtitleStreams.contains(where: { $0.index == oldIndex }) else {
                 logger.warning("MediaPlayerManager.SetTrack call with an invalid subtitle track index")
                 return
             }
 
-            if playbackItem.isRebuildRequired(from: oldIndex, to: newIndex) {
+            if playbackItem.isRebuildRequired(type: .subtitle, from: oldIndex, to: newIndex) {
                 try await updateMediaPlayerItem(
                     currentItem: playbackItem,
                     subtitleStreamIndex: newIndex
                 )
             } else {
-                playbackItem.switchSubtitleTrack(index: newIndex)
+                playbackItem.switchTrack(type: .subtitle, index: newIndex)
             }
         default:
             logger.warning("MediaPlayerManager.SetTrack called with unsupported type: \(String(describing: type))")

@@ -51,6 +51,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     var observers: [any MediaPlayerObserver] = []
 
     let baseItem: BaseItemDto
+    let deviceProfile: DeviceProfile = .init()
     let mediaSource: MediaSourceInfo
     let playSessionID: String
     let previewImageProvider: (any PreviewImageProvider)?
@@ -118,23 +119,57 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         observers.append(MediaProgressObserver(item: self))
     }
 
-    // TODO: rename to have subtitle in name
-    func isRebuildRequired(from oldIndex: Int?, to newIndex: Int?) -> Bool {
-        func needsRebuild(_ stream: MediaStream?) -> Bool {
-            guard let stream else { return false }
-            return stream.deliveryMethod == .encode || (stream.isTextSubtitleStream == false && stream.isExternal == true)
+    /// Decides whether a track change can be performed by the player in place, or whether the server must produce a new stream.
+    func isRebuildRequired(type: MediaStreamType, from oldIndex: Int?, to newIndex: Int?) -> Bool {
+        let isTranscoding = mediaSource.transcodingURL != nil
+
+        // Disabling a track is ALWAYS a local-only operation.
+        guard let newIndex, newIndex != -1 else { return false }
+
+        switch type {
+        case .audio:
+
+            // Transcodes contain a single audio track and MUST rebuild.
+            if isTranscoding { return true }
+
+            guard let newStream = audioStreams.first(where: { $0.index == newIndex }) else { return true }
+
+            // TODO: When audio playback exists then get the type dynamically.
+            return !deviceProfile.canPlay(
+                type: .video,
+                audioCodec: newStream.codec,
+                container: mediaSource.container
+            )
+
+        case .subtitle:
+            // Optional (do not guard) since this could be -1 for disabled.
+            let oldStream = oldIndex.flatMap { idx in subtitleStreams.first { $0.index == idx } }
+
+            // Transitioning away from encoded subtitles always requires a rebuild so the server stops burning them into the video.
+            if oldStream?.deliveryMethod == .encode { return true }
+
+            // Catch if the new stream doesn't exist. If non-existent this will fallback to -1 and disable locally.
+            guard let newStream = subtitleStreams.first(where: { $0.index == newIndex }) else { return false }
+
+            if newStream.isExternal == true {
+
+                // External subtitles can only be loaded as sidecars when the profile allows external or HLS delivery for the format.
+                // E.G, This should disable external PGS for VLC since VLC cannot play them.
+                return !(deviceProfile.canPlay(subtitleFormat: newStream.codec, method: .external)
+                    || deviceProfile.canPlay(subtitleFormat: newStream.codec, method: .hls))
+            }
+
+            // Embedded subtitles are in the source container. Only reachable while direct-playing AND when the profile supports embed delivery.
+            return isTranscoding || !deviceProfile.canPlay(subtitleFormat: newStream.codec, method: .embed)
+
+        default:
+            return false
         }
-
-        let oldStream = subtitleStreams.first(where: { $0.index == oldIndex })
-        let newStream: MediaStream? = {
-            guard let idx = newIndex, idx != -1 else { return nil }
-            return subtitleStreams.first(where: { $0.index == idx })
-        }()
-
-        return needsRebuild(oldStream) || needsRebuild(newStream)
     }
 
-    func switchSubtitleTrack(index: Int?) {
+    /// Switches an audio, subtitle, or lyric* track in the player without rebuilding the stream.
+    /// *Lyrics stubs are there but needs a `MediaPlayerLyricTrackConfigurable`
+    func switchTrack(type: MediaStreamType, index: Int?) {
         let playerIndex: Int
         if index == nil || index == -1 {
             playerIndex = -1
@@ -144,11 +179,25 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
             return
         }
 
-        if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
+        switch type {
+        case .audio:
+            guard let proxy = manager?.proxy as? any MediaPlayerAudioTrackConfigurable else { return }
+            proxy.setAudioStream(.init(index: playerIndex))
+        case .subtitle:
+            guard let proxy = manager?.proxy as? any MediaPlayerSubtitleTrackConfigurable else { return }
             proxy.setSubtitleStream(.init(index: playerIndex))
+        case .lyric:
+
+            // TODO: Enable for Audio Player when Lyrics are needed.
+            // guard let proxy = manager?.proxy as? any MediaPlayerLyricTrackConfigurable else { return }
+            // proxy.setLyricStream(.init(index: playerIndex))
+            return
+        default:
+            return
         }
     }
 
+    /// Get subtitle mapped subtitle track indexes from `playbackChildren`
     func getSubtitleIndexes(subtitleTracks: [(index: Int, title: String)]) {
         guard !externalSubtitlesResolved else { return }
         externalSubtitlesResolved = true
@@ -163,12 +212,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
             isTranscoding: mediaSource.transcodingURL != nil
         )
 
-        if let currentSubtitle = selectedSubtitleStreamIndex,
-           let playerIndex = indexMap[currentSubtitle]
-        {
-            if let proxy = manager?.proxy as? any VideoMediaPlayerProxy {
-                proxy.setSubtitleStream(.init(index: playerIndex))
-            }
-        }
+        switchTrack(type: .subtitle, index: selectedSubtitleStreamIndex)
     }
 }
