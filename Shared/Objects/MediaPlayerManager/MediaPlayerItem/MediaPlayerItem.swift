@@ -159,7 +159,8 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
                     || deviceProfile.canPlay(subtitleFormat: newStream.codec, method: .hls))
             }
 
-            // Embedded subtitles are in the source container. Only reachable while direct-playing AND when the profile supports embed delivery.
+            // Embedded subtitles are in the source container.
+            // Only reachable while direct-playing AND when the profile supports embed delivery.
             return isTranscoding || !deviceProfile.canPlay(subtitleFormat: newStream.codec, method: .embed)
 
         default:
