@@ -41,7 +41,7 @@ You can change the `PRODUCT_BUNDLE_IDENTIFIER` value to have multiple builds of 
 
 ### Xcode Version
 
-Swiftfin releases are built using [Xcode 26.2](https://github.com/jellyfin/Swiftfin/blob/main/.github/workflows/ci.yml#L27). Any changes you create should be built and tested on that version to ensure compatibility with the project. For that reason, this version of Xcode is the recommended version for development.
+Swiftfin releases are built using the Xcode version pinned in our [CI workflow](https://github.com/jellyfin/Swiftfin/blob/main/.github/workflows/ci.yml#L27). Any changes you create should be built and tested on that version to ensure compatibility with the project. For that reason, that version of Xcode is the recommended version for development.
 
 ### Testing
 
