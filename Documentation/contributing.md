@@ -47,9 +47,7 @@ Swiftfin releases are built using the Xcode version pinned in our [CI workflow](
 
 Swiftfin can be tested using Xcode's built-in Simulator or on real hardware. See Apple's guide on [Running your app in Simulator or on a device](https://developer.apple.com/documentation/xcode/running-your-app-in-simulator-or-on-a-device/) for instructions on both approaches.
 
-> **Note:** Some functionality behaves differently between the Simulator and real devices, including picture-in-picture, device storage, and background playback. In these scenarios, it is recommended to test code changes on real hardware to ensure correct behavior.
->
-> To run Swiftfin on real hardware, you will need to self-sign the app using your own development team. This is handled through the `XcodeConfig/DevelopmentTeam.xcconfig` file described in the [Xcode Config](#xcode-config) section above. Do not include self-signing changes in your Pull Requests.
+> **Note:** Some functionality behaves differently between the Simulator and real devices, including picture-in-picture, device storage, and local network access. In these scenarios, it is recommended to test code changes on real hardware to ensure correct behavior.
 
 ## Git Flow
 
