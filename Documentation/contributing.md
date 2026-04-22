@@ -43,6 +43,14 @@ You can change the `PRODUCT_BUNDLE_IDENTIFIER` value to have multiple builds of 
 
 Swiftfin releases are built using [Xcode 26.2](https://github.com/jellyfin/Swiftfin/blob/main/.github/workflows/ci.yml#L27). Any changes you create should be built and tested on that version to ensure compatibility with the project. For that reason, this version of Xcode is the recommended version for development.
 
+### Testing
+
+Swiftfin can be tested using Xcode's built-in Simulator or on real hardware. See Apple's guide on [Running your app in Simulator or on a device](https://developer.apple.com/documentation/xcode/running-your-app-in-simulator-or-on-a-device/) for instructions on both approaches.
+
+> **Note:** Some functionality behaves differently between the Simulator and real devices, including picture-in-picture, device storage, and background playback. In these scenarios, it is recommended to test code changes on real hardware to ensure correct behavior.
+>
+> To run Swiftfin on real hardware, you will need to self-sign the app using your own development team. This is handled through the `XcodeConfig/DevelopmentTeam.xcconfig` file described in the [Xcode Config](#xcode-config) section above. Do not include self-signing changes in your Pull Requests.
+
 ## Git Flow
 
 Swiftfin follows the same Pull Request Guidelines as outlined in the [Jellyfin Pull Request Guidelines](https://jellyfin.org/docs/general/contributing/development.html#pull-request-guidelines).
@@ -59,14 +67,6 @@ The following must pass in order for a PR to be merged:
 - label(s) are attached, if applicable
 
 Labeling PRs with `enhancement`, `bug`, or `crash` will allow the PR to be tracked in GitHub's [automatically generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes). Small fixes (like minor UI adjustments) or non-user facing issues (like developer project clean up) can also have the `ignore-for-release` label because they may not be important to include in the release notes.
-
-## Testing
-
-Swiftfin can be tested using Xcode's built-in Simulator or on real hardware. See Apple's guide on [Running your app in Simulator or on a device](https://developer.apple.com/documentation/xcode/running-your-app-in-simulator-or-on-a-device/) for instructions on both approaches.
-
-> **Note:** Some functionality behaves differently between the Simulator and real devices, including picture-in-picture, device storage, and background playback. In these scenarios, it is recommended to test code changes on real hardware to ensure correct behavior.
->
-> To run Swiftfin on real hardware, you will need to self-sign the app using your own development team. This is handled through the `XcodeConfig/DevelopmentTeam.xcconfig` file described in the [Xcode Config](#xcode-config) section above. Do not include self-signing changes in your Pull Requests.
 
 ### Documentation
 Documentation for advanced or complex features and other implementation reasoning is encouraged so that future developers may have insights and a better understand of the application. `// MARK:` comments are encouraged for organization, maintainability, and ease of navigation in Xcode's Minimap.
