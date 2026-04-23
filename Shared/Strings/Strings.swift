@@ -106,10 +106,6 @@ internal enum L10n {
   internal static let alternateDVD = L10n.tr("Localizable", "alternateDVD", fallback: "Alternate DVD")
   /// Anamorphic video is not supported
   internal static let anamorphicVideoNotSupported = L10n.tr("Localizable", "anamorphicVideoNotSupported", fallback: "Anamorphic video is not supported")
-  /// API key copied
-  internal static let apiKeyCopied = L10n.tr("Localizable", "apiKeyCopied", fallback: "API key copied")
-  /// Your API key was copied to your clipboard!
-  internal static let apiKeyCopiedMessage = L10n.tr("Localizable", "apiKeyCopiedMessage", fallback: "Your API key was copied to your clipboard!")
   /// API keys
   internal static let apiKeys = L10n.tr("Localizable", "apiKeys", fallback: "API keys")
   /// API Keys
@@ -378,6 +374,10 @@ internal enum L10n {
   internal static let controlOtherUsers = L10n.tr("Localizable", "controlOtherUsers", fallback: "Control other users")
   /// Control shared devices
   internal static let controlSharedDevices = L10n.tr("Localizable", "controlSharedDevices", fallback: "Control shared devices")
+  /// Copied to clipboard
+  internal static let copiedToClipboard = L10n.tr("Localizable", "copiedToClipboard", fallback: "Copied to clipboard")
+  /// This has been copied to your clipboard!
+  internal static let copiedToClipboardMessage = L10n.tr("Localizable", "copiedToClipboardMessage", fallback: "This has been copied to your clipboard!")
   /// Corrupted frames
   internal static let corruptedFrames = L10n.tr("Localizable", "corruptedFrames", fallback: "Corrupted frames")
   /// Count
@@ -398,6 +398,8 @@ internal enum L10n {
   }
   /// Creator
   internal static let creator = L10n.tr("Localizable", "creator", fallback: "Creator")
+  /// Critical
+  internal static let critical = L10n.tr("Localizable", "critical", fallback: "Critical")
   /// Critic rating
   internal static let criticRating = L10n.tr("Localizable", "criticRating", fallback: "Critic rating")
   /// Critic rating on a scale from 1 to 100.
@@ -464,6 +466,8 @@ internal enum L10n {
   internal static let dayOfWeek = L10n.tr("Localizable", "dayOfWeek", fallback: "Day of week")
   /// Days
   internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
+  /// Debug
+  internal static let debug = L10n.tr("Localizable", "debug", fallback: "Debug")
   /// Default
   internal static let `default` = L10n.tr("Localizable", "default", fallback: "Default")
   /// Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.
@@ -672,6 +676,8 @@ internal enum L10n {
   }
   /// Failed logins
   internal static let failedLogins = L10n.tr("Localizable", "failedLogins", fallback: "Failed logins")
+  /// Fatal
+  internal static let fatal = L10n.tr("Localizable", "fatal", fallback: "Fatal")
   /// Favorite
   internal static let favorite = L10n.tr("Localizable", "favorite", fallback: "Favorite")
   /// Favorited
@@ -780,6 +786,8 @@ internal enum L10n {
   internal static let indicator = L10n.tr("Localizable", "indicator", fallback: "Indicator")
   /// Indicators
   internal static let indicators = L10n.tr("Localizable", "indicators", fallback: "Indicators")
+  /// Information
+  internal static let information = L10n.tr("Localizable", "information", fallback: "Information")
   /// Inker
   internal static let inker = L10n.tr("Localizable", "inker", fallback: "Inker")
   /// Interlaced video is not supported
@@ -902,6 +910,8 @@ internal enum L10n {
   internal static let lockedFields = L10n.tr("Localizable", "lockedFields", fallback: "Locked fields")
   /// Locked users
   internal static let lockedUsers = L10n.tr("Localizable", "lockedUsers", fallback: "Locked users")
+  /// Log
+  internal static let log = L10n.tr("Localizable", "log", fallback: "Log")
   /// Logo
   internal static let logo = L10n.tr("Localizable", "logo", fallback: "Logo")
   /// Logs
@@ -1058,6 +1068,8 @@ internal enum L10n {
   internal static let onApplicationStartup = L10n.tr("Localizable", "onApplicationStartup", fallback: "On application startup")
   /// On Now
   internal static let onNow = L10n.tr("Localizable", "onNow", fallback: "On Now")
+  /// Open in browser
+  internal static let openInBrowser = L10n.tr("Localizable", "openInBrowser", fallback: "Open in browser")
   /// Options
   internal static let options = L10n.tr("Localizable", "options", fallback: "Options")
   /// Orange
@@ -1086,6 +1098,8 @@ internal enum L10n {
   internal static let parentalRatings = L10n.tr("Localizable", "parentalRatings", fallback: "Parental ratings")
   /// Parent index
   internal static let parentIndexNumber = L10n.tr("Localizable", "parentIndexNumber", fallback: "Parent index")
+  /// Parsed
+  internal static let parsed = L10n.tr("Localizable", "parsed", fallback: "Parsed")
   /// Password
   internal static let password = L10n.tr("Localizable", "password", fallback: "Password")
   /// User password has been changed.
@@ -1388,6 +1402,8 @@ internal enum L10n {
   internal static let setPinHintDescription = L10n.tr("Localizable", "setPinHintDescription", fallback: "Set a hint when prompting for the pin.")
   /// Settings
   internal static let settings = L10n.tr("Localizable", "settings", fallback: "Settings")
+  /// Share
+  internal static let share = L10n.tr("Localizable", "share", fallback: "Share")
   /// Short
   internal static let short = L10n.tr("Localizable", "short", fallback: "Short")
   /// Show favorited
@@ -1556,6 +1572,8 @@ internal enum L10n {
   internal static let title = L10n.tr("Localizable", "title", fallback: "Title")
   /// Total time
   internal static let totalTime = L10n.tr("Localizable", "totalTime", fallback: "Total time")
+  /// Trace
+  internal static let trace = L10n.tr("Localizable", "trace", fallback: "Trace")
   /// Trailer
   internal static let trailer = L10n.tr("Localizable", "trailer", fallback: "Trailer")
   /// Trailers
@@ -1716,6 +1734,8 @@ internal enum L10n {
   internal static let volume = L10n.tr("Localizable", "volume", fallback: "Volume")
   /// Votes
   internal static let votes = L10n.tr("Localizable", "votes", fallback: "Votes")
+  /// Warning
+  internal static let warning = L10n.tr("Localizable", "warning", fallback: "Warning")
   /// Weekday
   internal static let weekday = L10n.tr("Localizable", "weekday", fallback: "Weekday")
   /// Weekend
