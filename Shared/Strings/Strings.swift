@@ -1132,8 +1132,6 @@ internal enum L10n {
   internal static let playCount = L10n.tr("Localizable", "playCount", fallback: "Play count")
   /// Played
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
-  /// Player dimensions
-  internal static let playerDimensions = L10n.tr("Localizable", "playerDimensions", fallback: "Player dimensions")
   /// Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.
   internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.")
   /// Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.
