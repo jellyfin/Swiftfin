@@ -166,8 +166,8 @@ extension VLCMediaPlayerProxy {
 
                         if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
                             proxy.videoSize.value = info.videoSize
-                            proxy.droppedFrames.value = info.numberOfLostPictures
-                            proxy.corruptedFrames.value = info.numberOfCorruptedDataPackets
+                            proxy.droppedFrames.value = info.statistics.lostPictures
+                            proxy.corruptedFrames.value = info.statistics.demuxCorrupted
                         }
                     }
                     .onStateUpdated { state, info in
