@@ -106,10 +106,6 @@ internal enum L10n {
   internal static let alternateDVD = L10n.tr("Localizable", "alternateDVD", fallback: "Alternate DVD")
   /// Anamorphic video is not supported
   internal static let anamorphicVideoNotSupported = L10n.tr("Localizable", "anamorphicVideoNotSupported", fallback: "Anamorphic video is not supported")
-  /// API key copied
-  internal static let apiKeyCopied = L10n.tr("Localizable", "apiKeyCopied", fallback: "API key copied")
-  /// Your API key was copied to your clipboard!
-  internal static let apiKeyCopiedMessage = L10n.tr("Localizable", "apiKeyCopiedMessage", fallback: "Your API key was copied to your clipboard!")
   /// API keys
   internal static let apiKeys = L10n.tr("Localizable", "apiKeys", fallback: "API keys")
   /// API Keys
@@ -368,6 +364,10 @@ internal enum L10n {
   internal static let controlOtherUsers = L10n.tr("Localizable", "controlOtherUsers", fallback: "Control other users")
   /// Control shared devices
   internal static let controlSharedDevices = L10n.tr("Localizable", "controlSharedDevices", fallback: "Control shared devices")
+  /// Copied to clipboard
+  internal static let copiedToClipboard = L10n.tr("Localizable", "copiedToClipboard", fallback: "Copied to clipboard")
+  /// This has been copied to your clipboard!
+  internal static let copiedToClipboardMessage = L10n.tr("Localizable", "copiedToClipboardMessage", fallback: "This has been copied to your clipboard!")
   /// Count
   internal static let count = L10n.tr("Localizable", "count", fallback: "Count")
   /// Country

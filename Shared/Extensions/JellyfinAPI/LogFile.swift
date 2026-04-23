@@ -11,11 +11,7 @@ import JellyfinAPI
 
 extension LogFile {
 
-    /// A downloaded log file's local & server location,and parsed content (if available).
-    struct Download: Hashable {
-
-        let url: URL
-        let webURL: URL?
-        let content: Content?
+    var type: ServerLogType {
+        ServerLogType.from(name: name)
     }
 }

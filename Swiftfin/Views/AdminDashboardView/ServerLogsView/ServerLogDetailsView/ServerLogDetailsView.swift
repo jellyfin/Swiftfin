@@ -23,13 +23,13 @@ struct ServerLogDetailsView: View {
     @State
     private var showParsed = true
     @State
-    private var levelFilter: LogFile.Entry.Level?
+    private var levelFilter: ServerLogEntry.Level?
 
     private var url: URL? {
         viewModel.downloads[log]?.url
     }
 
-    private var content: LogFile.Content? {
+    private var content: ServerLogContent? {
         viewModel.downloads[log]?.content
     }
 
@@ -37,7 +37,7 @@ struct ServerLogDetailsView: View {
         viewModel.downloads[log]?.webURL
     }
 
-    private var filteredEntries: [LogFile.Entry] {
+    private var filteredEntries: [ServerLogEntry] {
         guard let entries = content?.entries else { return [] }
         guard let levelFilter else { return entries }
 
@@ -95,11 +95,11 @@ struct ServerLogDetailsView: View {
                 if let content, !content.entries.isEmpty && showParsed {
                     Picker(selection: $levelFilter) {
                         Label(L10n.all, systemImage: "line.3.horizontal")
-                            .tag(nil as LogFile.Entry.Level?)
+                            .tag(nil as ServerLogEntry.Level?)
 
-                        ForEach(LogFile.Entry.Level.allCases, id: \.self) { level in
+                        ForEach(ServerLogEntry.Level.allCases, id: \.self) { level in
                             Label(level.displayTitle, systemImage: level.systemImage)
-                                .tag(level as LogFile.Entry.Level?)
+                                .tag(level as ServerLogEntry.Level?)
                         }
                     } label: {
                         Text(L10n.level)

@@ -13,7 +13,7 @@ extension ServerLogDetailsView {
 
     struct ParsedServerLogRow: View {
 
-        let entry: LogFile.Entry
+        let entry: ServerLogEntry
 
         var body: some View {
             VStack(alignment: .leading, spacing: 4) {

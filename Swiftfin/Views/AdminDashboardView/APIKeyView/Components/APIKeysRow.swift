@@ -56,12 +56,12 @@ extension APIKeysView {
             }
             .foregroundStyle(.primary, .secondary)
             .alert(
-                L10n.apiKeyCopied,
+                L10n.copiedToClipboard,
                 isPresented: $showCopiedAlert
             ) {
                 Button(L10n.ok, role: .cancel) {}
             } message: {
-                Text(L10n.apiKeyCopiedMessage)
+                Text(L10n.copiedToClipboardMessage)
             }
             .confirmationDialog(
                 L10n.delete,

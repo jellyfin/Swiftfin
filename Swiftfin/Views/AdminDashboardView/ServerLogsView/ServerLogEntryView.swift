@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ServerLogEntryView: View {
 
-    let entry: LogFile.Entry
+    let entry: ServerLogEntry
 
     @State
     private var showCopiedAlert = false
@@ -45,8 +45,6 @@ struct ServerLogEntryView: View {
                     showCopiedAlert = true
                 } label: {
                     Text(entry.message)
-                        .font(.footnote)
-                        .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .foregroundStyle(.primary, .secondary)
@@ -55,8 +53,10 @@ struct ServerLogEntryView: View {
         .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.details)
-        .alert("Copied to clipboard", isPresented: $showCopiedAlert) {
+        .alert(L10n.copiedToClipboard, isPresented: $showCopiedAlert) {
             Button(L10n.ok, role: .cancel) {}
+        } message: {
+            Text(L10n.copiedToClipboardMessage)
         }
     }
 }

@@ -40,22 +40,31 @@ final class ServerLogsViewModel: ViewModel {
     }
 
     @Published
-    private(set) var logs: OrderedSet<LogFile> = []
+    private(set) var logs: [LogFile] = []
     @Published
-    private(set) var downloads: [LogFile: LogFile.Download] = [:]
-    @Published
-    var filter: LogFile.LogType?
+    private(set) var downloads: [LogFile: ServerLogDownload] = [:]
 
-    var filteredLogs: [LogFile] {
-        guard let filter else { return Array(logs) }
-        return logs.filter { $0.type == filter }
+    @Published
+    var filter: ServerLogType? {
+        didSet { applyFilter() }
+    }
+
+    private var allLogs: OrderedSet<LogFile> = []
+
+    private func applyFilter() {
+        guard let filter else {
+            logs = Array(allLogs)
+            return
+        }
+        logs = allLogs.filter { $0.type == filter }
     }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         let request = Paths.getServerLogs
         let response = try await userSession.client.send(request)
-        self.logs = OrderedSet(response.value)
+        allLogs = OrderedSet(response.value)
+        applyFilter()
     }
 
     @Function(\Action.Cases.download)
@@ -64,6 +73,7 @@ final class ServerLogsViewModel: ViewModel {
             throw ErrorMessage(L10n.unknownError)
         }
 
+        // Check if this file has already been downloaded before attempting to downloading
         if let existing = downloads[log], !force, FileManager.default.fileExists(atPath: existing.url.path) {
             return
         }
@@ -79,13 +89,18 @@ final class ServerLogsViewModel: ViewModel {
 
         try FileManager.default.moveItem(at: response.value, to: destination)
 
-        let content = await LogFile.Content.load(
+        let content = await ServerLogContent.load(
             from: destination,
             parseEntries: log.type == .system
         )
 
-        let webURL = userSession.client.fullURL(with: request, queryAPIKey: true)
+        // We JUST downloaded from this URL so this should always exist if the download was successful
+        guard let webURL = userSession.client.fullURL(with: request, queryAPIKey: true) else { return }
 
-        downloads[log] = LogFile.Download(url: destination, webURL: webURL, content: content)
+        downloads[log] = ServerLogDownload(
+            url: destination,
+            webURL: webURL,
+            content: content
+        )
     }
 }

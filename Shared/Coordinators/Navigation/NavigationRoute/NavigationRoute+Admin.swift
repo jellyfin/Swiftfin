@@ -142,7 +142,7 @@ extension NavigationRoute {
         }
     }
 
-    static func serverLogEntry(entry: LogFile.Entry) -> NavigationRoute {
+    static func serverLogEntry(entry: ServerLogEntry) -> NavigationRoute {
         NavigationRoute(id: "serverLogEntry") {
             ServerLogEntryView(entry: entry)
         }

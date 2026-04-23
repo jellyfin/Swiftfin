@@ -31,8 +31,8 @@ struct ServerLogsView: View {
                 UIApplication.shared.open(.jellyfinDocsTroubleshooting)
             }
 
-            if viewModel.filteredLogs.isNotEmpty {
-                ForEach(viewModel.filteredLogs, id: \.self) { log in
+            if viewModel.logs.isNotEmpty {
+                ForEach(viewModel.logs, id: \.self) { log in
                     logRow(log: log)
                 }
             } else {
@@ -71,11 +71,11 @@ struct ServerLogsView: View {
         Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
             Picker(selection: $viewModel.filter) {
                 Label(L10n.all, systemImage: "line.3.horizontal")
-                    .tag(nil as LogFile.LogType?)
+                    .tag(nil as ServerLogType?)
 
-                ForEach(LogFile.LogType.allCases, id: \.self) { type in
+                ForEach(ServerLogType.allCases, id: \.self) { type in
                     Label(type.displayTitle, systemImage: type.systemImage)
-                        .tag(type as LogFile.LogType?)
+                        .tag(type as ServerLogType?)
                 }
             } label: {
                 Text(L10n.logs)
