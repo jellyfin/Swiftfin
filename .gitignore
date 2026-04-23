@@ -10,7 +10,6 @@ Pods/
 Podfile.lock
 dynatraceSymbols.zip
 Cartfile.resolved
-Gemfile.lock
 dynatrace/
 Carthage
 

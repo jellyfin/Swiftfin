@@ -30,6 +30,11 @@ jobs:
       run: |
         git checkout ${{ github.event.client_payload.commitSHA }}
 
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
+
     - name: Install SwiftGen
       run: brew install swiftgen
 
@@ -141,5 +146,5 @@ jobs:
 
         for scheme in "${SCHEMES[@]}"; do
           echo "Building and uploading scheme: $scheme"
-          sudo fastlane testFlightLane "${COMMON_ARGS[@]}" "scheme:$scheme"
+          bundle exec fastlane testFlightLane "${COMMON_ARGS[@]}" "scheme:$scheme"
         done
