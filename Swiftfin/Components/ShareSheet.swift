@@ -21,7 +21,7 @@ struct ShareSheet: View {
         _ActivityView(activityItems: urls as [Any]) {
             router.dismiss()
         }
-        .presentationDetents([.fraction(0.4), .large])
+        .presentationDetents([.medium, .large])
         .ignoresSafeArea()
     }
 
