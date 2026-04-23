@@ -279,8 +279,7 @@ extension PlaybackInformationSupplement {
             }
             .scrollIndicators(.hidden)
             .labeledContentStyle(.playbackInfo)
-            .padding(safeAreaInsets)
-            .edgePadding(.bottom)
+            .edgePadding()
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .focusSection()
         }
