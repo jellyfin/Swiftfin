@@ -261,7 +261,28 @@ extension PlaybackInformationSupplement {
         }
 
         var tvOSView: some View {
-            regularView
+            ScrollView {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        playbackInfoSection
+                        videoInfoSection
+                        streamingInfoSection
+                        transcodeReasonsSection
+                    }
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        originalMediaInfoSection
+                    }
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                }
+            }
+            .scrollIndicators(.hidden)
+            .labeledContentStyle(.playbackInfo)
+            .padding(safeAreaInsets)
+            .edgePadding(.bottom)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .focusSection()
         }
     }
 }
