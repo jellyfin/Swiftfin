@@ -8,7 +8,7 @@
 
 ## Setup
 
-Fork the Swiftfin repo and install the necessary dependencies with Xcode 15 or higher:
+Fork the Swiftfin repo and install the necessary dependencies:
 
 ```bash
 # install Carthage, SwiftFormat, and SwiftGen with homebrew
@@ -41,7 +41,7 @@ You can change the `PRODUCT_BUNDLE_IDENTIFIER` value to have multiple builds of 
 
 ### Xcode Version
 
-Swiftfin releases are built using the Xcode version pinned in our [CI workflow](https://github.com/jellyfin/Swiftfin/blob/main/.github/workflows/ci.yml#L27). Any changes you create should be built and tested on that version to ensure compatibility with the project. For that reason, that version of Xcode is the recommended version for development.
+Swiftfin is built using the Xcode version pinned in our [CI workflow](https://github.com/jellyfin/Swiftfin/blob/main/.github/workflows/ci.yml#L27). This is the recommended version of Xcode for development.
 
 ### Testing
 
