@@ -386,6 +386,8 @@ internal enum L10n {
   }
   /// Creator
   internal static let creator = L10n.tr("Localizable", "creator", fallback: "Creator")
+  /// Critical
+  internal static let critical = L10n.tr("Localizable", "critical", fallback: "Critical")
   /// Critic rating
   internal static let criticRating = L10n.tr("Localizable", "criticRating", fallback: "Critic rating")
   /// Critic rating on a scale from 1 to 100.
@@ -452,6 +454,8 @@ internal enum L10n {
   internal static let dayOfWeek = L10n.tr("Localizable", "dayOfWeek", fallback: "Day of week")
   /// Days
   internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
+  /// Debug
+  internal static let debug = L10n.tr("Localizable", "debug", fallback: "Debug")
   /// Default
   internal static let `default` = L10n.tr("Localizable", "default", fallback: "Default")
   /// Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.
@@ -656,6 +660,8 @@ internal enum L10n {
   }
   /// Failed logins
   internal static let failedLogins = L10n.tr("Localizable", "failedLogins", fallback: "Failed logins")
+  /// Fatal
+  internal static let fatal = L10n.tr("Localizable", "fatal", fallback: "Fatal")
   /// Favorite
   internal static let favorite = L10n.tr("Localizable", "favorite", fallback: "Favorite")
   /// Favorited
@@ -762,6 +768,8 @@ internal enum L10n {
   internal static let indicator = L10n.tr("Localizable", "indicator", fallback: "Indicator")
   /// Indicators
   internal static let indicators = L10n.tr("Localizable", "indicators", fallback: "Indicators")
+  /// Information
+  internal static let information = L10n.tr("Localizable", "information", fallback: "Information")
   /// Inker
   internal static let inker = L10n.tr("Localizable", "inker", fallback: "Inker")
   /// Interlaced video is not supported
@@ -884,6 +892,8 @@ internal enum L10n {
   internal static let lockedFields = L10n.tr("Localizable", "lockedFields", fallback: "Locked fields")
   /// Locked users
   internal static let lockedUsers = L10n.tr("Localizable", "lockedUsers", fallback: "Locked users")
+  /// Log
+  internal static let log = L10n.tr("Localizable", "log", fallback: "Log")
   /// Logo
   internal static let logo = L10n.tr("Localizable", "logo", fallback: "Logo")
   /// Logs
@@ -1040,6 +1050,8 @@ internal enum L10n {
   internal static let onApplicationStartup = L10n.tr("Localizable", "onApplicationStartup", fallback: "On application startup")
   /// On Now
   internal static let onNow = L10n.tr("Localizable", "onNow", fallback: "On Now")
+  /// Open in browser
+  internal static let openInBrowser = L10n.tr("Localizable", "openInBrowser", fallback: "Open in browser")
   /// Options
   internal static let options = L10n.tr("Localizable", "options", fallback: "Options")
   /// Orange
@@ -1066,6 +1078,8 @@ internal enum L10n {
   internal static let parentalRatings = L10n.tr("Localizable", "parentalRatings", fallback: "Parental ratings")
   /// Parent index
   internal static let parentIndexNumber = L10n.tr("Localizable", "parentIndexNumber", fallback: "Parent index")
+  /// Parsed
+  internal static let parsed = L10n.tr("Localizable", "parsed", fallback: "Parsed")
   /// Password
   internal static let password = L10n.tr("Localizable", "password", fallback: "Password")
   /// User password has been changed.
@@ -1192,6 +1206,8 @@ internal enum L10n {
   internal static let rating = L10n.tr("Localizable", "rating", fallback: "Rating")
   /// Ratings
   internal static let ratings = L10n.tr("Localizable", "ratings", fallback: "Ratings")
+  /// Raw
+  internal static let raw = L10n.tr("Localizable", "raw", fallback: "Raw")
   /// Recently Added
   internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently Added")
   /// Recommended
@@ -1366,6 +1382,8 @@ internal enum L10n {
   internal static let setPinHintDescription = L10n.tr("Localizable", "setPinHintDescription", fallback: "Set a hint when prompting for the pin.")
   /// Settings
   internal static let settings = L10n.tr("Localizable", "settings", fallback: "Settings")
+  /// Share
+  internal static let share = L10n.tr("Localizable", "share", fallback: "Share")
   /// Short
   internal static let short = L10n.tr("Localizable", "short", fallback: "Short")
   /// Show favorited
@@ -1414,6 +1432,8 @@ internal enum L10n {
   internal static let sortName = L10n.tr("Localizable", "sortName", fallback: "Sort name")
   /// Sort title
   internal static let sortTitle = L10n.tr("Localizable", "sortTitle", fallback: "Sort title")
+  /// Source
+  internal static let source = L10n.tr("Localizable", "source", fallback: "Source")
   /// Source code
   internal static let sourceCode = L10n.tr("Localizable", "sourceCode", fallback: "Source code")
   /// Special features
@@ -1524,6 +1544,8 @@ internal enum L10n {
   internal static let title = L10n.tr("Localizable", "title", fallback: "Title")
   /// Total time
   internal static let totalTime = L10n.tr("Localizable", "totalTime", fallback: "Total time")
+  /// Trace
+  internal static let trace = L10n.tr("Localizable", "trace", fallback: "Trace")
   /// Trailer
   internal static let trailer = L10n.tr("Localizable", "trailer", fallback: "Trailer")
   /// Trailers
@@ -1676,6 +1698,8 @@ internal enum L10n {
   internal static let volume = L10n.tr("Localizable", "volume", fallback: "Volume")
   /// Votes
   internal static let votes = L10n.tr("Localizable", "votes", fallback: "Votes")
+  /// Warning
+  internal static let warning = L10n.tr("Localizable", "warning", fallback: "Warning")
   /// Weekday
   internal static let weekday = L10n.tr("Localizable", "weekday", fallback: "Weekday")
   /// Weekend
