@@ -57,7 +57,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
                 VStack(spacing: EdgeInsets.edgePadding) {
 
-                    // TODO: scroll if larger than horizontal
                     HStack(spacing: 10) {
                         if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
                             Button(supplement.displayTitle) {
@@ -75,11 +74,14 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                             }
                         }
                     }
+                    .scrollIfLargerThanContainer(axes: .horizontal, alignment: .leading)
+                    // Without `fixedSize` this fills all available vertical room
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.vertical, 8)
                     .buttonStyle(SupplementTitleButtonStyle())
                     .padding(.leading, safeAreaInsets.leading)
                     .padding(.trailing, safeAreaInsets.trailing)
                     .edgePadding(.horizontal)
-                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     ZStack {
                         if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {

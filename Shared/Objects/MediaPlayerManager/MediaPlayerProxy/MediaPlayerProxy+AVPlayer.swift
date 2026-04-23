@@ -27,6 +27,8 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
     var isScrubbing: Binding<Bool> = .constant(false)
     var scrubbedSeconds: Binding<Duration> = .constant(.zero)
     var videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
+    let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
+    let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
 
     let avPlayerLayer: AVPlayerLayer
     let player: AVPlayer
