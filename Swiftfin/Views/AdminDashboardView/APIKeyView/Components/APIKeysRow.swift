@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -13,8 +14,6 @@ extension APIKeysView {
 
     struct APIKeysRow: View {
 
-        @State
-        private var showCopiedAlert = false
         @State
         private var showDeleteConfirmation = false
         @State
@@ -48,21 +47,23 @@ extension APIKeysView {
         }
 
         var body: some View {
-            Button {
-                UIPasteboard.general.string = apiKey.accessToken
-                showCopiedAlert = true
-            } label: {
-                rowContent
+            StateAdapter(initialValue: false) { showCopiedAlert in
+                Button {
+                    UIPasteboard.general.string = apiKey.accessToken
+                    showCopiedAlert.wrappedValue = true
+                } label: {
+                    rowContent
+                }
+                .alert(
+                    L10n.copiedToClipboard,
+                    isPresented: showCopiedAlert
+                ) {
+                    Button(L10n.ok, role: .cancel) {}
+                } message: {
+                    Text(L10n.copiedToClipboardMessage)
+                }
             }
             .foregroundStyle(.primary, .secondary)
-            .alert(
-                L10n.copiedToClipboard,
-                isPresented: $showCopiedAlert
-            ) {
-                Button(L10n.ok, role: .cancel) {}
-            } message: {
-                Text(L10n.copiedToClipboardMessage)
-            }
             .confirmationDialog(
                 L10n.delete,
                 isPresented: $showDeleteConfirmation,

@@ -6,15 +6,13 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
 struct ServerLogEntryView: View {
 
     let entry: ServerLogEntry
-
-    @State
-    private var showCopiedAlert = false
 
     var body: some View {
         List {
@@ -40,23 +38,25 @@ struct ServerLogEntryView: View {
             }
 
             Section(L10n.details) {
-                Button {
-                    UIPasteboard.general.string = entry.message
-                    showCopiedAlert = true
-                } label: {
-                    Text(entry.message)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                StateAdapter(initialValue: false) { showCopiedAlert in
+                    Button {
+                        UIPasteboard.general.string = entry.message
+                        showCopiedAlert.wrappedValue = true
+                    } label: {
+                        Text(entry.message)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .foregroundStyle(.primary, .secondary)
+                    .alert(L10n.copiedToClipboard, isPresented: showCopiedAlert) {
+                        Button(L10n.ok, role: .cancel) {}
+                    } message: {
+                        Text(L10n.copiedToClipboardMessage)
+                    }
                 }
-                .foregroundStyle(.primary, .secondary)
             }
         }
         .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.details)
-        .alert(L10n.copiedToClipboard, isPresented: $showCopiedAlert) {
-            Button(L10n.ok, role: .cancel) {}
-        } message: {
-            Text(L10n.copiedToClipboardMessage)
-        }
     }
 }
