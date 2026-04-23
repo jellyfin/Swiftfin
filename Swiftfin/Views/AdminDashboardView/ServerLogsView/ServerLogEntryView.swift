@@ -13,6 +13,9 @@ struct ServerLogEntryView: View {
 
     let entry: LogFile.Entry
 
+    @State
+    private var showCopiedAlert = false
+
     var body: some View {
         List {
             Section(L10n.overview) {
@@ -37,14 +40,23 @@ struct ServerLogEntryView: View {
             }
 
             Section(L10n.details) {
-                Text(entry.message)
-                    .font(.footnote)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button {
+                    UIPasteboard.general.string = entry.message
+                    showCopiedAlert = true
+                } label: {
+                    Text(entry.message)
+                        .font(.footnote)
+                        .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .foregroundStyle(.primary, .secondary)
             }
         }
         .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.details)
+        .alert("Copied to clipboard", isPresented: $showCopiedAlert) {
+            Button(L10n.ok, role: .cancel) {}
+        }
     }
 }

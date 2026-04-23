@@ -20,6 +20,22 @@ extension LogFile {
         let source: String?
         let message: String
 
+        /// Single-line representation of the entry suitable for clipboard copy.
+        var clipboardText: String {
+            var parts: [String] = []
+            if let timestamp {
+                parts.append("[\(timestamp.formatted(.iso8601))]")
+            }
+            if let level {
+                parts.append("[\(level.rawValue)]")
+            }
+            if let source {
+                parts.append("\(source):")
+            }
+            parts.append(message)
+            return parts.joined(separator: " ")
+        }
+
         enum Level: String, CaseIterable, Displayable, SystemImageable {
 
             case trace = "TRC"

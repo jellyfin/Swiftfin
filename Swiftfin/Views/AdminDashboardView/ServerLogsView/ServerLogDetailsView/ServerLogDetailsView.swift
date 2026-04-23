@@ -47,27 +47,39 @@ struct ServerLogDetailsView: View {
     }
 
     @ViewBuilder
-    private var contentView: some View {
-        if let content {
-            if !showParsed || content.entries.isEmpty {
-                RawServerLogView(text: content.rawText)
-                    .ignoresSafeArea(.container, edges: .bottom)
-            } else {
-                List(filteredEntries) { entry in
-                    ChevronButton(action: {
-                        router.route(to: .serverLogEntry(entry: entry))
-                    }) {
-                        LabeledContent {
-                            EmptyView()
-                        } label: {
-                            ParsedServerLogRow(entry: entry)
-                        }
+    private var rawLogView: some View {
+        RawServerLogView(text: content?.rawText ?? "")
+            .ignoresSafeArea(.container, edges: .bottom)
+    }
+
+    @ViewBuilder
+    private var parsedLogView: some View {
+        if filteredEntries.isEmpty {
+            ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
+        } else {
+            List(filteredEntries) { entry in
+                ChevronButton(action: {
+                    router.route(to: .serverLogEntry(entry: entry))
+                }) {
+                    LabeledContent {
+                        EmptyView()
+                    } label: {
+                        ParsedServerLogRow(entry: entry)
                     }
                 }
-                .listStyle(.plain)
             }
-        } else {
+            .listStyle(.plain)
+        }
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
+        if content == nil {
             ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
+        } else if showParsed, log.type == .system {
+            parsedLogView
+        } else {
+            rawLogView
         }
     }
 
@@ -76,11 +88,11 @@ struct ServerLogDetailsView: View {
 
         if log.type == .system {
 
-            Section(L10n.filters) {
+            Section {
 
                 Toggle(L10n.parsed, systemImage: "list.bullet.rectangle", isOn: $showParsed)
 
-                if let content, !content.entries.isEmpty {
+                if let content, !content.entries.isEmpty && showParsed {
                     Picker(selection: $levelFilter) {
                         Label(L10n.all, systemImage: "line.3.horizontal")
                             .tag(nil as LogFile.Entry.Level?)

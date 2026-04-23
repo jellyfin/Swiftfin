@@ -28,7 +28,7 @@ struct ServerLogsView: View {
                 L10n.serverLogs.localizedCapitalized,
                 description: L10n.logsDescription
             ) {
-                UIApplication.shared.open(URL(string: "https://jellyfin.org/docs/general/administration/troubleshooting")!)
+                UIApplication.shared.open(.jellyfinDocsTroubleshooting)
             }
 
             if viewModel.filteredLogs.isNotEmpty {
@@ -37,6 +37,7 @@ struct ServerLogsView: View {
                 }
             } else {
                 Text(L10n.none)
+                    .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                     .listRowSeparator(.hidden)
                     .listRowInsets(.zero)
