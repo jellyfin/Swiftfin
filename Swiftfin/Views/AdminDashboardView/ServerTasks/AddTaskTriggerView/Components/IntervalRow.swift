@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -17,13 +18,13 @@ extension AddTaskTriggerView {
         private var taskTriggerInfo: TaskTriggerInfo
 
         @State
-        private var tempInterval: Int?
+        private var tempInterval: Duration?
 
         // MARK: - Init
 
         init(taskTriggerInfo: Binding<TaskTriggerInfo>) {
             self._taskTriggerInfo = taskTriggerInfo
-            _tempInterval = State(initialValue: Int(ServerTicks(taskTriggerInfo.wrappedValue.intervalTicks).minutes))
+            tempInterval = Duration.ticks(taskTriggerInfo.wrappedValue.intervalTicks ?? 0)
         }
 
         // MARK: - Body
@@ -36,19 +37,22 @@ extension AddTaskTriggerView {
             ) {
                 TextField(
                     L10n.minutes,
-                    value: $tempInterval,
+                    value: $tempInterval.map(
+                        getter: { $0.map { Int($0.minutes) } },
+                        setter: { Duration.minutes($0 ?? 0) }
+                    ),
                     format: .number
                 )
                 .keyboardType(.numberPad)
             } onSave: {
-                if tempInterval != nil && tempInterval != 0 {
-                    taskTriggerInfo.intervalTicks = ServerTicks(minutes: tempInterval).ticks
+                if let tempInterval, tempInterval != .zero {
+                    taskTriggerInfo.intervalTicks = tempInterval.ticks
                 } else {
                     taskTriggerInfo.intervalTicks = nil
                 }
             } onCancel: {
-                if let intervalTicks = taskTriggerInfo.intervalTicks {
-                    tempInterval = Int(ServerTicks(intervalTicks).minutes)
+                if let existingIntervalTicks = taskTriggerInfo.intervalTicks {
+                    tempInterval = Duration.ticks(existingIntervalTicks)
                 } else {
                     tempInterval = nil
                 }

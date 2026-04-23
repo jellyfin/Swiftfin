@@ -10,7 +10,7 @@ import AVFoundation
 import Combine
 import Defaults
 import Foundation
-import JellyfinAPI
+@preconcurrency import JellyfinAPI
 import SwiftUI
 
 // TODO: After NativeVideoPlayer is removed, can move bindings and
