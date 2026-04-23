@@ -141,5 +141,5 @@ jobs:
 
         for scheme in "${SCHEMES[@]}"; do
           echo "Building and uploading scheme: $scheme"
-          sudo fastlane testFlightLane "${COMMON_ARGS[@]}" "scheme:$scheme"
+          sudo fastlane testFlightLane "${COMMON_ARGS[@]}" "scheme:\"$scheme\""
         done
