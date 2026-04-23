@@ -8,7 +8,6 @@
 
 import Defaults
 import Factory
-import Files
 import Foundation
 import JellyfinAPI
 import UIKit

@@ -23,7 +23,7 @@ extension AddTaskTriggerView {
 
         init(taskTriggerInfo: Binding<TaskTriggerInfo>) {
             self._taskTriggerInfo = taskTriggerInfo
-            _tempTimeLimit = State(initialValue: Int(ServerTicks(taskTriggerInfo.wrappedValue.maxRuntimeTicks).hours))
+            _tempTimeLimit = State(initialValue: Int(Duration.ticks(taskTriggerInfo.wrappedValue.maxRuntimeTicks ?? 0).hours))
         }
 
         // MARK: - Body
@@ -43,13 +43,13 @@ extension AddTaskTriggerView {
                     .keyboardType(.numberPad)
                 } onSave: {
                     if tempTimeLimit != nil && tempTimeLimit != 0 {
-                        taskTriggerInfo.maxRuntimeTicks = ServerTicks(hours: tempTimeLimit).ticks
+                        taskTriggerInfo.maxRuntimeTicks = Duration.hours(tempTimeLimit ?? 0).ticks
                     } else {
                         taskTriggerInfo.maxRuntimeTicks = nil
                     }
                 } onCancel: {
                     if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
-                        tempTimeLimit = Int(ServerTicks(maxRuntimeTicks).hours)
+                        tempTimeLimit = Int(Duration.ticks(maxRuntimeTicks).hours)
                     } else {
                         tempTimeLimit = nil
                     }
