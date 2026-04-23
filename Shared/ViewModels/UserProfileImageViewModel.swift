@@ -158,7 +158,7 @@ final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         _ = try await userSession.client.send(request)
 
-        sweepProfileImageCache()
+        await sweepProfileImageCache()
 
         await MainActor.run {
             Notifications[.didChangeUserProfile].post(userID)
@@ -174,13 +174,14 @@ final class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
         let request = Paths.deleteUserImage(userID: userID)
         _ = try await userSession.client.send(request)
 
-        sweepProfileImageCache()
+        await sweepProfileImageCache()
 
         await MainActor.run {
             Notifications[.didChangeUserProfile].post(userID)
         }
     }
 
+    @ImagePipelineActor
     private func sweepProfileImageCache() {
         if let userImageURL = user.profileImageSource(client: userSession.client, maxWidth: 60).url {
             ImagePipeline.Swiftfin.local.removeItem(for: userImageURL)

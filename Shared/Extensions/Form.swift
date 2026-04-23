@@ -118,16 +118,26 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
 
     @ViewBuilder
     private func learnMoreModal(_ content: AnyView) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            content
-                .labeledContentStyle(LearnMoreLabeledContentStyle())
-                .foregroundStyle(Color.primary, Color.secondary)
+        Marquee(axis: .vertical, resetType: .bounce, speed: 30, fade: 20) {
+            VStack(alignment: .leading, spacing: 16) {
+                content
+                    .labeledContentStyle(LearnMoreLabeledContentStyle())
+                    .foregroundStyle(Color.primary, Color.secondary)
+            }
+            .edgePadding()
         }
-        .edgePadding()
         .background {
-            RoundedRectangle(cornerRadius: 20)
+            ContainerRelativeShape()
                 .fill(Material.thick)
         }
+        .overlay(
+            ContainerRelativeShape()
+                .stroke(
+                    .white.opacity(0.1),
+                    lineWidth: 1
+                )
+        )
+        .containerShape(RoundedRectangle(cornerRadius: 20))
         .padding()
     }
 }

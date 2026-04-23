@@ -13,7 +13,7 @@ struct NonePosterButton: View {
     let type: PosterDisplayType
 
     var body: some View {
-        Button {
+        Button {} label: {
             ZStack {
                 ZStack {
                     Color(UIColor.darkGray)
