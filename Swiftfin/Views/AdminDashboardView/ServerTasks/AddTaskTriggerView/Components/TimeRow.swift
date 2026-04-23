@@ -13,20 +13,19 @@ extension AddTaskTriggerView {
 
     struct TimeRow: View {
 
-        @Binding
-        var taskTriggerInfo: TaskTriggerInfo
+        let taskTriggerInfo: Binding<TaskTriggerInfo>
 
         var body: some View {
             DatePicker(
                 L10n.time,
                 selection: Binding<Date>(
                     get: {
-                        ServerTicks(
-                            taskTriggerInfo.timeOfDayTicks ?? defaultTimeOfDayTicks
-                        ).date
+                        Duration.ticks(
+                            taskTriggerInfo.wrappedValue.timeOfDayTicks ?? defaultTimeOfDayTicks
+                        ).timeOfDayDate
                     },
                     set: { date in
-                        taskTriggerInfo.timeOfDayTicks = ServerTicks(date: date).ticks
+                        taskTriggerInfo.wrappedValue.timeOfDayTicks = Duration.timeOfDay(date).ticks
                     }
                 ),
                 displayedComponents: .hourAndMinute

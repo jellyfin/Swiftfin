@@ -10,7 +10,7 @@ import AVFoundation
 import Combine
 import Defaults
 import Foundation
-import JellyfinAPI
+@preconcurrency import JellyfinAPI
 import SwiftUI
 
 // TODO: After NativeVideoPlayer is removed, can move bindings and
@@ -27,6 +27,8 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
     var isScrubbing: Binding<Bool> = .constant(false)
     var scrubbedSeconds: Binding<Duration> = .constant(.zero)
     var videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
+    let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
+    let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
 
     let avPlayerLayer: AVPlayerLayer
     let player: AVPlayer

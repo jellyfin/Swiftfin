@@ -19,6 +19,8 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
 
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
+    let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
+    let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
     let vlcUIProxy: VLCVideoPlayer.Proxy = .init()
 
     weak var manager: MediaPlayerManager? {
@@ -164,6 +166,8 @@ extension VLCMediaPlayerProxy {
 
                         if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
                             proxy.videoSize.value = info.videoSize
+                            proxy.droppedFrames.value = info.statistics.lostPictures
+                            proxy.corruptedFrames.value = info.statistics.demuxCorrupted
                         }
                     }
                     .onStateUpdated { state, info in

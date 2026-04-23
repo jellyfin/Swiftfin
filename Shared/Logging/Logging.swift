@@ -31,16 +31,10 @@ struct SwiftfinConsoleHandler: LogHandler {
     }
 
     func log(
-        level: Logger.Level,
-        message: Logger.Message,
-        metadata: Logger.Metadata?,
-        source: String,
-        file: String,
-        function: String,
-        line: UInt
+        event: LogEvent
     ) {
-        let line = "[\(level.emoji) \(level.rawValue.capitalized)] \(file.shortFileName)#\(line):\(function) \(message)"
-        let meta = (metadata ?? [:]).merging(self.metadata) { _, new in new }
+        let line = "[\(event.level.emoji) \(event.level.rawValue.capitalized)] \(event.file.shortFileName)#\(event.line):\(event.function) \(event.message)"
+        let meta = (event.metadata ?? [:]).merging(self.metadata) { _, new in new }
         let metadataString = meta.map { "\t- \($0): \($1)" }.joined(separator: "\n")
 
         print(line)
