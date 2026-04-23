@@ -132,7 +132,9 @@ struct ServerLogDetailsView: View {
 
     var body: some View {
         ZStack {
-            if viewModel.background.is(.downloading) {
+            if content != nil {
+                contentView
+            } else if viewModel.background.is(.downloading) {
                 ProgressView()
             } else {
                 contentView

@@ -47,7 +47,6 @@ struct ServerLogsView: View {
 
     private func logRow(log: LogFile) -> some View {
         ChevronButton(action: {
-            viewModel.download(log, force: false)
             router.route(to: .serverLogDetails(log: log, viewModel: viewModel))
         }) {
             LabeledContent {
