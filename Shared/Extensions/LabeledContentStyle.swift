@@ -75,6 +75,33 @@ struct DeviceProfileLabeledContentStyle: LabeledContentStyle {
     }
 }
 
+extension LabeledContentStyle where Self == PlaybackInfoLabeledContentStyle {
+
+    static var playbackInfo: PlaybackInfoLabeledContentStyle {
+        PlaybackInfoLabeledContentStyle()
+    }
+}
+
+struct PlaybackInfoLabeledContentStyle: LabeledContentStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: 0) {
+            configuration.label
+                .foregroundStyle(.secondary)
+
+            Text(":")
+                .foregroundStyle(.secondary)
+                .padding(.trailing, 4)
+
+            Spacer()
+
+            configuration.content
+                .foregroundStyle(.primary)
+        }
+        .font(.subheadline)
+    }
+}
+
 extension LabeledContentStyle where Self == FocusableLabeledContentStyle {
 
     static var focusable: FocusableLabeledContentStyle {

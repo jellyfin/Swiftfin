@@ -60,7 +60,7 @@ extension SelectUserView {
                     }
 
                     ForEach(servers.reversed()) { server in
-                        Button {
+                        Button {} label: {
                             Text(server.name)
                             Text(server.currentURL.absoluteString)
                         }
