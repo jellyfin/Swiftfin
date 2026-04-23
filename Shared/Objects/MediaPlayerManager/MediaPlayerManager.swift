@@ -141,10 +141,6 @@ final class MediaPlayerManager: ViewModel {
 
         newSupplements.append(MediaInfoSupplement(item: item))
 
-        if let itemID = item.id {
-            newSupplements.append(PlaybackInformationSupplement(itemID: itemID))
-        }
-
         if let chapters = item.fullChapterInfo, chapters.isNotEmpty {
             newSupplements.append(
                 MediaChaptersSupplement(
@@ -155,6 +151,10 @@ final class MediaPlayerManager: ViewModel {
 
         if let queue {
             newSupplements.append(queue)
+        }
+        
+        if let itemID = item.id {
+            newSupplements.append(PlaybackInformationSupplement(itemID: itemID))
         }
 
         self.supplements = newSupplements

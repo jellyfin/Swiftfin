@@ -95,13 +95,6 @@ extension PlaybackInformationSupplement {
                     .fontWeight(.semibold)
                     .padding(.vertical, 4)
 
-                if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
-                    let size = proxy.videoSize.value
-                    if size != .zero {
-                        LabeledContent(L10n.playerDimensions, value: "\(Int(size.width))x\(Int(size.height))")
-                    }
-                }
-
                 if let width = videoStream?.width, let height = videoStream?.height {
                     LabeledContent(L10n.videoResolution, value: "\(width)x\(height)")
                 }
@@ -234,7 +227,7 @@ extension PlaybackInformationSupplement {
         @ViewBuilder
         private var compactView: some View {
             ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
                     playbackInfoSection
                     videoInfoSection
                     originalMediaInfoSection
@@ -250,7 +243,7 @@ extension PlaybackInformationSupplement {
         private var regularView: some View {
             ScrollView {
                 HStack(alignment: .top, spacing: 24) {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 4) {
                         playbackInfoSection
                         videoInfoSection
                         streamingInfoSection
@@ -258,7 +251,7 @@ extension PlaybackInformationSupplement {
                     }
                     .frame(maxWidth: .infinity, alignment: .topLeading)
 
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 4) {
                         originalMediaInfoSection
                     }
                     .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -289,7 +282,7 @@ class PlaybackInformationProvider: ViewModel, MediaPlayerObserver {
         self.itemID = itemID
         super.init()
 
-        timer.poke(interval: 5)
+        timer.poke()
         timer.sink { [weak self] in
             self?.getCurrentSession()
             self?.timer.poke()
