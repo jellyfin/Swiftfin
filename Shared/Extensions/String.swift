@@ -82,6 +82,8 @@ extension String {
 
     static let emptyRuntime = "--:--"
 
+    static let ellipsis = "\u{2026}"
+
     var shortFileName: String {
         (split(separator: "/").last?.description ?? self)
             .replacingOccurrences(of: ".swift", with: "")
@@ -128,6 +130,12 @@ extension String {
 
     var url: URL? {
         URL(string: self)
+    }
+
+    /// Marks a hardcoded string as intentionally not localized.
+    /// This string is skipped during the`FindHardCodedStrings` build step
+    var doNotLocalize: String {
+        self
     }
 }
 

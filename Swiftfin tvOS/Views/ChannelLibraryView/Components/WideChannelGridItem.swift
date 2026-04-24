@@ -55,7 +55,7 @@ extension ChannelLibraryView {
         private func programLabel(for program: BaseItemDto) -> some View {
             HStack(alignment: .top, spacing: EdgeInsets.edgePadding / 2) {
                 AlternateLayoutView(alignment: .leading) {
-                    Text("00:00 AM")
+                    Text("00:00 AM".doNotLocalize)
                         .monospacedDigit()
                 } content: {
                     if let startDate = program.startDate {

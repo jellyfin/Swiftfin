@@ -46,7 +46,7 @@ extension DownloadTaskView {
                     // TODO: Break into subview
                     switch downloadTask.state {
                     case .ready, .cancelled:
-                        Button("Download") {
+                        Button(L10n.download) {
                             downloadManager.download(task: downloadTask)
                         }
                         .frame(maxWidth: 300)
@@ -78,7 +78,7 @@ extension DownloadTaskView {
                             .frame(maxWidth: 300)
                             .frame(height: 50)
 
-                            Text("Error: \(error.localizedDescription)")
+                            Text(error.localizedDescription)
                                 .padding(.horizontal)
                         }
                     case .complete:
@@ -110,7 +110,7 @@ extension DownloadTaskView {
                     Text(L10n.dismiss)
                 }
             } message: {
-                Text("Downloaded items are only playable through the Swiftfin video player.")
+                Text(L10n.downloadedItemsAreOnlyPlayableThrough)
             }
         }
     }

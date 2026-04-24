@@ -23,29 +23,29 @@ struct DebugSettingsView: View {
     var body: some View {
         Form(systemImage: "ladybug") {
 
-            Section("Settings") {
-                Toggle("Send Progress Reports", isOn: $sendProgressReports)
+            Section(L10n.settings) {
+                Toggle(L10n.sendProgressReports, isOn: $sendProgressReports)
             }
 
             Section {
-                Toggle("Liquid Glass", isOn: $isLiquidGlassEnabled)
+                Toggle("Liquid Glass".doNotLocalize, isOn: $isLiquidGlassEnabled)
             } footer: {
-                Text("Requires app restart to take effect.")
+                Text("Requires app restart to take effect.".doNotLocalize)
             }
 
-            Section("Device Details") {
+            Section("Device Details".doNotLocalize) {
                 LabeledContent(
-                    "SoC & GPU",
+                    "SoC & GPU".doNotLocalize,
                     value: PlaybackCapabilities.gpuName
                 )
 
                 LabeledContent(
-                    "Device Reports HDR Capabilities",
+                    "Device Reports HDR Capabilities".doNotLocalize,
                     value: PlaybackCapabilities.isDeviceHDRCapable ? L10n.yes : L10n.no
                 )
             }
 
-            Section("Video Codec Support") {
+            Section("Video Codec Support".doNotLocalize) {
                 LabeledContent(
                     VideoCodec.av1.displayTitle,
                     value: PlaybackCapabilities.supportsAV1 ? L10n.yes : L10n.no
@@ -62,7 +62,7 @@ struct DebugSettingsView: View {
                 )
             }
 
-            Section("Video Range Support") {
+            Section("Video Range Support".doNotLocalize) {
                 LabeledContent(
                     VideoRangeType.hdr10Plus.displayTitle,
                     value: PlaybackCapabilities.supportsHDR10 ? L10n.yes : L10n.no
@@ -80,7 +80,7 @@ struct DebugSettingsView: View {
             }
         }
         .labeledContentStyle(.focusable)
-        .navigationTitle("Debug")
+        .navigationTitle("Debug".doNotLocalize)
     }
 }
 #endif

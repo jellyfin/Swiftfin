@@ -35,43 +35,43 @@ enum DeviceType: String, Displayable, Codable, CaseIterable {
     var displayTitle: String {
         switch self {
         case .android:
-            "Android"
+            L10n.android
         case .apple:
-            "Apple"
+            L10n.apple
         case .chrome:
-            "Chrome"
+            L10n.chrome
         case .edge:
-            "Edge"
+            L10n.edge
         case .edgechromium:
-            "Edge Chromium"
+            L10n.edgeChromium
         case .finamp:
-            "Finamp"
+            L10n.finamp
         case .firefox:
-            "Firefox"
+            L10n.firefox
         case .homeAssistant:
-            "Home Assistant"
+            L10n.homeAssistant
         case .html5:
-            "HTML5"
+            L10n.html5
         case .kodi:
-            "Kodi"
+            L10n.kodi
         case .msie:
-            "Internet Explorer"
+            L10n.internetExplorer
         case .opera:
-            "Opera"
+            L10n.opera
         case .playstation:
-            "PlayStation"
+            L10n.playStation
         case .roku:
-            "Roku"
+            L10n.roku
         case .safari:
-            "Safari"
+            L10n.safari
         case .samsungtv:
-            "Samsung TV"
+            L10n.samsungTV
         case .webos:
-            "WebOS"
+            L10n.webOS
         case .windows:
-            "Windows"
+            L10n.windows
         case .xbox:
-            "Xbox"
+            L10n.xbox
         case .other:
             L10n.other
         }

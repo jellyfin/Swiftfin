@@ -102,7 +102,7 @@ struct UserButton: View {
             .lineLimit(1)
 
         AlternateLayoutView {
-            Text("Hidden")
+            Text("Hidden".doNotLocalize)
         } content: {
             if let subtitle {
                 Text(subtitle)
