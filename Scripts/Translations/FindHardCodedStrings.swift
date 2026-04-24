@@ -418,7 +418,7 @@ if !isReplace {
     print(
         "\nRun 'swift Scripts/Translations/FindHardCodedStrings.swift --dry' to preview L10n changes, or --replace to apply them."
     )
-    print("Opt out via ignore.yaml (project-wide) or '.doNotLocalize' at the call site.")
+    print("Opt out by using the '.doNotLocalize' modifer on the impacted string or by adding the string to ProperNouns.swift.")
     exit(1)
 }
 
