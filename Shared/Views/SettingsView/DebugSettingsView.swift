@@ -11,6 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 // NOTE: All settings *MUST* be surrounded by DEBUG compiler conditional as usage site
+// NOTE: This file is not checked for hard coded strings
 
 #if DEBUG
 struct DebugSettingsView: View {
@@ -28,24 +29,24 @@ struct DebugSettingsView: View {
             }
 
             Section {
-                Toggle("Liquid Glass".doNotLocalize, isOn: $isLiquidGlassEnabled)
+                Toggle("Liquid Glass", isOn: $isLiquidGlassEnabled)
             } footer: {
-                Text("Requires app restart to take effect.".doNotLocalize)
+                Text("Requires app restart to take effect.")
             }
 
-            Section("Device Details".doNotLocalize) {
+            Section("Device Details") {
                 LabeledContent(
-                    "SoC & GPU".doNotLocalize,
+                    "SoC & GPU",
                     value: PlaybackCapabilities.gpuName
                 )
 
                 LabeledContent(
-                    "Device Reports HDR Capabilities".doNotLocalize,
+                    "Device Reports HDR Capabilities",
                     value: PlaybackCapabilities.isDeviceHDRCapable ? L10n.yes : L10n.no
                 )
             }
 
-            Section("Video Codec Support".doNotLocalize) {
+            Section("Video Codec Support") {
                 LabeledContent(
                     VideoCodec.av1.displayTitle,
                     value: PlaybackCapabilities.supportsAV1 ? L10n.yes : L10n.no
@@ -62,7 +63,7 @@ struct DebugSettingsView: View {
                 )
             }
 
-            Section("Video Range Support".doNotLocalize) {
+            Section("Video Range Support") {
                 LabeledContent(
                     VideoRangeType.hdr10Plus.displayTitle,
                     value: PlaybackCapabilities.supportsHDR10 ? L10n.yes : L10n.no
@@ -80,7 +81,7 @@ struct DebugSettingsView: View {
             }
         }
         .labeledContentStyle(.focusable)
-        .navigationTitle("Debug".doNotLocalize)
+        .navigationTitle("Debug")
     }
 }
 #endif
