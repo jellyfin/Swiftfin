@@ -153,6 +153,10 @@ final class MediaPlayerManager: ViewModel {
             newSupplements.append(queue)
         }
 
+        if let itemID = item.id {
+            newSupplements.append(PlaybackInformationSupplement(itemID: itemID))
+        }
+
         self.supplements = newSupplements
     }
 

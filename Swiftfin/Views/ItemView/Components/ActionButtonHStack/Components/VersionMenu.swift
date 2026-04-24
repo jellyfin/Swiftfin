@@ -36,10 +36,8 @@ extension ItemView {
             Menu(L10n.version, systemImage: "list.dash") {
                 Picker(L10n.version, selection: selectedMediaSourceBinding) {
                     ForEach(mediaSources, id: \.hashValue) { mediaSource in
-                        Button {
-                            Text(mediaSource.displayTitle)
-                        }
-                        .tag(mediaSource as MediaSourceInfo?)
+                        Text(mediaSource.displayTitle)
+                            .tag(mediaSource as MediaSourceInfo?)
                     }
                 }
             }

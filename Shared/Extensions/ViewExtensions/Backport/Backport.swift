@@ -66,6 +66,20 @@ extension Backport where Content: View {
         }
     }
 
+    @ViewBuilder
+    func onChange(
+        of value: some Equatable,
+        _ action: @escaping () -> Void
+    ) -> some View {
+        if #available(iOS 17, tvOS 17, *) {
+            content.onChange(of: value, action)
+        } else {
+            content.onChange(of: value) { _ in
+                action()
+            }
+        }
+    }
+
     @MainActor
     @ViewBuilder
     func scrollClipDisabled(_ disabled: Bool = true) -> some View {
