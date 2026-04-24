@@ -137,27 +137,20 @@ final class MediaPlayerManager: ViewModel {
 
     // TODO: replace with graph dependency package
     private func setSupplements() {
-        var newSupplements: [any MediaPlayerSupplement] = []
-
-        newSupplements.append(MediaInfoSupplement(item: item))
-
-        if let chapters = item.fullChapterInfo, chapters.isNotEmpty {
-            newSupplements.append(
-                MediaChaptersSupplement(
-                    chapters: chapters
-                )
-            )
+        self.supplements = Defaults[.VideoPlayer.supplements].compactMap { kind -> (any MediaPlayerSupplement)? in
+            switch kind {
+            case .info:
+                return MediaInfoSupplement(item: item)
+            case .chapters:
+                guard let chapters = item.fullChapterInfo, chapters.isNotEmpty else { return nil }
+                return MediaChaptersSupplement(chapters: chapters)
+            case .queue:
+                return queue
+            case .playbackInformation:
+                guard let itemID = item.id else { return nil }
+                return PlaybackInformationSupplement(itemID: itemID)
+            }
         }
-
-        if let queue {
-            newSupplements.append(queue)
-        }
-
-        if let itemID = item.id {
-            newSupplements.append(PlaybackInformationSupplement(itemID: itemID))
-        }
-
-        self.supplements = newSupplements
     }
 
     /// The current seconds media playback is set to.
