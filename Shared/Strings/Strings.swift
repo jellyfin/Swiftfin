@@ -1594,8 +1594,6 @@ internal enum L10n {
   internal static let transcodeReasons = L10n.tr("Localizable", "transcodeReasons", fallback: "Transcode reason(s)")
   /// Translator
   internal static let translator = L10n.tr("Localizable", "translator", fallback: "Translator")
-  /// Trickplay
-  internal static let trickplay = L10n.tr("Localizable", "Trickplay", fallback: "Trickplay")
   /// Trickplays
   internal static let trickplays = L10n.tr("Localizable", "trickplays", fallback: "Trickplays")
   /// Trigger already exists
