@@ -74,9 +74,7 @@ struct ServerLogDetailsView: View {
 
     @ViewBuilder
     private var contentView: some View {
-        if content == nil {
-            ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
-        } else if showParsed, log.type == .system {
+        if showParsed, log.type == .system {
             parsedLogView
         } else {
             rawLogView
@@ -134,10 +132,8 @@ struct ServerLogDetailsView: View {
         ZStack {
             if content != nil {
                 contentView
-            } else if viewModel.background.is(.downloading) {
-                ProgressView()
             } else {
-                contentView
+                ProgressView()
             }
         }
         .backport
@@ -147,6 +143,7 @@ struct ServerLogDetailsView: View {
             toolbarMenu
         }
         .onFirstAppear {
+            guard viewModel.downloads[log] == nil else { return }
             viewModel.download(log, force: false)
         }
         .refreshable {
