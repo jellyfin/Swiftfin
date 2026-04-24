@@ -37,7 +37,7 @@ extension ServerLogDetailsView {
                     if let timestamp = entry.timestamp {
                         Text(timestamp.formatted(date: .abbreviated, time: .standard))
                     } else {
-                        Text(String.emptyRuntime)
+                        Text(verbatim: .emptyRuntime)
                     }
                 }
                 .font(.caption)

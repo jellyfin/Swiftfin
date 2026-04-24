@@ -25,20 +25,12 @@ struct ServerLogDetailsView: View {
     @State
     private var levelFilter: ServerLogEntry.Level?
 
-    private var url: URL? {
-        viewModel.downloads[log]?.url
-    }
-
-    private var content: ServerLogContent? {
-        viewModel.downloads[log]?.content
-    }
-
-    private var webURL: URL? {
-        viewModel.downloads[log]?.webURL
+    private var download: ServerLogDownload? {
+        viewModel.downloads[log]
     }
 
     private var filteredEntries: [ServerLogEntry] {
-        guard let entries = content?.entries else { return [] }
+        guard let entries = download?.content?.entries else { return [] }
         guard let levelFilter else { return entries }
 
         return entries.filter {
@@ -67,25 +59,22 @@ struct ServerLogDetailsView: View {
     }
 
     @ViewBuilder
-    private var contentView: some View {
-        if showParsed, log.type == .system {
-            parsedLogView
-        } else {
-            RawServerLogView(text: content?.rawText ?? "")
+    private var rawLogView: some View {
+        if let rawText = download?.content?.rawText, rawText.isNotEmpty {
+            RawServerLogView(text: rawText)
                 .ignoresSafeArea(.container, edges: .bottom)
+        } else {
+            ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
         }
     }
 
     @ViewBuilder
     private var toolbarMenu: some View {
-
         if log.type == .system {
-
             Section {
-
                 Toggle(L10n.parsed, systemImage: "list.bullet.rectangle", isOn: $showParsed)
 
-                if let content, !content.entries.isEmpty && showParsed {
+                if let entries = download?.content?.entries, entries.isNotEmpty, showParsed {
                     Picker(selection: $levelFilter) {
                         Label(L10n.all, systemImage: "line.3.horizontal")
                             .tag(nil as ServerLogEntry.Level?)
@@ -105,7 +94,7 @@ struct ServerLogDetailsView: View {
         }
 
         Section {
-            if let url {
+            if let url = download?.url {
                 Button {
                     router.route(to: .shareSheet(urls: [url]))
                 } label: {
@@ -113,7 +102,7 @@ struct ServerLogDetailsView: View {
                 }
             }
 
-            if let webURL {
+            if let webURL = download?.webURL {
                 Button {
                     UIApplication.shared.open(webURL)
                 } label: {
@@ -125,10 +114,12 @@ struct ServerLogDetailsView: View {
 
     var body: some View {
         ZStack {
-            if content != nil {
-                contentView
-            } else {
+            if download?.content == nil {
                 ProgressView()
+            } else if showParsed, log.type == .system {
+                parsedLogView
+            } else {
+                rawLogView
             }
         }
         .backport
@@ -138,7 +129,6 @@ struct ServerLogDetailsView: View {
             toolbarMenu
         }
         .onFirstAppear {
-            guard viewModel.downloads[log] == nil else { return }
             viewModel.download(log, force: false)
         }
         .refreshable {
