@@ -45,7 +45,7 @@ let groupedByValue = Dictionary(grouping: entries, by: \.value)
 let duplicates = groupedByValue.filter { $0.value.count > 1 }
 
 if duplicates.isEmpty {
-    print("No duplicate localization values found.")
+    print("No duplicate localization strings found.")
     exit(0)
 }
 
