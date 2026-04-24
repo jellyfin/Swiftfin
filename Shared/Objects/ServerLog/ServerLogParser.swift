@@ -22,53 +22,46 @@ enum ServerLogParser {
         return formatter
     }()
 
-    private struct Draft {
-        var timestamp: Date?
-        var level: ServerLogEntry.Level?
-        var source: String?
-        var message: String
-
-        func build(id: Int) -> ServerLogEntry {
-            ServerLogEntry(
-                id: id,
-                timestamp: timestamp,
-                level: level,
-                source: source,
-                message: message
-            )
-        }
-    }
-
     static func parse(_ text: String) -> [ServerLogEntry] {
         var entries: [ServerLogEntry] = []
-        var draft: Draft?
-
-        func flush() {
-            guard let draft else { return }
-            entries.append(draft.build(id: entries.count))
-        }
 
         for line in text.split(separator: "\n", omittingEmptySubsequences: false) {
 
-            if let match = try? lineRegex.wholeMatch(in: line) {
+            // Header lines always start with `[` so use this as a shortcut to skip early
+            // - instead of going straight to regex which is much much heavier
+            if line.first == "[", let match = try? lineRegex.wholeMatch(in: line) {
 
-                flush()
-
-                draft = Draft(
-                    timestamp: timestampFormatter.date(from: String(match.output.1)),
-                    level: ServerLogEntry.Level(rawValue: String(match.output.2)),
-                    source: String(match.output.3),
-                    message: String(match.output.4)
+                // Begin a new entry when timestamps denote a new line
+                entries.append(
+                    ServerLogEntry(
+                        id: entries.count,
+                        timestamp: timestampFormatter.date(from: String(match.output.1)),
+                        level: ServerLogEntry.Level(rawValue: String(match.output.2)),
+                        source: String(match.output.3),
+                        message: String(match.output.4)
+                    )
                 )
 
-            } else if draft != nil {
-                draft?.message += "\n" + String(line)
+            } else if !entries.isEmpty {
+
+                // Continue on the existing entry for multi-line logs.
+                entries[entries.count - 1].message.append("\n")
+                entries[entries.count - 1].message.append(contentsOf: line)
+
             } else if !line.isEmpty {
-                entries.append(Draft(message: String(line)).build(id: entries.count))
+
+                // Handle empty orphan lines
+                entries.append(
+                    ServerLogEntry(
+                        id: entries.count,
+                        timestamp: nil,
+                        level: nil,
+                        source: nil,
+                        message: String(line)
+                    )
+                )
             }
         }
-
-        flush()
 
         return entries
     }

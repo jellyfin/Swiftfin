@@ -15,22 +15,27 @@ struct ServerLogEntry: Identifiable, Hashable {
     let timestamp: Date?
     let level: Level?
     let source: String?
-    let message: String
+    var message: String
 
-    /// Single-line representation of the entry suitable for clipboard copy.
+    /// Single-line copyable text for the entry
     var clipboardText: String {
-        var parts: [String] = []
+        var components: [String] = []
+
         if let timestamp {
-            parts.append("[\(timestamp.formatted(.iso8601))]")
+            components.append("[\(timestamp.formatted(.iso8601))]")
         }
+
         if let level {
-            parts.append("[\(level.rawValue)]")
+            components.append("[\(level.rawValue)]")
         }
+
         if let source {
-            parts.append("\(source):")
+            components.append("\(source):")
         }
-        parts.append(message)
-        return parts.joined(separator: " ")
+
+        components.append(message)
+
+        return components.joined(separator: " ")
     }
 
     enum Level: String, CaseIterable, Displayable, SystemImageable {

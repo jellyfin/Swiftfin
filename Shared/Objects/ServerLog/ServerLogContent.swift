@@ -13,9 +13,7 @@ struct ServerLogContent: Hashable {
     let rawText: String
     let entries: [ServerLogEntry]
 
-    /// Reads the file at `url` off the main actor and parses it when `parseEntries` is true.
-    /// Both the file read and the parse pass happen inside the same detached task so the
-    /// `.background(.downloading)` state on the view model covers the whole operation.
+    /// Reads the file at `url` and parses it when `parseEntries` is true.
     static func load(from url: URL, parseEntries: Bool) async -> ServerLogContent {
         await Task.detached(priority: .userInitiated) {
             let rawText = readContents(at: url)
@@ -25,8 +23,6 @@ struct ServerLogContent: Hashable {
     }
 
     /// Attempts to read the contents of the log file.
-    /// - Depending on what goes into the log, the encoding can vary.
-    /// - Example: If I have an emoji in my logs it ends up as ascii.
     private static func readContents(at url: URL) -> String {
         var usedEncoding: String.Encoding = .utf8
 
@@ -36,6 +32,8 @@ struct ServerLogContent: Hashable {
 
         guard let data = try? Data(contentsOf: url) else { return "" }
 
+        // Depending on what goes into the log, the encoding can vary.
+        // - Example: If I have an emoji in my logs it ends up as ascii.
         return String(data: data, encoding: .utf8)
             ?? String(data: data, encoding: .utf16)
             ?? String(data: data, encoding: .ascii)

@@ -47,12 +47,6 @@ struct ServerLogDetailsView: View {
     }
 
     @ViewBuilder
-    private var rawLogView: some View {
-        RawServerLogView(text: content?.rawText ?? "")
-            .ignoresSafeArea(.container, edges: .bottom)
-    }
-
-    @ViewBuilder
     private var parsedLogView: some View {
         if filteredEntries.isEmpty {
             ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
@@ -77,7 +71,8 @@ struct ServerLogDetailsView: View {
         if showParsed, log.type == .system {
             parsedLogView
         } else {
-            rawLogView
+            RawServerLogView(text: content?.rawText ?? "")
+                .ignoresSafeArea(.container, edges: .bottom)
         }
     }
 
