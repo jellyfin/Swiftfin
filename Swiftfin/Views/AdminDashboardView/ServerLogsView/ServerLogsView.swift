@@ -32,8 +32,28 @@ struct ServerLogsView: View {
             }
 
             if viewModel.logs.isNotEmpty {
+
                 ForEach(viewModel.logs, id: \.self) { log in
-                    logRow(log: log)
+
+                    ChevronButton {
+                        router.route(to: .serverLogContents(log: log))
+                    } label: {
+                        LabeledContent {
+                            EmptyView()
+                        } label: {
+                            VStack(alignment: .leading) {
+                                Text(log.name ?? .emptyDash)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.leading)
+
+                                if let modifiedDate = log.dateModified {
+                                    Text(modifiedDate, format: .dateTime)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
                 }
             } else {
                 Text(L10n.none)
@@ -45,29 +65,7 @@ struct ServerLogsView: View {
         }
     }
 
-    private func logRow(log: LogFile) -> some View {
-        ChevronButton(action: {
-            router.route(to: .serverLogContents(log: log))
-        }) {
-            LabeledContent {
-                EmptyView()
-            } label: {
-                VStack(alignment: .leading) {
-                    Text(log.name ?? .emptyDash)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-
-                    if let modifiedDate = log.dateModified {
-                        Text(modifiedDate, format: .dateTime)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-        }
-    }
-
-    private var logFilters: some View {
+    private var filterMenu: some View {
         Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
             Picker(selection: $viewModel.filter) {
                 Label(L10n.all, systemImage: "line.3.horizontal")
@@ -115,7 +113,7 @@ struct ServerLogsView: View {
             if viewModel.state == .refreshing {
                 ProgressView()
             }
-            logFilters
+            filterMenu
         }
     }
 }

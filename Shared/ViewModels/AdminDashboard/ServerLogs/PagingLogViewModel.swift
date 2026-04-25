@@ -12,7 +12,7 @@ import IdentifiedCollections
 
 @MainActor
 @Stateful
-final class PagingFileReader<Parser: LogParser>: ViewModel {
+final class PagingLogViewModel<Parser: LogParser>: ViewModel {
 
     @CasePathable
     enum Action {
@@ -46,21 +46,41 @@ final class PagingFileReader<Parser: LogParser>: ViewModel {
     @Published
     private(set) var hasNextPage: Bool = true
 
+    @Published
+    var direction: ItemSortOrder {
+        didSet {
+            guard direction != oldValue else { return }
+            self.refresh()
+        }
+    }
+
     let url: URL
     let pageSize: Int
 
     private let initialParser: Parser
     private var parser: Parser
+
+    // Forward-streaming state
     private var handle: FileHandle?
     private var iterator: FileHandle.AsyncBytes.AsyncIterator?
     private var byteBuffer = Data()
     private var delimiterBytes = Data()
 
-    init(url: URL, parser: Parser, pageSize: Int = 100) {
+    // Reversed-eager state
+    private var preparsedElements: [Parser.Element] = []
+    private var preparsedCursor: Int = 0
+
+    init(
+        url: URL,
+        parser: Parser,
+        pageSize: Int = 100,
+        direction: ItemSortOrder = .ascending
+    ) {
         self.url = url
         self.initialParser = parser
         self.parser = parser
         self.pageSize = pageSize
+        self.direction = direction
         super.init()
     }
 
@@ -83,7 +103,26 @@ final class PagingFileReader<Parser: LogParser>: ViewModel {
         try await loadPage()
     }
 
+    private func reload() async {
+        resetStream()
+        do {
+            try openIfNeeded()
+            try await loadPage()
+        } catch {
+            logger.error("PagingFileReader reload failed: \(error.localizedDescription)")
+        }
+    }
+
     private func openIfNeeded() throws {
+        switch direction {
+        case .ascending:
+            try openForwardIfNeeded()
+        case .descending:
+            try openReverseIfNeeded()
+        }
+    }
+
+    private func openForwardIfNeeded() throws {
         guard handle == nil else { return }
         let h = try FileHandle(forReadingFrom: url)
         handle = h
@@ -93,16 +132,51 @@ final class PagingFileReader<Parser: LogParser>: ViewModel {
         hasNextPage = true
     }
 
+    /// Eagerly reads and parses the entire file, then stores the elements in
+    /// reverse order for descending pagination.
+    private func openReverseIfNeeded() throws {
+        guard preparsedElements.isEmpty else { return }
+        let data = try Data(contentsOf: url)
+        guard let text = String(data: data, encoding: parser.encoding) else {
+            hasNextPage = false
+            return
+        }
+
+        var working = parser
+        var collected: [Parser.Element] = []
+        for chunk in text.components(separatedBy: parser.delimiter) {
+            collected.append(contentsOf: working.consume(chunk: chunk))
+        }
+        collected.append(contentsOf: working.flush())
+        parser = working
+
+        preparsedElements = collected.reversed()
+        preparsedCursor = 0
+        hasNextPage = !preparsedElements.isEmpty
+    }
+
     private func resetStream() {
         try? handle?.close()
         handle = nil
         iterator = nil
         byteBuffer.removeAll()
+        preparsedElements.removeAll()
+        preparsedCursor = 0
         parser = initialParser
         elements = []
+        hasNextPage = true
     }
 
     private func loadPage() async throws {
+        switch direction {
+        case .ascending:
+            try await loadForwardPage()
+        case .descending:
+            loadReversePage()
+        }
+    }
+
+    private func loadForwardPage() async throws {
         guard var iterator else {
             hasNextPage = false
             return
@@ -122,7 +196,6 @@ final class PagingFileReader<Parser: LogParser>: ViewModel {
                 continue
             }
 
-            // No delimiter in current buffer — accumulate 4KB more before searching again.
             let target = byteBuffer.count + 4096
             while byteBuffer.count < target {
                 guard let byte = try await iterator.next() else {
@@ -151,6 +224,19 @@ final class PagingFileReader<Parser: LogParser>: ViewModel {
 
         if !newElements.isEmpty {
             elements.append(contentsOf: newElements)
+        }
+    }
+
+    private func loadReversePage() {
+        let endIndex = min(preparsedCursor + pageSize, preparsedElements.count)
+        guard preparsedCursor < endIndex else {
+            hasNextPage = false
+            return
+        }
+        elements.append(contentsOf: preparsedElements[preparsedCursor ..< endIndex])
+        preparsedCursor = endIndex
+        if preparsedCursor >= preparsedElements.count {
+            hasNextPage = false
         }
     }
 }

@@ -19,10 +19,7 @@ final class ServerLogsViewModel: ViewModel {
         case refresh
 
         var transition: Transition {
-            switch self {
-            case .refresh:
-                .loop(.refreshing)
-            }
+            .loop(.refreshing)
         }
     }
 
@@ -33,28 +30,34 @@ final class ServerLogsViewModel: ViewModel {
     }
 
     @Published
-    private(set) var logs: [LogFile] = []
+    var filter: ServerLogType? {
+        didSet {
+            filterLogs(filter)
+        }
+    }
 
     @Published
-    var filter: ServerLogType? {
-        didSet { applyFilter() }
-    }
+    private(set) var logs: OrderedSet<LogFile> = []
 
+    // Paths.getServerLogs doesn't have filtering so keep the full list to do it locally
     private var allLogs: OrderedSet<LogFile> = []
-
-    private func applyFilter() {
-        guard let filter else {
-            logs = Array(allLogs)
-            return
-        }
-        logs = allLogs.filter { $0.type == filter }
-    }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         let request = Paths.getServerLogs
         let response = try await userSession.client.send(request)
-        allLogs = OrderedSet(response.value)
-        applyFilter()
+
+        self.allLogs = OrderedSet(response.value)
+
+        filterLogs(filter)
+    }
+
+    private func filterLogs(_ filter: ServerLogType?) {
+        guard let filter else {
+            self.logs = allLogs
+            return
+        }
+
+        self.logs = allLogs.filter { $0.type == filter }
     }
 }

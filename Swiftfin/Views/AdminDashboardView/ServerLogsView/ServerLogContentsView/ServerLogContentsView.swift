@@ -13,33 +13,46 @@ import UIKit
 
 struct ServerLogContentsView: View {
 
+    let log: LogFile
+
+    @ViewBuilder
+    var body: some View {
+        switch log.type {
+        case .system:
+            ServerLogContentsBody(log: log, parser: ServerLogParser())
+        case .directStream, .remux, .transcode:
+            ServerLogContentsBody(log: log, parser: FFmpegLogParser())
+        case .other:
+            ServerLogContentsBody<ServerLogParser>(log: log, parser: nil)
+        }
+    }
+}
+
+private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Element == ServerLogEntry {
+
     @Router
     private var router
 
-    let log: LogFile
-
     @StateObject
-    private var viewModel: ServerLogContentsViewModel
+    private var viewModel: ServerLogContentsViewModel<Parser>
 
     @State
     private var showParsed = true
 
-    init(log: LogFile) {
+    let log: LogFile
+
+    init(log: LogFile, parser: Parser?) {
         self.log = log
-        _viewModel = StateObject(wrappedValue: ServerLogContentsViewModel(log: log))
+        _viewModel = StateObject(wrappedValue: ServerLogContentsViewModel(log: log, parser: parser))
     }
 
     private var resolvedShowParsed: Bool {
-        showParsed && viewModel.parses
+        showParsed && viewModel.parsed != nil
     }
 
     @ViewBuilder
     private var contentView: some View {
-        if resolvedShowParsed, let parsed = viewModel.parsedSystem {
-            ParsedReaderView(reader: parsed) { entry in
-                router.route(to: .serverLogEntry(entry: entry))
-            }
-        } else if resolvedShowParsed, let parsed = viewModel.parsedFFmpeg {
+        if resolvedShowParsed, let parsed = viewModel.parsed {
             ParsedReaderView(reader: parsed) { entry in
                 router.route(to: .serverLogEntry(entry: entry))
             }
@@ -50,9 +63,23 @@ struct ServerLogContentsView: View {
 
     @ViewBuilder
     private var toolbarMenu: some View {
-        if viewModel.parses {
+        if viewModel.parsed != nil {
             Section {
                 Toggle(L10n.parsed, systemImage: "list.bullet.rectangle", isOn: $showParsed)
+            }
+        }
+
+        Section {
+            Menu {
+                Picker(selection: $viewModel.sortOrder) {
+                    ForEach(ItemSortOrder.allCases, id: \.self) { order in
+                        Text(order.displayTitle).tag(order)
+                    }
+                } label: {
+                    EmptyView()
+                }
+            } label: {
+                Label(viewModel.sortOrder.displayTitle, systemImage: "arrow.up.arrow.down")
             }
         }
 
@@ -101,7 +128,7 @@ struct ServerLogContentsView: View {
 private struct ParsedReaderView<Parser: LogParser>: View where Parser.Element == ServerLogEntry {
 
     @ObservedObject
-    var reader: PagingFileReader<Parser>
+    var reader: PagingLogViewModel<Parser>
 
     let onSelect: (ServerLogEntry) -> Void
 
@@ -129,7 +156,7 @@ private struct ParsedReaderView<Parser: LogParser>: View where Parser.Element ==
 private struct RawReaderView: View {
 
     @ObservedObject
-    var reader: PagingFileReader<RawLogParser>
+    var reader: PagingLogViewModel<RawLogParser>
 
     var body: some View {
         if reader.elements.isEmpty, !reader.hasNextPage {

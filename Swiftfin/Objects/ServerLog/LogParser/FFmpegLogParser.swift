@@ -18,6 +18,13 @@ struct FFmpegLogParser: LogParser<ServerLogEntry> {
     private var firstLine: String?
     private var buffer: [String] = []
     private var nextID: Int = 0
+    private var deferredProgress: DeferredSection?
+
+    private struct DeferredSection {
+        let section: FFmpegLogSection
+        let firstLine: String?
+        let buffer: [String]
+    }
 
     mutating func consume(chunk line: String) -> [ServerLogEntry] {
         var output: [ServerLogEntry] = []
@@ -30,8 +37,20 @@ struct FFmpegLogParser: LogParser<ServerLogEntry> {
         let next = FFmpegLogSection.classify(line: line, currentSection: current)
 
         if let next, next != current {
-            // If the outgoing section is progress and the new section is also
-            // progress, pin the prior section's end frame to one before the new start.
+            // Progress → summary: defer flushing the progress section so we can
+            // pin its end frame using the summary's trailing `frame=…Lsize=…` line.
+            if case .progress = current, next == .summary, let currentSection = current {
+                deferredProgress = DeferredSection(
+                    section: currentSection,
+                    firstLine: firstLine,
+                    buffer: buffer
+                )
+                current = next
+                firstLine = line
+                buffer = [line]
+                return output
+            }
+
             var endFrame: Int?
             if case let .progress(nextFrame) = next {
                 endFrame = max(0, nextFrame - 1)
@@ -54,8 +73,30 @@ struct FFmpegLogParser: LogParser<ServerLogEntry> {
     }
 
     mutating func flush() -> [ServerLogEntry] {
-        guard let entry = flushCurrent(endFrame: nil) else { return [] }
-        return [entry]
+        var output: [ServerLogEntry] = []
+
+        // Emit the deferred final progress, using the summary buffer's trailing
+        // frame= line as its end bound.
+        if let deferred = deferredProgress {
+            let trailingFrame = buffer
+                .compactMap(FFmpegLogSection.parseFrameNumber)
+                .last
+            let endFrame = trailingFrame.map { max(0, $0 - 1) }
+            output.append(
+                makeEntry(
+                    section: deferred.section,
+                    firstLine: deferred.firstLine,
+                    buffer: deferred.buffer,
+                    endFrame: endFrame
+                )
+            )
+            deferredProgress = nil
+        }
+
+        if let entry = flushCurrent(endFrame: nil) {
+            output.append(entry)
+        }
+        return output
     }
 
     private mutating func flushCurrent(endFrame: Int?) -> ServerLogEntry? {
@@ -66,12 +107,26 @@ struct FFmpegLogParser: LogParser<ServerLogEntry> {
 
         guard let current, buffer.isNotEmpty else { return nil }
 
+        return makeEntry(
+            section: current,
+            firstLine: firstLine,
+            buffer: buffer,
+            endFrame: endFrame
+        )
+    }
+
+    private mutating func makeEntry(
+        section: FFmpegLogSection,
+        firstLine: String?,
+        buffer: [String],
+        endFrame: Int?
+    ) -> ServerLogEntry {
         let entry = ServerLogEntry(
             id: nextID,
             timestamp: nil,
-            type: current.entryType,
-            source: current.sourceName(firstLine: firstLine, endFrame: endFrame),
-            message: current.format(lines: buffer)
+            type: section.entryType,
+            source: section.sourceName(firstLine: firstLine, endFrame: endFrame),
+            message: section.format(lines: buffer)
         )
         nextID += 1
         return entry
@@ -96,6 +151,23 @@ private enum FFmpegLogSection: Equatable {
 
     static func classify(line: String, currentSection: FFmpegLogSection?) -> FFmpegLogSection? {
         guard let first = line.first else { return nil }
+
+        // Once we're in the transcoding phase, only `frame=` (new progress) and
+        // `[out#` (summary) cause transitions. Everything else — segment events,
+        // codec messages, warnings — continues whatever section is open.
+        if isTranscodingSection(currentSection) {
+            if line.hasPrefix("[out#") {
+                return .summary
+            }
+            if line.hasPrefix("frame=") {
+                if currentSection == .summary {
+                    return nil
+                }
+                let frame = parseFrameNumber(line) ?? 0
+                return .progress(frame: frame)
+            }
+            return nil
+        }
 
         // JSON parameters at the top of the log.
         if first == "{" {
@@ -137,24 +209,6 @@ private enum FFmpegLogSection: Equatable {
         if line.hasPrefix("Output #") {
             return .output
         }
-        if line.hasPrefix("[out#") {
-            return .summary
-        }
-        if line.hasPrefix("frame=") {
-            // The trailing `Lsize=` frame line belongs to the summary that just opened.
-            if currentSection == .summary {
-                return nil
-            }
-            let frame = parseFrameNumber(line) ?? 0
-            return .progress(frame: frame)
-        }
-        if line.hasPrefix("[hls ") {
-            // HLS segment events attach to whichever transcoding section is open.
-            if isTranscodingSection(currentSection) {
-                return nil
-            }
-            return .output
-        }
 
         return .other
     }
@@ -168,7 +222,7 @@ private enum FFmpegLogSection: Equatable {
         }
     }
 
-    private static func parseFrameNumber(_ line: String) -> Int? {
+    fileprivate static func parseFrameNumber(_ line: String) -> Int? {
         guard line.hasPrefix("frame=") else { return nil }
         let after = line.dropFirst("frame=".count).drop(while: { $0 == " " })
         let digits = after.prefix { $0.isNumber }

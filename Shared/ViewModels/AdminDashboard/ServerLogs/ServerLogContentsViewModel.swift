@@ -12,7 +12,7 @@ import SwiftUI
 
 @MainActor
 @Stateful
-final class ServerLogContentsViewModel: ViewModel {
+final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
 
     @CasePathable
     enum Action {
@@ -34,18 +34,34 @@ final class ServerLogContentsViewModel: ViewModel {
     }
 
     @Published
-    private(set) var url: URL?
+    private(set) var raw: PagingLogViewModel<RawLogParser>?
     @Published
-    private(set) var raw: PagingFileReader<RawLogParser>?
-    @Published
-    private(set) var parsedSystem: PagingFileReader<ServerLogParser>?
-    @Published
-    private(set) var parsedFFmpeg: PagingFileReader<FFmpegLogParser>?
+    private(set) var parsed: PagingLogViewModel<Parser>?
 
-    let log: LogFile
+    @Published
+    var sortOrder: ItemSortOrder = .ascending {
+        didSet {
+            guard sortOrder != oldValue else { return }
+            raw?.direction = sortOrder
+            parsed?.direction = sortOrder
+        }
+    }
 
-    var parses: Bool {
-        log.type.logParser != nil
+    @Published
+    private(set) var url: URL? {
+        didSet {
+            guard let url, url != oldValue else { return }
+
+            self.raw = PagingLogViewModel(url: url, parser: RawLogParser(), direction: sortOrder)
+            self.raw?.start()
+
+            if let parser {
+                self.parsed = PagingLogViewModel(url: url, parser: parser, direction: sortOrder)
+                self.parsed?.start()
+            } else {
+                self.parsed = nil
+            }
+        }
     }
 
     var webURL: URL? {
@@ -53,8 +69,12 @@ final class ServerLogContentsViewModel: ViewModel {
         return userSession.client.fullURL(with: Paths.getLogFile(name: name), queryAPIKey: true)
     }
 
-    init(log: LogFile) {
+    private let log: LogFile
+    private let parser: Parser?
+
+    init(log: LogFile, parser: Parser? = nil) {
         self.log = log
+        self.parser = parser
         super.init()
     }
 
@@ -66,43 +86,22 @@ final class ServerLogContentsViewModel: ViewModel {
 
         let destination = FileManager.default.temporaryDirectory.appendingPathComponent(name)
 
+        // Don't download unless forceable refreshed or the file doesn't exist yet
         if !force, FileManager.default.fileExists(atPath: destination.path) {
-            setURL(destination)
+            self.url = destination
             return
         }
 
         let request = Paths.getLogFile(name: name)
         let response = try await userSession.client.download(for: request)
 
+        // Remove the old file if this was this download is forced
         if FileManager.default.fileExists(atPath: destination.path) {
             try FileManager.default.removeItem(at: destination)
         }
+
         try FileManager.default.moveItem(at: response.value, to: destination)
 
-        setURL(destination)
-    }
-
-    private func setURL(_ url: URL) {
-        self.url = url
-
-        let raw = PagingFileReader(url: url, parser: RawLogParser())
-        self.raw = raw
-        raw.start()
-
-        parsedSystem = nil
-        parsedFFmpeg = nil
-
-        switch log.type.logParser {
-        case let parser as ServerLogParser:
-            let reader = PagingFileReader(url: url, parser: parser)
-            self.parsedSystem = reader
-            reader.start()
-        case let parser as FFmpegLogParser:
-            let reader = PagingFileReader(url: url, parser: parser)
-            self.parsedFFmpeg = reader
-            reader.start()
-        default:
-            break
-        }
+        self.url = destination
     }
 }
