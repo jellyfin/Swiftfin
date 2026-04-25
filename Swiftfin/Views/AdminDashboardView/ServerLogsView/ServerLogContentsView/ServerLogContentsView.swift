@@ -33,70 +33,66 @@ struct ServerLogContentsView: View {
         showParsed && log.type == .system
     }
 
-    private var rowCount: Int {
-        resolvedShowParsed ? viewModel.entries.count : viewModel.lines.count
-    }
-
     private var isEmptyAndFinished: Bool {
-        rowCount == 0 && viewModel.isFinished
+        let count = resolvedShowParsed ? viewModel.entries.count : viewModel.lines.count
+        return count == 0 && viewModel.isFinished
     }
 
     @ViewBuilder
     private var contentView: some View {
         if isEmptyAndFinished {
             ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
+        } else if resolvedShowParsed {
+            parsedGrid
         } else {
-            CollectionVGrid(
-                count: rowCount,
-                layout: .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
-            ) { idx in
-                if resolvedShowParsed {
-                    parsedRow(viewModel.entries[idx])
-                } else {
-                    rawRow(viewModel.lines[idx])
+            rawList
+        }
+    }
+
+    private var parsedGrid: some View {
+        CollectionVGrid(
+            uniqueElements: viewModel.entries,
+            id: \.id,
+            layout: .columns(1)
+        ) { entry in
+            ParsedServerEntry(entry: entry) {
+                router.route(to: .serverLogEntry(entry: entry))
+            }
+        }
+        .onReachedBottomEdge(offset: .offset(300)) {
+            viewModel.loadNextPage()
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var rawList: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                ForEach(viewModel.lines.indices, id: \.self) { idx in
+                    Text(viewModel.lines[idx].isEmpty ? " " : viewModel.lines[idx])
+                        .font(.system(.subheadline, design: .monospaced))
+                        .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 6)
+                        .contextMenu {
+                            Button {
+                                UIPasteboard.general.string = viewModel.lines[idx]
+                            } label: {
+                                Label("Copy", systemImage: "doc.on.doc")
+                            }
+                        }
+                }
+
+                if !viewModel.isFinished {
+                    Color.clear
+                        .frame(height: 1)
+                        .id(viewModel.lines.count)
+                        .onAppear { viewModel.loadNextPage() }
                 }
             }
-            .onReachedBottomEdge(offset: .offset(300)) {
-                viewModel.loadNextPage()
-            }
-            // Toggling parsed/raw flips the cell builder, but the int IDs are identical
-            // across modes — `.id` forces a full rebuild so cells re-bind to the new closure.
-            .id(resolvedShowParsed)
-            .ignoresSafeArea(.container, edges: .bottom)
         }
-    }
-
-    @ViewBuilder
-    private func parsedRow(_ entry: ServerLogEntry) -> some View {
-        ChevronButton(action: {
-            router.route(to: .serverLogEntry(entry: entry))
-        }) {
-            LabeledContent {
-                EmptyView()
-            } label: {
-                ParsedServerLogRow(entry: entry)
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-    }
-
-    @ViewBuilder
-    private func rawRow(_ line: String) -> some View {
-        Button {
-            UIPasteboard.general.string = line
-        } label: {
-            Text(line.isEmpty ? " " : line)
-                .font(.system(.subheadline, design: .monospaced))
-                .lineLimit(1)
-                .truncationMode(.tail)
-                .foregroundStyle(.primary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
+        .ignoresSafeArea(.container, edges: .bottom)
     }
 
     @ViewBuilder

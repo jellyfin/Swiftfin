@@ -38,21 +38,8 @@ struct ServerLogEntryView: View {
             }
 
             Section(L10n.details) {
-                StateAdapter(initialValue: false) { showCopiedAlert in
-                    Button {
-                        UIPasteboard.general.string = entry.message
-                        showCopiedAlert.wrappedValue = true
-                    } label: {
-                        Text(entry.message)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .foregroundStyle(.primary, .secondary)
-                    .alert(L10n.copiedToClipboard, isPresented: showCopiedAlert) {
-                        Button(L10n.ok, role: .cancel) {}
-                    } message: {
-                        Text(L10n.copiedToClipboardMessage)
-                    }
-                }
+                Text(entry.message)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .backport
