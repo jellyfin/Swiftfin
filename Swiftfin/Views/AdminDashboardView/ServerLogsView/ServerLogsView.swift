@@ -93,9 +93,9 @@ struct ServerLogsView: View {
                 viewModel.error.map {
                     ErrorView(error: $0)
                 }
-            case .initial:
+            case .content:
                 contentView
-            case .refreshing:
+            case .initial:
                 ProgressView()
             }
         }
@@ -110,9 +110,6 @@ struct ServerLogsView: View {
             viewModel.refresh()
         }
         .topBarTrailing {
-            if viewModel.state == .refreshing {
-                ProgressView()
-            }
             filterMenu
         }
     }

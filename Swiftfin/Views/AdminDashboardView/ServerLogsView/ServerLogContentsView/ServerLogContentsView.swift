@@ -46,6 +46,10 @@ private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Eleme
         _viewModel = StateObject(wrappedValue: ServerLogContentsViewModel(log: log, parser: parser))
     }
 
+    private var isLoading: Bool {
+        viewModel.parsed?.background.is(.refreshing) == true || viewModel.raw?.background.is(.refreshing) == true
+    }
+
     private var resolvedShowParsed: Bool {
         showParsed && viewModel.parsed != nil
     }
@@ -117,14 +121,14 @@ private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Eleme
         .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.log)
-        .navigationBarMenuButton {
+        .navigationBarMenuButton(isLoading: isLoading) {
             toolbarMenu
         }
         .onFirstAppear {
-            viewModel.download(force: false)
+            viewModel.refresh(force: false)
         }
         .refreshable {
-            viewModel.download(force: true)
+            viewModel.refresh(force: true)
         }
     }
 }
