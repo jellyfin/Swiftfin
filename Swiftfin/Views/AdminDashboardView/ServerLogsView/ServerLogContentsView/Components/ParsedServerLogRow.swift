@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ServerLogDetailsView {
+extension ServerLogContentsView {
 
     struct ParsedServerLogRow: View {
 

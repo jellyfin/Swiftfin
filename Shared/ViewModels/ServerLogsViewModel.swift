@@ -17,21 +17,16 @@ final class ServerLogsViewModel: ViewModel {
     @CasePathable
     enum Action {
         case refresh
-        case download(LogFile, force: Bool)
 
         var transition: Transition {
             switch self {
             case .refresh:
                 .loop(.refreshing)
-            case .download:
-                .background(.downloading)
             }
         }
     }
 
-    enum BackgroundState {
-        case downloading
-    }
+    enum BackgroundState {}
 
     enum State {
         case initial
@@ -41,8 +36,6 @@ final class ServerLogsViewModel: ViewModel {
 
     @Published
     private(set) var logs: [LogFile] = []
-    @Published
-    private(set) var downloads: [LogFile: ServerLogDownload] = [:]
 
     @Published
     var filter: ServerLogType? {
@@ -65,42 +58,5 @@ final class ServerLogsViewModel: ViewModel {
         let response = try await userSession.client.send(request)
         allLogs = OrderedSet(response.value)
         applyFilter()
-    }
-
-    @Function(\Action.Cases.download)
-    private func _download(_ log: LogFile, _ force: Bool) async throws {
-        guard let name = log.name else {
-            throw ErrorMessage(L10n.unknownError)
-        }
-
-        // Check if this file has already been downloaded before attempting to downloading
-        if let existing = downloads[log], !force, FileManager.default.fileExists(atPath: existing.url.path) {
-            return
-        }
-
-        let request = Paths.getLogFile(name: name)
-        let response = try await userSession.client.download(for: request)
-
-        let destination = FileManager.default.temporaryDirectory.appendingPathComponent(name)
-
-        if FileManager.default.fileExists(atPath: destination.path) {
-            try FileManager.default.removeItem(at: destination)
-        }
-
-        try FileManager.default.moveItem(at: response.value, to: destination)
-
-        let content = await ServerLogContent.load(
-            from: destination,
-            parseEntries: log.type == .system
-        )
-
-        // We JUST downloaded from this URL so this should always exist if the download was successful
-        guard let webURL = userSession.client.fullURL(with: request, queryAPIKey: true) else { return }
-
-        downloads[log] = ServerLogDownload(
-            url: destination,
-            webURL: webURL,
-            content: content
-        )
     }
 }

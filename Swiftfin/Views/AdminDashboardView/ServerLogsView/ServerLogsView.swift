@@ -47,7 +47,7 @@ struct ServerLogsView: View {
 
     private func logRow(log: LogFile) -> some View {
         ChevronButton(action: {
-            router.route(to: .serverLogDetails(log: log, viewModel: viewModel))
+            router.route(to: .serverLogContents(log: log))
         }) {
             LabeledContent {
                 EmptyView()
@@ -112,7 +112,7 @@ struct ServerLogsView: View {
             viewModel.refresh()
         }
         .topBarTrailing {
-            if viewModel.background.is(.downloading) || viewModel.state == .refreshing {
+            if viewModel.state == .refreshing {
                 ProgressView()
             }
             logFilters
