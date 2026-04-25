@@ -19,7 +19,11 @@ struct RawLogParser: LogParser<String> {
         self.delimiter = delimiter
     }
 
-    mutating func consume(chunk: String) -> [String] {
+    func isHeader(line: String) -> Bool {
+        true
+    }
+
+    mutating func read(chunk: String) -> [String] {
         [chunk]
     }
 

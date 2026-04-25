@@ -101,5 +101,8 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
         try FileManager.default.moveItem(at: response.value, to: destination)
 
         self.url = destination
+
+        await self.parsed?.refresh()
+        await self.raw?.refresh()
     }
 }

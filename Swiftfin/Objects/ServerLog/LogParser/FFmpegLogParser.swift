@@ -26,7 +26,7 @@ struct FFmpegLogParser: LogParser<ServerLogEntry> {
         let buffer: [String]
     }
 
-    mutating func consume(chunk line: String) -> [ServerLogEntry] {
+    mutating func read(chunk line: String) -> [ServerLogEntry] {
         var output: [ServerLogEntry] = []
 
         // Blank lines separate sections.
@@ -37,8 +37,8 @@ struct FFmpegLogParser: LogParser<ServerLogEntry> {
         let next = FFmpegLogSection.classify(line: line, currentSection: current)
 
         if let next, next != current {
-            // Progress → summary: defer flushing the progress section so we can
-            // pin its end frame using the summary's trailing `frame=…Lsize=…` line.
+            // Progress → summary: defer flushing the progress so we can pin its
+            // end frame from the summary's trailing `frame=…Lsize=…` line.
             if case .progress = current, next == .summary, let currentSection = current {
                 deferredProgress = DeferredSection(
                     section: currentSection,
@@ -49,6 +49,24 @@ struct FFmpegLogParser: LogParser<ServerLogEntry> {
                 firstLine = line
                 buffer = [line]
                 return output
+            }
+
+            // Leaving a summary (e.g. a new session begins): emit any deferred
+            // progress now, with the summary buffer's trailing frame= as its end.
+            if current == .summary, let deferred = deferredProgress {
+                let trailingFrame = buffer
+                    .compactMap(FFmpegLogSection.parseFrameNumber)
+                    .last
+                let endFrame = trailingFrame.map { max(0, $0 - 1) }
+                output.append(
+                    makeEntry(
+                        section: deferred.section,
+                        firstLine: deferred.firstLine,
+                        buffer: deferred.buffer,
+                        endFrame: endFrame
+                    )
+                )
+                deferredProgress = nil
             }
 
             var endFrame: Int?
@@ -115,6 +133,25 @@ struct FFmpegLogParser: LogParser<ServerLogEntry> {
         )
     }
 
+    func isHeader(line: String) -> Bool {
+        guard let first = line.first, !first.isWhitespace else { return false }
+        if first == "{" { return true }
+        if line.hasPrefix("ffmpeg ") || line.hasPrefix("/") { return true }
+        if line.hasPrefix("libva ") { return true }
+        if line.hasPrefix("Cuda") || line.hasPrefix("[CUDA") { return true }
+        if line.hasPrefix("[NVENC") || line.hasPrefix("[NVDEC") { return true }
+        if line.hasPrefix("[QSV") { return true }
+        if line.hasPrefix("[AMF") { return true }
+        if line.hasPrefix("[VideoToolbox") { return true }
+        if line.hasPrefix("[Vulkan") { return true }
+        if line.hasPrefix("Input #") { return true }
+        if line.hasPrefix("Stream mapping:") { return true }
+        if line.hasPrefix("Output #") { return true }
+        if line.hasPrefix("[out#") { return true }
+        if line.hasPrefix("frame=") { return true }
+        return false
+    }
+
     private mutating func makeEntry(
         section: FFmpegLogSection,
         firstLine: String?,
@@ -152,29 +189,44 @@ private enum FFmpegLogSection: Equatable {
     static func classify(line: String, currentSection: FFmpegLogSection?) -> FFmpegLogSection? {
         guard let first = line.first else { return nil }
 
-        // Once we're in the transcoding phase, only `frame=` (new progress) and
-        // `[out#` (summary) cause transitions. Everything else — segment events,
-        // codec messages, warnings — continues whatever section is open.
-        if isTranscodingSection(currentSection) {
-            if line.hasPrefix("[out#") {
-                return .summary
-            }
-            if line.hasPrefix("frame=") {
-                if currentSection == .summary {
-                    return nil
-                }
-                let frame = parseFrameNumber(line) ?? 0
-                return .progress(frame: frame)
-            }
-            return nil
-        }
-
-        // JSON parameters at the top of the log.
+        // State-independent section markers — any of these always start a new
+        // section, even when in a transcoding phase (handles back-to-back sessions
+        // in a single log file, and lets backward streaming start a window mid-file).
         if first == "{" {
             return .parameters
         }
+        if line.hasPrefix("ffmpeg version") {
+            return .version
+        }
+        if line.hasPrefix("ffmpeg ") || line.hasPrefix("/") {
+            return .command
+        }
+        if line.hasPrefix("Input #") {
+            return .input
+        }
+        if line.hasPrefix("Stream mapping:") {
+            return .streamMapping
+        }
+        if line.hasPrefix("Output #") {
+            return .output
+        }
+        if line.hasPrefix("[out#") {
+            return .summary
+        }
+        if line.hasPrefix("frame=") {
+            // The trailing `Lsize=` frame line attaches to the summary that just opened.
+            if currentSection == .summary {
+                return nil
+            }
+            let frame = parseFrameNumber(line) ?? 0
+            return .progress(frame: frame)
+        }
+        if let hwType = hardwareType(for: line) {
+            return .hardwareInit(type: hwType)
+        }
 
-        // Indented lines may transition from `.version` into `.configuration`.
+        // Indented lines: may transition from `.version` into `.configuration`,
+        // otherwise continue whatever section is open.
         if first.isWhitespace {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             if trimmed.hasPrefix("configuration:") {
@@ -188,26 +240,15 @@ private enum FFmpegLogSection: Equatable {
             return nil
         }
 
-        if line.hasPrefix("ffmpeg version") {
-            return .version
-        }
-        if line.hasPrefix("ffmpeg ") || line.hasPrefix("/") {
-            return .command
-        }
-        if let hwType = hardwareType(for: line) {
-            return .hardwareInit(type: hwType)
-        }
-        if line.hasPrefix("Input #") {
-            return .input
-        }
-        if line.hasPrefix("Stream mapping:") {
-            return .streamMapping
-        }
+        // Boilerplate prompt — continuation of whatever's open (typically stream mapping).
         if line.hasPrefix("Press [q]") {
             return nil
         }
-        if line.hasPrefix("Output #") {
-            return .output
+
+        // In the transcoding phase, unrecognized lines (segment events, codec
+        // diagnostics, etc.) attach to the current section.
+        if isTranscodingSection(currentSection) {
+            return nil
         }
 
         return .other

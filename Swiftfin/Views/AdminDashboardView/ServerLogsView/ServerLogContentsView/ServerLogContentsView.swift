@@ -67,27 +67,31 @@ private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Eleme
 
     @ViewBuilder
     private var toolbarMenu: some View {
-        if viewModel.parsed != nil {
-            Section {
+        Section {
+            if viewModel.parsed != nil {
                 Toggle(L10n.parsed, systemImage: "list.bullet.rectangle", isOn: $showParsed)
             }
-        }
 
-        Section {
             Menu {
                 Picker(selection: $viewModel.sortOrder) {
                     ForEach(ItemSortOrder.allCases, id: \.self) { order in
-                        Text(order.displayTitle).tag(order)
+                        Label(order.displayTitle, systemImage: order.systemImage).tag(order)
                     }
                 } label: {
                     EmptyView()
                 }
             } label: {
-                Label(viewModel.sortOrder.displayTitle, systemImage: "arrow.up.arrow.down")
+                Label(viewModel.sortOrder.displayTitle, systemImage: viewModel.sortOrder.systemImage)
             }
         }
 
         Section {
+            Button {
+                viewModel.refresh(force: true)
+            } label: {
+                Label("Refresh", systemImage: "arrow.clockwise")
+            }
+
             if let url = viewModel.url {
                 Button {
                     router.route(to: .shareSheet(urls: [url]))

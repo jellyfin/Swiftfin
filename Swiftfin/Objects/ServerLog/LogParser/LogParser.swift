@@ -20,8 +20,12 @@ protocol LogParser<Element> {
     /// Example: "/n" for a new line separated file
     var delimiter: String { get }
 
-    /// Consume one chunk, returning any elements that completed as a result.
-    mutating func consume(chunk: String) -> [Element]
+    /// True if this line could begin a new logical element.
+    /// Used to ensure we get the header as the start of entries when parsing backwards.
+    func isHeader(line: String) -> Bool
+
+    /// Read one chunk, returning any elements that completed as a result.
+    mutating func read(chunk: String) -> [Element]
 
     /// Remove any element still pending in internal state.
     mutating func flush() -> [Element]

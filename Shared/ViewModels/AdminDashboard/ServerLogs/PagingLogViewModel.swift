@@ -8,7 +8,6 @@
 
 import Combine
 import Foundation
-import IdentifiedCollections
 
 // TODO: Migrate over to new paging logic in https://github.com/jellyfin/Swiftfin/pull/1752
 
@@ -50,12 +49,7 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
     var direction: ItemSortOrder {
         didSet {
             guard direction != oldValue else { return }
-
-            elements = []
-            cursor = 0
-            hasNextPage = parsed.isNotEmpty
-
-            getNextPage()
+            self.refresh()
         }
     }
 
@@ -63,13 +57,18 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
     let pageSize: Int
 
     private let initialParser: Parser
-    private var parser: Parser
+    private let delimiterBytes: Data
+    private let readChunkSize = 64 * 1024
 
-    /// All elements parsed from the file.
-    private var parsed: [Parser.Element] = []
+    private var handle: FileHandle?
 
-    /// Number of elements already parsed.
-    private var cursor: Int = 0
+    // Forward (ascending): persistent parser, handle position advances toward EOF.
+    private var forwardBuffer = Data()
+    private var forwardCursor = 0
+    private var forwardParser: Parser
+
+    // Backward (descending): fresh parser per window, tail offset retreats toward 0.
+    private var reverseTail: UInt64 = 0
 
     init(
         url: URL,
@@ -79,68 +78,214 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
     ) {
         self.url = url
         self.initialParser = parser
-        self.parser = parser
+        self.forwardParser = parser
         self.pageSize = pageSize
         self.direction = direction
+        self.delimiterBytes = parser.delimiter.data(using: parser.encoding) ?? Data([0x0A])
         super.init()
     }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        reset()
-        try openLog()
+
+        self.elements = []
+
+        try open()
         try await loadPage()
     }
 
     @Function(\Action.Cases.getNextPage)
     private func _getNextPage() async throws {
         guard hasNextPage else { return }
-        try openLog()
+        if handle == nil {
+            try open()
+        }
         try await loadPage()
     }
 
-    private func reset() {
-        parser = initialParser
-        parsed.removeAll()
+    private func open() throws {
+        try? handle?.close()
+        let h = try FileHandle(forReadingFrom: url)
+        let size = try h.seekToEnd()
+        try h.seek(toOffset: 0)
+        handle = h
+        forwardBuffer = Data()
+        forwardCursor = 0
+        forwardParser = initialParser
+        reverseTail = size
         elements = []
-        cursor = 0
-        hasNextPage = true
-    }
-
-    /// Reads and parses the entire file once. No-op on subsequent calls.
-    private func openLog() throws {
-        guard parsed.isEmpty else { return }
-        let data = try Data(contentsOf: url)
-        guard let text = String(data: data, encoding: parser.encoding) else {
-            hasNextPage = false
-            return
-        }
-        for chunk in text.components(separatedBy: parser.delimiter) {
-            parsed.append(contentsOf: parser.consume(chunk: chunk))
-        }
-        parsed.append(contentsOf: parser.flush())
-        hasNextPage = parsed.isNotEmpty
+        hasNextPage = size > 0
     }
 
     private func loadPage() async throws {
-        let total = parsed.count
-        guard cursor < total else {
+        switch direction {
+        case .ascending:
+            try loadForwardPage()
+        case .descending:
+            try loadBackwardPage()
+        }
+    }
+
+    // MARK: - Forward
+
+    private func loadForwardPage() throws {
+        guard let handle else {
             hasNextPage = false
             return
         }
-        let take = min(pageSize, total - cursor)
-        let slice: [Parser.Element]
-        switch direction {
-        case .ascending:
-            slice = Array(parsed[cursor ..< cursor + take])
-        case .descending:
-            let end = total - cursor
-            slice = parsed[end - take ..< end].reversed()
+
+        var newElements: [Parser.Element] = []
+
+        while newElements.count < pageSize {
+            while newElements.count < pageSize,
+                  let range = forwardBuffer.range(
+                      of: delimiterBytes,
+                      in: forwardCursor ..< forwardBuffer.count
+                  )
+            {
+                let lineData = forwardBuffer.subdata(in: forwardCursor ..< range.lowerBound)
+                forwardCursor = range.upperBound
+                if let line = String(data: lineData, encoding: forwardParser.encoding) {
+                    newElements.append(contentsOf: forwardParser.read(chunk: line))
+                }
+            }
+
+            if newElements.count >= pageSize { break }
+
+            // Compact the buffer when most of it is consumed, to keep the search range bounded.
+            if forwardCursor >= readChunkSize {
+                forwardBuffer.removeSubrange(0 ..< forwardCursor)
+                forwardCursor = 0
+            }
+
+            let chunk = try handle.read(upToCount: readChunkSize) ?? Data()
+
+            if chunk.isEmpty {
+                // EOF: emit any trailing partial line + parser's pending state.
+                if forwardCursor < forwardBuffer.count,
+                   let line = String(
+                       data: forwardBuffer.subdata(in: forwardCursor ..< forwardBuffer.count),
+                       encoding: forwardParser.encoding
+                   )
+                {
+                    newElements.append(contentsOf: forwardParser.read(chunk: line))
+                }
+                forwardBuffer.removeAll()
+                forwardCursor = 0
+                newElements.append(contentsOf: forwardParser.flush())
+                hasNextPage = false
+                break
+            }
+
+            forwardBuffer.append(chunk)
         }
-        elements.append(contentsOf: slice)
-        cursor += take
-        if cursor >= total {
+
+        if newElements.isNotEmpty {
+            elements.append(contentsOf: newElements)
+        }
+    }
+
+    // MARK: - Backward
+
+    private func loadBackwardPage() throws {
+        guard let handle else {
             hasNextPage = false
+            return
         }
+
+        var newElements: [Parser.Element] = []
+
+        while newElements.count < pageSize {
+            if reverseTail == 0 {
+                hasNextPage = false
+                break
+            }
+
+            // Extend a window backward in chunks until it contains a parser-recognized header.
+            // Parse from that header forward with a fresh parser, append reversed, then move
+            // `reverseTail` to the header's byte offset for the next window.
+            var windowBytes = Data()
+            var windowStart = reverseTail
+            var headerOffset: Int?
+
+            while headerOffset == nil {
+                let toRead = min(UInt64(readChunkSize), windowStart)
+                if toRead == 0 {
+                    // Reached byte 0 with no header — parse from the start of the file.
+                    headerOffset = 0
+                    break
+                }
+                let newStart = windowStart - toRead
+                try handle.seek(toOffset: newStart)
+                let chunk = try handle.read(upToCount: Int(toRead)) ?? Data()
+                windowBytes = chunk + windowBytes
+                windowStart = newStart
+
+                // Cursor for the first well-formed line: byte 0 if at file start,
+                // otherwise the byte after the first delimiter (skipping the partial leading line).
+                let cursor: Int
+                if windowStart == 0 {
+                    cursor = 0
+                } else if let firstDelim = windowBytes.range(of: delimiterBytes) {
+                    cursor = firstDelim.upperBound
+                } else {
+                    // No delimiter visible yet — extend further.
+                    continue
+                }
+
+                headerOffset = firstHeaderOffset(in: windowBytes, startingAt: cursor)
+            }
+
+            guard let offset = headerOffset,
+                  let text = String(
+                      data: windowBytes.subdata(in: offset ..< windowBytes.count),
+                      encoding: initialParser.encoding
+                  )
+            else {
+                hasNextPage = false
+                break
+            }
+
+            var localParser = initialParser
+            var entries: [Parser.Element] = []
+            for line in text.components(separatedBy: initialParser.delimiter) {
+                entries.append(contentsOf: localParser.read(chunk: line))
+            }
+            entries.append(contentsOf: localParser.flush())
+            newElements.append(contentsOf: entries.reversed())
+
+            let newTail = windowStart + UInt64(offset)
+            // Defensive: ensure backward progress, else we'd spin forever.
+            if newTail >= reverseTail {
+                hasNextPage = false
+                break
+            }
+            reverseTail = newTail
+        }
+
+        if newElements.isNotEmpty {
+            elements.append(contentsOf: newElements)
+        }
+    }
+
+    /// Scans forward from `start` through `bytes`, returning the offset of the first line
+    /// the parser recognizes as a header. Returns `nil` if no header is found.
+    private func firstHeaderOffset(in bytes: Data, startingAt start: Int) -> Int? {
+        var cursor = start
+        while cursor < bytes.count {
+            let nextDelim = bytes.range(of: delimiterBytes, in: cursor ..< bytes.count)
+            let lineEnd = nextDelim?.lowerBound ?? bytes.count
+            if let line = String(
+                data: bytes.subdata(in: cursor ..< lineEnd),
+                encoding: initialParser.encoding
+            ),
+                initialParser.isHeader(line: line)
+            {
+                return cursor
+            }
+            guard let advance = nextDelim?.upperBound else { return nil }
+            cursor = advance
+        }
+        return nil
     }
 }

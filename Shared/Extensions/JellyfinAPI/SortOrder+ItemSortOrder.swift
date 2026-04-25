@@ -12,14 +12,23 @@ import JellyfinAPI
 // Necessary to handle conflict with Foundation.SortOrder
 typealias ItemSortOrder = JellyfinAPI.SortOrder
 
-extension ItemSortOrder: Displayable {
-    // TODO: Localize
+extension ItemSortOrder: Displayable, SystemImageable {
+
     var displayTitle: String {
         switch self {
         case .ascending:
             L10n.ascending
         case .descending:
             L10n.descending
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .ascending:
+            "arrow.up"
+        case .descending:
+            "arrow.down"
         }
     }
 }

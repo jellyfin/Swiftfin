@@ -14,6 +14,9 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
     let encoding: String.Encoding = .utf8
     let delimiter: String = "\n"
 
+    private var pending: ServerLogEntry?
+    private var nextID: Int = 0
+
     /// Format: `[2000-12-31 12:23:45.123 -06:00] [INF] [64] Source: message`.
     /// Lines that don't match the header pattern attach to the previous entry
     private static let lineRegex: Regex = /^\[([^\]]+)\] \[([A-Z]+)\] \[[^\]]+\] ([^:]+?): (.*)$/
@@ -25,15 +28,16 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
         return formatter
     }()
 
-    private var pending: ServerLogEntry?
-    private var nextID: Int = 0
+    /// Header lines always start with `[`.
+    func isHeader(line: String) -> Bool {
+        line.first == "["
+    }
 
-    mutating func consume(chunk line: String) -> [ServerLogEntry] {
+    mutating func read(chunk line: String) -> [ServerLogEntry] {
         var output: [ServerLogEntry] = []
 
-        // Header lines always start with `[` so look for this first.
-        // - This prevents the expensive REGEX lookups on lines that do not need them.
-        if line.first == "[", let match = try? Self.lineRegex.wholeMatch(in: line) {
+        // Don't parse unless we know it's a header line.
+        if isHeader(line: line), let match = try? Self.lineRegex.wholeMatch(in: line) {
 
             if let pending {
                 output.append(pending)
@@ -46,6 +50,7 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
                 source: String(match.output.3),
                 message: String(match.output.4)
             )
+
             nextID += 1
 
         } else if line.isNotEmpty && pending != nil {
@@ -58,12 +63,15 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
             // The line is either empty or cannot be parsed.
             // Ignore this line and move on.
         }
+
         return output
     }
 
     mutating func flush() -> [ServerLogEntry] {
         guard let pending else { return [] }
+
         self.pending = nil
+
         return [pending]
     }
 }

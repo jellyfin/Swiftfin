@@ -16,25 +16,4 @@ struct ServerLogEntry: Identifiable, Hashable {
     let type: ServerLogEntryType?
     let source: String?
     var message: String
-
-    /// Single-line copyable text for the entry
-    var copiedText: String {
-        var components: [String] = []
-
-        if let timestamp {
-            components.append("[\(timestamp.formatted(.iso8601))]")
-        }
-
-        if let type {
-            components.append("[\(type.rawValue)]")
-        }
-
-        if let source {
-            components.append("\(source):")
-        }
-
-        components.append(message)
-
-        return components.joined(separator: " ")
-    }
 }
