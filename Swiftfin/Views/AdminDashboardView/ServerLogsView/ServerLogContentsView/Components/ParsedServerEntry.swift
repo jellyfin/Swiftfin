@@ -46,16 +46,12 @@ extension ServerLogContentsView {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
-                    Group {
-                        if let timestamp = entry.timestamp {
-                            Text(timestamp.formatted(date: .abbreviated, time: .standard))
-                        } else {
-                            Text(verbatim: .emptyRuntime)
-                        }
+                    if let timestamp = entry.timestamp {
+                        Text(timestamp.formatted(date: .abbreviated, time: .standard))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
                     }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
                 }
 
                 Spacer()

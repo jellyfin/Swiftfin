@@ -30,12 +30,16 @@ struct ServerLogContentsView: View {
     }
 
     private var resolvedShowParsed: Bool {
-        showParsed && log.type == .system
+        showParsed && viewModel.parses
     }
 
     @ViewBuilder
     private var contentView: some View {
-        if resolvedShowParsed, let parsed = viewModel.parsed {
+        if resolvedShowParsed, let parsed = viewModel.parsedSystem {
+            ParsedReaderView(reader: parsed) { entry in
+                router.route(to: .serverLogEntry(entry: entry))
+            }
+        } else if resolvedShowParsed, let parsed = viewModel.parsedFFmpeg {
             ParsedReaderView(reader: parsed) { entry in
                 router.route(to: .serverLogEntry(entry: entry))
             }
@@ -46,7 +50,7 @@ struct ServerLogContentsView: View {
 
     @ViewBuilder
     private var toolbarMenu: some View {
-        if log.type == .system {
+        if viewModel.parses {
             Section {
                 Toggle(L10n.parsed, systemImage: "list.bullet.rectangle", isOn: $showParsed)
             }
@@ -94,10 +98,10 @@ struct ServerLogContentsView: View {
     }
 }
 
-private struct ParsedReaderView: View {
+private struct ParsedReaderView<Parser: LogParser>: View where Parser.Element == ServerLogEntry {
 
     @ObservedObject
-    var reader: PagingFileReader<ServerLogParser>
+    var reader: PagingFileReader<Parser>
 
     let onSelect: (ServerLogEntry) -> Void
 
@@ -125,7 +129,7 @@ private struct ParsedReaderView: View {
 private struct RawReaderView: View {
 
     @ObservedObject
-    var reader: PagingFileReader<RawLineParser>
+    var reader: PagingFileReader<RawLogParser>
 
     var body: some View {
         if reader.elements.isEmpty, !reader.hasNextPage {

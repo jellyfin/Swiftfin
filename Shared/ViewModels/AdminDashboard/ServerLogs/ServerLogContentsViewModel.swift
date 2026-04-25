@@ -36,14 +36,16 @@ final class ServerLogContentsViewModel: ViewModel {
     @Published
     private(set) var url: URL?
     @Published
-    private(set) var raw: PagingFileReader<RawLineParser>?
+    private(set) var raw: PagingFileReader<RawLogParser>?
     @Published
-    private(set) var parsed: PagingFileReader<ServerLogParser>?
+    private(set) var parsedSystem: PagingFileReader<ServerLogParser>?
+    @Published
+    private(set) var parsedFFmpeg: PagingFileReader<FFmpegLogParser>?
 
     let log: LogFile
 
     var parses: Bool {
-        log.type == .system
+        log.type.logParser != nil
     }
 
     var webURL: URL? {
@@ -83,16 +85,24 @@ final class ServerLogContentsViewModel: ViewModel {
     private func setURL(_ url: URL) {
         self.url = url
 
-        let raw = PagingFileReader(url: url, parser: RawLineParser())
+        let raw = PagingFileReader(url: url, parser: RawLogParser())
         self.raw = raw
         raw.start()
 
-        if parses {
-            let parsed = PagingFileReader(url: url, parser: ServerLogParser())
-            self.parsed = parsed
-            parsed.start()
-        } else {
-            self.parsed = nil
+        parsedSystem = nil
+        parsedFFmpeg = nil
+
+        switch log.type.logParser {
+        case let parser as ServerLogParser:
+            let reader = PagingFileReader(url: url, parser: parser)
+            self.parsedSystem = reader
+            reader.start()
+        case let parser as FFmpegLogParser:
+            let reader = PagingFileReader(url: url, parser: parser)
+            self.parsedFFmpeg = reader
+            reader.start()
+        default:
+            break
         }
     }
 }

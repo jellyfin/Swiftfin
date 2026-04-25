@@ -8,16 +8,14 @@
 
 import Foundation
 
-/// Parses Jellyfin system log files into `ServerLogEntry` records.
-///
-/// Format: `[2000-12-31 12:23:45.123 -06:00] [INF] [64] Source: message`.
-/// Lines that don't match the header pattern attach to the previous entry
-/// (stack traces, exception bodies).
+/// Parse server system logs into timestamped `ServerLogEntry` records.
 struct ServerLogParser: LogParser<ServerLogEntry> {
 
     let encoding: String.Encoding = .utf8
     let delimiter: String = "\n"
 
+    /// Format: `[2000-12-31 12:23:45.123 -06:00] [INF] [64] Source: message`.
+    /// Lines that don't match the header pattern attach to the previous entry
     private static let lineRegex: Regex = /^\[([^\]]+)\] \[([A-Z]+)\] \[[^\]]+\] ([^:]+?): (.*)$/
 
     private static let timestampFormatter: DateFormatter = {
@@ -34,7 +32,7 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
         var output: [ServerLogEntry] = []
 
         // Header lines always start with `[` so look for this first.
-        // - This prevents the expensive REGEX until we actually need it.
+        // - This prevents the expensive REGEX lookups on lines that do not need them.
         if line.first == "[", let match = try? Self.lineRegex.wholeMatch(in: line) {
 
             if let pending {
@@ -50,26 +48,16 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
             )
             nextID += 1
 
-        } else if pending != nil {
+        } else if line.isNotEmpty && pending != nil {
 
-            pending!.message.append("\n")
-            pending!.message.append(line)
+            // Append contents in a new line to the previous entry
+            pending?.message.append("\n")
+            pending?.message.append(line)
 
-        } else if !line.isEmpty {
-
-            // Orphan line before any header has been seen.
-            output.append(
-                ServerLogEntry(
-                    id: nextID,
-                    timestamp: nil,
-                    type: nil,
-                    source: nil,
-                    message: line
-                )
-            )
-            nextID += 1
+        } else {
+            // The line is either empty or cannot be parsed.
+            // Ignore this line and move on.
         }
-
         return output
     }
 

@@ -8,8 +8,8 @@
 
 import Foundation
 
-/// Identity parser: each chunk is emitted verbatim.
-struct RawLineParser: LogParser<String> {
+/// Parse logs into individual lines.
+struct RawLogParser: LogParser<String> {
 
     let encoding: String.Encoding
     let delimiter: String

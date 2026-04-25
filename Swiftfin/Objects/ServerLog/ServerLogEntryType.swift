@@ -76,7 +76,9 @@ enum ServerLogEntryType: String, CaseIterable, Displayable, SystemImageable {
         }
     }
 
-    static func from(_ rawValue: String) -> ServerLogEntryType {
-        ServerLogEntryType(rawValue: rawValue) ?? .unknown
+    static func from(_ rawValue: String?) -> ServerLogEntryType {
+        guard let rawValue else { return .unknown }
+
+        return ServerLogEntryType(rawValue: rawValue) ?? .unknown
     }
 }

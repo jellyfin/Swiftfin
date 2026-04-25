@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// Turns raw text chunks (split on a delimiter) into typed elements.
+/// Turns raw delimited string chunks into strongly typed elements.
 protocol LogParser<Element> {
 
     associatedtype Element
@@ -17,13 +17,12 @@ protocol LogParser<Element> {
     var encoding: String.Encoding { get }
 
     /// Byte sequence that separates chunks in the source file.
-    /// Example:
-    /// - "/n" for a new line separated file
+    /// Example: "/n" for a new line separated file
     var delimiter: String { get }
 
     /// Consume one chunk, returning any elements that completed as a result.
     mutating func consume(chunk: String) -> [Element]
 
-    /// Emit any element still pending in internal state. Called once at end-of-file.
+    /// Remove any element still pending in internal state.
     mutating func flush() -> [Element]
 }

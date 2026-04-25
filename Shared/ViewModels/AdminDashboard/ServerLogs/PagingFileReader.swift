@@ -16,13 +16,13 @@ final class PagingFileReader<Parser: LogParser>: ViewModel {
 
     @CasePathable
     enum Action {
-        case open
+        case start
         case getNextPage
         case refresh
 
         var transition: Transition {
             switch self {
-            case .open, .refresh:
+            case .start, .refresh:
                 .loop(.loading)
             case .getNextPage:
                 .background(.loadingPage)
