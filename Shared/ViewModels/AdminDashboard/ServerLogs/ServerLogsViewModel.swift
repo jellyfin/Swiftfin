@@ -26,8 +26,6 @@ final class ServerLogsViewModel: ViewModel {
         }
     }
 
-    enum BackgroundState {}
-
     enum State {
         case initial
         case error

@@ -219,6 +219,7 @@
 		E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Extensions/JellyfinAPI/LogFile.swift,
 				Extensions/JellyfinAPI/TaskTriggerInfoType.swift,
 				Objects/ItemArrayElements.swift,
 				ViewModels/AdminDashboard/ActiveSessionsViewModel.swift,
@@ -227,6 +228,9 @@
 				ViewModels/AdminDashboard/DevicesViewModel.swift,
 				ViewModels/AdminDashboard/ServerActivityDetailViewModel.swift,
 				ViewModels/AdminDashboard/ServerActivityViewModel.swift,
+				ViewModels/AdminDashboard/ServerLogs/PagingFileReader.swift,
+				ViewModels/AdminDashboard/ServerLogs/ServerLogContentsViewModel.swift,
+				ViewModels/AdminDashboard/ServerLogs/ServerLogsViewModel.swift,
 				ViewModels/AdminDashboard/ServerTaskObserver.swift,
 				ViewModels/AdminDashboard/ServerTasksViewModel.swift,
 				ViewModels/AdminDashboard/ServerUserAdminViewModel.swift,

@@ -17,10 +17,10 @@ struct ServerLogEntryView: View {
     var body: some View {
         List {
             Section(L10n.overview) {
-                if let level = entry.level {
+                if let type = entry.type {
                     LabeledContent(
                         L10n.level,
-                        value: level.displayTitle
+                        value: type.displayTitle
                     )
                 }
                 if let source = entry.source {

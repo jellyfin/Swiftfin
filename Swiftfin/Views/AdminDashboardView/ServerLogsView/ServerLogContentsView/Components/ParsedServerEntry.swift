@@ -31,8 +31,8 @@ extension ServerLogContentsView {
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 8) {
-                        Image(systemName: entry.level?.systemImage ?? "questionmark.circle")
-                            .foregroundStyle(entry.level?.color ?? .gray)
+                        Image(systemName: entry.type?.systemImage ?? "questionmark.circle")
+                            .foregroundStyle(entry.type?.color ?? .gray)
 
                         Text(entry.source ?? L10n.unknown)
                             .lineLimit(1)

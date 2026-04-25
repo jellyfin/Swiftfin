@@ -33,66 +33,15 @@ struct ServerLogContentsView: View {
         showParsed && log.type == .system
     }
 
-    private var isEmptyAndFinished: Bool {
-        let count = resolvedShowParsed ? viewModel.entries.count : viewModel.lines.count
-        return count == 0 && viewModel.isFinished
-    }
-
     @ViewBuilder
     private var contentView: some View {
-        if isEmptyAndFinished {
-            ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
-        } else if resolvedShowParsed {
-            parsedGrid
-        } else {
-            rawList
-        }
-    }
-
-    private var parsedGrid: some View {
-        CollectionVGrid(
-            uniqueElements: viewModel.entries,
-            id: \.id,
-            layout: .columns(1)
-        ) { entry in
-            ParsedServerEntry(entry: entry) {
+        if resolvedShowParsed, let parsed = viewModel.parsed {
+            ParsedReaderView(reader: parsed) { entry in
                 router.route(to: .serverLogEntry(entry: entry))
             }
+        } else if let raw = viewModel.raw {
+            RawReaderView(reader: raw)
         }
-        .onReachedBottomEdge(offset: .offset(300)) {
-            viewModel.loadNextPage()
-        }
-        .frame(maxWidth: .infinity)
-    }
-
-    private var rawList: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(viewModel.lines.indices, id: \.self) { idx in
-                    Text(viewModel.lines[idx].isEmpty ? " " : viewModel.lines[idx])
-                        .font(.system(.subheadline, design: .monospaced))
-                        .textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 6)
-                        .contextMenu {
-                            Button {
-                                UIPasteboard.general.string = viewModel.lines[idx]
-                            } label: {
-                                Label("Copy", systemImage: "doc.on.doc")
-                            }
-                        }
-                }
-
-                if !viewModel.isFinished {
-                    Color.clear
-                        .frame(height: 1)
-                        .id(viewModel.lines.count)
-                        .onAppear { viewModel.loadNextPage() }
-                }
-            }
-        }
-        .ignoresSafeArea(.container, edges: .bottom)
     }
 
     @ViewBuilder
@@ -141,6 +90,75 @@ struct ServerLogContentsView: View {
         }
         .refreshable {
             viewModel.download(force: true)
+        }
+    }
+}
+
+private struct ParsedReaderView: View {
+
+    @ObservedObject
+    var reader: PagingFileReader<ServerLogParser>
+
+    let onSelect: (ServerLogEntry) -> Void
+
+    var body: some View {
+        if reader.elements.isEmpty, !reader.hasNextPage {
+            ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
+        } else {
+            CollectionVGrid(
+                uniqueElements: reader.elements,
+                id: \ServerLogEntry.id,
+                layout: .columns(1)
+            ) { entry in
+                ServerLogContentsView.ParsedServerEntry(entry: entry) {
+                    onSelect(entry)
+                }
+            }
+            .onReachedBottomEdge(offset: .offset(300)) {
+                reader.getNextPage()
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+}
+
+private struct RawReaderView: View {
+
+    @ObservedObject
+    var reader: PagingFileReader<RawLineParser>
+
+    var body: some View {
+        if reader.elements.isEmpty, !reader.hasNextPage {
+            ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
+        } else {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(reader.elements.indices, id: \.self) { idx in
+                        let line = reader.elements[idx]
+                        Text(line.isEmpty ? " " : line)
+                            .font(.system(.subheadline, design: .monospaced))
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 6)
+                            .contextMenu {
+                                Button {
+                                    UIPasteboard.general.string = line
+                                } label: {
+                                    Label("Copy", systemImage: "doc.on.doc")
+                                }
+                            }
+                    }
+
+                    if reader.hasNextPage {
+                        Color.clear
+                            .frame(height: 1)
+                            .id(reader.elements.count)
+                            .onAppear { reader.getNextPage() }
+                    }
+                }
+            }
+            .ignoresSafeArea(.container, edges: .bottom)
         }
     }
 }

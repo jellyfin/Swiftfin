@@ -9,6 +9,7 @@
 import Foundation
 import JellyfinAPI
 
+/// - Note: This is for iOS (and maybe eventually macOS) only. Server `LogFile`s are not viewable on tvOS.
 extension LogFile {
 
     var type: ServerLogType {
