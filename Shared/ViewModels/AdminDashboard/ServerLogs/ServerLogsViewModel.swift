@@ -19,14 +19,14 @@ final class ServerLogsViewModel: ViewModel {
         case refresh
 
         var transition: Transition {
-            .loop(.refreshing)
+            .to(.initial, then: .content)
         }
     }
 
     enum State {
         case initial
         case error
-        case refreshing
+        case content
     }
 
     @Published
@@ -41,6 +41,8 @@ final class ServerLogsViewModel: ViewModel {
 
     // Paths.getServerLogs doesn't have filtering so keep the full list to do it locally
     private var allLogs: OrderedSet<LogFile> = []
+
+    // MARK: - Refresh
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {

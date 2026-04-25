@@ -104,12 +104,16 @@ private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Eleme
 
     var body: some View {
         ZStack {
-            if viewModel.url == nil {
+            switch viewModel.state {
+            case .initial:
                 ProgressView()
-            } else {
+            case .error:
+                viewModel.error.map { ErrorView(error: $0) }
+            case .content:
                 contentView
             }
         }
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.log)

@@ -16,28 +16,26 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
 
     @CasePathable
     enum Action {
-        case start
         case getNextPage
         case refresh
 
         var transition: Transition {
             switch self {
-            case .start, .refresh:
-                .loop(.loading)
+            case .refresh:
+                .to(.initial, then: .content)
             case .getNextPage:
-                .background(.loadingPage)
+                .background(.loading)
             }
         }
     }
 
     enum BackgroundState {
-        case loadingPage
+        case loading
     }
 
     enum State {
         case initial
         case error
-        case loading
         case content
     }
 
@@ -60,13 +58,13 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
     private let initialParser: Parser
     private var parser: Parser
 
-    // Forward-streaming state
+    // Forward (ascending) — lazy byte streaming.
     private var handle: FileHandle?
     private var iterator: FileHandle.AsyncBytes.AsyncIterator?
     private var byteBuffer = Data()
     private var delimiterBytes = Data()
 
-    // Reversed-eager state
+    // Reverse (descending) — eager parse, paginated from a reversed array.
     private var preparsedElements: [Parser.Element] = []
     private var preparsedCursor: Int = 0
 
@@ -84,78 +82,21 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
         super.init()
     }
 
-    @Function(\Action.Cases.start)
-    private func _start() async throws {
-        try openIfNeeded()
-        try await loadPage()
-    }
-
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        resetStream()
-        try openIfNeeded()
+        reset()
+        try open()
         try await loadPage()
     }
 
     @Function(\Action.Cases.getNextPage)
     private func _getNextPage() async throws {
         guard hasNextPage else { return }
+        try open()
         try await loadPage()
     }
 
-    private func reload() async {
-        resetStream()
-        do {
-            try openIfNeeded()
-            try await loadPage()
-        } catch {
-            logger.error("PagingFileReader reload failed: \(error.localizedDescription)")
-        }
-    }
-
-    private func openIfNeeded() throws {
-        switch direction {
-        case .ascending:
-            try openForwardIfNeeded()
-        case .descending:
-            try openReverseIfNeeded()
-        }
-    }
-
-    private func openForwardIfNeeded() throws {
-        guard handle == nil else { return }
-        let h = try FileHandle(forReadingFrom: url)
-        handle = h
-        iterator = h.bytes.makeAsyncIterator()
-        byteBuffer = Data()
-        delimiterBytes = parser.delimiter.data(using: parser.encoding) ?? Data([0x0A])
-        hasNextPage = true
-    }
-
-    /// Eagerly reads and parses the entire file, then stores the elements in
-    /// reverse order for descending pagination.
-    private func openReverseIfNeeded() throws {
-        guard preparsedElements.isEmpty else { return }
-        let data = try Data(contentsOf: url)
-        guard let text = String(data: data, encoding: parser.encoding) else {
-            hasNextPage = false
-            return
-        }
-
-        var working = parser
-        var collected: [Parser.Element] = []
-        for chunk in text.components(separatedBy: parser.delimiter) {
-            collected.append(contentsOf: working.consume(chunk: chunk))
-        }
-        collected.append(contentsOf: working.flush())
-        parser = working
-
-        preparsedElements = collected.reversed()
-        preparsedCursor = 0
-        hasNextPage = !preparsedElements.isEmpty
-    }
-
-    private func resetStream() {
+    private func reset() {
         try? handle?.close()
         handle = nil
         iterator = nil
@@ -165,6 +106,36 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
         parser = initialParser
         elements = []
         hasNextPage = true
+    }
+
+    private func open() throws {
+        switch direction {
+        case .ascending:
+            guard handle == nil else { return }
+            let handle = try FileHandle(forReadingFrom: url)
+            self.handle = handle
+            self.iterator = handle.bytes.makeAsyncIterator()
+            self.byteBuffer = Data()
+            self.delimiterBytes = parser.delimiter.data(using: parser.encoding) ?? Data([0x0A])
+
+        case .descending:
+            // Read and parse the entire file up front, then paginate the reversed result.
+            guard preparsedElements.isEmpty else { return }
+
+            let data = try Data(contentsOf: url)
+            guard let text = String(data: data, encoding: parser.encoding) else {
+                hasNextPage = false
+                return
+            }
+
+            for chunk in text.components(separatedBy: parser.delimiter) {
+                preparsedElements.append(contentsOf: parser.consume(chunk: chunk))
+            }
+            preparsedElements.append(contentsOf: parser.flush())
+            preparsedElements.reverse()
+            preparsedCursor = 0
+            hasNextPage = preparsedElements.isNotEmpty
+        }
     }
 
     private func loadPage() async throws {
@@ -222,19 +193,19 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
             self.iterator = iterator
         }
 
-        if !newElements.isEmpty {
+        if newElements.isNotEmpty {
             elements.append(contentsOf: newElements)
         }
     }
 
     private func loadReversePage() {
-        let endIndex = min(preparsedCursor + pageSize, preparsedElements.count)
-        guard preparsedCursor < endIndex else {
+        let end = min(preparsedCursor + pageSize, preparsedElements.count)
+        guard preparsedCursor < end else {
             hasNextPage = false
             return
         }
-        elements.append(contentsOf: preparsedElements[preparsedCursor ..< endIndex])
-        preparsedCursor = endIndex
+        elements.append(contentsOf: preparsedElements[preparsedCursor ..< end])
+        preparsedCursor = end
         if preparsedCursor >= preparsedElements.count {
             hasNextPage = false
         }

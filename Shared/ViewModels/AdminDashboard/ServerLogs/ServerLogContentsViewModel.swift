@@ -16,21 +16,17 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
 
     @CasePathable
     enum Action {
-        case download(force: Bool)
+        case refresh(force: Bool)
 
         var transition: Transition {
-            .background(.downloading)
+            .to(.initial, then: .content)
         }
-    }
-
-    enum BackgroundState {
-        case downloading
     }
 
     enum State {
         case initial
         case error
-        case ready
+        case content
     }
 
     @Published
@@ -53,11 +49,11 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
             guard let url, url != oldValue else { return }
 
             self.raw = PagingLogViewModel(url: url, parser: RawLogParser(), direction: sortOrder)
-            self.raw?.start()
+            self.raw?.refresh()
 
             if let parser {
                 self.parsed = PagingLogViewModel(url: url, parser: parser, direction: sortOrder)
-                self.parsed?.start()
+                self.parsed?.refresh()
             } else {
                 self.parsed = nil
             }
@@ -78,8 +74,10 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
         super.init()
     }
 
-    @Function(\Action.Cases.download)
-    private func _download(_ force: Bool) async throws {
+    // MARK: - Refresh
+
+    @Function(\Action.Cases.refresh)
+    private func _refresh(_ force: Bool) async throws {
         guard let name = log.name else {
             throw ErrorMessage(L10n.unknownError)
         }
