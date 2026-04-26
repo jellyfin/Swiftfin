@@ -38,9 +38,7 @@ struct ServerLogsView: View {
             if viewModel.logs.isNotEmpty {
                 ForEach(viewModel.logs, id: \.self) { log in
                     ChevronButton(external: true) {
-                        let request = Paths.getLogFile(name: log.name!)
-                        let url = viewModel.userSession.client.fullURL(with: request, queryAPIKey: true)!
-
+                        guard let url = log.url else { return }
                         UIApplication.shared.open(url)
 
                         // TODO: Route to a log parser using the downloaded log file
@@ -72,27 +70,6 @@ struct ServerLogsView: View {
         }
     }
 
-    private var filterMenu: some View {
-        Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
-            Picker(selection: $viewModel.filter) {
-                Label(L10n.all, systemImage: "line.3.horizontal")
-                    .tag(nil as ServerLogType?)
-
-                ForEach(ServerLogType.allCases, id: \.self) { type in
-                    Label(type.displayTitle, systemImage: type.systemImage)
-                        .tag(type as ServerLogType?)
-                }
-            } label: {
-                Text(L10n.logs)
-                Text(viewModel.filter?.displayTitle ?? L10n.all)
-                Image(systemName: viewModel.filter?.systemImage ?? "line.3.horizontal")
-            }
-            .pickerStyle(.menu)
-        }
-        .menuStyle(.button)
-        .foregroundStyle(accentColor)
-    }
-
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -117,7 +94,24 @@ struct ServerLogsView: View {
             viewModel.refresh()
         }
         .topBarTrailing {
-            filterMenu
+            Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
+                Picker(selection: $viewModel.filter) {
+                    Label(L10n.all, systemImage: "line.3.horizontal")
+                        .tag(nil as ServerLogType?)
+
+                    ForEach(ServerLogType.allCases, id: \.self) { type in
+                        Label(type.displayTitle, systemImage: type.systemImage)
+                            .tag(type as ServerLogType?)
+                    }
+                } label: {
+                    Text(L10n.logs)
+                    Text(viewModel.filter?.displayTitle ?? L10n.all)
+                    Image(systemName: viewModel.filter?.systemImage ?? "line.3.horizontal")
+                }
+                .pickerStyle(.menu)
+            }
+            .menuStyle(.button)
+            .foregroundStyle(accentColor)
         }
     }
 }

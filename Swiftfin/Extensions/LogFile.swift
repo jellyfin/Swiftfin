@@ -6,11 +6,18 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import JellyfinAPI
 
 /// - Note: This is for iOS (and maybe eventually macOS) only. Server `LogFile`s are not viewable on tvOS.
 extension LogFile {
+
+    var url: URL? {
+        guard let name, let client = Container.shared.currentUserSession()?.client else { return nil }
+        let request = Paths.getLogFile(name: name)
+        return client.fullURL(with: request, queryAPIKey: true)
+    }
 
     var type: ServerLogType {
         ServerLogType.from(name: name)
