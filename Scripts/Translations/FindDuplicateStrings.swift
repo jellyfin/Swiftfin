@@ -117,7 +117,7 @@ func rewriteL10nReferences(in filePath: String) -> Int {
 
         // The `\b` word boundary prevents `L10n.foo` from getting confused with `L10n.fooBar` when `foo` is remapped.
         let pattern = #"L10n\.\#(oldKey)\b"#
-    
+
         guard let regex = try? NSRegularExpression(pattern: pattern) else { continue }
 
         let ns = content as NSString
