@@ -47,19 +47,6 @@ enum ServerLogType: String, CaseIterable, Displayable, SystemImageable {
         }
     }
 
-    var logParser: (any LogParser)? {
-        switch self {
-        case .system:
-            ServerLogParser()
-        case .directStream, .remux, .transcode:
-            nil
-        // TODO: Figure out how to cleanly parse FFmpeg logs
-        // FFmpegLogParser()
-        default:
-            nil
-        }
-    }
-
     static func from(name: String?) -> ServerLogType {
         guard let name else { return .other }
 

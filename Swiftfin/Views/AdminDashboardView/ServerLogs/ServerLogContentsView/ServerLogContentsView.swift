@@ -13,26 +13,32 @@ import UIKit
 
 struct ServerLogContentsView: View {
 
+    @Router
+    private var router
+
     let log: LogFile
 
-    @ViewBuilder
     var body: some View {
         switch log.type {
         case .system:
-            ServerLogContentsBody(log: log, parser: ServerLogParser())
-
-        case .directStream, .remux, .transcode:
-            ServerLogContentsBody<ServerLogParser>(log: log, parser: nil)
-
-        // TODO: Enable for if we are able to build a FFmpegLogParser
-        // ServerLogContentsBody(log: log, parser: FFmpegLogParser())
-        case .other:
-            ServerLogContentsBody<ServerLogParser>(log: log, parser: nil)
+            TypedLogContentsView(log: log, parser: ServerLogParser()) { entry in
+                LogEntryButton(
+                    title: entry.source ?? .emptyDash,
+                    logLevel: entry.type,
+                    contents: entry.message,
+                    timestamp: entry.timestamp,
+                    action: { router.route(to: .serverLogEntry(entry: entry)) }
+                )
+            }
+        case .directStream, .remux, .transcode, .other:
+            TypedLogContentsView<ServerLogParser, EmptyView>(log: log, parser: nil) { _ in
+                EmptyView()
+            }
         }
     }
 }
 
-private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Element == ServerLogEntry {
+private struct TypedLogContentsView<Parser: LogParser, ParsedRow: View>: View where Parser.Element: Hashable {
 
     @Router
     private var router
@@ -43,29 +49,49 @@ private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Eleme
     @State
     private var showParsed = true
 
-    let log: LogFile
+    let parsedRow: (Parser.Element) -> ParsedRow
 
-    init(log: LogFile, parser: Parser?) {
-        self.log = log
-        _viewModel = StateObject(wrappedValue: ServerLogContentsViewModel(log: log, parser: parser))
-    }
-
-    private var isLoading: Bool {
-        viewModel.parsedLog?.background.is(.loading) == true || viewModel.rawLog?.background.is(.loading) == true
+    init(
+        log: LogFile,
+        parser: Parser?,
+        @ViewBuilder parsedRow: @escaping (Parser.Element) -> ParsedRow
+    ) {
+        self.parsedRow = parsedRow
+        _viewModel = StateObject(
+            wrappedValue: ServerLogContentsViewModel(log: log, parser: parser)
+        )
     }
 
     private var resolvedShowParsed: Bool {
         showParsed && viewModel.parsedLog != nil
     }
 
+    private var isLoading: Bool {
+        viewModel.parsedLog?.background.is(.loading) == true || viewModel.rawLog?.background.is(.loading) == true
+    }
+
     @ViewBuilder
     private var contentView: some View {
-        if resolvedShowParsed, let parsed = viewModel.parsedLog {
-            ParsedReaderView(reader: parsed) { entry in
-                router.route(to: .serverLogEntry(entry: entry))
+        if resolvedShowParsed, let parserViewModel = viewModel.parsedLog {
+            LogGrid(viewModel: parserViewModel) { entry in
+                parsedRow(entry)
             }
-        } else if let raw = viewModel.rawLog {
-            RawReaderView(reader: raw)
+        } else if let rawViewModel = viewModel.rawLog {
+            LogGrid(viewModel: rawViewModel) { line in
+                Text(line.isEmpty ? " " : line)
+                    .font(.system(.subheadline, design: .monospaced))
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 6)
+                    .contextMenu {
+                        Button {
+                            UIPasteboard.general.string = line
+                        } label: {
+                            Label("Copy", systemImage: "doc.on.doc")
+                        }
+                    }
+            }
         }
     }
 
@@ -90,12 +116,6 @@ private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Eleme
         }
 
         Section {
-            Button {
-                viewModel.refresh(force: true)
-            } label: {
-                Label("Refresh", systemImage: "arrow.clockwise")
-            }
-
             if let url = viewModel.url {
                 Button {
                     router.route(to: .shareSheet(urls: [url]))
@@ -143,75 +163,28 @@ private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Eleme
     }
 }
 
-private struct ParsedReaderView<Parser: LogParser>: View where Parser.Element == ServerLogEntry {
+private struct LogGrid<Parser: LogParser, Content: View>: View where Parser.Element: Hashable {
 
     @ObservedObject
-    var reader: PagingLogViewModel<Parser>
-
-    let onSelect: (ServerLogEntry) -> Void
+    var viewModel: PagingLogViewModel<Parser>
+    @ViewBuilder
+    let content: (Parser.Element) -> Content
 
     var body: some View {
-        if reader.elements.isEmpty, !reader.hasNextPage {
+        if viewModel.elements.isEmpty, !viewModel.hasNextPage {
             ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
         } else {
             CollectionVGrid(
-                uniqueElements: reader.elements,
-                id: \ServerLogEntry.id,
+                uniqueElements: viewModel.elements,
+                id: \.self,
                 layout: .columns(1)
-            ) { entry in
-                LogEntryButton(
-                    title: entry.source ?? .emptyDash,
-                    logLevel: entry.type,
-                    contents: entry.message,
-                    timestamp: entry.timestamp,
-                    action: { onSelect(entry) }
-                )
+            ) { element in
+                content(element)
             }
             .onReachedBottomEdge(offset: .offset(300)) {
-                reader.getNextPage()
+                viewModel.getNextPage()
             }
             .ignoresSafeArea(edges: .bottom)
-        }
-    }
-}
-
-private struct RawReaderView: View {
-
-    @ObservedObject
-    var reader: PagingLogViewModel<RawLogParser>
-
-    var body: some View {
-        if reader.elements.isEmpty, !reader.hasNextPage {
-            ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
-        } else {
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 0) {
-                    ForEach(reader.elements.indices, id: \.self) { idx in
-                        let line = reader.elements[idx]
-                        Text(line.isEmpty ? " " : line)
-                            .font(.system(.subheadline, design: .monospaced))
-                            .textSelection(.enabled)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 6)
-                            .contextMenu {
-                                Button {
-                                    UIPasteboard.general.string = line
-                                } label: {
-                                    Label("Copy", systemImage: "doc.on.doc")
-                                }
-                            }
-                    }
-
-                    if reader.hasNextPage {
-                        Color.clear
-                            .frame(height: 1)
-                            .id(reader.elements.count)
-                            .onAppear { reader.getNextPage() }
-                    }
-                }
-            }
-            .ignoresSafeArea(.container, edges: .bottom)
         }
     }
 }

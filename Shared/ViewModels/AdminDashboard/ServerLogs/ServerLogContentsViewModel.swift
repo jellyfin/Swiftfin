@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -58,8 +59,20 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
             } else {
                 self.parsedLog = nil
             }
+
+            readerSubs.removeAll()
+
+            rawLog?.objectWillChange
+                .sink { [weak self] in self?.objectWillChange.send() }
+                .store(in: &readerSubs)
+
+            parsedLog?.objectWillChange
+                .sink { [weak self] in self?.objectWillChange.send() }
+                .store(in: &readerSubs)
         }
     }
+
+    private var readerSubs = Set<AnyCancellable>()
 
     var webURL: URL? {
         guard let name = log.name else { return nil }

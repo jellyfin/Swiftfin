@@ -32,9 +32,7 @@ struct ServerLogsView: View {
             }
 
             if viewModel.logs.isNotEmpty {
-
                 ForEach(viewModel.logs, id: \.self) { log in
-
                     ChevronButton {
                         router.route(to: .serverLogContents(log: log))
                     } label: {
@@ -42,15 +40,13 @@ struct ServerLogsView: View {
                             EmptyView()
                         } label: {
                             VStack(alignment: .leading) {
-                                Text(log.name ?? .emptyDash)
+                                Text(log.name ?? L10n.unknown)
                                     .lineLimit(2)
                                     .multilineTextAlignment(.leading)
 
-                                if let modifiedDate = log.dateModified {
-                                    Text(modifiedDate, format: .dateTime)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
+                                Text(log.dateModified, format: .dateTime)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
                             }
                         }
                     }
@@ -89,14 +85,14 @@ struct ServerLogsView: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .error:
-                viewModel.error.map {
-                    ErrorView(error: $0)
-                }
             case .content:
                 contentView
             case .initial:
                 ProgressView()
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             }
         }
         .backport
