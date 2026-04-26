@@ -126,6 +126,32 @@ extension NavigationRoute {
         }
     }
 
+    // MARK: - Server General
+
+    static let serverGeneral = NavigationRoute(
+        id: "serverGeneral"
+    ) {
+        ServerConfigurationView()
+    }
+
+    static func serverLogsSettings(viewModel: ServerConfigurationViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "serverLogsSettings",
+            style: .push(.automatic)
+        ) {
+            ServerLogsSettingsView(viewModel: viewModel)
+        }
+    }
+
+    static func serverPaths(viewModel: ServerConfigurationViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "serverPaths",
+            style: .push(.automatic)
+        ) {
+            ServerPathsView(viewModel: viewModel)
+        }
+    }
+
     // MARK: - Server Logs
 
     static var serverLogs: NavigationRoute {

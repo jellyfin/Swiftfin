@@ -28,7 +28,7 @@ struct ServerLogsView: View {
                 L10n.serverLogs.localizedCapitalized,
                 description: L10n.logsDescription
             ) {
-                UIApplication.shared.open(URL(string: "https://jellyfin.org/docs/general/administration/troubleshooting")!)
+                UIApplication.shared.open(.jellyfinDocsTroubleshooting)
             }
             ForEach(viewModel.logs, id: \.self) { log in
                 Button {
