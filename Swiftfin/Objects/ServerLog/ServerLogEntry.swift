@@ -7,12 +7,13 @@
 //
 
 import Foundation
+import JellyfinAPI
 import SwiftUI
 
 struct ServerLogEntry: Identifiable, Hashable {
     let id: Int
     let timestamp: Date?
-    let type: ServerLogEntryType?
+    let type: LogLevel
     let source: String?
     var message: String
 }

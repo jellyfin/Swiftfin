@@ -51,4 +51,24 @@ extension LogLevel: SystemImageable, Displayable {
     public var displayTitle: String {
         rawValue
     }
+
+    /// Init from Jellyfin Server `LogFile` abbreviations.
+    static func from(abbreviation: String?) -> LogLevel {
+        switch abbreviation {
+        case "TRC":
+            .trace
+        case "DBG":
+            .debug
+        case "INF":
+            .information
+        case "WRN":
+            .warning
+        case "ERR":
+            .error
+        case "CRT":
+            .critical
+        default:
+            .none
+        }
+    }
 }

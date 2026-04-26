@@ -13,29 +13,21 @@ extension ServerActivityView {
 
     struct LogEntry: View {
 
-        // MARK: - Activity Log Entry Variable
-
         @StateObject
         var viewModel: ServerActivityDetailViewModel
 
-        // MARK: - Action Variable
-
         let action: () -> Void
 
-        // MARK: - Body
-
         var body: some View {
-            ListRow {
-                userImage
-                    .frame(width: 60, height: 60)
-            } content: {
-                rowContent
-                    .padding(.bottom, 8)
+            ChevronButton(action: action) {
+                LabeledContent {
+                    rowContent
+                } label: {
+                    userImage
+                        .frame(width: 60, height: 60)
+                }
             }
-            .onSelect(perform: action)
         }
-
-        // MARK: - User Image
 
         @ViewBuilder
         private var userImage: some View {
@@ -64,16 +56,15 @@ extension ServerActivityView {
             }
         }
 
-        // MARK: - User Image
-
         @ViewBuilder
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {
+
                     /// Event Severity & Username / System
                     HStack(spacing: 8) {
-                        Image(systemName: viewModel.log.severity?.systemImage ?? "questionmark.circle")
-                            .foregroundStyle(viewModel.log.severity?.color ?? .gray)
+                        Image(systemName: viewModel.log.severity?.systemImage ?? LogLevel.none.systemImage)
+                            .foregroundStyle(viewModel.log.severity?.color ?? LogLevel.none.color)
 
                         if viewModel.user != nil {
                             Text(viewModel.user?.name ?? L10n.unknown)
@@ -90,24 +81,13 @@ extension ServerActivityView {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
-                    Group {
-                        if let eventDate = viewModel.log.date {
-                            Text(eventDate.formatted(date: .abbreviated, time: .standard))
-                        } else {
-                            Text(String.emptyRuntime)
-                        }
-                    }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
+                    Text(viewModel.log.date?.formatted(date: .abbreviated, time: .standard) ?? .emptyRuntime)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
                 }
 
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .padding()
-                    .font(.body.weight(.regular))
-                    .foregroundStyle(.secondary)
+                Spacer(minLength: 0)
             }
         }
     }

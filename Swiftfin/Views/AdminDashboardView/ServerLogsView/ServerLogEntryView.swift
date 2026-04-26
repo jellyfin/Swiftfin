@@ -17,12 +17,12 @@ struct ServerLogEntryView: View {
     var body: some View {
         List {
             Section(L10n.overview) {
-                if let type = entry.type {
-                    LabeledContent(L10n.level, value: type.displayTitle)
-                }
+                LabeledContent(L10n.level, value: entry.type.displayTitle)
+
                 if let source = entry.source {
                     LabeledContent(L10n.source, value: source)
                 }
+
                 if let timestamp = entry.timestamp {
                     LabeledContent(
                         L10n.date,

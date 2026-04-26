@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import JellyfinAPI
 
 /// Parse server system logs into timestamped `ServerLogEntry` records.
 struct ServerLogParser: LogParser<ServerLogEntry> {
@@ -47,7 +48,7 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
             pending = ServerLogEntry(
                 id: nextID,
                 timestamp: Self.timestampFormatter.date(from: String(match.output.1)),
-                type: ServerLogEntryType.from(String(match.output.2)),
+                type: LogLevel.from(abbreviation: String(match.output.2)),
                 source: String(match.output.3),
                 message: String(match.output.4)
             )
@@ -70,7 +71,7 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
                     ServerLogEntry(
                         id: nextID,
                         timestamp: nil,
-                        type: .unknown,
+                        type: .none,
                         source: nil,
                         message: line
                     )
