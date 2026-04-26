@@ -17,49 +17,33 @@ extension ServerLogContentsView {
         let action: () -> Void
 
         var body: some View {
-            ListRow {
-                EmptyView()
-            } content: {
-                rowContent
-                    .padding(.bottom, 8)
-            }
-            .onSelect(perform: action)
-        }
+            ChevronButton(action: action) {
+                LabeledContent {
+                    EmptyView()
+                } label: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 8) {
+                            Image(systemName: entry.type?.systemImage ?? ServerLogEntryType.unknown.systemImage)
+                                .foregroundStyle(entry.type?.color ?? ServerLogEntryType.unknown.color)
 
-        @ViewBuilder
-        private var rowContent: some View {
-            HStack {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 8) {
-                        Image(systemName: entry.type?.systemImage ?? "questionmark.circle")
-                            .foregroundStyle(entry.type?.color ?? .gray)
+                            Text(entry.source ?? .emptyDash)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                        }
+                        .font(.headline)
 
-                        Text(entry.source ?? L10n.unknown)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                    }
-                    .font(.headline)
+                        Text(entry.message)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2, reservesSpace: true)
+                            .multilineTextAlignment(.leading)
 
-                    Text(entry.message)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-
-                    if let timestamp = entry.timestamp {
-                        Text(timestamp.formatted(date: .abbreviated, time: .standard))
+                        Text(entry.timestamp?.formatted(date: .abbreviated, time: .standard) ?? .emptyRuntime)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                     }
                 }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .padding()
-                    .font(.body.weight(.regular))
-                    .foregroundStyle(.secondary)
             }
         }
     }

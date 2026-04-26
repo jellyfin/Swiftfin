@@ -21,7 +21,7 @@ protocol LogParser<Element> {
     var delimiter: String { get }
 
     /// Is this row the header of a new log record?
-    /// Used to ensure we get the header as the start of entries when parsing backwards.
+    /// Required to ensure we get the header as the start of entries when parsing backwards.
     func isHeader(line: String) -> Bool
 
     /// Read one chunk, returning any elements that completed as a result.

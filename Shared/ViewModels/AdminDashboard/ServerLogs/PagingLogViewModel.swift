@@ -25,13 +25,13 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
             case .refresh:
                 .to(.initial, then: .content)
             case .getNextPage:
-                .background(.refreshing)
+                .background(.loading)
             }
         }
     }
 
     enum BackgroundState {
-        case refreshing
+        case loading
     }
 
     enum State {

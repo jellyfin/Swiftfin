@@ -30,16 +30,17 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
     }
 
     @Published
-    private(set) var raw: PagingLogViewModel<RawLogParser>?
+    private(set) var rawLog: PagingLogViewModel<RawLogParser>?
     @Published
-    private(set) var parsed: PagingLogViewModel<Parser>?
+    private(set) var parsedLog: PagingLogViewModel<Parser>?
 
     @Published
     var sortOrder: ItemSortOrder = .ascending {
         didSet {
             guard sortOrder != oldValue else { return }
-            raw?.direction = sortOrder
-            parsed?.direction = sortOrder
+
+            rawLog?.direction = sortOrder
+            parsedLog?.direction = sortOrder
         }
     }
 
@@ -48,14 +49,14 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
         didSet {
             guard let url, url != oldValue else { return }
 
-            self.raw = PagingLogViewModel(url: url, parser: RawLogParser(), direction: sortOrder)
-            self.raw?.refresh()
+            self.rawLog = PagingLogViewModel(url: url, parser: RawLogParser(), direction: sortOrder)
+            self.rawLog?.refresh()
 
             if let parser {
-                self.parsed = PagingLogViewModel(url: url, parser: parser, direction: sortOrder)
-                self.parsed?.refresh()
+                self.parsedLog = PagingLogViewModel(url: url, parser: parser, direction: sortOrder)
+                self.parsedLog?.refresh()
             } else {
-                self.parsed = nil
+                self.parsedLog = nil
             }
         }
     }
@@ -82,6 +83,7 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
             throw ErrorMessage(L10n.unknownError)
         }
 
+        // Store logs in a known location so we can reuse the file if we leave and re-enter the view.
         let destination = FileManager.default.temporaryDirectory.appendingPathComponent(name)
 
         // Skip the download if the file already exists.
@@ -102,7 +104,7 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
 
         self.url = destination
 
-        await self.parsed?.refresh()
-        await self.raw?.refresh()
+        await self.parsedLog?.refresh()
+        await self.rawLog?.refresh()
     }
 }

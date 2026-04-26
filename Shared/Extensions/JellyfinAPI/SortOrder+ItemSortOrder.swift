@@ -16,19 +16,19 @@ extension ItemSortOrder: Displayable, SystemImageable {
 
     var displayTitle: String {
         switch self {
-        case .ascending:
-            L10n.ascending
         case .descending:
             L10n.descending
+        case .ascending:
+            L10n.ascending
         }
     }
 
     var systemImage: String {
         switch self {
-        case .ascending:
-            "arrow.up"
         case .descending:
-            "arrow.down"
+            "arrowtriangle.down"
+        case .ascending:
+            "arrowtriangle.up"
         }
     }
 }

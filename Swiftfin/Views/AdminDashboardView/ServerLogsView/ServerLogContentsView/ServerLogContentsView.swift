@@ -24,7 +24,7 @@ struct ServerLogContentsView: View {
         case .directStream, .remux, .transcode:
             ServerLogContentsBody<ServerLogParser>(log: log, parser: nil)
 
-        // TODO: Enable for when FFmpegLogParser is done
+        // TODO: Enable for if we are able to build a FFmpegLogParser
         // ServerLogContentsBody(log: log, parser: FFmpegLogParser())
         case .other:
             ServerLogContentsBody<ServerLogParser>(log: log, parser: nil)
@@ -51,20 +51,20 @@ private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Eleme
     }
 
     private var isLoading: Bool {
-        viewModel.parsed?.background.is(.refreshing) == true || viewModel.raw?.background.is(.refreshing) == true
+        viewModel.parsedLog?.background.is(.loading) == true || viewModel.rawLog?.background.is(.loading) == true
     }
 
     private var resolvedShowParsed: Bool {
-        showParsed && viewModel.parsed != nil
+        showParsed && viewModel.parsedLog != nil
     }
 
     @ViewBuilder
     private var contentView: some View {
-        if resolvedShowParsed, let parsed = viewModel.parsed {
+        if resolvedShowParsed, let parsed = viewModel.parsedLog {
             ParsedReaderView(reader: parsed) { entry in
                 router.route(to: .serverLogEntry(entry: entry))
             }
-        } else if let raw = viewModel.raw {
+        } else if let raw = viewModel.rawLog {
             RawReaderView(reader: raw)
         }
     }
@@ -72,7 +72,7 @@ private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Eleme
     @ViewBuilder
     private var toolbarMenu: some View {
         Section {
-            if viewModel.parsed != nil {
+            if viewModel.parsedLog != nil {
                 Toggle(L10n.parsed, systemImage: "list.bullet.rectangle", isOn: $showParsed)
             }
 
@@ -119,10 +119,12 @@ private struct ServerLogContentsBody<Parser: LogParser>: View where Parser.Eleme
             switch viewModel.state {
             case .initial:
                 ProgressView()
-            case .error:
-                viewModel.error.map { ErrorView(error: $0) }
             case .content:
                 contentView
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
