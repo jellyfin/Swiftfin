@@ -110,7 +110,7 @@ extension DownloadTaskView {
                     Text(L10n.dismiss)
                 }
             } message: {
-                Text(L10n.downloadedItemsAreOnlyPlayableThrough)
+                Text(L10n.downloadedPlayerWarning)
             }
         }
     }
