@@ -167,7 +167,6 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
             let chunk = try handle.read(upToCount: readChunkSize) ?? Data()
 
             if chunk.isEmpty {
-                // EOF: emit any trailing partial line + parser's pending state.
                 if forwardCursor < forwardBuffer.count,
                    let line = String(
                        data: forwardBuffer.subdata(in: forwardCursor ..< forwardBuffer.count),
