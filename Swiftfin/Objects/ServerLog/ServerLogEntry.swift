@@ -10,7 +10,6 @@ import Foundation
 import SwiftUI
 
 struct ServerLogEntry: Identifiable, Hashable {
-
     let id: Int
     let timestamp: Date?
     let type: ServerLogEntryType?

@@ -85,6 +85,8 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
         super.init()
     }
 
+    // MARK: - Refresh
+
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
 
@@ -94,12 +96,16 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
         try await loadPage()
     }
 
+    // MARK: - Get Next Page
+
     @Function(\Action.Cases.getNextPage)
     private func _getNextPage() async throws {
         guard hasNextPage else { return }
+
         if handle == nil {
             try open()
         }
+
         try await loadPage()
     }
 
@@ -126,7 +132,7 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
         }
     }
 
-    // MARK: - Forward
+    // MARK: Forward
 
     private func loadForwardPage() throws {
         guard let handle else {
@@ -185,7 +191,7 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
         }
     }
 
-    // MARK: - Backward
+    // MARK: Backward
 
     private func loadBackwardPage() throws {
         guard let handle else {
@@ -210,20 +216,26 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
 
             while headerOffset == nil {
                 let toRead = min(UInt64(readChunkSize), windowStart)
+
                 if toRead == 0 {
                     // Reached byte 0 with no header — parse from the start of the file.
                     headerOffset = 0
                     break
                 }
+
                 let newStart = windowStart - toRead
+
                 try handle.seek(toOffset: newStart)
+
                 let chunk = try handle.read(upToCount: Int(toRead)) ?? Data()
+
                 windowBytes = chunk + windowBytes
                 windowStart = newStart
 
                 // Cursor for the first well-formed line: byte 0 if at file start,
                 // otherwise the byte after the first delimiter (skipping the partial leading line).
                 let cursor: Int
+
                 if windowStart == 0 {
                     cursor = 0
                 } else if let firstDelim = windowBytes.range(of: delimiterBytes) {
@@ -248,18 +260,22 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
 
             var localParser = initialParser
             var entries: [Parser.Element] = []
+
             for line in text.components(separatedBy: initialParser.delimiter) {
                 entries.append(contentsOf: localParser.read(chunk: line))
             }
+
             entries.append(contentsOf: localParser.flush())
             newElements.append(contentsOf: entries.reversed())
 
             let newTail = windowStart + UInt64(offset)
-            // Defensive: ensure backward progress, else we'd spin forever.
+
+            // Safety check to make sure we don't get stuck.
             if newTail >= reverseTail {
                 hasNextPage = false
                 break
             }
+
             reverseTail = newTail
         }
 
@@ -268,22 +284,23 @@ final class PagingLogViewModel<Parser: LogParser>: ViewModel {
         }
     }
 
-    /// Scans forward from `start` through `bytes`, returning the offset of the first line
-    /// the parser recognizes as a header. Returns `nil` if no header is found.
+    /// Scans forward from `start` through `bytes`, returning the offset of the first line the parser recognizes as a header.
+    /// Returns `nil` if no header is found.
     private func firstHeaderOffset(in bytes: Data, startingAt start: Int) -> Int? {
         var cursor = start
+
         while cursor < bytes.count {
             let nextDelim = bytes.range(of: delimiterBytes, in: cursor ..< bytes.count)
             let lineEnd = nextDelim?.lowerBound ?? bytes.count
-            if let line = String(
-                data: bytes.subdata(in: cursor ..< lineEnd),
-                encoding: initialParser.encoding
-            ),
-                initialParser.isHeader(line: line)
+
+            if let line = String(data: bytes.subdata(in: cursor ..< lineEnd), encoding: initialParser.encoding),
+               initialParser.isHeader(line: line)
             {
                 return cursor
             }
+
             guard let advance = nextDelim?.upperBound else { return nil }
+
             cursor = advance
         }
         return nil

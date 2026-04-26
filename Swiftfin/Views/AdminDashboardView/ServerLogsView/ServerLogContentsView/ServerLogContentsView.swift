@@ -20,8 +20,12 @@ struct ServerLogContentsView: View {
         switch log.type {
         case .system:
             ServerLogContentsBody(log: log, parser: ServerLogParser())
+
         case .directStream, .remux, .transcode:
-            ServerLogContentsBody(log: log, parser: FFmpegLogParser())
+            ServerLogContentsBody<ServerLogParser>(log: log, parser: nil)
+
+        // TODO: Enable for when FFmpegLogParser is done
+        // ServerLogContentsBody(log: log, parser: FFmpegLogParser())
         case .other:
             ServerLogContentsBody<ServerLogParser>(log: log, parser: nil)
         }

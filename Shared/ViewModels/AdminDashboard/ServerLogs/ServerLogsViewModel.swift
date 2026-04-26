@@ -39,7 +39,7 @@ final class ServerLogsViewModel: ViewModel {
     @Published
     private(set) var logs: OrderedSet<LogFile> = []
 
-    // Paths.getServerLogs doesn't have filtering so keep the full list to do it locally
+    // Paths.getServerLogs doesn't have filtering so keep the full list to do it locally.
     private var allLogs: OrderedSet<LogFile> = []
 
     // MARK: - Refresh

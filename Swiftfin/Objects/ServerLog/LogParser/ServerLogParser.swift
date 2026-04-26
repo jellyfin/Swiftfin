@@ -17,7 +17,7 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
     private var pending: ServerLogEntry?
     private var nextID: Int = 0
 
-    /// Format: `[2000-12-31 12:23:45.123 -06:00] [INF] [64] Source: message`.
+    /// Format: `[2000-12-31 12:23:45.123 -06:00] [INF] [64] Source: message`
     /// Lines that don't match the header pattern attach to the previous entry
     private static let lineRegex: Regex = /^\[([^\]]+)\] \[([A-Z]+)\] \[[^\]]+\] ([^:]+?): (.*)$/
 
@@ -28,21 +28,22 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
         return formatter
     }()
 
-    /// Header lines always start with `[`.
+    /// Simple check for a starting bracket followed by a heavier full REGEX check.
     func isHeader(line: String) -> Bool {
-        line.first == "["
+        line.first == "[" && (try? Self.lineRegex.wholeMatch(in: line)) != nil
     }
 
     mutating func read(chunk line: String) -> [ServerLogEntry] {
         var output: [ServerLogEntry] = []
 
-        // Don't parse unless we know it's a header line.
-        if isHeader(line: line), let match = try? Self.lineRegex.wholeMatch(in: line) {
+        if line.first == "[", let match = try? Self.lineRegex.wholeMatch(in: line) {
 
+            // New header was found so output the previous buffer.
             if let pending {
                 output.append(pending)
             }
 
+            // Create a new buffer for the new log header.
             pending = ServerLogEntry(
                 id: nextID,
                 timestamp: Self.timestampFormatter.date(from: String(match.output.1)),
@@ -53,16 +54,32 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
 
             nextID += 1
 
-        } else if line.isNotEmpty && pending != nil {
+        } else if line.isNotEmpty {
 
-            // Append contents in a new line to the previous entry
-            pending?.message.append("\n")
-            pending?.message.append(line)
+            if pending != nil {
 
-        } else {
-            // The line is either empty or cannot be parsed.
-            // Ignore this line and move on.
+                // Continue the pending entry on a new line.
+                pending?.message.append("\n")
+                pending?.message.append(line)
+
+            } else {
+
+                // A non-header entry before any headers exist. This is malformed.
+                // Malformed log entries should be handled as unknown.
+                output.append(
+                    ServerLogEntry(
+                        id: nextID,
+                        timestamp: nil,
+                        type: .unknown,
+                        source: nil,
+                        message: line
+                    )
+                )
+            }
+            nextID += 1
         }
+
+        // Empty lines are dropped.
 
         return output
     }

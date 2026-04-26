@@ -17,7 +17,7 @@ enum ServerLogEntryType: String, CaseIterable, Displayable, SystemImageable {
     case warning = "WRN"
     case error = "ERR"
     case critical = "CRT"
-    case unknown = "UNK" // Catch for 'none' or new/unmapped types
+    case unknown = "UNK" // Generic catch for 'none' or new/unmapped types
 
     var displayTitle: String {
         switch self {
@@ -43,7 +43,7 @@ enum ServerLogEntryType: String, CaseIterable, Displayable, SystemImageable {
         case .unknown:
             .primary
         case .trace:
-            .gray.opacity(0.7)
+            .gray
         case .debug:
             .gray
         case .info:

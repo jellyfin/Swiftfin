@@ -20,7 +20,7 @@ protocol LogParser<Element> {
     /// Example: "/n" for a new line separated file
     var delimiter: String { get }
 
-    /// True if this line could begin a new logical element.
+    /// Is this row the header of a new log record?
     /// Used to ensure we get the header as the start of entries when parsing backwards.
     func isHeader(line: String) -> Bool
 

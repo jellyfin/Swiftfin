@@ -84,19 +84,19 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
 
         let destination = FileManager.default.temporaryDirectory.appendingPathComponent(name)
 
-        // Don't download unless forceable refreshed or the file doesn't exist yet
-        if !force, FileManager.default.fileExists(atPath: destination.path) {
-            self.url = destination
-            return
+        // Skip the download if the file already exists.
+        // Remove the existing file if the download if forced.
+        if FileManager.default.fileExists(atPath: destination.path) {
+            if force {
+                try FileManager.default.removeItem(at: destination)
+            } else {
+                self.url = destination
+                return
+            }
         }
 
         let request = Paths.getLogFile(name: name)
         let response = try await userSession.client.download(for: request)
-
-        // Remove the old file if this was this download is forced
-        if FileManager.default.fileExists(atPath: destination.path) {
-            try FileManager.default.removeItem(at: destination)
-        }
 
         try FileManager.default.moveItem(at: response.value, to: destination)
 

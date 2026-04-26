@@ -52,7 +52,9 @@ enum ServerLogType: String, CaseIterable, Displayable, SystemImageable {
         case .system:
             ServerLogParser()
         case .directStream, .remux, .transcode:
-            FFmpegLogParser()
+            nil
+        // TODO: Figure out how to cleanly parse FFmpeg logs
+        // FFmpegLogParser()
         default:
             nil
         }
@@ -61,14 +63,15 @@ enum ServerLogType: String, CaseIterable, Displayable, SystemImageable {
     static func from(name: String?) -> ServerLogType {
         guard let name else { return .other }
 
-        if name.contains(/^log_\d{8}\.log$/) {
-            return .system
-        } else if name.hasPrefix("FFmpeg.DirectStream-") {
+        if name.hasPrefix("FFmpeg.DirectStream-") {
             return .directStream
         } else if name.hasPrefix("FFmpeg.Remux-") {
             return .remux
         } else if name.hasPrefix("FFmpeg.Transcode-") {
             return .transcode
+        } else if name.contains(/^log_\d{8}\.log$/) {
+            // This is intentionally at the end as it's the heaviest check.
+            return .system
         } else {
             return .other
         }
