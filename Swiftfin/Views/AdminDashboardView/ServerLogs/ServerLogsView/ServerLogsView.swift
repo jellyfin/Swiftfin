@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -16,11 +15,8 @@ import SwiftUI
 
 struct ServerLogsView: View {
 
-    @Router
-    private var router
-
-    @Default(.accentColor)
-    private var accentColor
+    @State
+    private var filter: ServerLogType?
 
     @StateObject
     private var viewModel = ServerLogsViewModel()
@@ -40,10 +36,6 @@ struct ServerLogsView: View {
                     ChevronButton(external: true) {
                         guard let url = log.url else { return }
                         UIApplication.shared.open(url)
-
-                        // TODO: Route to a log parser using the downloaded log file
-                        // router.route(to: .serverLogContents(log: log))
-
                     } label: {
                         LabeledContent {
                             EmptyView()
@@ -64,8 +56,6 @@ struct ServerLogsView: View {
                 Text(L10n.none)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.zero)
             }
         }
     }
@@ -88,30 +78,32 @@ struct ServerLogsView: View {
         .navigationTitle(L10n.serverLogs.localizedCapitalized)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .refreshable {
-            viewModel.refresh()
+            viewModel.refresh(filter: filter)
         }
         .onFirstAppear {
-            viewModel.refresh()
+            viewModel.refresh(filter: filter)
+        }
+        .backport
+        .onChange(of: filter) {
+            viewModel.refresh(filter: filter)
         }
         .topBarTrailing {
             Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
-                Picker(selection: $viewModel.filter) {
+                Picker(selection: $filter) {
                     Label(L10n.all, systemImage: "line.3.horizontal")
                         .tag(nil as ServerLogType?)
 
-                    ForEach(ServerLogType.allCases, id: \.self) { type in
+                    ForEach(ServerLogType.allCases) { type in
                         Label(type.displayTitle, systemImage: type.systemImage)
                             .tag(type as ServerLogType?)
                     }
                 } label: {
                     Text(L10n.logs)
-                    Text(viewModel.filter?.displayTitle ?? L10n.all)
-                    Image(systemName: viewModel.filter?.systemImage ?? "line.3.horizontal")
+                    Text(filter?.displayTitle ?? L10n.all)
+                    Image(systemName: filter?.systemImage ?? "line.3.horizontal")
                 }
                 .pickerStyle(.menu)
             }
-            .menuStyle(.button)
-            .foregroundStyle(accentColor)
         }
     }
 }

@@ -47,20 +47,19 @@ enum ServerLogType: String, CaseIterable, Displayable, SystemImageable {
         }
     }
 
-    static func from(name: String?) -> ServerLogType {
-        guard let name else { return .other }
-
-        if name.hasPrefix("FFmpeg.DirectStream-") {
-            return .directStream
-        } else if name.hasPrefix("FFmpeg.Remux-") {
-            return .remux
-        } else if name.hasPrefix("FFmpeg.Transcode-") {
-            return .transcode
-        } else if name.contains(/^log_\d{8}\.log$/) {
+    /// Creates a `ServerLogType` from a log file name
+    init(rawValue: String) {
+        if rawValue.hasPrefix("FFmpeg.DirectStream-") {
+            self = .directStream
+        } else if rawValue.hasPrefix("FFmpeg.Remux-") {
+            self = .remux
+        } else if rawValue.hasPrefix("FFmpeg.Transcode-") {
+            self = .transcode
+        } else if rawValue.contains(/^log_\d{8}\.log$/) {
             // This is intentionally at the end as it's the heaviest check.
-            return .system
+            self = .system
         } else {
-            return .other
+            self = .other
         }
     }
 }

@@ -10,7 +10,6 @@ import Factory
 import Foundation
 import JellyfinAPI
 
-/// - Note: This is for iOS (and maybe eventually macOS) only. Server `LogFile`s are not viewable on tvOS.
 extension LogFile {
 
     var url: URL? {
@@ -20,6 +19,6 @@ extension LogFile {
     }
 
     var type: ServerLogType {
-        ServerLogType.from(name: name)
+        name.map(ServerLogType.init(rawValue:)) ?? .other
     }
 }
