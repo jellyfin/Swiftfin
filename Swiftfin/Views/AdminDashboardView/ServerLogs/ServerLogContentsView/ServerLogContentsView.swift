@@ -159,9 +159,13 @@ private struct ParsedReaderView<Parser: LogParser>: View where Parser.Element ==
                 id: \ServerLogEntry.id,
                 layout: .columns(1)
             ) { entry in
-                ServerLogContentsView.ParsedServerEntry(entry: entry) {
-                    onSelect(entry)
-                }
+                LogEntryButton(
+                    title: entry.source ?? .emptyDash,
+                    logLevel: entry.type,
+                    contents: entry.message,
+                    timestamp: entry.timestamp,
+                    action: { onSelect(entry) }
+                )
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 reader.getNextPage()

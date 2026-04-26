@@ -13,17 +13,11 @@ import SwiftUI
 // TODO: WebSocket
 struct ServerActivityView: View {
 
-    // MARK: - Router
-
     @Router
     private var router
 
-    // MARK: - State Objects
-
     @StateObject
     private var viewModel = ServerActivityViewModel()
-
-    // MARK: - Body
 
     var body: some View {
         ZStack {
@@ -57,8 +51,6 @@ struct ServerActivityView: View {
         }
     }
 
-    // MARK: - Content View
-
     @ViewBuilder
     private var contentView: some View {
         if viewModel.elements.isEmpty {
@@ -83,8 +75,38 @@ struct ServerActivityView: View {
                     user: user
                 )
 
-                LogEntry(viewModel: logViewModel) {
-                    router.route(to: .activityDetails(viewModel: logViewModel))
+                LogEntryButton(
+                    title: user?.name ?? L10n.system,
+                    logLevel: log.severity ?? LogLevel.none,
+                    contents: log.name ?? .emptyDash,
+                    timestamp: log.date,
+                    action: {
+                        router.route(to: .activityDetails(viewModel: logViewModel))
+                    }
+                ) {
+                    if let user {
+                        UserProfileImage(
+                            userID: user.id,
+                            source: user.profileImageSource(
+                                client: viewModel.userSession.client,
+                                maxWidth: 60
+                            )
+                        )
+                    } else {
+                        ZStack {
+                            Rectangle()
+                                .fill(.complexSecondary)
+
+                            SystemImageContentView(
+                                systemName: "gearshape.fill",
+                                ratio: 0.5
+                            )
+                        }
+                        .posterBorder()
+                        .clipShape(.circle)
+                        .aspectRatio(1, contentMode: .fit)
+                        .shadow(radius: 5)
+                    }
                 }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
@@ -93,8 +115,6 @@ struct ServerActivityView: View {
             .frame(maxWidth: .infinity)
         }
     }
-
-    // MARK: - User Filter Button
 
     @ViewBuilder
     private var userFilterButton: some View {
@@ -130,8 +150,6 @@ struct ServerActivityView: View {
         }
         .pickerStyle(.menu)
     }
-
-    // MARK: - Start Date Button
 
     @ViewBuilder
     private var startDateButton: some View {
