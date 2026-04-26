@@ -350,6 +350,17 @@ extension ChevronButton where _Label == Label<Text, Image>, _Content == EmptyVie
     }
 }
 
+extension ChevronButton {
+
+    func listRowSeparator() -> some View {
+        VStack(spacing: 0) {
+            self
+            Divider()
+                .padding(.trailing, -EdgeInsets.edgeInsets.trailing)
+        }
+    }
+}
+
 private struct ChevronButtonLabeledContentStyle: LabeledContentStyle {
 
     let isExternal: Bool

@@ -45,6 +45,7 @@ extension ServerLogContentsView {
                     }
                 }
             }
+            .listRowSeparator()
         }
     }
 }
