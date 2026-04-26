@@ -112,7 +112,7 @@ struct ServerActivityView: View {
             .onReachedBottomEdge(offset: .offset(300)) {
                 viewModel.send(.getNextPage)
             }
-            .frame(maxWidth: .infinity)
+            .ignoresSafeArea(edges: .bottom)
         }
     }
 

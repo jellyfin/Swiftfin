@@ -170,7 +170,7 @@ private struct ParsedReaderView<Parser: LogParser>: View where Parser.Element ==
             .onReachedBottomEdge(offset: .offset(300)) {
                 reader.getNextPage()
             }
-            .frame(maxWidth: .infinity)
+            .ignoresSafeArea(edges: .bottom)
         }
     }
 }
