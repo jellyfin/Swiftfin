@@ -227,6 +227,7 @@
 				ViewModels/AdminDashboard/DevicesViewModel.swift,
 				ViewModels/AdminDashboard/ServerActivityDetailViewModel.swift,
 				ViewModels/AdminDashboard/ServerActivityViewModel.swift,
+				ViewModels/AdminDashboard/ServerLogs/ServerLogsViewModel.swift,
 				ViewModels/AdminDashboard/ServerTaskObserver.swift,
 				ViewModels/AdminDashboard/ServerTasksViewModel.swift,
 				ViewModels/AdminDashboard/ServerUserAdminViewModel.swift,
