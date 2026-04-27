@@ -101,18 +101,6 @@ private struct TypedLogContentsView<Parser: LogParser, ParsedRow: View>: View wh
             if viewModel.parsedLog != nil {
                 Toggle(L10n.parsed, systemImage: "list.bullet.rectangle", isOn: $showParsed)
             }
-
-            Menu {
-                Picker(selection: $viewModel.sortOrder) {
-                    ForEach(ItemSortOrder.allCases, id: \.self) { order in
-                        Label(order.displayTitle, systemImage: order.systemImage).tag(order)
-                    }
-                } label: {
-                    EmptyView()
-                }
-            } label: {
-                Label(viewModel.sortOrder.displayTitle, systemImage: viewModel.sortOrder.systemImage)
-            }
         }
 
         Section {
@@ -155,10 +143,10 @@ private struct TypedLogContentsView<Parser: LogParser, ParsedRow: View>: View wh
             toolbarMenu
         }
         .onFirstAppear {
-            viewModel.refresh(force: false)
+            viewModel.refresh()
         }
         .refreshable {
-            viewModel.refresh(force: true)
+            viewModel.refresh()
         }
     }
 }

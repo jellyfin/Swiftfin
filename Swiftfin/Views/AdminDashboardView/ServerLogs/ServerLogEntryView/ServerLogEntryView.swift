@@ -20,7 +20,12 @@ struct ServerLogEntryView: View {
                 LabeledContent(L10n.level, value: entry.type.displayTitle)
 
                 if let source = entry.source {
-                    LabeledContent(L10n.source, value: source)
+                    if let dotIndex = source.lastIndex(of: ".") {
+                        LabeledContent("Namespace", value: String(source[..<dotIndex]))
+                        LabeledContent(L10n.caller, value: String(source[source.index(after: dotIndex)...]))
+                    } else {
+                        LabeledContent(L10n.source, value: source)
+                    }
                 }
 
                 if let timestamp = entry.timestamp {

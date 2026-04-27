@@ -9,11 +9,10 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: download to device?
-// TODO: super cool log parser?
-//       - separate package
-
 struct ServerLogsView: View {
+
+    @Router
+    private var router
 
     @State
     private var filter: ServerLogType?
@@ -33,9 +32,8 @@ struct ServerLogsView: View {
 
             if viewModel.logs.isNotEmpty {
                 ForEach(viewModel.logs, id: \.self) { log in
-                    ChevronButton(external: true) {
-                        guard let url = log.url else { return }
-                        UIApplication.shared.open(url)
+                    ChevronButton {
+                        router.route(to: .serverLogContents(log: log))
                     } label: {
                         LabeledContent {
                             EmptyView()

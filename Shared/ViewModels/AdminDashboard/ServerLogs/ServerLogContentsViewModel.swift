@@ -17,7 +17,7 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
 
     @CasePathable
     enum Action {
-        case refresh(force: Bool)
+        case refresh
 
         var transition: Transition {
             .to(.initial, then: .content)
@@ -36,25 +36,15 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
     private(set) var parsedLog: PagingLogViewModel<Parser>?
 
     @Published
-    var sortOrder: ItemSortOrder = .ascending {
-        didSet {
-            guard sortOrder != oldValue else { return }
-
-            rawLog?.direction = sortOrder
-            parsedLog?.direction = sortOrder
-        }
-    }
-
-    @Published
     private(set) var url: URL? {
         didSet {
             guard let url, url != oldValue else { return }
 
-            self.rawLog = PagingLogViewModel(url: url, parser: RawLogParser(), direction: sortOrder)
+            self.rawLog = PagingLogViewModel(url: url, parser: RawLogParser())
             self.rawLog?.refresh()
 
             if let parser {
-                self.parsedLog = PagingLogViewModel(url: url, parser: parser, direction: sortOrder)
+                self.parsedLog = PagingLogViewModel(url: url, parser: parser)
                 self.parsedLog?.refresh()
             } else {
                 self.parsedLog = nil
@@ -91,31 +81,15 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
     // MARK: - Refresh
 
     @Function(\Action.Cases.refresh)
-    private func _refresh(_ force: Bool) async throws {
+    private func _refresh() async throws {
         guard let name = log.name else {
             throw ErrorMessage(L10n.unknownError)
-        }
-
-        // Store logs in a known location so we can reuse the file if we leave and re-enter the view.
-        let destination = FileManager.default.temporaryDirectory.appendingPathComponent(name)
-
-        // Skip the download if the file already exists.
-        // Remove the existing file if the download if forced.
-        if FileManager.default.fileExists(atPath: destination.path) {
-            if force {
-                try FileManager.default.removeItem(at: destination)
-            } else {
-                self.url = destination
-                return
-            }
         }
 
         let request = Paths.getLogFile(name: name)
         let response = try await userSession.client.download(for: request)
 
-        try FileManager.default.moveItem(at: response.value, to: destination)
-
-        self.url = destination
+        self.url = response.value
 
         await self.parsedLog?.refresh()
         await self.rawLog?.refresh()

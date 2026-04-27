@@ -16,10 +16,10 @@ extension ItemSortOrder: Displayable, SystemImageable {
 
     var displayTitle: String {
         switch self {
-        case .descending:
-            L10n.descending
         case .ascending:
             L10n.ascending
+        case .descending:
+            L10n.descending
         }
     }
 

@@ -22,10 +22,11 @@ struct LogEntryButton<LeadingContent: View>: View {
         ChevronButton(action: action) {
             LabeledContent {
                 rowContent
-                    .frame(minHeight: 60)
+                    .frame(minHeight: 60, alignment: .leading)
+                    .padding(.vertical, EdgeInsets.edgePadding)
             } label: {
                 leadingContent()
-                    .frame(width: 60, height: 60)
+                    .frame(width: 60, height: 60, alignment: .center)
             }
         }
     }
