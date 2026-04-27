@@ -25,16 +25,18 @@ struct LetterPickerBarModifier: ViewModifier {
            let viewModel
         {
             content
+                .ignoresSafeArea(.all, edges: edge == .leading ? .trailing : .leading)
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     LetterPickerBar(viewModel: viewModel)
                         .foregroundStyle(accentColor.overlayColor, accentColor, Color.primary)
                         .if(!UIDevice.isTV) { view in
                             view
                                 .padding(.vertical, EdgeInsets.edgePadding / 2)
+                                .padding(edge == .leading ? .leading : .trailing, EdgeInsets.edgePadding / 2)
                         }
                         .if(UIDevice.isTV) { view in
                             view
-                                .ignoresSafeArea()
+                                .focusSection()
                         }
                 }
         } else {

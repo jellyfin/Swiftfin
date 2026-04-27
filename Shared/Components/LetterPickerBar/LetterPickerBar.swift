@@ -27,7 +27,7 @@ struct LetterPickerBar: View {
     }
 
     static var font: Font {
-        UIDevice.isTV ? .footnote.weight(.semibold) : .headline
+        UIDevice.isTV ? .system(size: 22, weight: .semibold) : .headline
     }
 
     var body: some View {
@@ -38,10 +38,8 @@ struct LetterPickerBar: View {
                     .isSelected(viewModel.currentFilters.letter.contains(filterLetter))
             }
         }
-        .frame(width: dimension + 1)
         .scrollIfLargerThanContainer()
-        // Without `fixedSize` this fills all available horizontal room if it needs to scroll
-        .fixedSize(horizontal: true, vertical: false)
+        .frame(width: dimension)
         .background {
             ZStack {
                 ForEach(ItemLetter.allCases, id: \.hashValue) { letter in
