@@ -192,10 +192,6 @@ extension Defaults.Keys {
                 )
             }
 
-            static var letterPickerEnabled: Key<Bool> {
-                UserKey("letterPickerEnabled", default: false)
-            }
-
             static let letterPickerOrientation: Key<LetterPickerOrientation> = .init(
                 "letterPickerOrientation", default: .trailing
             )
