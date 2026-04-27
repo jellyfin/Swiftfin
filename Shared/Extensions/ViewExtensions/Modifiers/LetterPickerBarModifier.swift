@@ -41,6 +41,7 @@ struct LetterPickerBarModifier: ViewModifier {
                 }
         } else {
             content
+                .ignoresSafeArea(.all, edges: .horizontal)
         }
     }
 }
