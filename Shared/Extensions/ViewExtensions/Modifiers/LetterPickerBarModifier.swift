@@ -20,7 +20,7 @@ struct LetterPickerBarModifier: ViewModifier {
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if letterPickerOrientation != .disabled,
+        if letterPickerOrientation.isEnabled,
            let edge = letterPickerOrientation.edge,
            let viewModel
         {
