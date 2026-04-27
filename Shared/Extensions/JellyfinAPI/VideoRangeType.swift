@@ -10,35 +10,35 @@ import Foundation
 import JellyfinAPI
 
 extension VideoRangeType: Displayable {
-    /// Dolby Vision is a proper noun so it is not localized
+
     var displayTitle: String {
         switch self {
         case .unknown:
             L10n.unknown
         case .sdr:
-            "SDR"
+            L10n.sdr
         case .hdr10:
-            "HDR10"
+            L10n.hdr10
         case .hlg:
-            "HLG"
+            L10n.hlg
         case .dovi:
-            "Dolby Vision"
+            L10n.dolbyVision
         case .doviWithEL:
-            "Dolby Vision with Enhancement Layer"
+            "\(L10n.dolbyVision) \(L10n.withEnhancementLayer)"
         case .doviWithELHDR10Plus:
-            "Dolby Vision with Enhancement Layer / HDR10+"
+            "\(L10n.dolbyVision) \(L10n.withEnhancementLayer) / \(L10n.hdr10Plus)"
         case .doviWithHDR10:
-            "Dolby Vision / HDR10"
+            "\(L10n.dolbyVision) / \(L10n.hdr10)"
         case .doviWithHDR10Plus:
-            "Dolby Vision / HDR10+"
+            "\(L10n.dolbyVision) / \(L10n.hdr10Plus)"
         case .doviWithHLG:
-            "Dolby Vision / HLG"
+            "\(L10n.dolbyVision) / \(L10n.hlg)"
         case .doviInvalid:
-            "Invalid Dobly Vision"
+            L10n.invalidX(L10n.dolbyVision)
         case .doviWithSDR:
-            "Dolby Vision / SDR"
+            "\(L10n.dolbyVision) / \(L10n.sdr)"
         case .hdr10Plus:
-            "HDR10+"
+            L10n.hdr10Plus
         }
     }
 

@@ -24,3 +24,9 @@ jobs:
 
       - name: Find Unused Strings
         run: swift Scripts/Translations/FindUnusedStrings.swift
+
+      - name: Find Hard Coded Strings
+        run: swift Scripts/Translations/FindHardCodedStrings.swift
+
+      - name: Find Duplicate Strings
+        run: swift Scripts/Translations/FindDuplicateStrings.swift

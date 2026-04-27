@@ -30,7 +30,7 @@ enum LightAppIcon: String, AppIcon {
         case .yellow:
             L10n.yellow
         case .jellyfin:
-            "Jellyfin"
+            L10n.jellyfin
         }
     }
 

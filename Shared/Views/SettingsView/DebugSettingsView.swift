@@ -11,6 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 // NOTE: All settings *MUST* be surrounded by DEBUG compiler conditional as usage site
+// NOTE: This file is not checked for hard coded strings
 
 #if DEBUG
 struct DebugSettingsView: View {
@@ -23,8 +24,8 @@ struct DebugSettingsView: View {
     var body: some View {
         Form(systemImage: "ladybug") {
 
-            Section("Settings") {
-                Toggle("Send Progress Reports", isOn: $sendProgressReports)
+            Section(L10n.settings) {
+                Toggle(L10n.sendProgressReports, isOn: $sendProgressReports)
             }
 
             Section {

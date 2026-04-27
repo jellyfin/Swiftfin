@@ -34,7 +34,7 @@ enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .auto:
-            L10n.bitrateAuto
+            L10n.auto
         case .max:
             L10n.bitrateMax
         case .mbps120:

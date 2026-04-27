@@ -64,7 +64,7 @@ struct Stepper<
         ._alert(title, isPresented: $isPresented) {
             VStack {
                 HStack(spacing: 24) {
-                    Button("Decrement", systemImage: "minus") {
+                    Button(L10n.decrement, systemImage: "minus") {
                         value = min(range.upperBound, value.advanced(by: -step))
                     }
                     .buttonStyle(.bordered)
@@ -87,7 +87,7 @@ struct Stepper<
                                 .strokeBorder(.white.opacity(0.18), lineWidth: 1)
                         )
 
-                    Button("Increment", systemImage: "plus") {
+                    Button(L10n.increment, systemImage: "plus") {
                         value = min(range.upperBound, value.advanced(by: step))
                     }
                     .buttonStyle(.bordered)

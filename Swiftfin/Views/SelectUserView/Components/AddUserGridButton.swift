@@ -47,8 +47,7 @@ extension SelectUserView {
                     .foregroundStyle(isEnabled ? .primary : .secondary)
 
                 if selectedServer == nil {
-                    // For layout, not to be localized
-                    Text("Hidden")
+                    Text("Hidden".doNotLocalize)
                         .font(.footnote)
                         .hidden()
                 }
