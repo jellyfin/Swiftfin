@@ -780,6 +780,8 @@ internal enum L10n {
   internal static let indicator = L10n.tr("Localizable", "indicator", fallback: "Indicator")
   /// Indicators
   internal static let indicators = L10n.tr("Localizable", "indicators", fallback: "Indicators")
+  /// Info
+  internal static let info = L10n.tr("Localizable", "info", fallback: "Info")
   /// Inker
   internal static let inker = L10n.tr("Localizable", "inker", fallback: "Inker")
   /// Interlaced video is not supported
@@ -1494,6 +1496,8 @@ internal enum L10n {
   internal static let subtitleSize = L10n.tr("Localizable", "subtitleSize", fallback: "Subtitle size")
   /// Success
   internal static let success = L10n.tr("Localizable", "success", fallback: "Success")
+  /// Supplements
+  internal static let supplements = L10n.tr("Localizable", "supplements", fallback: "Supplements")
   /// Media control
   internal static let supportsMediaControl = L10n.tr("Localizable", "supportsMediaControl", fallback: "Media control")
   /// Persistent identifier
