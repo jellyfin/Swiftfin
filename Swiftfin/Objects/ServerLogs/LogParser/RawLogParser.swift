@@ -19,11 +19,6 @@ struct RawLogParser: LogParser<String> {
         self.delimiter = delimiter
     }
 
-    /// Treat every new line as a record.
-    func isHeader(line: String) -> Bool {
-        true
-    }
-
     mutating func read(chunk: String) -> [String] {
         [chunk]
     }

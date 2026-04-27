@@ -29,11 +29,6 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
         return formatter
     }()
 
-    /// Simple check for a starting bracket followed by a heavier full REGEX check.
-    func isHeader(line: String) -> Bool {
-        line.first == "[" && (try? Self.lineRegex.wholeMatch(in: line)) != nil
-    }
-
     mutating func read(chunk line: String) -> [ServerLogEntry] {
         var output: [ServerLogEntry] = []
 
