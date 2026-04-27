@@ -66,8 +66,6 @@ struct CustomizeSettingsView: View {
 
     // MARK: - Filter Defaults
 
-    @Default(.Customization.Library.letterPickerEnabled)
-    private var letterPickerEnabled
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
     @Default(.Customization.Library.enabledDrawerFilters)
@@ -192,11 +190,7 @@ struct CustomizeSettingsView: View {
     @ViewBuilder
     private var filterSettings: some View {
         Section(L10n.filters) {
-            Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
-
-            if letterPickerEnabled {
-                PlatformPicker(L10n.orientation, selection: $letterPickerOrientation)
-            }
+            PlatformPicker(L10n.letterPicker, selection: $letterPickerOrientation)
 
             ChevronButton(L10n.library) {
                 router.route(to: .itemFilterDrawerSelector(selection: $libraryEnabledDrawerFilters))
