@@ -15,24 +15,24 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
     let encoding: String.Encoding = .utf8
     let delimiter: String = "\n"
 
-    private var pending: ServerLogEntry?
-    private var nextID: Int = 0
-
     /// Format: `[2000-12-31 12:23:45.123 -06:00] [INF] [64] Source: message`
     /// Lines that don't match the header pattern attach to the previous entry
-    private static let lineRegex: Regex = /^\[([^\]]+)\] \[([A-Z]+)\] \[[^\]]+\] ([^:]+?): (.*)$/
+    private let lineRegex: Regex = /^\[([^\]]+)\] \[([A-Z]+)\] \[[^\]]+\] ([^:]+?): (.*)$/
 
-    private static let timestampFormatter: DateFormatter = {
+    private let timestampFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS XXX"
         formatter.locale = Locale(identifier: "en_US_POSIX")
         return formatter
     }()
 
+    private var pending: ServerLogEntry?
+    private var nextID: Int = 0
+
     mutating func read(chunk line: String) -> [ServerLogEntry] {
         var output: [ServerLogEntry] = []
 
-        if line.first == "[", let match = try? Self.lineRegex.wholeMatch(in: line) {
+        if line.first == "[", let match = try? lineRegex.wholeMatch(in: line) {
 
             // New header was found so output the previous buffer.
             if let pending {
@@ -42,8 +42,8 @@ struct ServerLogParser: LogParser<ServerLogEntry> {
             // Create a new buffer for the new log header.
             pending = ServerLogEntry(
                 id: nextID,
-                timestamp: Self.timestampFormatter.date(from: String(match.output.1)),
-                type: LogLevel(rawValue: String(match.output.2)),
+                timestamp: timestampFormatter.date(from: String(match.output.1)),
+                type: LogLevel(abbreviation: String(match.output.2)),
                 source: String(match.output.3),
                 message: String(match.output.4)
             )

@@ -21,7 +21,7 @@ struct ServerLogEntryView: View {
 
                 if let source = entry.source {
                     if let dotIndex = source.lastIndex(of: ".") {
-                        LabeledContent("Namespace", value: String(source[..<dotIndex]))
+                        LabeledContent(L10n.source, value: String(source[..<dotIndex]))
                         LabeledContent(L10n.caller, value: String(source[source.index(after: dotIndex)...]))
                     } else {
                         LabeledContent(L10n.source, value: source)
@@ -36,15 +36,9 @@ struct ServerLogEntryView: View {
                 }
             }
 
-            // Remove leading/trailing indentations.
-            let message = entry.message
-                .dropFirst()
-                .trimmingCharacters(in: .whitespaces)
-
-            if message.isNotEmpty {
+            if entry.message.isNotEmpty {
                 Section(L10n.details) {
                     Text(entry.message)
-                        .lineLimit(nil)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .textSelection(.enabled)
                 }
