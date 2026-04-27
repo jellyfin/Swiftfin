@@ -25,6 +25,7 @@ struct LetterPickerBarModifier: ViewModifier {
            let viewModel
         {
             content
+                .focusSection()
                 .ignoresSafeArea(.all, edges: edge == .leading ? .trailing : .leading)
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     LetterPickerBar(viewModel: viewModel)
@@ -36,6 +37,8 @@ struct LetterPickerBarModifier: ViewModifier {
                         }
                         .if(UIDevice.isTV) { view in
                             view
+                                .offset(x: edge == .leading ? -EdgeInsets.edgePadding / 1.5 : EdgeInsets.edgePadding / 1.5)
+                                .padding(edge == .leading ? .trailing : .leading, -EdgeInsets.edgePadding / 2)
                                 .focusSection()
                         }
                 }
