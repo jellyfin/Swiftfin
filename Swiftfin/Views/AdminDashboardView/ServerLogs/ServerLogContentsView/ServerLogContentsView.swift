@@ -16,12 +16,12 @@ struct ServerLogContentsView: View {
     @Router
     private var router
 
-    let log: LogFile
+    let logFile: LogFile
 
     var body: some View {
-        switch log.type {
+        switch logFile.type {
         case .system:
-            TypedLogContentsView(log: log, parser: ServerLogParser()) { entry in
+            TypedLogContentsView(logFile: logFile, parser: ServerLogParser()) { entry in
                 LogEntryButton(
                     title: entry.source ?? .emptyDash,
                     logLevel: entry.type,
@@ -31,7 +31,7 @@ struct ServerLogContentsView: View {
                 )
             }
         case .directStream, .remux, .transcode, .other:
-            TypedLogContentsView<ServerLogParser, EmptyView>(log: log, parser: nil) { _ in
+            TypedLogContentsView<ServerLogParser, EmptyView>(logFile: logFile, parser: nil) { _ in
                 EmptyView()
             }
         }
@@ -52,13 +52,13 @@ private struct TypedLogContentsView<Parser: LogParser, ParsedRow: View>: View wh
     let parsedRow: (Parser.Element) -> ParsedRow
 
     init(
-        log: LogFile,
+        logFile: LogFile,
         parser: Parser?,
         @ViewBuilder parsedRow: @escaping (Parser.Element) -> ParsedRow
     ) {
         self.parsedRow = parsedRow
         _viewModel = StateObject(
-            wrappedValue: ServerLogContentsViewModel(log: log, parser: parser)
+            wrappedValue: ServerLogContentsViewModel(logFile: logFile, parser: parser)
         )
     }
 
@@ -104,15 +104,15 @@ private struct TypedLogContentsView<Parser: LogParser, ParsedRow: View>: View wh
         }
 
         Section {
-            if let url = viewModel.url {
+            if let downloadLocation = viewModel.downloadLocation {
                 Button {
-                    router.route(to: .shareSheet(urls: [url]))
+                    router.route(to: .shareSheet(urls: [downloadLocation]))
                 } label: {
                     Label(L10n.share, systemImage: "square.and.arrow.up")
                 }
             }
 
-            if let webURL = viewModel.webURL {
+            if let webURL = viewModel.logFile.url {
                 Button {
                     UIApplication.shared.open(webURL)
                 } label: {

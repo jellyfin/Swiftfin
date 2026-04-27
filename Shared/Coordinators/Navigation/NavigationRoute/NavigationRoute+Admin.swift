@@ -136,9 +136,9 @@ extension NavigationRoute {
         }
     }
 
-    static func serverLogContents(log: LogFile) -> NavigationRoute {
+    static func serverLogContents(logFile: LogFile) -> NavigationRoute {
         NavigationRoute(id: "serverLogContents") {
-            ServerLogContentsView(log: log)
+            ServerLogContentsView(logFile: logFile)
         }
     }
 

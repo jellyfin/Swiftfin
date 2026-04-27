@@ -31,20 +31,22 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
     }
 
     @Published
+    private(set) var logFile: LogFile
+    @Published
     private(set) var rawLog: PagingLogViewModel<RawLogParser>?
     @Published
     private(set) var parsedLog: PagingLogViewModel<Parser>?
 
     @Published
-    private(set) var url: URL? {
+    private(set) var downloadLocation: URL? {
         didSet {
-            guard let url, url != oldValue else { return }
+            guard let downloadLocation, downloadLocation != oldValue else { return }
 
-            self.rawLog = PagingLogViewModel(url: url, parser: RawLogParser())
+            self.rawLog = PagingLogViewModel(url: downloadLocation, parser: RawLogParser())
             self.rawLog?.refresh()
 
             if let parser {
-                self.parsedLog = PagingLogViewModel(url: url, parser: parser)
+                self.parsedLog = PagingLogViewModel(url: downloadLocation, parser: parser)
                 self.parsedLog?.refresh()
             } else {
                 self.parsedLog = nil
@@ -64,16 +66,10 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
 
     private var readerSubs = Set<AnyCancellable>()
 
-    var webURL: URL? {
-        guard let name = log.name else { return nil }
-        return userSession.client.fullURL(with: Paths.getLogFile(name: name), queryAPIKey: true)
-    }
-
-    private let log: LogFile
     private let parser: Parser?
 
-    init(log: LogFile, parser: Parser? = nil) {
-        self.log = log
+    init(logFile: LogFile, parser: Parser? = nil) {
+        self.logFile = logFile
         self.parser = parser
         super.init()
     }
@@ -82,14 +78,14 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        guard let name = log.name else {
+        guard let name = logFile.name else {
             throw ErrorMessage(L10n.unknownError)
         }
 
         let request = Paths.getLogFile(name: name)
         let response = try await userSession.client.download(for: request)
 
-        self.url = response.value
+        self.downloadLocation = response.value
 
         await self.parsedLog?.refresh()
         await self.rawLog?.refresh()

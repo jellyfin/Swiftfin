@@ -31,19 +31,19 @@ struct ServerLogsView: View {
             }
 
             if viewModel.logs.isNotEmpty {
-                ForEach(viewModel.logs, id: \.self) { log in
+                ForEach(viewModel.logs, id: \.self) { logFile in
                     ChevronButton {
-                        router.route(to: .serverLogContents(log: log))
+                        router.route(to: .serverLogContents(logFile: logFile))
                     } label: {
                         LabeledContent {
                             EmptyView()
                         } label: {
                             VStack(alignment: .leading) {
-                                Text(log.name ?? L10n.unknown)
+                                Text(logFile.name ?? L10n.unknown)
                                     .lineLimit(2)
                                     .multilineTextAlignment(.leading)
 
-                                Text(log.dateModified, format: .dateTime)
+                                Text(logFile.dateModified, format: .dateTime)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
