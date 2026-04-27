@@ -60,6 +60,17 @@ extension MediaChaptersSupplement {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        #if os(tvOS)
+        @EnvironmentObject
+        private var focusGuide: FocusGuide
+        #endif
+
+        @FocusState
+        private var focusedChapterID: ChapterInfo.FullInfo.ID?
+
+        @State
+        private var lastFocusedChapterID: ChapterInfo.FullInfo.ID?
+
         @ObservedObject
         private var supplement: MediaChaptersSupplement
 
@@ -68,6 +79,16 @@ extension MediaChaptersSupplement {
 
         init(supplement: MediaChaptersSupplement) {
             self.supplement = supplement
+        }
+
+        private func getContentFocus() {
+            if let lastFocusedChapterID,
+               chapters.contains(where: { $0.id == lastFocusedChapterID })
+            {
+                focusedChapterID = lastFocusedChapterID
+            } else {
+                focusedChapterID = currentChapter?.id ?? chapters.first?.id
+            }
         }
 
         private var chapters: [ChapterInfo.FullInfo] {
@@ -138,7 +159,55 @@ extension MediaChaptersSupplement {
         }
 
         var tvOSView: some View {
-            EmptyView()
+            CollectionHStack(
+                uniqueElements: chapters,
+                id: \.unwrappedIDHashOrZero,
+                columns: 4
+            ) { chapter in
+                ChapterButton(chapter: chapter) {
+                    guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
+                    manager.proxy?.setSeconds(startSeconds)
+                    manager.setPlaybackRequestStatus(status: .playing)
+                }
+                .environmentObject(supplement)
+                .focused($focusedChapterID, equals: chapter.id)
+                .padding(.horizontal, UIDevice.isTV ? 4 : nil)
+            }
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding)
+            .proxy(collectionHStackProxy)
+            #if os(iOS)
+                .onFirstAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        guard let currentChapter else { return }
+                        collectionHStackProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+                    }
+                }
+            #else
+                .focusSection()
+                .onChange(of: focusedChapterID) { _, newValue in
+                    guard let newValue else { return }
+                    lastFocusedChapterID = newValue
+                }
+                .onChange(of: containerState.isPresentingSupplement) { _, newValue in
+                    if newValue {
+                        getContentFocus()
+                    }
+                }
+                .onChange(of: focusGuide.focusedTag) { _, newTag in
+                    if newTag == "supplementContent" {
+                        getContentFocus()
+                    }
+                }
+                .onFirstAppear {
+                    lastFocusedChapterID = currentChapter?.id
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        guard let currentChapter else { return }
+                        collectionHStackProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+                    }
+                }
+            #endif
         }
     }
 
@@ -152,6 +221,12 @@ extension MediaChaptersSupplement {
 
         let chapter: ChapterInfo.FullInfo
 
+        #if os(iOS)
+        private let strokeLineWidth: CGFloat = 8
+        #else
+        private let strokeLineWidth: CGFloat = 12
+        #endif
+
         var body: some View {
             PosterImage(
                 item: chapter,
@@ -163,20 +238,22 @@ extension MediaChaptersSupplement {
                     ContainerRelativeShape()
                         .stroke(
                             accentColor,
-                            lineWidth: 8
+                            lineWidth: strokeLineWidth
                         )
                         .clipped()
                 }
             }
             .posterStyle(.landscape)
+            .posterShadow()
+            .hoverEffect(.highlight)
         }
     }
 
-    struct ChapterContent: View {
+    struct ChapterContent: PlatformView {
 
         let chapter: ChapterInfo.FullInfo
 
-        var body: some View {
+        var iOSView: some View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(chapter.chapterInfo.displayTitle)
                     .lineLimit(1)
@@ -196,6 +273,20 @@ extension MediaChaptersSupplement {
             .frame(maxWidth: .infinity, alignment: .leading)
             .font(.subheadline)
             .fontWeight(.semibold)
+        }
+
+        var tvOSView: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(chapter.chapterInfo.displayTitle)
+                    .font(.footnote.weight(.regular))
+                    .foregroundStyle(.white)
+                    .lineLimit(1, reservesSpace: true)
+
+                Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(Color(UIColor.systemBlue))
+                    .lineLimit(1, reservesSpace: true)
+            }
         }
     }
 
@@ -257,18 +348,27 @@ extension MediaChaptersSupplement {
 
         var body: some View {
             Button(action: action) {
-                VStack(alignment: .leading, spacing: 5) {
-                    ChapterPreview(
-                        chapter: chapter
-                    )
+                VStack(alignment: .leading, spacing: UIDevice.isTV ? 15 : 5) {
+                    ChapterPreview(chapter: chapter)
 
-                    ChapterContent(
-                        chapter: chapter
-                    )
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(chapter.chapterInfo.displayTitle)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .lineLimit(1)
+                            .foregroundStyle(.primary)
+
+                        Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                            .font(.caption)
+                            .lineLimit(1)
+                            .foregroundStyle(.secondary)
+                    }
                 }
-                .font(.subheadline)
-                .fontWeight(.semibold)
             }
+            #if os(tvOS)
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.roundedRectangle)
+            #endif
             .foregroundStyle(.primary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
             .isSelected(isCurrentChapter)

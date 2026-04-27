@@ -85,6 +85,9 @@ extension LabeledContentStyle where Self == PlaybackInfoLabeledContentStyle {
 struct PlaybackInfoLabeledContentStyle: LabeledContentStyle {
 
     func makeBody(configuration: Configuration) -> some View {
+        #if os(tvOS)
+        PlaybackInfoRow(label: configuration.label, content: configuration.content)
+        #else
         HStack(spacing: 0) {
             configuration.label
                 .foregroundStyle(.secondary)
@@ -99,7 +102,45 @@ struct PlaybackInfoLabeledContentStyle: LabeledContentStyle {
                 .foregroundStyle(.primary)
         }
         .font(.subheadline)
+        #endif
     }
+
+    #if os(tvOS)
+    private struct PlaybackInfoRow<Label: View, Content: View>: View {
+
+        @FocusState
+        private var isFocused: Bool
+
+        let label: Label
+        let content: Content
+
+        var body: some View {
+            HStack(spacing: 0) {
+                label
+                    .foregroundStyle(.secondary)
+
+                Text(":")
+                    .foregroundStyle(.secondary)
+                    .padding(.trailing, 4)
+
+                Spacer()
+
+                content
+                    .foregroundStyle(.primary)
+            }
+            .font(.subheadline)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isFocused ? Color.white.opacity(0.15) : Color.clear)
+            )
+            .focusable()
+            .focused($isFocused)
+            .animation(.easeInOut(duration: 0.15), value: isFocused)
+        }
+    }
+    #endif
 }
 
 extension LabeledContentStyle where Self == FocusableLabeledContentStyle {

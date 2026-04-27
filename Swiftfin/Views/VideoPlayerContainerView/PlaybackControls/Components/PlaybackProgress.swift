@@ -16,6 +16,8 @@ import SwiftUI
 //       - current running time
 // TODO: show chapter title under preview image
 //       - have max width, on separate offset track
+// TODO: bar color default to style
+// TODO: live tv
 
 extension VideoPlayer.PlaybackControls {
 
@@ -33,9 +35,10 @@ extension VideoPlayer.PlaybackControls {
 
         @State
         private var currentTranslation: CGPoint = .zero
-
         @State
         private var sliderSize: CGSize = .zero
+
+        private let previewImageHeight: CGFloat = 85
 
         private var isScrubbing: Bool {
             get {
@@ -46,27 +49,9 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        private var isSlowScrubbing: Bool {
-            isScrubbing && (currentTranslation.y >= 60)
-        }
-
-        private var previewXOffset: CGFloat {
-            let videoWidth = 85 * videoSizeAspectRatio
-            let p = (sliderSize.width * scrubbedProgress) - (videoWidth / 2)
-            return clamp(p, min: 0, max: sliderSize.width - videoWidth)
-        }
-
-        private var progress: Double {
-            scrubbedSeconds / (manager.item.runtime ?? .seconds(1))
-        }
-
         private var scrubbedProgress: Double {
             guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
-            return scrubbedSeconds / runtime
-        }
-
-        private var scrubbedSeconds: Duration {
-            scrubbedSecondsBox.value
+            return scrubbedSecondsBox.value / runtime
         }
 
         private var videoSizeAspectRatio: CGFloat {
@@ -75,6 +60,12 @@ extension VideoPlayer.PlaybackControls {
             }
 
             return clamp(videoPlayerProxy.videoSize.value.aspectRatio, min: 0.25, max: 4)
+        }
+
+        private var previewXOffset: CGFloat {
+            let videoWidth = previewImageHeight * videoSizeAspectRatio
+            let p = (sliderSize.width * scrubbedProgress) - (videoWidth / 2)
+            return clamp(p, min: 0, max: sliderSize.width - videoWidth)
         }
 
         @ViewBuilder
@@ -91,11 +82,19 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
+        private var isSlowScrubbing: Bool {
+            isScrubbing && (currentTranslation.y >= 60)
+        }
+
+        private var progress: Double {
+            scrubbedSecondsBox.value / (manager.item.runtime ?? .seconds(1))
+        }
+
         @ViewBuilder
         private var slowScrubbingIndicator: some View {
             HStack {
                 Image(systemName: "backward.fill")
-                Text("Slow Scrubbing")
+                Text(L10n.slowScrubbing.localizedCapitalized)
                 Image(systemName: "forward.fill")
             }
             .font(.caption)
@@ -138,7 +137,7 @@ extension VideoPlayer.PlaybackControls {
                 .frame(height: isScrubbing ? 20 : 10)
                 .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
             }
-            .animation(.linear(duration: 0.05), value: scrubbedSeconds)
+            .animation(.linear(duration: 0.05), value: scrubbedSecondsBox.value)
             .frame(height: 10)
             .disabled(manager.state == .loadingItem)
         }
@@ -164,7 +163,7 @@ extension VideoPlayer.PlaybackControls {
                 if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
                     PreviewImageView(previewImageProvider: previewImageProvider)
                         .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
-                        .frame(height: 85)
+                        .frame(height: previewImageHeight)
                         .posterBorder()
                         .cornerRadius(ratio: 1 / 30, of: \.width)
                         .offset(x: previewXOffset, y: -100)
