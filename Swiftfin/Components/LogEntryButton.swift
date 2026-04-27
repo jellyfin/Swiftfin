@@ -21,9 +21,13 @@ struct LogEntryButton<LeadingContent: View>: View {
     var body: some View {
         ChevronButton(action: action) {
             LabeledContent {
-                rowContent
-                    .frame(minHeight: 60, alignment: .leading)
-                    .padding(.vertical, EdgeInsets.edgePadding)
+                AlternateLayoutView(alignment: .leading) {
+                    Color.clear
+                        .frame(minHeight: 60)
+                } content: {
+                    rowContent
+                        .frame(minHeight: 60)
+                }
             } label: {
                 leadingContent()
                     .frame(width: 60, height: 60, alignment: .center)

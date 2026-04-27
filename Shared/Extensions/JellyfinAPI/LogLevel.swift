@@ -52,23 +52,23 @@ extension LogLevel: SystemImageable, Displayable {
         rawValue
     }
 
-    /// Init from Jellyfin Server `LogFile` abbreviations.
-    static func from(abbreviation: String?) -> LogLevel {
-        switch abbreviation {
+    /// Creates a `LogLevel` from a `LogFile` abbreviated type
+    init(rawValue: String) {
+        switch rawValue {
         case "TRC":
-            .trace
+            self = .trace
         case "DBG":
-            .debug
+            self = .debug
         case "INF":
-            .information
+            self = .information
         case "WRN":
-            .warning
+            self = .warning
         case "ERR":
-            .error
+            self = .error
         case "CRT":
-            .critical
+            self = .critical
         default:
-            .none
+            self = .none
         }
     }
 }
