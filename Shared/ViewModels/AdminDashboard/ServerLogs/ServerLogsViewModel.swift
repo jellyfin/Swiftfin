@@ -16,7 +16,7 @@ final class ServerLogsViewModel: ViewModel {
 
     @CasePathable
     enum Action {
-        case refresh
+        case refresh(filter: ServerLogType?)
 
         var transition: Transition {
             .to(.initial, then: .content)
@@ -30,36 +30,16 @@ final class ServerLogsViewModel: ViewModel {
     }
 
     @Published
-    var filter: ServerLogType? {
-        didSet {
-            filterLogs(filter)
-        }
-    }
-
-    @Published
     private(set) var logs: OrderedSet<LogFile> = []
-
-    // Paths.getServerLogs doesn't have filtering so keep the full list to do it locally.
-    private var allLogs: OrderedSet<LogFile> = []
 
     // MARK: - Refresh
 
     @Function(\Action.Cases.refresh)
-    private func _refresh() async throws {
+    private func _refresh(_ filter: ServerLogType?) async throws {
         let request = Paths.getServerLogs
         let response = try await userSession.client.send(request)
 
-        self.allLogs = OrderedSet(response.value)
-
-        filterLogs(filter)
-    }
-
-    private func filterLogs(_ filter: ServerLogType?) {
-        guard let filter else {
-            self.logs = allLogs
-            return
-        }
-
-        self.logs = allLogs.filter { $0.type == filter }
+        self.logs = OrderedSet(response.value)
+            .filter { filter == nil ? true : $0.type == filter }
     }
 }
