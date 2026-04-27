@@ -16,27 +16,30 @@ final class ServerLogsViewModel: ViewModel {
 
     @CasePathable
     enum Action {
-        case getLogs
+        case refresh(filter: ServerLogType?)
 
         var transition: Transition {
-            .loop(.refreshing)
+            .to(.initial, then: .content)
         }
     }
 
     enum State {
         case initial
         case error
-        case refreshing
+        case content
     }
 
     @Published
     private(set) var logs: OrderedSet<LogFile> = []
 
-    @Function(\Action.Cases.getLogs)
-    private func _getLogs() async throws {
+    // MARK: - Refresh
+
+    @Function(\Action.Cases.refresh)
+    private func _refresh(_ filter: ServerLogType?) async throws {
         let request = Paths.getServerLogs
         let response = try await userSession.client.send(request)
-        let newLogs = OrderedSet(response.value)
-        self.logs = newLogs
+
+        self.logs = OrderedSet(response.value)
+            .filter { filter == nil ? true : $0.type == filter }
     }
 }
