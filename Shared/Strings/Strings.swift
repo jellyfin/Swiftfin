@@ -994,8 +994,6 @@ internal enum L10n {
   internal static let name = L10n.tr("Localizable", "name", fallback: "Name")
   /// Native
   internal static let native = L10n.tr("Localizable", "native", fallback: "Native")
-  /// Native Player
-  internal static let nativePlayer = L10n.tr("Localizable", "nativePlayer", fallback: "Native Player")
   /// Network timed out
   internal static let networkTimedOut = L10n.tr("Localizable", "networkTimedOut", fallback: "Network timed out")
   /// Never
