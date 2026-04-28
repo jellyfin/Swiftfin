@@ -16,7 +16,7 @@ extension NavigationRoute {
             id: "filter",
             style: .sheet
         ) {
-            FilterView(viewModel: viewModel, type: type)
+            FilterView(viewModel, type: type)
         }
     }
 
@@ -25,7 +25,7 @@ extension NavigationRoute {
             id: "filter",
             style: .sheet
         ) {
-            FilterView(viewModel: viewModel, types: types)
+            FilterView(viewModel, types: types)
         }
     }
 

@@ -91,11 +91,19 @@ extension FilterView {
 
     /// Single Filter
     init(
-        viewModel: FilterViewModel,
+        _ viewModel: FilterViewModel,
         type: ItemFilterType
     ) {
         self.viewModel = viewModel
         self.types = [type]
     }
 
+    /// Mutiple Filters
+    init(
+        _ viewModel: FilterViewModel,
+        types: [ItemFilterType]
+    ) {
+        self.viewModel = viewModel
+        self.types = types
+    }
 }
