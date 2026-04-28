@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import GoogleCast
 import PreferencesView
 import UIKit
 
@@ -15,7 +16,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        true
+        let discoveryCriteria = GCKDiscoveryCriteria(applicationID: JellyfinCastReceiverID.stable)
+        let options = GCKCastOptions(discoveryCriteria: discoveryCriteria)
+        GCKCastContext.setSharedInstanceWith(options)
+        return true
     }
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
