@@ -16,7 +16,6 @@ func DotHStack(
         Circle()
             .frame(width: 2, height: 2)
             .padding(.horizontal, padding)
-        Text("Workflow Testing Value")
     } content: {
         content()
     }
