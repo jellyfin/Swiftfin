@@ -11,6 +11,15 @@ import SwiftUI
 
 extension NavigationRoute {
 
+    static func filter(type: ItemFilterType, viewModel: FilterViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "filter",
+            style: .sheet
+        ) {
+            FilterView(viewModel: viewModel, type: type)
+        }
+    }
+
     static func filter(types: [ItemFilterType], viewModel: FilterViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "filter",

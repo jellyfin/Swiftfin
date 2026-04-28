@@ -20,19 +20,14 @@ struct FilterView: View {
     private let types: [ItemFilterType]
 
     private var title: String {
-        if types.count > 1 {
-            types.map(\.displayTitle).joined(separator: " & ")
-        } else {
+        switch types.count {
+        case 1:
             types.first?.displayTitle ?? L10n.unknown
+        case 2:
+            types.map(\.displayTitle).joined(separator: " & ")
+        default:
+            L10n.filters
         }
-    }
-
-    init(
-        viewModel: FilterViewModel,
-        types: [ItemFilterType]
-    ) {
-        self.viewModel = viewModel
-        self.types = types
     }
 
     var body: some View {
@@ -90,4 +85,17 @@ struct FilterView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
     }
+}
+
+extension FilterView {
+
+    /// Single Filter
+    init(
+        viewModel: FilterViewModel,
+        type: ItemFilterType
+    ) {
+        self.viewModel = viewModel
+        self.types = [type]
+    }
+
 }
