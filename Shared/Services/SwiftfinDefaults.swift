@@ -296,7 +296,7 @@ extension Defaults.Keys {
         static var supplements: Key<[VideoPlayerSupplement]> {
             UserKey(
                 "videoPlayerSupplements",
-                default: VideoPlayerSupplement.allCases
+                default: VideoPlayerSupplement.supportedCases
             )
         }
 
