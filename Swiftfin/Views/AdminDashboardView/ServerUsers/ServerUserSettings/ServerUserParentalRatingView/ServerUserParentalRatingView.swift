@@ -77,24 +77,22 @@ struct ServerUserParentalRatingView: View {
 
     @ViewBuilder
     private var maxParentalRatingsView: some View {
-        Section(L10n.maxParentalRating) {
-            Picker(L10n.parentalRating, selection: $tempPolicy.maxParentalRating) {
-                ForEach(
-                    reducedParentalRatings(),
-                    id: \.value
-                ) { rating in
-                    Text(rating.name ?? L10n.unknown)
-                        .tag(rating.value)
+        Section(
+            L10n.maxParentalRating,
+            footer: L10n.maxParentalRatingDescription,
+            content: {
+                Picker(L10n.parentalRating, selection: $tempPolicy.maxParentalRating) {
+                    ForEach(
+                        reducedParentalRatings(),
+                        id: \.value
+                    ) { rating in
+                        Text(rating.name ?? L10n.unknown)
+                            .tag(rating.value)
+                    }
                 }
-            }
-        } footer: {
-            Text(L10n.maxParentalRatingDescription)
-        } learnMore: {
-            LabeledContent(
-                L10n.parentalRating,
-                content: parentalRatingLabeledContent
-            )
-        }
+            },
+            learnMore: parentalRatingLabeledContent
+        )
     }
 
     @ViewBuilder

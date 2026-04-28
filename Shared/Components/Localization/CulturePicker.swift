@@ -10,6 +10,9 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: This only shows `None` when the device is offline or there is no server connection.
+// - Need a local version purely off Apple's localization values
+// TODO: Option to remove `None` as an option
+// - Likely just an init for Binding<String> instead of Binding<String?>
 struct CulturePicker: View {
 
     @StateObject

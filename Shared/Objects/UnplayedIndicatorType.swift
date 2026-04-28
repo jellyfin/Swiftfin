@@ -9,7 +9,7 @@
 import Defaults
 import Foundation
 
-enum UnplayedIndicatorType: String, CaseIterable, Displayable, Identifiable, _DefaultsSerializable {
+enum UnplayedIndicatorType: String, CaseIterable, Displayable, Identifiable, Defaults.Serializable {
 
     case none
     case indicator
