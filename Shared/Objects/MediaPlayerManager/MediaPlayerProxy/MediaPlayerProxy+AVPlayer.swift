@@ -24,7 +24,6 @@ class AVMediaPlayerProxy: NSObject,
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
     var isScrubbing: Binding<Bool> = .constant(false)
     var scrubbedSeconds: Binding<Duration> = .constant(.zero)
-    let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let playbackInfo: PublishedBox<MediaPlayerPlaybackInfo?> = .init(initialValue: nil)
     var videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)

@@ -55,11 +55,13 @@ protocol VideoMediaPlayerProxy: MediaPlayerProxy {
     var videoPlayerBody: Self.VideoPlayerBody { get }
 }
 
+@MainActor
 protocol MediaPlayerOffsetConfigurable {
     func setAudioOffset(_ seconds: Duration)
     func setSubtitleOffset(_ seconds: Duration)
 }
 
+@MainActor
 protocol MediaPlayerPictureInPictureCapable: AnyObject {
     func startPiP()
     func stopPiP()
@@ -78,6 +80,7 @@ struct MediaPlayerPlaybackInfo {
     var bytesTransferred: Int64?
 }
 
+@MainActor
 protocol MediaPlayerPlaybackInfoProvider: AnyObject {
     var playbackInfo: PublishedBox<MediaPlayerPlaybackInfo?> { get }
 }

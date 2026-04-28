@@ -191,10 +191,10 @@ extension VLCMediaPlayerProxy {
 
                         if let proxy = manager.proxy as? MediaPlayerPlaybackInfoProvider {
                             proxy.playbackInfo.value = MediaPlayerPlaybackInfo(
-                                droppedFrames: info.numberOfLostPictures,
-                                observedBitrateKbps: Double(info.inputBitrate) * 8 / 1000,
-                                indicatedBitrateKbps: Double(info.demuxBitrate) * 8 / 1000,
-                                bytesTransferred: Int64(info.numberOfReadBytesOnInput)
+                                droppedFrames: info.statistics.lostPictures,
+                                observedBitrateKbps: Double(info.statistics.inputBitrate) * 8 / 1000,
+                                indicatedBitrateKbps: Double(info.statistics.demuxBitrate) * 8 / 1000,
+                                bytesTransferred: Int64(info.statistics.readBytes)
                             )
                         }
                     }
