@@ -435,6 +435,12 @@ extension View {
         modifier(ScrollIfLargerThanContainerModifier(axes: axes, padding: padding, alignment: alignment))
     }
 
+    func letterPickerBar(filterViewModel: FilterViewModel?) -> some View {
+        modifier(
+            LetterPickerBarModifier(viewModel: filterViewModel)
+        )
+    }
+
     func maskLinearGradient(
         @ArrayBuilder<OpacityLinearGradientModifier.Stop> stops: () -> [OpacityLinearGradientModifier.Stop]
     ) -> some View {
