@@ -31,7 +31,7 @@ extension NavigationRoute {
             OrderedSectionSelectorView(
                 selection: selectedSupplementsBinding,
                 sources: VideoPlayerSupplement.allCases,
-                removable: VideoPlayerSupplement.supportedCases
+                removable: VideoPlayerSupplement.allCases.subtracting(VideoPlayerSupplement.supportedCases)
             )
             .navigationTitle(L10n.supplements.localizedCapitalized)
         }
