@@ -10,9 +10,6 @@ import SwiftUI
 
 struct ServerCheckView: View {
 
-    @EnvironmentObject
-    private var rootCoordinator: RootCoordinator
-
     @Router
     private var router
 
@@ -44,7 +41,7 @@ struct ServerCheckView: View {
         .onReceive(viewModel.events) { event in
             switch event {
             case .connected:
-                rootCoordinator.root(.mainTab)
+                router.root(.mainTab)
             }
         }
         .topBarTrailing {

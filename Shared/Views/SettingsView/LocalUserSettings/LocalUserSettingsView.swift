@@ -62,11 +62,11 @@ struct LocalUserSettingsView: View {
             }
 
             Section {
-                // TODO: move under future "Storage" tab
-                //       when downloads implemented
-                Button(L10n.resetSettings, role: .destructive) {
-                    isPresentingConfirmReset = true
-                }
+                // TODO: Disabled as non-essential stored values and
+                // settings need to be migrated to be separate
+//                Button(L10n.resetSettings, role: .destructive) {
+//                    isPresentingConfirmReset = true
+//                }
             } footer: {
                 Text(L10n.resetSettingsDescription)
             }

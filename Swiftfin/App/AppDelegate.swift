@@ -19,14 +19,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
-           let topViewController = scene.keyWindow?.rootViewController,
-           let presentedViewController = topViewController.presentedViewController,
+
+        guard UIDevice.isPhone else {
+            return .allButUpsideDown
+        }
+
+        if let presentedViewController = window?.rootViewController?.presentedViewController,
            let preferencesHostingController = presentedViewController as? UIPreferencesHostingController
         {
             return preferencesHostingController.supportedInterfaceOrientations
         }
 
-        return UIDevice.isPad ? .allButUpsideDown : .portrait
+        return .portrait
     }
 }

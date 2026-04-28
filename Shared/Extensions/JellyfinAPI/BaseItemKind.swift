@@ -205,6 +205,168 @@ extension BaseItemKind {
 
 extension BaseItemKind {
 
+    /// The `ItemSortBy` cases applicable to this `BaseItemKind`.
+    @ArrayBuilder<ItemSortBy>
+    var supportedItemSortBy: [ItemSortBy] {
+
+        // Universal
+        ItemSortBy.name
+        ItemSortBy.random
+        ItemSortBy.sortName
+
+        switch self {
+        case .audio:
+            ItemSortBy.album
+            ItemSortBy.albumArtist
+            ItemSortBy.artist
+            ItemSortBy.dateCreated
+            ItemSortBy.datePlayed
+            ItemSortBy.isFavoriteOrLiked
+            ItemSortBy.isPlayed
+            ItemSortBy.isUnplayed
+            ItemSortBy.playCount
+            ItemSortBy.runtime
+        case .book:
+            ItemSortBy.communityRating
+            ItemSortBy.dateCreated
+            ItemSortBy.datePlayed
+            ItemSortBy.isFavoriteOrLiked
+            ItemSortBy.isPlayed
+            ItemSortBy.isUnplayed
+            ItemSortBy.officialRating
+            ItemSortBy.productionYear
+        case .boxSet:
+            ItemSortBy.communityRating
+            ItemSortBy.criticRating
+            ItemSortBy.dateCreated
+            ItemSortBy.dateLastContentAdded
+            ItemSortBy.isFavoriteOrLiked
+            ItemSortBy.officialRating
+            ItemSortBy.studio
+        case .collectionFolder:
+            ItemSortBy.dateCreated
+            ItemSortBy.dateLastContentAdded
+            ItemSortBy.isFolder
+        case .episode:
+            ItemSortBy.airedEpisodeOrder
+            ItemSortBy.communityRating
+            ItemSortBy.criticRating
+            ItemSortBy.dateCreated
+            ItemSortBy.datePlayed
+            ItemSortBy.indexNumber
+            ItemSortBy.isFavoriteOrLiked
+            ItemSortBy.isPlayed
+            ItemSortBy.isUnplayed
+            ItemSortBy.officialRating
+            ItemSortBy.parentIndexNumber
+            ItemSortBy.playCount
+            ItemSortBy.premiereDate
+            ItemSortBy.runtime
+            ItemSortBy.seriesSortName
+            ItemSortBy.studio
+            ItemSortBy.videoBitRate
+        case .folder:
+            ItemSortBy.dateCreated
+            ItemSortBy.dateLastContentAdded
+            ItemSortBy.isFolder
+        case .movie:
+            ItemSortBy.communityRating
+            ItemSortBy.criticRating
+            ItemSortBy.dateCreated
+            ItemSortBy.datePlayed
+            ItemSortBy.isFavoriteOrLiked
+            ItemSortBy.isPlayed
+            ItemSortBy.isUnplayed
+            ItemSortBy.officialRating
+            ItemSortBy.playCount
+            ItemSortBy.premiereDate
+            ItemSortBy.productionYear
+            ItemSortBy.runtime
+            ItemSortBy.studio
+            ItemSortBy.videoBitRate
+        case .musicAlbum:
+            ItemSortBy.albumArtist
+            ItemSortBy.artist
+            ItemSortBy.communityRating
+            ItemSortBy.criticRating
+            ItemSortBy.dateCreated
+            ItemSortBy.isFavoriteOrLiked
+            ItemSortBy.premiereDate
+            ItemSortBy.productionYear
+        case .musicArtist:
+            ItemSortBy.albumArtist
+            ItemSortBy.artist
+            ItemSortBy.communityRating
+            ItemSortBy.dateCreated
+            ItemSortBy.isFavoriteOrLiked
+        case .musicVideo:
+            ItemSortBy.album
+            ItemSortBy.artist
+            ItemSortBy.dateCreated
+            ItemSortBy.datePlayed
+            ItemSortBy.isFavoriteOrLiked
+            ItemSortBy.isPlayed
+            ItemSortBy.isUnplayed
+            ItemSortBy.playCount
+            ItemSortBy.productionYear
+            ItemSortBy.runtime
+            ItemSortBy.videoBitRate
+        case .photo:
+            ItemSortBy.album
+            ItemSortBy.dateCreated
+            ItemSortBy.isFavoriteOrLiked
+            ItemSortBy.isFolder
+        case .photoAlbum:
+            ItemSortBy.dateCreated
+            ItemSortBy.isFavoriteOrLiked
+        case .playlist:
+            ItemSortBy.dateCreated
+            ItemSortBy.dateLastContentAdded
+            ItemSortBy.isFavoriteOrLiked
+            ItemSortBy.runtime
+        case .program:
+            ItemSortBy.airTime
+            ItemSortBy.communityRating
+            ItemSortBy.officialRating
+            ItemSortBy.startDate
+        case .season:
+            ItemSortBy.dateCreated
+            ItemSortBy.dateLastContentAdded
+            ItemSortBy.indexNumber
+            ItemSortBy.premiereDate
+            ItemSortBy.productionYear
+        case .series:
+            ItemSortBy.communityRating
+            ItemSortBy.criticRating
+            ItemSortBy.dateCreated
+            ItemSortBy.dateLastContentAdded
+            ItemSortBy.isFavoriteOrLiked
+            ItemSortBy.officialRating
+            ItemSortBy.premiereDate
+            ItemSortBy.productionYear
+            ItemSortBy.studio
+        case .tvChannel:
+            ItemSortBy.airTime
+            ItemSortBy.communityRating
+            ItemSortBy.officialRating
+            ItemSortBy.startDate
+        case .userView:
+            ItemSortBy.dateCreated
+            ItemSortBy.dateLastContentAdded
+            ItemSortBy.isFolder
+        case .video:
+            ItemSortBy.isFavoriteOrLiked
+            ItemSortBy.isPlayed
+            ItemSortBy.isUnplayed
+            ItemSortBy.videoBitRate
+        default:
+            [ItemSortBy]()
+        }
+    }
+}
+
+extension BaseItemKind {
+
     /// Item types that can be identified on the server.
     static var itemIdentifiableCases: [BaseItemKind] {
         [.boxSet, .movie, .person, .series]

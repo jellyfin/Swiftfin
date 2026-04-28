@@ -183,7 +183,7 @@ extension NavigationRoute {
             id: "identifyItemResults",
             style: .sheet
         ) {
-            IdentifyItemView.RemoteSearchResultView(
+            IdentifyItemResultView(
                 viewModel: viewModel,
                 result: result
             )
@@ -206,15 +206,6 @@ extension NavigationRoute {
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
             ItemView(item: item)
-        }
-    }
-
-    static func itemDeletion(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
-        NavigationRoute(
-            id: "itemDeletion",
-            style: .sheet
-        ) {
-            ItemDeletionView(viewModel: viewModel)
         }
     }
 

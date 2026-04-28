@@ -203,10 +203,16 @@ extension PosterButton {
                         if (item.userData?.playbackPositionTicks ?? 0) > 0 {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 5)
                                 .isVisible(showProgress)
-                        } else if item.canBePlayed, !item.isLiveStream {
-                            UnwatchedIndicator(size: 25)
-                                .foregroundColor(accentColor)
-                                .isVisible(showUnplayed)
+                        } else if item.canBePlayed,
+                                  !item.isLiveStream,
+                                  showUnplayed != .none
+                        {
+                            UnwatchedIndicator(
+                                size: 25,
+                                count:
+                                showUnplayed == .count ? item.userData?.unplayedItemCount : nil
+                            )
+                            .foregroundStyle(accentColor.overlayColor, accentColor)
                         }
                     }
 

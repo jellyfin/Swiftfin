@@ -20,18 +20,22 @@ extension NavigationRoute {
         }
     }
 
-    static let activeSessions = NavigationRoute(
-        id: "activeSessions"
-    ) {
-        ActiveSessionsView()
+    static var activeSessions: NavigationRoute {
+        NavigationRoute(
+            id: "activeSessions"
+        ) {
+            ActiveSessionsView()
+        }
     }
 
     // MARK: - User Activity
 
-    static let activity = NavigationRoute(
-        id: "activity"
-    ) {
-        ServerActivityView()
+    static var activity: NavigationRoute {
+        NavigationRoute(
+            id: "activity"
+        ) {
+            ServerActivityView()
+        }
     }
 
     static func activityDetails(viewModel: ServerActivityDetailViewModel) -> NavigationRoute {
@@ -73,10 +77,12 @@ extension NavigationRoute {
 
     // MARK: - API Keys
 
-    static let apiKeys = NavigationRoute(
-        id: "apiKeys"
-    ) {
-        APIKeysView()
+    static var apiKeys: NavigationRoute {
+        NavigationRoute(
+            id: "apiKeys"
+        ) {
+            APIKeysView()
+        }
     }
 
     // MARK: - Devices
@@ -87,10 +93,12 @@ extension NavigationRoute {
         }
     }
 
-    static let devices = NavigationRoute(
-        id: "devices"
-    ) {
-        DevicesView()
+    static var devices: NavigationRoute {
+        NavigationRoute(
+            id: "devices"
+        ) {
+            DevicesView()
+        }
     }
 
     // MARK: - Server Tasks
@@ -120,18 +128,22 @@ extension NavigationRoute {
 
     // MARK: - Server Logs
 
-    static let serverLogs = NavigationRoute(
-        id: "serverLogs"
-    ) {
-        ServerLogsView()
+    static var serverLogs: NavigationRoute {
+        NavigationRoute(
+            id: "serverLogs"
+        ) {
+            ServerLogsView()
+        }
     }
 
     // MARK: - Server Tasks
 
-    static let tasks = NavigationRoute(
-        id: "tasks"
-    ) {
-        ServerTasksView()
+    static var tasks: NavigationRoute {
+        NavigationRoute(
+            id: "tasks"
+        ) {
+            ServerTasksView()
+        }
     }
 
     // MARK: - Users
@@ -217,10 +229,12 @@ extension NavigationRoute {
         }
     }
 
-    static let users = NavigationRoute(
-        id: "users"
-    ) {
-        ServerUsersView()
+    static var users: NavigationRoute {
+        NavigationRoute(
+            id: "users"
+        ) {
+            ServerUsersView()
+        }
     }
 }
 #endif

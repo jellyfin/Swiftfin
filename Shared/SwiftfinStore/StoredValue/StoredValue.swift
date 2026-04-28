@@ -8,6 +8,7 @@
 
 import Combine
 import CoreStore
+import Defaults
 import Factory
 import Foundation
 import Logging
@@ -19,10 +20,10 @@ import SwiftUI
 
 /// A property wrapper for a stored `AnyData` object.
 @propertyWrapper
-struct StoredValue<Value: Codable>: DynamicProperty {
+struct StoredValue<Value: Storable>: DynamicProperty {
 
     @ObservedObject
-    private var observable: Observable
+    private var observable: _GenericStoredValueObservation<Value>
 
     let key: StoredValues.Key<Value>
 
@@ -41,109 +42,11 @@ struct StoredValue<Value: Codable>: DynamicProperty {
 
     init(_ key: StoredValues.Key<Value>) {
         self.key = key
-        self.observable = .init(key: key)
+        self.observable = .init(key)
     }
 
     mutating func update() {
         _observable.update()
-    }
-}
-
-extension StoredValue {
-
-    final class Observable: ObservableObject {
-
-        let key: StoredValues.Key<Value>
-        let objectWillChange = ObservableObjectPublisher()
-
-        private let logger = Logger.swiftfin()
-        private var objectPublisher: ObjectPublisher<AnyStoredData>?
-        private var shouldListenToPublish: Bool = true
-
-        var value: Value {
-            get {
-                guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return key.defaultValue() }
-
-                let fetchedValue: Value? = try? AnyStoredData.fetch(
-                    key.name,
-                    ownerID: key.ownerID,
-                    domain: key.domain
-                )
-
-                return fetchedValue ?? key.defaultValue()
-            }
-            set {
-                guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return }
-                shouldListenToPublish = false
-
-                objectWillChange.send()
-
-                try? AnyStoredData.store(
-                    value: newValue,
-                    key: key.name,
-                    ownerID: key.ownerID,
-                    domain: key.domain ?? ""
-                )
-
-                shouldListenToPublish = true
-            }
-        }
-
-        init(key: StoredValues.Key<Value>) {
-            self.key = key
-            self.objectPublisher = makeObjectPublisher()
-        }
-
-        private func makeObjectPublisher() -> ObjectPublisher<AnyStoredData>? {
-
-            guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return nil }
-
-            let domain = key.domain ?? "none"
-
-            let ownerFilter: Where<AnyStoredData> = Where(\.$ownerID == key.ownerID)
-            let keyFilter: Where<AnyStoredData> = Where(\.$key == key.name)
-            let domainFilter: Where<AnyStoredData> = Where(\.$domain == domain)
-
-            let clause = From<AnyStoredData>()
-                .where(ownerFilter && keyFilter && domainFilter)
-
-            if let values = try? SwiftfinStore.dataStack.fetchAll(clause), let first = values.first {
-                let publisher = first.asPublisher(in: SwiftfinStore.dataStack)
-
-                publisher.addObserver(self) { [weak self] objectPublisher in
-                    guard self?.shouldListenToPublish ?? false else { return }
-                    guard let data = objectPublisher.object?.data else { return }
-                    guard let newValue = try? JSONDecoder().decode(Value.self, from: data) else { fatalError() }
-
-                    DispatchQueue.main.async {
-                        self?.value = newValue
-                    }
-                }
-
-                return publisher
-            } else {
-                // Stored value doesn't exist but we want to observe it.
-                // Create default and get new publisher
-
-                // TODO: this still store unnecessary data if never changed,
-                //       observe if changes were made and delete on deinit
-
-                do {
-                    try AnyStoredData.store(
-                        value: key.defaultValue(),
-                        key: key.name,
-                        ownerID: key.ownerID,
-                        domain: key.domain
-                    )
-                } catch {
-                    logger.error("Unable to store and create publisher for: \(key)")
-
-                    return nil
-                }
-
-                return makeObjectPublisher()
-            }
-        }
     }
 }
 
@@ -160,57 +63,96 @@ enum StoredValues {
     ///
     /// - Important: if `name` or `ownerID` are empty, the default value
     ///              will always be retrieved and nothing will be set.
-    final class Key<Value: Codable>: _AnyKey {
+    final class Key<Value: Storable>: _AnyKey {
+
+        enum StorageDestination {
+            case defaults
+            case sql
+        }
 
         let defaultValue: () -> Value
-        let domain: String?
+        let field: String?
         let name: String
         let ownerID: String
+        let storage: StorageDestination
+
+        var _defaultKey: Defaults.Key<Value> {
+
+            let resolvedName: String = if field == name || field == nil {
+                name
+            } else {
+                "\(field!)-\(name)"
+            }
+
+            return Defaults.Key(
+                resolvedName,
+                suite: UserDefaults(suiteName: ownerID)!,
+                default: defaultValue
+            )
+        }
 
         init(
             _ name: String,
             ownerID: String,
-            domain: String?,
+            field: String?,
+            storage: StorageDestination = .sql,
             default defaultValue: @autoclosure @escaping () -> Value
         ) {
             self.defaultValue = defaultValue
-            self.domain = domain
-            self.ownerID = ownerID
+            self.field = field
             self.name = name
+            self.ownerID = ownerID
+
+            // tvOS only supports user defaults storage
+            #if os(tvOS)
+            self.storage = .defaults
+            #else
+            self.storage = storage
+            #endif
         }
 
         /// Always returns the given value and does not
         /// set anything to storage.
         init(always: @autoclosure @escaping () -> Value) {
             defaultValue = always
-            domain = nil
-            name = ""
+            field = nil
+            name = "always"
             ownerID = ""
+            storage = .defaults
         }
     }
 
-    // TODO: find way that code isn't just copied from `Observable` above
     static subscript<Value: Codable>(key: Key<Value>) -> Value {
         get {
             guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return key.defaultValue() }
 
-            let fetchedValue: Value? = try? AnyStoredData.fetch(
-                key.name,
-                ownerID: key.ownerID,
-                domain: key.domain
-            )
+            switch key.storage {
+            case .defaults:
+                return Defaults[key._defaultKey]
+            case .sql:
+                let fetchedValue: Value? = try? AnyStoredData.fetch(
+                    ownerID: key.ownerID,
+                    field: key.field ?? key.name,
+                    key: key.name
+                )
 
-            return fetchedValue ?? key.defaultValue()
+                return fetchedValue ?? key.defaultValue()
+            }
         }
         set {
             guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return }
 
-            try? AnyStoredData.store(
-                value: newValue,
-                key: key.name,
-                ownerID: key.ownerID,
-                domain: key.domain ?? ""
-            )
+            switch key.storage {
+            case .defaults:
+                Defaults[key._defaultKey] = newValue
+            case .sql:
+                try? AnyStoredData.store(
+                    value: newValue,
+                    ownerID: key.ownerID,
+                    field: key.field ?? key.name,
+                    key: key.name
+                )
+            }
         }
     }
 }

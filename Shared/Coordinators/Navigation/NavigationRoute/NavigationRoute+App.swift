@@ -11,10 +11,12 @@ import SwiftUI
 
 extension NavigationRoute {
 
-    static let aboutApp = NavigationRoute(
-        id: "about-app"
-    ) {
-        AboutAppView()
+    static var aboutApp: NavigationRoute {
+        NavigationRoute(
+            id: "about-app"
+        ) {
+            AboutAppView()
+        }
     }
 
     #if os(iOS)
@@ -27,10 +29,12 @@ extension NavigationRoute {
     }
     #endif
 
-    static let appSettings = NavigationRoute(
-        id: "app-settings",
-        style: .sheet
-    ) {
-        AppSettingsView()
+    static var appSettings: NavigationRoute {
+        NavigationRoute(
+            id: "app-settings",
+            style: .sheet
+        ) {
+            AppSettingsView()
+        }
     }
 }

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import Factory
 import JellyfinAPI
 import SwiftUI
@@ -41,6 +42,11 @@ struct ItemEditorView: View {
         .refreshable {
             viewModel.refreshItem(sendNotification: false)
         }
+        .onNotification(.didDeleteItem) { _ in
+            UIDevice.feedback(.success)
+            router.dismiss()
+        }
+        .errorMessage($viewModel.error)
     }
 
     private var contentView: some View {
@@ -89,10 +95,25 @@ struct ItemEditorView: View {
             }
 
             if viewModel.item.canDelete == true {
-                Button(L10n.delete, role: .destructive) {
-                    router.route(to: .itemDeletion(viewModel: viewModel))
+                StateAdapter(initialValue: false) { isPresentingDeleteConfirmation in
+                    Button(L10n.delete, role: .destructive) {
+                        isPresentingDeleteConfirmation.wrappedValue = true
+                    }
+                    .buttonStyle(.primary)
+                    .confirmationDialog(
+                        L10n.deleteItemConfirmationMessage,
+                        isPresented: isPresentingDeleteConfirmation,
+                        titleVisibility: .visible
+                    ) {
+                        Button(
+                            L10n.confirm,
+                            role: .destructive,
+                            action: viewModel.delete
+                        )
+
+                        Button(L10n.cancel, role: .cancel) {}
+                    }
                 }
-                .buttonStyle(.primary)
             }
         }
     }

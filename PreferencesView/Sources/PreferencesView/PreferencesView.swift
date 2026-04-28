@@ -7,20 +7,18 @@
 //
 
 import SwiftUI
-import SwizzleSwift
 
 public struct PreferencesView<Content: View>: UIViewControllerRepresentable {
 
-    private var content: () -> Content
+    private let content: Content
 
     public init(@ViewBuilder content: @escaping () -> Content) {
-        _ = UIViewController.swizzlePreferences
-        self.content = content
+        self.content = content()
     }
 
-    public func makeUIViewController(context: Context) -> UIPreferencesHostingController {
-        UIPreferencesHostingController(content: content)
+    public func makeUIViewController(context: Context) -> some UIViewController {
+        UIPreferencesHostingController { content }
     }
 
-    public func updateUIViewController(_ uiViewController: UIPreferencesHostingController, context: Context) {}
+    public func updateUIViewController(_ uiViewController: some UIViewController, context: Context) {}
 }

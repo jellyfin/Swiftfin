@@ -55,6 +55,14 @@ protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
     func transform(image: Image) -> ImageBody
 }
 
+extension Poster where ImageBody == Image {
+
+    @MainActor
+    func transform(image: Image) -> Image {
+        image
+    }
+}
+
 extension Poster {
 
     var subtitle: String? {

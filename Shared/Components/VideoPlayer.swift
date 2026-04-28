@@ -8,6 +8,7 @@
 
 import Factory
 import SwiftUI
+import Transmission
 
 struct VideoPlayer: View {
 
@@ -63,7 +64,7 @@ struct VideoPlayer: View {
 
     var body: some View {
         containerView
-            .preference(key: IsStatusBarHiddenKey.self, value: !containerState.isPresentingOverlay)
+            .prefersStatusBarHidden(!containerState.isPresentingOverlay)
             .backport
             .onChange(of: audioOffset) { _, newValue in
                 if let proxy = proxy as? MediaPlayerOffsetConfigurable {

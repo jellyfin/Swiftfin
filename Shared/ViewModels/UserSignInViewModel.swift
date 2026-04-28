@@ -7,7 +7,6 @@
 //
 
 import Combine
-import CoreStore
 import Factory
 import Foundation
 import Get
@@ -181,10 +180,8 @@ final class UserSignInViewModel: ViewModel {
     }
 
     private func existingUser(id: String) -> UserState? {
-        try? SwiftfinStore
-            .dataStack
-            .fetchOne(From<UserModel>().where(\.$id == id))?
-            .state
+        StoredValues[.User.users]
+            .first { $0.id == id }
     }
 
     @Function(\Action.Cases.save)
@@ -205,21 +202,26 @@ final class UserSignInViewModel: ViewModel {
 
         let userState = user.state.state
 
-        guard let serverModel = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
-            logger.critical("Unable to find server to save user")
-            throw ErrorMessage(L10n.unknownError)
-        }
+        let savedUserState = userState
+        var users = StoredValues[.User.users]
+        users.removeAll { $0.id == savedUserState.id }
+        users.append(savedUserState)
+        StoredValues[.User.users] = users
 
-        let savedUserState = try dataStack.perform { transaction in
-            let newUser = transaction.create(Into<UserModel>())
+        var servers = StoredValues[.Server.servers]
+        if let index = servers.firstIndex(where: { $0.id == savedUserState.serverID }) {
+            let existingServer = servers[index]
+            let userIDs = existingServer.userIDs.appending(savedUserState.id)
 
-            newUser.id = userState.id
-            newUser.username = userState.username
+            servers[index] = ServerState(
+                urls: existingServer.urls,
+                currentURL: existingServer.currentURL,
+                name: existingServer.name,
+                id: existingServer.id,
+                userIDs: userIDs
+            )
 
-            let editServer = transaction.edit(serverModel)!
-            editServer.users.insert(newUser)
-
-            return newUser.state
+            StoredValues[.Server.servers] = servers
         }
 
         savedUserState.accessPolicy = accessPolicy

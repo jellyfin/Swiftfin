@@ -14,26 +14,12 @@ import KeychainSwift
 import Pulse
 import UIKit
 
-// Note: it is kind of backwards to have a "state" object with a mix of
-//       non-mutable and "mutable" values, but it just works.
-
 extension SwiftfinStore.State {
 
-    struct User: Hashable, Identifiable {
-
+    struct User: Hashable, Identifiable, Codable {
         let id: String
         let serverID: String
         let username: String
-
-        init(
-            id: String,
-            serverID: String,
-            username: String
-        ) {
-            self.id = id
-            self.serverID = serverID
-            self.username = username
-        }
     }
 }
 
@@ -102,39 +88,34 @@ extension UserState {
     /// Deletes the model that this state represents and
     /// all settings from `Defaults` `Keychain`, and `StoredValues`
     func delete() throws {
-        try SwiftfinStore.dataStack.perform { transaction in
-            guard let storedUser = try transaction.fetchOne(From<UserModel>().where(\.$id == id)) else {
-                throw ErrorMessage("Unable to find user to delete")
-            }
+        var users = StoredValues[.User.users]
+        users.removeAll { $0.id == id }
+        StoredValues[.User.users] = users
 
-            let storedDataClause = AnyStoredData.fetchClause(ownerID: id)
-            let storedData = try transaction.fetchAll(storedDataClause)
+        try deleteSettings()
 
-            transaction.delete(storedUser)
-            transaction.delete(storedData)
+        var servers = StoredValues[.Server.servers]
+        if let index = servers.firstIndex(where: { $0.id == serverID }) {
+            let currentServer = servers[index]
+
+            servers[index] = ServerState(
+                urls: currentServer.urls,
+                currentURL: currentServer.currentURL,
+                name: currentServer.name,
+                id: currentServer.id,
+                userIDs: currentServer.userIDs.filter { $0 != id }
+            )
+
+            StoredValues[.Server.servers] = servers
         }
-
-        UserDefaults.userSuite(id: id).removeAll()
 
         let keychain = Container.shared.keychainService()
         keychain.delete("\(id)-pin")
     }
 
     /// Deletes user settings from `UserDefaults` and `StoredValues`
-    ///
-    /// Note: if performing deletion with another transaction, use
-    ///       `AnyStoredData.fetchClause` instead within that transaction
-    ///       and delete `Defaults` manually
     func deleteSettings() throws {
-        try SwiftfinStore.dataStack.perform { transaction in
-            let userData = try transaction.fetchAll(
-                From<AnyStoredData>()
-                    .where(combineByAnd: Where(\.$ownerID == id), Where("%K BEGINSWITH %@", "domain", "setting"))
-            )
-
-            transaction.delete(userData)
-        }
-
+        try AnyStoredData.deleteAll(ownerID: id)
         UserDefaults.userSuite(id: id).removeAll()
     }
 
@@ -142,10 +123,9 @@ extension UserState {
     /// with an access token
     func getUserData(server: ServerState) async throws -> UserDto {
         let client = JellyfinClient(
-            configuration: .swiftfinConfiguration(url: server.currentURL),
+            configuration: .swiftfinConfiguration(url: server.currentURL, accessToken: accessToken),
             sessionConfiguration: .swiftfin,
-            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin()),
-            accessToken: accessToken
+            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
         )
 
         let request = Paths.getCurrentUser

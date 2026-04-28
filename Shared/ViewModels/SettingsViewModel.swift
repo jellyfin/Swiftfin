@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import CoreStore
 import Defaults
 import Factory
 import Files
@@ -52,11 +51,7 @@ final class SettingsViewModel: ViewModel {
 
         super.init()
 
-        do {
-            servers = try getServers()
-        } catch {
-            logger.critical("Could not retrieve servers")
-        }
+        servers = getServers()
     }
 
     func select(icon: any AppIcon) {
@@ -78,11 +73,8 @@ final class SettingsViewModel: ViewModel {
         }
     }
 
-    private func getServers() throws -> [ServerState] {
-        try SwiftfinStore
-            .dataStack
-            .fetchAll(From<ServerModel>())
-            .map(\.state)
+    private func getServers() -> [ServerState] {
+        StoredValues[.Server.servers]
             .sorted(using: \.name)
     }
 

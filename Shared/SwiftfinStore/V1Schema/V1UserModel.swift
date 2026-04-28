@@ -13,9 +13,6 @@ extension SwiftfinStore.V1 {
 
     final class StoredUser: CoreStoreObject {
 
-        @Field.Stored("accessToken")
-        var accessToken: String = ""
-
         @Field.Stored("username")
         var username: String = ""
 
@@ -28,13 +25,12 @@ extension SwiftfinStore.V1 {
         @Field.Relationship("server")
         var server: StoredServer?
 
+        @Field.Relationship("accessToken", inverse: \StoredAccessToken.$user)
+        var accessToken: StoredAccessToken?
+
         var state: UserState {
             guard let server else { fatalError("No server associated with user") }
-            return .init(
-                id: id,
-                serverID: server.id,
-                username: username
-            )
+            return .init(id: id, serverID: server.id, username: username)
         }
     }
 }

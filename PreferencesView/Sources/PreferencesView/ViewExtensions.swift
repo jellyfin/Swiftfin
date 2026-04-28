@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-public extension UIInterfaceOrientationMask {
-    var displayTitle: String {
+extension UIInterfaceOrientationMask: CustomDebugStringConvertible {
+    public var debugDescription: String {
         switch self {
         case .all: "All Orientations"
         case .allButUpsideDown: "All But Upside Down"
@@ -28,14 +28,6 @@ public extension View {
     #if os(iOS)
     func keyCommands(@KeyCommandsBuilder _ commands: @escaping () -> [KeyCommandAction]) -> some View {
         preference(key: KeyCommandsPreferenceKey.self, value: commands())
-    }
-
-    func preferredScreenEdgesDeferringSystemGestures(_ edges: UIRectEdge) -> some View {
-        preference(key: PreferredScreenEdgesDeferringSystemGesturesPreferenceKey.self, value: edges)
-    }
-
-    func prefersHomeIndicatorAutoHidden(_ hidden: Bool) -> some View {
-        preference(key: PrefersHomeIndicatorAutoHiddenPreferenceKey.self, value: hidden)
     }
     #endif
 

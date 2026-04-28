@@ -14,21 +14,28 @@ extension SwiftfinStore.V1 {
     static let schema = CoreStoreSchema(
         modelVersion: "V1",
         entities: [
+            Entity<StoredAccessToken>("AccessToken"),
             Entity<StoredServer>("Server"),
             Entity<StoredUser>("User"),
         ],
         versionLock: [
+            "AccessToken": [
+                0xA8C4_75E8_7449_4BB1,
+                0x7948_6E93_449F_0B3D,
+                0xA7DC_4A00_0354_1EDB,
+                0x9418_3FAE_7580_EF72,
+            ],
             "Server": [
-                0x4E8_8201_635C_2BB5,
-                0x7A7_85D8_A65D_177C,
-                0x3FE6_7B5B_D402_6EEE,
-                0x8893_16D4_188E_B136,
+                0x936B_46AC_D8E8_F0E3,
+                0x5989_0D4D_9F3F_885F,
+                0x819C_F7A4_ABF9_8B22,
+                0xE161_25C5_AF88_5A06,
             ],
             "User": [
-                0x1001_44F1_4D4D_5A31,
-                0x828F_7943_7D0B_4C03,
-                0x3824_5761_B815_D61A,
-                0x3C1D_BF68_E42B_1DA6,
+                0x845D_E08A_74BC_53ED,
+                0xE95A_406A_29F3_A5D0,
+                0x9EDA_7328_21A1_5EA9,
+                0xB5A_FA53_1E41_CE8A,
             ],
         ]
     )

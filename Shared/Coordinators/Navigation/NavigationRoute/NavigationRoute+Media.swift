@@ -15,16 +15,20 @@ import Transmission
 
 extension NavigationRoute {
 
-    static let channels = NavigationRoute(
-        id: "channels"
-    ) {
-        ChannelLibraryView()
+    static var channels: NavigationRoute {
+        NavigationRoute(
+            id: "channels"
+        ) {
+            ChannelLibraryView()
+        }
     }
 
-    static let liveTV = NavigationRoute(
-        id: "liveTV"
-    ) {
-        ProgramsView()
+    static var liveTV: NavigationRoute {
+        NavigationRoute(
+            id: "liveTV"
+        ) {
+            ProgramsView()
+        }
     }
 
     static func mediaSourceInfo(source: MediaSourceInfo) -> NavigationRoute {
@@ -36,13 +40,11 @@ extension NavigationRoute {
         }
     }
 
-    #if os(iOS)
     static func mediaStreamInfo(mediaStream: MediaStream) -> NavigationRoute {
         NavigationRoute(id: "mediaStreamInfo") {
             MediaStreamInfoView(mediaStream: mediaStream)
         }
     }
-    #endif
 
     @MainActor
     static func videoPlayer(

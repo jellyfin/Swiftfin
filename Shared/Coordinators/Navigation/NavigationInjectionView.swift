@@ -69,6 +69,7 @@ struct NavigationInjectionView: View {
                 NavigationInjectionView(coordinator: newCoordinator) {
                     route.destination
                 }
+                .environmentObject(rootCoordinator)
                 .background(.regularMaterial)
             }
         #else // <- Start: Use this for both OS when fixed
@@ -82,6 +83,7 @@ struct NavigationInjectionView: View {
                 NavigationInjectionView(coordinator: newCoordinator) {
                     route.destination
                 }
+                .environmentObject(rootCoordinator)
             }
         #endif // <- End
         #if os(tvOS)
@@ -93,6 +95,7 @@ struct NavigationInjectionView: View {
             NavigationInjectionView(coordinator: newCoordinator) {
                 route.destination
             }
+            .environmentObject(rootCoordinator)
         }
         #else
         .presentation(
@@ -112,6 +115,7 @@ struct NavigationInjectionView: View {
                         routeBinding.wrappedValue.destination
                             .environment(\.presentationControllerShouldDismiss, $isPresentationInteractive)
                     }
+                    .environmentObject(rootCoordinator)
                 }
 
                 // TODO: presentation options for customizing background color, dimming effect, etc.

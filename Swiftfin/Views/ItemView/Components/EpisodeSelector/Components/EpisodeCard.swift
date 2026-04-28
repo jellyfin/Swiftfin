@@ -6,12 +6,18 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
 
     struct EpisodeCard: View {
+
+        @Default(.accentColor)
+        private var accentColor
+        @Default(.Customization.Indicators.showPlayed)
+        private var showPlayed
 
         @Namespace
         private var namespace
@@ -28,17 +34,8 @@ extension SeriesEpisodeSelector {
                     title: progressLabel,
                     progress: (episode.userData?.playedPercentage ?? 0) / 100
                 )
-            } else if episode.userData?.isPlayed ?? false {
-                ZStack(alignment: .bottomTrailing) {
-                    Color.clear
-
-                    Image(systemName: "checkmark.circle.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30, alignment: .bottomTrailing)
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, .black)
-                        .padding()
-                }
+            } else if episode.userData?.isPlayed ?? false, showPlayed {
+                WatchedIndicator(size: 25)
             }
         }
 
