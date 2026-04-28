@@ -57,8 +57,9 @@ extension EditServerTaskView {
                 if let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
                     return L10n.itemAtItem(
                         triggerType.displayTitle,
-                        ServerTicks(timeOfDayTicks)
-                            .date.formatted(date: .omitted, time: .shortened)
+                        Duration.ticks(timeOfDayTicks)
+                            .timeOfDayDate
+                            .formatted(date: .omitted, time: .shortened)
                     )
                 }
             case .weeklyTrigger:
@@ -67,14 +68,16 @@ extension EditServerTaskView {
                 {
                     return L10n.itemAtItem(
                         dayOfWeek.rawValue.capitalized,
-                        ServerTicks(timeOfDayTicks)
-                            .date.formatted(date: .omitted, time: .shortened)
+                        Duration.ticks(timeOfDayTicks)
+                            .timeOfDayDate
+                            .formatted(date: .omitted, time: .shortened)
                     )
                 }
             case .intervalTrigger:
                 if let intervalTicks = taskTriggerInfo.intervalTicks {
                     return L10n.everyInterval(
-                        Duration.ticks(intervalTicks).formatted(.hourMinuteAbbreviated)
+                        Duration.ticks(intervalTicks)
+                            .formatted(.hourMinuteAbbreviated)
                     )
                 }
             case .startupTrigger:

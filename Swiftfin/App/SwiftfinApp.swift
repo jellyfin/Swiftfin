@@ -26,7 +26,9 @@ struct SwiftfinApp: App {
 
     init() {
 
+        #if DEBUG
         SwizzleDefaults.set(Defaults[.isLiquidGlassEnabled], for: "com.apple.SwiftUI.IgnoreSolariumOptOut")
+        #endif
 
         // Logging
         LoggingSystem.bootstrap { label in

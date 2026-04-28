@@ -98,7 +98,8 @@ struct EditServerView: View {
             }
         }
         .navigationTitle(L10n.server)
-        .onChange(of: currentServerURL) { newValue in
+        .backport
+        .onChange(of: currentServerURL) { _, newValue in
             viewModel.setCurrentURL(to: newValue)
         }
         .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {

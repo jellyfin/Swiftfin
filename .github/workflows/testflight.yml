@@ -12,6 +12,10 @@ jobs:
   build:
     name: "TestFlight ✈️"
     runs-on: macos-15
+    env:
+      XCODE_VERSION: "26.3"
+      DEFAULT_IOS_SCHEME: "Swiftfin"
+      DEFAULT_TVOS_SCHEME: "Swiftfin tvOS"
 
     steps:
     - name: Checkout
@@ -25,6 +29,12 @@ jobs:
       if: ${{ github.event.client_payload.hasCheckoutCommit }}
       run: |
         git checkout ${{ github.event.client_payload.commitSHA }}
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.3'
+        bundler-cache: true
 
     - name: Install SwiftGen
       run: brew install swiftgen
@@ -106,25 +116,36 @@ jobs:
         PAYLOAD_VERSION: ${{ github.event.client_payload.version }}
         AUTO_CHANGELOG: ${{ steps.changelog.outputs.changelog }}
       run: |
-        ARGS="keyID:$FL_KEY_ID issuerID:$FL_ISSUER_ID keyContents:$FL_KEY_CONTENTS"
-        ARGS="$ARGS codeSign64:$FL_CODE_SIGN_64 profileName64:$FL_PROFILE_NAME_64"
+        RESOLVED_XCODE_VERSION="${PAYLOAD_XCODE_VERSION:-$XCODE_VERSION}"
+        CHANGELOG_FILE=$(mktemp)
 
-        ARGS="$ARGS scheme:${PAYLOAD_SCHEME:-Swiftfin iOS}"
+        echo "$AUTO_CHANGELOG" > "$CHANGELOG_FILE"
+
+        COMMON_ARGS=(
+          "keyID:$FL_KEY_ID"
+          "issuerID:$FL_ISSUER_ID"
+          "keyContents:$FL_KEY_CONTENTS"
+          "codeSign64:$FL_CODE_SIGN_64"
+          "profileName64:$FL_PROFILE_NAME_64"
+          "xcodeVersion:$RESOLVED_XCODE_VERSION"
+          "changelogFile:$CHANGELOG_FILE"
+        )
 
         if [ -n "$PAYLOAD_BUILD" ]; then
-          ARGS="$ARGS build:$PAYLOAD_BUILD"
+          COMMON_ARGS+=("build:$PAYLOAD_BUILD")
         fi
 
         if [ -n "$PAYLOAD_VERSION" ]; then
-          ARGS="$ARGS version:$PAYLOAD_VERSION"
+          COMMON_ARGS+=("version:$PAYLOAD_VERSION")
         fi
 
-        if [ -n "$PAYLOAD_XCODE_VERSION" ]; then
-          ARGS="$ARGS xcodeVersion:$PAYLOAD_XCODE_VERSION"
+        if [ -n "$PAYLOAD_SCHEME" ]; then
+          SCHEMES=("$PAYLOAD_SCHEME")
+        else
+          SCHEMES=("$DEFAULT_IOS_SCHEME" "$DEFAULT_TVOS_SCHEME")
         fi
 
-        CHANGELOG_FILE=$(mktemp)
-        echo "$AUTO_CHANGELOG" > "$CHANGELOG_FILE"
-        ARGS="$ARGS changelogFile:$CHANGELOG_FILE"
-
-        sudo fastlane testFlightLane $ARGS
+        for scheme in "${SCHEMES[@]}"; do
+          echo "Building and uploading scheme: $scheme"
+          bundle exec fastlane testFlightLane "${COMMON_ARGS[@]}" "scheme:$scheme"
+        done

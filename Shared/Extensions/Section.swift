@@ -40,6 +40,20 @@ func Section(
 
 func Section(
     _ title: String,
+    footer: String,
+    @ViewBuilder content: @escaping () -> some View,
+    @LabeledContentBuilder learnMore: @escaping () -> AnyView
+) -> some View {
+    Section(
+        title,
+        content: content,
+        footer: { Text(footer) },
+        learnMore: learnMore
+    )
+}
+
+func Section(
+    _ title: String,
     @ViewBuilder content: @escaping () -> some View,
     @ViewBuilder footer: @escaping () -> some View,
     @LabeledContentBuilder learnMore: @escaping () -> AnyView

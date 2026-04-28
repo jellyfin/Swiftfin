@@ -152,7 +152,7 @@ struct ConnectToServerView: View {
                 isPresented: $isPresentingDuplicateServer,
                 presenting: duplicateServer
             ) { server in
-                Button(L10n.dismiss, role: .destructive)
+                Button(L10n.dismiss, role: .destructive) {}
 
                 Button(L10n.addURL) {
                     viewModel.addNewURL(serverState: server)
