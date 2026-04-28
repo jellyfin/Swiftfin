@@ -148,7 +148,14 @@ struct CustomizeSettingsView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.customize)
+        .topBarTrailing {
+            if viewModel.background.is(.updating) || viewModel.background.is(.refreshing) {
+                ProgressView()
+            }
+        }
     }
 
     // MARK: - Home Settings

@@ -62,8 +62,9 @@ struct EditServerUserAccessTagsView: View {
                 }
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.accessTags.localizedCapitalized)
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
         .refreshable {
             viewModel.refresh()
@@ -96,7 +97,7 @@ struct EditServerUserAccessTagsView: View {
             }
         }
         .navigationBarMenuButton(
-            isLoading: viewModel.background.is(.refreshing),
+            isLoading: viewModel.background.is(.refreshing) || viewModel.background.is(.updating),
             isHidden: isEditing || hasTags
         ) {
             Button(L10n.add, systemImage: "plus") {

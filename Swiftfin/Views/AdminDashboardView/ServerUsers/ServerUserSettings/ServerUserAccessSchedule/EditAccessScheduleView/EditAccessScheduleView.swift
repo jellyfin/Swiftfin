@@ -34,8 +34,9 @@ struct EditAccessScheduleView: View {
 
     var body: some View {
         contentView
+            .backport
+            .toolbarTitleDisplayMode(.inline)
             .navigationTitle(L10n.accessSchedules.localizedCapitalized)
-            .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isEditing)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -66,7 +67,7 @@ struct EditAccessScheduleView: View {
                 }
             }
             .navigationBarMenuButton(
-                isLoading: viewModel.background.is(.refreshing),
+                isLoading: viewModel.background.is(.refreshing) || viewModel.background.is(.updating),
                 isHidden: isEditing || viewModel.user.policy?.accessSchedules == []
             ) {
                 Button(L10n.add, systemImage: "plus") {

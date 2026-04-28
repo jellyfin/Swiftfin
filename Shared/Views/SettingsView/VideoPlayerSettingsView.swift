@@ -97,7 +97,14 @@ struct VideoPlayerSettingsView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.videoPlayer.localizedCapitalized)
+        .topBarTrailing {
+            if viewModel.background.is(.updating) || viewModel.background.is(.refreshing) {
+                ProgressView()
+            }
+        }
     }
 
     // MARK: - Gesture Settings

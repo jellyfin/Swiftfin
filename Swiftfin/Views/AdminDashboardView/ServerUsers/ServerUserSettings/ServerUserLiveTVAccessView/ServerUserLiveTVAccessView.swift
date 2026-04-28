@@ -47,8 +47,9 @@ struct ServerUserLiveTVAccessView: View {
                 )
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.liveTVAccessCapitalized)
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }

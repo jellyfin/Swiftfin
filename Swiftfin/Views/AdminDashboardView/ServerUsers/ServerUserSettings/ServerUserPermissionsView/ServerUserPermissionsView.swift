@@ -47,8 +47,9 @@ struct ServerUserPermissionsView: View {
                 }
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.permissions)
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }

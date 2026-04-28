@@ -38,8 +38,9 @@ struct ServerUserDeviceAccessView: View {
 
     var body: some View {
         contentView
+            .backport
+            .toolbarTitleDisplayMode(.inline)
             .navigationTitle(L10n.deviceAccess.localizedCapitalized)
-            .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismiss()
             }

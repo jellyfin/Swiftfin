@@ -178,16 +178,6 @@ extension NavigationRoute {
         }
     }
 
-    #if os(iOS)
-    static var nativePlayerSettings: NavigationRoute {
-        NavigationRoute(
-            id: "nativePlayerSettings"
-        ) {
-            NativeVideoPlayerSettingsView()
-        }
-    }
-    #endif
-
     static var playbackQualitySettings: NavigationRoute {
         NavigationRoute(
             id: "playbackQualitySettings"

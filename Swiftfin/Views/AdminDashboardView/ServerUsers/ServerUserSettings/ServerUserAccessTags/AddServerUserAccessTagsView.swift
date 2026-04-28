@@ -82,13 +82,15 @@ struct AddServerUserAccessTagsView: View {
                 existsOnServer: existsOnServer
             )
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.addAccessTag.localizedCapitalized)
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }
         .topBarTrailing {
-            if viewModel.background.states.contains(.refreshing) ||
+            if viewModel.background.is(.refreshing) ||
+                viewModel.background.is(.updating) ||
                 tagViewModel.background.states.contains(.searching)
             {
                 ProgressView()

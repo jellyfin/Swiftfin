@@ -102,7 +102,14 @@ struct ServerUserDetailsView: View {
                 }
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.user)
+        .topBarTrailing {
+            if viewModel.background.is(.updating) || viewModel.background.is(.refreshing) {
+                ProgressView()
+            }
+        }
         .onFirstAppear {
             viewModel.refresh()
         }
