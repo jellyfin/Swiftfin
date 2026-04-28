@@ -146,6 +146,9 @@ final class MediaPlayerManager: ViewModel {
                 return MediaChaptersSupplement(chapters: chapters)
             case .queue:
                 return queue
+            case .people:
+                guard let people = item.people?.filter({ $0.type?.isSupported == true }), people.isNotEmpty else { return nil }
+                return MediaPeopleSupplement(people: people)
             case .playbackInformation:
                 guard let itemID = item.id else { return nil }
                 return PlaybackInformationSupplement(itemID: itemID)

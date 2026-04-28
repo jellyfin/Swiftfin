@@ -12,6 +12,7 @@ enum VideoPlayerSupplement: String, CaseIterable, Displayable, Equatable, Identi
     case chapters
     case queue
     case playbackInformation
+    case people
 
     var displayTitle: String {
         switch self {
@@ -21,6 +22,8 @@ enum VideoPlayerSupplement: String, CaseIterable, Displayable, Equatable, Identi
             L10n.chapters
         case .queue:
             L10n.episodes
+        case .people:
+            L10n.people
         case .playbackInformation:
             L10n.session
         }
@@ -38,6 +41,8 @@ enum VideoPlayerSupplement: String, CaseIterable, Displayable, Equatable, Identi
             "list.bullet.rectangle.fill"
         case .queue:
             "list.triangle"
+        case .people:
+            "person.2.fill"
         case .playbackInformation:
             "waveform.circle.fill"
         }
