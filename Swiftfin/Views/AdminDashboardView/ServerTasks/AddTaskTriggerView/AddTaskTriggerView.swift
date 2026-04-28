@@ -24,7 +24,7 @@ struct AddTaskTriggerView: View {
 
     static let defaultTimeOfDayTicks = 0
     static let defaultDayOfWeek: DayOfWeek = .sunday
-    static let defaultIntervalTicks = 36_000_000_000
+    static let defaultIntervalTicks = Duration.hours(1).ticks
 
     private let emptyTaskTriggerInfo: TaskTriggerInfo
 

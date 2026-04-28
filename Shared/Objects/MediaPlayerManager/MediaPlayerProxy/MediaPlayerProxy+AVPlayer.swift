@@ -11,7 +11,7 @@ import AVKit
 import Combine
 import Defaults
 import Foundation
-import JellyfinAPI
+@preconcurrency import JellyfinAPI
 import SwiftUI
 
 @MainActor
@@ -26,6 +26,9 @@ class AVMediaPlayerProxy: NSObject,
     var scrubbedSeconds: Binding<Duration> = .constant(.zero)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let playbackInfo: PublishedBox<MediaPlayerPlaybackInfo?> = .init(initialValue: nil)
+    var videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
+    let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
+    let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
 
     let avPlayerLayer: AVPlayerLayer
     let player: AVPlayer

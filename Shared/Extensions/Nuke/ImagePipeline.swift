@@ -16,7 +16,7 @@ extension ImagePipeline {
 
     enum Swiftfin {}
 
-    static func cacheKey(for url: URL) -> String? {
+    nonisolated static func cacheKey(for url: URL) -> String? {
         guard var components = url.components else { return nil }
 
         var maxWidthValue: String?
@@ -32,6 +32,17 @@ extension ImagePipeline {
             return urlSHA + "-\(maxWidthValue)"
         } else {
             return urlSHA
+        }
+    }
+
+    func loadFirstImage(from requests: some Collection<ImageSource>) async -> UIImage? {
+        guard let url = requests.first?.url else { return nil }
+
+        do {
+            return try await image(for: url)
+        } catch {
+            let requests = requests.dropFirst()
+            return await loadFirstImage(from: requests)
         }
     }
 
@@ -81,24 +92,10 @@ extension ImagePipeline.Swiftfin {
     static let other: ImagePipeline = ImagePipeline(configuration: .withURLCache)
 }
 
-final class SwiftfinImagePipelineDelegate: ImagePipelineDelegate {
+final class SwiftfinImagePipelineDelegate: ImagePipeline.Delegate {
 
     func cacheKey(for request: ImageRequest, pipeline: ImagePipeline) -> String? {
         guard let url = request.url else { return nil }
         return ImagePipeline.cacheKey(for: url)
-    }
-}
-
-extension ImagePipeline {
-
-    func loadFirstImage(from requests: some Collection<ImageSource>) async -> UIImage? {
-        guard let url = requests.first?.url else { return nil }
-
-        do {
-            return try await image(for: url)
-        } catch {
-            let requests = requests.dropFirst()
-            return await loadFirstImage(from: requests)
-        }
     }
 }
