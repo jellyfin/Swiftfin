@@ -22,13 +22,8 @@ extension LetterPickerBar {
         @FocusState
         private var isFocused: Bool
 
-        private let letter: ItemLetter
-        private let viewModel: FilterViewModel
-
-        init(letter: ItemLetter, viewModel: FilterViewModel) {
-            self.letter = letter
-            self.viewModel = viewModel
-        }
+        let letter: ItemLetter
+        let viewModel: FilterViewModel
 
         private var foregroundStyle: Color {
             if isFocused {

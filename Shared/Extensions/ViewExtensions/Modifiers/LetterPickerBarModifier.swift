@@ -11,8 +11,6 @@ import SwiftUI
 
 struct LetterPickerBarModifier: ViewModifier {
 
-    @Default(.accentColor)
-    private var accentColor
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
 
@@ -20,8 +18,7 @@ struct LetterPickerBarModifier: ViewModifier {
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if letterPickerOrientation.isEnabled,
-           let edge = letterPickerOrientation.edge,
+        if let edge = letterPickerOrientation.edge,
            let viewModel
         {
             content
@@ -29,7 +26,6 @@ struct LetterPickerBarModifier: ViewModifier {
                 .ignoresSafeArea(.all, edges: edge == .leading ? .trailing : .leading)
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     LetterPickerBar(viewModel: viewModel)
-                        .foregroundStyle(accentColor.overlayColor, accentColor, Color.primary)
                         .if(!UIDevice.isTV) { view in
                             view
                                 .padding(.vertical, EdgeInsets.edgePadding / 2)

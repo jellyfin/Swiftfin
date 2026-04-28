@@ -46,8 +46,4 @@ enum LetterPickerOrientation: String, CaseIterable, Displayable, Storable {
             .trailing
         }
     }
-
-    var isEnabled: Bool {
-        self != .disabled
-    }
 }
