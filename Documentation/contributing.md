@@ -8,7 +8,7 @@
 
 ## Setup
 
-Fork the Swiftfin repo and install the necessary dependencies with Xcode 15:
+Fork the Swiftfin repo and install the necessary dependencies:
 
 ```bash
 # install Carthage, SwiftFormat, and SwiftGen with homebrew
@@ -39,6 +39,16 @@ You can change the `PRODUCT_BUNDLE_IDENTIFIER` value to have multiple builds of 
 
 `DevelopmentTeam.xcconfig` is already added to the `.gitignore`.
 
+### Xcode Version
+
+Swiftfin is built using the Xcode version pinned in our [CI workflow](https://github.com/jellyfin/Swiftfin/blob/main/.github/workflows/ci.yml#L27). This is the recommended version of Xcode for development.
+
+### Testing
+
+Swiftfin can be tested using Xcode's built-in Simulator or on real hardware. See Apple's guide on [Running your app in Simulator or on a device](https://developer.apple.com/documentation/xcode/running-your-app-in-simulator-or-on-a-device/) for instructions on both approaches.
+
+> **Note:** Some functionality behaves differently between the Simulator and real devices, including picture-in-picture, device storage, and local network access. In these scenarios, it is recommended to test code changes on real hardware to ensure correct behavior.
+
 ## Git Flow
 
 Swiftfin follows the same Pull Request Guidelines as outlined in the [Jellyfin Pull Request Guidelines](https://jellyfin.org/docs/general/contributing/development.html#pull-request-guidelines).
@@ -56,7 +66,7 @@ The following must pass in order for a PR to be merged:
 
 Labeling PRs with `enhancement`, `bug`, or `crash` will allow the PR to be tracked in GitHub's [automatically generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes). Small fixes (like minor UI adjustments) or non-user facing issues (like developer project clean up) can also have the `ignore-for-release` label because they may not be important to include in the release notes.
 
-### Documentation
+## Documentation
 Documentation for advanced or complex features and other implementation reasoning is encouraged so that future developers may have insights and a better understand of the application. `// MARK:` comments are encouraged for organization, maintainability, and ease of navigation in Xcode's Minimap.
 
 ## Architecture
