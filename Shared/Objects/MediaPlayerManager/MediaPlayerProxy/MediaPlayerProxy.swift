@@ -36,6 +36,8 @@ protocol VideoMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigura
     associatedtype VideoPlayerBody: View
 
     var videoSize: PublishedBox<CGSize> { get }
+    var droppedFrames: PublishedBox<Int> { get }
+    var corruptedFrames: PublishedBox<Int> { get }
 
     // TODO: remove when container view handles aspect fill
     func setAspectFill(_ aspectFill: Bool)
