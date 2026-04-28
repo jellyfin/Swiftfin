@@ -11,8 +11,8 @@
 Fork the Swiftfin repo and install the necessary dependencies:
 
 ```bash
-# install Carthage, SwiftFormat, and SwiftGen with homebrew
-$ brew install carthage swiftformat swiftgen
+# install Carthage, SwiftFormat, SwiftLint, and SwiftGen with homebrew
+$ brew install carthage swiftformat swiftlint swiftgen
 
 # install or update dependencies
 $ carthage update --use-xcframeworks
@@ -56,6 +56,8 @@ Swiftfin follows the same Pull Request Guidelines as outlined in the [Jellyfin P
 If a Pull Request relates to an Issue, mention the issue correctly in the PR description.
 
 [SwiftFormat](https://github.com/nicklockwood/SwiftFormat) is our linter. `swiftformat .` can be run in the project directory or install SwiftFormat's Xcode extension.
+
+[SwiftLint](https://github.com/realm/SwiftLint) enforces additional rules [Add better write up here]
 
 The following must pass in order for a PR to be merged:
 - automated `iOS` and `tvOS` builds must succeed

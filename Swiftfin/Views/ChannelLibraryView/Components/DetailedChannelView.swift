@@ -48,7 +48,8 @@ extension ChannelLibraryView {
         private func programLabel(for program: BaseItemDto) -> some View {
             HStack(alignment: .top) {
                 AlternateLayoutView(alignment: .leading) {
-                    Text("00:00 AAA".doNotLocalize)
+                    // swiftlint:disable:next hard_coded_display_string
+                    Text("00:00 AAA")
                         .monospacedDigit()
                 } content: {
                     if let startDate = program.startDate {

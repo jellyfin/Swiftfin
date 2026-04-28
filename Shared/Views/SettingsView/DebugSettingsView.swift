@@ -11,7 +11,8 @@ import JellyfinAPI
 import SwiftUI
 
 // NOTE: All settings *MUST* be surrounded by DEBUG compiler conditional as usage site
-// NOTE: This file is not checked for hard coded strings
+
+// swiftlint:disable hard_coded_display_string
 
 #if DEBUG
 struct DebugSettingsView: View {

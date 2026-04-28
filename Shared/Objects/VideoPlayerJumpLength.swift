@@ -17,6 +17,7 @@ enum VideoPlayerJumpLength: Int, CaseIterable, Defaults.Serializable, Displayabl
     case thirty = 30
 
     // TODO: formatter for locale?
+    // swiftlint:disable:next hard_coded_display_string
     var displayTitle: String {
         "\(rawValue)s"
     }

@@ -57,6 +57,7 @@ extension DownloadTaskView {
 //                                .buttonStyle(.plain)
 //                                .frame(width: 30, height: 30)
 
+                            // swiftlint:disable:next hard_coded_display_string
                             Text("\(Int(progress * 100))%")
                                 .foregroundColor(.secondary)
 
@@ -94,11 +95,6 @@ extension DownloadTaskView {
                         .frame(height: 50)
                     }
                 }
-
-//                Text("Media Info")
-//                    .font(.title2)
-//                    .fontWeight(.semibold)
-//                    .padding(.horizontal)
             }
             .alert(
                 L10n.error,

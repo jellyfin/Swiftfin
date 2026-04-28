@@ -46,7 +46,7 @@ struct TruncatedText: View {
                         HStack {
                             Spacer()
 
-                            Text("   " + seeMoreText)
+                            Text(.tab + seeMoreText)
                                 .background {
                                     LinearGradient(
                                         stops: [

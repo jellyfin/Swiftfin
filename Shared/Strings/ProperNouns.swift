@@ -25,7 +25,7 @@ extension L10n {
     static let hlg = "HLG"
     static let dolbyVision = "Dolby Vision"
 
-    // MARK: - Codecs
+    // MARK: - Video codecs
 
     static let av1 = "AV1"
     static let dirac = "Dirac"
@@ -52,6 +52,41 @@ extension L10n {
     static let wmv1 = "WMV1"
     static let wmv2 = "WMV2"
     static let wmv3 = "WMV3"
+
+    // MARK: - Audio codecs
+
+    static let aac = "AAC"
+    static let ac3 = "AC-3"
+    static let alac = "ALAC"
+    static let amrNB = "AMR-NB"
+    static let amrWB = "AMR-WB"
+    static let dts = "DTS"
+    static let dtsHD = "DTS-HD"
+    static let eac3 = "E-AC-3"
+    static let flac = "FLAC"
+    static let mlp = "MLP"
+    static let mp1 = "MP1"
+    static let mp2 = "MP2"
+    static let mp3 = "MP3"
+    static let nellymoser = "Nellymoser"
+    static let opus = "Opus"
+    static let pcmALAW = "PCM ALAW"
+    static let pcmBluray = "PCM Bluray"
+    static let pcmDVD = "PCM DVD"
+    static let pcmMULAW = "PCM MULAW"
+    static let pcmS16BE = "PCM S16BE"
+    static let pcmS16LE = "PCM S16LE"
+    static let pcmS24BE = "PCM S24BE"
+    static let pcmS24LE = "PCM S24LE"
+    static let pcmU8 = "PCM U8"
+    static let speex = "Speex"
+    static let trueHD = "TrueHD"
+    static let vorbis = "Vorbis"
+    static let wavPack = "WavPack"
+    static let wmaLossless = "WMA Lossless"
+    static let wmaPro = "WMA Pro"
+    static let wmaV1 = "WMA V1"
+    static let wmaV2 = "WMA V2"
 
     // MARK: - Containers
 

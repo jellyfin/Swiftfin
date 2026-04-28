@@ -39,7 +39,7 @@ struct AboutAppView: View {
                 )
 
                 LabeledContent(
-                    "Server requirement",
+                    L10n.serverRequirement,
                     value: JellyfinClient.sdkVersion.description
                 )
             }

@@ -102,7 +102,8 @@ struct UserButton: View {
             .lineLimit(1)
 
         AlternateLayoutView {
-            Text("Hidden".doNotLocalize)
+            // swiftlint:disable:next hard_coded_display_string
+            Text("Hidden")
         } content: {
             if let subtitle {
                 Text(subtitle)
