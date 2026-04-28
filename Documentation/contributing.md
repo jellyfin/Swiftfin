@@ -63,6 +63,7 @@ The following must pass in order for a PR to be merged:
 - automated `iOS` and `tvOS` builds must succeed
 - developer account cannot be attached
 - SwiftFormat linting check must pass. If this does not pass, you may need to update your version of `swiftformat`
+- SwiftLint check must pass. If this does not pass, fix the violation or add a justified `swiftlint:disable` directive
 - new strings that are not part of an experimental feature must be localized
 - label(s) are attached, if applicable
 

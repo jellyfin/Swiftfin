@@ -22,5 +22,8 @@ jobs:
       - name: Run Swiftformat
         run: swiftformat . --lint --config ".swiftformat"
 
+      - name: Run SwiftLint
+        run: swiftlint lint --strict --config ".swiftlint.yml"
+
       - name: Find Unused Strings
         run: swift Scripts/Translations/FindUnusedStrings.swift
