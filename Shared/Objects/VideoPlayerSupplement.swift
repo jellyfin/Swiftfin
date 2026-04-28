@@ -6,7 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-enum VideoPlayerSupplement: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable {
+enum VideoPlayerSupplement: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable, SupportedCaseIterable {
 
     case info
     case chapters
@@ -43,5 +43,5 @@ enum VideoPlayerSupplement: String, CaseIterable, Displayable, Equatable, Identi
         }
     }
 
-    static let defaultSupplements: [VideoPlayerSupplement] = allCases
+    static let supportedCases: [VideoPlayerSupplement] = [.info, .chapters, .queue]
 }

@@ -28,8 +28,12 @@ extension NavigationRoute {
 
     static func supplementSelector(selectedSupplementsBinding: Binding<[VideoPlayerSupplement]>) -> NavigationRoute {
         NavigationRoute(id: "supplementSelector") {
-            OrderedSectionSelectorView(selection: selectedSupplementsBinding, sources: VideoPlayerSupplement.allCases)
-                .navigationTitle(L10n.supplements.localizedCapitalized)
+            OrderedSectionSelectorView(
+                selection: selectedSupplementsBinding,
+                sources: VideoPlayerSupplement.allCases,
+                removable: VideoPlayerSupplement.supportedCases
+            )
+            .navigationTitle(L10n.supplements.localizedCapitalized)
         }
     }
 
