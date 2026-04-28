@@ -51,11 +51,6 @@ struct PagingLibraryView<Element: Poster>: View {
     @Default(.Customization.Library.posterType)
     private var defaultPosterType: PosterDisplayType
 
-    @Default(.Customization.Library.letterPickerEnabled)
-    private var letterPickerEnabled
-    @Default(.Customization.Library.letterPickerOrientation)
-    private var letterPickerOrientation
-
     @Namespace
     private var namespace
 
@@ -234,7 +229,7 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     @ViewBuilder
-    private var innerContent: some View {
+    private var contentView: some View {
         switch viewModel.state {
         case .content:
             if viewModel.elements.isEmpty {
@@ -246,24 +241,6 @@ struct PagingLibraryView<Element: Poster>: View {
             ProgressView()
         default:
             AssertionFailureView("Expected view for unexpected state")
-        }
-    }
-
-    @ViewBuilder
-    private var contentView: some View {
-        if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
-            ZStack(alignment: letterPickerOrientation.alignment) {
-                innerContent
-                    .padding(letterPickerOrientation.edge, LetterPickerBar.size + 10)
-                    .frame(maxWidth: .infinity)
-
-                LetterPickerBar(viewModel: filterViewModel)
-                    .padding(.top, safeArea.top)
-                    .padding(.bottom, safeArea.bottom)
-                    .padding(letterPickerOrientation.edge, 10)
-            }
-        } else {
-            innerContent
         }
     }
 
@@ -283,7 +260,8 @@ struct PagingLibraryView<Element: Poster>: View {
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
-        .ignoresSafeArea()
+        .ignoresSafeArea(.all, edges: .vertical)
+        .letterPickerBar(filterViewModel: viewModel.filterViewModel)
         .onSizeChanged { _, safeArea in
             self.safeArea = safeArea
         }
