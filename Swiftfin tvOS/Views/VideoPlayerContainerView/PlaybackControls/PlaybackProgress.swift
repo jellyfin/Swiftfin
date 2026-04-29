@@ -132,6 +132,7 @@ extension VideoPlayer.PlaybackControls {
                     .trackingSize($sliderSize)
                     .overlay {
                         CurrentSecondTick()
+                            .frame(height: sliderSize.height + 0.5)
                             .allowsHitTesting(false)
                     }
                     .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)

@@ -77,55 +77,57 @@ extension VideoPlayer {
                     .disabled(containerState.isPresentingSupplement)
                     .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
 
-                PlaybackProgress(
-                    onPanScrubChanged: { isPanning in
-                        if isPanning {
-                            if containerState.scrubOriginSeconds == nil {
-                                containerState.scrubOriginSeconds = manager.seconds
+                VStack(spacing: 0) {
+                    PlaybackProgress(
+                        onPanScrubChanged: { isPanning in
+                            if isPanning {
+                                if containerState.scrubOriginSeconds == nil {
+                                    containerState.scrubOriginSeconds = manager.seconds
+                                }
+                                containerState.hasEnteredScrubMode = true
                             }
-                            containerState.hasEnteredScrubMode = true
                         }
-                    }
-                )
-                .focused($isProgressBarFocused)
-                .focusSection()
-                .focusGuide(
-                    focusGuide,
-                    tag: "progressBar",
-                    top: "navigationBar",
-                    bottom: "dividerZone"
-                )
-                .fixedSize(horizontal: false, vertical: true)
-                .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
-                .disabled(containerState.isPresentingSupplement)
-                .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
-
-                Color.clear
-                    .frame(height: 0)
+                    )
+                    .focused($isProgressBarFocused)
+                    .focusSection()
                     .focusGuide(
                         focusGuide,
-                        tag: "dividerZone",
-                        onContentFocus: {
-                            if focusGuide.lastFocusedTag == "tabButtons" {
-                                if containerState.isPresentingSupplement {
-                                    containerState.selectedSupplement = nil
-                                    containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
+                        tag: "progressBar",
+                        top: "navigationBar",
+                        bottom: "dividerZone"
+                    )
+                    .fixedSize(horizontal: false, vertical: true)
+                    .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
+                    .disabled(containerState.isPresentingSupplement)
+                    .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
 
-                                    DispatchQueue.main.async {
+                    Color.clear
+                        .frame(height: 0)
+                        .focusGuide(
+                            focusGuide,
+                            tag: "dividerZone",
+                            onContentFocus: {
+                                if focusGuide.lastFocusedTag == "tabButtons" {
+                                    if containerState.isPresentingSupplement {
+                                        containerState.selectedSupplement = nil
+                                        containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
+
+                                        DispatchQueue.main.async {
+                                            focusGuide.transition(to: "progressBar")
+                                        }
+                                    } else {
                                         focusGuide.transition(to: "progressBar")
                                     }
                                 } else {
-                                    focusGuide.transition(to: "progressBar")
+                                    focusGuide.transition(to: "tabButtons")
                                 }
-                            } else {
-                                focusGuide.transition(to: "tabButtons")
-                            }
-                        },
-                        top: "progressBar",
-                        bottom: "tabButtons"
-                    )
-                    .fixedSize(horizontal: false, vertical: true)
-                    .isVisible(containerState.isPresentingOverlay)
+                            },
+                            top: "progressBar",
+                            bottom: "tabButtons"
+                        )
+                        .fixedSize(horizontal: false, vertical: true)
+                        .isVisible(containerState.isPresentingOverlay)
+                }
             }
         }
 

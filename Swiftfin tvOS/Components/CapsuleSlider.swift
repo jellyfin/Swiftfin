@@ -54,8 +54,6 @@ private struct CapsuleSliderContent: SliderContentView {
     @EnvironmentObject
     var sliderState: SliderContainerState<Double>
 
-    private let borderWidth = 1.5
-
     var body: some View {
         ProgressView(value: sliderState.value, total: sliderState.total)
             .progressViewStyle(PlaybackProgressViewStyle(cornerStyle: .round))
@@ -63,8 +61,8 @@ private struct CapsuleSliderContent: SliderContentView {
             .overlay {
                 Capsule()
                     .strokeBorder(
-                        Color.white.opacity(sliderState.isFocused ? 1 : 0.4),
-                        lineWidth: 1.5
+                        Color.white.opacity(sliderState.isFocused ? 0.85 : 0),
+                        lineWidth: 1
                     )
             }
             .overlay {
@@ -75,7 +73,7 @@ private struct CapsuleSliderContent: SliderContentView {
 
                         RoundedRectangle(cornerRadius: 1)
                             .fill(Color.white.opacity(0.85))
-                            .frame(width: 2, height: geometry.size.height)
+                            .frame(width: 1, height: geometry.size.height)
                             .shadow(color: .black.opacity(0.6), radius: 2)
                             .position(x: xPos, y: geometry.size.height / 2)
                     }
