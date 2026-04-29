@@ -50,13 +50,10 @@ extension VideoPlayer {
         @FocusState
         private var isProgressBarFocused: Bool
 
-        @StateObject
-        private var childFocusGuide = FocusGuide()
-
         private var bottomContent: some View {
             VStack(spacing: 10) {
                 NavigationBar()
-                    .environmentObject(childFocusGuide)
+                    .environmentObject(focusGuide)
                     .fixedSize(horizontal: false, vertical: true)
                     .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
                     .disabled(containerState.isPresentingSupplement)
@@ -70,13 +67,13 @@ extension VideoPlayer {
                             tag: "topProgressBar",
                             onContentFocus: {
                                 if focusGuide.lastFocusedTag == "progressBar" {
-                                    if let lastTag = childFocusGuide.lastFocusedTag ?? childFocusGuide.focusedTag {
-                                        childFocusGuide.transition(to: nil)
+                                    if let lastTag = focusGuide.lastFocusedTag ?? focusGuide.focusedTag {
+                                        focusGuide.transition(to: nil)
                                         DispatchQueue.main.async {
-                                            childFocusGuide.transition(to: lastTag)
+                                            focusGuide.transition(to: lastTag)
                                         }
                                     } else if let firstButton = Defaults[.VideoPlayer.barActionButtons].first {
-                                        childFocusGuide.transition(to: firstButton.rawValue)
+                                        focusGuide.transition(to: firstButton.rawValue)
                                     }
                                 } else {
                                     focusGuide.transition(to: "progressBar")
