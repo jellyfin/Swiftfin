@@ -102,10 +102,24 @@ extension VideoPlayer.PlaybackControls {
 
         let work = DispatchWorkItem { [weak manager, weak containerState] in
             let totalDuration = interval * jumpCount
-            if direction == .forward {
-                manager?.proxy?.jumpForward(totalDuration)
-            } else {
-                manager?.proxy?.jumpBackward(totalDuration)
+            let currentSeconds = manager?.seconds ?? .zero
+
+            switch direction {
+            case .forward:
+                if let runtime = manager?.item.runtime {
+                    let remaining = max(.zero, runtime - currentSeconds)
+                    let clamped = min(totalDuration, remaining)
+                    if clamped > .zero {
+                        manager?.proxy?.jumpForward(clamped)
+                    }
+                } else {
+                    manager?.proxy?.jumpForward(totalDuration)
+                }
+            case .backward:
+                let clamped = min(totalDuration, currentSeconds)
+                if clamped > .zero {
+                    manager?.proxy?.jumpBackward(clamped)
+                }
             }
             containerState?.jumpProgressObserver.reset()
         }

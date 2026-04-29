@@ -13,9 +13,6 @@ extension VideoPlayer {
 
     struct PlaybackControls: View {
 
-        static let supplementTransition: Animation = .easeInOut(duration: 0.35)
-        static let supplementSwap: Animation = .easeInOut(duration: 0.2)
-
         @Default(.VideoPlayer.jumpBackwardInterval)
         var jumpBackwardInterval
         @Default(.VideoPlayer.jumpForwardInterval)
@@ -78,7 +75,7 @@ extension VideoPlayer {
                     .fixedSize(horizontal: false, vertical: true)
                     .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
                     .disabled(containerState.isPresentingSupplement)
-                    .animation(Self.supplementTransition, value: containerState.isPresentingSupplement)
+                    .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
 
                 PlaybackProgress(
                     onPanScrubChanged: { isPanning in
@@ -95,16 +92,13 @@ extension VideoPlayer {
                 .focusGuide(
                     focusGuide,
                     tag: "progressBar",
-                    onContentFocus: {
-                        isProgressBarFocused = true
-                    },
                     top: "navigationBar",
                     bottom: "dividerZone"
                 )
                 .fixedSize(horizontal: false, vertical: true)
                 .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
                 .disabled(containerState.isPresentingSupplement)
-                .animation(Self.supplementTransition, value: containerState.isPresentingSupplement)
+                .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
 
                 Color.clear
                     .frame(height: 0)
