@@ -203,7 +203,7 @@ struct VideoPlayerSettingsView: View {
             }
         }
     }
-    
+
     // MARK: - Timestamp Settings
 
     @ViewBuilder
