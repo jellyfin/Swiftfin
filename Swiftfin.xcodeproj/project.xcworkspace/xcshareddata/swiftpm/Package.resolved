@@ -312,8 +312,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/VLCUI",
       "state" : {
-        "revision" : "92d898885f72fc363d874ce41fdb795b7a0ab3fc",
-        "version" : "0.8.0"
+        "revision" : "e1449ec0a5ceda8f79c3d634fdd59e16b37bc151",
+        "version" : "0.8.1"
       }
     },
     {

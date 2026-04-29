@@ -1217,7 +1217,7 @@
 			repositoryURL = "https://github.com/LePips/VLCUI";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.7.2;
+				minimumVersion = 0.8.1;
 			};
 		};
 		E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */ = {

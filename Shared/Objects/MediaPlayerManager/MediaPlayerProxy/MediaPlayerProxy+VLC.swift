@@ -48,7 +48,18 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     func jumpForward(_ seconds: Duration) {
-        vlcUIProxy.jumpForward(seconds)
+        let target: Duration
+
+        if let runtime = manager?.item.runtime, let current = manager?.seconds {
+            let remaining = max(.zero, runtime - current)
+            target = min(seconds, remaining)
+        } else {
+            target = seconds
+        }
+
+        guard target > .zero else { return }
+
+        vlcUIProxy.jumpForward(target)
     }
 
     func jumpBackward(_ seconds: Duration) {

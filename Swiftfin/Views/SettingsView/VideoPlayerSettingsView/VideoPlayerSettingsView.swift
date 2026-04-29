@@ -45,6 +45,8 @@ struct VideoPlayerSettingsView: View {
 
             ButtonSection()
 
+            SupplementSection()
+
             SliderSection()
 
             SubtitleSection()
