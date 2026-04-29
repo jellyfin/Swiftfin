@@ -67,7 +67,7 @@ extension VideoPlayer.PlaybackControls {
         @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
-                manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
+                manager.jumpForward(jumpForwardInterval.rawValue)
             } label: {
                 Label(
                     "\(jumpForwardInterval.rawValue, format: Duration.UnitsFormatStyle(allowedUnits: [.seconds], width: .narrow))",
@@ -83,7 +83,7 @@ extension VideoPlayer.PlaybackControls {
         @ViewBuilder
         private var jumpBackwardButton: some View {
             Button {
-                manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
+                manager.jumpBackward(jumpBackwardInterval.rawValue)
             } label: {
                 Label(
                     "\(jumpBackwardInterval.rawValue, format: Duration.UnitsFormatStyle(allowedUnits: [.seconds], width: .narrow))",
