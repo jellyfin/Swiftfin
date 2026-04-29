@@ -221,33 +221,6 @@ final class MediaPlayerManager: ViewModel {
         self.playbackItem = playbackItem
     }
 
-    func jumpForward(_ duration: Duration) {
-        guard duration > .zero else { return }
-
-        let target: Duration
-
-        if let runtime = item.runtime {
-            let remaining = max(.zero, runtime - seconds)
-            target = min(duration, remaining)
-        } else {
-            target = duration
-        }
-
-        guard target > .zero else { return }
-
-        proxy?.jumpForward(target)
-    }
-
-    func jumpBackward(_ duration: Duration) {
-        guard duration > .zero else { return }
-
-        let target = min(duration, seconds)
-
-        guard target > .zero else { return }
-
-        proxy?.jumpBackward(target)
-    }
-
     @Function(\Action.Cases.ended)
     private func _ended() async throws {
         // TODO: change to observe given seconds against runtime
