@@ -70,7 +70,7 @@ extension VideoPlayer {
                                 childFocusGuide.transition(to: firstButton.rawValue)
                             }
                         },
-                        bottom: "progressBar"
+                        bottom: "topProgressBar"
                     )
                     .fixedSize(horizontal: false, vertical: true)
                     .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
