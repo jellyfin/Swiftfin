@@ -83,7 +83,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                                 ?? containerState.selectedSupplement?.id
                                 ?? currentSupplements.first?.id
                         },
-                        top: "bottomProgressBar",
+                        top: "supplementContainer",
                         bottom: containerState.isPresentingSupplement ? "supplementContent" : nil
                     )
                     .fixedSize(horizontal: false, vertical: true)
