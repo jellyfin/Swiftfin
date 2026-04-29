@@ -36,8 +36,8 @@ jobs:
         ruby-version: '3.3'
         bundler-cache: true
 
-    - name: Install SwiftGen
-      run: brew install swiftgen
+    - name: Install Homebrew dependencies
+      run: brew bundle --file Brewfile
 
     - name: Update Carthage
       run: carthage update --use-xcframeworks --cache-builds
