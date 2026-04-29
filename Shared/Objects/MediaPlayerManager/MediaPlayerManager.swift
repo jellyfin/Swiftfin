@@ -242,6 +242,8 @@ final class MediaPlayerManager: ViewModel {
 
         if let nextItem = queue?.nextItem, Defaults[.VideoPlayer.autoPlayEnabled] {
             await self.playNewItem(provider: nextItem)
+        } else {
+            await self.stop()
         }
     }
 
