@@ -171,7 +171,7 @@ extension MediaChaptersSupplement {
                 }
                 .environmentObject(supplement)
                 .focused($focusedChapterID, equals: chapter.id)
-                .padding(.horizontal, UIDevice.isTV ? 4 : nil)
+                .padding(.horizontal, 4)
             }
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding)

@@ -110,14 +110,12 @@ extension MediaPeopleSupplement {
             CollectionHStack(
                 uniqueElements: people,
                 id: \.unwrappedIDHashOrZero,
-                columns: 7
+                columns: 9
             ) { person in
                 personView(for: person)
             }
-            .clipsToBounds(false)
-            .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.edgePadding - 20)
-            .scrollBehavior(.continuousLeadingEdge)
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding)
         }
     }
 
