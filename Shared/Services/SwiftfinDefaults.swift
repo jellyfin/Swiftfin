@@ -294,6 +294,13 @@ extension Defaults.Keys {
             UserKey("resumeOffset", default: 0)
         }
 
+        static var supplements: Key<[VideoPlayerSupplement]> {
+            UserKey(
+                "videoPlayerSupplements",
+                default: VideoPlayerSupplement.supportedCases
+            )
+        }
+
         static var videoPlayerType: Key<VideoPlayerType> {
             UserKey("videoPlayerType", default: .swiftfin)
         }

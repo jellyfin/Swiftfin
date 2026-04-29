@@ -26,6 +26,17 @@ extension NavigationRoute {
         }
     }
 
+    static func supplementSelector(selectedSupplementsBinding: Binding<[VideoPlayerSupplement]>) -> NavigationRoute {
+        NavigationRoute(id: "supplementSelector") {
+            OrderedSectionSelectorView(
+                selection: selectedSupplementsBinding,
+                sources: VideoPlayerSupplement.allCases,
+                removable: VideoPlayerSupplement.allCases.subtracting(VideoPlayerSupplement.supportedCases)
+            )
+            .navigationTitle(L10n.supplements.localizedCapitalized)
+        }
+    }
+
     #if os(iOS)
     static var adminDashboard: NavigationRoute {
         NavigationRoute(
