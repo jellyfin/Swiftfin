@@ -12,6 +12,7 @@ import JellyfinAPI
 extension DayOfWeek {
 
     var displayTitle: String {
+        // swiftlint:disable:next hard_coded_display_string
         let newLineRemoved = rawValue.replacingOccurrences(of: "\n", with: "")
 
         /// The enum is in English so validation must be done against a calendar in English

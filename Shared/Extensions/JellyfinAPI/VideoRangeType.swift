@@ -11,6 +11,7 @@ import JellyfinAPI
 
 extension VideoRangeType: Displayable {
 
+    // swiftlint:disable:next hard_coded_display_string
     var displayTitle: String {
         switch self {
         case .unknown:
