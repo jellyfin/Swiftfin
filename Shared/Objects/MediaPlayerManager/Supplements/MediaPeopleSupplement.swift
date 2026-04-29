@@ -149,7 +149,7 @@ extension MediaPeopleSupplement {
         let person: BaseItemPerson
 
         var body: some View {
-            ListRow(insets: .init(top: 0, leading: 0, bottom: 0, trailing: EdgeInsets.edgePadding)) {
+            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
                 PosterImage(
                     item: person,
                     type: .portrait,
@@ -157,6 +157,7 @@ extension MediaPeopleSupplement {
                     maxWidth: 60
                 )
                 .frame(height: 90)
+                .padding(.vertical, 8)
             } content: {
                 PersonContent(person: person)
             }
