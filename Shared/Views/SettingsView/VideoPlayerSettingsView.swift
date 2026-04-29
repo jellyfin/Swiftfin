@@ -42,6 +42,11 @@ struct VideoPlayerSettingsView: View {
     @StoredValue(.User.previewImageScrubbing)
     private var previewImageScrubbing: PreviewImageScrubbingOption
 
+    // MARK: - Supplement Defaults
+
+    @Default(.VideoPlayer.supplements)
+    private var supplements
+
     // MARK: - Subtitle Defaults
 
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
@@ -87,6 +92,8 @@ struct VideoPlayerSettingsView: View {
             resumeSettings
 
             sliderSettings
+
+            supplementSettings
 
             timestampSettings
 
@@ -184,6 +191,19 @@ struct VideoPlayerSettingsView: View {
         }
     }
 
+    // MARK: - Supplement Settings
+
+    @ViewBuilder
+    private var supplementSettings: some View {
+        Section(L10n.supplements) {
+            ChevronButton(L10n.supplements) {
+                router.route(to: .supplementSelector(
+                    selectedSupplementsBinding: $supplements
+                ))
+            }
+        }
+    }
+    
     // MARK: - Timestamp Settings
 
     @ViewBuilder
