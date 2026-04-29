@@ -78,6 +78,24 @@ extension VideoPlayer {
                     .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
 
                 VStack(spacing: 0) {
+                    Color.clear
+                        .frame(height: 0)
+                        .focusGuide(
+                            focusGuide,
+                            tag: "topProgressBar",
+                            onContentFocus: {
+                                if focusGuide.lastFocusedTag == "progressBar" {
+                                    focusGuide.transition(to: "navigationBar")
+                                } else {
+                                    focusGuide.transition(to: "progressBar")
+                                }
+                            },
+                            top: "navigationBar",
+                            bottom: "progressBar"
+                        )
+                        .fixedSize(horizontal: false, vertical: true)
+                        .isVisible(containerState.isPresentingOverlay)
+
                     PlaybackProgress(
                         onPanScrubChanged: { isPanning in
                             if isPanning {
@@ -93,8 +111,8 @@ extension VideoPlayer {
                     .focusGuide(
                         focusGuide,
                         tag: "progressBar",
-                        top: "navigationBar",
-                        bottom: "dividerZone"
+                        top: "topProgressBar",
+                        bottom: "bottomProgressBar"
                     )
                     .fixedSize(horizontal: false, vertical: true)
                     .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
@@ -105,7 +123,7 @@ extension VideoPlayer {
                         .frame(height: 0)
                         .focusGuide(
                             focusGuide,
-                            tag: "dividerZone",
+                            tag: "bottomProgressBar",
                             onContentFocus: {
                                 if focusGuide.lastFocusedTag == "tabButtons" {
                                     if containerState.isPresentingSupplement {
