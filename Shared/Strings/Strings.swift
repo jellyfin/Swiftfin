@@ -1756,8 +1756,10 @@ internal enum L10n {
   internal static let weekly = L10n.tr("Localizable", "weekly", fallback: "Weekly")
   /// This will be created as a new item on your Jellyfin Server.
   internal static let willBeCreatedOnServer = L10n.tr("Localizable", "willBeCreatedOnServer", fallback: "This will be created as a new item on your Jellyfin Server.")
-  /// with Enhancement Layer
-  internal static let withEnhancementLayer = L10n.tr("Localizable", "withEnhancementLayer", fallback: "with Enhancement Layer")
+  /// %1$@ with Enhancement Layer
+  internal static func withEnhancementLayer(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "withEnhancementLayer", String(describing: p1), fallback: "%1$@ with Enhancement Layer")
+  }
   /// Writer
   internal static let writer = L10n.tr("Localizable", "writer", fallback: "Writer")
   /// Year

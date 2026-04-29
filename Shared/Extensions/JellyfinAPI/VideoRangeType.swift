@@ -25,9 +25,9 @@ extension VideoRangeType: Displayable {
         case .dovi:
             L10n.dolbyVision
         case .doviWithEL:
-            "\(L10n.dolbyVision) \(L10n.withEnhancementLayer)"
+            L10n.withEnhancementLayer(L10n.dolbyVision)
         case .doviWithELHDR10Plus:
-            "\(L10n.dolbyVision) \(L10n.withEnhancementLayer) / \(L10n.hdr10Plus)"
+            "\(L10n.withEnhancementLayer(L10n.dolbyVision)) / \(L10n.hdr10Plus)"
         case .doviWithHDR10:
             "\(L10n.dolbyVision) / \(L10n.hdr10)"
         case .doviWithHDR10Plus:
