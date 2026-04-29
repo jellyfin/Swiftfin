@@ -13,24 +13,26 @@ extension VideoPlayer.PlaybackControls {
 
     struct SplitTimeStamp: PlatformView {
 
+        @Default(.VideoPlayer.Overlay.trailingTimestampType)
+        private var trailingTimestampType
+
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
-        private var manager: MediaPlayerManager
-        @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+
+        @State
+        private var activeSeconds: Duration = .zero
+
+        private var isScrubbing: Bool {
+            containerState.isScrubbing
+        }
 
         private var scrubbedSeconds: Duration {
             scrubbedSecondsBox.value
         }
-
-        // MARK: - iOS
-
-        @Default(.VideoPlayer.Overlay.trailingTimestampType)
-        private var trailingTimestampType
-
-        @State
-        private var activeSeconds: Duration = .zero
 
         @ViewBuilder
         private var leadingTimestamp: some View {
@@ -44,7 +46,7 @@ extension VideoPlayer.PlaybackControls {
                     Text(activeSeconds, format: .runtime)
                 }
                 .foregroundStyle(.secondary)
-                .isVisible(containerState.isScrubbing)
+                .isVisible(isScrubbing)
             }
         }
 
@@ -61,7 +63,7 @@ extension VideoPlayer.PlaybackControls {
                     Text("/")
                 }
                 .foregroundStyle(.secondary)
-                .isVisible(containerState.isScrubbing)
+                .isVisible(isScrubbing)
 
                 if let runtime = manager.item.runtime {
                     switch trailingTimestampType {
@@ -108,7 +110,7 @@ extension VideoPlayer.PlaybackControls {
             .monospacedDigit()
             .font(.caption2)
             .lineLimit(1)
-            .foregroundStyle(containerState.isScrubbing ? .primary : .secondary, .secondary)
+            .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
         }
 

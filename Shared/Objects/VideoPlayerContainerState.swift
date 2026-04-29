@@ -16,90 +16,63 @@ import SwiftUI
 @MainActor
 class VideoPlayerContainerState: ObservableObject {
 
-    // MARK: - Batch Update Support
+    @Published
+    var isAspectFilled: Bool = false
 
-    private var isBatchingUpdates = false
-
-    private func performBatchUpdate(_ block: () -> Void) {
-        guard !isBatchingUpdates else {
-            block()
-            return
-        }
-        isBatchingUpdates = true
-        objectWillChange.send()
-        block()
-        isBatchingUpdates = false
-    }
-
-    private func sendChangeIfNeeded() {
-        if !isBatchingUpdates {
-            objectWillChange.send()
-        }
-    }
-
-    // MARK: - Published Properties
-
-    var isAspectFilled: Bool = false {
-        willSet { sendChangeIfNeeded() }
-    }
-
+    @Published
     var isGestureLocked: Bool = false {
-        willSet { sendChangeIfNeeded() }
         didSet {
-            guard isGestureLocked != oldValue else { return }
             if isGestureLocked {
-                performBatchUpdate {
-                    isPresentingOverlay = false
-                }
+                isPresentingOverlay = false
             }
         }
     }
 
     // TODO: rename isPresentingPlaybackButtons
-    var isPresentingPlaybackControls: Bool = false {
-        willSet { sendChangeIfNeeded() }
-    }
+    @Published
+    var isPresentingPlaybackControls: Bool = false
 
     // TODO: replace with graph dependency package
+    func setPlaybackControlsVisibility() {
 
-    private func updatePlaybackControlsVisibility() {
-        let newValue: Bool = if !isPresentingOverlay {
-            false
-        } else if !isPresentingSupplement {
-            true
-        } else if isCompact {
-            true
-        } else {
-            false
+        guard isPresentingOverlay else {
+            isPresentingPlaybackControls = false
+            return
         }
 
-        if isPresentingPlaybackControls != newValue {
-            isPresentingPlaybackControls = newValue
+        if isPresentingOverlay && !isPresentingSupplement {
+            isPresentingPlaybackControls = true
+            return
         }
-    }
 
-    var isCompact: Bool = false {
-        willSet { sendChangeIfNeeded() }
-        didSet {
-            guard isCompact != oldValue else { return }
-            performBatchUpdate {
-                updatePlaybackControlsVisibility()
+        if isCompact {
+            if isPresentingSupplement {
+                if !isPresentingPlaybackControls {
+                    isPresentingPlaybackControls = true
+                }
+            } else {
+                isPresentingPlaybackControls = false
             }
+        } else {
+            isPresentingPlaybackControls = false
         }
     }
 
-    var isGuestSupplement: Bool = false {
-        willSet { sendChangeIfNeeded() }
+    @Published
+    var isCompact: Bool = false {
+        didSet {
+            setPlaybackControlsVisibility()
+        }
     }
+
+    @Published
+    var isGuestSupplement: Bool = false
 
     // TODO: rename isPresentingPlaybackControls
+    @Published
     var isPresentingOverlay: Bool = false {
-        willSet { sendChangeIfNeeded() }
         didSet {
-            guard isPresentingOverlay != oldValue else { return }
-            performBatchUpdate {
-                updatePlaybackControlsVisibility()
-            }
+            setPlaybackControlsVisibility()
 
             if isPresentingOverlay, !isPresentingSupplement {
                 timer.poke()
@@ -107,14 +80,11 @@ class VideoPlayerContainerState: ObservableObject {
         }
     }
 
+    @Published
     private(set) var isPresentingSupplement: Bool = false {
-        willSet { sendChangeIfNeeded() }
         didSet {
-            guard isPresentingSupplement != oldValue else { return }
-            performBatchUpdate {
-                updatePlaybackControlsVisibility()
-                presentationControllerShouldDismiss = !isPresentingSupplement
-            }
+            setPlaybackControlsVisibility()
+            presentationControllerShouldDismiss = !isPresentingSupplement
 
             if isPresentingSupplement {
                 timer.stop()
@@ -125,10 +95,9 @@ class VideoPlayerContainerState: ObservableObject {
         }
     }
 
+    @Published
     var isScrubbing: Bool = false {
-        willSet { sendChangeIfNeeded() }
         didSet {
-            guard isScrubbing != oldValue else { return }
             if isScrubbing {
                 timer.stop()
             } else {
@@ -137,26 +106,21 @@ class VideoPlayerContainerState: ObservableObject {
         }
     }
 
-    var presentationControllerShouldDismiss: Bool = true {
-        willSet { sendChangeIfNeeded() }
-    }
+    @Published
+    var presentationControllerShouldDismiss: Bool = true
 
-    var selectedSupplement: (any MediaPlayerSupplement)? {
-        willSet { sendChangeIfNeeded() }
+    @Published
+    var selectedSupplement: (any MediaPlayerSupplement)? = nil {
         didSet {
-            performBatchUpdate {
-                isPresentingSupplement = selectedSupplement != nil
-            }
+            isPresentingSupplement = selectedSupplement != nil
         }
     }
 
-    var supplementOffset: CGFloat = 0.0 {
-        willSet { sendChangeIfNeeded() }
-    }
+    @Published
+    var supplementOffset: CGFloat = 0.0
 
-    var centerOffset: CGFloat = 0.0 {
-        willSet { sendChangeIfNeeded() }
-    }
+    @Published
+    var centerOffset: CGFloat = 0.0
 
     var originalPlaybackRate: Float?
 
@@ -175,12 +139,12 @@ class VideoPlayerContainerState: ObservableObject {
     #endif
 
     #if os(tvOS)
+    @Published
+    var isPresentingCloseConfirmation: Bool = false
+
     var isProgressBarFocused: Bool = false
     var hasEnteredScrubMode: Bool = false
     var scrubOriginSeconds: Duration?
-    var isPresentingCloseConfirmation: Bool = false {
-        willSet { sendChangeIfNeeded() }
-    }
 
     func commitScrub() {
         guard hasEnteredScrubMode else { return }
@@ -224,18 +188,14 @@ class VideoPlayerContainerState: ObservableObject {
     }
 
     func select(supplement: (any MediaPlayerSupplement)?, isGuest: Bool = false) {
-        let isToggle = supplement?.id == selectedSupplement?.id
+        isGuestSupplement = isGuest
 
-        performBatchUpdate {
-            isGuestSupplement = isGuest
-
-            if isToggle {
-                selectedSupplement = nil
-            } else {
-                selectedSupplement = supplement
-            }
+        if supplement?.id == selectedSupplement?.id {
+            selectedSupplement = nil
+            containerView?.presentSupplementContainer(false)
+        } else {
+            selectedSupplement = supplement
+            containerView?.presentSupplementContainer(supplement != nil)
         }
-
-        containerView?.presentSupplementContainer(isToggle ? false : supplement != nil)
     }
 }

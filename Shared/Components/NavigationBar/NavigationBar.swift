@@ -117,7 +117,6 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
 
             #if os(iOS)
             Text(titleSubtitle.title)
-                .font(.headline)
                 .fontWeight(.semibold)
                 .lineLimit(1)
                 .frame(minWidth: max(50, subtitleContentSize.width))
