@@ -25,7 +25,7 @@ extension ItemView {
                 title: L10n.additionalParts,
                 type: .landscape,
                 items: items
-            ) { item, _ in
+            ) { item in
                 guard let mediaSource = item.mediaSources?.first else { return }
                 router.route(to: .videoPlayer(item: item, mediaSource: mediaSource))
             }
