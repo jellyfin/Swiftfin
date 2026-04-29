@@ -57,21 +57,6 @@ extension VideoPlayer {
             VStack(spacing: 10) {
                 NavigationBar()
                     .environmentObject(childFocusGuide)
-                    .focusGuide(
-                        focusGuide,
-                        tag: "navigationBar",
-                        onContentFocus: {
-                            if let lastTag = childFocusGuide.lastFocusedTag ?? childFocusGuide.focusedTag {
-                                childFocusGuide.transition(to: nil)
-                                DispatchQueue.main.async {
-                                    childFocusGuide.transition(to: lastTag)
-                                }
-                            } else if let firstButton = Defaults[.VideoPlayer.barActionButtons].first {
-                                childFocusGuide.transition(to: firstButton.rawValue)
-                            }
-                        },
-                        bottom: "topProgressBar"
-                    )
                     .fixedSize(horizontal: false, vertical: true)
                     .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
                     .disabled(containerState.isPresentingSupplement)
@@ -85,7 +70,14 @@ extension VideoPlayer {
                             tag: "topProgressBar",
                             onContentFocus: {
                                 if focusGuide.lastFocusedTag == "progressBar" {
-                                    focusGuide.transition(to: "navigationBar")
+                                    if let lastTag = childFocusGuide.lastFocusedTag ?? childFocusGuide.focusedTag {
+                                        childFocusGuide.transition(to: nil)
+                                        DispatchQueue.main.async {
+                                            childFocusGuide.transition(to: lastTag)
+                                        }
+                                    } else if let firstButton = Defaults[.VideoPlayer.barActionButtons].first {
+                                        childFocusGuide.transition(to: firstButton.rawValue)
+                                    }
                                 } else {
                                     focusGuide.transition(to: "progressBar")
                                 }
