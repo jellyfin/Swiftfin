@@ -209,10 +209,10 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             manager?.togglePlayPause()
         case .skipBackward:
             guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
-            manager?.proxy?.jumpBackward(.seconds(event.interval))
+            manager?.jumpBackward(.seconds(event.interval))
         case .skipForward:
             guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
-            manager?.proxy?.jumpForward(.seconds(event.interval))
+            manager?.jumpForward(.seconds(event.interval))
         case .changePlaybackPosition:
             guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
             manager?.proxy?.setSeconds(Duration.seconds(event.positionTime))
