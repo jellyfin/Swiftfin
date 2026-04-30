@@ -59,15 +59,15 @@ struct HomeView: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .content:
+            case .content, .refreshing:
                 contentView
             case let .error(error):
                 ErrorView(error: error)
-            case .initial, .refreshing:
+            case .initial:
                 ProgressView()
             }
         }
-        .animation(.linear(duration: 0.1), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .onFirstAppear {
             viewModel.send(.refresh)
         }
