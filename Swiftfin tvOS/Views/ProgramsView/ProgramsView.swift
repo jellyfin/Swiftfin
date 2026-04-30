@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import JellyfinAPI
 import SwiftUI
 
@@ -18,13 +19,36 @@ struct ProgramsView: View {
     @Router
     private var router
 
+    @Injected(\.currentUserSession)
+    private var userSession
+
     @StateObject
     private var programsViewModel = ProgramsViewModel()
+
+    @ViewBuilder
+    private var channelsSection: some View {
+        HStack {
+            Button {
+                router.route(to: .channels)
+            } label: {
+                Label(L10n.channels, systemImage: "play.square.stack")
+                    .font(.callout.weight(.semibold))
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+            }
+
+            Spacer()
+        }
+        .edgePadding(.horizontal)
+    }
 
     @ViewBuilder
     private var contentView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
+
+                channelsSection
+
                 if programsViewModel.recommended.isNotEmpty {
                     programsSection(title: L10n.onNow, keyPath: \.recommended)
                 }
@@ -61,12 +85,10 @@ struct ProgramsView: View {
             title: title,
             type: .landscape,
             items: programsViewModel[keyPath: keyPath]
-        ) { _ in
-//            guard let mediaSource = channelProgram.channel.mediaSources?.first else { return }
-//            router.route(
-//                to: \.liveVideoPlayer,
-//                LiveVideoPlayerManager(item: channelProgram.channel, mediaSource: mediaSource)
-//            )
+        ) { program in
+            guard let userSession else { return }
+            let provider = program.getPlaybackItemProvider(userSession: userSession)
+            router.route(to: .videoPlayer(provider: provider))
         } label: {
             ProgramButtonContent(program: $0)
         }
