@@ -11,8 +11,8 @@
 Fork the Swiftfin repo and install the necessary dependencies:
 
 ```bash
-# install Carthage, SwiftFormat, and SwiftGen with homebrew
-$ brew install carthage swiftformat swiftgen
+# install Carthage, SwiftFormat, SwiftLint, and SwiftGen with Homebrew
+$ brew bundle --file Brewfile
 
 # install or update dependencies
 $ carthage update --use-xcframeworks
@@ -57,10 +57,13 @@ If a Pull Request relates to an Issue, mention the issue correctly in the PR des
 
 [SwiftFormat](https://github.com/nicklockwood/SwiftFormat) is our linter. `swiftformat .` can be run in the project directory or install SwiftFormat's Xcode extension.
 
+[SwiftLint](https://github.com/realm/SwiftLint) enforces additional rules.
+
 The following must pass in order for a PR to be merged:
 - automated `iOS` and `tvOS` builds must succeed
 - developer account cannot be attached
 - SwiftFormat linting check must pass. If this does not pass, you may need to update your version of `swiftformat`
+- SwiftLint check must pass. If this does not pass, fix the violation or add a justified `swiftlint:disable` directive
 - new strings that are not part of an experimental feature must be localized
 - label(s) are attached, if applicable
 

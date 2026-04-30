@@ -39,7 +39,7 @@ struct AboutAppView: View {
                 )
 
                 LabeledContent(
-                    "Server requirement",
+                    L10n.serverRequirement,
                     value: JellyfinClient.sdkVersion.description
                 )
             }
@@ -58,7 +58,7 @@ struct AboutAppView: View {
 
                 ChevronButton(
                     L10n.license,
-                    subtitle: "MLP 2.0",
+                    subtitle: L10n.mlp2,
                     systemName: "text.document",
                     external: true
                 ) {

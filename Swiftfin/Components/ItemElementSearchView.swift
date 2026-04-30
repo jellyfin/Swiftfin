@@ -96,7 +96,7 @@ struct ItemElementSearchView<Element: Hashable>: View {
                 HStack(spacing: 4) {
                     Text(L10n.existingItems)
 
-                    Text("-")
+                    Text(String.hyphen)
 
                     Text(population.count.description)
 

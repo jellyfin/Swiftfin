@@ -41,6 +41,7 @@ extension VideoPlayer.PlaybackControls {
                 Text(scrubbedSeconds, format: .runtime)
 
                 Group {
+                    // swiftlint:disable:next hard_coded_display_string
                     Text("/")
 
                     Text(activeSeconds, format: .runtime)
@@ -60,6 +61,7 @@ extension VideoPlayer.PlaybackControls {
                         Text(verbatim: .emptyRuntime)
                     }
 
+                    // swiftlint:disable:next hard_coded_display_string
                     Text("/")
                 }
                 .foregroundStyle(.secondary)

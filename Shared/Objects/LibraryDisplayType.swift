@@ -11,7 +11,6 @@ enum LibraryDisplayType: String, CaseIterable, Displayable, Storable, SystemImag
     case grid
     case list
 
-    // TODO: localize
     var displayTitle: String {
         switch self {
         case .grid:
