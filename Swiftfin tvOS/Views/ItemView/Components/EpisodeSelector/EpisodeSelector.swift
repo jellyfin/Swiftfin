@@ -63,5 +63,10 @@ struct SeriesEpisodeSelector: View {
                 selectionViewModel.send(.refresh)
             }
         }
+        .onAppear {
+            if selection == nil, let firstSeason = viewModel.seasons.first {
+                selection = firstSeason.id
+            }
+        }
     }
 }

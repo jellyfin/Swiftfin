@@ -80,6 +80,11 @@ struct SeriesEpisodeSelector: View {
                 selection = viewModel.seasons.first?.id
             }
         }
+        .onAppear {
+            if selection == nil, let firstSeason = viewModel.seasons.first {
+                selection = firstSeason.id
+            }
+        }
         .onChange(of: selection) { _ in
             guard let selectionViewModel else { return }
 
