@@ -50,7 +50,7 @@ struct CinematicItemSelector<Item: Poster>: View {
             )
             .frame(height: 400)
         }
-        .frame(height: UIScreen.main.bounds.height - 75, alignment: .bottomLeading)
+        .frame(height: UIScreen.currentBounds.height - 125, alignment: .bottomLeading)
         .frame(maxWidth: .infinity)
         .background(alignment: .top) {
             CinematicBackgroundView(
@@ -65,7 +65,7 @@ struct CinematicItemSelector<Item: Poster>: View {
                         (location: 1, opacity: 1)
                     }
             }
-            .frame(height: UIScreen.main.bounds.height)
+            .frame(height: UIScreen.currentBounds.height)
             .maskLinearGradient {
                 (location: 0.9, opacity: 1)
                 (location: 1, opacity: 0)

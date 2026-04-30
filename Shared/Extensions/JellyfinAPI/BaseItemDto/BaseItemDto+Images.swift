@@ -12,8 +12,6 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-// TODO: figure out what to do about screen scaling with .main being deprecated
-//       - maxWidth assume already scaled?
 // TODO: change "series" image sources to "parent"
 //       - for episodes and extras
 
@@ -125,8 +123,9 @@ extension BaseItemDto {
         itemID: String,
         requireTag: Bool = true
     ) -> URL? {
-        let scaleWidth = maxWidth.map { UIScreen.main.scale($0) }
-        let scaleHeight = maxWidth.map { UIScreen.main.scale($0) }
+        let scaleFactor = UIScreen.nativeScaleFactor
+        let scaleWidth = maxWidth.map { Int(scaleFactor * $0) }
+        let scaleHeight = maxHeight.map { Int(scaleFactor * $0) }
         let validQuality = quality.map { clamp($0, min: 1, max: 100) }
 
         let tag = getImageTag(for: type)

@@ -33,9 +33,7 @@ extension BaseItemPerson: Poster {
 
         guard let client = Container.shared.currentUserSession()?.client else { return [] }
 
-        // TODO: figure out what to do about screen scaling with .main being deprecated
-        //       - maxWidth assume already scaled?
-        let scaleWidth: Int? = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
+        let scaleWidth: Int? = maxWidth.map { Int(UIScreen.nativeScaleFactor * $0) }
 
         let imageRequestParameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth ?? Int(maxWidth),

@@ -23,13 +23,13 @@ extension HomeView {
             if item.type == .episode {
                 item.seriesImageSource(
                     .logo,
-                    maxWidth: UIScreen.main.bounds.width * 0.4,
+                    maxWidth: UIScreen.currentBounds.width * 0.4,
                     maxHeight: 200
                 )
             } else {
                 item.imageSource(
                     .logo,
-                    maxWidth: UIScreen.main.bounds.width * 0.4,
+                    maxWidth: UIScreen.currentBounds.width * 0.4,
                     maxHeight: 200
                 )
             }

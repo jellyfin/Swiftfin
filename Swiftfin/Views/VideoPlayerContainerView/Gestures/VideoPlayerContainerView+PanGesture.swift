@@ -202,8 +202,13 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
     // MARK: - Brightness
 
     private static var BrightnessPanHandlingAction: PanHandlingAction<CGFloat> {
-        PanHandlingAction<CGFloat>(
-            startValue: UIScreen.main.brightness
+        let currentScreen = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first?
+            .screen
+
+        return PanHandlingAction<CGFloat>(
+            startValue: currentScreen?.brightness ?? UIScreen.main.brightness
         ) { startState, handlingState, containerState in
             guard handlingState.gestureState != .ended else { return }
 
@@ -227,7 +232,15 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             )
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                UIScreen.main.brightness = newBrightness
+                if let screen = UIApplication.shared.connectedScenes
+                    .compactMap({ $0 as? UIWindowScene })
+                    .first?
+                    .screen
+                {
+                    screen.brightness = newBrightness
+                } else {
+                    UIScreen.main.brightness = newBrightness
+                }
             }
         }
     }

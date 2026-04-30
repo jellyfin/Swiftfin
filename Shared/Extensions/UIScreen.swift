@@ -17,4 +17,32 @@ extension UIScreen {
     func scale(_ x: CGFloat) -> Int {
         Int(nativeScale * x)
     }
+
+    static var nativeScaleFactor: CGFloat {
+        #if os(tvOS)
+        UIScreen.main.nativeScale
+        #else
+        if let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first
+        {
+            return windowScene.screen.nativeScale
+        }
+        return UITraitCollection.current.displayScale
+        #endif
+    }
+
+    static var currentBounds: CGRect {
+        #if os(tvOS)
+        UIScreen.main.bounds
+        #else
+        if let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first
+        {
+            return windowScene.screen.bounds
+        }
+        return .zero
+        #endif
+    }
 }
