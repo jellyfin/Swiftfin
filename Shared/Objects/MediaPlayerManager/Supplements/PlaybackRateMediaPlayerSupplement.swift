@@ -85,7 +85,7 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
         // TODO: Localize
         var tvOSView: some View {
             VStack(spacing: 30) {
-                Text("Playback Rate")
+                Text(L10n.playbackRate)
                     .font(.title2)
                     .fontWeight(.semibold)
 
@@ -98,7 +98,7 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
                         let newRate = clamp(manager.rate - 0.05, min: 0.5, max: 2.0)
                         manager.setRate(rate: newRate)
                     } label: {
-                        Label("Decrease", systemImage: "minus")
+                        Label(L10n.decrease, systemImage: "minus")
                             .font(.title3)
                             .fontWeight(.semibold)
                             .frame(width: 140, height: 100)
@@ -109,7 +109,7 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
                         let newRate = clamp(manager.rate + 0.05, min: 0.5, max: 2.0)
                         manager.setRate(rate: newRate)
                     } label: {
-                        Label("Increase", systemImage: "plus")
+                        Label(L10n.increase, systemImage: "plus")
                             .font(.title3)
                             .fontWeight(.semibold)
                             .frame(width: 140, height: 100)

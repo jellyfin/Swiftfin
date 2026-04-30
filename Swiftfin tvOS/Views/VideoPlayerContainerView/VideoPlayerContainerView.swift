@@ -305,13 +305,6 @@ extension VideoPlayer {
 
             view.setNeedsLayout()
 
-            if redirectFocus && !didPresent {
-                focusGuide.transition(to: nil)
-                DispatchQueue.main.async { [self] in
-                    focusGuide.transition(to: "progressBar")
-                }
-            }
-
             if let panningState {
                 let velocity = panningState.velocity.magnitude / 1000
                 let distance = panningState.translation.magnitude

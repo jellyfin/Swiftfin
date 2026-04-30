@@ -76,7 +76,7 @@ extension VideoPlayer.PlaybackControls {
 
         @ViewBuilder
         private var liveIndicator: some View {
-            Text("Live")
+            Text(L10n.live)
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundStyle(.white)
