@@ -6,7 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
+import Foundation
 
 // TODO: break into separate files
 
@@ -110,7 +110,7 @@ struct PlaybackRateStyle: FormatStyle {
         FloatingPointFormatStyle<Float>()
             .precision(.fractionLength(0 ... precision))
             .format(value)
-            .appending("\u{00D7}")
+            .appending(.multiply)
     }
 }
 

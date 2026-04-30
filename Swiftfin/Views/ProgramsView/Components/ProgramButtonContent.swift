@@ -35,7 +35,7 @@ extension ProgramsView {
                         Text(String.emptyDash)
                     }
 
-                    Text("-")
+                    Text(String.hyphen)
 
                     if let endDate = program.endDate {
                         Text(endDate, style: .time)

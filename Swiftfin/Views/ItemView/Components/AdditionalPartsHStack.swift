@@ -22,7 +22,7 @@ extension ItemView {
 
         var body: some View {
             PosterHStack(
-                title: L10n.additionalParts,
+                title: L10n.additionalParts.localizedCapitalized,
                 type: .landscape,
                 items: items
             ) { item, _ in

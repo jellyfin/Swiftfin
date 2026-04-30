@@ -33,12 +33,12 @@ extension UIDevice {
 
     static var platform: String {
         #if os(tvOS)
-        "tvOS"
+        L10n.tvOS
         #else
         if UIDevice.isPad {
-            return "iPadOS"
+            return L10n.iPadOS
         } else {
-            return "iOS"
+            return L10n.iOS
         }
         #endif
     }
