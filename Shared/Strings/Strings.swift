@@ -714,6 +714,8 @@ internal enum L10n {
   internal static let format = L10n.tr("Localizable", "format", fallback: "Format")
   /// 3D format
   internal static let format3D = L10n.tr("Localizable", "format3D", fallback: "3D format")
+  /// From beginning
+  internal static let fromBeginning = L10n.tr("Localizable", "fromBeginning", fallback: "From beginning")
   /// Full side-by-side
   internal static let fullSideBySide = L10n.tr("Localizable", "fullSideBySide", fallback: "Full side-by-side")
   /// Full top and bottom
@@ -1160,8 +1162,8 @@ internal enum L10n {
   internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.")
   /// Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.
   internal static let playerSwiftfinDescription = L10n.tr("Localizable", "playerSwiftfinDescription", fallback: "Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.")
-  /// Play From beginning
-  internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From beginning")
+  /// Play from beginning
+  internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play from beginning")
   /// Playlist
   internal static let playlist = L10n.tr("Localizable", "playlist", fallback: "Playlist")
   /// Playlists

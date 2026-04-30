@@ -87,14 +87,14 @@ extension MediaInfoSupplement {
                         RoundedRectangle(cornerRadius: 7)
                             .foregroundStyle(.white)
 
-                        Label(L10n.playFromBeginning, systemImage: "play.fill")
+                        Label(L10n.fromBeginning, systemImage: "play.fill")
                             .fontWeight(.semibold)
                             .foregroundStyle(.black)
                     }
                 }
             } content: {
                 Button(action: resetPlayback) {
-                    Label(L10n.playFromBeginning, systemImage: "play.fill")
+                    Label(L10n.fromBeginning, systemImage: "play.fill")
                         .padding()
                 }
                 .buttonStyle(.material)
