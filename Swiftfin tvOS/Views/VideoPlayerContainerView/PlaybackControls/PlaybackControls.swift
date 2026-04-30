@@ -53,9 +53,6 @@ extension VideoPlayer {
         @EnvironmentObject
         var focusGuide: FocusGuide
 
-        @FocusState
-        private var isProgressBarFocused: Bool
-
         private var bottomContent: some View {
             VStack(spacing: 10) {
                 NavigationBar()
@@ -74,7 +71,6 @@ extension VideoPlayer {
                             }
                         }
                     )
-                    .focused($isProgressBarFocused, equals: true)
                     .prefersDefaultFocus(in: playbackControls)
                     .focusGuide(
                         focusGuide,
