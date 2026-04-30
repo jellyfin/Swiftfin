@@ -16,8 +16,6 @@ import SwiftUI
 //       - current running time
 // TODO: show chapter title under preview image
 //       - have max width, on separate offset track
-// TODO: bar color default to style
-// TODO: live tv
 
 extension VideoPlayer.PlaybackControls {
 
@@ -39,8 +37,6 @@ extension VideoPlayer.PlaybackControls {
         @State
         private var sliderSize: CGSize = .zero
 
-        private let previewImageHeight: CGFloat = 85
-
         private var isScrubbing: Bool {
             get {
                 containerState.isScrubbing
@@ -55,7 +51,7 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var previewXOffset: CGFloat {
-            let videoWidth = previewImageHeight * videoSizeAspectRatio
+            let videoWidth = 85 * videoSizeAspectRatio
             let p = (sliderSize.width * scrubbedProgress) - (videoWidth / 2)
             return clamp(p, min: 0, max: sliderSize.width - videoWidth)
         }
@@ -168,7 +164,7 @@ extension VideoPlayer.PlaybackControls {
                 if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
                     PreviewImageView(previewImageProvider: previewImageProvider)
                         .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
-                        .frame(height: previewImageHeight)
+                        .frame(height: 85)
                         .posterBorder()
                         .cornerRadius(ratio: 1 / 30, of: \.width)
                         .offset(x: previewXOffset, y: -100)
