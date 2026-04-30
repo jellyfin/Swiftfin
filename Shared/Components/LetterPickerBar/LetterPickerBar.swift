@@ -18,8 +18,6 @@ struct LetterPickerBar: View {
     private var focusedLetter: ItemLetter?
 
     @State
-    private var lastFocusedLetter: ItemLetter?
-    @State
     private var letterSize: CGSize = .zero
 
     // Largest letter +1p on either side
@@ -59,20 +57,13 @@ struct LetterPickerBar: View {
             .fixedSize()
             .trackingSize($letterSize)
         }
-        .backport
-        .onChange(of: focusedLetter) { _, newValue in
-            if let newValue {
-                lastFocusedLetter = newValue
-            }
-        }
         #if os(tvOS)
         .defaultFocus(
             $focusedLetter,
             viewModel.currentFilters.letter.first
-                ?? lastFocusedLetter
                 ?? ItemLetter.allCases.first
                 ?? ItemLetter(stringLiteral: "#"),
-            priority: focusedLetter == nil ? .userInitiated : .automatic // This prevents focus getting stuck for .leading
+            priority: focusedLetter == nil ? .userInitiated : .automatic
         )
         #endif
     }
