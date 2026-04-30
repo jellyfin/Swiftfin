@@ -76,12 +76,10 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 Audio()
             case .autoPlay:
                 AutoPlay()
+            #if os(iOS)
             case .gestureLock:
-                #if os(iOS)
                 GestureLock()
-                #else
-                EmptyView()
-                #endif
+            #endif
             case .playbackSpeed:
                 PlaybackRateMenu()
 //            case .playbackQuality:
