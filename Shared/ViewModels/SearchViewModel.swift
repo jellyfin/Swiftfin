@@ -151,17 +151,30 @@ final class SearchViewModel: ViewModel {
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [itemType]
         parameters.isRecursive = true
-        parameters.limit = 20
+        parameters.limit = 100
         parameters.searchTerm = query
 
-        // Filters
+        // Filters — only set non-empty values to avoid inflating URL length (414 errors)
         let filters = filterViewModel.currentFilters
-        parameters.filters = filters.traits
-        parameters.genres = filters.genres.map(\.value)
-        parameters.sortBy = filters.sortBy.map(\.rawValue)
-        parameters.sortOrder = filters.sortOrder
-        parameters.tags = filters.tags.map(\.value)
-        parameters.years = filters.years.map(\.intValue)
+
+        if filters.traits.isNotEmpty {
+            parameters.filters = filters.traits
+        }
+        if filters.genres.isNotEmpty {
+            parameters.genres = filters.genres.map(\.value)
+        }
+        if filters.sortBy.isNotEmpty {
+            parameters.sortBy = filters.sortBy.map(\.rawValue)
+        }
+        if filters.sortOrder.isNotEmpty {
+            parameters.sortOrder = filters.sortOrder
+        }
+        if filters.tags.isNotEmpty {
+            parameters.tags = filters.tags.map(\.value)
+        }
+        if filters.years.isNotEmpty {
+            parameters.years = filters.years.map(\.intValue)
+        }
 
         if filters.letter.first?.value == "#" {
             parameters.nameLessThan = "A"
@@ -181,7 +194,7 @@ final class SearchViewModel: ViewModel {
     private func _getPeople(query: String) async throws -> [BaseItemDto] {
 
         var parameters = Paths.GetPersonsParameters()
-        parameters.limit = 20
+        parameters.limit = 100
         parameters.searchTerm = query
 
         let request = Paths.getPersons(parameters: parameters)
