@@ -112,6 +112,17 @@ extension Backport where Content: View {
         }
     }
 
+    /// This does nothing on iOS.
+    @ViewBuilder
+    func focusable(_ isFocusable: Bool = true) -> some View {
+        if #available(iOS 17, tvOS 17, *) {
+            content
+                .focusable(isFocusable)
+        } else {
+            content
+        }
+    }
+
     @available(tvOS, unavailable)
     @ViewBuilder
     func searchFocused(

@@ -111,6 +111,7 @@ struct PlaybackInfoLabeledContentStyle: LabeledContentStyle {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(isFocused ? Color.white.opacity(0.15) : Color.clear)
                 )
+                .backport
                 .focusable()
                 .focused($isFocused)
                 .animation(.easeInOut(duration: 0.15), value: isFocused)
