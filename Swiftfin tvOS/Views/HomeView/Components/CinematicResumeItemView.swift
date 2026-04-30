@@ -56,6 +56,7 @@ extension HomeView {
                     if item.type == .episode {
                         PosterButton<BaseItemDto>.EpisodeContentSubtitleContent.Subtitle(item: item)
                     } else {
+                        // swiftlint:disable:next hard_coded_display_string
                         Text(" ")
                     }
                 }

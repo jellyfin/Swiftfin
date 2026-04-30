@@ -28,7 +28,7 @@ class ToastProxy: ObservableObject {
     @Published
     private(set) var systemName: String? = nil
     @Published
-    private(set) var title: Text = Text("")
+    private(set) var title: Text = Text(String.empty)
 //    @Published
 //    private(set) var messageID: String = ""
 

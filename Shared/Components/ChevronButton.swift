@@ -246,7 +246,7 @@ extension ChevronButton where _Label == Label<Text, EmptyView>, _Content == Text
     ) {
         self.init(
             labeledContent: LabeledContent {
-                subtitle ?? Text("")
+                subtitle ?? Text(String.empty)
             } label: {
                 Label(title: { Text(title) }, icon: { EmptyView() })
             },

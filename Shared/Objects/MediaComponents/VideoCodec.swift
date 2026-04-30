@@ -37,55 +37,55 @@ enum VideoCodec: String, CaseIterable, Codable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .av1:
-            "AV1"
+            L10n.av1
         case .dv:
-            "DV"
+            L10n.dv
         case .dirac:
-            "Dirac"
+            L10n.dirac
         case .ffv1:
-            "FFV1"
+            L10n.ffv1
         case .flv1:
-            "FLV1"
+            L10n.flv1
         case .h261:
-            "H.261"
+            L10n.h261
         case .h263:
-            "H.263"
+            L10n.h263
         case .h264:
-            "H.264"
+            L10n.h264
         case .hevc:
-            "HEVC"
+            L10n.hevc
         case .mjpeg:
-            "MJPEG"
+            L10n.mjpeg
         case .mpeg1video:
-            "MPEG-1 Video"
+            L10n.mpeg1Video
         case .mpeg2video:
-            "MPEG-2 Video"
+            L10n.mpeg2Video
         case .mpeg4:
-            "MPEG-4"
+            L10n.mpeg4
         case .msmpeg4v1:
-            "MS MPEG-4 v1"
+            L10n.msMpeg4V1
         case .msmpeg4v2:
-            "MS MPEG-4 v2"
+            L10n.msMpeg4V2
         case .msmpeg4v3:
-            "MS MPEG-4 v3"
+            L10n.msMpeg4V3
         case .prores:
-            "ProRes"
+            L10n.proRes
         case .theora:
-            "Theora"
+            L10n.theora
         case .vc1:
-            "VC-1"
+            L10n.vc1
         case .vp8:
-            "VP8"
+            L10n.vp8
         case .vp9:
-            "VP9"
+            L10n.vp9
         case .vvc:
-            "VVC"
+            L10n.vvc
         case .wmv1:
-            "WMV1"
+            L10n.wmv1
         case .wmv2:
-            "WMV2"
+            L10n.wmv2
         case .wmv3:
-            "WMV3"
+            L10n.wmv3
         }
     }
 }
