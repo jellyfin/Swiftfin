@@ -86,7 +86,7 @@ extension VideoPlayer.PlaybackControls {
 
 extension VideoPlayer.PlaybackControls.NavigationBar {
 
-    struct TitleView: View {
+    struct TitleView: PlatformView {
 
         @State
         private var subtitleContentSize: CGSize = .zero
@@ -112,35 +112,33 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 .trackingSize($subtitleContentSize)
         }
 
-        var body: some View {
-            let titleSubtitle = self._titleSubtitle
-
-            #if os(iOS)
-            Text(titleSubtitle.title)
+        var iOSView: some View {
+            Text(self._titleSubtitle.title)
                 .fontWeight(.semibold)
                 .lineLimit(1)
                 .frame(minWidth: max(50, subtitleContentSize.width))
                 .overlay(alignment: .bottomLeading) {
-                    if let subtitle = titleSubtitle.subtitle {
+                    if let subtitle = self._titleSubtitle.subtitle {
                         _subtitle(subtitle)
                             .lineLimit(1)
                             .offset(y: subtitleContentSize.height)
                     }
                 }
-            #else
+        }
+
+        var tvOSView: some View {
             VStack(alignment: .leading) {
-                Text(titleSubtitle.title)
+                Text(self._titleSubtitle.title)
                     .font(.headline)
                     .fontWeight(.semibold)
                     .lineLimit(1)
 
-                if let subtitle = titleSubtitle.subtitle {
+                if let subtitle = self._titleSubtitle.subtitle {
                     _subtitle(subtitle)
                         .lineLimit(1)
                 }
             }
             .frame(minWidth: max(50, subtitleContentSize.width))
-            #endif
         }
     }
 }
