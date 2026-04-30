@@ -53,10 +53,11 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                 }
             }
             .videoPlayerActionButtonTransition()
-            #if os(iOS)
-                .id(isAutoPlayEnabled)
-            #endif
-                .disabled(manager.queue == nil)
+            .if(!UIDevice.isTV) { button in
+                button
+                    .id(isAutoPlayEnabled)
+            }
+            .disabled(manager.queue == nil)
         }
     }
 }

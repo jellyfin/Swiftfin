@@ -24,7 +24,6 @@ extension VideoPlayer.PlaybackControls {
         private var router
 
         private var fontSize: CGFloat = !UIDevice.isTV ? 24 : 36
-        private var fontWeight: Font.Weight = !UIDevice.isTV ? .semibold : .regular
 
         private func onPressed(isPressed: Bool) {
             if isPressed {
@@ -74,7 +73,7 @@ extension VideoPlayer.PlaybackControls {
                     ActionButtons()
                 }
             }
-            .font(.system(size: fontSize, weight: fontWeight))
+            .font(.system(size: fontSize, weight: .semibold))
             .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
             #if os(iOS)
                 .background {
