@@ -15,12 +15,8 @@ import KeychainSwift
 import OrderedCollections
 import SwiftUI
 
-// TODO: instead of just signing in duplicate user, send event for alert
-//       to override existing user access token?
-//       - won't require deleting and re-signing in user for password changes
-//       - account for local device auth required
 // TODO: ignore NSURLErrorDomain Code=-999 cancelled error on sign in
-//       - need to make NSError wrappres anyways
+//       - need to make NSError wrappers anyways
 
 // Note: UserDto in StoredValues so that it doesn't need to be passed
 //       around along with the user UserState. Was just easy

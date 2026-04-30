@@ -327,7 +327,7 @@ struct UserSignInView: View {
                 Button(L10n.signIn) {
                     viewModel.saveExisting(
                         user: existingUser,
-                        replaceForAccessToken: false,
+                        replaceForAccessToken: true,
                         authenticationAction: (
                             authenticationAction!,
                             existingUserAccessPolicy,
