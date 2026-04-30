@@ -53,7 +53,6 @@ extension VideoPlayer {
         private var bottomContent: some View {
             VStack(spacing: 10) {
                 NavigationBar()
-                    .fixedSize(horizontal: false, vertical: true)
                     .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
                     .disabled(containerState.isPresentingSupplement)
                     .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
@@ -69,7 +68,7 @@ extension VideoPlayer {
                             }
                         }
                     )
-                    .focused($isProgressBarFocused)
+                    .focused($isProgressBarFocused, equals: true)
                     .focusSection()
                     .focusGuide(
                         focusGuide,
@@ -81,6 +80,8 @@ extension VideoPlayer {
                     .disabled(containerState.isPresentingSupplement)
                     .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
 
+                    // This exists as a focusable elemet to direct focus in and out of the Supplement
+                    // - When the rest of the playback buttons are hidden this still exists to trigger drawer
                     Color.clear
                         .frame(height: 0)
                         .focusGuide(
@@ -144,6 +145,7 @@ extension VideoPlayer {
             }
             .onFirstAppear {
                 containerState.isPresentingOverlay = true
+                isProgressBarFocused = true
             }
             .onChange(of: containerState.isPresentingOverlay) { _, newValue in
                 if newValue {

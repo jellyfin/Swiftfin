@@ -68,9 +68,10 @@ extension VideoPlayer.PlaybackControls {
                 AlternateLayoutView(alignment: .trailing) {
                     Color.clear
                         .frame(maxWidth: .infinity, alignment: .trailing)
+                        .frame(height: fontSize)
+                        .padding()
                 } content: {
                     ActionButtons()
-                        .focusSection()
                 }
             }
             .font(.system(size: fontSize, weight: fontWeight))

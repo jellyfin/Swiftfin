@@ -140,17 +140,19 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 }
             }
             .focusSection()
-            .defaultFocus(
-                $focusedButton,
-                lastFocusedButton ?? barActionButtons.first?.rawValue ?? "menu",
-                priority: .userInitiated
-            )
             .backport
             .onChange(of: focusedButton) { oldValue, newValue in
                 if newValue == nil {
                     lastFocusedButton = oldValue
                 }
             }
+            #if os(tvOS)
+            .defaultFocus(
+                $focusedButton,
+                lastFocusedButton ?? barActionButtons.first?.rawValue ?? "menu",
+                priority: .userInitiated
+            )
+            #endif
         }
 
         var body: some View {
