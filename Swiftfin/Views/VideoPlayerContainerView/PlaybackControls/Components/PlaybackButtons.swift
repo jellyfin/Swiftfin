@@ -67,7 +67,7 @@ extension VideoPlayer.PlaybackControls {
         @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
-                manager.jumpForward(jumpForwardInterval.rawValue)
+                manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
             } label: {
                 // swiftlint:disable:next hard_coded_display_string
                 Label(
@@ -84,7 +84,7 @@ extension VideoPlayer.PlaybackControls {
         @ViewBuilder
         private var jumpBackwardButton: some View {
             Button {
-                manager.jumpBackward(jumpBackwardInterval.rawValue)
+                manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
             } label: {
                 // swiftlint:disable:next hard_coded_display_string
                 Label(
