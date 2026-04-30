@@ -23,6 +23,9 @@ extension VideoPlayer {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
+        @Environment(\.resetFocus)
+        private var resetFocus
+
         @OnPressEvent
         private var onPressEvent
 
@@ -33,6 +36,9 @@ extension VideoPlayer {
 
         @Toaster
         var toaster: ToastProxy
+
+        @Namespace
+        private var playbackControls
 
         @State
         private var bottomContentFrame: CGRect = .zero
@@ -69,7 +75,7 @@ extension VideoPlayer {
                         }
                     )
                     .focused($isProgressBarFocused, equals: true)
-                    .focusSection()
+                    .prefersDefaultFocus(in: playbackControls)
                     .focusGuide(
                         focusGuide,
                         tag: "progressBar",
@@ -80,8 +86,6 @@ extension VideoPlayer {
                     .disabled(containerState.isPresentingSupplement)
                     .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
 
-                    // This exists as a focusable elemet to direct focus in and out of the Supplement
-                    // - When the rest of the playback buttons are hidden this still exists to trigger drawer
                     Color.clear
                         .frame(height: 0)
                         .focusGuide(
@@ -133,6 +137,7 @@ extension VideoPlayer {
                     }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .focusScope(playbackControls)
             .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
             .alert(L10n.closePlayer, isPresented: $containerState.isPresentingCloseConfirmation) {
@@ -145,11 +150,15 @@ extension VideoPlayer {
             }
             .onFirstAppear {
                 containerState.isPresentingOverlay = true
-                isProgressBarFocused = true
+                DispatchQueue.main.async {
+                    resetFocus(in: playbackControls)
+                }
             }
             .onChange(of: containerState.isPresentingOverlay) { _, newValue in
                 if newValue {
-                    isProgressBarFocused = true
+                    DispatchQueue.main.async {
+                        resetFocus(in: playbackControls)
+                    }
                 }
             }
             .onChange(of: manager.playbackRequestStatus) { _, newValue in
