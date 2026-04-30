@@ -459,7 +459,7 @@ extension EpisodeMediaPlayerQueue {
                             count: Int.random(in: 1 ..< 3),
                             columns: 4
                         ) { _ in
-                            LoadingButton()
+                            PlaceholderButton()
                                 .padding(.horizontal, UIDevice.isTV ? 4 : nil)
                         }
                         .insets(horizontal: EdgeInsets.edgePadding)
@@ -601,19 +601,84 @@ extension EpisodeMediaPlayerQueue {
         }
 
         var body: some View {
+            _PosterButton(action: action) {
+                EpisodePreview(episode: episode)
+            } title: {
+                Text(episode.displayTitle)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                    .foregroundStyle(.primary)
+            } description: {
+                EpisodeDescription(episode: episode)
+                    .lineLimit(1)
+            }
+            .onReceive(manager.$item) { newItem in
+                activeItemID = newItem.id
+            }
+            .isSelected(isCurrentEpisode)
+        }
+    }
+
+    private struct PlaceholderButton: View {
+
+        let systemImage: String?
+
+        init(systemImage: String? = nil) {
+            self.systemImage = systemImage
+        }
+
+        var body: some View {
+            _PosterButton(action: {}) {
+                Rectangle()
+                    .fill(.complexSecondary)
+                    .posterStyle(.landscape)
+                    .posterShadow()
+                    .hoverEffect(.highlight)
+                    .overlay {
+                        if let systemImage {
+                            Image(systemName: systemImage)
+                                .font(.system(size: 40))
+                        }
+                    }
+            } title: {
+                Text(String.random(count: 10 ..< 20))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                    .foregroundStyle(.primary)
+                    .redacted(reason: .placeholder)
+            } description: {
+                DotHStack {
+                    Text(String.random(count: 1 ..< 2))
+                    Text(String.random(count: 2 ..< 3))
+                }
+                .redacted(reason: .placeholder)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+            }
+        }
+    }
+
+    private struct _PosterButton<Preview: View, Title: View, Description: View>: View {
+
+        let action: () -> Void
+        @ViewBuilder
+        let preview: () -> Preview
+        @ViewBuilder
+        let title: () -> Title
+        @ViewBuilder
+        let description: () -> Description
+
+        var body: some View {
             Button(action: action) {
                 VStack(alignment: .leading, spacing: UIDevice.isTV ? 15 : 5) {
-                    EpisodePreview(episode: episode)
+                    preview()
 
                     VStack(alignment: .leading, spacing: 5) {
-                        Text(episode.displayTitle)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .lineLimit(1)
-                            .foregroundStyle(.primary)
-
-                        EpisodeDescription(episode: episode)
-                            .lineLimit(1)
+                        title()
+                        description()
                     }
                 }
             }
@@ -622,48 +687,6 @@ extension EpisodeMediaPlayerQueue {
                     .buttonStyle(.borderless)
                     .buttonBorderShape(.roundedRectangle)
             }
-            .foregroundStyle(.primary, .secondary)
-            .onReceive(manager.$item) { newItem in
-                activeItemID = newItem.id
-            }
-            .isSelected(isCurrentEpisode)
-        }
-    }
-
-    private struct LoadingButton: View {
-
-        var body: some View {
-            Button {} label: {
-                VStack(alignment: .leading, spacing: UIDevice.isTV ? 15 : 5) {
-                    Rectangle()
-                        .fill(.complexSecondary)
-                        .posterStyle(.landscape)
-                        .posterShadow()
-                        .hoverEffect(.highlight)
-
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(String.random(count: 10 ..< 20))
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .lineLimit(1)
-                            .foregroundStyle(.primary)
-                            .redacted(reason: .placeholder)
-
-                        DotHStack {
-                            Text(String.random(count: 1 ..< 2))
-                            Text(String.random(count: 2 ..< 3))
-                        }
-                        .redacted(reason: .placeholder)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                    }
-                }
-            }
-            #if os(tvOS)
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.roundedRectangle)
-            #endif
             .foregroundStyle(.primary, .secondary)
         }
     }

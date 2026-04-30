@@ -312,7 +312,6 @@ extension MediaChaptersSupplement {
                     .buttonStyle(.borderless)
                     .buttonBorderShape(.roundedRectangle)
             }
-            .foregroundStyle(.primary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
             .isSelected(isCurrentChapter)
         }
