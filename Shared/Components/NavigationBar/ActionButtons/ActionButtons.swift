@@ -146,13 +146,12 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                     lastFocusedButton = oldValue
                 }
             }
-            #if os(tvOS)
+            .backport
             .defaultFocus(
                 $focusedButton,
                 lastFocusedButton ?? barActionButtons.first?.rawValue ?? "menu",
                 priority: .userInitiated
             )
-            #endif
         }
 
         var body: some View {
