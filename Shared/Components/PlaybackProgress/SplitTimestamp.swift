@@ -25,6 +25,22 @@ extension VideoPlayer.PlaybackControls {
 
         @State
         private var activeSeconds: Duration = .zero
+        @State
+        private var contentSize: CGSize = .zero
+        @State
+        private var leadingTimestampSize: CGSize = .zero
+        @State
+        private var trailingTimestampSize: CGSize = .zero
+
+        private var scrubbedProgress: Double {
+            guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+            return scrubbedSeconds / runtime
+        }
+
+        private var previewXOffset: CGFloat {
+            let p = contentSize.width * scrubbedProgress - (leadingTimestampSize.width / 2)
+            return clamp(p, min: 0, max: contentSize.width - (trailingTimestampSize.width + leadingTimestampSize.width))
+        }
 
         private var isScrubbing: Bool {
             containerState.isScrubbing
@@ -114,25 +130,6 @@ extension VideoPlayer.PlaybackControls {
             .lineLimit(1)
             .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
-        }
-
-        // MARK: - tvOS
-
-        @State
-        private var contentSize: CGSize = .zero
-        @State
-        private var leadingTimestampSize: CGSize = .zero
-        @State
-        private var trailingTimestampSize: CGSize = .zero
-
-        private var scrubbedProgress: Double {
-            guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
-            return scrubbedSeconds / runtime
-        }
-
-        private var previewXOffset: CGFloat {
-            let p = contentSize.width * scrubbedProgress - (leadingTimestampSize.width / 2)
-            return clamp(p, min: 0, max: contentSize.width - (trailingTimestampSize.width + leadingTimestampSize.width))
         }
 
         @ViewBuilder
