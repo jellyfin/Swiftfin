@@ -455,8 +455,16 @@ extension EpisodeMediaPlayerQueue {
                             #endif
                         }
                     case .initial, .refreshing:
-                        ProgressView()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        CollectionHStack(
+                            count: Int.random(in: 1 ..< 3),
+                            columns: 4
+                        ) { _ in
+                            LoadingButton()
+                                .padding(.horizontal, UIDevice.isTV ? 4 : nil)
+                        }
+                        .insets(horizontal: EdgeInsets.edgePadding)
+                        .itemSpacing(EdgeInsets.edgePadding)
+                        .proxy(collectionHStackProxy)
                     case .error:
                         ErrorView(error: ErrorMessage(L10n.unknownError))
                     }
@@ -618,6 +626,44 @@ extension EpisodeMediaPlayerQueue {
                 activeItemID = newItem.id
             }
             .isSelected(isCurrentEpisode)
+        }
+    }
+
+    private struct LoadingButton: View {
+
+        var body: some View {
+            Button {} label: {
+                VStack(alignment: .leading, spacing: UIDevice.isTV ? 15 : 5) {
+                    Rectangle()
+                        .fill(.complexSecondary)
+                        .posterStyle(.landscape)
+                        .posterShadow()
+                        .hoverEffect(.highlight)
+
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(String.random(count: 10 ..< 20))
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .lineLimit(1)
+                            .foregroundStyle(.primary)
+                            .redacted(reason: .placeholder)
+
+                        DotHStack {
+                            Text(String.random(count: 1 ..< 2))
+                            Text(String.random(count: 2 ..< 3))
+                        }
+                        .redacted(reason: .placeholder)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                    }
+                }
+            }
+            #if os(tvOS)
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.roundedRectangle)
+            #endif
+            .foregroundStyle(.primary, .secondary)
         }
     }
 }
