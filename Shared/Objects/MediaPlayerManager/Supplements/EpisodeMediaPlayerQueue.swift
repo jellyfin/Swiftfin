@@ -617,10 +617,11 @@ extension EpisodeMediaPlayerQueue {
                     }
                 }
             }
-            #if os(tvOS)
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.roundedRectangle)
-            #endif
+            .if(UIDevice.isTV) { button in
+                button
+                    .buttonStyle(.borderless)
+                    .buttonBorderShape(.roundedRectangle)
+            }
             .foregroundStyle(.primary, .secondary)
             .onReceive(manager.$item) { newItem in
                 activeItemID = newItem.id
