@@ -20,25 +20,47 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
         private var isFocused
         @Environment(\.isSelected)
         private var isSelected
+        @Environment(\.isEnabled)
+        private var isEnabled
 
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .fontWeight(.semibold)
                 .foregroundStyle(isFocused ? accentColor.overlayColor : isSelected ? .black : .white)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.horizontal, UIDevice.isTV ? 12 : 10)
+                .padding(.vertical, UIDevice.isTV ? 6 : 3)
                 .background {
                     if isFocused || isSelected {
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 7)
                             .foregroundStyle(isFocused ? accentColor : .white)
                     }
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay {
-                    RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(isFocused ? .clear : .white, lineWidth: 4)
+                    if !isSelected {
+                        RoundedRectangle(cornerRadius: 7)
+                            .stroke(Color.white, lineWidth: UIDevice.isTV ? 6 : 4)
+                    }
                 }
+                .mask {
+                    RoundedRectangle(cornerRadius: 7)
+                }
+            #if os(tvOS)
                 .shadow(color: isFocused ? .black.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
+            #else
+                .scaleEffect(
+                    x: configuration.isPressed ? 0.9 : 1,
+                    y: configuration.isPressed ? 0.9 : 1,
+                    anchor: .init(x: 0.5, y: 0.5)
+                )
+                .animation(.bouncy(duration: 0.4), value: configuration.isPressed)
+                .opacity(configuration.isPressed ? 0.6 : 1)
+                .backport
+                .onChange(of: configuration.isPressed) { _, newValue in
+                    if !newValue, isEnabled {
+                        UIDevice.impact(.light)
+                    }
+                }
+            #endif
         }
     }
 }

@@ -38,7 +38,7 @@ extension VideoPlayer {
         var toaster: ToastProxy
 
         @Namespace
-        private var playbackControls
+        private var videoPlayer
 
         @State
         private var bottomContentFrame: CGRect = .zero
@@ -50,92 +50,52 @@ extension VideoPlayer {
         @State
         var pendingJumpWork: DispatchWorkItem?
 
-        @EnvironmentObject
-        var focusGuide: FocusGuide
-
-        private var bottomContent: some View {
-            VStack(spacing: 10) {
-                NavigationBar()
-                    .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
-                    .disabled(containerState.isPresentingSupplement)
-                    .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
-
-                VStack(spacing: 0) {
-                    PlaybackProgress(
-                        onPanScrubChanged: { isPanning in
-                            if isPanning {
-                                if containerState.scrubOriginSeconds == nil {
-                                    containerState.scrubOriginSeconds = manager.seconds
-                                }
-                                containerState.hasEnteredScrubMode = true
-                            }
-                        }
-                    )
-                    .prefersDefaultFocus(in: playbackControls)
-                    .focusGuide(
-                        focusGuide,
-                        tag: "progressBar",
-                        bottom: "supplementContainer"
-                    )
-                    .fixedSize(horizontal: false, vertical: true)
-                    .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement)
-                    .disabled(containerState.isPresentingSupplement)
-                    .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
-
-                    Color.clear
-                        .frame(height: 0)
-                        .focusGuide(
-                            focusGuide,
-                            tag: "supplementContainer",
-                            onContentFocus: {
-                                if focusGuide.lastFocusedTag == "tabButtons" {
-                                    if containerState.isPresentingSupplement {
-                                        containerState.selectedSupplement = nil
-                                        containerState.containerView?.presentSupplementContainer(false, redirectFocus: false)
-
-                                        DispatchQueue.main.async {
-                                            focusGuide.transition(to: "progressBar")
-                                        }
-                                    } else {
-                                        focusGuide.transition(to: "progressBar")
-                                    }
-                                } else {
-                                    focusGuide.transition(to: "tabButtons")
-                                }
-                            },
-                            top: "progressBar",
-                            bottom: "tabButtons"
-                        )
-                        .fixedSize(horizontal: false, vertical: true)
-                        .isVisible(containerState.isPresentingOverlay)
-                }
-            }
-        }
-
         var body: some View {
-            VStack(spacing: 0) {
-                Spacer()
-                    .allowsHitTesting(false)
+            VStack(spacing: 10) {
 
-                bottomContent
-                    .edgePadding(.horizontal)
-                    .trackingFrame($bottomContentFrame)
-                    .background(alignment: .top) {
-                        Color.black
-                            .maskLinearGradient {
-                                (location: 0, opacity: 0)
-                                (location: 1, opacity: 0.5)
+                Spacer(minLength: 0)
+
+                NavigationBar()
+                    .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState
+                        .isPresentingSupplement)
+                    .disabled(containerState.isPresentingSupplement)
+
+                PlaybackProgress(
+                    onPanScrubChanged: { isPanning in
+                        if isPanning {
+                            if containerState.scrubOriginSeconds == nil {
+                                containerState.scrubOriginSeconds = manager.seconds
                             }
-                            .frame(height: bottomContentFrame.height + 50 + EdgeInsets.edgePadding * 2)
-                            .isVisible((containerState.isScrubbing || containerState.isPresentingOverlay) && !containerState
-                                .isPresentingSupplement)
-                            .allowsHitTesting(false)
+                            containerState.hasEnteredScrubMode = true
+                        }
                     }
+                )
+                .prefersDefaultFocus(in: videoPlayer)
+                .fixedSize(horizontal: false, vertical: true)
+                .isVisible(
+                    (containerState.isPresentingOverlay || containerState.isScrubbing) &&
+                        !containerState.isPresentingSupplement
+                )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .focusScope(playbackControls)
-            .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
+            .edgePadding(.horizontal)
+            .background(alignment: .top) {
+                Color.black
+                    .maskLinearGradient {
+                        (location: 0, opacity: 0)
+                        (location: 1, opacity: 0.5)
+                    }
+                    .frame(height: bottomContentFrame.height + EdgeInsets.edgeInsets.bottom + EdgeInsets.edgePadding * 2)
+                    .ignoresSafeArea(.all)
+                    .isVisible((containerState.isScrubbing || containerState.isPresentingOverlay) && !containerState
+                        .isPresentingSupplement)
+                    .allowsHitTesting(false)
+            }
+            .trackingFrame($bottomContentFrame)
+            .focusScope(videoPlayer)
+            .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
+            .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
             .alert(L10n.closePlayer, isPresented: $containerState.isPresentingCloseConfirmation) {
                 Button(L10n.cancel, role: .cancel) {}
                 Button(L10n.ok, role: .destructive) {
@@ -146,15 +106,11 @@ extension VideoPlayer {
             }
             .onFirstAppear {
                 containerState.isPresentingOverlay = true
-                DispatchQueue.main.async {
-                    resetFocus(in: playbackControls)
-                }
+                resetFocus(in: videoPlayer)
             }
             .onChange(of: containerState.isPresentingOverlay) { _, newValue in
                 if newValue {
-                    DispatchQueue.main.async {
-                        resetFocus(in: playbackControls)
-                    }
+                    resetFocus(in: videoPlayer)
                 }
             }
             .onChange(of: manager.playbackRequestStatus) { _, newValue in

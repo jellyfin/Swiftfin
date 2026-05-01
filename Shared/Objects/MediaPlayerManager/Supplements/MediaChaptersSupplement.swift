@@ -150,10 +150,15 @@ extension MediaChaptersSupplement {
         }
 
         var tvOSView: some View {
-            CollectionHStack(
+            CollectionVGrid(
                 uniqueElements: chapters,
                 id: \.unwrappedIDHashOrZero,
-                columns: 4
+                layout: .columns(
+                    4,
+                    insets: .zero,
+                    itemSpacing: EdgeInsets.edgePadding,
+                    lineSpacing: EdgeInsets.edgePadding
+                )
             ) { chapter in
                 ChapterButton(chapter: chapter) {
                     guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
@@ -169,8 +174,6 @@ extension MediaChaptersSupplement {
                     priority: .automatic
                 )
             }
-            .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.edgePadding)
 //            .proxy(collectionHStack)
 //            .onAppear {
 //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

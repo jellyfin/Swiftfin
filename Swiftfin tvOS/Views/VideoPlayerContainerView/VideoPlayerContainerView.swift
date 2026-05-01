@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Engine
 import MediaPlayer
 import SwiftUI
@@ -124,7 +125,6 @@ extension VideoPlayer {
                     onPressEvent: onPressEvent
                 )
                 .environmentObject(containerState)
-                .environmentObject(focusGuide)
                 .environmentObject(manager)
                 .eraseToAnyView()
             )
@@ -137,7 +137,6 @@ extension VideoPlayer {
         private lazy var supplementContainerViewController: HostingController<AnyView> = {
             let content = SupplementContainerView()
                 .environmentObject(containerState)
-                .environmentObject(focusGuide)
                 .environmentObject(manager)
                 .eraseToAnyView()
             let controller = HostingController(content: content)
@@ -165,7 +164,7 @@ extension VideoPlayer {
 
         /// Resting offset for the supplement container when dismissed,
         /// tall enough to show the tab buttons above the screen bottom edge.
-        private let supplementTabRestingOffset: CGFloat = 65
+        private let supplementTabRestingOffset: CGFloat = 120
 
         private let minimumTranslation: CGFloat = 100.0
 
@@ -176,7 +175,7 @@ extension VideoPlayer {
         private let player: AnyView
         private let playbackControls: AnyView
         private let containerState: VideoPlayerContainerState
-        private let focusGuide = FocusGuide()
+        private var cancellables: Set<AnyCancellable> = []
 
         let onPressEvent = OnPressEvent()
 
@@ -286,7 +285,6 @@ extension VideoPlayer {
 
         func presentSupplementContainer(
             _ didPresent: Bool,
-            redirectFocus: Bool = true,
             with panningState: (translation: CGFloat, velocity: CGFloat)? = nil
         ) {
             guard !isPanning else { return }
@@ -294,10 +292,8 @@ extension VideoPlayer {
             if didPresent {
                 self.supplementBottomAnchor.constant = -supplementContainerOffset
                 containerState.isPresentingOverlay = true
-                supplementContainerView.isUserInteractionEnabled = true
             } else {
                 self.supplementBottomAnchor.constant = -supplementTabRestingOffset
-                supplementContainerView.isUserInteractionEnabled = false
             }
 
             containerState.isPresentingPlaybackControls = true
@@ -343,6 +339,13 @@ extension VideoPlayer {
             let gesture = UITapGestureRecognizer(target: self, action: #selector(menuPressed))
             gesture.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
             view.addGestureRecognizer(gesture)
+
+            containerState.$isPresentingOverlay
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] isPresenting in
+                    self?.supplementContainerView.isUserInteractionEnabled = isPresenting
+                }
+                .store(in: &cancellables)
         }
 
         override func viewDidAppear(_ animated: Bool) {
@@ -563,12 +566,8 @@ extension VideoPlayer {
                 containerState.timer.poke()
             } else if containerState.isPresentingSupplement {
                 containerState.selectedSupplement = nil
-                presentSupplementContainer(false, redirectFocus: false)
+                presentSupplementContainer(false)
                 containerState.timer.poke()
-                focusGuide.transition(to: nil)
-                DispatchQueue.main.async { [self] in
-                    focusGuide.transition(to: "progressBar")
-                }
             } else {
                 containerState.isPresentingCloseConfirmation = true
             }

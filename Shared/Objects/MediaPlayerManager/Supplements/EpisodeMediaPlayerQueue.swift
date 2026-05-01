@@ -157,16 +157,11 @@ extension EpisodeMediaPlayerQueue {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        #if os(tvOS)
-        @EnvironmentObject
-        private var focusGuide: FocusGuide
-
         @FocusState
         private var focusedEpisodeID: String?
 
         @State
         private var lastFocusedEpisodeID: String?
-        #endif
 
         @ObservedObject
         var viewModel: SeriesItemViewModel
@@ -333,10 +328,15 @@ extension EpisodeMediaPlayerQueue {
                     switch season.state {
                     case .content:
                         if !season.elements.isEmpty {
-                            CollectionHStack(
+                            CollectionVGrid(
                                 uniqueElements: season.elements,
                                 id: \.unwrappedIDHashOrZero,
-                                columns: 4
+                                layout: .columns(
+                                    4,
+                                    insets: .zero,
+                                    itemSpacing: EdgeInsets.edgePadding,
+                                    lineSpacing: EdgeInsets.edgePadding
+                                )
                             ) { episode in
                                 EpisodeButton(episode: episode) {
                                     select(episode: episode)
@@ -344,9 +344,6 @@ extension EpisodeMediaPlayerQueue {
                                 .focused($focusedEpisodeID, equals: episode.id)
                                 .padding(.horizontal, 4)
                             }
-                            .insets(horizontal: EdgeInsets.edgePadding)
-                            .itemSpacing(EdgeInsets.edgePadding)
-                            .proxy(collectionHStackProxy)
                             .focusSection()
                             .onChange(of: focusedEpisodeID) { _, newValue in
                                 guard let newValue else { return }
@@ -357,44 +354,36 @@ extension EpisodeMediaPlayerQueue {
                                     getContentFocus()
                                 }
                             }
-                            .onChange(of: focusGuide.focusedTag) { _, newTag in
-                                if newTag == "supplementContent" {
-                                    getContentFocus()
-                                }
-                            }
                             .onFirstAppear {
                                 lastFocusedEpisodeID = manager.item.id
-
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    collectionHStackProxy.scrollTo(
-                                        id: manager.item.unwrappedIDHashOrZero,
-                                        animated: false
-                                    )
-                                }
                             }
                         }
                     case .initial, .refreshing:
-                        CollectionHStack(
+                        CollectionVGrid(
                             count: 1,
-                            columns: 4
+                            layout: .columns(
+                                4,
+                                insets: .zero,
+                                itemSpacing: EdgeInsets.edgePadding,
+                                lineSpacing: EdgeInsets.edgePadding
+                            )
                         ) { _ in
                             SupplementLoadingButton()
                                 .padding(.horizontal, 4)
                         }
-                        .insets(horizontal: EdgeInsets.edgePadding)
-                        .itemSpacing(EdgeInsets.edgePadding)
-                        .proxy(collectionHStackProxy)
                     case .error:
-                        CollectionHStack(
+                        CollectionVGrid(
                             count: 1,
-                            columns: 4
+                            layout: .columns(
+                                4,
+                                insets: .zero,
+                                itemSpacing: EdgeInsets.edgePadding,
+                                lineSpacing: EdgeInsets.edgePadding
+                            )
                         ) { _ in
                             SupplementEmptyButton()
                                 .padding(.horizontal, 4)
                         }
-                        .insets(horizontal: EdgeInsets.edgePadding)
-                        .itemSpacing(EdgeInsets.edgePadding)
-                        .proxy(collectionHStackProxy)
                     }
                 }
             }

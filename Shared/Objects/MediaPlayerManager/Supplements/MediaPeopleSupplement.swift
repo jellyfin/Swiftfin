@@ -107,15 +107,18 @@ extension MediaPeopleSupplement {
         }
 
         var tvOSView: some View {
-            CollectionHStack(
+            CollectionVGrid(
                 uniqueElements: people,
                 id: \.unwrappedIDHashOrZero,
-                columns: 9
+                layout: .columns(
+                    9,
+                    insets: .zero,
+                    itemSpacing: EdgeInsets.edgePadding,
+                    lineSpacing: EdgeInsets.edgePadding
+                )
             ) { person in
                 personView(for: person)
             }
-            .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.edgePadding)
         }
     }
 

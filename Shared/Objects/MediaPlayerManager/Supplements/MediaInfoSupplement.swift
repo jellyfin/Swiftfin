@@ -40,11 +40,6 @@ extension MediaInfoSupplement {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        #if os(tvOS)
-        @EnvironmentObject
-        private var focusGuide: FocusGuide
-        #endif
-
         let item: BaseItemDto
 
         @ViewBuilder
@@ -143,6 +138,7 @@ extension MediaInfoSupplement {
                 )
                 .posterCornerRadius(item.preferredPosterDisplayType)
                 .environment(\.isOverComplexContent, true)
+                .padding(.top, EdgeInsets.edgeInsets.bottom / 2)
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
@@ -179,15 +175,7 @@ extension MediaInfoSupplement {
 
         var tvOSView: some View {
             regularView
-                .edgePadding()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            #if os(tvOS)
-                .onChange(of: focusGuide.focusedTag) { _, newTag in
-                    if newTag == "supplementContent" {
-                        isResetButtonFocused = true
-                    }
-                }
-            #endif
+                .frame(maxWidth: .infinity, alignment: .topLeading)
         }
     }
 }
