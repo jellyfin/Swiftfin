@@ -76,6 +76,18 @@ extension VideoPlayer {
 
             var body: some View {
                 player
+                    .overlay(alignment: .bottom) {
+                        LinearGradient(
+                            stops: [
+                                .init(color: .black.opacity(0), location: 0),
+                                .init(color: .black.opacity(0.5), location: 1),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .isVisible(containerState.isPresentingOverlay && !containerState.isScrubbing)
+                        .allowsHitTesting(false)
+                    }
                     .overlay {
                         if manager.playbackRequestStatus == .paused {
                             Label(L10n.pause, systemImage: "pause.fill")

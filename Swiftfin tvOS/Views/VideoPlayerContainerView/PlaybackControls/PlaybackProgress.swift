@@ -159,6 +159,11 @@ extension VideoPlayer.PlaybackControls {
             .onChange(of: isFocused) { _, newValue in
                 containerState.isProgressBarFocused = newValue
             }
+            .onChange(of: containerState.isProgressBarFocused) { _, newValue in
+                if newValue, !isFocused {
+                    isFocused = true
+                }
+            }
         }
     }
 }

@@ -41,9 +41,6 @@ extension VideoPlayer {
         private var videoPlayer
 
         @State
-        private var bottomContentFrame: CGRect = .zero
-
-        @State
         var speedBoostTimer: Timer?
         @State
         var isSpeedBoosting: Bool = false
@@ -79,19 +76,6 @@ extension VideoPlayer {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .edgePadding(.horizontal)
-            .background(alignment: .top) {
-                Color.black
-                    .maskLinearGradient {
-                        (location: 0, opacity: 0)
-                        (location: 1, opacity: 0.5)
-                    }
-                    .frame(height: bottomContentFrame.height + EdgeInsets.edgeInsets.bottom + EdgeInsets.edgePadding * 2)
-                    .ignoresSafeArea(.all)
-                    .isVisible((containerState.isScrubbing || containerState.isPresentingOverlay) && !containerState
-                        .isPresentingSupplement)
-                    .allowsHitTesting(false)
-            }
-            .trackingFrame($bottomContentFrame)
             .focusScope(videoPlayer)
             .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
