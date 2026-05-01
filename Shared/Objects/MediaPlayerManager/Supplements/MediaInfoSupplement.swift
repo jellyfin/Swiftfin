@@ -86,12 +86,12 @@ extension MediaInfoSupplement {
                 isCompact: containerState.isCompact
             ) {
                 iOSCompactView
+                    .edgePadding(.horizontal)
             } regularView: {
                 regularView
             }
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
-            .edgePadding(.horizontal)
             .edgePadding(.bottom)
         }
 

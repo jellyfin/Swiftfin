@@ -215,13 +215,13 @@ extension PlaybackInformationSupplement {
                 isCompact: containerState.isCompact
             ) {
                 compactView
+                    .edgePadding(.horizontal)
             } regularView: {
                 regularView
             }
             .labeledContentStyle(.playbackInfo)
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
-            .edgePadding(.horizontal)
             .edgePadding(.bottom)
         }
 
