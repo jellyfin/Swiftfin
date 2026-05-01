@@ -138,7 +138,6 @@ extension MediaInfoSupplement {
                 )
                 .posterCornerRadius(item.preferredPosterDisplayType)
                 .environment(\.isOverComplexContent, true)
-                .padding(.top, EdgeInsets.edgeInsets.bottom / 2)
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
@@ -171,11 +170,13 @@ extension MediaInfoSupplement {
                     }
                 }
             }
+            .edgePadding(.vertical)
         }
 
         var tvOSView: some View {
             regularView
                 .frame(maxWidth: .infinity, alignment: .topLeading)
+                .edgePadding(.horizontal)
         }
     }
 }

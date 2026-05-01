@@ -332,8 +332,13 @@ extension EpisodeMediaPlayerQueue {
                                 uniqueElements: season.elements,
                                 id: \.unwrappedIDHashOrZero,
                                 layout: .columns(
-                                    4,
-                                    insets: .zero,
+                                    5,
+                                    insets: .init(
+                                        top: EdgeInsets.edgePadding,
+                                        leading: EdgeInsets.edgePadding,
+                                        bottom: 0,
+                                        trailing: EdgeInsets.edgePadding
+                                    ),
                                     itemSpacing: EdgeInsets.edgePadding,
                                     lineSpacing: EdgeInsets.edgePadding
                                 )
@@ -344,6 +349,7 @@ extension EpisodeMediaPlayerQueue {
                                 .focused($focusedEpisodeID, equals: episode.id)
                                 .padding(.horizontal, 4)
                             }
+                            .ignoresSafeArea(.container, edges: .horizontal)
                             .focusSection()
                             .onChange(of: focusedEpisodeID) { _, newValue in
                                 guard let newValue else { return }
@@ -358,32 +364,29 @@ extension EpisodeMediaPlayerQueue {
                                 lastFocusedEpisodeID = manager.item.id
                             }
                         }
-                    case .initial, .refreshing:
+                    case .initial, .refreshing, .error:
                         CollectionVGrid(
                             count: 1,
                             layout: .columns(
-                                4,
-                                insets: .zero,
+                                5,
+                                insets: .init(
+                                    top: EdgeInsets.edgePadding,
+                                    leading: EdgeInsets.edgePadding,
+                                    bottom: 0,
+                                    trailing: EdgeInsets.edgePadding
+                                ),
                                 itemSpacing: EdgeInsets.edgePadding,
                                 lineSpacing: EdgeInsets.edgePadding
                             )
                         ) { _ in
-                            SupplementLoadingButton()
-                                .padding(.horizontal, 4)
+                            switch season.state {
+                            case .error:
+                                SupplementEmptyButton()
+                            default:
+                                SupplementLoadingButton()
+                            }
                         }
-                    case .error:
-                        CollectionVGrid(
-                            count: 1,
-                            layout: .columns(
-                                4,
-                                insets: .zero,
-                                itemSpacing: EdgeInsets.edgePadding,
-                                lineSpacing: EdgeInsets.edgePadding
-                            )
-                        ) { _ in
-                            SupplementEmptyButton()
-                                .padding(.horizontal, 4)
-                        }
+                        .ignoresSafeArea(.container, edges: .horizontal)
                     }
                 }
             }

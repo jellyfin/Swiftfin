@@ -112,13 +112,20 @@ extension MediaPeopleSupplement {
                 id: \.unwrappedIDHashOrZero,
                 layout: .columns(
                     9,
-                    insets: .zero,
+                    insets: .init(
+                        top: EdgeInsets.edgePadding,
+                        leading: EdgeInsets.edgePadding,
+                        bottom: 0,
+                        trailing: EdgeInsets.edgePadding
+                    ),
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
             ) { person in
                 personView(for: person)
+                    .focusSection()
             }
+            .ignoresSafeArea(.container, edges: .horizontal)
         }
     }
 

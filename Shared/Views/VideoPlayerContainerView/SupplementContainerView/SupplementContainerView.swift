@@ -22,6 +22,22 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             case focusBoundary
             case supplementTab(AnyMediaPlayerSupplement.ID)
             case supplementContents(AnyMediaPlayerSupplement.ID)
+
+            var isSupplementTab: Bool {
+                if case .supplementTab = self {
+                    true
+                } else {
+                    false
+                }
+            }
+
+            var isSupplementContents: Bool {
+                if case .supplementContents = self {
+                    true
+                } else {
+                    false
+                }
+            }
         }
 
         @Environment(\.safeAreaInsets)
@@ -68,9 +84,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             } content: {
                 supplement.videoPlayerBody
             }
-            #if os(tvOS)
-            .edgePadding(.horizontal)
-            #endif
             .background {
                 #if os(iOS)
                 GestureView()
@@ -109,15 +122,18 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             }
             .edgePadding(.horizontal)
             .focusSection()
-            #if os(tvOS)
-                .defaultFocus($focusedElement, defaultTabFocus)
-            #endif
-                .if(!UIDevice.isTV) { view in
-                    view
-                        .padding(.leading, safeAreaInsets.leading)
-                        .padding(.trailing, safeAreaInsets.trailing)
-                }
-                .buttonStyle(SupplementTitleButtonStyle())
+            .backport
+            .defaultFocus(
+                $focusedElement,
+                defaultTabFocus,
+                priority: .userInitiated
+            )
+            .if(!UIDevice.isTV) { view in
+                view
+                    .padding(.leading, safeAreaInsets.leading)
+                    .padding(.trailing, safeAreaInsets.trailing)
+            }
+            .buttonStyle(SupplementTitleButtonStyle())
         }
 
         @ViewBuilder
@@ -138,6 +154,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         ForEach(currentSupplements) { supplement in
                             supplementContainer(for: supplement.supplement)
                                 .eraseToAnyView()
+                                .focusSection()
+                                .frame(maxWidth: .infinity, alignment: .topLeading)
                                 .tag(supplement.id as String?)
                         }
                     }
@@ -155,19 +173,16 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
                 VStack(alignment: .leading, spacing: 0) {
 
-                    #if os(tvOS)
                     Color.clear
                         .frame(height: 1)
+                        .backport
                         .focusable(true)
                         .focused($focusedElement, equals: .focusBoundary)
                         .fixedSize(horizontal: false, vertical: true)
-                    #endif
 
                     tabButtons
 
                     supplementContent
-                        .padding(.top, EdgeInsets.edgePadding)
-                        .scrollClipDisabled()
                         .isVisible(containerState.isPresentingSupplement)
                         .disabled(!containerState.isPresentingSupplement)
                         .animation(.linear(duration: 0.2), value: containerState.selectedSupplement?.id)
@@ -223,18 +238,16 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     switch newValue {
                     case let .supplementTab(id):
                         if containerState.selectedSupplement?.id != id,
-                           let supplement = currentSupplements[id: id]?.supplement
+                           let supplement = currentSupplements[id: id]
                         {
                             containerState.select(supplement: supplement)
                         }
                         containerState.isPresentingOverlay = true
                     case .focusBoundary:
                         if containerState.isPresentingSupplement {
-                            // Came from a supplement tab going up → close + focus progress bar
                             containerState.select(supplement: nil)
                             containerState.isProgressBarFocused = true
                         } else {
-                            // Came from progress bar going down → open + focus first tab
                             if let first = currentSupplements.first {
                                 containerState.select(supplement: first.supplement)
                                 DispatchQueue.main.async {

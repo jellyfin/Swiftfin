@@ -58,10 +58,10 @@ extension MediaChaptersSupplement {
         @ObservedObject
         private var supplement: MediaChaptersSupplement
 
-//        @StateObject
-//        private var collectionHStackProxy: CollectionHStackProxy = .init()
-//        @StateObject
-//        private var collectionVGridProxy: CollectionVGridProxy = .init()
+        //        @StateObject
+        //        private var collectionHStackProxy: CollectionHStackProxy = .init()
+        //        @StateObject
+        //        private var collectionVGridProxy: CollectionVGridProxy = .init()
 
         @FocusState
         private var focusedChapterID: ChapterInfo.FullInfo.ID?
@@ -112,13 +112,13 @@ extension MediaChaptersSupplement {
                 .edgePadding(.horizontal)
                 .environmentObject(supplement)
             }
-//            .proxy(collectionVGridProxy)
-//            .onAppear {
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                    guard let currentChapter else { return }
-//                    collectionVGridProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
-//                }
-//            }
+            //            .proxy(collectionVGridProxy)
+            //            .onAppear {
+            //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            //                    guard let currentChapter else { return }
+            //                    collectionVGridProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+            //                }
+            //            }
         }
 
         @ViewBuilder
@@ -140,13 +140,13 @@ extension MediaChaptersSupplement {
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
             .scrollBehavior(.continuousLeadingEdge)
-//            .proxy(collectionHStack)
-//            .onAppear {
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                    guard let currentChapter else { return }
-//                    collectionVGridProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
-//                }
-//            }
+            //            .proxy(collectionHStack)
+            //            .onAppear {
+            //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            //                    guard let currentChapter else { return }
+            //                    collectionVGridProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+            //                }
+            //            }
         }
 
         var tvOSView: some View {
@@ -154,8 +154,13 @@ extension MediaChaptersSupplement {
                 uniqueElements: chapters,
                 id: \.unwrappedIDHashOrZero,
                 layout: .columns(
-                    4,
-                    insets: .zero,
+                    5,
+                    insets: .init(
+                        top: EdgeInsets.edgePadding,
+                        leading: EdgeInsets.edgePadding,
+                        bottom: 0,
+                        trailing: EdgeInsets.edgePadding
+                    ),
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
@@ -174,139 +179,133 @@ extension MediaChaptersSupplement {
                     priority: .automatic
                 )
             }
-//            .proxy(collectionHStack)
-//            .onAppear {
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                    guard let currentChapter else { return }
-//                    collectionVGridProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
-//                }
-//            }
+            .ignoresSafeArea(.container, edges: .horizontal)
         }
-    }
 
-    struct ChapterPreview: View {
+        struct ChapterPreview: View {
 
-        @Default(.accentColor)
-        private var accentColor
+            @Default(.accentColor)
+            private var accentColor
 
-        @Environment(\.isSelected)
-        private var isSelected
+            @Environment(\.isSelected)
+            private var isSelected
 
-        let chapter: ChapterInfo.FullInfo
+            let chapter: ChapterInfo.FullInfo
 
-        var body: some View {
-            PosterImage(
-                item: chapter,
-                type: .landscape,
-                contentMode: .fill
-            )
-            .overlay {
-                if isSelected {
-                    ContainerRelativeShape()
-                        .stroke(
-                            accentColor,
-                            lineWidth: UIDevice.isTV ? 12 : 8
-                        )
-                        .clipped()
-                }
-            }
-            .posterStyle(.landscape)
-            .posterShadow()
-            .hoverEffect(.highlight)
-        }
-    }
-
-    struct ChapterContent: View {
-
-        let chapter: ChapterInfo.FullInfo
-
-        var body: some View {
-            VStack(alignment: .leading, spacing: 5) {
-                Text(chapter.chapterInfo.displayTitle)
-                    .font(.subheadline.weight(.semibold))
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-
-                Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
-                    .font(UIDevice.isTV ? .caption : .subheadline.weight(.semibold))
-                    .foregroundStyle(Color(UIColor.systemBlue))
-                    .padding(.horizontal, 4)
-                    .background {
-                        Color(.darkGray)
-                            .opacity(0.2)
-                            .cornerRadius(4)
+            var body: some View {
+                PosterImage(
+                    item: chapter,
+                    type: .landscape,
+                    contentMode: .fill
+                )
+                .overlay {
+                    if isSelected {
+                        ContainerRelativeShape()
+                            .stroke(
+                                accentColor,
+                                lineWidth: UIDevice.isTV ? 12 : 8
+                            )
+                            .clipped()
                     }
+                }
+                .posterStyle(.landscape)
+                .posterShadow()
+                .hoverEffect(.highlight)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
-    struct ChapterRow: View {
-
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var supplement: MediaChaptersSupplement
-
-        @State
-        private var activeSeconds: Duration = .zero
-
-        let chapter: ChapterInfo.FullInfo
-        let action: () -> Void
-
-        private var isCurrentChapter: Bool {
-            supplement.isCurrentChapter(
-                seconds: activeSeconds,
-                chapter: chapter
-            )
         }
 
-        var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
-                ChapterPreview(
+        struct ChapterContent: View {
+
+            let chapter: ChapterInfo.FullInfo
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(chapter.chapterInfo.displayTitle)
+                        .font(.subheadline.weight(.semibold))
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+
+                    Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                        .font(UIDevice.isTV ? .caption : .subheadline.weight(.semibold))
+                        .foregroundStyle(Color(UIColor.systemBlue))
+                        .padding(.horizontal, 4)
+                        .background {
+                            Color(.darkGray)
+                                .opacity(0.2)
+                                .cornerRadius(4)
+                        }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+
+        struct ChapterRow: View {
+
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
+            @EnvironmentObject
+            private var supplement: MediaChaptersSupplement
+
+            @State
+            private var activeSeconds: Duration = .zero
+
+            let chapter: ChapterInfo.FullInfo
+            let action: () -> Void
+
+            private var isCurrentChapter: Bool {
+                supplement.isCurrentChapter(
+                    seconds: activeSeconds,
                     chapter: chapter
                 )
-                .frame(width: 110)
-                .padding(.vertical, 8)
-            } content: {
-                ChapterContent(chapter: chapter)
             }
-            .onSelect(perform: action)
-            .assign(manager.secondsBox.$value, to: $activeSeconds)
-            .isSelected(isCurrentChapter)
-        }
-    }
 
-    struct ChapterButton: View {
-
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var supplement: MediaChaptersSupplement
-
-        @State
-        private var activeSeconds: Duration = .zero
-
-        let chapter: ChapterInfo.FullInfo
-        let action: () -> Void
-
-        private var isCurrentChapter: Bool {
-            supplement.isCurrentChapter(
-                seconds: activeSeconds,
-                chapter: chapter
-            )
+            var body: some View {
+                ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+                    ChapterPreview(
+                        chapter: chapter
+                    )
+                    .frame(width: 110)
+                    .padding(.vertical, 8)
+                } content: {
+                    ChapterContent(chapter: chapter)
+                }
+                .onSelect(perform: action)
+                .assign(manager.secondsBox.$value, to: $activeSeconds)
+                .isSelected(isCurrentChapter)
+            }
         }
 
-        var body: some View {
-            SupplementPosterButton(
-                item: chapter,
-                isSelected: isCurrentChapter,
-                action: action
-            ) {
-                ChapterContent(chapter: chapter)
+        struct ChapterButton: View {
+
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
+            @EnvironmentObject
+            private var supplement: MediaChaptersSupplement
+
+            @State
+            private var activeSeconds: Duration = .zero
+
+            let chapter: ChapterInfo.FullInfo
+            let action: () -> Void
+
+            private var isCurrentChapter: Bool {
+                supplement.isCurrentChapter(
+                    seconds: activeSeconds,
+                    chapter: chapter
+                )
             }
-            .assign(manager.secondsBox.$value, to: $activeSeconds)
+
+            var body: some View {
+                SupplementPosterButton(
+                    item: chapter,
+                    isSelected: isCurrentChapter,
+                    action: action
+                ) {
+                    ChapterContent(chapter: chapter)
+                }
+                .assign(manager.secondsBox.$value, to: $activeSeconds)
+            }
         }
     }
 }

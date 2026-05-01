@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionVGrid
 import Combine
 import Defaults
 import JellyfinAPI
@@ -226,7 +227,20 @@ extension PlaybackInformationSupplement {
 
         @ViewBuilder
         private var compactView: some View {
-            ScrollView {
+            CollectionVGrid(
+                count: 1,
+                layout: .columns(
+                    1,
+                    insets: .init(
+                        top: EdgeInsets.edgePadding,
+                        leading: 0,
+                        bottom: 0,
+                        trailing: 0
+                    ),
+                    itemSpacing: 0,
+                    lineSpacing: 0
+                )
+            ) { _ in
                 VStack(alignment: .leading, spacing: 4) {
                     playbackInfoSection
                     videoInfoSection
@@ -236,12 +250,24 @@ extension PlaybackInformationSupplement {
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
             }
-            .scrollIndicators(.hidden)
         }
 
         @ViewBuilder
         private var regularView: some View {
-            ScrollView {
+            CollectionVGrid(
+                count: 1,
+                layout: .columns(
+                    1,
+                    insets: .init(
+                        top: EdgeInsets.edgePadding,
+                        leading: EdgeInsets.edgePadding,
+                        bottom: 0,
+                        trailing: EdgeInsets.edgePadding
+                    ),
+                    itemSpacing: EdgeInsets.edgePadding,
+                    lineSpacing: EdgeInsets.edgePadding
+                )
+            ) { _ in
                 HStack(alignment: .top, spacing: 24) {
                     VStack(alignment: .leading, spacing: 4) {
                         playbackInfoSection
@@ -257,7 +283,6 @@ extension PlaybackInformationSupplement {
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                 }
             }
-            .scrollIndicators(.hidden)
         }
 
         var tvOSView: some View {
