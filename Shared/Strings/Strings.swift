@@ -468,8 +468,6 @@ internal enum L10n {
   internal static let dayOfWeek = L10n.tr("Localizable", "dayOfWeek", fallback: "Day of week")
   /// Days
   internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
-  /// Decrease
-  internal static let decrease = L10n.tr("Localizable", "decrease", fallback: "Decrease")
   /// Decrement
   internal static let decrement = L10n.tr("Localizable", "decrement", fallback: "Decrement")
   /// Default
@@ -786,8 +784,6 @@ internal enum L10n {
   internal static func incorrectPinForUser(_ p1: Any) -> String {
     return L10n.tr("Localizable", "incorrectPinForUser", String(describing: p1), fallback: "Incorrect pin for %@")
   }
-  /// Increase
-  internal static let increase = L10n.tr("Localizable", "increase", fallback: "Increase")
   /// Increment
   internal static let increment = L10n.tr("Localizable", "increment", fallback: "Increment")
   /// Index
@@ -1150,8 +1146,6 @@ internal enum L10n {
   internal static let playAndPause = L10n.tr("Localizable", "playAndPause", fallback: "Play / Pause")
   /// Playback quality
   internal static let playbackQuality = L10n.tr("Localizable", "playbackQuality", fallback: "Playback quality")
-  /// Playback rate
-  internal static let playbackRate = L10n.tr("Localizable", "playbackRate", fallback: "Playback rate")
   /// Playback speed
   internal static let playbackSpeed = L10n.tr("Localizable", "playbackSpeed", fallback: "Playback speed")
   /// Play count
