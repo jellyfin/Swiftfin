@@ -12,13 +12,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: current button
 // TODO: scroll to current chapter on appear
-// TODO: fix swapping between chapters on selection
-//       - little flicker at seconds boundary
 // TODO: sometimes safe area for CollectionHStack doesn't trigger
-// TODO: fix chapter image aspect fit
-//       - still be in a 1.77 box
 
 class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
 
@@ -301,19 +296,14 @@ extension MediaChaptersSupplement {
         }
 
         var body: some View {
-            Button(action: action) {
-                VStack(alignment: .leading, spacing: UIDevice.isTV ? 15 : 5) {
-                    ChapterPreview(chapter: chapter)
-                    ChapterContent(chapter: chapter)
-                }
-            }
-            .if(UIDevice.isTV) { button in
-                button
-                    .buttonStyle(.borderless)
-                    .buttonBorderShape(.roundedRectangle)
+            SupplementPosterButton(
+                item: chapter,
+                isSelected: isCurrentChapter,
+                action: action
+            ) {
+                ChapterContent(chapter: chapter)
             }
             .assign(manager.secondsBox.$value, to: $activeSeconds)
-            .isSelected(isCurrentChapter)
         }
     }
 }
