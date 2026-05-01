@@ -144,7 +144,7 @@ extension MediaInfoSupplement {
                 .posterCornerRadius(item.preferredPosterDisplayType)
                 .environment(\.isOverComplexContent, true)
 
-                VStack(alignment: .leading, spacing: !UIDevice.isTV ? 5 : 15) {
+                VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
                         .font(.callout.weight(.semibold))
                         .lineLimit(2)
