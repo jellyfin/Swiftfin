@@ -83,40 +83,8 @@ struct PlaybackRateMediaPlayerSupplement: MediaPlayerSupplement {
         }
 
         var tvOSView: some View {
-            VStack(spacing: 30) {
-                Text(L10n.playbackRate)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-
-                Text(manager.rate, format: .playbackRate)
-                    .font(.system(size: 120))
-                    .fontWeight(.bold)
-
-                HStack(spacing: 20) {
-                    Button {
-                        let newRate = clamp(manager.rate - 0.05, min: 0.5, max: 2.0)
-                        manager.setRate(rate: newRate)
-                    } label: {
-                        Label(L10n.decrease, systemImage: "minus")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .frame(width: 140, height: 100)
-                    }
-                    .buttonStyle(.card)
-
-                    Button {
-                        let newRate = clamp(manager.rate + 0.05, min: 0.5, max: 2.0)
-                        manager.setRate(rate: newRate)
-                    } label: {
-                        Label(L10n.increase, systemImage: "plus")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .frame(width: 140, height: 100)
-                    }
-                    .buttonStyle(.card)
-                }
-            }
-            .padding(40)
+            Color.orange
+                .opacity(0.5)
         }
     }
 }
