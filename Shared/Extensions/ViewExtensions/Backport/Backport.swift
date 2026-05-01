@@ -92,6 +92,37 @@ extension Backport where Content: View {
         }
     }
 
+    /// This does nothing on iOS pre-17.
+    @ViewBuilder
+    func defaultFocus<V: Hashable>(
+        _ binding: FocusState<V>.Binding,
+        _ value: V,
+        priority: DefaultFocusEvaluationPriority = .automatic
+    )
+    -> some View {
+        if #available(iOS 17, tvOS 17, *) {
+            content
+                .defaultFocus(
+                    binding,
+                    value,
+                    priority: priority
+                )
+        } else {
+            content
+        }
+    }
+
+    /// This does nothing on iOS pre-17.
+    @ViewBuilder
+    func focusable(_ isFocusable: Bool = true) -> some View {
+        if #available(iOS 17, tvOS 17, *) {
+            content
+                .focusable(isFocusable)
+        } else {
+            content
+        }
+    }
+
     @available(tvOS, unavailable)
     @ViewBuilder
     func searchFocused(

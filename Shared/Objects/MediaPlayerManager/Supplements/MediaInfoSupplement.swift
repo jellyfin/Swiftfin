@@ -13,7 +13,7 @@ import SwiftUI
 
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
-    let displayTitle: String = "Info"
+    let displayTitle: String = L10n.info
     let item: BaseItemDto
 
     var id: String {
@@ -32,45 +32,56 @@ extension MediaInfoSupplement {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
+        @FocusState
+        private var isResetButtonFocused: Bool
+
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        #if os(tvOS)
+        @EnvironmentObject
+        private var focusGuide: FocusGuide
+        #endif
+
         let item: BaseItemDto
 
         @ViewBuilder
         private var accessoryView: some View {
-            DotHStack {
-                if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLabel {
-                    Text(seasonEpisodeLocator)
-                } else if let premiereYear = item.premiereDateYear {
-                    Text(premiereYear)
-                }
-
-                if let runtime = item.runTimeLabel {
-                    Text(runtime)
-                }
-
-                if let officialRating = item.officialRating {
-                    Text(officialRating)
+            VStack(alignment: .leading) {
+                DotHStack {
+                    if item.type == .episode {
+                        if let premiereDateLabel = item.premiereDateLabel {
+                            Text(premiereDateLabel)
+                        }
+                        if let seasonEpisodeLocator = item.seasonEpisodeLabel {
+                            Text(seasonEpisodeLocator)
+                        }
+                    } else if let premiereYear = item.premiereDateYear {
+                        Text(premiereYear)
+                    }
+                    if let runtime = item.runTimeLabel {
+                        Text(runtime)
+                    }
+                    if let officialRating = item.officialRating {
+                        Text(officialRating)
+                    }
                 }
             }
         }
 
-        @ViewBuilder
-        private var fromBeginningButton: some View {
-            Button(L10n.fromBeginning, systemImage: "play.fill") {
+        private var resetPlaybackButton: some View {
+            Button {
                 manager.proxy?.setSeconds(.zero)
                 manager.setPlaybackRequestStatus(status: .playing)
                 containerState.select(supplement: nil)
+            } label: {
+                Label(L10n.fromBeginning, systemImage: "play.fill")
+                    .padding()
             }
-            #if os(iOS)
             .buttonStyle(.material)
-            #endif
-            .frame(width: 200, height: 50)
-            .font(.subheadline)
-            .fontWeight(.semibold)
+            .font(.subheadline.weight(.semibold))
         }
 
         // TODO: may need to be a layout for correct overview frame
@@ -81,7 +92,7 @@ extension MediaInfoSupplement {
             ) {
                 iOSCompactView
             } regularView: {
-                iOSRegularView
+                regularView
             }
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
@@ -111,29 +122,17 @@ extension MediaInfoSupplement {
                 .allowsHitTesting(false)
 
                 if !item.isLiveStream {
-                    Button {
-                        manager.proxy?.setSeconds(.zero)
-                        manager.setPlaybackRequestStatus(status: .playing)
-                        containerState.select(supplement: nil)
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 7)
-                                .foregroundStyle(.white)
-
-                            Label(L10n.fromBeginning, systemImage: "play.fill")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 40)
+                    resetPlaybackButton
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 40)
+                        .padding(.vertical)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
         }
 
         @ViewBuilder
-        private var iOSRegularView: some View {
+        private var regularView: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                 // TODO: determine what to do with non-portrait (channel, home video) images
                 //       - use aspect ratio?
@@ -142,12 +141,12 @@ extension MediaInfoSupplement {
                     type: item.preferredPosterDisplayType,
                     contentMode: .fit
                 )
+                .posterCornerRadius(item.preferredPosterDisplayType)
                 .environment(\.isOverComplexContent, true)
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
-                        .font(.callout)
-                        .fontWeight(.semibold)
+                        .font(.callout.weight(.semibold))
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
@@ -155,7 +154,7 @@ extension MediaInfoSupplement {
                         Text(overview)
                             .font(.subheadline)
                             .fontWeight(.regular)
-                            .lineLimit(3)
+                            .lineLimit(4)
                     }
 
                     accessoryView
@@ -165,15 +164,30 @@ extension MediaInfoSupplement {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 if !item.isLiveStream {
-                    VStack {
-                        fromBeginningButton
+                    AlternateLayoutView {
+                        Label(L10n.fromBeginning, systemImage: "play.fill")
+                            .font(.subheadline.weight(.semibold))
+                            .padding(safeAreaInsets)
+                            .frame(height: UIDevice.isTV ? 75 : 50)
+                    } content: {
+                        resetPlaybackButton
+                            .focusSection()
                     }
                 }
             }
         }
 
         var tvOSView: some View {
-            EmptyView()
+            regularView
+                .edgePadding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            #if os(tvOS)
+                .onChange(of: focusGuide.focusedTag) { _, newTag in
+                    if newTag == "supplementContent" {
+                        isResetButtonFocused = true
+                    }
+                }
+            #endif
         }
     }
 }

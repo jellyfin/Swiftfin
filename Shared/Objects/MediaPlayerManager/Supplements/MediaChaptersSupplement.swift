@@ -12,13 +12,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: current button
 // TODO: scroll to current chapter on appear
-// TODO: fix swapping between chapters on selection
-//       - little flicker at seconds boundary
 // TODO: sometimes safe area for CollectionHStack doesn't trigger
-// TODO: fix chapter image aspect fit
-//       - still be in a 1.77 box
 
 class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
 
@@ -63,8 +58,13 @@ extension MediaChaptersSupplement {
         @ObservedObject
         private var supplement: MediaChaptersSupplement
 
-        @StateObject
-        private var collectionHStackProxy: CollectionHStackProxy = .init()
+//        @StateObject
+//        private var collectionHStackProxy: CollectionHStackProxy = .init()
+//        @StateObject
+//        private var collectionVGridProxy: CollectionVGridProxy = .init()
+
+        @FocusState
+        private var focusedChapterID: ChapterInfo.FullInfo.ID?
 
         init(supplement: MediaChaptersSupplement) {
             self.supplement = supplement
@@ -95,9 +95,10 @@ extension MediaChaptersSupplement {
 
         @ViewBuilder
         private var iOSCompactView: some View {
-            // TODO: scroll to current chapter
+            // TODO: Scroll to current chapter
             CollectionVGrid(
                 uniqueElements: chapters,
+                id: \.unwrappedIDHashOrZero,
                 layout: .columns(
                     1,
                     insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
@@ -111,34 +112,72 @@ extension MediaChaptersSupplement {
                 .edgePadding(.horizontal)
                 .environmentObject(supplement)
             }
+//            .proxy(collectionVGridProxy)
+//            .onAppear {
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                    guard let currentChapter else { return }
+//                    collectionVGridProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+//                }
+//            }
         }
 
         @ViewBuilder
         private var iOSRegularView: some View {
-            // TODO: change to continuousLeadingEdge after
-            // layout inset fix in CollectionHStack
+            // TODO: Scroll to current chapter
             CollectionHStack(
-                uniqueElements: chapters
+                uniqueElements: chapters,
+                id: \.unwrappedIDHashOrZero,
+                layout: .minimumWidth(columnWidth: 170, rows: 1)
             ) { chapter in
                 ChapterButton(chapter: chapter) {
                     guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
                     manager.proxy?.setSeconds(startSeconds)
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
-                .frame(height: 150)
                 .environmentObject(supplement)
             }
+            .clipsToBounds(false)
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-            .proxy(collectionHStackProxy)
-            .frame(height: 150)
-            .onAppear {
-                guard let currentChapter else { return }
-                collectionHStackProxy.scrollTo(id: currentChapter.id)
-            }
+            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollBehavior(.continuousLeadingEdge)
+//            .proxy(collectionHStack)
+//            .onAppear {
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                    guard let currentChapter else { return }
+//                    collectionVGridProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+//                }
+//            }
         }
 
         var tvOSView: some View {
-            EmptyView()
+            CollectionHStack(
+                uniqueElements: chapters,
+                id: \.unwrappedIDHashOrZero,
+                columns: 4
+            ) { chapter in
+                ChapterButton(chapter: chapter) {
+                    guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
+                    manager.proxy?.setSeconds(startSeconds)
+                    manager.setPlaybackRequestStatus(status: .playing)
+                }
+                .environmentObject(supplement)
+                .focused($focusedChapterID, equals: chapter.unwrappedIDHashOrZero)
+                .backport
+                .defaultFocus(
+                    $focusedChapterID,
+                    currentChapter?.unwrappedIDHashOrZero,
+                    priority: .automatic
+                )
+            }
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding)
+//            .proxy(collectionHStack)
+//            .onAppear {
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                    guard let currentChapter else { return }
+//                    collectionVGridProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+//                }
+//            }
         }
     }
 
@@ -163,12 +202,14 @@ extension MediaChaptersSupplement {
                     ContainerRelativeShape()
                         .stroke(
                             accentColor,
-                            lineWidth: 8
+                            lineWidth: UIDevice.isTV ? 12 : 8
                         )
                         .clipped()
                 }
             }
             .posterStyle(.landscape)
+            .posterShadow()
+            .hoverEffect(.highlight)
         }
     }
 
@@ -179,12 +220,13 @@ extension MediaChaptersSupplement {
         var body: some View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(chapter.chapterInfo.displayTitle)
+                    .font(.subheadline.weight(.semibold))
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
                     .lineLimit(1)
-                    .foregroundStyle(.white)
-                    .frame(height: 15)
 
                 Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
-                    .frame(height: 20)
+                    .font(UIDevice.isTV ? .caption : .subheadline.weight(.semibold))
                     .foregroundStyle(Color(UIColor.systemBlue))
                     .padding(.horizontal, 4)
                     .background {
@@ -194,8 +236,6 @@ extension MediaChaptersSupplement {
                     }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .font(.subheadline)
-            .fontWeight(.semibold)
         }
     }
 
@@ -256,22 +296,14 @@ extension MediaChaptersSupplement {
         }
 
         var body: some View {
-            Button(action: action) {
-                VStack(alignment: .leading, spacing: 5) {
-                    ChapterPreview(
-                        chapter: chapter
-                    )
-
-                    ChapterContent(
-                        chapter: chapter
-                    )
-                }
-                .font(.subheadline)
-                .fontWeight(.semibold)
+            SupplementPosterButton(
+                item: chapter,
+                isSelected: isCurrentChapter,
+                action: action
+            ) {
+                ChapterContent(chapter: chapter)
             }
-            .foregroundStyle(.primary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
-            .isSelected(isCurrentChapter)
         }
     }
 }
