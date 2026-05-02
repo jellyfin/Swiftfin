@@ -838,6 +838,7 @@ extension VideoPlayer {
             } else if containerState.isPresentingSupplement {
                 containerState.selectedSupplement = nil
                 presentSupplementContainer(false)
+                containerState.isProgressBarFocused = true
                 containerState.timer.poke()
             } else {
                 containerState.isPresentingCloseConfirmation = true

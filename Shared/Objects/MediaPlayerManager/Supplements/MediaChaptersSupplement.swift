@@ -21,21 +21,22 @@ class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
     let displayTitle: String = L10n.chapters
     let id: String
 
+    @Published
+    var activeChapterID: ChapterInfo.FullInfo.ID?
+
     init(chapters: [ChapterInfo.FullInfo]) {
         self.chapters = chapters
         self.id = "Chapters-\(chapters.hashValue)"
     }
 
-    func isCurrentChapter(seconds: Duration, chapter: ChapterInfo.FullInfo) -> Bool {
-        guard let currentChapterIndex = chapters
-            .firstIndex(where: {
-                guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
-                return startSeconds > seconds
-            }
-            ) else { return false }
-
-        guard let currentChapter = chapters[safe: max(0, currentChapterIndex - 1)] else { return false }
-        return currentChapter.id == chapter.id
+    func chapterID(at seconds: Duration) -> ChapterInfo.FullInfo.ID? {
+        guard let nextIndex = chapters.firstIndex(where: {
+            guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
+            return startSeconds > seconds
+        }) else {
+            return chapters.last?.id
+        }
+        return chapters[safe: max(0, nextIndex - 1)]?.id
     }
 
     var videoPlayerBody: some PlatformView {
@@ -63,9 +64,6 @@ extension MediaChaptersSupplement {
         //        @StateObject
         //        private var collectionVGridProxy: CollectionVGridProxy = .init()
 
-        @State
-        private var activeSeconds: Duration = .zero
-
         init(supplement: MediaChaptersSupplement) {
             self.supplement = supplement
         }
@@ -75,13 +73,15 @@ extension MediaChaptersSupplement {
         }
 
         private var activeChapter: ChapterInfo.FullInfo? {
-            guard let nextIndex = chapters.firstIndex(where: {
-                guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
-                return startSeconds > activeSeconds
-            }) else {
-                return chapters.last
+            guard let id = supplement.activeChapterID else { return nil }
+            return chapters.first { $0.id == id }
+        }
+
+        private func updateActiveChapter(for seconds: Duration) {
+            let newID = supplement.chapterID(at: seconds)
+            if newID != supplement.activeChapterID {
+                supplement.activeChapterID = newID
             }
-            return chapters[safe: max(0, nextIndex - 1)]
         }
 
         var iOSView: some View {
@@ -92,7 +92,7 @@ extension MediaChaptersSupplement {
             } regularView: {
                 iOSRegularView
             }
-            .assign(manager.secondsBox.$value, to: $activeSeconds)
+            .onReceive(manager.secondsBox.$value, perform: updateActiveChapter(for:))
         }
 
         @ViewBuilder
@@ -106,7 +106,7 @@ extension MediaChaptersSupplement {
                     insets: .init(EdgeInsets.edgePadding)
                 )
             ) { chapter, _ in
-                ChapterRow(chapter: chapter) {
+                ChapterRow(supplement: supplement, chapter: chapter) {
                     guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
                     manager.proxy?.setSeconds(startSeconds)
                     manager.setPlaybackRequestStatus(status: .playing)
@@ -129,12 +129,11 @@ extension MediaChaptersSupplement {
                 id: \.unwrappedIDHashOrZero,
                 layout: .minimumWidth(columnWidth: 170, rows: 1)
             ) { chapter in
-                ChapterButton(chapter: chapter) {
+                ChapterButton(supplement: supplement, chapter: chapter) {
                     guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
                     manager.proxy?.setSeconds(startSeconds)
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
-                .isSelected(chapter.id == activeChapter?.id)
             }
             .clipsToBounds(false)
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
@@ -153,16 +152,15 @@ extension MediaChaptersSupplement {
                     lineSpacing: EdgeInsets.edgePadding
                 )
             ) { chapter in
-                ChapterButton(chapter: chapter) {
+                ChapterButton(supplement: supplement, chapter: chapter) {
                     guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
                     manager.proxy?.setSeconds(startSeconds)
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
-                .isSelected(chapter.id == activeChapter?.id)
             }
             .ignoresSafeArea(.container, edges: .horizontal)
             .focusSection()
-            .assign(manager.secondsBox.$value, to: $activeSeconds)
+            .onReceive(manager.secondsBox.$value, perform: updateActiveChapter(for:))
         }
 
         struct ChapterPreview: View {
@@ -225,8 +223,8 @@ extension MediaChaptersSupplement {
 
         struct ChapterRow: View {
 
-            @Environment(\.isSelected)
-            private var isSelected
+            @ObservedObject
+            var supplement: MediaChaptersSupplement
 
             let chapter: ChapterInfo.FullInfo
             let action: () -> Void
@@ -240,14 +238,14 @@ extension MediaChaptersSupplement {
                     ChapterContent(chapter: chapter)
                 }
                 .onSelect(perform: action)
-                .isSelected(isSelected)
+                .isSelected(chapter.id == supplement.activeChapterID)
             }
         }
 
         struct ChapterButton: View {
 
-            @Environment(\.isSelected)
-            private var isSelected
+            @ObservedObject
+            var supplement: MediaChaptersSupplement
 
             let chapter: ChapterInfo.FullInfo
             let action: () -> Void
@@ -259,7 +257,7 @@ extension MediaChaptersSupplement {
                 ) {
                     ChapterContent(chapter: chapter)
                 }
-                .isSelected(isSelected)
+                .isSelected(chapter.id == supplement.activeChapterID)
             }
         }
     }
