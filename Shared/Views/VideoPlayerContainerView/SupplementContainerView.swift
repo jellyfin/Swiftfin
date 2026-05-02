@@ -195,7 +195,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     } else {
                         if let first = currentSupplements.first {
                             containerState.select(supplement: first.supplement)
-                            DispatchQueue.main.async {
+                            Task { @MainActor in
                                 focusedElement = .supplementTab(first.id)
                             }
                         }
