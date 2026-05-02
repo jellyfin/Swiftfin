@@ -63,6 +63,9 @@ extension MediaChaptersSupplement {
         //        @StateObject
         //        private var collectionVGridProxy: CollectionVGridProxy = .init()
 
+        @State
+        private var activeSeconds: Duration = .zero
+
         init(supplement: MediaChaptersSupplement) {
             self.supplement = supplement
         }
@@ -74,7 +77,7 @@ extension MediaChaptersSupplement {
         private var activeChapter: ChapterInfo.FullInfo? {
             guard let nextIndex = chapters.firstIndex(where: {
                 guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
-                return startSeconds > manager.secondsBox.value
+                return startSeconds > activeSeconds
             }) else {
                 return chapters.last
             }
@@ -89,6 +92,7 @@ extension MediaChaptersSupplement {
             } regularView: {
                 iOSRegularView
             }
+            .assign(manager.secondsBox.$value, to: $activeSeconds)
         }
 
         @ViewBuilder
@@ -158,6 +162,7 @@ extension MediaChaptersSupplement {
             }
             .ignoresSafeArea(.container, edges: .horizontal)
             .focusSection()
+            .assign(manager.secondsBox.$value, to: $activeSeconds)
         }
 
         struct ChapterPreview: View {
