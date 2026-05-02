@@ -87,7 +87,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                             let isSelected = containerState.selectedSupplement?.id == supplement.id
 
                             Button(supplement.displayTitle) {
-                                containerState.select(supplement: supplement.supplement)
+                                if !UIDevice.isTV {
+                                    containerState.select(supplement: supplement.supplement)
+                                }
                             }
                             .isSelected(isSelected)
                             .focused($focusedElement, equals: .supplementTab(supplement.id))
