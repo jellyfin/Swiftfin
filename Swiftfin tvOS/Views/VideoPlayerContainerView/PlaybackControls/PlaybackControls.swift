@@ -23,9 +23,6 @@ extension VideoPlayer {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
-        @OnPressEvent
-        private var onPressEvent
-
         @EnvironmentObject
         var containerState: VideoPlayerContainerState
         @EnvironmentObject
@@ -73,6 +70,14 @@ extension VideoPlayer {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .edgePadding(.horizontal)
+            .overlay {
+                if manager.playbackRequestStatus == .paused {
+                    Label(L10n.pause, systemImage: "pause.fill")
+                        .transition(.opacity.combined(with: .scale).animation(.bouncy(duration: 0.7, extraBounce: 0.2)))
+                        .font(.system(size: 72, weight: .bold, design: .default))
+                        .labelStyle(.iconOnly)
+                }
+            }
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
@@ -98,7 +103,7 @@ extension VideoPlayer {
                     containerState.isPresentingOverlay = true
                 }
             }
-            .onReceive(onPressEvent) { press in
+            .onReceive(containerState.containerView?.onPressEvent ?? .init()) { press in
                 handlePressEvent(press)
             }
             .onChange(of: containerState.isProgressBarFocused) { _, newValue in
