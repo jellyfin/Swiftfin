@@ -22,39 +22,15 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             case focusBoundary
             case supplementTab(AnyMediaPlayerSupplement.ID)
             case supplementContents(AnyMediaPlayerSupplement.ID)
-
-            var isSupplementTab: Bool {
-                if case .supplementTab = self {
-                    true
-                } else {
-                    false
-                }
-            }
-
-            var isSupplementContents: Bool {
-                if case .supplementContents = self {
-                    true
-                } else {
-                    false
-                }
-            }
         }
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
-        #if os(tvOS)
-        @Environment(\.resetFocus)
-        private var resetFocus
-        #endif
-
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
-
-        @Namespace
-        private var videoPlayer
 
         @FocusState
         private var focusedElement: SupplementElement?
@@ -173,26 +149,27 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
                 VStack(alignment: .leading, spacing: 0) {
 
+                    // Exists to catch focus between supplement & controls.
+                    // - The progress bar isn't visible while the supplements are up.
                     Color.clear
                         .frame(height: 1)
                         .backport
                         .focusable(true)
                         .focused($focusedElement, equals: .focusBoundary)
-                        .fixedSize(horizontal: false, vertical: true)
 
                     tabButtons
 
                     supplementContent
                         .isVisible(containerState.isPresentingSupplement)
                         .disabled(!containerState.isPresentingSupplement)
-                        .animation(.linear(duration: 0.2), value: containerState.selectedSupplement?.id)
+                        .animation(.linear(duration: 0.25), value: containerState.selectedSupplement?.id)
                 }
                 .isVisible(isPresentingOverlay && !isScrubbing)
                 .padding(.top, EdgeInsets.edgeInsets.bottom / (UIDevice.isTV ? 2 : 1))
             }
-            .animation(.linear(duration: 0.2), value: isPresentingOverlay)
+            .animation(.linear(duration: 0.25), value: isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: isScrubbing)
-            .animation(.bouncy(duration: 0.3, extraBounce: 0.1), value: currentSupplements)
+            .animation(.bouncy(duration: 0.25, extraBounce: 0.1), value: currentSupplements)
             .environment(\.isOverComplexContent, true)
             .onReceive(manager.$supplements) { newValue in
                 let newSupplements = IdentifiedArray(
@@ -232,7 +209,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     guard newItem != nil else { return }
                     containerState.selectedSupplement = nil
                     containerState.containerView?.presentSupplementContainer(false)
-                    resetFocus(in: videoPlayer)
+                    focusedElement = .focusBoundary
                 }
                 .onChange(of: focusedElement) { _, newValue in
                     switch newValue {

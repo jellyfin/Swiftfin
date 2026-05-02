@@ -23,9 +23,6 @@ extension VideoPlayer {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
-        @Environment(\.resetFocus)
-        private var resetFocus
-
         @OnPressEvent
         private var onPressEvent
 
@@ -37,8 +34,8 @@ extension VideoPlayer {
         @Toaster
         var toaster: ToastProxy
 
-        @Namespace
-        private var videoPlayer
+        @FocusState
+        private var isPlaybackProgressFocused: Bool
 
         @State
         var speedBoostTimer: Timer?
@@ -67,7 +64,7 @@ extension VideoPlayer {
                         }
                     }
                 )
-                .prefersDefaultFocus(in: videoPlayer)
+                .focused($isPlaybackProgressFocused, equals: true)
                 .fixedSize(horizontal: false, vertical: true)
                 .isVisible(
                     (containerState.isPresentingOverlay || containerState.isScrubbing) &&
@@ -76,8 +73,7 @@ extension VideoPlayer {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .edgePadding(.horizontal)
-            .focusScope(videoPlayer)
-            .animation(.easeInOut(duration: 0.35), value: containerState.isPresentingSupplement)
+            .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
             .alert(L10n.closePlayer, isPresented: $containerState.isPresentingCloseConfirmation) {
@@ -90,11 +86,11 @@ extension VideoPlayer {
             }
             .onFirstAppear {
                 containerState.isPresentingOverlay = true
-                resetFocus(in: videoPlayer)
+                isPlaybackProgressFocused = true
             }
             .onChange(of: containerState.isPresentingOverlay) { _, newValue in
                 if newValue {
-                    resetFocus(in: videoPlayer)
+                    isPlaybackProgressFocused = true
                 }
             }
             .onChange(of: manager.playbackRequestStatus) { _, newValue in
