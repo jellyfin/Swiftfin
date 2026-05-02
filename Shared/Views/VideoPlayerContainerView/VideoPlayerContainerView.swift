@@ -271,12 +271,12 @@ extension VideoPlayer {
         private var playerRegularConstraints: [NSLayoutConstraint] = []
         private var supplementContainerConstraints: [NSLayoutConstraint] = []
 
-        private var playerCompactBottomAnchor: NSLayoutConstraint!
-        private var supplementHeightAnchor: NSLayoutConstraint!
-        private var supplementBottomAnchor: NSLayoutConstraint!
+        private var playerCompactBottomAnchor: NSLayoutConstraint?
+        private var supplementHeightAnchor: NSLayoutConstraint?
+        private var supplementBottomAnchor: NSLayoutConstraint?
 
         private var centerOffset: CGFloat {
-            guard containerState.isCompact else {
+            guard containerState.isCompact, let supplementBottomAnchor else {
                 return dismissedSupplementContainerOffset
             }
 
@@ -288,7 +288,7 @@ extension VideoPlayer {
         }
 
         private var compactPlayerBottomOffset: CGFloat {
-            guard containerState.isCompact else {
+            guard containerState.isCompact, let supplementBottomAnchor else {
                 return dismissedSupplementContainerOffset
             }
             let supplementContainerHeight = compactSupplementContainerOffset(view.bounds.height)
@@ -347,6 +347,8 @@ extension VideoPlayer {
             location: CGPoint,
             state: UIGestureRecognizer.State
         ) {
+            guard let supplementBottomAnchor, let playerCompactBottomAnchor else { return }
+
             let yDirection: CGFloat = translation.y > 0 ? -1 : 1
             let newOffset: CGFloat
             let clampedOffset: CGFloat
@@ -369,7 +371,7 @@ extension VideoPlayer {
                     -((containerState.isCompact ? compactMinimumTranslation : regularMinimumTranslation) +
                         dismissedSupplementContainerOffset
                     )
-                let shouldHaveSupplementPresented = self.supplementBottomAnchor.constant < minimumTranslation
+                let shouldHaveSupplementPresented = supplementBottomAnchor.constant < minimumTranslation
 
                 if shouldHaveSupplementPresented, !containerState.isPresentingSupplement {
                     containerState.selectedSupplement = manager.supplements.first
@@ -458,15 +460,16 @@ extension VideoPlayer {
             with panningState: (translation: CGFloat, velocity: CGFloat)? = nil
         ) {
             guard !isPanning else { return }
+            guard let supplementBottomAnchor, let playerCompactBottomAnchor else { return }
 
             if didPresent {
                 if containerState.isCompact {
-                    self.supplementBottomAnchor.constant = -compactSupplementContainerOffset(view.bounds.size.height)
+                    supplementBottomAnchor.constant = -compactSupplementContainerOffset(view.bounds.size.height)
                 } else {
-                    self.supplementBottomAnchor.constant = -regularSupplementContainerOffset
+                    supplementBottomAnchor.constant = -regularSupplementContainerOffset
                 }
             } else {
-                self.supplementBottomAnchor.constant = -dismissedSupplementContainerOffset
+                supplementBottomAnchor.constant = -dismissedSupplementContainerOffset
             }
 
             playerCompactBottomAnchor.constant = compactPlayerBottomOffset
@@ -525,10 +528,15 @@ extension VideoPlayer {
 
             view.backgroundColor = .black
 
-            containerState.isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
+            let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
 
             setupOnLoadViews()
             setupOnLoadConstraints()
+
+            Task { @MainActor in
+                containerState.isCompact = isCompact
+                containerState.centerOffset = centerOffset
+            }
 
             #if os(tvOS)
             let gesture = UITapGestureRecognizer(target: self, action: #selector(menuPressed))
@@ -553,16 +561,18 @@ extension VideoPlayer {
             playerViewController.didMove(toParent: self)
             playerView.backgroundColor = .black
 
-            playerCompactBottomAnchor = playerView.bottomAnchor.constraint(
+            let bottomAnchor = playerView.bottomAnchor.constraint(
                 equalTo: supplementContainerView.topAnchor,
                 constant: compactPlayerBottomOffset
             )
+
+            playerCompactBottomAnchor = bottomAnchor
 
             playerCompactConstraints = [
                 playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 playerView.topAnchor.constraint(equalTo: view.topAnchor),
-                playerCompactBottomAnchor,
+                bottomAnchor,
             ]
             playerRegularConstraints = [
                 playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -597,22 +607,23 @@ extension VideoPlayer {
 
             let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
 
-            supplementBottomAnchor = supplementContainerView.topAnchor.constraint(
+            let bottomAnchor = supplementContainerView.topAnchor.constraint(
                 equalTo: view.bottomAnchor,
                 constant: -dismissedSupplementContainerOffset
             )
-            containerState.centerOffset = centerOffset
+            supplementBottomAnchor = bottomAnchor
 
             let constant = isCompact ?
                 compactSupplementContainerOffset(view.bounds.height) :
                 regularSupplementContainerOffset
-            supplementHeightAnchor = supplementContainerView.heightAnchor.constraint(equalToConstant: constant)
+            let heightAnchor = supplementContainerView.heightAnchor.constraint(equalToConstant: constant)
+            supplementHeightAnchor = heightAnchor
 
             supplementContainerConstraints = [
                 supplementContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 supplementContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                supplementBottomAnchor,
-                supplementHeightAnchor,
+                bottomAnchor,
+                heightAnchor,
             ]
 
             NSLayoutConstraint.activate(supplementContainerConstraints)
@@ -641,6 +652,11 @@ extension VideoPlayer {
 
         private func adjustContraints(isCompact: Bool, in newSize: CGSize) {
             containerState.isCompact = isCompact
+
+            guard let supplementBottomAnchor,
+                  let supplementHeightAnchor,
+                  let playerCompactBottomAnchor
+            else { return }
 
             if isCompact {
                 NSLayoutConstraint.deactivate(playerRegularConstraints)
