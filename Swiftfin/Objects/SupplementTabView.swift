@@ -68,7 +68,7 @@ struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRep
                 if let host = hosts[item.id] {
                     host.rootView = parent.content(item)
                 } else {
-                    let host = UIHostingController(rootView: parent.content(item))
+                    let host = UIHostingController(rootView: parent.content(item), ignoreSafeArea: true)
                     host.view.backgroundColor = .clear
                     hosts[item.id] = host
                 }
