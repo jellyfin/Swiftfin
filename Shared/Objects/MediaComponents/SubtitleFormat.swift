@@ -45,47 +45,47 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .ass:
-            "ASS"
+            L10n.ass
         case .cc_dec:
-            "EIA-608"
+            L10n.eia608
         case .dvdsub:
-            "DVD Subtitle"
+            L10n.dvdSubtitle
         case .dvbsub:
-            "DVB Subtitle"
+            L10n.dvbSubtitle
         case .jacosub:
-            "Jacosub"
+            L10n.jacosub
         case .libzvbi_teletextdec:
-            "DVB Teletext"
+            L10n.dvbTeletext
         case .mov_text:
-            "MPEG-4 Timed Text"
+            L10n.mpeg4TimedText
         case .mpl2:
-            "MPL2"
+            L10n.mpl2
         case .pjs:
-            "Phoenix Subtitle"
+            L10n.phoenixSubtitle
         case .pgssub:
-            "PGS Subtitle"
+            L10n.pgsSubtitle
         case .realtext:
-            "RealText"
+            L10n.realText
         case .sami:
-            "SMI"
+            L10n.smi
         case .ssa:
-            "SSA"
+            L10n.ssa
         case .subrip:
-            "SRT"
+            L10n.srt
         case .subviewer:
-            "SubViewer"
+            L10n.subViewer
         case .subviewer1:
-            "SubViewer1"
+            L10n.subViewer1
         case .text:
-            "TXT"
+            L10n.txt
         case .ttml:
-            "TTML"
+            L10n.ttml
         case .vplayer:
-            "VPlayer"
+            L10n.vPlayer
         case .vtt:
-            "WebVTT"
+            L10n.webVTT
         case .xsub:
-            "XSUB"
+            L10n.xsub
         }
     }
 

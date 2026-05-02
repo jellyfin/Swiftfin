@@ -82,6 +82,20 @@ extension String {
 
     static let emptyRuntime = "--:--"
 
+    static let empty = ""
+
+    static let tab = "\u{0009}"
+    /// —
+    static let emDash = "\u{2014}"
+    /// –
+    static let enDash = "\u{2013}"
+    /// -
+    static let hyphen = "\u{002D}"
+    /// ...
+    static let ellipsis = "\u{2026}"
+    /// x
+    static let multiply = "\u{00D7}"
+
     var shortFileName: String {
         (split(separator: "/").last?.description ?? self)
             .replacingOccurrences(of: ".swift", with: "")

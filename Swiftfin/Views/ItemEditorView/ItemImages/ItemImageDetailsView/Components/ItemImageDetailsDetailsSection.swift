@@ -68,7 +68,7 @@ extension ItemImageDetailsView {
                 if let width, let height {
                     LabeledContent(
                         L10n.dimensions,
-                        value: "\(width) x \(height)"
+                        value: "\(width) \(String.multiply) \(height)"
                     )
                 }
 

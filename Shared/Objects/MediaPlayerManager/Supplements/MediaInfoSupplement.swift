@@ -60,7 +60,7 @@ extension MediaInfoSupplement {
 
         @ViewBuilder
         private var fromBeginningButton: some View {
-            Button("From Beginning", systemImage: "play.fill") {
+            Button(L10n.fromBeginning, systemImage: "play.fill") {
                 manager.proxy?.setSeconds(.zero)
                 manager.setPlaybackRequestStatus(status: .playing)
                 containerState.select(supplement: nil)
@@ -120,7 +120,7 @@ extension MediaInfoSupplement {
                             RoundedRectangle(cornerRadius: 7)
                                 .foregroundStyle(.white)
 
-                            Label("From Beginning", systemImage: "play.fill")
+                            Label(L10n.fromBeginning, systemImage: "play.fill")
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.black)
                         }
