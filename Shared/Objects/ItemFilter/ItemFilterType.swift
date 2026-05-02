@@ -6,50 +6,23 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-enum ItemFilterType: String, CaseIterable, Storable, Identifiable {
+import JellyfinAPI
+
+enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, SystemImageable {
+
+    typealias Group = (
+        displayTitle: String,
+        keyPath: KeyPath<ItemFilterCollection, [AnyItemFilter]>,
+        setter: @MainActor ([AnyItemFilter], FilterViewModel) -> Void,
+        selectorType: SelectorType
+    )
 
     case genres
     case letter
     case sortBy
-    case sortOrder
     case tags
     case traits
     case years
-
-    var id: String {
-        rawValue
-    }
-
-    var selectorType: SelectorType {
-        switch self {
-        case .genres, .tags, .traits, .years:
-            .multi
-        case .letter, .sortBy, .sortOrder:
-            .single
-        }
-    }
-
-    var collectionAnyKeyPath: KeyPath<ItemFilterCollection, [AnyItemFilter]> {
-        switch self {
-        case .genres:
-            \ItemFilterCollection.genres.asAnyItemFilter
-        case .letter:
-            \ItemFilterCollection.letter.asAnyItemFilter
-        case .sortBy:
-            \ItemFilterCollection.sortBy.asAnyItemFilter
-        case .sortOrder:
-            \ItemFilterCollection.sortOrder.asAnyItemFilter
-        case .tags:
-            \ItemFilterCollection.tags.asAnyItemFilter
-        case .traits:
-            \ItemFilterCollection.traits.asAnyItemFilter
-        case .years:
-            \ItemFilterCollection.years.asAnyItemFilter
-        }
-    }
-}
-
-extension ItemFilterType: Displayable {
 
     var displayTitle: String {
         switch self {
@@ -59,8 +32,6 @@ extension ItemFilterType: Displayable {
             L10n.letter
         case .sortBy:
             L10n.sort
-        case .sortOrder:
-            L10n.order
         case .tags:
             L10n.tags
         case .traits:
@@ -69,9 +40,64 @@ extension ItemFilterType: Displayable {
             L10n.years
         }
     }
-}
 
-extension ItemFilterType: SystemImageable {
+    @ArrayBuilder<Group>
+    var group: [Group] {
+        switch self {
+        case .genres:
+            (
+                displayTitle: displayTitle,
+                keyPath: \ItemFilterCollection.genres.asAnyItemFilter,
+                setter: { $1.currentFilters.genres = $0.map(ItemGenre.init) },
+                selectorType: .multi
+            )
+        case .letter:
+            (
+                displayTitle: displayTitle,
+                keyPath: \ItemFilterCollection.letter.asAnyItemFilter,
+                setter: { $1.currentFilters.letter = $0.map(ItemLetter.init) },
+                selectorType: .single
+            )
+        case .sortBy:
+            (
+                displayTitle: L10n.order,
+                keyPath: \ItemFilterCollection.sortOrder.asAnyItemFilter,
+                setter: { $1.currentFilters.sortOrder = $0.map(ItemSortOrder.init) },
+                selectorType: .single
+            )
+            (
+                displayTitle: displayTitle,
+                keyPath: \ItemFilterCollection.sortBy.asAnyItemFilter,
+                setter: { $1.currentFilters.sortBy = $0.map(ItemSortBy.init) },
+                selectorType: .single
+            )
+        case .tags:
+            (
+                displayTitle: displayTitle,
+                keyPath: \ItemFilterCollection.tags.asAnyItemFilter,
+                setter: { $1.currentFilters.tags = $0.map(ItemTag.init) },
+                selectorType: .multi
+            )
+        case .traits:
+            (
+                displayTitle: displayTitle,
+                keyPath: \ItemFilterCollection.traits.asAnyItemFilter,
+                setter: { $1.currentFilters.traits = $0.map(ItemTrait.init) },
+                selectorType: .multi
+            )
+        case .years:
+            (
+                displayTitle: displayTitle,
+                keyPath: \ItemFilterCollection.years.asAnyItemFilter,
+                setter: { $1.currentFilters.years = $0.map(ItemYear.init) },
+                selectorType: .multi
+            )
+        }
+    }
+
+    var id: String {
+        rawValue
+    }
 
     var systemImage: String {
         switch self {
@@ -81,8 +107,6 @@ extension ItemFilterType: SystemImageable {
             "character.textbox"
         case .sortBy:
             "line.3.horizontal.decrease"
-        case .sortOrder:
-            "arrow.up.arrow.down"
         case .tags:
             "tag"
         case .traits:

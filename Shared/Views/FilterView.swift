@@ -6,104 +6,63 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
 
 struct FilterView: View {
 
+    @ObservedObject
+    var viewModel: FilterViewModel
+
     @Router
     private var router
 
-    @ObservedObject
-    private var viewModel: FilterViewModel
+    let type: ItemFilterType
 
-    private let types: [ItemFilterType]
+    @ViewBuilder
+    private func selector(group: ItemFilterType.Group) -> some View {
+        let source = viewModel.allFilters[keyPath: group.keyPath]
 
-    private var title: String {
-        switch types.count {
-        case 1:
-            types.first?.displayTitle ?? L10n.unknown
-        case 2:
-            types.map(\.displayTitle).joined(separator: " & ")
-        default:
-            L10n.filters
+        let selectionBinding: Binding<[AnyItemFilter]> = Binding {
+            viewModel.currentFilters[keyPath: group.keyPath]
+        } set: {
+            group.setter($0, viewModel)
+        }
+
+        if source.isEmpty {
+            Text(L10n.none)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        } else {
+            SelectorView(
+                selection: selectionBinding,
+                sources: source,
+                type: group.selectorType
+            )
         }
     }
 
     var body: some View {
-        Form(systemImage: types.first?.systemImage ?? "line.3.horizontal.decrease") {
-            ForEach(types) { type in
-                selectorView(for: type)
-            }
-        }
-        .navigationTitle(title)
-        .topBarTrailing {
-            Button(L10n.reset) {
-                for type in types {
-                    viewModel.send(.reset(type))
+        Form(systemImage: type.systemImage) {
+            ForEach(type.group) { element in
+                Section {
+                    selector(group: element)
+                } header: {
+                    if type.group.count > 1 {
+                        Text(element.displayTitle)
+                    }
                 }
             }
-            .environment(
-                \.isEnabled,
-                types.contains {
-                    viewModel.isFilterSelected(type: $0)
-                }
-            )
         }
+        .navigationTitle(type.displayTitle)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }
-    }
-
-    @ViewBuilder
-    private func selectorView(for type: ItemFilterType) -> some View {
-
-        let source = viewModel.allFilters[keyPath: type.collectionAnyKeyPath]
-
-        if source.isNotEmpty {
-            Section {
-                SelectorView(
-                    selection: Binding<[AnyItemFilter]>(
-                        get: {
-                            viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
-                        },
-                        set: { newValue in
-                            viewModel.send(.update(type, newValue))
-                        }
-                    ),
-                    sources: source,
-                    type: type.selectorType
-                )
-            } header: {
-                if types.count > 1 {
-                    Text(type.displayTitle)
-                }
+        .topBarTrailing {
+            Button(L10n.reset) {
+                viewModel.reset(filterType: type)
             }
-        } else {
-            Text(L10n.none)
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            .enabled(viewModel.isFilterSelected(type: type))
         }
-    }
-}
-
-extension FilterView {
-
-    /// Single Filter
-    init(
-        _ viewModel: FilterViewModel,
-        type: ItemFilterType
-    ) {
-        self.viewModel = viewModel
-        self.types = [type]
-    }
-
-    /// Mutiple Filters
-    init(
-        _ viewModel: FilterViewModel,
-        types: [ItemFilterType]
-    ) {
-        self.viewModel = viewModel
-        self.types = types
     }
 }

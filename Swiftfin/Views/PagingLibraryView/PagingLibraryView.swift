@@ -274,9 +274,7 @@ struct PagingLibraryView<Element: Poster>: View {
             view.navigationBarFilterDrawer(
                 viewModel: filterViewModel,
                 types: enabledDrawerFilters
-            ) {
-                router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
-            }
+            )
         }
         .onChange(of: defaultDisplayType) { newValue in
             guard !Defaults[.Customization.Library.rememberLayout] else { return }

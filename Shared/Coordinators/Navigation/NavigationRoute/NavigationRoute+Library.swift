@@ -16,16 +16,10 @@ extension NavigationRoute {
             id: "filter",
             style: .sheet
         ) {
-            FilterView(viewModel, type: type)
-        }
-    }
-
-    static func filter(types: [ItemFilterType], viewModel: FilterViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "filter",
-            style: .sheet
-        ) {
-            FilterView(viewModel, types: types)
+            FilterView(
+                viewModel: viewModel,
+                type: type
+            )
         }
     }
 

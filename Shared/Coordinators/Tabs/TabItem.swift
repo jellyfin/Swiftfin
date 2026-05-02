@@ -9,6 +9,7 @@
 import SwiftUI
 
 // TODO: selected icon
+@MainActor
 struct TabItem: Identifiable, Hashable {
 
     let content: AnyView
