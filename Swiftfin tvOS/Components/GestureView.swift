@@ -9,12 +9,6 @@
 import Foundation
 import SwiftUI
 
-extension EnvironmentValues {
-
-    @Entry
-    var panGestureDirection: Direction = .all
-}
-
 struct GestureView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UIView {

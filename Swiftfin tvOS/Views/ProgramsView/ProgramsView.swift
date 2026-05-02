@@ -26,28 +26,9 @@ struct ProgramsView: View {
     private var programsViewModel = ProgramsViewModel()
 
     @ViewBuilder
-    private var channelsSection: some View {
-        HStack {
-            Button {
-                router.route(to: .channels)
-            } label: {
-                Label(L10n.channels, systemImage: "play.square.stack")
-                    .font(.callout.weight(.semibold))
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
-            }
-
-            Spacer()
-        }
-        .edgePadding(.horizontal)
-    }
-
-    @ViewBuilder
     private var contentView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
-
-                channelsSection
 
                 if programsViewModel.recommended.isNotEmpty {
                     programsSection(title: L10n.onNow, keyPath: \.recommended)
