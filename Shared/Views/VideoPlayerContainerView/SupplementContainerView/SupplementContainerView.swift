@@ -21,7 +21,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         enum SupplementElement: Hashable {
             case focusBoundary
             case supplementTab(AnyMediaPlayerSupplement.ID)
-            case supplementContents(AnyMediaPlayerSupplement.ID)
         }
 
         @Environment(\.safeAreaInsets)
@@ -234,7 +233,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                                 }
                             }
                         }
-                    case .supplementContents, .none:
+                    case .none:
                         break
                     }
                 }

@@ -160,9 +160,6 @@ extension EpisodeMediaPlayerQueue {
         @FocusState
         private var focusedEpisodeID: String?
 
-        @State
-        private var lastFocusedEpisodeID: String?
-
         @ObservedObject
         var viewModel: SeriesItemViewModel
 
@@ -206,19 +203,6 @@ extension EpisodeMediaPlayerQueue {
             selection = seasons.first?.id
             seasons.first?.send(.refresh)
         }
-
-        #if os(tvOS)
-        private func getContentFocus() {
-            guard let selectionViewModel else { return }
-            if let lastFocusedEpisodeID,
-               selectionViewModel.elements.contains(where: { $0.id == lastFocusedEpisodeID })
-            {
-                focusedEpisodeID = lastFocusedEpisodeID
-            } else {
-                focusedEpisodeID = selectionViewModel.elements.first?.id
-            }
-        }
-        #endif
 
         var iOSView: some View {
             CompactOrRegularView(

@@ -178,9 +178,6 @@ extension VideoPlayer {
         /// tall enough to show the tab buttons above the screen bottom edge.
         private let supplementTabRestingOffset: CGFloat = 120
 
-        private let minimumTranslation: CGFloat = 100.0
-
-        private var supplementHeightAnchor: NSLayoutConstraint!
         private var supplementBottomAnchor: NSLayoutConstraint!
 
         private let manager: MediaPlayerManager
@@ -191,9 +188,6 @@ extension VideoPlayer {
 
         let onPressEvent = OnPressEvent()
 
-        private var verticalPanGestureStartConstant: CGFloat?
-        private var isPanning: Bool = false
-        private var didStartPanningWithSupplement: Bool = false
         private var lastTouchPokeTime: CFTimeInterval = 0
 
         init(
@@ -218,125 +212,26 @@ extension VideoPlayer {
             fatalError("init(coder:) has not been implemented")
         }
 
-        func handleSupplementPanAction(
-            translation: CGPoint,
-            velocity: CGFloat,
-            location: CGPoint,
-            state: UIGestureRecognizer.State
-        ) {
-            let yDirection: CGFloat = translation.y > 0 ? -1 : 1
-            let newOffset: CGFloat
-            let clampedOffset: CGFloat
-
-            if state == .began {
-                self.view.layer.removeAllAnimations()
-                didStartPanningWithSupplement = containerState.selectedSupplement != nil
-                verticalPanGestureStartConstant = supplementBottomAnchor.constant
-            }
-
-            if state == .began || state == .changed {
-                isPanning = true
-
-                let shouldHaveSupplementPresented = self.supplementBottomAnchor
-                    .constant < -(minimumTranslation + supplementTabRestingOffset)
-
-                if shouldHaveSupplementPresented, !containerState.isPresentingSupplement {
-                    containerState.selectedSupplement = manager.supplements.first
-                } else if !shouldHaveSupplementPresented, containerState.selectedSupplement != nil {
-                    containerState.selectedSupplement = nil
-                }
-            } else {
-                verticalPanGestureStartConstant = nil
-                isPanning = false
-
-                let shouldActuallyDismissSupplement = didStartPanningWithSupplement &&
-                    (translation.y > minimumTranslation || velocity > 1000)
-                if shouldActuallyDismissSupplement {
-                    containerState.selectedSupplement = nil
-                }
-
-                let shouldActuallyPresentSupplement = !didStartPanningWithSupplement &&
-                    (translation.y < -minimumTranslation || velocity < -1000)
-                if shouldActuallyPresentSupplement {
-                    containerState.selectedSupplement = manager.supplements.first
-                }
-
-                let stateToPass: (translation: CGFloat, velocity: CGFloat)? = (translation: translation.y, velocity: velocity)
-                presentSupplementContainer(containerState.selectedSupplement != nil, with: stateToPass)
-                return
-            }
-
-            guard let verticalPanGestureStartConstant else { return }
-
-            if (!didStartPanningWithSupplement && yDirection > 0) || (didStartPanningWithSupplement && yDirection < 0) {
-                newOffset = verticalPanGestureStartConstant + (translation.y.magnitude * -yDirection)
-            } else {
-                newOffset = verticalPanGestureStartConstant - (translation.y.magnitude * yDirection)
-            }
-
-            clampedOffset = clamp(
-                newOffset,
-                min: -supplementContainerOffset,
-                max: -supplementTabRestingOffset
-            )
-
-            if newOffset < clampedOffset {
-                let excess = clampedOffset - newOffset
-                let resistance = pow(excess, 0.7)
-                supplementBottomAnchor.constant = clampedOffset - resistance
-            } else if newOffset > -supplementTabRestingOffset {
-                let excess = newOffset - clampedOffset
-                let resistance = pow(excess, 0.5)
-                supplementBottomAnchor.constant = clamp(clampedOffset + resistance, min: -supplementTabRestingOffset, max: -50)
-            } else {
-                supplementBottomAnchor.constant = clampedOffset
-            }
-
-            containerState.supplementOffset = supplementBottomAnchor.constant
-        }
-
-        func presentSupplementContainer(
-            _ didPresent: Bool,
-            with panningState: (translation: CGFloat, velocity: CGFloat)? = nil
-        ) {
-            guard !isPanning else { return }
-
+        func presentSupplementContainer(_ didPresent: Bool) {
             if didPresent {
-                self.supplementBottomAnchor.constant = -supplementContainerOffset
+                supplementBottomAnchor.constant = -supplementContainerOffset
                 containerState.isPresentingOverlay = true
             } else {
-                self.supplementBottomAnchor.constant = -supplementTabRestingOffset
+                supplementBottomAnchor.constant = -supplementTabRestingOffset
             }
 
             containerState.isPresentingPlaybackControls = true
-            containerState.supplementOffset = supplementBottomAnchor.constant
 
             view.setNeedsLayout()
 
-            if let panningState {
-                let velocity = panningState.velocity.magnitude / 1000
-                let distance = panningState.translation.magnitude
-                let duration = min(max(Double(distance) / Double(velocity * 1000), 0.2), 0.75)
-
-                UIView.animate(
-                    withDuration: duration,
-                    delay: 0,
-                    usingSpringWithDamping: 0.8,
-                    initialSpringVelocity: velocity,
-                    options: .allowUserInteraction
-                ) { [weak self] in
-                    self?.view.layoutIfNeeded()
-                }
-            } else {
-                UIView.animate(
-                    withDuration: 0.55,
-                    delay: 0,
-                    usingSpringWithDamping: 0.85,
-                    initialSpringVelocity: 0.3,
-                    options: .allowUserInteraction
-                ) { [weak self] in
-                    self?.view.layoutIfNeeded()
-                }
+            UIView.animate(
+                withDuration: 0.55,
+                delay: 0,
+                usingSpringWithDamping: 0.85,
+                initialSpringVelocity: 0.3,
+                options: .allowUserInteraction
+            ) { [weak self] in
+                self?.view.layoutIfNeeded()
             }
         }
 
@@ -416,15 +311,12 @@ extension VideoPlayer {
                 equalTo: view.bottomAnchor,
                 constant: -supplementTabRestingOffset
             )
-            containerState.supplementOffset = supplementBottomAnchor.constant
-
-            supplementHeightAnchor = supplementContainerView.heightAnchor.constraint(equalToConstant: supplementContainerOffset)
 
             let supplementConstraints = [
                 supplementContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 supplementContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 supplementBottomAnchor!,
-                supplementHeightAnchor!,
+                supplementContainerView.heightAnchor.constraint(equalToConstant: supplementContainerOffset),
             ]
 
             NSLayoutConstraint.activate(supplementConstraints)

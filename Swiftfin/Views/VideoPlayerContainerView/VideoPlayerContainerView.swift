@@ -428,7 +428,6 @@ extension VideoPlayer {
             }
 
             playerCompactBottomAnchor.constant = compactPlayerBottomOffset
-            containerState.supplementOffset = supplementBottomAnchor.constant
             containerState.centerOffset = centerOffset
         }
 
@@ -451,7 +450,6 @@ extension VideoPlayer {
             }
 
             playerCompactBottomAnchor.constant = compactPlayerBottomOffset
-            containerState.supplementOffset = supplementBottomAnchor.constant
             containerState.centerOffset = centerOffset
 
             if let panningState {
@@ -564,7 +562,6 @@ extension VideoPlayer {
                 equalTo: view.bottomAnchor,
                 constant: -dismissedSupplementContainerOffset
             )
-            containerState.supplementOffset = supplementBottomAnchor.constant
             containerState.centerOffset = centerOffset
 
             let constant = isCompact ?
@@ -623,7 +620,6 @@ extension VideoPlayer {
             }
 
             playerCompactBottomAnchor.constant = compactPlayerBottomOffset
-            containerState.supplementOffset = supplementHeightAnchor.constant
             containerState.centerOffset = centerOffset
         }
     }

@@ -39,11 +39,6 @@ extension MediaPeopleSupplement {
         @ObservedObject
         private var supplement: MediaPeopleSupplement
 
-        #if os(tvOS)
-        @FocusState
-        private var focusedPersonID: Int?
-        #endif
-
         init(supplement: MediaPeopleSupplement) {
             self.supplement = supplement
         }

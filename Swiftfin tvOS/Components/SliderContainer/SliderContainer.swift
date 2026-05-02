@@ -36,6 +36,7 @@ struct SliderContainer<Value: BinaryFloatingPoint, Content: SliderContentView>: 
         UISliderContainer(
             value: value,
             total: total,
+            originProgress: originProgress,
             onEditingChanged: onEditingChanged,
             view: view
         )
@@ -44,6 +45,7 @@ struct SliderContainer<Value: BinaryFloatingPoint, Content: SliderContentView>: 
     func updateUIView(_ uiView: UISliderContainer<Value, Content>, context: Context) {
         uiView.update(
             value: value.wrappedValue,
+            originProgress: originProgress,
             view: view
         )
     }
@@ -78,6 +80,7 @@ final class UISliderContainer<Value: BinaryFloatingPoint, Content: SliderContent
     init(
         value: Binding<Value>,
         total: Value,
+        originProgress: Value?,
         onEditingChanged: @escaping (Bool) -> Void,
         view: Content
     ) {
@@ -88,6 +91,7 @@ final class UISliderContainer<Value: BinaryFloatingPoint, Content: SliderContent
             isEditing: false,
             isFocused: false,
             value: value.wrappedValue,
+            originValue: originProgress,
             total: total
         )
         self.view = view
@@ -102,8 +106,9 @@ final class UISliderContainer<Value: BinaryFloatingPoint, Content: SliderContent
         fatalError("init(coder:) has not been implemented")
     }
 
-    func update(value: Value, view: Content) {
+    func update(value: Value, originProgress: Value?, view: Content) {
         containerState.value = value
+        containerState.originValue = originProgress
         progressHostingController.rootView = AnyView(view.environmentObject(containerState))
     }
 

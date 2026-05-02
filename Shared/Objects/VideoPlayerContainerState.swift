@@ -117,9 +117,6 @@ class VideoPlayerContainerState: ObservableObject {
     }
 
     @Published
-    var supplementOffset: CGFloat = 0.0
-
-    @Published
     var centerOffset: CGFloat = 0.0
 
     var originalPlaybackRate: Float?

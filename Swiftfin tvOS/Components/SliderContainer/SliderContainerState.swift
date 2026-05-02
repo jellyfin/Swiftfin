@@ -25,11 +25,13 @@ class SliderContainerState<Value: BinaryFloatingPoint>: ObservableObject {
         isEditing: Bool,
         isFocused: Bool,
         value: Value,
+        originValue: Value?,
         total: Value
     ) {
         self.isEditing = isEditing
         self.isFocused = isFocused
         self.value = value
+        self.originValue = originValue
         self.total = total
     }
 }
