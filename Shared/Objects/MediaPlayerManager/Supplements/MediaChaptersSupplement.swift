@@ -63,9 +63,6 @@ extension MediaChaptersSupplement {
         //        @StateObject
         //        private var collectionVGridProxy: CollectionVGridProxy = .init()
 
-        @FocusState
-        private var focusedChapterID: ChapterInfo.FullInfo.ID?
-
         init(supplement: MediaChaptersSupplement) {
             self.supplement = supplement
         }
@@ -74,13 +71,14 @@ extension MediaChaptersSupplement {
             supplement.chapters
         }
 
-        private var currentChapter: ChapterInfo.FullInfo? {
-            chapters.first(
-                where: {
-                    guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
-                    return startSeconds <= manager.seconds
-                }
-            )
+        private var activeChapter: ChapterInfo.FullInfo? {
+            guard let nextIndex = chapters.firstIndex(where: {
+                guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
+                return startSeconds > manager.secondsBox.value
+            }) else {
+                return chapters.last
+            }
+            return chapters[safe: max(0, nextIndex - 1)]
         }
 
         var iOSView: some View {
@@ -109,7 +107,6 @@ extension MediaChaptersSupplement {
                     manager.proxy?.setSeconds(startSeconds)
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
-                .environmentObject(supplement)
             }
             //            .proxy(collectionVGridProxy)
             //            .onAppear {
@@ -133,19 +130,12 @@ extension MediaChaptersSupplement {
                     manager.proxy?.setSeconds(startSeconds)
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
-                .environmentObject(supplement)
+                .isSelected(chapter.id == activeChapter?.id)
             }
             .clipsToBounds(false)
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
             .scrollBehavior(.continuousLeadingEdge)
-            //            .proxy(collectionHStack)
-            //            .onAppear {
-            //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            //                    guard let currentChapter else { return }
-            //                    collectionVGridProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
-            //                }
-            //            }
         }
 
         var tvOSView: some View {
@@ -164,15 +154,7 @@ extension MediaChaptersSupplement {
                     manager.proxy?.setSeconds(startSeconds)
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
-                .environmentObject(supplement)
-                .focused($focusedChapterID, equals: chapter.unwrappedIDHashOrZero)
-                .backport
-                .defaultFocus(
-                    $focusedChapterID,
-                    currentChapter?.unwrappedIDHashOrZero,
-                    priority: .automatic
-                )
-                .padding(.horizontal, 4)
+                .isSelected(chapter.id == activeChapter?.id)
             }
             .ignoresSafeArea(.container, edges: .horizontal)
             .focusSection()
@@ -238,69 +220,41 @@ extension MediaChaptersSupplement {
 
         struct ChapterRow: View {
 
-            @EnvironmentObject
-            private var manager: MediaPlayerManager
-            @EnvironmentObject
-            private var supplement: MediaChaptersSupplement
-
-            @State
-            private var activeSeconds: Duration = .zero
+            @Environment(\.isSelected)
+            private var isSelected
 
             let chapter: ChapterInfo.FullInfo
             let action: () -> Void
 
-            private var isCurrentChapter: Bool {
-                supplement.isCurrentChapter(
-                    seconds: activeSeconds,
-                    chapter: chapter
-                )
-            }
-
             var body: some View {
                 ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
-                    ChapterPreview(
-                        chapter: chapter
-                    )
-                    .frame(width: 110)
-                    .padding(.vertical, 8)
+                    ChapterPreview(chapter: chapter)
+                        .frame(width: 110)
+                        .padding(.vertical, 8)
                 } content: {
                     ChapterContent(chapter: chapter)
                 }
                 .onSelect(perform: action)
-                .assign(manager.secondsBox.$value, to: $activeSeconds)
-                .isSelected(isCurrentChapter)
+                .isSelected(isSelected)
             }
         }
 
         struct ChapterButton: View {
 
-            @EnvironmentObject
-            private var manager: MediaPlayerManager
-            @EnvironmentObject
-            private var supplement: MediaChaptersSupplement
-
-            @State
-            private var activeSeconds: Duration = .zero
+            @Environment(\.isSelected)
+            private var isSelected
 
             let chapter: ChapterInfo.FullInfo
             let action: () -> Void
 
-            private var isCurrentChapter: Bool {
-                supplement.isCurrentChapter(
-                    seconds: activeSeconds,
-                    chapter: chapter
-                )
-            }
-
             var body: some View {
                 SupplementPosterButton(
                     item: chapter,
-                    isSelected: isCurrentChapter,
                     action: action
                 ) {
                     ChapterContent(chapter: chapter)
                 }
-                .assign(manager.secondsBox.$value, to: $activeSeconds)
+                .isSelected(isSelected)
             }
         }
     }

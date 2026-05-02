@@ -157,9 +157,6 @@ extension EpisodeMediaPlayerQueue {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @FocusState
-        private var focusedEpisodeID: String?
-
         @ObservedObject
         var viewModel: SeriesItemViewModel
 
@@ -323,7 +320,6 @@ extension EpisodeMediaPlayerQueue {
                                 EpisodeButton(episode: episode) {
                                     select(episode: episode)
                                 }
-                                .focused($focusedEpisodeID, equals: episode.id)
                                 .padding(.horizontal, 4)
                             }
                             .ignoresSafeArea(.container, edges: .horizontal)
@@ -502,7 +498,6 @@ extension EpisodeMediaPlayerQueue {
         var body: some View {
             SupplementPosterButton(
                 item: episode,
-                isSelected: manager.item.id == episode.id,
                 action: action
             ) {
                 VStack(alignment: .leading, spacing: 5) {
@@ -519,6 +514,7 @@ extension EpisodeMediaPlayerQueue {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .isSelected(manager.item.id == episode.id)
         }
     }
 }

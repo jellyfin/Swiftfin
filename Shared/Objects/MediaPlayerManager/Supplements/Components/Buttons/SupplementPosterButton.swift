@@ -15,19 +15,19 @@ struct SupplementPosterButton<Item: Poster, Label: View>: View {
     @Default(.accentColor)
     private var accentColor
 
+    @Environment(\.isSelected)
+    private var isSelected
+
     private let item: Item
-    private let isSelected: Bool
     private let action: () -> Void
     private let label: () -> Label
 
     init(
         item: Item,
-        isSelected: Bool = false,
         action: @escaping () -> Void,
         @ViewBuilder label: @escaping () -> Label
     ) {
         self.item = item
-        self.isSelected = isSelected
         self.action = action
         self.label = label
     }
