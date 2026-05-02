@@ -178,6 +178,38 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 )
                 currentSupplements = newSupplements
             }
+            .backport
+            .onChange(of: focusedElement) { _, newValue in
+                switch newValue {
+                case let .supplementTab(id):
+                    if containerState.selectedSupplement?.id != id,
+                       let supplement = currentSupplements[id: id]
+                    {
+                        containerState.select(supplement: supplement)
+                    }
+                    containerState.isPresentingOverlay = true
+                case .focusBoundary:
+                    if containerState.isPresentingSupplement {
+                        containerState.select(supplement: nil)
+                        containerState.isProgressBarFocused = true
+                    } else {
+                        if let first = currentSupplements.first {
+                            containerState.select(supplement: first.supplement)
+                            DispatchQueue.main.async {
+                                focusedElement = .supplementTab(first.id)
+                            }
+                        }
+                    }
+                case .none:
+                    break
+                }
+            }
+            .backport
+            .onChange(of: containerState.isProgressBarFocused) { _, focused in
+                if focused, containerState.isPresentingSupplement {
+                    containerState.select(supplement: nil)
+                }
+            }
             #if os(iOS)
             .environment(
                 \.panAction,
@@ -205,43 +237,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     }
                 )
             )
-            #else
-            .onReceive(manager.$playbackItem) { newItem in
-                    guard newItem != nil else { return }
-                    containerState.selectedSupplement = nil
-                    containerState.containerView?.presentSupplementContainer(false)
-                    focusedElement = .focusBoundary
-                }
-                .onChange(of: focusedElement) { _, newValue in
-                    switch newValue {
-                    case let .supplementTab(id):
-                        if containerState.selectedSupplement?.id != id,
-                           let supplement = currentSupplements[id: id]
-                        {
-                            containerState.select(supplement: supplement)
-                        }
-                        containerState.isPresentingOverlay = true
-                    case .focusBoundary:
-                        if containerState.isPresentingSupplement {
-                            containerState.select(supplement: nil)
-                            containerState.isProgressBarFocused = true
-                        } else {
-                            if let first = currentSupplements.first {
-                                containerState.select(supplement: first.supplement)
-                                DispatchQueue.main.async {
-                                    focusedElement = .supplementTab(first.id)
-                                }
-                            }
-                        }
-                    case .none:
-                        break
-                    }
-                }
-                .onChange(of: containerState.isProgressBarFocused) { _, focused in
-                    if focused, containerState.isPresentingSupplement {
-                        containerState.select(supplement: nil)
-                    }
-                }
             #endif
         }
     }
