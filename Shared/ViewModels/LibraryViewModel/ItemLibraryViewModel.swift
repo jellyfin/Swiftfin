@@ -13,6 +13,7 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
+@MainActor
 final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     // MARK: get

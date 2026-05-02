@@ -37,9 +37,9 @@ extension ItemView {
                 // MARK: - Parts
 
                 // TODO: Implement after part queue made
-//                if viewModel.additionalParts.isNotEmpty {
-//                    AdditionalPartsHStack(items: viewModel.additionalParts)
-//                }
+                if viewModel.additionalParts.isNotEmpty {
+                    AdditionalPartsHStack(items: viewModel.additionalParts)
+                }
 
                 // MARK: Cast and Crew
 
