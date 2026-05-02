@@ -105,9 +105,9 @@ extension VideoPlayer.PlaybackControls {
 
             switch direction {
             case .forward:
-                manager?.jumpForward(totalDuration)
+                manager?.proxy?.jumpForward(totalDuration)
             case .backward:
-                manager?.jumpBackward(totalDuration)
+                manager?.proxy?.jumpBackward(totalDuration)
             }
             containerState?.jumpProgressObserver.reset()
         }
