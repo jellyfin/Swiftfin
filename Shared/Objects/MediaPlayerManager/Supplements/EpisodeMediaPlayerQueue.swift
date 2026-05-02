@@ -245,25 +245,23 @@ extension EpisodeMediaPlayerQueue {
                                 uniqueElements: season.elements,
                                 layout: .columns(
                                     1,
-                                    insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
+                                    insets: .init(EdgeInsets.edgePadding)
                                 )
                             ) { item in
                                 EpisodeRow(episode: item) {
                                     select(episode: item)
                                 }
-                                .edgePadding(.horizontal)
                             }
                         }
                     case .initial, .refreshing:
                         CollectionVGrid(
-                            count: 3,
+                            count: 1,
                             layout: .columns(
                                 1,
-                                insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
+                                insets: .init(EdgeInsets.edgePadding)
                             )
                         ) { _ in
                             EpisodeRowPlaceholder()
-                                .edgePadding(.horizontal)
                         }
                     case .error:
                         ErrorView(error: ErrorMessage(L10n.unknownError))
@@ -333,12 +331,7 @@ extension EpisodeMediaPlayerQueue {
                                 id: \.unwrappedIDHashOrZero,
                                 layout: .columns(
                                     5,
-                                    insets: .init(
-                                        top: EdgeInsets.edgePadding,
-                                        leading: EdgeInsets.edgePadding,
-                                        bottom: 0,
-                                        trailing: EdgeInsets.edgePadding
-                                    ),
+                                    insets: .init(EdgeInsets.edgePadding),
                                     itemSpacing: EdgeInsets.edgePadding,
                                     lineSpacing: EdgeInsets.edgePadding
                                 )
@@ -351,30 +344,13 @@ extension EpisodeMediaPlayerQueue {
                             }
                             .ignoresSafeArea(.container, edges: .horizontal)
                             .focusSection()
-                            .onChange(of: focusedEpisodeID) { _, newValue in
-                                guard let newValue else { return }
-                                lastFocusedEpisodeID = newValue
-                            }
-                            .onChange(of: containerState.isPresentingSupplement) { _, newValue in
-                                if newValue {
-                                    getContentFocus()
-                                }
-                            }
-                            .onFirstAppear {
-                                lastFocusedEpisodeID = manager.item.id
-                            }
                         }
                     case .initial, .refreshing, .error:
                         CollectionVGrid(
                             count: 1,
                             layout: .columns(
                                 5,
-                                insets: .init(
-                                    top: EdgeInsets.edgePadding,
-                                    leading: EdgeInsets.edgePadding,
-                                    bottom: 0,
-                                    trailing: EdgeInsets.edgePadding
-                                ),
+                                insets: .init(EdgeInsets.edgePadding),
                                 itemSpacing: EdgeInsets.edgePadding,
                                 lineSpacing: EdgeInsets.edgePadding
                             )
@@ -485,7 +461,7 @@ extension EpisodeMediaPlayerQueue {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
-                        .lineLimit(2, reservesSpace: true)
+                        .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
                     EpisodeDescription(episode: episode)

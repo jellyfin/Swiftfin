@@ -39,6 +39,11 @@ extension MediaPeopleSupplement {
         @ObservedObject
         private var supplement: MediaPeopleSupplement
 
+        #if os(tvOS)
+        @FocusState
+        private var focusedPersonID: Int?
+        #endif
+
         init(supplement: MediaPeopleSupplement) {
             self.supplement = supplement
         }
@@ -63,11 +68,10 @@ extension MediaPeopleSupplement {
                 uniqueElements: people,
                 layout: .columns(
                     1,
-                    insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
+                    insets: .init(EdgeInsets.edgePadding)
                 )
             ) { person, _ in
                 PersonRow(person: person)
-                    .edgePadding(.horizontal)
             }
         }
 
@@ -111,21 +115,17 @@ extension MediaPeopleSupplement {
                 uniqueElements: people,
                 id: \.unwrappedIDHashOrZero,
                 layout: .columns(
-                    9,
-                    insets: .init(
-                        top: EdgeInsets.edgePadding,
-                        leading: EdgeInsets.edgePadding,
-                        bottom: 0,
-                        trailing: EdgeInsets.edgePadding
-                    ),
+                    10,
+                    insets: .init(EdgeInsets.edgePadding),
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
             ) { person in
                 personView(for: person)
-                    .focusSection()
+                    .padding(.horizontal, 4)
             }
             .ignoresSafeArea(.container, edges: .horizontal)
+            .focusSection()
         }
     }
 

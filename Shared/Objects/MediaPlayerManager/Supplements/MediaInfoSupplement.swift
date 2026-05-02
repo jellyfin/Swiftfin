@@ -86,35 +86,30 @@ extension MediaInfoSupplement {
                 isCompact: containerState.isCompact
             ) {
                 iOSCompactView
-                    .edgePadding(.horizontal)
             } regularView: {
                 regularView
             }
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
-            .edgePadding(.bottom)
         }
 
         @ViewBuilder
         private var iOSCompactView: some View {
             VStack(alignment: .leading) {
-                Group {
-                    Text(item.displayTitle)
-                        .fontWeight(.semibold)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
+                Text(item.displayTitle)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
 
-                    if let overview = item.overview {
-                        Text(overview)
-                            .font(.subheadline)
-                            .fontWeight(.regular)
-                    }
-
-                    accessoryView
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if let overview = item.overview {
+                    Text(overview)
+                        .font(.subheadline)
+                        .fontWeight(.regular)
                 }
-                .allowsHitTesting(false)
+
+                accessoryView
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
                 if !item.isLiveStream {
                     resetPlaybackButton
@@ -124,6 +119,7 @@ extension MediaInfoSupplement {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
+            .edgePadding()
         }
 
         @ViewBuilder
@@ -170,13 +166,12 @@ extension MediaInfoSupplement {
                     }
                 }
             }
-            .edgePadding(.vertical)
+            .edgePadding()
         }
 
         var tvOSView: some View {
             regularView
                 .frame(maxWidth: .infinity, alignment: .topLeading)
-                .edgePadding(.horizontal)
         }
     }
 }

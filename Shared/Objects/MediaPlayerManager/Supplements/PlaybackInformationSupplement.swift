@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionVGrid
 import Combine
 import Defaults
 import JellyfinAPI
@@ -215,32 +214,17 @@ extension PlaybackInformationSupplement {
                 isCompact: containerState.isCompact
             ) {
                 compactView
-                    .edgePadding(.horizontal)
             } regularView: {
                 regularView
             }
             .labeledContentStyle(.playbackInfo)
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
-            .edgePadding(.bottom)
         }
 
         @ViewBuilder
         private var compactView: some View {
-            CollectionVGrid(
-                count: 1,
-                layout: .columns(
-                    1,
-                    insets: .init(
-                        top: EdgeInsets.edgePadding,
-                        leading: 0,
-                        bottom: 0,
-                        trailing: 0
-                    ),
-                    itemSpacing: 0,
-                    lineSpacing: 0
-                )
-            ) { _ in
+            ScrollView {
                 VStack(alignment: .leading, spacing: 4) {
                     playbackInfoSection
                     videoInfoSection
@@ -250,24 +234,13 @@ extension PlaybackInformationSupplement {
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
             }
+            .scrollIndicators(.hidden)
+            .edgePadding()
         }
 
         @ViewBuilder
         private var regularView: some View {
-            CollectionVGrid(
-                count: 1,
-                layout: .columns(
-                    1,
-                    insets: .init(
-                        top: EdgeInsets.edgePadding,
-                        leading: EdgeInsets.edgePadding,
-                        bottom: 0,
-                        trailing: EdgeInsets.edgePadding
-                    ),
-                    itemSpacing: EdgeInsets.edgePadding,
-                    lineSpacing: EdgeInsets.edgePadding
-                )
-            ) { _ in
+            ScrollView {
                 HStack(alignment: .top, spacing: 24) {
                     VStack(alignment: .leading, spacing: 4) {
                         playbackInfoSection
@@ -283,6 +256,8 @@ extension PlaybackInformationSupplement {
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                 }
             }
+            .scrollIndicators(.hidden)
+            .edgePadding()
         }
 
         var tvOSView: some View {

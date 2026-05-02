@@ -36,7 +36,7 @@ struct SupplementPosterButton<Item: Poster, Label: View>: View {
     private func overlay(for posterItem: Item) -> some View {
         if isSelected {
             ContainerRelativeShape()
-                .stroke(accentColor, lineWidth: 8)
+                .stroke(accentColor, lineWidth: UIDevice.isTV ? 12 : 8)
                 .clipped()
         }
 

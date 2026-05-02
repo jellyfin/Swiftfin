@@ -101,7 +101,7 @@ extension MediaChaptersSupplement {
                 id: \.unwrappedIDHashOrZero,
                 layout: .columns(
                     1,
-                    insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
+                    insets: .init(EdgeInsets.edgePadding)
                 )
             ) { chapter, _ in
                 ChapterRow(chapter: chapter) {
@@ -109,7 +109,6 @@ extension MediaChaptersSupplement {
                     manager.proxy?.setSeconds(startSeconds)
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
-                .edgePadding(.horizontal)
                 .environmentObject(supplement)
             }
             //            .proxy(collectionVGridProxy)
@@ -155,12 +154,7 @@ extension MediaChaptersSupplement {
                 id: \.unwrappedIDHashOrZero,
                 layout: .columns(
                     5,
-                    insets: .init(
-                        top: EdgeInsets.edgePadding,
-                        leading: EdgeInsets.edgePadding,
-                        bottom: 0,
-                        trailing: EdgeInsets.edgePadding
-                    ),
+                    insets: .init(EdgeInsets.edgePadding),
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
@@ -178,8 +172,10 @@ extension MediaChaptersSupplement {
                     currentChapter?.unwrappedIDHashOrZero,
                     priority: .automatic
                 )
+                .padding(.horizontal, 4)
             }
             .ignoresSafeArea(.container, edges: .horizontal)
+            .focusSection()
         }
 
         struct ChapterPreview: View {
