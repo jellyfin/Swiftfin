@@ -9,9 +9,7 @@
 import SwiftUI
 
 extension ItemView {
-
     struct MovieItemContentView: View {
-
         @ObservedObject
         var viewModel: MovieItemViewModel
 
@@ -19,6 +17,10 @@ extension ItemView {
             VStack(spacing: 0) {
                 if let castAndCrew = viewModel.item.people, castAndCrew.isNotEmpty {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
+                }
+
+                if viewModel.additionalParts.isNotEmpty {
+                    AdditionalPartsHStack(items: viewModel.additionalParts)
                 }
 
                 if viewModel.specialFeatures.isNotEmpty {
