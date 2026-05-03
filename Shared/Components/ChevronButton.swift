@@ -10,6 +10,7 @@ import SwiftUI
 
 // TODO: Remove alert and just be a Button
 // TODO: change "subtitle" to "content"
+// TODO: observe editing/selection for checkbox/chevron switching?
 
 struct ChevronButton<_Label: View, _Content: View>: View {
 
@@ -145,6 +146,7 @@ extension ChevronButton {
 
 extension ChevronButton {
 
+    // TODO: clean up to not take a LabeledContent
     init(
         external: Bool = false,
         action: @escaping () -> Void,
@@ -244,7 +246,7 @@ extension ChevronButton where _Label == Label<Text, EmptyView>, _Content == Text
     ) {
         self.init(
             labeledContent: LabeledContent {
-                subtitle ?? Text("")
+                subtitle ?? Text(String.empty)
             } label: {
                 Label(title: { Text(title) }, icon: { EmptyView() })
             },

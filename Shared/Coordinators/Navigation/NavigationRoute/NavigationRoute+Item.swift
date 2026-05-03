@@ -51,10 +51,11 @@ extension NavigationRoute {
     }
     #endif
 
+    @MainActor
     static func castAndCrew(people: [BaseItemPerson], itemID: String?) -> NavigationRoute {
         let id: String? = itemID == nil ? nil : "castAndCrew-\(itemID!)"
         let viewModel = PagingLibraryViewModel(
-            title: L10n.castAndCrew,
+            title: L10n.castAndCrew.localizedCapitalized,
             id: id,
             people
         )
@@ -75,24 +76,6 @@ extension NavigationRoute {
                     router.route(to: .addGenre(viewModel: viewModel as! GenreEditorViewModel))
                 }
             )
-        }
-    }
-
-    static func editSubtitles(item: BaseItemDto) -> NavigationRoute {
-        NavigationRoute(
-            id: "editSubtitles",
-            style: .sheet
-        ) {
-            ItemSubtitlesView(item: item)
-        }
-    }
-
-    static func uploadSubtitle(viewModel: SubtitleEditorViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "uploadSubtitle",
-            style: .sheet
-        ) {
-            ItemSubtitleUploadView(viewModel: viewModel)
         }
     }
 
@@ -132,6 +115,15 @@ extension NavigationRoute {
         }
     }
 
+    static func editSubtitles(item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "editSubtitles",
+            style: .sheet
+        ) {
+            ItemSubtitlesView(item: item)
+        }
+    }
+
     @MainActor
     static func editTags(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editTags") {
@@ -165,9 +157,19 @@ extension NavigationRoute {
             )
         }
     }
+
+    static func uploadSubtitle(viewModel: ItemSubtitlesViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "uploadSubtitle",
+            style: .sheet
+        ) {
+            ItemSubtitleUploadView(viewModel: viewModel)
+        }
+    }
+
     #endif
 
-    static func searchSubtitle(viewModel: SubtitleEditorViewModel) -> NavigationRoute {
+    static func searchSubtitle(viewModel: ItemSubtitlesViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "searchSubtitle",
             style: .sheet

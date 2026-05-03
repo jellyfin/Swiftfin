@@ -60,7 +60,8 @@ final class SearchViewModel: ViewModel {
 
     // MARK: init
 
-    init(filterViewModel: FilterViewModel = .init()) {
+    @MainActor
+    init(filterViewModel: FilterViewModel) {
         self.filterViewModel = filterViewModel
         super.init()
 
@@ -195,7 +196,7 @@ final class SearchViewModel: ViewModel {
     @Function(\Action.Cases.getSuggestions)
     private func _getSuggestions() async throws {
 
-        filterViewModel.send(.getQueryFilters)
+        await filterViewModel.getQueryFilters()
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.includeItemTypes = [.movie, .series]

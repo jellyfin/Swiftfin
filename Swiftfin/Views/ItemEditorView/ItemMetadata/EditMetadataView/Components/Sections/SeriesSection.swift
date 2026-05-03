@@ -24,7 +24,7 @@ extension EditMetadataView {
 
         init(item: Binding<BaseItemDto>) {
             self._item = item
-            self.tempRunTime = Int(ServerTicks(item.wrappedValue.runTimeTicks ?? 0).minutes)
+            self.tempRunTime = Int(Duration.ticks(item.wrappedValue.runTimeTicks ?? 0).minutes)
         }
 
         // MARK: - Body
@@ -114,13 +114,13 @@ extension EditMetadataView {
                 .keyboardType(.numberPad)
             } onSave: {
                 if let tempRunTime, tempRunTime != 0 {
-                    item.runTimeTicks = ServerTicks(minutes: tempRunTime).ticks
+                    item.runTimeTicks = Duration.minutes(tempRunTime).ticks
                 } else {
                     item.runTimeTicks = nil
                 }
             } onCancel: {
                 if let originalRunTime = item.runTimeTicks {
-                    tempRunTime = Int(ServerTicks(originalRunTime).minutes)
+                    tempRunTime = Int(Duration.ticks(originalRunTime).minutes)
                 } else {
                     tempRunTime = nil
                 }

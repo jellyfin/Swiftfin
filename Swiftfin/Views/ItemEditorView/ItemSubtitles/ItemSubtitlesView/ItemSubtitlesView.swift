@@ -11,87 +11,61 @@ import SwiftUI
 
 struct ItemSubtitlesView: View {
 
-    // MARK: - Router
-
     @Router
     private var router
 
-    // MARK: - ViewModel
-
-    @StateObject
-    private var viewModel: SubtitleEditorViewModel
-
-    // MARK: - Edit Mode
-
     @State
     private var isEditing = false
-
-    // MARK: - Deletion Dialog States
-
-    @State
-    private var selectedSubtitles: Set<MediaStream> = []
     @State
     private var isPresentingDeleteConfirmation = false
-
-    // MARK: - Error State
-
     @State
-    private var error: Error?
+    private var selectedSubtitles: Set<MediaStream> = []
 
-    // MARK: - Item has Subtitles
+    @StateObject
+    private var viewModel: ItemSubtitlesViewModel
 
     private var hasSubtitles: Bool {
         viewModel.externalSubtitles.isNotEmpty || viewModel.internalSubtitles.isNotEmpty
     }
 
-    // MARK: - All Subtitles Selected
-
     private var isAllSelected: Bool {
         selectedSubtitles.count == viewModel.externalSubtitles.count
     }
-
-    // MARK: - Initializer
-
-    init(item: BaseItemDto) {
-        self._viewModel = StateObject(wrappedValue: .init(item: item))
-    }
-
-    // MARK: - Toggle All Selection
 
     private func toggleAllSelection() {
         selectedSubtitles = isAllSelected ? [] : Set(viewModel.externalSubtitles)
     }
 
-    // MARK: - Cancel Editing
-
-    private func cancelEditing() {
-        isEditing = false
-        UIDevice.impact(.light)
-        selectedSubtitles.removeAll()
+    init(item: BaseItemDto) {
+        self._viewModel = StateObject(wrappedValue: .init(item: item))
     }
-
-    // MARK: - Body
 
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case let .error(error):
-                ErrorView(error: error)
-            default:
+            case .initial:
+                ProgressView()
+            case .content:
                 contentView
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             }
+        }
+        .onFirstAppear {
+            viewModel.refresh()
         }
         .navigationTitle(L10n.subtitles)
         .navigationBarBackButtonHidden(isEditing)
-        .navigationBarTitleDisplayMode(.inline)
-        .onReceive(viewModel.events) { event in
-            if case let .error(eventError) = event {
-                error = eventError
-            }
-        }
-        .errorMessage($error)
-        .navigationBarCloseButton {
-            router.dismiss()
+        .backport
+        .toolbarTitleDisplayMode(.inline)
+        .errorMessage($viewModel.error)
+        .if(!isEditing) { view in
+            view
+                .navigationBarCloseButton {
+                    router.dismiss()
+                }
         }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -105,7 +79,8 @@ struct ItemSubtitlesView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
                     Button(L10n.cancel) {
-                        cancelEditing()
+                        isEditing = false
+                        selectedSubtitles.removeAll()
                     }
                     .buttonStyle(.toolbarPill)
                 }
@@ -122,24 +97,20 @@ struct ItemSubtitlesView: View {
             }
         }
         .navigationBarMenuButton(
-            isLoading: viewModel.backgroundStates.contains(.updating),
+            isLoading: viewModel.background.is(.updating),
             isHidden: isEditing || !hasSubtitles
         ) {
-            Section(L10n.add) {
-                Button(L10n.uploadFile, systemImage: "plus") {
-                    router.route(to: .uploadSubtitle(viewModel: viewModel))
-                }
+            Button(L10n.uploadFile, systemImage: "plus") {
+                router.route(to: .uploadSubtitle(viewModel: viewModel))
+            }
 
-                Button(L10n.search, systemImage: "magnifyingglass") {
-                    router.route(to: .searchSubtitle(viewModel: viewModel))
-                }
+            Button(L10n.search, systemImage: "magnifyingglass") {
+                router.route(to: .searchSubtitle(viewModel: viewModel))
             }
 
             if viewModel.externalSubtitles.isNotEmpty {
-                Section(L10n.manage) {
-                    Button(L10n.edit, systemImage: "checkmark.circle") {
-                        isEditing = true
-                    }
+                Button(L10n.edit, systemImage: "checkmark.circle") {
+                    isEditing = true
                 }
             }
         }
@@ -151,17 +122,14 @@ struct ItemSubtitlesView: View {
             Button(L10n.cancel, role: .cancel) {}
 
             Button(L10n.delete, role: .destructive) {
-                viewModel.send(.delete(selectedSubtitles))
+                viewModel.delete(selectedSubtitles)
                 selectedSubtitles.removeAll()
                 isEditing = false
-                isPresentingDeleteConfirmation = false
             }
         } message: {
             Text(L10n.deleteSelectedConfirmation)
         }
     }
-
-    // MARK: - Content Views
 
     @ViewBuilder
     private var contentView: some View {
@@ -181,39 +149,42 @@ struct ItemSubtitlesView: View {
                     router.route(to: .searchSubtitle(viewModel: viewModel))
                 }
                 .foregroundStyle(.primary, .secondary)
-            }
+            } else {
 
-            if viewModel.internalSubtitles.isNotEmpty {
-                Section {
-                    DisclosureGroup(L10n.embedded) {
+                if viewModel.internalSubtitles.isNotEmpty {
+                    Section {
                         ForEach(viewModel.internalSubtitles, id: \.index) { subtitle in
-                            SubtitleButton(subtitle) {
+                            ItemSubtitleButton(subtitle: subtitle) {
                                 router.route(to: .mediaStreamInfo(mediaStream: subtitle))
                             }
-                            .environment(\.isEnabled, !isEditing)
+                            .disabled(isEditing)
                         }
+                    } header: {
+                        Text(L10n.embedded)
+                    } footer: {
+                        Text(L10n.embeddedSubtitleFooter)
                     }
-                } footer: {
-                    Text(L10n.embeddedSubtitleFooter)
                 }
-            }
 
-            if viewModel.externalSubtitles.isNotEmpty {
-                Section {
-                    DisclosureGroup(L10n.external) {
+                if viewModel.externalSubtitles.isNotEmpty {
+                    Section(L10n.external) {
                         ForEach(viewModel.externalSubtitles, id: \.index) { subtitle in
-                            SubtitleButton(subtitle) {
+                            ItemSubtitleButton(subtitle: subtitle) {
                                 if isEditing {
                                     selectedSubtitles.toggle(value: subtitle)
                                 } else {
                                     router.route(to: .mediaStreamInfo(mediaStream: subtitle))
                                 }
-                            } deleteAction: {
-                                selectedSubtitles = [subtitle]
-                                isPresentingDeleteConfirmation = true
                             }
-                            .isSelected(selectedSubtitles.contains(subtitle))
+                            .swipeActions {
+                                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                                    selectedSubtitles = [subtitle]
+                                    isPresentingDeleteConfirmation = true
+                                }
+                                .tint(.red)
+                            }
                             .isEditing(isEditing)
+                            .isSelected(selectedSubtitles.contains(subtitle))
                         }
                     }
                 }

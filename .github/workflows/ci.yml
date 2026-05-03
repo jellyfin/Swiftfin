@@ -24,18 +24,20 @@ jobs:
     runs-on: macos-15
 
     env:
-      XCODE_VERSION: "26.2"
-      IOS_VERSION: "18"
-      TVOS_VERSION: "18"
-      TVOS_SIMULATOR: "Apple TV 4K"
-      IPHONE_SIMULATOR: "iPhone 16 Pro"
+      XCODE_VERSION: "26.3"
 
-    steps:    
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install SwiftGen
-        run: brew install swiftgen
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Install Homebrew dependencies
+        run: brew bundle --file Brewfile
 
       - name: Cache Carthage
         uses: actions/cache@v4
@@ -63,6 +65,6 @@ jobs:
           max_attempts: 3
           retry_on: error
           timeout_minutes: 60
-          command: sudo fastlane buildLane \
+          command: bundle exec fastlane buildLane \
             scheme:"\"${{ matrix.scheme }}\"" \
             xcodeVersion:${{ env.XCODE_VERSION }}

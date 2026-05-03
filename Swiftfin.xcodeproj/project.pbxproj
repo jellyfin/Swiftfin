@@ -227,6 +227,7 @@
 				ViewModels/AdminDashboard/DevicesViewModel.swift,
 				ViewModels/AdminDashboard/ServerActivityDetailViewModel.swift,
 				ViewModels/AdminDashboard/ServerActivityViewModel.swift,
+				ViewModels/AdminDashboard/ServerLogs/ServerLogsViewModel.swift,
 				ViewModels/AdminDashboard/ServerTaskObserver.swift,
 				ViewModels/AdminDashboard/ServerTasksViewModel.swift,
 				ViewModels/AdminDashboard/ServerUserAdminViewModel.swift,
@@ -479,6 +480,7 @@
 				4EC71FBD2D1620AF00D0B3A8 /* Alphabetize Strings */,
 				6286F0A3271C0ABA00C40ED5 /* Run Swiftgen.swift */,
 				BD83D7852B55EEB600652C24 /* Run SwiftFormat */,
+				E1A1B5C42F00000000000002 /* Run SwiftLint */,
 				5358705C2669D21600D05A09 /* Sources */,
 				5358705D2669D21600D05A09 /* Frameworks */,
 				5358705E2669D21600D05A09 /* Resources */,
@@ -534,6 +536,7 @@
 				4EC71FBC2D16201C00D0B3A8 /* Alphabetize Strings */,
 				6286F09E271C093000C40ED5 /* Run Swiftgen.swift */,
 				BD0BA2282AD64BB200306A8D /* Run SwiftFormat */,
+				E1A1B5C42F00000000000001 /* Run SwiftLint */,
 				5377CBED263B596A003A4E83 /* Sources */,
 				5377CBEE263B596A003A4E83 /* Frameworks */,
 				5377CBEF263B596A003A4E83 /* Resources */,
@@ -854,6 +857,44 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftFormat installations\nexport PATH=/opt/homebrew/bin:$PATH\n\n# Skip phase if the action is not build (ie. analyze, archive, etc).\nif [ \"$ACTION\" != \"build\" ]; then\n    exit 0\nfi\n\nif which swiftformat >/dev/null; then\n    swiftformat .\nelse\n    echo \"error: SwiftFormat not installed, check contributing.md for installation instructions.\"\nfi\n";
+		};
+		E1A1B5C42F00000000000001 /* Run SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftLint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"\n\nif command -v swiftlint >/dev/null; then\n  swiftlint lint\nelse\n  echo \"warning: SwiftLint not installed. Run 'brew bundle --file Brewfile' from the repository root.\"\nfi\n";
+		};
+		E1A1B5C42F00000000000002 /* Run SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftLint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"\n\nif command -v swiftlint >/dev/null; then\n  swiftlint lint\nelse\n  echo \"warning: SwiftLint not installed. Run 'brew bundle --file Brewfile' from the repository root.\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1183,7 +1224,7 @@
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 26.0.0;
 			};
 		};
 		BD88CB402D77E6A0006BB5E3 /* XCRemoteSwiftPackageReference "TVOSPicker" */ = {
@@ -1215,7 +1256,7 @@
 			repositoryURL = "https://github.com/LePips/VLCUI";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.7.2;
+				minimumVersion = 0.8.1;
 			};
 		};
 		E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */ = {
@@ -1247,7 +1288,7 @@
 			repositoryURL = "https://github.com/sindresorhus/Defaults";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 8.0.0;
+				minimumVersion = 9.0.0;
 			};
 		};
 		E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
@@ -1327,7 +1368,7 @@
 			repositoryURL = "https://github.com/kean/Nuke";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 12.0.0;
+				minimumVersion = 13.0.0;
 			};
 		};
 		E19E6E0828A0BEFF005C10C8 /* XCRemoteSwiftPackageReference "BlurHashKit" */ = {

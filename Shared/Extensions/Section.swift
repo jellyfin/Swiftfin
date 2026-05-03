@@ -40,6 +40,20 @@ func Section(
 
 func Section(
     _ title: String,
+    footer: String,
+    @ViewBuilder content: @escaping () -> some View,
+    @LabeledContentBuilder learnMore: @escaping () -> AnyView
+) -> some View {
+    Section(
+        title,
+        content: content,
+        footer: { Text(footer) },
+        learnMore: learnMore
+    )
+}
+
+func Section(
+    _ title: String,
     @ViewBuilder content: @escaping () -> some View,
     @ViewBuilder footer: @escaping () -> some View,
     @LabeledContentBuilder learnMore: @escaping () -> AnyView
@@ -91,7 +105,7 @@ private struct _LearnMoreButton: View {
     }
 
     var body: some View {
-        Button(L10n.learnMore + "\u{2026}") {
+        Button(L10n.learnMore + .ellipsis) {
             isPresented = true
         }
         .foregroundStyle(Color.accentColor)

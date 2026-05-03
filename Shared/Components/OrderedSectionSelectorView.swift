@@ -17,20 +17,27 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     private var selection: BindingBox<[Element]>
 
     private let data: [Element]
+    private let removable: [Element]
     private let systemImage: String
 
     init(
         systemImage: String = "filemenu.and.selection",
         selection: Binding<[Element]>,
-        sources: [Element]
+        sources: [Element],
+        removable: [Element]? = nil
     ) {
         self._selection = StateObject(wrappedValue: BindingBox(source: selection))
         self.data = sources
+        self.removable = removable ?? sources
         self.systemImage = systemImage
     }
 
+    private func isRemovable(_ element: Element) -> Bool {
+        removable.contains(element)
+    }
+
     private var disabledSelection: [Element] {
-        data.subtracting(selection.value)
+        data.subtracting(selection.value).filter(isRemovable)
     }
 
     private var isReordering: Bool {
@@ -38,6 +45,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     }
 
     private func select(element: Element) {
+        guard isRemovable(element) else { return }
         selection.value.toggle(element)
         UIDevice.impact(.light)
     }
@@ -82,7 +90,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                 } else {
                     ForEach(selection.value, id: \.self) { element in
                         button(for: element) {
-                            if !isReordering {
+                            if !isReordering, isRemovable(element) {
                                 Image(systemName: "minus.circle.fill")
                                     .foregroundStyle(.red)
                             }

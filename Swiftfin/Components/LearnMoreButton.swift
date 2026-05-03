@@ -30,7 +30,7 @@ struct LearnMoreButton: View {
     // MARK: - Body
 
     var body: some View {
-        Button(L10n.learnMore + "\u{2026}") {
+        Button(L10n.learnMore + .ellipsis) {
             isPresented = true
         }
         .foregroundStyle(Color.accentColor)
