@@ -113,9 +113,7 @@ struct ItemImagesView: View {
                 InsetGroupedListHeader(
                     L10n.images,
                     description: L10n.imagesDescription
-                ) {
-                    UIApplication.shared.open(.jellyfinDocsImages)
-                }
+                )
                 .edgePadding(.horizontal)
                 .frame(maxWidth: .infinity)
                 .padding(.top, 24)

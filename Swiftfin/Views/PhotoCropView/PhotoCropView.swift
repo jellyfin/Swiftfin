@@ -64,7 +64,7 @@ struct PhotoCropView<Item>: View {
                                 proxy.setAspectRatio(preset.ratio)
                             }
                             .isSelected(proxy.selectedRatio == preset.ratio)
-                            .buttonStyle(.toolbarCapsule)
+                            .buttonStyle(NavigationDrawerLabelStyle())
                         }
                     }
                     .scrollIfLargerThanContainer(axes: .horizontal)

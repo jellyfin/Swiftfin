@@ -23,7 +23,7 @@ final class UserImageViewModel: ImageViewModel<UserDto> {
 
         _ = try await userSession.client.send(request)
 
-        cleanImageCache()
+        await cleanImageCache()
     }
 
     override func performDelete() async throws {
@@ -32,14 +32,14 @@ final class UserImageViewModel: ImageViewModel<UserDto> {
         let request = Paths.deleteUserImage(userID: userID)
         _ = try await userSession.client.send(request)
 
-        cleanImageCache()
+        await cleanImageCache()
     }
 
-    private func cleanImageCache() {
+    private func cleanImageCache() async {
         for width: CGFloat in [60, 120, 150] {
             if let url = item.profileImageSource(client: userSession.client, maxWidth: width).url {
-                ImagePipeline.Swiftfin.local.removeItem(for: url)
-                ImagePipeline.Swiftfin.posters.removeItem(for: url)
+                await ImagePipeline.Swiftfin.local.removeItem(for: url)
+                await ImagePipeline.Swiftfin.posters.removeItem(for: url)
             }
         }
 
