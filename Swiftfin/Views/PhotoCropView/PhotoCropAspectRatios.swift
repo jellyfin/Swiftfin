@@ -20,6 +20,7 @@ enum AspectRatios: Identifiable, Displayable, CaseIterable {
         displayTitle
     }
 
+    // swiftlint:disable:next hard_coded_display_string
     var displayTitle: String {
         guard let width, let height else { return L10n.custom }
         return "\(width):\(height)"
