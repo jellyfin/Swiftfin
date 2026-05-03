@@ -25,13 +25,9 @@ extension ItemView {
                 items: items
             ) { item in
                 guard let mediaSource = item.mediaSources?.first else { return }
-                let provider = MediaPlayerItemProvider(item: item) { item in
-                    try await MediaPlayerItem.build(
-                        for: item,
-                        mediaSource: mediaSource
-                    )
-                }
-                router.route(to: .videoPlayer(provider: provider))
+//                router.route(
+//                    to: .videoPlayer(manager: OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
+//                )
             }
             .posterOverlay(for: BaseItemDto.self) { _ in EmptyView() }
         }
