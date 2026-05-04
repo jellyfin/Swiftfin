@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2CD797CBC62CA3749A1F93A1 /* IntTimeLabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CC6A670218D75A7669288C /* IntTimeLabelTests.swift */; };
+		3BFD249C0AB954F7674922A5 /* SwiftfinTVOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26F25A7A9DFF734F18809F44 /* SwiftfinTVOSTests.swift */; };
 		53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABFDDB267972BF00886593 /* TVServices.framework */; };
 		62666DF727E5012C00EC0ECD /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; };
 		62666DF827E5012C00EC0ECD /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -42,6 +44,10 @@
 		62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62666E3127E5021E00EC0ECD /* UIKit.framework */; };
 		62666E3E27E503FA00EC0ECD /* MediaAccessibility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4BE267D40E4000E2F71 /* MediaAccessibility.framework */; };
 		62666E3F27E5040300EC0ECD /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */; };
+		73BEF088F93EFD2EB520395F /* DurationExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E52EB1479D7CDA6EC5CCFB0 /* DurationExtensionsTests.swift */; };
+		87B5847E8C6086B256794DCD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3B04562D260715795F3B5C3 /* Foundation.framework */; };
+		8ED581A7DD931BC3D630C6E5 /* StringTrimmingSuffixTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829F075942590C7C9D09ECDD /* StringTrimmingSuffixTests.swift */; };
+		B8FFFCC76620AA6C780A951F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 857496230130DDF30211B569 /* Foundation.framework */; };
 		BD88CB422D77E6A0006BB5E3 /* TVOSPicker in Frameworks */ = {isa = PBXBuildFile; productRef = BD88CB412D77E6A0006BB5E3 /* TVOSPicker */; };
 		E1002B682793CFBA00E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B672793CFBA00E47059 /* Algorithms */; };
 		E1002B6B2793E36600E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B6A2793E36600E47059 /* Algorithms */; };
@@ -118,7 +124,26 @@
 		E1E2D7BF2E3FD936004E2E5F /* Transmission in Frameworks */ = {isa = PBXBuildFile; productRef = E1E2D7BE2E3FD936004E2E5F /* Transmission */; };
 		E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E1FAD1C52A0375BA007F5521 /* UDPBroadcast */; };
 		E1FADDF12E84B63600FB310E /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1FADDF02E84B63600FB310E /* StatefulMacros */; };
+		E2125D35D64E88F48D57F520 /* RuntimeFormatStyleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF25EBFBEEA6CC552FAA181 /* RuntimeFormatStyleTests.swift */; };
+		F2F266687AAE277B899ADAEC /* SwiftfinTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9148914C45C39330C25E7B45 /* SwiftfinTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		662A47CE5096160FF6F7189D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5377CBF0263B596A003A4E83;
+			remoteInfo = "Swiftfin iOS";
+		};
+		D99A9DE4C230575B41065DE7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5377CBE9263B596A003A4E83 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5358705F2669D21600D05A09;
+			remoteInfo = "Swiftfin tvOS";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		62666DF927E5012C00EC0ECD /* Embed Frameworks */ = {
@@ -146,6 +171,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		26F25A7A9DFF734F18809F44 /* SwiftfinTVOSTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwiftfinTVOSTests.swift; sourceTree = "<group>"; };
+		4E52EB1479D7CDA6EC5CCFB0 /* DurationExtensionsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DurationExtensionsTests.swift; sourceTree = "<group>"; };
 		535870602669D21600D05A09 /* Swiftfin tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swiftfin tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5362E4A7267D4067000E2F71 /* GoogleCast.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleCast.framework; path = "../../Downloads/GoogleCastSDK-ios-4.6.0_dynamic/GoogleCast.framework"; sourceTree = "<group>"; };
 		5362E4AA267D40AD000E2F71 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -166,7 +193,9 @@
 		5362E4C8267D40F7000E2F71 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swiftfin iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53ABFDDB267972BF00886593 /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/System/Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
+		53CC6A670218D75A7669288C /* IntTimeLabelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IntTimeLabelTests.swift; sourceTree = "<group>"; };
 		53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobileVLCKit.xcframework; path = Carthage/Build/MobileVLCKit.xcframework; sourceTree = "<group>"; };
+		5CF25EBFBEEA6CC552FAA181 /* RuntimeFormatStyleTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RuntimeFormatStyleTests.swift; sourceTree = "<group>"; };
 		625CB57D2678E81E00530A6E /* TVVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = TVVLCKit.xcframework; path = Carthage/Build/TVVLCKit.xcframework; sourceTree = "<group>"; };
 		62666E0027E5016900EC0ECD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		62666E0527E5017A00EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
@@ -198,25 +227,31 @@
 		628B95212670CABD0091AF3B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		628B95232670CABD0091AF3B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
+		7385EE5DC7B8AFBFC8FF354B /* SwiftfinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftfinTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		829F075942590C7C9D09ECDD /* StringTrimmingSuffixTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StringTrimmingSuffixTests.swift; sourceTree = "<group>"; };
+		857496230130DDF30211B569 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		9148914C45C39330C25E7B45 /* SwiftfinTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwiftfinTests.swift; sourceTree = "<group>"; };
+		A3B04562D260715795F3B5C3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		ADE90C3876CA7E24C4D81AF9 /* SwiftfinTVOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftfinTVOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCast.xcframework; path = Carthage/Build/GoogleCast.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		E14561A22DFCAE51008FF700 /* Exceptions for "Swiftfin" folder in "Swiftfin iOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/Info.plist,
 			);
 			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
 		};
-		E14561A32DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		E14561A32DFCAE51008FF700 /* Exceptions for "Swiftfin" folder in "Swiftfin tvOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/Assets.xcassets,
 			);
 			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
 		};
-		E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		E14565D92DFCAE6E008FF700 /* Exceptions for "Shared" folder in "Swiftfin tvOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Extensions/JellyfinAPI/TaskTriggerInfoType.swift,
@@ -245,7 +280,7 @@
 			);
 			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
 		};
-		E14567272DFCAEFD008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		E14567272DFCAEFD008FF700 /* Exceptions for "Swiftfin tvOS" folder in "Swiftfin tvOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/Info.plist,
@@ -255,15 +290,87 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E14561A32DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
-		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
-		E14565DD2DFCAE78008FF700 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
-		E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14567272DFCAEFD008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Swiftfin tvOS"; sourceTree = "<group>"; };
-		E1456FC82DFCB323008FF700 /* Translations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Translations; sourceTree = "<group>"; };
-		E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = XcodeConfig; sourceTree = "<group>"; };
+		E14560852DFCAE51008FF700 /* Swiftfin */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E14561A22DFCAE51008FF700 /* Exceptions for "Swiftfin" folder in "Swiftfin iOS" target */,
+				E14561A32DFCAE51008FF700 /* Exceptions for "Swiftfin" folder in "Swiftfin tvOS" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Swiftfin;
+			sourceTree = "<group>";
+		};
+		E14563272DFCAE6E008FF700 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E14565D92DFCAE6E008FF700 /* Exceptions for "Shared" folder in "Swiftfin tvOS" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		E14565DD2DFCAE78008FF700 /* Scripts */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E14567272DFCAEFD008FF700 /* Exceptions for "Swiftfin tvOS" folder in "Swiftfin tvOS" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = "Swiftfin tvOS";
+			sourceTree = "<group>";
+		};
+		E1456FC82DFCB323008FF700 /* Translations */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Translations;
+			sourceTree = "<group>";
+		};
+		E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = XcodeConfig;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		41C6E93FB14D12029593EFD3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				87B5847E8C6086B256794DCD /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5358705D2669D21600D05A09 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -387,9 +494,38 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		580C786C263218A5A4293054 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B8FFFCC76620AA6C780A951F /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		17E59B3F0B805E06443715D3 /* SwiftfinTests */ = {
+			isa = PBXGroup;
+			children = (
+				4E52EB1479D7CDA6EC5CCFB0 /* DurationExtensionsTests.swift */,
+				53CC6A670218D75A7669288C /* IntTimeLabelTests.swift */,
+				5CF25EBFBEEA6CC552FAA181 /* RuntimeFormatStyleTests.swift */,
+				829F075942590C7C9D09ECDD /* StringTrimmingSuffixTests.swift */,
+				9148914C45C39330C25E7B45 /* SwiftfinTests.swift */,
+			);
+			name = SwiftfinTests;
+			path = SwiftfinTests;
+			sourceTree = "<group>";
+		};
+		3130D26A067A62ECF55A1A82 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				857496230130DDF30211B569 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 		5377CBE8263B596A003A4E83 = {
 			isa = PBXGroup;
 			children = (
@@ -401,6 +537,7 @@
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
 				E14565DD2DFCAE78008FF700 /* Scripts */,
 				E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */,
+				90D38740BA6B0E4C84FD88F3 /* Tests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -409,6 +546,8 @@
 			children = (
 				5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */,
 				535870602669D21600D05A09 /* Swiftfin tvOS.app */,
+				7385EE5DC7B8AFBFC8FF354B /* SwiftfinTests.xctest */,
+				ADE90C3876CA7E24C4D81AF9 /* SwiftfinTVOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -467,8 +606,37 @@
 				53D5E3DC264B47EE00BADDC8 /* MobileVLCKit.xcframework */,
 				628B95212670CABD0091AF3B /* WidgetKit.framework */,
 				628B95232670CABD0091AF3B /* SwiftUI.framework */,
+				3130D26A067A62ECF55A1A82 /* iOS */,
+				621E855EDB8EF869A82F3D8E /* tvOS */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		621E855EDB8EF869A82F3D8E /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				A3B04562D260715795F3B5C3 /* Foundation.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		90D38740BA6B0E4C84FD88F3 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				17E59B3F0B805E06443715D3 /* SwiftfinTests */,
+				B8332B932A89BF4A4154EA28 /* SwiftfinTVOSTests */,
+			);
+			name = Tests;
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		B8332B932A89BF4A4154EA28 /* SwiftfinTVOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				26F25A7A9DFF734F18809F44 /* SwiftfinTVOSTests.swift */,
+			);
+			name = SwiftfinTVOSTests;
+			path = SwiftfinTVOSTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -607,6 +775,42 @@
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		7EA200CD46C0F36FA2837BB9 /* SwiftfinTVOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2AD352743AB1989161D66226 /* Build configuration list for PBXNativeTarget "SwiftfinTVOSTests" */;
+			buildPhases = (
+				356C3B71321204732F4D11CA /* Sources */,
+				41C6E93FB14D12029593EFD3 /* Frameworks */,
+				17EDDB8566308A2EFFB156E8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A18011C4692216443F7EA1D0 /* PBXTargetDependency */,
+			);
+			name = SwiftfinTVOSTests;
+			productName = SwiftfinTVOSTests;
+			productReference = ADE90C3876CA7E24C4D81AF9 /* SwiftfinTVOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		94246B288E505F188EDE1B10 /* SwiftfinTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 51EA295791D6D938FF25F9A6 /* Build configuration list for PBXNativeTarget "SwiftfinTests" */;
+			buildPhases = (
+				0C6478C4E3AECD63795CF058 /* Sources */,
+				580C786C263218A5A4293054 /* Frameworks */,
+				B2A16EC9AE20B6D13FFC3B90 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CC7F66E1BC0D91C953E166F9 /* PBXTargetDependency */,
+			);
+			name = SwiftfinTests;
+			productName = SwiftfinTests;
+			productReference = 7385EE5DC7B8AFBFC8FF354B /* SwiftfinTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -721,11 +925,20 @@
 			targets = (
 				5377CBF0263B596A003A4E83 /* Swiftfin iOS */,
 				5358705F2669D21600D05A09 /* Swiftfin tvOS */,
+				94246B288E505F188EDE1B10 /* SwiftfinTests */,
+				7EA200CD46C0F36FA2837BB9 /* SwiftfinTVOSTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		17EDDB8566308A2EFFB156E8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5358705E2669D21600D05A09 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -734,6 +947,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5377CBEF263B596A003A4E83 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B2A16EC9AE20B6D13FFC3B90 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -900,6 +1120,26 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0C6478C4E3AECD63795CF058 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				73BEF088F93EFD2EB520395F /* DurationExtensionsTests.swift in Sources */,
+				2CD797CBC62CA3749A1F93A1 /* IntTimeLabelTests.swift in Sources */,
+				E2125D35D64E88F48D57F520 /* RuntimeFormatStyleTests.swift in Sources */,
+				8ED581A7DD931BC3D630C6E5 /* StringTrimmingSuffixTests.swift in Sources */,
+				F2F266687AAE277B899ADAEC /* SwiftfinTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		356C3B71321204732F4D11CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3BFD249C0AB954F7674922A5 /* SwiftfinTVOSTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5358705C2669D21600D05A09 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -916,7 +1156,67 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		A18011C4692216443F7EA1D0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Swiftfin tvOS";
+			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
+			targetProxy = D99A9DE4C230575B41065DE7 /* PBXContainerItemProxy */;
+		};
+		CC7F66E1BC0D91C953E166F9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Swiftfin iOS";
+			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
+			targetProxy = 662A47CE5096160FF6F7189D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		2D2D4F3330606789ECCA04A0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Swiftfin iOS.app/Swiftfin iOS";
+			};
+			name = Debug;
+		};
+		2E37672E975FD5FD829C130E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Swiftfin iOS.app/Swiftfin iOS";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		535870722669D21700D05A09 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1180,9 +1480,70 @@
 			};
 			name = Release;
 		};
+		5EFC163D90E96A7A99830E29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.tvos.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Swiftfin tvOS.app/Swiftfin tvOS";
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		62DB0226DDC490DB58835A54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin.tvos.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Swiftfin tvOS.app/Swiftfin tvOS";
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2AD352743AB1989161D66226 /* Build configuration list for PBXNativeTarget "SwiftfinTVOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5EFC163D90E96A7A99830E29 /* Release */,
+				62DB0226DDC490DB58835A54 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		51EA295791D6D938FF25F9A6 /* Build configuration list for PBXNativeTarget "SwiftfinTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2E37672E975FD5FD829C130E /* Release */,
+				2D2D4F3330606789ECCA04A0 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

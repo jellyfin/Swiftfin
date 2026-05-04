@@ -1,0 +1,20 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+import XCTest
+
+/// Smoke test for the SwiftfinTVOSTests bundle. Pure-logic shared code is
+/// covered in `SwiftfinTests`; this target exists so tvOS-specific
+/// behavior (player overlay, focus engine logic) can be tested as it
+/// lands.
+final class SwiftfinTVOSTests: XCTestCase {
+
+    func testTestTargetIsWired() {
+        XCTAssertTrue(true, "Verifies the SwiftfinTVOSTests target is wired into the Swiftfin tvOS scheme.")
+    }
+}
