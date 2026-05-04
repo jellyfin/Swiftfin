@@ -152,10 +152,11 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
                     // Exists to catch focus between supplement & controls.
                     // - The progress bar isn't visible while the supplements are up.
+                    // - Focus is only needed from Supplement -> ProgressBar.
                     Color.clear
                         .frame(height: 1)
                         .backport
-                        .focusable(true)
+                        .focusable(containerState.isPresentingSupplement)
                         .focused($focusedElement, equals: .focusBoundary)
 
                     tabButtons
@@ -189,17 +190,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     }
                     containerState.isPresentingOverlay = true
                 case .focusBoundary:
-                    if containerState.isPresentingSupplement {
-                        containerState.select(supplement: nil)
-                        containerState.isProgressBarFocused = true
-                    } else {
-                        if let first = currentSupplements.first {
-                            containerState.select(supplement: first.supplement)
-                            Task { @MainActor in
-                                focusedElement = .supplementTab(first.id)
-                            }
-                        }
-                    }
+                    containerState.select(supplement: nil)
+                    containerState.isProgressBarFocused = true
                 case .none:
                     break
                 }

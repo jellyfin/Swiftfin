@@ -118,8 +118,9 @@ class VideoPlayerContainerState: ObservableObject {
 
     @Published
     var centerOffset: CGFloat = 0.0
-
+    @Published
     var isProgressBarFocused: Bool = false
+
     var originalPlaybackRate: Float?
 
     let jumpProgressObserver: JumpProgressObserver = .init()
