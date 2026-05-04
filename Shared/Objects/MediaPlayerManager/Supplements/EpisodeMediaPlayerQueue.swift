@@ -292,61 +292,57 @@ extension EpisodeMediaPlayerQueue {
         }
 
         var tvOSView: some View {
-            tvOSContent
-                .onAppear { selectInitialSeason() }
-                .onReceive(viewModel.$seasons) { newSeasons in
-                    setSelectionIfNeeded(seasons: newSeasons)
-                }
-        }
-
-        @ViewBuilder
-        private var tvOSContent: some View {
-            #if os(tvOS)
-            if let selectionViewModel {
-                EpisodeSeason(season: selectionViewModel) { season in
-                    switch season.state {
-                    case .content:
-                        if !season.elements.isEmpty {
+            Group {
+                if let selectionViewModel {
+                    EpisodeSeason(season: selectionViewModel) { season in
+                        switch season.state {
+                        case .content:
+                            if !season.elements.isEmpty {
+                                CollectionVGrid(
+                                    uniqueElements: season.elements,
+                                    id: \.unwrappedIDHashOrZero,
+                                    layout: .columns(
+                                        5,
+                                        insets: .init(EdgeInsets.edgePadding),
+                                        itemSpacing: EdgeInsets.edgePadding,
+                                        lineSpacing: EdgeInsets.edgePadding
+                                    )
+                                ) { episode in
+                                    EpisodeButton(episode: episode) {
+                                        select(episode: episode)
+                                    }
+                                }
+                                .ignoresSafeArea(.container, edges: .horizontal)
+                                .focusSection()
+                            }
+                        case .initial, .refreshing, .error:
                             CollectionVGrid(
-                                uniqueElements: season.elements,
-                                id: \.unwrappedIDHashOrZero,
+                                count: 1,
                                 layout: .columns(
                                     5,
                                     insets: .init(EdgeInsets.edgePadding),
                                     itemSpacing: EdgeInsets.edgePadding,
                                     lineSpacing: EdgeInsets.edgePadding
                                 )
-                            ) { episode in
-                                EpisodeButton(episode: episode) {
-                                    select(episode: episode)
+                            ) { _ in
+                                switch season.state {
+                                case .error:
+                                    SupplementEmptyButton()
+                                default:
+                                    SupplementLoadingButton()
                                 }
-                                .padding(.horizontal, 4)
                             }
                             .ignoresSafeArea(.container, edges: .horizontal)
-                            .focusSection()
                         }
-                    case .initial, .refreshing, .error:
-                        CollectionVGrid(
-                            count: 1,
-                            layout: .columns(
-                                5,
-                                insets: .init(EdgeInsets.edgePadding),
-                                itemSpacing: EdgeInsets.edgePadding,
-                                lineSpacing: EdgeInsets.edgePadding
-                            )
-                        ) { _ in
-                            switch season.state {
-                            case .error:
-                                SupplementEmptyButton()
-                            default:
-                                SupplementLoadingButton()
-                            }
-                        }
-                        .ignoresSafeArea(.container, edges: .horizontal)
                     }
                 }
             }
-            #endif
+            .onFirstAppear {
+                selectInitialSeason()
+            }
+            .onReceive(viewModel.$seasons) { newSeasons in
+                setSelectionIfNeeded(seasons: newSeasons)
+            }
         }
     }
 

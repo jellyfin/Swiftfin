@@ -139,6 +139,13 @@ extension MediaChaptersSupplement {
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
             .scrollBehavior(.continuousLeadingEdge)
+            //            .proxy(collectionHStackProxy)
+            //            .onAppear {
+            //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            //                    guard let currentChapter else { return }
+            //                    collectionHStackProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+            //                }
+            //            }
         }
 
         var tvOSView: some View {
@@ -158,6 +165,13 @@ extension MediaChaptersSupplement {
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
             }
+            //            .proxy(collectionHStackProxy)
+            //            .onAppear {
+            //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            //                    guard let currentChapter else { return }
+            //                    collectionHStackProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+            //                }
+            //            }
             .ignoresSafeArea(.container, edges: .horizontal)
             .focusSection()
             .onReceive(manager.secondsBox.$value, perform: updateActiveChapter(for:))
