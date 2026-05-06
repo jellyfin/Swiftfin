@@ -107,9 +107,21 @@ final class UISliderContainer<Value: BinaryFloatingPoint, Content: SliderContent
     }
 
     func update(value: Value, originProgress: Value?, view: Content) {
-        containerState.value = value
-        containerState.originValue = originProgress
         progressHostingController.rootView = AnyView(view.environmentObject(containerState))
+
+        // Skip updates if the value is unchanged.
+        guard containerState.value != value || containerState.originValue != originProgress else { return }
+
+        // `updateUIView` is part of SwiftUI's view update pass, so writes to @Published properties here produce warnings.
+        Task { @MainActor [weak containerState] in
+            guard let containerState else { return }
+            if containerState.value != value {
+                containerState.value = value
+            }
+            if containerState.originValue != originProgress {
+                containerState.originValue = originProgress
+            }
+        }
     }
 
     private func setupViews() {
