@@ -130,8 +130,7 @@ struct PlaybackQualitySettingsView: View {
                     isOn: $forceHDRTranscode
                 )
             } header: {
-                /// Proper nouns. Do not localize.
-                Text("HDR & Dolby Vision")
+                Text(L10n.hdr)
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.forceDVHDRTranscodeMessage)

@@ -1,0 +1,9 @@
+only_rules:
+  - custom_rules
+
+custom_rules:
+  hard_coded_display_string:
+    name: "Hard-coded Display String"
+    regex: '(?:\b(?:Text|Button|Label|Toggle|Picker|Section|LabeledContent)\s*\(\s*"[^"\n]*(?:\\.[^"\n]*)*"|(?<=\n)([ \t]*)(?:\w+\s+)*var\s+displayTitle\s*:\s*String\s*\{(?:(?!\n\1\})[\s\S])*?(?:^|\n)[ \t]*(?!//)[^\n"]*"[^"\n]*(?:\\.[^"\n]*)*")'
+    message: "Avoid hard-coded user-facing strings. Use L10n instead."
+    severity: warning

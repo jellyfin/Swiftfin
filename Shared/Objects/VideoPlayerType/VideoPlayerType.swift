@@ -16,9 +16,9 @@ enum VideoPlayerType: String, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .avPlayer:
-            "AVPlayer"
+            L10n.avPlayer
         case .vlc:
-            "VLC"
+            L10n.vlc
         }
     }
 

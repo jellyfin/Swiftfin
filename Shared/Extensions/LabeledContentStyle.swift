@@ -89,6 +89,7 @@ struct PlaybackInfoLabeledContentStyle: LabeledContentStyle {
             configuration.label
                 .foregroundStyle(.secondary)
 
+            // swiftlint:disable:next hard_coded_display_string
             Text(":")
                 .foregroundStyle(.secondary)
                 .padding(.trailing, 4)

@@ -46,7 +46,7 @@ extension DownloadTaskView {
                     // TODO: Break into subview
                     switch downloadTask.state {
                     case .ready, .cancelled:
-                        Button("Download") {
+                        Button(L10n.download) {
                             downloadManager.download(task: downloadTask)
                         }
                         .frame(maxWidth: 300)
@@ -57,6 +57,7 @@ extension DownloadTaskView {
 //                                .buttonStyle(.plain)
 //                                .frame(width: 30, height: 30)
 
+                            // swiftlint:disable:next hard_coded_display_string
                             Text("\(Int(progress * 100))%")
                                 .foregroundColor(.secondary)
 
@@ -78,7 +79,7 @@ extension DownloadTaskView {
                             .frame(maxWidth: 300)
                             .frame(height: 50)
 
-                            Text("Error: \(error.localizedDescription)")
+                            Text(error.localizedDescription)
                                 .padding(.horizontal)
                         }
                     case .complete:
@@ -94,11 +95,6 @@ extension DownloadTaskView {
                         .frame(height: 50)
                     }
                 }
-
-//                Text("Media Info")
-//                    .font(.title2)
-//                    .fontWeight(.semibold)
-//                    .padding(.horizontal)
             }
             .alert(
                 L10n.error,
@@ -110,7 +106,7 @@ extension DownloadTaskView {
                     Text(L10n.dismiss)
                 }
             } message: {
-                Text("Downloaded items are only playable through the Swiftfin video player.")
+                Text(L10n.downloadedPlayerWarning)
             }
         }
     }

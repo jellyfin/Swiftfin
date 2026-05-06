@@ -47,7 +47,7 @@ extension SelectUserView {
                     .foregroundStyle(isEnabled ? .primary : .secondary)
 
                 if selectedServer == nil {
-                    // For layout, not to be localized
+                    // swiftlint:disable:next hard_coded_display_string
                     Text("Hidden")
                         .font(.footnote)
                         .hidden()

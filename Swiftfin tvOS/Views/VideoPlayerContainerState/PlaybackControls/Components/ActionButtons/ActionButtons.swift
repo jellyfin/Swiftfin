@@ -82,6 +82,8 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 PlayPreviousItem()
             case .subtitles:
                 Subtitles()
+            case .pictureInPicture:
+                EmptyView()
             }
         }
 

@@ -116,11 +116,11 @@ struct SettingsView: View {
             }
         } learnMore: {
             LabeledContent(
-                "VLC",
+                L10n.vlc,
                 value: L10n.playerSwiftfinDescription
             )
             LabeledContent(
-                "AVPlayer",
+                L10n.avPlayer,
                 value: L10n.playerNativeDescription
             )
         }

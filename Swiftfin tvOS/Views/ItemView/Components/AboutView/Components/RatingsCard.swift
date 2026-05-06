@@ -32,6 +32,7 @@ extension ItemView.AboutView {
                                 .foregroundStyle(.green, .red)
                                 .font(.largeTitle)
 
+                                // swiftlint:disable:next hard_coded_display_string
                                 Text("\(criticRating, specifier: "%.0f")")
                                     .font(.title3)
                             }
@@ -44,6 +45,7 @@ extension ItemView.AboutView {
                                     .foregroundStyle(.yellow)
                                     .font(.largeTitle)
 
+                                // swiftlint:disable:next hard_coded_display_string
                                 Text("\(communityRating, specifier: "%.1f")")
                                     .font(.title3)
                             }
