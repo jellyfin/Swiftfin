@@ -117,8 +117,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         private var supplementContent: some View {
             ZStack {
                 if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
-                    supplementContainer(for: supplement)
-                        .eraseToAnyView()
+                    supplementContainer(for: AnyMediaPlayerSupplement(supplement))
                 } else {
                     TabView(
                         selection: $containerState.selectedSupplement.map(
@@ -129,8 +128,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         )
                     ) {
                         ForEach(currentSupplements) { supplement in
-                            supplementContainer(for: supplement.supplement)
-                                .eraseToAnyView()
+                            supplementContainer(for: supplement)
                                 .focusSection()
                                 .frame(maxWidth: .infinity, alignment: .topLeading)
                                 .tag(supplement.id as String?)
@@ -168,10 +166,10 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 }
                 .isVisible(isPresentingOverlay && !isScrubbing)
                 .padding(.top, EdgeInsets.edgeInsets.bottom / (UIDevice.isTV ? 2 : 1))
+                .animation(.linear(duration: 0.25), value: isPresentingOverlay)
+                .animation(.linear(duration: 0.1), value: isScrubbing)
+                .animation(.bouncy(duration: 0.25, extraBounce: 0.1), value: currentSupplements)
             }
-            .animation(.linear(duration: 0.25), value: isPresentingOverlay)
-            .animation(.linear(duration: 0.1), value: isScrubbing)
-            .animation(.bouncy(duration: 0.25, extraBounce: 0.1), value: currentSupplements)
             .environment(\.isOverComplexContent, true)
             .onReceive(manager.$supplements) { newValue in
                 let newSupplements = IdentifiedArray(

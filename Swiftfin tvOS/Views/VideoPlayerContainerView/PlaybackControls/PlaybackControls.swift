@@ -116,11 +116,6 @@ extension VideoPlayer {
                     }
                 }
             }
-            .onReceive(manager.secondsBox.$value) { newSeconds in
-                if containerState.hasEnteredScrubMode {
-                    containerState.scrubOriginSeconds = newSeconds
-                }
-            }
         }
     }
 }
