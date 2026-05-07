@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
 import JellyfinAPI
 import SwiftUI
 
@@ -38,13 +37,6 @@ struct AboutAppView: View {
                     L10n.version,
                     value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
-
-                if let client = Container.shared.currentUserSession()?.client {
-                    LabeledContent(
-                        L10n.serverRequirement,
-                        value: client.version.description
-                    )
-                }
             }
 
             Section {
