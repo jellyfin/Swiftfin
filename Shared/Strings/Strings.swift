@@ -1390,8 +1390,6 @@ internal enum L10n {
   }
   /// Server logs
   internal static let serverLogs = L10n.tr("Localizable", "serverLogs", fallback: "Server logs")
-  /// Server requirement
-  internal static let serverRequirement = L10n.tr("Localizable", "serverRequirement", fallback: "Server requirement")
   /// Servers
   internal static let servers = L10n.tr("Localizable", "servers", fallback: "Servers")
   /// Server URL
