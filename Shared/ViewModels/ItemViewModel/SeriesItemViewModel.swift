@@ -113,7 +113,8 @@ final class SeriesItemViewModel: ItemViewModel {
 
     private func getFirstAvailableItem() async throws -> BaseItemDto? {
 
-        var parameters = Paths.GetItemsByUserIDParameters()
+        var parameters = Paths.GetItemsParameters()
+        parameters.userID = userSession.user.id
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.episode]
         parameters.isRecursive = true
@@ -121,10 +122,7 @@ final class SeriesItemViewModel: ItemViewModel {
         parameters.parentID = item.id
         parameters.sortOrder = [.ascending]
 
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
-        )
+        let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         return response.value.items?.first
