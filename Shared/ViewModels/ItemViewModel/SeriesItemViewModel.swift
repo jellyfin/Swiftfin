@@ -81,7 +81,6 @@ final class SeriesItemViewModel: ItemViewModel {
         var parameters = Paths.GetNextUpParameters()
         parameters.fields = .MinimumFields
         parameters.seriesID = item.id
-        parameters.userID = userSession.user.id
 
         let request = Paths.getNextUp(parameters: parameters)
         let response = try await userSession.client.send(request)
@@ -98,7 +97,6 @@ final class SeriesItemViewModel: ItemViewModel {
     private func getResumeItem() async throws -> BaseItemDto? {
 
         var parameters = Paths.GetResumeItemsParameters()
-        parameters.userID = userSession.user.id
         parameters.fields = .MinimumFields
         parameters.limit = 1
         parameters.parentID = item.id
@@ -114,7 +112,6 @@ final class SeriesItemViewModel: ItemViewModel {
     private func getFirstAvailableItem() async throws -> BaseItemDto? {
 
         var parameters = Paths.GetItemsParameters()
-        parameters.userID = userSession.user.id
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.episode]
         parameters.isRecursive = true
@@ -134,7 +131,6 @@ final class SeriesItemViewModel: ItemViewModel {
 
         var parameters = Paths.GetSeasonsParameters()
         parameters.isMissing = Defaults[.Customization.shouldShowMissingSeasons] ? nil : false
-        parameters.userID = userSession.user.id
 
         let request = Paths.getSeasons(
             seriesID: item.id!,

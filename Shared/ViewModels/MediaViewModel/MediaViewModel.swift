@@ -107,7 +107,6 @@ final class MediaViewModel: ViewModel {
         }
 
         var parameters = Paths.GetItemsParameters()
-        parameters.userID = userSession.user.id
         parameters.limit = 3
         parameters.isRecursive = true
         parameters.parentID = parentID

@@ -50,7 +50,6 @@ final class EpisodeItemViewModel: ItemViewModel {
         guard let seriesID = item.seriesID else { throw ErrorMessage("Expected series ID missing") }
 
         var parameters = Paths.GetItemsParameters()
-        parameters.userID = userSession.user.id
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.ids = [seriesID]

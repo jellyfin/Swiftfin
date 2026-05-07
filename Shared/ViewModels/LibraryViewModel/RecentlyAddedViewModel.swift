@@ -37,7 +37,6 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
     private func parameters(for page: Int) -> Paths.GetItemsParameters {
 
         var parameters = Paths.GetItemsParameters()
-        parameters.userID = userSession.user.id
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.movie, .series]

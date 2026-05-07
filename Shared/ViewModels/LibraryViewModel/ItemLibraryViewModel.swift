@@ -50,7 +50,6 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
     private func itemParameters(for page: Int?) -> Paths.GetItemsParameters {
 
         var parameters = Paths.GetItemsParameters()
-        parameters.userID = userSession.user.id
 
         parameters.enableUserData = true
         parameters.fields = .MinimumFields

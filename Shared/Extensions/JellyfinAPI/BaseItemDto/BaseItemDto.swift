@@ -232,7 +232,6 @@ extension BaseItemDto {
         guard type == .program else { return nil }
 
         var parameters = Paths.GetItemsParameters()
-        parameters.userID = userSession.user.id
         parameters.fields = .MinimumFields
         parameters.ids = [program.channelID ?? ""]
 

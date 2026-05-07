@@ -148,7 +148,6 @@ final class SearchViewModel: ViewModel {
     private func _getItems(query: String, itemType: BaseItemKind) async throws -> [BaseItemDto] {
 
         var parameters = Paths.GetItemsParameters()
-        parameters.userID = userSession.user.id
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [itemType]
@@ -200,7 +199,6 @@ final class SearchViewModel: ViewModel {
         await filterViewModel.getQueryFilters()
 
         var parameters = Paths.GetItemsParameters()
-        parameters.userID = userSession.user.id
         parameters.includeItemTypes = [.movie, .series]
         parameters.isRecursive = true
         parameters.limit = 10
