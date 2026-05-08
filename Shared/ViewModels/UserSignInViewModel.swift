@@ -286,7 +286,7 @@ final class UserSignInViewModel: ViewModel {
     }
 
     private func retrieveIsQuickConnectEnabled() async throws -> Bool {
-        let request = Paths.getEnabled
+        let request = Paths.getQuickConnectEnabled
         let response = try await server.client.send(request)
 
         let isEnabled = try? JSONDecoder().decode(Bool.self, from: response.value)

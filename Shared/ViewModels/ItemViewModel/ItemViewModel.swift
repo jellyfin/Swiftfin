@@ -314,7 +314,6 @@ class ItemViewModel: ViewModel, Stateful {
         var parameters = Paths.GetSimilarItemsParameters()
         parameters.fields = .MinimumFields
         parameters.limit = 20
-        parameters.userID = userSession.user.id
 
         let request = Paths.getSimilarItems(
             itemID: item.id!,
