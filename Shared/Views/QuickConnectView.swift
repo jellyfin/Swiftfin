@@ -15,11 +15,7 @@ struct QuickConnectView: View {
     private var router
 
     @ObservedObject
-    private var viewModel: QuickConnectViewModel
-
-    init(viewModel: QuickConnectViewModel) {
-        self.viewModel = viewModel
-    }
+    var viewModel: QuickConnectViewModel
 
     private func pollingView(code: String) -> some View {
         VStack(spacing: 20) {
