@@ -11,16 +11,17 @@ import SwiftUI
 
 extension NavigationRoute {
 
-    #if os(iOS)
     static func filter(type: ItemFilterType, viewModel: FilterViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "filter",
             style: .sheet
         ) {
-            FilterView(viewModel: viewModel, type: type)
+            FilterView(
+                viewModel: viewModel,
+                type: type
+            )
         }
     }
-    #endif
 
     static func library(
         viewModel: PagingLibraryViewModel<some Poster>

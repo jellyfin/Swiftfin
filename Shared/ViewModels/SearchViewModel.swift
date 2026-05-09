@@ -60,7 +60,8 @@ final class SearchViewModel: ViewModel {
 
     // MARK: init
 
-    init(filterViewModel: FilterViewModel = .init()) {
+    @MainActor
+    init(filterViewModel: FilterViewModel) {
         self.filterViewModel = filterViewModel
         super.init()
 
@@ -146,7 +147,7 @@ final class SearchViewModel: ViewModel {
 
     private func _getItems(query: String, itemType: BaseItemKind) async throws -> [BaseItemDto] {
 
-        var parameters = Paths.GetItemsByUserIDParameters()
+        var parameters = Paths.GetItemsParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [itemType]
@@ -158,7 +159,7 @@ final class SearchViewModel: ViewModel {
         let filters = filterViewModel.currentFilters
         parameters.filters = filters.traits
         parameters.genres = filters.genres.map(\.value)
-        parameters.sortBy = filters.sortBy.map(\.rawValue)
+        parameters.sortBy = filters.sortBy
         parameters.sortOrder = filters.sortOrder
         parameters.tags = filters.tags.map(\.value)
         parameters.years = filters.years.map(\.intValue)
@@ -172,7 +173,7 @@ final class SearchViewModel: ViewModel {
                 .first
         }
 
-        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         return response.value.items ?? []
@@ -195,15 +196,15 @@ final class SearchViewModel: ViewModel {
     @Function(\Action.Cases.getSuggestions)
     private func _getSuggestions() async throws {
 
-        filterViewModel.send(.getQueryFilters)
+        await filterViewModel.getQueryFilters()
 
-        var parameters = Paths.GetItemsByUserIDParameters()
+        var parameters = Paths.GetItemsParameters()
         parameters.includeItemTypes = [.movie, .series]
         parameters.isRecursive = true
         parameters.limit = 10
-        parameters.sortBy = [ItemSortBy.random.rawValue]
+        parameters.sortBy = [ItemSortBy.random]
 
-        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         self.suggestions = response.value.items ?? []
