@@ -20,12 +20,12 @@ extension NavigationRoute {
         }
     }
 
-    static func quickConnect(quickConnect: QuickConnect) -> NavigationRoute {
+    static func quickConnect(viewModel: QuickConnectViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "quickConnectView",
             style: .sheet
         ) {
-            QuickConnectView(quickConnect: quickConnect)
+            QuickConnectView(viewModel: viewModel)
         }
     }
 

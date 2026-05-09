@@ -36,13 +36,13 @@ struct WithQuickConnect<Content: View>: View {
     @State
     private var continuation: CheckedContinuation<String, Error>? = nil
     @State
-    private var quickConnect: QuickConnect? = nil
+    private var quickConnect: QuickConnectViewModel? = nil
 
     private let content: Content
     private let logger = Logger.swiftfin()
 
     private func handleQuickConnectState(
-        _ state: QuickConnect.State
+        _ state: QuickConnectViewModel.State
     ) {
         switch state {
         case let .error(error):
@@ -70,10 +70,10 @@ struct WithQuickConnect<Content: View>: View {
             throw ErrorMessage(L10n.unknownError)
         }
 
-        let newQuickConnect = QuickConnect(client: client)
+        let newQuickConnect = QuickConnectViewModel(client: client)
         self.quickConnect = newQuickConnect
 
-        router.route(to: .quickConnect(quickConnect: newQuickConnect))
+        router.route(to: .quickConnect(viewModel: newQuickConnect))
 
         return try await withCheckedThrowingContinuation { continuation in
             self.continuation = continuation

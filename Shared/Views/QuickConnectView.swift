@@ -15,10 +15,10 @@ struct QuickConnectView: View {
     private var router
 
     @ObservedObject
-    private var viewModel: QuickConnect
+    private var viewModel: QuickConnectViewModel
 
-    init(quickConnect: QuickConnect) {
-        self.viewModel = quickConnect
+    init(viewModel: QuickConnectViewModel) {
+        self.viewModel = viewModel
     }
 
     private func pollingView(code: String) -> some View {
