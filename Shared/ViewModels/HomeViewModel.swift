@@ -13,6 +13,7 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
+@MainActor
 final class HomeViewModel: ViewModel, Stateful {
 
     // MARK: Action
@@ -174,7 +175,6 @@ final class HomeViewModel: ViewModel, Stateful {
 
     private func getResumeItems() async throws -> [BaseItemDto] {
         var parameters = Paths.GetResumeItemsParameters()
-        parameters.userID = userSession.user.id
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.mediaTypes = [.video]

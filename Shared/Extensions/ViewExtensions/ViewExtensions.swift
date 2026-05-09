@@ -312,6 +312,10 @@ extension View {
         environment(\.isEditing, isEditing)
     }
 
+    func isHighlighted(_ isHighlighted: Bool) -> some View {
+        environment(\.isHighlighted, isHighlighted)
+    }
+
     func isSelected(_ isSelected: Bool) -> some View {
         environment(\.isSelected, isSelected)
     }

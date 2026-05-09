@@ -99,6 +99,7 @@ class ItemViewModel: ViewModel, Stateful {
 
     // MARK: init
 
+    @MainActor
     init(item: BaseItemDto) {
         self.item = item
         super.init()
@@ -126,6 +127,7 @@ class ItemViewModel: ViewModel, Stateful {
             .store(in: &cancellables)
     }
 
+    @MainActor
     convenience init(episode: BaseItemDto) {
         let shellSeriesItem = BaseItemDto(id: episode.seriesID, name: episode.seriesName)
         self.init(item: shellSeriesItem)
@@ -312,7 +314,6 @@ class ItemViewModel: ViewModel, Stateful {
         var parameters = Paths.GetSimilarItemsParameters()
         parameters.fields = .MinimumFields
         parameters.limit = 20
-        parameters.userID = userSession.user.id
 
         let request = Paths.getSimilarItems(
             itemID: item.id!,

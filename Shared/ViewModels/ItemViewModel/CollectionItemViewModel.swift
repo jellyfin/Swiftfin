@@ -11,6 +11,7 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
+@MainActor
 final class CollectionItemViewModel: ItemViewModel {
 
     @ObservedPublisher
@@ -18,6 +19,7 @@ final class CollectionItemViewModel: ItemViewModel {
 
     private let itemCollection: ItemTypeCollection
 
+    @MainActor
     override init(item: BaseItemDto) {
         self.itemCollection = ItemTypeCollection(
             parent: item,
