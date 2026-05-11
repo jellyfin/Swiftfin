@@ -826,12 +826,6 @@ extension VideoPlayer {
         }
 
         private func handleMenuEnded() {
-            if !containerState.isPresentingOverlay {
-                containerState.isPresentingOverlay = true
-                containerState.timer.poke()
-                return
-            }
-
             if containerState.hasEnteredScrubMode {
                 containerState.cancelScrub()
                 containerState.timer.poke()
@@ -840,6 +834,8 @@ extension VideoPlayer {
                 presentSupplementContainer(false)
                 containerState.isProgressBarFocused = true
                 containerState.timer.poke()
+            } else if containerState.isPresentingOverlay {
+                containerState.isPresentingOverlay = false
             } else {
                 containerState.isPresentingCloseConfirmation = true
             }

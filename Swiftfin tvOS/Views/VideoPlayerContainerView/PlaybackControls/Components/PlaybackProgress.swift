@@ -88,12 +88,6 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
-        private func originProgress(resolution: Double) -> Double? {
-            guard let origin = containerState.scrubOriginSeconds,
-                  let runtime = manager.item.runtime, runtime > .zero else { return nil }
-            return clamp((origin.seconds / runtime.seconds) * resolution, min: 0, max: resolution)
-        }
-
         var body: some View {
             VStack(spacing: 10) {
                 if manager.item.isLiveStream {
@@ -110,7 +104,6 @@ extension VideoPlayer.PlaybackControls {
                         ),
                         total: 100
                     )
-                    .originProgress(originProgress(resolution: 100))
                     .onEditingChanged { isEditing in
                         if isEditing {
                             isScrubbing = true
@@ -128,11 +121,11 @@ extension VideoPlayer.PlaybackControls {
                             }
                         }
                     }
-                    .frame(height: 16)
+                    .frame(height: 14)
                     .trackingSize($sliderSize)
                     .overlay {
                         CurrentSecondTick()
-                            .frame(height: sliderSize.height + 0.5)
+                            .frame(height: sliderSize.height)
                             .allowsHitTesting(false)
                     }
                     .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
@@ -143,8 +136,7 @@ extension VideoPlayer.PlaybackControls {
                 }
             }
             .focused($isFocused)
-            .foregroundStyle(isFocused ? Color.white : Color.gray.opacity(0.75))
-            .animation(.easeInOut(duration: 0.2), value: isFocused)
+            .foregroundStyle(Color.white.opacity(0.75))
             .overlay(alignment: .topLeading) {
                 if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
                     PreviewImageView(previewImageProvider: previewImageProvider)

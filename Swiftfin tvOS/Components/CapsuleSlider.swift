@@ -53,34 +53,19 @@ private struct CapsuleSliderContent: SliderContentView {
 
     @EnvironmentObject
     var sliderState: SliderContainerState<Double>
+    @EnvironmentObject
+    private var containerState: VideoPlayerContainerState
 
     var body: some View {
         ProgressView(value: sliderState.value, total: sliderState.total)
             .progressViewStyle(PlaybackProgressViewStyle(cornerStyle: .round))
-            .frame(height: 12)
-            .overlay {
-                Capsule()
-                    .strokeBorder(
-                        Color.white.opacity(sliderState.isFocused ? 0.85 : 0),
-                        lineWidth: 1
-                    )
-            }
-            .overlay {
-                if let originValue = sliderState.originValue, sliderState.total > 0 {
-                    GeometryReader { geometry in
-                        let fraction = clamp(originValue / sliderState.total, min: 0, max: 1)
-                        let xPos = geometry.size.width * fraction
-
-                        RoundedRectangle(cornerRadius: 1)
-                            .fill(Color.white.opacity(0.85))
-                            .frame(width: 1, height: geometry.size.height)
-                            .shadow(color: .black.opacity(0.6), radius: 2)
-                            .position(x: xPos, y: geometry.size.height / 2)
-                    }
-                    .allowsHitTesting(false)
-                    .transition(.opacity)
+            .onChange(of: sliderState.isFocused) { _, focused in
+                if !focused {
+                    containerState.cancelScrub()
                 }
             }
+            .opacity(sliderState.isFocused ? 1 : 0.70)
+            .animation(.easeInOut(duration: 0.2), value: sliderState.isFocused)
             .animation(.easeInOut(duration: 0.2), value: sliderState.originValue != nil)
     }
 }

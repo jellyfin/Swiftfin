@@ -83,9 +83,7 @@ extension VideoPlayer.PlaybackControls {
     }
 
     func cancelScrubbing() {
-        if let origin = containerState.scrubOriginSeconds {
-            containerState.scrubbedSeconds.value = origin
-        }
+        containerState.scrubbedSeconds.value = manager.seconds
 
         containerState.isScrubbing = false
         containerState.hasEnteredScrubMode = false

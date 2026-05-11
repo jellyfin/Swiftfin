@@ -154,8 +154,8 @@ class VideoPlayerContainerState: ObservableObject {
 
     func cancelScrub() {
         guard hasEnteredScrubMode else { return }
-        if let origin = scrubOriginSeconds {
-            scrubbedSeconds.value = origin
+        if let manager {
+            scrubbedSeconds.value = manager.seconds
         }
         isScrubbing = false
         hasEnteredScrubMode = false
