@@ -59,17 +59,14 @@ struct DownloadButton: View {
         if let id = item.id {
             switch state {
             case .none:
-                Section(L10n.download) {
-                    Button(L10n.direct, systemImage: "arrow.right") {
+                if downloadManager.canDownload(item) {
+                    Button(L10n.download, systemImage: "arrow.down") {
                         downloadManager.queue(item)
                     }
-                }
-                Section(L10n.transcode) {
-                    ForEach(PlaybackBitrate.supportedCases, id: \.self) { bitrate in
-                        Button(bitrate.displayTitle, systemImage: "shuffle") {
-                            downloadManager.queue(item, bitrate: bitrate)
-                        }
-                    }
+                } else {
+                    // swiftlint:disable:next hard_coded_display_string
+                    Button("Not enough space", systemImage: "externaldrive.badge.exclamationmark") {}
+                        .disabled(true)
                 }
             case .queued:
                 Button(L10n.cancel, systemImage: "trash", role: .destructive) {
@@ -124,6 +121,7 @@ struct DownloadButton: View {
                     .foregroundStyle(.red)
             case .none:
                 Image(systemName: "arrow.down.circle")
+                    .foregroundStyle(downloadManager.canDownload(item) ? .primary : .secondary)
             }
         }
         .id(state)
