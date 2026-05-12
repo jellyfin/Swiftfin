@@ -121,7 +121,7 @@ struct PagingLibraryView<Element: Poster>: View {
         case let element as BaseItemPerson:
             select(item: BaseItemDto(person: element), in: namespace)
         case let element as DownloadItemDto:
-            router.route(to: .downloadItem(item: element), in: namespace)
+            select(download: element, in: namespace)
         default:
             assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
         }
@@ -135,6 +135,10 @@ struct PagingLibraryView<Element: Poster>: View {
         default:
             router.route(to: .item(item: item), in: namespace)
         }
+    }
+
+    private func select(download: DownloadItemDto, in namespace: Namespace.ID) {
+        router.route(to: .downloadItem(item: download), in: namespace)
     }
 
     // MARK: layout
@@ -411,6 +415,8 @@ struct PagingLibraryView<Element: Poster>: View {
                     select(item: item, in: namespace)
                 case let item as BaseItemPerson:
                     select(item: BaseItemDto(person: item), in: namespace)
+                case let item as DownloadItemDto:
+                    select(download: item, in: namespace)
                 default:
                     assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
                 }
