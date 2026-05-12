@@ -411,23 +411,21 @@ extension BaseItemDto {
         var path = URL.downloadsDirectory
 //            .appendingPathComponent(userSession.user.id)
 
-        let segments: [String]
-
-        switch type {
+        let segments: [String] = switch type {
         case .season:
-            segments = [seriesID, id].compactMap(\.self)
+            [seriesID, id].compactMap(\.self)
         case .episode:
-            segments = [seriesID, seasonID, id].compactMap(\.self)
+            [seriesID, seasonID, id].compactMap(\.self)
         case .musicAlbum:
-            segments = [albumArtists?.first?.id, id].compactMap(\.self)
+            [albumArtists?.first?.id, id].compactMap(\.self)
         case .audio, .audioBook, .musicVideo:
-            segments = [albumArtists?.first?.id, albumID, id].compactMap(\.self)
+            [albumArtists?.first?.id, albumID, id].compactMap(\.self)
         case .book:
-            segments = [artists?.first, id].compactMap(\.self)
+            [artists?.first, id].compactMap(\.self)
         case .photo:
-            segments = [parentID, id].compactMap(\.self)
+            [parentID, id].compactMap(\.self)
         default:
-            segments = [id]
+            [id]
         }
 
         for segment in segments {

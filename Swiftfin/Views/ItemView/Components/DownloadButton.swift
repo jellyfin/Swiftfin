@@ -13,18 +13,21 @@ import SwiftUI
 
 struct DownloadButton: View {
 
-    @ObservedObject
-    private var downloadManager = Container.shared.downloadManager()
+    @State
+    private var state: DownloadState?
 
-    let item: BaseItemDto
+    private let downloadManager = Container.shared.downloadManager()
 
-    private var download: DownloadRecord? {
-        guard let id = item.id else { return nil }
-        return downloadManager.records.first { $0.id == id }
-    }
+    private let item: BaseItemDto
 
     private var isMenu: Bool {
-        download == nil || download?.state == .paused
+        state == nil || state == .paused || state == .downloading
+    }
+
+    init(item: BaseItemDto) {
+        self.item = item
+        let initial = Container.shared.downloadManager().records.first { $0.id == item.id }?.state
+        self._state = State(initialValue: initial)
     }
 
     var body: some View {
@@ -34,12 +37,12 @@ struct DownloadButton: View {
                 action: {
                     guard let id = item.id else { return }
 
-                    guard let download else {
+                    guard let state else {
                         downloadManager.queue(item)
                         return
                     }
 
-                    switch download.state {
+                    switch state {
                     case .queued:
                         downloadManager.cancel(id: id)
                     case .downloading:
@@ -66,11 +69,19 @@ struct DownloadButton: View {
                 Text("This will remove the downloaded file from your device.")
             }
         }
+        // Reading directly from .state locks the menus when an item is queued
+        .onReceive(
+            downloadManager.$records
+                .map { records in records.first { $0.id == item.id }?.state }
+                .removeDuplicates()
+        ) { newState in
+            state = newState
+        }
     }
 
     @ViewBuilder
     private var menuView: some View {
-        if download == nil {
+        if state == nil {
             Section(L10n.bitrate) {
                 ForEach(PlaybackBitrate.supportedCases, id: \.self) { bitrate in
                     Button(bitrate.displayTitle, systemImage: "arrow.down") {
@@ -78,12 +89,24 @@ struct DownloadButton: View {
                     }
                 }
             }
-        } else if let id = item.id, download?.state == .paused {
-            Button(L10n.resume, systemImage: "play") {
-                downloadManager.resume(id: id)
-            }
-            Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                downloadManager.cancel(id: id)
+        } else if let id = item.id, let state {
+            switch state {
+            case .downloading:
+                Button(L10n.pause, systemImage: "pause") {
+                    downloadManager.pause(id: id)
+                }
+                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                    downloadManager.cancel(id: id)
+                }
+            case .paused:
+                Button(L10n.resume, systemImage: "play") {
+                    downloadManager.resume(id: id)
+                }
+                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                    downloadManager.cancel(id: id)
+                }
+            default:
+                EmptyView()
             }
         }
     }
@@ -91,26 +114,26 @@ struct DownloadButton: View {
     @ViewBuilder
     private var buttonView: some View {
         Group {
-            if let download {
-                switch download.state {
-                case .downloading, .queued:
-                    ProgressView(value: download.progress)
+            switch state {
+            case .downloading, .queued:
+                TimelineView(.periodic(from: .now, by: 0.1)) { _ in
+                    ProgressView(value: downloadManager.records.first { $0.id == item.id }?.progress ?? 0)
                         .progressViewStyle(.download)
-                case .paused:
-                    Image(systemName: "arrow.down.circle.badge.pause")
-                case .complete:
-                    Image(systemName: "arrow.down.circle.fill")
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, .green)
-                case .error:
-                    Image(systemName: "arrow.down.circle.badge.xmark")
-                        .foregroundStyle(.red)
                 }
-            } else {
+            case .paused:
+                Image(systemName: "arrow.down.circle.badge.pause")
+            case .complete:
+                Image(systemName: "arrow.down.circle.fill")
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(.white, .green)
+            case .error:
+                Image(systemName: "arrow.down.circle.badge.xmark")
+                    .foregroundStyle(.red)
+            case .none:
                 Image(systemName: "arrow.down.circle")
             }
         }
-        .id(download?.state)
-        .animation(.easeInOut(duration: 0.25), value: download?.state)
+        .id(state)
+        .animation(.easeInOut(duration: 0.25), value: state)
     }
 }
