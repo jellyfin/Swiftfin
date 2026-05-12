@@ -12,7 +12,7 @@ import SwiftUI
 /// `Note`: Used for experimental settings that may be removed or implemented officially. Keep for future settings.
 struct ExperimentalSettingsView: View {
 
-    static let isEnabled = true
+    static let isEnabled = !UIDevice.isTV
 
     @Default(.Experimental.downloads)
     private var experimentalDownloads
@@ -20,11 +20,13 @@ struct ExperimentalSettingsView: View {
     @ViewBuilder
     var body: some View {
         Form(systemImage: "flask") {
-            Section {
-                Toggle(L10n.downloads, isOn: $experimentalDownloads)
-            } footer: {
-                // swiftlint:disable:next hard_coded_display_string
-                Text("Enables local downloads for offline browsing. Playback of downloaded files is not yet supported.")
+            if !UIDevice.isTV {
+                Section {
+                    Toggle(L10n.downloads, isOn: $experimentalDownloads)
+                } footer: {
+                    // swiftlint:disable:next hard_coded_display_string
+                    Text("Enables local downloads for offline browsing. Playback of downloaded files is not yet supported.")
+                }
             }
         }
         .navigationTitle(L10n.experimental)
