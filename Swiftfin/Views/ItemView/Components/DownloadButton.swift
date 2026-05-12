@@ -26,7 +26,7 @@ struct DownloadButton: View {
     var body: some View {
         StateAdapter(initialValue: false) { isPresentingDeleteConfirmation in
             ConditionalMenu(
-                isMenu: record == nil || record?.state == .paused,
+                isMenu: record == nil || record?.state == .paused || record?.state == .downloading,
                 action: {
                     guard let id = item.id else { return }
 
@@ -57,12 +57,24 @@ struct DownloadButton: View {
                                 }
                             }
                         }
-                    } else if let id = item.id {
-                        Button(L10n.resume, systemImage: "play") {
-                            downloadManager.resume(id: id)
-                        }
-                        Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                            downloadManager.cancel(id: id)
+                    } else if let id = item.id, let state = record?.state {
+                        switch state {
+                        case .downloading:
+                            Button(L10n.pause, systemImage: "pause") {
+                                downloadManager.pause(id: id)
+                            }
+                            Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                                downloadManager.cancel(id: id)
+                            }
+                        case .paused:
+                            Button(L10n.resume, systemImage: "play") {
+                                downloadManager.resume(id: id)
+                            }
+                            Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                                downloadManager.cancel(id: id)
+                            }
+                        default:
+                            EmptyView()
                         }
                     }
                 },
