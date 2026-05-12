@@ -18,24 +18,28 @@ struct DownloadButton: View {
 
     let item: BaseItemDto
 
-    private var record: DownloadRecord? {
+    private var download: DownloadRecord? {
         guard let id = item.id else { return nil }
         return downloadManager.records.first { $0.id == id }
+    }
+
+    private var isMenu: Bool {
+        download == nil || download?.state == .paused || download?.state == .downloading
     }
 
     var body: some View {
         StateAdapter(initialValue: false) { isPresentingDeleteConfirmation in
             ConditionalMenu(
-                isMenu: record == nil || record?.state == .paused || record?.state == .downloading,
+                isMenu: isMenu,
                 action: {
                     guard let id = item.id else { return }
 
-                    guard let record else {
+                    guard let download else {
                         downloadManager.queue(item)
                         return
                     }
 
-                    switch record.state {
+                    switch download.state {
                     case .queued:
                         downloadManager.cancel(id: id)
                     case .downloading:
@@ -48,61 +52,8 @@ struct DownloadButton: View {
                         isPresentingDeleteConfirmation.wrappedValue = true
                     }
                 },
-                menuContent: {
-                    if record == nil {
-                        Section(L10n.bitrate) {
-                            ForEach(PlaybackBitrate.supportedCases, id: \.self) { bitrate in
-                                Button(bitrate.displayTitle, systemImage: "arrow.down") {
-                                    downloadManager.queue(item, bitrate: bitrate)
-                                }
-                            }
-                        }
-                    } else if let id = item.id, let state = record?.state {
-                        switch state {
-                        case .downloading:
-                            Button(L10n.pause, systemImage: "pause") {
-                                downloadManager.pause(id: id)
-                            }
-                            Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                                downloadManager.cancel(id: id)
-                            }
-                        case .paused:
-                            Button(L10n.resume, systemImage: "play") {
-                                downloadManager.resume(id: id)
-                            }
-                            Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                                downloadManager.cancel(id: id)
-                            }
-                        default:
-                            EmptyView()
-                        }
-                    }
-                },
-                label: {
-                    Group {
-                        if let record {
-                            switch record.state {
-                            case .downloading, .queued:
-                                ProgressView(value: record.progress)
-                                    .progressViewStyle(.download)
-                            case .paused:
-                                Image(systemName: "arrow.down.circle.badge.pause")
-                            case .complete:
-                                Image(systemName: "arrow.down.circle.fill")
-                                    .symbolRenderingMode(.palette)
-                                    .foregroundStyle(.white, .green)
-                            case .error:
-                                Image(systemName: "arrow.down.circle.badge.xmark")
-                                    .foregroundStyle(.red)
-                            }
-                        } else {
-                            Image(systemName: "arrow.down.circle")
-                        }
-                    }
-                    .id(record?.state)
-                    .transition(.scale.combined(with: .opacity))
-                    .animation(.easeInOut(duration: 0.25), value: record?.state)
-                }
+                menuContent: { menuView },
+                label: { buttonView }
             )
             .confirmationDialog(L10n.delete, isPresented: isPresentingDeleteConfirmation) {
                 Button(L10n.delete, role: .destructive) {
@@ -115,5 +66,63 @@ struct DownloadButton: View {
                 Text("This will remove the downloaded file from your device.")
             }
         }
+    }
+
+    @ViewBuilder
+    private var menuView: some View {
+        if download == nil {
+            Section(L10n.bitrate) {
+                ForEach(PlaybackBitrate.supportedCases, id: \.self) { bitrate in
+                    Button(bitrate.displayTitle, systemImage: "arrow.down") {
+                        downloadManager.queue(item, bitrate: bitrate)
+                    }
+                }
+            }
+        } else if let id = item.id, let state = download?.state {
+            switch state {
+            case .downloading:
+                Button(L10n.pause, systemImage: "pause") {
+                    downloadManager.pause(id: id)
+                }
+                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                    downloadManager.cancel(id: id)
+                }
+            case .paused:
+                Button(L10n.resume, systemImage: "play") {
+                    downloadManager.resume(id: id)
+                }
+                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                    downloadManager.cancel(id: id)
+                }
+            default:
+                EmptyView()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var buttonView: some View {
+        Group {
+            if let download {
+                switch download.state {
+                case .downloading, .queued:
+                    ProgressView(value: download.progress)
+                        .progressViewStyle(.download)
+                case .paused:
+                    Image(systemName: "arrow.down.circle.badge.pause")
+                case .complete:
+                    Image(systemName: "arrow.down.circle.fill")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, .green)
+                case .error:
+                    Image(systemName: "arrow.down.circle.badge.xmark")
+                        .foregroundStyle(.red)
+                }
+            } else {
+                Image(systemName: "arrow.down.circle")
+            }
+        }
+        .id(download?.state)
+        .animation(.easeInOut(duration: 0.25), value: download?.state)
     }
 }
