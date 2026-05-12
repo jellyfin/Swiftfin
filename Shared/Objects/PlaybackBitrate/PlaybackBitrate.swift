@@ -13,7 +13,7 @@ import JellyfinAPI
 
 // TODO: move bitrate test to `MediaPlayerManager`
 
-enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
+enum PlaybackBitrate: Int, CaseIterable, SupportedCaseIterable, Displayable, Storable {
     case auto = 0
     case max = 360_000_000
     case mbps120 = 120_000_000
@@ -67,6 +67,9 @@ enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
             L10n.bitrateKbps420
         }
     }
+
+    /// Bitrates supported for download
+    static let supportedCases: [PlaybackBitrate] = [.max]
 
     func getMaxBitrate() async throws -> Int {
 
