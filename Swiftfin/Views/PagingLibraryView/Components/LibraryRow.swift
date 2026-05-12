@@ -60,12 +60,33 @@ extension PagingLibraryView {
         }
 
         @ViewBuilder
+        private func downloadAccessoryView(item: DownloadItemDto) -> some View {
+            DotHStack {
+                if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLabel {
+                    Text(seasonEpisodeLocator)
+                } else if let premiereYear = item.premiereDateYear {
+                    Text(premiereYear)
+                }
+
+                if let runtime = item.runTimeLabel {
+                    Text(runtime)
+                }
+
+                if let officialRating = item.officialRating {
+                    Text(officialRating)
+                }
+            }
+        }
+
+        @ViewBuilder
         private var accessoryView: some View {
             switch item {
             case let element as BaseItemDto:
                 itemAccessoryView(item: element)
             case let element as BaseItemPerson:
                 personAccessoryView(person: element)
+            case let element as DownloadItemDto:
+                downloadAccessoryView(item: element)
             default:
                 AssertionFailureView("Used an unexpected type within a `PagingLibaryView`?")
             }
