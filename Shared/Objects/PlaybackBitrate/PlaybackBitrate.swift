@@ -69,7 +69,7 @@ enum PlaybackBitrate: Int, CaseIterable, SupportedCaseIterable, Displayable, Sto
     }
 
     /// Bitrates supported for download
-    static let supportedCases: [PlaybackBitrate] = [.max]
+    static let supportedCases: [PlaybackBitrate] = [.mbps10, .mbps3, .kbps720]
 
     func getMaxBitrate() async throws -> Int {
 

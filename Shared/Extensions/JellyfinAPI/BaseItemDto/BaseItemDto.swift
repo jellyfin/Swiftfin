@@ -408,7 +408,7 @@ extension BaseItemDto {
     var downloadFolder: URL? {
         guard let type, let id else { return nil }
 
-        var path = URL.downloadsDirectory
+        var path = URL.swiftfinDownloads
 //            .appendingPathComponent(userSession.user.id)
 
         let segments: [String] = switch type {
