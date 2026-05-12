@@ -13,6 +13,7 @@ import JellyfinAPI
 
 // TODO: Switch over to the new PagingLibrary type when available
 
+@MainActor
 final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadItemDto> {
 
     override var isDownloads: Bool {
@@ -38,76 +39,83 @@ final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadItemDto> {
     }
 
     override func get(page: Int) async throws -> [DownloadItemDto] {
-        let manager = Container.shared.downloadManager()
-        let filtered = apply(filterViewModel?.currentFilters, to: manager.completedItems)
-
-        let startIndex = page * pageSize
-        guard startIndex < filtered.count else { return [] }
-
-        let endIndex = min(startIndex + pageSize, filtered.count)
-
-        return Array(filtered[startIndex ..< endIndex])
+        items(for: page)
     }
 
-    private func apply(_ filters: ItemFilterCollection?, to items: [DownloadItemDto]) -> [DownloadItemDto] {
-        guard let filters else { return items }
+    override func getRandomItem() async -> DownloadItemDto? {
+        items(for: nil).randomElement()
+    }
 
-        var filtered = items
+    private func items(for page: Int?) -> [DownloadItemDto] {
 
-        if filters.genres.isNotEmpty {
-            let allowed = Set(filters.genres.map(\.value))
-            filtered = filtered.filter { item in
-                guard let genres = item.item.genres else { return false }
-                return !allowed.isDisjoint(with: genres)
-            }
-        }
+        let manager = Container.shared.downloadManager()
+        var items = manager.completedItems
 
-        if filters.tags.isNotEmpty {
-            let allowed = Set(filters.tags.map(\.value))
-            filtered = filtered.filter { item in
-                guard let itemTags = item.item.tags else { return false }
-                return !allowed.isDisjoint(with: itemTags)
-            }
-        }
+        if let filterViewModel {
+            let filters = filterViewModel.currentFilters
 
-        if filters.years.isNotEmpty {
-            let allowed = Set(filters.years.compactMap { Int($0.value) })
-            filtered = filtered.filter { item in
-                guard let year = item.item.productionYear else { return false }
-                return allowed.contains(year)
-            }
-        }
-
-        if filters.letter.isNotEmpty {
-            let allowed = Set(filters.letter.map(\.value))
-            filtered = filtered.filter { item in
-                let sortName = item.item.sortName ?? item.item.displayTitle
-                guard let firstChar = sortName.first else { return false }
-                if firstChar.isLetter {
-                    return allowed.contains(String(firstChar).uppercased())
+            if filters.genres.isNotEmpty {
+                let allowed = Set(filters.genres.map(\.value))
+                items = items.filter {
+                    guard let genres = $0.item.genres else { return false }
+                    return !allowed.isDisjoint(with: genres)
                 }
-                return allowed.contains("#")
+            }
+
+            if filters.tags.isNotEmpty {
+                let allowed = Set(filters.tags.map(\.value))
+                items = items.filter {
+                    guard let tags = $0.item.tags else { return false }
+                    return !allowed.isDisjoint(with: tags)
+                }
+            }
+
+            if filters.years.isNotEmpty {
+                let allowed = Set(filters.years.compactMap { Int($0.value) })
+                items = items.filter {
+                    guard let year = $0.item.productionYear else { return false }
+                    return allowed.contains(year)
+                }
+            }
+
+            if filters.letter.isNotEmpty {
+                let allowed = Set(filters.letter.map(\.value))
+                items = items.filter {
+                    let sortName = $0.item.sortName ?? $0.item.displayTitle
+                    guard let first = sortName.first else { return false }
+                    if first.isLetter {
+                        return allowed.contains(String(first).uppercased())
+                    }
+                    return allowed.contains("#")
+                }
+            }
+
+            if filters.traits.contains(where: { $0.value == ItemTrait.isFavorite.value }) {
+                items = items.filter { $0.item.userData?.isFavorite == true }
+            }
+            if filters.traits.contains(where: { $0.value == ItemTrait.isPlayed.value }) {
+                items = items.filter { $0.item.userData?.isPlayed == true }
+            }
+            if filters.traits.contains(where: { $0.value == ItemTrait.isUnplayed.value }) {
+                items = items.filter { $0.item.userData?.isPlayed != true }
+            }
+
+            if let primarySort = filters.sortBy.first {
+                let ascending = filters.sortOrder.first == .ascending
+                items.sort { lhs, rhs in
+                    let comparison = lhs.compare(to: rhs, by: primarySort)
+                    return ascending ? comparison : !comparison
+                }
             }
         }
 
-        if filters.traits.contains(where: { $0.value == ItemTrait.isFavorite.value }) {
-            filtered = filtered.filter { $0.item.userData?.isFavorite == true }
-        }
-        if filters.traits.contains(where: { $0.value == ItemTrait.isPlayed.value }) {
-            filtered = filtered.filter { $0.item.userData?.isPlayed == true }
-        }
-        if filters.traits.contains(where: { $0.value == ItemTrait.isUnplayed.value }) {
-            filtered = filtered.filter { $0.item.userData?.isPlayed != true }
+        if let page {
+            let startIndex = page * pageSize
+            guard startIndex < items.count else { return [] }
+            let endIndex = min(startIndex + pageSize, items.count)
+            return Array(items[startIndex ..< endIndex])
         }
 
-        let ascending = filters.sortOrder.first == .ascending
-        if let primarySort = filters.sortBy.first {
-            filtered.sort { lhs, rhs in
-                let comparison = lhs.compare(to: rhs, by: primarySort)
-                return ascending ? comparison : !comparison
-            }
-        }
-
-        return filtered
+        return items
     }
 }
