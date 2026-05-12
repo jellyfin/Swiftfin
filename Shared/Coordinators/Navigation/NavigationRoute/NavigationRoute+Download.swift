@@ -11,12 +11,13 @@ import SwiftUI
 
 extension NavigationRoute {
 
+    @MainActor
     static var downloadList: NavigationRoute {
         NavigationRoute(
             id: "downloadList"
         ) {
             #if os(iOS)
-            DownloadListView(viewModel: .init())
+            PagingLibraryView(viewModel: DownloadPagingLibraryViewModel())
             #else
             EmptyView()
             #endif
@@ -24,12 +25,11 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
-    static func downloadTask(downloadTask: DownloadTask) -> NavigationRoute {
+    static func downloadItem(item: DownloadItemDto) -> NavigationRoute {
         NavigationRoute(
-            id: "downloadTask",
-            style: .sheet
+            id: "downloadItem"
         ) {
-            DownloadTaskView(downloadTask: downloadTask)
+            DownloadItemView(item: item)
         }
     }
     #endif
