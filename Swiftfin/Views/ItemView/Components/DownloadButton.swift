@@ -20,10 +20,6 @@ struct DownloadButton: View {
 
     private let item: BaseItemDto
 
-    private var isMenu: Bool {
-        state == nil || state == .paused || state == .downloading
-    }
-
     init(item: BaseItemDto) {
         self.item = item
         let initial = Container.shared.downloadManager().records.first { $0.id == item.id }?.state
@@ -32,32 +28,11 @@ struct DownloadButton: View {
 
     var body: some View {
         StateAdapter(initialValue: false) { isPresentingDeleteConfirmation in
-            ConditionalMenu(
-                isMenu: isMenu,
-                action: {
-                    guard let id = item.id else { return }
-
-                    guard let state else {
-                        downloadManager.queue(item)
-                        return
-                    }
-
-                    switch state {
-                    case .queued:
-                        downloadManager.cancel(id: id)
-                    case .downloading:
-                        downloadManager.pause(id: id)
-                    case .paused:
-                        downloadManager.resume(id: id)
-                    case .error:
-                        downloadManager.retry(id: id)
-                    case .complete:
-                        isPresentingDeleteConfirmation.wrappedValue = true
-                    }
-                },
-                menuContent: { menuView },
-                label: { buttonView }
-            )
+            Menu {
+                menuContent(isPresentingDeleteConfirmation: isPresentingDeleteConfirmation)
+            } label: {
+                labelView
+            }
             .confirmationDialog(L10n.delete, isPresented: isPresentingDeleteConfirmation) {
                 Button(L10n.delete, role: .destructive) {
                     guard let id = item.id else { return }
@@ -80,22 +55,26 @@ struct DownloadButton: View {
     }
 
     @ViewBuilder
-    private var menuView: some View {
-        if state == nil {
-            Section(L10n.download) {
-                Button(L10n.direct, systemImage: "arrow.right") {
-                    downloadManager.queue(item)
-                }
-            }
-            Section(L10n.transcode) {
-                ForEach(PlaybackBitrate.supportedCases, id: \.self) { bitrate in
-                    Button(bitrate.displayTitle, systemImage: "shuffle") {
-                        downloadManager.queue(item, bitrate: bitrate)
+    private func menuContent(isPresentingDeleteConfirmation: Binding<Bool>) -> some View {
+        if let id = item.id {
+            switch state {
+            case .none:
+                Section(L10n.download) {
+                    Button(L10n.direct, systemImage: "arrow.right") {
+                        downloadManager.queue(item)
                     }
                 }
-            }
-        } else if let id = item.id, let state {
-            switch state {
+                Section(L10n.transcode) {
+                    ForEach(PlaybackBitrate.supportedCases, id: \.self) { bitrate in
+                        Button(bitrate.displayTitle, systemImage: "shuffle") {
+                            downloadManager.queue(item, bitrate: bitrate)
+                        }
+                    }
+                }
+            case .queued:
+                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                    downloadManager.cancel(id: id)
+                }
             case .downloading:
                 Button(L10n.pause, systemImage: "pause") {
                     downloadManager.pause(id: id)
@@ -110,14 +89,23 @@ struct DownloadButton: View {
                 Button(L10n.cancel, systemImage: "trash", role: .destructive) {
                     downloadManager.cancel(id: id)
                 }
-            default:
-                EmptyView()
+            case .error:
+                Button(L10n.retry, systemImage: "arrow.clockwise") {
+                    downloadManager.retry(id: id)
+                }
+                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                    downloadManager.cancel(id: id)
+                }
+            case .complete:
+                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                    isPresentingDeleteConfirmation.wrappedValue = true
+                }
             }
         }
     }
 
     @ViewBuilder
-    private var buttonView: some View {
+    private var labelView: some View {
         Group {
             switch state {
             case .downloading, .queued:
