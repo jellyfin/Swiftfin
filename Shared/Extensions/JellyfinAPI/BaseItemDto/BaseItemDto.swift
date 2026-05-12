@@ -405,31 +405,36 @@ extension BaseItemDto {
             }
     }
 
-    // TODO: series-season-episode hierarchy for episodes
-    // TODO: user hierarchy for downloads
     var downloadFolder: URL? {
         guard let type, let id else { return nil }
 
-        let root = URL.downloadsDirectory
+        var path = URL.downloadsDirectory
 //            .appendingPathComponent(userSession.user.id)
 
+        let segments: [String]
+
         switch type {
-        case .movie, .episode:
-            return root
-                .appendingPathComponent(id)
-//        case .episode:
-//            guard let seasonID = seasonID,
-//                  let seriesID = seriesID
-//            else {
-//                return nil
-//            }
-//            return root
-//                .appendingPathComponent(seriesID)
-//                .appendingPathComponent(seasonID)
-//                .appendingPathComponent(id)
+        case .season:
+            segments = [seriesID, id].compactMap(\.self)
+        case .episode:
+            segments = [seriesID, seasonID, id].compactMap(\.self)
+        case .musicAlbum:
+            segments = [albumArtists?.first?.id, id].compactMap(\.self)
+        case .audio, .audioBook, .musicVideo:
+            segments = [albumArtists?.first?.id, albumID, id].compactMap(\.self)
+        case .book:
+            segments = [artists?.first, id].compactMap(\.self)
+        case .photo:
+            segments = [parentID, id].compactMap(\.self)
         default:
-            return nil
+            segments = [id]
         }
+
+        for segment in segments {
+            path.appendPathComponent(segment, isDirectory: true)
+        }
+
+        return path
     }
 
     /// Returns `originalTitle` if it is not the same as `displayTitle`
