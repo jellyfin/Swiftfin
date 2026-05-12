@@ -82,9 +82,14 @@ struct DownloadButton: View {
     @ViewBuilder
     private var menuView: some View {
         if state == nil {
-            Section(L10n.bitrate) {
+            Section(L10n.download) {
+                Button(L10n.direct, systemImage: "arrow.right") {
+                    downloadManager.queue(item)
+                }
+            }
+            Section(L10n.transcode) {
                 ForEach(PlaybackBitrate.supportedCases, id: \.self) { bitrate in
-                    Button(bitrate.displayTitle, systemImage: "arrow.down") {
+                    Button(bitrate.displayTitle, systemImage: "shuffle") {
                         downloadManager.queue(item, bitrate: bitrate)
                     }
                 }

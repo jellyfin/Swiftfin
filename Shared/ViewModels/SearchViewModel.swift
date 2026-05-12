@@ -196,7 +196,7 @@ final class SearchViewModel: ViewModel {
     @Function(\Action.Cases.getSuggestions)
     private func _getSuggestions() async throws {
 
-        await filterViewModel.getQueryFilters()
+        await filterViewModel.getQueryFilters(isDownloads: false)
 
         var parameters = Paths.GetItemsParameters()
         parameters.includeItemTypes = [.movie, .series]

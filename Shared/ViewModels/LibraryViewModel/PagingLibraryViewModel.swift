@@ -114,6 +114,10 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     private(set) var currentPage = 0
     private(set) var hasNextPage = true
 
+    var isDownloads: Bool {
+        false
+    }
+
     private let eventSubject: PassthroughSubject<Event, Never> = .init()
     private let isStatic: Bool
 
@@ -185,7 +189,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
             self.filterViewModel = .init(
                 parent: parent,
-                currentFilters: filters
+                currentFilters: filters,
             )
         } else {
             self.filterViewModel = nil
@@ -254,7 +258,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             pagingTask?.cancel()
             randomItemTask?.cancel()
 
-            filterViewModel?.getQueryFilters()
+            filterViewModel?.getQueryFilters(isDownloads: isDownloads)
 
             pagingTask = Task { [weak self] in
                 guard let self else { return }
