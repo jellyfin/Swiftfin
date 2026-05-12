@@ -12,12 +12,6 @@ import SwiftUI
 
 extension BaseItemDto {
 
-    /// Indicates whether the item can be downloaded by the current user
-    var canBeDownloaded: Bool {
-        guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
-        return userPolicy.enableContentDownloading == true && canDownload == true
-    }
-
     /// Indicates whether the item's metadata can be edited by the current user
     var canEditMetadata: Bool {
         guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
@@ -62,8 +56,7 @@ extension BaseItemDto {
     var showEditorMenu: Bool {
         canEditMetadata
             || canEditSubtitles
-        // TODO: Enable with Lyrics and/or Downloads
+        // TODO: Enable with Lyrics
         // || canEditLyrics
-        // || (!UIDevice.isTV && canBeDownloaded)
     }
 }

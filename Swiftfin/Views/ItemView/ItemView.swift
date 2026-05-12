@@ -19,6 +19,9 @@ struct ItemView: View {
         init(viewModel: ItemViewModel, content: @escaping () -> Content)
     }
 
+    // TODO: Remove when downloads are no longer Experimental
+    @Default(.Experimental.downloads)
+    private var experimentalDownloads
     @Default(.Customization.itemViewType)
     private var itemViewType
 
@@ -120,6 +123,13 @@ struct ItemView: View {
         }
         .onFirstAppear {
             viewModel.send(.refresh)
+        }
+        .toolbar {
+            if experimentalDownloads, viewModel.item.canDownload == true {
+                ToolbarItem(placement: .topBarTrailing) {
+                    DownloadButton(item: viewModel.item)
+                }
+            }
         }
         .navigationBarMenuButton(
             isLoading: viewModel.backgroundStates.contains(.refresh),

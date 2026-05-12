@@ -24,7 +24,7 @@ struct DownloadButton: View {
     }
 
     private var isMenu: Bool {
-        download == nil || download?.state == .paused || download?.state == .downloading
+        download == nil || download?.state == .paused
     }
 
     var body: some View {
@@ -78,24 +78,12 @@ struct DownloadButton: View {
                     }
                 }
             }
-        } else if let id = item.id, let state = download?.state {
-            switch state {
-            case .downloading:
-                Button(L10n.pause, systemImage: "pause") {
-                    downloadManager.pause(id: id)
-                }
-                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                    downloadManager.cancel(id: id)
-                }
-            case .paused:
-                Button(L10n.resume, systemImage: "play") {
-                    downloadManager.resume(id: id)
-                }
-                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                    downloadManager.cancel(id: id)
-                }
-            default:
-                EmptyView()
+        } else if let id = item.id, download?.state == .paused {
+            Button(L10n.resume, systemImage: "play") {
+                downloadManager.resume(id: id)
+            }
+            Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                downloadManager.cancel(id: id)
             }
         }
     }

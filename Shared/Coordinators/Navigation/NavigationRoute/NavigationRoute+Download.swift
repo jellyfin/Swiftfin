@@ -17,7 +17,7 @@ extension NavigationRoute {
             id: "downloadList"
         ) {
             #if os(iOS)
-            PagingLibraryView(viewModel: DownloadPagingLibraryViewModel())
+            PagingLibraryView(viewModel: DownloadLibraryViewModel())
             #else
             EmptyView()
             #endif
