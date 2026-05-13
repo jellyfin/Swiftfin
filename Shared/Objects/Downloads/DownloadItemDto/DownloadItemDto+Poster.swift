@@ -25,21 +25,11 @@ extension DownloadItemDto: Poster {
     }
 
     func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        if item.type == .episode {
-            return sources(parent?.imageURL(for: .primary))
-        }
-        return sources(imageURL(for: .primary))
+        sources(imageURL(for: .primary))
     }
 
     func landscapeImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        if item.type == .episode {
-            return sources(
-                parent?.imageURL(for: .thumb),
-                parent?.imageURL(for: .backdrop),
-                imageURL(for: .primary)
-            )
-        }
-        return sources(
+        sources(
             imageURL(for: .thumb),
             imageURL(for: .backdrop),
             imageURL(for: .primary)
@@ -47,10 +37,7 @@ extension DownloadItemDto: Poster {
     }
 
     func cinematicImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        if item.type == .episode {
-            return sources(parent?.imageURL(for: .backdrop), imageURL(for: .primary))
-        }
-        return sources(imageURL(for: .backdrop), imageURL(for: .primary))
+        sources(imageURL(for: .backdrop), imageURL(for: .primary))
     }
 
     func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {

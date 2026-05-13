@@ -59,38 +59,15 @@ struct DownloadItemDto: Hashable, Identifiable, Displayable, LibraryIdentifiable
         item.type
     }
 
-    var parent: DownloadItemDto? {
-        guard let manager,
-              let parentID = record.parentID ?? record.seriesID,
-              let parentRecord = manager.record(id: parentID)
-        else {
-            return nil
-        }
-
-        return DownloadItemDto(record: parentRecord, manager: manager)
-    }
-
     func imageURL(for kind: ImageType) -> URL? {
-        if let url = record.imageURL(for: kind),
-           FileManager.default.fileExists(atPath: url.path)
-        {
-            return url
-        }
-
-        if let parent {
-            return parent.imageURL(for: kind)
-        }
-
-        return nil
+        guard let url = record.imageURL(for: kind),
+              FileManager.default.fileExists(atPath: url.path)
+        else { return nil }
+        return url
     }
 
     func imageAspectRatio(for kind: ImageType) -> CGFloat? {
-        if let image = record.images.first(where: { $0.kind == kind }),
-           let ratio = image.aspectRatio
-        {
-            return ratio
-        }
-        return parent?.imageAspectRatio(for: kind)
+        record.images.first(where: { $0.kind == kind })?.aspectRatio
     }
 
     static func == (lhs: DownloadItemDto, rhs: DownloadItemDto) -> Bool {
