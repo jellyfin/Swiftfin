@@ -151,6 +151,8 @@ extension VideoPlayer.PlaybackControls {
             .font(.callout)
             .monospacedDigit()
             .trackingSize($contentSize)
+            .foregroundStyle(containerState.isProgressBarFocused ? .primary : .secondary)
+            .opacity(containerState.isProgressBarFocused ? 1 : 0.70)
         }
     }
 }
