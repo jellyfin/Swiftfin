@@ -12,7 +12,7 @@ extension StoredValues.Keys {
 
     enum Downloads {
 
-        static func items(userID: String) -> Key<[DownloadRecord]> {
+        static func items(userID: String) -> Key<[DownloadTask]> {
             UserKey(
                 ownerID: userID,
                 field: "downloads",

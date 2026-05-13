@@ -13,18 +13,18 @@ struct DownloadItemDto: Hashable, Identifiable, Displayable, LibraryIdentifiable
 
     weak var manager: DownloadManager?
 
-    let record: DownloadRecord
+    let task: DownloadTask
     let item: BaseItemDto
 
-    init?(record: DownloadRecord, manager: DownloadManager? = nil) {
-        guard let item = record.item else { return nil }
-        self.record = record
+    init?(task: DownloadTask, manager: DownloadManager? = nil) {
+        guard let item = task.item else { return nil }
+        self.task = task
         self.item = item
         self.manager = manager
     }
 
     var id: String? {
-        record.id
+        task.id
     }
 
     var displayTitle: String {
@@ -32,7 +32,7 @@ struct DownloadItemDto: Hashable, Identifiable, Displayable, LibraryIdentifiable
     }
 
     var unwrappedIDHashOrZero: Int {
-        record.id.hashValue
+        task.id.hashValue
     }
 
     var systemImage: String {
@@ -60,22 +60,22 @@ struct DownloadItemDto: Hashable, Identifiable, Displayable, LibraryIdentifiable
     }
 
     func imageURL(for kind: ImageType) -> URL? {
-        guard let url = record.imageURL(for: kind),
+        guard let url = task.imageURL(for: kind),
               FileManager.default.fileExists(atPath: url.path)
         else { return nil }
         return url
     }
 
     func imageAspectRatio(for kind: ImageType) -> CGFloat? {
-        record.images.first(where: { $0.kind == kind })?.aspectRatio
+        task.images.first(where: { $0.kind == kind })?.aspectRatio
     }
 
     static func == (lhs: DownloadItemDto, rhs: DownloadItemDto) -> Bool {
-        lhs.record.id == rhs.record.id && lhs.record.updatedAt == rhs.record.updatedAt
+        lhs.task.id == rhs.task.id && lhs.task.updatedAt == rhs.task.updatedAt
     }
 
     func hash(into hasher: inout Hasher) {
-        hasher.combine(record.id)
+        hasher.combine(task.id)
     }
 
     func compare(to other: DownloadItemDto, by sort: ItemSortBy) -> Bool {

@@ -23,12 +23,13 @@ struct DownloadImage: Codable, Hashable {
     let aspectRatio: CGFloat?
 }
 
-struct DownloadRecord: Codable, Hashable, Identifiable {
+struct DownloadTask: Codable, Hashable, Identifiable {
 
     let id: String
     let itemJSON: Data
 
     var state: DownloadState
+    var errorReason: DownloadError?
     var bytesDownloaded: Int64
     var bytesTotal: Int64
     var resumeData: Data?
@@ -63,7 +64,7 @@ struct DownloadRecord: Codable, Hashable, Identifiable {
     }
 }
 
-extension DownloadRecord {
+extension DownloadTask {
 
     init(item: BaseItemDto) throws {
         let json = try JSONEncoder().encode(item)
@@ -72,6 +73,7 @@ extension DownloadRecord {
             id: item.id!,
             itemJSON: json,
             state: .queued,
+            errorReason: nil,
             bytesDownloaded: 0,
             bytesTotal: 0,
             resumeData: nil,
@@ -83,4 +85,4 @@ extension DownloadRecord {
     }
 }
 
-extension DownloadRecord: Storable {}
+extension DownloadTask: Storable {}

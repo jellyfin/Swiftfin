@@ -79,7 +79,7 @@ struct DownloadItemView: View {
         .navigationBarTitleDisplayMode(.inline)
         .alert(L10n.delete, isPresented: $isPresentingDeleteAlert) {
             Button(L10n.delete, role: .destructive) {
-                downloadManager.delete(id: item.record.id)
+                downloadManager.delete(id: item.task.id)
                 router.dismiss()
             }
             Button(L10n.cancel, role: .cancel) {}

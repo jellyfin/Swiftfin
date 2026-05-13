@@ -11,9 +11,9 @@ import JellyfinAPI
 
 extension DownloadManager {
 
-    func downloadCompanionFiles(recordID: String, item: BaseItemDto) async {
+    func downloadCompanionFiles(taskID: String, item: BaseItemDto) async {
         guard let userSession else { return }
-        guard let record = record(id: recordID) else { return }
+        guard let task = task(id: taskID) else { return }
 
         let externalSubtitles = (item.mediaSources?.first?.mediaStreams ?? []).filter {
             $0.type == .subtitle && ($0.isExternal ?? false) && $0.deliveryURL != nil
@@ -21,7 +21,7 @@ extension DownloadManager {
 
         guard !externalSubtitles.isEmpty else { return }
 
-        let folder = record.downloadFolder.appendingPathComponent("Subtitles", isDirectory: true)
+        let folder = task.downloadFolder.appendingPathComponent("Subtitles", isDirectory: true)
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
 
         for stream in externalSubtitles {

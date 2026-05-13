@@ -29,7 +29,7 @@ final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadItemDto> {
         manager.$completedItems
             .receive(on: RunLoop.main)
             .dropFirst()
-            .removeDuplicates(by: { $0.map(\.record.id) == $1.map(\.record.id) })
+            .removeDuplicates(by: { $0.map(\.task.id) == $1.map(\.task.id) })
             .sink { [weak self] _ in
                 Task { @MainActor in
                     self?.send(.refresh)

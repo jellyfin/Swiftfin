@@ -41,13 +41,13 @@ extension DownloadManager: URLSessionDownloadDelegate {
         totalBytesWritten: Int64,
         totalBytesExpectedToWrite: Int64
     ) {
-        guard let recordID = downloadTask.taskDescription else { return }
+        guard let taskID = downloadTask.taskDescription else { return }
 
         DispatchQueue.main.async {
-            self.update(id: recordID, throttlePersist: true) { record in
-                record.bytesDownloaded = totalBytesWritten
+            self.update(id: taskID, throttlePersist: true) { task in
+                task.bytesDownloaded = totalBytesWritten
                 if totalBytesExpectedToWrite > 0 {
-                    record.bytesTotal = totalBytesExpectedToWrite
+                    task.bytesTotal = totalBytesExpectedToWrite
                 }
             }
         }
@@ -58,66 +58,69 @@ extension DownloadManager: URLSessionDownloadDelegate {
         downloadTask: URLSessionDownloadTask,
         didFinishDownloadingTo location: URL
     ) {
-        guard let recordID = downloadTask.taskDescription else { return }
-        guard let record = self.record(id: recordID) else { return }
+        guard let taskID = downloadTask.taskDescription else { return }
+        guard let task = self.task(id: taskID) else { return }
 
         let subtype = downloadTask.response?.mimeSubtype
         let ext = subtype.map { ".\($0)" } ?? ""
-        let filename = "\(recordID)\(ext)"
+        let filename = "\(taskID)\(ext)"
 
         do {
-            try FileManager.default.createDirectory(at: record.downloadFolder, withIntermediateDirectories: true)
-            let destination = record.downloadFolder.appendingPathComponent(filename)
+            try FileManager.default.createDirectory(at: task.downloadFolder, withIntermediateDirectories: true)
+            let destination = task.downloadFolder.appendingPathComponent(filename)
             try? FileManager.default.removeItem(at: destination)
             try FileManager.default.moveItem(at: location, to: destination)
 
             DispatchQueue.main.async {
-                self.update(id: recordID) { rec in
-                    rec.mediaRelativePath = filename
-                    rec.resumeData = nil
+                self.update(id: taskID) { task in
+                    task.mediaRelativePath = filename
+                    task.resumeData = nil
                 }
             }
 
-            if let item = record.item {
+            if let item = task.item {
                 Task {
-                    await downloadItemImages(recordID: recordID, item: item)
-                    await downloadCompanionFiles(recordID: recordID, item: item)
-                    try? await writeMetadataSidecar(item: item, in: record.downloadFolder)
+                    await downloadItemImages(taskID: taskID, item: item)
+                    await downloadCompanionFiles(taskID: taskID, item: item)
+                    try? await writeMetadataSidecar(item: item, in: task.downloadFolder)
                 }
             }
         } catch {
-            logger.error("Failed to move downloaded media for \(recordID): \(error.localizedDescription)")
+            logger.error("Failed to move downloaded media for \(taskID): \(error.localizedDescription)")
             DispatchQueue.main.async {
-                self.update(id: recordID) { rec in
-                    rec.state = .error
+                self.update(id: taskID) { task in
+                    task.state = .error
+                    task.errorReason = DownloadError(error)
                 }
             }
         }
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        guard let recordID = task.taskDescription else { return }
+        guard let taskID = task.taskDescription else { return }
 
         DispatchQueue.main.async {
-            self.activeURLTasks.removeValue(forKey: recordID)
-            if self.activeRecordID == recordID { self.activeRecordID = nil }
+            self.activeURLTasks.removeValue(forKey: taskID)
+            if self.activeTaskID == taskID { self.activeTaskID = nil }
 
             if let error = error as NSError? {
                 if error.domain == NSURLErrorDomain, error.code == NSURLErrorCancelled {
                     if let resumeData = error.userInfo[NSURLSessionDownloadTaskResumeData] as? Data {
-                        self.update(id: recordID) { rec in
-                            rec.resumeData = resumeData
-                            rec.state = .paused
+                        self.update(id: taskID) { task in
+                            task.resumeData = resumeData
+                            task.state = .paused
                         }
                     }
                 } else {
-                    self.update(id: recordID) { rec in
-                        rec.state = .error
+                    self.update(id: taskID) { task in
+                        task.state = .error
+                        task.errorReason = DownloadError(error)
                     }
                 }
             } else {
-                self.update(id: recordID) { rec in
-                    rec.state = .complete
+                self.update(id: taskID) { task in
+                    task.state = .complete
+                    task.errorReason = nil
                 }
                 self.refreshCompletedItems()
             }

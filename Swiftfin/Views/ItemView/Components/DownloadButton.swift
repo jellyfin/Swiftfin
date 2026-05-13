@@ -22,7 +22,7 @@ struct DownloadButton: View {
 
     init(item: BaseItemDto) {
         self.item = item
-        let initial = Container.shared.downloadManager().records.first { $0.id == item.id }?.state
+        let initial = Container.shared.downloadManager().tasks.first { $0.id == item.id }?.state
         self._state = State(initialValue: initial)
     }
 
@@ -46,8 +46,8 @@ struct DownloadButton: View {
         }
         // Reading directly from .state locks the menus when an item is queued
         .onReceive(
-            downloadManager.$records
-                .map { records in records.first { $0.id == item.id }?.state }
+            downloadManager.$tasks
+                .map { tasks in tasks.first { $0.id == item.id }?.state }
                 .removeDuplicates()
         ) { newState in
             state = newState
@@ -65,7 +65,7 @@ struct DownloadButton: View {
                     }
                 } else {
                     // swiftlint:disable:next hard_coded_display_string
-                    Button("Not enough space", systemImage: "externaldrive.badge.exclamationmark") {}
+                    Button(DownloadError.insufficientStorage.displayTitle, systemImage: "externaldrive.badge.exclamationmark") {}
                         .disabled(true)
                 }
             case .queued:
@@ -87,6 +87,11 @@ struct DownloadButton: View {
                     downloadManager.cancel(id: id)
                 }
             case .error:
+                if let reason = downloadManager.tasks.first(where: { $0.id == id })?.errorReason {
+                    // swiftlint:disable:next hard_coded_display_string
+                    Button(reason.displayTitle, systemImage: "exclamationmark.triangle") {}
+                        .disabled(true)
+                }
                 Button(L10n.retry, systemImage: "arrow.clockwise") {
                     downloadManager.retry(id: id)
                 }
@@ -107,7 +112,7 @@ struct DownloadButton: View {
             switch state {
             case .downloading, .queued:
                 TimelineView(.periodic(from: .now, by: 0.1)) { _ in
-                    ProgressView(value: downloadManager.records.first { $0.id == item.id }?.progress ?? 0)
+                    ProgressView(value: downloadManager.tasks.first { $0.id == item.id }?.progress ?? 0)
                         .progressViewStyle(.download)
                 }
             case .paused:

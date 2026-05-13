@@ -33,13 +33,13 @@ final class DownloadManager: NSObject, ObservableObject {
     var userSession: UserSession?
 
     @Published
-    private(set) var records: [DownloadRecord] = []
+    private(set) var tasks: [DownloadTask] = []
 
     @Published
     private(set) var completedItems: [DownloadItemDto] = []
 
     private var queue: [String] = []
-    var activeRecordID: String?
+    var activeTaskID: String?
     var activeURLTasks: [String: URLSessionDownloadTask] = [:]
     private var lastPersistTime: [String: Date] = [:]
 
@@ -66,8 +66,8 @@ final class DownloadManager: NSObject, ObservableObject {
 
     // MARK: - Public API
 
-    func record(id: String) -> DownloadRecord? {
-        records.first { $0.id == id }
+    func task(id: String) -> DownloadTask? {
+        tasks.first { $0.id == id }
     }
 
     /// Queues `item` (and, for containers, all of its downloadable children)
@@ -83,7 +83,7 @@ final class DownloadManager: NSObject, ObservableObject {
         do {
             switch kind {
             case .movie, .episode:
-                try await createMediaRecord(item)
+                try await createMediaTask(item)
             case .season:
                 let episodes = try await fetchSeasonEpisodes(seasonID: item.id!)
                 for episode in episodes {
@@ -112,7 +112,7 @@ final class DownloadManager: NSObject, ObservableObject {
     }
 
     func pause(id: String) {
-        guard activeRecordID == id, let urlTask = activeURLTasks[id] else { return }
+        guard activeTaskID == id, let urlTask = activeURLTasks[id] else { return }
 
         urlTask.cancel { [weak self] resumeData in
             DispatchQueue.main.async {
@@ -123,22 +123,23 @@ final class DownloadManager: NSObject, ObservableObject {
 
     private func handlePause(id: String, resumeData: Data?) {
         activeURLTasks.removeValue(forKey: id)
-        if activeRecordID == id { activeRecordID = nil }
+        if activeTaskID == id { activeTaskID = nil }
 
-        update(id: id) { record in
-            record.resumeData = resumeData
-            record.state = .paused
+        update(id: id) { task in
+            task.resumeData = resumeData
+            task.state = .paused
         }
 
         advanceQueue()
     }
 
     func resume(id: String) {
-        guard let record = record(id: id) else { return }
-        guard record.state == .paused || record.state == .error else { return }
+        guard let task = task(id: id) else { return }
+        guard task.state == .paused || task.state == .error else { return }
 
-        update(id: id) { record in
-            record.state = .queued
+        update(id: id) { task in
+            task.state = .queued
+            task.errorReason = nil
         }
 
         if !queue.contains(id) {
@@ -149,7 +150,7 @@ final class DownloadManager: NSObject, ObservableObject {
     }
 
     /// Cancelling a download is functionally the same as deleting it — the
-    /// record is removed and any in-flight transfer torn down. To restart,
+    /// task is removed and any in-flight transfer torn down. To restart,
     /// queue the item fresh.
     func cancel(id: String) {
         delete(id: id)
@@ -159,22 +160,22 @@ final class DownloadManager: NSObject, ObservableObject {
         resume(id: id)
     }
 
-    /// Removes the record and all of its on-disk files.
+    /// Removes the task and all of its on-disk files.
     func delete(id: String) {
-        if activeRecordID == id, let urlTask = activeURLTasks[id] {
+        if activeTaskID == id, let urlTask = activeURLTasks[id] {
             urlTask.cancel()
             activeURLTasks.removeValue(forKey: id)
-            activeRecordID = nil
+            activeTaskID = nil
         }
         queue.removeAll(where: { $0 == id })
 
-        guard let record = record(id: id) else { return }
+        guard let task = task(id: id) else { return }
 
-        try? FileManager.default.removeItem(at: record.downloadFolder)
+        try? FileManager.default.removeItem(at: task.downloadFolder)
 
-        records.removeAll(where: { $0.id == id })
+        tasks.removeAll(where: { $0.id == id })
 
-        persistRecords()
+        persistTasks()
         refreshCompletedItems()
         advanceQueue()
     }
@@ -182,9 +183,9 @@ final class DownloadManager: NSObject, ObservableObject {
     // MARK: - Queue management
 
     func advanceQueue() {
-        guard activeRecordID == nil else { return }
+        guard activeTaskID == nil else { return }
 
-        let nextID = records
+        let nextID = tasks
             .filter { $0.state == .queued }
             .sorted { $0.createdAt < $1.createdAt }
             .first?
@@ -195,40 +196,42 @@ final class DownloadManager: NSObject, ObservableObject {
     }
 
     private func startMediaDownload(id: String) {
-        guard let record = record(id: id) else { return }
+        guard let task = task(id: id) else { return }
         guard let userSession else { return }
 
-        if let shortage = spaceShortage(for: record) {
+        if let shortage = spaceShortage(for: task) {
             let formatter = ByteCountFormatter()
             formatter.countStyle = .file
             let need = formatter.string(fromByteCount: shortage.needed)
             let have = formatter.string(fromByteCount: shortage.available)
             logger.warning("Refusing to start \(id): need \(need) free, only \(have) available.")
-            update(id: id) { rec in
-                rec.state = .error
+            update(id: id) { task in
+                task.state = .error
+                task.errorReason = .insufficientStorage
             }
             advanceQueue()
             return
         }
 
-        activeRecordID = id
+        activeTaskID = id
 
-        update(id: id) { record in
-            record.state = .downloading
+        update(id: id) { task in
+            task.state = .downloading
         }
 
         let urlTask: URLSessionDownloadTask
         do {
-            if let resumeData = record.resumeData {
+            if let resumeData = task.resumeData {
                 urlTask = urlSession.downloadTask(withResumeData: resumeData)
             } else {
                 urlTask = try startRawDownload(id: id, userSession: userSession)
             }
         } catch {
             logger.error("Failed to start download \(id): \(error.localizedDescription)")
-            activeRecordID = nil
-            update(id: id) { rec in
-                rec.state = .error
+            activeTaskID = nil
+            update(id: id) { task in
+                task.state = .error
+                task.errorReason = DownloadError(error)
             }
             advanceQueue()
             return
@@ -249,11 +252,11 @@ final class DownloadManager: NSObject, ObservableObject {
         return spaceShortage(needed: needed) == nil
     }
 
-    /// Returns `nil` if the device has enough free space for `record`'s
+    /// Returns `nil` if the device has enough free space for `task`'s
     /// projected on-disk footprint, otherwise the (needed, available) pair so
     /// the caller can compose a user-facing error.
-    private func spaceShortage(for record: DownloadRecord) -> (needed: Int64, available: Int64)? {
-        guard let item = record.item,
+    private func spaceShortage(for task: DownloadTask) -> (needed: Int64, available: Int64)? {
+        guard let item = task.item,
               let sourceSize = item.mediaSources?.first?.size, sourceSize > 0
         else { return nil }
 
@@ -280,79 +283,79 @@ final class DownloadManager: NSObject, ObservableObject {
 
     private func rebuildFromStore() {
         guard let userID = currentUserID else {
-            records = []
+            tasks = []
             completedItems = []
             return
         }
 
         let loaded = StoredValues[.Downloads.items(userID: userID)]
-        records = loaded
+        tasks = loaded
 
-        let resurrected = records.map { record -> DownloadRecord in
-            if record.state == .downloading {
-                var mutable = record
+        let resurrected = tasks.map { task -> DownloadTask in
+            if task.state == .downloading {
+                var mutable = task
                 mutable.state = .paused
                 return mutable
             }
-            return record
+            return task
         }
 
-        if resurrected != records {
-            records = resurrected
-            persistRecords()
+        if resurrected != tasks {
+            tasks = resurrected
+            persistTasks()
         }
 
         refreshCompletedItems()
     }
 
-    private func persistRecords() {
+    private func persistTasks() {
         guard let userID = currentUserID else { return }
-        StoredValues[.Downloads.items(userID: userID)] = records
+        StoredValues[.Downloads.items(userID: userID)] = tasks
     }
 
     func refreshCompletedItems() {
-        completedItems = records
+        completedItems = tasks
             .filter { $0.state == .complete }
-            .compactMap { DownloadItemDto(record: $0, manager: self) }
+            .compactMap { DownloadItemDto(task: $0, manager: self) }
     }
 
-    /// Mutates the named record in-place and triggers a publish + persist.
+    /// Mutates the named task in-place and triggers a publish + persist.
     /// Throttles persistence during active downloads so high-frequency progress
     /// updates don't hammer the store.
-    func update(id: String, throttlePersist: Bool = false, _ mutator: (inout DownloadRecord) -> Void) {
-        guard let index = records.firstIndex(where: { $0.id == id }) else { return }
-        var record = records[index]
-        mutator(&record)
-        record.updatedAt = Date()
-        records[index] = record
+    func update(id: String, throttlePersist: Bool = false, _ mutator: (inout DownloadTask) -> Void) {
+        guard let index = tasks.firstIndex(where: { $0.id == id }) else { return }
+        var task = tasks[index]
+        mutator(&task)
+        task.updatedAt = Date()
+        tasks[index] = task
 
         if throttlePersist {
             let now = Date()
             let last = lastPersistTime[id] ?? .distantPast
             if now.timeIntervalSince(last) > 1.0 {
                 lastPersistTime[id] = now
-                persistRecords()
+                persistTasks()
             }
         } else {
             lastPersistTime[id] = Date()
-            persistRecords()
+            persistTasks()
         }
     }
 
-    // MARK: - Record creation
+    // MARK: - Task creation
 
-    private func createMediaRecord(_ item: BaseItemDto) async throws {
+    private func createMediaTask(_ item: BaseItemDto) async throws {
         guard let id = item.id else { return }
-        if record(id: id) != nil { return }
+        if task(id: id) != nil { return }
 
-        let record = try DownloadRecord(item: item)
+        let task = try DownloadTask(item: item)
 
         await MainActor.run {
-            records.append(record)
-            persistRecords()
+            tasks.append(task)
+            persistTasks()
         }
 
-        try await writeMetadataSidecar(item: item, in: record.downloadFolder)
+        try await writeMetadataSidecar(item: item, in: task.downloadFolder)
     }
 
     // MARK: - JellyfinAPI helpers
