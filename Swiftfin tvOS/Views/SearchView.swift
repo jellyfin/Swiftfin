@@ -22,7 +22,7 @@ struct SearchView: View {
     private var searchQuery = ""
 
     @StateObject
-    private var viewModel = SearchViewModel()
+    private var viewModel = SearchViewModel(filterViewModel: .init())
 
     @ViewBuilder
     private var suggestionsView: some View {

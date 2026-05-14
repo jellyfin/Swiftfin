@@ -58,6 +58,7 @@ extension ItemView {
             if let criticRating = viewModel.item.criticRating {
                 AttributeBadge(
                     style: .outline,
+                    // swiftlint:disable:next hard_coded_display_string
                     title: Text("\(criticRating, specifier: "%.0f")")
                 ) {
                     if criticRating >= 60 {
@@ -75,6 +76,7 @@ extension ItemView {
             if let communityRating = viewModel.item.communityRating {
                 AttributeBadge(
                     style: .outline,
+                    // swiftlint:disable:next hard_coded_display_string
                     title: Text("\(communityRating, specifier: "%.01f")"),
                     systemName: "star.fill"
                 )

@@ -42,23 +42,11 @@ struct ItemFilterCollection: Hashable, Storable {
         traits: ItemTrait.supportedCases
     )
 
-    var hasFilters: Bool {
+    var isNotEmpty: Bool {
         self != Self.default
     }
 
     var hasQueryableFilters: Bool {
         genres.isNotEmpty || itemTypes.isNotEmpty || letter.isNotEmpty || tags.isNotEmpty || traits.isNotEmpty || years.isNotEmpty
-    }
-
-    var activeFilterCount: Int {
-        var count = 0
-
-        for filter in ItemFilterType.allCases {
-            if self[keyPath: filter.collectionAnyKeyPath] != Self.default[keyPath: filter.collectionAnyKeyPath] {
-                count += 1
-            }
-        }
-
-        return count
     }
 }

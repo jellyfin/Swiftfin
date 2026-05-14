@@ -103,7 +103,8 @@ struct UserButton: View {
 
         AlternateLayoutView {
             // Setting the subtitle here ensures that we reserve the horizonal spacing
-            Text(subtitle ?? "hidden")
+            // swiftlint:disable:next hard_coded_display_string
+            Text(subtitle ?? "Hidden")
                 .lineLimit(1)
         } content: {
             if let subtitle {
