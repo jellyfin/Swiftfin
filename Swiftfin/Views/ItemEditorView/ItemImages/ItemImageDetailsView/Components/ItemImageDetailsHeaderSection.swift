@@ -16,28 +16,66 @@ extension ItemImageDetailsView {
         // MARK: - Image Info
 
         let imageSource: ImageSource
+        let imageType: ImageType?
         let posterType: PosterDisplayType
 
         // MARK: - Body
 
         var body: some View {
             Section {
-                ImageView(imageSource)
-                    .placeholder { _ in
-                        Image(systemName: "photo")
-                    }
-                    .failure {
-                        Image(systemName: "photo")
-                    }
-                    .pipeline(.Swiftfin.other)
+                PosterImage(
+                    item: BasicImagePosterItem(
+                        displayTitle: L10n.image,
+                        id: 0,
+                        imageSource: imageSource,
+                        preferredPosterDisplayType: posterType,
+                        systemImage: "photo",
+                        type: imageType
+                    ),
+                    type: posterType,
+                    contentMode: .fit
+                )
+                .pipeline(.Swiftfin.other)
+                .frame(maxWidth: .infinity)
             }
-            .scaledToFit()
             .frame(maxHeight: 300)
-            .posterStyle(posterType)
-            .frame(maxWidth: .infinity)
             .listRowBackground(Color.clear)
             .listRowCornerRadius(0)
             .listRowInsets(.zero)
+        }
+    }
+}
+
+// TODO: have ImageInfo and RemoteImageInfo conform to a shared protocol
+
+private struct BasicImagePosterItem: Poster {
+
+    let displayTitle: String
+    let id: Int
+    let imageSource: ImageSource
+    let preferredPosterDisplayType: PosterDisplayType
+    let systemImage: String
+    let type: ImageType?
+
+    func imageSources(
+        for displayType: PosterDisplayType,
+        size: PosterDisplayType.Size,
+        environment: Empty
+    ) -> [ImageSource] {
+        [imageSource]
+    }
+
+    @ViewBuilder
+    func transform(image: Image, displayType: PosterDisplayType) -> some View {
+        switch type {
+        case .logo:
+            ContainerRelativeView(ratio: 0.95) {
+                image
+                    .aspectRatio(contentMode: .fit)
+            }
+        default:
+            image
+                .aspectRatio(contentMode: .fill)
         }
     }
 }

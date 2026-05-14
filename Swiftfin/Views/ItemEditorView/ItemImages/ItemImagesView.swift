@@ -92,14 +92,16 @@ struct ItemImagesView: View {
     @ViewBuilder
     private var imageView: some View {
         ScrollView {
-            ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
-                Section {
-                    imageScrollView(for: imageType)
-
-                    RowDivider()
-                        .padding(.vertical, 16)
-                } header: {
-                    sectionHeader(for: imageType)
+            SeparatorVStack(alignment: .leading) {
+                Divider()
+                    .edgePadding(.horizontal)
+                    .padding(.vertical, 10)
+            } content: {
+                ForEach(
+                    ImageType.allCases.sorted(using: \.rawValue),
+                    id: \.self
+                ) { imageType in
+                    imageSection(for: imageType)
                 }
             }
         }
@@ -108,26 +110,29 @@ struct ItemImagesView: View {
     // MARK: - Image Scroll View
 
     @ViewBuilder
-    private func imageScrollView(for imageType: ImageType) -> some View {
+    private func imageSection(for imageType: ImageType) -> some View {
         let images = viewModel.images[imageType] ?? []
 
-        if images.isNotEmpty {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(images, id: \.self) { imageInfo in
-                        imageButton(imageInfo: imageInfo) {
-                            router.route(
-                                to: .itemImageDetails(
-                                    viewModel: viewModel,
-                                    imageInfo: imageInfo
-                                )
-                            )
-                        }
-                    }
-                }
-                .edgePadding(.horizontal)
-            }
+        PosterHStack(
+            elements: images,
+            type: images.first?.preferredPosterDisplayType ?? .portrait
+        ) { imageInfo, _ in
+            router.route(
+                to: .itemImageDetails(
+                    viewModel: viewModel,
+                    imageInfo: imageInfo
+                )
+            )
+        } header: {
+            sectionHeader(for: imageType)
         }
+        .customEnvironment(
+            for: ImageInfo.self,
+            value: .init(
+                itemID: viewModel.item.id!,
+                client: viewModel.userSession.client
+            )
+        )
     }
 
     // MARK: - Section Header
@@ -136,7 +141,7 @@ struct ItemImagesView: View {
     private func sectionHeader(for imageType: ImageType) -> some View {
         HStack {
             Text(imageType.displayTitle)
-                .font(.headline)
+                .accessibilityAddTraits(.isHeader)
 
             Spacer()
 
@@ -156,44 +161,32 @@ struct ItemImagesView: View {
                     router.route(to: .itemImageSelector(viewModel: viewModel, imageType: imageType))
                 }
             }
-            .font(.body)
             .labelStyle(.iconOnly)
-            .fontWeight(.semibold)
             .foregroundStyle(accentColor)
         }
+        .font(.title2)
+        .fontWeight(.semibold)
         .edgePadding(.horizontal)
     }
 
     // MARK: - Image Button
 
-    // TODO: instead of using `posterStyle`, should be sized based on
-    //       the image type and just ignore and poster styling
     @ViewBuilder
     private func imageButton(
         imageInfo: ImageInfo,
         onSelect: @escaping () -> Void
     ) -> some View {
         Button(action: onSelect) {
-            ZStack {
-                Color.secondarySystemFill
-
-                ImageView(
-                    imageInfo.itemImageSource(
-                        itemID: viewModel.item.id!,
-                        client: viewModel.userSession.client
-                    )
-                )
-                .placeholder { _ in
-                    Image(systemName: "photo")
-                }
-                .failure {
-                    Image(systemName: "photo")
-                }
-                .pipeline(.Swiftfin.other)
-            }
-            .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)
-            .frame(maxHeight: 150)
+            PosterImage(
+                item: imageInfo,
+                type: imageInfo.preferredPosterDisplayType
+            )
+            .pipeline(.Swiftfin.other)
             .posterShadow()
+            .customEnvironment(
+                for: ImageInfo.self,
+                value: .init(itemID: viewModel.item.id!, client: viewModel.userSession.client)
+            )
         }
     }
 }

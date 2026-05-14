@@ -7,15 +7,18 @@
 //
 
 #if os(iOS)
+import Combine
 import SwiftUI
 import Transmission
+
+typealias TransitionReaderProxySubject = PassthroughSubject<TransitionReaderProxy?, Never>
 
 // TODO: sometimes causes hangs?
 
 struct WithTransitionReaderPublisher<Content: View>: View {
 
     @StateObject
-    private var publishedBox: PublishedBox<LegacyEventPublisher<TransitionReaderProxy?>> = .init(initialValue: .init())
+    private var publishedBox: PublishedBox<TransitionReaderProxySubject> = .init(initialValue: .init())
 
     let content: Content
 
@@ -43,7 +46,7 @@ struct TransitionReaderObserver: DynamicProperty {
     @Environment(\.transitionReader)
     private var publisher
 
-    var wrappedValue: LegacyEventPublisher<TransitionReaderProxy?> {
+    var wrappedValue: TransitionReaderProxySubject {
         publisher
     }
 }
@@ -51,6 +54,6 @@ struct TransitionReaderObserver: DynamicProperty {
 extension EnvironmentValues {
 
     @Entry
-    var transitionReader: LegacyEventPublisher<TransitionReaderProxy?> = .init()
+    var transitionReader: TransitionReaderProxySubject = .init()
 }
 #endif

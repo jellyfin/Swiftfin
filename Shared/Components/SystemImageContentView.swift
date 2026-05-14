@@ -14,31 +14,39 @@ import SwiftUI
 
 struct ContainerRelativeView<Content: View>: View {
 
+    private let alignment: Alignment
     private let content: Content
     private let ratio: CGSize
 
     init(
+        alignment: Alignment = .center,
         ratio: CGFloat,
         @ViewBuilder content: () -> Content
     ) {
+        self.alignment = alignment
         self.content = content()
         self.ratio = CGSize(width: ratio, height: ratio)
     }
 
     init(
+        alignment: Alignment = .center,
         ratio: CGSize = CGSize(width: 1, height: 1),
         @ViewBuilder content: () -> Content
     ) {
+        self.alignment = alignment
         self.content = content()
         self.ratio = ratio
     }
 
     var body: some View {
-        AlternateLayoutView {
+        AlternateLayoutView(alignment: alignment) {
             Color.clear
         } content: { size in
             content
-                .frame(width: size.width * ratio.width, height: size.height * ratio.height)
+                .frame(
+                    width: size.width * ratio.width,
+                    height: size.height * ratio.height
+                )
         }
     }
 }

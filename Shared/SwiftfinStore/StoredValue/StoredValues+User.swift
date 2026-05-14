@@ -112,6 +112,22 @@ extension StoredValues.Keys {
             )
         }
 
+        static func libraryStyle(id: String?) -> Key<LibraryStyle> {
+            if let id {
+                CurrentUserKey(
+                    id,
+                    field: "setting-libraryStyle",
+                    default: .default
+                )
+            } else {
+                CurrentUserKey(
+                    "swiftfin-default",
+                    field: "setting-libraryStyle",
+                    default: .default
+                )
+            }
+        }
+
         static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
             CurrentUserKey(
                 parentID,
@@ -125,6 +141,14 @@ extension StoredValues.Keys {
                 parentID,
                 field: "setting-libraryListColumnCount",
                 default: Defaults[.Customization.Library.listColumnCount]
+            )
+        }
+
+        static func posterButtonStyle(parentID: String?) -> Key<PosterDisplayConfiguration> {
+            CurrentUserKey(
+                parentID,
+                field: "setting-posterButtonStyle",
+                default: .default
             )
         }
 
@@ -162,6 +186,7 @@ extension StoredValues.Keys {
             )
         }
 
+        // TODO: move edit/delete item + edit collections to an OptionSet
         static var enableItemEditing: Key<Bool> {
             CurrentUserKey(
                 field: "enableItemEditing",

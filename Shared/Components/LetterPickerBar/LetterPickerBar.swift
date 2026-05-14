@@ -62,7 +62,7 @@ struct LetterPickerBar: View {
             $focusedLetter,
             viewModel.currentFilters.letter.first
                 ?? ItemLetter.allCases.first
-                ?? ItemLetter(stringLiteral: "#"),
+                ?? ItemLetter(value: "#"),
             priority: focusedLetter == nil ? .userInitiated : .automatic
         )
         #endif

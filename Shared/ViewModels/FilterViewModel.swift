@@ -40,10 +40,10 @@ final class FilterViewModel: ViewModel {
     @Published
     var currentFilters: ItemFilterCollection
 
-    private let parent: (any LibraryParent)?
+    private let parent: (any _LibraryParent)?
 
     init(
-        parent: (any LibraryParent)? = nil,
+        parent: (any _LibraryParent)? = nil,
         currentFilters: ItemFilterCollection = .default
     ) {
         self.parent = parent
@@ -90,7 +90,7 @@ final class FilterViewModel: ViewModel {
 
         let parameters = Paths.GetQueryFiltersLegacyParameters(
             userID: userSession.user.id,
-            parentID: parent?.id
+            parentID: parent?.libraryID
         )
 
         let request = Paths.getQueryFiltersLegacy(parameters: parameters)

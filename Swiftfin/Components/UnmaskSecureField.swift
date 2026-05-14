@@ -6,13 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import SwiftUI
 
 // TODO: use _UIHostingView for button animation workaround?
 //       - have a nice animation for toggle
 
 /// - Note: Do not use this view directly.
-/// Use `SecureField.init(_:text:maskToggle)` instead
+/// Use `SecureField.init(_:text:maskToggle:)` instead
 struct _UnmaskSecureField: UIViewRepresentable {
 
     private var submitAction: () -> Void
@@ -31,7 +32,7 @@ struct _UnmaskSecureField: UIViewRepresentable {
     func makeUIView(context: Context) -> UITextField {
 
         let textField = UITextField()
-        textField.font = context.environment.font?.uiFont ?? UIFont.preferredFont(forTextStyle: .body)
+        textField.font = context.environment.font?.toUIFont()
         textField.adjustsFontForContentSizeCategory = true
         textField.isSecureTextEntry = true
         textField.keyboardType = .asciiCapable

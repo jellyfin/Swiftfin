@@ -89,11 +89,6 @@ final class MediaViewModel: ViewModel {
             return []
         }
 
-        // downloads doesn't have random
-        if mediaType == .downloads {
-            return []
-        }
-
         var parentID: String?
 
         if case let MediaType.collectionFolder(item) = mediaType {
@@ -118,6 +113,6 @@ final class MediaViewModel: ViewModel {
         let response = try await userSession.client.send(request)
 
         return (response.value.items ?? [])
-            .flatMap { $0.landscapeImageSources(maxWidth: 200) }
+            .flatMap { $0.landscapeImageSources(maxWidth: 200, environment: .init()) }
     }
 }

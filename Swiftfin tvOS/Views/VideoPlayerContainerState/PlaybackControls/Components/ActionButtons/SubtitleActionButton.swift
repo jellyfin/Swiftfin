@@ -12,7 +12,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
     struct Subtitles: View {
 
-        @Environment(\.isInMenu)
+        @ViewContextContains(.isInMenu)
         private var isInMenu
 
         @EnvironmentObject

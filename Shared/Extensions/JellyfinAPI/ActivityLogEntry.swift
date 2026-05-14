@@ -19,15 +19,7 @@ extension ActivityLogEntry: Poster {
         name ?? L10n.unknown
     }
 
-    var unwrappedIDHashOrZero: Int {
-        id?.hashValue ?? 0
-    }
-
     var systemImage: String {
         "text.document"
-    }
-
-    func transform(image: Image) -> some View {
-        image
     }
 }

@@ -79,14 +79,21 @@ extension MediaPeopleSupplement {
                 type: .portrait
             ) { _ in
             } label: {
-                PosterButton<BaseItemPerson>.TitleSubtitleContentView(item: person)
+                TitleSubtitleContentView(
+                    title: person.displayTitle,
+                    subtitle: person.firstRole ?? ""
+                )
             }
             #else
             PosterButton(
                 item: person,
                 type: .portrait
-            ) {} label: {
-                PosterButton<BaseItemPerson>.TitleSubtitleContentView(item: person)
+            ) { _ in
+            } label: {
+                TitleSubtitleContentView(
+                    title: person.displayTitle,
+                    subtitle: person.firstRole ?? ""
+                )
             }
             #endif
         }
@@ -95,7 +102,7 @@ extension MediaPeopleSupplement {
         private var iOSRegularView: some View {
             CollectionHStack(
                 uniqueElements: people,
-                id: \.unwrappedIDHashOrZero,
+                id: \.hashValue,
                 layout: .minimumWidth(columnWidth: 80, rows: 1)
             ) { person in
                 personView(for: person)
@@ -109,7 +116,7 @@ extension MediaPeopleSupplement {
         var tvOSView: some View {
             CollectionHStack(
                 uniqueElements: people,
-                id: \.unwrappedIDHashOrZero,
+                id: \.hashValue,
                 columns: 7
             ) { person in
                 personView(for: person)
@@ -149,7 +156,7 @@ extension MediaPeopleSupplement {
         let person: BaseItemPerson
 
         var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding), action: {}) {
                 PosterImage(
                     item: person,
                     type: .portrait,

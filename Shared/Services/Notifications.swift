@@ -11,6 +11,7 @@ import Combine
 import Factory
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 import UIKit
 
 extension Container {
@@ -123,24 +124,12 @@ extension Notifications.Key {
 
     // MARK: - App Flow
 
-    static var processDeepLink: Key<Void> {
-        Key("processDeepLink")
-    }
-
-    static var didPurge: Key<Void> {
-        Key("didPurge")
-    }
-
     static var didChangeCurrentServerURL: Key<ServerState> {
         Key("didChangeCurrentServerURL")
     }
 
     static var didSendStopReport: Key<Void> {
         Key("didSendStopReport")
-    }
-
-    static var didRequestGlobalRefresh: Key<Void> {
-        Key("didRequestGlobalRefresh")
     }
 
     static var didFailMigration: Key<Void> {
@@ -150,6 +139,10 @@ extension Notifications.Key {
     // MARK: - Media Items
 
     // TODO: come up with a cleaner, more defined way for item update notifications
+
+    static var itemUserDataDidChange: Key<UserItemDataDto> {
+        Key("itemUserDataDidChange")
+    }
 
     /// - Payload: The new item with updated metadata.
     static var itemMetadataDidChange: Key<BaseItemDto> {
@@ -185,16 +178,6 @@ extension Notifications.Key {
 
     static var didAddServerUser: Key<UserDto> {
         Key("didAddServerUser")
-    }
-
-    // MARK: - Playback
-
-    static var didStartPlayback: Key<Void> {
-        Key("didStartPlayback")
-    }
-
-    static var interruption: Key<Void> {
-        Key(AVAudioSession.interruptionNotification)
     }
 
     // MARK: - UIApplication

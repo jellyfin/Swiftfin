@@ -92,43 +92,26 @@ extension Backport where Content: View {
         }
     }
 
-    @available(tvOS, unavailable)
+    /// - Important: This does nothing on tvOS.
     @ViewBuilder
     func searchFocused(
         _ isSearchFocused: FocusState<Bool>.Binding
     ) -> some View {
+        #if os(iOS)
         if #available(iOS 18.0, *) {
             content.searchFocused(isSearchFocused)
         } else {
             content
         }
+        #else
+        content
+        #endif
     }
-}
 
-// MARK: ButtonBorderShape
-
-enum ButtonBorderShape {
-    case automatic
-    case capsule
-    case roundedRectangle
-    case circle
-
-    var swiftUIValue: SwiftUI.ButtonBorderShape {
-        switch self {
-        case .automatic: .automatic
-        case .capsule: .capsule
-        case .roundedRectangle: .roundedRectangle
-        case .circle:
-            if #available(iOS 17, *) {
-                .circle
-            } else {
-                .roundedRectangle
-            }
-        }
+    @available(iOS 9999, *)
+    @ViewBuilder
+    func tabViewStyle(_ style: TabViewStyle) -> some View {
+        content.tabViewStyle(style.swiftUIValue)
+            .eraseToAnyView()
     }
-}
-
-enum NavigationTransition: Hashable {
-    case automatic
-    case zoom(sourceID: String, namespace: Namespace.ID)
 }

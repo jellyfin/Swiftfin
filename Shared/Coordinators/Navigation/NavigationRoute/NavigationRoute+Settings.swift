@@ -145,6 +145,24 @@ extension NavigationRoute {
     }
     #endif
 
+    static let itemSettings = NavigationRoute(
+        id: "itemSettings"
+    ) {
+        CustomizeViewsSettings.ItemSection()
+    }
+
+    static let librarySettings = NavigationRoute(
+        id: "librarySettings"
+    ) {
+        CustomizeViewsSettings.LibrarySection()
+    }
+
+    static let posterSettings = NavigationRoute(
+        id: "posterSettings"
+    ) {
+        CustomizeViewsSettings.PosterSection()
+    }
+
     static var indicatorSettings: NavigationRoute {
         NavigationRoute(
             id: "indicatorSettings"

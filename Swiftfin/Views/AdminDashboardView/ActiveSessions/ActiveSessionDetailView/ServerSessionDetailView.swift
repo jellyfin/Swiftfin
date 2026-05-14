@@ -17,7 +17,7 @@ struct ActiveSessionDetailView: View {
     private var router
 
     @ObservedObject
-    var box: BindingBox<SessionInfoDto?>
+    var box: PublishedBox<SessionInfoDto?>
 
     // MARK: Create Idle Content View
 

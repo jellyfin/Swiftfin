@@ -64,12 +64,14 @@ final class UserSignInViewModel: ViewModel {
             switch self {
             case .cancel:
                 .to(.initial)
-            case .error, .save, .saveExisting:
+            case .save, .saveExisting:
                 .none
             case .getPublicData:
                 .background(.gettingPublicData)
             case .signIn, .signInQuickConnect:
                 .loop(.signingIn)
+            default:
+                .none
             }
         }
     }

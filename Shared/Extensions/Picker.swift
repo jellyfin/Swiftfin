@@ -16,7 +16,7 @@ struct _OptionalCaseIterablePickerContent<Element: CaseIterable & Displayable & 
         Text(noneStyle.displayTitle)
             .tag(nil as Element?)
 
-        ForEach(Element.allCases.asArray, id: \.hashValue) {
+        ForEach(Array(Element.allCases), id: \.hashValue) {
             Text($0.displayTitle)
                 .tag($0 as Element?)
         }
@@ -26,7 +26,7 @@ struct _OptionalCaseIterablePickerContent<Element: CaseIterable & Displayable & 
 struct _CaseIterablePickerContent<Element: CaseIterable & Displayable & Hashable>: View {
 
     var body: some View {
-        ForEach(Element.allCases.asArray, id: \.hashValue) {
+        ForEach(Array(Element.allCases), id: \.hashValue) {
             Text($0.displayTitle)
                 .tag($0 as Element)
         }
@@ -38,7 +38,7 @@ struct _SupportedCaseIterablePickerContent<Element: SupportedCaseIterable & Disp
     let onlySupported: Bool
 
     private var elements: [Element] {
-        onlySupported ? Element.supportedCases.asArray : Element.allCases.asArray
+        onlySupported ? Array(Element.supportedCases) : Array(Element.allCases)
     }
 
     var body: some View {
@@ -53,11 +53,13 @@ struct _OptionalSourcesPickerContent<Element: Identifiable & Displayable & Hasha
 where Data.Element == Element {
 
     let sources: Data
-    let noneStyle: NoneStyle
+    let noneStyle: NoneStyle?
 
     var body: some View {
-        Text(noneStyle.displayTitle)
-            .tag(nil as Element?)
+        if let noneStyle {
+            Text(noneStyle.displayTitle)
+                .tag(nil as Element?)
+        }
 
         ForEach(sources) { element in
             Text(element.displayTitle)
@@ -101,7 +103,7 @@ extension Picker where Label == Text {
         _ title: String,
         sources: Data,
         selection: Binding<E?>,
-        noneStyle: NoneStyle = .text
+        noneStyle: NoneStyle? = .text
     ) where SelectionValue == E?, Content == _OptionalSourcesPickerContent<E, Data>, Data.Element == E {
         self.init(title, selection: selection) {
             _OptionalSourcesPickerContent(sources: sources, noneStyle: noneStyle)

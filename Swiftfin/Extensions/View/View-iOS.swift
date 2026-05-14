@@ -6,27 +6,46 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
 extension View {
 
-    func detectOrientation(_ orientation: Binding<UIDeviceOrientation>) -> some View {
-        modifier(DetectOrientation(orientation: orientation))
-    }
-
     /// - Important: This does nothing on iOS.
+    @ViewBuilder
     func focusSection() -> some View {
         self
     }
 
-    func navigationBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
-        modifier(NavigationBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
+    @ViewBuilder
+    func listRowCornerRadius(_ radius: CGFloat) -> some View {
+        introspect(.listCell, on: .iOS(.v16...)) { cell in
+            if #available(iOS 26, *) {
+                cell.cornerConfiguration = .uniformCorners(radius: .fixed(radius))
+            } else {
+                cell.layer.cornerRadius = radius
+            }
+        }
     }
 
-    func navigationBarDrawer(@ViewBuilder _ drawer: @escaping () -> some View) -> some View {
+    @ViewBuilder
+    func navigationBarDrawer(
+        @ViewBuilder _ drawer: @escaping () -> some View
+    ) -> some View {
         modifier(NavigationBarDrawerModifier(drawer: drawer))
+    }
+
+    @ViewBuilder
+    func navigationBarCloseButton(
+        disabled: Bool = false,
+        _ action: @escaping () -> Void
+    ) -> some View {
+        modifier(
+            NavigationBarCloseButtonModifier(
+                disabled: disabled,
+                action: action
+            )
+        )
     }
 
     @ViewBuilder
@@ -47,42 +66,17 @@ extension View {
     }
 
     @ViewBuilder
-    func navigationBarCloseButton(
-        disabled: Bool = false,
-        _ action: @escaping () -> Void
-    ) -> some View {
-        modifier(
-            NavigationBarCloseButtonModifier(
-                disabled: disabled,
-                action: action
-            )
-        )
-    }
-
-    @ViewBuilder
     func navigationBarMenuButton(
         isLoading: Bool = false,
         isHidden: Bool = false,
-        @ViewBuilder
-        _ items: @escaping () -> some View
+        @ViewBuilder _ content: @escaping () -> some View
     ) -> some View {
         modifier(
             NavigationBarMenuButtonModifier(
                 isLoading: isLoading,
                 isHidden: isHidden,
-                items: items
+                menuContent: content
             )
         )
-    }
-
-    @ViewBuilder
-    func listRowCornerRadius(_ radius: CGFloat) -> some View {
-        introspect(.listCell, on: .iOS(.v16...)) { cell in
-            if #available(iOS 26, *) {
-                cell.cornerConfiguration = .uniformCorners(radius: .fixed(radius))
-            } else {
-                cell.layer.cornerRadius = radius
-            }
-        }
     }
 }

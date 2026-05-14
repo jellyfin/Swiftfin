@@ -45,13 +45,7 @@ struct ServerCheckView: View {
             }
         }
         .topBarTrailing {
-
-            SettingsBarButton(
-                server: viewModel.userSession.server,
-                user: viewModel.userSession.user
-            ) {
-                router.route(to: .settings)
-            }
+            SettingsBarButton()
         }
     }
 }

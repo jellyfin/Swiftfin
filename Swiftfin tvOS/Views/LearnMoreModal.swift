@@ -9,13 +9,13 @@
 import SwiftUI
 
 @available(*, deprecated, message: "Use `Section(:content:learnMore:)` and a `Form` with an image instead")
-struct LearnMoreModal: View {
+struct LearnMoreModal<Content: View>: View {
 
-    private let content: AnyView
+    private let content: Content
 
     // MARK: - Initializer
 
-    init(@LabeledContentBuilder content: () -> AnyView) {
+    init(@LabeledContentBuilder content: () -> Content) {
         self.content = content()
     }
 

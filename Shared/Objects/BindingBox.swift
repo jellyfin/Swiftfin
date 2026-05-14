@@ -42,12 +42,3 @@ class BindingBox<Wrapped>: ObservableObject {
         valueObserver = nil
     }
 }
-
-extension Publisher where Failure == Never {
-
-    func assign(to binding: Binding<Output>) -> AnyCancellable {
-        self.sink { value in
-            binding.wrappedValue = value
-        }
-    }
-}

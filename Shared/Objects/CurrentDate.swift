@@ -44,7 +44,7 @@ extension CurrentDate {
         private var publisher: AnyCancellable?
 
         init(interval: TimeInterval) {
-            publisher = Timer.publish(every: 1, on: .main, in: .common)
+            publisher = Timer.publish(every: interval, on: .main, in: .common)
                 .autoconnect()
                 .sink { [weak self] _ in
                     if let self {

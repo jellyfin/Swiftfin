@@ -110,7 +110,7 @@ extension Defaults.Keys {
     enum Customization {
 
         static var itemViewType: Key<ItemViewType> {
-            UserKey("itemViewType", default: .compactLogo)
+            UserKey("mediaItemViewType", default: .enhanced)
         }
 
         static var showPosterLabels: Key<Bool> {
@@ -162,6 +162,13 @@ extension Defaults.Keys {
 
         enum Indicators {
 
+            static var enabled: Key<PosterIndicator> {
+                UserKey(
+                    "enabledPosterIndicators",
+                    default: [.favorited, .played, .progress, .unplayed]
+                )
+            }
+
             static var showFavorited: Key<Bool> {
                 UserKey("showFavoritedIndicator", default: true)
             }
@@ -193,7 +200,11 @@ extension Defaults.Keys {
             }
 
             static var letterPickerOrientation: Key<LetterPickerOrientation> {
-                UserKey("letterPickerOrientation", default: .disabled)
+                UserKey("letterPickerOrientation", default: .trailing)
+            }
+
+            static var letterPickerEnabled: Key<Bool> {
+                UserKey("letterPickerEnabled", default: false)
             }
 
             static var displayType: Key<LibraryDisplayType> {
@@ -222,6 +233,10 @@ extension Defaults.Keys {
 
             static var rememberSort: Key<Bool> {
                 UserKey("libraryRememberSort", default: false)
+            }
+
+            static var _libraryStyle: Key<LibraryStyle> {
+                UserKey("libraryStyle", default: .default)
             }
         }
 

@@ -9,56 +9,31 @@
 import Foundation
 import JellyfinAPI
 
-final class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
+// TODO: Good example of a multi-library view model, find way to generalize
+//       - variadic generics when available?
+//       - be like server activity that just subclasses and then encapsulates multiple libraries?
+//       - need way to wait for initial results of all libraries
 
-    // Image providers come from the paging call
-    @Published
-    private(set) var providers: [String] = []
+@MainActor
+final class RemoteImageInfoViewModel: ObservableObject {
 
-    @Published
-    var includeAllLanguages: Bool = false {
-        didSet {
-            DispatchQueue.main.async {
-                self.send(.refresh)
-            }
-        }
+    var remoteImageLibrary: PagingLibraryViewModel<RemoteImageLibrary>
+    let remoteImageProvidersLibrary: PagingLibraryViewModel<RemoteImageProvidersLibrary>
+
+    init(itemID: String, imageType: ImageType) {
+        self.remoteImageLibrary = .init(
+            library: .init(
+                imageType: imageType,
+                itemID: itemID
+            )
+        )
+        self.remoteImageProvidersLibrary = .init(
+            library: .init(itemID: itemID)
+        )
     }
 
-    @Published
-    var provider: String? = nil {
-        didSet {
-            DispatchQueue.main.async {
-                self.send(.refresh)
-            }
-        }
-    }
-
-    let imageType: ImageType
-
-    init(imageType: ImageType, parent: BaseItemDto) {
-
-        self.imageType = imageType
-
-        super.init(parent: parent)
-    }
-
-    override func get(page: Int) async throws -> [RemoteImageInfo] {
-        guard let itemID = parent?.id else { return [] }
-
-        var parameters = Paths.GetRemoteImagesParameters()
-        parameters.isIncludeAllLanguages = includeAllLanguages
-        parameters.limit = pageSize
-        parameters.providerName = provider
-        parameters.startIndex = page * pageSize
-        parameters.type = imageType
-
-        let request = Paths.getRemoteImages(itemID: itemID, parameters: parameters)
-        let response = try await userSession.client.send(request)
-
-        await MainActor.run {
-            providers = response.value.providers ?? []
-        }
-
-        return response.value.images ?? []
+    func refresh() {
+        remoteImageLibrary.refresh()
+        remoteImageProvidersLibrary.refresh()
     }
 }

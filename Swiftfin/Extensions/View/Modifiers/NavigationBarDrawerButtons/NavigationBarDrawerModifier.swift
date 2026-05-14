@@ -10,15 +10,15 @@ import SwiftUI
 
 struct NavigationBarDrawerModifier<Drawer: View>: ViewModifier {
 
-    private let drawer: () -> Drawer
+    private let drawer: Drawer
 
     init(@ViewBuilder drawer: @escaping () -> Drawer) {
-        self.drawer = drawer
+        self.drawer = drawer()
     }
 
     func body(content: Content) -> some View {
         NavigationBarDrawerView {
-            drawer()
+            drawer
                 .ignoresSafeArea()
         } content: {
             content

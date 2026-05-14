@@ -10,8 +10,11 @@ import SwiftUI
 
 struct ScrollIfLargerThanContainerModifier: ViewModifier {
 
+    @ViewContextContains(.withConstrainedSize)
+    private var withConstrainedSize: Bool
+
     @State
-    private var contentSize: CGSize = .zero
+    private var contentFrame: CGRect = .zero
 
     let axes: Axis.Set
     let padding: CGFloat
@@ -22,22 +25,25 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
             Color.clear
         } content: { layoutSize in
 
-            let isHorizontallyLarger: Bool = (contentSize.width + padding >= layoutSize.width) && axes.contains(.horizontal)
-            let isVerticallyLarger: Bool = (contentSize.height + padding >= layoutSize.height) && axes.contains(.vertical)
+            let isHorizontallyLarger: Bool = (contentFrame.width + padding >= layoutSize.width) && axes.contains(.horizontal)
+            let isVerticallyLarger: Bool = (contentFrame.height + padding >= layoutSize.height) && axes.contains(.vertical)
 
             ScrollView(axes) {
                 content
-                    .trackingSize($contentSize)
+                    .trackingFrame($contentFrame)
             }
             .frame(
-                maxWidth: axes.contains(.horizontal) ? (isHorizontallyLarger ? .infinity : contentSize.width) : nil,
-                maxHeight: axes.contains(.vertical) ? (isVerticallyLarger ? .infinity : contentSize.height) : nil,
+                maxWidth: axes.contains(.horizontal) ? (isHorizontallyLarger ? .infinity : contentFrame.width) : nil,
+                maxHeight: axes.contains(.vertical) ? (isVerticallyLarger ? .infinity : contentFrame.height) : nil,
                 alignment: alignment
             )
             .backport // iOS 17
             .scrollClipDisabled()
             .scrollDisabled((axes.contains(.horizontal) && !isHorizontallyLarger) || (axes.contains(.vertical) && !isVerticallyLarger))
             .scrollIndicators(.never)
+        }
+        .if(withConstrainedSize) { view in
+            view.frame(maxWidth: contentFrame.width)
         }
     }
 }

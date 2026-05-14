@@ -24,13 +24,4 @@ extension ItemSortOrder: Displayable {
     }
 }
 
-extension ItemSortOrder: ItemFilter {
-
-    var value: String {
-        rawValue
-    }
-
-    init(from anyFilter: AnyItemFilter) {
-        self.init(rawValue: anyFilter.value)!
-    }
-}
+extension ItemSortOrder: ItemFilter {}

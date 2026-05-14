@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ItemGenre: Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
+struct ItemGenre: Codable, Hashable, ItemFilter {
 
     let value: String
 
@@ -16,7 +16,7 @@ struct ItemGenre: Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
         value
     }
 
-    init(stringLiteral value: String) {
+    init(value: String) {
         self.value = value
     }
 

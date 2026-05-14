@@ -129,13 +129,4 @@ extension ItemSortBy: Displayable, SupportedCaseIterable {
     }
 }
 
-extension ItemSortBy: ItemFilter {
-
-    var value: String {
-        rawValue
-    }
-
-    init(from anyFilter: AnyItemFilter) {
-        self.init(rawValue: anyFilter.value)!
-    }
-}
+extension ItemSortBy: ItemFilter {}

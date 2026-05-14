@@ -274,7 +274,7 @@ struct CustomizeSettingsView: View {
             Section {
                 PlatformPicker(L10n.type, selection: $itemViewType)
 
-                if itemViewType == .cinematic {
+                if itemViewType == .enhanced {
                     Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
                 }
 
@@ -282,7 +282,7 @@ struct CustomizeSettingsView: View {
             } header: {
                 Text(L10n.itemView)
             } footer: {
-                if itemViewType == .cinematic {
+                if itemViewType == .enhanced {
                     Text(L10n.usePrimaryImageDescription)
                 }
             }

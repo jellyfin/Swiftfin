@@ -10,31 +10,28 @@ import SwiftUI
 
 struct NavigationBarDrawerView<Content: View, Drawer: View>: UIViewControllerRepresentable {
 
-    private let buttons: () -> Drawer
-    private let content: () -> Content
+    private let content: Content
+    private let drawer: Drawer
 
     init(
-        @ViewBuilder buttons: @escaping () -> Drawer,
+        @ViewBuilder drawer: @escaping () -> Drawer,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        self.buttons = buttons
-        self.content = content
+        self.content = content()
+        self.drawer = drawer()
     }
 
-    func makeUIViewController(context: Context) -> UINavigationBarDrawerHostingController<Content, Drawer> {
-        UINavigationBarDrawerHostingController<Content, Drawer>(buttons: buttons, content: content)
+    func makeUIViewController(context: Context) -> _UINavigationBarDrawerHostingController<Content, Drawer> {
+        _UINavigationBarDrawerHostingController(content: content, drawer: drawer)
     }
 
-    func updateUIViewController(_ uiViewController: UINavigationBarDrawerHostingController<Content, Drawer>, context: Context) {}
+    func updateUIViewController(_ uiViewController: _UINavigationBarDrawerHostingController<Content, Drawer>, context: Context) {}
 }
 
-class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIHostingController<Content> {
+class _UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIHostingController<Content> {
 
-    private let drawer: () -> Drawer
-    private let content: () -> Content
-
-    // TODO: see if we can get the height instead from the view passed in
-    private let drawerHeight: CGFloat = 36
+    private let drawer: Drawer
+    private var drawerHeight: CGFloat = 0
 
     private lazy var blurView: UIVisualEffectView = {
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
@@ -42,21 +39,19 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIHos
         return blurView
     }()
 
-    private lazy var drawerButtonsView: UIHostingController<Drawer> = {
-        let drawerButtonsView = UIHostingController(rootView: drawer())
+    private lazy var drawerView: UIHostingController<Drawer> = {
+        let drawerButtonsView = UIHostingController(rootView: drawer)
         drawerButtonsView.view.translatesAutoresizingMaskIntoConstraints = false
         drawerButtonsView.view.backgroundColor = nil
         return drawerButtonsView
     }()
 
     init(
-        buttons: @escaping () -> Drawer,
-        content: @escaping () -> Content
+        content: Content,
+        drawer: Drawer
     ) {
-        self.drawer = buttons
-        self.content = content
-
-        super.init(rootView: content())
+        self.drawer = drawer
+        super.init(rootView: content)
     }
 
     @available(*, unavailable)
@@ -68,23 +63,30 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIHos
         super.viewDidLoad()
 
         view.backgroundColor = nil
-
         view.addSubview(blurView)
 
-        addChild(drawerButtonsView)
-        view.addSubview(drawerButtonsView.view)
-        drawerButtonsView.didMove(toParent: self)
+        addChild(drawerView)
+        view.addSubview(drawerView.view)
+        drawerView.didMove(toParent: self)
+
+        drawerHeight = drawerView.sizeThatFits(
+            in: .init(
+                width: view.frame.width,
+                height: CGFloat.greatestFiniteMagnitude
+            )
+        )
+        .height
 
         NSLayoutConstraint.activate([
-            drawerButtonsView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -drawerHeight),
-            drawerButtonsView.view.heightAnchor.constraint(equalToConstant: drawerHeight),
-            drawerButtonsView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            drawerButtonsView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            drawerView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -drawerHeight),
+            drawerView.view.heightAnchor.constraint(equalToConstant: drawerHeight),
+            drawerView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            drawerView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
 
         NSLayoutConstraint.activate([
             blurView.topAnchor.constraint(equalTo: view.topAnchor),
-            blurView.bottomAnchor.constraint(equalTo: drawerButtonsView.view.bottomAnchor),
+            blurView.bottomAnchor.constraint(equalTo: drawerView.view.bottomAnchor),
             blurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             blurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
@@ -104,10 +106,20 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIHos
 
     override var additionalSafeAreaInsets: UIEdgeInsets {
         get {
-            .init(top: drawerHeight, left: 0, bottom: 0, right: 0)
+            .init(
+                top: drawerHeight,
+                left: 0,
+                bottom: 0,
+                right: 0
+            )
         }
         set {
-            super.additionalSafeAreaInsets = .init(top: drawerHeight, left: 0, bottom: 0, right: 0)
+            super.additionalSafeAreaInsets = .init(
+                top: drawerHeight,
+                left: 0,
+                bottom: 0,
+                right: 0
+            )
         }
     }
 }

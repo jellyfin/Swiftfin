@@ -8,8 +8,7 @@
 
 import Combine
 
-// TODO: remove, apply the Stateful macro
-
+@available(*, deprecated, message: "Apply the `Stateful` macro instead")
 protocol Eventful {
 
     associatedtype Event

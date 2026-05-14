@@ -36,7 +36,6 @@ struct ItemEditorView: View {
             router.dismiss()
         }
         .onFirstAppear {
-            // Ensure we have a full `BaseItemDto` or some non-required metadata may be missing
             viewModel.refreshItem(sendNotification: false)
         }
         .refreshable {
@@ -71,6 +70,12 @@ struct ItemEditorView: View {
 
                 ChevronButton(L10n.metadata) {
                     router.route(to: .editMetadata(viewModel: viewModel))
+                }
+
+                if viewModel.item.canEditSubtitles {
+                    ChevronButton(L10n.subtitles) {
+                        router.route(to: .editSubtitles(item: viewModel.item))
+                    }
                 }
             }
 

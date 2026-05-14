@@ -95,7 +95,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                     barActionButtons,
                     content: view(for:)
                 )
-                .environment(\.isInMenu, true)
+                .withViewContext(.isInMenu)
 
                 Divider()
 
@@ -103,7 +103,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                     menuActionButtons,
                     content: view(for:)
                 )
-                .environment(\.isInMenu, true)
+                .withViewContext(.isInMenu)
             }
         }
 
@@ -124,7 +124,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                             menuActionButtons,
                             content: view(for:)
                         )
-                        .environment(\.isInMenu, true)
+                        .withViewContext(.isInMenu)
                     }
                 }
             }
