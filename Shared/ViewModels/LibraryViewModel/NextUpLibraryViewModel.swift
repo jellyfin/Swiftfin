@@ -38,7 +38,6 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         }
         parameters.enableRewatching = Defaults[.Customization.Home.resumeNextUp]
         parameters.startIndex = page
-        parameters.userID = userSession.user.id
 
         return parameters
     }

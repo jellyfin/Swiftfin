@@ -37,11 +37,6 @@ struct AboutAppView: View {
                     L10n.version,
                     value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
-
-                LabeledContent(
-                    L10n.serverRequirement,
-                    value: JellyfinClient.sdkVersion.description
-                )
             }
 
             Section {

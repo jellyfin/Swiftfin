@@ -21,7 +21,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
     override func get(page: Int) async throws -> [BaseItemDto] {
 
         let parameters = itemParameters(for: page)
-        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         // 1 - only care to keep collections that hold valid items
@@ -47,9 +47,9 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     // MARK: item parameters
 
-    private func itemParameters(for page: Int?) -> Paths.GetItemsByUserIDParameters {
+    private func itemParameters(for page: Int?) -> Paths.GetItemsParameters {
 
-        var parameters = Paths.GetItemsByUserIDParameters()
+        var parameters = Paths.GetItemsParameters()
 
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
@@ -58,7 +58,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         // by parent or filters
         parameters.includeItemTypes = BaseItemKind.supportedCases
         parameters.sortOrder = [.ascending]
-        parameters.sortBy = [ItemSortBy.name.rawValue]
+        parameters.sortBy = [ItemSortBy.name]
 
         /// Recursive should only apply to parents/folders and not to baseItems
         parameters.isRecursive = (parent as? BaseItemDto)?.isRecursiveCollection ?? true
@@ -79,7 +79,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             let filters = filterViewModel.currentFilters
             parameters.filters = filters.traits
             parameters.genres = filters.genres.map(\.value)
-            parameters.sortBy = filters.sortBy.map(\.rawValue)
+            parameters.sortBy = filters.sortBy
             parameters.sortOrder = filters.sortOrder
             parameters.tags = filters.tags.map(\.value)
             parameters.years = filters.years.compactMap { Int($0.value) }
@@ -117,9 +117,9 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         var parameters = itemParameters(for: nil)
         parameters.limit = 1
-        parameters.sortBy = [ItemSortBy.random.rawValue]
+        parameters.sortBy = [ItemSortBy.random]
 
-        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let request = Paths.getItems(parameters: parameters)
         let response = try? await userSession.client.send(request)
 
         return response?.value.items?.first
