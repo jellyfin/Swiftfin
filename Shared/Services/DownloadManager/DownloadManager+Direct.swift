@@ -89,8 +89,7 @@ extension DownloadManager: URLSessionDownloadDelegate {
             logger.error("Failed to move downloaded media for \(taskID): \(error.localizedDescription)")
             DispatchQueue.main.async {
                 self.update(id: taskID) { task in
-                    task.state = .error
-                    task.errorReason = DownloadError(error)
+                    task.state = .error(DownloadError(error))
                 }
             }
         }
@@ -113,14 +112,12 @@ extension DownloadManager: URLSessionDownloadDelegate {
                     }
                 } else {
                     self.update(id: taskID) { task in
-                        task.state = .error
-                        task.errorReason = DownloadError(error)
+                        task.state = .error(DownloadError(error))
                     }
                 }
             } else {
                 self.update(id: taskID) { task in
                     task.state = .complete
-                    task.errorReason = nil
                 }
                 self.refreshCompletedItems()
             }

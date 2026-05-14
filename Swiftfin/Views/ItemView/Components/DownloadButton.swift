@@ -86,12 +86,9 @@ struct DownloadButton: View {
                 Button(L10n.cancel, systemImage: "trash", role: .destructive) {
                     downloadManager.cancel(id: id)
                 }
-            case .error:
-                if let reason = downloadManager.tasks.first(where: { $0.id == id })?.errorReason {
-                    // swiftlint:disable:next hard_coded_display_string
-                    Button(reason.displayTitle, systemImage: "exclamationmark.triangle") {}
-                        .disabled(true)
-                }
+            case let .error(reason):
+                Button(reason.displayTitle, systemImage: "exclamationmark.triangle") {}
+                    .disabled(true)
                 Button(L10n.retry, systemImage: "arrow.clockwise") {
                     downloadManager.retry(id: id)
                 }

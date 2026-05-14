@@ -15,6 +15,7 @@ enum DownloadError: Hashable, Displayable, Error {
     case fileSystemError
     case unknown(String)
 
+    // swiftlint:disable:next hard_coded_display_string
     var displayTitle: String {
         switch self {
         case .networkFailure:

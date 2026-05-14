@@ -135,11 +135,15 @@ final class DownloadManager: NSObject, ObservableObject {
 
     func resume(id: String) {
         guard let task = task(id: id) else { return }
-        guard task.state == .paused || task.state == .error else { return }
+        switch task.state {
+        case .paused, .error:
+            break
+        default:
+            return
+        }
 
         update(id: id) { task in
             task.state = .queued
-            task.errorReason = nil
         }
 
         if !queue.contains(id) {
@@ -206,8 +210,7 @@ final class DownloadManager: NSObject, ObservableObject {
             let have = formatter.string(fromByteCount: shortage.available)
             logger.warning("Refusing to start \(id): need \(need) free, only \(have) available.")
             update(id: id) { task in
-                task.state = .error
-                task.errorReason = .insufficientStorage
+                task.state = .error(.insufficientStorage)
             }
             advanceQueue()
             return
@@ -230,8 +233,7 @@ final class DownloadManager: NSObject, ObservableObject {
             logger.error("Failed to start download \(id): \(error.localizedDescription)")
             activeTaskID = nil
             update(id: id) { task in
-                task.state = .error
-                task.errorReason = DownloadError(error)
+                task.state = .error(DownloadError(error))
             }
             advanceQueue()
             return

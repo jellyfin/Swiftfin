@@ -9,12 +9,12 @@
 import Foundation
 import JellyfinAPI
 
-enum DownloadState: String, Codable, Hashable {
+enum DownloadState: Codable, Hashable {
     case queued
     case downloading
     case paused
     case complete
-    case error
+    case error(DownloadError)
 }
 
 struct DownloadImage: Codable, Hashable {
@@ -29,7 +29,6 @@ struct DownloadTask: Codable, Hashable, Identifiable {
     let itemJSON: Data
 
     var state: DownloadState
-    var errorReason: DownloadError?
     var bytesDownloaded: Int64
     var bytesTotal: Int64
     var resumeData: Data?
@@ -44,8 +43,7 @@ struct DownloadTask: Codable, Hashable, Identifiable {
         return min(1, Double(bytesDownloaded) / Double(bytesTotal))
     }
 
-    /// On-disk location, derived from `BaseItemDto.downloadFolder` so we
-    /// don't duplicate the per-kind path logic.
+    /// On-disk location, derived from `BaseItemDto.downloadFolder` so we don't duplicate the per-kind path logic.
     var downloadFolder: URL {
         item?.downloadFolder ?? URL.swiftfinDownloads.appendingPathComponent(id, isDirectory: true)
     }
@@ -73,7 +71,6 @@ extension DownloadTask {
             id: item.id!,
             itemJSON: json,
             state: .queued,
-            errorReason: nil,
             bytesDownloaded: 0,
             bytesTotal: 0,
             resumeData: nil,
