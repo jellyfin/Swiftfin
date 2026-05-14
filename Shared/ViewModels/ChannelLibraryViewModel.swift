@@ -16,7 +16,6 @@ final class ChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
 
         var parameters = Paths.GetLiveTvChannelsParameters()
         parameters.fields = .MinimumFields
-        parameters.userID = userSession.user.id
         parameters.sortBy = [ItemSortBy.name]
 
         parameters.limit = pageSize
@@ -35,7 +34,6 @@ final class ChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
 
         var parameters = Paths.GetLiveTvProgramsParameters()
         parameters.channelIDs = channels.compactMap(\.id)
-        parameters.userID = userSession.user.id
         parameters.maxStartDate = maxStartDate
         parameters.minEndDate = minEndDate
         parameters.sortBy = [ItemSortBy.startDate]

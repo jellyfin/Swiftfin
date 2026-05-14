@@ -81,7 +81,7 @@ struct EditServerView: View {
             } footer: {
                 if !viewModel.server.isVersionCompatible {
                     Label(
-                        L10n.serverVersionWarning(JellyfinClient.sdkVersion.majorMinor.description),
+                        L10n.serverVersionWarning(viewModel.server.client.version.majorMinor.description),
                         systemImage: "exclamationmark.circle.fill"
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))

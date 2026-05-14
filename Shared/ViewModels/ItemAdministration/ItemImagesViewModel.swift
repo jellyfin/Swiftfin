@@ -256,8 +256,7 @@ final class ItemImagesViewModel: ViewModel, Stateful, Eventful {
               let type = remoteImageInfo.type,
               let imageURL = remoteImageInfo.url else { return }
 
-        let parameters = Paths.DownloadRemoteImageParameters(type: type, imageURL: imageURL)
-        let imageRequest = Paths.downloadRemoteImage(itemID: itemID, parameters: parameters)
+        let imageRequest = Paths.downloadRemoteImage(itemID: itemID, type: type, imageURL: imageURL)
         try await userSession.client.send(imageRequest)
     }
 

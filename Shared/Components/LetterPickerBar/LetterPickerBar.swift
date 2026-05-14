@@ -14,6 +14,9 @@ struct LetterPickerBar: View {
     @ObservedObject
     var viewModel: FilterViewModel
 
+    @FocusState
+    private var focusedLetter: ItemLetter?
+
     @State
     private var letterSize: CGSize = .zero
 
@@ -35,11 +38,13 @@ struct LetterPickerBar: View {
             ForEach(ItemLetter.allCases, id: \.hashValue) { filterLetter in
                 LetterPickerButton(letter: filterLetter, viewModel: viewModel)
                     .frame(width: dimension, height: dimension)
+                    .focused($focusedLetter, equals: filterLetter)
                     .isSelected(viewModel.currentFilters.letter.contains(filterLetter))
             }
         }
         .scrollIfLargerThanContainer()
         .frame(width: dimension)
+        .focusSection()
         .background {
             ZStack {
                 ForEach(ItemLetter.allCases, id: \.hashValue) { letter in
@@ -52,5 +57,14 @@ struct LetterPickerBar: View {
             .fixedSize()
             .trackingSize($letterSize)
         }
+        #if os(tvOS)
+        .defaultFocus(
+            $focusedLetter,
+            viewModel.currentFilters.letter.first
+                ?? ItemLetter.allCases.first
+                ?? ItemLetter(stringLiteral: "#"),
+            priority: focusedLetter == nil ? .userInitiated : .automatic
+        )
+        #endif
     }
 }

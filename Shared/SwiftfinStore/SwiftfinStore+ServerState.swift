@@ -97,7 +97,7 @@ extension ServerState {
         let publicInfo = StoredValues[.Server.publicInfo(id: self.id)]
 
         if let version = publicInfo.version {
-            return JellyfinClient.Version(stringLiteral: version).majorMinor >= JellyfinClient.sdkVersion.majorMinor
+            return JellyfinClient.Version(stringLiteral: version).majorMinor >= client.version.majorMinor
         } else {
             return false
         }

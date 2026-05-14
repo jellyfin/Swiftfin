@@ -106,15 +106,15 @@ final class MediaViewModel: ViewModel {
             filters = [.isFavorite]
         }
 
-        var parameters = Paths.GetItemsByUserIDParameters()
+        var parameters = Paths.GetItemsParameters()
         parameters.limit = 3
         parameters.isRecursive = true
         parameters.parentID = parentID
         parameters.includeItemTypes = BaseItemKind.supportedCases
         parameters.filters = filters
-        parameters.sortBy = [ItemSortBy.random.rawValue]
+        parameters.sortBy = [ItemSortBy.random]
 
-        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         return (response.value.items ?? [])

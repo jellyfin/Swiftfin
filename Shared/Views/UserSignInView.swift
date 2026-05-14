@@ -122,6 +122,7 @@ struct UserSignInView: View {
         Section {
             TextField(L10n.username, text: $username)
                 .autocorrectionDisabled()
+                .textContentType(.username)
                 .textInputAutocapitalization(.never)
                 .focused($focusedTextField, equals: .username)
                 .onSubmit {
@@ -142,6 +143,7 @@ struct UserSignInView: View {
                 )
             }
             .autocorrectionDisabled()
+            .textContentType(.password)
             .textInputAutocapitalization(.never)
             .focused($focusedTextField, equals: .password)
         } header: {
