@@ -32,7 +32,6 @@ final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiab
         parameters.fields = .MinimumFields
         parameters.isMissing = userSession.user.data.configuration?.isDisplayMissingEpisodes == true
         parameters.seasonID = parent!.id
-        parameters.userID = userSession.user.id
 
 //        parameters.startIndex = page * pageSize
 //        parameters.limit = pageSize

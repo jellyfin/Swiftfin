@@ -23,7 +23,6 @@ final class LatestInLibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Ident
     private func parameters() -> Paths.GetLatestMediaParameters {
 
         var parameters = Paths.GetLatestMediaParameters()
-        parameters.userID = userSession.user.id
         parameters.parentID = parent?.id
         parameters.fields = .MinimumFields
         parameters.enableUserData = true

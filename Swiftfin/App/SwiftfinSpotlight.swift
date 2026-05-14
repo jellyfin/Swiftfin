@@ -15,7 +15,7 @@ struct SwiftfinSpotlight {
     func addSwiftfinToSpotlight() {
         Task.detached {
             let attributeSet = CSSearchableItemAttributeSet(contentType: UTType.application)
-            attributeSet.title = "Jellyfin"
+            attributeSet.title = L10n.jellyfin
 
             let searchableItem = CSSearchableItem(
                 uniqueIdentifier: "org.jellyfin.swiftfin",

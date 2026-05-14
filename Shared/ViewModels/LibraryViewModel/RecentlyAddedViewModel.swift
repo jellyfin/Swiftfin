@@ -28,21 +28,21 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
     override func get(page: Int) async throws -> [BaseItemDto] {
 
         let parameters = parameters(for: page)
-        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         return response.value.items ?? []
     }
 
-    private func parameters(for page: Int) -> Paths.GetItemsByUserIDParameters {
+    private func parameters(for page: Int) -> Paths.GetItemsParameters {
 
-        var parameters = Paths.GetItemsByUserIDParameters()
+        var parameters = Paths.GetItemsParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.movie, .series]
         parameters.isRecursive = true
         parameters.limit = pageSize
-        parameters.sortBy = [ItemSortBy.dateCreated.rawValue]
+        parameters.sortBy = [ItemSortBy.dateCreated]
         parameters.sortOrder = [.descending]
         parameters.startIndex = page
 

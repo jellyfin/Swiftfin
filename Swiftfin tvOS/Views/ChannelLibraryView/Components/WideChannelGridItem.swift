@@ -55,6 +55,7 @@ extension ChannelLibraryView {
         private func programLabel(for program: BaseItemDto) -> some View {
             HStack(alignment: .top, spacing: EdgeInsets.edgePadding / 2) {
                 AlternateLayoutView(alignment: .leading) {
+                    // swiftlint:disable:next hard_coded_display_string
                     Text("00:00 AM")
                         .monospacedDigit()
                 } content: {

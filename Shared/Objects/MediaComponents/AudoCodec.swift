@@ -44,69 +44,69 @@ enum AudioCodec: String, CaseIterable, Codable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .aac:
-            "AAC"
+            L10n.aac
         case .ac3:
-            "AC-3"
+            L10n.ac3
         case .amr_nb:
-            "AMR-NB"
+            L10n.amrNB
         case .amr_wb:
-            "AMR-WB"
+            L10n.amrWB
         case .dts:
-            "DTS"
+            L10n.dts
         case .dts_hd:
-            "DTS-HD"
+            L10n.dtsHD
         case .eac3:
-            "E-AC-3"
+            L10n.eac3
         case .flac:
-            "FLAC"
+            L10n.flac
         case .alac:
-            "ALAC"
+            L10n.alac
         case .mlp:
-            "MLP"
+            L10n.mlp
         case .mp1:
-            "MP1"
+            L10n.mp1
         case .mp2:
-            "MP2"
+            L10n.mp2
         case .mp3:
-            "MP3"
+            L10n.mp3
         case .nellymoser:
-            "Nellymoser"
+            L10n.nellymoser
         case .opus:
-            "Opus"
+            L10n.opus
         case .pcm_alaw:
-            "PCM ALAW"
+            L10n.pcmALAW
         case .pcm_bluray:
-            "PCM Bluray"
+            L10n.pcmBluray
         case .pcm_dvd:
-            "PCM DVD"
+            L10n.pcmDVD
         case .pcm_mulaw:
-            "PCM MULAW"
+            L10n.pcmMULAW
         case .pcm_s16be:
-            "PCM S16BE"
+            L10n.pcmS16BE
         case .pcm_s16le:
-            "PCM S16LE"
+            L10n.pcmS16LE
         case .pcm_s24be:
-            "PCM S24BE"
+            L10n.pcmS24BE
         case .pcm_s24le:
-            "PCM S24LE"
+            L10n.pcmS24LE
         case .pcm_u8:
-            "PCM U8"
+            L10n.pcmU8
         case .speex:
-            "Speex"
+            L10n.speex
         case .truehd:
-            "TrueHD"
+            L10n.trueHD
         case .vorbis:
-            "Vorbis"
+            L10n.vorbis
         case .wavpack:
-            "WavPack"
+            L10n.wavPack
         case .wmalossless:
-            "WMA Lossless"
+            L10n.wmaLossless
         case .wmapro:
-            "WMA Pro"
+            L10n.wmaPro
         case .wmav1:
-            "WMA V1"
+            L10n.wmaV1
         case .wmav2:
-            "WMA V2"
+            L10n.wmaV2
         }
     }
 }

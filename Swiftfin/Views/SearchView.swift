@@ -35,7 +35,7 @@ struct SearchView: View {
     private var tabItemSelected
 
     @StateObject
-    private var viewModel = SearchViewModel()
+    private var viewModel = SearchViewModel(filterViewModel: .init())
 
     @ViewBuilder
     private var suggestionsView: some View {
@@ -214,9 +214,7 @@ struct SearchView: View {
         .navigationBarFilterDrawer(
             viewModel: viewModel.filterViewModel,
             types: enabledDrawerFilters
-        ) {
-            router.route(to: .filter(type: $0.type, viewModel: $0.viewModel))
-        }
+        )
         .onFirstAppear {
             viewModel.getSuggestions()
         }
