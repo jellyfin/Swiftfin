@@ -800,8 +800,6 @@ internal enum L10n {
   }
   /// Increment
   internal static let increment = L10n.tr("Localizable", "increment", fallback: "Increment")
-  /// Index
-  internal static let index = L10n.tr("Localizable", "index", fallback: "Index")
   /// Index number
   internal static let indexNumber = L10n.tr("Localizable", "indexNumber", fallback: "Index number")
   /// Indicator

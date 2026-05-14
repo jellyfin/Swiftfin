@@ -54,8 +54,7 @@ final class ItemImageViewModel: ImageViewModel<BaseItemDto> {
               let type = remoteImageInfo.type,
               let imageURL = remoteImageInfo.url else { return }
 
-        let parameters = Paths.DownloadRemoteImageParameters(type: type, imageURL: imageURL)
-        let request = Paths.downloadRemoteImage(itemID: itemID, parameters: parameters)
+        let request = Paths.downloadRemoteImage(itemID: itemID, type: type, imageURL: imageURL)
 
         _ = try await userSession.client.send(request)
 
