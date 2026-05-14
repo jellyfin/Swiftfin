@@ -30,10 +30,10 @@ extension ItemView {
         private var error: Error?
 
         @State
-        private var selectedRemoteURL: MediaURL?
+        private var selectedRemoteURL: NamedURL?
 
         let localTrailers: [BaseItemDto]
-        let externalTrailers: [MediaURL]
+        let externalTrailers: [NamedURL]
 
         private var showLocalTrailers: Bool {
             enabledTrailers.contains(.local) && localTrailers.isNotEmpty
@@ -120,7 +120,7 @@ extension ItemView {
 
         // MARK: Play External Trailer
 
-        private func playExternalTrailer(_ trailer: MediaURL) {
+        private func playExternalTrailer(_ trailer: NamedURL) {
             guard let urlString = trailer.url else {
                 error = ErrorMessage(L10n.unableToOpenTrailer)
                 return
