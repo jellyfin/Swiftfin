@@ -20,12 +20,12 @@ extension NavigationRoute {
         }
     }
 
-    static func quickConnect(quickConnect: QuickConnect) -> NavigationRoute {
+    static func quickConnect(client: JellyfinClient, action: @escaping (String) async -> Void) -> NavigationRoute {
         NavigationRoute(
             id: "quickConnectView",
             style: .sheet
         ) {
-            QuickConnectView(quickConnect: quickConnect)
+            QuickConnectView(client: client, action: action)
         }
     }
 
@@ -71,9 +71,7 @@ extension NavigationRoute {
             style: .sheet
         ) {
             WithUserAuthentication {
-                WithQuickConnect {
-                    UserSignInView(server: server)
-                }
+                UserSignInView(server: server)
             }
         }
     }
