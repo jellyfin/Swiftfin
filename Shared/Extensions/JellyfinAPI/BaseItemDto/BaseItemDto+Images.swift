@@ -149,7 +149,7 @@ extension BaseItemDto {
             parameters: parameters
         )
 
-        return client.fullURL(with: request)
+        return client.url(with: request)
     }
 
     private func getImageTag(for type: ImageType) -> String? {

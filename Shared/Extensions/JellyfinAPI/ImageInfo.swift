@@ -29,7 +29,7 @@ extension ImageInfo {
             parameters: parameters
         )
 
-        let itemImageURL = client.fullURL(with: request)
+        let itemImageURL = client.url(with: request)
 
         return ImageSource(url: itemImageURL)
     }
