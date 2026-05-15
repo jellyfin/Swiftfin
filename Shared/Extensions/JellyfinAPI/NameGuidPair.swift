@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-extension NameGuidPair: Displayable {
+extension NameIDPair: Displayable {
 
     var displayTitle: String {
         name ?? .emptyDash
@@ -17,7 +17,7 @@ extension NameGuidPair: Displayable {
 }
 
 // TODO: strong type studios and implement as `LibraryParent`
-extension NameGuidPair: LibraryParent {
+extension NameIDPair: LibraryParent {
 
     var libraryType: BaseItemKind? {
         .studio

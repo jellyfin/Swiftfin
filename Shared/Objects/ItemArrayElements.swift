@@ -59,7 +59,7 @@ enum ItemArrayElements: Displayable {
         case .genres, .tags:
             name as! T
         case .studios:
-            NameGuidPair(id: id, name: name) as! T
+            NameIDPair(id: id, name: name) as! T
         case .people:
             BaseItemPerson(
                 id: id,
@@ -92,7 +92,7 @@ enum ItemArrayElements: Displayable {
         case .genres, .tags:
             nil
         case .studios:
-            (element.base as? NameGuidPair)?.id
+            (element.base as? NameIDPair)?.id
         case .people:
             (element.base as? BaseItemPerson)?.id
         }
@@ -105,7 +105,7 @@ enum ItemArrayElements: Displayable {
         case .genres, .tags:
             element.base as? String ?? L10n.unknown
         case .studios:
-            (element.base as? NameGuidPair)?.name ?? L10n.unknown
+            (element.base as? NameIDPair)?.name ?? L10n.unknown
         case .people:
             (element.base as? BaseItemPerson)?.name ?? L10n.unknown
         }

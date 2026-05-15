@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Factory
 import Foundation
 import Get
@@ -48,28 +47,6 @@ final class ConnectToServerViewModel: ViewModel {
     // no longer-found servers are not cleared, but not an issue
     @Published
     var localServers: OrderedSet<ServerState> = []
-
-    private let discovery = ServerDiscovery()
-
-    deinit {
-        discovery.close()
-    }
-
-    override init() {
-        super.init()
-
-        // TODO: refactor, causing retain cycle
-        Task { [weak self] in
-            guard let self else { return }
-
-            for await response in discovery.discoveredServers.values {
-                await MainActor.run {
-                    let _ = self.localServers.append(response.asServerState)
-                }
-            }
-        }
-        .store(in: &cancellables)
-    }
 
     @Function(\Action.Cases.connect)
     private func connectToServer(_ url: String) async throws {
@@ -176,7 +153,21 @@ final class ConnectToServerViewModel: ViewModel {
     }
 
     @Function(\Action.Cases.searchForServers)
-    private func _searchForServers() {
-        discovery.broadcast()
+    private func _searchForServers() async {
+        do {
+            for try await server in JellyfinClient.discover() {
+                localServers.append(
+                    ServerState(
+                        urls: [server.url],
+                        currentURL: server.url,
+                        name: server.name,
+                        id: server.id,
+                        userIDs: []
+                    )
+                )
+            }
+        } catch {
+            logger.error("Local server discovery failed: \(error.localizedDescription)")
+        }
     }
 }
