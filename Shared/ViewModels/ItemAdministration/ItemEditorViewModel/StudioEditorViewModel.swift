@@ -10,19 +10,19 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
+final class StudioEditorViewModel: ItemEditorViewModel<NameIDPair> {
 
-    override func searchElements(_ searchTerm: String) async throws -> [NameGuidPair] {
+    override func searchElements(_ searchTerm: String) async throws -> [NameIDPair] {
         let parameters = Paths.GetStudiosParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
         let request = Paths.getStudios(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         return response.value.items?.map { studio in
-            NameGuidPair(id: studio.id, name: studio.name)
+            NameIDPair(id: studio.id, name: studio.name)
         } ?? []
     }
 
-    override func addComponents(_ studios: [NameGuidPair]) async throws {
+    override func addComponents(_ studios: [NameIDPair]) async throws {
         var updatedItem = item
         if updatedItem.studios == nil {
             updatedItem.studios = []
@@ -31,13 +31,13 @@ final class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         try await updateItem(updatedItem)
     }
 
-    override func removeComponents(_ studios: [NameGuidPair]) async throws {
+    override func removeComponents(_ studios: [NameIDPair]) async throws {
         var updatedItem = item
         updatedItem.studios?.removeAll { studios.contains($0) }
         try await updateItem(updatedItem)
     }
 
-    override func reorderComponents(_ studios: [NameGuidPair]) async throws {
+    override func reorderComponents(_ studios: [NameIDPair]) async throws {
         var updatedItem = item
         updatedItem.studios = studios
         try await updateItem(updatedItem)

@@ -49,7 +49,7 @@ extension BaseItemPerson: Poster {
             parameters: imageRequestParameters
         )
 
-        let url = client.fullURL(with: imageRequest)
+        let url = client.url(with: imageRequest)
         let blurHash: String? = imageBlurHashes?.primary?[primaryImageTag]
 
         return [ImageSource(

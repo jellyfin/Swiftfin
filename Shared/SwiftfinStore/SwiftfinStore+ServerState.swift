@@ -69,8 +69,7 @@ extension ServerState {
     }
 
     var splashScreenImageSource: ImageSource {
-        let request = Paths.getSplashscreen()
-        return ImageSource(url: client.fullURL(with: request))
+        ImageSource(url: client.url(with: Paths.getSplashscreen()))
     }
 
     @MainActor

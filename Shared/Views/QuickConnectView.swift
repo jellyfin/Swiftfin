@@ -14,12 +14,13 @@ struct QuickConnectView: View {
     @Router
     private var router
 
-    @ObservedObject
-    private var viewModel: QuickConnect
+    @State
+    private var code: String? = nil
+    @State
+    private var error: Error? = nil
 
-    init(quickConnect: QuickConnect) {
-        self.viewModel = quickConnect
-    }
+    let client: JellyfinClient
+    let action: (String) async -> Void
 
     private func pollingView(code: String) -> some View {
         VStack(spacing: 20) {
@@ -47,32 +48,37 @@ struct QuickConnectView: View {
 
     var body: some View {
         ZStack {
-            switch viewModel.state {
-            case .authenticated, .idle, .retrievingCode:
-                ProgressView()
-            case let .polling(code):
-                pollingView(code: code)
-            case let .error(error):
+            if let error {
                 ErrorView(error: error)
+            } else if let code {
+                pollingView(code: code)
+            } else {
+                ProgressView()
             }
         }
-        .animation(.linear(duration: 0.2), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: code)
         .edgePadding()
+        .task {
+            do {
+                for try await event in client.quickConnect.connect() {
+                    switch event {
+                    case let .polling(code: code):
+                        self.code = code
+                    case let .authenticated(secret: secret):
+                        router.dismiss()
+                        await action(secret)
+                    }
+                }
+            } catch {
+                self.error = error
+            }
+        }
         .navigationTitle(L10n.quickConnect)
-        .refreshable {
-            viewModel.start()
-        }
         #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                router.dismiss()
+            }
         #endif
-        .onFirstAppear {
-                viewModel.start()
-            }
-            .onDisappear {
-                viewModel.stop()
-            }
     }
 }
