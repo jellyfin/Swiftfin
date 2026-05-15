@@ -31,7 +31,7 @@ extension ItemView {
         private var error: Error?
 
         let localTrailers: [BaseItemDto]
-        let externalTrailers: [MediaURL]
+        let externalTrailers: [NamedURL]
         private let logger = Logger.swiftfin()
 
         private var showLocalTrailers: Bool {
@@ -121,7 +121,7 @@ extension ItemView {
 
         // MARK: - Play: External Trailer
 
-        private func playExternalTrailer(_ trailer: MediaURL) {
+        private func playExternalTrailer(_ trailer: NamedURL) {
             if let url = URL(string: trailer.url), UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url) { success in
                     guard !success else { return }

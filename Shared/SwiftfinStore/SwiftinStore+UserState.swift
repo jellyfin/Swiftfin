@@ -143,7 +143,7 @@ extension UserState {
         )
         let request = Paths.getUserImage(parameters: parameters)
 
-        let profileImageURL = client.fullURL(with: request)
+        let profileImageURL = client.url(with: request)
 
         return ImageSource(url: profileImageURL)
     }
