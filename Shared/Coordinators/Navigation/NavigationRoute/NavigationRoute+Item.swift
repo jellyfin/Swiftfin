@@ -129,7 +129,7 @@ extension NavigationRoute {
     @MainActor
     static func editStudios(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editStudios") {
-            EditItemElementView<NameGuidPair>(
+            EditItemElementView<NameIDPair>(
                 viewModel: StudioEditorViewModel(item: item),
                 type: .studios,
                 route: { router, viewModel in
