@@ -396,7 +396,7 @@ extension BaseItemDto {
 
                 let imageURL = userSession
                     .client
-                    .fullURL(with: request)
+                    .url(with: request)
 
                 return .init(
                     chapterInfo: chapter,

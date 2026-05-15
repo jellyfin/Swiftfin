@@ -22,10 +22,8 @@ extension MediaStream {
 
         let deliveryPath = deliveryURL.removingFirst(if: client.configuration.url.absoluteString.last == "/")
 
-        guard let fullURL = client.fullURL(with: deliveryPath) else { return nil }
-
         return .init(
-            url: fullURL,
+            url: client.url(path: deliveryPath),
             type: .subtitle,
             enforce: false
         )
