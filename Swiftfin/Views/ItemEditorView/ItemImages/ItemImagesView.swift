@@ -228,7 +228,10 @@ struct ItemImagesView: View {
                     Color.secondarySystemFill
 
                     ImageView(
-                        imageInfo.imageSource(item: viewModel.item)
+                        imageInfo.itemImageSource(
+                            itemID: viewModel.item.id!,
+                            client: viewModel.userSession.client
+                        )
                     )
                     .placeholder { _ in
                         Image(systemName: "photo")
