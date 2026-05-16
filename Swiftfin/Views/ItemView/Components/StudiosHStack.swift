@@ -16,7 +16,7 @@ extension ItemView {
         @Router
         private var router
 
-        let studios: [NameGuidPair]
+        let studios: [NameIDPair]
 
         var body: some View {
             PillHStack(

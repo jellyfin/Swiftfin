@@ -187,12 +187,10 @@ extension MediaPlayerItem {
             throw ErrorMessage("No item ID while building online media player item!")
         }
 
-        if let transcodingURL = mediaSource.transcodingURL {
+        if let transcodingPath = mediaSource.transcodingURL {
             logger.trace("Using transcoding URL for item \(itemID)")
 
-            guard let fullTranscodeURL = userSession.client.fullURL(with: transcodingURL)
-            else { throw ErrorMessage("Unable to make transcode URL") }
-            return fullTranscodeURL
+            return userSession.client.url(path: transcodingPath)
         }
 
         if item.mediaType == .video, !item.isLiveStream {
@@ -211,7 +209,7 @@ extension MediaPlayerItem {
                 parameters: videoStreamParameters
             )
 
-            guard let videoStreamURL = userSession.client.fullURL(with: videoStreamRequest)
+            guard let videoStreamURL = userSession.client.url(with: videoStreamRequest)
             else { throw ErrorMessage("Unable to make video stream URL") }
 
             return videoStreamURL

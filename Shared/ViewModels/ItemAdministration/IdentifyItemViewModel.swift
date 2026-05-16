@@ -107,7 +107,7 @@ final class IdentifyItemViewModel: ViewModel {
         case .boxSet:
             let parameters = BoxSetInfoRemoteSearchQuery(
                 itemID: itemID,
-                searchInfo: BoxSetInfo(
+                searchInfo: .init(
                     name: name,
                     originalTitle: originalTitle,
                     year: year
@@ -121,7 +121,7 @@ final class IdentifyItemViewModel: ViewModel {
         case .movie:
             let parameters = MovieInfoRemoteSearchQuery(
                 itemID: itemID,
-                searchInfo: MovieInfo(
+                searchInfo: .init(
                     name: name,
                     originalTitle: originalTitle,
                     year: year
@@ -135,7 +135,7 @@ final class IdentifyItemViewModel: ViewModel {
         case .person:
             let parameters = PersonLookupInfoRemoteSearchQuery(
                 itemID: itemID,
-                searchInfo: PersonLookupInfo(
+                searchInfo: .init(
                     name: name,
                     originalTitle: originalTitle,
                     year: year
@@ -149,7 +149,7 @@ final class IdentifyItemViewModel: ViewModel {
         case .series:
             let parameters = SeriesInfoRemoteSearchQuery(
                 itemID: itemID,
-                searchInfo: SeriesInfo(
+                searchInfo: .init(
                     name: name,
                     originalTitle: originalTitle,
                     year: year

@@ -111,7 +111,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
         #endif
 
         Task {
-            var info = PlaybackStartInfo()
+            var info = PlaybackStateInfo()
             info.audioStreamIndex = item.selectedAudioStreamIndex
             info.itemID = item.baseItem.id
             info.mediaSourceID = item.mediaSource.id
@@ -152,7 +152,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
         #endif
 
         Task {
-            var info = PlaybackProgressInfo()
+            var info = PlaybackStateInfo()
             info.audioStreamIndex = item.selectedAudioStreamIndex
             info.isPaused = isPaused
             info.itemID = item.baseItem.id
