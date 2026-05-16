@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -24,47 +25,59 @@ extension EditMetadataView {
 
                 // MARK: - Critics Rating
 
-                ChevronButton(
-                    L10n.critics,
-                    subtitle: item.criticRating
-                        .map { FloatingPointFormatStyle<Float>.number
-                            .precision(.fractionLength(0 ... 2)).format($0)
-                        } ?? .emptyDash,
-                    description: L10n.criticRatingDescription
-                ) {
-                    TextField(
-                        L10n.rating,
-                        value: $item.criticRating,
-                        format: .number
-                    )
-                    .keyboardType(.decimalPad)
-                    .onChange(of: item.criticRating) { _ in
-                        if let rating = item.criticRating {
-                            item.criticRating = min(max(rating, 0), 100)
+                StateAdapter(initialValue: false) { isPresented in
+                    ChevronButton(
+                        L10n.critics,
+                        content: item.criticRating
+                            .map { FloatingPointFormatStyle<Float>.number
+                                .precision(.fractionLength(0 ... 2)).format($0)
+                            } ?? .emptyDash
+                    ) {
+                        isPresented.wrappedValue = true
+                    }
+                    .alert(L10n.critics, isPresented: isPresented) {
+                        TextField(
+                            L10n.rating,
+                            value: $item.criticRating,
+                            format: .number
+                        )
+                        .keyboardType(.decimalPad)
+                        .onChange(of: item.criticRating) { _ in
+                            if let rating = item.criticRating {
+                                item.criticRating = min(max(rating, 0), 100)
+                            }
                         }
+                    } message: {
+                        Text(L10n.criticRatingDescription)
                     }
                 }
 
                 // MARK: - Community Rating
 
-                ChevronButton(
-                    L10n.community,
-                    subtitle: item.communityRating
-                        .map { FloatingPointFormatStyle<Float>.number
-                            .precision(.fractionLength(0 ... 2)).format($0)
-                        } ?? .emptyDash,
-                    description: L10n.communityRatingDescription
-                ) {
-                    TextField(
-                        L10n.rating,
-                        value: $item.communityRating,
-                        format: .number
-                    )
-                    .keyboardType(.decimalPad)
-                    .onChange(of: item.communityRating) { _ in
-                        if let rating = item.communityRating {
-                            item.communityRating = min(max(rating, 0), 10)
+                StateAdapter(initialValue: false) { isPresented in
+                    ChevronButton(
+                        L10n.community,
+                        content: item.communityRating
+                            .map { FloatingPointFormatStyle<Float>.number
+                                .precision(.fractionLength(0 ... 2)).format($0)
+                            } ?? .emptyDash
+                    ) {
+                        isPresented.wrappedValue = true
+                    }
+                    .alert(L10n.community, isPresented: isPresented) {
+                        TextField(
+                            L10n.rating,
+                            value: $item.communityRating,
+                            format: .number
+                        )
+                        .keyboardType(.decimalPad)
+                        .onChange(of: item.communityRating) { _ in
+                            if let rating = item.communityRating {
+                                item.communityRating = min(max(rating, 0), 10)
+                            }
                         }
+                    } message: {
+                        Text(L10n.communityRatingDescription)
                     }
                 }
             }

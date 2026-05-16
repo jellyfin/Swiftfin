@@ -16,11 +16,9 @@ extension AdminDashboardView {
         @CurrentDate
         private var currentDate: Date
 
-        private let user: UserDto
-        private let lastActivityDate: Date?
-        private let action: (() -> Void)?
-
-        // MARK: - Initializer
+        let user: UserDto
+        let lastActivityDate: Date?
+        let action: (() -> Void)?
 
         init(user: UserDto, lastActivityDate: Date? = nil, action: (() -> Void)? = nil) {
             self.user = user
@@ -42,11 +40,11 @@ extension AdminDashboardView {
         // MARK: - Profile View
 
         private var profileView: some View {
-            if let onSelect = action {
+            if let action {
                 SettingsView.UserProfileRow(
                     user: user
                 ) {
-                    onSelect()
+                    action()
                 }
             } else {
                 SettingsView.UserProfileRow(

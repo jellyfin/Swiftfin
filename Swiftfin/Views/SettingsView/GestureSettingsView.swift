@@ -51,7 +51,7 @@ struct GestureSettingsView: View {
                 Picker(L10n.longPress, selection: $longPressGesture)
 
                 if longPressGesture == .playbackSpeed {
-                    PlaybackSpeedPicker(L10n.playbackSpeed, selection: $longPressSpeedMultiplier)
+                    PlaybackSpeedPicker(title: L10n.playbackSpeed, selection: $longPressSpeedMultiplier)
                 }
 
                 Picker(L10n.multiTap, selection: $multiTapGesture)

@@ -210,23 +210,19 @@ struct UserSignInView: View {
                         password = ""
                         focusedTextField = .password
                     } label: {
-                        LabeledContent {
-                            EmptyView()
-                        } label: {
-                            HStack {
-                                UserProfileImage(
-                                    userID: user.id,
-                                    source: user.profileImageSource(
-                                        client: viewModel.server.client,
-                                        maxWidth: 50
-                                    )
+                        HStack {
+                            UserProfileImage(
+                                userID: user.id,
+                                source: user.profileImageSource(
+                                    client: viewModel.server.client,
+                                    maxWidth: 50
                                 )
-                                .frame(width: 50, height: 50)
+                            )
+                            .frame(width: 50, height: 50)
 
-                                Text(user.name ?? .emptyDash)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(1)
-                            }
+                            Text(user.name ?? .emptyDash)
+                                .fontWeight(.semibold)
+                                .lineLimit(1)
                         }
                     }
                 }

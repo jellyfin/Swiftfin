@@ -106,11 +106,3 @@ extension SelectorView where Element: Displayable, Label == Text {
         )
     }
 }
-
-extension SelectorView {
-
-    @available(*, deprecated, message: "Use SelectorView(selection:sources:type:label:) instead")
-    func label(@ViewBuilder _ content: @escaping (Element) -> Label) -> Self {
-        copy(modifying: \.label, with: content)
-    }
-}

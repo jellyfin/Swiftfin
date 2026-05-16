@@ -176,7 +176,7 @@ struct EditItemElementView<Element: Hashable>: View {
                     EditItemElementRow(
                         item: element,
                         type: type,
-                        onSelect: {
+                        action: {
                             if isEditing {
                                 selectedElements.toggle(value: element)
                             }

@@ -59,7 +59,8 @@ struct ActiveSessionDetailView: View {
                 ActiveSessionsView.ProgressSection(
                     item: nowPlayingItem,
                     playState: playState,
-                    transcodingInfo: session.transcodingInfo
+                    transcodingInfo: session.transcodingInfo,
+                    showTranscodeReason: false
                 )
             }
 

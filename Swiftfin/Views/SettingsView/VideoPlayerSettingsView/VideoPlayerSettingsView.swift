@@ -29,8 +29,8 @@ struct VideoPlayerSettingsView: View {
             }
 
             Section(L10n.buttons) {
-                JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
-                JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+                JumpIntervalPicker(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+                JumpIntervalPicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
             }
 
             Section {

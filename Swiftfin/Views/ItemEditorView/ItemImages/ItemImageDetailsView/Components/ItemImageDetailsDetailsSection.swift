@@ -15,43 +15,17 @@ extension ItemImageDetailsView {
 
         // MARK: - Image Details Variables
 
-        private let index: Int?
-        private let language: String?
-        private let width: Int?
-        private let height: Int?
-        private let provider: String?
+        var url: URL?
+        var index: Int?
+        var language: String?
+        var width: Int?
+        var height: Int?
+        var provider: String?
 
         // MARK: - Image Ratings Variables
 
-        private let rating: Double?
-        private let ratingVotes: Int?
-
-        // MARK: - Image Source Variable
-
-        private let url: URL?
-
-        // MARK: - Initializer
-
-        init(
-            url: URL? = nil,
-            index: Int? = nil,
-            language: String? = nil,
-            width: Int? = nil,
-            height: Int? = nil,
-            provider: String? = nil,
-            rating: Double? = nil,
-            ratingType: RatingType? = nil,
-            ratingVotes: Int? = nil
-        ) {
-            self.url = url
-            self.index = index
-            self.language = language
-            self.width = width
-            self.height = height
-            self.provider = provider
-            self.rating = rating
-            self.ratingVotes = ratingVotes
-        }
+        var rating: Double?
+        var ratingVotes: Int?
 
         // MARK: - Body
 

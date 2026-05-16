@@ -20,13 +20,13 @@ extension EditServerUserAccessTagsView {
 
         // MARK: - Row Actions
 
-        let onSelect: () -> Void
+        let action: () -> Void
         let onDelete: () -> Void
 
         // MARK: - Body
 
         var body: some View {
-            Button(action: onSelect) {
+            Button(action: action) {
                 HStack {
                     Text(tag)
                         .frame(maxWidth: .infinity, alignment: .leading)
