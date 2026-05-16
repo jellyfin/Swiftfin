@@ -77,7 +77,7 @@ struct LocalUserSecurityView: View {
                     TextField(L10n.hint, text: $pinHint)
                     #else
                     StateAdapter(initialValue: (isPresented: false, hint: pinHint)) { alert in
-                        ChevronButton(L10n.hint, subtitle: pinHint) {
+                        ChevronButton(L10n.hint, content: pinHint) {
                             alert.isPresented.wrappedValue = true
                         }
                         .alert(L10n.hint, isPresented: alert.isPresented) {

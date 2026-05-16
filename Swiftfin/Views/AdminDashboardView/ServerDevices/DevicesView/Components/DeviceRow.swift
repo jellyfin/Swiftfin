@@ -33,20 +33,8 @@ extension DevicesView {
         // MARK: - Properties
 
         let device: DeviceInfoDto
-        let onSelect: () -> Void
-        let onDelete: (() -> Void)?
-
-        // MARK: - Initializer
-
-        init(
-            device: DeviceInfoDto,
-            onSelect: @escaping () -> Void,
-            onDelete: (() -> Void)? = nil
-        ) {
-            self.device = device
-            self.onSelect = onSelect
-            self.onDelete = onDelete
-        }
+        let action: () -> Void
+        var onDelete: (() -> Void)?
 
         // MARK: - Label Styling
 
@@ -121,8 +109,9 @@ extension DevicesView {
                 deviceImage
             } content: {
                 rowContent
+            } action: {
+                action()
             }
-            .onSelect(perform: onSelect)
             .isSeparatorVisible(false)
             .swipeActions {
                 if let onDelete {

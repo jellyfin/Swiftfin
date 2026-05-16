@@ -16,42 +16,41 @@ extension ItemView.AboutView {
         let item: BaseItemDto
 
         var body: some View {
-            Card(title: L10n.ratings)
-                .content {
-                    HStack(alignment: .bottom) {
-                        if let criticRating = item.criticRating {
-                            VStack {
-                                Group {
-                                    if criticRating >= 60 {
-                                        Image(.tomatoFresh)
-                                    } else {
-                                        Image(.tomatoRotten)
-                                    }
+            Card(title: L10n.ratings) {
+                HStack(alignment: .bottom) {
+                    if let criticRating = item.criticRating {
+                        VStack {
+                            Group {
+                                if criticRating >= 60 {
+                                    Image(.tomatoFresh)
+                                } else {
+                                    Image(.tomatoRotten)
                                 }
+                            }
+                            .symbolRenderingMode(.multicolor)
+                            .foregroundStyle(.green, .red)
+                            .font(.largeTitle)
+
+                            // swiftlint:disable:next hard_coded_display_string
+                            Text("\(criticRating, specifier: "%.0f")")
+                                .font(.title3)
+                        }
+                    }
+
+                    if let communityRating = item.communityRating {
+                        VStack {
+                            Image(systemName: "star.fill")
                                 .symbolRenderingMode(.multicolor)
-                                .foregroundStyle(.green, .red)
+                                .foregroundStyle(.yellow)
                                 .font(.largeTitle)
 
-                                // swiftlint:disable:next hard_coded_display_string
-                                Text("\(criticRating, specifier: "%.0f")")
-                                    .font(.title3)
-                            }
-                        }
-
-                        if let communityRating = item.communityRating {
-                            VStack {
-                                Image(systemName: "star.fill")
-                                    .symbolRenderingMode(.multicolor)
-                                    .foregroundStyle(.yellow)
-                                    .font(.largeTitle)
-
-                                // swiftlint:disable:next hard_coded_display_string
-                                Text("\(communityRating, specifier: "%.1f")")
-                                    .font(.title3)
-                            }
+                            // swiftlint:disable:next hard_coded_display_string
+                            Text("\(communityRating, specifier: "%.1f")")
+                                .font(.title3)
                         }
                     }
                 }
+            }
         }
     }
 }

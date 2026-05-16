@@ -11,8 +11,8 @@ import SwiftUI
 
 struct UnwatchedIndicator: View {
 
-    private let size: CGFloat
-    private let count: Int?
+    let size: CGFloat
+    var count: Int?
 
     #if os(iOS)
     private let padding: CGFloat = 4
@@ -21,11 +21,6 @@ struct UnwatchedIndicator: View {
     private let padding: CGFloat = 8
     private let bottomLeadingRadius: CGFloat = 10
     #endif
-
-    init(size: CGFloat, count: Int? = nil) {
-        self.size = size
-        self.count = count
-    }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {

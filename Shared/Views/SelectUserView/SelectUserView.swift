@@ -210,7 +210,7 @@ struct SelectUserView: View {
                                     isEditing: $isEditing,
                                     selectedUsers: $selectedUsers,
                                     serverSelection: serverSelection,
-                                    onSelect: { select(user: $0) },
+                                    action: { select(user: $0) },
                                     onDelete: { delete(user: $0) }
                                 )
                             case .grid:
@@ -219,7 +219,7 @@ struct SelectUserView: View {
                                     isEditing: $isEditing,
                                     selectedUsers: $selectedUsers,
                                     serverSelection: serverSelection,
-                                    onSelect: { select(user: $0) },
+                                    action: { select(user: $0) },
                                     onDelete: { delete(user: $0) }
                                 )
                             }

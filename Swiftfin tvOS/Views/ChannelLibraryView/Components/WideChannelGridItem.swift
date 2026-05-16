@@ -22,7 +22,7 @@ extension ChannelLibraryView {
 
         let channel: ChannelProgram
 
-        private var onSelect: () -> Void
+        private let action: () -> Void
         private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
         @ViewBuilder
@@ -102,7 +102,7 @@ extension ChannelLibraryView {
 
         var body: some View {
             Button {
-                onSelect()
+                action()
             } label: {
                 HStack(alignment: .center, spacing: EdgeInsets.edgePadding / 2) {
 
@@ -136,19 +136,10 @@ extension ChannelLibraryView {
             }
             .animation(.linear(duration: 0.2), value: channel.currentProgram)
         }
-    }
-}
 
-extension ChannelLibraryView.WideChannelGridItem {
-
-    init(channel: ChannelProgram) {
-        self.init(
-            channel: channel,
-            onSelect: {}
-        )
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
+        init(channel: ChannelProgram, action: @escaping () -> Void) {
+            self.channel = channel
+            self.action = action
+        }
     }
 }

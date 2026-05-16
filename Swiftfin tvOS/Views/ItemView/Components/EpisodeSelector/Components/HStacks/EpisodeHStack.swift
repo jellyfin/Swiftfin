@@ -173,12 +173,11 @@ extension SeriesEpisodeSelector {
                 count: 1,
                 columns: 3.5
             ) { _ in
-                SeriesEpisodeSelector.ErrorCard(error: error)
-                    .onSelect {
-                        viewModel.send(.refresh)
-                    }
-                    .focused(focusedEpisodeID, equals: "errorCard")
-                    .padding(.horizontal, 4)
+                SeriesEpisodeSelector.ErrorCard(error: error) {
+                    viewModel.send(.refresh)
+                }
+                .focused(focusedEpisodeID, equals: "errorCard")
+                .padding(.horizontal, 4)
             }
             .insets(horizontal: EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
