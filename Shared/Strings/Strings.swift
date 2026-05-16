@@ -108,10 +108,6 @@ internal enum L10n {
   internal static let alternateDVD = L10n.tr("Localizable", "alternateDVD", fallback: "Alternate DVD")
   /// Anamorphic video is not supported
   internal static let anamorphicVideoNotSupported = L10n.tr("Localizable", "anamorphicVideoNotSupported", fallback: "Anamorphic video is not supported")
-  /// API key copied
-  internal static let apiKeyCopied = L10n.tr("Localizable", "apiKeyCopied", fallback: "API key copied")
-  /// Your API key was copied to your clipboard!
-  internal static let apiKeyCopiedMessage = L10n.tr("Localizable", "apiKeyCopiedMessage", fallback: "Your API key was copied to your clipboard!")
   /// API keys
   internal static let apiKeys = L10n.tr("Localizable", "apiKeys", fallback: "API keys")
   /// API Keys
@@ -198,8 +194,6 @@ internal enum L10n {
   internal static let birthYear = L10n.tr("Localizable", "birthYear", fallback: "Birth year")
   /// Bitrate
   internal static let bitrate = L10n.tr("Localizable", "bitrate", fallback: "Bitrate")
-  /// Auto
-  internal static let bitrateAuto = L10n.tr("Localizable", "bitrateAuto", fallback: "Auto")
   /// Default bitrate
   internal static let bitrateDefault = L10n.tr("Localizable", "bitrateDefault", fallback: "Default bitrate")
   /// Limits the internet bandwidth used during playback.
