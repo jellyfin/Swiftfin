@@ -6,113 +6,64 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
-import Defaults
 import Engine
 import SwiftUI
-
-#if os(iOS)
-import LocalAuthentication
-#endif
 
 // TODO: present toast when authentication successfully changed
 
 struct LocalUserSecurityView: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @Environment(\.localUserAuthenticationAction)
+    private var authenticationAction
 
     @Router
     private var router
 
-    @StateObject
-    private var viewModel = LocalUserSecurityViewModel()
-
     @State
-    private var signInPolicy: UserAccessPolicy = .none
-    @State
-    private var pin: String = ""
+    private var signInPolicy: LocalUserAccessPolicy = .none
     @State
     private var pinHint: String = ""
     @State
-    private var isPresentingOldPinPrompt: Bool = false
-    @State
-    private var isPresentingNewPinPrompt: Bool = false
-    @State
     private var error: Error? = nil
 
-    private func checkOldPolicy() {
-        do {
-            try viewModel.checkForOldPolicy()
-        } catch {
-            return
-        }
-
-        checkNewPolicy()
-    }
-
-    private func checkNewPolicy() {
-        do {
-            try viewModel.checkFor(newPolicy: signInPolicy)
-        } catch {
-            return
-        }
-
-        viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
-    }
-
-    #if os(iOS)
-    private func performDeviceAuthentication(reason: String) async throws {
-        let context = LAContext()
-        var policyError: NSError?
-
-        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
-            viewModel.logger.critical("\(policyError!.localizedDescription)")
-            error = ErrorMessage(L10n.unableToPerformDeviceAuthFaceID)
-            throw ErrorMessage(L10n.deviceAuthFailed)
-        }
-
-        do {
-            try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
-        } catch {
-            viewModel.logger.critical("\(error.localizedDescription)")
-            self.error = ErrorMessage(L10n.unableToPerformDeviceAuth)
-            throw ErrorMessage(L10n.deviceAuthFailed)
-        }
-    }
-    #endif
+    @StateObject
+    private var viewModel = LocalUserSecurityViewModel()
 
     @MainActor
-    private func handleEvent(_ event: LocalUserSecurityViewModel.Event) async throws {
-        switch event {
-        case let .error(eventError):
-            UIDevice.feedback(.error)
-            error = eventError
+    private func performSaveSecurityPolicy() async {
+        guard let authenticationAction else {
+            return
+        }
 
-        case .promptForOldDeviceAuth:
-            #if os(iOS)
-            try await performDeviceAuthentication(
-                reason: L10n.userRequiresDeviceAuthentication(viewModel.userSession.user.username)
+        do {
+            let user = viewModel.userSession.user
+            let oldPolicy = user.accessPolicy
+
+            let oldEvaluatedPolicy = try await authenticationAction(
+                policy: oldPolicy,
+                reason: oldPolicy.authenticateReason(user: user)
             )
-            checkNewPolicy()
-            #endif
 
-        case .promptForOldPin:
-            pin = ""
-            isPresentingOldPinPrompt = true
+            if let oldPinPolicy = oldEvaluatedPolicy as? PinEvaluatedUserAccessPolicy {
+                try viewModel.check(oldPin: oldPinPolicy.pin)
+            }
 
-        case .promptForNewDeviceAuth:
-            #if os(iOS)
-            try await performDeviceAuthentication(
-                reason: L10n.userRequiresDeviceAuthentication(viewModel.userSession.user.username)
+            let newEvaluatedPolicy = try await authenticationAction(
+                policy: signInPolicy,
+                reason: signInPolicy.createReason(user: user)
             )
-            viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: "")
+
+            viewModel.set(
+                newPolicy: signInPolicy,
+                newPin: (newEvaluatedPolicy as? PinEvaluatedUserAccessPolicy)?.pin ?? "",
+                newPinHint: signInPolicy == .requirePin ? pinHint : ""
+            )
             router.dismiss()
-            #endif
-
-        case .promptForNewPin:
-            pin = ""
-            isPresentingNewPinPrompt = true
+        } catch is CancellationError {
+            return
+        } catch {
+            UIDevice.feedback(.error)
+            self.error = error
         }
     }
 
@@ -155,64 +106,21 @@ struct LocalUserSecurityView: View {
             signInPolicy = viewModel.userSession.user.accessPolicy
             pinHint = viewModel.userSession.user.pinHint
         }
-        .onReceive(viewModel.events) { event in
-            Task {
-                try await handleEvent(event)
-            }
-        }
         .topBarTrailing {
             Button(
                 signInPolicy == .requirePin && signInPolicy == viewModel.userSession.user.accessPolicy
                     ? L10n.changePin
-                    : L10n.save,
-                action: checkOldPolicy
-            )
+                    : L10n.save
+            ) {
+                Task { @MainActor in
+                    await performSaveSecurityPolicy()
+                }
+            }
             #if os(iOS)
             .buttonStyle(.toolbarPill)
             #endif
         }
-        .alert(
-            L10n.enterPin,
-            isPresented: $isPresentingOldPinPrompt
-        ) {
-            pinField
-
-            // bug in SwiftUI: having .disabled will dismiss
-            // alert but not call the closure
-            Button(L10n.continue) {
-                Task {
-                    try viewModel.check(oldPin: pin)
-                    checkNewPolicy()
-                }
-            }
-
-            Button(L10n.cancel, role: .cancel) {}
-        } message: {
-            Text(L10n.enterPinForUser(viewModel.userSession.user.username))
-        }
-        .alert(
-            L10n.setPin,
-            isPresented: $isPresentingNewPinPrompt
-        ) {
-            pinField
-
-            // bug in SwiftUI: having .disabled will dismiss
-            // alert but not call the closure
-            Button(L10n.set) {
-                viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
-                router.dismiss()
-            }
-
-            Button(L10n.cancel, role: .cancel) {}
-        } message: {
-            Text(L10n.createPinForUser(viewModel.userSession.user.username))
-        }
         .errorMessage($error)
-    }
-
-    private var pinField: some View {
-        TextField(L10n.pin, text: $pin)
-            .keyboardType(.numberPad)
     }
 
     @ViewBuilder
@@ -233,17 +141,17 @@ struct LocalUserSecurityView: View {
             Text(L10n.additionalSecurityAccessDescription)
         } learnMore: {
             LabeledContent(
-                UserAccessPolicy.none.displayTitle,
+                LocalUserAccessPolicy.none.displayTitle,
                 value: L10n.saveUserWithoutAuthDescription
             )
             #if os(iOS)
             LabeledContent(
-                UserAccessPolicy.requireDeviceAuthentication.displayTitle,
+                LocalUserAccessPolicy.requireDeviceAuthentication.displayTitle,
                 value: L10n.requireDeviceAuthDescription
             )
             #endif
             LabeledContent(
-                UserAccessPolicy.requirePin.displayTitle,
+                LocalUserAccessPolicy.requirePin.displayTitle,
                 value: L10n.requirePinDescription
             )
         }

@@ -30,7 +30,7 @@ struct UserSignInView: View {
     private var router
 
     @State
-    private var accessPolicy: UserAccessPolicy = .none
+    private var accessPolicy: LocalUserAccessPolicy = .none
     @State
     private var existingUser: UserSignInViewModel.UserStateDataPair? = nil
     @State
@@ -218,7 +218,7 @@ struct UserSignInView: View {
                                     userID: user.id,
                                     source: user.profileImageSource(
                                         client: viewModel.server.client,
-                                        maxWidth: 120
+                                        maxWidth: 50
                                     )
                                 )
                                 .frame(width: 50, height: 50)
