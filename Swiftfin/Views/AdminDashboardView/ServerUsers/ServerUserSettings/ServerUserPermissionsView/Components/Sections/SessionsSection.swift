@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -68,19 +69,25 @@ extension ServerUserPermissionsView {
 
         @ViewBuilder
         private func MaxFailedLoginsButton() -> some View {
-            ChevronButton(
-                L10n.customFailedLogins,
-                subtitle: Text(policy.loginAttemptsBeforeLockout ?? 1, format: .number),
-                description: L10n.enterCustomFailedLogins
-            ) {
-                TextField(
-                    L10n.failedLogins,
-                    value: $policy.loginAttemptsBeforeLockout
-                        .coalesce(1)
-                        .clamp(min: 1, max: 1000),
-                    format: .number
-                )
-                .keyboardType(.numberPad)
+            StateAdapter(initialValue: false) { isPresented in
+                ChevronButton(
+                    L10n.customFailedLogins,
+                    content: Text(policy.loginAttemptsBeforeLockout ?? 1, format: .number)
+                ) {
+                    isPresented.wrappedValue = true
+                }
+                .alert(L10n.customFailedLogins, isPresented: isPresented) {
+                    TextField(
+                        L10n.failedLogins,
+                        value: $policy.loginAttemptsBeforeLockout
+                            .coalesce(1)
+                            .clamp(min: 1, max: 1000),
+                        format: .number
+                    )
+                    .keyboardType(.numberPad)
+                } message: {
+                    Text(L10n.enterCustomFailedLogins)
+                }
             }
         }
 
@@ -117,19 +124,25 @@ extension ServerUserPermissionsView {
 
         @ViewBuilder
         private func MaxSessionsButton() -> some View {
-            ChevronButton(
-                L10n.customSessions,
-                subtitle: Text(policy.maxActiveSessions ?? 1, format: .number),
-                description: L10n.enterCustomMaxSessions
-            ) {
-                TextField(
-                    L10n.maximumSessions,
-                    value: $policy.maxActiveSessions
-                        .coalesce(1)
-                        .clamp(min: 1, max: 1000),
-                    format: .number
-                )
-                .keyboardType(.numberPad)
+            StateAdapter(initialValue: false) { isPresented in
+                ChevronButton(
+                    L10n.customSessions,
+                    content: Text(policy.maxActiveSessions ?? 1, format: .number)
+                ) {
+                    isPresented.wrappedValue = true
+                }
+                .alert(L10n.customSessions, isPresented: isPresented) {
+                    TextField(
+                        L10n.maximumSessions,
+                        value: $policy.maxActiveSessions
+                            .coalesce(1)
+                            .clamp(min: 1, max: 1000),
+                        format: .number
+                    )
+                    .keyboardType(.numberPad)
+                } message: {
+                    Text(L10n.enterCustomMaxSessions)
+                }
             }
         }
     }

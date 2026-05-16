@@ -10,12 +10,12 @@ import SwiftUI
 
 struct SeeAllPosterButton: View {
 
-    private let type: PosterDisplayType
-    private var onSelect: () -> Void
+    let type: PosterDisplayType
+    let action: () -> Void
 
     var body: some View {
         Button {
-            onSelect()
+            action()
         } label: {
             ZStack {
                 Color(UIColor.darkGray)
@@ -32,19 +32,5 @@ struct SeeAllPosterButton: View {
             .posterStyle(type)
         }
         .buttonStyle(.card)
-    }
-}
-
-extension SeeAllPosterButton {
-
-    init(type: PosterDisplayType) {
-        self.init(
-            type: type,
-            onSelect: {}
-        )
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }
