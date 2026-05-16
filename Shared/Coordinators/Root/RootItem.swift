@@ -34,7 +34,9 @@ struct RootItem: Identifiable {
 
     static let selectUser = RootItem(id: "selectUser") {
         NavigationInjectionView(coordinator: .init()) {
-            SelectUserView()
+            WithUserAuthentication {
+                SelectUserView()
+            }
         }
     }
 

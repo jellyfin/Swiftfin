@@ -61,7 +61,7 @@ extension StoredValues.Keys {
 
 // MARK: values
 
-extension UserAccessPolicy: Storable {}
+extension LocalUserAccessPolicy: Storable {}
 extension UserDto: @retroactive Defaults.Serializable {}
 extension UserDto: Storable {}
 extension UserState: Defaults.Serializable {}
@@ -87,7 +87,7 @@ extension StoredValues.Keys {
 
         // Doesn't use `CurrentUserKey` because data may be
         // retrieved and stored without a user session
-        static func accessPolicy(id: String) -> Key<UserAccessPolicy> {
+        static func accessPolicy(id: String) -> Key<LocalUserAccessPolicy> {
             UserKey(
                 ownerID: id,
                 field: "accessPolicy",
@@ -105,7 +105,7 @@ extension StoredValues.Keys {
             )
         }
 
-        static var accessPolicy: Key<UserAccessPolicy> {
+        static var accessPolicy: Key<LocalUserAccessPolicy> {
             CurrentUserKey(
                 field: "currentUserAccessPolicy",
                 default: .none

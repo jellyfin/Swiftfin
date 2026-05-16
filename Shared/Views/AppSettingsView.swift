@@ -130,6 +130,12 @@ struct AppSettingsView: View {
             ChevronButton(L10n.logs) {
                 router.route(to: .log)
             }
+
+            #if DEBUG
+            ChevronButton("Debug") {
+                router.route(to: .debugSettings)
+            }
+            #endif
         }
         .animation(.linear, value: selectUserUseSplashscreen)
         .animation(.linear, value: signOutOnBackground)
