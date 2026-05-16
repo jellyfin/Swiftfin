@@ -250,8 +250,9 @@ extension MediaChaptersSupplement {
                         .padding(.vertical, 8)
                 } content: {
                     ChapterContent(chapter: chapter)
+                } action: {
+                    action()
                 }
-                .onSelect(perform: action)
                 .isSelected(chapter.id == supplement.activeChapterID)
             }
         }

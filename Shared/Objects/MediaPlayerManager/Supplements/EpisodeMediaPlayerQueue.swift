@@ -443,8 +443,9 @@ extension EpisodeMediaPlayerQueue {
                     EpisodeDescription(episode: episode)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+            } action: {
+                action()
             }
-            .onSelect(perform: action)
             .isSelected(isCurrentEpisode)
         }
     }
