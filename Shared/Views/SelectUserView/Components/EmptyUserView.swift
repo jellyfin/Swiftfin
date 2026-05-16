@@ -10,17 +10,11 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct UserEmptyView: PlatformView {
+    struct EmptyUserView: PlatformView {
 
-        private let action: () -> Void
+        let action: () -> Void
 
-        private var columns: Int {
-            UIDevice.isPhone ? 2 : 5
-        }
-
-        init(action: @escaping () -> Void) {
-            self.action = action
-        }
+        private let columns: CGFloat = UIDevice.isPhone ? 2 : 5
 
         @ViewBuilder
         private var imageView: some View {
@@ -65,16 +59,15 @@ extension SelectUserView {
         var iOSView: some View {
             GeometryReader { geometry in
                 addUserButton
-                    .frame(maxWidth: (geometry.size.width - EdgeInsets.edgePadding * (CGFloat(columns) + 1)) / CGFloat(columns))
-                    .frame(maxWidth: min(geometry.size.width, geometry.size.height), maxHeight: .infinity, alignment: .center)
+                    .frame(maxWidth: (geometry.size.width - EdgeInsets.edgePadding * (columns + 1)) / columns)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
 
         var tvOSView: some View {
             addUserButton
-                .frame(width: 300)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .focusSection()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
     }
 }

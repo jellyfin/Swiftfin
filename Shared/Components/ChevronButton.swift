@@ -352,35 +352,20 @@ extension ChevronButton where _Label == Label<Text, Image>, _Content == EmptyVie
 
 private struct ChevronButtonLabeledContentStyle: LabeledContentStyle {
 
-    let isExternal: Bool
-
-    func makeBody(configuration: Configuration) -> some View {
-        ChevronButtonLabeledContentView(
-            isExternal: isExternal,
-            label: configuration.label,
-            content: configuration.content
-        )
-    }
-}
-
-private struct ChevronButtonLabeledContentView<Label: View, Content: View>: View {
-
-    let isExternal: Bool
-    let label: Label
-    let content: Content
-
     @Environment(\.isEditing)
     private var isEditing
 
-    var body: some View {
+    let isExternal: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
         HStack {
 
-            label
+            configuration.label
                 .labelStyle(BoldIconLabelStyle())
 
             Spacer()
 
-            content
+            configuration.content
                 .foregroundStyle(.secondary)
 
             if isEditing {

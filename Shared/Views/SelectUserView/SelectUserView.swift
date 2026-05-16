@@ -12,10 +12,6 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-#if os(iOS)
-import LocalAuthentication
-#endif
-
 struct SelectUserView: View {
 
     typealias UserItem = (user: UserState, server: ServerState)
@@ -33,23 +29,20 @@ struct SelectUserView: View {
     @Default(.selectUserSortOrder)
     private var userSortOrder
 
+    @Environment(\.localUserAuthenticationAction)
+    private var authenticationAction
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
+
     @Router
     private var router
 
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass
-    @Environment(\.editMode)
-    private var editMode
-
-    @State
-    private var pin: String = ""
     @State
     private var selectedUsers: Set<UserState> = []
-
+    @State
+    private var isEditing = false
     @State
     private var isPresentingConfirmDeleteUsers = false
-    @State
-    private var isPresentingLocalPin: Bool = false
 
     @StateObject
     private var viewModel = SelectUserViewModel()
@@ -73,19 +66,18 @@ struct SelectUserView: View {
     private var splashScreenImageSources: [ImageSource] {
         switch (serverSelection, selectUserAllServersSplashscreen) {
         case (.all, .all):
-            return viewModel
+            viewModel
                 .servers
                 .keys
                 .shuffled()
                 .map(\.splashScreenImageSource)
 
         case let (.server(id), _), let (.all, .server(id)):
-            guard let server = viewModel
+            viewModel
                 .servers
                 .keys
-                .first(where: { $0.id == id }) else { return [] }
-
-            return [server.splashScreenImageSource]
+                .first(where: { $0.id == id })
+                .map { [$0.splashScreenImageSource] } ?? []
         }
     }
 
@@ -95,10 +87,9 @@ struct SelectUserView: View {
             case .all:
                 return viewModel.servers
                     .map { server, users in
-                        users.map { (server: server, user: $0) }
+                        users.map { UserItem(user: $0, server: server) }
                     }
-                    .flatMap(\.self)
-                    .map { UserItem(user: $0.user, server: $0.server) }
+                    .flattened()
             case let .server(id: id):
                 guard let server = viewModel.servers.keys.first(where: { $0.id == id }) else {
                     return []
@@ -132,26 +123,33 @@ struct SelectUserView: View {
         isPresentingConfirmDeleteUsers = true
     }
 
-    private func select(user: UserState, needsPin: Bool = true) {
+    private func select(user: UserState) {
         selectedUsers.insert(user)
 
         Task { @MainActor in
-            switch user.accessPolicy {
-            case .requireDeviceAuthentication:
-                #if os(iOS)
-                try await performDeviceAuthentication(reason: L10n.userRequiresDeviceAuthentication(user.username))
-                #else
-                return
-                #endif
-            case .requirePin:
-                if needsPin {
-                    isPresentingLocalPin = true
+            do {
+                guard let authenticationAction else {
+                    selectedUsers.remove(user)
                     return
                 }
-            case .none: ()
-            }
 
-            await viewModel.signIn(user, pin: pin)
+                let evaluatedPolicy = try await authenticationAction(
+                    policy: user.accessPolicy,
+                    reason: user.accessPolicy.authenticateReason(user: user)
+                )
+                let pin = (evaluatedPolicy as? PinEvaluatedUserAccessPolicy)?.pin ?? ""
+
+                await viewModel.signIn(user, pin: pin)
+
+                if user.accessPolicy == .requirePin {
+                    selectedUsers.remove(user)
+                }
+            } catch is CancellationError {
+                selectedUsers.remove(user)
+            } catch {
+                selectedUsers.remove(user)
+                await viewModel.error(error)
+            }
         }
     }
 
@@ -162,62 +160,36 @@ struct SelectUserView: View {
         Notifications[.didSignIn].post()
     }
 
-    #if os(iOS)
-    private func performDeviceAuthentication(reason: String) async throws {
-        let context = LAContext()
-        var policyError: NSError?
-
-        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
-            viewModel.logger.critical("\(policyError!.localizedDescription)")
-            await viewModel.error(ErrorMessage(L10n.unableToPerformDeviceAuthFaceID))
-            throw ErrorMessage(L10n.deviceAuthFailed)
-        }
-
-        do {
-            try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
-        } catch {
-            viewModel.logger.critical("\(error.localizedDescription)")
-            await viewModel.error(ErrorMessage(L10n.unableToPerformDeviceAuth))
-            throw ErrorMessage(L10n.deviceAuthFailed)
-        }
-    }
-    #endif
-
     @ViewBuilder
     private var splashScreenBackground: some View {
         if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
-            ZStack {
+            ZStack(alignment: .top) {
                 ImageView(splashScreenImageSources)
                     .pipeline(.Swiftfin.local)
                     .aspectRatio(contentMode: .fill)
-                    // Causes random redrawing but also required to switch servers
-                    // .id(splashScreenImageSources)
-                    .transition(.opacity.animation(.linear(duration: 0.1)))
-                    .animation(.linear, value: splashScreenImageSources)
+                    .id(splashScreenImageSources)
 
                 Color.black
                     .opacity(0.9)
             }
-            .ignoresSafeArea()
         }
     }
 
-    @ViewBuilder
-    private var contentView: some View {
+    var body: some View {
         ZStack {
             if viewModel.servers.isEmpty {
-                InitialSetupView()
+                ConnectToJellyfinView()
             } else {
                 VStack(spacing: 0) {
                     ZStack {
                         if userItems.isEmpty {
-                            UserEmptyView {
+                            EmptyUserView {
                                 if let selectedServer {
                                     addUser(server: selectedServer)
                                 }
                             }
-                            .if(selectedServer == nil) { view in
-                                view.contextMenu {
+                            .contextMenu {
+                                if selectedServer == nil {
                                     Text(L10n.selectServer)
 
                                     ForEach(viewModel.servers.keys) { server in
@@ -235,6 +207,7 @@ struct SelectUserView: View {
                             case .list:
                                 ListView(
                                     userItems: userItems,
+                                    isEditing: $isEditing,
                                     selectedUsers: $selectedUsers,
                                     serverSelection: serverSelection,
                                     onSelect: { select(user: $0) },
@@ -243,6 +216,7 @@ struct SelectUserView: View {
                             case .grid:
                                 GridView(
                                     userItems: userItems,
+                                    isEditing: $isEditing,
                                     selectedUsers: $selectedUsers,
                                     serverSelection: serverSelection,
                                     onSelect: { select(user: $0) },
@@ -252,7 +226,8 @@ struct SelectUserView: View {
                         }
                     }
                     .animation(.linear(duration: 0.1), value: userListDisplayType)
-                    .frame(maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .focusSection()
                     .mask {
                         VStack(spacing: 0) {
                             #if os(tvOS)
@@ -284,9 +259,10 @@ struct SelectUserView: View {
                         .ignoresSafeArea(.all, edges: .horizontal)
                     }
 
-                    UserActionButtonBar(
+                    BottomBar(
                         servers: viewModel.servers.keys,
                         allUsers: userItems,
+                        isEditing: $isEditing,
                         selectedUsers: $selectedUsers,
                         onDelete: {
                             isPresentingConfirmDeleteUsers = true
@@ -296,29 +272,77 @@ struct SelectUserView: View {
                 }
             }
         }
-        .environment(\.editMode, editMode)
+        .animation(.linear(duration: 0.1), value: selectedServer)
         .environment(\.isOverComplexContent, true)
-        .isEditing(editMode?.wrappedValue.isEditing == true)
+        .isEditing(isEditing)
         .onFirstAppear {
             viewModel.getServers()
         }
-        .background {
-            splashScreenBackground
-        }
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Image(uiImage: .jellyfinBlobBlue)
+                Image(.jellyfinBlobBlue)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: UIDevice.isTV ? 100 : 30)
             }
+
+            #if os(iOS)
+            if horizontalSizeClass == .compact {
+                ToolbarItem(placement: .topBarLeading) {
+                    if isEditing {
+                        Button(
+                            areAllUsersSelected ? L10n.removeAll : L10n.selectAll,
+                            action: toggleAllUsersSelected
+                        )
+                        .buttonStyle(.toolbarPill)
+                    }
+                }
+
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    if isEditing {
+                        Button(L10n.cancel) {
+                            isEditing = false
+                        }
+                        .buttonStyle(.toolbarPill)
+                    } else {
+                        Menu {
+                            AdvancedMenu(
+                                hasUsers: userItems.isNotEmpty,
+                                isEditing: $isEditing
+                            )
+                        } label: {
+                            Label(L10n.advanced, systemImage: "gearshape.fill")
+                        }
+                    }
+                }
+
+                ToolbarItem(placement: .bottomBar) {
+                    if isEditing {
+                        Button(L10n.delete) {
+                            isPresentingConfirmDeleteUsers = true
+                        }
+                        .buttonStyle(.toolbarPill(.red))
+                        .disabled(selectedUsers.isEmpty)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                }
+            }
+            #endif
         }
-        .onChange(of: editMode?.wrappedValue) { newValue in
-            guard newValue?.isEditing != true,
-                  !isPresentingConfirmDeleteUsers else { return }
+        .background {
+            splashScreenBackground
+                .ignoresSafeArea()
+        }
+        #if os(iOS)
+        .ignoresSafeArea(.keyboard, edges: .bottom)
+        #endif
+        .backport
+        .onChange(of: isEditing) {
+            guard !isEditing, !isPresentingConfirmDeleteUsers else { return }
             selectedUsers.removeAll()
         }
-        .onChange(of: viewModel.servers.keys) { newValue in
+        .backport
+        .onChange(of: viewModel.servers.keys) { _, newValue in
             if case let SelectUserServerSelection.server(id: id) = serverSelection,
                !newValue.contains(where: { $0.id == id })
             {
@@ -330,13 +354,6 @@ struct SelectUserView: View {
                     serverSelection = .all
                     selectUserAllServersSplashscreen = .all
                 }
-            }
-        }
-        .onChange(of: isPresentingLocalPin) { newValue in
-            if newValue {
-                pin = ""
-            } else {
-                selectedUsers.removeAll()
             }
         }
         .onReceive(viewModel.$error) { error in
@@ -359,27 +376,6 @@ struct SelectUserView: View {
         .onNotification(.didDeleteServer) { _ in
             viewModel.getServers()
         }
-        .alert(L10n.signIn, isPresented: $isPresentingLocalPin) {
-            SecureField(L10n.pin, text: $pin)
-                .keyboardType(.numberPad)
-
-            Button(L10n.signIn) {
-                guard let user = selectedUsers.first else {
-                    assertionFailure("User not selected")
-                    return
-                }
-                select(user: user, needsPin: false)
-            }
-
-            Button(L10n.cancel, role: .cancel) {}
-        } message: {
-            if let user = selectedUsers.first, user.pinHint.isNotEmpty {
-                Text(user.pinHint)
-            } else {
-                let username = selectedUsers.first?.username ?? .emptyDash
-                Text(L10n.enterPinForUser(username))
-            }
-        }
         .alert(
             L10n.delete,
             isPresented: $isPresentingConfirmDeleteUsers
@@ -387,7 +383,7 @@ struct SelectUserView: View {
             Button(L10n.delete, role: .destructive) {
                 viewModel.deleteUsers(selectedUsers)
                 selectedUsers.removeAll()
-                editMode?.wrappedValue = .inactive
+                isEditing = false
                 UIDevice.feedback(.success)
             }
         } message: {
@@ -398,57 +394,5 @@ struct SelectUserView: View {
             }
         }
         .errorMessage($viewModel.error)
-    }
-
-    var body: some View {
-        contentView
-        #if os(iOS)
-        .ignoresSafeArea(.keyboard, edges: .bottom)
-        .toolbar {
-            if horizontalSizeClass == .compact {
-                ToolbarItem(placement: .topBarLeading) {
-                    if editMode?.wrappedValue.isEditing == true {
-                        Button(areAllUsersSelected ? L10n.removeAll : L10n.selectAll) {
-                            toggleAllUsersSelected()
-                        }
-                        .buttonStyle(.toolbarPill)
-                    }
-                }
-
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    if editMode?.wrappedValue.isEditing == true {
-                        Button(L10n.cancel) {
-                            editMode?.wrappedValue = .inactive
-                        }
-                        .buttonStyle(.toolbarPill)
-                    } else {
-                        Menu {
-                            Section(L10n.users) {
-                                AddUserMenu(servers: viewModel.servers.keys)
-
-                                EditUsersMenu(hasUsers: userItems.isNotEmpty)
-                                    .environment(\.editMode, editMode)
-                            }
-
-                            AdvancedMenu()
-                        } label: {
-                            Label(L10n.advanced, systemImage: "gearshape.fill")
-                        }
-                    }
-                }
-
-                ToolbarItem(placement: .bottomBar) {
-                    if editMode?.wrappedValue.isEditing == true {
-                        Button(L10n.delete) {
-                            isPresentingConfirmDeleteUsers = true
-                        }
-                        .buttonStyle(.toolbarPill(.red))
-                        .disabled(selectedUsers.isEmpty)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                    }
-                }
-            }
-        }
-        #endif
     }
 }

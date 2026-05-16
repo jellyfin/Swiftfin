@@ -13,41 +13,37 @@ extension SelectUserView {
 
     struct ListView: View {
 
-        @Environment(\.editMode)
-        private var editMode
-
+        @Binding
+        private var isEditing: Bool
         @Binding
         private var selectedUsers: Set<UserState>
 
-        private let userItems: [UserItem]
+        private let users: [UserItem]
         private let serverSelection: SelectUserServerSelection
         private let onSelect: (UserState) -> Void
         private let onDelete: (UserState) -> Void
 
-        private var profileImageWidth: CGFloat {
-            UIDevice.isTV ? 120 : UIDevice.isPad ? 80 : 50
-        }
-
         init(
             userItems: [UserItem],
+            isEditing: Binding<Bool>,
             selectedUsers: Binding<Set<UserState>>,
             serverSelection: SelectUserServerSelection,
             onSelect: @escaping (UserState) -> Void,
             onDelete: @escaping (UserState) -> Void
         ) {
-            self.userItems = userItems
+            self.users = userItems
+            self._isEditing = isEditing
             self._selectedUsers = selectedUsers
             self.serverSelection = serverSelection
             self.onSelect = onSelect
             self.onDelete = onDelete
         }
 
-        @ViewBuilder
         var body: some View {
             List {
-                ForEach(userItems, id: \.user.id) { item in
+                ForEach(users, id: \.user.id) { item in
                     ChevronButton {
-                        if editMode?.wrappedValue.isEditing == true {
+                        if isEditing {
                             selectedUsers.toggle(value: item.user)
                         } else {
                             onSelect(item.user)
@@ -65,7 +61,7 @@ extension SelectUserView {
                                     pipeline: .Swiftfin.local
                                 )
                                 .posterShadow()
-                                .frame(width: profileImageWidth)
+                                .frame(width: UIDevice.isTV ? 120 : UIDevice.isPad ? 80 : 50)
 
                                 VStack(alignment: .leading) {
                                     Text(item.user.username)
@@ -84,7 +80,7 @@ extension SelectUserView {
                         }
                     }
                     .contextMenu {
-                        if editMode?.wrappedValue.isEditing != true {
+                        if !isEditing {
                             Button(L10n.delete, role: .destructive) {
                                 onDelete(item.user)
                             }
@@ -93,7 +89,7 @@ extension SelectUserView {
                     .isSelected(selectedUsers.contains(item.user))
                     #if os(iOS)
                         .swipeActions {
-                            if editMode?.wrappedValue.isEditing != true {
+                            if !isEditing {
                                 Button(
                                     L10n.delete,
                                     systemImage: "trash"
@@ -111,11 +107,9 @@ extension SelectUserView {
             #if os(iOS)
                 .scrollContentBackground(.hidden)
             #else
-                // This is required to allow the list to be focusable during `EditMode`
-                    .environment(\.editMode, .constant(.inactive))
-                    .edgePadding()
-                    .scrollClipDisabled()
-                    .focusSection()
+                .edgePadding()
+                .scrollClipDisabled()
+                .focusSection()
             #endif
         }
     }

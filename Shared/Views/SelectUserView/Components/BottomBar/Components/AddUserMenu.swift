@@ -20,21 +20,12 @@ extension SelectUserView {
         @Router
         private var router
 
-        private let servers: OrderedSet<ServerState>
-
-        init(
-            servers: OrderedSet<ServerState>
-        ) {
-            self.servers = servers
-        }
+        let servers: OrderedSet<ServerState>
 
         var body: some View {
-            ConditionalMenu(
-                tracking: serverSelection.server(from: servers),
-                action: { server in
-                    router.route(to: .userSignIn(server: server))
-                }
-            ) {
+            ConditionalMenu(tracking: serverSelection.server(from: servers)) { server in
+                router.route(to: .userSignIn(server: server))
+            } menuContent: {
                 ForEach(servers) { server in
                     Button {
                         router.route(to: .userSignIn(server: server))
@@ -46,6 +37,7 @@ extension SelectUserView {
             } label: {
                 Label(L10n.addUser, systemImage: "plus")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .fontWeight(.bold)
             }
         }
     }

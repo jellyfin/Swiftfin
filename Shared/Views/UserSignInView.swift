@@ -30,7 +30,7 @@ struct UserSignInView: View {
     private var router
 
     @State
-    private var accessPolicy: UserAccessPolicy = .none
+    private var accessPolicy: LocalUserAccessPolicy = .none
     @State
     private var existingUser: UserSignInViewModel.UserStateDataPair? = nil
     @State

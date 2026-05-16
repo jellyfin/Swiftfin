@@ -11,27 +11,22 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct InitialSetupView: View {
-
-        @Router
-        private var router
+    struct ConnectToJellyfinView: View {
 
         @Default(.accentColor)
         private var accentColor
 
+        @Router
+        private var router
+
         var body: some View {
-            VStack(spacing: UIDevice.isTV ? 50 : 10) {
+            VStack {
                 Text(L10n.connectToJellyfinServerStart)
-                    .font(.body)
-                    .frame(minWidth: 50, maxWidth: 250)
+                    .frame(maxWidth: 250)
                     .multilineTextAlignment(.center)
 
-                Button {
+                Button(L10n.connect) {
                     router.route(to: .connectToServer)
-                } label: {
-                    Text(L10n.connect)
-                        .font(.callout)
-                        .fontWeight(.bold)
                 }
                 .foregroundStyle(
                     accentColor.overlayColor,
@@ -40,7 +35,7 @@ extension SelectUserView {
                 .buttonStyle(.primary)
                 .frame(
                     width: 250,
-                    height: UIDevice.isTV ? 75 : 50
+                    height: UIDevice.isTV ? 75 : 44
                 )
             }
         }

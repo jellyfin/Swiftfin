@@ -21,7 +21,18 @@ extension SelectUserView {
         @Router
         private var router
 
+        let hasUsers: Bool
+        let isEditing: Binding<Bool>
+
         var body: some View {
+            if hasUsers {
+                Toggle(
+                    L10n.editUsers,
+                    systemImage: "person.crop.circle",
+                    isOn: isEditing
+                )
+            }
+
             Picker(selection: $userListDisplayType) {
                 ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
                     Label($0.displayTitle, systemImage: $0.systemImage)

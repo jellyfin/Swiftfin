@@ -13,10 +13,10 @@ import SwiftUI
 
 struct LocalUserAuthenticationAction {
 
-    let action: (UserAccessPolicy, String?) async throws -> EvaluatedLocalUserAccessPolicy
+    let action: (LocalUserAccessPolicy, String?) async throws -> EvaluatedLocalUserAccessPolicy
 
     func callAsFunction(
-        policy: UserAccessPolicy,
+        policy: LocalUserAccessPolicy,
         reason: String?
     ) async throws -> EvaluatedLocalUserAccessPolicy {
         try await action(policy, reason)
@@ -51,6 +51,8 @@ struct WithUserAuthentication<Content: View>: View {
         let context = LAContext()
         try context.canEvaluatePolicy(.deviceOwnerAuthentication)
         try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason ?? "")
+        #else
+        throw ErrorMessage(L10n.deviceAuthFailed)
         #endif
     }
 
@@ -63,7 +65,7 @@ struct WithUserAuthentication<Content: View>: View {
     }
 
     private func handleAuthentication(
-        policy: UserAccessPolicy,
+        policy: LocalUserAccessPolicy,
         reason: String?
     ) async throws -> EvaluatedLocalUserAccessPolicy {
         self.reason = reason
