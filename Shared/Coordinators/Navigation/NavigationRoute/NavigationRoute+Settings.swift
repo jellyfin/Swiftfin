@@ -171,7 +171,9 @@ extension NavigationRoute {
         NavigationRoute(
             id: "localUserSecurity"
         ) {
-            LocalUserSecurityView()
+            WithUserAuthentication {
+                LocalUserSecurityView()
+            }
         }
     }
 
