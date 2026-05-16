@@ -352,6 +352,9 @@ extension ChevronButton where _Label == Label<Text, Image>, _Content == EmptyVie
 
 private struct ChevronButtonLabeledContentStyle: LabeledContentStyle {
 
+    @Environment(\.isEditing)
+    private var isEditing
+
     let isExternal: Bool
 
     func makeBody(configuration: Configuration) -> some View {
@@ -365,10 +368,14 @@ private struct ChevronButtonLabeledContentStyle: LabeledContentStyle {
             configuration.content
                 .foregroundStyle(.secondary)
 
-            Image(systemName: isExternal ? "arrow.up.forward" : "chevron.right")
-                .font(.body)
-                .fontWeight(.regular)
-                .foregroundStyle(.secondary)
+            if isEditing {
+                ListRowCheckbox()
+            } else {
+                Image(systemName: isExternal ? "arrow.up.forward" : "chevron.right")
+                    .font(.body)
+                    .fontWeight(.regular)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }
