@@ -1,7 +1,7 @@
 <div align="center">
+  <img alt="Swiftfin" src="./Resources/primary-wide.svg">
 
-  ![Jellyfin](https://raw.githubusercontent.com/JPKribs/jellyfin-stats/main/banners/contributor-icons/swiftfin.svg)
-
+  <h1>Swiftfin</h1>
   <img src="https://img.shields.io/badge/iOS-16+-red"/>
   <img src="https://img.shields.io/badge/tvOS-17+-red"/>
   <img src="https://img.shields.io/badge/Jellyfin-10.11-9962be"/>
