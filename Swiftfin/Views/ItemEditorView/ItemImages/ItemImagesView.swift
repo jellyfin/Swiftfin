@@ -14,9 +14,6 @@ import SwiftUI
 
 struct ItemImagesView: View {
 
-    @Default(.accentColor)
-    private var accentColor
-
     @Router
     private var router
 
@@ -35,7 +32,7 @@ struct ItemImagesView: View {
     private var uploadError: Error?
 
     private var columns: CGFloat {
-        UIDevice.isPhone ? (posterType == .landscape ? 1.5 : 3) : 3.5
+        posterType == .landscape ? 1.5 : 3
     }
 
     private var posterType: PosterDisplayType {
@@ -273,11 +270,9 @@ struct ItemImagesView: View {
                 VStack {
                     Image(systemName: "photo.badge.plus")
                         .font(.title)
-
                     Text(L10n.add)
                         .font(.body)
                 }
-                .foregroundStyle(accentColor)
             }
             .posterStyle(posterType)
             .posterShadow()
