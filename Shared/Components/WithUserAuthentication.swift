@@ -99,7 +99,7 @@ struct WithUserAuthentication<Content: View>: View {
 
                 // bug in SwiftUI: having .disabled will dismiss
                 // alert but not call the closure (for length)
-                Button(L10n.signIn) {
+                Button(L10n.done) {
                     continuation.resume(returning: ())
                 }
                 .disabled((4 ... 30 ~= pin.count) == false)
