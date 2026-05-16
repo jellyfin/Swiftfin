@@ -1,6 +1,6 @@
 <div align="center">
 
-  ![Jellyfin](https://raw.githubusercontent.com/JPKribs/jellyfin-stats/main/banners/contributor-stats/swiftfin.svg)
+  ![Jellyfin](https://raw.githubusercontent.com/JPKribs/jellyfin-stats/main/banners/simple/swiftfin.svg)
 
   <img src="https://img.shields.io/badge/iOS-16+-red"/>
   <img src="https://img.shields.io/badge/tvOS-17+-red"/>
