@@ -219,20 +219,12 @@ extension EpisodeMediaPlayerQueue {
         @EnvironmentObject
         private var seriesViewModel: SeriesItemViewModel
 
-        private let selection: Binding<SeasonItemViewModel.ID?>
-        private let action: (BaseItemDto) -> Void
+        let selection: Binding<SeasonItemViewModel.ID?>
+        let action: (BaseItemDto) -> Void
 
         private var selectionViewModel: SeasonItemViewModel? {
             guard let id = selection.wrappedValue else { return nil }
             return seriesViewModel.seasons[id: id]
-        }
-
-        init(
-            selection: Binding<SeasonItemViewModel.ID?>,
-            action: @escaping (BaseItemDto) -> Void
-        ) {
-            self.selection = selection
-            self.action = action
         }
 
         private struct _Body: View {
@@ -276,20 +268,12 @@ extension EpisodeMediaPlayerQueue {
         @EnvironmentObject
         private var seriesViewModel: SeriesItemViewModel
 
-        private let selection: Binding<SeasonItemViewModel.ID?>
-        private let action: (BaseItemDto) -> Void
+        let selection: Binding<SeasonItemViewModel.ID?>
+        let action: (BaseItemDto) -> Void
 
         private var selectionViewModel: SeasonItemViewModel? {
             guard let id = selection.wrappedValue else { return nil }
             return seriesViewModel.seasons[id: id]
-        }
-
-        init(
-            selection: Binding<SeasonItemViewModel.ID?>,
-            action: @escaping (BaseItemDto) -> Void
-        ) {
-            self.selection = selection
-            self.action = action
         }
 
         private struct _Body: View {
@@ -338,14 +322,6 @@ extension EpisodeMediaPlayerQueue {
 
             let selection: Binding<SeasonItemViewModel.ID?>
             let selectionViewModel: SeasonItemViewModel
-
-            init(
-                selection: Binding<SeasonItemViewModel.ID?>,
-                selectionViewModel: SeasonItemViewModel
-            ) {
-                self.selection = selection
-                self.selectionViewModel = selectionViewModel
-            }
 
             var body: some View {
                 VStack {
@@ -502,8 +478,9 @@ extension EpisodeMediaPlayerQueue {
                     EpisodeDescription(episode: episode)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+            } action: {
+                action()
             }
-            .onSelect(perform: action)
             .isSelected(isCurrentEpisode)
         }
     }

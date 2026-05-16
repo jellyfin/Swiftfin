@@ -33,12 +33,12 @@ extension ServerUsersView {
         @CurrentDate
         private var currentDate: Date
 
-        private let user: UserDto
+        let user: UserDto
 
         // MARK: - Actions
 
-        private let onSelect: () -> Void
-        private let onDelete: () -> Void
+        let action: () -> Void
+        let onDelete: () -> Void
 
         // MARK: - User Status Mapping
 
@@ -48,18 +48,6 @@ extension ServerUsersView {
             } else {
                 false
             }
-        }
-
-        // MARK: - Initializer
-
-        init(
-            user: UserDto,
-            onSelect: @escaping () -> Void,
-            onDelete: @escaping () -> Void
-        ) {
-            self.user = user
-            self.onSelect = onSelect
-            self.onDelete = onDelete
         }
 
         // MARK: - Label Styling
@@ -135,8 +123,9 @@ extension ServerUsersView {
                 userImage
             } content: {
                 rowContent
+            } action: {
+                action()
             }
-            .onSelect(perform: onSelect)
             .isSeparatorVisible(false)
             .swipeActions {
                 Button(

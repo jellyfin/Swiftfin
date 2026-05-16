@@ -17,19 +17,13 @@ struct HourMinutePicker: View {
     @State
     private var isPresented = false
 
-    private let title: String
-    private let interval: Binding<TimeInterval>
+    let title: String
+    let interval: Binding<TimeInterval>
 
-    init(_ title: String, interval: Binding<TimeInterval>) {
-        self.title = title
-        self.interval = interval
-    }
-
-    @ViewBuilder
     var body: some View {
         ChevronButton(
             title,
-            subtitle: Text(Duration.seconds(interval.wrappedValue), format: .hourMinuteAbbreviated)
+            content: Text(Duration.seconds(interval.wrappedValue), format: .hourMinuteAbbreviated)
         ) {
             isPresented.toggle()
         }

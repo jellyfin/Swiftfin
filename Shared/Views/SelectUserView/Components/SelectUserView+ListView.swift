@@ -20,7 +20,7 @@ extension SelectUserView {
 
         private let users: [UserItem]
         private let serverSelection: SelectUserServerSelection
-        private let onSelect: (UserState) -> Void
+        private let action: (UserState) -> Void
         private let onDelete: (UserState) -> Void
 
         init(
@@ -28,14 +28,14 @@ extension SelectUserView {
             isEditing: Binding<Bool>,
             selectedUsers: Binding<Set<UserState>>,
             serverSelection: SelectUserServerSelection,
-            onSelect: @escaping (UserState) -> Void,
+            action: @escaping (UserState) -> Void,
             onDelete: @escaping (UserState) -> Void
         ) {
             self.users = userItems
             self._isEditing = isEditing
             self._selectedUsers = selectedUsers
             self.serverSelection = serverSelection
-            self.onSelect = onSelect
+            self.action = action
             self.onDelete = onDelete
         }
 
@@ -46,35 +46,31 @@ extension SelectUserView {
                         if isEditing {
                             selectedUsers.toggle(value: item.user)
                         } else {
-                            onSelect(item.user)
+                            action(item.user)
                         }
                     } label: {
-                        LabeledContent {
-                            EmptyView()
-                        } label: {
-                            HStack(spacing: EdgeInsets.edgePadding) {
-                                UserProfileImage(
-                                    userID: item.user.id,
-                                    source: item.user.profileImageSource(
-                                        client: item.server.client
-                                    ),
-                                    pipeline: .Swiftfin.local
-                                )
-                                .posterShadow()
-                                .frame(width: UIDevice.isTV ? 120 : UIDevice.isPad ? 80 : 50)
+                        HStack(spacing: EdgeInsets.edgePadding) {
+                            UserProfileImage(
+                                userID: item.user.id,
+                                source: item.user.profileImageSource(
+                                    client: item.server.client
+                                ),
+                                pipeline: .Swiftfin.local
+                            )
+                            .posterShadow()
+                            .frame(width: UIDevice.isTV ? 120 : UIDevice.isPad ? 80 : 50)
 
-                                VStack(alignment: .leading) {
-                                    Text(item.user.username)
-                                        .font(.title3)
-                                        .fontWeight(.semibold)
+                            VStack(alignment: .leading) {
+                                Text(item.user.username)
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+
+                                if serverSelection == .all {
+                                    Text(item.server.name)
+                                        .font(UIDevice.isTV ? .body : .footnote)
+                                        .foregroundStyle(.secondary)
                                         .lineLimit(1)
-
-                                    if serverSelection == .all {
-                                        Text(item.server.name)
-                                            .font(UIDevice.isTV ? .body : .footnote)
-                                            .foregroundStyle(.secondary)
-                                            .lineLimit(1)
-                                    }
                                 }
                             }
                         }

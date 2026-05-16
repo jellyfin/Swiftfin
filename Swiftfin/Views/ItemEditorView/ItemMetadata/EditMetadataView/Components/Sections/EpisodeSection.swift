@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -24,32 +25,44 @@ extension EditMetadataView {
 
                 // MARK: - Season Number
 
-                ChevronButton(
-                    L10n.season,
-                    subtitle: item.parentIndexNumber?.description,
-                    description: L10n.enterSeasonNumber
-                ) {
-                    TextField(
+                StateAdapter(initialValue: false) { isPresented in
+                    ChevronButton(
                         L10n.season,
-                        value: $item.parentIndexNumber,
-                        format: .number
-                    )
-                    .keyboardType(.numberPad)
+                        content: item.parentIndexNumber?.description ?? ""
+                    ) {
+                        isPresented.wrappedValue = true
+                    }
+                    .alert(L10n.season, isPresented: isPresented) {
+                        TextField(
+                            L10n.season,
+                            value: $item.parentIndexNumber,
+                            format: .number
+                        )
+                        .keyboardType(.numberPad)
+                    } message: {
+                        Text(L10n.enterSeasonNumber)
+                    }
                 }
 
                 // MARK: - Episode Number
 
-                ChevronButton(
-                    L10n.episode,
-                    subtitle: item.indexNumber?.description,
-                    description: L10n.enterEpisodeNumber
-                ) {
-                    TextField(
+                StateAdapter(initialValue: false) { isPresented in
+                    ChevronButton(
                         L10n.episode,
-                        value: $item.indexNumber,
-                        format: .number
-                    )
-                    .keyboardType(.numberPad)
+                        content: item.indexNumber?.description ?? ""
+                    ) {
+                        isPresented.wrappedValue = true
+                    }
+                    .alert(L10n.episode, isPresented: isPresented) {
+                        TextField(
+                            L10n.episode,
+                            value: $item.indexNumber,
+                            format: .number
+                        )
+                        .keyboardType(.numberPad)
+                    } message: {
+                        Text(L10n.enterEpisodeNumber)
+                    }
                 }
             }
         }

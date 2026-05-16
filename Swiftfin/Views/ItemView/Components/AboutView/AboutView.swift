@@ -65,10 +65,6 @@ extension ItemView {
             return items
         }
 
-        init(viewModel: ItemViewModel) {
-            self.viewModel = viewModel
-        }
-
         // TODO: break out into a general solution for general use?
         // use similar math from CollectionHStack
         private var padImageWidth: CGFloat {
