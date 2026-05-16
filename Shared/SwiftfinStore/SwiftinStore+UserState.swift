@@ -73,7 +73,7 @@ extension UserState {
         }
     }
 
-    var accessPolicy: UserAccessPolicy {
+    var accessPolicy: LocalUserAccessPolicy {
         get {
             StoredValues[.User.accessPolicy(id: id)]
         }
