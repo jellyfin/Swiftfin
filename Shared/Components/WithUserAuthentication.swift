@@ -13,10 +13,10 @@ import SwiftUI
 
 struct LocalUserAuthenticationAction {
 
-    let action: (UserAccessPolicy, String?) async throws -> EvaluatedLocalUserAccessPolicy
+    let action: (LocalUserAccessPolicy, String?) async throws -> EvaluatedLocalUserAccessPolicy
 
     func callAsFunction(
-        policy: UserAccessPolicy,
+        policy: LocalUserAccessPolicy,
         reason: String?
     ) async throws -> EvaluatedLocalUserAccessPolicy {
         try await action(policy, reason)
@@ -36,7 +36,7 @@ struct WithUserAuthentication<Content: View>: View {
     @State
     private var pin: String = ""
     @State
-    private var pinContinuation: CheckedContinuation<Void, Error>? = nil
+    private var pinContinuation: CheckedContinuation<String, Error>? = nil
     @State
     private var reason: String? = nil
 
@@ -51,10 +51,12 @@ struct WithUserAuthentication<Content: View>: View {
         let context = LAContext()
         try context.canEvaluatePolicy(.deviceOwnerAuthentication)
         try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason ?? "")
+        #else
+        throw ErrorMessage(L10n.deviceAuthFailed)
         #endif
     }
 
-    private func handlePinAuthentication() async throws {
+    private func handlePinAuthentication() async throws -> String {
         isPresentingLocalPin = true
 
         return try await withCheckedThrowingContinuation { continuation in
@@ -63,7 +65,7 @@ struct WithUserAuthentication<Content: View>: View {
     }
 
     private func handleAuthentication(
-        policy: UserAccessPolicy,
+        policy: LocalUserAccessPolicy,
         reason: String?
     ) async throws -> EvaluatedLocalUserAccessPolicy {
         self.reason = reason
@@ -75,7 +77,7 @@ struct WithUserAuthentication<Content: View>: View {
             try await handleDeviceAuthentication(reason: reason)
             return EmptyEvaluatedUserAccessPolicy()
         case .requirePin:
-            try await handlePinAuthentication()
+            let pin = try await handlePinAuthentication()
             return PinEvaluatedUserAccessPolicy(pin: pin, pinHint: nil)
         }
     }
@@ -97,8 +99,8 @@ struct WithUserAuthentication<Content: View>: View {
 
                 // bug in SwiftUI: having .disabled will dismiss
                 // alert but not call the closure (for length)
-                Button(L10n.signIn) {
-                    continuation.resume(returning: ())
+                Button(L10n.done) {
+                    continuation.resume(returning: pin)
                 }
                 .disabled((4 ... 30 ~= pin.count) == false)
 

@@ -6,19 +6,17 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Factory
 import Foundation
-import JellyfinAPI
 import KeychainSwift
 import OrderedCollections
+
+// TODO: may want initial, content states
+//       - empty state hitch on sign out
 
 @MainActor
 @Stateful
 final class SelectUserViewModel: ViewModel {
-
-    @Injected(\.keychainService)
-    var keychain
 
     @CasePathable
     enum Action {
@@ -32,6 +30,9 @@ final class SelectUserViewModel: ViewModel {
         case error
         case signedIn(UserState)
     }
+
+    @Injected(\.keychainService)
+    private var keychain
 
     @Published
     private(set) var servers: OrderedDictionary<ServerState, [UserState]> = [:]

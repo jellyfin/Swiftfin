@@ -22,8 +22,6 @@ struct UserSignInView: View {
 
     @Environment(\.localUserAuthenticationAction)
     private var authenticationAction
-    @Environment(\.quickConnectAction)
-    private var quickConnectAction
 
     @FocusState
     private var focusedTextField: Field?
@@ -32,7 +30,7 @@ struct UserSignInView: View {
     private var router
 
     @State
-    private var accessPolicy: UserAccessPolicy = .none
+    private var accessPolicy: LocalUserAccessPolicy = .none
     @State
     private var existingUser: UserSignInViewModel.UserStateDataPair? = nil
     @State
@@ -80,25 +78,6 @@ struct UserSignInView: View {
             Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
             Container.shared.currentUserSession.reset()
             Notifications[.didSignIn].post()
-        }
-    }
-
-    private func runQuickConnect() {
-        Task {
-            do {
-                guard let secret = try await quickConnectAction?(client: viewModel.server.client) else {
-                    logger.critical("QuickConnect called without necessary action!")
-                    throw ErrorMessage(L10n.unknownError)
-                }
-                await viewModel.signInQuickConnect(
-                    secret: secret
-                )
-            } catch is CancellationError {
-                // ignore
-            } catch {
-                logger.error("QuickConnect failed with error: \(error.localizedDescription)")
-                await viewModel.error(ErrorMessage(L10n.taskFailed))
-            }
         }
     }
 
@@ -186,10 +165,15 @@ struct UserSignInView: View {
 
         if viewModel.isQuickConnectEnabled {
             Section {
-                Button(
-                    L10n.quickConnect,
-                    action: runQuickConnect
-                )
+                Button(L10n.quickConnect) {
+                    router.route(
+                        to: .quickConnect(
+                            client: viewModel.server.client
+                        ) { secret in
+                            await viewModel.signInQuickConnect(secret: secret)
+                        }
+                    )
+                }
                 .buttonStyle(.primary)
                 .frame(maxHeight: 75)
                 .disabled(viewModel.state == .signingIn)
@@ -234,7 +218,7 @@ struct UserSignInView: View {
                                     userID: user.id,
                                     source: user.profileImageSource(
                                         client: viewModel.server.client,
-                                        maxWidth: 120
+                                        maxWidth: 50
                                     )
                                 )
                                 .frame(width: 50, height: 50)

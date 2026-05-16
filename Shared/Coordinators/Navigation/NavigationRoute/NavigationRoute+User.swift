@@ -20,18 +20,18 @@ extension NavigationRoute {
         }
     }
 
-    static func quickConnect(quickConnect: QuickConnect) -> NavigationRoute {
+    static func quickConnect(client: JellyfinClient, action: @escaping (String) async -> Void) -> NavigationRoute {
         NavigationRoute(
             id: "quickConnectView",
             style: .sheet
         ) {
-            QuickConnectView(quickConnect: quickConnect)
+            QuickConnectView(client: client, action: action)
         }
     }
 
     #if os(iOS)
     // TODO: rename to `localUserAccessPolicy`
-    static func userSecurity(pinHint: Binding<String>, accessPolicy: Binding<UserAccessPolicy>) -> NavigationRoute {
+    static func userSecurity(pinHint: Binding<String>, accessPolicy: Binding<LocalUserAccessPolicy>) -> NavigationRoute {
         NavigationRoute(
             id: "userSecurity",
             style: .sheet
@@ -50,9 +50,7 @@ extension NavigationRoute {
             style: .sheet
         ) {
             WithUserAuthentication {
-                WithQuickConnect {
-                    UserSignInView(server: server)
-                }
+                UserSignInView(server: server)
             }
         }
     }
