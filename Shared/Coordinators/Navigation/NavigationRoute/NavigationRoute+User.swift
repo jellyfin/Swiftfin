@@ -52,7 +52,7 @@ extension NavigationRoute {
     }
 
     // TODO: rename to `localUserAccessPolicy`
-    static func userSecurity(pinHint: Binding<String>, accessPolicy: Binding<UserAccessPolicy>) -> NavigationRoute {
+    static func userSecurity(pinHint: Binding<String>, accessPolicy: Binding<LocalUserAccessPolicy>) -> NavigationRoute {
         NavigationRoute(
             id: "userSecurity",
             style: .sheet
