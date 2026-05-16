@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@available(*, deprecated, message: "Use defaultFocus and focusScope instead")
 struct FocusGuideModifier: ViewModifier {
 
     @FocusState
@@ -121,10 +122,7 @@ struct FocusConstructor {
     let rightTarget: String?
 }
 
-// TODO: generic focus values instead of strings
-// TODO: keep mapping of all tag connections,
-//       only add complete connections
-
+@available(*, deprecated, message: "Use defaultFocus and focusScope instead")
 class FocusGuide: ObservableObject {
 
     @Published

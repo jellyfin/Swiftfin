@@ -37,12 +37,6 @@ extension ItemView {
             return false
         }
 
-        // MARK: - Initializer
-
-        init(viewModel: ItemViewModel) {
-            self.viewModel = viewModel
-        }
-
         // MARK: - Body
 
         var body: some View {

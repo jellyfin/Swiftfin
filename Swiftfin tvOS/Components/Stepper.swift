@@ -23,8 +23,9 @@ struct Stepper<
     @State
     private var isPresented = false
 
+    private let content: () -> Content
     private let format: Format
-    private let label: LabeledContent<Label, Content>
+    private let label: () -> Label
     private let range: ClosedRange<Value>
     private let step: Value.Stride
     private let title: String
@@ -43,11 +44,13 @@ struct Stepper<
         in range: ClosedRange<Value>,
         step: Value.Stride = 1,
         format: Format,
-        @ViewBuilder label: @escaping () -> LabeledContent<Label, Content>
+        @ViewBuilder label: @escaping () -> Label,
+        @ViewBuilder content: @escaping () -> Content
     ) {
         self._value = value
+        self.content = content
         self.format = format
-        self.label = label()
+        self.label = label
         self.range = range
         self.step = step
         self.title = title
@@ -59,7 +62,11 @@ struct Stepper<
         ChevronButton {
             isPresented = true
         } label: {
-            label
+            LabeledContent {
+                content()
+            } label: {
+                label()
+            }
         }
         ._alert(title, isPresented: $isPresented) {
             VStack {
@@ -122,7 +129,8 @@ extension Stepper where Format == VerbatimFormatStyle<Value> {
         value: Binding<Value>,
         in range: ClosedRange<Value>,
         step: Value.Stride = 1,
-        @ViewBuilder label: @escaping () -> LabeledContent<Label, Content>
+        @ViewBuilder label: @escaping () -> Label,
+        @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(
             title,
@@ -130,7 +138,30 @@ extension Stepper where Format == VerbatimFormatStyle<Value> {
             in: range,
             step: step,
             format: VerbatimFormatStyle(),
-            label: label
+            label: label,
+            content: content
         )
+    }
+}
+
+extension Stepper where Format == VerbatimFormatStyle<Value>, Label == Text, Content == EmptyView {
+
+    init(
+        _ title: String,
+        value: Binding<Value>,
+        in range: ClosedRange<Value>,
+        step: Value.Stride = 1
+    ) {
+        self.init(
+            title,
+            value: value,
+            in: range,
+            step: step,
+            format: VerbatimFormatStyle()
+        ) {
+            Text(title)
+        } content: {
+            EmptyView()
+        }
     }
 }

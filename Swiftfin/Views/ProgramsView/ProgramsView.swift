@@ -40,10 +40,8 @@ struct ProgramsView: View {
     // TODO: probably make own pill view
     //       - see if could merge with item view pills
     @ViewBuilder
-    private func liveTVSectionPill(title: String, systemImage: String, onSelect: @escaping () -> Void) -> some View {
-        Button {
-            onSelect()
-        } label: {
+    private func liveTVSectionPill(title: String, systemImage: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
             Label(title, systemImage: systemImage)
                 .font(.callout.weight(.semibold))
                 .foregroundColor(.primary)
@@ -115,7 +113,7 @@ struct ProgramsView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch programsViewModel.state {
             case .content:
                 contentView

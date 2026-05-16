@@ -37,18 +37,14 @@ struct ServerLogsView: View {
                         guard let url = log.url else { return }
                         UIApplication.shared.open(url)
                     } label: {
-                        LabeledContent {
-                            EmptyView()
-                        } label: {
-                            VStack(alignment: .leading) {
-                                Text(log.name ?? L10n.unknown)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.leading)
+                        VStack(alignment: .leading) {
+                            Text(log.name ?? L10n.unknown)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
 
-                                Text(log.dateModified, format: .dateTime)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
+                            Text(log.dateModified, format: .dateTime)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }

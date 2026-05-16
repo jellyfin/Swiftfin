@@ -29,17 +29,15 @@ struct VideoPlayerSettingsView: View {
         Form(systemImage: "tv") {
 
             Section(L10n.buttons) {
-                JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
-                JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+                JumpIntervalPicker(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+                JumpIntervalPicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
             }
 
             Section {
                 Stepper(L10n.resumeOffset, value: $resumeOffset, in: 0 ... 30, step: 1, format: SecondFormatter()) {
-                    LabeledContent {
-                        Text(resumeOffset, format: SecondFormatter())
-                    } label: {
-                        Text(L10n.resumeOffset)
-                    }
+                    Text(L10n.resumeOffset)
+                } content: {
+                    Text(resumeOffset, format: SecondFormatter())
                 }
             } header: {
                 Text(L10n.resume)
@@ -48,7 +46,7 @@ struct VideoPlayerSettingsView: View {
             }
 
             Section {
-                ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName) {
+                ChevronButton(L10n.subtitleFont, content: subtitleFontName) {
                     router.route(to: .fontPicker(selection: $subtitleFontName))
                 }
             } header: {

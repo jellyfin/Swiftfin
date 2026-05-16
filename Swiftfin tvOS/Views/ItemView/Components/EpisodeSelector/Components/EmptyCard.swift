@@ -12,20 +12,12 @@ extension SeriesEpisodeSelector {
 
     struct EmptyCard: View {
 
-        private var onSelect: () -> Void
-
-        init() {
-            self.onSelect = {}
-        }
-
-        func onSelect(perform action: @escaping () -> Void) -> Self {
-            copy(modifying: \.onSelect, with: action)
-        }
+        let action: () -> Void
 
         var body: some View {
             VStack(alignment: .leading) {
                 Button {
-                    onSelect()
+                    action()
                 } label: {
                     Color.secondarySystemFill
                         .opacity(0.75)
@@ -44,6 +36,10 @@ extension SeriesEpisodeSelector {
                     content: L10n.noEpisodesAvailable
                 )
             }
+        }
+
+        init(_ action: @escaping () -> Void = {}) {
+            self.action = action
         }
     }
 }

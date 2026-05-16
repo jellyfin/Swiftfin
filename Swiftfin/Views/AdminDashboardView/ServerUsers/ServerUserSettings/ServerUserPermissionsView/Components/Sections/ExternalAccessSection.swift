@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -35,12 +36,18 @@ extension ServerUserPermissionsView {
                 )
 
                 if policy.remoteClientBitrateLimit != MaxBitratePolicy.unlimited.rawValue {
-                    ChevronButton(
-                        L10n.customBitrate,
-                        subtitle: Text(policy.remoteClientBitrateLimit ?? 0, format: .bitRate),
-                        description: L10n.enterCustomBitrate
-                    ) {
-                        MaxBitrateInput()
+                    StateAdapter(initialValue: false) { isPresented in
+                        ChevronButton(
+                            L10n.customBitrate,
+                            content: Text(policy.remoteClientBitrateLimit ?? 0, format: .bitRate)
+                        ) {
+                            isPresented.wrappedValue = true
+                        }
+                        .alert(L10n.customBitrate, isPresented: isPresented) {
+                            MaxBitrateInput()
+                        } message: {
+                            Text(L10n.enterCustomBitrate)
+                        }
                     }
                 }
             }

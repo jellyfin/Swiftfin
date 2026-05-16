@@ -18,13 +18,8 @@ struct PlaybackSpeedPicker: View {
     @State
     private var isPresentingCustomSpeed = false
 
-    private let title: String
-    private let selection: Binding<PlaybackSpeed>
-
-    init(_ title: String, selection: Binding<PlaybackSpeed>) {
-        self.title = title
-        self.selection = selection
-    }
+    let title: String
+    let selection: Binding<PlaybackSpeed>
 
     @ViewBuilder
     private var picker: some View {

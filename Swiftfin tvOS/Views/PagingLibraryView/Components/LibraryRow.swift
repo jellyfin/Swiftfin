@@ -17,19 +17,9 @@ extension PagingLibraryView {
 
     struct LibraryRow: View {
 
-        private let item: Element
-        private var action: () -> Void
-        private let posterType: PosterDisplayType
-
-        init(
-            item: Element,
-            posterType: PosterDisplayType,
-            action: @escaping () -> Void
-        ) {
-            self.item = item
-            self.action = action
-            self.posterType = posterType
-        }
+        let item: Element
+        let posterType: PosterDisplayType
+        let action: () -> Void
 
         private func imageSources(from element: Element) -> [ImageSource] {
             switch posterType {
@@ -122,8 +112,9 @@ extension PagingLibraryView {
                 rowLeading
             } content: {
                 rowContent
+            } action: {
+                action()
             }
-            .onSelect(perform: action)
             .focusedValue(\.focusedPoster, AnyPoster(item))
         }
     }

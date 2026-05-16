@@ -10,13 +10,8 @@ import SwiftUI
 
 struct LandscapePosterProgressBar: View {
 
-    private let title: String?
-    private let progress: Double
-
-    init(title: String? = nil, progress: Double) {
-        self.title = title
-        self.progress = progress
-    }
+    var title: String?
+    let progress: Double
 
     var body: some View {
         ZStack(alignment: .bottom) {

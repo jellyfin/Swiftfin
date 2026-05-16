@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -30,28 +31,38 @@ extension AddTaskTriggerView {
 
         var body: some View {
             Section {
-                ChevronButton(
-                    L10n.timeLimit.localizedCapitalized,
-                    subtitle: subtitleString,
-                    description: L10n.taskTriggerTimeLimit
-                ) {
-                    TextField(
-                        L10n.hours,
-                        value: $tempTimeLimit,
-                        format: .number
-                    )
-                    .keyboardType(.numberPad)
-                } onSave: {
-                    if tempTimeLimit != nil && tempTimeLimit != 0 {
-                        taskTriggerInfo.maxRuntimeTicks = Duration.hours(tempTimeLimit ?? 0).ticks
-                    } else {
-                        taskTriggerInfo.maxRuntimeTicks = nil
+                StateAdapter(initialValue: false) { isPresented in
+                    ChevronButton(
+                        L10n.timeLimit.localizedCapitalized,
+                        content: subtitleString
+                    ) {
+                        isPresented.wrappedValue = true
                     }
-                } onCancel: {
-                    if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
-                        tempTimeLimit = Int(Duration.ticks(maxRuntimeTicks).hours)
-                    } else {
-                        tempTimeLimit = nil
+                    .alert(L10n.timeLimit.localizedCapitalized, isPresented: isPresented) {
+                        TextField(
+                            L10n.hours,
+                            value: $tempTimeLimit,
+                            format: .number
+                        )
+                        .keyboardType(.numberPad)
+
+                        Button(L10n.save) {
+                            if tempTimeLimit != nil && tempTimeLimit != 0 {
+                                taskTriggerInfo.maxRuntimeTicks = Duration.hours(tempTimeLimit ?? 0).ticks
+                            } else {
+                                taskTriggerInfo.maxRuntimeTicks = nil
+                            }
+                        }
+
+                        Button(L10n.cancel, role: .cancel) {
+                            if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
+                                tempTimeLimit = Int(Duration.ticks(maxRuntimeTicks).hours)
+                            } else {
+                                tempTimeLimit = nil
+                            }
+                        }
+                    } message: {
+                        Text(L10n.taskTriggerTimeLimit)
                     }
                 }
             }

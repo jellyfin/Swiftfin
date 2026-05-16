@@ -89,7 +89,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
 
     // MARK: On Select
 
-    private func onSelect(_ element: Element) {
+    private func action(_ element: Element) {
         switch element {
         case let element as BaseItemDto:
             select(item: element)
@@ -180,7 +180,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             item: item,
             type: .landscape
         ) {
-            onSelect(item)
+            action(item)
         } label: {
             if item.showTitle {
                 PosterButton<Element>.TitleContentView(item: item)
@@ -201,7 +201,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             item: item,
             type: .portrait
         ) {
-            onSelect(item)
+            action(item)
         } label: {
             if item.showTitle {
                 PosterButton<Element>.TitleContentView(item: item)
@@ -222,7 +222,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             item: item,
             posterType: posterType
         ) {
-            onSelect(item)
+            action(item)
         }
     }
 

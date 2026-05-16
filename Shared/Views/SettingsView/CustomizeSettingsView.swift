@@ -148,13 +148,20 @@ struct CustomizeSettingsView: View {
                 ChevronButton {
                     isPresented.wrappedValue = true
                 } label: {
-                    LabeledContent(L10n.nextUpDays) {
-                        if maxNextUp > 0 {
-                            let duration = Duration.seconds(TimeInterval(maxNextUp))
-                            return Text(duration, format: .units(allowed: [.days], width: .abbreviated))
-                        } else {
-                            return Text(L10n.disabled)
+                    LabeledContent {
+                        Group {
+                            if maxNextUp > 0 {
+                                Text(
+                                    Duration.seconds(maxNextUp),
+                                    format: .units(allowed: [.days], width: .abbreviated)
+                                )
+                            } else {
+                                Text(L10n.disabled)
+                            }
                         }
+                        .foregroundStyle(.secondary)
+                    } label: {
+                        Text(L10n.nextUpDays)
                     }
                 }
                 .alert(
@@ -212,12 +219,20 @@ struct CustomizeSettingsView: View {
             PlatformPicker(L10n.defaultLayout, selection: $libraryDisplayType)
 
             if libraryDisplayType == .list, UIDevice.isPad || UIDevice.isTV {
+                #if os(tvOS)
+                Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 3, step: 1) {
+                    Text(L10n.columns)
+                } content: {
+                    Text(listColumnCount.description)
+                }
+                #else
                 Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 3, step: 1) {
                     LabeledContent(
                         L10n.columns,
                         value: listColumnCount.description
                     )
                 }
+                #endif
             }
 
             Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
