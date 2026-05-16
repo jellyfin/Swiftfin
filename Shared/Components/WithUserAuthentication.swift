@@ -36,7 +36,7 @@ struct WithUserAuthentication<Content: View>: View {
     @State
     private var pin: String = ""
     @State
-    private var pinContinuation: CheckedContinuation<Void, Error>? = nil
+    private var pinContinuation: CheckedContinuation<String, Error>? = nil
     @State
     private var reason: String? = nil
 
@@ -56,7 +56,7 @@ struct WithUserAuthentication<Content: View>: View {
         #endif
     }
 
-    private func handlePinAuthentication() async throws {
+    private func handlePinAuthentication() async throws -> String {
         isPresentingLocalPin = true
 
         return try await withCheckedThrowingContinuation { continuation in
@@ -77,7 +77,7 @@ struct WithUserAuthentication<Content: View>: View {
             try await handleDeviceAuthentication(reason: reason)
             return EmptyEvaluatedUserAccessPolicy()
         case .requirePin:
-            try await handlePinAuthentication()
+            let pin = try await handlePinAuthentication()
             return PinEvaluatedUserAccessPolicy(pin: pin, pinHint: nil)
         }
     }
@@ -100,7 +100,7 @@ struct WithUserAuthentication<Content: View>: View {
                 // bug in SwiftUI: having .disabled will dismiss
                 // alert but not call the closure (for length)
                 Button(L10n.done) {
-                    continuation.resume(returning: ())
+                    continuation.resume(returning: pin)
                 }
                 .disabled((4 ... 30 ~= pin.count) == false)
 
