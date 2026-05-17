@@ -312,6 +312,26 @@ extension VideoPlayer {
             fatalError("init(coder:) has not been implemented")
         }
 
+        override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+            guard let press = presses.first else {
+                super.pressesBegan(presses, with: event)
+                return
+            }
+
+            switch press.type {
+            case .menu:
+                if containerState.isPresentingSupplement {
+                    containerState.select(supplement: nil)
+                } else {
+                    manager.stop()
+                }
+            case .playPause:
+                manager.togglePlayPause()
+            default:
+                super.pressesBegan(presses, with: event)
+            }
+        }
+
         // TODO: don't force unwrap optional, sometimes gets into weird state
         private var lastVerticalPanLocation: CGPoint?
         private var verticalPanGestureStartConstant: CGFloat?

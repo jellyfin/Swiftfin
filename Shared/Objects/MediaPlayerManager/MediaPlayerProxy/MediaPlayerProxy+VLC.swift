@@ -9,6 +9,7 @@
 import Defaults
 import Foundation
 import JellyfinAPI
+import Logging
 import SwiftUI
 import VLCUI
 
@@ -22,6 +23,8 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
     let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
     let vlcUIProxy: VLCVideoPlayer.Proxy = .init()
+
+    private var hasRetriedCurrentItem = false
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -131,6 +134,9 @@ extension VLCMediaPlayerProxy {
         @EnvironmentObject
         private var proxy: VLCVideoPlayer.Proxy
 
+        @State
+        private var didScheduleLiveOverlayDismissal = false
+
         private var isScrubbing: Bool {
             containerState.isScrubbing
         }
@@ -139,8 +145,40 @@ extension VLCMediaPlayerProxy {
             let baseItem = item.baseItem
             let mediaSource = item.mediaSource
 
-            var configuration = VLCVideoPlayer.Configuration(url: item.url)
+            // Normalize malformed URLs like .../stream%3F&DeviceId=... to .../stream?DeviceId=...
+            let originalURL = item.url
+            let fixedURL: URL = {
+                let s = originalURL.absoluteString
+                // Replace only the first occurrence of "%3F" (encoded question mark) with "?"
+                if let range = s.range(of: "%3F") {
+                    var corrected = s
+                    corrected.replaceSubrange(range, with: "?")
+                    if let url = URL(string: corrected) {
+                        manager.logger.warning(
+                            "Normalized malformed media URL for VLC",
+                            metadata: [
+                                "original": .stringConvertible(s),
+                                "normalized": .stringConvertible(corrected)
+                            ]
+                        )
+                        return url
+                    }
+                }
+                return originalURL
+            }()
+
+            var configuration = VLCVideoPlayer.Configuration(url: fixedURL)
             configuration.autoPlay = true
+
+            // Configure caching to better handle segmented livestreams and network variability
+            if baseItem.isLiveStream {
+                // Prefer higher live/network caching for HLS/DASH segmented livestreams
+                configuration.options["live-caching"] = 1500
+                configuration.options["network-caching"] = 2000
+            } else {
+                configuration.options["network-caching"] = 1500
+                configuration.options["file-caching"] = 1000
+            }
 
             let startSeconds = max(.zero, (baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset]))
 
@@ -150,7 +188,11 @@ extension VLCMediaPlayerProxy {
                 configuration.subtitleIndex = .absolute(mediaSource.defaultSubtitleStreamIndex ?? -1)
             }
 
-            configuration.subtitleSize = .absolute(25 - Defaults[.VideoPlayer.Subtitle.subtitleSize])
+            // Compute and clamp subtitle size to a sane range
+            let computedSubtitleSize = 25 - Defaults[.VideoPlayer.Subtitle.subtitleSize]
+            let clampedSubtitleSize = max(8, min(36, computedSubtitleSize))
+            configuration.subtitleSize = .absolute(clampedSubtitleSize)
+
             configuration.subtitleColor = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleColor].uiColor)
             configuration.rate = .absolute(Defaults[.VideoPlayer.Playback.playbackRate])
             if let font = UIFont(name: Defaults[.VideoPlayer.Subtitle.subtitleFontName], size: 1) {
@@ -160,6 +202,21 @@ extension VLCMediaPlayerProxy {
             configuration.playbackChildren = item.subtitleStreams
                 .filter { $0.deliveryMethod == .external }
                 .compactMap(\.asVLCPlaybackChild)
+
+            let audioIndexValue = baseItem.isLiveStream ? -1 : (mediaSource.defaultAudioStreamIndex ?? -1)
+            let subtitleIndexValue = baseItem.isLiveStream ? -1 : (mediaSource.defaultSubtitleStreamIndex ?? -1)
+            let childrenCount = configuration.playbackChildren.count
+
+            manager.logger.info(
+                "Built VLC configuration",
+                metadata: [
+                    "url": .stringConvertible(fixedURL.absoluteString),
+                    "startSeconds": .stringConvertible(startSeconds.seconds),
+                    "audioIndex": .stringConvertible(audioIndexValue),
+                    "subtitleIndex": .stringConvertible(subtitleIndexValue),
+                    "externalSubtitleChildren": .stringConvertible(childrenCount)
+                ]
+            )
 
             return configuration
         }
@@ -180,16 +237,28 @@ extension VLCMediaPlayerProxy {
                             proxy.droppedFrames.value = info.statistics.lostPictures
                             proxy.corruptedFrames.value = info.statistics.demuxCorrupted
                         }
+
+                        if playbackItem.baseItem.isLiveStream, !didScheduleLiveOverlayDismissal {
+                            didScheduleLiveOverlayDismissal = true
+                            containerState.timer.poke(interval: 3)
+                        }
                     }
                     .onStateUpdated { state, info in
                         manager.logger.trace("VLC state updated: \(state)")
 
                         switch state {
-                        case .buffering,
-                             .esAdded,
-                             .opening:
-                            // TODO: figure out when to properly set to false
+                        case .buffering:
                             manager.proxy?.isBuffering.value = true
+                        case .esAdded:
+                            manager.proxy?.isBuffering.value = true
+                        case .opening:
+                            manager.proxy?.isBuffering.value = true
+                            manager.logger.info(
+                                "VLC opening media",
+                                metadata: [
+                                    "url": .stringConvertible(manager.playbackItem?.url.absoluteString ?? "unknown")
+                                ]
+                            )
                         case .ended:
                             // Live streams will send stopped/ended events
                             guard !playbackItem.baseItem.isLiveStream else { return }
@@ -201,10 +270,58 @@ extension VLCMediaPlayerProxy {
                         // than react to the event.
                         case .error:
                             manager.proxy?.isBuffering.value = false
+                            let url = manager.playbackItem?.url.absoluteString ?? "unknown"
+                            let secs = manager.seconds.seconds
+                            manager.logger.error(
+                                "VLC reported error",
+                                metadata: [
+                                    "url": .stringConvertible(url),
+                                    "seconds": .stringConvertible(secs),
+                                    "videoSize": .stringConvertible("\(info.videoSize.width)x\(info.videoSize.height)"),
+                                    "lostPictures": .stringConvertible(info.statistics.lostPictures),
+                                    "demuxCorrupted": .stringConvertible(info.statistics.demuxCorrupted)
+                                ]
+                            )
+                            if let proxyOwner = manager.proxy as? VLCMediaPlayerProxy, proxyOwner.hasRetriedCurrentItem == false {
+                                proxyOwner.hasRetriedCurrentItem = true
+                                manager.logger.warning(
+                                    "VLC error encountered — attempting single retry with increased caching",
+                                    metadata: ["url": .stringConvertible(url), "seconds": .stringConvertible(secs)]
+                                )
+                                if let item = manager.playbackItem {
+                                    var cfg = vlcConfiguration(for: item)
+                                    // Bump caching a bit more for the retry to stabilize playback
+                                    if item.baseItem.isLiveStream {
+                                        cfg.options["live-caching"] = 2500
+                                        cfg.options["network-caching"] = 3000
+                                    } else {
+                                        cfg.options["network-caching"] = 2000
+                                        cfg.options["file-caching"] = 1500
+                                    }
+                                    proxy.playNewMedia(cfg)
+                                    return
+                                }
+                            }
                             manager.error(ErrorMessage("VLC player is unable to perform playback"))
                         case .playing:
                             manager.proxy?.isBuffering.value = false
                             manager.setPlaybackRequestStatus(status: .playing)
+                            if playbackItem.baseItem.isLiveStream {
+                                proxy.setSubtitleTrack(.absolute(playbackItem.selectedSubtitleStreamIndex ?? -1))
+
+                                if !didScheduleLiveOverlayDismissal {
+                                    didScheduleLiveOverlayDismissal = true
+                                    containerState.timer.poke(interval: 3)
+                                }
+                            }
+                            manager.logger.info(
+                                "VLC playing",
+                                metadata: [
+                                    "videoSize": .stringConvertible("\(info.videoSize.width)x\(info.videoSize.height)"),
+                                    "lostPictures": .stringConvertible(info.statistics.lostPictures),
+                                    "demuxCorrupted": .stringConvertible(info.statistics.demuxCorrupted)
+                                ]
+                            )
                         case .paused:
                             manager.setPlaybackRequestStatus(status: .paused)
                         }
@@ -214,8 +331,17 @@ extension VLCMediaPlayerProxy {
                         }
                     }
                     .onReceive(manager.$playbackItem) { playbackItem in
+                        didScheduleLiveOverlayDismissal = false
                         guard let playbackItem else { return }
+                        if let proxyOwner = manager.proxy as? VLCMediaPlayerProxy {
+                            proxyOwner.hasRetriedCurrentItem = false
+                        }
+                        manager.logger.info(
+                            "VLC playNewMedia",
+                            metadata: ["url": .stringConvertible(playbackItem.url.absoluteString)]
+                        )
                         proxy.playNewMedia(vlcConfiguration(for: playbackItem))
+                        proxy.setSubtitleTrack(.absolute(playbackItem.selectedSubtitleStreamIndex ?? -1))
                     }
                     .backport
                     .onChange(of: manager.rate) { _, newValue in

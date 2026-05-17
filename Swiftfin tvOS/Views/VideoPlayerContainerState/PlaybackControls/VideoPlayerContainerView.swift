@@ -53,13 +53,20 @@ extension VideoPlayer {
 
             @EnvironmentObject
             private var containerState: VideoPlayerContainerState
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
 
             let player: AnyView
 
+            private var isPlayingLiveStream: Bool {
+                manager.item.isLiveStream && manager.playbackRequestStatus == .playing
+            }
+
             var body: some View {
                 player
-                    .overlay(Color.black.opacity(containerState.isPresentingPlaybackControls ? 0.3 : 0.0))
+                    .overlay(Color.black.opacity(containerState.isPresentingPlaybackControls && !isPlayingLiveStream ? 0.3 : 0.0))
                     .animation(.linear(duration: 0.2), value: containerState.isPresentingPlaybackControls)
+                    .animation(.linear(duration: 0.2), value: isPlayingLiveStream)
             }
         }
 

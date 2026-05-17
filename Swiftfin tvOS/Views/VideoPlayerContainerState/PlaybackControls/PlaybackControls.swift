@@ -50,9 +50,17 @@ extension VideoPlayer {
             containerState.isScrubbing
         }
 
+        private var isPlayingLiveStream: Bool {
+            manager.item.isLiveStream && manager.playbackRequestStatus == .playing
+        }
+
+        private var shouldShowPlaybackChrome: Bool {
+            !isPlayingLiveStream && !isPresentingSupplement
+        }
+
         @ViewBuilder
         private var bottomContent: some View {
-            if !isPresentingSupplement {
+            if shouldShowPlaybackChrome {
 
                 NavigationBar()
                     .focusSection()
@@ -75,8 +83,9 @@ extension VideoPlayer {
                                 (location: 0, opacity: 0)
                                 (location: 1, opacity: 0.5)
                             }
-                            .isVisible(isScrubbing || isPresentingOverlay)
+                            .isVisible((isScrubbing || isPresentingOverlay) && !isPlayingLiveStream)
                             .animation(.linear(duration: 0.25), value: isPresentingOverlay)
+                            .animation(.linear(duration: 0.25), value: isPlayingLiveStream)
                     }
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
@@ -90,7 +99,7 @@ extension VideoPlayer {
                     if isPresentingSupplement {
                         containerState.selectedSupplement = nil
                     } else {
-                        manager.proxy?.stop()
+                        manager.stop()
                         router.dismiss()
                     }
                 default: ()

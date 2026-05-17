@@ -29,6 +29,10 @@ struct SupplementContainerView: View {
     @State
     private var currentSupplements: IdentifiedArrayOf<AnyMediaPlayerSupplement> = []
 
+    private var isPlayingLiveStream: Bool {
+        manager.item.isLiveStream && manager.playbackRequestStatus == .playing
+    }
+
     @ViewBuilder
     private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
         AlternateLayoutView(alignment: .topLeading) {
@@ -67,9 +71,14 @@ struct SupplementContainerView: View {
                 }
             }
         }
-        .isVisible(containerState.isPresentingOverlay)
+        .background {
+            if !isPlayingLiveStream {
+                Color.blue.opacity(0.2)
+            }
+        }
+        .isVisible(containerState.isPresentingOverlay && !isPlayingLiveStream)
         .animation(.linear(duration: 0.2), value: containerState.isPresentingOverlay)
-        .background(Color.blue.opacity(0.2))
+        .animation(.linear(duration: 0.2), value: isPlayingLiveStream)
         .focusSection()
         .focused($isFocused)
         .onReceive(manager.$supplements) { newValue in

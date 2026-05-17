@@ -46,6 +46,17 @@ extension VideoPlayer {
                     }
 
                     KeyCommandAction(
+                        title: L10n.close,
+                        input: UIKeyCommand.inputEscape
+                    ) {
+                        if containerState.isPresentingSupplement {
+                            containerState.select(supplement: nil)
+                        } else {
+                            manager.stop()
+                        }
+                    }
+
+                    KeyCommandAction(
                         title: L10n.playAndPause,
                         input: " "
                     ) {
