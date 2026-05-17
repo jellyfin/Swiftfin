@@ -171,9 +171,9 @@ struct ItemImagesView: View {
     @ViewBuilder
     private func imageButton(
         imageInfo: ImageInfo,
-        onSelect: @escaping () -> Void
+        action: @escaping () -> Void
     ) -> some View {
-        Button(action: onSelect) {
+        Button(action: action) {
             ZStack {
                 Color.secondarySystemFill
 

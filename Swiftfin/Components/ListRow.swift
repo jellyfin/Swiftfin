@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// TODO: come up with better name along with `ListRowButton`
+// TODO: possibly consolidate with ChevronButton
 
 // Meant to be used when making a custom list without `List` or `Form`
 struct ListRow<Leading: View, Content: View>: View {
@@ -16,11 +16,25 @@ struct ListRow<Leading: View, Content: View>: View {
     @State
     private var contentSize: CGSize = .zero
 
-    private let leading: Leading
+    private let action: () -> Void
     private let content: Content
-    private var action: () -> Void
     private var insets: EdgeInsets
     private var isSeparatorVisible: Bool
+    private let leading: Leading
+
+    private init(
+        leading: Leading,
+        content: Content,
+        action: @escaping () -> Void,
+        insets: EdgeInsets,
+        isSeparatorVisible: Bool
+    ) {
+        self.leading = leading
+        self.content = content
+        self.action = action
+        self.insets = insets
+        self.isSeparatorVisible = isSeparatorVisible
+    }
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -55,9 +69,23 @@ extension ListRow {
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(
+            insets: insets,
+            leading: leading,
+            content: content,
+            action: {}
+        )
+    }
+
+    init(
+        insets: EdgeInsets = .zero,
+        @ViewBuilder leading: @escaping () -> Leading,
+        @ViewBuilder content: @escaping () -> Content,
+        action: @escaping () -> Void
+    ) {
+        self.init(
             leading: leading(),
             content: content(),
-            action: {},
+            action: action,
             insets: insets,
             isSeparatorVisible: true
         )
@@ -65,9 +93,5 @@ extension ListRow {
 
     func isSeparatorVisible(_ isVisible: Bool) -> Self {
         copy(modifying: \.isSeparatorVisible, with: isVisible)
-    }
-
-    func onSelect(perform action: @escaping () -> Void) -> Self {
-        copy(modifying: \.action, with: action)
     }
 }

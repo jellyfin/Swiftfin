@@ -89,8 +89,7 @@ extension SeriesEpisodeSelector {
                     subHeader: episode.episodeLocator ?? .emptyDash,
                     header: episode.displayTitle,
                     content: episodeContent
-                )
-                .onSelect {
+                ) {
                     router.route(to: .item(item: episode))
                 }
             }

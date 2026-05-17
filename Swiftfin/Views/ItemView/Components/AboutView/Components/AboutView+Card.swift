@@ -12,8 +12,8 @@ extension ItemView.AboutView {
 
     struct Card<Content: View>: View {
 
-        private var action: () -> Void
-        private var content: Content
+        private let action: () -> Void
+        private let content: Content
         private let title: String
         private let subtitle: String?
 

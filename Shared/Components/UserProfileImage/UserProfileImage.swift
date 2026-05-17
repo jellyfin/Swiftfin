@@ -18,19 +18,9 @@ struct UserProfileImage: View {
     @Environment(\.isSelected)
     private var isSelected
 
-    private let userID: String?
-    private let source: ImageSource
-    private let pipeline: ImagePipeline
-
-    init(
-        userID: String?,
-        source: ImageSource,
-        pipeline: ImagePipeline = .Swiftfin.posters
-    ) {
-        self.userID = userID
-        self.source = source
-        self.pipeline = pipeline
-    }
+    let userID: String?
+    let source: ImageSource
+    var pipeline: ImagePipeline = .Swiftfin.posters
 
     private var overlayOpacity: Double {
         /// Dim the Profile Image if Editing & Unselected or if Disabled

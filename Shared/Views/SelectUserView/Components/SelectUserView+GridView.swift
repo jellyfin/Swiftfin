@@ -21,7 +21,7 @@ extension SelectUserView {
         private var selectedUsers: Set<UserState>
 
         private let onDelete: (UserState) -> Void
-        private let onSelect: (UserState) -> Void
+        private let action: (UserState) -> Void
         private let serverSelection: SelectUserServerSelection
         private let userItems: [UserItem]
 
@@ -30,14 +30,14 @@ extension SelectUserView {
             isEditing: Binding<Bool>,
             selectedUsers: Binding<Set<UserState>>,
             serverSelection: SelectUserServerSelection,
-            onSelect: @escaping (UserState) -> Void,
+            action: @escaping (UserState) -> Void,
             onDelete: @escaping (UserState) -> Void
         ) {
             self.userItems = userItems
             self._isEditing = isEditing
             self._selectedUsers = selectedUsers
             self.serverSelection = serverSelection
-            self.onSelect = onSelect
+            self.action = action
             self.onDelete = onDelete
         }
 
@@ -51,7 +51,7 @@ extension SelectUserView {
                 if isEditing {
                     selectedUsers.toggle(value: item.user)
                 } else {
-                    onSelect(item.user)
+                    action(item.user)
                 }
             } onDelete: {
                 onDelete(item.user)

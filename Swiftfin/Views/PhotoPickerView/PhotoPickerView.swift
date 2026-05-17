@@ -19,8 +19,8 @@ struct PhotoPickerView: UIViewControllerRepresentable {
 
     // MARK: - Photo Picker Actions
 
-    var onSelect: (UIImage) -> Void
-    var onCancel: () -> Void
+    let action: (UIImage) -> Void
+    let onCancel: () -> Void
 
     // MARK: - UIView Controller
 
@@ -36,7 +36,7 @@ struct PhotoPickerView: UIViewControllerRepresentable {
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = context.coordinator
 
-        context.coordinator.onSelect = onSelect
+        context.coordinator.action = action
         context.coordinator.onCancel = onCancel
 
         return picker
@@ -56,7 +56,7 @@ struct PhotoPickerView: UIViewControllerRepresentable {
 
     class Coordinator: PHPickerViewControllerDelegate {
 
-        var onSelect: ((UIImage) -> Void)?
+        var action: ((UIImage) -> Void)?
         var onCancel: (() -> Void)?
 
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
@@ -72,7 +72,7 @@ struct PhotoPickerView: UIViewControllerRepresentable {
 
             itemProvider.loadObject(ofClass: UIImage.self) { image, _ in
                 guard let image = image as? UIImage else { return }
-                self.onSelect?(image)
+                self.action?(image)
             }
         }
     }

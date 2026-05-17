@@ -27,13 +27,13 @@ extension EditAccessScheduleView {
 
         // MARK: - Schedule Actions
 
-        let onSelect: () -> Void
+        let action: () -> Void
         let onDelete: () -> Void
 
         // MARK: - Body
 
         var body: some View {
-            Button(action: onSelect) {
+            Button(action: action) {
                 rowContent
             }
             .foregroundStyle(.primary, .secondary)

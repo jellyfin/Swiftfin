@@ -16,7 +16,7 @@ struct EditAccessScheduleView: View {
     private var accentColor
 
     @ObservedObject
-    private var viewModel: ServerUserAdminViewModel
+    var viewModel: ServerUserAdminViewModel
 
     @Router
     private var router

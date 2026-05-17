@@ -64,8 +64,6 @@ struct SettingsView: View {
                     router.route(to: .editServer(server: viewModel.userSession.server))
                 }
             ) {
-                EmptyView()
-            } subtitle: {
                 Label {
                     Text(viewModel.userSession.server.name)
                 } icon: {

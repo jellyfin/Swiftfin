@@ -31,8 +31,9 @@ extension ServerActivityView {
             } content: {
                 rowContent
                     .padding(.bottom, 8)
+            } action: {
+                action()
             }
-            .onSelect(perform: action)
         }
 
         // MARK: - User Image

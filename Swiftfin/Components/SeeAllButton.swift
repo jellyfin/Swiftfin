@@ -10,7 +10,7 @@ import SwiftUI
 
 struct SeeAllButton: View {
 
-    private var action: () -> Void
+    let action: () -> Void
 
     var body: some View {
         Button(
@@ -20,18 +20,5 @@ struct SeeAllButton: View {
         )
         .font(.subheadline.weight(.bold))
         .labelStyle(.titleAndIcon.trailingIcon)
-    }
-}
-
-extension SeeAllButton {
-
-    init() {
-        self.init(
-            action: {}
-        )
-    }
-
-    func onSelect(perform action: @escaping () -> Void) -> Self {
-        copy(modifying: \.action, with: action)
     }
 }

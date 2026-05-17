@@ -120,8 +120,9 @@ extension ActiveSessionsView {
                 } else {
                     idleSessionDetails
                 }
+            } action: {
+                action()
             }
-            .onSelect(perform: action)
         }
     }
 }

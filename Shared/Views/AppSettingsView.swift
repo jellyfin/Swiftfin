@@ -121,7 +121,7 @@ struct AppSettingsView: View {
                 Toggle(L10n.signoutBackground, isOn: $signOutOnBackground)
 
                 if signOutOnBackground {
-                    HourMinutePicker(L10n.duration, interval: $backgroundSignOutInterval)
+                    HourMinutePicker(title: L10n.duration, interval: $backgroundSignOutInterval)
                 }
             } footer: {
                 Text(L10n.signoutBackgroundFooter)
