@@ -20,14 +20,14 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @Toaster
-        private var toaster
+        @State
+        private var userConfiguration: UserConfiguration
 
         @StateObject
         private var viewModel: ServerUserAdminViewModel
 
-        @State
-        private var userConfiguration: UserConfiguration
+        @Toaster
+        private var toaster
 
         private var isAutoPlayEnabled: Bool {
             manager.userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true

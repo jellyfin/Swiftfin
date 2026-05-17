@@ -11,11 +11,11 @@ import SwiftUI
 
 struct AddAccessScheduleView: View {
 
-    @Router
-    private var router
-
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
+
+    @Router
+    private var router
 
     @State
     private var tempPolicy: UserPolicy
@@ -76,49 +76,6 @@ struct AddAccessScheduleView: View {
     }
 
     var body: some View {
-        contentView
-            .backport
-            .toolbarTitleDisplayMode(.inline)
-            .navigationTitle(L10n.addAccessSchedule.localizedCapitalized)
-            .navigationBarCloseButton {
-                router.dismiss()
-            }
-            .refreshable {
-                viewModel.refresh()
-            }
-            .topBarTrailing {
-                if viewModel.background.is(.refreshing) {
-                    ProgressView()
-                }
-                if viewModel.background.is(.updating) {
-                    Button(L10n.cancel) {
-                        viewModel.cancel()
-                    }
-                    .buttonStyle(.toolbarPill(.red))
-                } else {
-                    Button(L10n.save) {
-                        if let newSchedule {
-                            tempPolicy.accessSchedules = tempPolicy.accessSchedules
-                                .appendedOrInit(newSchedule)
-
-                            viewModel.updatePolicy(tempPolicy)
-                        }
-                    }
-                    .buttonStyle(.toolbarPill)
-                    .disabled(!isValidRange && !isDuplicateSchedule)
-                }
-            }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case .updated:
-                    UIDevice.feedback(.success)
-                    router.dismiss()
-                }
-            }
-            .errorMessage($viewModel.error)
-    }
-
-    private var contentView: some View {
         Form {
             Section(L10n.dayOfWeek) {
                 Picker(L10n.dayOfWeek, selection: $selectedDay) {
@@ -153,5 +110,46 @@ struct AddAccessScheduleView: View {
                 }
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
+        .navigationTitle(L10n.addAccessSchedule.localizedCapitalized)
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
+        .refreshable {
+            viewModel.refresh()
+        }
+        .topBarTrailing {
+
+            if viewModel.background.is(.refreshing) {
+                ProgressView()
+            }
+
+            if viewModel.background.is(.updating) {
+                Button(L10n.cancel) {
+                    viewModel.cancel()
+                }
+                .buttonStyle(.toolbarPill(.red))
+            } else {
+                Button(L10n.save) {
+                    if let newSchedule {
+                        tempPolicy.accessSchedules = tempPolicy.accessSchedules
+                            .appendedOrInit(newSchedule)
+
+                        viewModel.updatePolicy(tempPolicy)
+                    }
+                }
+                .buttonStyle(.toolbarPill)
+                .disabled(!isValidRange || isDuplicateSchedule)
+            }
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .updated:
+                UIDevice.feedback(.success)
+                router.dismiss()
+            }
+        }
+        .errorMessage($viewModel.error)
     }
 }

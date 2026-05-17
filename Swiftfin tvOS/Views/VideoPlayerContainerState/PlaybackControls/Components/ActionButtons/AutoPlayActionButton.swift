@@ -20,11 +20,11 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @StateObject
-        private var viewModel: ServerUserAdminViewModel
-
         @State
         private var userConfiguration: UserConfiguration
+
+        @StateObject
+        private var viewModel: ServerUserAdminViewModel
 
         private var isAutoPlayEnabled: Bool {
             manager.userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -14,13 +13,10 @@ extension ActiveSessionsView {
 
     struct ProgressSection: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
-        private let item: BaseItemDto
-        private let playState: PlayerStateInfo
-        private let transcodingInfo: TranscodingInfo?
-        private let showTranscodeReason: Bool
+        let item: BaseItemDto
+        let playState: PlayerStateInfo
+        let transcodingInfo: TranscodingInfo?
+        var showTranscodeReason: Bool = false
 
         private var playbackPercentage: Double {
             clamp(Double(playState.positionTicks ?? 0) / Double(item.runTimeTicks ?? 1), min: 0, max: 1)
@@ -29,13 +25,6 @@ extension ActiveSessionsView {
         private var transcodingPercentage: Double? {
             guard let c = transcodingInfo?.completionPercentage else { return nil }
             return clamp(c / 100.0, min: 0, max: 1)
-        }
-
-        init(item: BaseItemDto, playState: PlayerStateInfo, transcodingInfo: TranscodingInfo?, showTranscodeReason: Bool = false) {
-            self.item = item
-            self.playState = playState
-            self.transcodingInfo = transcodingInfo
-            self.showTranscodeReason = showTranscodeReason
         }
 
         @ViewBuilder

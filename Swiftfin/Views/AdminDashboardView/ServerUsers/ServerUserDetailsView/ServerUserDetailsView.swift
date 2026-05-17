@@ -49,10 +49,7 @@ struct ServerUserDetailsView: View {
                         alert.isPresented.wrappedValue = true
                     }
                     .alert(L10n.username, isPresented: alert.isPresented) {
-                        TextField(L10n.username, text: Binding<String>(
-                            get: { alert.username.wrappedValue },
-                            set: { alert.username.wrappedValue = $0 }
-                        ))
+                        TextField(L10n.username, text: alert.username)
 
                         Button(L10n.save) {
                             viewModel.updateUsername(alert.username.wrappedValue)

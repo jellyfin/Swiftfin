@@ -15,13 +15,13 @@ struct ServerUserParentalRatingView: View {
     @Router
     private var router
 
+    @State
+    private var tempPolicy: UserPolicy
+
     @StateObject
     private var viewModel: ServerUserAdminViewModel
     @StateObject
     private var parentalRatingsViewModel: ParentalRatingsViewModel
-
-    @State
-    private var tempPolicy: UserPolicy
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)

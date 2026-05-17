@@ -13,9 +13,6 @@ import SwiftUI
 
 struct SettingsView: View {
 
-    @Router
-    var router
-
     #if os(iOS)
     @Default(.userAppearance)
     private var appearance
@@ -28,6 +25,9 @@ struct SettingsView: View {
 
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
+
+    @Router
+    var router
 
     @StateObject
     private var viewModel = SettingsViewModel()

@@ -12,11 +12,11 @@ import SwiftUI
 
 struct ServerUserMediaAccessView: View {
 
-    @Router
-    private var router
-
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
+
+    @Router
+    private var router
 
     @State
     private var tempPolicy: UserPolicy

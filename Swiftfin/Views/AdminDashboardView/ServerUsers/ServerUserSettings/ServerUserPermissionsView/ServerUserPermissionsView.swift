@@ -13,11 +13,11 @@ import SwiftUI
 
 struct ServerUserPermissionsView: View {
 
-    @Router
-    private var router
-
     @ObservedObject
     var viewModel: ServerUserAdminViewModel
+
+    @Router
+    private var router
 
     @State
     private var tempPolicy: UserPolicy

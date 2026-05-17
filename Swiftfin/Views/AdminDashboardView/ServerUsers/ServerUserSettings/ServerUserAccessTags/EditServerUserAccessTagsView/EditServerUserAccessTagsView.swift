@@ -20,15 +20,15 @@ struct EditServerUserAccessTagsView: View {
     @Router
     private var router
 
-    @StateObject
-    private var viewModel: ServerUserAdminViewModel
-
     @State
     private var isPresentingDeleteConfirmation = false
     @State
     private var selectedTags: Set<TagWithAccess> = []
     @State
     private var isEditing: Bool = false
+
+    @StateObject
+    private var viewModel: ServerUserAdminViewModel
 
     private var hasTags: Bool {
         viewModel.user.policy?.blockedTags?.isEmpty == true &&

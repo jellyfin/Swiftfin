@@ -18,13 +18,13 @@ struct ServerUserDeviceAccessView: View {
     @Router
     private var router
 
+    @State
+    private var tempPolicy: UserPolicy
+
     @StateObject
     private var viewModel: ServerUserAdminViewModel
     @StateObject
     private var devicesViewModel = DevicesViewModel()
-
-    @State
-    private var tempPolicy: UserPolicy
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
