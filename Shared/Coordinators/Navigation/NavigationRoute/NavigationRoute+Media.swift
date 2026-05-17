@@ -31,6 +31,14 @@ extension NavigationRoute {
         }
     }
 
+    static var liveTVGuide: NavigationRoute {
+        NavigationRoute(
+            id: "liveTVGuide"
+        ) {
+            LiveTVGuideView()
+        }
+    }
+
     static func mediaSourceInfo(source: MediaSourceInfo) -> NavigationRoute {
         NavigationRoute(
             id: "mediaSourceInfo",

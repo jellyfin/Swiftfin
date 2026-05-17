@@ -27,6 +27,13 @@ struct ProgramsView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 liveTVSectionPill(
+                    title: "Guide",
+                    systemImage: "list.bullet.rectangle"
+                ) {
+                    router.route(to: .liveTVGuide)
+                }
+
+                liveTVSectionPill(
                     title: L10n.channels,
                     systemImage: "play.square.stack"
                 ) {

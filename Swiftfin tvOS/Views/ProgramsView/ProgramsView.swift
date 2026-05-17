@@ -22,9 +22,31 @@ struct ProgramsView: View {
     private var programsViewModel = ProgramsViewModel()
 
     @ViewBuilder
+    private var liveTVSectionButtons: some View {
+        HStack(spacing: 24) {
+            Button {
+                router.route(to: .liveTVGuide)
+            } label: {
+                Label("Guide", systemImage: "list.bullet.rectangle")
+            }
+
+            Button {
+                router.route(to: .channels)
+            } label: {
+                Label(L10n.channels, systemImage: "play.square.stack")
+            }
+        }
+        .font(.title3.weight(.semibold))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 50)
+    }
+
+    @ViewBuilder
     private var contentView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
+                liveTVSectionButtons
+
                 if programsViewModel.recommended.isNotEmpty {
                     programsSection(title: L10n.onNow, keyPath: \.recommended)
                 }
