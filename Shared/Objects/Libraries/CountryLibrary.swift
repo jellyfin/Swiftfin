@@ -6,15 +6,19 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
-import Foundation
 import JellyfinAPI
 
-final class CountriesViewModel: BaseFetchViewModel<[CountryInfo]> {
+struct CountryLibrary: PagingLibrary {
 
-    override func getValue() async throws -> [CountryInfo] {
+    let hasNextPage: Bool = false
+    let parent: TitledLibraryParent = .init(displayTitle: "", id: "country")
+
+    func retrievePage(
+        environment: Empty,
+        pageState: LibraryPageState
+    ) async throws -> [CountryInfo] {
         let request = Paths.getCountries
-        let response = try await userSession.client.send(request)
+        let response = try await pageState.userSession.client.send(request)
 
         return response.value
     }

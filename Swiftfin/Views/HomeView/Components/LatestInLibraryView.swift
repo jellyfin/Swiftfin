@@ -20,12 +20,12 @@ extension HomeView {
         private var router
 
         @ObservedObject
-        var viewModel: LatestInLibraryViewModel
+        var viewModel: PagingLibraryViewModel<LatestInLibrary>
 
         var body: some View {
             if viewModel.elements.isNotEmpty {
                 PosterHStack(
-                    title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
+                    title: viewModel.library.parent.displayTitle,
                     type: latestInLibraryPosterType,
                     items: viewModel.elements
                 ) { item, namespace in
@@ -33,7 +33,7 @@ extension HomeView {
                 }
                 .trailing {
                     SeeAllButton {
-                        router.route(to: .library(viewModel: viewModel))
+                        router.route(to: .library(library: viewModel.library))
                     }
                 }
             }

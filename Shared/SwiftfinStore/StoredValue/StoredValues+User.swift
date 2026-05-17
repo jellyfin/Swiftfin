@@ -112,6 +112,14 @@ extension StoredValues.Keys {
             )
         }
 
+        static func libraryStyle(id: String?) -> Key<LibraryStyle> {
+            CurrentUserKey(
+                id,
+                field: "setting-libraryStyle",
+                default: .default
+            )
+        }
+
         static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
             CurrentUserKey(
                 parentID,

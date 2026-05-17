@@ -20,7 +20,7 @@ extension HomeView {
         private var router
 
         @ObservedObject
-        var viewModel: RecentlyAddedLibraryViewModel
+        var viewModel: PagingLibraryViewModel<RecentlyAddedLibrary>
 
         var body: some View {
             if viewModel.elements.isNotEmpty {

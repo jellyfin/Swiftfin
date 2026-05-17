@@ -18,10 +18,11 @@ struct ServerActivityView: View {
     @Router
     private var router
 
-    // MARK: - State Objects
+    @StateObject
+    private var usersViewModel = PagingLibraryViewModel(library: ServerUsersLibrary())
 
     @StateObject
-    private var viewModel = ServerActivityViewModel()
+    private var viewModel = PagingLibraryViewModel(library: ServerActivityLibrary())
 
     // MARK: - Body
 
@@ -30,8 +31,8 @@ struct ServerActivityView: View {
             switch viewModel.state {
             case .content:
                 contentView
-            case let .error(error):
-                ErrorView(error: error)
+            case .error:
+                viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
                 ProgressView()
             }
@@ -40,10 +41,11 @@ struct ServerActivityView: View {
         .navigationTitle(L10n.activity)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
-            viewModel.send(.refresh)
+            await viewModel.refresh()
+            await usersViewModel.refresh()
         }
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.gettingNextPage) {
+            if viewModel.background.is(.gettingNextPage) {
                 ProgressView()
             }
 
@@ -53,7 +55,14 @@ struct ServerActivityView: View {
             }
         }
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
+            usersViewModel.refresh()
+        }
+        .onChange(of: viewModel.environment.hasUserID) { _ in
+            viewModel.refresh()
+        }
+        .onChange(of: viewModel.environment.minDate) { _ in
+            viewModel.refresh()
         }
     }
 
@@ -69,11 +78,10 @@ struct ServerActivityView: View {
         } else {
             CollectionVGrid(
                 uniqueElements: viewModel.elements,
-                id: \.unwrappedIDHashOrZero,
                 layout: .columns(1)
             ) { log in
 
-                let user = viewModel.users.first(
+                let user = usersViewModel.elements.first(
                     property: \.id,
                     equalTo: log.userID
                 )
@@ -88,7 +96,7 @@ struct ServerActivityView: View {
                 }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
-                viewModel.send(.getNextPage)
+                viewModel.getNextPage()
             }
             .frame(maxWidth: .infinity)
         }
@@ -98,7 +106,7 @@ struct ServerActivityView: View {
 
     @ViewBuilder
     private var userFilterButton: some View {
-        Picker(selection: $viewModel.hasUserId) {
+        Picker(selection: $viewModel.environment.hasUserID) {
             Label(
                 L10n.all,
                 systemImage: "line.3.horizontal"
@@ -119,7 +127,7 @@ struct ServerActivityView: View {
         } label: {
             Text(L10n.type)
 
-            if let hasUserID = viewModel.hasUserId {
+            if let hasUserID = viewModel.environment.hasUserID {
                 Text(hasUserID ? L10n.users : L10n.system)
                 Image(systemName: hasUserID ? "person" : "gearshape")
 
@@ -136,11 +144,11 @@ struct ServerActivityView: View {
     @ViewBuilder
     private var startDateButton: some View {
         Button {
-            router.route(to: .activityFilters(viewModel: viewModel))
+            router.route(to: .activityFilters(environment: $viewModel.environment))
         } label: {
             Text(L10n.startDate)
 
-            if let startDate = viewModel.minDate {
+            if let startDate = viewModel.environment.minDate {
                 Text(startDate.formatted(date: .numeric, time: .omitted))
             } else {
                 Text(verbatim: .emptyDash)

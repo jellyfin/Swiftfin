@@ -23,8 +23,7 @@ extension ItemView {
                 title: L10n.studios,
                 items: studios
             ) { studio in
-                let viewModel = ItemLibraryViewModel(parent: studio)
-                router.route(to: .library(viewModel: viewModel))
+                router.route(to: .library(library: ItemLibrary(parent: studio)))
             }
         }
     }

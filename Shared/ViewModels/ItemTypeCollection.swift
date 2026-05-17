@@ -26,7 +26,7 @@ final class ItemTypeCollection: ViewModel, Stateful {
     var state: State = .content
 
     @Published
-    private(set) var elements: OrderedDictionary<BaseItemKind, ItemLibraryViewModel> = [:]
+    private(set) var elements: OrderedDictionary<BaseItemKind, PagingLibraryViewModel<ItemLibrary>> = [:]
 
     private var task: AnyCancellable?
 
@@ -60,8 +60,8 @@ final class ItemTypeCollection: ViewModel, Stateful {
         return .refreshing
     }
 
-    private func getNewElements() async -> OrderedDictionary<BaseItemKind, ItemLibraryViewModel> {
-        await withTaskGroup(of: (BaseItemKind, ItemLibraryViewModel).self) { group in
+    private func getNewElements() async -> OrderedDictionary<BaseItemKind, PagingLibraryViewModel<ItemLibrary>> {
+        await withTaskGroup(of: (BaseItemKind, PagingLibraryViewModel<ItemLibrary>).self) { group in
             for kind in itemTypes {
                 group.addTask {
                     await (kind, self.getItems(for: kind))
@@ -69,7 +69,7 @@ final class ItemTypeCollection: ViewModel, Stateful {
             }
 
             let newElements = await group.reduce(
-                into: OrderedDictionary<BaseItemKind, ItemLibraryViewModel>()
+                into: OrderedDictionary<BaseItemKind, PagingLibraryViewModel<ItemLibrary>>()
             ) { result, element in
                 let (kind, viewModel) = element
                 if case .content = viewModel.state, viewModel.elements.isNotEmpty {
@@ -81,14 +81,13 @@ final class ItemTypeCollection: ViewModel, Stateful {
         }
     }
 
-    private func getItems(for itemType: BaseItemKind) async -> ItemLibraryViewModel {
+    private func getItems(for itemType: BaseItemKind) async -> PagingLibraryViewModel<ItemLibrary> {
 
         /// Server will edit filters if only boxset, add userView as workaround.
         let itemTypes = (itemType == .boxSet ? [.boxSet, .userView] : [itemType])
 
-        let viewModel = ItemLibraryViewModel(
-            parent: parent,
-            filters: .init(itemTypes: itemTypes),
+        let viewModel = PagingLibraryViewModel(
+            library: ItemLibrary(parent: parent, filters: .init(itemTypes: itemTypes)),
             pageSize: 20
         )
 
@@ -103,7 +102,7 @@ final class ItemTypeCollection: ViewModel, Stateful {
                 }
 
             Task { @MainActor in
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
         }
     }

@@ -17,27 +17,18 @@ struct ServerActivityFilterView: View {
     @Router
     private var router
 
-    // MARK: - State Objects
-
-    @ObservedObject
-    private var viewModel: ServerActivityViewModel
+    private let environment: Binding<ServerActivityLibrary.Environment>
 
     // MARK: - Dialog States
 
     @State
-    private var tempDate: Date?
+    private var tempDate: Date
 
     // MARK: - Initializer
 
-    init(viewModel: ServerActivityViewModel) {
-
-        self.viewModel = viewModel
-
-        if let minDate = viewModel.minDate {
-            tempDate = minDate
-        } else {
-            tempDate = .now
-        }
+    init(environment: Binding<ServerActivityLibrary.Environment>) {
+        self.environment = environment
+        self.tempDate = environment.wrappedValue.minDate ?? .now
     }
 
     // MARK: - Body
@@ -47,7 +38,7 @@ struct ServerActivityFilterView: View {
             Section {
                 DatePicker(
                     L10n.date,
-                    selection: $tempDate.coalesce(.now),
+                    selection: $tempDate,
                     in: ...Date.now,
                     displayedComponents: .date
                 )
@@ -56,10 +47,10 @@ struct ServerActivityFilterView: View {
             }
 
             /// Reset button to remove the filter
-            if viewModel.minDate != nil {
+            if environment.wrappedValue.minDate != nil {
                 Section {
                     Button(L10n.reset, role: .destructive) {
-                        viewModel.minDate = nil
+                        environment.wrappedValue.minDate = nil
                         router.dismiss()
                     }
                     .buttonStyle(.primary)
@@ -75,14 +66,14 @@ struct ServerActivityFilterView: View {
         }
         .topBarTrailing {
             let startOfDay = Calendar.current
-                .startOfDay(for: tempDate ?? .now)
+                .startOfDay(for: tempDate)
 
             Button(L10n.save) {
-                viewModel.minDate = startOfDay
+                environment.wrappedValue.minDate = startOfDay
                 router.dismiss()
             }
             .buttonStyle(.toolbarPill)
-            .disabled(viewModel.minDate != nil && startOfDay == viewModel.minDate)
+            .disabled(environment.wrappedValue.minDate != nil && startOfDay == environment.wrappedValue.minDate)
         }
     }
 }

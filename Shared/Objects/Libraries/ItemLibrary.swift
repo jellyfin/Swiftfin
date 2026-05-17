@@ -1,0 +1,131 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+import JellyfinAPI
+
+@MainActor
+struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
+
+    struct Environment: WithDefaultValue {
+        var filters: ItemFilterCollection
+
+        static let `default`: Self = .init(filters: .default)
+    }
+
+    let environment: Environment?
+    let parent: AnyLibraryParent
+
+    init(
+        parent: some LibraryParent,
+        filters: ItemFilterCollection? = nil
+    ) {
+        self.environment = .init(filters: filters ?? .default)
+        self.parent = .init(parent)
+    }
+
+    func retrievePage(
+        environment: Environment,
+        pageState: LibraryPageState
+    ) async throws -> [BaseItemDto] {
+        var parameters = attachPage(
+            to: attachFilters(
+                to: makeBaseItemParameters(),
+                using: environment.filters
+            ),
+            pageState: pageState
+        )
+        parameters.userID = pageState.userSession.user.id
+
+        let request = Paths.getItems(parameters: parameters)
+        let response = try await pageState.userSession.client.send(request)
+
+        return (response.value.items ?? [])
+            .filter { item in
+                if let collectionType = item.collectionType {
+                    return CollectionType.supportedCases.contains(collectionType)
+                }
+
+                return true
+            }
+            .map { item in
+                if parent.libraryType == .folder, item.type == .collectionFolder {
+                    return item.mutating(\.type, with: .folder)
+                }
+
+                return item
+            }
+    }
+
+    func retrieveRandomElement(
+        environment: Environment,
+        pageState: LibraryPageState
+    ) async throws -> BaseItemDto? {
+        var parameters = attachFilters(
+            to: makeBaseItemParameters(),
+            using: environment.filters
+        )
+        parameters.limit = 1
+        parameters.sortBy = [.random]
+        parameters.userID = pageState.userSession.user.id
+
+        let request = Paths.getItems(parameters: parameters)
+        let response = try await pageState.userSession.client.send(request)
+
+        return response.value.items?.first
+    }
+
+    private func makeBaseItemParameters() -> Paths.GetItemsParameters {
+        var parameters = Paths.GetItemsParameters()
+        parameters.enableUserData = true
+        parameters.fields = .MinimumFields
+        parameters.includeItemTypes = BaseItemKind.supportedCases
+        parameters.isRecursive = parent.isRecursiveCollection
+        parameters.sortBy = [.name]
+        parameters.sortOrder = [.ascending]
+
+        return parent.setParentParameters(parameters)
+    }
+
+    private func attachFilters(
+        to parameters: Paths.GetItemsParameters,
+        using filters: ItemFilterCollection
+    ) -> Paths.GetItemsParameters {
+        var parameters = parameters
+        parameters.filters = filters.traits
+        parameters.genres = filters.genres.map(\.value)
+        parameters.sortBy = filters.sortBy
+        parameters.sortOrder = filters.sortOrder
+        parameters.tags = filters.tags.map(\.value)
+        parameters.years = filters.years.compactMap { Int($0.value) }
+
+        if filters.itemTypes.isNotEmpty {
+            parameters.includeItemTypes = filters.itemTypes
+        }
+
+        if filters.letter.first?.value == "#" {
+            parameters.nameLessThan = "A"
+        } else {
+            parameters.nameStartsWith = filters.letter
+                .map(\.value)
+                .filter { $0 != "#" }
+                .first
+        }
+
+        return parameters
+    }
+
+    private func attachPage(
+        to parameters: Paths.GetItemsParameters,
+        pageState: LibraryPageState
+    ) -> Paths.GetItemsParameters {
+        var parameters = parameters
+        parameters.limit = pageState.pageSize
+        parameters.startIndex = pageState.pageOffset
+        return parameters
+    }
+}

@@ -17,7 +17,7 @@ extension ItemView {
 
     struct CollectionItemContentView: View {
 
-        typealias Element = OrderedDictionary<BaseItemKind, ItemLibraryViewModel>.Elements.Element
+        typealias Element = OrderedDictionary<BaseItemKind, PagingLibraryViewModel<ItemLibrary>>.Elements.Element
 
         @Router
         private var router
@@ -57,7 +57,7 @@ extension ItemView {
             }
             .trailing {
                 SeeAllButton {
-                    router.route(to: .library(viewModel: element.value))
+                    router.route(to: .library(library: element.value.library))
                 }
             }
         }

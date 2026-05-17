@@ -6,15 +6,19 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
-import Foundation
 import JellyfinAPI
 
-final class CulturesViewModel: BaseFetchViewModel<[CultureDto]> {
+struct CultureLibrary: PagingLibrary {
 
-    override func getValue() async throws -> [CultureDto] {
+    let hasNextPage: Bool = false
+    let parent: TitledLibraryParent = .init(displayTitle: "", id: "cultures")
+
+    func retrievePage(
+        environment: Empty,
+        pageState: LibraryPageState
+    ) async throws -> [CultureDto] {
         let request = Paths.getCultures
-        let response = try await userSession.client.send(request)
+        let response = try await pageState.userSession.client.send(request)
 
         return response.value
     }

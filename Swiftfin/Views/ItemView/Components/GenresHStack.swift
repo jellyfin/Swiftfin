@@ -23,12 +23,11 @@ extension ItemView {
                 title: L10n.genres,
                 items: genres
             ) { genre in
-                let viewModel = ItemLibraryViewModel(
-                    title: genre.displayTitle,
-                    id: genre.value,
+                let library = ItemLibrary(
+                    parent: TitledLibraryParent(displayTitle: genre.displayTitle, id: genre.value),
                     filters: .init(genres: [genre])
                 )
-                router.route(to: .library(viewModel: viewModel))
+                router.route(to: .library(library: library))
             }
         }
     }

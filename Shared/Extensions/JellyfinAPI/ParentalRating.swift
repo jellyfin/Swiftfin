@@ -16,7 +16,12 @@ extension ParentalRating: Displayable {
     }
 }
 
-extension ParentalRating: @retroactive Identifiable {
+extension ParentalRating: @retroactive Identifiable, LibraryIdentifiable {
+
+    var unwrappedIDHashOrZero: Int {
+        hashValue
+    }
+
     public var id: Int {
         hashValue
     }

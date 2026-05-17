@@ -53,15 +53,15 @@ extension NavigationRoute {
 
     @MainActor
     static func castAndCrew(people: [BaseItemPerson], itemID: String?) -> NavigationRoute {
-        let id: String? = itemID == nil ? nil : "castAndCrew-\(itemID!)"
-        let viewModel = PagingLibraryViewModel(
+        let id = itemID == nil ? "castAndCrew" : "castAndCrew-\(itemID!)"
+        let library = StaticLibrary(
             title: L10n.castAndCrew.localizedCapitalized,
             id: id,
-            people
+            elements: people
         )
 
         return NavigationRoute(id: "castAndCrew") {
-            PagingLibraryView(viewModel: viewModel)
+            PagingLibraryView(library: library)
         }
     }
 

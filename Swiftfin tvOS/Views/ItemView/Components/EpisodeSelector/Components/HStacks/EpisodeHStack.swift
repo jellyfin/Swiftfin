@@ -22,7 +22,7 @@ extension SeriesEpisodeSelector {
         private var focusedEpisodeID: String?
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
+        var viewModel: PagingLibraryViewModel<EpisodeLibrary>
 
         @State
         private var didScrollToPlayButtonItem = false
@@ -36,7 +36,7 @@ extension SeriesEpisodeSelector {
 
         // MARK: - Content View
 
-        private func contentView(viewModel: SeasonItemViewModel) -> some View {
+        private func contentView(viewModel: PagingLibraryViewModel<EpisodeLibrary>) -> some View {
             CollectionHStack(
                 uniqueElements: viewModel.elements,
                 id: \.unwrappedIDHashOrZero,
@@ -105,8 +105,14 @@ extension SeriesEpisodeSelector {
                         } else {
                             contentView(viewModel: viewModel)
                         }
-                    case let .error(error):
-                        ErrorHStack(viewModel: viewModel, error: error, focusedEpisodeID: $focusedEpisodeID)
+                    case .error:
+                        viewModel.error.map { error in
+                            ErrorHStack(
+                                viewModel: viewModel,
+                                error: ErrorMessage(error.localizedDescription),
+                                focusedEpisodeID: $focusedEpisodeID
+                            )
+                        }
                     case .initial, .refreshing:
                         LoadingHStack(focusedEpisodeID: $focusedEpisodeID)
                     }
@@ -163,7 +169,7 @@ extension SeriesEpisodeSelector {
     struct ErrorHStack: View {
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
+        var viewModel: PagingLibraryViewModel<EpisodeLibrary>
 
         let error: ErrorMessage
         let focusedEpisodeID: FocusState<String?>.Binding
@@ -174,7 +180,7 @@ extension SeriesEpisodeSelector {
                 columns: 3.5
             ) { _ in
                 SeriesEpisodeSelector.ErrorCard(error: error) {
-                    viewModel.send(.refresh)
+                    viewModel.refresh()
                 }
                 .focused(focusedEpisodeID, equals: "errorCard")
                 .padding(.horizontal, 4)

@@ -6,40 +6,49 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
 import Foundation
 import JellyfinAPI
 
-final class ChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
+struct ChannelLibrary: PagingLibrary {
 
-    override func get(page: Int) async throws -> [ChannelProgram] {
+    let parent: TitledLibraryParent = .init(displayTitle: L10n.channels, id: "channels")
 
+    func retrievePage(
+        environment: Empty,
+        pageState: LibraryPageState
+    ) async throws -> [ChannelProgram] {
         var parameters = Paths.GetLiveTvChannelsParameters()
         parameters.fields = .MinimumFields
-        parameters.sortBy = [ItemSortBy.name]
-
-        parameters.limit = pageSize
-        parameters.startIndex = page * pageSize
+        parameters.limit = pageState.pageSize
+        parameters.sortBy = [.name]
+        parameters.startIndex = pageState.pageOffset
 
         let request = Paths.getLiveTvChannels(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await pageState.userSession.client.send(request)
 
-        return try await getPrograms(for: response.value.items ?? [])
+        return try await getPrograms(
+            for: response.value.items ?? [],
+            pageState: pageState
+        )
     }
 
-    private func getPrograms(for channels: [BaseItemDto]) async throws -> [ChannelProgram] {
-
+    private func getPrograms(
+        for channels: [BaseItemDto],
+        pageState: LibraryPageState
+    ) async throws -> [ChannelProgram] {
         guard let minEndDate = Calendar.current.date(byAdding: .hour, value: -1, to: .now),
-              let maxStartDate = Calendar.current.date(byAdding: .hour, value: 6, to: .now) else { return [] }
+              let maxStartDate = Calendar.current.date(byAdding: .hour, value: 6, to: .now)
+        else { return [] }
 
         var parameters = Paths.GetLiveTvProgramsParameters()
         parameters.channelIDs = channels.compactMap(\.id)
         parameters.maxStartDate = maxStartDate
         parameters.minEndDate = minEndDate
-        parameters.sortBy = [ItemSortBy.startDate]
+        parameters.sortBy = [.startDate]
+        parameters.userID = pageState.userSession.user.id
 
         let request = Paths.getLiveTvPrograms(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await pageState.userSession.client.send(request)
 
         let groupedPrograms = (response.value.items ?? [])
             .grouped { program in

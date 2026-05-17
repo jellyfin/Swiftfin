@@ -63,11 +63,12 @@ extension TabItem {
             title: title,
             systemImage: systemName
         ) {
-            let viewModel = ItemLibraryViewModel(
-                filters: filters
+            PagingLibraryView(
+                library: ItemLibrary(
+                    parent: TitledLibraryParent(displayTitle: title),
+                    filters: filters
+                )
             )
-
-            PagingLibraryView(viewModel: viewModel)
         }
     }
 

@@ -17,7 +17,7 @@ struct ChannelLibraryView: View {
     private var router
 
     @StateObject
-    private var viewModel = ChannelLibraryViewModel()
+    private var viewModel = PagingLibraryViewModel(library: ChannelLibrary())
 
     @ViewBuilder
     private var contentView: some View {
@@ -34,7 +34,7 @@ struct ChannelLibraryView: View {
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
-            viewModel.send(.getNextPage)
+            viewModel.getNextPage()
         }
     }
 
@@ -47,8 +47,8 @@ struct ChannelLibraryView: View {
                 } else {
                     contentView
                 }
-            case let .error(error):
-                ErrorView(error: error)
+            case .error:
+                viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
                 ProgressView()
             }
@@ -56,17 +56,17 @@ struct ChannelLibraryView: View {
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .refreshable {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
         .onFirstAppear {
             if viewModel.state == .initial {
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
         }
         .sinceLastDisappear { interval in
             // refresh after 3 hours
             if interval >= 10800 {
-                viewModel.send(.refresh)
+                viewModel.refresh()
             }
         }
     }
