@@ -132,8 +132,15 @@ struct VideoPlayerSettingsView: View {
     @ViewBuilder
     private var buttonSettings: some View {
         Section(L10n.buttons) {
-            JumpIntervalPicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
-            JumpIntervalPicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+            JumpIntervalPicker(
+                title: L10n.jumpBackwardLength,
+                selection: $jumpBackwardLength
+            )
+
+            JumpIntervalPicker(
+                title: L10n.jumpForwardLength,
+                selection: $jumpForwardLength
+            )
 
             ChevronButton(L10n.barButtons) {
                 router.route(to: .actionBarButtonSelector(
@@ -147,11 +154,13 @@ struct VideoPlayerSettingsView: View {
                 ))
             }
         }
-        .onChange(of: barActionButtons) { newValue in
+        .backport
+        .onChange(of: barActionButtons) { _, newValue in
             let enabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
             updateConfiguration { $0.enableNextEpisodeAutoPlay = enabled }
         }
-        .onChange(of: menuActionButtons) { newValue in
+        .backport
+        .onChange(of: menuActionButtons) { _, newValue in
             let enabled = newValue.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
             updateConfiguration { $0.enableNextEpisodeAutoPlay = enabled }
         }
@@ -187,6 +196,7 @@ struct VideoPlayerSettingsView: View {
     private var sliderSettings: some View {
         Section(L10n.slider) {
             Toggle(L10n.chapterSlider, isOn: $chapterSlider)
+
             PlatformPicker(L10n.previewImage, selection: $previewImageScrubbing)
         }
     }
@@ -224,12 +234,14 @@ struct VideoPlayerSettingsView: View {
                     updateConfiguration { $0.audioLanguagePreference = newValue }
                 }
             ))
+
             Toggle(L10n.playDefaultTrack, isOn: Binding(
                 get: { viewModel.user.configuration?.isPlayDefaultAudioTrack == true },
                 set: { newValue in
                     updateConfiguration { $0.isPlayDefaultAudioTrack = newValue }
                 }
             ))
+
             Toggle(L10n.rememberTrackSelection, isOn: Binding(
                 get: { viewModel.user.configuration?.isRememberAudioSelections == true },
                 set: { newValue in
@@ -241,6 +253,7 @@ struct VideoPlayerSettingsView: View {
                 L10n.playDefault,
                 value: L10n.playDefaultTrackDescription
             )
+
             LabeledContent(
                 L10n.rememberTrackSelection,
                 value: L10n.rememberTrackSelectionDescription
@@ -278,18 +291,22 @@ struct VideoPlayerSettingsView: View {
                 SubtitlePlaybackMode.default.displayTitle,
                 value: SubtitlePlaybackMode.default.description
             )
+
             LabeledContent(
                 SubtitlePlaybackMode.always.displayTitle,
                 value: SubtitlePlaybackMode.always.description
             )
+
             LabeledContent(
                 SubtitlePlaybackMode.onlyForced.displayTitle,
                 value: SubtitlePlaybackMode.onlyForced.description
             )
+
             LabeledContent(
                 SubtitlePlaybackMode.none.displayTitle,
                 value: SubtitlePlaybackMode.none.description
             )
+
             LabeledContent(
                 SubtitlePlaybackMode.smart.displayTitle,
                 value: SubtitlePlaybackMode.smart.description
@@ -297,7 +314,7 @@ struct VideoPlayerSettingsView: View {
         }
 
         Section {
-            ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName) {
+            ChevronButton(L10n.subtitleFont, content: subtitleFontName) {
                 router.route(to: .fontPicker(selection: $subtitleFontName))
             }
 

@@ -27,7 +27,7 @@ struct SettingsView: View {
     private var videoPlayerType
 
     @Router
-    var router
+    private var router
 
     @StateObject
     private var viewModel = SettingsViewModel()
