@@ -22,9 +22,9 @@ extension ItemView {
         private var enabledTrailers: TrailerSelection
 
         @ObservedObject
-        private var viewModel: ItemViewModel
+        var viewModel: ItemViewModel
 
-        private let equalSpacing: Bool
+        var equalSpacing: Bool = true
 
         // MARK: - Has Trailers
 
@@ -38,13 +38,6 @@ extension ItemView {
             }
 
             return false
-        }
-
-        // MARK: - Initializer
-
-        init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
-            self.viewModel = viewModel
-            self.equalSpacing = equalSpacing
         }
 
         // MARK: - Body

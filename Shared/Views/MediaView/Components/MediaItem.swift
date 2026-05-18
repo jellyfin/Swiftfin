@@ -25,7 +25,7 @@ extension MediaView {
         private var useRandomImage
 
         @ObservedObject
-        private var viewModel: MediaViewModel
+        var viewModel: MediaViewModel
 
         @Namespace
         private var namespace
@@ -33,35 +33,25 @@ extension MediaView {
         @State
         private var imageSources: [ImageSource] = []
 
-        private let action: (Namespace.ID) -> Void
-        private let mediaType: MediaViewModel.MediaType
-
-        init(
-            viewModel: MediaViewModel,
-            type: MediaViewModel.MediaType,
-            action: @escaping (Namespace.ID) -> Void
-        ) {
-            self.viewModel = viewModel
-            self.action = action
-            self.mediaType = type
-        }
+        let type: MediaViewModel.MediaType
+        let action: (Namespace.ID) -> Void
 
         private var useTitleLabel: Bool {
             useRandomImage ||
-                mediaType == .downloads ||
-                mediaType == .favorites
+                type == .downloads ||
+                type == .favorites
         }
 
         private func setImageSources() {
             Task { @MainActor in
                 if useRandomImage {
-                    self.imageSources = try await viewModel.randomItemImageSources(for: mediaType)
+                    self.imageSources = try await viewModel.randomItemImageSources(for: type)
                     return
                 }
 
-                if case let MediaViewModel.MediaType.collectionFolder(item) = mediaType {
+                if case let MediaViewModel.MediaType.collectionFolder(item) = type {
                     self.imageSources = [item.imageSource(.primary, maxWidth: 500)]
-                } else if case let MediaViewModel.MediaType.liveTV(item) = mediaType {
+                } else if case let MediaViewModel.MediaType.liveTV(item) = type {
                     self.imageSources = [item.imageSource(.primary, maxWidth: 500)]
                 }
             }
@@ -69,7 +59,7 @@ extension MediaView {
 
         @ViewBuilder
         private var titleLabel: some View {
-            Text(mediaType.displayTitle)
+            Text(type.displayTitle)
                 .font(.title2)
                 .fontWeight(.semibold)
                 .lineLimit(1)

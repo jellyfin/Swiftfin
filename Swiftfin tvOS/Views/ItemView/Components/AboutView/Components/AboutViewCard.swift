@@ -12,14 +12,14 @@ extension ItemView.AboutView {
 
     struct Card: View {
 
-        private var content: () -> any View
-        private var onSelect: () -> Void
+        private let content: () -> any View
+        private let action: () -> Void
         private let title: String
         private let subtitle: String?
 
         var body: some View {
             Button {
-                onSelect()
+                action()
             } label: {
                 VStack(alignment: .leading) {
                     Text(title)
@@ -43,25 +43,30 @@ extension ItemView.AboutView {
             }
             .buttonStyle(.card)
         }
-    }
-}
 
-extension ItemView.AboutView.Card {
+        init(
+            title: String,
+            subtitle: String? = nil,
+            @ViewBuilder content: @escaping () -> any View
+        ) {
+            self.init(
+                title: title,
+                subtitle: subtitle,
+                action: {},
+                content: content
+            )
+        }
 
-    init(title: String, subtitle: String? = nil) {
-        self.init(
-            content: { EmptyView() },
-            onSelect: {},
-            title: title,
-            subtitle: subtitle
-        )
-    }
-
-    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.content, with: content)
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
+        init(
+            title: String,
+            subtitle: String? = nil,
+            action: @escaping () -> Void = {},
+            @ViewBuilder content: @escaping () -> any View
+        ) {
+            self.content = content
+            self.action = action
+            self.title = title
+            self.subtitle = subtitle
+        }
     }
 }

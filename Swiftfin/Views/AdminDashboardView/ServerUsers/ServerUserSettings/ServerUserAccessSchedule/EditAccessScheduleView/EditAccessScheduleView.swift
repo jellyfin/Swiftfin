@@ -23,7 +23,7 @@ struct EditAccessScheduleView: View {
     private var router
 
     @ObservedObject
-    private var viewModel: ServerUserAdminViewModel
+    var viewModel: ServerUserAdminViewModel
 
     // MARK: - Policy Variable
 
@@ -46,12 +46,6 @@ struct EditAccessScheduleView: View {
 
     @State
     private var error: Error?
-
-    // MARK: - Initializer
-
-    init(viewModel: ServerUserAdminViewModel) {
-        self.viewModel = viewModel
-    }
 
     // MARK: - Body
 

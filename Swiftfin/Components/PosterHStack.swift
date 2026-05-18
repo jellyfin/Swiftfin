@@ -19,7 +19,7 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
     private var type: PosterDisplayType
     private var label: (Element) -> any View
     private var trailingContent: () -> any View
-    private var action: (Element, Namespace.ID) -> Void
+    private let action: (Element, Namespace.ID) -> Void
 
     private var layout: CollectionHStackLayout {
         if UIDevice.isPhone {

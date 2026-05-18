@@ -13,20 +13,12 @@ import SwiftUI
 struct NavigationBarFilterDrawer: View {
 
     @ObservedObject
-    private var viewModel: FilterViewModel
+    var viewModel: FilterViewModel
 
     @Router
     private var router
 
-    private let filterTypes: [ItemFilterType]
-
-    init(
-        viewModel: FilterViewModel,
-        types: [ItemFilterType]
-    ) {
-        self.viewModel = viewModel
-        self.filterTypes = types
-    }
+    let types: [ItemFilterType]
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -41,7 +33,7 @@ struct NavigationBarFilterDrawer: View {
                     .labelStyle(NavigationDrawerLabelStyle(isIconOnly: true))
                 }
 
-                ForEach(filterTypes, id: \.self) { type in
+                ForEach(types, id: \.self) { type in
                     Button {
                         router.route(
                             to: .filter(

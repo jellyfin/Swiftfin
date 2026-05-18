@@ -18,13 +18,8 @@ struct JumpIntervalPicker: View {
     @State
     private var isPresentingCustomInterval = false
 
-    private let title: String
-    private let selection: Binding<MediaJumpInterval>
-
-    init(_ title: String, selection: Binding<MediaJumpInterval>) {
-        self.title = title
-        self.selection = selection
-    }
+    let title: String
+    let selection: Binding<MediaJumpInterval>
 
     @ViewBuilder
     private var picker: some View {

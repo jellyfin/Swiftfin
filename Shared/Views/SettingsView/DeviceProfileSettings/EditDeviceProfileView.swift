@@ -117,25 +117,21 @@ extension CustomDeviceProfilesView {
             }
         }
 
-        private func componentLabel(_ title: String, value: String) -> LabeledContent<some View, EmptyView> {
+        private func componentLabel(_ title: String, value: String) -> some View {
             LabeledContent {
-                EmptyView()
+                if value.isEmpty {
+                    Label(L10n.none, systemImage: "exclamationmark.circle.fill")
+                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                } else {
+                    Text(value)
+                }
             } label: {
-                LabeledContent {
-                    if value.isEmpty {
-                        Label(L10n.none, systemImage: "exclamationmark.circle.fill")
-                            .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                    } else {
-                        Text(value)
-                    }
-                } label: {
-                    Text(title)
-                }
-                .labeledContentStyle(.deviceProfile)
-                .if(UIDevice.isTV) { text in
-                    text
-                        .padding(.vertical)
-                }
+                Text(title)
+            }
+            .labeledContentStyle(.deviceProfile)
+            .if(UIDevice.isTV) { text in
+                text
+                    .padding(.vertical)
             }
         }
     }

@@ -53,7 +53,7 @@ struct AboutAppView: View {
 
                 ChevronButton(
                     L10n.license,
-                    subtitle: L10n.mlp2,
+                    content: L10n.mlp2,
                     systemName: "text.document",
                     external: true
                 ) {

@@ -13,21 +13,12 @@ extension SeriesEpisodeSelector {
     struct ErrorCard: View {
 
         let error: ErrorMessage
-        private var onSelect: () -> Void
-
-        init(error: ErrorMessage) {
-            self.error = error
-            self.onSelect = {}
-        }
-
-        func onSelect(perform action: @escaping () -> Void) -> Self {
-            copy(modifying: \.onSelect, with: action)
-        }
+        let action: () -> Void
 
         var body: some View {
             VStack(alignment: .leading) {
                 Button {
-                    onSelect()
+                    action()
                 } label: {
                     Color.secondarySystemFill
                         .opacity(0.75)
@@ -46,6 +37,11 @@ extension SeriesEpisodeSelector {
                     content: error.localizedDescription
                 )
             }
+        }
+
+        init(error: ErrorMessage, action: @escaping () -> Void = {}) {
+            self.error = error
+            self.action = action
         }
     }
 }

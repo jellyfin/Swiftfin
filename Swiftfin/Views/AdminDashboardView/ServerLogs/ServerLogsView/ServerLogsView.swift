@@ -35,18 +35,14 @@ struct ServerLogsView: View {
                     ChevronButton {
                         router.route(to: .serverLogContents(logFile: logFile))
                     } label: {
-                        LabeledContent {
-                            EmptyView()
-                        } label: {
-                            VStack(alignment: .leading) {
-                                Text(logFile.name ?? L10n.unknown)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.leading)
+                        VStack(alignment: .leading) {
+                            Text(log.name ?? L10n.unknown)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
 
-                                Text(logFile.dateModified, format: .dateTime)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
+                            Text(log.dateModified, format: .dateTime)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }

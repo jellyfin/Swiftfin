@@ -12,24 +12,13 @@ extension ItemView {
 
     struct AttributesHStack: View {
 
+        let attributes: [ItemViewAttribute]
+
         @ObservedObject
-        private var viewModel: ItemViewModel
+        var viewModel: ItemViewModel
 
-        private let alignment: HorizontalAlignment
-        private let attributes: [ItemViewAttribute]
-        private let flowDirection: FlowLayout.Direction
-
-        init(
-            attributes: [ItemViewAttribute],
-            viewModel: ItemViewModel,
-            alignment: HorizontalAlignment = .center,
-            flowDirection: FlowLayout.Direction = .up
-        ) {
-            self.viewModel = viewModel
-            self.alignment = alignment
-            self.attributes = attributes
-            self.flowDirection = flowDirection
-        }
+        var alignment: HorizontalAlignment = .center
+        var flowDirection: FlowLayout.Direction = .up
 
         var body: some View {
             if attributes.isNotEmpty {
