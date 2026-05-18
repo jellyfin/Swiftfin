@@ -36,11 +36,11 @@ struct ServerLogsView: View {
                         router.route(to: .serverLogContents(logFile: logFile))
                     } label: {
                         VStack(alignment: .leading) {
-                            Text(log.name ?? L10n.unknown)
+                            Text(logFile.name ?? L10n.unknown)
                                 .lineLimit(2)
                                 .multilineTextAlignment(.leading)
 
-                            Text(log.dateModified, format: .dateTime)
+                            Text(logFile.dateModified, format: .dateTime)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
