@@ -10,7 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 #if os(tvOS)
-struct FilterView: View {
+struct TVOSFilterView: View {
 
     // MARK: - Observed Objects
 
