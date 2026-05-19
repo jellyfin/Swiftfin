@@ -12,27 +12,16 @@ import SwiftUI
 
 struct ServerUserParentalRatingView: View {
 
-    // MARK: - Observed, State, & Environment Objects
-
     @Router
     private var router
+
+    @State
+    private var tempPolicy: UserPolicy
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
     @StateObject
     private var parentalRatingsViewModel: ParentalRatingsViewModel
-
-    // MARK: - Policy Variable
-
-    @State
-    private var tempPolicy: UserPolicy
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -45,27 +34,26 @@ struct ServerUserParentalRatingView: View {
         self.tempPolicy = policy
     }
 
-    // MARK: - Body
-
     var body: some View {
         List {
             maxParentalRatingsView
 
             blockUnratedItemsView
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.parentalRatings.localizedCapitalized)
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.updating) {
+            if viewModel.background.is(.updating) {
                 ProgressView()
             }
 
             Button(L10n.save) {
                 if tempPolicy != viewModel.user.policy {
-                    viewModel.send(.updatePolicy(tempPolicy))
+                    viewModel.updatePolicy(tempPolicy)
                 }
             }
             .buttonStyle(.toolbarPill)
@@ -74,20 +62,19 @@ struct ServerUserParentalRatingView: View {
         .onFirstAppear {
             parentalRatingsViewModel.refresh()
         }
+        .refreshable {
+            parentalRatingsViewModel.refresh()
+            viewModel.refresh()
+        }
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-                error = eventError
             case .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()
             }
         }
-        .errorMessage($error)
+        .errorMessage($viewModel.error)
     }
-
-    // MARK: - Maximum Parental Ratings View
 
     @ViewBuilder
     private var maxParentalRatingsView: some View {
@@ -108,8 +95,6 @@ struct ServerUserParentalRatingView: View {
             learnMore: parentalRatingLabeledContent
         )
     }
-
-    // MARK: - Block Unrated Items View
 
     @ViewBuilder
     private var blockUnratedItemsView: some View {
@@ -150,8 +135,6 @@ struct ServerUserParentalRatingView: View {
             }
             .sorted(using: \.value)
     }
-
-    // MARK: - Parental Rating Learn More
 
     @LabeledContentBuilder
     private func parentalRatingLabeledContent() -> AnyView {
