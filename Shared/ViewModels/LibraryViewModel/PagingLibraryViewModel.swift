@@ -42,6 +42,10 @@ protocol LibraryIdentifiable: Identifiable {
     var unwrappedIDHashOrZero: Int { get }
 }
 
+protocol HasTotalCount: AnyObject {
+    var totalCount: Int { get }
+}
+
 // TODO: fix how `hasNextPage` is determined
 //       - some subclasses might not have "paging" and only have one call. This can be solved with
 //         a check if elements were actually appended to the set but that requires a redundant get
