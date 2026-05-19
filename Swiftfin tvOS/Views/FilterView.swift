@@ -9,6 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
+#if os(tvOS)
 struct FilterView: View {
 
     // MARK: - Observed Objects
@@ -236,3 +237,4 @@ struct FilterView: View {
         }
     }
 }
+#endif

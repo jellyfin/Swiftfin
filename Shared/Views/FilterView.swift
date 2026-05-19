@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct FilterView: View {
 
     @ObservedObject
@@ -66,3 +67,4 @@ struct FilterView: View {
         }
     }
 }
+#endif
