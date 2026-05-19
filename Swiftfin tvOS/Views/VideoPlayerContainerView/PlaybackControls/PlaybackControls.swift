@@ -51,7 +51,8 @@ extension VideoPlayer {
                 .animation(.bouncy(duration: 0.7, extraBounce: 0.2))
         }
 
-        var body: some View {
+        @ViewBuilder
+        private var mainContent: some View {
             VStack(spacing: 10) {
 
                 Spacer(minLength: 0)
@@ -74,16 +75,25 @@ extension VideoPlayer {
                 .fixedSize(horizontal: false, vertical: true)
                 .isVisible(isOverlayOrScrubbingVisible)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .edgePadding(.horizontal)
-            .overlay {
-                if manager.playbackRequestStatus == .paused {
-                    Label(L10n.pause, systemImage: "pause.fill")
-                        .transition(pauseTransition)
-                        .font(.system(size: 72, weight: .bold, design: .default))
-                        .labelStyle(.iconOnly)
-                }
+        }
+
+        @ViewBuilder
+        private var pauseOverlay: some View {
+            if manager.playbackRequestStatus == .paused {
+                Label(L10n.pause, systemImage: "pause.fill")
+                    .transition(pauseTransition)
+                    .font(.system(size: 72, weight: .bold, design: .default))
+                    .labelStyle(.iconOnly)
             }
+        }
+
+        var body: some View {
+            mainContent
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .edgePadding(.horizontal)
+                .overlay {
+                    pauseOverlay
+                }
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
