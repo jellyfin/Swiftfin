@@ -92,7 +92,7 @@ extension VideoPlayer {
                     isPlaybackProgressFocused = true
                 }
             }
-            .onChange(of: manager.playbackRequestStatus) { _, (newValue: MediaPlayerManager.PlaybackRequestStatus) in
+            .onChange(of: manager.playbackRequestStatus) { (oldValue: MediaPlayerManager.PlaybackRequestStatus, newValue: MediaPlayerManager.PlaybackRequestStatus) in
                 if newValue == MediaPlayerManager.PlaybackRequestStatus.paused, !containerState.isPresentingOverlay {
                     containerState.isPresentingOverlay = true
                 }
