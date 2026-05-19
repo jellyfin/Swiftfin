@@ -75,14 +75,6 @@ extension VideoPlayer {
                 .fixedSize(horizontal: false, vertical: true)
                 .isVisible(isOverlayOrScrubbingVisible)
             }
-            .alert(L10n.closePlayer, isPresented: $containerState.isPresentingCloseConfirmation) {
-                Button(L10n.cancel, role: .cancel) {}
-                Button(L10n.ok, role: .destructive) {
-                    manager.stop()
-                }
-            } message: {
-                Text(L10n.closePlayerWarning)
-            }
             .onFirstAppear {
                 containerState.isPresentingOverlay = true
                 isPlaybackProgressFocused = true
@@ -92,7 +84,10 @@ extension VideoPlayer {
                     isPlaybackProgressFocused = true
                 }
             }
-            .onChange(of: manager.playbackRequestStatus) { (oldValue: MediaPlayerManager.PlaybackRequestStatus, newValue: MediaPlayerManager.PlaybackRequestStatus) in
+            .onChange(of: manager.playbackRequestStatus) { (
+                _: MediaPlayerManager.PlaybackRequestStatus,
+                newValue: MediaPlayerManager.PlaybackRequestStatus
+            ) in
                 if newValue == MediaPlayerManager.PlaybackRequestStatus.paused, !containerState.isPresentingOverlay {
                     containerState.isPresentingOverlay = true
                 }
@@ -132,6 +127,17 @@ extension VideoPlayer {
                 .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)
                 .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
                 .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
+                .background {
+                    Color.clear
+                        .alert(L10n.closePlayer, isPresented: $containerState.isPresentingCloseConfirmation) {
+                            Button(L10n.cancel, role: .cancel) {}
+                            Button(L10n.ok, role: .destructive) {
+                                manager.stop()
+                            }
+                        } message: {
+                            Text(L10n.closePlayerWarning)
+                        }
+                }
         }
     }
 }
