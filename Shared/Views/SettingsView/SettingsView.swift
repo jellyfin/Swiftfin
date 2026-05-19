@@ -55,7 +55,7 @@ struct SettingsView: View {
     private var serverSection: some View {
         Section {
             UserProfileRow(user: viewModel.userSession.user.data) {
-                router.route(to: .localUserSettings(viewModel: viewModel))
+                router.route(to: .localUserSettings(user: viewModel.userSession.user.data))
             }
 
             ChevronButton(
@@ -132,6 +132,7 @@ struct SettingsView: View {
             #if os(iOS)
             Picker(L10n.appearance, selection: $appearance)
             #endif
+
             ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
 
             ChevronButton(L10n.advanced) {
