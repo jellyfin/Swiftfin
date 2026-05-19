@@ -12,8 +12,6 @@ import Transmission
 
 struct VideoPlayer: View {
 
-    @Environment(\.presentationControllerShouldDismiss)
-    private var presentationControllerShouldDismiss
     @Environment(\.presentationCoordinator)
     private var presentationCoordinator
 
@@ -97,10 +95,10 @@ struct VideoPlayer: View {
                     proxy.setSubtitleOffset(newValue)
                 }
             }
-            .backport
-            .onChange(of: containerState.presentationControllerShouldDismiss) { _, newValue in
-                presentationControllerShouldDismiss.wrappedValue = newValue
-            }
+            .preference(
+                key: PresentationControllerShouldDismissPreferenceKey.self,
+                value: containerState.presentationControllerShouldDismiss
+            )
             .backport
             .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
                 guard !isPresented else { return }

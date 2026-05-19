@@ -6,60 +6,68 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import Defaults
+import Engine
 import JellyfinAPI
 import SwiftUI
 
 struct ItemImagesView: View {
 
-    // MARK: - Defaults
-
-    @Default(.accentColor)
-    private var accentColor
-
-    // MARK: - Observed & Environment Objects
+    @ObservedObject
+    var viewModel: ItemImageViewModel
 
     @Router
     private var router
 
-    @StateObject
-    var viewModel: ItemImagesViewModel
-
-    // MARK: - Dialog State
-
-    @State
-    private var selectedType: ImageType?
     @State
     private var isFilePickerPresented = false
-
-    // MARK: - Error State
-
     @State
-    private var error: Error?
+    private var isPhotoPickerPresented = false
+    @State
+    private var selectedType: ImageType = .primary
+    @State
+    private var uploadError: Error?
 
-    // MARK: - Body
+    private var columns: CGFloat {
+        posterType == .landscape ? 1.5 : 3
+    }
+
+    private var posterType: PosterDisplayType {
+        selectedType.posterDisplayType(for: viewModel.item.type)
+    }
+
+    private var selectedImages: [ImageInfo] {
+        viewModel.images[selectedType] ?? []
+    }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .content:
-                imageView
             case .initial:
                 ProgressView()
-            case let .error(error):
-                ErrorView(error: error)
+            case .content:
+                contentView
+            case .error:
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.images)
-        .navigationBarTitleDisplayMode(.inline)
-        .refreshable {
-            viewModel.send(.refresh)
-        }
-        .onFirstAppear {
-            viewModel.send(.refresh)
-        }
         .navigationBarCloseButton {
             router.dismiss()
+        }
+        .onFirstAppear {
+            viewModel.refresh()
+        }
+        .navigationBarMenuButton(
+            isLoading: viewModel.background.is(.updating) || viewModel.background.is(.deleting),
+            isHidden: selectedImages.isEmpty
+        ) {
+            addImageMenu
         }
         .fileImporter(
             isPresented: $isFilePickerPresented,
@@ -68,112 +76,135 @@ struct ItemImagesView: View {
         ) {
             switch $0 {
             case let .success(urls):
-                if let file = urls.first, let type = selectedType {
-                    viewModel.send(.uploadFile(file: file, type: type))
-                    selectedType = nil
+                if let url = urls.first {
+                    viewModel.uploadFile(file: url, type: selectedType)
                 }
             case let .failure(fileError):
-                error = fileError
-                selectedType = nil
+                uploadError = fileError
             }
+        }
+        .photoPicker(
+            isPresented: $isPhotoPickerPresented,
+            isSaving: viewModel.background.is(.updating)
+        ) {
+            viewModel.uploadImage(image: $0, type: selectedType)
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .updated: ()
-            case let .error(eventError):
-                self.error = eventError
+            case .deleted:
+                UIDevice.feedback(.success)
+            case .updated:
+                UIDevice.feedback(.success)
+                isPhotoPickerPresented = false
             }
         }
-        .errorMessage($error)
+        .errorMessage($uploadError)
     }
 
-    // MARK: - Image View
-
     @ViewBuilder
-    private var imageView: some View {
+    private var contentView: some View {
         ScrollView {
-            ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
-                Section {
-                    imageScrollView(for: imageType)
-
-                    RowDivider()
-                        .padding(.vertical, 16)
-                } header: {
-                    sectionHeader(for: imageType)
-                }
-            }
-        }
-    }
-
-    // MARK: - Image Scroll View
-
-    @ViewBuilder
-    private func imageScrollView(for imageType: ImageType) -> some View {
-        let images = viewModel.images[imageType] ?? []
-
-        if images.isNotEmpty {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(images, id: \.self) { imageInfo in
-                        imageButton(imageInfo: imageInfo) {
-                            router.route(
-                                to: .itemImageDetails(
-                                    viewModel: viewModel,
-                                    imageInfo: imageInfo
-                                )
-                            )
-                        }
-                    }
-                }
+            VStack(alignment: .leading, spacing: 24) {
+                InsetGroupedListHeader(
+                    L10n.images,
+                    description: L10n.imagesDescription
+                )
                 .edgePadding(.horizontal)
-            }
-        }
-    }
+                .frame(maxWidth: .infinity)
+                .padding(.top, 24)
 
-    // MARK: - Section Header
+                typePicker
+                    .edgePadding(.horizontal)
 
-    @ViewBuilder
-    private func sectionHeader(for imageType: ImageType) -> some View {
-        HStack {
-            Text(imageType.displayTitle)
-                .font(.headline)
-
-            Spacer()
-
-            Menu(L10n.options, systemImage: "plus") {
-                Button(L10n.search, systemImage: "magnifyingglass") {
-                    router.route(to: .addItemImage(viewModel: viewModel, imageType: imageType))
-                }
+                imagesView
 
                 Divider()
+                    .edgePadding(.horizontal)
 
-                Button(L10n.uploadFile, systemImage: "document.badge.plus") {
-                    selectedType = imageType
-                    isFilePickerPresented = true
-                }
-
-                Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
-                    router.route(to: .itemImageSelector(viewModel: viewModel, imageType: imageType))
-                }
+                Text(selectedType.description)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .edgePadding(.horizontal)
             }
-            .font(.body)
-            .labelStyle(.iconOnly)
-            .fontWeight(.semibold)
-            .foregroundStyle(accentColor)
         }
-        .edgePadding(.horizontal)
     }
 
-    // MARK: - Image Button
-
-    // TODO: instead of using `posterStyle`, should be sized based on
-    //       the image type and just ignore and poster styling
     @ViewBuilder
-    private func imageButton(
-        imageInfo: ImageInfo,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
+    private var imagesView: some View {
+        if selectedImages.isNotEmpty {
+            CollectionHStack(
+                uniqueElements: selectedImages,
+                columns: columns
+            ) { imageInfo in
+                imageButton(imageInfo: imageInfo)
+            }
+            .clipsToBounds(false)
+            .scrollBehavior(.continuousLeadingEdge)
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .id(selectedType)
+            .transition(.opacity.animation(.linear(duration: 0.1)))
+        } else {
+            CollectionHStack(
+                count: 1,
+                columns: columns
+            ) { _ in
+                addImageButton
+            }
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollDisabled(true)
+            .id(selectedType)
+            .transition(.opacity.animation(.linear(duration: 0.1)))
+        }
+    }
+
+    @ViewBuilder
+    private var typePicker: some View {
+        Menu {
+            ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
+                Button {
+                    selectedType = imageType
+                } label: {
+                    if imageType == selectedType {
+                        Label(imageType.displayTitle, systemImage: "checkmark")
+                    } else {
+                        Text(imageType.displayTitle)
+                    }
+                }
+            }
+        } label: {
+            Label(
+                selectedType.displayTitle,
+                systemImage: "chevron.down"
+            )
+            .labelStyle(.episodeSelector)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private var addImageMenu: some View {
+        Button(L10n.search, systemImage: "magnifyingglass") {
+            router.route(to: .remoteImageSearch(viewModel: viewModel, imageType: selectedType))
+        }
+
+        Divider()
+
+        Button(L10n.uploadFile, systemImage: "document.badge.plus") {
+            isFilePickerPresented = true
+        }
+
+        Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
+            isPhotoPickerPresented = true
+        }
+    }
+
+    @ViewBuilder
+    private func imageButton(imageInfo: ImageInfo) -> some View {
+        Button {
+            router.route(to: .itemImageDetail(viewModel: viewModel, imageInfo: imageInfo))
+        } label: {
             ZStack {
                 Color.secondarySystemFill
 
@@ -191,9 +222,30 @@ struct ItemImagesView: View {
                 }
                 .pipeline(.Swiftfin.other)
             }
-            .posterStyle(imageInfo.height ?? 0 > imageInfo.width ?? 0 ? .portrait : .landscape)
-            .frame(maxHeight: 150)
+            .posterStyle(posterType)
             .posterShadow()
         }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var addImageButton: some View {
+        Menu {
+            addImageMenu
+        } label: {
+            ZStack {
+                Color.secondarySystemFill
+
+                VStack {
+                    Image(systemName: "photo.badge.plus")
+                        .font(.title)
+                    Text(L10n.add)
+                        .font(.body)
+                }
+            }
+            .posterStyle(posterType)
+            .posterShadow()
+        }
+        .buttonStyle(.plain)
     }
 }

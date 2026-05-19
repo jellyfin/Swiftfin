@@ -113,7 +113,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         unitPoint: UnitPoint
     ) -> any _PanHandlingAction {
         let newAction: any _PanHandlingAction = {
-            if direction.isVertical {
+            if containerState.isPresentingOverlay {
+                Self.SupplementPanHandlingAction
+            } else if direction.isVertical {
                 if unitPoint.x < 0.5 {
                     panActionForGestureAction(
                         for: Defaults[.VideoPlayer.Gesture.verticalPanLeftAction]

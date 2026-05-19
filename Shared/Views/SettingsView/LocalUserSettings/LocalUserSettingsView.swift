@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Engine
 import Factory
 import JellyfinAPI
 import SwiftUI
@@ -16,41 +17,52 @@ struct LocalUserSettingsView: View {
     @Router
     private var router
 
-    @ObservedObject
-    private var viewModel: SettingsViewModel
-
     @StateObject
-    private var profileImageViewModel: UserProfileImageViewModel
+    private var imageViewModel: UserImageViewModel
 
-    @State
-    private var isPresentingConfirmReset: Bool = false
-
-    init(viewModel: SettingsViewModel) {
-        self.viewModel = viewModel
-        self._profileImageViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: viewModel.userSession.user.data))
+    init(user: UserDto) {
+        self._imageViewModel = StateObject(wrappedValue: UserImageViewModel(user: user))
     }
 
     var body: some View {
         Form {
             #if os(iOS)
-            UserProfileHeroImage(
-                user: profileImageViewModel.user,
-                source: viewModel.userSession.user.profileImageSource(
-                    client: viewModel.userSession.client
-                )
-            ) {
-                router.route(to: .userProfileImage(viewModel: profileImageViewModel))
-            } onDelete: {
-                profileImageViewModel.send(.delete)
+            StateAdapter(initialValue: false) { isPhotoPickerPresented in
+                UserProfileHeroImage(
+                    user: imageViewModel.user,
+                    source: imageViewModel.userSession.user.profileImageSource(
+                        client: imageViewModel.userSession.client
+                    )
+                ) {
+                    isPhotoPickerPresented.wrappedValue = true
+                } onDelete: {
+                    imageViewModel.delete()
+                }
+                .photoPicker(
+                    isPresented: isPhotoPickerPresented,
+                    isSaving: imageViewModel.background.is(.updating),
+                    presetRatio: .alwaysUsingOnePresetFixedRatio(ratio: 1)
+                ) {
+                    imageViewModel.upload($0)
+                }
+                .onReceive(imageViewModel.events) { event in
+                    switch event {
+                    case .updated:
+                        UIDevice.feedback(.success)
+                        isPhotoPickerPresented.wrappedValue = false
+                    case .deleted:
+                        UIDevice.feedback(.success)
+                    }
+                }
             }
 
             Section {
                 ChevronButton(L10n.quickConnect) {
-                    router.route(to: .quickConnectAuthorize(user: viewModel.userSession.user.data))
+                    router.route(to: .quickConnectAuthorize(user: imageViewModel.userSession.user.data))
                 }
 
                 ChevronButton(L10n.password) {
-                    router.route(to: .resetUserPassword(userID: viewModel.userSession.user.id))
+                    router.route(to: .resetUserPassword(userID: imageViewModel.userSession.user.id))
                 }
             }
             #endif
@@ -61,40 +73,43 @@ struct LocalUserSettingsView: View {
                 }
             }
 
-            Section {
-                // TODO: Disabled as non-essential stored values and
-                // settings need to be migrated to be separate
-//                Button(L10n.resetSettings, role: .destructive) {
-//                    isPresentingConfirmReset = true
+            // TODO: Disabled as stored values and defaults
+            // settings need to be migrated to final destinations
+//            StateAdapter(initialValue: false) { isPresented in
+//                Section {
+//                    Button(L10n.resetSettings, role: .destructive) {
+//                        isPresented.wrappedValue = true
+//                    }
+//                } footer: {
+//                    Text(L10n.resetSettingsDescription)
 //                }
-            } footer: {
-                Text(L10n.resetSettingsDescription)
-            }
+//                .confirmationDialog(
+//                    L10n.resetSettings,
+//                    isPresented: isPresented,
+//                    titleVisibility: .visible
+//                ) {
+//                    Button(L10n.reset, role: .destructive) {
+//                        do {
+//                            try viewModel.userSession.user.deleteSettings()
+//                        } catch {
+//                            viewModel.logger.error("Unable to reset user settings: \(error.localizedDescription)")
+//                        }
+//                    }
+//                } message: {
+//                    Text(L10n.resetSettingsMessage)
+//                }
+//            }
         } image: {
             UserProfileImage(
-                userID: viewModel.userSession.user.id,
-                source: viewModel.userSession.user.profileImageSource(
-                    client: viewModel.userSession.client
+                userID: imageViewModel.userSession.user.id,
+                source: imageViewModel.userSession.user.profileImageSource(
+                    client: imageViewModel.userSession.client
                 )
             )
             .aspectRatio(contentMode: .fit)
             .frame(maxWidth: 400)
         }
         .navigationTitle(L10n.user)
-        .confirmationDialog(
-            L10n.resetSettings,
-            isPresented: $isPresentingConfirmReset,
-            titleVisibility: .visible
-        ) {
-            Button(L10n.reset, role: .destructive) {
-                do {
-                    try viewModel.userSession.user.deleteSettings()
-                } catch {
-                    viewModel.logger.error("Unable to reset user settings: \(error.localizedDescription)")
-                }
-            }
-        } message: {
-            Text(L10n.resetSettingsMessage)
-        }
+        .errorMessage($imageViewModel.error)
     }
 }
