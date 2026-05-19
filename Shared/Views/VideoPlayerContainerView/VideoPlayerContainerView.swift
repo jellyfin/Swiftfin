@@ -125,7 +125,9 @@ extension VideoPlayer {
                             GestureView()
                                 .environment(
                                     \.panGestureDirection,
-                                    containerState.presentationControllerShouldDismiss ? .allButDown : .vertical
+                                    containerState.isPresentingSupplement
+                                        ? .vertical
+                                        : (containerState.isPresentingOverlay ? .up : .allButDown)
                                 )
 
                             playbackControls

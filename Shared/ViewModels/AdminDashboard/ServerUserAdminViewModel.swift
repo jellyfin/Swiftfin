@@ -76,9 +76,8 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
         Notifications[.didChangeUserProfile]
             .publisher
-            .sink { userID in
-                guard userID == self.user.id else { return }
-
+            .filter { $0 == self.user.id }
+            .sink { _ in
                 Task {
                     await self.send(.refresh)
                 }
