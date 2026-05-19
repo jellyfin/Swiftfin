@@ -11,14 +11,10 @@ import Defaults
 import Factory
 import Foundation
 import SwiftUI
+import UIKit
 
-// Following class is necessary to observe values that can either
-// be a user *or* an app setting and only one should apply at a time.
-//
-// Also just to separate out value observation
-
-// TODO: could clean up?
-
+// Observes values that can come from either app defaults or user defaults,
+// depending on whether a user is currently signed in.
 extension SwiftfinApp {
 
     class ValueObservation: ObservableObject {
@@ -29,8 +25,12 @@ extension SwiftfinApp {
         private var splashScreenCancellable: AnyCancellable?
 
         init() {
-
-            // MARK: signed in observation
+            switch Defaults[.lastSignedInUserID] {
+            case .signedIn:
+                setUserDefaultsObservation()
+            case .signedOut:
+                setAppDefaultsObservation()
+            }
 
             lastSignInUserIDCancellable = Task {
                 for await newValue in Defaults.updates(.lastSignedInUserID) {
@@ -55,21 +55,19 @@ extension SwiftfinApp {
             splashScreenCancellable?.cancel()
 
             accentColorCancellable = Task {
+                await applyAccentColor(Defaults[.userAccentColor])
+
                 for await newValue in Defaults.updates(.userAccentColor) {
-                    await MainActor.run {
-                        Defaults[.accentColor] = newValue
-                        UIApplication.shared.setAccentColor(newValue.uiColor)
-                    }
+                    await applyAccentColor(newValue)
                 }
             }
             .asAnyCancellable()
 
             appearanceCancellable = Task {
+                await applyAppearance(Defaults[.userAppearance])
+
                 for await newValue in Defaults.updates(.userAppearance) {
-                    await MainActor.run {
-                        Defaults[.appearance] = newValue
-                        UIApplication.shared.setAppearance(newValue.style)
-                    }
+                    await applyAppearance(newValue)
                 }
             }
             .asAnyCancellable()
@@ -83,42 +81,50 @@ extension SwiftfinApp {
             splashScreenCancellable?.cancel()
 
             accentColorCancellable = Task {
-                await MainActor.run {
-                    Defaults[.accentColor] = .jellyfinPurple
-                    UIApplication.shared.setAccentColor(Color.jellyfinPurple.uiColor)
-                }
+                await applyAccentColor(.jellyfinPurple)
             }
             .asAnyCancellable()
 
             appearanceCancellable = Task {
+                await applyAppAppearance()
+
                 for await newValue in Defaults.updates(.appAppearance) {
 
-                    // other cancellable will set appearance if enabled
-                    // and need to avoid races
+                    // Other cancellable will set appearance if enabled and need to avoid races.
                     guard !Defaults[.selectUserUseSplashscreen] else { continue }
 
-                    await MainActor.run {
-                        Defaults[.appearance] = newValue
-                        UIApplication.shared.setAppearance(newValue.style)
-                    }
+                    await applyAppearance(newValue)
                 }
             }
             .asAnyCancellable()
 
             splashScreenCancellable = Task {
-                for await newValue in Defaults.updates(.selectUserUseSplashscreen) {
-                    await MainActor.run {
-                        if newValue {
-                            Defaults[.appearance] = .dark
-                            UIApplication.shared.setAppearance(.dark)
-                        } else {
-                            Defaults[.appearance] = Defaults[.appAppearance]
-                            UIApplication.shared.setAppearance(Defaults[.appAppearance].style)
-                        }
-                    }
+                for await _ in Defaults.updates(.selectUserUseSplashscreen) {
+                    await applyAppAppearance()
                 }
             }
             .asAnyCancellable()
+        }
+
+        @MainActor
+        private func applyAccentColor(_ color: Color) {
+            Defaults[.accentColor] = color
+            UIApplication.shared.setAccentColor(color.uiColor)
+        }
+
+        @MainActor
+        private func applyAppearance(_ appearance: AppAppearance) {
+            Defaults[.appearance] = appearance
+            UIApplication.shared.setAppearance(appearance.style)
+        }
+
+        @MainActor
+        private func applyAppAppearance() {
+            if Defaults[.selectUserUseSplashscreen] {
+                applyAppearance(.dark)
+            } else {
+                applyAppearance(Defaults[.appAppearance])
+            }
         }
     }
 }

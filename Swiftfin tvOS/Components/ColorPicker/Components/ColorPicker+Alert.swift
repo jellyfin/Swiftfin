@@ -91,7 +91,9 @@ extension ColorPicker {
                             } label: {
                                 Image(systemName: "paintpalette.fill")
                                     .frame(width: 30, height: 30)
+                                    .foregroundStyle(.primary)
                             }
+                            .foregroundStyle(.primary)
                         }
                         .padding(.top, 10)
                         .focusSection()
@@ -108,8 +110,10 @@ extension ColorPicker {
                             .frame(height: 40)
                     } content: {
                         Text(L10n.close)
+                            .foregroundStyle(.primary)
                     }
                 }
+                .foregroundStyle(.primary)
             }
         }
     }

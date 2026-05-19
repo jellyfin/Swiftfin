@@ -16,12 +16,10 @@ struct SettingsView: View {
     #if os(iOS)
     @Default(.userAppearance)
     private var appearance
+    #endif
+
     @Default(.userAccentColor)
     private var accentColor
-    #else
-    @Default(.accentColor)
-    private var accentColor
-    #endif
 
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
