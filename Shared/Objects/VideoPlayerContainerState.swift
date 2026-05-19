@@ -73,6 +73,7 @@ class VideoPlayerContainerState: ObservableObject {
     var isPresentingOverlay: Bool = false {
         didSet {
             setPlaybackControlsVisibility()
+            presentationControllerShouldDismiss = isPresentingOverlay && !isPresentingSupplement
 
             if isPresentingOverlay, !isPresentingSupplement {
                 timer.poke()
@@ -84,7 +85,7 @@ class VideoPlayerContainerState: ObservableObject {
     private(set) var isPresentingSupplement: Bool = false {
         didSet {
             setPlaybackControlsVisibility()
-            presentationControllerShouldDismiss = !isPresentingSupplement
+            presentationControllerShouldDismiss = isPresentingOverlay && !isPresentingSupplement
 
             if isPresentingSupplement {
                 timer.stop()
@@ -107,7 +108,7 @@ class VideoPlayerContainerState: ObservableObject {
     }
 
     @Published
-    var presentationControllerShouldDismiss: Bool = true
+    var presentationControllerShouldDismiss: Bool = false
 
     @Published
     var selectedSupplement: (any MediaPlayerSupplement)? = nil {
