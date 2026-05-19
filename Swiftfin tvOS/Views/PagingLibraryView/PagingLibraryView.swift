@@ -265,6 +265,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 ContentUnavailableView(L10n.noItems.localizedCapitalized, systemImage: "rectangle.on.rectangle.slash")
             } else {
                 gridView
+                    .padding(.top, 100)
                     .onChange(of: posterType) {
                         setCustomLayout()
                     }
@@ -305,8 +306,18 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         }
         .frame(maxWidth: .infinity)
         .animation(.linear(duration: 0.1), value: viewModel.state)
-        .navigationTitle(viewModel.parent?.displayTitle ?? "")
-        .ignoresSafeArea(.all, edges: .vertical)
+        .ignoresSafeArea()
+        .overlay(alignment: .top) {
+            if let title = viewModel.parent?.displayTitle, !title.isEmpty {
+                if let filterViewModel = viewModel.filterViewModel {
+                    LibraryHeader(
+                        title: title,
+                        viewModel: viewModel,
+                        filterViewModel: filterViewModel
+                    )
+                }
+            }
+        }
         .letterPickerBar(filterViewModel: viewModel.filterViewModel)
         .refreshable {
             viewModel.send(.refresh)
