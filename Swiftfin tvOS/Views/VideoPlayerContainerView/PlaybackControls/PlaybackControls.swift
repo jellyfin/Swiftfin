@@ -41,14 +41,23 @@ extension VideoPlayer {
         @State
         var pendingJumpWork: DispatchWorkItem?
 
+        private var isOverlayOrScrubbingVisible: Bool {
+            (containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState.isPresentingSupplement
+        }
+
+        private var pauseTransition: AnyTransition {
+            .opacity
+                .combined(with: .scale)
+                .animation(.bouncy(duration: 0.7, extraBounce: 0.2))
+        }
+
         var body: some View {
             VStack(spacing: 10) {
 
                 Spacer(minLength: 0)
 
                 NavigationBar()
-                    .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState
-                        .isPresentingSupplement)
+                    .isVisible(isOverlayOrScrubbingVisible)
                     .disabled(containerState.isPresentingSupplement)
 
                 PlaybackProgress(
@@ -63,17 +72,14 @@ extension VideoPlayer {
                 )
                 .focused($isPlaybackProgressFocused, equals: true)
                 .fixedSize(horizontal: false, vertical: true)
-                .isVisible(
-                    (containerState.isPresentingOverlay || containerState.isScrubbing) &&
-                        !containerState.isPresentingSupplement
-                )
+                .isVisible(isOverlayOrScrubbingVisible)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .edgePadding(.horizontal)
             .overlay {
                 if manager.playbackRequestStatus == .paused {
                     Label(L10n.pause, systemImage: "pause.fill")
-                        .transition(.opacity.combined(with: .scale).animation(.bouncy(duration: 0.7, extraBounce: 0.2)))
+                        .transition(pauseTransition)
                         .font(.system(size: 72, weight: .bold, design: .default))
                         .labelStyle(.iconOnly)
                 }

@@ -170,7 +170,8 @@ struct TVOSFilterView: View {
             .padding(.horizontal, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .disabled(!viewModel.isFilterSelected(type: .traits) && !viewModel.isFilterSelected(type: .genres) && !viewModel.isFilterSelected(type: .years))
+        .disabled(!viewModel.isFilterSelected(type: .traits) && !viewModel.isFilterSelected(type: .genres) && !viewModel
+            .isFilterSelected(type: .years))
 
         Section {
             ForEach(filterSource, id: \.hashValue) { item in
