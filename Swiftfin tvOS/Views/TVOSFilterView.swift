@@ -24,7 +24,7 @@ struct TVOSFilterView: View {
     // MARK: - Filter Sources
 
     private var filterSource: [AnyItemFilter] {
-        viewModel.allFilters[keyPath: type.collectionAnyKeyPath]
+        viewModel.allFilters.traits.map(\.asAnyItemFilter)
     }
 
     // MARK: - Subtitle Helpers
@@ -92,8 +92,7 @@ struct TVOSFilterView: View {
     @ViewBuilder
     private var sortContentView: some View {
         Button(action: {
-            viewModel.send(.reset(.sortBy))
-            viewModel.send(.reset(.sortOrder))
+            viewModel.reset(filterType: .sortBy)
         }) {
             HStack {
                 Image(systemName: "arrow.clockwise")
@@ -103,7 +102,7 @@ struct TVOSFilterView: View {
             .padding(.horizontal, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .disabled(!viewModel.isFilterSelected(type: .sortBy) && !viewModel.isFilterSelected(type: .sortOrder))
+        .disabled(!viewModel.isFilterSelected(type: .sortBy))
 
         Section {
             ForEach(viewModel.allFilters.sortBy.map(\.asAnyItemFilter), id: \.hashValue) { item in
@@ -115,7 +114,7 @@ struct TVOSFilterView: View {
                         },
                         set: { isSelected in
                             if isSelected {
-                                viewModel.send(.update(.sortBy, [item]))
+                                viewModel.currentFilters.sortBy = [ItemSortBy(from: item)]
                             }
                         }
                     )
@@ -135,7 +134,7 @@ struct TVOSFilterView: View {
                         },
                         set: { isSelected in
                             if isSelected {
-                                viewModel.send(.update(.sortOrder, [item]))
+                                viewModel.currentFilters.sortOrder = [ItemSortOrder(from: item)]
                             }
                         }
                     )
@@ -159,9 +158,9 @@ struct TVOSFilterView: View {
     private var filtersContentView: some View {
 
         Button(action: {
-            viewModel.send(.reset(.traits))
-            viewModel.send(.reset(.genres))
-            viewModel.send(.reset(.years))
+            viewModel.reset(filterType: .traits)
+            viewModel.reset(filterType: .genres)
+            viewModel.reset(filterType: .years)
         }) {
             HStack {
                 Image(systemName: "arrow.clockwise")
@@ -171,8 +170,7 @@ struct TVOSFilterView: View {
             .padding(.horizontal, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .disabled(!viewModel.isFilterSelected(type: .traits) && !viewModel.isFilterSelected(type: .genres) && !viewModel
-            .isFilterSelected(type: .years))
+        .disabled(!viewModel.isFilterSelected(type: .traits) && !viewModel.isFilterSelected(type: .genres) && !viewModel.isFilterSelected(type: .years))
 
         Section {
             ForEach(filterSource, id: \.hashValue) { item in
@@ -180,17 +178,14 @@ struct TVOSFilterView: View {
                     item.displayTitle,
                     isOn: Binding(
                         get: {
-                            viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
-                                .contains(where: { $0.hashValue == item.hashValue })
+                            viewModel.currentFilters.traits.contains(where: { $0.asAnyItemFilter.hashValue == item.hashValue })
                         },
                         set: { isSelected in
-                            let currentSelection = viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
+                            let currentSelection = viewModel.currentFilters.traits
                             if isSelected {
-                                let newSelection = currentSelection + [item]
-                                viewModel.send(.update(type, newSelection))
+                                viewModel.currentFilters.traits = currentSelection + [ItemTrait(from: item)]
                             } else {
-                                let newSelection = currentSelection.filter { $0.hashValue != item.hashValue }
-                                viewModel.send(.update(type, newSelection))
+                                viewModel.currentFilters.traits = currentSelection.filter { $0.asAnyItemFilter.hashValue != item.hashValue }
                             }
                         }
                     )
@@ -208,10 +203,9 @@ struct TVOSFilterView: View {
                 selection: Binding(
                     get: { viewModel.currentFilters.genres.map(\.asAnyItemFilter) },
                     set: { newGenres in
-                        let genreValues = newGenres.compactMap { filter in
-                            ItemGenre(stringLiteral: filter.value)
+                        viewModel.currentFilters.genres = newGenres.compactMap { filter in
+                            ItemGenre(from: filter)
                         }
-                        viewModel.send(.update(.genres, genreValues.map(\.asAnyItemFilter)))
                     }
                 )
             )
@@ -225,10 +219,9 @@ struct TVOSFilterView: View {
                 selection: Binding(
                     get: { viewModel.currentFilters.years.map(\.asAnyItemFilter) },
                     set: { newYears in
-                        let yearValues = newYears.compactMap { filter in
+                        viewModel.currentFilters.years = newYears.compactMap { filter in
                             ItemYear(from: filter)
                         }
-                        viewModel.send(.update(.years, yearValues.map(\.asAnyItemFilter)))
                     }
                 )
             )

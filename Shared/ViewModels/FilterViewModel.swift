@@ -126,8 +126,6 @@ final class FilterViewModel: ViewModel {
             currentFilters.letter = newValue.map(ItemLetter.init)
         case .sortBy:
             currentFilters.sortBy = newValue.map(ItemSortBy.init)
-        case .sortOrder:
-            currentFilters.sortOrder = newValue.map(ItemSortOrder.init)
         case .tags:
             currentFilters.tags = newValue.map(ItemTag.init)
         case .traits:
