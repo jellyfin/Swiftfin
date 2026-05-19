@@ -20,20 +20,15 @@ struct ServerUserDetailsView: View {
     @Router
     private var router
 
-    @State
-    private var error: Error?
-
-    @StateObject
-    private var profileViewModel: UserImageViewModel
     @StateObject
     private var viewModel: ServerUserAdminViewModel
+    @StateObject
+    private var profileViewModel: UserImageViewModel
 
     init(user: UserDto) {
         self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
         self._profileViewModel = StateObject(wrappedValue: UserImageViewModel(user: user))
     }
-
-    // MARK: - Body
 
     var body: some View {
         List {
@@ -75,7 +70,7 @@ struct ServerUserDetailsView: View {
                         TextField(L10n.username, text: alert.username)
 
                         Button(L10n.save) {
-                            viewModel.send(.updateUsername(alert.username.wrappedValue))
+                            viewModel.updateUsername(alert.username.wrappedValue)
                         }
 
                         Button(L10n.cancel, role: .cancel) {
@@ -127,19 +122,28 @@ struct ServerUserDetailsView: View {
                 }
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.user)
-        .onAppear {
-            viewModel.send(.refresh)
+        .topBarTrailing {
+            if viewModel.background.is(.updating) || viewModel.background.is(.refreshing) {
+                ProgressView()
+            }
+        }
+        .onFirstAppear {
+            viewModel.refresh()
+        }
+        .refreshable {
+            viewModel.refresh()
+        }
+        .errorMessage($viewModel.error) {
+            UIDevice.feedback(.error)
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .error(eventError):
-                error = eventError
             case .updated:
-                break
+                UIDevice.feedback(.success)
             }
         }
-        .errorMessage($error)
-        .errorMessage($profileViewModel.error)
     }
 }

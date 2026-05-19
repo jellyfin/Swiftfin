@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -14,13 +13,10 @@ extension ActiveSessionsView {
 
     struct ProgressSection: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
         let item: BaseItemDto
         let playState: PlayerStateInfo
         let transcodingInfo: TranscodingInfo?
-        let showTranscodeReason: Bool
+        var showTranscodeReason: Bool = false
 
         private var playbackPercentage: Double {
             clamp(Double(playState.positionTicks ?? 0) / Double(item.runTimeTicks ?? 1), min: 0, max: 1)

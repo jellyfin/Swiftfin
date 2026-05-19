@@ -12,32 +12,19 @@ import SwiftUI
 
 struct ServerUserDeviceAccessView: View {
 
-    // MARK: - Current Date
-
     @CurrentDate
     private var currentDate: Date
 
-    // MARK: - State & Environment Objects
-
     @Router
     private var router
+
+    @State
+    private var tempPolicy: UserPolicy
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
     @StateObject
     private var devicesViewModel = DevicesViewModel()
-
-    // MARK: - State Variables
-
-    @State
-    private var tempPolicy: UserPolicy
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -49,22 +36,21 @@ struct ServerUserDeviceAccessView: View {
         self.tempPolicy = policy
     }
 
-    // MARK: - Body
-
     var body: some View {
         contentView
+            .backport
+            .toolbarTitleDisplayMode(.inline)
             .navigationTitle(L10n.deviceAccess.localizedCapitalized)
-            .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismiss()
             }
             .topBarTrailing {
-                if viewModel.backgroundStates.contains(.updating) {
+                if viewModel.background.is(.updating) {
                     ProgressView()
                 }
                 Button(L10n.save) {
                     if tempPolicy != viewModel.user.policy {
-                        viewModel.send(.updatePolicy(tempPolicy))
+                        viewModel.updatePolicy(tempPolicy)
                     }
                 }
                 .buttonStyle(.toolbarPill)
@@ -72,9 +58,6 @@ struct ServerUserDeviceAccessView: View {
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case let .error(eventError):
-                    UIDevice.feedback(.error)
-                    error = eventError
                 case .updated:
                     UIDevice.feedback(.success)
                     router.dismiss()
@@ -83,13 +66,14 @@ struct ServerUserDeviceAccessView: View {
             .onFirstAppear {
                 devicesViewModel.refresh()
             }
-            .errorMessage($error)
+            .refreshable {
+                viewModel.refresh()
+            }
+            .errorMessage($viewModel.error)
     }
 
-    // MARK: - Content View
-
     @ViewBuilder
-    var contentView: some View {
+    private var contentView: some View {
         List {
             InsetGroupedListHeader {
                 Toggle(
