@@ -40,6 +40,21 @@ extension VideoPlayer {
             containerState.isScrubbing
         }
 
+        private var backgroundHeight: CGFloat {
+            bottomContentFrame.height + 50 + EdgeInsets.edgePadding * 2
+        }
+
+        @ViewBuilder
+        private var progressBackground: some View {
+            Color.black
+                .maskLinearGradient {
+                    (location: 0, opacity: 0)
+                    (location: 1, opacity: 0.5)
+                }
+                .isVisible(isScrubbing)
+                .frame(height: backgroundHeight)
+        }
+
         // MARK: body
 
         var body: some View {
@@ -71,13 +86,7 @@ extension VideoPlayer {
                             }
                         }
                         .background(alignment: .top) {
-                            Color.black
-                                .maskLinearGradient {
-                                    (location: 0, opacity: 0)
-                                    (location: 1, opacity: 0.5)
-                                }
-                                .isVisible(isScrubbing)
-                                .frame(height: bottomContentFrame.height + 50 + EdgeInsets.edgePadding * 2)
+                            progressBackground
                         }
                 }
 
