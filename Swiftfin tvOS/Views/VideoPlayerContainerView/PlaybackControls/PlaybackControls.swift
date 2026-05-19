@@ -92,8 +92,8 @@ extension VideoPlayer {
                     isPlaybackProgressFocused = true
                 }
             }
-            .onChange(of: manager.playbackRequestStatus) { _, newValue in
-                if newValue == .paused, !containerState.isPresentingOverlay {
+            .onChange(of: manager.playbackRequestStatus) { _, (newValue: MediaPlayerManager.PlaybackRequestStatus) in
+                if newValue == MediaPlayerManager.PlaybackRequestStatus.paused, !containerState.isPresentingOverlay {
                     containerState.isPresentingOverlay = true
                 }
             }
@@ -114,7 +114,7 @@ extension VideoPlayer {
 
         @ViewBuilder
         private var pauseOverlay: some View {
-            if manager.playbackRequestStatus == .paused {
+            if manager.playbackRequestStatus == MediaPlayerManager.PlaybackRequestStatus.paused {
                 Label(L10n.pause, systemImage: "pause.fill")
                     .transition(pauseTransition)
                     .font(.system(size: 72, weight: .bold, design: .default))
