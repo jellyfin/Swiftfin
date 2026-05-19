@@ -24,6 +24,13 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
+        // Update total count on first page load
+        if page == 0 {
+            await MainActor.run {
+                self.totalCount = response.value.totalRecordCount ?? 0
+            }
+        }
+
         // 1 - only care to keep collections that hold valid items
         // 2 - if parent is type `folder`, then we are in a folder-view
         //     context so change `collectionFolder` types to `folder`

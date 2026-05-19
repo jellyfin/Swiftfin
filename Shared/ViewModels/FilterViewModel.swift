@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -21,10 +22,11 @@ final class FilterViewModel: ViewModel {
         case cancel
         case getQueryFilters
         case reset(filterType: ItemFilterType?)
+        case update(filterType: ItemFilterType, filters: [AnyItemFilter])
 
         var transition: Transition {
             switch self {
-            case .cancel, .reset: .none
+            case .cancel, .reset, .update: .none
             case .getQueryFilters:
                 .background(.retrievingQueryFilters)
             }
@@ -63,25 +65,94 @@ final class FilterViewModel: ViewModel {
     @Function(\Action.Cases.reset)
     private func resetCurrentFilters(_ type: ItemFilterType?) {
 
-        guard let type else {
+        if let type {
+            switch type {
+            case .genres:
+                currentFilters.genres = ItemFilterCollection.default.genres
+            case .letter:
+                currentFilters.letter = ItemFilterCollection.default.letter
+            case .sortBy:
+                currentFilters.sortBy = ItemFilterCollection.default.sortBy
+                currentFilters.sortOrder = ItemFilterCollection.default.sortOrder
+            case .tags:
+                currentFilters.tags = ItemFilterCollection.default.tags
+            case .traits:
+                currentFilters.traits = ItemFilterCollection.default.traits
+            case .years:
+                currentFilters.years = ItemFilterCollection.default.years
+            }
+        } else {
             currentFilters = .default
-            return
         }
 
+        // Clear stored filters when rememberFiltering is enabled
+        if let id = parent?.id, Defaults[.Customization.Library.rememberFiltering] {
+            var storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
+
+            if let type {
+                switch type {
+                case .genres:
+                    storedFilters.genres = ItemFilterCollection.default.genres
+                case .letter:
+                    storedFilters.letter = ItemFilterCollection.default.letter
+                case .sortBy:
+                    storedFilters.sortBy = ItemFilterCollection.default.sortBy
+                    storedFilters.sortOrder = ItemFilterCollection.default.sortOrder
+                case .tags:
+                    storedFilters.tags = ItemFilterCollection.default.tags
+                case .traits:
+                    storedFilters.traits = ItemFilterCollection.default.traits
+                case .years:
+                    storedFilters.years = ItemFilterCollection.default.years
+                }
+            } else {
+                storedFilters.genres = ItemFilterCollection.default.genres
+                storedFilters.letter = ItemFilterCollection.default.letter
+                storedFilters.tags = ItemFilterCollection.default.tags
+                storedFilters.traits = ItemFilterCollection.default.traits
+                storedFilters.years = ItemFilterCollection.default.years
+            }
+
+            StoredValues[.User.libraryFilters(parentID: id)] = storedFilters
+        }
+    }
+
+    @Function(\Action.Cases.update)
+    private func updateCurrentFilters(_ type: ItemFilterType, _ newValue: [AnyItemFilter]) {
         switch type {
         case .genres:
-            currentFilters.genres = ItemFilterCollection.default.genres
+            currentFilters.genres = newValue.map(ItemGenre.init)
         case .letter:
-            currentFilters.letter = ItemFilterCollection.default.letter
+            currentFilters.letter = newValue.map(ItemLetter.init)
         case .sortBy:
-            currentFilters.sortBy = ItemFilterCollection.default.sortBy
-            currentFilters.sortOrder = ItemFilterCollection.default.sortOrder
+            currentFilters.sortBy = newValue.map(ItemSortBy.init)
+        case .sortOrder:
+            currentFilters.sortOrder = newValue.map(ItemSortOrder.init)
         case .tags:
-            currentFilters.tags = ItemFilterCollection.default.tags
+            currentFilters.tags = newValue.map(ItemTag.init)
         case .traits:
-            currentFilters.traits = ItemFilterCollection.default.traits
+            var traits = newValue.map(ItemTrait.init)
+
+            let isPlayedSelected = traits.contains(.isPlayed)
+            let isUnplayedSelected = traits.contains(.isUnplayed)
+
+            if isPlayedSelected && isUnplayedSelected {
+                let oldTraits = currentFilters.traits
+                let oldHasPlayed = oldTraits.contains(.isPlayed)
+                let oldHasUnplayed = oldTraits.contains(.isUnplayed)
+
+                if oldHasUnplayed {
+                    traits.removeAll { $0 == .isUnplayed }
+                } else if oldHasPlayed {
+                    traits.removeAll { $0 == .isPlayed }
+                } else {
+                    traits.removeAll { $0 == .isUnplayed }
+                }
+            }
+
+            currentFilters.traits = traits
         case .years:
-            currentFilters.years = ItemFilterCollection.default.years
+            currentFilters.years = newValue.map(ItemYear.init)
         }
     }
 

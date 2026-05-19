@@ -64,6 +64,7 @@ extension TabItem {
             systemImage: systemName
         ) {
             let viewModel = ItemLibraryViewModel(
+                parent: TitledLibraryParent(displayTitle: title),
                 filters: filters
             )
 

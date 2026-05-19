@@ -61,7 +61,7 @@ protocol LibraryIdentifiable: Identifiable {
  */
 
 @MainActor
-class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
+class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful, HasTotalCount {
 
     // MARK: Event
 
