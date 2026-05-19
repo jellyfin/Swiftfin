@@ -23,7 +23,7 @@ struct ServerUserDetailsView: View {
     @StateObject
     private var viewModel: ServerUserAdminViewModel
     @StateObject
-    private var profileViewModel: UserProfileImageViewModel
+    private var profileViewModel: UserImageViewModel
 
     init(user: UserDto) {
         self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
