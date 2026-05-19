@@ -74,7 +74,7 @@ struct LibraryHeader<ViewModel: ObservableObject & AnyObject>: View {
 
                 if filterViewModel.currentFilters.hasFilters {
                     Button(action: {
-                        filterViewModel.send(.reset())
+                        filterViewModel.reset(filterType: nil)
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "xmark.circle")
