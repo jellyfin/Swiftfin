@@ -12,13 +12,14 @@ import Transmission
 
 // TODO: have full screen zoom presentation zoom from/to center
 //       - probably need to make mock view with matching ids
-// TODO: have presentation dismissal be through preference keys
-//       - issue with all of the VC/view wrapping
 
-extension EnvironmentValues {
+struct PresentationControllerShouldDismissPreferenceKey: PreferenceKey {
 
-    @Entry
-    var presentationControllerShouldDismiss: Binding<Bool> = .constant(true)
+    static var defaultValue: Bool = true
+
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue()
+    }
 }
 
 struct NavigationInjectionView: View {
@@ -113,7 +114,9 @@ struct NavigationInjectionView: View {
                 let vc = UIPreferencesHostingController {
                     NavigationInjectionView(coordinator: .init()) {
                         routeBinding.wrappedValue.destination
-                            .environment(\.presentationControllerShouldDismiss, $isPresentationInteractive)
+                            .onPreferenceChange(PresentationControllerShouldDismissPreferenceKey.self) { newValue in
+                                isPresentationInteractive = newValue
+                            }
                     }
                     .environmentObject(rootCoordinator)
                 }
