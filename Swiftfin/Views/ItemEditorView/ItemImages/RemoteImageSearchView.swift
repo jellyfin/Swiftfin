@@ -13,11 +13,11 @@ import SwiftUI
 
 struct RemoteImageSearchView: View {
 
-    @Router
-    private var router
-
     @ObservedObject
     private var viewModel: ItemImageViewModel
+    
+    @Router
+    private var router
 
     @StateObject
     private var remoteImageInfoViewModel: RemoteImageInfoViewModel

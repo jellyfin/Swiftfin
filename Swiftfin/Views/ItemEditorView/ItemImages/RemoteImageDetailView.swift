@@ -12,21 +12,13 @@ import SwiftUI
 
 struct RemoteImageDetailView: View {
 
+    @ObservedObject
+    var viewModel: ItemImageViewModel
+    
     @Router
     private var router
 
-    @ObservedObject
-    private var viewModel: ItemImageViewModel
-
-    private let remoteImageInfo: RemoteImageInfo
-
-    init(
-        viewModel: ItemImageViewModel,
-        remoteImageInfo: RemoteImageInfo
-    ) {
-        self.viewModel = viewModel
-        self.remoteImageInfo = remoteImageInfo
-    }
+    let remoteImageInfo: RemoteImageInfo
 
     var body: some View {
         List {
