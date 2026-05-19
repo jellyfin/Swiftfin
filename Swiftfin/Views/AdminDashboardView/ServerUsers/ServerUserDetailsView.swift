@@ -9,52 +9,56 @@
 import Defaults
 import Engine
 import JellyfinAPI
+import Mantis
 import SwiftUI
 
 struct ServerUserDetailsView: View {
 
-    // MARK: - Current Date
-
     @CurrentDate
     private var currentDate: Date
-
-    // MARK: - State, Observed, & Environment Objects
 
     @Router
     private var router
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
-
     @StateObject
-    private var profileViewModel: UserProfileImageViewModel
-
-    // MARK: - Error State
-
-    @State
-    private var error: Error?
-
-    // MARK: - Initializer
+    private var profileViewModel: UserImageViewModel
 
     init(user: UserDto) {
         self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
-        self._profileViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: user))
+        self._profileViewModel = StateObject(wrappedValue: UserImageViewModel(user: user))
     }
-
-    // MARK: - Body
 
     var body: some View {
         List {
-            UserProfileHeroImage(
-                user: viewModel.user,
-                source: viewModel.user.profileImageSource(
-                    client: viewModel.userSession.client,
-                    maxWidth: 150
+            StateAdapter(initialValue: false) { isPhotoPickerPresented in
+                UserProfileHeroImage(
+                    user: viewModel.user,
+                    source: viewModel.user.profileImageSource(
+                        client: viewModel.userSession.client,
+                        maxWidth: 150
+                    )
+                ) {
+                    isPhotoPickerPresented.wrappedValue = true
+                } onDelete: {
+                    profileViewModel.delete()
+                }
+                .photoPicker(
+                    isPresented: isPhotoPickerPresented,
+                    isSaving: profileViewModel.background.is(.updating),
+                    presetRatio: .alwaysUsingOnePresetFixedRatio(ratio: 1),
+                    onSave: profileViewModel.upload
                 )
-            ) {
-                router.route(to: .userProfileImage(viewModel: profileViewModel))
-            } onDelete: {
-                profileViewModel.send(.delete)
+                .onReceive(profileViewModel.events) { event in
+                    switch event {
+                    case .updated:
+                        UIDevice.feedback(.success)
+                        isPhotoPickerPresented.wrappedValue = false
+                    case .deleted:
+                        UIDevice.feedback(.success)
+                    }
+                }
             }
 
             Section {
@@ -66,7 +70,7 @@ struct ServerUserDetailsView: View {
                         TextField(L10n.username, text: alert.username)
 
                         Button(L10n.save) {
-                            viewModel.send(.updateUsername(alert.username.wrappedValue))
+                            viewModel.updateUsername(alert.username.wrappedValue)
                         }
 
                         Button(L10n.cancel, role: .cancel) {
@@ -83,6 +87,7 @@ struct ServerUserDetailsView: View {
                     ChevronButton(L10n.password) {
                         router.route(to: .resetUserPasswordAdmin(userID: userId))
                     }
+
                     ChevronButton(L10n.quickConnect) {
                         router.route(to: .quickConnectAuthorize(user: viewModel.user))
                     }
@@ -93,9 +98,11 @@ struct ServerUserDetailsView: View {
                 ChevronButton(L10n.devices) {
                     router.route(to: .userDeviceAccess(viewModel: viewModel))
                 }
+
                 ChevronButton(L10n.liveTV) {
                     router.route(to: .userLiveTVAccess(viewModel: viewModel))
                 }
+
                 ChevronButton(L10n.media) {
                     router.route(to: .userMediaAccess(viewModel: viewModel))
                 }
@@ -105,26 +112,38 @@ struct ServerUserDetailsView: View {
                 ChevronButton(L10n.parentalRatings) {
                     router.route(to: .userParentalRatings(viewModel: viewModel))
                 }
+
                 ChevronButton(L10n.accessSchedules) {
                     router.route(to: .userEditAccessSchedules(viewModel: viewModel))
                 }
+
                 ChevronButton(L10n.accessTags) {
                     router.route(to: .userEditAccessTags(viewModel: viewModel))
                 }
             }
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.user)
-        .onAppear {
-            viewModel.send(.refresh)
+        .topBarTrailing {
+            if viewModel.background.is(.updating) || viewModel.background.is(.refreshing) {
+                ProgressView()
+            }
+        }
+        .onFirstAppear {
+            viewModel.refresh()
+        }
+        .refreshable {
+            viewModel.refresh()
+        }
+        .errorMessage($viewModel.error) {
+            UIDevice.feedback(.error)
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .error(eventError):
-                error = eventError
             case .updated:
-                break
+                UIDevice.feedback(.success)
             }
         }
-        .errorMessage($error)
     }
 }

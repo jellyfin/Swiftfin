@@ -30,31 +30,41 @@ extension AddTaskTriggerView {
         // MARK: - Body
 
         var body: some View {
-            ChevronButton(
-                L10n.every,
-                subtitle: Text(Duration.ticks(taskTriggerInfo.intervalTicks ?? 0), format: .hourMinuteAbbreviated),
-                description: L10n.taskTriggerInterval
-            ) {
-                TextField(
-                    L10n.minutes,
-                    value: $tempInterval.map(
-                        getter: { $0.map { Int($0.minutes) } },
-                        setter: { Duration.minutes($0 ?? 0) }
-                    ),
-                    format: .number
-                )
-                .keyboardType(.numberPad)
-            } onSave: {
-                if let tempInterval, tempInterval != .zero {
-                    taskTriggerInfo.intervalTicks = tempInterval.ticks
-                } else {
-                    taskTriggerInfo.intervalTicks = nil
+            StateAdapter(initialValue: false) { isPresented in
+                ChevronButton(
+                    L10n.every,
+                    content: Text(Duration.ticks(taskTriggerInfo.intervalTicks ?? 0), format: .hourMinuteAbbreviated)
+                ) {
+                    isPresented.wrappedValue = true
                 }
-            } onCancel: {
-                if let existingIntervalTicks = taskTriggerInfo.intervalTicks {
-                    tempInterval = Duration.ticks(existingIntervalTicks)
-                } else {
-                    tempInterval = nil
+                .alert(L10n.every, isPresented: isPresented) {
+                    TextField(
+                        L10n.minutes,
+                        value: $tempInterval.map(
+                            getter: { $0.map { Int($0.minutes) } },
+                            setter: { Duration.minutes($0 ?? 0) }
+                        ),
+                        format: .number
+                    )
+                    .keyboardType(.numberPad)
+
+                    Button(L10n.save) {
+                        if let tempInterval, tempInterval != .zero {
+                            taskTriggerInfo.intervalTicks = tempInterval.ticks
+                        } else {
+                            taskTriggerInfo.intervalTicks = nil
+                        }
+                    }
+
+                    Button(L10n.cancel, role: .cancel) {
+                        if let existingIntervalTicks = taskTriggerInfo.intervalTicks {
+                            tempInterval = Duration.ticks(existingIntervalTicks)
+                        } else {
+                            tempInterval = nil
+                        }
+                    }
+                } message: {
+                    Text(L10n.taskTriggerInterval)
                 }
             }
         }

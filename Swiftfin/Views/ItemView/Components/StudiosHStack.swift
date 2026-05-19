@@ -22,7 +22,7 @@ extension ItemView {
             PillHStack(
                 title: L10n.studios,
                 items: studios
-            ).onSelect { studio in
+            ) { studio in
                 let viewModel = ItemLibraryViewModel(parent: studio)
                 router.route(to: .library(viewModel: viewModel))
             }

@@ -81,8 +81,6 @@ struct CustomizeSettingsView: View {
     private var enabledTrailers
     @Default(.Customization.shouldShowMissingSeasons)
     private var shouldShowMissingSeasons
-    @Default(.Customization.shouldShowMissingEpisodes)
-    private var shouldShowMissingEpisodes
 
     // MARK: - Item View Defaults
 
@@ -114,6 +112,21 @@ struct CustomizeSettingsView: View {
     @Router
     private var router
 
+    @StateObject
+    private var viewModel: ServerUserAdminViewModel
+
+    init() {
+        /// If there is no User or UserSession, updating the user on the server has the potential of nuking all settings.
+        /// - Force Unwrap might crash but this is to prevent malformed UserDTO updating over real UserDTOs
+        _viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: Container.shared.currentUserSession()!.user.data))
+    }
+
+    private func updateConfiguration(_ modify: (inout UserConfiguration) -> Void) {
+        guard var configuration = viewModel.user.configuration else { return }
+        modify(&configuration)
+        viewModel.updateConfiguration(configuration)
+    }
+
     var body: some View {
         Form(systemImage: "gearshape") {
             homeSettings
@@ -132,7 +145,17 @@ struct CustomizeSettingsView: View {
 
             itemManagementSettings
         }
+        .onFirstAppear {
+            viewModel.refresh()
+        }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.customize)
+        .topBarTrailing {
+            if viewModel.background.is(.updating) || viewModel.background.is(.refreshing) {
+                ProgressView()
+            }
+        }
     }
 
     // MARK: - Home Settings
@@ -142,19 +165,33 @@ struct CustomizeSettingsView: View {
         Section(L10n.home) {
             Toggle(L10n.recentlyAdded, isOn: $showRecentlyAdded)
 
+            Toggle(L10n.hidePlayedInLatest, isOn: Binding(
+                get: { viewModel.user.configuration?.isHidePlayedInLatest == true },
+                set: { newValue in
+                    updateConfiguration { $0.isHidePlayedInLatest = newValue }
+                }
+            ))
+
             Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
 
             StateAdapter(initialValue: false) { isPresented in
                 ChevronButton {
                     isPresented.wrappedValue = true
                 } label: {
-                    LabeledContent(L10n.nextUpDays) {
-                        if maxNextUp > 0 {
-                            let duration = Duration.seconds(TimeInterval(maxNextUp))
-                            return Text(duration, format: .units(allowed: [.days], width: .abbreviated))
-                        } else {
-                            return Text(L10n.disabled)
+                    LabeledContent {
+                        Group {
+                            if maxNextUp > 0 {
+                                Text(
+                                    Duration.seconds(maxNextUp),
+                                    format: .units(allowed: [.days], width: .abbreviated)
+                                )
+                            } else {
+                                Text(L10n.disabled)
+                            }
                         }
+                        .foregroundStyle(.secondary)
+                    } label: {
+                        Text(L10n.nextUpDays)
                     }
                 }
                 .alert(
@@ -212,12 +249,20 @@ struct CustomizeSettingsView: View {
             PlatformPicker(L10n.defaultLayout, selection: $libraryDisplayType)
 
             if libraryDisplayType == .list, UIDevice.isPad || UIDevice.isTV {
+                #if os(tvOS)
+                Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 3, step: 1) {
+                    Text(L10n.columns)
+                } content: {
+                    Text(listColumnCount.description)
+                }
+                #else
                 Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 3, step: 1) {
                     LabeledContent(
                         L10n.columns,
                         value: listColumnCount.description
                     )
                 }
+                #endif
             }
 
             Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
@@ -262,7 +307,12 @@ struct CustomizeSettingsView: View {
 
             Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
-            Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
+            Toggle(L10n.showMissingEpisodes, isOn: Binding(
+                get: { viewModel.user.configuration?.isDisplayMissingEpisodes == true },
+                set: { newValue in
+                    updateConfiguration { $0.isDisplayMissingEpisodes = newValue }
+                }
+            ))
         }
     }
 

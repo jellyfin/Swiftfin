@@ -112,9 +112,9 @@ struct PagingLibraryView<Element: Poster>: View {
         }
     }
 
-    // MARK: onSelect
+    // MARK: action
 
-    private func onSelect(_ element: Element, in namespace: Namespace.ID) {
+    private func action(_ element: Element, in namespace: Namespace.ID) {
         switch element {
         case let element as BaseItemDto:
             select(item: element, in: namespace)
@@ -187,7 +187,7 @@ struct PagingLibraryView<Element: Poster>: View {
             item: item,
             type: posterType
         ) { namespace in
-            onSelect(item, in: namespace)
+            action(item, in: namespace)
         } label: {
             if item.showTitle {
                 PosterButton<Element>.TitleContentView(title: item.displayTitle)
@@ -206,7 +206,7 @@ struct PagingLibraryView<Element: Poster>: View {
             item: item,
             posterType: posterType
         ) { namespace in
-            onSelect(item, in: namespace)
+            action(item, in: namespace)
         }
     }
 

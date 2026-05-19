@@ -36,39 +36,38 @@ extension HomeView {
         }
 
         var body: some View {
-            CinematicItemSelector(items: viewModel.resumeItems.elements)
-                .topContent { item in
-                    ImageView(itemSelectorImageSource(for: item))
-                        .placeholder { _ in
-                            EmptyView()
-                        }
-                        .failure {
-                            Text(item.displayTitle)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                        }
-                        .edgePadding(.leading)
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 200, alignment: .bottomLeading)
-                }
-                .content { item in
-                    // TODO: clean up
-                    if item.type == .episode {
-                        PosterButton<BaseItemDto>.EpisodeContentSubtitleContent.Subtitle(item: item)
-                    } else {
-                        // swiftlint:disable:next hard_coded_display_string
-                        Text(" ")
+            CinematicItemSelector(items: viewModel.resumeItems.elements) { item in
+                router.route(to: .item(item: item))
+            }
+            .topContent { item in
+                ImageView(itemSelectorImageSource(for: item))
+                    .placeholder { _ in
+                        EmptyView()
                     }
+                    .failure {
+                        Text(item.displayTitle)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                    }
+                    .edgePadding(.leading)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 200, alignment: .bottomLeading)
+            }
+            .content { item in
+                // TODO: clean up
+                if item.type == .episode {
+                    PosterButton<BaseItemDto>.EpisodeContentSubtitleContent.Subtitle(item: item)
+                } else {
+                    // swiftlint:disable:next hard_coded_display_string
+                    Text(" ")
                 }
-                .onSelect { item in
-                    router.route(to: .item(item: item))
-                }
-                .posterOverlay(for: BaseItemDto.self) { item in
-                    LandscapePosterProgressBar(
-                        title: item.progressLabel ?? L10n.continue,
-                        progress: (item.userData?.playedPercentage ?? 0) / 100
-                    )
-                }
+            }
+            .posterOverlay(for: BaseItemDto.self) { item in
+                LandscapePosterProgressBar(
+                    title: item.progressLabel ?? L10n.continue,
+                    progress: (item.userData?.playedPercentage ?? 0) / 100
+                )
+            }
         }
     }
 }

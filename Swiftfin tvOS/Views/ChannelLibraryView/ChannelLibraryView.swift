@@ -25,14 +25,13 @@ struct ChannelLibraryView: View {
             uniqueElements: viewModel.elements,
             layout: .columns(3, insets: .init(0), itemSpacing: 25, lineSpacing: 25)
         ) { channel in
-            WideChannelGridItem(channel: channel)
-                .onSelect {
-                    guard let mediaSource = channel.channel.mediaSources?.first else { return }
+            WideChannelGridItem(channel: channel) {
+                guard let mediaSource = channel.channel.mediaSources?.first else { return }
 //                    router.route(
 //                        to: \.liveVideoPlayer,
 //                        LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
 //                    )
-                }
+            }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
             viewModel.send(.getNextPage)

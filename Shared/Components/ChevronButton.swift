@@ -8,314 +8,124 @@
 
 import SwiftUI
 
-// TODO: Remove alert and just be a Button
-// TODO: change "subtitle" to "content"
-// TODO: observe editing/selection for checkbox/chevron switching?
+// TODO: possibly consolidate with ListRow
 
-struct ChevronButton<_Label: View, _Content: View>: View {
+struct ChevronButton<Label: View>: View {
 
+    @Environment(\.isEditing)
+    private var isEditing
+
+    private let action: () -> Void
     private let isExternal: Bool
-    private let labeledContent: LabeledContent<_Label, _Content>
-
-    private let innerContent: (LabeledContent<_Label, _Content>) -> AnyView
+    private let label: Label
 
     var body: some View {
-        innerContent(labeledContent)
-            .labeledContentStyle(ChevronButtonLabeledContentStyle(isExternal: isExternal))
-            .eraseToAnyView()
-    }
-}
+        Button(action: action) {
+            HStack {
 
-extension ChevronButton {
-
-    private init(
-        labeledContent: LabeledContent<_Label, _Content>,
-        external: Bool = false,
-        @ViewBuilder innerContent: @escaping (LabeledContent<_Label, _Content>) -> some View
-    ) {
-        self.isExternal = external
-        self.labeledContent = labeledContent
-        self.innerContent = { labeledContent in
-            innerContent(labeledContent)
-                .eraseToAnyView()
-        }
-    }
-
-    private init(
-        labeledContent: LabeledContent<_Label, _Content>,
-        external: Bool = false,
-        action: @escaping () -> Void,
-        isTitleOnly: Bool = false
-    ) {
-        self.init(
-            labeledContent: labeledContent,
-            external: external
-        ) { labeledContent in
-            ButtonContentView(
-                label: labeledContent,
-                action: action,
-                isTitleOnly: isTitleOnly
-            )
-        }
-    }
-
-    @available(*, deprecated, message: "Use Engine.StateAdapter with an inline alert instead")
-    private init(
-        labeledContent: LabeledContent<_Label, _Content>,
-        alertTitle: String,
-        description: String?,
-        @ViewBuilder content: @escaping () -> some View,
-        onSave: (() -> Void)? = nil,
-        onCancel: (() -> Void)? = nil
-    ) {
-        self.init(labeledContent: labeledContent) { labeledContent in
-            AlertContentView(
-                alertTitle: alertTitle,
-                content: content,
-                description: description,
-                label: labeledContent,
-                onCancel: onCancel,
-                onSave: onSave
-            )
-        }
-    }
-
-    private struct AlertContentView<Content: View, Label: View>: View {
-
-        @State
-        private var isPresented: Bool = false
-
-        let alertTitle: String
-        let content: () -> Content
-        let description: String?
-        let label: Label
-        let onCancel: (() -> Void)?
-        let onSave: (() -> Void)?
-
-        var body: some View {
-            Button {
-                isPresented = true
-            } label: {
                 label
-            }
-            .foregroundStyle(.primary, .secondary)
-            .alert(alertTitle, isPresented: $isPresented) {
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                content()
-
-                if let onSave {
-                    Button(L10n.save) {
-                        onSave()
-                        isPresented = false
-                    }
-                }
-
-                if let onCancel {
-                    Button(L10n.cancel, role: .cancel) {
-                        onCancel()
-                        isPresented = false
-                    }
-                }
-            } message: {
-                if let description {
-                    Text(description)
-                }
-            }
-        }
-    }
-
-    private struct ButtonContentView<Label: View>: View {
-
-        let label: Label
-        let action: () -> Void
-        let isTitleOnly: Bool
-
-        var body: some View {
-            Button(action: action) {
-                if isTitleOnly {
-                    label
-                        .labelStyle(.titleOnly)
+                if isEditing {
+                    ListRowCheckbox()
                 } else {
-                    label
+                    Image(systemName: isExternal ? "arrow.up.forward" : "chevron.right")
+                        .font(.body)
+                        .fontWeight(.regular)
+                        .foregroundStyle(.secondary)
                 }
             }
-            .foregroundStyle(.primary, .secondary)
         }
+        .foregroundStyle(.primary, .secondary)
     }
 }
 
 extension ChevronButton {
 
-    // TODO: clean up to not take a LabeledContent
     init(
         external: Bool = false,
         action: @escaping () -> Void,
-        @ViewBuilder label: @escaping () -> LabeledContent<_Label, _Content>
+        @ViewBuilder label: () -> Label
+    ) {
+        self.action = action
+        self.isExternal = external
+        self.label = label()
+    }
+}
+
+extension ChevronButton where Label == Text {
+
+    init(
+        _ title: String,
+        external: Bool = false,
+        action: @escaping () -> Void
     ) {
         self.init(
-            labeledContent: label(),
+            external: external,
+            action: action
+        ) {
+            Text(title)
+        }
+    }
+}
+
+extension ChevronButton where Label == ChevronButtonValueContent<Text, Text> {
+
+    init(
+        _ title: String,
+        content: String,
+        external: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.init(
+            title,
+            content: Text(content),
             external: external,
             action: action
         )
     }
 
-    @available(*, deprecated, message: "Use `init(external:action:label:)` instead")
-    init<Icon: View>(
+    init(
+        _ title: String,
+        content: Text,
+        external: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.init(
+            external: external,
+            action: action
+        ) {
+            ChevronButtonValueContent {
+                Text(title)
+            } value: {
+                content
+            }
+        }
+    }
+}
+
+extension ChevronButton {
+
+    init<Value: View>(
         _ title: String,
         external: Bool = false,
         action: @escaping () -> Void,
-        @ViewBuilder icon: @escaping () -> Icon,
-        @ViewBuilder subtitle: @escaping () -> _Content
-    ) where _Label == Label<Text, Icon> {
+        @ViewBuilder content: @escaping () -> Value
+    ) where Label == ChevronButtonValueContent<Text, Value> {
         self.init(
-            labeledContent: LabeledContent {
-                subtitle()
-            } label: {
-                Label(title: { Text(title) }, icon: icon)
-            },
             external: external,
-            action: action,
-            isTitleOnly: Icon.self == EmptyView.self
-        )
+            action: action
+        ) {
+            ChevronButtonValueContent {
+                Text(title)
+            } value: {
+                content()
+            }
+        }
     }
 }
 
-extension ChevronButton where _Label == Label<Text, EmptyView>, _Content == Text {
-
-    init(
-        _ title: String,
-        subtitle: String,
-        external: Bool = false,
-        action: @escaping () -> Void
-    ) {
-        self.init(
-            title,
-            external: external,
-            action: action,
-            icon: { EmptyView() },
-            subtitle: { Text(subtitle) }
-        )
-    }
-
-    init(
-        _ title: String,
-        subtitle: Text,
-        external: Bool = false,
-        action: @escaping () -> Void
-    ) {
-        self.init(
-            title,
-            external: external,
-            action: action,
-            icon: { EmptyView() },
-            subtitle: { subtitle }
-        )
-    }
-
-    @available(*, deprecated, message: "Use Engine.StateAdapter with an inline alert instead")
-    init(
-        _ title: String,
-        subtitle: String? = nil,
-        description: String?,
-        @ViewBuilder content: @escaping () -> some View,
-        onSave: (() -> Void)? = nil,
-        onCancel: (() -> Void)? = nil
-    ) {
-        self.init(
-            labeledContent: LabeledContent {
-                Text(subtitle ?? "")
-            } label: {
-                Label(title: { Text(title) }, icon: { EmptyView() })
-            },
-            alertTitle: title,
-            description: description,
-            content: content,
-            onSave: onSave,
-            onCancel: onCancel
-        )
-    }
-
-    @available(*, deprecated, message: "Use Engine.StateAdapter with an inline alert instead")
-    init(
-        _ title: String,
-        subtitle: Text? = nil,
-        description: String?,
-        @ViewBuilder content: @escaping () -> some View,
-        onSave: (() -> Void)? = nil,
-        onCancel: (() -> Void)? = nil
-    ) {
-        self.init(
-            labeledContent: LabeledContent {
-                subtitle ?? Text(String.empty)
-            } label: {
-                Label(title: { Text(title) }, icon: { EmptyView() })
-            },
-            alertTitle: title,
-            description: description,
-            content: content,
-            onSave: onSave,
-            onCancel: onCancel
-        )
-    }
-}
-
-extension ChevronButton where _Label == Label<Text, EmptyView>, _Content == EmptyView {
-
-    init(
-        _ title: String,
-        external: Bool = false,
-        action: @escaping () -> Void
-    ) {
-        self.init(
-            title,
-            external: external,
-            action: action,
-            icon: { EmptyView() },
-            subtitle: { EmptyView() }
-        )
-    }
-}
-
-extension ChevronButton where _Label == Label<Text, Image>, _Content == Text {
-
-    // systemName
-
-    init(
-        _ title: String,
-        subtitle: String,
-        systemName: String,
-        external: Bool = false,
-        action: @escaping () -> Void
-    ) {
-        self.init(
-            title,
-            external: external,
-            action: action,
-            icon: { Image(systemName: systemName) },
-            subtitle: { Text(subtitle) }
-        )
-    }
-
-    init(
-        _ title: String,
-        subtitle: Text,
-        systemName: String,
-        external: Bool = false,
-        action: @escaping () -> Void
-    ) {
-        self.init(
-            title,
-            external: external,
-            action: action,
-            icon: { Image(systemName: systemName) },
-            subtitle: { subtitle }
-        )
-    }
-}
-
-extension ChevronButton where _Label == Label<Text, Image>, _Content == EmptyView {
-
-    // systemName
+extension ChevronButton where Label == ChevronButtonLabelContent<SwiftUI.Label<Text, Image>> {
 
     init(
         _ title: String,
@@ -324,15 +134,14 @@ extension ChevronButton where _Label == Label<Text, Image>, _Content == EmptyVie
         action: @escaping () -> Void
     ) {
         self.init(
-            title,
             external: external,
-            action: action,
-            icon: { Image(systemName: systemName) },
-            subtitle: { EmptyView() }
-        )
+            action: action
+        ) {
+            ChevronButtonLabelContent {
+                SwiftUI.Label { Text(title) } icon: { Image(systemName: systemName) }
+            }
+        }
     }
-
-    // ImageResource
 
     init(
         _ title: String,
@@ -341,42 +150,93 @@ extension ChevronButton where _Label == Label<Text, Image>, _Content == EmptyVie
         action: @escaping () -> Void
     ) {
         self.init(
-            title,
             external: external,
-            action: action,
-            icon: { Image(image) },
-            subtitle: { EmptyView() }
-        )
+            action: action
+        ) {
+            ChevronButtonLabelContent {
+                SwiftUI.Label { Text(title) } icon: { Image(image) }
+            }
+        }
     }
 }
 
-private struct ChevronButtonLabeledContentStyle: LabeledContentStyle {
+extension ChevronButton where Label == ChevronButtonValueContent<SwiftUI.Label<Text, Image>, Text> {
 
-    @Environment(\.isEditing)
-    private var isEditing
+    init(
+        _ title: String,
+        content: String,
+        systemName: String,
+        external: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.init(
+            title,
+            content: Text(content),
+            systemName: systemName,
+            external: external,
+            action: action
+        )
+    }
 
-    let isExternal: Bool
+    init(
+        _ title: String,
+        content: Text,
+        systemName: String,
+        external: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.init(
+            external: external,
+            action: action
+        ) {
+            ChevronButtonValueContent {
+                SwiftUI.Label { Text(title) } icon: { Image(systemName: systemName) }
+            } value: {
+                content
+            }
+        }
+    }
+}
 
-    func makeBody(configuration: Configuration) -> some View {
+struct ChevronButtonValueContent<Label: View, Value: View>: View {
+
+    private let label: Label
+    private let value: Value
+
+    init(
+        @ViewBuilder label: @escaping () -> Label,
+        @ViewBuilder value: @escaping () -> Value
+    ) {
+        self.label = label()
+        self.value = value()
+    }
+
+    var body: some View {
         HStack {
 
-            configuration.label
+            label
                 .labelStyle(BoldIconLabelStyle())
 
             Spacer()
 
-            configuration.content
+            value
                 .foregroundStyle(.secondary)
-
-            if isEditing {
-                ListRowCheckbox()
-            } else {
-                Image(systemName: isExternal ? "arrow.up.forward" : "chevron.right")
-                    .font(.body)
-                    .fontWeight(.regular)
-                    .foregroundStyle(.secondary)
-            }
         }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+struct ChevronButtonLabelContent<Label: View>: View {
+
+    private let label: Label
+
+    init(@ViewBuilder label: @escaping () -> Label) {
+        self.label = label()
+    }
+
+    var body: some View {
+        label
+            .labelStyle(BoldIconLabelStyle())
     }
 }
 

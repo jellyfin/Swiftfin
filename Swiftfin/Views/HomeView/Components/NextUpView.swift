@@ -23,7 +23,7 @@ extension HomeView {
         @ObservedObject
         var viewModel: NextUpLibraryViewModel
 
-        private var onSetPlayed: (BaseItemDto) -> Void
+        let onSetPlayed: (BaseItemDto) -> Void
 
         var body: some View {
             if viewModel.elements.isNotEmpty {
@@ -41,10 +41,9 @@ extension HomeView {
                     }
                 }
                 .trailing {
-                    SeeAllButton()
-                        .onSelect {
-                            router.route(to: .library(viewModel: viewModel))
-                        }
+                    SeeAllButton {
+                        router.route(to: .library(viewModel: viewModel))
+                    }
                 }
                 .contextMenu(for: BaseItemDto.self) { item in
                     Button {
@@ -55,19 +54,5 @@ extension HomeView {
                 }
             }
         }
-    }
-}
-
-extension HomeView.NextUpView {
-
-    init(viewModel: NextUpLibraryViewModel) {
-        self.init(
-            viewModel: viewModel,
-            onSetPlayed: { _ in }
-        )
-    }
-
-    func onSetPlayed(perform action: @escaping (BaseItemDto) -> Void) -> Self {
-        copy(modifying: \.onSetPlayed, with: action)
     }
 }

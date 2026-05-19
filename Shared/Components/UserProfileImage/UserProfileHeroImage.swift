@@ -14,49 +14,20 @@ import SwiftUI
 
 struct UserProfileHeroImage: View {
 
-    // MARK: - Accent Color
-
     @Default(.accentColor)
     private var accentColor
-
-    // MARK: - User Session
 
     @Injected(\.currentUserSession)
     private var userSession
 
-    // MARK: - User Variables
-
-    private let user: UserDto
-    private let source: ImageSource
-    private let pipeline: ImagePipeline
-
-    // MARK: - User Actions
-
-    private let onUpdate: () -> Void
-    private let onDelete: () -> Void
-
-    // MARK: - Dialog State
-
     @State
     private var isPresentingOptions: Bool = false
 
-    // MARK: - Initializer
-
-    init(
-        user: UserDto,
-        source: ImageSource,
-        pipeline: ImagePipeline = .Swiftfin.posters,
-        onUpdate: @escaping () -> Void,
-        onDelete: @escaping () -> Void
-    ) {
-        self.user = user
-        self.source = source
-        self.pipeline = pipeline
-        self.onUpdate = onUpdate
-        self.onDelete = onDelete
-    }
-
-    // MARK: - Body
+    let user: UserDto
+    let source: ImageSource
+    var pipeline: ImagePipeline = .Swiftfin.posters
+    let onUpdate: () -> Void
+    let onDelete: () -> Void
 
     var body: some View {
         Section {

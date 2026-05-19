@@ -28,7 +28,7 @@ extension EditItemElementView {
 
         // MARK: - Row Actions
 
-        let onSelect: () -> Void
+        let action: () -> Void
         let onDelete: () -> Void
 
         // MARK: - Body
@@ -40,8 +40,9 @@ extension EditItemElementView {
                 }
             } content: {
                 rowContent
+            } action: {
+                action()
             }
-            .onSelect(perform: onSelect)
             .isSeparatorVisible(false)
             .swipeActions {
                 Button(

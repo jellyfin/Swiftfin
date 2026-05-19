@@ -22,7 +22,7 @@ extension ItemView {
             PillHStack(
                 title: L10n.genres,
                 items: genres
-            ).onSelect { genre in
+            ) { genre in
                 let viewModel = ItemLibraryViewModel(
                     title: genre.displayTitle,
                     id: genre.value,

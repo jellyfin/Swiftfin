@@ -10,18 +10,12 @@ import SwiftUI
 
 struct ListRowMenu<Content: View, Subtitle: View>: View {
 
-    // MARK: - Focus State
-
     @FocusState
     private var isFocused: Bool
-
-    // MARK: - Properties
 
     private let title: Text
     private let subtitle: Subtitle?
     private let content: () -> Content
-
-    // MARK: - Body
 
     var body: some View {
         Menu(content: content) {
@@ -34,7 +28,6 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 
     @ViewBuilder
     private var buttonView: some View {
-        // TODO: Remove when 26+ is our minimum
         if #available(tvOS 26.0, *) {
             HStack {
                 title
@@ -106,37 +99,59 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 // Base initializer
 extension ListRowMenu where Subtitle == Text? {
 
-    init(_ title: Text, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: Text,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
         self.subtitle = nil
         self.content = content
     }
 
-    init(_ title: Text, subtitle: Text?, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: Text,
+        subtitle: Text?,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
         self.subtitle = subtitle
         self.content = content
     }
 
-    init(_ title: Text, subtitle: String?, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: Text,
+        subtitle: String?,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
         self.subtitle = subtitle.map { Text($0) }
         self.content = content
     }
 
-    init(_ title: String, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: String,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = Text(title)
         self.subtitle = nil
         self.content = content
     }
 
-    init(_ title: String, subtitle: String?, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: String,
+        subtitle: String?,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = Text(title)
         self.subtitle = subtitle.map { Text($0) }
         self.content = content
     }
 
-    init(_ title: String, subtitle: Text?, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: String,
+        subtitle: Text?,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = Text(title)
         self.subtitle = subtitle
         self.content = content
@@ -146,13 +161,21 @@ extension ListRowMenu where Subtitle == Text? {
 // Custom view subtitles
 extension ListRowMenu {
 
-    init(_ title: String, @ViewBuilder subtitle: @escaping () -> Subtitle, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: String,
+        @ViewBuilder subtitle: @escaping () -> Subtitle,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = Text(title)
         self.subtitle = subtitle()
         self.content = content
     }
 
-    init(_ title: Text, @ViewBuilder subtitle: @escaping () -> Subtitle, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: Text,
+        @ViewBuilder subtitle: @escaping () -> Subtitle,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
         self.subtitle = subtitle()
         self.content = content

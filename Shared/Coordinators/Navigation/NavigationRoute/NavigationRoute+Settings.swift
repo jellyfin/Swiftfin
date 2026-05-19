@@ -177,9 +177,9 @@ extension NavigationRoute {
         }
     }
 
-    static func localUserSettings(viewModel: SettingsViewModel) -> NavigationRoute {
+    static func localUserSettings(user: UserDto) -> NavigationRoute {
         NavigationRoute(id: "localUserSettings") {
-            LocalUserSettingsView(viewModel: viewModel)
+            LocalUserSettingsView(user: user)
         }
     }
 
@@ -190,16 +190,6 @@ extension NavigationRoute {
             ConsoleView()
         }
     }
-
-    #if os(iOS)
-    static var nativePlayerSettings: NavigationRoute {
-        NavigationRoute(
-            id: "nativePlayerSettings"
-        ) {
-            NativeVideoPlayerSettingsView()
-        }
-    }
-    #endif
 
     static var playbackQualitySettings: NavigationRoute {
         NavigationRoute(
