@@ -16,12 +16,8 @@ struct ActiveSessionsView: View {
     @Default(.accentColor)
     private var accentColor
 
-    // MARK: - Router
-
     @Router
     private var router
-
-    // MARK: - Track Filter State
 
     @State
     private var isFiltersPresented = false

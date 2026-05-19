@@ -20,36 +20,23 @@ extension AdminDashboardView {
         let lastActivityDate: Date?
         let action: (() -> Void)?
 
-        init(user: UserDto, lastActivityDate: Date? = nil, action: (() -> Void)? = nil) {
-            self.user = user
-            self.lastActivityDate = lastActivityDate
-            self.action = action
-        }
-
-        // MARK: - Body
-
         var body: some View {
             Section(L10n.user) {
-                profileView
+
+                if let action {
+                    SettingsView.UserProfileRow(
+                        user: user,
+                        action: action
+                    )
+                } else {
+                    SettingsView.UserProfileRow(
+                        user: user
+                    )
+                }
+
                 LabeledContent(L10n.lastSeen, value: lastActivityDate, format: .lastSeen)
                     .id(currentDate)
                     .monospacedDigit()
-            }
-        }
-
-        // MARK: - Profile View
-
-        private var profileView: some View {
-            if let action {
-                SettingsView.UserProfileRow(
-                    user: user
-                ) {
-                    action()
-                }
-            } else {
-                SettingsView.UserProfileRow(
-                    user: user
-                )
             }
         }
     }
