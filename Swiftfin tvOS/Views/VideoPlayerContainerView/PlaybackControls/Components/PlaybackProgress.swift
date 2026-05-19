@@ -88,48 +88,58 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
+        private var sliderValueBinding: Binding<Double> {
+            Binding(
+                get: {
+                    guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+                    return clamp((scrubbedSecondsBox.value.seconds / runtime.seconds) * 100, min: 0, max: 100)
+                },
+                set: {
+                    scrubbedSecondsBox.value = (manager.item.runtime ?? .zero) * ($0 / 100)
+                }
+            )
+        }
+
+        @ViewBuilder
+        private var sliderView: some View {
+            let baseSlider = CapsuleSlider(
+                value: sliderValueBinding,
+                total: 100
+            )
+            .onEditingChanged { isEditing in
+                if isEditing {
+                    isScrubbing = true
+                    onPanScrubChanged?(true)
+                } else {
+                    onPanScrubChanged?(false)
+                }
+            }
+
+            if chapterSlider, let chapters = manager.item.fullChapterInfo, !chapters.isEmpty {
+                baseSlider.inverseMask {
+                    ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero)
+                }
+            } else {
+                baseSlider
+            }
+        }
+
         var body: some View {
             VStack(spacing: 10) {
                 if manager.item.isLiveStream {
                     liveIndicator
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
-                    CapsuleSlider(
-                        value: $scrubbedSecondsBox.value.map(
-                            getter: {
-                                guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
-                                return clamp(($0.seconds / runtime.seconds) * 100, min: 0, max: 100)
-                            },
-                            setter: { (manager.item.runtime ?? .zero) * ($0 / 100) }
-                        ),
-                        total: 100
-                    )
-                    .onEditingChanged { isEditing in
-                        if isEditing {
-                            isScrubbing = true
-                            onPanScrubChanged?(true)
-                        } else {
-                            onPanScrubChanged?(false)
+                    sliderView
+                        .frame(height: 14)
+                        .trackingSize($sliderSize)
+                        .overlay {
+                            CurrentSecondTick()
+                                .frame(height: sliderSize.height)
+                                .allowsHitTesting(false)
                         }
-                    }
-                    .if(chapterSlider) { view in
-                        view.ifLet(manager.item.fullChapterInfo) { view, chapters in
-                            if chapters.isEmpty {
-                                view
-                            } else {
-                                view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
-                            }
-                        }
-                    }
-                    .frame(height: 14)
-                    .trackingSize($sliderSize)
-                    .overlay {
-                        CurrentSecondTick()
-                            .frame(height: sliderSize.height)
-                            .allowsHitTesting(false)
-                    }
-                    .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
-                    .disabled(manager.state == .loadingItem)
+                        .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
+                        .disabled(manager.state == .loadingItem)
 
                     SplitTimeStamp()
                         .foregroundStyle(Color.white)
