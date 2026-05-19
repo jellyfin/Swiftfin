@@ -73,15 +73,6 @@ extension ImageType: Displayable {
         }
     }
 
-    var isUsed: Bool {
-        switch self {
-        case .primary, .thumb, .backdrop, .banner, .logo:
-            true
-        default:
-            false
-        }
-    }
-
     func posterDisplayType(for type: BaseItemKind? = nil) -> PosterDisplayType {
         switch self {
         case .primary:

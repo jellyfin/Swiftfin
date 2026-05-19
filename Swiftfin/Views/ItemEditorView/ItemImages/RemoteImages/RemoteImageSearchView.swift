@@ -135,7 +135,6 @@ struct RemoteImageSearchView: View {
                     item: image,
                     type: posterType
                 ) { namespace in
-                    viewModel.remoteImageInfo = image
                     router.route(
                         to: .remoteImageDetail(
                             viewModel: viewModel,

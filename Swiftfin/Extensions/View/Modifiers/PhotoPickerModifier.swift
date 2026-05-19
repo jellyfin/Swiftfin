@@ -6,27 +6,24 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Mantis
 import PhotosUI
 import SwiftUI
 
-/// SwiftUI's PhotoPicker (iOS 16+) but with Mantis Cropping built into the workflow
-struct PhotoPickerModifier<Item>: ViewModifier {
+struct PhotoPickerModifier: ViewModifier {
 
     @Binding
     var isPresented: Bool
 
-    @ObservedObject
-    var viewModel: ImageViewModel<Item>
-
-    let cropShape: Mantis.CropShapeType
-    let presetRatio: Mantis.PresetFixedRatioType
-
-    @State
-    private var selectedItem: PhotosPickerItem?
     @State
     private var selectedImage: UIImage?
+    @State
+    private var selectedItem: PhotosPickerItem?
+
+    let isSaving: Bool
+    let cropShape: Mantis.CropShapeType
+    let presetRatio: Mantis.PresetFixedRatioType
+    let onSave: (UIImage) -> Void
 
     func body(content: Content) -> some View {
         content
@@ -35,8 +32,9 @@ struct PhotoPickerModifier<Item>: ViewModifier {
                 selection: $selectedItem,
                 matching: .images
             )
-            .onChange(of: selectedItem) { newItem in
-                loadImage(from: newItem)
+            .backport
+            .onChange(of: selectedItem) { _, newValue in
+                loadImage(from: newValue)
             }
             .sheet(isPresented: Binding<Bool>(
                 get: { selectedImage != nil },
@@ -48,22 +46,17 @@ struct PhotoPickerModifier<Item>: ViewModifier {
                 if let image = selectedImage {
                     NavigationView {
                         PhotoCropView(
-                            viewModel: viewModel,
+                            isSaving: isSaving,
                             image: image,
                             cropShape: cropShape,
-                            presetRatio: presetRatio
+                            presetRatio: presetRatio,
+                            onSave: {
+                                clearSelection()
+                                onSave($0)
+                            },
+                            onCancel: clearSelection
                         )
                     }
-                }
-            }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case .updated:
-                    selectedImage = nil
-                    selectedItem = nil
-                    isPresented = false
-                case .deleted:
-                    break
                 }
             }
     }
@@ -74,6 +67,7 @@ struct PhotoPickerModifier<Item>: ViewModifier {
             selectedImage = nil
             return
         }
+
         Task {
             if let data = try? await item.loadTransferable(type: Data.self),
                let image = UIImage(data: data)
@@ -81,5 +75,11 @@ struct PhotoPickerModifier<Item>: ViewModifier {
                 selectedImage = image
             }
         }
+    }
+
+    private func clearSelection() {
+        selectedImage = nil
+        selectedItem = nil
+        isPresented = false
     }
 }

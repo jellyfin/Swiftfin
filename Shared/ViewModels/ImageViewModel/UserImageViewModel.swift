@@ -9,11 +9,55 @@
 import Foundation
 import JellyfinAPI
 import Nuke
+import UIKit
 
-final class UserImageViewModel: ImageViewModel<UserDto> {
+@MainActor
+@Stateful
+final class UserImageViewModel: ViewModel {
 
-    override func performUpload(imageData: Data, contentType: String) async throws {
-        guard let userID = item.id else { return }
+    @CasePathable
+    enum Action {
+        case delete
+        case upload(UIImage)
+
+        var transition: Transition {
+            switch self {
+            case .delete:
+                .background(.deleting)
+            case .upload:
+                .background(.updating)
+            }
+        }
+    }
+
+    enum BackgroundState {
+        case deleting
+        case updating
+    }
+
+    enum Event {
+        case deleted
+        case updated
+    }
+
+    enum State {
+        case initial
+        case error
+    }
+
+    @Published
+    var user: UserDto
+
+    init(user: UserDto) {
+        self.user = user
+        super.init()
+    }
+
+    @Function(\Action.Cases.upload)
+    private func _upload(_ image: UIImage) async throws {
+        guard let userID = user.id else { return }
+
+        let (imageData, contentType) = try image.data()
 
         var request = Paths.postUserImage(
             userID: userID,
@@ -24,26 +68,29 @@ final class UserImageViewModel: ImageViewModel<UserDto> {
         _ = try await userSession.client.send(request)
 
         await cleanImageCache()
+        events.send(.updated)
     }
 
-    override func performDelete() async throws {
-        guard let userID = item.id else { return }
+    @Function(\Action.Cases.delete)
+    private func _delete() async throws {
+        guard let userID = user.id else { return }
 
         let request = Paths.deleteUserImage(userID: userID)
         _ = try await userSession.client.send(request)
 
         await cleanImageCache()
+        events.send(.deleted)
     }
 
     private func cleanImageCache() async {
         for width: CGFloat in [60, 120, 150] {
-            if let url = item.profileImageSource(client: userSession.client, maxWidth: width).url {
+            if let url = user.profileImageSource(client: userSession.client, maxWidth: width).url {
                 await ImagePipeline.Swiftfin.local.removeItem(for: url)
                 await ImagePipeline.Swiftfin.posters.removeItem(for: url)
             }
         }
 
-        if let userID = item.id {
+        if let userID = user.id {
             Notifications[.didChangeUserProfile].post(userID)
         }
     }

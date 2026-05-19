@@ -200,9 +200,21 @@ extension NavigationRoute {
     static func itemImages(viewModel: ItemImageViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemImages",
-            style: .push(.automatic)
+            style: .sheet
         ) {
             ItemImagesView(viewModel: viewModel)
+        }
+    }
+
+    static func itemImageDetail(viewModel: ItemImageViewModel, imageInfo: ImageInfo) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemImageDetail",
+            style: .sheet
+        ) {
+            ItemImageDetailView(
+                viewModel: viewModel,
+                imageInfo: imageInfo
+            )
         }
     }
 

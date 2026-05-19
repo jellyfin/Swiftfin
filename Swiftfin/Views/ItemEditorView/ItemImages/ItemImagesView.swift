@@ -14,20 +14,18 @@ import SwiftUI
 
 struct ItemImagesView: View {
 
-    @Router
-    private var router
-
     @ObservedObject
     var viewModel: ItemImageViewModel
 
-    @State
-    private var selectedType: ImageType = .primary
+    @Router
+    private var router
 
     @State
     private var isFilePickerPresented = false
     @State
     private var isPhotoPickerPresented = false
-
+    @State
+    private var selectedType: ImageType = .primary
     @State
     private var uploadError: Error?
 
@@ -59,8 +57,8 @@ struct ItemImagesView: View {
         .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.images)
-        .refreshable {
-            viewModel.refresh()
+        .navigationBarCloseButton {
+            router.dismiss()
         }
         .onFirstAppear {
             viewModel.refresh()
@@ -78,11 +76,8 @@ struct ItemImagesView: View {
         ) {
             switch $0 {
             case let .success(urls):
-                if let url = urls.first,
-                   let data = try? Data(contentsOf: url),
-                   let file = UIImage(data: data)
-                {
-                    viewModel.upload(file)
+                if let url = urls.first {
+                    viewModel.uploadFile(file: url, type: selectedType)
                 }
             case let .failure(fileError):
                 uploadError = fileError
@@ -90,14 +85,17 @@ struct ItemImagesView: View {
         }
         .photoPicker(
             isPresented: $isPhotoPickerPresented,
-            viewModel: viewModel
-        )
+            isSaving: viewModel.background.is(.updating)
+        ) {
+            viewModel.uploadImage(image: $0, type: selectedType)
+        }
         .onReceive(viewModel.events) { event in
             switch event {
             case .deleted:
                 UIDevice.feedback(.success)
             case .updated:
-                break
+                UIDevice.feedback(.success)
+                isPhotoPickerPresented = false
             }
         }
         .errorMessage($uploadError)
@@ -123,7 +121,9 @@ struct ItemImagesView: View {
                 Divider()
                     .edgePadding(.horizontal)
 
-                descriptionView
+                Text(selectedType.description)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
                     .edgePadding(.horizontal)
             }
         }
@@ -159,6 +159,7 @@ struct ItemImagesView: View {
         }
     }
 
+    @ViewBuilder
     private var typePicker: some View {
         Menu {
             ForEach(ImageType.allCases.sorted(using: \.rawValue), id: \.self) { imageType in
@@ -182,20 +183,6 @@ struct ItemImagesView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var descriptionView: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(selectedType.description)
-
-            if !selectedType.isUsed {
-                Label(L10n.imageTypeUnused, systemImage: "exclamationmark.circle.fill")
-                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-            }
-        }
-        .font(.body)
-        .foregroundStyle(.secondary)
-        .transition(.opacity.animation(.linear(duration: 0.1)))
-    }
-
     @ViewBuilder
     private var addImageMenu: some View {
         Button(L10n.search, systemImage: "magnifyingglass") {
@@ -205,61 +192,43 @@ struct ItemImagesView: View {
         Divider()
 
         Button(L10n.uploadFile, systemImage: "document.badge.plus") {
-            viewModel.imageType = selectedType
             isFilePickerPresented = true
         }
 
         Button(L10n.uploadPhoto, systemImage: "photo.badge.plus") {
-            viewModel.imageType = selectedType
             isPhotoPickerPresented = true
         }
     }
 
     @ViewBuilder
     private func imageButton(imageInfo: ImageInfo) -> some View {
-        StateAdapter(initialValue: false) { isPresentingConfirmDeletion in
-            Button {
-                isPresentingConfirmDeletion.wrappedValue = true
-            } label: {
-                ZStack {
-                    Color.secondarySystemFill
+        Button {
+            router.route(to: .itemImageDetail(viewModel: viewModel, imageInfo: imageInfo))
+        } label: {
+            ZStack {
+                Color.secondarySystemFill
 
-                    ImageView(
-                        imageInfo.itemImageSource(
-                            itemID: viewModel.item.id!,
-                            client: viewModel.userSession.client
-                        )
+                ImageView(
+                    imageInfo.itemImageSource(
+                        itemID: viewModel.item.id!,
+                        client: viewModel.userSession.client
                     )
-                    .placeholder { _ in
-                        Image(systemName: "photo")
-                    }
-                    .failure {
-                        Image(systemName: "photo")
-                    }
-                    .pipeline(.Swiftfin.other)
+                )
+                .placeholder { _ in
+                    Image(systemName: "photo")
                 }
-                .posterStyle(posterType)
-                .posterShadow()
+                .failure {
+                    Image(systemName: "photo")
+                }
+                .pipeline(.Swiftfin.other)
             }
-            .confirmationDialog(
-                L10n.delete,
-                isPresented: isPresentingConfirmDeletion,
-                titleVisibility: .visible
-            ) {
-                Button(L10n.delete, role: .destructive) {
-                    viewModel.deleteImageInfo = imageInfo
-                    viewModel.delete()
-                }
-
-                Button(L10n.cancel, role: .cancel) {
-                    isPresentingConfirmDeletion.wrappedValue = false
-                }
-            } message: {
-                Text(L10n.deleteItemConfirmationMessage)
-            }
+            .posterStyle(posterType)
+            .posterShadow()
         }
+        .buttonStyle(.plain)
     }
 
+    @ViewBuilder
     private var addImageButton: some View {
         Menu {
             addImageMenu

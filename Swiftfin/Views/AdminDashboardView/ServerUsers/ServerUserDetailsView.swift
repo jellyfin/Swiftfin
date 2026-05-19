@@ -14,30 +14,23 @@ import SwiftUI
 
 struct ServerUserDetailsView: View {
 
-    // MARK: - Current Date
-
     @CurrentDate
     private var currentDate: Date
-
-    // MARK: - State, Observed, & Environment Objects
 
     @Router
     private var router
 
-    @StateObject
-    private var viewModel: ServerUserAdminViewModel
-
-    @StateObject
-    private var profileViewModel: UserImageViewModel
-
     @State
     private var error: Error?
 
-    // MARK: - Initializer
+    @StateObject
+    private var profileViewModel: UserImageViewModel
+    @StateObject
+    private var viewModel: ServerUserAdminViewModel
 
     init(user: UserDto) {
         self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
-        self._profileViewModel = StateObject(wrappedValue: UserImageViewModel(item: user))
+        self._profileViewModel = StateObject(wrappedValue: UserImageViewModel(user: user))
     }
 
     // MARK: - Body
@@ -58,9 +51,19 @@ struct ServerUserDetailsView: View {
                 }
                 .photoPicker(
                     isPresented: isPhotoPickerPresented,
-                    viewModel: profileViewModel,
-                    presetRatio: .alwaysUsingOnePresetFixedRatio(ratio: 1)
+                    isSaving: profileViewModel.background.is(.updating),
+                    presetRatio: .alwaysUsingOnePresetFixedRatio(ratio: 1),
+                    onSave: profileViewModel.upload
                 )
+                .onReceive(profileViewModel.events) { event in
+                    switch event {
+                    case .updated:
+                        UIDevice.feedback(.success)
+                        isPhotoPickerPresented.wrappedValue = false
+                    case .deleted:
+                        UIDevice.feedback(.success)
+                    }
+                }
             }
 
             Section {
@@ -89,6 +92,7 @@ struct ServerUserDetailsView: View {
                     ChevronButton(L10n.password) {
                         router.route(to: .resetUserPasswordAdmin(userID: userId))
                     }
+
                     ChevronButton(L10n.quickConnect) {
                         router.route(to: .quickConnectAuthorize(user: viewModel.user))
                     }
@@ -99,9 +103,11 @@ struct ServerUserDetailsView: View {
                 ChevronButton(L10n.devices) {
                     router.route(to: .userDeviceAccess(viewModel: viewModel))
                 }
+
                 ChevronButton(L10n.liveTV) {
                     router.route(to: .userLiveTVAccess(viewModel: viewModel))
                 }
+
                 ChevronButton(L10n.media) {
                     router.route(to: .userMediaAccess(viewModel: viewModel))
                 }
@@ -111,9 +117,11 @@ struct ServerUserDetailsView: View {
                 ChevronButton(L10n.parentalRatings) {
                     router.route(to: .userParentalRatings(viewModel: viewModel))
                 }
+
                 ChevronButton(L10n.accessSchedules) {
                     router.route(to: .userEditAccessSchedules(viewModel: viewModel))
                 }
+
                 ChevronButton(L10n.accessTags) {
                     router.route(to: .userEditAccessTags(viewModel: viewModel))
                 }
@@ -132,5 +140,6 @@ struct ServerUserDetailsView: View {
             }
         }
         .errorMessage($error)
+        .errorMessage($profileViewModel.error)
     }
 }

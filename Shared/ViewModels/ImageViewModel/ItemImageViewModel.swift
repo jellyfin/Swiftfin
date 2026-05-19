@@ -10,16 +10,59 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-final class ItemImageViewModel: ImageViewModel<BaseItemDto> {
+@MainActor
+@Stateful
+final class ItemImageViewModel: ViewModel {
+
+    @CasePathable
+    enum Action {
+        case deleteImage(ImageInfo)
+        case refresh
+        case saveRemoteImage(RemoteImageInfo)
+        case uploadFile(file: URL, type: ImageType)
+        case uploadImage(image: UIImage, type: ImageType)
+
+        var transition: Transition {
+            switch self {
+            case .refresh:
+                .to(.initial, then: .content)
+            case .deleteImage:
+                .background(.deleting)
+            case .saveRemoteImage, .uploadFile, .uploadImage:
+                .background(.updating)
+            }
+        }
+    }
+
+    enum BackgroundState {
+        case deleting
+        case updating
+    }
+
+    enum Event {
+        case deleted
+        case updated
+    }
+
+    enum State {
+        case initial
+        case content
+        case error
+    }
+
+    @Published
+    var item: BaseItemDto
 
     @Published
     var images: [ImageType: [ImageInfo]] = [:]
 
-    var imageType: ImageType?
-    var remoteImageInfo: RemoteImageInfo?
-    var deleteImageInfo: ImageInfo?
+    init(item: BaseItemDto) {
+        self.item = item
+        super.init()
+    }
 
-    override func performRefresh() async throws {
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async throws {
         guard let itemID = item.id else { return }
 
         let request = Paths.getItemImageInfos(itemID: itemID)
@@ -33,8 +76,32 @@ final class ItemImageViewModel: ImageViewModel<BaseItemDto> {
             }
     }
 
-    override func performUpload(imageData: Data, contentType: String) async throws {
-        guard let itemID = item.id, let imageType else { return }
+    @Function(\Action.Cases.uploadImage)
+    private func _uploadImage(_ image: UIImage, _ type: ImageType) async throws {
+        let (imageData, contentType) = try image.data()
+        try await upload(imageData: imageData, imageType: type, contentType: contentType)
+        try await _refresh()
+        events.send(.updated)
+    }
+
+    @Function(\Action.Cases.uploadFile)
+    private func _uploadFile(_ file: URL, _ type: ImageType) async throws {
+        guard file.startAccessingSecurityScopedResource() else {
+            logger.error("Unable to access file at \(file)")
+            throw ErrorMessage(L10n.unknownError)
+        }
+        defer { file.stopAccessingSecurityScopedResource() }
+
+        guard let image = try UIImage(data: Data(contentsOf: file)) else {
+            logger.error("Unable to create image from file at \(file)")
+            throw ErrorMessage(L10n.unknownError)
+        }
+
+        try await _uploadImage(image, type)
+    }
+
+    private func upload(imageData: Data, imageType: ImageType, contentType: String) async throws {
+        guard let itemID = item.id else { return }
 
         var request = Paths.setItemImage(
             itemID: itemID,
@@ -44,13 +111,11 @@ final class ItemImageViewModel: ImageViewModel<BaseItemDto> {
         request.headers = ["Content-Type": contentType]
 
         _ = try await userSession.client.send(request)
-
-        try await performRefresh()
     }
 
-    override func performSave() async throws {
+    @Function(\Action.Cases.saveRemoteImage)
+    private func _saveRemoteImage(_ remoteImageInfo: RemoteImageInfo) async throws {
         guard let itemID = item.id,
-              let remoteImageInfo,
               let type = remoteImageInfo.type,
               let imageURL = remoteImageInfo.url else { return }
 
@@ -58,12 +123,13 @@ final class ItemImageViewModel: ImageViewModel<BaseItemDto> {
 
         _ = try await userSession.client.send(request)
 
-        try await performRefresh()
+        try await _refresh()
+        events.send(.updated)
     }
 
-    override func performDelete() async throws {
+    @Function(\Action.Cases.deleteImage)
+    private func _deleteImage(_ deleteImageInfo: ImageInfo) async throws {
         guard let itemID = item.id,
-              let deleteImageInfo,
               let imageType = deleteImageInfo.imageType else { return }
 
         if let imageIndex = deleteImageInfo.imageIndex {
@@ -81,10 +147,9 @@ final class ItemImageViewModel: ImageViewModel<BaseItemDto> {
             try await userSession.client.send(request)
         }
 
-        self.deleteImageInfo = nil
-
         item = try await item.getFullItem(userSession: userSession, sendNotification: true)
 
-        try await performRefresh()
+        try await _refresh()
+        events.send(.deleted)
     }
 }

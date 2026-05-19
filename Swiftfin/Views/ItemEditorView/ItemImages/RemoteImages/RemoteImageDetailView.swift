@@ -97,7 +97,7 @@ struct RemoteImageDetailView: View {
             }
 
             Button(L10n.save) {
-                viewModel.save()
+                viewModel.saveRemoteImage(remoteImageInfo)
             }
             .buttonStyle(.toolbarPill)
             .disabled(viewModel.background.is(.updating))
