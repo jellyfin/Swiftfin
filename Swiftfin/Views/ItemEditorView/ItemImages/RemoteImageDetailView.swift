@@ -14,7 +14,7 @@ struct RemoteImageDetailView: View {
 
     @ObservedObject
     var viewModel: ItemImageViewModel
-    
+
     @Router
     private var router
 

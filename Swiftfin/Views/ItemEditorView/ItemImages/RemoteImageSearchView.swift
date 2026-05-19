@@ -15,7 +15,7 @@ struct RemoteImageSearchView: View {
 
     @ObservedObject
     private var viewModel: ItemImageViewModel
-    
+
     @Router
     private var router
 
