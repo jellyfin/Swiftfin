@@ -212,13 +212,12 @@ extension ListRowMenu where Subtitle == Text, Content == AnyView {
         ItemType.AllCases: RandomAccessCollection
     {
         let selectedCount = selection.wrappedValue.count
-        let subtitleText: String
-        if selectedCount == 0 {
-            subtitleText = L10n.none
+        let subtitleText: String = if selectedCount == 0 {
+            L10n.none
         } else if selectedCount == 1 {
-            subtitleText = selection.wrappedValue.first?.displayTitle ?? L10n.none
+            selection.wrappedValue.first?.displayTitle ?? L10n.none
         } else {
-            subtitleText = "\(selectedCount) selected"
+            "\(selectedCount) selected"
         }
 
         self.title = Text(title)

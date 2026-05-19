@@ -11,7 +11,7 @@ import SwiftUI
 
 extension NavigationRoute {
 
-#if os(tvOS)
+    #if os(tvOS)
     static func filter(type: ItemFilterType, viewModel: FilterViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "filter",
@@ -23,7 +23,7 @@ extension NavigationRoute {
             )
         }
     }
-#else
+    #else
     static func filter(type: ItemFilterType, viewModel: FilterViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "filter",
@@ -35,7 +35,7 @@ extension NavigationRoute {
             )
         }
     }
-#endif
+    #endif
 
     static func library(
         viewModel: PagingLibraryViewModel<some Poster>
