@@ -15,8 +15,6 @@ extension ActiveSessionDetailView {
 
         let transcodeReasons: [TranscodeReason]
 
-        // MARK: - Body
-
         var body: some View {
             VStack(alignment: .center) {
 
