@@ -75,28 +75,6 @@ extension VideoPlayer {
                 .fixedSize(horizontal: false, vertical: true)
                 .isVisible(isOverlayOrScrubbingVisible)
             }
-        }
-
-        @ViewBuilder
-        private var pauseOverlay: some View {
-            if manager.playbackRequestStatus == .paused {
-                Label(L10n.pause, systemImage: "pause.fill")
-                    .transition(pauseTransition)
-                    .font(.system(size: 72, weight: .bold, design: .default))
-                    .labelStyle(.iconOnly)
-            }
-        }
-
-        var body: some View {
-            mainContent
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .edgePadding(.horizontal)
-                .overlay {
-                    pauseOverlay
-                }
-            .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)
-            .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
-            .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
             .alert(L10n.closePlayer, isPresented: $containerState.isPresentingCloseConfirmation) {
                 Button(L10n.cancel, role: .cancel) {}
                 Button(L10n.ok, role: .destructive) {
@@ -132,6 +110,28 @@ extension VideoPlayer {
                     }
                 }
             }
+        }
+
+        @ViewBuilder
+        private var pauseOverlay: some View {
+            if manager.playbackRequestStatus == .paused {
+                Label(L10n.pause, systemImage: "pause.fill")
+                    .transition(pauseTransition)
+                    .font(.system(size: 72, weight: .bold, design: .default))
+                    .labelStyle(.iconOnly)
+            }
+        }
+
+        var body: some View {
+            mainContent
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .edgePadding(.horizontal)
+                .overlay {
+                    pauseOverlay
+                }
+                .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)
+                .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
+                .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
         }
     }
 }
