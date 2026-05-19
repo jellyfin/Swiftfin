@@ -109,7 +109,10 @@ extension SwiftfinApp {
         @MainActor
         private func applyAccentColor(_ color: Color) {
             Defaults[.accentColor] = color
+
+            #if os(iOS)
             UIApplication.shared.setAccentColor(color.uiColor)
+            #endif
         }
 
         @MainActor
