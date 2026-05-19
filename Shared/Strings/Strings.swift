@@ -782,8 +782,8 @@ internal enum L10n {
   internal static let idle = L10n.tr("Localizable", "idle", fallback: "Idle")
   /// Illustrator
   internal static let illustrator = L10n.tr("Localizable", "illustrator", fallback: "Illustrator")
-  /// Image
-  internal static let image = L10n.tr("Localizable", "image", fallback: "Image")
+  /// Images
+  internal static let image = L10n.tr("Localizable", "image", fallback: "Images")
   /// Images
   internal static let images = L10n.tr("Localizable", "images", fallback: "Images")
   /// Manage and customize the images associated with this media item. Select an image type to view, add, or replace images.
@@ -1170,8 +1170,8 @@ internal enum L10n {
   internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.")
   /// Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.
   internal static let playerSwiftfinDescription = L10n.tr("Localizable", "playerSwiftfinDescription", fallback: "Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.")
-  /// Play from beginning
-  internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play from beginning")
+  /// Play From beginning
+  internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From beginning")
   /// Playlist
   internal static let playlist = L10n.tr("Localizable", "playlist", fallback: "Playlist")
   /// Playlists
