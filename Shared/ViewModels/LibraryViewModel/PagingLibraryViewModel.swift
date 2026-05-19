@@ -104,6 +104,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful, Ha
     var elements: IdentifiedArray<Int, Element>
     @Published
     var state: State = .initial
+    @Published
+    var totalCount: Int = 0
 
     final let filterViewModel: FilterViewModel?
     final let parent: (any LibraryParent)?
@@ -339,6 +341,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful, Ha
 
         await MainActor.run {
             elements.removeAll()
+            totalCount = 0
         }
 
         try await getNextPage()
