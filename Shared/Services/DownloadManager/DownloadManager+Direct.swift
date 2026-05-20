@@ -13,7 +13,7 @@ extension DownloadManager {
 
     func startRawDownload(id: String, userSession: UserSession) throws -> URLSessionDownloadTask {
         let request = Paths.getDownload(itemID: id)
-        guard let url = userSession.client.fullURL(with: request, queryAPIKey: true) else {
+        guard let url = userSession.client.url(with: request, queryAPIKey: true) else {
             throw ErrorMessage("Could not build download URL for \(id)")
         }
         return urlSession.downloadTask(with: url)

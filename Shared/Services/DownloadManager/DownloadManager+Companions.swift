@@ -31,7 +31,7 @@ extension DownloadManager {
 
     private func downloadSubtitle(stream: MediaStream, into folder: URL, userSession: UserSession) async {
         guard let deliveryURL = stream.deliveryURL else { return }
-        guard let url = userSession.client.fullURL(with: deliveryURL) else { return }
+        let url = userSession.client.url(path: deliveryURL)
 
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
