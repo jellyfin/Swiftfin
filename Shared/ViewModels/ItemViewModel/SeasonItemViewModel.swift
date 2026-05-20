@@ -30,7 +30,7 @@ final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiab
         var parameters = Paths.GetEpisodesParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
-        parameters.isMissing = userSession.user.data.configuration?.isDisplayMissingEpisodes == true
+        parameters.isMissing = userSession?.user.data.configuration?.isDisplayMissingEpisodes == true
         parameters.seasonID = parent!.id
 
 //        parameters.startIndex = page * pageSize

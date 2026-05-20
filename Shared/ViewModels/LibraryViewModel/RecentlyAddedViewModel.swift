@@ -51,7 +51,7 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         // nothing we can do about it.
         parameters.excludeItemIDs = elements.compactMap(\.id)
 
-        if userSession.user.data.configuration?.isHidePlayedInLatest == true {
+        if userSession?.user.data.configuration?.isHidePlayedInLatest == true {
             parameters.isPlayed = false
         }
 
