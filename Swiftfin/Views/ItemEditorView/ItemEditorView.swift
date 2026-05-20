@@ -66,7 +66,7 @@ struct ItemEditorView: View {
                 }
 
                 ChevronButton(L10n.images) {
-                    router.route(to: .itemImages(viewModel: ItemImagesViewModel(item: viewModel.item)))
+                    router.route(to: .itemImages(viewModel: ItemImageViewModel(item: viewModel.item)))
                 }
 
                 ChevronButton(L10n.metadata) {

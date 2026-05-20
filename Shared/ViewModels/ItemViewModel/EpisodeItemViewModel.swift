@@ -49,16 +49,13 @@ final class EpisodeItemViewModel: ItemViewModel {
 
         guard let seriesID = item.seriesID else { throw ErrorMessage("Expected series ID missing") }
 
-        var parameters = Paths.GetItemsByUserIDParameters()
+        var parameters = Paths.GetItemsParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.ids = [seriesID]
         parameters.limit = 1
 
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
-        )
+        let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         guard let seriesItem = response.value.items?.first else { throw ErrorMessage("Expected series item missing") }

@@ -14,9 +14,6 @@ extension ImageInfo: @retroactive Identifiable {
     public var id: Int {
         hashValue
     }
-}
-
-extension ImageInfo {
 
     func itemImageSource(itemID: String, client: JellyfinClient) -> ImageSource {
         let parameters = Paths.GetItemImageParameters(
@@ -29,7 +26,7 @@ extension ImageInfo {
             parameters: parameters
         )
 
-        let itemImageURL = client.fullURL(with: request)
+        let itemImageURL = client.url(with: request)
 
         return ImageSource(url: itemImageURL)
     }

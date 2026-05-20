@@ -11,7 +11,7 @@ import UIKit
 
 struct SFSymbolButton: UIViewRepresentable {
 
-    private var onSelect: () -> Void
+    private let action: () -> Void
     private let pointSize: CGFloat
     private let systemName: String
     private let systemNameFocused: String?
@@ -34,7 +34,7 @@ struct SFSymbolButton: UIViewRepresentable {
         configuration.cornerStyle = .capsule
 
         let buttonAction = UIAction(title: "") { _ in
-            self.onSelect()
+            self.action()
         }
 
         let button = UIButton(configuration: configuration, primaryAction: buttonAction)
@@ -54,17 +54,14 @@ extension SFSymbolButton {
     init(
         systemName: String,
         systemNameFocused: String? = nil,
-        pointSize: CGFloat = 32
+        pointSize: CGFloat = 32,
+        action: @escaping () -> Void = {}
     ) {
         self.init(
-            onSelect: {},
+            action: action,
             pointSize: pointSize,
             systemName: systemName,
             systemNameFocused: systemNameFocused
         )
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

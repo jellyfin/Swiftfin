@@ -69,8 +69,7 @@ extension ServerState {
     }
 
     var splashScreenImageSource: ImageSource {
-        let request = Paths.getSplashscreen()
-        return ImageSource(url: client.fullURL(with: request))
+        ImageSource(url: client.url(with: Paths.getSplashscreen()))
     }
 
     @MainActor
@@ -97,7 +96,7 @@ extension ServerState {
         let publicInfo = StoredValues[.Server.publicInfo(id: self.id)]
 
         if let version = publicInfo.version {
-            return JellyfinClient.Version(stringLiteral: version).majorMinor >= JellyfinClient.sdkVersion.majorMinor
+            return JellyfinClient.Version(stringLiteral: version).majorMinor >= client.version.majorMinor
         } else {
             return false
         }

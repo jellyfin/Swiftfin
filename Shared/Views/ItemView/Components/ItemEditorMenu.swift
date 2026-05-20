@@ -72,7 +72,7 @@ struct ItemEditorMenu: View {
                  isPresentingDeleteConfirmation.wrappedValue = true
              }
              .confirmationDialog(
-                 L10n.deleteItemConfirmationMessage,
+                 L10n.deleteItemConfirmation,
                  isPresented: $isPresentingDeleteConfirmation,
                  titleVisibility: .visible
              ) {

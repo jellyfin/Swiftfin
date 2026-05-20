@@ -73,7 +73,7 @@ extension UserState {
         }
     }
 
-    var accessPolicy: UserAccessPolicy {
+    var accessPolicy: LocalUserAccessPolicy {
         get {
             StoredValues[.User.accessPolicy(id: id)]
         }
@@ -143,7 +143,7 @@ extension UserState {
         )
         let request = Paths.getUserImage(parameters: parameters)
 
-        let profileImageURL = client.fullURL(with: request)
+        let profileImageURL = client.url(with: request)
 
         return ImageSource(url: profileImageURL)
     }

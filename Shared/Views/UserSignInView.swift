@@ -22,8 +22,6 @@ struct UserSignInView: View {
 
     @Environment(\.localUserAuthenticationAction)
     private var authenticationAction
-    @Environment(\.quickConnectAction)
-    private var quickConnectAction
 
     @FocusState
     private var focusedTextField: Field?
@@ -32,7 +30,7 @@ struct UserSignInView: View {
     private var router
 
     @State
-    private var accessPolicy: UserAccessPolicy = .none
+    private var accessPolicy: LocalUserAccessPolicy = .none
     @State
     private var existingUser: UserSignInViewModel.UserStateDataPair? = nil
     @State
@@ -83,25 +81,6 @@ struct UserSignInView: View {
         }
     }
 
-    private func runQuickConnect() {
-        Task {
-            do {
-                guard let secret = try await quickConnectAction?(client: viewModel.server.client) else {
-                    logger.critical("QuickConnect called without necessary action!")
-                    throw ErrorMessage(L10n.unknownError)
-                }
-                await viewModel.signInQuickConnect(
-                    secret: secret
-                )
-            } catch is CancellationError {
-                // ignore
-            } catch {
-                logger.error("QuickConnect failed with error: \(error.localizedDescription)")
-                await viewModel.error(ErrorMessage(L10n.taskFailed))
-            }
-        }
-    }
-
     private func processEvaluatedPolicy(
         _ evaluatedPolicy: any EvaluatedLocalUserAccessPolicy
     ) -> any EvaluatedLocalUserAccessPolicy {
@@ -122,6 +101,7 @@ struct UserSignInView: View {
         Section {
             TextField(L10n.username, text: $username)
                 .autocorrectionDisabled()
+                .textContentType(.username)
                 .textInputAutocapitalization(.never)
                 .focused($focusedTextField, equals: .username)
                 .onSubmit {
@@ -142,6 +122,7 @@ struct UserSignInView: View {
                 )
             }
             .autocorrectionDisabled()
+            .textContentType(.password)
             .textInputAutocapitalization(.never)
             .focused($focusedTextField, equals: .password)
         } header: {
@@ -184,10 +165,15 @@ struct UserSignInView: View {
 
         if viewModel.isQuickConnectEnabled {
             Section {
-                Button(
-                    L10n.quickConnect,
-                    action: runQuickConnect
-                )
+                Button(L10n.quickConnect) {
+                    router.route(
+                        to: .quickConnect(
+                            client: viewModel.server.client
+                        ) { secret in
+                            await viewModel.signInQuickConnect(secret: secret)
+                        }
+                    )
+                }
                 .buttonStyle(.primary)
                 .frame(maxHeight: 75)
                 .disabled(viewModel.state == .signingIn)
@@ -224,23 +210,19 @@ struct UserSignInView: View {
                         password = ""
                         focusedTextField = .password
                     } label: {
-                        LabeledContent {
-                            EmptyView()
-                        } label: {
-                            HStack {
-                                UserProfileImage(
-                                    userID: user.id,
-                                    source: user.profileImageSource(
-                                        client: viewModel.server.client,
-                                        maxWidth: 120
-                                    )
+                        HStack {
+                            UserProfileImage(
+                                userID: user.id,
+                                source: user.profileImageSource(
+                                    client: viewModel.server.client,
+                                    maxWidth: 50
                                 )
-                                .frame(width: 50, height: 50)
+                            )
+                            .frame(width: 50, height: 50)
 
-                                Text(user.name ?? .emptyDash)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(1)
-                            }
+                            Text(user.name ?? .emptyDash)
+                                .fontWeight(.semibold)
+                                .lineLimit(1)
                         }
                     }
                 }

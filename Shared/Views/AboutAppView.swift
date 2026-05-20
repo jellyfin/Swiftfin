@@ -37,11 +37,6 @@ struct AboutAppView: View {
                     L10n.version,
                     value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
-
-                LabeledContent(
-                    L10n.serverRequirement,
-                    value: JellyfinClient.sdkVersion.description
-                )
             }
 
             Section {
@@ -58,7 +53,7 @@ struct AboutAppView: View {
 
                 ChevronButton(
                     L10n.license,
-                    subtitle: L10n.mlp2,
+                    content: L10n.mlp2,
                     systemName: "text.document",
                     external: true
                 ) {

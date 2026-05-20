@@ -6,22 +6,28 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 struct ListRowMenu<Content: View, Subtitle: View>: View {
 
-    // MARK: - Focus State
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
 
     @FocusState
     private var isFocused: Bool
-
-    // MARK: - Properties
 
     private let title: Text
     private let subtitle: Subtitle?
     private let content: () -> Content
 
-    // MARK: - Body
+    private func buttonShape(cornerRadius: Double) -> AnyShape {
+        if #available(tvOS 26.0, *), isLiquidGlassEnabled {
+            AnyShape(Capsule())
+        } else {
+            AnyShape(RoundedRectangle(cornerRadius: cornerRadius))
+        }
+    }
 
     var body: some View {
         Menu(content: content) {
@@ -34,7 +40,6 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 
     @ViewBuilder
     private var buttonView: some View {
-        // TODO: Remove when 26+ is our minimum
         if #available(tvOS 26.0, *) {
             HStack {
                 title
@@ -58,10 +63,10 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12.5)
+                    buttonShape(cornerRadius: 12.5)
                         .fill(isFocused ? Color.white : Color.clear)
                     if isFocused {
-                        RoundedRectangle(cornerRadius: 12.5)
+                        buttonShape(cornerRadius: 12.5)
                             .fill(Color.white.opacity(0.8))
                             .scaleEffect(x: 1.0, y: isFocused ? 1.10 : 1.0, anchor: .center)
                     }
@@ -92,7 +97,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                buttonShape(cornerRadius: 10)
                     .fill(isFocused ? Color.white : Color.clear)
             )
             .scaleEffect(isFocused ? 1.04 : 1.0)
@@ -106,37 +111,59 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 // Base initializer
 extension ListRowMenu where Subtitle == Text? {
 
-    init(_ title: Text, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: Text,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
         self.subtitle = nil
         self.content = content
     }
 
-    init(_ title: Text, subtitle: Text?, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: Text,
+        subtitle: Text?,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
         self.subtitle = subtitle
         self.content = content
     }
 
-    init(_ title: Text, subtitle: String?, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: Text,
+        subtitle: String?,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
         self.subtitle = subtitle.map { Text($0) }
         self.content = content
     }
 
-    init(_ title: String, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: String,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = Text(title)
         self.subtitle = nil
         self.content = content
     }
 
-    init(_ title: String, subtitle: String?, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: String,
+        subtitle: String?,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = Text(title)
         self.subtitle = subtitle.map { Text($0) }
         self.content = content
     }
 
-    init(_ title: String, subtitle: Text?, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: String,
+        subtitle: Text?,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = Text(title)
         self.subtitle = subtitle
         self.content = content
@@ -146,13 +173,21 @@ extension ListRowMenu where Subtitle == Text? {
 // Custom view subtitles
 extension ListRowMenu {
 
-    init(_ title: String, @ViewBuilder subtitle: @escaping () -> Subtitle, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: String,
+        @ViewBuilder subtitle: @escaping () -> Subtitle,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = Text(title)
         self.subtitle = subtitle()
         self.content = content
     }
 
-    init(_ title: Text, @ViewBuilder subtitle: @escaping () -> Subtitle, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        _ title: Text,
+        @ViewBuilder subtitle: @escaping () -> Subtitle,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
         self.subtitle = subtitle()
         self.content = content

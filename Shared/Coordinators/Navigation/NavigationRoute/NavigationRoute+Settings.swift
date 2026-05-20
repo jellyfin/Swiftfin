@@ -171,13 +171,15 @@ extension NavigationRoute {
         NavigationRoute(
             id: "localUserSecurity"
         ) {
-            LocalUserSecurityView()
+            WithUserAuthentication {
+                LocalUserSecurityView()
+            }
         }
     }
 
-    static func localUserSettings(viewModel: SettingsViewModel) -> NavigationRoute {
+    static func localUserSettings(user: UserDto) -> NavigationRoute {
         NavigationRoute(id: "localUserSettings") {
-            LocalUserSettingsView(viewModel: viewModel)
+            LocalUserSettingsView(user: user)
         }
     }
 

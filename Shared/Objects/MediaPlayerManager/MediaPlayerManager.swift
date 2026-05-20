@@ -239,7 +239,7 @@ final class MediaPlayerManager: ViewModel {
             return
         }
 
-        if let nextItem = queue?.nextItem, Defaults[.VideoPlayer.autoPlayEnabled] {
+        if let nextItem = queue?.nextItem, userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true {
             await self.playNewItem(provider: nextItem)
         } else {
             await self.stop()

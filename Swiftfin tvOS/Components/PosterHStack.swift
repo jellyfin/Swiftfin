@@ -18,7 +18,7 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
     private var type: PosterDisplayType
     private var label: (Element) -> any View
     private var trailingContent: () -> any View
-    private var action: (Element) -> Void
+    private let action: (Element) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {

@@ -20,39 +20,18 @@ extension NavigationRoute {
         }
     }
 
-    static func quickConnect(quickConnect: QuickConnect) -> NavigationRoute {
+    static func quickConnect(client: JellyfinClient, action: @escaping (String) async -> Void) -> NavigationRoute {
         NavigationRoute(
             id: "quickConnectView",
             style: .sheet
         ) {
-            QuickConnectView(quickConnect: quickConnect)
+            QuickConnectView(client: client, action: action)
         }
     }
 
     #if os(iOS)
-    static func userProfileImage(viewModel: UserProfileImageViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "userProfileImage",
-            style: .sheet
-        ) {
-            UserProfileImagePickerView(viewModel: viewModel)
-        }
-    }
-
-    static func userProfileImageCrop(viewModel: UserProfileImageViewModel, image: UIImage) -> NavigationRoute {
-        NavigationRoute(
-            id: "cropImage",
-            style: .sheet
-        ) {
-            UserProfileImageCropView(
-                viewModel: viewModel,
-                image: image
-            )
-        }
-    }
-
     // TODO: rename to `localUserAccessPolicy`
-    static func userSecurity(pinHint: Binding<String>, accessPolicy: Binding<UserAccessPolicy>) -> NavigationRoute {
+    static func userSecurity(pinHint: Binding<String>, accessPolicy: Binding<LocalUserAccessPolicy>) -> NavigationRoute {
         NavigationRoute(
             id: "userSecurity",
             style: .sheet
@@ -71,9 +50,7 @@ extension NavigationRoute {
             style: .sheet
         ) {
             WithUserAuthentication {
-                WithQuickConnect {
-                    UserSignInView(server: server)
-                }
+                UserSignInView(server: server)
             }
         }
     }

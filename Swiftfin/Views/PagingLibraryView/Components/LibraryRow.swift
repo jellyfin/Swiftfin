@@ -19,19 +19,9 @@ extension PagingLibraryView {
         @Namespace
         private var namespace
 
-        private let item: Element
-        private var action: (Namespace.ID) -> Void
-        private let posterType: PosterDisplayType
-
-        init(
-            item: Element,
-            posterType: PosterDisplayType,
-            action: @escaping (Namespace.ID) -> Void
-        ) {
-            self.item = item
-            self.action = action
-            self.posterType = posterType
-        }
+        let item: Element
+        let posterType: PosterDisplayType
+        let action: (Namespace.ID) -> Void
 
         @ViewBuilder
         private func itemAccessoryView(item: BaseItemDto) -> some View {
@@ -110,8 +100,7 @@ extension PagingLibraryView {
                 rowLeading
             } content: {
                 rowContent
-            }
-            .onSelect {
+            } action: {
                 action(namespace)
             }
             .backport

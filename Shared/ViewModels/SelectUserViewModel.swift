@@ -6,10 +6,8 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Factory
 import Foundation
-import JellyfinAPI
 import KeychainSwift
 import OrderedCollections
 
@@ -17,21 +15,43 @@ import OrderedCollections
 @Stateful
 final class SelectUserViewModel: ViewModel {
 
-    @Injected(\.keychainService)
-    var keychain
-
     @CasePathable
     enum Action {
         case deleteUsers(Set<UserState>)
         case error
         case getServers
         case signIn(UserState, pin: String)
+
+        var transition: Transition {
+            switch self {
+            case .getServers:
+                .to(.loading, then: .content)
+                    .whenBackground(.refreshing)
+            case .deleteUsers:
+                .background(.refreshing)
+            case .error, .signIn:
+                .none
+            }
+        }
+    }
+
+    enum BackgroundState {
+        case refreshing
     }
 
     enum Event {
         case error
         case signedIn(UserState)
     }
+
+    enum State {
+        case initial
+        case loading
+        case content
+    }
+
+    @Injected(\.keychainService)
+    private var keychain
 
     @Published
     private(set) var servers: OrderedDictionary<ServerState, [UserState]> = [:]

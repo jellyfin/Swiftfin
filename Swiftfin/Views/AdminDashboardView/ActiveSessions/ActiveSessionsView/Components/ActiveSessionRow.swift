@@ -18,9 +18,9 @@ extension ActiveSessionsView {
         private var currentDate: Date
 
         @ObservedObject
-        private var box: BindingBox<SessionInfoDto?>
+        var box: BindingBox<SessionInfoDto?>
 
-        private let onSelect: () -> Void
+        let action: () -> Void
 
         private var session: SessionInfoDto {
             box.value ?? .init()
@@ -28,11 +28,6 @@ extension ActiveSessionsView {
 
         private var isPlaying: Bool {
             session.nowPlayingItem != nil && session.playState != nil
-        }
-
-        init(box: BindingBox<SessionInfoDto?>, onSelect action: @escaping () -> Void) {
-            self.box = box
-            self.onSelect = action
         }
 
         @ViewBuilder
@@ -125,8 +120,9 @@ extension ActiveSessionsView {
                 } else {
                     idleSessionDetails
                 }
+            } action: {
+                action()
             }
-            .onSelect(perform: onSelect)
         }
     }
 }

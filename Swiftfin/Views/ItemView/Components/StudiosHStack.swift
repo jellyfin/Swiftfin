@@ -16,13 +16,13 @@ extension ItemView {
         @Router
         private var router
 
-        let studios: [NameGuidPair]
+        let studios: [NameIDPair]
 
         var body: some View {
             PillHStack(
                 title: L10n.studios,
                 items: studios
-            ).onSelect { studio in
+            ) { studio in
                 let viewModel = ItemLibraryViewModel(parent: studio)
                 router.route(to: .library(viewModel: viewModel))
             }

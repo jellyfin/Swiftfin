@@ -231,14 +231,11 @@ extension BaseItemDto {
     ) async throws -> BaseItemDto? {
         guard type == .program else { return nil }
 
-        var parameters = Paths.GetItemsByUserIDParameters()
+        var parameters = Paths.GetItemsParameters()
         parameters.fields = .MinimumFields
         parameters.ids = [program.channelID ?? ""]
 
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
-        )
+        let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         return response.value.items?.first
@@ -399,7 +396,7 @@ extension BaseItemDto {
 
                 let imageURL = userSession
                     .client
-                    .fullURL(with: request)
+                    .url(with: request)
 
                 return .init(
                     chapterInfo: chapter,

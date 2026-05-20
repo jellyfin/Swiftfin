@@ -84,6 +84,7 @@ extension Defaults.Keys {
 
     static let selectUserDisplayType: Key<LibraryDisplayType> = AppKey("selectUserDisplayType", default: .grid)
     static let selectUserServerSelection: Key<SelectUserServerSelection> = AppKey("selectUserServerSelection", default: .all)
+    static let selectUserSortOrder: Key<SelectUserSortOrder> = AppKey("selectUserSortOrder", default: .name)
     static let selectUserAllServersSplashscreen: Key<SelectUserServerSelection> = AppKey("selectUserAllServersSplashscreen", default: .all)
     static let selectUserUseSplashscreen: Key<Bool> = AppKey("selectUserUseSplashscreen", default: true)
 
