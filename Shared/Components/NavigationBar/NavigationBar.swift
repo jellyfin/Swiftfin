@@ -116,7 +116,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             Text(self._titleSubtitle.title)
                 .fontWeight(.semibold)
                 .lineLimit(1)
-                .frame(minWidth: max(50, subtitleContentSize.width))
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .overlay(alignment: .bottomLeading) {
                     if let subtitle = self._titleSubtitle.subtitle {
                         _subtitle(subtitle)
