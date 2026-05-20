@@ -12,15 +12,15 @@ import JellyfinAPI
 extension DownloadTask {
 
     func makeURLSessionTask(in urlSession: URLSession, userSession: UserSession) throws -> URLSessionDownloadTask {
-        let urlTask: URLSessionDownloadTask
-        if let resumeData {
-            urlTask = urlSession.downloadTask(withResumeData: resumeData)
+        let urlTask: URLSessionDownloadTask = if let resumeData {
+            urlSession.downloadTask(withResumeData: resumeData)
         } else {
-            let request = Paths.getDownload(itemID: id)
-            guard let url = userSession.client.url(with: request, queryAPIKey: true) else {
-                throw ErrorMessage("Could not build download URL for \(id)")
+            switch type {
+            case .direct:
+                try makeDirectURLSessionTask(in: urlSession, userSession: userSession)
+            case let .transcode(bitrate):
+                try makeTranscodeURLSessionTask(in: urlSession, userSession: userSession, bitrate: bitrate)
             }
-            urlTask = urlSession.downloadTask(with: url)
         }
         urlTask.taskDescription = id
         return urlTask
@@ -36,5 +36,13 @@ extension DownloadTask {
         try? FileManager.default.removeItem(at: destination)
         try FileManager.default.moveItem(at: location, to: destination)
         return filename
+    }
+
+    private func makeDirectURLSessionTask(in urlSession: URLSession, userSession: UserSession) throws -> URLSessionDownloadTask {
+        let request = Paths.getDownload(itemID: id)
+        guard let url = userSession.client.url(with: request, queryAPIKey: true) else {
+            throw ErrorMessage("Could not build download URL for \(id)")
+        }
+        return urlSession.downloadTask(with: url)
     }
 }

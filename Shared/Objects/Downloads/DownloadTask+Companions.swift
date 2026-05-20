@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CryptoKit
 import Foundation
 import JellyfinAPI
 import Logging
@@ -46,10 +47,7 @@ extension DownloadTask {
             let (data, response) = try await URLSession.shared.data(from: sourceURL)
 
             let ext: String = response.mimeSubtype ?? "jpg"
-            let safeName = pathKey
-                .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-                .replacingOccurrences(of: "/", with: "_")
-            let filename = "\(safeName).\(ext)"
+            let filename = "\(Self.filenameHash(pathKey)).\(ext)"
             let destination = imagesFolder.appendingPathComponent(filename)
             try? FileManager.default.removeItem(at: destination)
             try data.write(to: destination)
@@ -70,6 +68,11 @@ extension DownloadTask {
             Logger.swiftfin().warning("Failed to download image \(pathKey): \(error.localizedDescription)")
             return nil
         }
+    }
+
+    private static func filenameHash(_ pathKey: String) -> String {
+        let digest = SHA256.hash(data: Data(pathKey.utf8))
+        return digest.prefix(8).map { String(format: "%02x", $0) }.joined()
     }
 
     func downloadSubtitles(item: BaseItemDto, userSession: UserSession) async {

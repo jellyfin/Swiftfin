@@ -25,11 +25,11 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
-    static func downloadItem(item: DownloadItem) -> NavigationRoute {
+    static func downloadItem(entry: DownloadEntry) -> NavigationRoute {
         NavigationRoute(
             id: "downloadItem"
         ) {
-            DownloadItemView(item: item)
+            DownloadItemView(entry: entry)
         }
     }
     #endif

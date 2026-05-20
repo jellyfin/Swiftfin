@@ -11,16 +11,17 @@ import JellyfinAPI
 
 extension DownloadManager: URLSessionDownloadDelegate {
 
-    func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        DispatchQueue.main.async {
-            guard let identifier = session.configuration.identifier else { return }
+    nonisolated func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
+        let identifier = session.configuration.identifier
+        MainActor.assumeIsolated {
+            guard let identifier else { return }
             if let handler = Self.backgroundCompletionHandlers.removeValue(forKey: identifier) {
                 handler()
             }
         }
     }
 
-    func urlSession(
+    nonisolated func urlSession(
         _ session: URLSession,
         downloadTask: URLSessionDownloadTask,
         didWriteData bytesWritten: Int64,
@@ -29,8 +30,8 @@ extension DownloadManager: URLSessionDownloadDelegate {
     ) {
         guard let taskID = downloadTask.taskDescription else { return }
 
-        DispatchQueue.main.async {
-            self.update(id: taskID, throttlePersist: true) { task in
+        MainActor.assumeIsolated {
+            self.update(id: taskID, throttle: true) { task in
                 task.bytesDownloaded = totalBytesWritten
                 if totalBytesExpectedToWrite > 0 {
                     task.bytesTotal = totalBytesExpectedToWrite
@@ -39,63 +40,48 @@ extension DownloadManager: URLSessionDownloadDelegate {
         }
     }
 
-    func urlSession(
+    nonisolated func urlSession(
         _ session: URLSession,
         downloadTask: URLSessionDownloadTask,
         didFinishDownloadingTo location: URL
     ) {
         guard let taskID = downloadTask.taskDescription else { return }
-        guard let task = self.task(id: taskID) else { return }
-        guard let userSession else { return }
-
         let response = downloadTask.response
 
-        do {
-            let filename = try task.moveDownloadedMedia(from: location, response: response)
+        MainActor.assumeIsolated {
+            guard let task = self.task(id: taskID) else { return }
+            guard let userSession = self.userSession else { return }
 
-            DispatchQueue.main.async {
-                self.update(id: taskID) { task in
-                    task.resumeData = nil
-                }
-            }
+            do {
+                let filename = try task.moveDownloadedMedia(from: location, response: response)
+                self.update(id: taskID) { $0.resumeData = nil }
 
-            guard let item = task.item else {
-                logger.error("Cannot finalize \(taskID): item JSON failed to decode")
-                DispatchQueue.main.async {
-                    self.update(id: taskID) { task in
-                        task.state = .error(.unknown("Failed to read item metadata"))
+                Task {
+                    let item = task.item
+                    let images = await task.downloadImages(item: item)
+                    await task.downloadSubtitles(item: item, userSession: userSession)
+                    await MainActor.run {
+                        self.complete(id: taskID, mediaRelativePath: filename, images: images)
                     }
                 }
-                return
-            }
-
-            Task {
-                let images = await task.downloadImages(item: item)
-                await task.downloadSubtitles(item: item, userSession: userSession)
-                await MainActor.run {
-                    self.graduate(taskID: taskID, mediaRelativePath: filename, images: images)
-                }
-            }
-        } catch {
-            logger.error("Failed to move downloaded media for \(taskID): \(error.localizedDescription)")
-            DispatchQueue.main.async {
-                self.update(id: taskID) { task in
-                    task.state = .error(DownloadError(error))
-                }
+            } catch {
+                self.logger.error("Failed to move downloaded media for \(taskID): \(error.localizedDescription)")
+                self.update(id: taskID) { $0.state = .error(DownloadError(error)) }
             }
         }
     }
 
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    nonisolated func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let taskID = task.taskDescription else { return }
+        let nsError = error as NSError?
+        let resumeData = nsError?.userInfo[NSURLSessionDownloadTaskResumeData] as? Data
 
-        DispatchQueue.main.async {
-            self.activeURLTask = nil
-            if self.activeTaskID == taskID { self.activeTaskID = nil }
+        MainActor.assumeIsolated {
+            if self.active?.id == taskID { self.active = nil }
 
-            if let error = error as NSError? {
-                if error.domain == NSURLErrorDomain, error.code == NSURLErrorCancelled {
-                    if let resumeData = error.userInfo[NSURLSessionDownloadTaskResumeData] as? Data {
+            if let nsError {
+                if nsError.domain == NSURLErrorDomain, nsError.code == NSURLErrorCancelled {
+                    if let resumeData {
                         self.update(id: taskID) { task in
                             task.resumeData = resumeData
                             task.state = .paused
@@ -103,7 +89,7 @@ extension DownloadManager: URLSessionDownloadDelegate {
                     }
                 } else {
                     self.update(id: taskID) { task in
-                        task.state = .error(DownloadError(error))
+                        task.state = .error(DownloadError(nsError))
                     }
                 }
             }

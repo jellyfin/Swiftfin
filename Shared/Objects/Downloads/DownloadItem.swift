@@ -63,16 +63,16 @@ struct DownloadItem: Codable, Hashable, Identifiable, Displayable, LibraryIdenti
 
     func localFileURL(for serverURL: URL) -> URL? {
         let path = serverURL.path
-        let match = images.first(where: { $0.pathKey == path })
-            ?? images.first(where: { image in
-                guard let last = serverURL.pathComponents.last,
-                      let kind = ImageType(rawValue: last.lowercased())
-                else { return false }
-                return image.legacyKind == kind
-            })
-        guard let match else { return nil }
-        let url = imagesFolder.appendingPathComponent(match.relativePath)
-        return FileManager.default.fileExists(atPath: url.path) ? url : nil
+        if let match = images.first(where: { $0.pathKey == path }) {
+            return imagesFolder.appendingPathComponent(match.relativePath)
+        }
+        if let last = serverURL.pathComponents.last,
+           let kind = ImageType(rawValue: last.lowercased()),
+           let match = images.first(where: { $0.pathKey == "legacy:\(kind.rawValue)" })
+        {
+            return imagesFolder.appendingPathComponent(match.relativePath)
+        }
+        return nil
     }
 
     func compare(to other: DownloadItem, by sort: ItemSortBy) -> Bool {

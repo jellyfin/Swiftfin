@@ -24,7 +24,7 @@ struct DownloadButton: View {
     init(item: BaseItemDto) {
         self.item = item
         if let id = item.id {
-            self._state = State(initialValue: Container.shared.downloadManager().state(forItemID: id))
+            self._state = State(initialValue: Container.shared.downloadManager().state(for: id))
         }
     }
 
@@ -103,7 +103,7 @@ struct DownloadButton: View {
                         downloadManager.cancel(id: id)
                     }
                 }
-            case .downloaded:
+            case .completed:
                 Button(L10n.delete, systemImage: "trash", role: .destructive) {
                     isPresentingDeleteConfirmation.wrappedValue = true
                 }
@@ -131,7 +131,7 @@ struct DownloadButton: View {
                     Image(systemName: "arrow.down.circle.badge.xmark")
                         .foregroundStyle(.red)
                 }
-            case .downloaded:
+            case .completed:
                 Image(systemName: "arrow.down.circle.fill")
                     .symbolRenderingMode(.palette)
                     .foregroundStyle(.white, .green)

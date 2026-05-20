@@ -16,20 +16,16 @@ enum DownloadState: Codable, Hashable {
     case error(DownloadError)
 }
 
+enum DownloadType: Hashable, Codable {
+    case direct
+    case transcode(PlaybackBitrate)
+}
+
 struct DownloadImage: Hashable {
 
     let pathKey: String
     let relativePath: String
     let aspectRatio: CGFloat?
-
-    let legacyKind: ImageType?
-
-    init(pathKey: String, relativePath: String, aspectRatio: CGFloat?) {
-        self.pathKey = pathKey
-        self.relativePath = relativePath
-        self.aspectRatio = aspectRatio
-        self.legacyKind = nil
-    }
 }
 
 extension DownloadImage: Codable {
@@ -43,10 +39,9 @@ extension DownloadImage: Codable {
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        self.legacyKind = try c.decodeIfPresent(ImageType.self, forKey: .kind)
         if let key = try c.decodeIfPresent(String.self, forKey: .pathKey) {
             self.pathKey = key
-        } else if let kind = legacyKind {
+        } else if let kind = try c.decodeIfPresent(ImageType.self, forKey: .kind) {
             self.pathKey = "legacy:\(kind.rawValue)"
         } else {
             self.pathKey = ""
@@ -63,10 +58,11 @@ extension DownloadImage: Codable {
     }
 }
 
-struct DownloadTask: Codable, Hashable, Identifiable, Storable {
+struct DownloadTask: Hashable, Identifiable, Storable {
 
     let id: String
-    let itemJSON: Data
+    let item: BaseItemDto
+    let type: DownloadType
 
     var state: DownloadState
     var bytesDownloaded: Int64
@@ -82,26 +78,76 @@ struct DownloadTask: Codable, Hashable, Identifiable, Storable {
     }
 
     var downloadFolder: URL {
-        item?.downloadFolder ?? URL.swiftfinDownloads.appendingPathComponent(id, isDirectory: true)
+        item.downloadFolder ?? URL.swiftfinDownloads.appendingPathComponent(id, isDirectory: true)
     }
 
     var imagesFolder: URL {
         downloadFolder.appendingPathComponent("Images", isDirectory: true)
     }
+}
 
-    var item: BaseItemDto? {
-        try? JSONDecoder().decode(BaseItemDto.self, from: itemJSON)
+extension DownloadTask: Codable {
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case item
+        case itemJSON
+        case type
+        case state
+        case bytesDownloaded
+        case bytesTotal
+        case resumeData
+        case createdAt
+        case updatedAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try c.decode(String.self, forKey: .id)
+        if let item = try c.decodeIfPresent(BaseItemDto.self, forKey: .item) {
+            self.item = item
+        } else if let json = try c.decodeIfPresent(Data.self, forKey: .itemJSON) {
+            self.item = try JSONDecoder().decode(BaseItemDto.self, from: json)
+        } else {
+            throw DecodingError.keyNotFound(
+                CodingKeys.item,
+                .init(codingPath: decoder.codingPath, debugDescription: "DownloadTask is missing item")
+            )
+        }
+        self.type = try c.decodeIfPresent(DownloadType.self, forKey: .type) ?? .direct
+        self.state = try c.decode(DownloadState.self, forKey: .state)
+        self.bytesDownloaded = try c.decode(Int64.self, forKey: .bytesDownloaded)
+        self.bytesTotal = try c.decode(Int64.self, forKey: .bytesTotal)
+        self.resumeData = try c.decodeIfPresent(Data.self, forKey: .resumeData)
+        self.createdAt = try c.decode(Date.self, forKey: .createdAt)
+        self.updatedAt = try c.decode(Date.self, forKey: .updatedAt)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(item, forKey: .item)
+        try c.encode(type, forKey: .type)
+        try c.encode(state, forKey: .state)
+        try c.encode(bytesDownloaded, forKey: .bytesDownloaded)
+        try c.encode(bytesTotal, forKey: .bytesTotal)
+        try c.encodeIfPresent(resumeData, forKey: .resumeData)
+        try c.encode(createdAt, forKey: .createdAt)
+        try c.encode(updatedAt, forKey: .updatedAt)
     }
 }
 
 extension DownloadTask {
 
-    init(item: BaseItemDto) throws {
-        let json = try JSONEncoder().encode(item)
+    init(item: BaseItemDto, type: DownloadType = .direct) throws {
+        guard let id = item.id else {
+            throw ErrorMessage("Item has no id")
+        }
         let now = Date()
         self.init(
-            id: item.id!,
-            itemJSON: json,
+            id: id,
+            item: item,
+            type: type,
             state: .queued,
             bytesDownloaded: 0,
             bytesTotal: 0,
