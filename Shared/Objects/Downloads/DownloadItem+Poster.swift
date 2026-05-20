@@ -13,7 +13,7 @@ import SwiftUI
 extension DownloadItem: Poster {
 
     var preferredPosterDisplayType: PosterDisplayType {
-        item.type?.preferredPosterDisplayType ?? .portrait
+        item.preferredPosterDisplayType
     }
 
     var subtitle: String? {
@@ -25,42 +25,34 @@ extension DownloadItem: Poster {
     }
 
     func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        sources(imageURL(for: .primary))
+        getLocalSource(item.portraitImageSources(maxWidth: maxWidth, quality: quality))
     }
 
     func landscapeImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        sources(
-            imageURL(for: .thumb),
-            imageURL(for: .backdrop),
-            imageURL(for: .primary)
-        )
+        getLocalSource(item.landscapeImageSources(maxWidth: maxWidth, quality: quality))
     }
 
     func cinematicImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        sources(imageURL(for: .backdrop), imageURL(for: .primary))
+        getLocalSource(item.cinematicImageSources(maxWidth: maxWidth, quality: quality))
     }
 
     func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {
-        sources(imageURL(for: .primary))
+        getLocalSource(item.squareImageSources(maxWidth: maxWidth, quality: quality))
     }
 
     func thumbImageSources() -> [ImageSource] {
-        switch preferredPosterDisplayType {
-        case .portrait:
-            portraitImageSources(maxWidth: 200, quality: 90)
-        case .landscape:
-            landscapeImageSources(maxWidth: 200, quality: 90)
-        case .square:
-            squareImageSources(maxWidth: 200, quality: 90)
-        }
+        getLocalSource(item.thumbImageSources())
     }
 
     @ViewBuilder
     func transform(image: Image) -> some View {
-        image.aspectRatio(contentMode: .fill)
+        item.transform(image: image)
     }
 
-    private func sources(_ urls: URL?...) -> [ImageSource] {
-        urls.compactMap(\.self).map { ImageSource(url: $0) }
+    private func getLocalSource(_ sources: [ImageSource]) -> [ImageSource] {
+        sources.compactMap { source in
+            guard let url = source.url, let local = localFileURL(for: url) else { return nil }
+            return ImageSource(url: local, blurHash: source.blurHash)
+        }
     }
 }

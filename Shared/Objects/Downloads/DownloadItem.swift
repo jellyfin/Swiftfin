@@ -9,9 +9,6 @@
 import Foundation
 import JellyfinAPI
 
-/// A completed download. Owned by `DownloadManager.downloads` and persisted to SQL.
-/// A `DownloadTask` graduates into a `DownloadItem` once the media file and its
-/// companion files (images, subtitles, metadata sidecar) are written to disk.
 struct DownloadItem: Codable, Hashable, Identifiable, Displayable, LibraryIdentifiable, SystemImageable, Storable {
 
     let id: String
@@ -64,14 +61,18 @@ struct DownloadItem: Codable, Hashable, Identifiable, Displayable, LibraryIdenti
         item.type
     }
 
-    func imageURL(for kind: ImageType) -> URL? {
-        guard let image = images.first(where: { $0.kind == kind }) else { return nil }
-        let url = imagesFolder.appendingPathComponent(image.relativePath)
+    func localFileURL(for serverURL: URL) -> URL? {
+        let path = serverURL.path
+        let match = images.first(where: { $0.pathKey == path })
+            ?? images.first(where: { image in
+                guard let last = serverURL.pathComponents.last,
+                      let kind = ImageType(rawValue: last.lowercased())
+                else { return false }
+                return image.legacyKind == kind
+            })
+        guard let match else { return nil }
+        let url = imagesFolder.appendingPathComponent(match.relativePath)
         return FileManager.default.fileExists(atPath: url.path) ? url : nil
-    }
-
-    func imageAspectRatio(for kind: ImageType) -> CGFloat? {
-        images.first(where: { $0.kind == kind })?.aspectRatio
     }
 
     func compare(to other: DownloadItem, by sort: ItemSortBy) -> Bool {

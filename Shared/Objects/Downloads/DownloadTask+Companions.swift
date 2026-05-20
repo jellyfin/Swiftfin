@@ -11,50 +11,45 @@ import JellyfinAPI
 import Logging
 import UIKit
 
-/// Companion-file downloads that run after the media transfer finishes.
-/// Flavor-agnostic — both direct and transcoded downloads need posters
-/// and subtitles alongside the media file.
 extension DownloadTask {
 
-    /// Downloads poster / backdrop / thumb / logo into `imagesFolder`.
-    /// Returns the manifest used to populate the resulting `DownloadItem`.
     func downloadImages(item: BaseItemDto) async -> [DownloadImage] {
-        let kinds: [ImageType] = [.primary, .backdrop, .thumb, .logo]
+        let sourceLists: [[ImageSource]] = [
+            item.portraitImageSources(maxWidth: 600),
+            item.landscapeImageSources(maxWidth: 800),
+            item.cinematicImageSources(maxWidth: 800),
+            item.squareImageSources(maxWidth: 600),
+            item.thumbImageSources(),
+        ]
+
+        var seen: Set<String> = []
         var images: [DownloadImage] = []
 
-        for kind in kinds {
-            if let image = await downloadImage(kind: kind, for: item) {
-                images.append(image)
+        for sources in sourceLists {
+            for source in sources {
+                guard let url = source.url else { continue }
+                let pathKey = url.path
+                guard seen.insert(pathKey).inserted else { continue }
+
+                if let image = await downloadImage(from: url, pathKey: pathKey) {
+                    images.append(image)
+                }
             }
         }
 
         return images
     }
 
-    private func downloadImage(kind: ImageType, for item: BaseItemDto) async -> DownloadImage? {
-        let sourceURL: URL? = {
-            switch kind {
-            case .primary:
-                item.imageSource(.primary, maxWidth: 600).url
-            case .backdrop:
-                item.imageSource(.backdrop, maxWidth: 800).url
-            case .thumb:
-                item.imageSource(.thumb, maxWidth: 800).url
-            case .logo:
-                item.imageSource(.logo, maxWidth: 400).url
-            default:
-                nil
-            }
-        }()
-
-        guard let sourceURL else { return nil }
-
+    private func downloadImage(from sourceURL: URL, pathKey: String) async -> DownloadImage? {
         do {
             try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)
             let (data, response) = try await URLSession.shared.data(from: sourceURL)
 
             let ext: String = response.mimeSubtype ?? "jpg"
-            let filename = "\(kind.rawValue.capitalized).\(ext)"
+            let safeName = pathKey
+                .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+                .replacingOccurrences(of: "/", with: "_")
+            let filename = "\(safeName).\(ext)"
             let destination = imagesFolder.appendingPathComponent(filename)
             try? FileManager.default.removeItem(at: destination)
             try data.write(to: destination)
@@ -67,19 +62,16 @@ extension DownloadTask {
             }()
 
             return DownloadImage(
-                kind: kind,
+                pathKey: pathKey,
                 relativePath: filename,
                 aspectRatio: aspectRatio
             )
         } catch {
-            Logger.swiftfin().warning("Failed to download \(kind.rawValue) image: \(error.localizedDescription)")
+            Logger.swiftfin().warning("Failed to download image \(pathKey): \(error.localizedDescription)")
             return nil
         }
     }
 
-    /// Downloads external subtitle streams into `downloadFolder/Subtitles/`.
-    /// Filenames are namespaced by language + stream index to avoid collisions
-    /// (e.g. `eng.0.srt`, `fra.1.ass`).
     func downloadSubtitles(item: BaseItemDto, userSession: UserSession) async {
         let externalSubtitles = (item.mediaSources?.first?.mediaStreams ?? []).filter {
             $0.type == .subtitle && ($0.isExternal ?? false) && $0.deliveryURL != nil

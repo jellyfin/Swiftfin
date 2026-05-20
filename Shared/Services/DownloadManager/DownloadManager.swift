@@ -19,7 +19,6 @@ extension Container {
     }
 }
 
-/// Combined download status for a single library item.
 enum ItemDownloadState: Hashable {
     case none
     case active(DownloadTask)
@@ -39,12 +38,9 @@ final class DownloadManager: NSObject, ObservableObject {
     @Injected(\.currentUserSession)
     var userSession: UserSession?
 
-    /// In-flight downloads: queued, downloading, paused, or errored.
-    /// A task graduates out of this array into `downloads` once finalized.
     @Published
     private(set) var tasks: [DownloadTask] = []
 
-    /// Completed downloads. Persisted independently from `tasks`.
     @Published
     private(set) var downloads: [DownloadItem] = []
 
@@ -73,8 +69,6 @@ final class DownloadManager: NSObject, ObservableObject {
         }
     }
 
-    // MARK: - Public lookup
-
     func task(id: String) -> DownloadTask? {
         tasks.first { $0.id == id }
     }
@@ -93,15 +87,6 @@ final class DownloadManager: NSObject, ObservableObject {
         return .none
     }
 
-    /// Combined publisher that emits the current `ItemDownloadState` for the
-    /// given item whenever the *shape* of its state changes — i.e. the item
-    /// moves between none / active / downloaded, or the active task's state
-    /// case changes (queued ↔ downloading ↔ paused ↔ error).
-    ///
-    /// Progress updates (`bytesDownloaded`) deliberately do **not** trigger
-    /// this publisher. UI that needs live progress reads `task(id:)?.progress`
-    /// directly inside a `TimelineView`; firing on every byte tick would
-    /// rebuild any subscribed `Menu` 10× per second and make taps unreliable.
     func statePublisher(for itemID: String) -> AnyPublisher<ItemDownloadState, Never> {
         Publishers.CombineLatest($tasks, $downloads)
             .map { tasks, downloads in
@@ -130,8 +115,6 @@ final class DownloadManager: NSObject, ObservableObject {
 
     // MARK: - Public API
 
-    /// Queues `item` (and, for containers, all of its downloadable children)
-    /// for download.
     func queue(_ item: BaseItemDto) {
         Task { await queueAsync(item) }
     }
@@ -209,9 +192,6 @@ final class DownloadManager: NSObject, ObservableObject {
         advanceQueue()
     }
 
-    /// Cancelling an in-flight download is functionally the same as deleting
-    /// it — the task is removed and any in-flight transfer torn down. To
-    /// restart, queue the item fresh.
     func cancel(id: String) {
         delete(id: id)
     }
@@ -220,8 +200,6 @@ final class DownloadManager: NSObject, ObservableObject {
         resume(id: id)
     }
 
-    /// Removes the in-flight task or completed download (whichever the id
-    /// matches) and all of its on-disk files.
     func delete(id: String) {
         if activeTaskID == id, let urlTask = activeURLTask {
             urlTask.cancel()
@@ -301,19 +279,12 @@ final class DownloadManager: NSObject, ObservableObject {
         urlTask.resume()
     }
 
-    /// Whether the device has enough free space to download `item`. Budgets
-    /// at 105% of source size. Returns `true` when source size is unknown or
-    /// the volume can't be queried so the toolbar button doesn't get stuck
-    /// disabled on missing telemetry.
     func canDownload(_ item: BaseItemDto) -> Bool {
         guard let sourceSize = item.mediaSources?.first?.size, sourceSize > 0 else { return true }
         let needed = Int64(Double(sourceSize) * 1.05)
         return spaceShortage(needed: needed) == nil
     }
 
-    /// Returns `nil` if the device has enough free space for `task`'s
-    /// projected on-disk footprint, otherwise the (needed, available) pair so
-    /// the caller can compose a user-facing error.
     private func spaceShortage(for task: DownloadTask) -> (needed: Int64, available: Int64)? {
         guard let item = task.item,
               let sourceSize = item.mediaSources?.first?.size, sourceSize > 0
@@ -377,9 +348,6 @@ final class DownloadManager: NSObject, ObservableObject {
         StoredValues[.Downloads.items(userID: userID)] = downloads
     }
 
-    /// Mutates the named task in-place and triggers a publish + persist.
-    /// Throttles persistence during active downloads so high-frequency
-    /// progress updates don't hammer the store.
     func update(id: String, throttlePersist: Bool = false, _ mutator: (inout DownloadTask) -> Void) {
         guard let index = tasks.firstIndex(where: { $0.id == id }) else { return }
         var task = tasks[index]
@@ -401,10 +369,6 @@ final class DownloadManager: NSObject, ObservableObject {
 
     // MARK: - Graduation
 
-    /// Promotes a finished `DownloadTask` to a persisted `DownloadItem` and
-    /// removes it from the in-flight task list. Called by the delegate's
-    /// async finalize chain once the media file, images, subtitles and
-    /// metadata sidecar are written to disk.
     func graduate(taskID: String, mediaRelativePath: String, images: [DownloadImage]) {
         guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
         let task = tasks[index]

@@ -9,14 +9,8 @@
 import Foundation
 import JellyfinAPI
 
-/// `URLSessionDownloadDelegate` routing. The manager hosts the background
-/// `URLSession` (only one delegate is allowed), and these callbacks dispatch
-/// each event back to the matching `DownloadTask` for the per-download work.
 extension DownloadManager: URLSessionDownloadDelegate {
 
-    /// Called by iOS after it has finished delivering all queued events for a
-    /// background `URLSession`. We invoke the completion handler stashed by
-    /// the AppDelegate so iOS knows it can re-suspend the app.
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
         DispatchQueue.main.async {
             guard let identifier = session.configuration.identifier else { return }

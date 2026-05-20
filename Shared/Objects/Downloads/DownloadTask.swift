@@ -16,15 +16,53 @@ enum DownloadState: Codable, Hashable {
     case error(DownloadError)
 }
 
-struct DownloadImage: Codable, Hashable {
-    let kind: ImageType
+struct DownloadImage: Hashable {
+
+    let pathKey: String
     let relativePath: String
     let aspectRatio: CGFloat?
+
+    let legacyKind: ImageType?
+
+    init(pathKey: String, relativePath: String, aspectRatio: CGFloat?) {
+        self.pathKey = pathKey
+        self.relativePath = relativePath
+        self.aspectRatio = aspectRatio
+        self.legacyKind = nil
+    }
 }
 
-/// An in-flight download. The task is created when an item is queued and is
-/// removed from `DownloadManager.tasks` once the transfer completes and the
-/// item graduates to `DownloadManager.downloads`.
+extension DownloadImage: Codable {
+
+    private enum CodingKeys: String, CodingKey {
+        case pathKey
+        case kind
+        case relativePath
+        case aspectRatio
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.legacyKind = try c.decodeIfPresent(ImageType.self, forKey: .kind)
+        if let key = try c.decodeIfPresent(String.self, forKey: .pathKey) {
+            self.pathKey = key
+        } else if let kind = legacyKind {
+            self.pathKey = "legacy:\(kind.rawValue)"
+        } else {
+            self.pathKey = ""
+        }
+        self.relativePath = try c.decode(String.self, forKey: .relativePath)
+        self.aspectRatio = try c.decodeIfPresent(CGFloat.self, forKey: .aspectRatio)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(pathKey, forKey: .pathKey)
+        try c.encode(relativePath, forKey: .relativePath)
+        try c.encodeIfPresent(aspectRatio, forKey: .aspectRatio)
+    }
+}
+
 struct DownloadTask: Codable, Hashable, Identifiable, Storable {
 
     let id: String

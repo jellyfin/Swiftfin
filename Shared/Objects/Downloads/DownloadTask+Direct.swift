@@ -9,15 +9,8 @@
 import Foundation
 import JellyfinAPI
 
-/// Direct-source download flavor — pulls the original media file from the
-/// server as-is. Per-download mechanics for this flavor live here; future
-/// transcoded flavors will have their own sibling extension.
 extension DownloadTask {
 
-    /// Builds a fresh `URLSessionDownloadTask` for this download.
-    /// If `resumeData` is present, the transfer resumes from the previous
-    /// byte offset; otherwise a new request is issued against the
-    /// `getDownload` endpoint.
     func makeURLSessionTask(in urlSession: URLSession, userSession: UserSession) throws -> URLSessionDownloadTask {
         let urlTask: URLSessionDownloadTask
         if let resumeData {
@@ -33,8 +26,6 @@ extension DownloadTask {
         return urlTask
     }
 
-    /// Moves the finished temp file into the task's download folder.
-    /// Returns the filename relative to `downloadFolder`.
     func moveDownloadedMedia(from location: URL, response: URLResponse?) throws -> String {
         let subtype = response?.mimeSubtype
         let ext = subtype.map { ".\($0)" } ?? ""
