@@ -12,8 +12,8 @@ import UIKit
 
 extension DownloadManager {
 
-    func downloadItemImages(taskID: String, item: BaseItemDto) async {
-        guard let task = task(id: taskID) else { return }
+    func downloadItemImages(taskID: String, item: BaseItemDto) async -> [DownloadImage] {
+        guard let task = task(id: taskID) else { return [] }
         let kinds: [ImageType] = [.primary, .backdrop, .thumb, .logo]
         var images: [DownloadImage] = []
 
@@ -23,12 +23,7 @@ extension DownloadManager {
             }
         }
 
-        let finalImages = images
-        await MainActor.run {
-            update(id: taskID) { task in
-                task.images = finalImages
-            }
-        }
+        return images
     }
 
     private func downloadImage(kind: ImageType, for item: BaseItemDto, into folder: URL) async -> DownloadImage? {

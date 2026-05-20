@@ -19,6 +19,13 @@ extension Container {
     }
 }
 
+/// Combined download status for a single library item.
+enum ItemDownloadState: Hashable {
+    case none
+    case active(DownloadTask)
+    case downloaded(DownloadItem)
+}
+
 final class DownloadManager: NSObject, ObservableObject {
 
     /// Background `URLSession` completion handlers stashed here by the
@@ -32,16 +39,18 @@ final class DownloadManager: NSObject, ObservableObject {
     @Injected(\.currentUserSession)
     var userSession: UserSession?
 
+    /// In-flight downloads: queued, downloading, paused, or errored.
+    /// A task graduates out of this array into `downloads` once finalized.
     @Published
     private(set) var tasks: [DownloadTask] = []
 
+    /// Completed downloads. Persisted independently from `tasks`.
     @Published
-    private(set) var completedItems: [DownloadItemDto] = []
+    private(set) var downloads: [DownloadItem] = []
 
-    private var queue: [String] = []
     var activeTaskID: String?
-    var activeURLTasks: [String: URLSessionDownloadTask] = [:]
-    private var lastPersistTime: [String: Date] = [:]
+    var activeURLTask: URLSessionDownloadTask?
+    private var lastPersistAt: Date?
 
     lazy var urlSession: URLSession = {
         let config = URLSessionConfiguration.background(withIdentifier: "org.jellyfin.swiftfin.downloads")
@@ -64,11 +73,45 @@ final class DownloadManager: NSObject, ObservableObject {
         }
     }
 
-    // MARK: - Public API
+    // MARK: - Public lookup
 
     func task(id: String) -> DownloadTask? {
         tasks.first { $0.id == id }
     }
+
+    func download(id: String) -> DownloadItem? {
+        downloads.first { $0.id == id }
+    }
+
+    func state(forItemID itemID: String) -> ItemDownloadState {
+        if let task = task(id: itemID) {
+            return .active(task)
+        }
+        if let download = download(id: itemID) {
+            return .downloaded(download)
+        }
+        return .none
+    }
+
+    /// Combined publisher that emits the current `ItemDownloadState` for the
+    /// given item whenever either the active task list or the completed
+    /// download list changes.
+    func statePublisher(for itemID: String) -> AnyPublisher<ItemDownloadState, Never> {
+        Publishers.CombineLatest($tasks, $downloads)
+            .map { tasks, downloads in
+                if let task = tasks.first(where: { $0.id == itemID }) {
+                    return .active(task)
+                }
+                if let download = downloads.first(where: { $0.id == itemID }) {
+                    return .downloaded(download)
+                }
+                return .none
+            }
+            .removeDuplicates()
+            .eraseToAnyPublisher()
+    }
+
+    // MARK: - Public API
 
     /// Queues `item` (and, for containers, all of its downloadable children)
     /// for download.
@@ -112,7 +155,7 @@ final class DownloadManager: NSObject, ObservableObject {
     }
 
     func pause(id: String) {
-        guard activeTaskID == id, let urlTask = activeURLTasks[id] else { return }
+        guard activeTaskID == id, let urlTask = activeURLTask else { return }
 
         urlTask.cancel { [weak self] resumeData in
             DispatchQueue.main.async {
@@ -122,7 +165,7 @@ final class DownloadManager: NSObject, ObservableObject {
     }
 
     private func handlePause(id: String, resumeData: Data?) {
-        activeURLTasks.removeValue(forKey: id)
+        activeURLTask = nil
         if activeTaskID == id { activeTaskID = nil }
 
         update(id: id) { task in
@@ -146,16 +189,12 @@ final class DownloadManager: NSObject, ObservableObject {
             task.state = .queued
         }
 
-        if !queue.contains(id) {
-            queue.append(id)
-        }
-
         advanceQueue()
     }
 
-    /// Cancelling a download is functionally the same as deleting it — the
-    /// task is removed and any in-flight transfer torn down. To restart,
-    /// queue the item fresh.
+    /// Cancelling an in-flight download is functionally the same as deleting
+    /// it — the task is removed and any in-flight transfer torn down. To
+    /// restart, queue the item fresh.
     func cancel(id: String) {
         delete(id: id)
     }
@@ -164,23 +203,29 @@ final class DownloadManager: NSObject, ObservableObject {
         resume(id: id)
     }
 
-    /// Removes the task and all of its on-disk files.
+    /// Removes the in-flight task or completed download (whichever the id
+    /// matches) and all of its on-disk files.
     func delete(id: String) {
-        if activeTaskID == id, let urlTask = activeURLTasks[id] {
+        if activeTaskID == id, let urlTask = activeURLTask {
             urlTask.cancel()
-            activeURLTasks.removeValue(forKey: id)
+            activeURLTask = nil
             activeTaskID = nil
         }
-        queue.removeAll(where: { $0 == id })
 
-        guard let task = task(id: id) else { return }
+        let folder: URL? = task(id: id)?.downloadFolder ?? download(id: id)?.downloadFolder
+        if let folder {
+            try? FileManager.default.removeItem(at: folder)
+        }
 
-        try? FileManager.default.removeItem(at: task.downloadFolder)
+        let removedTask = tasks.contains { $0.id == id }
+        let removedDownload = downloads.contains { $0.id == id }
 
         tasks.removeAll(where: { $0.id == id })
+        downloads.removeAll(where: { $0.id == id })
 
-        persistTasks()
-        refreshCompletedItems()
+        if removedTask { persistTasks() }
+        if removedDownload { persistDownloads() }
+
         advanceQueue()
     }
 
@@ -240,7 +285,7 @@ final class DownloadManager: NSObject, ObservableObject {
         }
 
         urlTask.taskDescription = id
-        activeURLTasks[id] = urlTask
+        activeURLTask = urlTask
         urlTask.resume()
     }
 
@@ -286,13 +331,15 @@ final class DownloadManager: NSObject, ObservableObject {
     private func rebuildFromStore() {
         guard let userID = currentUserID else {
             tasks = []
-            completedItems = []
+            downloads = []
             return
         }
 
-        let loaded = StoredValues[.Downloads.items(userID: userID)]
-        tasks = loaded
+        tasks = StoredValues[.Downloads.tasks(userID: userID)]
+        downloads = StoredValues[.Downloads.items(userID: userID)]
 
+        // App was killed mid-transfer — downgrade any `.downloading` task to
+        // `.paused` so it can resume on the next user action.
         let resurrected = tasks.map { task -> DownloadTask in
             if task.state == .downloading {
                 var mutable = task
@@ -306,24 +353,21 @@ final class DownloadManager: NSObject, ObservableObject {
             tasks = resurrected
             persistTasks()
         }
-
-        refreshCompletedItems()
     }
 
     private func persistTasks() {
         guard let userID = currentUserID else { return }
-        StoredValues[.Downloads.items(userID: userID)] = tasks
+        StoredValues[.Downloads.tasks(userID: userID)] = tasks
     }
 
-    func refreshCompletedItems() {
-        completedItems = tasks
-            .filter { $0.state == .complete }
-            .compactMap { DownloadItemDto(task: $0, manager: self) }
+    private func persistDownloads() {
+        guard let userID = currentUserID else { return }
+        StoredValues[.Downloads.items(userID: userID)] = downloads
     }
 
     /// Mutates the named task in-place and triggers a publish + persist.
-    /// Throttles persistence during active downloads so high-frequency progress
-    /// updates don't hammer the store.
+    /// Throttles persistence during active downloads so high-frequency
+    /// progress updates don't hammer the store.
     func update(id: String, throttlePersist: Bool = false, _ mutator: (inout DownloadTask) -> Void) {
         guard let index = tasks.firstIndex(where: { $0.id == id }) else { return }
         var task = tasks[index]
@@ -331,24 +375,54 @@ final class DownloadManager: NSObject, ObservableObject {
         task.updatedAt = Date()
         tasks[index] = task
 
+        let now = Date()
         if throttlePersist {
-            let now = Date()
-            let last = lastPersistTime[id] ?? .distantPast
-            if now.timeIntervalSince(last) > 1.0 {
-                lastPersistTime[id] = now
+            if now.timeIntervalSince(lastPersistAt ?? .distantPast) > 1.0 {
+                lastPersistAt = now
                 persistTasks()
             }
         } else {
-            lastPersistTime[id] = Date()
+            lastPersistAt = now
             persistTasks()
         }
+    }
+
+    // MARK: - Graduation
+
+    /// Promotes a finished `DownloadTask` to a persisted `DownloadItem` and
+    /// removes it from the in-flight task list. Called by the delegate's
+    /// async finalize chain once the media file, images, subtitles and
+    /// metadata sidecar are written to disk.
+    func graduate(taskID: String, mediaRelativePath: String, images: [DownloadImage]) {
+        guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
+        let task = tasks[index]
+        guard let item = task.item else {
+            logger.error("Cannot graduate \(taskID): item JSON failed to decode")
+            update(id: taskID) { $0.state = .error(.unknown("Failed to read item metadata")) }
+            return
+        }
+
+        let download = DownloadItem(
+            id: task.id,
+            item: item,
+            mediaRelativePath: mediaRelativePath,
+            images: images,
+            completedAt: Date()
+        )
+
+        tasks.remove(at: index)
+        downloads.removeAll(where: { $0.id == task.id })
+        downloads.append(download)
+
+        persistTasks()
+        persistDownloads()
     }
 
     // MARK: - Task creation
 
     private func createMediaTask(_ item: BaseItemDto) async throws {
         guard let id = item.id else { return }
-        if task(id: id) != nil { return }
+        if task(id: id) != nil || download(id: id) != nil { return }
 
         let task = try DownloadTask(item: item)
 
@@ -358,6 +432,23 @@ final class DownloadManager: NSObject, ObservableObject {
         }
 
         try await writeMetadataSidecar(item: item, in: task.downloadFolder)
+    }
+
+    // MARK: - On-disk helpers
+
+    func cleanStaging() {
+        let staging = URL.swiftfinDownloads.appendingPathComponent(".staging", isDirectory: true)
+        try? FileManager.default.removeItem(at: staging)
+    }
+
+    func writeMetadataSidecar(item: BaseItemDto, in folder: URL) async throws {
+        let metadataFolder = folder.appendingPathComponent("Metadata", isDirectory: true)
+        try FileManager.default.createDirectory(at: metadataFolder, withIntermediateDirectories: true)
+
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        let data = try encoder.encode(item)
+        try data.write(to: metadataFolder.appendingPathComponent("Item.json"))
     }
 
     // MARK: - JellyfinAPI helpers

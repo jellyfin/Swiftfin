@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-extension DownloadItemDto: Poster {
+extension DownloadItem: Poster {
 
     var preferredPosterDisplayType: PosterDisplayType {
         item.type?.preferredPosterDisplayType ?? .portrait

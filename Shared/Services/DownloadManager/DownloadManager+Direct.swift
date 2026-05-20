@@ -64,25 +64,37 @@ extension DownloadManager: URLSessionDownloadDelegate {
         let subtype = downloadTask.response?.mimeSubtype
         let ext = subtype.map { ".\($0)" } ?? ""
         let filename = "\(taskID)\(ext)"
+        let downloadFolder = task.downloadFolder
+        let item = task.item
 
         do {
-            try FileManager.default.createDirectory(at: task.downloadFolder, withIntermediateDirectories: true)
-            let destination = task.downloadFolder.appendingPathComponent(filename)
+            try FileManager.default.createDirectory(at: downloadFolder, withIntermediateDirectories: true)
+            let destination = downloadFolder.appendingPathComponent(filename)
             try? FileManager.default.removeItem(at: destination)
             try FileManager.default.moveItem(at: location, to: destination)
 
             DispatchQueue.main.async {
                 self.update(id: taskID) { task in
-                    task.mediaRelativePath = filename
                     task.resumeData = nil
                 }
             }
 
-            if let item = task.item {
-                Task {
-                    await downloadItemImages(taskID: taskID, item: item)
-                    await downloadCompanionFiles(taskID: taskID, item: item)
-                    try? await writeMetadataSidecar(item: item, in: task.downloadFolder)
+            guard let item else {
+                logger.error("Cannot finalize \(taskID): item JSON failed to decode")
+                DispatchQueue.main.async {
+                    self.update(id: taskID) { task in
+                        task.state = .error(.unknown("Failed to read item metadata"))
+                    }
+                }
+                return
+            }
+
+            Task {
+                let images = await downloadItemImages(taskID: taskID, item: item)
+                await downloadCompanionFiles(taskID: taskID, item: item)
+                try? await writeMetadataSidecar(item: item, in: downloadFolder)
+                await MainActor.run {
+                    self.graduate(taskID: taskID, mediaRelativePath: filename, images: images)
                 }
             }
         } catch {
@@ -99,7 +111,7 @@ extension DownloadManager: URLSessionDownloadDelegate {
         guard let taskID = task.taskDescription else { return }
 
         DispatchQueue.main.async {
-            self.activeURLTasks.removeValue(forKey: taskID)
+            self.activeURLTask = nil
             if self.activeTaskID == taskID { self.activeTaskID = nil }
 
             if let error = error as NSError? {
@@ -115,12 +127,8 @@ extension DownloadManager: URLSessionDownloadDelegate {
                         task.state = .error(DownloadError(error))
                     }
                 }
-            } else {
-                self.update(id: taskID) { task in
-                    task.state = .complete
-                }
-                self.refreshCompletedItems()
             }
+
             self.advanceQueue()
         }
     }

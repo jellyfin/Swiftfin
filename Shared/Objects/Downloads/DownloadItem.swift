@@ -9,22 +9,27 @@
 import Foundation
 import JellyfinAPI
 
-struct DownloadItemDto: Hashable, Identifiable, Displayable, LibraryIdentifiable, SystemImageable {
+/// A completed download. Owned by `DownloadManager.downloads` and persisted to SQL.
+/// A `DownloadTask` graduates into a `DownloadItem` once the media file and its
+/// companion files (images, subtitles, metadata sidecar) are written to disk.
+struct DownloadItem: Codable, Hashable, Identifiable, Displayable, LibraryIdentifiable, SystemImageable, Storable {
 
-    weak var manager: DownloadManager?
-
-    let task: DownloadTask
+    let id: String
     let item: BaseItemDto
+    let mediaRelativePath: String
+    let images: [DownloadImage]
+    let completedAt: Date
 
-    init?(task: DownloadTask, manager: DownloadManager? = nil) {
-        guard let item = task.item else { return nil }
-        self.task = task
-        self.item = item
-        self.manager = manager
+    var downloadFolder: URL {
+        item.downloadFolder ?? URL.swiftfinDownloads.appendingPathComponent(id, isDirectory: true)
     }
 
-    var id: String? {
-        task.id
+    var imagesFolder: URL {
+        downloadFolder.appendingPathComponent("Images", isDirectory: true)
+    }
+
+    var mediaURL: URL {
+        downloadFolder.appendingPathComponent(mediaRelativePath)
     }
 
     var displayTitle: String {
@@ -32,7 +37,7 @@ struct DownloadItemDto: Hashable, Identifiable, Displayable, LibraryIdentifiable
     }
 
     var unwrappedIDHashOrZero: Int {
-        task.id.hashValue
+        id.hashValue
     }
 
     var systemImage: String {
@@ -60,25 +65,16 @@ struct DownloadItemDto: Hashable, Identifiable, Displayable, LibraryIdentifiable
     }
 
     func imageURL(for kind: ImageType) -> URL? {
-        guard let url = task.imageURL(for: kind),
-              FileManager.default.fileExists(atPath: url.path)
-        else { return nil }
-        return url
+        guard let image = images.first(where: { $0.kind == kind }) else { return nil }
+        let url = imagesFolder.appendingPathComponent(image.relativePath)
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
 
     func imageAspectRatio(for kind: ImageType) -> CGFloat? {
-        task.images.first(where: { $0.kind == kind })?.aspectRatio
+        images.first(where: { $0.kind == kind })?.aspectRatio
     }
 
-    static func == (lhs: DownloadItemDto, rhs: DownloadItemDto) -> Bool {
-        lhs.task.id == rhs.task.id && lhs.task.updatedAt == rhs.task.updatedAt
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(task.id)
-    }
-
-    func compare(to other: DownloadItemDto, by sort: ItemSortBy) -> Bool {
+    func compare(to other: DownloadItem, by sort: ItemSortBy) -> Bool {
         switch sort {
         case .sortName, .name:
             (item.sortName ?? displayTitle) < (other.item.sortName ?? other.displayTitle)

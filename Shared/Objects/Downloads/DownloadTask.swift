@@ -13,7 +13,6 @@ enum DownloadState: Codable, Hashable {
     case queued
     case downloading
     case paused
-    case complete
     case error(DownloadError)
 }
 
@@ -23,7 +22,10 @@ struct DownloadImage: Codable, Hashable {
     let aspectRatio: CGFloat?
 }
 
-struct DownloadTask: Codable, Hashable, Identifiable {
+/// An in-flight download. The task is created when an item is queued and is
+/// removed from `DownloadManager.tasks` once the transfer completes and the
+/// item graduates to `DownloadManager.downloads`.
+struct DownloadTask: Codable, Hashable, Identifiable, Storable {
 
     let id: String
     let itemJSON: Data
@@ -32,8 +34,6 @@ struct DownloadTask: Codable, Hashable, Identifiable {
     var bytesDownloaded: Int64
     var bytesTotal: Int64
     var resumeData: Data?
-    var mediaRelativePath: String?
-    var images: [DownloadImage]
 
     let createdAt: Date
     var updatedAt: Date
@@ -43,18 +43,12 @@ struct DownloadTask: Codable, Hashable, Identifiable {
         return min(1, Double(bytesDownloaded) / Double(bytesTotal))
     }
 
-    /// On-disk location, derived from `BaseItemDto.downloadFolder` so we don't duplicate the per-kind path logic.
     var downloadFolder: URL {
         item?.downloadFolder ?? URL.swiftfinDownloads.appendingPathComponent(id, isDirectory: true)
     }
 
     var imagesFolder: URL {
         downloadFolder.appendingPathComponent("Images", isDirectory: true)
-    }
-
-    func imageURL(for kind: ImageType) -> URL? {
-        guard let image = images.first(where: { $0.kind == kind }) else { return nil }
-        return imagesFolder.appendingPathComponent(image.relativePath)
     }
 
     var item: BaseItemDto? {
@@ -74,12 +68,8 @@ extension DownloadTask {
             bytesDownloaded: 0,
             bytesTotal: 0,
             resumeData: nil,
-            mediaRelativePath: nil,
-            images: [],
             createdAt: now,
             updatedAt: now
         )
     }
 }
-
-extension DownloadTask: Storable {}

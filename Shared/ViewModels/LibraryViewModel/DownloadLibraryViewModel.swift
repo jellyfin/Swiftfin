@@ -14,7 +14,7 @@ import JellyfinAPI
 // TODO: Switch over to the new PagingLibrary type when available
 
 @MainActor
-final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadItemDto> {
+final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadItem> {
 
     override var isDownloads: Bool {
         true
@@ -26,10 +26,10 @@ final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadItemDto> {
 
         let manager = Container.shared.downloadManager()
 
-        manager.$completedItems
+        manager.$downloads
             .receive(on: RunLoop.main)
             .dropFirst()
-            .removeDuplicates(by: { $0.map(\.task.id) == $1.map(\.task.id) })
+            .removeDuplicates(by: { $0.map(\.id) == $1.map(\.id) })
             .sink { [weak self] _ in
                 Task { @MainActor in
                     self?.send(.refresh)
@@ -38,18 +38,18 @@ final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadItemDto> {
             .store(in: &cancellables)
     }
 
-    override func get(page: Int) async throws -> [DownloadItemDto] {
+    override func get(page: Int) async throws -> [DownloadItem] {
         items(for: page)
     }
 
-    override func getRandomItem() async -> DownloadItemDto? {
+    override func getRandomItem() async -> DownloadItem? {
         items(for: nil).randomElement()
     }
 
-    private func items(for page: Int?) -> [DownloadItemDto] {
+    private func items(for page: Int?) -> [DownloadItem] {
 
         let manager = Container.shared.downloadManager()
-        var items = manager.completedItems
+        var items = manager.downloads
 
         if let filterViewModel {
             let filters = filterViewModel.currentFilters

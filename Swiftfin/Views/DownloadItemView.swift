@@ -21,7 +21,7 @@ struct DownloadItemView: View {
     @State
     private var isPresentingDeleteAlert = false
 
-    let item: DownloadItemDto
+    let item: DownloadItem
 
     private var sourceItem: BaseItemDto {
         item.item
@@ -79,7 +79,7 @@ struct DownloadItemView: View {
         .navigationBarTitleDisplayMode(.inline)
         .alert(L10n.delete, isPresented: $isPresentingDeleteAlert) {
             Button(L10n.delete, role: .destructive) {
-                downloadManager.delete(id: item.task.id)
+                downloadManager.delete(id: item.id)
                 router.dismiss()
             }
             Button(L10n.cancel, role: .cancel) {}

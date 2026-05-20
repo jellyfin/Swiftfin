@@ -127,7 +127,7 @@ final class FilterViewModel: ViewModel {
         var tagSet = Set<String>()
         var yearSet = Set<Int>()
 
-        for item in manager.completedItems {
+        for item in manager.downloads {
             if let genres = item.item.genres {
                 genreSet.formUnion(genres)
             }

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Engine
 import Factory
 import JellyfinAPI
@@ -14,7 +15,7 @@ import SwiftUI
 struct DownloadButton: View {
 
     @State
-    private var state: DownloadState?
+    private var state: ItemDownloadState = .none
 
     private let downloadManager = Container.shared.downloadManager()
 
@@ -22,8 +23,9 @@ struct DownloadButton: View {
 
     init(item: BaseItemDto) {
         self.item = item
-        let initial = Container.shared.downloadManager().tasks.first { $0.id == item.id }?.state
-        self._state = State(initialValue: initial)
+        if let id = item.id {
+            self._state = State(initialValue: Container.shared.downloadManager().state(forItemID: id))
+        }
     }
 
     var body: some View {
@@ -45,13 +47,16 @@ struct DownloadButton: View {
             }
         }
         // Reading directly from .state locks the menus when an item is queued
-        .onReceive(
-            downloadManager.$tasks
-                .map { tasks in tasks.first { $0.id == item.id }?.state }
-                .removeDuplicates()
-        ) { newState in
+        .onReceive(statePublisher) { newState in
             state = newState
         }
+    }
+
+    private var statePublisher: AnyPublisher<ItemDownloadState, Never> {
+        guard let id = item.id else {
+            return Just(.none).eraseToAnyPublisher()
+        }
+        return downloadManager.statePublisher(for: id)
     }
 
     @ViewBuilder
@@ -68,34 +73,37 @@ struct DownloadButton: View {
                     Button(DownloadError.insufficientStorage.displayTitle, systemImage: "externaldrive.badge.exclamationmark") {}
                         .disabled(true)
                 }
-            case .queued:
-                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                    downloadManager.cancel(id: id)
+            case let .active(task):
+                switch task.state {
+                case .queued:
+                    Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                        downloadManager.cancel(id: id)
+                    }
+                case .downloading:
+                    Button(L10n.pause, systemImage: "pause") {
+                        downloadManager.pause(id: id)
+                    }
+                    Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                        downloadManager.cancel(id: id)
+                    }
+                case .paused:
+                    Button(L10n.resume, systemImage: "play") {
+                        downloadManager.resume(id: id)
+                    }
+                    Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                        downloadManager.cancel(id: id)
+                    }
+                case let .error(reason):
+                    Button(reason.displayTitle, systemImage: "exclamationmark.triangle") {}
+                        .disabled(true)
+                    Button(L10n.retry, systemImage: "arrow.clockwise") {
+                        downloadManager.retry(id: id)
+                    }
+                    Button(L10n.cancel, systemImage: "trash", role: .destructive) {
+                        downloadManager.cancel(id: id)
+                    }
                 }
-            case .downloading:
-                Button(L10n.pause, systemImage: "pause") {
-                    downloadManager.pause(id: id)
-                }
-                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                    downloadManager.cancel(id: id)
-                }
-            case .paused:
-                Button(L10n.resume, systemImage: "play") {
-                    downloadManager.resume(id: id)
-                }
-                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                    downloadManager.cancel(id: id)
-                }
-            case let .error(reason):
-                Button(reason.displayTitle, systemImage: "exclamationmark.triangle") {}
-                    .disabled(true)
-                Button(L10n.retry, systemImage: "arrow.clockwise") {
-                    downloadManager.retry(id: id)
-                }
-                Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                    downloadManager.cancel(id: id)
-                }
-            case .complete:
+            case .downloaded:
                 Button(L10n.delete, systemImage: "trash", role: .destructive) {
                     isPresentingDeleteConfirmation.wrappedValue = true
                 }
@@ -107,23 +115,26 @@ struct DownloadButton: View {
     private var labelView: some View {
         Group {
             switch state {
-            case .downloading, .queued:
-                TimelineView(.periodic(from: .now, by: 0.1)) { _ in
-                    ProgressView(value: downloadManager.tasks.first { $0.id == item.id }?.progress ?? 0)
-                        .progressViewStyle(.download)
-                }
-            case .paused:
-                Image(systemName: "arrow.down.circle.badge.pause")
-            case .complete:
-                Image(systemName: "arrow.down.circle.fill")
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(.white, .green)
-            case .error:
-                Image(systemName: "arrow.down.circle.badge.xmark")
-                    .foregroundStyle(.red)
             case .none:
                 Image(systemName: "arrow.down.circle")
                     .foregroundStyle(downloadManager.canDownload(item) ? .primary : .secondary)
+            case let .active(task):
+                switch task.state {
+                case .downloading, .queued:
+                    TimelineView(.periodic(from: .now, by: 0.1)) { _ in
+                        ProgressView(value: downloadManager.task(id: task.id)?.progress ?? 0)
+                            .progressViewStyle(.download)
+                    }
+                case .paused:
+                    Image(systemName: "arrow.down.circle.badge.pause")
+                case .error:
+                    Image(systemName: "arrow.down.circle.badge.xmark")
+                        .foregroundStyle(.red)
+                }
+            case .downloaded:
+                Image(systemName: "arrow.down.circle.fill")
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(.white, .green)
             }
         }
         .id(state)
