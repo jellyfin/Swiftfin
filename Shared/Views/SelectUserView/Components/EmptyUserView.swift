@@ -10,7 +10,7 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct EmptyUserView: PlatformView {
+    struct EmptyUserView: View {
 
         let action: () -> Void
 
@@ -56,18 +56,13 @@ extension SelectUserView {
             #endif
         }
 
-        var iOSView: some View {
+        var body: some View {
             GeometryReader { geometry in
                 addUserButton
                     .frame(maxWidth: (geometry.size.width - EdgeInsets.edgePadding * (columns + 1)) / columns)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .focusSection()
             }
-        }
-
-        var tvOSView: some View {
-            addUserButton
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .focusSection()
         }
     }
 }
