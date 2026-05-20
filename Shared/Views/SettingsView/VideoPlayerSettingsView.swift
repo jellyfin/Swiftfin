@@ -174,6 +174,7 @@ struct VideoPlayerSettingsView: View {
             Stepper(L10n.resumeOffset, value: $resumeOffset, in: 0 ... 30, step: 1) {
                 LabeledContent(L10n.resumeOffset) {
                     Text(resumeOffset, format: SecondFormatter())
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -321,6 +322,7 @@ struct VideoPlayerSettingsView: View {
             Stepper(L10n.subtitleSize, value: $subtitleSize, in: 1 ... 20, step: 1) {
                 LabeledContent(L10n.subtitleSize) {
                     Text(subtitleSize.description)
+                        .foregroundStyle(.secondary)
                 }
             }
 
