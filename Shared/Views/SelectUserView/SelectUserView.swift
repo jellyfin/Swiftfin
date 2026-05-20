@@ -12,6 +12,9 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
+// TODO: Need to change handling of splashscreen
+//       - change root item, needs to be background of navigation stack
+
 struct SelectUserView: View {
 
     typealias UserItem = (user: UserState, server: ServerState)
@@ -175,103 +178,114 @@ struct SelectUserView: View {
         }
     }
 
+    @ViewBuilder
+    private var contentView: some View {
+        VStack(spacing: 0) {
+            ZStack {
+                if userItems.isEmpty {
+                    EmptyUserView {
+                        if let selectedServer {
+                            addUser(server: selectedServer)
+                        }
+                    }
+                    .contextMenu {
+                        if selectedServer == nil {
+                            Text(L10n.selectServer)
+
+                            ForEach(viewModel.servers.keys) { server in
+                                Button {
+                                    addUser(server: server)
+                                } label: {
+                                    Text(server.name)
+                                    Text(server.currentURL.absoluteString)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    switch userListDisplayType {
+                    case .list:
+                        ListView(
+                            userItems: userItems,
+                            isEditing: $isEditing,
+                            selectedUsers: $selectedUsers,
+                            serverSelection: serverSelection,
+                            action: { select(user: $0) },
+                            onDelete: { delete(user: $0) }
+                        )
+                    case .grid:
+                        GridView(
+                            userItems: userItems,
+                            isEditing: $isEditing,
+                            selectedUsers: $selectedUsers,
+                            serverSelection: serverSelection,
+                            action: { select(user: $0) },
+                            onDelete: { delete(user: $0) }
+                        )
+                    }
+                }
+            }
+            .animation(.linear(duration: 0.1), value: userListDisplayType)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .focusSection()
+            .mask {
+                VStack(spacing: 0) {
+                    #if os(tvOS)
+                    if userListDisplayType == .list {
+                        LinearGradient(
+                            stops: [
+                                .init(color: .clear, location: 0),
+                                .init(color: .white, location: 1),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 30)
+                    }
+                    #endif
+
+                    Color.white
+
+                    LinearGradient(
+                        stops: [
+                            .init(color: .white, location: 0),
+                            .init(color: .clear, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 30)
+                }
+                .ignoresSafeArea(.all, edges: .horizontal)
+            }
+
+            BottomBar(
+                servers: viewModel.servers.keys,
+                allUsers: userItems,
+                isEditing: $isEditing,
+                selectedUsers: $selectedUsers,
+                onDelete: {
+                    isPresentingConfirmDeleteUsers = true
+                }
+            )
+            .focusSection()
+        }
+    }
+
     var body: some View {
         ZStack {
-            if viewModel.servers.isEmpty {
-                ConnectToJellyfinView()
-            } else {
-                VStack(spacing: 0) {
-                    ZStack {
-                        if userItems.isEmpty {
-                            EmptyUserView {
-                                if let selectedServer {
-                                    addUser(server: selectedServer)
-                                }
-                            }
-                            .contextMenu {
-                                if selectedServer == nil {
-                                    Text(L10n.selectServer)
-
-                                    ForEach(viewModel.servers.keys) { server in
-                                        Button {
-                                            addUser(server: server)
-                                        } label: {
-                                            Text(server.name)
-                                            Text(server.currentURL.absoluteString)
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            switch userListDisplayType {
-                            case .list:
-                                ListView(
-                                    userItems: userItems,
-                                    isEditing: $isEditing,
-                                    selectedUsers: $selectedUsers,
-                                    serverSelection: serverSelection,
-                                    action: { select(user: $0) },
-                                    onDelete: { delete(user: $0) }
-                                )
-                            case .grid:
-                                GridView(
-                                    userItems: userItems,
-                                    isEditing: $isEditing,
-                                    selectedUsers: $selectedUsers,
-                                    serverSelection: serverSelection,
-                                    action: { select(user: $0) },
-                                    onDelete: { delete(user: $0) }
-                                )
-                            }
-                        }
-                    }
-                    .animation(.linear(duration: 0.1), value: userListDisplayType)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .focusSection()
-                    .mask {
-                        VStack(spacing: 0) {
-                            #if os(tvOS)
-                            if userListDisplayType == .list {
-                                LinearGradient(
-                                    stops: [
-                                        .init(color: .clear, location: 0),
-                                        .init(color: .white, location: 1),
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                                .frame(height: 30)
-                            }
-                            #endif
-
-                            Color.white
-
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .white, location: 0),
-                                    .init(color: .clear, location: 1),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .frame(height: 30)
-                        }
-                        .ignoresSafeArea(.all, edges: .horizontal)
-                    }
-
-                    BottomBar(
-                        servers: viewModel.servers.keys,
-                        allUsers: userItems,
-                        isEditing: $isEditing,
-                        selectedUsers: $selectedUsers,
-                        onDelete: {
-                            isPresentingConfirmDeleteUsers = true
-                        }
-                    )
-                    .focusSection()
+            switch viewModel.state {
+            case .initial, .loading:
+                ProgressView()
+            case .content:
+                if viewModel.servers.isEmpty {
+                    ConnectToJellyfinView()
+                } else {
+                    contentView
                 }
             }
         }
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .animation(.linear(duration: 0.1), value: selectedServer)
         .environment(\.isOverComplexContent, true)
         .isEditing(isEditing)
@@ -367,14 +381,14 @@ struct SelectUserView: View {
             }
         }
         .onNotification(.didConnectToServer) { server in
-            viewModel.getServers()
+            viewModel.background.getServers()
             serverSelection = .server(id: server.id)
         }
         .onNotification(.didChangeCurrentServerURL) { _ in
-            viewModel.getServers()
+            viewModel.background.getServers()
         }
         .onNotification(.didDeleteServer) { _ in
-            viewModel.getServers()
+            viewModel.background.getServers()
         }
         .alert(
             L10n.delete,

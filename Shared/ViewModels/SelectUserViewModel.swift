@@ -11,9 +11,6 @@ import Foundation
 import KeychainSwift
 import OrderedCollections
 
-// TODO: may want initial, content states
-//       - empty state hitch on sign out
-
 @MainActor
 @Stateful
 final class SelectUserViewModel: ViewModel {
@@ -24,11 +21,33 @@ final class SelectUserViewModel: ViewModel {
         case error
         case getServers
         case signIn(UserState, pin: String)
+
+        var transition: Transition {
+            switch self {
+            case .getServers:
+                .to(.loading, then: .content)
+                    .whenBackground(.refreshing)
+            case .deleteUsers:
+                .background(.refreshing)
+            case .error, .signIn:
+                .none
+            }
+        }
+    }
+
+    enum BackgroundState {
+        case refreshing
     }
 
     enum Event {
         case error
         case signedIn(UserState)
+    }
+
+    enum State {
+        case initial
+        case loading
+        case content
     }
 
     @Injected(\.keychainService)
