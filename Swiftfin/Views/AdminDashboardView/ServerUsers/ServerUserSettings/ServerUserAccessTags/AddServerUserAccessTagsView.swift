@@ -82,21 +82,23 @@ struct AddServerUserAccessTagsView: View {
                 existsOnServer: existsOnServer
             )
         }
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.addAccessTag.localizedCapitalized)
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.refreshing) ||
+            if viewModel.background.is(.refreshing) ||
+                viewModel.background.is(.updating) ||
                 tagViewModel.background.states.contains(.searching)
             {
                 ProgressView()
             }
 
-            if viewModel.backgroundStates.contains(.updating) {
+            if viewModel.background.states.contains(.updating) {
                 Button(L10n.cancel) {
-                    viewModel.send(.cancel)
+                    viewModel.cancel()
                 }
                 .buttonStyle(.toolbarPill(.red))
             } else {
@@ -109,7 +111,7 @@ struct AddServerUserAccessTagsView: View {
                             .appendedOrInit(tempTag)
                     }
 
-                    viewModel.send(.updatePolicy(tempPolicy))
+                    viewModel.updatePolicy(tempPolicy)
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(!isValid)
@@ -120,14 +122,11 @@ struct AddServerUserAccessTagsView: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .error:
-                UIDevice.feedback(.error)
             case .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()
             }
         }
-        // TODO: Add when moved to @Stateful
-        // .errorMessage($viewModel.error)
+        .errorMessage($viewModel.error)
     }
 }

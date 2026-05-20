@@ -19,13 +19,12 @@ extension SettingsView {
         @Injected(\.currentUserSession)
         private var userSession: UserSession?
 
-        private let user: UserDto
-        private let action: (() -> Void)?
+        let user: UserDto
+        var action: (() -> Void)?
 
         var body: some View {
             Button {
-                guard let action else { return }
-                action()
+                action?()
             } label: {
                 HStack {
 
@@ -59,22 +58,5 @@ extension SettingsView {
             }
             .foregroundStyle(.primary, .secondary)
         }
-    }
-}
-
-extension SettingsView.UserProfileRow {
-
-    init(user: UserDto) {
-        self.init(
-            user: user,
-            action: nil
-        )
-    }
-
-    init(user: UserDto, perform action: @escaping () -> Void) {
-        self.init(
-            user: user,
-            action: action
-        )
     }
 }
