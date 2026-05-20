@@ -6,18 +6,16 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import SwiftUI
 import UIKit
 
-// TODO: Remove when TabView is working as expected.
-
-/// A `TabView` that does not scroll until the previous scroll completes
-/// - Used to prevent the overscrolling caused by the regular `TabView` & programmatic tab selection
+/// `TabView` has an "overscroll" bug on some index selections, workaround with manual `UIPageViewController`
 struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRepresentable {
 
     let items: [Item]
-    @Binding
-    var selection: Item.ID?
+    let selection: Binding<Item.ID?>
+
     @ViewBuilder
     let content: (Item) -> Content
 
@@ -27,8 +25,8 @@ struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRep
             navigationOrientation: .horizontal
         )
 
-        controller.delegate = context.coordinator
         controller.dataSource = context.coordinator
+        controller.delegate = context.coordinator
         controller.view.backgroundColor = .clear
 
         context.coordinator.controller = controller
@@ -37,71 +35,127 @@ struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRep
     }
 
     func updateUIViewController(_ controller: UIPageViewController, context: Context) {
-        context.coordinator.parent = self
-        context.coordinator.sync(items: items, selection: selection)
+        context.coordinator.sync(
+            items: items,
+            newID: selection.wrappedValue,
+            content: content
+        )
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
+        Coordinator(selection: selection)
     }
 
     final class Coordinator: NSObject, UIPageViewControllerDelegate, UIPageViewControllerDataSource {
 
-        var parent: SupplementTabView
-
         weak var controller: UIPageViewController?
 
-        private var hosts: [Item.ID: UIHostingController<Content>] = [:]
-        private var hasSetInitial = false
+        private var currentID: Item.ID?
+        private var viewControllers: [Item.ID: HostingController<Content>] = [:]
+        private var items: [Item] = []
+        private let selection: Binding<Item.ID?>
 
-        init(parent: SupplementTabView) {
-            self.parent = parent
+        init(selection: Binding<Item.ID?>) {
+            self.selection = selection
         }
 
-        func sync(items: [Item], selection: Item.ID?) {
+        func sync(
+            items: [Item],
+            newID: Item.ID?,
+            @ViewBuilder content: (Item) -> Content
+        ) {
             guard let controller else { return }
 
-            let currentIDs = Set(items.map(\.id))
-            hosts = hosts.filter { currentIDs.contains($0.key) }
+            let previousID = currentID
 
-            for item in items {
-                if let host = hosts[item.id] {
-                    host.rootView = parent.content(item)
-                } else {
-                    let host = UIHostingController(rootView: parent.content(item), ignoreSafeArea: true)
-                    host.view.backgroundColor = .clear
-                    hosts[item.id] = host
-                }
+            self.items = items
+
+            updateHosts(with: items, content: content)
+
+            switch (previousID, newID) {
+            case (_, nil):
+                currentID = nil
+
+            case (nil, let .some(newID)):
+                select(
+                    targetID(for: newID),
+                    in: controller,
+                    animated: false
+                )
+
+            case let (.some, .some(selection)):
+                select(
+                    targetID(for: selection),
+                    in: controller,
+                    animated: true
+                )
             }
+        }
 
-            let targetID = selection ?? items.first?.id
+        private func select(
+            _ targetID: Item.ID?,
+            in controller: UIPageViewController,
+            animated: Bool
+        ) {
+            guard let targetID, let target = viewControllers[targetID] else { return }
 
-            guard let targetID, let target = hosts[targetID] else { return }
+            currentID = targetID
 
-            let visible = controller.viewControllers?.first
-
-            if visible === target {
-                hasSetInitial = true
-                return
-            }
-
-            let direction: UIPageViewController.NavigationDirection = {
-                guard let visible,
-                      let currentID = id(for: visible),
-                      let currentIndex = items.firstIndex(where: { $0.id == currentID }),
-                      let targetIndex = items.firstIndex(where: { $0.id == targetID })
-                else { return .forward }
-
-                return targetIndex < currentIndex ? .reverse : .forward
-            }()
+            guard controller.viewControllers?.first !== target else { return }
 
             controller.setViewControllers(
                 [target],
-                direction: direction,
-                animated: hasSetInitial
+                direction: direction(from: controller.viewControllers?.first, to: targetID),
+                animated: animated
             )
+        }
 
-            hasSetInitial = true
+        private func updateHosts(
+            with items: [Item],
+            @ViewBuilder content: (Item) -> Content
+        ) {
+            let currentIDs = Set(items.map(\.id))
+            viewControllers = viewControllers.filter { currentIDs.contains($0.key) }
+
+            for item in items {
+                if let host = viewControllers[item.id] {
+                    host.rootView = content(item)
+                } else {
+                    let host = HostingController(content: content(item))
+                    host.disablesSafeArea = true
+                    host.view.backgroundColor = .clear
+                    viewControllers[item.id] = host
+                }
+            }
+        }
+
+        private func targetID(for selection: Item.ID) -> Item.ID? {
+            let targetID = viewControllers[selection] != nil ? selection : items.first?.id
+
+            if targetID != selection {
+                setSelection(targetID)
+            }
+
+            return targetID
+        }
+
+        private func direction(
+            from visible: UIViewController?,
+            to targetID: Item.ID
+        ) -> UIPageViewController.NavigationDirection {
+            guard let visible,
+                  let currentID = id(for: visible),
+                  let currentIndex = items.firstIndex(where: { $0.id == currentID }),
+                  let targetIndex = items.firstIndex(where: { $0.id == targetID })
+            else { return .forward }
+
+            return targetIndex < currentIndex ? .reverse : .forward
+        }
+
+        private func setSelection(_ id: Item.ID?) {
+            DispatchQueue.main.async {
+                self.selection.wrappedValue = id
+            }
         }
 
         // MARK: UIPageViewControllerDataSource
@@ -134,27 +188,25 @@ struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRep
                   let newID = id(for: visible)
             else { return }
 
-            if parent.selection != newID {
-                DispatchQueue.main.async {
-                    self.parent.selection = newID
-                }
+            if selection.wrappedValue != newID {
+                setSelection(newID)
             }
         }
 
         private func id(for controller: UIViewController) -> Item.ID? {
-            hosts.first(where: { $0.value === controller })?.key
+            viewControllers.first(where: { $0.value === controller })?.key
         }
 
         private func adjacent(to viewController: UIViewController, offset: Int) -> UIViewController? {
             guard let id = id(for: viewController),
-                  let index = parent.items.firstIndex(where: { $0.id == id })
+                  let index = items.firstIndex(where: { $0.id == id })
             else { return nil }
 
             let target = index + offset
 
-            guard parent.items.indices.contains(target) else { return nil }
+            guard items.indices.contains(target) else { return nil }
 
-            return hosts[parent.items[target].id]
+            return viewControllers[items[target].id]
         }
     }
 }

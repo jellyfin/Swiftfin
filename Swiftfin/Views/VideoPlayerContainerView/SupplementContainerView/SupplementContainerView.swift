@@ -88,7 +88,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                             supplementContainer(for: supplement)
                                 .eraseToAnyView()
                         } else {
-                            // TODO: Remove when TabView is working as expected.
                             SupplementTabView(
                                 items: Array(currentSupplements),
                                 selection: $containerState.selectedSupplement.map(
@@ -101,22 +100,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                                 supplementContainer(for: supplement.supplement)
                                     .eraseToAnyView()
                             }
-
-//                            TabView(
-//                                selection: $containerState.selectedSupplement.map(
-//                                    getter: { $0?.id },
-//                                    setter: { id -> (any MediaPlayerSupplement)? in
-//                                        id.map { currentSupplements[id: $0]?.supplement } ?? nil
-//                                    }
-//                                )
-//                            ) {
-//                                ForEach(currentSupplements) { supplement in
-//                                    supplementContainer(for: supplement.supplement)
-//                                        .eraseToAnyView()
-//                                        .tag(supplement.id as String?)
-//                                }
-//                            }
-//                            .tabViewStyle(.page(indexDisplayMode: .never))
                         }
                     }
                     .isVisible(containerState.isPresentingSupplement)
