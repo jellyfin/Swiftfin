@@ -124,18 +124,18 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.send(.refresh)
         }
+        .navigationBarMenuButton(
+            isLoading: viewModel.backgroundStates.contains(.refresh),
+            isHidden: !viewModel.item.showEditorMenu
+        ) {
+            ItemEditorMenu(item: viewModel.item)
+        }
         .toolbar {
             if experimentalDownloads, viewModel.item.canDownload == true {
                 ToolbarItem(placement: .topBarTrailing) {
                     DownloadButton(item: viewModel.item)
                 }
             }
-        }
-        .navigationBarMenuButton(
-            isLoading: viewModel.backgroundStates.contains(.refresh),
-            isHidden: !viewModel.item.showEditorMenu
-        ) {
-            ItemEditorMenu(item: viewModel.item)
         }
     }
 }

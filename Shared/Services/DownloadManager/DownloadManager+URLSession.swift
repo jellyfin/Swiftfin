@@ -9,17 +9,9 @@
 import Foundation
 import JellyfinAPI
 
-extension DownloadManager {
-
-    func startRawDownload(id: String, userSession: UserSession) throws -> URLSessionDownloadTask {
-        let request = Paths.getDownload(itemID: id)
-        guard let url = userSession.client.url(with: request, queryAPIKey: true) else {
-            throw ErrorMessage("Could not build download URL for \(id)")
-        }
-        return urlSession.downloadTask(with: url)
-    }
-}
-
+/// `URLSessionDownloadDelegate` routing. The manager hosts the background
+/// `URLSession` (only one delegate is allowed), and these callbacks dispatch
+/// each event back to the matching `DownloadTask` for the per-download work.
 extension DownloadManager: URLSessionDownloadDelegate {
 
     /// Called by iOS after it has finished delivering all queued events for a
@@ -60,18 +52,12 @@ extension DownloadManager: URLSessionDownloadDelegate {
     ) {
         guard let taskID = downloadTask.taskDescription else { return }
         guard let task = self.task(id: taskID) else { return }
+        guard let userSession else { return }
 
-        let subtype = downloadTask.response?.mimeSubtype
-        let ext = subtype.map { ".\($0)" } ?? ""
-        let filename = "\(taskID)\(ext)"
-        let downloadFolder = task.downloadFolder
-        let item = task.item
+        let response = downloadTask.response
 
         do {
-            try FileManager.default.createDirectory(at: downloadFolder, withIntermediateDirectories: true)
-            let destination = downloadFolder.appendingPathComponent(filename)
-            try? FileManager.default.removeItem(at: destination)
-            try FileManager.default.moveItem(at: location, to: destination)
+            let filename = try task.moveDownloadedMedia(from: location, response: response)
 
             DispatchQueue.main.async {
                 self.update(id: taskID) { task in
@@ -79,7 +65,7 @@ extension DownloadManager: URLSessionDownloadDelegate {
                 }
             }
 
-            guard let item else {
+            guard let item = task.item else {
                 logger.error("Cannot finalize \(taskID): item JSON failed to decode")
                 DispatchQueue.main.async {
                     self.update(id: taskID) { task in
@@ -90,9 +76,8 @@ extension DownloadManager: URLSessionDownloadDelegate {
             }
 
             Task {
-                let images = await downloadItemImages(taskID: taskID, item: item)
-                await downloadCompanionFiles(taskID: taskID, item: item)
-                try? await writeMetadataSidecar(item: item, in: downloadFolder)
+                let images = await task.downloadImages(item: item)
+                await task.downloadSubtitles(item: item, userSession: userSession)
                 await MainActor.run {
                     self.graduate(taskID: taskID, mediaRelativePath: filename, images: images)
                 }

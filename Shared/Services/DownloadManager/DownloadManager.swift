@@ -94,8 +94,14 @@ final class DownloadManager: NSObject, ObservableObject {
     }
 
     /// Combined publisher that emits the current `ItemDownloadState` for the
-    /// given item whenever either the active task list or the completed
-    /// download list changes.
+    /// given item whenever the *shape* of its state changes — i.e. the item
+    /// moves between none / active / downloaded, or the active task's state
+    /// case changes (queued ↔ downloading ↔ paused ↔ error).
+    ///
+    /// Progress updates (`bytesDownloaded`) deliberately do **not** trigger
+    /// this publisher. UI that needs live progress reads `task(id:)?.progress`
+    /// directly inside a `TimelineView`; firing on every byte tick would
+    /// rebuild any subscribed `Menu` 10× per second and make taps unreliable.
     func statePublisher(for itemID: String) -> AnyPublisher<ItemDownloadState, Never> {
         Publishers.CombineLatest($tasks, $downloads)
             .map { tasks, downloads in
@@ -107,7 +113,18 @@ final class DownloadManager: NSObject, ObservableObject {
                 }
                 return .none
             }
-            .removeDuplicates()
+            .removeDuplicates(by: { lhs, rhs in
+                switch (lhs, rhs) {
+                case (.none, .none):
+                    true
+                case let (.active(l), .active(r)):
+                    l.state == r.state
+                case let (.downloaded(l), .downloaded(r)):
+                    l.id == r.id
+                default:
+                    false
+                }
+            })
             .eraseToAnyPublisher()
     }
 
@@ -269,11 +286,7 @@ final class DownloadManager: NSObject, ObservableObject {
 
         let urlTask: URLSessionDownloadTask
         do {
-            if let resumeData = task.resumeData {
-                urlTask = urlSession.downloadTask(withResumeData: resumeData)
-            } else {
-                urlTask = try startRawDownload(id: id, userSession: userSession)
-            }
+            urlTask = try task.makeURLSessionTask(in: urlSession, userSession: userSession)
         } catch {
             logger.error("Failed to start download \(id): \(error.localizedDescription)")
             activeTaskID = nil
@@ -284,7 +297,6 @@ final class DownloadManager: NSObject, ObservableObject {
             return
         }
 
-        urlTask.taskDescription = id
         activeURLTask = urlTask
         urlTask.resume()
     }
@@ -430,8 +442,6 @@ final class DownloadManager: NSObject, ObservableObject {
             tasks.append(task)
             persistTasks()
         }
-
-        try await writeMetadataSidecar(item: item, in: task.downloadFolder)
     }
 
     // MARK: - On-disk helpers
@@ -439,16 +449,6 @@ final class DownloadManager: NSObject, ObservableObject {
     func cleanStaging() {
         let staging = URL.swiftfinDownloads.appendingPathComponent(".staging", isDirectory: true)
         try? FileManager.default.removeItem(at: staging)
-    }
-
-    func writeMetadataSidecar(item: BaseItemDto, in folder: URL) async throws {
-        let metadataFolder = folder.appendingPathComponent("Metadata", isDirectory: true)
-        try FileManager.default.createDirectory(at: metadataFolder, withIntermediateDirectories: true)
-
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
-        let data = try encoder.encode(item)
-        try data.write(to: metadataFolder.appendingPathComponent("Item.json"))
     }
 
     // MARK: - JellyfinAPI helpers
