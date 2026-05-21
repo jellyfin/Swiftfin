@@ -249,20 +249,13 @@ struct CustomizeSettingsView: View {
             PlatformPicker(L10n.defaultLayout, selection: $libraryDisplayType)
 
             if libraryDisplayType == .list, UIDevice.isPad || UIDevice.isTV {
-                #if os(tvOS)
                 Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 3, step: 1) {
-                    Text(L10n.columns)
-                } content: {
-                    Text(listColumnCount.description)
+                    LabeledContent(L10n.columns) {
+                        Text(listColumnCount.description)
+                            .foregroundStyle(.secondary)
+                    }
                 }
-                #else
-                Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 3, step: 1) {
-                    LabeledContent(
-                        L10n.columns,
-                        value: listColumnCount.description
-                    )
-                }
-                #endif
+                .foregroundStyle(.primary, .secondary)
             }
 
             Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)

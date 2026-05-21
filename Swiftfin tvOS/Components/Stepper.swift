@@ -62,11 +62,7 @@ struct Stepper<
         ChevronButton {
             isPresented = true
         } label: {
-            LabeledContent {
-                content()
-            } label: {
-                label()
-            }
+            label()
         }
         ._alert(title, isPresented: $isPresented) {
             VStack {

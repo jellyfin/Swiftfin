@@ -190,7 +190,11 @@ extension MediaPlayerItem {
         if let transcodingPath = mediaSource.transcodingURL {
             logger.trace("Using transcoding URL for item \(itemID)")
 
-            return userSession.client.url(path: transcodingPath)
+            guard let url = userSession.client.url(path: transcodingPath) else {
+                throw ErrorMessage("Unable to make transcoding URL")
+            }
+
+            return url
         }
 
         if item.mediaType == .video, !item.isLiveStream {
