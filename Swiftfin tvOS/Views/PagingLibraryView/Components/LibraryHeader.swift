@@ -88,7 +88,6 @@ struct LibraryHeader<ViewModel: ObservableObject & AnyObject>: View {
         }
         .frame(maxWidth: .infinity)
         .padding(EdgeInsets(top: 10, leading: 60, bottom: 10, trailing: 60))
-        .ignoresSafeArea()
 
         if totalCount == 0 {
             Text(L10n.noResults)

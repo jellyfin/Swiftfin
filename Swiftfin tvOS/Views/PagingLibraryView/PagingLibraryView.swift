@@ -265,7 +265,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 ContentUnavailableView(L10n.noItems.localizedCapitalized, systemImage: "rectangle.on.rectangle.slash")
             } else {
                 gridView
-                    .padding(.top, 100)
+                    .padding(.top, 210)
                     .onChange(of: posterType) {
                         setCustomLayout()
                     }
