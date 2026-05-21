@@ -6,9 +6,13 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 struct ListRowMenu<Content: View, Subtitle: View>: View {
+
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
 
     @FocusState
     private var isFocused: Bool
@@ -16,6 +20,14 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
     private let title: Text
     private let subtitle: Subtitle?
     private let content: () -> Content
+
+    private func buttonShape(cornerRadius: Double) -> AnyShape {
+        if #available(tvOS 26.0, *), isLiquidGlassEnabled {
+            AnyShape(Capsule())
+        } else {
+            AnyShape(RoundedRectangle(cornerRadius: cornerRadius))
+        }
+    }
 
     var body: some View {
         Menu(content: content) {
@@ -51,10 +63,10 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12.5)
+                    buttonShape(cornerRadius: 12.5)
                         .fill(isFocused ? Color.white : Color.clear)
                     if isFocused {
-                        RoundedRectangle(cornerRadius: 12.5)
+                        buttonShape(cornerRadius: 12.5)
                             .fill(Color.white.opacity(0.8))
                             .scaleEffect(x: 1.0, y: isFocused ? 1.10 : 1.0, anchor: .center)
                     }
@@ -85,7 +97,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                buttonShape(cornerRadius: 10)
                     .fill(isFocused ? Color.white : Color.clear)
             )
             .scaleEffect(isFocused ? 1.04 : 1.0)
