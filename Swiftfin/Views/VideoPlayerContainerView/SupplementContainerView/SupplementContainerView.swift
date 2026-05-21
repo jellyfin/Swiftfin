@@ -88,21 +88,18 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                             supplementContainer(for: supplement)
                                 .eraseToAnyView()
                         } else {
-                            TabView(
+                            SupplementTabView(
+                                items: Array(currentSupplements),
                                 selection: $containerState.selectedSupplement.map(
                                     getter: { $0?.id },
                                     setter: { id -> (any MediaPlayerSupplement)? in
                                         id.map { currentSupplements[id: $0]?.supplement } ?? nil
                                     }
                                 )
-                            ) {
-                                ForEach(currentSupplements) { supplement in
-                                    supplementContainer(for: supplement.supplement)
-                                        .eraseToAnyView()
-                                        .tag(supplement.id as String?)
-                                }
+                            ) { supplement in
+                                supplementContainer(for: supplement.supplement)
+                                    .eraseToAnyView()
                             }
-                            .tabViewStyle(.page(indexDisplayMode: .never))
                         }
                     }
                     .isVisible(containerState.isPresentingSupplement)
