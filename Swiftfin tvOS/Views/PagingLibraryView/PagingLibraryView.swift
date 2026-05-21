@@ -286,7 +286,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     // MARK: Body
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             Color.clear
                 .ignoresSafeArea()
 
@@ -303,11 +303,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             case let .error(error):
                 ErrorView(error: error)
             }
-        }
-        .frame(maxWidth: .infinity)
-        .animation(.linear(duration: 0.1), value: viewModel.state)
-        .ignoresSafeArea()
-        .overlay(alignment: .top) {
+
             if let title = viewModel.parent?.displayTitle, !title.isEmpty {
                 if let filterViewModel = viewModel.filterViewModel {
                     LibraryHeader(
@@ -318,6 +314,9 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity)
+        .animation(.linear(duration: 0.1), value: viewModel.state)
+        .ignoresSafeArea()
         .letterPickerBar(filterViewModel: viewModel.filterViewModel)
         .refreshable {
             viewModel.send(.refresh)

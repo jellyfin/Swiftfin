@@ -31,67 +31,70 @@ struct LibraryHeader<ViewModel: ObservableObject & AnyObject>: View {
     // MARK: - Body
 
     var body: some View {
-        HStack {
-            HStack(alignment: .center, spacing: 8) {
-                Text(title)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+        VStack(spacing: 0) {
+            HStack {
+                HStack(alignment: .center, spacing: 8) {
+                    Text(title)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
 
-                Text("(\(totalCount) \(L10n.items.lowercased()))")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.top, 7)
-            }
-
-            Spacer()
-
-            HStack(spacing: 30) {
-
-                Button(action: {
-                    router.route(to: .filter(type: ItemFilterType.traits, viewModel: filterViewModel))
-                }) {
-                    HStack(spacing: 10) {
-                        Text(filterButtonTitle)
-                            .lineLimit(1)
-                            .truncationMode(.tail)
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
+                    Text("(\(totalCount) \(L10n.items.lowercased()))")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .padding(.top, 7)
                 }
 
-                Text(L10n.by.lowercased())
+                Spacer()
 
-                Button(action: {
-                    router.route(to: .filter(type: ItemFilterType.sortBy, viewModel: filterViewModel))
-                }) {
-                    HStack(spacing: 10) {
-                        Text(sortButtonTitle)
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                }
+                HStack(spacing: 30) {
 
-                if filterViewModel.currentFilters.hasFilters {
                     Button(action: {
-                        filterViewModel.reset(filterType: nil)
+                        router.route(to: .filter(type: ItemFilterType.traits, viewModel: filterViewModel))
                     }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "xmark.circle")
-                            Text(L10n.reset)
+                        HStack(spacing: 10) {
+                            Text(filterButtonTitle)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                         }
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
                     }
+
+                    Text(L10n.by.lowercased())
+
+                    Button(action: {
+                        router.route(to: .filter(type: ItemFilterType.sortBy, viewModel: filterViewModel))
+                    }) {
+                        HStack(spacing: 10) {
+                            Text(sortButtonTitle)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                    }
+
+                    if filterViewModel.currentFilters.hasFilters {
+                        Button(action: {
+                            filterViewModel.reset(filterType: nil)
+                        }) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "xmark.circle")
+                                Text(L10n.reset)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                        }
+                    }
                 }
             }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(EdgeInsets(top: 10, leading: 60, bottom: 10, trailing: 60))
+            .frame(maxWidth: .infinity)
+            .padding(EdgeInsets(top: 10, leading: 60, bottom: 10, trailing: 60))
+            .focusSection()
 
-        if totalCount == 0 {
-            Text(L10n.noResults)
-                .padding(.vertical, 100)
+            if totalCount == 0 {
+                Text(L10n.noResults)
+                    .padding(.vertical, 100)
+            }
         }
     }
 
