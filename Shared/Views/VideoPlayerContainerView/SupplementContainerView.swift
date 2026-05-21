@@ -119,6 +119,20 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
                     supplementContainer(for: AnyMediaPlayerSupplement(supplement))
                 } else {
+                    #if os(iOS)
+                    SupplementTabView(
+                        items: Array(currentSupplements),
+                        selection: $containerState.selectedSupplement.map(
+                            getter: { $0?.id },
+                            setter: { id -> (any MediaPlayerSupplement)? in
+                                id.map { currentSupplements[id: $0]?.supplement } ?? nil
+                            }
+                        )
+                    ) { supplement in
+                        supplementContainer(for: supplement.supplement)
+                            .eraseToAnyView()
+                    }
+                    #else
                     TabView(
                         selection: $containerState.selectedSupplement.map(
                             getter: { $0?.id },
@@ -135,6 +149,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
+                    #endif
                 }
             }
         }
