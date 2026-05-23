@@ -9,11 +9,6 @@
 import IdentifiedCollections
 import SwiftUI
 
-// TODO: possibly make custom tab view to have observe
-//       vertical scroll content and transfer to dismissal
-// TODO: fix improper supplement selected
-//       - maybe a race issue
-
 extension VideoPlayer.UIVideoPlayerContainerViewController {
 
     struct SupplementContainerView: View {
@@ -52,6 +47,14 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             return currentSupplements.first.map { .supplementTab($0.id) }
         }
 
+        private var isTitleBarFocused: Bool {
+            if case .supplementTab = focusedElement {
+                return true
+            }
+
+            return false
+        }
+
         @ViewBuilder
         private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
             AlternateLayoutView(alignment: .topLeading) {
@@ -59,12 +62,12 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             } content: {
                 supplement.videoPlayerBody
             }
+            #if os(iOS)
             .background {
-                #if os(iOS)
                 GestureView()
                     .environment(\.panGestureDirection, .vertical)
-                #endif
             }
+            #endif
         }
 
         @ViewBuilder
@@ -81,6 +84,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                             containerState.select(supplement: nil)
                         }
                         .isSelected(true)
+                        .focused($focusedElement, equals: .supplementTab(supplement.id))
                     } else {
                         ForEach(currentSupplements) { supplement in
                             let isSelected = containerState.selectedSupplement?.id == supplement.id
@@ -109,6 +113,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 view
                     .padding(.leading, safeAreaInsets.leading)
                     .padding(.trailing, safeAreaInsets.trailing)
+                    .padding(.bottom, 8)
             }
             .buttonStyle(SupplementTitleButtonStyle())
         }
@@ -133,22 +138,13 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                             .eraseToAnyView()
                     }
                     #else
-                    TabView(
-                        selection: $containerState.selectedSupplement.map(
-                            getter: { $0?.id },
-                            setter: { id -> (any MediaPlayerSupplement)? in
-                                id.map { currentSupplements[id: $0]?.supplement } ?? nil
-                            }
-                        )
-                    ) {
-                        ForEach(currentSupplements) { supplement in
-                            supplementContainer(for: supplement)
-                                .focusSection()
-                                .frame(maxWidth: .infinity, alignment: .topLeading)
-                                .tag(supplement.id as String?)
-                        }
+                    SupplementTabView(
+                        items: Array(currentSupplements),
+                        selection: containerState.selectedSupplement?.id
+                    ) { supplement in
+                        supplementContainer(for: supplement.supplement)
+                            .eraseToAnyView()
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
                     #endif
                 }
             }

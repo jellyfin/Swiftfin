@@ -56,9 +56,11 @@ extension MediaInfoSupplement {
                     } else if let premiereYear = item.premiereDateYear {
                         Text(premiereYear)
                     }
+
                     if let runtime = item.runTimeLabel {
                         Text(runtime)
                     }
+
                     if let officialRating = item.officialRating {
                         Text(officialRating)
                     }
@@ -66,17 +68,25 @@ extension MediaInfoSupplement {
             }
         }
 
-        private var resetPlaybackButton: some View {
+        @ViewBuilder
+        private var fromBeginningButton: some View {
             Button {
                 manager.proxy?.setSeconds(.zero)
                 manager.setPlaybackRequestStatus(status: .playing)
                 containerState.select(supplement: nil)
             } label: {
-                Label(L10n.fromBeginning, systemImage: "play.fill")
-                    .padding()
+                ZStack {
+                    RoundedRectangle(cornerRadius: 7)
+                        .foregroundStyle(.white)
+
+                    Label(L10n.fromBeginning, systemImage: "play.fill")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                }
             }
-            .buttonStyle(.material)
-            .font(.subheadline.weight(.semibold))
+            .buttonStyle(.card)
+            .frame(height: 40)
         }
 
         // TODO: may need to be a layout for correct overview frame
@@ -112,7 +122,7 @@ extension MediaInfoSupplement {
                     .foregroundStyle(.secondary)
 
                 if !item.isLiveStream {
-                    resetPlaybackButton
+                    fromBeginningButton
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .padding(.vertical)
@@ -161,7 +171,7 @@ extension MediaInfoSupplement {
                             .padding(safeAreaInsets)
                             .frame(height: UIDevice.isTV ? 75 : 50)
                     } content: {
-                        resetPlaybackButton
+                        fromBeginningButton
                             .focusSection()
                     }
                 }

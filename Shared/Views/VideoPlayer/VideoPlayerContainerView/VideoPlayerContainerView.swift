@@ -35,12 +35,13 @@ import SwiftUI
 // MARK: - VideoPlayerContainerView
 
 extension VideoPlayer {
+
     struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: UIViewControllerRepresentable {
 
         private let containerState: VideoPlayerContainerState
         private let manager: MediaPlayerManager
-        private let player: () -> Player
-        private let playbackControls: () -> PlaybackControls
+        private let player: Player
+        private let playbackControls: PlaybackControls
 
         init(
             containerState: VideoPlayerContainerState,
@@ -50,15 +51,16 @@ extension VideoPlayer {
         ) {
             self.containerState = containerState
             self.manager = manager
-            self.player = player
-            self.playbackControls = playbackControls
+            self.player = player()
+            self.playbackControls = playbackControls()
         }
 
         func makeUIViewController(context: Context) -> UIVideoPlayerContainerViewController {
-            let playerView = player()
+            let playerView = player
                 .environment(\.audioOffset, context.environment.audioOffset)
                 .eraseToAnyView()
-            let playbackControlsView = playbackControls()
+
+            let playbackControlsView = playbackControls
                 .environment(\.audioOffset, context.environment.audioOffset)
                 .eraseToAnyView()
 
@@ -541,7 +543,7 @@ extension VideoPlayer {
             }
 
             #if os(tvOS)
-            let gesture = UITapGestureRecognizer(target: self, action: #selector(menuPressed))
+            let gesture = UITapGestureRecognizer(target: self, action: #selector(handleMenuEnded))
             gesture.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
             view.addGestureRecognizer(gesture)
 
@@ -695,9 +697,9 @@ extension VideoPlayer {
         }
 
         private func disableTogglePlayPauseCommand() {
-            let cmd = MPRemoteCommandCenter.shared().togglePlayPauseCommand
-            cmd.removeTarget(nil)
-            cmd.addTarget { _ in .success }
+            let command = MPRemoteCommandCenter.shared().togglePlayPauseCommand
+            command.removeTarget(nil)
+            command.addTarget { _ in .success }
         }
 
         override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -712,11 +714,6 @@ extension VideoPlayer {
             } else {
                 containerState.timer.poke()
             }
-        }
-
-        @objc
-        private func menuPressed() {
-            handleMenuEnded()
         }
 
         private func forwardPressesBegan(
@@ -827,6 +824,7 @@ extension VideoPlayer {
             }
         }
 
+        @objc
         private func handleMenuEnded() {
             if containerState.hasEnteredScrubMode {
                 containerState.cancelScrub()

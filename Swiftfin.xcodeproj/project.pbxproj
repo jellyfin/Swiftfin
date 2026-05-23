@@ -217,7 +217,6 @@
 		E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Components/NavigationBar/ActionButtons/GestureLockActionButton.swift,
 				Extensions/JellyfinAPI/TaskTriggerInfoType.swift,
 				Objects/ItemArrayElements.swift,
 				ViewModels/AdminDashboard/ActiveSessionsViewModel.swift,
@@ -239,6 +238,7 @@
 				ViewModels/ItemAdministration/RemoteImageInfoViewModel.swift,
 				ViewModels/QuickConnectAuthorizeViewModel.swift,
 				ViewModels/ServerCheckViewModel.swift,
+				Views/VideoPlayer/Components/NavigationBar/ActionButtons/GestureLockActionButton.swift,
 			);
 			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
 		};
@@ -911,6 +911,8 @@
 /* Begin XCBuildConfiguration section */
 		535870722669D21700D05A09 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
+			baseConfigurationReferenceRelativePath = Shared.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
@@ -918,7 +920,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -928,7 +929,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.4.1;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -941,6 +941,8 @@
 		};
 		535870732669D21700D05A09 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
+			baseConfigurationReferenceRelativePath = Shared.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
@@ -948,7 +950,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -958,7 +959,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.4.1;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_EMIT_LOC_STRINGS = YES;

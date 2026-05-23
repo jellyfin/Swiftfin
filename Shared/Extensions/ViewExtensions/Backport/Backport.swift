@@ -92,7 +92,6 @@ extension Backport where Content: View {
         }
     }
 
-    /// This does nothing on iOS.
     @ViewBuilder
     func defaultFocus<V: Hashable>(
         _ binding: FocusState<V>.Binding,
@@ -112,7 +111,6 @@ extension Backport where Content: View {
         }
     }
 
-    /// This does nothing on iOS.
     @ViewBuilder
     func focusable(_ isFocusable: Bool = true) -> some View {
         if #available(iOS 17, tvOS 17, *) {

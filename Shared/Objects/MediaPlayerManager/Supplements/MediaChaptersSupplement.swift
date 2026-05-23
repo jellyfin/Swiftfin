@@ -149,15 +149,10 @@ extension MediaChaptersSupplement {
         }
 
         var tvOSView: some View {
-            CollectionVGrid(
+            CollectionHStack(
                 uniqueElements: chapters,
                 id: \.unwrappedIDHashOrZero,
-                layout: .columns(
-                    5,
-                    insets: .init(EdgeInsets.edgePadding),
-                    itemSpacing: EdgeInsets.edgePadding,
-                    lineSpacing: EdgeInsets.edgePadding
-                )
+                layout: .minimumWidth(columnWidth: 170, rows: 1)
             ) { chapter in
                 ChapterButton(supplement: supplement, chapter: chapter) {
                     guard let startSeconds = chapter.chapterInfo.startSeconds else { return }

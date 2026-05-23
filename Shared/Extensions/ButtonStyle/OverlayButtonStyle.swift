@@ -39,7 +39,10 @@ extension VideoPlayer.PlaybackControls {
                 }
                 .animation(.linear(duration: 0.1).delay(configuration.isPressed ? 0.2 : 0), value: configuration.isPressed)
                 .padding(4)
-                .onChange(of: configuration.isPressed, perform: onPressed)
+                .backport
+                .onChange(of: configuration.isPressed) { _, newValue in
+                    onPressed(newValue)
+                }
         }
     }
 }

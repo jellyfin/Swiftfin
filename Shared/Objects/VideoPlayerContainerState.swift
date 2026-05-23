@@ -148,6 +148,7 @@ class VideoPlayerContainerState: ObservableObject {
     func commitScrub() {
         guard hasEnteredScrubMode else { return }
         manager?.proxy?.setSeconds(scrubbedSeconds.value)
+        manager?.setPlaybackRequestStatus(status: .playing)
         isScrubbing = false
         hasEnteredScrubMode = false
         scrubOriginSeconds = nil

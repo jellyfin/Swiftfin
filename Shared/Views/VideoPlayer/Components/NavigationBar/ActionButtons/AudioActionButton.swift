@@ -31,10 +31,16 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
 
         @ViewBuilder
         private func content(playbackItem: MediaPlayerItem) -> some View {
-            Picker(L10n.audio, selection: $selectedAudioStreamIndex) {
+            Picker(selection: $selectedAudioStreamIndex) {
                 ForEach(playbackItem.audioStreams, id: \.index) { stream in
                     Text(stream.displayTitle ?? L10n.unknown)
                         .tag(stream.index as Int?)
+                }
+            } label: {
+                Text(L10n.audio)
+
+                if let selectedAudioStream = playbackItem.audioStreams.first(where: { $0.index == selectedAudioStreamIndex }) {
+                    Text(selectedAudioStream.displayTitle ?? L10n.unknown)
                 }
             }
         }

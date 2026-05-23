@@ -26,9 +26,6 @@ extension VideoPlayer.PlaybackControls {
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
 
-        @Toaster
-        private var toaster: ToastProxy
-
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
@@ -42,7 +39,11 @@ extension VideoPlayer.PlaybackControls {
         @State
         private var sliderSize: CGSize = .zero
 
+        @Toaster
+        private var toaster: ToastProxy
+
         private let previewImageHeight: CGFloat = 200
+        private let sliderHeight: CGFloat = 14
 
         private var isScrubbing: Bool {
             get {
@@ -53,11 +54,23 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        var onPanScrubChanged: ((Bool) -> Void)?
+        let onPanScrubChanged: ((Bool) -> Void)?
 
         private var scrubbedProgress: Double {
             guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
             return scrubbedSecondsBox.value / runtime
+        }
+
+        private var currentProgress: Double? {
+            guard isScrubbing,
+                  let runtime = manager.item.runtime,
+                  runtime > .zero
+            else {
+                return nil
+            }
+
+            let currentSeconds = containerState.scrubOriginSeconds ?? manager.seconds
+            return clamp((currentSeconds / runtime) * 100, min: 0, max: 100)
         }
 
         private var videoSizeAspectRatio: CGFloat {
@@ -77,7 +90,7 @@ extension VideoPlayer.PlaybackControls {
         @ViewBuilder
         private var liveIndicator: some View {
             Text(L10n.live)
-                .font(.subheadline)
+                .font(UIDevice.isTV ? .caption : .subheadline)
                 .fontWeight(.semibold)
                 .foregroundStyle(.white)
                 .padding(.horizontal, 16)
@@ -94,7 +107,7 @@ extension VideoPlayer.PlaybackControls {
                     liveIndicator
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
-                    CapsuleSlider(
+                    VideoPlayerSlider(
                         value: $scrubbedSecondsBox.value.map(
                             getter: {
                                 guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
@@ -102,7 +115,9 @@ extension VideoPlayer.PlaybackControls {
                             },
                             setter: { (manager.item.runtime ?? .zero) * ($0 / 100) }
                         ),
-                        total: 100
+                        currentProgress: currentProgress,
+                        total: 100,
+                        isScrollingEnabled: manager.playbackRequestStatus == .paused
                     )
                     .onEditingChanged { isEditing in
                         if isEditing {
@@ -121,18 +136,13 @@ extension VideoPlayer.PlaybackControls {
                             }
                         }
                     }
-                    .frame(height: 14)
+                    .frame(height: sliderHeight)
                     .trackingSize($sliderSize)
-                    .overlay {
-                        CurrentSecondTick()
-                            .frame(height: sliderSize.height)
-                            .allowsHitTesting(false)
-                    }
                     .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
                     .disabled(manager.state == .loadingItem)
 
                     SplitTimeStamp()
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(.white, Color.lightGray)
                 }
             }
             .focused($isFocused)

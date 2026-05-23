@@ -9,8 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: determine smaller font size for title
-
 extension VideoPlayer.PlaybackControls {
 
     struct NavigationBar: View {
@@ -23,7 +21,9 @@ extension VideoPlayer.PlaybackControls {
         @Router
         private var router
 
-        private var fontSize: CGFloat = !UIDevice.isTV ? 24 : 36
+        private var fontSize: CGFloat {
+            UIDevice.isTV ? 34 : 24
+        }
 
         private func onPressed(isPressed: Bool) {
             if isPressed {
@@ -33,6 +33,7 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        @ViewBuilder
         private var closeButton: some View {
             Button {
                 if containerState.isPresentingSupplement {
@@ -106,19 +107,19 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         @ViewBuilder
         private func _subtitle(_ subtitle: String) -> some View {
             Text(subtitle)
-                .font(.subheadline)
+                .font(UIDevice.isTV ? .callout : .subheadline)
                 .fontWeight(.medium)
                 .foregroundStyle(.white)
                 .trackingSize($subtitleContentSize)
         }
 
         var iOSView: some View {
-            Text(self._titleSubtitle.title)
+            Text(_titleSubtitle.title)
                 .fontWeight(.semibold)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .overlay(alignment: .bottomLeading) {
-                    if let subtitle = self._titleSubtitle.subtitle {
+                    if let subtitle = _titleSubtitle.subtitle {
                         _subtitle(subtitle)
                             .lineLimit(1)
                             .offset(y: subtitleContentSize.height)
@@ -128,17 +129,18 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
 
         var tvOSView: some View {
             VStack(alignment: .leading) {
-                Text(self._titleSubtitle.title)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .lineLimit(1)
-
-                if let subtitle = self._titleSubtitle.subtitle {
-                    _subtitle(subtitle)
-                        .lineLimit(1)
+                if let subtitle = _titleSubtitle.subtitle {
+                    Text(subtitle)
+                        .font(UIDevice.isTV ? .callout : .subheadline)
+                        .fontWeight(.medium)
                 }
+
+                Text(_titleSubtitle.title)
+                    .font(UIDevice.isTV ? .title2 : .body)
+                    .fontWeight(.semibold)
             }
-            .frame(minWidth: max(50, subtitleContentSize.width))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .lineLimit(1)
         }
     }
 }

@@ -13,16 +13,18 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
     @Binding
     private var value: Value
 
-    @FocusState
-    private var isFocused: Bool
-
     private let total: Value
-    private var originProgress: Value?
+    private let isScrollingEnabled: Bool
     private var onEditingChanged: (Bool) -> Void
 
-    init(value: Binding<Value>, total: Value) {
+    init(
+        value: Binding<Value>,
+        total: Value,
+        isScrollingEnabled: Bool = true
+    ) {
         self._value = value
         self.total = total
+        self.isScrollingEnabled = isScrollingEnabled
         self.onEditingChanged = { _ in }
     }
 
@@ -30,7 +32,7 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
         SliderContainer(
             value: $value,
             total: total,
-            originProgress: originProgress,
+            isScrollingEnabled: isScrollingEnabled,
             onEditingChanged: onEditingChanged
         ) {
             CapsuleSliderContent()
@@ -43,29 +45,18 @@ extension CapsuleSlider {
     func onEditingChanged(_ action: @escaping (Bool) -> Void) -> Self {
         copy(modifying: \.onEditingChanged, with: action)
     }
-
-    func originProgress(_ value: Value?) -> Self {
-        copy(modifying: \.originProgress, with: value)
-    }
 }
 
 private struct CapsuleSliderContent: SliderContentView {
 
     @EnvironmentObject
     var sliderState: SliderContainerState<Double>
-    @EnvironmentObject
-    private var containerState: VideoPlayerContainerState
 
     var body: some View {
         ProgressView(value: sliderState.value, total: sliderState.total)
             .progressViewStyle(PlaybackProgressViewStyle(cornerStyle: .round))
-            .onChange(of: sliderState.isFocused) { _, focused in
-                if !focused {
-                    containerState.cancelScrub()
-                }
-            }
-            .opacity(sliderState.isFocused ? 1 : 0.70)
+            .opacity(sliderState.isFocused ? 1 : 0.7)
+            .animation(.linear(duration: 0.1), value: sliderState.value)
             .animation(.easeInOut(duration: 0.2), value: sliderState.isFocused)
-            .animation(.easeInOut(duration: 0.2), value: sliderState.originValue != nil)
     }
 }

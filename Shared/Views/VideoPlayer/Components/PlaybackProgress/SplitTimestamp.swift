@@ -96,7 +96,6 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        @ViewBuilder
         var iOSView: some View {
             HStack {
                 Button {
@@ -125,14 +124,14 @@ extension VideoPlayer.PlaybackControls {
                 }
                 .foregroundStyle(.primary, .secondary)
             }
+            .font(UIDevice.isTV ? .caption : .caption2)
+            .fontWeight(UIDevice.isTV ? .medium : nil)
             .monospacedDigit()
-            .font(.caption2)
             .lineLimit(1)
             .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
             .assign(manager.secondsBox.$value, to: $activeSeconds)
         }
 
-        @ViewBuilder
         var tvOSView: some View {
             ZStack {
                 if let runtime = manager.item.runtime {
@@ -148,11 +147,12 @@ extension VideoPlayer.PlaybackControls {
                     .trackingSize($leadingTimestampSize)
                     .offset(x: previewXOffset)
             }
-            .font(.callout)
+            .font(UIDevice.isTV ? .caption : .caption2)
+            .fontWeight(UIDevice.isTV ? .medium : nil)
             .monospacedDigit()
             .trackingSize($contentSize)
             .foregroundStyle(containerState.isProgressBarFocused ? .primary : .secondary)
-            .opacity(containerState.isProgressBarFocused ? 1 : 0.70)
+            .opacity(containerState.isProgressBarFocused ? 1 : 0.7)
         }
     }
 }

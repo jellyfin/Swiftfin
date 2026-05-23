@@ -18,11 +18,6 @@ extension VideoPlayer {
         @Default(.VideoPlayer.jumpForwardInterval)
         var jumpForwardInterval
 
-        // since this view ignores safe area, it must
-        // get safe area insets from parent views
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
-
         @EnvironmentObject
         var containerState: VideoPlayerContainerState
         @EnvironmentObject
@@ -42,25 +37,24 @@ extension VideoPlayer {
         var pendingJumpWork: DispatchWorkItem?
 
         var body: some View {
-            VStack(spacing: 10) {
-
-                Spacer(minLength: 0)
+            VStack(spacing: 30) {
 
                 NavigationBar()
-                    .isVisible((containerState.isPresentingOverlay || containerState.isScrubbing) && !containerState
-                        .isPresentingSupplement)
+                    .isVisible(
+                        containerState.isPresentingOverlay &&
+                            !containerState.isScrubbing &&
+                            !containerState.isPresentingSupplement
+                    )
                     .disabled(containerState.isPresentingSupplement)
 
-                PlaybackProgress(
-                    onPanScrubChanged: { isPanning in
-                        if isPanning {
-                            if containerState.scrubOriginSeconds == nil {
-                                containerState.scrubOriginSeconds = manager.seconds
-                            }
-                            containerState.hasEnteredScrubMode = true
+                PlaybackProgress { isPanning in
+                    if isPanning {
+                        if containerState.scrubOriginSeconds == nil {
+                            containerState.scrubOriginSeconds = manager.seconds
                         }
+                        containerState.hasEnteredScrubMode = true
                     }
-                )
+                }
                 .focused($isPlaybackProgressFocused, equals: true)
                 .fixedSize(horizontal: false, vertical: true)
                 .isVisible(
@@ -68,21 +62,14 @@ extension VideoPlayer {
                         !containerState.isPresentingSupplement
                 )
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             .edgePadding(.horizontal)
-            .overlay {
-                if manager.playbackRequestStatus == .paused {
-                    Label(L10n.pause, systemImage: "pause.fill")
-                        .transition(.opacity.combined(with: .scale).animation(.bouncy(duration: 0.7, extraBounce: 0.2)))
-                        .font(.system(size: 72, weight: .bold, design: .default))
-                        .labelStyle(.iconOnly)
-                }
-            }
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
             .alert(L10n.closePlayer, isPresented: $containerState.isPresentingCloseConfirmation) {
                 Button(L10n.cancel, role: .cancel) {}
+
                 Button(L10n.ok, role: .destructive) {
                     manager.stop()
                 }
