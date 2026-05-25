@@ -183,6 +183,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
                 if playbackRequestStateBeforeInterruption == .playing {
                     if options.contains(.shouldResume) {
                         manager?.setPlaybackRequestStatus(status: .playing)
+                        manager?.proxy?.play()
                     } else {
                         manager?.setPlaybackRequestStatus(status: .paused)
                     }
