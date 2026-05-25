@@ -118,12 +118,11 @@ class VideoPlayerContainerState: ObservableObject {
     }
 
     @Published
-    var centerOffset: CGFloat = 0.0
-    @Published
     var isProgressBarFocused: Bool = false
 
     var originalPlaybackRate: Float?
 
+    let centerOffsetBox: PublishedBox<CGFloat> = .init(initialValue: 0)
     let jumpProgressObserver: JumpProgressObserver = .init()
     let scrubbedSeconds: PublishedBox<Duration> = .init(initialValue: .zero)
     let timer: PokeIntervalTimer = .init()
@@ -142,25 +141,25 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var isPresentingCloseConfirmation: Bool = false
 
-    var hasEnteredScrubMode: Bool = false
     var scrubOriginSeconds: Duration?
 
     func commitScrub() {
-        guard hasEnteredScrubMode else { return }
+        guard isScrubbing else { return }
+
         manager?.proxy?.setSeconds(scrubbedSeconds.value)
         manager?.setPlaybackRequestStatus(status: .playing)
         isScrubbing = false
-        hasEnteredScrubMode = false
         scrubOriginSeconds = nil
     }
 
     func cancelScrub() {
-        guard hasEnteredScrubMode else { return }
+        guard isScrubbing else { return }
+
         if let manager {
             scrubbedSeconds.value = manager.seconds
         }
+
         isScrubbing = false
-        hasEnteredScrubMode = false
         scrubOriginSeconds = nil
     }
     #endif

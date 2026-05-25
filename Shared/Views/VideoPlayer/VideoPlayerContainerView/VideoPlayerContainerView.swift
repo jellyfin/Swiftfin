@@ -106,9 +106,30 @@ extension VideoPlayer {
 
             var body: some View {
                 player
-                    .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
-                    .animation(.linear(duration: 0.2), value: containerState.isPresentingPlaybackControls)
-                    .allowsHitTesting(false)
+                #if os(iOS)
+                .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
+                .animation(.linear(duration: 0.2), value: containerState.isPresentingPlaybackControls)
+                #endif
+                .overlay {
+                    GeometryReader { proxy in
+                        LinearGradient(
+                            stops: [
+                                .init(color: .clear, location: 0),
+                                .init(color: .black.opacity(0.04), location: 0.25),
+                                .init(color: .black.opacity(0.18), location: 0.45),
+                                .init(color: .black.opacity(0.42), location: 0.68),
+                                .init(color: .black.opacity(0.68), location: 0.86),
+                                .init(color: .black.opacity(0.82), location: 1),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .isVisible(shouldPresentDimOverlay)
+                        .frame(height: proxy.size.height * 0.55)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    }
+                }
+                .allowsHitTesting(false)
             }
         }
 
@@ -139,6 +160,7 @@ extension VideoPlayer {
                         #endif
                     }
                     .environmentObject(containerState.scrubbedSeconds)
+                    .environmentObject(containerState.centerOffsetBox)
                 }
                 #if os(iOS)
                 .environment(
@@ -454,7 +476,7 @@ extension VideoPlayer {
             }
 
             playerCompactBottomAnchor.constant = compactPlayerBottomOffset
-            containerState.centerOffset = centerOffset
+            containerState.centerOffsetBox.value = centerOffset
         }
 
         // MARK: - present
@@ -477,7 +499,7 @@ extension VideoPlayer {
             }
 
             playerCompactBottomAnchor.constant = compactPlayerBottomOffset
-            containerState.centerOffset = centerOffset
+            containerState.centerOffsetBox.value = centerOffset
 
             if let panningState {
                 let velocity = panningState.velocity.magnitude / 1000
@@ -539,7 +561,7 @@ extension VideoPlayer {
 
             Task { @MainActor in
                 containerState.isCompact = isCompact
-                containerState.centerOffset = centerOffset
+                containerState.centerOffsetBox.value = centerOffset
             }
 
             #if os(tvOS)
@@ -679,7 +701,7 @@ extension VideoPlayer {
             }
 
             playerCompactBottomAnchor.constant = compactPlayerBottomOffset
-            containerState.centerOffset = centerOffset
+            containerState.centerOffsetBox.value = centerOffset
         }
 
         // MARK: - tvOS
@@ -745,7 +767,7 @@ extension VideoPlayer {
                         .init(
                             type: press.type,
                             phase: press.phase,
-                            performDefault: defaultAction
+                            defaultAction: defaultAction
                         )
                     )
                 }
@@ -771,7 +793,7 @@ extension VideoPlayer {
                         .init(
                             type: press.type,
                             phase: press.phase,
-                            performDefault: defaultAction
+                            defaultAction: defaultAction
                         )
                     )
                 }
@@ -779,7 +801,7 @@ extension VideoPlayer {
         }
 
         private func handlePlayPauseEnded() {
-            if containerState.hasEnteredScrubMode {
+            if containerState.isScrubbing {
                 containerState.cancelScrub()
                 containerState.timer.poke()
                 return
@@ -798,6 +820,7 @@ extension VideoPlayer {
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
             }
+
             containerState.timer.poke()
         }
 
@@ -808,7 +831,7 @@ extension VideoPlayer {
                 return
             }
 
-            if containerState.hasEnteredScrubMode {
+            if containerState.isScrubbing {
                 containerState.commitScrub()
                 containerState.timer.poke()
             } else if containerState.isProgressBarFocused {
@@ -826,7 +849,7 @@ extension VideoPlayer {
 
         @objc
         private func handleMenuEnded() {
-            if containerState.hasEnteredScrubMode {
+            if containerState.isScrubbing {
                 containerState.cancelScrub()
                 containerState.timer.poke()
             } else if containerState.isPresentingSupplement {
@@ -859,15 +882,15 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         let type: UIPress.PressType
         let phase: UIPress.Phase
 
-        fileprivate let performDefault: () -> Void
+        fileprivate let defaultAction: () -> Void
 
         func resolve(_ resolution: Resolution) {
             if resolution == .fallback {
-                performDefault()
+                defaultAction()
             }
         }
     }
 
-    typealias OnPressEvent = LegacyEventPublisher<PressEvent>
+    typealias OnPressEvent = EventPublisher<PressEvent>
 }
 #endif

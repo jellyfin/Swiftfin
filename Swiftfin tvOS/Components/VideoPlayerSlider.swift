@@ -63,6 +63,10 @@ private struct VideoPlayerSliderContent: SliderContentView {
 
     private let tickWidth: CGFloat = 3
 
+    private var activeColor: Color {
+        isEnabled ? .white : .lightGray
+    }
+
     private var scrubbedProgress: Double {
         progress(for: sliderState.value)
     }
@@ -95,14 +99,29 @@ private struct VideoPlayerSliderContent: SliderContentView {
         return abs(currentProgress - scrubbedProgress) > 0.001
     }
 
-    private var activeColor: Color {
-        isEnabled ? .white : .lightGray
+    private func progress(for value: Double) -> Double {
+        guard sliderState.total > 0 else {
+            return 0
+        }
+
+        return clamp(value / sliderState.total, min: 0, max: 1)
+    }
+
+    @ViewBuilder
+    private func progressSegment(progress: Double, in size: CGSize) -> some View {
+        Rectangle()
+            .frame(width: size.width * progress + size.height)
+            .offset(x: -size.height)
+    }
+
+    private func tickOffset(for progress: Double, in width: CGFloat) -> CGFloat {
+        clamp(width * progress - tickWidth / 2, min: 0, max: width - tickWidth)
     }
 
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
-                Capsule()
+                Rectangle()
                     .fill(activeColor.opacity(0.2))
 
                 if let pendingProgress {
@@ -114,7 +133,7 @@ private struct VideoPlayerSliderContent: SliderContentView {
                     .foregroundStyle(activeColor)
 
                 if shouldShowCurrentTick, let currentProgress {
-                    Capsule()
+                    Rectangle()
                         .fill(activeColor.opacity(0.95))
                         .frame(width: tickWidth)
                         .offset(x: tickOffset(for: currentProgress, in: proxy.size.width))
@@ -131,23 +150,5 @@ private struct VideoPlayerSliderContent: SliderContentView {
         .animation(.linear(duration: 0.1), value: sliderState.value)
         .animation(.easeInOut(duration: 0.2), value: sliderState.isFocused)
         .animation(.easeInOut(duration: 0.2), value: sliderState.originValue != nil)
-    }
-
-    private func progress(for value: Double) -> Double {
-        guard sliderState.total > 0 else {
-            return 0
-        }
-
-        return clamp(value / sliderState.total, min: 0, max: 1)
-    }
-
-    private func progressSegment(progress: Double, in size: CGSize) -> some View {
-        Rectangle()
-            .frame(width: size.width * progress + size.height)
-            .offset(x: -size.height)
-    }
-
-    private func tickOffset(for progress: Double, in width: CGFloat) -> CGFloat {
-        clamp(width * progress - tickWidth / 2, min: 0, max: width - tickWidth)
     }
 }

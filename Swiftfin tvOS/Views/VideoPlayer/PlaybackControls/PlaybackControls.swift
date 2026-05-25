@@ -47,20 +47,13 @@ extension VideoPlayer {
                     )
                     .disabled(containerState.isPresentingSupplement)
 
-                PlaybackProgress { isPanning in
-                    if isPanning {
-                        if containerState.scrubOriginSeconds == nil {
-                            containerState.scrubOriginSeconds = manager.seconds
-                        }
-                        containerState.hasEnteredScrubMode = true
-                    }
-                }
-                .focused($isPlaybackProgressFocused, equals: true)
-                .fixedSize(horizontal: false, vertical: true)
-                .isVisible(
-                    (containerState.isPresentingOverlay || containerState.isScrubbing) &&
-                        !containerState.isPresentingSupplement
-                )
+                PlaybackProgress()
+                    .focused($isPlaybackProgressFocused, equals: true)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .isVisible(
+                        (containerState.isPresentingOverlay || containerState.isScrubbing) &&
+                            !containerState.isPresentingSupplement
+                    )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             .edgePadding(.horizontal)
@@ -95,9 +88,8 @@ extension VideoPlayer {
             }
             .onChange(of: containerState.isProgressBarFocused) { _, newValue in
                 if !newValue {
-                    if containerState.hasEnteredScrubMode {
-                        cancelScrubbing()
-                    }
+                    containerState.cancelScrub()
+
                     if isSpeedBoosting {
                         stopSpeedBoost()
                     }

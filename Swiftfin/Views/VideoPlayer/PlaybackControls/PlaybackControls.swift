@@ -83,7 +83,6 @@ extension VideoPlayer {
 
                 PlaybackButtons()
                     .isVisible(!isScrubbing && containerState.isPresentingPlaybackControls)
-                    .offset(y: containerState.centerOffset / 2)
             }
             .modifier(VideoPlayer.KeyCommandsModifier())
             .animation(.linear(duration: 0.1), value: isScrubbing)

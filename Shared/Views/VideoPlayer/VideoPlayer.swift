@@ -32,7 +32,7 @@ struct VideoPlayer: View {
 
     // TODO: move behavior to `PlaybackProgress`?
     @State
-    private var scrubbingStartDate: Date? = nil
+    private var scrubbingStartTime: CFTimeInterval? = nil
     @State
     private var subtitleOffset: Duration = .zero
 
@@ -72,10 +72,12 @@ struct VideoPlayer: View {
         }
         .backport
         .onChange(of: containerState.isScrubbing) { _, newValue in
-            if newValue { scrubbingStartDate = .now }
+            if newValue {
+                scrubbingStartTime = CACurrentMediaTime()
+            }
 
-            guard let scrubbingStartDate else { return }
-            let scrubbingDelta = Date.now.timeIntervalSince(scrubbingStartDate)
+            guard let scrubbingStartTime else { return }
+            let scrubbingDelta = CACurrentMediaTime() - scrubbingStartTime
             let secondsDelta = abs(manager.seconds - containerState.scrubbedSeconds.value)
 
             guard secondsDelta >= .seconds(1), scrubbingDelta >= 0.1 else { return }

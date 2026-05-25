@@ -82,14 +82,6 @@ extension VideoPlayer.PlaybackControls {
         scheduleJump(direction: .backward)
     }
 
-    func cancelScrubbing() {
-        containerState.scrubbedSeconds.value = manager.seconds
-
-        containerState.isScrubbing = false
-        containerState.hasEnteredScrubMode = false
-        containerState.scrubOriginSeconds = nil
-    }
-
     func scheduleJump(direction: JumpDirection) {
         pendingJumpWork?.cancel()
 

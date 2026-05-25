@@ -54,8 +54,6 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        let onPanScrubChanged: ((Bool) -> Void)?
-
         private var scrubbedProgress: Double {
             guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
             return scrubbedSecondsBox.value / runtime
@@ -121,19 +119,17 @@ extension VideoPlayer.PlaybackControls {
                     )
                     .onEditingChanged { isEditing in
                         if isEditing {
+                            if containerState.scrubOriginSeconds == nil {
+                                containerState.scrubOriginSeconds = manager.seconds
+                            }
                             isScrubbing = true
-                            onPanScrubChanged?(true)
-                        } else {
-                            onPanScrubChanged?(false)
                         }
                     }
                     .if(chapterSlider) { view in
-                        view.ifLet(manager.item.fullChapterInfo) { view, chapters in
-                            if chapters.isEmpty {
-                                view
-                            } else {
-                                view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
-                            }
+                        if let chapters = manager.item.fullChapterInfo, chapters.isNotEmpty {
+                            view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
+                        } else {
+                            view
                         }
                     }
                     .frame(height: sliderHeight)

@@ -22,6 +22,8 @@ extension VideoPlayer.PlaybackControls {
         private var jumpForwardInterval
 
         @EnvironmentObject
+        private var centerOffsetBox: PublishedBox<CGFloat>
+        @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
@@ -113,6 +115,7 @@ extension VideoPlayer.PlaybackControls {
             }
             .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
             .padding(.horizontal, 50)
+            .offset(y: centerOffsetBox.value / 2)
         }
     }
 }
