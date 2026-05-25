@@ -58,6 +58,17 @@ struct VideoPlayer: View {
             manager.proxy = proxy
             manager.start()
         }
+        .overlay {
+            Rectangle()
+                .hidden()
+                .accessibilityRepresentation {
+                    Button {
+                        containerState.accessibilityToggleOverlay()
+                    } label: {
+                        Text("Toggle Overlay")
+                    }
+                }
+        }
     }
 
     var body: some View {
