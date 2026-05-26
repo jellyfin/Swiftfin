@@ -15,13 +15,17 @@ import UIKit
 extension DownloadTask {
 
     func downloadImages(item: BaseItemDto) async -> [DownloadImage] {
-        let sourceLists: [[ImageSource]] = [
+        var sourceLists: [[ImageSource]] = [
             item.portraitImageSources(maxWidth: 600),
             item.landscapeImageSources(maxWidth: 800),
             item.cinematicImageSources(maxWidth: 800),
             item.squareImageSources(maxWidth: 600),
             item.thumbImageSources(),
         ]
+
+        if item.imageTags?[ImageType.logo.rawValue] != nil {
+            sourceLists.append([item.imageSource(.logo, maxWidth: 400)])
+        }
 
         var seen: Set<String> = []
         var images: [DownloadImage] = []

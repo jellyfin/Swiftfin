@@ -13,30 +13,39 @@ extension DownloadManager {
 
     func queue(_ item: BaseItemDto, type: DownloadType = .direct) {
         Task {
-            await queueAsync(item, type: type)
+            await queueAsync(item, type: type, parentID: nil)
         }
     }
 
-    private func queueAsync(_ item: BaseItemDto, type: DownloadType) async {
+    private func queueAsync(_ item: BaseItemDto, type: DownloadType, parentID: String?) async {
         guard currentUserID != nil else { return }
-        guard let kind = item.type else { return }
+        guard let kind = item.type, let id = item.id else { return }
 
         do {
+            let parentIDs: [String] = if let parentID {
+                [parentID]
+            } else {
+                try await ensureAncestors(for: item)
+            }
+
             switch kind {
             case .movie, .episode:
-                try await createMediaTask(item, type: type)
+                try createMediaTask(item, type: type, parentIDs: parentIDs)
+
             case .series:
-                guard let id = item.id else { return }
+                createContainerTask(item, parentIDs: parentIDs)
                 let seasons = try await getSeasons(seriesID: id)
                 for season in seasons {
-                    await queueAsync(season, type: type)
+                    await queueAsync(season, type: type, parentID: id)
                 }
-            case .boxSet, .season:
-                guard let id = item.id else { return }
+
+            case .season, .boxSet:
+                createContainerTask(item, parentIDs: parentIDs)
                 let children = try await getChildren(parentID: id)
                 for child in children {
-                    await queueAsync(child, type: type)
+                    await queueAsync(child, type: type, parentID: id)
                 }
+
             default:
                 return
             }
@@ -47,13 +56,65 @@ extension DownloadManager {
         advanceQueue()
     }
 
-    private func createMediaTask(_ item: BaseItemDto, type: DownloadType) async throws {
+    // MARK: - Task creation
+
+    private func createMediaTask(_ item: BaseItemDto, type: DownloadType, parentIDs: [String]) throws {
         guard let id = item.id else { return }
         if task(id: id) != nil { return }
 
-        let task = try DownloadTask(item: item, type: type)
-        tasks.append(task)
+        let newTask = try DownloadTask(item: item, kind: .media(type), parentIDs: parentIDs)
+        tasks.append(newTask)
         persistTasks()
+    }
+
+    private func createContainerTask(_ item: BaseItemDto, parentIDs: [String]) {
+        guard let id = item.id else { return }
+        if task(id: id) != nil { return }
+
+        guard let newTask = try? DownloadTask(item: item, kind: .container, parentIDs: parentIDs) else { return }
+        tasks.append(newTask)
+        persistTasks()
+    }
+
+    // MARK: - Ancestor resolution
+
+    private func ensureAncestors(for item: BaseItemDto) async throws -> [String] {
+        switch item.type {
+        case .episode:
+            if let seasonID = item.seasonID {
+                try await ensureContainer(id: seasonID)
+                return [seasonID]
+            }
+            if let seriesID = item.seriesID {
+                try await ensureContainer(id: seriesID)
+                return [seriesID]
+            }
+            return []
+        case .season:
+            if let seriesID = item.seriesID {
+                try await ensureContainer(id: seriesID)
+                return [seriesID]
+            }
+            return []
+        default:
+            return []
+        }
+    }
+
+    private func ensureContainer(id: String) async throws {
+        guard task(id: id) == nil else { return }
+        let item = try await fetchItem(id: id)
+        let parentIDs = try await ensureAncestors(for: item)
+        createContainerTask(item, parentIDs: parentIDs)
+    }
+
+    // MARK: - Server fetches
+
+    private func fetchItem(id: String) async throws -> BaseItemDto {
+        guard let userSession else { throw URLError(.userAuthenticationRequired) }
+        let request = Paths.getItem(itemID: id, userID: userSession.user.id)
+        let response = try await userSession.client.send(request)
+        return response.value
     }
 
     private func getSeasons(seriesID: String) async throws -> [BaseItemDto] {

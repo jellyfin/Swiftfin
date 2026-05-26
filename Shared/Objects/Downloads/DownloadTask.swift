@@ -9,17 +9,41 @@
 import Foundation
 import JellyfinAPI
 
-enum DownloadState: Codable, Hashable {
+enum DownloadState: Codable, Hashable, Comparable {
     case queued
     case downloading
     case paused
     case error(DownloadError)
-    case completed(completedAt: Date, mediaRelativePath: String, images: [DownloadImage])
+    case completed(completedAt: Date, mediaRelativePath: String?, images: [DownloadImage])
+
+    private var rank: Int {
+        switch self {
+        case .downloading:
+            0
+        case .paused:
+            1
+        case .queued:
+            2
+        case .error:
+            3
+        case .completed:
+            4
+        }
+    }
+
+    static func < (lhs: DownloadState, rhs: DownloadState) -> Bool {
+        lhs.rank < rhs.rank
+    }
 }
 
 enum DownloadType: Hashable, Codable {
     case direct
     case transcode(PlaybackBitrate)
+}
+
+enum DownloadKind: Hashable, Codable {
+    case media(DownloadType)
+    case container
 }
 
 struct DownloadImage: Hashable {
@@ -63,7 +87,8 @@ struct DownloadTask: Hashable, Identifiable, Storable {
 
     let id: String
     let item: BaseItemDto
-    let type: DownloadType
+    let kind: DownloadKind
+    let parentIDs: [String]
 
     var state: DownloadState
     var bytesDownloaded: Int64
@@ -84,6 +109,11 @@ struct DownloadTask: Hashable, Identifiable, Storable {
 
     var imagesFolder: URL {
         downloadFolder.appendingPathComponent("Images", isDirectory: true)
+    }
+
+    var isContainer: Bool {
+        if case .container = kind { return true }
+        return false
     }
 
     var isCompleted: Bool {
@@ -133,7 +163,9 @@ extension DownloadTask: Codable {
         case id
         case item
         case itemJSON
+        case kind
         case type
+        case parentIDs
         case state
         case bytesDownloaded
         case bytesTotal
@@ -155,7 +187,14 @@ extension DownloadTask: Codable {
                 .init(codingPath: decoder.codingPath, debugDescription: "DownloadTask is missing item")
             )
         }
-        self.type = try c.decodeIfPresent(DownloadType.self, forKey: .type) ?? .direct
+        if let kind = try c.decodeIfPresent(DownloadKind.self, forKey: .kind) {
+            self.kind = kind
+        } else if let type = try c.decodeIfPresent(DownloadType.self, forKey: .type) {
+            self.kind = .media(type)
+        } else {
+            self.kind = .media(.direct)
+        }
+        self.parentIDs = try c.decodeIfPresent([String].self, forKey: .parentIDs) ?? []
         self.state = try c.decode(DownloadState.self, forKey: .state)
         self.bytesDownloaded = try c.decode(Int64.self, forKey: .bytesDownloaded)
         self.bytesTotal = try c.decode(Int64.self, forKey: .bytesTotal)
@@ -168,7 +207,8 @@ extension DownloadTask: Codable {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(id, forKey: .id)
         try c.encode(item, forKey: .item)
-        try c.encode(type, forKey: .type)
+        try c.encode(kind, forKey: .kind)
+        try c.encode(parentIDs, forKey: .parentIDs)
         try c.encode(state, forKey: .state)
         try c.encode(bytesDownloaded, forKey: .bytesDownloaded)
         try c.encode(bytesTotal, forKey: .bytesTotal)
@@ -180,7 +220,11 @@ extension DownloadTask: Codable {
 
 extension DownloadTask {
 
-    init(item: BaseItemDto, type: DownloadType = .direct) throws {
+    init(
+        item: BaseItemDto,
+        kind: DownloadKind = .media(.direct),
+        parentIDs: [String] = []
+    ) throws {
         guard let id = item.id else {
             throw ErrorMessage("Item has no id")
         }
@@ -188,7 +232,8 @@ extension DownloadTask {
         self.init(
             id: id,
             item: item,
-            type: type,
+            kind: kind,
+            parentIDs: parentIDs,
             state: .queued,
             bytesDownloaded: 0,
             bytesTotal: 0,

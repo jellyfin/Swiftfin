@@ -50,13 +50,13 @@ final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadTask> {
 
     private func allEntries() -> [DownloadTask] {
         let manager = Container.shared.downloadManager()
-        let active = manager.tasks.filter { !$0.isCompleted }
-        let completed = manager.tasks.filter(\.isCompleted)
+        let roots = manager.topLevel()
+        let completed = roots.filter { manager.isFullyCompleted($0) }
+        let completedIDs = Set(completed.map(\.id))
+        let active = roots.filter { !completedIDs.contains($0.id) }
 
         let activeSorted = active.sorted { lhs, rhs in
-            let lhsRank = sortRank(of: lhs.state)
-            let rhsRank = sortRank(of: rhs.state)
-            if lhsRank != rhsRank { return lhsRank < rhsRank }
+            if lhs.state != rhs.state { return lhs.state < rhs.state }
             return lhs.createdAt < rhs.createdAt
         }
 
@@ -123,20 +123,5 @@ final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadTask> {
         }
 
         return items
-    }
-
-    private func sortRank(of state: DownloadState) -> Int {
-        switch state {
-        case .downloading:
-            0
-        case .paused:
-            1
-        case .queued:
-            2
-        case .error:
-            3
-        case .completed:
-            4
-        }
     }
 }

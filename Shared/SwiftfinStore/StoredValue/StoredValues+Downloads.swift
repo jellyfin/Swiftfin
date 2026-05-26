@@ -67,7 +67,8 @@ private struct LegacyDownloadItem: Codable, Storable {
         DownloadTask(
             id: id,
             item: item,
-            type: .direct,
+            kind: .media(.direct),
+            parentIDs: [],
             state: .completed(
                 completedAt: completedAt,
                 mediaRelativePath: mediaRelativePath,

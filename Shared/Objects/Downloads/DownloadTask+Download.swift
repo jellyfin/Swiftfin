@@ -6,13 +6,18 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 
 extension DownloadTask {
 
     func makeURLSessionTask(in urlSession: URLSession, userSession: UserSession) throws -> URLSessionDownloadTask {
-        let urlTask: URLSessionDownloadTask = if let resumeData {
+        guard case let .media(type) = kind else {
+            throw ErrorMessage("Container download has no URL session task")
+        }
+
+        let downloadTask: URLSessionDownloadTask = if let resumeData {
             urlSession.downloadTask(withResumeData: resumeData)
         } else {
             switch type {
@@ -22,8 +27,10 @@ extension DownloadTask {
                 try makeTranscodeURLSessionTask(in: urlSession, userSession: userSession, bitrate: bitrate)
             }
         }
-        urlTask.taskDescription = id
-        return urlTask
+
+        downloadTask.taskDescription = id
+
+        return downloadTask
     }
 
     func moveDownloadedMedia(from location: URL, response: URLResponse?) throws -> String {
@@ -35,14 +42,41 @@ extension DownloadTask {
         let destination = downloadFolder.appendingPathComponent(filename)
         try? FileManager.default.removeItem(at: destination)
         try FileManager.default.moveItem(at: location, to: destination)
+
         return filename
     }
 
-    private func makeDirectURLSessionTask(in urlSession: URLSession, userSession: UserSession) throws -> URLSessionDownloadTask {
-        let request = Paths.getDownload(itemID: id)
-        guard let url = userSession.client.url(with: request, queryAPIKey: true) else {
+    // MARK: Direct Download
+
+    private func makeDirectURLSessionTask(
+        in urlSession: URLSession,
+        userSession: UserSession
+    ) throws -> URLSessionDownloadTask {
+        guard let url = userSession.client.url(with: Paths.getDownload(itemID: id), queryAPIKey: true) else {
             throw ErrorMessage("Could not build download URL for \(id)")
         }
+
         return urlSession.downloadTask(with: url)
+    }
+
+    // MARK: Transcoded Download
+
+    func makeTranscodeURLSessionTask(
+        in urlSession: URLSession,
+        userSession: UserSession,
+        bitrate: PlaybackBitrate? = nil
+    ) throws -> URLSessionDownloadTask {
+
+        // TODO: build transcoded download URL
+
+        let deviceProfile = DeviceProfile.build(
+            for: Defaults[.VideoPlayer.videoPlayerType],
+            compatibilityMode: Defaults[.VideoPlayer.Playback.compatibilityMode],
+            maxBitrate: bitrate?.rawValue ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate].rawValue
+        )
+
+        assertionFailure("Transcoded downloads are not yet implemented")
+
+        throw ErrorMessage("Transcoded downloads are not yet implemented")
     }
 }

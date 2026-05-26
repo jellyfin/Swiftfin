@@ -39,6 +39,7 @@ final class DownloadManager: NSObject, ObservableObject {
 
     var active: Active?
     private var lastPersistedAt: Date?
+    private var runningContainers: Set<String> = []
 
     lazy var urlSession: URLSession = {
         let config = URLSessionConfiguration.background(withIdentifier: "org.jellyfin.swiftfin.downloads")
@@ -67,11 +68,41 @@ final class DownloadManager: NSObject, ObservableObject {
         tasks.first { $0.id == id }
     }
 
+    func children(of id: String) -> [DownloadTask] {
+        tasks.filter { $0.parentIDs.contains(id) }
+    }
+
+    /// Tasks with no surviving parent in the task list (true roots or orphans).
+    func topLevel() -> [DownloadTask] {
+        let existingIDs = Set(tasks.map(\.id))
+        return tasks.filter { task in
+            !task.parentIDs.contains { existingIDs.contains($0) }
+        }
+    }
+
+    /// True iff `task` and every descendant has reached `.completed`.
+    func isFullyCompleted(_ task: DownloadTask) -> Bool {
+        guard task.isCompleted else { return false }
+        return descendants(of: task.id).allSatisfy { id in
+            tasks.first(where: { $0.id == id })?.isCompleted ?? true
+        }
+    }
+
     func taskPublisher(for id: String) -> AnyPublisher<DownloadTask?, Never> {
         $tasks
             .map { $0.first(where: { $0.id == id }) }
             .removeDuplicates(by: { $0?.state == $1?.state })
             .eraseToAnyPublisher()
+    }
+
+    func descendants(of id: String) -> [String] {
+        var result: [String] = []
+        var queue = children(of: id).map(\.id)
+        while let next = queue.popLast() {
+            result.append(next)
+            queue.append(contentsOf: children(of: next).map(\.id))
+        }
+        return result
     }
 
     // MARK: - Lifecycle
@@ -123,10 +154,20 @@ final class DownloadManager: NSObject, ObservableObject {
     }
 
     func delete(id: String) {
+        let ids = [id] + descendants(of: id)
+        for taskID in ids {
+            deleteOne(id: taskID)
+        }
+        advanceQueue()
+    }
+
+    private func deleteOne(id: String) {
         if let active, active.id == id {
             active.urlTask.cancel()
             self.active = nil
         }
+
+        runningContainers.remove(id)
 
         let folder = task(id: id)?.downloadFolder
         let removed = tasks.contains { $0.id == id }
@@ -139,23 +180,38 @@ final class DownloadManager: NSObject, ObservableObject {
                 try? FileManager.default.removeItem(at: folder)
             }
         }
-
-        advanceQueue()
     }
 
     // MARK: - Queue advancement
 
     func advanceQueue() {
+        advanceContainers()
+        advanceMedia()
+    }
+
+    private func advanceMedia() {
         guard active == nil else { return }
 
         let nextID = tasks
-            .filter { $0.state == .queued }
+            .filter {
+                if case .media = $0.kind, $0.state == .queued { return true }
+                return false
+            }
             .sorted { $0.createdAt < $1.createdAt }
             .first?
             .id
 
         guard let nextID else { return }
         startMediaDownload(id: nextID)
+    }
+
+    private func advanceContainers() {
+        let queued = tasks.filter {
+            $0.isContainer && $0.state == .queued && !runningContainers.contains($0.id)
+        }
+        for task in queued {
+            startContainerDownload(id: task.id)
+        }
     }
 
     private func startMediaDownload(id: String) {
@@ -193,6 +249,22 @@ final class DownloadManager: NSObject, ObservableObject {
 
         active = Active(id: id, urlTask: urlTask)
         urlTask.resume()
+    }
+
+    private func startContainerDownload(id: String) {
+        guard let task = task(id: id) else { return }
+
+        runningContainers.insert(id)
+        update(id: id) { $0.state = .downloading }
+
+        let snapshot = task
+        Task {
+            let images = await snapshot.downloadImages(item: snapshot.item)
+            await MainActor.run {
+                self.runningContainers.remove(id)
+                self.complete(id: id, mediaRelativePath: nil, images: images)
+            }
+        }
     }
 
     // MARK: - Disk budget
@@ -235,12 +307,12 @@ final class DownloadManager: NSObject, ObservableObject {
         let migrated = StoredValues.Keys.Downloads.loadAndMigrate(userID: userID)
 
         let resurrected = migrated.map { task -> DownloadTask in
-            if task.state == .downloading {
-                var mutable = task
-                mutable.state = .paused
-                return mutable
-            }
-            return task
+            guard task.state == .downloading else { return task }
+            var mutable = task
+            // Containers have no resume data — restart from queued.
+            // Media tasks may have URLSession resume data — sit in paused until user resumes.
+            mutable.state = task.isContainer ? .queued : .paused
+            return mutable
         }
 
         tasks = resurrected
@@ -275,7 +347,7 @@ final class DownloadManager: NSObject, ObservableObject {
 
     // MARK: - Completion
 
-    func complete(id: String, mediaRelativePath: String, images: [DownloadImage]) {
+    func complete(id: String, mediaRelativePath: String?, images: [DownloadImage]) {
         update(id: id) { task in
             task.state = .completed(
                 completedAt: Date(),
@@ -284,6 +356,7 @@ final class DownloadManager: NSObject, ObservableObject {
             )
             task.resumeData = nil
         }
+        advanceQueue()
     }
 
     // MARK: - On-disk helpers
