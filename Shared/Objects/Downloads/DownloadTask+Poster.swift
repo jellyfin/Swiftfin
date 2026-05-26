@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-extension DownloadEntry: Poster {
+extension DownloadTask: Poster {
 
     var preferredPosterDisplayType: PosterDisplayType {
         item.preferredPosterDisplayType
@@ -25,27 +25,35 @@ extension DownloadEntry: Poster {
     }
 
     func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        completed?.portraitImageSources(maxWidth: maxWidth, quality: quality) ?? []
+        localSources(item.portraitImageSources(maxWidth: maxWidth, quality: quality))
     }
 
     func landscapeImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        completed?.landscapeImageSources(maxWidth: maxWidth, quality: quality) ?? []
+        localSources(item.landscapeImageSources(maxWidth: maxWidth, quality: quality))
     }
 
     func cinematicImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        completed?.cinematicImageSources(maxWidth: maxWidth, quality: quality) ?? []
+        localSources(item.cinematicImageSources(maxWidth: maxWidth, quality: quality))
     }
 
     func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {
-        completed?.squareImageSources(maxWidth: maxWidth, quality: quality) ?? []
+        localSources(item.squareImageSources(maxWidth: maxWidth, quality: quality))
     }
 
     func thumbImageSources() -> [ImageSource] {
-        completed?.thumbImageSources() ?? []
+        localSources(item.thumbImageSources())
     }
 
     @ViewBuilder
     func transform(image: Image) -> some View {
         item.transform(image: image)
+    }
+
+    private func localSources(_ sources: [ImageSource]) -> [ImageSource] {
+        guard isCompleted else { return [] }
+        return sources.compactMap { source in
+            guard let url = source.url, let local = localFileURL(for: url) else { return nil }
+            return ImageSource(url: local, blurHash: source.blurHash)
+        }
     }
 }

@@ -14,6 +14,7 @@ enum DownloadState: Codable, Hashable {
     case downloading
     case paused
     case error(DownloadError)
+    case completed(completedAt: Date, mediaRelativePath: String, images: [DownloadImage])
 }
 
 enum DownloadType: Hashable, Codable {
@@ -83,6 +84,46 @@ struct DownloadTask: Hashable, Identifiable, Storable {
 
     var imagesFolder: URL {
         downloadFolder.appendingPathComponent("Images", isDirectory: true)
+    }
+
+    var isCompleted: Bool {
+        if case .completed = state { return true }
+        return false
+    }
+
+    var completedAt: Date? {
+        if case let .completed(date, _, _) = state { return date }
+        return nil
+    }
+
+    var mediaRelativePath: String? {
+        if case let .completed(_, path, _) = state { return path }
+        return nil
+    }
+
+    var images: [DownloadImage] {
+        if case let .completed(_, _, images) = state { return images }
+        return []
+    }
+
+    var mediaURL: URL? {
+        guard let mediaRelativePath else { return nil }
+        return downloadFolder.appendingPathComponent(mediaRelativePath)
+    }
+
+    func localFileURL(for serverURL: URL) -> URL? {
+        let images = images
+        let path = serverURL.path
+        if let match = images.first(where: { $0.pathKey == path }) {
+            return imagesFolder.appendingPathComponent(match.relativePath)
+        }
+        if let last = serverURL.pathComponents.last,
+           let kind = ImageType(rawValue: last.lowercased()),
+           let match = images.first(where: { $0.pathKey == "legacy:\(kind.rawValue)" })
+        {
+            return imagesFolder.appendingPathComponent(match.relativePath)
+        }
+        return nil
     }
 }
 
@@ -155,5 +196,60 @@ extension DownloadTask {
             createdAt: now,
             updatedAt: now
         )
+    }
+}
+
+extension DownloadTask: Displayable, LibraryIdentifiable, SystemImageable {
+
+    var displayTitle: String {
+        item.displayTitle
+    }
+
+    var unwrappedIDHashOrZero: Int {
+        id.hashValue
+    }
+
+    var systemImage: String {
+        item.systemImage
+    }
+}
+
+extension DownloadTask {
+
+    var seasonEpisodeLabel: String? {
+        item.seasonEpisodeLabel
+    }
+
+    var premiereDateYear: String? {
+        item.premiereDateYear
+    }
+
+    var runTimeLabel: String? {
+        item.runTimeLabel
+    }
+
+    var officialRating: String? {
+        item.officialRating
+    }
+
+    func compare(to other: DownloadTask, by sort: ItemSortBy) -> Bool {
+        switch sort {
+        case .sortName, .name:
+            (item.sortName ?? displayTitle) < (other.item.sortName ?? other.displayTitle)
+        case .premiereDate:
+            (item.premiereDate ?? .distantPast) < (other.item.premiereDate ?? .distantPast)
+        case .productionYear:
+            (item.productionYear ?? 0) < (other.item.productionYear ?? 0)
+        case .dateCreated:
+            (item.dateCreated ?? .distantPast) < (other.item.dateCreated ?? .distantPast)
+        case .runtime:
+            (item.runTimeTicks ?? 0) < (other.item.runTimeTicks ?? 0)
+        case .communityRating:
+            (item.communityRating ?? 0) < (other.item.communityRating ?? 0)
+        case .criticRating:
+            (item.criticRating ?? 0) < (other.item.criticRating ?? 0)
+        default:
+            (item.sortName ?? displayTitle) < (other.item.sortName ?? other.displayTitle)
+        }
     }
 }

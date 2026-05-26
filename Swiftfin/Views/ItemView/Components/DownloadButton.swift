@@ -15,7 +15,7 @@ import SwiftUI
 struct DownloadButton: View {
 
     @State
-    private var state: ItemDownloadState = .none
+    private var task: DownloadTask?
 
     private let downloadManager = Container.shared.downloadManager()
 
@@ -24,7 +24,7 @@ struct DownloadButton: View {
     init(item: BaseItemDto) {
         self.item = item
         if let id = item.id {
-            self._state = State(initialValue: Container.shared.downloadManager().state(for: id))
+            self._task = State(initialValue: Container.shared.downloadManager().task(id: id))
         }
     }
 
@@ -47,33 +47,22 @@ struct DownloadButton: View {
             }
         }
         // Reading directly from .state locks the menus when an item is queued
-        .onReceive(statePublisher) { newState in
-            state = newState
+        .onReceive(taskPublisher) { newTask in
+            task = newTask
         }
     }
 
-    private var statePublisher: AnyPublisher<ItemDownloadState, Never> {
+    private var taskPublisher: AnyPublisher<DownloadTask?, Never> {
         guard let id = item.id else {
-            return Just(.none).eraseToAnyPublisher()
+            return Just(nil).eraseToAnyPublisher()
         }
-        return downloadManager.statePublisher(for: id)
+        return downloadManager.taskPublisher(for: id)
     }
 
     @ViewBuilder
     private func menuContent(isPresentingDeleteConfirmation: Binding<Bool>) -> some View {
         if let id = item.id {
-            switch state {
-            case .none:
-                if downloadManager.canDownload(item) {
-                    Button(L10n.download, systemImage: "arrow.down") {
-                        downloadManager.queue(item)
-                    }
-                } else {
-                    // swiftlint:disable:next hard_coded_display_string
-                    Button(DownloadError.insufficientStorage.displayTitle, systemImage: "externaldrive.badge.exclamationmark") {}
-                        .disabled(true)
-                }
-            case let .active(task):
+            if let task {
                 switch task.state {
                 case .queued:
                     Button(L10n.cancel, systemImage: "trash", role: .destructive) {
@@ -102,10 +91,20 @@ struct DownloadButton: View {
                     Button(L10n.cancel, systemImage: "trash", role: .destructive) {
                         downloadManager.cancel(id: id)
                     }
+                case .completed:
+                    Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                        isPresentingDeleteConfirmation.wrappedValue = true
+                    }
                 }
-            case .completed:
-                Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                    isPresentingDeleteConfirmation.wrappedValue = true
+            } else {
+                if downloadManager.canDownload(item) {
+                    Button(L10n.download, systemImage: "arrow.down") {
+                        downloadManager.queue(item)
+                    }
+                } else {
+                    // swiftlint:disable:next hard_coded_display_string
+                    Button(DownloadError.insufficientStorage.displayTitle, systemImage: "externaldrive.badge.exclamationmark") {}
+                        .disabled(true)
                 }
             }
         }
@@ -114,11 +113,7 @@ struct DownloadButton: View {
     @ViewBuilder
     private var labelView: some View {
         Group {
-            switch state {
-            case .none:
-                Image(systemName: "arrow.down.circle")
-                    .foregroundStyle(downloadManager.canDownload(item) ? .primary : .secondary)
-            case let .active(task):
+            if let task {
                 switch task.state {
                 case .downloading, .queued:
                     TimelineView(.periodic(from: .now, by: 0.1)) { _ in
@@ -130,14 +125,17 @@ struct DownloadButton: View {
                 case .error:
                     Image(systemName: "arrow.down.circle.badge.xmark")
                         .foregroundStyle(.red)
+                case .completed:
+                    Image(systemName: "arrow.down.circle.fill")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, .green)
                 }
-            case .completed:
-                Image(systemName: "arrow.down.circle.fill")
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(.white, .green)
+            } else {
+                Image(systemName: "arrow.down.circle")
+                    .foregroundStyle(downloadManager.canDownload(item) ? .primary : .secondary)
             }
         }
-        .id(state)
-        .animation(.easeInOut(duration: 0.25), value: state)
+        .id(task?.state)
+        .animation(.easeInOut(duration: 0.25), value: task?.state)
     }
 }

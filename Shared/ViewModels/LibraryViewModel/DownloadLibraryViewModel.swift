@@ -12,7 +12,7 @@ import Foundation
 import JellyfinAPI
 
 @MainActor
-final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadEntry> {
+final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadTask> {
 
     override var isDownloads: Bool {
         true
@@ -24,12 +24,10 @@ final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadEntry> {
 
         let manager = Container.shared.downloadManager()
 
-        Publishers.CombineLatest(manager.$tasks, manager.$downloads)
+        manager.$tasks
             .receive(on: RunLoop.main)
             .dropFirst()
-            .removeDuplicates(by: { lhs, rhs in
-                lhs.0.map(\.id) == rhs.0.map(\.id) && lhs.1.map(\.id) == rhs.1.map(\.id)
-            })
+            .removeDuplicates(by: { $0.map(\.id) == $1.map(\.id) })
             .sink { [weak self] _ in
                 Task { @MainActor in
                     self?.send(.refresh)
@@ -38,7 +36,7 @@ final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadEntry> {
             .store(in: &cancellables)
     }
 
-    override func get(page: Int) async throws -> [DownloadEntry] {
+    override func get(page: Int) async throws -> [DownloadTask] {
         let entries = allEntries()
         let startIndex = page * pageSize
         guard startIndex < entries.count else { return [] }
@@ -46,26 +44,26 @@ final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadEntry> {
         return Array(entries[startIndex ..< endIndex])
     }
 
-    override func getRandomItem() async -> DownloadEntry? {
+    override func getRandomItem() async -> DownloadTask? {
         allEntries().randomElement()
     }
 
-    private func allEntries() -> [DownloadEntry] {
+    private func allEntries() -> [DownloadTask] {
         let manager = Container.shared.downloadManager()
-        let activeEntries = manager.tasks
-            .sorted { lhs, rhs in
-                let lhsRank = sortRank(of: lhs.state)
-                let rhsRank = sortRank(of: rhs.state)
-                if lhsRank != rhsRank { return lhsRank < rhsRank }
-                return lhs.createdAt < rhs.createdAt
-            }
-            .map(DownloadEntry.active)
+        let active = manager.tasks.filter { !$0.isCompleted }
+        let completed = manager.tasks.filter(\.isCompleted)
 
-        let completedEntries = filteredDownloads(manager.downloads).map(DownloadEntry.completed)
-        return activeEntries + completedEntries
+        let activeSorted = active.sorted { lhs, rhs in
+            let lhsRank = sortRank(of: lhs.state)
+            let rhsRank = sortRank(of: rhs.state)
+            if lhsRank != rhsRank { return lhsRank < rhsRank }
+            return lhs.createdAt < rhs.createdAt
+        }
+
+        return activeSorted + filteredDownloads(completed)
     }
 
-    private func filteredDownloads(_ source: [DownloadItem]) -> [DownloadItem] {
+    private func filteredDownloads(_ source: [DownloadTask]) -> [DownloadTask] {
         var items = source
         guard let filterViewModel else { return items }
         let filters = filterViewModel.currentFilters
@@ -129,10 +127,16 @@ final class DownloadLibraryViewModel: PagingLibraryViewModel<DownloadEntry> {
 
     private func sortRank(of state: DownloadState) -> Int {
         switch state {
-        case .downloading: 0
-        case .paused: 1
-        case .queued: 2
-        case .error: 3
+        case .downloading:
+            0
+        case .paused:
+            1
+        case .queued:
+            2
+        case .error:
+            3
+        case .completed:
+            4
         }
     }
 }

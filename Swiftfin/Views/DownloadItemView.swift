@@ -20,38 +20,27 @@ struct DownloadItemView: View {
     private var downloadManager: DownloadManager
 
     @State
-    private var state: ItemDownloadState
+    private var task: DownloadTask?
 
     @State
     private var isPresentingDeleteAlert = false
 
     private let id: String
-    private let initialEntry: DownloadEntry
+    private let initialTask: DownloadTask
 
-    init(entry: DownloadEntry) {
-        self.id = entry.id
-        self.initialEntry = entry
-        self._state = State(initialValue: Container.shared.downloadManager().state(for: entry.id))
+    init(task: DownloadTask) {
+        self.id = task.id
+        self.initialTask = task
+        self._task = State(initialValue: Container.shared.downloadManager().task(id: task.id) ?? task)
     }
 
     private var item: BaseItemDto {
-        switch state {
-        case .none:
-            initialEntry.item
-        case let .active(task):
-            task.item
-        case let .completed(item):
-            item.item
-        }
+        (task ?? initialTask).item
     }
 
     private var heroSources: [ImageSource] {
-        switch state {
-        case let .completed(item):
-            item.landscapeImageSources(maxWidth: 800)
-        default:
-            []
-        }
+        guard let task, task.isCompleted else { return [] }
+        return task.landscapeImageSources(maxWidth: 800)
     }
 
     var body: some View {
@@ -84,7 +73,7 @@ struct DownloadItemView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                    if case let .active(task) = state {
+                    if let task, !task.isCompleted {
                         progressSection(task: task)
                     }
 
@@ -103,8 +92,8 @@ struct DownloadItemView: View {
         }
         .navigationTitle(item.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .onReceive(downloadManager.statePublisher(for: id)) { newState in
-            state = newState
+        .onReceive(downloadManager.taskPublisher(for: id)) { newTask in
+            task = newTask
         }
         .alert(L10n.delete, isPresented: $isPresentingDeleteAlert) {
             Button(L10n.delete, role: .destructive) {
@@ -154,37 +143,44 @@ struct DownloadItemView: View {
 
     @ViewBuilder
     private var actionRow: some View {
-        switch state {
-        case let .active(task):
-            VStack(spacing: 8) {
-                switch task.state {
-                case .downloading:
+        if let task {
+            switch task.state {
+            case .downloading:
+                VStack(spacing: 8) {
                     actionButton(L10n.pause, systemImage: "pause.fill", tint: .accentColor) {
                         downloadManager.pause(id: id)
                     }
-                case .paused:
+                    cancelButton
+                }
+            case .paused:
+                VStack(spacing: 8) {
                     actionButton(L10n.resume, systemImage: "play.fill", tint: .accentColor) {
                         downloadManager.resume(id: id)
                     }
-                case .error:
+                    cancelButton
+                }
+            case .error:
+                VStack(spacing: 8) {
                     actionButton(L10n.retry, systemImage: "arrow.clockwise", tint: .accentColor) {
                         downloadManager.retry(id: id)
                     }
-                case .queued:
-                    EmptyView()
+                    cancelButton
                 }
+            case .queued:
+                cancelButton
+            case .completed:
+                actionButton(L10n.delete, systemImage: "trash", tint: .red) {
+                    isPresentingDeleteAlert = true
+                }
+            }
+        }
+    }
 
-                actionButton(L10n.cancel, systemImage: "trash", tint: .red) {
-                    downloadManager.cancel(id: id)
-                    router.dismiss()
-                }
-            }
-        case .completed:
-            actionButton(L10n.delete, systemImage: "trash", tint: .red) {
-                isPresentingDeleteAlert = true
-            }
-        case .none:
-            EmptyView()
+    @ViewBuilder
+    private var cancelButton: some View {
+        actionButton(L10n.cancel, systemImage: "trash", tint: .red) {
+            downloadManager.cancel(id: id)
+            router.dismiss()
         }
     }
 

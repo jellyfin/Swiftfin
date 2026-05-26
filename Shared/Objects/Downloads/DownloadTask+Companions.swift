@@ -92,7 +92,7 @@ extension DownloadTask {
 
     private func downloadSubtitle(stream: MediaStream, into folder: URL, userSession: UserSession) async {
         guard let deliveryURL = stream.deliveryURL else { return }
-        let url = userSession.client.url(path: deliveryURL)
+        guard let url = userSession.client.url(path: deliveryURL) else { return }
 
         do {
             let (data, response) = try await URLSession.shared.data(from: url)

@@ -49,7 +49,7 @@ extension DownloadManager {
 
     private func createMediaTask(_ item: BaseItemDto, type: DownloadType) async throws {
         guard let id = item.id else { return }
-        if task(id: id) != nil || download(id: id) != nil { return }
+        if task(id: id) != nil { return }
 
         let task = try DownloadTask(item: item, type: type)
         tasks.append(task)

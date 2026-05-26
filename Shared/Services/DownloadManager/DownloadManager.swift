@@ -19,12 +19,6 @@ extension Container {
     }
 }
 
-enum ItemDownloadState: Hashable {
-    case none
-    case active(DownloadTask)
-    case completed(DownloadItem)
-}
-
 @MainActor
 final class DownloadManager: NSObject, ObservableObject {
 
@@ -42,9 +36,6 @@ final class DownloadManager: NSObject, ObservableObject {
 
     @Published
     var tasks: [DownloadTask] = []
-
-    @Published
-    var downloads: [DownloadItem] = []
 
     var active: Active?
     private var lastPersistedAt: Date?
@@ -76,43 +67,10 @@ final class DownloadManager: NSObject, ObservableObject {
         tasks.first { $0.id == id }
     }
 
-    func download(id: String) -> DownloadItem? {
-        downloads.first { $0.id == id }
-    }
-
-    func state(for id: String) -> ItemDownloadState {
-        if let task = task(id: id) {
-            return .active(task)
-        }
-        if let download = download(id: id) {
-            return .completed(download)
-        }
-        return .none
-    }
-
-    func statePublisher(for id: String) -> AnyPublisher<ItemDownloadState, Never> {
-        Publishers.CombineLatest($tasks, $downloads)
-            .map { tasks, downloads in
-                if let task = tasks.first(where: { $0.id == id }) {
-                    return .active(task)
-                }
-                if let download = downloads.first(where: { $0.id == id }) {
-                    return .completed(download)
-                }
-                return .none
-            }
-            .removeDuplicates(by: { lhs, rhs in
-                switch (lhs, rhs) {
-                case (.none, .none):
-                    true
-                case let (.active(l), .active(r)):
-                    l.state == r.state
-                case let (.completed(l), .completed(r)):
-                    l.id == r.id
-                default:
-                    false
-                }
-            })
+    func taskPublisher(for id: String) -> AnyPublisher<DownloadTask?, Never> {
+        $tasks
+            .map { $0.first(where: { $0.id == id }) }
+            .removeDuplicates(by: { $0?.state == $1?.state })
             .eraseToAnyPublisher()
     }
 
@@ -170,16 +128,11 @@ final class DownloadManager: NSObject, ObservableObject {
             self.active = nil
         }
 
-        let folder: URL? = task(id: id)?.downloadFolder ?? download(id: id)?.downloadFolder
-
-        let removedTask = tasks.contains { $0.id == id }
-        let removedDownload = downloads.contains { $0.id == id }
-
+        let folder = task(id: id)?.downloadFolder
+        let removed = tasks.contains { $0.id == id }
         tasks.removeAll(where: { $0.id == id })
-        downloads.removeAll(where: { $0.id == id })
 
-        if removedTask { persistTasks() }
-        if removedDownload { persistDownloads() }
+        if removed { persistTasks() }
 
         if let folder {
             Task.detached(priority: .utility) {
@@ -276,14 +229,12 @@ final class DownloadManager: NSObject, ObservableObject {
     private func load() {
         guard let userID = currentUserID else {
             tasks = []
-            downloads = []
             return
         }
 
-        tasks = StoredValues[.Downloads.tasks(userID: userID)]
-        downloads = StoredValues[.Downloads.items(userID: userID)]
+        let migrated = StoredValues.Keys.Downloads.loadAndMigrate(userID: userID)
 
-        let resurrected = tasks.map { task -> DownloadTask in
+        let resurrected = migrated.map { task -> DownloadTask in
             if task.state == .downloading {
                 var mutable = task
                 mutable.state = .paused
@@ -292,27 +243,15 @@ final class DownloadManager: NSObject, ObservableObject {
             return task
         }
 
-        if resurrected != tasks {
-            tasks = resurrected
-            persistTasks()
-        }
-
-        let downloadedIDs = Set(downloads.map(\.id))
-        let deduped = tasks.filter { !downloadedIDs.contains($0.id) }
-        if deduped.count != tasks.count {
-            tasks = deduped
+        tasks = resurrected
+        if resurrected != migrated {
             persistTasks()
         }
     }
 
     func persistTasks() {
         guard let userID = currentUserID else { return }
-        StoredValues[.Downloads.tasks(userID: userID)] = tasks
-    }
-
-    func persistDownloads() {
-        guard let userID = currentUserID else { return }
-        StoredValues[.Downloads.items(userID: userID)] = downloads
+        StoredValues[.Downloads.all(userID: userID)] = tasks
     }
 
     func update(id: String, throttle: Bool = false, _ mutator: (inout DownloadTask) -> Void) {
@@ -337,23 +276,14 @@ final class DownloadManager: NSObject, ObservableObject {
     // MARK: - Completion
 
     func complete(id: String, mediaRelativePath: String, images: [DownloadImage]) {
-        guard let index = tasks.firstIndex(where: { $0.id == id }) else { return }
-        let task = tasks[index]
-
-        let download = DownloadItem(
-            id: task.id,
-            item: task.item,
-            mediaRelativePath: mediaRelativePath,
-            images: images,
-            completedAt: Date()
-        )
-
-        downloads.removeAll(where: { $0.id == task.id })
-        downloads.append(download)
-        persistDownloads()
-
-        tasks.remove(at: index)
-        persistTasks()
+        update(id: id) { task in
+            task.state = .completed(
+                completedAt: Date(),
+                mediaRelativePath: mediaRelativePath,
+                images: images
+            )
+            task.resumeData = nil
+        }
     }
 
     // MARK: - On-disk helpers
