@@ -86,7 +86,10 @@ extension MediaInfoSupplement {
                 }
             }
             .buttonStyle(.card)
-            .frame(height: 40)
+            #if os(tvOS)
+                .focused($isResetButtonFocused)
+            #endif
+                .frame(height: UIDevice.isTV ? 80 : 40)
         }
 
         // TODO: may need to be a layout for correct overview frame
@@ -97,7 +100,8 @@ extension MediaInfoSupplement {
             ) {
                 iOSCompactView
             } regularView: {
-                regularView
+                regularContent
+                    .edgePadding()
             }
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
@@ -133,7 +137,7 @@ extension MediaInfoSupplement {
         }
 
         @ViewBuilder
-        private var regularView: some View {
+        private var regularContent: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                 // TODO: determine what to do with non-portrait (channel, home video) images
                 //       - use aspect ratio?
@@ -169,19 +173,33 @@ extension MediaInfoSupplement {
                         Label(L10n.fromBeginning, systemImage: "play.fill")
                             .font(.subheadline.weight(.semibold))
                             .padding(safeAreaInsets)
-                            .frame(height: UIDevice.isTV ? 75 : 50)
+                            .frame(height: UIDevice.isTV ? 80 : 50)
                     } content: {
                         fromBeginningButton
                             .focusSection()
                     }
                 }
             }
-            .edgePadding()
         }
 
         var tvOSView: some View {
-            regularView
+            regularContent
+                .edgePadding(.horizontal)
+                .padding(.vertical, EdgeInsets.edgePadding / 2)
+                .background {
+                    RoundedRectangle(cornerRadius: 32)
+                        .fill(Material.thin)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 32))
+                .edgePadding()
                 .frame(maxWidth: .infinity, alignment: .topLeading)
+                .focusSection()
+                .backport
+                .defaultFocus(
+                    $isResetButtonFocused,
+                    true,
+                    priority: .userInitiated
+                )
         }
     }
 }

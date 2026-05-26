@@ -39,7 +39,7 @@ extension VideoPlayer {
         var body: some View {
             VStack(spacing: 30) {
 
-                NavigationBar()
+                Toolbar()
                     .isVisible(
                         containerState.isPresentingOverlay &&
                             !containerState.isScrubbing &&
@@ -48,7 +48,7 @@ extension VideoPlayer {
                     .disabled(containerState.isPresentingSupplement)
 
                 PlaybackProgress()
-                    .focused($isPlaybackProgressFocused, equals: true)
+                    .focused($isPlaybackProgressFocused)
                     .fixedSize(horizontal: false, vertical: true)
                     .isVisible(
                         (containerState.isPresentingOverlay || containerState.isScrubbing) &&
@@ -73,10 +73,8 @@ extension VideoPlayer {
                 containerState.isPresentingOverlay = true
                 isPlaybackProgressFocused = true
             }
-            .onChange(of: containerState.isPresentingOverlay) { _, newValue in
-                if newValue {
-                    isPlaybackProgressFocused = true
-                }
+            .onChange(of: containerState.isPresentingOverlay) { _, _ in
+                isPlaybackProgressFocused = true
             }
             .onChange(of: manager.playbackRequestStatus) { _, newValue in
                 if newValue == .paused, !containerState.isPresentingOverlay {

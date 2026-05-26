@@ -16,8 +16,6 @@ import SwiftUI
 //       - current running time
 // TODO: show chapter title under preview image
 //       - have max width, on separate offset track
-// TODO: bar color default to style
-// TODO: live tv
 
 extension VideoPlayer.PlaybackControls {
 
@@ -43,7 +41,10 @@ extension VideoPlayer.PlaybackControls {
         private var toaster: ToastProxy
 
         private let previewImageHeight: CGFloat = 200
-        private let sliderHeight: CGFloat = 14
+
+        private var sliderHeight: CGFloat {
+            isScrubbing ? 20 : 14
+        }
 
         private var isScrubbing: Bool {
             get {
@@ -99,43 +100,61 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
+        @ViewBuilder
+        private var videoPlayerSlider: some View {
+            VideoPlayerSlider(
+                value: $scrubbedSecondsBox.value.map(
+                    getter: {
+                        guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+                        return clamp(($0.seconds / runtime.seconds) * 100, min: 0, max: 100)
+                    },
+                    setter: { (manager.item.runtime ?? .zero) * ($0 / 100) }
+                ),
+                currentProgress: currentProgress,
+                total: 100,
+                isScrollingEnabled: manager.playbackRequestStatus == .paused
+            )
+            .onEditingChanged { isEditing in
+                if isEditing {
+                    if containerState.scrubOriginSeconds == nil {
+                        containerState.scrubOriginSeconds = manager.seconds
+                    }
+                    isScrubbing = true
+                }
+            }
+            .if(chapterSlider) { view in
+                if let chapters = manager.item.fullChapterInfo, chapters.isNotEmpty {
+                    view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
+                } else {
+                    view
+                }
+            }
+            .frame(height: sliderHeight)
+            .trackingSize($sliderSize)
+            .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
+            .disabled(manager.state == .loadingItem)
+        }
+
+        @ViewBuilder
+        private var previewImage: some View {
+            if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
+                PreviewImageView(previewImageProvider: previewImageProvider)
+                    .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
+                    .frame(height: previewImageHeight)
+                    .posterBorder()
+                    .cornerRadius(ratio: 1 / 30, of: \.width)
+                    .offset(x: previewXOffset, y: -(previewImageHeight + 10))
+                    .shadow(color: Color.black.opacity(0.5), radius: 10, x: 0, y: 4)
+            }
+        }
+
         var body: some View {
             VStack(spacing: 10) {
                 if manager.item.isLiveStream {
                     liveIndicator
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
-                    VideoPlayerSlider(
-                        value: $scrubbedSecondsBox.value.map(
-                            getter: {
-                                guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
-                                return clamp(($0.seconds / runtime.seconds) * 100, min: 0, max: 100)
-                            },
-                            setter: { (manager.item.runtime ?? .zero) * ($0 / 100) }
-                        ),
-                        currentProgress: currentProgress,
-                        total: 100,
-                        isScrollingEnabled: manager.playbackRequestStatus == .paused
-                    )
-                    .onEditingChanged { isEditing in
-                        if isEditing {
-                            if containerState.scrubOriginSeconds == nil {
-                                containerState.scrubOriginSeconds = manager.seconds
-                            }
-                            isScrubbing = true
-                        }
-                    }
-                    .if(chapterSlider) { view in
-                        if let chapters = manager.item.fullChapterInfo, chapters.isNotEmpty {
-                            view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
-                        } else {
-                            view
-                        }
-                    }
-                    .frame(height: sliderHeight)
-                    .trackingSize($sliderSize)
-                    .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
-                    .disabled(manager.state == .loadingItem)
+                    videoPlayerSlider
 
                     SplitTimeStamp()
                         .foregroundStyle(.white, Color.lightGray)
@@ -144,15 +163,7 @@ extension VideoPlayer.PlaybackControls {
             .focused($isFocused)
             .foregroundStyle(Color.white.opacity(0.75))
             .overlay(alignment: .topLeading) {
-                if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
-                    PreviewImageView(previewImageProvider: previewImageProvider)
-                        .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
-                        .frame(height: previewImageHeight)
-                        .posterBorder()
-                        .cornerRadius(ratio: 1 / 30, of: \.width)
-                        .offset(x: previewXOffset, y: -(previewImageHeight + 10))
-                        .shadow(color: Color.black.opacity(0.5), radius: 4, x: 0, y: 4)
-                }
+                previewImage
             }
             .onChange(of: isFocused) { _, newValue in
                 containerState.isProgressBarFocused = newValue

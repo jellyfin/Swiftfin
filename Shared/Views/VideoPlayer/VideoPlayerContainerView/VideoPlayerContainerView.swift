@@ -859,8 +859,10 @@ extension VideoPlayer {
                 containerState.timer.poke()
             } else if containerState.isPresentingOverlay {
                 containerState.isPresentingOverlay = false
-            } else {
+            } else if Defaults[.confirmClose] {
                 containerState.isPresentingCloseConfirmation = true
+            } else {
+                manager.stop()
             }
         }
         #endif

@@ -1,5 +1,5 @@
 {
-  "originHash" : "e949a4f8a46ae8f2b9568d2d6d8b0b57f76f6265a32ec143c98fe490b9e055a9",
+  "originHash" : "abc5b4b8ea9d646a3adfbee724badcb25df112cd13492c1967d34287be490c73",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -182,6 +182,15 @@
       }
     },
     {
+      "identity" : "statefulmacro",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/StatefulMacro",
+      "state" : {
+        "revision" : "43887a5d30bf32ed7b97d5ae86be02621bed20e3",
+        "version" : "0.1.4"
+      }
+    },
+    {
       "identity" : "svgkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SVGKit/SVGKit",
@@ -204,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
       "state" : {
-        "revision" : "626b5b7b2f45e1b0b1c6f4a309296d1d21d7311b",
-        "version" : "1.7.1"
+        "revision" : "5e0406d68a4937f21ae5f670b8f89dad1d156a1c",
+        "version" : "1.8.0"
       }
     },
     {

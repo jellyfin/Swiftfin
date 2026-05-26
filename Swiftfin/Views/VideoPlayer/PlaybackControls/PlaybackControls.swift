@@ -23,6 +23,7 @@ extension VideoPlayer {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        // TODO: do something with this value
         @State
         private var activeIsBuffering: Bool = false
         @State
@@ -48,7 +49,7 @@ extension VideoPlayer {
                 // MARK: - Buttons and Supplements
 
                 VStack {
-                    NavigationBar()
+                    Toolbar()
                         .frame(height: 50)
                         .isVisible(!isScrubbing && isPresentingOverlay)
                         .padding(.top, safeAreaInsets.top)
@@ -88,7 +89,8 @@ extension VideoPlayer {
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: containerState.isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: containerState.isPresentingOverlay)
-            .onChange(of: manager.proxy?.isBuffering.value) { newValue in
+            .backport
+            .onChange(of: manager.proxy?.isBuffering.value) { _, newValue in
                 activeIsBuffering = newValue ?? false
             }
             .disabled(manager.error != nil)

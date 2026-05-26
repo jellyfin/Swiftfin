@@ -25,7 +25,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
         @ViewBuilder
         func makeBody(configuration: Configuration) -> some View {
             if #available(tvOS 26.0, *), isLiquidGlassEnabled {
-                tvOSGlassBody(configuration)
+                glassBody(configuration)
             } else {
                 legacyBody(configuration)
             }
@@ -41,7 +41,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
         }
 
         @available(tvOS 26.0, *)
-        private func tvOSGlassBody(_ configuration: Configuration) -> some View {
+        private func glassBody(_ configuration: Configuration) -> some View {
             baseLabel(configuration)
                 .foregroundStyle(isSelected ? .black : .white)
                 .glassEffect(
@@ -50,6 +50,10 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                         .interactive(isFocused),
                     in: Capsule()
                 )
+                .overlay {
+                    Capsule()
+                        .stroke(.white.opacity(0.1), lineWidth: 1)
+                }
                 .opacity(inactiveSelectedOpacity)
                 .animation(.easeInOut(duration: 0.1), value: isFocused)
                 .animation(.easeInOut(duration: 0.1), value: isSelected)
@@ -64,8 +68,12 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                             .fill(Color.white)
                     } else {
                         Capsule()
-                            .fill(.ultraThinMaterial)
+                            .fill(Material.ultraThinMaterial.tinted(.white.opacity(0.2)))
                     }
+                }
+                .overlay {
+                    Capsule()
+                        .stroke(.white.opacity(0.1), lineWidth: 1)
                 }
                 .clipShape(Capsule())
                 .opacity(inactiveSelectedOpacity)

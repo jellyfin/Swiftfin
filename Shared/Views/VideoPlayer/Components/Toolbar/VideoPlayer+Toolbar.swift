@@ -11,7 +11,7 @@ import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
-    struct NavigationBar: View {
+    struct Toolbar: View {
 
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
@@ -65,14 +65,9 @@ extension VideoPlayer.PlaybackControls {
                 TitleView(item: manager.item)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                AlternateLayoutView(alignment: .trailing) {
-                    Color.clear
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .frame(height: fontSize)
-                        .padding()
-                } content: {
-                    ActionButtons()
-                }
+                ActionButtons()
+                    .frame(height: fontSize)
+                    .padding()
             }
             .font(.system(size: fontSize, weight: .semibold))
             .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
@@ -85,7 +80,7 @@ extension VideoPlayer.PlaybackControls {
     }
 }
 
-extension VideoPlayer.PlaybackControls.NavigationBar {
+extension VideoPlayer.PlaybackControls.Toolbar {
 
     struct TitleView: PlatformView {
 
@@ -107,7 +102,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
         @ViewBuilder
         private func _subtitle(_ subtitle: String) -> some View {
             Text(subtitle)
-                .font(UIDevice.isTV ? .callout : .subheadline)
+                .font(UIDevice.isTV ? .caption : .subheadline)
                 .fontWeight(.medium)
                 .foregroundStyle(.white)
                 .trackingSize($subtitleContentSize)
@@ -131,15 +126,14 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             VStack(alignment: .leading) {
                 if let subtitle = _titleSubtitle.subtitle {
                     Text(subtitle)
-                        .font(UIDevice.isTV ? .callout : .subheadline)
+                        .font(.callout)
                         .fontWeight(.medium)
                 }
 
                 Text(_titleSubtitle.title)
-                    .font(UIDevice.isTV ? .title2 : .body)
+                    .font(.title2)
                     .fontWeight(.semibold)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .lineLimit(1)
         }
     }

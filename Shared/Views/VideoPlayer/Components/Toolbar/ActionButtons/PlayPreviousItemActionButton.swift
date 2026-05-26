@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
+extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct PlayPreviousItem: View {
 

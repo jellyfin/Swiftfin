@@ -11,7 +11,7 @@ import SwiftUI
 
 // TODO: set through proxy
 
-extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
+extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct PlaybackRateMenu: View {
 

@@ -51,14 +51,37 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         rawValue
     }
 
+    #if os(tvOS)
+    var systemImage: String {
+        switch self {
+        case .aspectFill: "arrow.up.left.and.arrow.down.right"
+        case .audio: "speaker.wave.2"
+        case .autoPlay: "play.fill"
+        case .playbackSpeed: "speedometer"
+//        case .playbackQuality: "tv.circle"
+        case .playNextItem: "forward.end.fill"
+        case .playPreviousItem: "backward.end.fill"
+        case .subtitles: "captions.bubble.fill"
+        }
+    }
+
+    var secondarySystemImage: String {
+        switch self {
+        case .aspectFill: "arrow.down.right.and.arrow.up.left"
+        case .audio: "speaker.wave.2"
+        case .autoPlay: "stop.fill"
+        case .subtitles: "captions.bubble"
+        default:
+            systemImage
+        }
+    }
+    #else
     var systemImage: String {
         switch self {
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2.fill"
         case .autoPlay: "play.circle.fill"
-        #if os(iOS)
         case .gestureLock: "lock.circle.fill"
-        #endif
         case .playbackSpeed: "speedometer"
 //        case .playbackQuality: "tv.circle.fill"
         case .playNextItem: "forward.end.circle.fill"
@@ -72,14 +95,13 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .aspectFill: "arrow.down.right.and.arrow.up.left"
         case .audio: "speaker.wave.2"
         case .autoPlay: "stop.circle"
-        #if os(iOS)
         case .gestureLock: "lock.open.fill"
-        #endif
         case .subtitles: "captions.bubble"
         default:
             systemImage
         }
     }
+    #endif
 
     static let defaultBarActionButtons: [VideoPlayerActionButton] = [
         .aspectFill,

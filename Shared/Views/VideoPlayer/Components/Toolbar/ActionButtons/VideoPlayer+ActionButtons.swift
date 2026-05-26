@@ -11,7 +11,7 @@ import SwiftUI
 
 // TODO: ensure changes on playback item change
 
-extension VideoPlayer.PlaybackControls.NavigationBar {
+extension VideoPlayer.PlaybackControls.Toolbar {
 
     struct ActionButtons: View {
 
@@ -27,9 +27,6 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
 
         @FocusState
         private var focusedButton: String?
-
-        @State
-        private var lastFocusedButton: String?
 
         private func filteredActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
             var filteredButtons = rawButtons
@@ -117,7 +114,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
 
         @ViewBuilder
         private var regularView: some View {
-            HStack(spacing: 0) {
+            HStack(spacing: UIDevice.isTV ? 16 : 0) {
                 ForEach(barActionButtons) { button in
                     view(for: button)
                         .focused($focusedButton, equals: button.rawValue)
@@ -126,7 +123,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
                 if menuActionButtons.isNotEmpty {
                     Menu(
                         L10n.menu,
-                        systemImage: "ellipsis.circle"
+                        systemImage: UIDevice.isTV ? "ellipsis" : "ellipsis.circle"
                     ) {
                         ForEach(
                             menuActionButtons,
@@ -139,15 +136,9 @@ extension VideoPlayer.PlaybackControls.NavigationBar {
             }
             .focusSection()
             .backport
-            .onChange(of: focusedButton) { oldValue, newValue in
-                if newValue == nil {
-                    lastFocusedButton = oldValue
-                }
-            }
-            .backport
             .defaultFocus(
                 $focusedButton,
-                lastFocusedButton ?? barActionButtons.first?.rawValue ?? "menu",
+                barActionButtons.first?.rawValue ?? "menu",
                 priority: .userInitiated
             )
         }

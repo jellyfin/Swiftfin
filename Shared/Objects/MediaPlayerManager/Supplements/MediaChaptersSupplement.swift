@@ -152,7 +152,8 @@ extension MediaChaptersSupplement {
             CollectionHStack(
                 uniqueElements: chapters,
                 id: \.unwrappedIDHashOrZero,
-                layout: .minimumWidth(columnWidth: 170, rows: 1)
+                layout: .grid(columns: 5, rows: 1, columnTrailingInset: 0)
+//                layout: .minimumWidth(columnWidth: 170, rows: 1)
             ) { chapter in
                 ChapterButton(supplement: supplement, chapter: chapter) {
                     guard let startSeconds = chapter.chapterInfo.startSeconds else { return }

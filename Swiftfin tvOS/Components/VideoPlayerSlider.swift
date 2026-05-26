@@ -99,6 +99,18 @@ private struct VideoPlayerSliderContent: SliderContentView {
         return abs(currentProgress - scrubbedProgress) > 0.001
     }
 
+    private var visibleTickProgress: Double? {
+        if shouldShowCurrentTick {
+            return currentProgress
+        }
+
+        if !sliderState.isFocused {
+            return scrubbedProgress
+        }
+
+        return nil
+    }
+
     private func progress(for value: Double) -> Double {
         guard sliderState.total > 0 else {
             return 0
@@ -124,19 +136,21 @@ private struct VideoPlayerSliderContent: SliderContentView {
                 Rectangle()
                     .fill(activeColor.opacity(0.2))
 
-                if let pendingProgress {
+                if sliderState.isFocused, let pendingProgress {
                     progressSegment(progress: pendingProgress, in: proxy.size)
                         .foregroundStyle(activeColor.opacity(0.45))
                 }
 
-                progressSegment(progress: committedProgress, in: proxy.size)
-                    .foregroundStyle(activeColor)
+                if sliderState.isFocused {
+                    progressSegment(progress: committedProgress, in: proxy.size)
+                        .foregroundStyle(activeColor)
+                }
 
-                if shouldShowCurrentTick, let currentProgress {
+                if let visibleTickProgress {
                     Rectangle()
                         .fill(activeColor.opacity(0.95))
                         .frame(width: tickWidth)
-                        .offset(x: tickOffset(for: currentProgress, in: proxy.size.width))
+                        .offset(x: tickOffset(for: visibleTickProgress, in: proxy.size.width))
                 }
             }
             .clipShape(Capsule())

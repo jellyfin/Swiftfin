@@ -18,7 +18,7 @@ import SwiftUI
 //       - value on media player item
 // TODO: filter to sensible subset
 
-extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
+extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct PlaybackQuality: View {
 
