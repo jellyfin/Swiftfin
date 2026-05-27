@@ -157,10 +157,8 @@ struct SelectUserView: View {
     }
 
     private func onSignedIn(_ user: UserState) {
-        Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
-        Container.shared.currentUserSession.reset()
+        Container.shared.userSessionManager().signIn(userID: user.id)
         UIDevice.feedback(.success)
-        Notifications[.didSignIn].post()
     }
 
     @ViewBuilder

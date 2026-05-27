@@ -30,7 +30,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         private var toaster
 
         private var isAutoPlayEnabled: Bool {
-            manager.userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true
+            manager.userSession?.user.data.configuration?.enableNextEpisodeAutoPlay == true
         }
 
         private var systemImage: String {
@@ -42,11 +42,9 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
         }
 
         init() {
-            /// If there is no User or UserSession, updating the user on the server has the potential of nuking all settings.
-            /// - Force Unwrap might crash but this is to prevent malformed UserDTO updating over real UserDTOs
-            let user = Container.shared.currentUserSession()!.user.data
+            let user = Container.shared.currentUserSession()?.user.data ?? UserDto()
 
-            self.userConfiguration = user.configuration!
+            self.userConfiguration = user.configuration ?? UserConfiguration()
             self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
         }
 
@@ -55,7 +53,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
                 let newValue = !isAutoPlayEnabled
 
                 userConfiguration.enableNextEpisodeAutoPlay = newValue
-                manager.userSession.user.data.configuration = userConfiguration
+                manager.userSession?.user.data.configuration = userConfiguration
                 viewModel.updateConfiguration(userConfiguration)
 
                 if newValue {
@@ -75,7 +73,7 @@ extension VideoPlayer.PlaybackControls.NavigationBar.ActionButtons {
             }
             .videoPlayerActionButtonTransition()
             .id(isAutoPlayEnabled)
-            .disabled(manager.queue == nil)
+            .disabled(manager.queue == nil || manager.userSession == nil)
         }
     }
 }

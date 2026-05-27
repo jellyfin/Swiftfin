@@ -16,9 +16,9 @@ final class TagEditorViewModel: ItemEditorViewModel<String> {
 
     override func searchElements(_ searchTerm: String) async throws -> [String] {
         if trie.isEmpty {
-            let parameters = Paths.GetQueryFiltersLegacyParameters(userID: userSession.user.id)
+            let parameters = try Paths.GetQueryFiltersLegacyParameters(userID: authenticatedUser.id)
             let request = Paths.getQueryFiltersLegacy(parameters: parameters)
-            let response = try await userSession.client.send(request)
+            let response = try await send(request)
             trie.insert(contentsOf: (response.value.tags ?? []).keyed(using: \.localizedLowercase))
         }
 

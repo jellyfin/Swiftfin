@@ -15,7 +15,7 @@ final class StudioEditorViewModel: ItemEditorViewModel<NameIDPair> {
     override func searchElements(_ searchTerm: String) async throws -> [NameIDPair] {
         let parameters = Paths.GetStudiosParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
         let request = Paths.getStudios(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items?.map { studio in
             NameIDPair(id: studio.id, name: studio.name)

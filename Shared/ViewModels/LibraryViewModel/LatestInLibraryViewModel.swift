@@ -13,14 +13,14 @@ final class LatestInLibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Ident
 
     override func get(page: Int) async throws -> [BaseItemDto] {
 
-        let parameters = parameters()
+        let parameters = try parameters(user: authenticatedUser)
         let request = Paths.getLatestMedia(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value
     }
 
-    private func parameters() -> Paths.GetLatestMediaParameters {
+    private func parameters(user: UserState) -> Paths.GetLatestMediaParameters {
 
         var parameters = Paths.GetLatestMediaParameters()
         parameters.parentID = parent?.id
@@ -28,7 +28,7 @@ final class LatestInLibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Ident
         parameters.enableUserData = true
         parameters.limit = pageSize
 
-        if userSession.user.data.configuration?.isHidePlayedInLatest == true {
+        if user.data.configuration?.isHidePlayedInLatest == true {
             parameters.isPlayed = false
         }
 

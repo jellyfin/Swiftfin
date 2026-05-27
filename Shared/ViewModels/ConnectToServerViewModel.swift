@@ -6,16 +6,18 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Factory
 import Foundation
 import Get
 import JellyfinAPI
+import Logging
 import OrderedCollections
 import Pulse
 
 @MainActor
 @Stateful
-final class ConnectToServerViewModel: ViewModel {
+final class ConnectToServerViewModel: ObservableObject {
 
     @CasePathable
     enum Action {
@@ -47,6 +49,9 @@ final class ConnectToServerViewModel: ViewModel {
     // no longer-found servers are not cleared, but not an issue
     @Published
     var localServers: OrderedSet<ServerState> = []
+
+    let logger = Logger.swiftfin()
+    var cancellables = Set<AnyCancellable>()
 
     @Function(\Action.Cases.connect)
     private func connectToServer(_ url: String) async throws {

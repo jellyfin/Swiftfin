@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import Factory
 import PreferencesView
 import SwiftUI
 import UIKit
@@ -36,26 +35,13 @@ struct SwiftfinApp: App {
         WindowGroup {
             OverlayToastView {
                 PreferencesView {
-                    RootView()
-                        .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+                    WithUserAuthentication {
+                        RootView()
+                            .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+                    }
                 }
             }
             .ignoresSafeArea()
-            .onAppDidEnterBackground {
-                Defaults[.backgroundTimeStamp] = Date.now
-            }
-            .onAppWillEnterForeground {
-
-                // TODO: needs to check if any background playback is happening
-                //       - atow, background video playback isn't officially supported
-                let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
-
-                if Defaults[.signOutOnBackground], backgroundedInterval > Defaults[.backgroundSignOutInterval] {
-                    Defaults[.lastSignedInUserID] = .signedOut
-                    Container.shared.currentUserSession.reset()
-                    Notifications[.didSignOut].post()
-                }
-            }
         }
     }
 }

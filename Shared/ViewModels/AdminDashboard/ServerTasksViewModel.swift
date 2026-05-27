@@ -52,7 +52,7 @@ final class ServerTasksViewModel: ViewModel {
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         let request = Paths.getTasks(isHidden: false, isEnabled: true)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         let allTasks = response.value
         let allTaskIDs = allTasks.compactMap(\.id)
@@ -116,12 +116,12 @@ final class ServerTasksViewModel: ViewModel {
     @Function(\Action.Cases.restartApplication)
     private func _restartApplication() async throws {
         let request = Paths.restartApplication
-        try await userSession.client.send(request)
+        try await send(request)
     }
 
     @Function(\Action.Cases.shutdownApplication)
     private func _shutdownApplication() async throws {
         let request = Paths.shutdownApplication
-        try await userSession.client.send(request)
+        try await send(request)
     }
 }

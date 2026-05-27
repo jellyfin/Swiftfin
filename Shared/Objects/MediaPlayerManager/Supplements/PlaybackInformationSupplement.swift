@@ -295,14 +295,14 @@ class PlaybackInformationProvider: ViewModel, MediaPlayerObserver {
 
         currentSessionTask = Task {
             do {
-                let parameters = Paths.GetSessionsParameters(
-                    deviceID: userSession.client.configuration.deviceID
+                let parameters = try Paths.GetSessionsParameters(
+                    deviceID: authenticatedClient.configuration.deviceID
                 )
                 let request = Paths.getSessions(
                     parameters: parameters
                 )
 
-                let response = try await userSession.client.send(request)
+                let response = try await send(request)
                 let sessions = response.value
 
                 // Match by device, falling back to nowPlayingItem ID

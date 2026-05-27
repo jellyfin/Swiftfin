@@ -73,13 +73,13 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        user = try await user.getFullUser(userSession: userSession)
+        user = try await user.getFullUser(userSession: requireUserSession())
     }
 
     @Function(\Action.Cases.getLibraries)
     private func _getLibraries(_ isHidden: Bool?) async throws {
         let request = Paths.getMediaFolders(isHidden: isHidden)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         libraries = response.value.items ?? []
     }
@@ -91,12 +91,13 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
         }
 
         let request = Paths.updateUserPolicy(userID: userID, policy)
-        try await userSession.client.send(request)
+        try await send(request)
 
         user.policy = policy
 
-        if userID == userSession.user.id {
-            userSession.user.data.policy = policy
+        let currentUser = try authenticatedUser
+        if userID == currentUser.id {
+            currentUser.data.policy = policy
         }
 
         events.send(.updated)
@@ -109,12 +110,13 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
         }
 
         let request = Paths.updateUserConfiguration(userID: userID, configuration)
-        try await userSession.client.send(request)
+        try await send(request)
 
         user.configuration = configuration
 
-        if userID == userSession.user.id {
-            userSession.user.data.configuration = configuration
+        let currentUser = try authenticatedUser
+        if userID == currentUser.id {
+            currentUser.data.configuration = configuration
         }
 
         events.send(.updated)
@@ -130,12 +132,13 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
         updatedUser.name = username
 
         let request = Paths.updateUser(userID: userID, updatedUser)
-        try await userSession.client.send(request)
+        try await send(request)
 
         user.name = username
 
-        if userID == userSession.user.id {
-            userSession.user.data.name = username
+        let currentUser = try authenticatedUser
+        if userID == currentUser.id {
+            currentUser.data.name = username
         }
 
         Notifications[.didChangeUserProfile].post(userID)

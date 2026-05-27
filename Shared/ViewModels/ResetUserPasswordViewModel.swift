@@ -87,9 +87,10 @@ final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
     }
 
     private func reset(current: String, new: String) async throws {
+
         let body = UpdateUserPassword(currentPw: current, newPw: new)
         let request = Paths.updateUserPassword(userID: userID, body)
 
-        try await userSession.client.send(request)
+        try await send(request)
     }
 }

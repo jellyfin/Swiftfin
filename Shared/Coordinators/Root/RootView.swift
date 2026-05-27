@@ -10,6 +10,9 @@ import SwiftUI
 
 struct RootView: View {
 
+    @Environment(\.localUserAuthenticationAction)
+    private var authenticationAction
+
     @StateObject
     private var rootCoordinator: RootCoordinator = .init()
 
@@ -35,5 +38,13 @@ struct RootView: View {
         }
         .animation(.linear(duration: 0.1), value: rootCoordinator.root.id)
         .environmentObject(rootCoordinator)
+        .onOpenURL { url in
+            Task { @MainActor in
+                await AppURLHandler.shared.handle(
+                    url,
+                    authenticationAction: authenticationAction
+                )
+            }
+        }
     }
 }

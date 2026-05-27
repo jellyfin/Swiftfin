@@ -123,10 +123,6 @@ extension Notifications.Key {
 
     // MARK: - App Flow
 
-    static var processDeepLink: Key<Void> {
-        Key("processDeepLink")
-    }
-
     static var didPurge: Key<Void> {
         Key("didPurge")
     }

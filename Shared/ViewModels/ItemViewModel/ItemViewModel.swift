@@ -306,32 +306,34 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     private func getFullItem() async throws -> BaseItemDto {
-        try await item.getFullItem(userSession: userSession, sendNotification: true)
+        try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
     }
 
-    private func getSimilarItems() async -> [BaseItemDto] {
+    private func getSimilarItems() async throws -> [BaseItemDto] {
+        guard let itemID = item.id else { return [] }
 
         var parameters = Paths.GetSimilarItemsParameters()
         parameters.fields = .MinimumFields
         parameters.limit = 20
 
         let request = Paths.getSimilarItems(
-            itemID: item.id!,
+            itemID: itemID,
             parameters: parameters
         )
 
-        let response = try? await userSession.client.send(request)
+        let response = try? await send(request)
 
         return response?.value.items ?? []
     }
 
-    private func getSpecialFeatures() async -> [BaseItemDto] {
+    private func getSpecialFeatures() async throws -> [BaseItemDto] {
+        guard let itemID = item.id else { return [] }
 
-        let request = Paths.getSpecialFeatures(
-            itemID: item.id!,
-            userID: userSession.user.id
+        let request = try Paths.getSpecialFeatures(
+            itemID: itemID,
+            userID: authenticatedUser.id
         )
-        let response = try? await userSession.client.send(request)
+        let response = try? await send(request)
 
         return (response?.value ?? [])
             .filter { $0.extraType?.isVideo ?? false }
@@ -339,8 +341,8 @@ class ItemViewModel: ViewModel, Stateful {
 
     private func getLocalTrailers() async throws -> [BaseItemDto] {
 
-        let request = try Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
-        let response = try? await userSession.client.send(request)
+        let request = try Paths.getLocalTrailers(itemID: itemID, userID: authenticatedUser.id)
+        let response = try? await send(request)
 
         return response?.value ?? []
     }
@@ -352,7 +354,7 @@ class ItemViewModel: ViewModel, Stateful {
               let itemID = item.id else { return [] }
 
         let request = Paths.getAdditionalPart(itemID: itemID)
-        let response = try? await userSession.client.send(request)
+        let response = try? await send(request)
 
         return response?.value.items ?? []
     }
@@ -362,18 +364,18 @@ class ItemViewModel: ViewModel, Stateful {
         guard let itemID = item.id else { return }
 
         let request: Request<UserItemDataDto> = if isPlayed {
-            Paths.markPlayedItem(
-                itemID: item.id!,
-                userID: userSession.user.id
+            try Paths.markPlayedItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
             )
         } else {
-            Paths.markUnplayedItem(
-                itemID: item.id!,
-                userID: userSession.user.id
+            try Paths.markUnplayedItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
             )
         }
 
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
         Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 
@@ -382,18 +384,18 @@ class ItemViewModel: ViewModel, Stateful {
         guard let itemID = item.id else { return }
 
         let request: Request<UserItemDataDto> = if isFavorite {
-            Paths.markFavoriteItem(
-                itemID: item.id!,
-                userID: userSession.user.id
+            try Paths.markFavoriteItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
             )
         } else {
-            Paths.unmarkFavoriteItem(
-                itemID: item.id!,
-                userID: userSession.user.id
+            try Paths.unmarkFavoriteItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
             )
         }
 
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
         Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 }

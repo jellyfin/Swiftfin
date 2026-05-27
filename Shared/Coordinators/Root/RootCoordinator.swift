@@ -80,7 +80,7 @@ final class RootCoordinator: ObservableObject {
 
         guard Container.shared.currentUserSession() != nil else { return }
 
-        Container.shared.currentUserSession.reset()
+        Container.shared.userSessionManager().updateCurrentServerURL()
         Notifications[.didSignIn].post()
     }
 }

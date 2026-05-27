@@ -81,6 +81,8 @@ extension NavigationRoute {
 
         Container.shared.mediaPlayerManagerPublisher()
             .send(manager)
+        Container.shared.userSessionManager()
+            .setActiveMediaPlayerManager(manager)
 
         return NavigationRoute(
             id: "videoPlayer",

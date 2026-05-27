@@ -8,6 +8,7 @@
 
 import CoreStore
 import Defaults
+import Factory
 import Logging
 import Nuke
 import PulseLogHandler
@@ -53,11 +54,6 @@ extension SwiftfinApp {
 
         ImagePipeline.shared = .Swiftfin.posters
 
-        // Swiftfin
-
-        // Don't keep last user id.
-        if Defaults[.signOutOnClose] {
-            Defaults[.lastSignedInUserID] = .signedOut
-        }
+        _ = Container.shared.userSessionManager()
     }
 }
