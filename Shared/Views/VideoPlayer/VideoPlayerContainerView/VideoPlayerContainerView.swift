@@ -654,11 +654,22 @@ extension VideoPlayer {
 
             NSLayoutConstraint.activate(supplementContainerConstraints)
 
+            #if os(tvOS)
+            let playbackControlsBottomAnchor = playbackControlsView.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor,
+                constant: -dismissedSupplementContainerOffset
+            )
+            #else
+            let playbackControlsBottomAnchor = playbackControlsView.bottomAnchor.constraint(
+                equalTo: supplementContainerView.topAnchor
+            )
+            #endif
+
             playbackControlsConstraints = [
                 playbackControlsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 playbackControlsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 playbackControlsView.topAnchor.constraint(equalTo: view.topAnchor),
-                playbackControlsView.bottomAnchor.constraint(equalTo: supplementContainerView.topAnchor),
+                playbackControlsBottomAnchor,
             ]
 
             NSLayoutConstraint.activate(playbackControlsConstraints)

@@ -124,8 +124,7 @@ extension VideoPlayer.PlaybackControls {
                 }
                 .foregroundStyle(.primary, .secondary)
             }
-            .font(UIDevice.isTV ? .caption : .caption2)
-            .fontWeight(UIDevice.isTV ? .medium : nil)
+            .font(.caption2)
             .monospacedDigit()
             .lineLimit(1)
             .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
@@ -147,7 +146,7 @@ extension VideoPlayer.PlaybackControls {
                     .trackingSize($leadingTimestampSize)
                     .offset(x: previewXOffset)
             }
-            .font(UIDevice.isTV ? .caption : .caption2)
+            .font(.caption)
             .fontWeight(UIDevice.isTV ? .medium : nil)
             .monospacedDigit()
             .trackingSize($contentSize)

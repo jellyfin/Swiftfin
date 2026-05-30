@@ -10,7 +10,7 @@ import Engine
 import SwiftUI
 import UIKit
 
-/// `TabView` acts weird with horizontal stacks, so tvOS swaps tracked child hosts directly.
+/// `TabView` acts weird with horizontal stacks, workaround with manual supplement presentation
 struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRepresentable {
 
     let items: [Item]
@@ -50,8 +50,12 @@ struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRep
         weak var container: UIViewController?
 
         private var visibleID: Item.ID?
+        private var pendingSelectionID: Item.ID?
+        private var pendingSelectionWorkItem: DispatchWorkItem?
         private var transitionID: Int = 0
         private var hosts: [Item.ID: HostingController<Content>] = [:]
+
+        private let selectionDebounceInterval: TimeInterval = 0.5
 
         func sync(
             items: [Item],
@@ -61,10 +65,14 @@ struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRep
             guard let container else { return }
 
             updateHosts(with: items, content: content)
-            select(selection, in: container)
+            selectDebounced(selection, in: container)
         }
 
         func removeAll() {
+            pendingSelectionWorkItem?.cancel()
+            pendingSelectionWorkItem = nil
+            pendingSelectionID = nil
+
             for host in hosts.values {
                 remove(host)
             }
@@ -75,7 +83,7 @@ struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRep
 
         private func updateHosts(
             with items: [Item],
-            @ViewBuilder content: (Item) -> Content
+            content: (Item) -> Content
         ) {
             let currentIDs = Set(items.map(\.id))
 
@@ -102,6 +110,35 @@ struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRep
                     hosts[item.id] = host
                 }
             }
+        }
+
+        private func selectDebounced(_ selection: Item.ID?, in container: UIViewController) {
+            pendingSelectionWorkItem?.cancel()
+            pendingSelectionWorkItem = nil
+            pendingSelectionID = selection
+
+            guard let selection else {
+                pendingSelectionID = nil
+                select(nil, in: container)
+                return
+            }
+
+            guard selection != visibleID else {
+                pendingSelectionID = nil
+                select(selection, in: container)
+                return
+            }
+
+            let workItem = DispatchWorkItem { [weak self, weak container] in
+                guard let self, let container, self.pendingSelectionID == selection else { return }
+
+                self.pendingSelectionID = nil
+                self.pendingSelectionWorkItem = nil
+                self.select(selection, in: container)
+            }
+
+            pendingSelectionWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + selectionDebounceInterval, execute: workItem)
         }
 
         private func select(_ selection: Item.ID?, in container: UIViewController) {
@@ -133,9 +170,15 @@ struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRep
             container.addChild(host)
             container.view.addSubview(host.view)
 
-            host.view.frame = container.view.bounds
-            host.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            host.view.translatesAutoresizingMaskIntoConstraints = false
             host.view.alpha = alpha
+
+            NSLayoutConstraint.activate([
+                host.view.leadingAnchor.constraint(equalTo: container.view.leadingAnchor),
+                host.view.trailingAnchor.constraint(equalTo: container.view.trailingAnchor),
+                host.view.topAnchor.constraint(equalTo: container.view.topAnchor),
+                host.view.bottomAnchor.constraint(equalTo: container.view.bottomAnchor),
+            ])
 
             host.didMove(toParent: container)
         }
@@ -161,7 +204,7 @@ struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRep
             let currentTransitionID = transitionID
 
             UIView.animate(
-                withDuration: 0.18,
+                withDuration: 0.2,
                 delay: 0,
                 options: [.beginFromCurrentState, .allowUserInteraction]
             ) {

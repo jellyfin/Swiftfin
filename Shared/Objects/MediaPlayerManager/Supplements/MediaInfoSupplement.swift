@@ -171,12 +171,13 @@ extension MediaInfoSupplement {
                 if !item.isLiveStream {
                     AlternateLayoutView {
                         Label(L10n.fromBeginning, systemImage: "play.fill")
-                            .font(.subheadline.weight(.semibold))
-                            .padding(safeAreaInsets)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .padding()
+                            .edgePadding(.horizontal)
                             .frame(height: UIDevice.isTV ? 80 : 50)
                     } content: {
                         fromBeginningButton
-                            .focusSection()
                     }
                 }
             }

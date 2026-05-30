@@ -149,9 +149,6 @@ extension EpisodeMediaPlayerQueue {
 
     private struct EpisodeOverlay: PlatformView {
 
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets: EdgeInsets
-
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
@@ -162,9 +159,6 @@ extension EpisodeMediaPlayerQueue {
 
         @State
         private var selection: SeasonItemViewModel.ID?
-
-        @StateObject
-        private var collectionHStackProxy: CollectionHStackProxy = .init()
 
         private var selectionViewModel: SeasonItemViewModel? {
             guard let selection else { return nil }
@@ -205,138 +199,29 @@ extension EpisodeMediaPlayerQueue {
             CompactOrRegularView(
                 isCompact: containerState.isCompact
             ) {
-                iOSCompactView
+                CompactSeasonStackObserver(
+                    selection: $selection,
+                    action: select
+                )
             } regularView: {
-                iOSRegularView
+                RegularSeasonStackObserver(
+                    selection: $selection,
+                    action: select
+                )
             }
+            .environmentObject(viewModel)
             .onAppear { selectInitialSeason() }
             .onReceive(viewModel.$seasons) { newSeasons in
                 setSelectionIfNeeded(seasons: newSeasons)
             }
         }
 
-        @ViewBuilder
-        private var iOSCompactView: some View {
-            if let selectionViewModel {
-                EpisodeSeason(season: selectionViewModel) { season in
-                    switch season.state {
-                    case .content:
-                        if !season.elements.isEmpty {
-                            CollectionVGrid(
-                                uniqueElements: season.elements,
-                                layout: .columns(
-                                    1,
-                                    insets: .init(EdgeInsets.edgePadding)
-                                )
-                            ) { item in
-                                EpisodeRow(episode: item) {
-                                    select(episode: item)
-                                }
-                            }
-                        }
-                    case .initial, .refreshing:
-                        CollectionVGrid(
-                            count: 1,
-                            layout: .columns(
-                                1,
-                                insets: .init(EdgeInsets.edgePadding)
-                            )
-                        ) { _ in
-                            EpisodeRowPlaceholder()
-                        }
-                    case .error:
-                        ErrorView(error: ErrorMessage(L10n.unknownError))
-                    }
-                }
-            }
-        }
-
-        @ViewBuilder
-        private var iOSRegularView: some View {
-            if let selectionViewModel {
-                EpisodeSeason(season: selectionViewModel) { season in
-                    switch season.state {
-                    case .content:
-                        if !season.elements.isEmpty {
-                            CollectionHStack(
-                                uniqueElements: season.elements,
-                                id: \.unwrappedIDHashOrZero,
-                                layout: .minimumWidth(columnWidth: 170, rows: 1)
-                            ) { item in
-                                EpisodeButton(episode: item) {
-                                    select(episode: item)
-                                }
-                            }
-                            .clipsToBounds(false)
-                            .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-                            .itemSpacing(EdgeInsets.edgePadding / 2)
-                            .scrollBehavior(.continuousLeadingEdge)
-                        }
-                    case .initial, .refreshing:
-                        CollectionHStack(
-                            count: Int.random(in: 1 ..< 3),
-                            minWidth: 170,
-                            rows: 1
-                        ) { _ in
-                            SupplementLoadingButton()
-                        }
-                        .clipsToBounds(false)
-                        .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-                        .itemSpacing(EdgeInsets.edgePadding / 2)
-                        .scrollBehavior(.continuousLeadingEdge)
-                    case .error:
-                        ErrorView(error: ErrorMessage(L10n.unknownError))
-                    }
-                }
-            }
-        }
-
         var tvOSView: some View {
-            Group {
-                if let selectionViewModel {
-                    EpisodeSeason(season: selectionViewModel) { season in
-                        switch season.state {
-                        case .content:
-                            if !season.elements.isEmpty {
-                                CollectionVGrid(
-                                    uniqueElements: season.elements,
-                                    id: \.unwrappedIDHashOrZero,
-                                    layout: .columns(
-                                        5,
-                                        insets: .init(EdgeInsets.edgePadding),
-                                        itemSpacing: EdgeInsets.edgePadding,
-                                        lineSpacing: EdgeInsets.edgePadding
-                                    )
-                                ) { episode in
-                                    EpisodeButton(episode: episode) {
-                                        select(episode: episode)
-                                    }
-                                }
-                                .ignoresSafeArea(.container, edges: .horizontal)
-                                .focusSection()
-                            }
-                        case .initial, .refreshing, .error:
-                            CollectionVGrid(
-                                count: 1,
-                                layout: .columns(
-                                    5,
-                                    insets: .init(EdgeInsets.edgePadding),
-                                    itemSpacing: EdgeInsets.edgePadding,
-                                    lineSpacing: EdgeInsets.edgePadding
-                                )
-                            ) { _ in
-                                switch season.state {
-                                case .error:
-                                    SupplementEmptyButton()
-                                default:
-                                    SupplementLoadingButton()
-                                }
-                            }
-                            .ignoresSafeArea(.container, edges: .horizontal)
-                        }
-                    }
-                }
-            }
+            RegularSeasonStackObserver(
+                selection: $selection,
+                action: select
+            )
+            .environmentObject(viewModel)
             .onFirstAppear {
                 selectInitialSeason()
             }
@@ -346,16 +231,199 @@ extension EpisodeMediaPlayerQueue {
         }
     }
 
-    private struct EpisodeSeason<Content: View>: View {
+    private struct CompactSeasonStackObserver: View {
 
-        @ObservedObject
-        var season: SeasonItemViewModel
+        @EnvironmentObject
+        private var seriesViewModel: SeriesItemViewModel
 
-        @ViewBuilder
-        let content: (SeasonItemViewModel) -> Content
+        let selection: Binding<SeasonItemViewModel.ID?>
+        let action: (BaseItemDto) -> Void
+
+        private var selectionViewModel: SeasonItemViewModel? {
+            guard let id = selection.wrappedValue else { return nil }
+            return seriesViewModel.seasons[id: id]
+        }
+
+        private struct _Body: View {
+
+            @ObservedObject
+            var selectionViewModel: SeasonItemViewModel
+
+            let action: (BaseItemDto) -> Void
+
+            var body: some View {
+                switch selectionViewModel.state {
+                case .content:
+                    if selectionViewModel.elements.isNotEmpty {
+                        CollectionVGrid(
+                            uniqueElements: selectionViewModel.elements,
+                            layout: .columns(
+                                1,
+                                insets: .edgeInsets
+                            )
+                        ) { item in
+                            EpisodeRow(episode: item) {
+                                action(item)
+                            }
+                        }
+                    }
+                case .initial, .refreshing:
+                    EmptyView()
+                case .error:
+                    ErrorView(error: ErrorMessage(L10n.unknownError))
+                }
+            }
+        }
 
         var body: some View {
-            content(season)
+            if let selectionViewModel {
+                _Body(
+                    selectionViewModel: selectionViewModel,
+                    action: action
+                )
+            }
+        }
+    }
+
+    private struct RegularSeasonStackObserver: View {
+
+        @EnvironmentObject
+        private var seriesViewModel: SeriesItemViewModel
+
+        let selection: Binding<SeasonItemViewModel.ID?>
+        let action: (BaseItemDto) -> Void
+
+        private var selectionViewModel: SeasonItemViewModel? {
+            guard let id = selection.wrappedValue else { return nil }
+            return seriesViewModel.seasons[id: id]
+        }
+
+        private struct _Body: View {
+
+            #if !os(tvOS)
+            @Environment(\.safeAreaInsets)
+            private var safeAreaInsets: EdgeInsets
+            #endif
+
+            @ObservedObject
+            var selectionViewModel: SeasonItemViewModel
+
+            let action: (BaseItemDto) -> Void
+
+            @ViewBuilder
+            private var contentView: some View {
+                #if os(tvOS)
+                CollectionHStack(
+                    uniqueElements: selectionViewModel.elements,
+                    id: \.unwrappedIDHashOrZero,
+                    layout: .grid(columns: 5, rows: 1, columnTrailingInset: 0)
+                ) { episode in
+                    EpisodeButton(episode: episode) {
+                        action(episode)
+                    }
+                }
+                .ignoresSafeArea(.container, edges: .horizontal)
+                .focusSection()
+                #else
+                CollectionHStack(
+                    uniqueElements: selectionViewModel.elements,
+                    id: \.unwrappedIDHashOrZero,
+                    layout: .minimumWidth(columnWidth: 170, rows: 1)
+                ) { item in
+                    EpisodeButton(episode: item) {
+                        action(item)
+                    }
+                }
+                .clipsToBounds(false)
+                .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
+                .itemSpacing(EdgeInsets.edgePadding / 2)
+                .scrollBehavior(.continuousLeadingEdge)
+                #endif
+            }
+
+            var body: some View {
+                switch selectionViewModel.state {
+                case .content:
+                    if selectionViewModel.elements.isNotEmpty {
+                        contentView
+                    }
+                case .initial, .refreshing:
+                    EmptyView()
+                case .error:
+                    SeasonErrorView(viewModel: selectionViewModel)
+                }
+            }
+        }
+
+        var body: some View {
+            if let selectionViewModel {
+                _Body(
+                    selectionViewModel: selectionViewModel,
+                    action: action
+                )
+            }
+        }
+    }
+
+    private struct SeasonErrorView: View {
+
+        @FocusState
+        private var isRetryButtonFocused: Bool
+
+        @ObservedObject
+        var viewModel: SeasonItemViewModel
+
+        // TODO: Supplements are dismissed on retry, probably due to focus change
+        @ViewBuilder
+        private var retryButton: some View {
+            AlternateLayoutView {
+                Label(L10n.retry, systemImage: "arrow.clockwise")
+                    .font(.subheadline.weight(.semibold))
+                    .padding()
+                    .edgePadding(.horizontal)
+                    .frame(height: UIDevice.isTV ? 80 : 40)
+            } content: {
+                Button {
+                    viewModel.send(.refresh)
+                } label: {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 7)
+                            .foregroundStyle(.white)
+
+                        Label(L10n.retry, systemImage: "arrow.clockwise")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.black)
+                            .padding()
+                            .edgePadding(.horizontal)
+                    }
+                }
+                .buttonStyle(.card)
+                .focused($isRetryButtonFocused)
+                .frame(height: UIDevice.isTV ? 80 : 50)
+            }
+        }
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: EdgeInsets.edgePadding / 2) {
+                Text(L10n.unknownError)
+                    .font(.callout)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxHeight: .infinity, alignment: .topLeading)
+
+                retryButton
+            }
+            .edgePadding(.horizontal)
+            .padding(.vertical, EdgeInsets.edgePadding / 2)
+            .background {
+                RoundedRectangle(cornerRadius: 32)
+                    .fill(Material.thin)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 32))
+            .edgePadding()
+            .focusSection()
         }
     }
 
@@ -447,40 +515,6 @@ extension EpisodeMediaPlayerQueue {
                 action()
             }
             .isSelected(isCurrentEpisode)
-        }
-    }
-
-    private struct EpisodeRowPlaceholder: View {
-
-        var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
-                Rectangle()
-                    .fill(.complexSecondary)
-                    .frame(width: 110)
-                    .padding(.vertical, 8)
-                    .posterStyle(.landscape)
-                    .posterShadow()
-                    .hoverEffect(.highlight)
-            } content: {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(String.random(count: 10 ..< 20))
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.primary)
-                        .lineLimit(2, reservesSpace: true)
-                        .multilineTextAlignment(.leading)
-                        .redacted(reason: .placeholder)
-
-                    DotHStack {
-                        Text(String.random(count: 1 ..< 2))
-                        Text(String.random(count: 2 ..< 3))
-                    }
-                    .redacted(reason: .placeholder)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
         }
     }
 
