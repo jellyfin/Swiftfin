@@ -219,7 +219,6 @@
 			membershipExceptions = (
 				Extensions/JellyfinAPI/TaskTriggerInfoType.swift,
 				Objects/ItemArrayElements.swift,
-				ViewModels/AdminDashboard/ActiveSessionsViewModel.swift,
 				ViewModels/AdminDashboard/APIKeysViewModel.swift,
 				ViewModels/AdminDashboard/DevicesViewModel.swift,
 				ViewModels/AdminDashboard/ServerActivityDetailViewModel.swift,
@@ -227,6 +226,8 @@
 				ViewModels/AdminDashboard/ServerLogs/ServerLogsViewModel.swift,
 				ViewModels/AdminDashboard/ServerTaskObserver.swift,
 				ViewModels/AdminDashboard/ServerTasksViewModel.swift,
+				ViewModels/AdminDashboard/Sessions/ActiveSessionsViewModel.swift,
+				ViewModels/AdminDashboard/Sessions/SessionViewModel.swift,
 				ViewModels/AdminDashboard/Users/AddServerUserViewModel.swift,
 				ViewModels/AdminDashboard/Users/ServerUsersViewModel.swift,
 				ViewModels/DownloadListViewModel.swift,

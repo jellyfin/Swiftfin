@@ -16,24 +16,27 @@ import UIKit
 
 final class SocketManager {
 
-    typealias Topic = JellyfinSocket.Subscription
-
+    /// Published socket events
     let events = PassthroughSubject<JellyfinSocket.Session.Event, Never>()
+    /// Published convenience for tracking if the socket is connected
     let isConnected = CurrentValueSubject<Bool, Never>(false)
 
     private struct State {
         var session: JellyfinSocket.Session?
-        var subscriptions: [Topic: (delay: Duration, interval: Duration)] = [:]
+        var subscriptions: [JellyfinSocket.Subscription: (delay: Duration, interval: Duration)] = [:]
     }
 
     private let logger = Logger.swiftfin()
     private let socket: JellyfinSocket
 
+    private var tasks: [Task<Void, Never>] = []
+
+    /// Thread-safe guard for `session` and `subscriptions`, because they are touched outside the main thread
     private let state = OSAllocatedUnfairLock(initialState: State())
+
+    /// Signals the `runConnection` loop to start a new connection
     private let wakeStream: AsyncStream<Void>
     private let wake: AsyncStream<Void>.Continuation
-
-    private var tasks: [Task<Void, Never>] = []
 
     init(_ socket: JellyfinSocket) {
         self.socket = socket
@@ -57,25 +60,30 @@ final class SocketManager {
         wake.yield()
     }
 
-    /// Subscribe to a subscription. Releasing the cancellable unsubscribes.
-    func subscribe(_ topic: Topic, delay: Duration = .seconds(0), interval: Duration = .seconds(5)) -> AnyCancellable {
+    /// Subscribe the socket to a high volume subscription (E.G. Activities, Sessions, etc.).
+    /// Releasing the cancellable unsubscribes the socket from that subscription.
+    func subscribe(
+        _ subscription: JellyfinSocket.Subscription,
+        delay: Duration = .seconds(0),
+        interval: Duration = .seconds(5)
+    ) -> AnyCancellable {
         let session = state.withLock { state in
-            state.subscriptions[topic] = (delay, interval)
+            state.subscriptions[subscription] = (delay, interval)
             return state.session
         }
 
         if let session {
-            session.subscribe(topic, delay: delay, interval: interval)
+            session.subscribe(subscription, delay: delay, interval: interval)
         } else {
             wake.yield()
         }
 
         return AnyCancellable { [weak self] in
             let session = self?.state.withLock { state in
-                state.subscriptions[topic] = nil
+                state.subscriptions[subscription] = nil
                 return state.session
             }
-            session?.unsubscribe(topic)
+            session?.unsubscribe(subscription)
         }
     }
 
@@ -84,8 +92,8 @@ final class SocketManager {
         state.withLock { $0.session }?.disconnect()
     }
 
-    /// Bridge session events into multi-usable publishers, re-apply subscriptions on each connect, and park between sessions until
-    /// signaled.
+    /// Connects to the socket and publish events for multiple consumers.
+    /// This will attempt to reconnect the socket if it goes offline.
     private func runConnection() async {
         var wakeIterator = wakeStream.makeAsyncIterator()
 
@@ -108,15 +116,15 @@ final class SocketManager {
                 )
             }
 
-            logger.debug("Socket connecting")
+            logger.debug("Connecting the socket (Initial Startup)")
 
             do {
                 for try await event in session.events {
                     switch event {
                     case .connecting:
-                        logger.debug("Socket retrying")
+                        logger.debug("Socket retrying...")
                     case let .connected(url):
-                        logger.info("Socket connected to \(url)")
+                        logger.info("Socket connected to \(url)!")
                         isConnected.send(true)
                     case let .message(message):
                         logger.debug("Socket message: \(message)")
@@ -137,14 +145,16 @@ final class SocketManager {
     }
 
     /// Reconnect when the app returns to the foreground.
+    /// Fixes the socket when it expires in the background.
     private func observeForeground() async {
         for await _ in NotificationCenter.default.notifications(named: UIApplication.willEnterForegroundNotification) {
-            logger.debug("Socket reconnect: foreground")
+            logger.debug("Reconnecting the socket (Background -> Foreground)")
             reconnect()
         }
     }
 
     /// Reconnect when network transitions from unreachable to reachable.
+    /// Restarts the socket when switching networks (E.G. WiFI to Cellular).
     private func observeNetworkPath() async {
         let monitor = NWPathMonitor()
         defer { monitor.cancel() }
@@ -159,7 +169,7 @@ final class SocketManager {
 
         for await path in stream {
             if path.status == .satisfied, previous == .unsatisfied {
-                logger.debug("Socket reconnect: network restored")
+                logger.debug("Reconnecting the socket (Network Restored)")
                 reconnect()
             }
             previous = path.status

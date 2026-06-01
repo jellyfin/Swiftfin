@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveSessionDetailView {
+extension ActiveSessionDetailsView {
 
     struct StreamSection: View {
 

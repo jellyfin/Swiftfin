@@ -18,12 +18,12 @@ extension ActiveSessionsView {
         private var currentDate: Date
 
         @ObservedObject
-        var box: BindingBox<SessionInfoDto?>
+        var viewModel: SessionViewModel
 
         let action: () -> Void
 
         private var session: SessionInfoDto {
-            box.value ?? .init()
+            viewModel.session
         }
 
         private var isPlaying: Bool {
