@@ -119,7 +119,7 @@ final class ActiveSessionsViewModel: ViewModel {
                 }
                 .sorted()
 
-        for session in incomingSessions {
+        for session in filteredSessions {
             guard let id = session.id else { continue }
 
             if let existing = sessions[id] {
