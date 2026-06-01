@@ -20,6 +20,9 @@ struct ActiveSessionDetailsView: View {
     @ObservedObject
     var viewModel: SessionViewModel
 
+    @FocusState
+    private var isMessageFieldFocused: Bool
+
     private var isPaused: Bool {
         viewModel.session.playState?.isPaused ?? false
     }
@@ -50,6 +53,8 @@ struct ActiveSessionDetailsView: View {
                 }
 
                 Button(L10n.cancel, role: .cancel) {}
+            } message: {
+                Text(L10n.stopPlaybackWarning)
             }
         }
     }
@@ -63,6 +68,7 @@ struct ActiveSessionDetailsView: View {
             .alert(L10n.message, isPresented: alert.isPresented) {
                 TextField(L10n.title, text: alert.header)
                 TextField(L10n.message, text: alert.text)
+                    .focused($isMessageFieldFocused)
 
                 Button(L10n.cancel, role: .cancel) {}
 
@@ -74,6 +80,10 @@ struct ActiveSessionDetailsView: View {
                     viewModel.sendMessage(command)
                 }
                 .disabled(alert.text.wrappedValue.isEmpty)
+            }
+            .onChange(of: alert.isPresented.wrappedValue) { isPresented in
+                guard isPresented else { return }
+                isMessageFieldFocused = true
             }
         }
     }
@@ -138,6 +148,9 @@ struct ActiveSessionDetailsView: View {
                     showTranscodeReason: false
                 )
             }
+            .listRowBackground(Color.clear)
+            .listRowInsets(.zero)
+            .listRowCornerRadius(0)
 
             commandsSection(session: session)
 
