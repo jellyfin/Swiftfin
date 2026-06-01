@@ -13,9 +13,6 @@ import SwiftUI
 
 struct ActiveSessionsView: View {
 
-    @Default(.accentColor)
-    private var accentColor
-
     @Router
     private var router
 
@@ -24,11 +21,6 @@ struct ActiveSessionsView: View {
 
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
-
-    private let timer = Timer.publish(every: 5, on: .main, in: .common)
-        .autoconnect()
-
-    // MARK: - Content View
 
     @ViewBuilder
     private var contentView: some View {
@@ -49,8 +41,6 @@ struct ActiveSessionsView: View {
         }
     }
 
-    // MARK: - Body
-
     @ViewBuilder
     var body: some View {
         ZStack {
@@ -65,10 +55,14 @@ struct ActiveSessionsView: View {
                 ProgressView()
             }
         }
-        .animation(.linear(duration: 0.2), value: viewModel.state)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.sessions)
-        .navigationBarTitleDisplayMode(.inline)
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .refreshable {
+            viewModel.refresh()
+        }
+        .onFirstAppear {
             viewModel.refresh()
         }
         .topBarTrailing {
@@ -84,20 +78,9 @@ struct ActiveSessionsView: View {
             .buttonStyle(.isPressed { isPressed in
                 isFiltersPresented = isPressed
             })
-            .foregroundStyle(accentColor)
-        }
-        .onFirstAppear {
-            viewModel.refresh()
-        }
-        .onReceive(timer) { _ in
-            guard !isFiltersPresented else { return }
-            viewModel.background.refresh()
         }
     }
 
-    // MARK: - Active Within Filter Button
-
-    @ViewBuilder
     private var activeWithinFilterButton: some View {
         Picker(selection: $viewModel.activeWithinSeconds) {
             Label(
@@ -143,9 +126,6 @@ struct ActiveSessionsView: View {
         .pickerStyle(.menu)
     }
 
-    // MARK: - Show Inactive Sessions Button
-
-    @ViewBuilder
     private var showInactiveSessionsButton: some View {
         Picker(selection: $viewModel.showSessionType) {
             ForEach(ActiveSessionFilter.allCases, id: \.self) { filter in

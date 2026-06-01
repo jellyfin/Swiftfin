@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -51,6 +52,33 @@ final class ActiveSessionsViewModel: ViewModel {
     @Published
     private(set) var sessions: OrderedDictionary<String, BindingBox<SessionInfoDto?>> = [:]
 
+    @Published
+    var isPaused = false
+
+    override init() {
+        super.init()
+
+        guard let socket = userSession?.socket else { return }
+
+        socket
+            .subscribe(.sessions, delay: .seconds(0), interval: .seconds(2))
+            .store(in: &cancellables)
+
+        socket.events
+            .compactMap { event -> [SessionInfoDto]? in
+                guard case let .message(.sessionsMessage(msg)) = event else { return nil }
+                return msg.data
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] sessions in
+                Task { @MainActor in
+                    guard let self else { return }
+                    self.updateSessions(sessions)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         var parameters = Paths.GetSessionsParameters()
@@ -59,22 +87,36 @@ final class ActiveSessionsViewModel: ViewModel {
         let request = Paths.getSessions(parameters: parameters)
         let response = try await userSession.client.send(request)
 
-        let filteredSessions: [SessionInfoDto] = switch showSessionType {
-        case .all:
-            response.value
-        case .active:
-            response.value.filter { $0.nowPlayingItem != nil }
-        case .inactive:
-            response.value.filter { $0.nowPlayingItem == nil }
+        updateSessions(response.value)
+    }
+
+    private func updateSessions(_ incoming: [SessionInfoDto]) {
+        guard !isPaused else { return }
+        let withinFiltered: [SessionInfoDto] = if let seconds = activeWithinSeconds {
+            incoming.filter {
+                guard let date = $0.lastActivityDate else { return true }
+                return Date.now.timeIntervalSince(date) <= TimeInterval(seconds)
+            }
+        } else {
+            incoming
         }
 
-        let removedSessionIDs = sessions.keys.filter { !filteredSessions.map(\.id).contains($0) }
+        let filtered: [SessionInfoDto] = switch showSessionType {
+        case .all:
+            withinFiltered
+        case .active:
+            withinFiltered.filter { $0.nowPlayingItem != nil }
+        case .inactive:
+            withinFiltered.filter { $0.nowPlayingItem == nil }
+        }
+
+        let removedSessionIDs = sessions.keys.filter { !filtered.map(\.id).contains($0) }
 
         let existingIDs = sessions.keys
             .filter {
-                filteredSessions.map(\.id).contains($0)
+                filtered.map(\.id).contains($0)
             }
-        let newSessions = filteredSessions
+        let newSessions = filtered
             .filter {
                 guard let id = $0.id else { return false }
                 return !sessions.keys.contains(id)
@@ -95,7 +137,7 @@ final class ActiveSessionsViewModel: ViewModel {
         }
 
         for id in existingIDs {
-            sessions[id]?.value = filteredSessions.first(where: { $0.id == id })
+            sessions[id]?.value = filtered.first(where: { $0.id == id })
         }
 
         for session in newSessions {

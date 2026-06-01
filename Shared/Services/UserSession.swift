@@ -14,6 +14,7 @@ import Pulse
 final class UserSession {
 
     let client: JellyfinClient
+    let socket: SocketManager
     let server: ServerState
     let user: UserState
 
@@ -34,6 +35,13 @@ final class UserSession {
         )
 
         self.client = client
+        self.socket = .init(
+            client.socket(
+                supportsMediaControl: false,
+                supportedCommands: [.displayMessage],
+                playableMediaTypes: [.video]
+            )
+        )
     }
 }
 
