@@ -20,9 +20,6 @@ struct ActiveSessionDetailsView: View {
     @ObservedObject
     var viewModel: SessionViewModel
 
-    @FocusState
-    private var isMessageFieldFocused: Bool
-
     private var isPaused: Bool {
         viewModel.session.playState?.isPaused ?? false
     }
@@ -61,14 +58,19 @@ struct ActiveSessionDetailsView: View {
 
     @ViewBuilder
     private func messageControl(session: SessionInfoDto) -> some View {
-        StateAdapter(initialValue: (isPresented: false, header: L10n.messageFrom(viewModel.userSession.user.username), text: "")) { alert in
+        StateAdapter(
+            initialValue: (
+                isPresented: false,
+                header: L10n.messageFrom(viewModel.userSession.user.username),
+                text: ""
+            )
+        ) { alert in
             ChevronButton(L10n.message, systemName: "message.fill") {
                 alert.wrappedValue = (isPresented: true, header: L10n.messageFrom(viewModel.userSession.user.username), text: "")
             }
             .alert(L10n.message, isPresented: alert.isPresented) {
                 TextField(L10n.title, text: alert.header)
                 TextField(L10n.message, text: alert.text)
-                    .focused($isMessageFieldFocused)
 
                 Button(L10n.cancel, role: .cancel) {}
 
@@ -80,10 +82,6 @@ struct ActiveSessionDetailsView: View {
                     viewModel.sendMessage(command)
                 }
                 .disabled(alert.text.wrappedValue.isEmpty)
-            }
-            .onChange(of: alert.isPresented.wrappedValue) { isPresented in
-                guard isPresented else { return }
-                isMessageFieldFocused = true
             }
         }
     }
@@ -140,14 +138,12 @@ struct ActiveSessionDetailsView: View {
 
             FormItemSection(item: nowPlayingItem)
 
-            Section(L10n.progress) {
-                ActiveSessionsView.ProgressSection(
-                    item: nowPlayingItem,
-                    playState: playState,
-                    transcodingInfo: session.transcodingInfo,
-                    showTranscodeReason: false
-                )
-            }
+            ActiveSessionsView.ProgressSection(
+                item: nowPlayingItem,
+                playState: playState,
+                transcodingInfo: session.transcodingInfo,
+                showTranscodeReason: false
+            )
             .listRowBackground(Color.clear)
             .listRowInsets(.zero)
             .listRowCornerRadius(0)
