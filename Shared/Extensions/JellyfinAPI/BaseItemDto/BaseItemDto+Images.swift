@@ -45,6 +45,7 @@ extension BaseItemDto {
     func imageURL(
         _ sourceID: String?,
         type: ImageType,
+        index: Int? = nil,
         maxWidth: CGFloat? = nil,
         maxHeight: CGFloat? = nil,
         quality: Int? = nil
@@ -53,6 +54,7 @@ extension BaseItemDto {
 
         return _imageURL(
             type,
+            index: index,
             maxWidth: maxWidth,
             maxHeight: maxHeight,
             quality: quality,
@@ -105,6 +107,7 @@ extension BaseItemDto {
     /// Image source for a specified `BaseItemDto`
     func imageSource(
         _ sourceID: String?,
+        index: Int? = nil,
         type: ImageType,
         maxWidth: CGFloat? = nil,
         maxHeight: CGFloat? = nil,
@@ -114,6 +117,7 @@ extension BaseItemDto {
 
         let url = _imageURL(
             type,
+            index: index,
             maxWidth: maxWidth,
             maxHeight: maxHeight,
             quality: quality,
