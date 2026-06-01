@@ -24,16 +24,20 @@ extension BaseItemDto {
     /// Image URL for this `BaseItemDto`
     func imageURL(
         _ type: ImageType,
+        index: Int? = nil,
         maxWidth: CGFloat? = nil,
         maxHeight: CGFloat? = nil,
-        quality: Int? = nil
+        quality: Int? = nil,
+        tag: String? = nil
     ) -> URL? {
         _imageURL(
             type,
+            index: index,
             maxWidth: maxWidth,
             maxHeight: maxHeight,
             quality: quality,
-            itemID: id ?? ""
+            itemID: id ?? "",
+            tag: tag
         )
     }
 
@@ -82,15 +86,19 @@ extension BaseItemDto {
     /// Image source for this `BaseItemDto`
     func imageSource(
         _ type: ImageType,
+        index: Int? = nil,
         maxWidth: CGFloat? = nil,
         maxHeight: CGFloat? = nil,
-        quality: Int? = nil
+        quality: Int? = nil,
+        tag: String? = nil
     ) -> ImageSource {
         _imageSource(
             type,
+            index: index,
             maxWidth: maxWidth,
             maxHeight: maxHeight,
-            quality: quality
+            quality: quality,
+            tag: tag
         )
     }
 
@@ -123,17 +131,19 @@ extension BaseItemDto {
 
     func _imageURL(
         _ type: ImageType,
+        index: Int? = nil,
         maxWidth: CGFloat?,
         maxHeight: CGFloat?,
         quality: Int?,
         itemID: String,
+        tag: String? = nil,
         requireTag: Bool = true
     ) -> URL? {
         let scaleWidth = maxWidth.map { UIScreen.main.scale($0) }
         let scaleHeight = maxWidth.map { UIScreen.main.scale($0) }
         let validQuality = quality.map { clamp($0, min: 1, max: 100) }
 
-        let tag = getImageTag(for: type)
+        let tag = tag ?? getImageTag(for: type)
 
         guard tag != nil || !requireTag else { return nil }
 
@@ -144,7 +154,8 @@ extension BaseItemDto {
             maxHeight: scaleHeight,
             quality: validQuality,
             tag: tag,
-            format: type == .logo ? .png : nil
+            format: type == .logo ? .png : nil,
+            imageIndex: index
         )
 
         let request = Paths.getItemImage(
@@ -169,16 +180,20 @@ extension BaseItemDto {
 
     private func _imageSource(
         _ type: ImageType,
+        index: Int? = nil,
         maxWidth: CGFloat?,
         maxHeight: CGFloat?,
-        quality: Int?
+        quality: Int?,
+        tag: String? = nil
     ) -> ImageSource {
         let url = _imageURL(
             type,
+            index: index,
             maxWidth: maxWidth,
             maxHeight: maxHeight,
             quality: quality,
-            itemID: id ?? ""
+            itemID: id ?? "",
+            tag: tag
         )
         let blurHash = blurHashString(for: type)
 
