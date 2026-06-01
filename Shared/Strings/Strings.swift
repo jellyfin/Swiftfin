@@ -1086,8 +1086,6 @@ internal enum L10n {
   internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
   /// No runtime limit
   internal static let noRuntimeLimit = L10n.tr("Localizable", "noRuntimeLimit", fallback: "No runtime limit")
-  /// No session
-  internal static let noSession = L10n.tr("Localizable", "noSession", fallback: "No session")
   /// Type: %@ not implemented yet :(
   internal static func notImplementedYetWithType(_ p1: Any) -> String {
     return L10n.tr("Localizable", "notImplementedYetWithType", String(describing: p1), fallback: "Type: %@ not implemented yet :(")
@@ -1422,8 +1420,6 @@ internal enum L10n {
   internal static let selectServer = L10n.tr("Localizable", "selectServer", fallback: "Select server")
   /// Send
   internal static let send = L10n.tr("Localizable", "send", fallback: "Send")
-  /// Send Message
-  internal static let sendMessage = L10n.tr("Localizable", "sendMessage", fallback: "Send Message")
   /// Send progress reports
   internal static let sendProgressReports = L10n.tr("Localizable", "sendProgressReports", fallback: "Send progress reports")
   /// Series
