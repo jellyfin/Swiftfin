@@ -992,6 +992,10 @@ internal enum L10n {
   internal static let menuButtons = L10n.tr("Localizable", "menuButtons", fallback: "Menu buttons")
   /// A menu image originally intended for DVD or Blu-ray style menu navigation screens.
   internal static let menuImageDescription = L10n.tr("Localizable", "menuImageDescription", fallback: "A menu image originally intended for DVD or Blu-ray style menu navigation screens.")
+  /// Message
+  internal static let message = L10n.tr("Localizable", "message", fallback: "Message")
+  /// Message required
+  internal static let messageRequired = L10n.tr("Localizable", "messageRequired", fallback: "Message required")
   /// Metadata
   internal static let metadata = L10n.tr("Localizable", "metadata", fallback: "Metadata")
   /// Metadata preferences
@@ -1408,6 +1412,10 @@ internal enum L10n {
   internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select image")
   /// Select server
   internal static let selectServer = L10n.tr("Localizable", "selectServer", fallback: "Select server")
+  /// Send
+  internal static let send = L10n.tr("Localizable", "send", fallback: "Send")
+  /// Send message
+  internal static let sendMessage = L10n.tr("Localizable", "sendMessage", fallback: "Send message")
   /// Send progress reports
   internal static let sendProgressReports = L10n.tr("Localizable", "sendProgressReports", fallback: "Send progress reports")
   /// Series

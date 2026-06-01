@@ -56,6 +56,13 @@ struct OverlayToastView<Content: View>: View {
                 OverlayToastContent()
                     .environmentObject(toastProxy)
             }
+            .onNotification(.didReceiveSessionMessage) { message in
+                toastProxy.present(
+                    message.displayText,
+                    systemName: "message.fill",
+                    duration: message.displayDuration
+                )
+            }
             .environmentObject(toastProxy)
     }
 }

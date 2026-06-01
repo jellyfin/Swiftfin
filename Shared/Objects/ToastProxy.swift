@@ -44,18 +44,18 @@ class ToastProxy: ObservableObject {
             }
     }
 
-    func present(_ title: String, systemName: String? = nil) {
-        present(Text(title), systemName: systemName)
+    func present(_ title: String, systemName: String? = nil, duration: TimeInterval? = nil) {
+        present(Text(title), systemName: systemName, duration: duration)
     }
 
-    func present(_ title: Text, systemName: String? = nil) {
+    func present(_ title: Text, systemName: String? = nil, duration: TimeInterval? = nil) {
         self.title = title
         self.systemName = systemName
 
-        poke(equalsPrevious: title == self.title)
+        poke(equalsPrevious: title == self.title, duration: duration)
     }
 
-    private func poke(equalsPrevious: Bool) {
+    private func poke(equalsPrevious: Bool, duration: TimeInterval? = nil) {
 //        if equalsPrevious {
 //            messageID = UUID().uuidString
 //        }
@@ -64,6 +64,6 @@ class ToastProxy: ObservableObject {
             isPresenting = true
         }
 
-        pokeTimer.poke()
+        pokeTimer.poke(interval: duration)
     }
 }

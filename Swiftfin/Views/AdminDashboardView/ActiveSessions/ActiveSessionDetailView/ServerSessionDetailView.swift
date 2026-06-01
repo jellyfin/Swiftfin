@@ -19,6 +19,13 @@ struct ActiveSessionDetailView: View {
     @ObservedObject
     var box: BindingBox<SessionInfoDto?>
 
+    private func canSendMessage(to session: SessionInfoDto) -> Bool {
+        session.id != nil && (
+            session.isSupportsRemoteControl == true ||
+                session.supportedCommands?.contains(.displayMessage) == true
+        )
+    }
+
     // MARK: Create Idle Content View
 
     @ViewBuilder
@@ -123,5 +130,13 @@ struct ActiveSessionDetailView: View {
         }
         .animation(.linear(duration: 0.2), value: box.value)
         .navigationTitle(L10n.session)
+        .topBarTrailing {
+            if let session = box.value, canSendMessage(to: session) {
+                Button(L10n.sendMessage) {
+                    router.route(to: .sendSessionMessage(session: session))
+                }
+                .buttonStyle(.toolbarPill)
+            }
+        }
     }
 }

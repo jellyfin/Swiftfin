@@ -28,6 +28,7 @@ final class RootCoordinator: ObservableObject {
                     #if os(tvOS)
                     await MainActor.run {
                         root(.mainTab)
+                        Notifications[.didRestoreUserSession].post()
                     }
                     #else
                     await MainActor.run {

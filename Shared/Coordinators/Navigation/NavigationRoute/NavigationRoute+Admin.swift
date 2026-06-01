@@ -28,6 +28,15 @@ extension NavigationRoute {
         }
     }
 
+    static func sendSessionMessage(session: SessionInfoDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "sendSessionMessage",
+            style: .sheet
+        ) {
+            SendSessionMessageView(session: session)
+        }
+    }
+
     // MARK: - User Activity
 
     static var activity: NavigationRoute {

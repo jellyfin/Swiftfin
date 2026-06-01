@@ -20,6 +20,8 @@ struct SwiftfinApp: App {
 
     @StateObject
     private var valueObservation = ValueObservation()
+    @StateObject
+    private var sessionMessageObserver = SessionMessageObserver()
 
     init() {
         Self.configure()
@@ -43,6 +45,7 @@ struct SwiftfinApp: App {
             .ignoresSafeArea()
             .onAppDidEnterBackground {
                 Defaults[.backgroundTimeStamp] = Date.now
+                sessionMessageObserver.stop()
             }
             .onAppWillEnterForeground {
 
@@ -54,6 +57,8 @@ struct SwiftfinApp: App {
                     Defaults[.lastSignedInUserID] = .signedOut
                     Container.shared.currentUserSession.reset()
                     Notifications[.didSignOut].post()
+                } else {
+                    sessionMessageObserver.start()
                 }
             }
         }

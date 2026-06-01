@@ -42,6 +42,7 @@ struct ServerCheckView: View {
             switch event {
             case .connected:
                 router.root(.mainTab)
+                Notifications[.didRestoreUserSession].post()
             }
         }
         .topBarTrailing {

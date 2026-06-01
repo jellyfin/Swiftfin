@@ -121,6 +121,10 @@ extension Notifications.Key {
         Key("didSignOut")
     }
 
+    static var didRestoreUserSession: Key<Void> {
+        Key("didRestoreUserSession")
+    }
+
     // MARK: - App Flow
 
     static var processDeepLink: Key<Void> {
@@ -145,6 +149,10 @@ extension Notifications.Key {
 
     static var didFailMigration: Key<Void> {
         Key("didFailMigration")
+    }
+
+    static var didReceiveSessionMessage: Key<SessionMessage> {
+        Key("didReceiveSessionMessage")
     }
 
     // MARK: - Media Items
