@@ -10,7 +10,9 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: fullscreen supplement styles
+// TODO: alternate sized (normal, medium, fullscreen) supplement styles
+//       - tvOS playback info list
+//       - live tv guide
 
 @MainActor
 protocol MediaPlayerSupplement: Displayable, Identifiable {

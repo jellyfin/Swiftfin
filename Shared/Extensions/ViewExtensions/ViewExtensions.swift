@@ -144,16 +144,12 @@ extension View {
     func posterCornerRadius(
         _ type: PosterDisplayType
     ) -> some View {
-//        #if !os(tvOS)
         switch type {
         case .landscape:
             cornerRadius(ratio: 1 / 30, of: \.width)
         case .portrait, .square:
             cornerRadius(ratio: 0.0375, of: \.width)
         }
-//        #else
-//        self
-//        #endif
     }
 
     func posterBorder() -> some View {

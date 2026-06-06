@@ -528,7 +528,7 @@ extension EpisodeMediaPlayerQueue {
 
         var body: some View {
             SupplementPosterButton(
-                item: episode,
+                item: episode._withLandscapeImages { [episode.imageSource(.primary, maxWidth: $0, quality: $1)] },
                 action: action
             ) {
                 VStack(alignment: .leading, spacing: 5) {

@@ -13,6 +13,7 @@ import SwiftUI
 
 // TODO: have proxies be a `PlaybackInformationProvider`
 //       - be labeled pair information
+// TODO: tvOS: use material background
 
 class PlaybackInformationSupplement: ObservableObject, MediaPlayerSupplement {
 

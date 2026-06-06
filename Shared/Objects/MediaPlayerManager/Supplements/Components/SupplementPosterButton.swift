@@ -18,9 +18,9 @@ struct SupplementPosterButton<Item: Poster, Label: View>: View {
     @Environment(\.isSelected)
     private var isSelected
 
-    private let item: Item
     private let action: () -> Void
-    private let label: () -> Label
+    private let item: Item
+    private let label: Label
 
     init(
         item: Item,
@@ -29,7 +29,7 @@ struct SupplementPosterButton<Item: Poster, Label: View>: View {
     ) {
         self.item = item
         self.action = action
-        self.label = label
+        self.label = label()
     }
 
     @ViewBuilder
@@ -50,7 +50,7 @@ struct SupplementPosterButton<Item: Poster, Label: View>: View {
             type: .landscape,
             action: action
         ) {
-            label()
+            label
         }
         .posterOverlay(for: Item.self) { posterItem in
             overlay(for: posterItem)
@@ -61,7 +61,7 @@ struct SupplementPosterButton<Item: Poster, Label: View>: View {
             type: .landscape,
             action: { _ in action() }
         ) {
-            label()
+            label
         }
         .posterOverlay(for: Item.self) { posterItem in
             overlay(for: posterItem)
