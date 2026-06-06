@@ -24,6 +24,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     private var router
 
     @StateObject
+    private var gridProxy = CollectionVGridProxy()
+    @StateObject
     private var viewModel: PagingLibraryViewModel<Library>
 
     @StoredValue(.User.libraryStyle(id: nil))
@@ -60,69 +62,68 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .onReachedBottomEdge(offset: .offset(300)) {
             viewModel.getNextPage()
         }
+        .proxy(gridProxy)
         .scrollIndicators(.hidden)
     }
 
-    @ViewBuilder
-    private var contentView: some View {
-        switch viewModel.state {
-        case .initial, .refreshing:
-            ProgressView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        case .content:
-            if viewModel.elements.isEmpty {
-                Text(L10n.noResults)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                elementsView
-            }
-        case .error:
-            viewModel.error.map(ErrorView.init)
-        }
-    }
-
     var body: some View {
-        contentView
-            .animation(.linear(duration: 0.2), value: viewModel.background.is(.gettingNextPage))
-            .animation(.linear(duration: 0.2), value: viewModel.elements)
-            .navigationTitle(viewModel.library.parent.displayTitle)
-            .backport
-            .toolbarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        LibraryStyleSection(libraryStyle: libraryStyleBinding)
+        ZStack {
+            switch viewModel.state {
+            case .initial, .refreshing:
+                ProgressView()
+            case .content:
+                if viewModel.elements.isEmpty {
+                    ContentUnavailableView(L10n.noItems.localizedCapitalized, systemImage: "rectangle.on.rectangle.slash")
+                } else {
+                    elementsView
+                }
+            case .error:
+                viewModel.error.map(ErrorView.init)
+            }
+        }
+        .animation(.linear(duration: 0.2), value: viewModel.background.is(.gettingNextPage))
+        .animation(.linear(duration: 0.2), value: viewModel.elements)
+        .navigationTitle(viewModel.library.parent.displayTitle)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .topBarTrailing) {
 
-                        Button(L10n.random, systemImage: "dice.fill") {
-                            viewModel.getRandomItem()
-                        }
-                    } label: {
-                        if viewModel.background.is(.gettingNextPage) {
-                            ProgressView()
-                        } else {
-                            Image(systemName: "ellipsis.circle")
-                        }
+                if viewModel.background.is(.gettingNextPage) {
+                    ProgressView()
+                }
+
+                Menu(L10n.options, systemImage: "ellipsis.circle") {
+                    LibraryStyleSection(libraryStyle: libraryStyleBinding)
+
+                    Button(L10n.random, systemImage: "dice.fill") {
+                        viewModel.getRandomItem()
                     }
                 }
             }
-            .refreshable {
-                viewModel.refresh()
+        }
+        .refreshable {
+            viewModel.refresh()
+        }
+        .backport
+        .onChange(of: viewModel.environment) {
+            viewModel.refresh()
+        }
+        .backport
+        .onChange(of: libraryStyle) { oldStyle, newStyle in
+            if Element.layout(for: oldStyle) == Element.layout(for: newStyle) {
+                gridProxy.layout()
             }
-            .backport.onChange(of: viewModel.environment) {
-                viewModel.refresh()
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .gotRandomItem(element):
+                element.libraryDidSelectElement(router: router, in: namespace)
             }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case let .gotRandomItem(element):
-                    element.libraryDidSelectElement(router: router, in: namespace)
-                }
-            }
-            .onFirstAppear {
-                if case .initial = viewModel.state {
-                    viewModel.refresh()
-                }
-            }
+        }
+        .onFirstAppear {
+            viewModel.refresh()
+        }
     }
 }
 
