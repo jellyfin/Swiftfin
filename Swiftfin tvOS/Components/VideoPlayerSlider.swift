@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: refine segment animations when swiping fast
+
 struct VideoPlayerSlider<Value: BinaryFloatingPoint>: View {
 
     @Binding

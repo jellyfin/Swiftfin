@@ -10,6 +10,8 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
+// TODO: static width for tvOS
+
 extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct AutoPlay: View {
