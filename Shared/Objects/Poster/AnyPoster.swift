@@ -13,8 +13,14 @@ struct AnyPoster: Poster {
 
     let _poster: any Poster
 
-    init(_ poster: any Poster) {
+    private let _withLandscapeImages: ((CGFloat?, Int?) -> [ImageSource])?
+
+    init(
+        _ poster: any Poster,
+        _withLandscapeImages: ((CGFloat?, Int?) -> [ImageSource])? = nil
+    ) {
         self._poster = poster
+        self._withLandscapeImages = _withLandscapeImages
     }
 
     var preferredPosterDisplayType: PosterDisplayType {
@@ -57,7 +63,11 @@ struct AnyPoster: Poster {
     }
 
     func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.landscapeImageSources(maxWidth: maxWidth, quality: quality)
+        if let _withLandscapeImages {
+            _withLandscapeImages(maxWidth, quality)
+        } else {
+            _poster.landscapeImageSources(maxWidth: maxWidth, quality: quality)
+        }
     }
 
     func cinematicImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {

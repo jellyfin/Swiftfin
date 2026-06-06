@@ -91,8 +91,6 @@ extension PosterButton {
     }
 }
 
-// TODO: remove these and replace with `TextStyle`
-
 extension PosterButton {
 
     // MARK: Default Content

@@ -57,7 +57,7 @@ struct LetterPickerBar: View {
             .fixedSize()
             .trackingSize($letterSize)
         }
-        #if os(tvOS)
+        .backport
         .defaultFocus(
             $focusedLetter,
             viewModel.currentFilters.letter.first
@@ -65,6 +65,5 @@ struct LetterPickerBar: View {
                 ?? ItemLetter(stringLiteral: "#"),
             priority: focusedLetter == nil ? .userInitiated : .automatic
         )
-        #endif
     }
 }

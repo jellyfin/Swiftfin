@@ -105,4 +105,8 @@ extension Poster {
     func thumbImageSources() -> [ImageSource] {
         []
     }
+
+    func _withLandscapeImages(_ imageSources: @escaping (CGFloat?, Int?) -> [ImageSource]) -> AnyPoster {
+        .init(self, _withLandscapeImages: imageSources)
+    }
 }
