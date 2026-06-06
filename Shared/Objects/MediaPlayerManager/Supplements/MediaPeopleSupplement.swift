@@ -63,11 +63,10 @@ extension MediaPeopleSupplement {
                 uniqueElements: people,
                 layout: .columns(
                     1,
-                    insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
+                    insets: .init(EdgeInsets.edgePadding)
                 )
             ) { person, _ in
                 PersonRow(person: person)
-                    .edgePadding(.horizontal)
             }
         }
 
@@ -107,17 +106,21 @@ extension MediaPeopleSupplement {
         }
 
         var tvOSView: some View {
-            CollectionHStack(
+            CollectionVGrid(
                 uniqueElements: people,
                 id: \.unwrappedIDHashOrZero,
-                columns: 7
+                layout: .columns(
+                    10,
+                    insets: .init(EdgeInsets.edgePadding),
+                    itemSpacing: EdgeInsets.edgePadding,
+                    lineSpacing: EdgeInsets.edgePadding
+                )
             ) { person in
                 personView(for: person)
+                    .padding(.horizontal, 4)
             }
-            .clipsToBounds(false)
-            .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.edgePadding - 20)
-            .scrollBehavior(.continuousLeadingEdge)
+            .ignoresSafeArea(.container, edges: .horizontal)
+            .focusSection()
         }
     }
 
