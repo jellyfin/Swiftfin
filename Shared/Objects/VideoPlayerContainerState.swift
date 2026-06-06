@@ -12,6 +12,9 @@ import SwiftUI
 
 // TODO: turned into spaghetti to get out, clean up with a better state system
 // TODO: verify timer states
+// TODO: for tvOS, some kind of focus token system
+//       - help with Menu
+//       - may help with alternate overlays
 
 @MainActor
 class VideoPlayerContainerState: ObservableObject {
@@ -125,7 +128,7 @@ class VideoPlayerContainerState: ObservableObject {
     let centerOffsetBox: PublishedBox<CGFloat> = .init(initialValue: 0)
     let jumpProgressObserver: JumpProgressObserver = .init()
     let scrubbedSeconds: PublishedBox<Duration> = .init(initialValue: .zero)
-    let timer: PokeIntervalTimer = .init()
+    let timer: PokeIntervalTimer = .init(defaultInterval: UIDevice.isTV ? 10 : 5)
     let toastProxy: ToastProxy = .init()
 
     weak var containerView: VideoPlayer.UIVideoPlayerContainerViewController?

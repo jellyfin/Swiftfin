@@ -39,7 +39,14 @@ extension VideoPlayer.PlaybackControls {
 
         private var previewXOffset: CGFloat {
             let p = contentSize.width * scrubbedProgress - (leadingTimestampSize.width / 2)
-            return clamp(p, min: 0, max: contentSize.width - (trailingTimestampSize.width + leadingTimestampSize.width))
+            return clamp(p, min: 0, max: contentSize.width - leadingTimestampSize.width)
+        }
+
+        private var shouldHideTrailingTimestamp: Bool {
+            let leadingTimestampMaxX = previewXOffset + leadingTimestampSize.width
+            let trailingTimestampMinX = contentSize.width - trailingTimestampSize.width
+
+            return leadingTimestampMaxX >= trailingTimestampMinX
         }
 
         private var isScrubbing: Bool {
@@ -139,6 +146,8 @@ extension VideoPlayer.PlaybackControls {
                     Text(verbatim: .emptyRuntime)
                 }
             }
+            .opacity(shouldHideTrailingTimestamp ? 0 : 1)
+            .animation(.linear(duration: 0.1), value: shouldHideTrailingTimestamp)
             .trackingSize($trailingTimestampSize)
             .frame(maxWidth: .infinity, alignment: .trailing)
             .overlay(alignment: .leading) {

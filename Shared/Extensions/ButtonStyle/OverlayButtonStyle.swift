@@ -80,10 +80,10 @@ extension VideoPlayer.PlaybackControls {
                     Circle()
                         .stroke(.white.opacity(0.1), lineWidth: 1)
                 }
-                .scaleEffect(configuration.isPressed ? 0.92 : isFocused ? 1.06 : 1)
                 .clipShape(Circle())
+                .scaleEffect(configuration.isPressed ? 0.90 : isFocused ? 1.1 : 1)
                 .shadow(color: isFocused ? .black.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
-                .animation(.easeInOut(duration: 0.1), value: isFocused)
+                .animation(.linear(duration: 0.1), value: isFocused)
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.25), value: configuration.isPressed)
                 .backport
                 .onChange(of: configuration.isPressed) { _, newValue in
