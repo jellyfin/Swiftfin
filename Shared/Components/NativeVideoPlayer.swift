@@ -67,6 +67,9 @@ struct NativeVideoPlayer: View {
         } message: {
             Text(L10n.unableToLoadThisItem)
         }
+        .onFinalDisappear {
+            manager.stop()
+        }
     }
 }
 

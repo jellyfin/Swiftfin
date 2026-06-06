@@ -15,19 +15,27 @@ class SliderContainerState<Value: BinaryFloatingPoint>: ObservableObject {
     @Published
     var isFocused: Bool
     @Published
+    var isScrollingEnabled: Bool
+    @Published
     var value: Value
+    @Published
+    var originValue: Value?
 
     let total: Value
 
     init(
         isEditing: Bool,
         isFocused: Bool,
+        isScrollingEnabled: Bool,
         value: Value,
+        originValue: Value?,
         total: Value
     ) {
         self.isEditing = isEditing
         self.isFocused = isFocused
+        self.isScrollingEnabled = isScrollingEnabled
         self.value = value
+        self.originValue = originValue
         self.total = total
     }
 }
