@@ -23,15 +23,14 @@ class ViewModel: ObservableObject {
 
     var cancellables = Set<AnyCancellable>()
 
-    private var userSessionResolverCancellable: AnyCancellable?
-
     init() {
-        userSessionResolverCancellable = Notifications[.didChangeCurrentServerURL]
+        Notifications[.didChangeServerConnection]
             .publisher
             .sink { [weak self] _ in
-                Container.shared.userSessionManager().updateCurrentServerURL()
+                Container.shared.userSessionManager().refreshCurrentSession()
                 self?.$userSession.resolve(reset: .scope)
             }
+            .store(in: &cancellables)
     }
 
     func requireUserSession() throws -> UserSession {

@@ -127,8 +127,8 @@ extension Notifications.Key {
         Key("didPurge")
     }
 
-    static var didChangeCurrentServerURL: Key<ServerState> {
-        Key("didChangeCurrentServerURL")
+    static var didChangeServerConnection: Key<ServerConnectionChange> {
+        Key("didChangeServerConnection")
     }
 
     static var didSendStopReport: Key<Void> {

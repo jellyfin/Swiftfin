@@ -50,7 +50,7 @@ final class RootCoordinator: ObservableObject {
         // Notification setup for state
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
         Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
-        Notifications[.didChangeCurrentServerURL].subscribe(self, selector: #selector(didChangeCurrentServerURL(_:)))
+        Notifications[.didChangeServerConnection].subscribe(self, selector: #selector(didChangeServerConnection(_:)))
     }
 
     func root(_ newRoot: RootItem) {
@@ -76,11 +76,11 @@ final class RootCoordinator: ObservableObject {
     }
 
     @objc
-    func didChangeCurrentServerURL(_ notification: Notification) {
+    func didChangeServerConnection(_ notification: Notification) {
 
         guard Container.shared.currentUserSession() != nil else { return }
 
-        Container.shared.userSessionManager().updateCurrentServerURL()
+        Container.shared.userSessionManager().refreshCurrentSession()
         Notifications[.didSignIn].post()
     }
 }

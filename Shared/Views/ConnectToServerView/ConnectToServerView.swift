@@ -155,7 +155,7 @@ struct ConnectToServerView: View {
                 Button(L10n.dismiss, role: .destructive) {}
 
                 Button(L10n.addURL) {
-                    viewModel.addNewURL(serverState: server)
+                    viewModel.addConnection(serverState: server)
                     router.dismiss()
                 }
             } message: { server in

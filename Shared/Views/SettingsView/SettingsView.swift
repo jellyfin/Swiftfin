@@ -60,7 +60,7 @@ struct SettingsView: View {
                 ChevronButton(
                     L10n.server,
                     action: {
-                        router.route(to: .editServer(server: userSession.server))
+                        router.route(to: .editLocalServer(server: userSession.server))
                     }
                 ) {
                     Label {

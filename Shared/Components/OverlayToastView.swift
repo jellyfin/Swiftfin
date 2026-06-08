@@ -69,6 +69,16 @@ struct OverlayToastView<Content: View>: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: toastProxy.isPresenting)
+        .onReceive(Notifications[.didChangeServerConnection].publisher) { change in
+            switch change.reason {
+            case .automatic:
+                toastProxy.present(L10n.usingConnection(change.current.displayName), systemName: change.current.interface.systemImage)
+            case .manual:
+                toastProxy.present(L10n.usingConnection(change.current.displayName), systemName: "checkmark.circle.fill")
+            case .deletedActiveConnection:
+                toastProxy.present(L10n.usingFallbackConnection(change.current.displayName), systemName: "arrow.triangle.2.circlepath")
+            }
+        }
     }
 }
 

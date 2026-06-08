@@ -114,10 +114,12 @@ extension NavigationRoute {
         }
     }
 
-    static func editServer(server: ServerState, isEditing: Bool = false) -> NavigationRoute {
+    static func editLocalServer(server: ServerState, isEditing: Bool = false) -> NavigationRoute {
         NavigationRoute(id: "editServer") {
-            EditServerView(server: server)
-                .isEditing(isEditing)
+            EditLocalServerView(
+                server: server,
+                isDeletePresented: isEditing
+            )
         }
     }
 
@@ -209,12 +211,6 @@ extension NavigationRoute {
         }
     }
     #endif
-
-    static func serverConnection(server: ServerState) -> NavigationRoute {
-        NavigationRoute(id: "serverConnection") {
-            EditServerView(server: server)
-        }
-    }
 
     static var settings: NavigationRoute {
         NavigationRoute(

@@ -6,32 +6,24 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
 
-// TODO: change URL picker from menu to list with network-url mapping
-
-/// - Note: Set the environment `isEditing` to `true` to
-///         allow server deletion
-struct EditServerView: View {
+struct EditLocalServerView: View {
 
     @Router
     private var router
 
-    @Environment(\.isEditing)
-    private var isEditing
-
-    @State
-    private var currentServerURL: URL
     @State
     private var isPresentingConfirmDeletion: Bool = false
 
     @StateObject
     private var viewModel: ServerConnectionViewModel
 
-    init(server: ServerState) {
+    private let isDeletePresented: Bool
+
+    init(server: ServerState, isDeletePresented: Bool = false) {
         self._viewModel = StateObject(wrappedValue: ServerConnectionViewModel(server: server))
-        self._currentServerURL = State(initialValue: server.currentURL)
+        self.isDeletePresented = isDeletePresented
     }
 
     var body: some View {
@@ -59,25 +51,21 @@ struct EditServerView: View {
             }
 
             Section {
-                #if os(tvOS)
-                ListRowMenu(L10n.url, subtitle: currentServerURL.absoluteString) {
-                    Picker(L10n.serverURL, selection: $currentServerURL) {
-                        ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
-                            Text(url.absoluteString)
-                                .tag(url)
-                        }
-                    }
+                Toggle(L10n.autoSwitchURLs, isOn: $viewModel.isAutoSwitchingEnabled)
+
+                ForEach(viewModel.connections) { connection in
+                    serverConnectionRow(connection)
                 }
-                #else
-                Picker(L10n.url, selection: $currentServerURL) {
-                    ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
-                        Text(url.absoluteString)
-                            .tag(url)
-                    }
+                .onMove(perform: viewModel.moveConnections)
+
+                Button {
+                    let connection = viewModel.newConnection()
+                    router.route(to: editConnectionRoute(connection))
+                } label: {
+                    Label(L10n.addConnection, systemImage: "plus.circle.fill")
                 }
-                #endif
             } header: {
-                Text(L10n.serverURL)
+                Text(L10n.connections)
             } footer: {
                 if !viewModel.server.isVersionCompatible {
                     Label(
@@ -88,20 +76,15 @@ struct EditServerView: View {
                 }
             }
 
-            if isEditing {
+            if isDeletePresented {
                 Section {
                     Button(L10n.delete, role: .destructive) {
                         isPresentingConfirmDeletion = true
                     }
-                    .buttonStyle(.primary)
                 }
             }
         }
         .navigationTitle(L10n.server)
-        .backport
-        .onChange(of: currentServerURL) { _, newValue in
-            viewModel.setCurrentURL(to: newValue)
-        }
         .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {
             Button(L10n.delete, role: .destructive) {
                 viewModel.delete()
@@ -109,6 +92,49 @@ struct EditServerView: View {
             }
         } message: {
             Text(L10n.confirmDeleteServerAndUsers(viewModel.server.name))
+        }
+    }
+
+    private func serverConnectionRow(_ connection: ServerConnection) -> some View {
+        ChevronButton {
+            router.route(to: editConnectionRoute(connection))
+        } label: {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(connection.displayName)
+                        .font(.headline)
+
+                    Text(connection.url.absoluteString)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
+                    if connection.interface == .wifi {
+                        Text(connection.normalizedSSID ?? L10n.anyWifiNetwork)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                if viewModel.activeConnection?.id == connection.id {
+                    Spacer()
+
+                    Image(systemName: "circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.green)
+                }
+            }
+        }
+    }
+
+    private func editConnectionRoute(_ connection: ServerConnection) -> NavigationRoute {
+        NavigationRoute(
+            id: "serverConnection-\(viewModel.server.id)-\(connection.id)",
+            style: .sheet
+        ) {
+            EditServerConnectionView(
+                viewModel: viewModel,
+                connection: connection
+            )
         }
     }
 }

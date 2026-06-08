@@ -16,7 +16,9 @@ extension SwiftfinStore.State {
 
     struct Server: Hashable, Identifiable, Codable {
 
+        @available(*, message: "Use connections instead")
         let urls: Set<URL>
+        @available(*, message: "Use connections instead")
         let currentURL: URL
         let name: String
         let id: String
@@ -26,7 +28,7 @@ extension SwiftfinStore.State {
         ///         have a user access token.
         var client: JellyfinClient {
             JellyfinClient(
-                configuration: .swiftfinConfiguration(url: currentURL),
+                configuration: .swiftfinConfiguration(url: effectiveServerURL),
                 sessionConfiguration: .swiftfin,
                 sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
             )

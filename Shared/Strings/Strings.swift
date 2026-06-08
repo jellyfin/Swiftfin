@@ -46,6 +46,8 @@ internal enum L10n {
   internal static let addAccessSchedule = L10n.tr("Localizable", "addAccessSchedule", fallback: "Add access schedule")
   /// Add access tag
   internal static let addAccessTag = L10n.tr("Localizable", "addAccessTag", fallback: "Add access tag")
+  /// Add Connection
+  internal static let addConnection = L10n.tr("Localizable", "addConnection", fallback: "Add Connection")
   /// Additional parts
   internal static let additionalParts = L10n.tr("Localizable", "additionalParts", fallback: "Additional parts")
   /// Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.
@@ -110,6 +112,10 @@ internal enum L10n {
   internal static let always = L10n.tr("Localizable", "always", fallback: "Always")
   /// Anamorphic video is not supported
   internal static let anamorphicVideoNotSupported = L10n.tr("Localizable", "anamorphicVideoNotSupported", fallback: "Anamorphic video is not supported")
+  /// Any Network
+  internal static let anyNetwork = L10n.tr("Localizable", "anyNetwork", fallback: "Any Network")
+  /// Any Wi-Fi Network
+  internal static let anyWifiNetwork = L10n.tr("Localizable", "anyWifiNetwork", fallback: "Any Wi-Fi Network")
   /// API key copied
   internal static let apiKeyCopied = L10n.tr("Localizable", "apiKeyCopied", fallback: "API key copied")
   /// Your API key was copied to your clipboard!
@@ -178,6 +184,8 @@ internal enum L10n {
   internal static let autoDescription = L10n.tr("Localizable", "autoDescription", fallback: "Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.")
   /// Auto play
   internal static let autoPlay = L10n.tr("Localizable", "autoPlay", fallback: "Auto play")
+  /// Auto-Switch URLs
+  internal static let autoSwitchURLs = L10n.tr("Localizable", "autoSwitchURLs", fallback: "Auto-Switch URLs")
   /// Backdrop
   internal static let backdrop = L10n.tr("Localizable", "backdrop", fallback: "Backdrop")
   /// A wide background image displayed behind the item details on its media page. Multiple backdrops can be added and will cycle or be selected randomly.
@@ -290,6 +298,8 @@ internal enum L10n {
   internal static let castAndCrew = L10n.tr("Localizable", "castAndCrew", fallback: "Cast & crew")
   /// Category
   internal static let category = L10n.tr("Localizable", "category", fallback: "Category")
+  /// Cellular
+  internal static let cellular = L10n.tr("Localizable", "cellular", fallback: "Cellular")
   /// Change pin
   internal static let changePin = L10n.tr("Localizable", "changePin", fallback: "Change pin")
   /// Channel
@@ -376,6 +386,20 @@ internal enum L10n {
   internal static let confirmPassword = L10n.tr("Localizable", "confirmPassword", fallback: "Confirm password")
   /// Connect
   internal static let connect = L10n.tr("Localizable", "connect", fallback: "Connect")
+  /// Connected to %@
+  internal static func connectedTo(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "connectedTo", String(describing: p1), fallback: "Connected to %@")
+  }
+  /// Connection
+  internal static let connection = L10n.tr("Localizable", "connection", fallback: "Connection")
+  /// Connection Failed
+  internal static let connectionFailed = L10n.tr("Localizable", "connectionFailed", fallback: "Connection Failed")
+  /// Connections
+  internal static let connections = L10n.tr("Localizable", "connections", fallback: "Connections")
+  /// Connection Saved
+  internal static let connectionSaved = L10n.tr("Localizable", "connectionSaved", fallback: "Connection Saved")
+  /// This connection does not point to the current server.
+  internal static let connectionServerMismatch = L10n.tr("Localizable", "connectionServerMismatch", fallback: "This connection does not point to the current server.")
   /// Connect to a Jellyfin server to get started
   internal static let connectToJellyfinServerStart = L10n.tr("Localizable", "connectToJellyfinServerStart", fallback: "Connect to a Jellyfin server to get started")
   /// Connect to server
@@ -424,6 +448,8 @@ internal enum L10n {
   internal static let critics = L10n.tr("Localizable", "critics", fallback: "Critics")
   /// Current password
   internal static let currentPassword = L10n.tr("Localizable", "currentPassword", fallback: "Current password")
+  /// Current URL
+  internal static let currentURL = L10n.tr("Localizable", "currentURL", fallback: "Current URL")
   /// Custom
   internal static let custom = L10n.tr("Localizable", "custom", fallback: "Custom")
   /// Custom bitrate
@@ -820,6 +846,8 @@ internal enum L10n {
   internal static let interview = L10n.tr("Localizable", "interview", fallback: "Interview")
   /// Invalid format
   internal static let invalidFormat = L10n.tr("Localizable", "invalidFormat", fallback: "Invalid format")
+  /// Invalid URL
+  internal static let invalidURL = L10n.tr("Localizable", "invalidURL", fallback: "Invalid URL")
   /// Invalid %@
   internal static func invalidX(_ p1: Any) -> String {
     return L10n.tr("Localizable", "invalidX", String(describing: p1), fallback: "Invalid %@")
@@ -1030,12 +1058,16 @@ internal enum L10n {
   internal static let name = L10n.tr("Localizable", "name", fallback: "Name")
   /// Native
   internal static let native = L10n.tr("Localizable", "native", fallback: "Native")
+  /// Network
+  internal static let network = L10n.tr("Localizable", "network", fallback: "Network")
   /// Network timed out
   internal static let networkTimedOut = L10n.tr("Localizable", "networkTimedOut", fallback: "Network timed out")
   /// Never
   internal static let never = L10n.tr("Localizable", "never", fallback: "Never")
   /// Never run
   internal static let neverRun = L10n.tr("Localizable", "neverRun", fallback: "Never run")
+  /// New Connection
+  internal static let newConnection = L10n.tr("Localizable", "newConnection", fallback: "New Connection")
   /// New password
   internal static let newPassword = L10n.tr("Localizable", "newPassword", fallback: "New password")
   /// News
@@ -1498,6 +1530,8 @@ internal enum L10n {
   internal static let sourceCode = L10n.tr("Localizable", "sourceCode", fallback: "Source code")
   /// Special features
   internal static let specialFeatures = L10n.tr("Localizable", "specialFeatures", fallback: "Special features")
+  /// Specific Network
+  internal static let specificNetwork = L10n.tr("Localizable", "specificNetwork", fallback: "Specific Network")
   /// Splashscreen
   internal static let splashscreen = L10n.tr("Localizable", "splashscreen", fallback: "Splashscreen")
   /// When all servers are selected, use the splashscreen from a single server or a random server.
@@ -1602,6 +1636,8 @@ internal enum L10n {
   internal static let taskTriggerTimeLimit = L10n.tr("Localizable", "taskTriggerTimeLimit", fallback: "Sets the maximum runtime (in hours) for this task trigger.")
   /// Tbps
   internal static let terabitsPerSecond = L10n.tr("Localizable", "terabitsPerSecond", fallback: "Tbps")
+  /// Test
+  internal static let test = L10n.tr("Localizable", "test", fallback: "Test")
   /// Test size
   internal static let testSize = L10n.tr("Localizable", "testSize", fallback: "Test size")
   /// Theme song
@@ -1706,6 +1742,8 @@ internal enum L10n {
   internal static let uploadPhoto = L10n.tr("Localizable", "uploadPhoto", fallback: "Upload photo")
   /// URL
   internal static let url = L10n.tr("Localizable", "url", fallback: "URL")
+  /// Use
+  internal static let use = L10n.tr("Localizable", "use", fallback: "Use")
   /// Use as transcoding profile
   internal static let useAsTranscodingProfile = L10n.tr("Localizable", "useAsTranscodingProfile", fallback: "Use as transcoding profile")
   /// Use primary image
@@ -1736,6 +1774,14 @@ internal enum L10n {
   internal static let useSeriesImageForEpisodes = L10n.tr("Localizable", "useSeriesImageForEpisodes", fallback: "Use series image for episodes")
   /// Use splashscreen
   internal static let useSplashscreen = L10n.tr("Localizable", "useSplashscreen", fallback: "Use splashscreen")
+  /// Using %@
+  internal static func usingConnection(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "usingConnection", String(describing: p1), fallback: "Using %@")
+  }
+  /// Using fallback %@
+  internal static func usingFallbackConnection(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "usingFallbackConnection", String(describing: p1), fallback: "Using fallback %@")
+  }
   /// Version
   internal static let version = L10n.tr("Localizable", "version", fallback: "Version")
   /// Video
@@ -1788,6 +1834,10 @@ internal enum L10n {
   internal static let weekend = L10n.tr("Localizable", "weekend", fallback: "Weekend")
   /// Weekly
   internal static let weekly = L10n.tr("Localizable", "weekly", fallback: "Weekly")
+  /// Wi-Fi
+  internal static let wifi = L10n.tr("Localizable", "wifi", fallback: "Wi-Fi")
+  /// Wi-Fi Name
+  internal static let wifiName = L10n.tr("Localizable", "wifiName", fallback: "Wi-Fi Name")
   /// This will be created as a new item on your Jellyfin Server.
   internal static let willBeCreatedOnServer = L10n.tr("Localizable", "willBeCreatedOnServer", fallback: "This will be created as a new item on your Jellyfin Server.")
   /// %1$@ with Enhancement Layer

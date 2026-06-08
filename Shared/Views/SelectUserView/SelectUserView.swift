@@ -382,7 +382,7 @@ struct SelectUserView: View {
             viewModel.background.getServers()
             serverSelection = .server(id: server.id)
         }
-        .onNotification(.didChangeCurrentServerURL) { _ in
+        .onNotification(.didChangeServerConnection) { _ in
             viewModel.background.getServers()
         }
         .onNotification(.didDeleteServer) { _ in

@@ -29,7 +29,7 @@ final class UserSession {
 
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(
-                url: server.currentURL,
+                url: server.effectiveServerURL,
                 accessToken: user.accessToken
             ),
             sessionConfiguration: .swiftfin,
@@ -101,10 +101,6 @@ final class UserSessionManager {
         )
 
         Notifications[.didSignOut].post()
-    }
-
-    func updateCurrentServerURL() {
-        refreshCurrentSession()
     }
 
     private func handleAppLaunch() {

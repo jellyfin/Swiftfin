@@ -55,5 +55,6 @@ extension SwiftfinApp {
         ImagePipeline.shared = .Swiftfin.posters
 
         _ = Container.shared.userSessionManager()
+        Container.shared.serverConnectionManager().start()
     }
 }
