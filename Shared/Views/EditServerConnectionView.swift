@@ -126,7 +126,7 @@ struct EditServerConnectionView: View {
 
                 testStatusView
             }
-            
+
             Section {
                 if isExistingConnection {
                     Button(L10n.delete, role: .destructive) {

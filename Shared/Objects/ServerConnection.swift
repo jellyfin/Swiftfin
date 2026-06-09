@@ -8,20 +8,15 @@
 
 import Foundation
 
-enum ServerConnectionInterface: String, CaseIterable, Codable, Hashable {
+enum ServerConnectionInterface: String, CaseIterable, Codable, Displayable, Hashable {
     case any
     case wifi
     case cellular
-    case other
-
-    static var allCases: [ServerConnectionInterface] {
-        [.any, .wifi, .cellular, .other]
-    }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let rawValue = try container.decode(String.self)
-        self = Self(rawValue: rawValue) ?? .other
+        self = Self(rawValue: rawValue) ?? .any
     }
 
     func encode(to encoder: Encoder) throws {
@@ -37,8 +32,6 @@ enum ServerConnectionInterface: String, CaseIterable, Codable, Hashable {
             L10n.wifi
         case .cellular:
             L10n.cellular
-        case .other:
-            L10n.other
         }
     }
 
@@ -50,8 +43,6 @@ enum ServerConnectionInterface: String, CaseIterable, Codable, Hashable {
             "wifi"
         case .cellular:
             "antenna.radiowaves.left.and.right"
-        case .other:
-            "network"
         }
     }
 }
@@ -104,8 +95,6 @@ struct ServerConnection: Hashable, Identifiable, Storable {
             return normalizedSSID.caseInsensitiveCompare(context.wifiSSID ?? .empty) == .orderedSame
         case .cellular:
             return context.interface == .cellular
-        case .other:
-            return context.isSatisfied
         }
     }
 
@@ -148,12 +137,4 @@ struct ServerConnectionChange: Hashable {
     let previous: ServerConnection?
     let current: ServerConnection
     let reason: Reason
-}
-
-extension String {
-
-    var nilIfBlank: String? {
-        let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? nil : trimmed
-    }
 }

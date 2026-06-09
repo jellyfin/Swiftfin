@@ -61,7 +61,7 @@ struct NetworkConnectionContext: Equatable {
     static var unavailable: NetworkConnectionContext {
         .init(
             isSatisfied: false,
-            interface: .other,
+            interface: .any,
             wifiSSID: nil,
             isExpensive: false,
             isConstrained: false
@@ -74,18 +74,16 @@ struct NetworkConnectionContext: Equatable {
         } else if path.usesInterfaceType(.cellular) {
             .cellular
         } else {
-            .other
+            .any
         }
     }
 
     static func currentWifiSSID() async -> String? {
         #if os(iOS)
         if #available(iOS 14, *) {
-            return await withCheckedContinuation { continuation in
-                NEHotspotNetwork.fetchCurrent { network in
-                    continuation.resume(returning: network?.ssid.nilIfBlank)
-                }
-            }
+            return await (NEHotspotNetwork.fetchCurrent())?
+                .ssid
+                .nilIfBlank
         }
         #endif
 

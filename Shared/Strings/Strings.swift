@@ -98,6 +98,8 @@ internal enum L10n {
   internal static let allLanguages = L10n.tr("Localizable", "allLanguages", fallback: "All languages")
   /// All media
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All media")
+  /// Allow
+  internal static let allow = L10n.tr("Localizable", "allow", fallback: "Allow")
   /// Allowed
   internal static let allowed = L10n.tr("Localizable", "allowed", fallback: "Allowed")
   /// All servers
@@ -958,6 +960,8 @@ internal enum L10n {
   internal static let local = L10n.tr("Localizable", "local", fallback: "Local")
   /// Local servers
   internal static let localServers = L10n.tr("Localizable", "localServers", fallback: "Local servers")
+  /// Location
+  internal static let location = L10n.tr("Localizable", "location", fallback: "Location")
   /// Lock all fields
   internal static let lockAllFields = L10n.tr("Localizable", "lockAllFields", fallback: "Lock all fields")
   /// Locked fields
@@ -1172,8 +1176,14 @@ internal enum L10n {
   internal static let peopleDescription = L10n.tr("Localizable", "peopleDescription", fallback: "People who helped create or perform specific media.")
   /// Perfect match
   internal static let perfectMatch = L10n.tr("Localizable", "perfectMatch", fallback: "Perfect match")
+  /// Error requesting %@ permission: %@
+  internal static func permissionRequestError(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "permissionRequestError", String(describing: p1), String(describing: p2), fallback: "Error requesting %@ permission: %@")
+  }
   /// Permissions
   internal static let permissions = L10n.tr("Localizable", "permissions", fallback: "Permissions")
+  /// Manage additional Swiftfin settings in the Settings app.
+  internal static let permissionsSettingsAppFooter = L10n.tr("Localizable", "permissionsSettingsAppFooter", fallback: "Manage additional Swiftfin settings in the Settings app.")
   /// Person
   internal static let person = L10n.tr("Localizable", "person", fallback: "Person")
   /// Photo
