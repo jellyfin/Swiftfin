@@ -65,6 +65,10 @@ struct VideoPlayerSettingsView: View {
 
     @Default(.VideoPlayer.enableMediaSegments)
     private var enableMediaSegments
+    @Default(.VideoPlayer.askMediaSegments)
+    private var askMediaSegments
+    @Default(.VideoPlayer.skipMediaSegments)
+    private var skipMediaSegments
 
     @Router
     private var router
@@ -237,13 +241,42 @@ struct VideoPlayerSettingsView: View {
     private var mediaSegmentSettings: some View {
         Section(L10n.mediaSegments) {
             Toggle(L10n.enableMediaSegments, isOn: $enableMediaSegments)
+        }
 
-            if enableMediaSegments {
-                ChevronButton(L10n.configureMediaSegments) {
-                    router.route(to: .mediaSegmentSettings)
+        if enableMediaSegments {
+            Section {
+                ForEach(MediaSegmentType.allCases.sorted(by: { $0.displayTitle < $1.displayTitle }), id: \.self) { segment in
+                    PlatformPicker(segment.displayTitle, selection: mediaSegmentBinding(segment))
                 }
             }
         }
+    }
+
+    private func mediaSegmentBinding(_ segment: MediaSegmentType) -> Binding<MediaSegmentBehavior> {
+        Binding(
+            get: {
+                if askMediaSegments.contains(segment) {
+                    .ask
+                } else if skipMediaSegments.contains(segment) {
+                    .skip
+                } else {
+                    .off
+                }
+            },
+            set: { newValue in
+                switch newValue {
+                case .off:
+                    askMediaSegments.removeAll { $0 == segment }
+                    skipMediaSegments.removeAll { $0 == segment }
+                case .ask:
+                    askMediaSegments.append(segment)
+                    skipMediaSegments.removeAll { $0 == segment }
+                case .skip:
+                    askMediaSegments.removeAll { $0 == segment }
+                    skipMediaSegments.append(segment)
+                }
+            }
+        )
     }
 
     // MARK: - Audio Settings
