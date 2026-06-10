@@ -61,7 +61,11 @@ final class ConnectToServerViewModel: ObservableObject {
             .trimmingCharacters(in: ["/"])
             .prepending("http://", if: !url.contains("://"))
 
-        guard let url = URL(string: formattedURL) else { throw ErrorMessage("Invalid URL") }
+        guard let url = URL(string: formattedURL)?.normalizedServerConnectionURL,
+              url.host != nil
+        else {
+            throw ErrorMessage(L10n.invalidURL)
+        }
 
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: url),
@@ -102,7 +106,9 @@ final class ConnectToServerViewModel: ObservableObject {
     // In the event of redirects, get the new host URL from response
     private func processConnectionURL(initial url: URL, response: URL?) -> URL {
 
-        guard let response else { return url }
+        let normalizedURL = url.normalizedServerConnectionURL ?? url
+
+        guard let response else { return normalizedURL }
 
         if url.scheme != response.scheme ||
             url.host != response.host
@@ -110,10 +116,10 @@ final class ConnectToServerViewModel: ObservableObject {
             let newURL = response.absoluteString.trimmingSuffix(
                 Paths.getPublicSystemInfo.url?.absoluteString ?? ""
             )
-            return URL(string: newURL) ?? url
+            return URL(string: newURL)?.normalizedServerConnectionURL ?? normalizedURL
         }
 
-        return url
+        return normalizedURL
     }
 
     private func isDuplicate(server: ServerState) -> Bool {
@@ -144,16 +150,15 @@ final class ConnectToServerViewModel: ObservableObject {
         var connections = ServerConnectionStore.ensureConnections(for: existingServer)
         let connection: ServerConnection
 
-        if let index = connections.firstIndex(where: { $0.url == server.currentURL }) {
-            var existingConnection = connections[index]
-            existingConnection.isEnabled = true
-            connection = existingConnection
-            connections[index] = existingConnection
+        let normalizedURL = server.currentURL.normalizedServerConnectionURL ?? server.currentURL
+
+        if let index = connections.firstIndex(where: { $0.normalizedURL == normalizedURL }) {
+            connection = connections[index]
             ServerConnectionStore.save(connections, for: existingServer.id)
         } else {
             connection = ServerConnection(
-                name: server.currentURL.absoluteString,
-                url: server.currentURL,
+                name: normalizedURL.absoluteString,
+                url: normalizedURL,
                 interface: .any,
                 priority: connections.count
             )

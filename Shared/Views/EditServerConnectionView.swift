@@ -13,11 +13,19 @@ struct EditServerConnectionView: View {
     @ObservedObject
     var viewModel: ServerConnectionViewModel
 
+    @FocusState
+    private var isNameFocused: Bool
+
     @Router
     private var router
 
     @State
     private var draft: ServerConnectionDraft
+
+    #if os(iOS)
+    @State
+    private var locationPermissionStatus = AppPermission.location.status
+    #endif
 
     @Toaster
     private var toaster
@@ -37,7 +45,7 @@ struct EditServerConnectionView: View {
         storedConnection != nil
     }
 
-    private var testState: ServerConnectionTestState {
+    private var testState: ServerConnection.TestState {
         viewModel.testStates[initialConnection.id] ?? .idle
     }
 
@@ -68,118 +76,22 @@ struct EditServerConnectionView: View {
         self._draft = State(initialValue: ServerConnectionDraft(connection: connection))
     }
 
-    var body: some View {
-        Form(systemImage: "network") {
-            Section(L10n.name) {
-                TextField(L10n.name, text: $draft.name)
-            }
-
-            Section(L10n.serverURL) {
-                TextField(L10n.serverURL, text: $draft.urlString)
-                #if !os(tvOS)
-                    .textInputAutocapitalization(.never)
-                    .keyboardType(.URL)
-                    .autocorrectionDisabled()
-                #endif
-            }
-
-            Section(L10n.network) {
-                Picker(L10n.network, selection: $draft.interface) {
-                    ForEach(ServerConnectionInterface.allCases, id: \.self) { interface in
-                        Label(interface.displayTitle, systemImage: interface.systemImage)
-                            .tag(interface)
-                    }
-                }
-
-                if draft.interface == .wifi {
-                    Toggle(L10n.specificNetwork, isOn: $draft.isSpecificWifiNetwork)
-
-                    if draft.isSpecificWifiNetwork {
-                        TextField(L10n.wifiName, text: $draft.wifiSSID)
-                        #if !os(tvOS)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                        #endif
-                    }
-                }
-            }
-
-            Section(L10n.enabled) {
-                Toggle(L10n.enabled, isOn: $draft.isEnabled)
-            }
-
-            Section(L10n.status) {
-                if isCurrentConnection {
-                    Label(L10n.active, systemImage: "circle.fill")
-                        .foregroundStyle(.green)
-                } else if isExistingConnection {
-                    Button(L10n.use) {
-                        setActiveConnection(connection)
-                    }
-                    .disabled(!connection.isEnabled || isTesting || hasChanges)
-                }
-
-                Button(L10n.test) {
-                    testDraft()
-                }
-                .disabled(isTesting)
-
-                testStatusView
-            }
-
-            Section {
-                if isExistingConnection {
-                    Button(L10n.delete, role: .destructive) {
-                        viewModel.deleteConnection(connection)
-                        router.dismiss()
-                    }
-                    .disabled(viewModel.connections.count <= 1 || isCurrentConnection)
-                }
-            }
-        }
-        .navigationTitle(isExistingConnection ? L10n.connection : L10n.newConnection)
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
-        .topBarTrailing {
-            Button(L10n.save) {
-                Task { await save() }
-            }
-            .disabled(isTesting || !hasChanges)
-            #if os(iOS)
-                .buttonStyle(.toolbarPill)
-            #endif
-        }
-        .animation(.linear(duration: 0.1), value: draft.interface)
-        .animation(.linear(duration: 0.1), value: draft.isSpecificWifiNetwork)
-        .backport
-        .onChange(of: draft.interface) { _, newValue in
-            guard newValue == .wifi, draft.wifiSSID.nilIfBlank == nil else { return }
-            populateCurrentWifiSSID(keepSpecificOnFailure: false)
-        }
-        .backport
-        .onChange(of: draft.isSpecificWifiNetwork) { _, newValue in
-            guard newValue, draft.interface == .wifi, draft.wifiSSID.nilIfBlank == nil else { return }
-            populateCurrentWifiSSID(keepSpecificOnFailure: true)
-        }
-    }
-
+    #if os(iOS)
     @ViewBuilder
-    private var testStatusView: some View {
-        switch testState {
-        case .idle:
-            EmptyView()
-        case .testing:
-            Label(L10n.test, systemImage: "hourglass")
-                .foregroundStyle(.secondary)
-        case let .success(version):
-            Label(L10n.connectedTo(version), systemImage: "checkmark.circle.fill")
-                .foregroundStyle(.green)
-        case let .failure(message):
-            Label(message.nilIfBlank ?? L10n.connectionFailed, systemImage: "xmark.circle.fill")
-                .foregroundStyle(.red)
+    private var locationPermissionWarning: some View {
+
+        if draft.interface == .wifi,
+           locationPermissionStatus != .authorized,
+           AppPermission.location.privacyDescription.isNotEmpty
+        {
+            Label(
+                AppPermission.location.privacyDescription,
+                systemImage: "exclamationmark.circle.fill"
+            )
+            .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
         }
     }
+    #endif
 
     private func save() async {
         if let validationError = draft.validationError {
@@ -227,15 +139,17 @@ struct EditServerConnectionView: View {
     }
 
     private func populateCurrentWifiSSID(keepSpecificOnFailure: Bool) {
+        #if os(iOS)
         Task { @MainActor in
             guard let ssid = await NetworkConnectionContext.currentWifiSSID() else {
-                draft.isSpecificWifiNetwork = keepSpecificOnFailure
+                draft.useWifiName = keepSpecificOnFailure
                 return
             }
 
             draft.wifiSSID = ssid
-            draft.isSpecificWifiNetwork = true
+            draft.useWifiName = true
         }
+        #endif
     }
 
     private func test(_ connection: ServerConnection) {
@@ -245,12 +159,134 @@ struct EditServerConnectionView: View {
             switch state {
             case .idle, .testing:
                 break
-            case let .success(version):
-                toaster.present(L10n.connectedTo(version), systemName: "checkmark.circle.fill")
+            case .success:
+                toaster.present(L10n.connected, systemName: "checkmark.circle.fill")
             case .failure:
                 toaster.present(L10n.connectionFailed, systemName: "xmark.circle.fill")
             }
         }
+    }
+
+    var body: some View {
+        Form(systemImage: "network") {
+            Section(L10n.name) {
+                TextField(L10n.name, text: $draft.name)
+                    .focused($isNameFocused)
+            }
+
+            Section(L10n.url) {
+                TextField(L10n.url, text: $draft.urlString)
+                #if !os(tvOS)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
+                    .autocorrectionDisabled()
+                #endif
+            }
+
+            #if os(iOS)
+            Section {
+                Picker(L10n.network, selection: $draft.interface) {
+                    ForEach(ServerConnectionInterface.allCases, id: \.self) { interface in
+                        Label(interface.displayTitle, systemImage: interface.systemImage)
+                            .tag(interface)
+                    }
+                }
+
+                if draft.interface == .wifi {
+                    Toggle(L10n.wifiName, isOn: $draft.useWifiName)
+
+                    if draft.useWifiName {
+                        TextField(L10n.wifiName, text: $draft.wifiSSID)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    }
+                }
+            } header: {
+                Text(L10n.network)
+            } footer: {
+                locationPermissionWarning
+            }
+            #endif
+
+            Section(L10n.status) {
+                if isCurrentConnection {
+                    Label(L10n.active, systemImage: "circle.fill")
+                        .foregroundStyle(.green)
+                } else if isExistingConnection {
+                    Button(L10n.use) {
+                        setActiveConnection(connection)
+                    }
+                    .disabled(isTesting || hasChanges)
+                }
+
+                Button(action: testDraft) {
+                    LabeledContent {
+                        switch testState {
+                        case .idle, .failure:
+                            EmptyView()
+                        case .testing:
+                            ProgressView()
+                        case .success:
+                            Image(systemName: "circle.fill")
+                                .font(.caption)
+                                .foregroundStyle(.green)
+                        }
+                    } label: {
+                        Text(L10n.test)
+                    }
+                }
+                .disabled(isTesting)
+
+                if case let .failure(message) = testState {
+                    Text(message.nilIfBlank ?? L10n.connectionFailed)
+                        .foregroundStyle(.red)
+                }
+            }
+
+            if isExistingConnection {
+                Button(L10n.delete, role: .destructive) {
+                    viewModel.deleteConnection(connection)
+                    router.dismiss()
+                }
+                .disabled(viewModel.connections.count <= 1 || isCurrentConnection)
+            }
+        }
+        .navigationTitle(L10n.connection)
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
+        .topBarTrailing {
+            Button(L10n.save) {
+                Task { await save() }
+            }
+            .disabled(isTesting || !hasChanges)
+            #if os(iOS)
+                .buttonStyle(.toolbarPill)
+            #endif
+        }
+        .animation(.linear(duration: 0.1), value: draft.interface)
+        .animation(.linear(duration: 0.1), value: draft.useWifiName)
+        .onFirstAppear {
+            isNameFocused = true
+        }
+        #if os(iOS)
+        .backport
+        .onChange(of: draft.interface) { _, newValue in
+            guard newValue == .wifi, draft.wifiSSID.nilIfBlank == nil else { return }
+            populateCurrentWifiSSID(keepSpecificOnFailure: false)
+        }
+        .backport
+        .onChange(of: draft.useWifiName) { _, newValue in
+            guard newValue, draft.interface == .wifi, draft.wifiSSID.nilIfBlank == nil else { return }
+            populateCurrentWifiSSID(keepSpecificOnFailure: true)
+        }
+        .onAppear {
+            locationPermissionStatus = AppPermission.location.status
+        }
+        .onNotification(.applicationWillEnterForeground) {
+            locationPermissionStatus = AppPermission.location.status
+        }
+        #endif
     }
 }
 
@@ -261,18 +297,25 @@ private struct ServerConnectionDraft: Equatable {
     var interface: ServerConnectionInterface
     var wifiSSID: String
     var priority: Int
-    var isEnabled: Bool
-    var isSpecificWifiNetwork: Bool
+    var useWifiName: Bool
 
     init(connection: ServerConnection) {
         self.id = connection.id
         self.name = connection.name
         self.urlString = connection.url.absoluteString
+        #if os(tvOS)
+        self.interface = .any
+        self.wifiSSID = .empty
+        #else
         self.interface = connection.interface
         self.wifiSSID = connection.wifiSSID
+        #endif
         self.priority = connection.priority
-        self.isEnabled = connection.isEnabled
-        self.isSpecificWifiNetwork = connection.interface == .wifi && connection.wifiSSID.nilIfBlank != nil
+        #if os(tvOS)
+        self.useWifiName = false
+        #else
+        self.useWifiName = connection.interface == .wifi && connection.wifiSSID.nilIfBlank != nil
+        #endif
     }
 
     var formattedURL: URL? {
@@ -280,32 +323,49 @@ private struct ServerConnectionDraft: Equatable {
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .prepending("http://", if: !urlString.contains("://"))
 
-        return URL(string: formattedURL)
+        return URL(string: formattedURL)?.normalizedServerConnectionURL
+    }
+
+    var connectionInterface: ServerConnectionInterface {
+        #if os(tvOS)
+        .any
+        #else
+        interface
+        #endif
+    }
+
+    var connectionWifiSSID: String {
+        #if os(tvOS)
+        .empty
+        #else
+        let normalizedSSID = wifiSSID.trimmingCharacters(in: .whitespacesAndNewlines)
+        return interface == .wifi && useWifiName ? normalizedSSID : .empty
+        #endif
     }
 
     var validationError: String? {
-        guard formattedURL != nil else { return L10n.invalidURL }
+        guard let formattedURL, formattedURL.host != nil else { return L10n.invalidURL }
 
+        #if !os(tvOS)
         let normalizedSSID = wifiSSID.trimmingCharacters(in: .whitespacesAndNewlines)
-        if interface == .wifi, isSpecificWifiNetwork, normalizedSSID.nilIfBlank == nil {
+        if interface == .wifi, useWifiName, normalizedSSID.nilIfBlank == nil {
             return L10n.invalidX(L10n.wifiName)
         }
+        #endif
 
         return nil
     }
 
     func connection() -> ServerConnection? {
-        let normalizedSSID = wifiSSID.trimmingCharacters(in: .whitespacesAndNewlines)
         guard validationError == nil, let url = formattedURL else { return nil }
 
         return ServerConnection(
             id: id,
-            name: name,
+            name: name.trimmingCharacters(in: .whitespacesAndNewlines),
             url: url,
-            interface: interface,
-            wifiSSID: interface == .wifi && isSpecificWifiNetwork ? normalizedSSID : .empty,
-            priority: priority,
-            isEnabled: isEnabled
+            interface: connectionInterface,
+            wifiSSID: connectionWifiSSID,
+            priority: priority
         )
     }
 }

@@ -49,13 +49,19 @@ enum ServerConnectionInterface: String, CaseIterable, Codable, Displayable, Hash
 
 struct ServerConnection: Hashable, Identifiable, Storable {
 
+    enum TestState {
+        case idle
+        case testing
+        case success
+        case failure(String)
+    }
+
     var id: String = UUID().uuidString
     var name: String
     var url: URL
     var interface: ServerConnectionInterface
     var wifiSSID: String
     var priority: Int
-    var isEnabled: Bool
 
     init(
         id: String = UUID().uuidString,
@@ -63,16 +69,19 @@ struct ServerConnection: Hashable, Identifiable, Storable {
         url: URL,
         interface: ServerConnectionInterface,
         wifiSSID: String = .empty,
-        priority: Int,
-        isEnabled: Bool = true
+        priority: Int
     ) {
         self.id = id
         self.name = name
         self.url = url
+        #if os(tvOS)
+        self.interface = .any
+        self.wifiSSID = .empty
+        #else
         self.interface = interface
         self.wifiSSID = wifiSSID
+        #endif
         self.priority = priority
-        self.isEnabled = isEnabled
     }
 
     var displayName: String {
@@ -80,13 +89,15 @@ struct ServerConnection: Hashable, Identifiable, Storable {
     }
 
     var normalizedSSID: String? {
+        #if os(iOS)
         wifiSSID.nilIfBlank
+        #else
+        nil
+        #endif
     }
 
     func matches(_ context: NetworkConnectionContext) -> Bool {
-        guard isEnabled else { return false }
-
-        switch interface {
+        switch normalizedInterface {
         case .any:
             return context.isSatisfied
         case .wifi:
@@ -95,6 +106,27 @@ struct ServerConnection: Hashable, Identifiable, Storable {
             return normalizedSSID.caseInsensitiveCompare(context.wifiSSID ?? .empty) == .orderedSame
         case .cellular:
             return context.interface == .cellular
+        }
+    }
+
+    var normalizedInterface: ServerConnectionInterface {
+        #if os(tvOS)
+        .any
+        #else
+        interface
+        #endif
+    }
+
+    var normalizedURL: URL {
+        url.normalizedServerConnectionURL ?? url
+    }
+
+    static func isDuplicate(_ connection: ServerConnection, in connections: [ServerConnection]) -> Bool {
+        connections.contains { existingConnection in
+            existingConnection.id != connection.id &&
+                existingConnection.normalizedURL == connection.normalizedURL &&
+                existingConnection.normalizedInterface == connection.normalizedInterface &&
+                existingConnection.normalizedSSID == connection.normalizedSSID
         }
     }
 
@@ -121,7 +153,27 @@ struct ServerConnection: Hashable, Identifiable, Storable {
     func with(priority: Int) -> ServerConnection {
         var copy = self
         copy.priority = priority
+        #if os(tvOS)
+        copy.interface = .any
+        copy.wifiSSID = .empty
+        #endif
         return copy
+    }
+}
+
+extension URL {
+
+    var normalizedServerConnectionURL: URL? {
+        guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else { return nil }
+
+        components.scheme = components.scheme?.lowercased()
+        components.host = components.host?.lowercased()
+
+        if components.path.isNotEmpty {
+            components.path = components.path.trimmingSuffix("/")
+        }
+
+        return components.url
     }
 }
 
@@ -130,7 +182,6 @@ struct ServerConnectionChange: Hashable {
     enum Reason: String, Hashable {
         case automatic
         case manual
-        case deletedActiveConnection
     }
 
     let server: ServerState

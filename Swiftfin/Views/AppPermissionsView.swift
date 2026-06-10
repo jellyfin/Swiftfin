@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-#if os(iOS)
 import Engine
 import OrderedCollections
 import SwiftUI
@@ -99,4 +98,3 @@ struct AppPermissionsView: View {
         }
     }
 }
-#endif

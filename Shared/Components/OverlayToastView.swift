@@ -33,7 +33,7 @@ struct OverlayToastView<Content: View>: View {
         #if os(tvOS)
         60
         #else
-        safeAreaInsets.top + 15
+        safeAreaInsets.top + 10
         #endif
     }
 
@@ -75,8 +75,6 @@ struct OverlayToastView<Content: View>: View {
                 toastProxy.present(L10n.usingConnection(change.current.displayName), systemName: change.current.interface.systemImage)
             case .manual:
                 toastProxy.present(L10n.usingConnection(change.current.displayName), systemName: "checkmark.circle.fill")
-            case .deletedActiveConnection:
-                toastProxy.present(L10n.usingFallbackConnection(change.current.displayName), systemName: "arrow.triangle.2.circlepath")
             }
         }
     }
@@ -127,7 +125,7 @@ private struct OverlayToastContent: View {
         #if os(tvOS)
         EdgeInsets(top: 24, leading: 24, bottom: 24, trailing: 24)
         #else
-        EdgeInsets(top: 8, leading: 24, bottom: 8, trailing: 24)
+        EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16)
         #endif
     }
 
@@ -143,7 +141,7 @@ private struct OverlayToastContent: View {
         #if os(tvOS)
         60
         #else
-        50
+        40
         #endif
     }
 

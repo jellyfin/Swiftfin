@@ -123,6 +123,31 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
+    static func serverConnections(viewModel: ServerConnectionViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "serverConnections-\(viewModel.server.id)"
+        ) {
+            ServerConnectionsView(viewModel: viewModel)
+        }
+    }
+
+    @MainActor
+    static func editServerConnection(
+        viewModel: ServerConnectionViewModel,
+        connection: ServerConnection
+    ) -> NavigationRoute {
+        NavigationRoute(
+            id: "serverConnection-\(viewModel.server.id)-\(connection.id)",
+            style: .sheet
+        ) {
+            EditServerConnectionView(
+                viewModel: viewModel,
+                connection: connection
+            )
+        }
+    }
+
     static var experimentalSettings: NavigationRoute {
         NavigationRoute(
             id: "experimentalSettings"

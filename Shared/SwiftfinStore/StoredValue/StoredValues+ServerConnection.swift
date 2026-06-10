@@ -57,7 +57,7 @@ enum ServerConnectionStore {
     }
 
     static func save(_ connections: [ServerConnection], for serverID: String) {
-        StoredValues[.Server.connections(id: serverID)] = normalize(connections)
+        StoredValues[.Server.connections(id: serverID)] = normalize(connections, preservingOrder: true)
     }
 
     static func activeConnection(for server: ServerState) -> ServerConnection? {
@@ -65,12 +65,12 @@ enum ServerConnectionStore {
         let activeConnectionID = StoredValues[.Server.activeConnectionID(id: server.id)]
 
         if activeConnectionID.isNotEmpty,
-           let connection = connections.first(where: { $0.id == activeConnectionID && $0.isEnabled })
+           let connection = connections.first(where: { $0.id == activeConnectionID })
         {
             return connection
         }
 
-        return connections.first { $0.url == server.currentURL && $0.isEnabled } ?? connections.first { $0.isEnabled }
+        return connections.first { $0.url == server.currentURL } ?? connections.first
     }
 
     static func setActiveConnection(_ connection: ServerConnection, for server: ServerState) {
@@ -81,6 +81,10 @@ enum ServerConnectionStore {
         activeConnection(for: server)?.url ?? server.currentURL
     }
 
+    static func contains(_ url: URL, for server: ServerState) -> Bool {
+        connections(for: server).contains { $0.url == url }
+    }
+
     static func isAutoSwitchingEnabled(for serverID: String) -> Bool {
         StoredValues[.Server.isAutoSwitchingConnections(id: serverID)]
     }
@@ -89,9 +93,10 @@ enum ServerConnectionStore {
         StoredValues[.Server.isAutoSwitchingConnections(id: serverID)] = isEnabled
     }
 
-    static func normalize(_ connections: [ServerConnection]) -> [ServerConnection] {
-        connections
-            .sorted(using: \.priority)
+    static func normalize(_ connections: [ServerConnection], preservingOrder: Bool = false) -> [ServerConnection] {
+        let connections = preservingOrder ? connections : connections.sorted(using: \.priority)
+
+        return connections
             .enumerated()
             .map { index, connection in
                 connection.with(priority: index)
@@ -111,5 +116,9 @@ extension ServerState {
 
     var effectiveServerURL: URL {
         ServerConnectionStore.effectiveURL(for: self)
+    }
+
+    func hasServerConnection(url: URL) -> Bool {
+        ServerConnectionStore.contains(url, for: self)
     }
 }

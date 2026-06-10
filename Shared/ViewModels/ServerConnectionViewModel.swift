@@ -12,13 +12,6 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-enum ServerConnectionTestState: Equatable {
-    case idle
-    case testing
-    case success(String)
-    case failure(String)
-}
-
 @MainActor
 final class ServerConnectionViewModel: ViewModel {
 
@@ -40,7 +33,7 @@ final class ServerConnectionViewModel: ViewModel {
     }
 
     @Published
-    private(set) var testStates: [String: ServerConnectionTestState] = [:]
+    private(set) var testStates: [String: ServerConnection.TestState] = [:]
 
     init(server: ServerState) {
         self.server = server
@@ -64,8 +57,6 @@ final class ServerConnectionViewModel: ViewModel {
         let userStates = StoredValues[.User.users]
             .filter { $0.serverID == server.id }
 
-        // Note: don't use Server/UserState.delete() to have
-        //       all deletions in a single transaction
         do {
             for user in userStates {
                 try AnyStoredData.deleteAll(ownerID: user.id)
@@ -92,7 +83,7 @@ final class ServerConnectionViewModel: ViewModel {
 
     func newConnection() -> ServerConnection {
         ServerConnection(
-            name: L10n.newConnection,
+            name: "",
             url: server.effectiveServerURL,
             interface: .any,
             priority: connections.count
@@ -109,24 +100,12 @@ final class ServerConnectionViewModel: ViewModel {
 
         let previous = activeConnection
         let isActiveConnection = activeConnection?.id == connection.id
-        var updatedConnection = connection
 
-        if !updatedConnection.isEnabled,
-           !connections.contains(where: { $0.id != updatedConnection.id && $0.isEnabled })
-        {
-            updatedConnection.isEnabled = true
-        }
-
-        connections[index] = updatedConnection
+        connections[index] = connection
         saveConnections()
 
         if isActiveConnection {
-            let nextActiveConnection = if updatedConnection.isEnabled {
-                connections.first { $0.id == updatedConnection.id }
-            } else {
-                connections.first(where: \.isEnabled)
-            }
-
+            let nextActiveConnection = connections.first { $0.id == connection.id }
             guard let nextActiveConnection else { return }
 
             activeConnection = nextActiveConnection
@@ -134,7 +113,7 @@ final class ServerConnectionViewModel: ViewModel {
             postConnectionChange(
                 previous: previous,
                 current: nextActiveConnection,
-                reason: updatedConnection.isEnabled ? .manual : .deletedActiveConnection
+                reason: .manual
             )
         }
     }
@@ -149,15 +128,13 @@ final class ServerConnectionViewModel: ViewModel {
     }
 
     func setActiveConnection(_ connection: ServerConnection) {
-        guard connection.isEnabled else { return }
-
         let previous = activeConnection
         activeConnection = connection
         ServerConnectionStore.setActiveConnection(connection, for: server)
         postConnectionChange(previous: previous, current: connection, reason: .manual)
     }
 
-    func setActiveConnectionIfValid(_ connection: ServerConnection) async -> ServerConnectionTestState {
+    func setActiveConnectionIfValid(_ connection: ServerConnection) async -> ServerConnection.TestState {
         let state = await testConnection(connection)
         guard case .success = state else { return state }
 
@@ -170,27 +147,32 @@ final class ServerConnectionViewModel: ViewModel {
         saveConnections()
     }
 
-    func testConnection(_ connection: ServerConnection) async -> ServerConnectionTestState {
+    func testConnection(_ connection: ServerConnection) async -> ServerConnection.TestState {
         testStates[connection.id] = .testing
 
         do {
-            let publicInfo = try await Container.shared.serverConnectionManager().test(
+            _ = try await Container.shared.serverConnectionManager().test(
                 connection: connection,
                 accessToken: userSession?.user.accessToken,
                 matchingServerID: server.id
             )
-            let version = publicInfo.version ?? "unknown version"
-            let state = ServerConnectionTestState.success(version)
+            let state = ServerConnection.TestState.success
             testStates[connection.id] = state
             return state
         } catch {
-            let state = ServerConnectionTestState.failure(error.localizedDescription)
+            let state = ServerConnection.TestState.failure(error.localizedDescription)
             testStates[connection.id] = state
             return state
         }
     }
 
-    func saveConnection(_ connection: ServerConnection) async -> ServerConnectionTestState {
+    func saveConnection(_ connection: ServerConnection) async -> ServerConnection.TestState {
+        if ServerConnection.isDuplicate(connection, in: connections) {
+            let state = ServerConnection.TestState.failure(L10n.connectionAlreadyExists)
+            testStates[connection.id] = state
+            return state
+        }
+
         let state = await testConnection(connection)
         guard case .success = state else { return state }
 
@@ -204,7 +186,7 @@ final class ServerConnectionViewModel: ViewModel {
     }
 
     private func saveConnections() {
-        connections = ServerConnectionStore.normalize(connections)
+        connections = ServerConnectionStore.normalize(connections, preservingOrder: true)
         ServerConnectionStore.save(connections, for: server.id)
 
         if let activeConnection {
@@ -225,13 +207,14 @@ final class ServerConnectionViewModel: ViewModel {
     ) {
         guard previous?.id != current.id || previous?.url != current.url else { return }
 
-        Notifications[.didChangeServerConnection].post(
-            .init(
-                server: server,
-                previous: previous,
-                current: current,
-                reason: reason
+        Notifications[.didChangeServerConnection]
+            .post(
+                .init(
+                    server: server,
+                    previous: previous,
+                    current: current,
+                    reason: reason
+                )
             )
-        )
     }
 }

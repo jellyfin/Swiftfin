@@ -52,7 +52,7 @@ extension SelectUserView {
                     ForEach(servers) { server in
                         Button {} label: {
                             Text(server.name)
-                            Text(server.currentURL.absoluteString)
+                            Text(server.effectiveServerURL.absoluteString)
                         }
                         .tag(SelectUserServerSelection.server(id: server.id))
                     }

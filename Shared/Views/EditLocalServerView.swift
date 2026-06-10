@@ -51,21 +51,12 @@ struct EditLocalServerView: View {
             }
 
             Section {
-                Toggle(L10n.autoSwitchURLs, isOn: $viewModel.isAutoSwitchingEnabled)
-
-                ForEach(viewModel.connections) { connection in
-                    serverConnectionRow(connection)
+                ChevronButton(
+                    L10n.connections,
+                    content: viewModel.connections.count.description
+                ) {
+                    router.route(to: .serverConnections(viewModel: viewModel))
                 }
-                .onMove(perform: viewModel.moveConnections)
-
-                Button {
-                    let connection = viewModel.newConnection()
-                    router.route(to: editConnectionRoute(connection))
-                } label: {
-                    Label(L10n.addConnection, systemImage: "plus.circle.fill")
-                }
-            } header: {
-                Text(L10n.connections)
             } footer: {
                 if !viewModel.server.isVersionCompatible {
                     Label(
@@ -92,49 +83,6 @@ struct EditLocalServerView: View {
             }
         } message: {
             Text(L10n.confirmDeleteServerAndUsers(viewModel.server.name))
-        }
-    }
-
-    private func serverConnectionRow(_ connection: ServerConnection) -> some View {
-        ChevronButton {
-            router.route(to: editConnectionRoute(connection))
-        } label: {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(connection.displayName)
-                        .font(.headline)
-
-                    Text(connection.url.absoluteString)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-
-                    if connection.interface == .wifi {
-                        Text(connection.normalizedSSID ?? L10n.anyWifiNetwork)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
-                if viewModel.activeConnection?.id == connection.id {
-                    Spacer()
-
-                    Image(systemName: "circle.fill")
-                        .font(.caption)
-                        .foregroundStyle(.green)
-                }
-            }
-        }
-    }
-
-    private func editConnectionRoute(_ connection: ServerConnection) -> NavigationRoute {
-        NavigationRoute(
-            id: "serverConnection-\(viewModel.server.id)-\(connection.id)",
-            style: .sheet
-        ) {
-            EditServerConnectionView(
-                viewModel: viewModel,
-                connection: connection
-            )
         }
     }
 }

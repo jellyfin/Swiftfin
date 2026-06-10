@@ -195,7 +195,7 @@ struct SelectUserView: View {
                                     addUser(server: server)
                                 } label: {
                                     Text(server.name)
-                                    Text(server.currentURL.absoluteString)
+                                    Text(server.effectiveServerURL.absoluteString)
                                 }
                             }
                         }
