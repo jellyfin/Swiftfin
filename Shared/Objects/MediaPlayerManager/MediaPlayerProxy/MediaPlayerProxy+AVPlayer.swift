@@ -90,9 +90,6 @@ class AVMediaPlayerProxy: NSObject,
         addTimeObserver()
     }
 
-    /// Registers the periodic time observer that drives the progress bar and
-    /// manager seconds. Safe to call multiple times — removes any existing
-    /// observer before adding a new one.
     private func addTimeObserver() {
         if let timeObserver {
             player.removeTimeObserver(timeObserver)
@@ -139,8 +136,7 @@ class AVMediaPlayerProxy: NSObject,
     }
 
     func setRate(_ rate: Float) {
-        // Only update the live rate when currently playing; play() applies the
-        // desired rate when playback resumes so the player stays paused if paused.
+        // `play()` applies the rate when playback resumes so don't set rate if paused
         guard player.rate != 0 else { return }
         player.rate = rate
     }
@@ -188,15 +184,17 @@ class AVMediaPlayerProxy: NSObject,
     }
 }
 
-// MARK: - PiP
+// MARK: - Picture In Picture
 
 extension AVMediaPlayerProxy {
 
     func setupPiP() {
         guard pipController == nil, AVPictureInPictureController.isPictureInPictureSupported() else { return }
+
         pipController = AVPictureInPictureController(playerLayer: avPlayerLayer)
         pipController?.delegate = self
         pipController?.requiresLinearPlayback = false
+
         #if !os(tvOS)
         pipController?.canStartPictureInPictureAutomaticallyFromInline = false
         #endif
@@ -231,7 +229,7 @@ extension AVMediaPlayerProxy: AVPictureInPictureControllerDelegate {
     }
 }
 
-// MARK: - Playback lifecycle
+// MARK: - Playback Lifecycle
 
 extension AVMediaPlayerProxy {
 
@@ -372,19 +370,32 @@ extension AVMediaPlayerProxy {
                     (baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset])
                 )
                 DispatchQueue.main.async {
-                    self.cachedAudioGroup = newAVPlayerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .audible)
-                    self.cachedSubtitleGroup = newAVPlayerItem.asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
+                    Task { @MainActor [weak self] in
+                        guard let self else { return }
 
-                    self.setAudioStream(.init(index: item.selectedAudioStreamIndex))
-                    self.setSubtitleStream(.init(index: item.selectedSubtitleStreamIndex ?? -1))
+                        do {
+                            self.cachedAudioGroup = try await newAVPlayerItem.asset.loadMediaSelectionGroup(for: .audible)
+                        } catch {
+                            self.cachedAudioGroup = nil
+                        }
+                        do {
+                            self.cachedSubtitleGroup = try await newAVPlayerItem.asset.loadMediaSelectionGroup(for: .legible)
+                        } catch {
+                            self.cachedSubtitleGroup = nil
+                        }
 
-                    self.player.seek(
-                        to: CMTimeMake(value: startSeconds.components.seconds, timescale: 1),
-                        toleranceBefore: .zero,
-                        toleranceAfter: .zero
-                    ) { [weak self] _ in
-                        DispatchQueue.main.async {
-                            self?.player.rate = self?.manager?.rate ?? 1.0
+                        // Apply initial stream selections if available
+                        self.setAudioStream(.init(index: item.selectedAudioStreamIndex))
+                        self.setSubtitleStream(.init(index: item.selectedSubtitleStreamIndex ?? -1))
+
+                        self.player.seek(
+                            to: CMTimeMake(value: startSeconds.components.seconds, timescale: 1),
+                            toleranceBefore: .zero,
+                            toleranceAfter: .zero
+                        ) { [weak self] _ in
+                            DispatchQueue.main.async {
+                                self?.player.rate = self?.manager?.rate ?? 1.0
+                            }
                         }
                     }
                 }
@@ -408,7 +419,7 @@ extension AVMediaPlayerProxy {
         private var manager: MediaPlayerManager
 
         func makeUIView(context: Context) -> UIView {
-            UIAVPlayerView(proxy: proxy)
+            AVPlayerUIView(proxy: proxy)
         }
 
         func updateUIView(_ uiView: UIView, context: Context) {
@@ -439,7 +450,7 @@ extension AVMediaPlayerProxy {
         }
     }
 
-    private class UIAVPlayerView: UIView {
+    private class AVPlayerUIView: UIView {
 
         let proxy: AVMediaPlayerProxy
 
