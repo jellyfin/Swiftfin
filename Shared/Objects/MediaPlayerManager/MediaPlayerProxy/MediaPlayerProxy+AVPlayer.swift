@@ -219,7 +219,9 @@ extension AVMediaPlayerProxy {
                     toleranceBefore: .zero,
                     toleranceAfter: .zero,
                     completionHandler: { _ in
-                        if newValue == .readyToPlay {
+                        // Note: not the observed value, which is unreliable
+                        // for chained optional key paths
+                        if self.player.currentItem?.status == .readyToPlay {
                             self.hasSetInitialSeconds = true
                         }
                         self.play()

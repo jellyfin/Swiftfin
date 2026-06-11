@@ -69,16 +69,23 @@ private struct SkipSegmentButtonStyle: ButtonStyle {
         let configuration: ButtonStyle.Configuration
 
         var body: some View {
+            #if os(tvOS)
+            configuration.label
+                .fontWeight(.semibold)
+                .foregroundStyle(isFocused ? AnyShapeStyle(.black) : AnyShapeStyle(.white))
+                .padding(10)
+                .padding(.horizontal, 5)
+                .background(isFocused ? AnyShapeStyle(.white) : AnyShapeStyle(.thinMaterial), in: Capsule())
+                .scaleEffect(isFocused ? 1.15 : 1)
+                .shadow(radius: isFocused ? 5 : 0)
+                .animation(.easeOut(duration: 0.15), value: isFocused)
+            #else
             configuration.label
                 .fontWeight(.semibold)
                 .foregroundStyle(.black)
                 .padding(10)
                 .padding(.horizontal, 5)
                 .background(.white, in: Capsule())
-            #if os(tvOS)
-                .scaleEffect(isFocused ? 1.15 : 1)
-                .shadow(radius: isFocused ? 5 : 0)
-                .animation(.easeOut(duration: 0.15), value: isFocused)
             #endif
         }
     }

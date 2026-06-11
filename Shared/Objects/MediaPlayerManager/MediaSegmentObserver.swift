@@ -134,8 +134,8 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
                 // logger.debug("[MediaSegments] automatically skipping \(activeSegment.type?.rawValue ?? "Unknown") segment")
                 skip(segment: activeSegment)
                 return
-            // } else {
-            //     logger.debug("[MediaSegments] entered skip segment by seeking, offering button instead")
+                    // } else {
+                    //     logger.debug("[MediaSegments] entered skip segment by seeking, offering button instead")
             }
         }
 
