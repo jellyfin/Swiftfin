@@ -11,9 +11,6 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-/// Observes playback seconds against an item's media segments,
-/// performing automatic skips and publishing the segment that
-/// should currently offer a skip action.
 extension MediaPlayerManager {
 
     var segmentObserver: MediaSegmentObserver? {
@@ -33,8 +30,6 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
     /// instead of from a seek.
     private static let naturalEntryThreshold: Duration = .seconds(5)
 
-    /// The segment that the current playback seconds is within,
-    /// if a skip action should be offered for it.
     @Published
     private(set) var currentSegment: MediaSegmentDto?
 
@@ -43,14 +38,8 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
     @Published
     private(set) var isStandalonePresentation: Bool = false
 
-    /// Whether the current segment was entered by natural playback
-    /// instead of by seeking into it. Useful for deciding initial
-    /// focus of a skip button.
     private(set) var enteredCurrentSegmentNaturally: Bool = false
 
-    /// Segments that were already automatically skipped, or were
-    /// entered by seeking, and should only offer a button instead
-    /// of automatically skipping again.
     private var autoSkipSpentSegmentIDs: Set<String> = []
     private var lastSeconds: Duration?
     private var segments: [MediaSegmentDto] = []
@@ -80,8 +69,6 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
                     .map { "\($0.type?.rawValue ?? "Unknown") \($0.startSeconds ?? .zero)-\($0.endSeconds ?? .zero)" }
                     .joined(separator: ", ")
 
-                // logger.debug("[MediaSegments] fetched \(segments.count) segment(s) for item \(itemID): \(segmentDescriptions)")
-
                 await MainActor.run {
                     self.segments = segments
                 }
@@ -108,9 +95,6 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
     }
 
     private func secondsDidChange(_ newSeconds: Duration) {
-        // Don't observe seconds until segments are loaded so that
-        // the first observed seconds correctly determines natural
-        // entry for segments at the start of an item.
         guard segments.isNotEmpty else { return }
         defer { lastSeconds = newSeconds }
 
@@ -121,7 +105,6 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
 
         guard let activeSegment, let segmentID = activeSegment.id else {
             if currentSegment != nil {
-                // logger.debug("[MediaSegments] exited segment")
                 setCurrentSegment(nil)
             }
             return
@@ -131,35 +114,24 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
             autoSkipSpentSegmentIDs.insert(segmentID)
 
             if isNaturalEntry(into: activeSegment, at: newSeconds) {
-                // logger.debug("[MediaSegments] automatically skipping \(activeSegment.type?.rawValue ?? "Unknown") segment")
                 skip(segment: activeSegment)
                 return
-                    // } else {
-                    //     logger.debug("[MediaSegments] entered skip segment by seeking, offering button instead")
             }
         }
 
         if activeSegment != currentSegment {
-            // logger.debug("[MediaSegments] presenting skip button for \(activeSegment.type?.rawValue ?? "Unknown") segment")
             enteredCurrentSegmentNaturally = isNaturalEntry(into: activeSegment, at: newSeconds)
             setCurrentSegment(activeSegment)
         }
     }
 
-    /// Whether the given seconds entered the segment from natural
-    /// playback: crossing the segment start with a small difference
-    /// from the last observed seconds, instead of seeking into it.
     private func isNaturalEntry(into segment: MediaSegmentDto, at seconds: Duration) -> Bool {
         guard let start = segment.startSeconds else { return false }
 
         guard let lastSeconds else {
-            // First observed seconds, like playback starting
-            // within a segment at the start of an item.
             return seconds - start <= Self.naturalEntryThreshold
         }
 
-        // `<=` so that a segment starting at zero is naturally
-        // entered by the first ticks of playback.
         guard lastSeconds <= start else { return false }
         return seconds - lastSeconds <= Self.naturalEntryThreshold
     }
@@ -178,7 +150,6 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
             autoSkipSpentSegmentIDs.insert(segmentID)
         }
 
-        // logger.debug("[MediaSegments] skipping to \(end)")
 
         setCurrentSegment(nil)
         manager.seconds = end
@@ -192,8 +163,6 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
         startStandalonePresentationWindow()
     }
 
-    /// Restarts the standalone presentation window for the current
-    /// segment, like when native player controls were toggled.
     func refreshStandalonePresentation() {
         guard currentSegment != nil else { return }
         startStandalonePresentationWindow()

@@ -43,8 +43,6 @@ struct NativeVideoPlayer: View {
             case .playback:
                 NativeVideoPlayerView(proxy: proxy, manager: manager)
                 #if !os(tvOS)
-                    // Without insight into AVKit overlay presentation, only
-                    // present the button during its standalone window.
                         .overlay(alignment: .bottomTrailing) {
                             if let segmentObserver = manager.segmentObserver {
                                 SkipSegmentButton(
@@ -140,8 +138,6 @@ extension NativeVideoPlayer {
         override func viewDidLoad() {
             super.viewDidLoad()
 
-            // Without insight into AVKit overlay presentation, restart
-            // the standalone skip button window on the taps that toggle it.
             let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didReceiveTap))
             tapRecognizer.cancelsTouchesInView = false
             tapRecognizer.delegate = self
@@ -162,8 +158,6 @@ extension NativeVideoPlayer {
         #endif
 
         #if os(tvOS)
-        /// Presents skippable segments as AVKit contextual actions,
-        /// which are natively rendered, positioned, and focusable.
         private func observeSegments(of manager: MediaPlayerManager) {
             manager.$playbackItem
                 .receive(on: DispatchQueue.main)

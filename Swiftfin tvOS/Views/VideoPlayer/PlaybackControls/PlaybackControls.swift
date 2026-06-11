@@ -51,8 +51,6 @@ extension VideoPlayer {
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .focusSection()
                     .onReceive(segmentObserver.$currentSegment) { segment in
-                        // Only steal focus when the segment was entered by
-                        // natural playback, not by scrubbing into it.
                         if segment != nil, segmentObserver.enteredCurrentSegmentNaturally {
                             isSkipSegmentButtonFocused = true
                         }

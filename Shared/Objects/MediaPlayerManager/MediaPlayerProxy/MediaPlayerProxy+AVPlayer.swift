@@ -40,9 +40,6 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
     private var managerItemObserver: AnyCancellable?
     private var managerStateObserver: AnyCancellable?
 
-    /// Whether the seek to the item's start seconds on ready has
-    /// completed. The player emits times for the zero position
-    /// before being ready, which shouldn't be reported.
     private var hasSetInitialSeconds = false
 
     weak var manager: MediaPlayerManager? {
@@ -219,8 +216,6 @@ extension AVMediaPlayerProxy {
                     toleranceBefore: .zero,
                     toleranceAfter: .zero,
                     completionHandler: { _ in
-                        // Note: not the observed value, which is unreliable
-                        // for chained optional key paths
                         if self.player.currentItem?.status == .readyToPlay {
                             self.hasSetInitialSeconds = true
                         }

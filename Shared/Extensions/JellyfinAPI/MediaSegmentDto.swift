@@ -42,8 +42,6 @@ extension MediaSegmentType: Displayable, @retroactive Defaults.Serializable {
         }
     }
 
-    /// The title for the action of skipping a segment
-    /// of this type: `Skip Intro`, `Skip Recap`, etc.
     var skipActionTitle: String {
         L10n.skipSegment(displayTitle)
     }
@@ -51,9 +49,9 @@ extension MediaSegmentType: Displayable, @retroactive Defaults.Serializable {
 
 extension MediaSegmentType: SupportedCaseIterable {
 
-    /// In probable order of appearance during playback.
+    /// Same order as jellyfin web.
     static var supportedCases: [MediaSegmentType] {
-        [.recap, .intro, .commercial, .outro, .preview]
+        [.intro, .preview, .recap, .commercial, .outro]
     }
 }
 

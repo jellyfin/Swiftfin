@@ -15,8 +15,6 @@ struct SkipSegmentButton: View {
     @ObservedObject
     private var observer: MediaSegmentObserver
 
-    /// Whether the playback overlay is currently presented, which
-    /// presents the button beyond its standalone presentation window.
     private let isPresentingOverlay: Bool
 
     init(
@@ -41,20 +39,12 @@ struct SkipSegmentButton: View {
                 }
                 .buttonStyle(SkipSegmentButtonStyle())
                 .transition(.opacity)
-                // .onAppear {
-                //     Logger.swiftfin().debug("[MediaSegments] skip button appeared")
-                // }
-                // .onDisappear {
-                //     Logger.swiftfin().debug("[MediaSegments] skip button disappeared")
-                // }
             }
         }
         .animation(.easeOut(duration: 0.4), value: isPresented)
     }
 }
 
-/// A plain white capsule that indicates focus by scale
-/// instead of a platter, unlike built-in button styles.
 private struct SkipSegmentButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
