@@ -63,8 +63,6 @@ struct VideoPlayerSettingsView: View {
 
     // MARK: - Media Segment Defaults
 
-    @Default(.VideoPlayer.enableMediaSegments)
-    private var enableMediaSegments
     @Default(.VideoPlayer.mediaSegmentBehaviors)
     private var mediaSegmentBehaviors
 
@@ -238,15 +236,15 @@ struct VideoPlayerSettingsView: View {
     @ViewBuilder
     private var mediaSegmentSettings: some View {
         Section(L10n.mediaSegments) {
-            Toggle(L10n.enableMediaSegments, isOn: $enableMediaSegments)
-        }
-
-        if enableMediaSegments {
-            Section {
-                ForEach(MediaSegmentType.supportedCases, id: \.self) { segment in
-                    PlatformPicker(segment.displayTitle, selection: mediaSegmentBinding(segment))
-                }
+            #if os(tvOS)
+            ChevronButton(L10n.mediaSegments) {
+                router.route(to: .mediaSegmentSettings)
             }
+            #else
+            ForEach(MediaSegmentType.supportedCases, id: \.self) { segment in
+                PlatformPicker(segment.displayTitle, selection: mediaSegmentBinding(segment))
+            }
+            #endif
         }
     }
 

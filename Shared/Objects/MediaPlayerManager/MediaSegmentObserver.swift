@@ -103,7 +103,7 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
     // MARK: - seconds
 
     private func behavior(for segment: MediaSegmentDto) -> MediaSegmentBehavior {
-        guard Defaults[.VideoPlayer.enableMediaSegments], let type = segment.type else { return .off }
+        guard let type = segment.type else { return .off }
         return Defaults[.VideoPlayer.mediaSegmentBehaviors][type] ?? .off
     }
 

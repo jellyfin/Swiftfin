@@ -51,8 +51,9 @@ extension MediaSegmentType: Displayable, @retroactive Defaults.Serializable {
 
 extension MediaSegmentType: SupportedCaseIterable {
 
+    /// In probable order of appearance during playback.
     static var supportedCases: [MediaSegmentType] {
-        allCases.filter { $0 != .unknown }
+        [.recap, .intro, .commercial, .outro, .preview]
     }
 }
 
