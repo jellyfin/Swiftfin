@@ -318,6 +318,10 @@ internal enum L10n {
   internal static let clip = L10n.tr("Localizable", "clip", fallback: "Clip")
   /// Close
   internal static let close = L10n.tr("Localizable", "close", fallback: "Close")
+  /// Close player
+  internal static let closePlayer = L10n.tr("Localizable", "closePlayer", fallback: "Close player")
+  /// Are you sure you want to close the player?
+  internal static let closePlayerWarning = L10n.tr("Localizable", "closePlayerWarning", fallback: "Are you sure you want to close the player?")
   /// Collection
   internal static let collection = L10n.tr("Localizable", "collection", fallback: "Collection")
   /// Collection folder
@@ -1036,8 +1040,6 @@ internal enum L10n {
   internal static let news = L10n.tr("Localizable", "news", fallback: "News")
   /// New user
   internal static let newUser = L10n.tr("Localizable", "newUser", fallback: "New user")
-  /// Next
-  internal static let next = L10n.tr("Localizable", "next", fallback: "Next")
   /// Next item
   internal static let nextItem = L10n.tr("Localizable", "nextItem", fallback: "Next item")
   /// Next Up
@@ -1200,8 +1202,6 @@ internal enum L10n {
   internal static let premiereDate = L10n.tr("Localizable", "premiereDate", fallback: "Premiere date")
   /// Preview image
   internal static let previewImage = L10n.tr("Localizable", "previewImage", fallback: "Preview image")
-  /// Previous
-  internal static let previous = L10n.tr("Localizable", "previous", fallback: "Previous")
   /// Previous item
   internal static let previousItem = L10n.tr("Localizable", "previousItem", fallback: "Previous item")
   /// Primary
@@ -1342,8 +1342,6 @@ internal enum L10n {
   internal static let resumeOffset = L10n.tr("Localizable", "resumeOffset", fallback: "Resume offset")
   /// Resume content seconds before the recorded resume time.
   internal static let resumeOffsetDescription = L10n.tr("Localizable", "resumeOffsetDescription", fallback: "Resume content seconds before the recorded resume time.")
-  /// Retrieving media information
-  internal static let retrievingMediaInformation = L10n.tr("Localizable", "retrievingMediaInformation", fallback: "Retrieving media information")
   /// Retry
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
   /// Reviews
