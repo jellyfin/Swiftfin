@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: Remove
+
 struct TintedMaterial: UIViewRepresentable {
 
     let tint: Color

@@ -29,18 +29,14 @@ class ToastProxy: ObservableObject {
     private(set) var systemName: String? = nil
     @Published
     private(set) var title: Text = Text(String.empty)
-//    @Published
-//    private(set) var messageID: String = ""
 
     private let pokeTimer = PokeIntervalTimer(defaultInterval: 2)
     private var pokeCancellable: AnyCancellable?
 
     init() {
         pokeCancellable = pokeTimer
-            .sink {
-                withAnimation {
-                    self.isPresenting = false
-                }
+            .sink { [weak self] in
+                self?.dismiss()
             }
     }
 
@@ -56,14 +52,16 @@ class ToastProxy: ObservableObject {
     }
 
     private func poke(equalsPrevious: Bool) {
-//        if equalsPrevious {
-//            messageID = UUID().uuidString
-//        }
-
-        withAnimation(.spring) {
+        withAnimation(.easeInOut(duration: 0.2)) {
             isPresenting = true
         }
 
         pokeTimer.poke()
+    }
+
+    func dismiss() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            isPresenting = false
+        }
     }
 }
