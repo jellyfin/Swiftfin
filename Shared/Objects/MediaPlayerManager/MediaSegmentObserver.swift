@@ -80,7 +80,7 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
                     .map { "\($0.type?.rawValue ?? "Unknown") \($0.startSeconds ?? .zero)-\($0.endSeconds ?? .zero)" }
                     .joined(separator: ", ")
 
-                logger.debug("[MediaSegments] fetched \(segments.count) segment(s) for item \(itemID): \(segmentDescriptions)")
+                // logger.debug("[MediaSegments] fetched \(segments.count) segment(s) for item \(itemID): \(segmentDescriptions)")
 
                 await MainActor.run {
                     self.segments = segments
@@ -121,7 +121,7 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
 
         guard let activeSegment, let segmentID = activeSegment.id else {
             if currentSegment != nil {
-                logger.debug("[MediaSegments] exited segment")
+                // logger.debug("[MediaSegments] exited segment")
                 setCurrentSegment(nil)
             }
             return
@@ -131,16 +131,16 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
             autoSkipSpentSegmentIDs.insert(segmentID)
 
             if isNaturalEntry(into: activeSegment, at: newSeconds) {
-                logger.debug("[MediaSegments] automatically skipping \(activeSegment.type?.rawValue ?? "Unknown") segment")
+                // logger.debug("[MediaSegments] automatically skipping \(activeSegment.type?.rawValue ?? "Unknown") segment")
                 skip(segment: activeSegment)
                 return
-            } else {
-                logger.debug("[MediaSegments] entered skip segment by seeking, offering button instead")
+            // } else {
+            //     logger.debug("[MediaSegments] entered skip segment by seeking, offering button instead")
             }
         }
 
         if activeSegment != currentSegment {
-            logger.debug("[MediaSegments] presenting skip button for \(activeSegment.type?.rawValue ?? "Unknown") segment")
+            // logger.debug("[MediaSegments] presenting skip button for \(activeSegment.type?.rawValue ?? "Unknown") segment")
             enteredCurrentSegmentNaturally = isNaturalEntry(into: activeSegment, at: newSeconds)
             setCurrentSegment(activeSegment)
         }
@@ -178,7 +178,7 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
             autoSkipSpentSegmentIDs.insert(segmentID)
         }
 
-        logger.debug("[MediaSegments] skipping to \(end)")
+        // logger.debug("[MediaSegments] skipping to \(end)")
 
         setCurrentSegment(nil)
         manager.seconds = end

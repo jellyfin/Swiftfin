@@ -41,12 +41,12 @@ struct SkipSegmentButton: View {
                 }
                 .buttonStyle(SkipSegmentButtonStyle())
                 .transition(.opacity)
-                .onAppear {
-                    Logger.swiftfin().debug("[MediaSegments] skip button appeared")
-                }
-                .onDisappear {
-                    Logger.swiftfin().debug("[MediaSegments] skip button disappeared")
-                }
+                // .onAppear {
+                //     Logger.swiftfin().debug("[MediaSegments] skip button appeared")
+                // }
+                // .onDisappear {
+                //     Logger.swiftfin().debug("[MediaSegments] skip button disappeared")
+                // }
             }
         }
         .animation(.easeOut(duration: 0.4), value: isPresented)
