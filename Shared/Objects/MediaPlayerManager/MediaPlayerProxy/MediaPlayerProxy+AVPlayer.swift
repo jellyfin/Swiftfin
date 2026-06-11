@@ -40,6 +40,11 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
     private var managerItemObserver: AnyCancellable?
     private var managerStateObserver: AnyCancellable?
 
+    /// Whether the seek to the item's start seconds on ready has
+    /// completed. The player emits times for the zero position
+    /// before being ready, which shouldn't be reported.
+    private var hasSetInitialSeconds = false
+
     weak var manager: MediaPlayerManager? {
         didSet {
             for var o in observers {
@@ -81,6 +86,8 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
             forInterval: CMTime(seconds: 1, preferredTimescale: 1000),
             queue: .main
         ) { newTime in
+            guard self.hasSetInitialSeconds else { return }
+
             let newSeconds = Duration.seconds(newTime.seconds)
 
             if !self.isScrubbing.wrappedValue {
@@ -161,6 +168,8 @@ extension AVMediaPlayerProxy {
     private func playNew(item: MediaPlayerItem) {
         let baseItem = item.baseItem
 
+        hasSetInitialSeconds = false
+
         let newAVPlayerItem = AVPlayerItem(url: item.url)
         newAVPlayerItem.externalMetadata = item.baseItem.avMetadata
 
@@ -210,6 +219,9 @@ extension AVMediaPlayerProxy {
                     toleranceBefore: .zero,
                     toleranceAfter: .zero,
                     completionHandler: { _ in
+                        if newValue == .readyToPlay {
+                            self.hasSetInitialSeconds = true
+                        }
                         self.play()
                     }
                 )

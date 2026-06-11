@@ -188,10 +188,21 @@ class MediaSegmentObserver: ViewModel, MediaPlayerObserver {
     // MARK: - presentation
 
     private func setCurrentSegment(_ segment: MediaSegmentDto?) {
-        standalonePresentationTask?.cancel()
         currentSegment = segment
+        startStandalonePresentationWindow()
+    }
 
-        guard let segment, let end = segment.endSeconds else {
+    /// Restarts the standalone presentation window for the current
+    /// segment, like when native player controls were toggled.
+    func refreshStandalonePresentation() {
+        guard currentSegment != nil else { return }
+        startStandalonePresentationWindow()
+    }
+
+    private func startStandalonePresentationWindow() {
+        standalonePresentationTask?.cancel()
+
+        guard let end = currentSegment?.endSeconds else {
             isStandalonePresentation = false
             return
         }
