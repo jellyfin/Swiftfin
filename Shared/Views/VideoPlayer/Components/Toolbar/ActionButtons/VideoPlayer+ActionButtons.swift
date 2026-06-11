@@ -77,6 +77,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             case .gestureLock:
                 GestureLock()
             #endif
+            case .pictureInPicture:
+                PictureInPicture()
             case .playbackSpeed:
                 PlaybackRateMenu()
 //            case .playbackQuality:

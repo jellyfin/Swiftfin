@@ -157,17 +157,8 @@ extension VLCMediaPlayerProxy {
 
             if !baseItem.isLiveStream {
                 configuration.startSeconds = startSeconds
-
-                let subtitleIndex = item.indexMap[item.selectedSubtitleStreamIndex] ?? -1
-
-                if mediaSource.transcodingURL != nil {
-                    configuration.audioIndex = .auto
-                } else {
-                    let audioIndex = item.indexMap[item.selectedAudioStreamIndex] ?? -1
-                    configuration.audioIndex = .absolute(audioIndex)
-                }
-
-                configuration.subtitleIndex = .absolute(subtitleIndex)
+                configuration.audioIndex = .absolute(mediaSource.defaultAudioStreamIndex ?? -1)
+                configuration.subtitleIndex = .absolute(mediaSource.defaultSubtitleStreamIndex ?? -1)
             }
 
             configuration.subtitleSize = .absolute(25 - Defaults[.VideoPlayer.Subtitle.subtitleSize])
@@ -177,7 +168,8 @@ extension VLCMediaPlayerProxy {
                 configuration.subtitleFont = .absolute(font)
             }
 
-            configuration.playbackChildren = item.subtitleStreams.sidecarSubtitles
+            configuration.playbackChildren = item.subtitleStreams
+                .filter { $0.deliveryMethod == .external }
                 .compactMap(\.asVLCPlaybackChild)
 
             return configuration
@@ -239,9 +231,6 @@ extension VLCMediaPlayerProxy {
                         case .playing:
                             manager.proxy?.isBuffering.value = false
                             manager.setPlaybackRequestStatus(status: .playing)
-
-                            let tracks = info.subtitleTracks.map { (index: $0.index, title: $0.title) }
-                            manager.playbackItem?.getSubtitleIndexes(subtitleTracks: tracks)
                         case .paused:
                             manager.setPlaybackRequestStatus(status: .paused)
                         }
