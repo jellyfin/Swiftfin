@@ -16,6 +16,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     #if os(iOS)
     case gestureLock
     #endif
+    case pictureInPicture
     case playbackSpeed
 //    case playbackQuality
     case playNextItem
@@ -34,6 +35,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .gestureLock:
             L10n.gestureLock
         #endif
+        case .pictureInPicture:
+            L10n.pictureInPicture
         case .playbackSpeed:
             L10n.playbackSpeed
 //        case .playbackQuality:
@@ -57,6 +60,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2"
         case .autoPlay: "play.fill"
+        case .pictureInPicture: "pip.enter"
         case .playbackSpeed: "speedometer"
 //        case .playbackQuality: "tv.circle"
         case .playNextItem: "forward.end.fill"
@@ -82,6 +86,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .audio: "speaker.wave.2.fill"
         case .autoPlay: "play.circle.fill"
         case .gestureLock: "lock.circle.fill"
+        case .pictureInPicture: "pip.enter"
         case .playbackSpeed: "speedometer"
 //        case .playbackQuality: "tv.circle.fill"
         case .playNextItem: "forward.end.circle.fill"

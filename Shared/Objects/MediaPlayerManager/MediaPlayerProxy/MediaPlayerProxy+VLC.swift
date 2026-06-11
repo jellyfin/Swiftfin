@@ -14,10 +14,13 @@ import VLCUI
 
 class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     MediaPlayerOffsetConfigurable,
+    // MediaPlayerPictureInPictureCapable, <- TODO: Enable for VLCKit 4.0
+    MediaPlayerPlaybackInfoProvider,
     MediaPlayerSubtitleConfigurable
 {
 
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
+    let playbackInfo: PublishedBox<MediaPlayerPlaybackInfo?> = .init(initialValue: nil)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
     let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
@@ -70,8 +73,11 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         vlcUIProxy.setRate(.absolute(rate))
     }
 
-    func setSeconds(_ seconds: Duration) {
+    /// - Note: VLCKit does not provide a seek completion callback.
+    ///   The completion fires synchronously and always reports success.
+    func setSeconds(_ seconds: Duration, completion: ((Bool) -> Void)? = nil) {
         vlcUIProxy.setSeconds(seconds)
+        completion?(true)
     }
 
     func setAudioStream(_ stream: MediaStream) {
@@ -85,6 +91,11 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     func setAspectFill(_ aspectFill: Bool) {
         vlcUIProxy.aspectFill(aspectFill ? 1 : 0)
     }
+
+    // TODO: Implement in VLCKit 4.0
+    // VLCKit 3.7.0 does not support PiP
+    // func startPiP() {}
+    // func stopPiP() {}
 
     func setAudioOffset(_ seconds: Duration) {
         vlcUIProxy.setAudioDelay(seconds)
@@ -180,6 +191,15 @@ extension VLCMediaPlayerProxy {
                             proxy.droppedFrames.value = info.statistics.lostPictures
                             proxy.corruptedFrames.value = info.statistics.demuxCorrupted
                         }
+
+                        if let proxy = manager.proxy as? MediaPlayerPlaybackInfoProvider {
+                            proxy.playbackInfo.value = MediaPlayerPlaybackInfo(
+                                droppedFrames: info.statistics.lostPictures,
+                                observedBitrateKbps: Double(info.statistics.inputBitrate) * 8 / 1000,
+                                indicatedBitrateKbps: Double(info.statistics.demuxBitrate) * 8 / 1000,
+                                bytesTransferred: Int64(info.statistics.readBytes)
+                            )
+                        }
                     }
                     .onStateUpdated { state, info in
                         manager.logger.trace("VLC state updated: \(state)")
@@ -192,8 +212,11 @@ extension VLCMediaPlayerProxy {
                             manager.proxy?.isBuffering.value = true
                         case .ended:
                             // Live streams will send stopped/ended events
-                            guard !playbackItem.baseItem.isLiveStream else { return }
+                            guard !(manager.playbackItem?.baseItem.isLiveStream ?? false) else { return }
                             manager.proxy?.isBuffering.value = false
+                            if let proxy = manager.proxy as? MediaPlayerPlaybackInfoProvider {
+                                proxy.playbackInfo.value = nil
+                            }
                             manager.ended()
                         case .stopped: ()
                         // Stopped is ignored as the `MediaPlayerManager`
@@ -201,6 +224,9 @@ extension VLCMediaPlayerProxy {
                         // than react to the event.
                         case .error:
                             manager.proxy?.isBuffering.value = false
+                            if let proxy = manager.proxy as? MediaPlayerPlaybackInfoProvider {
+                                proxy.playbackInfo.value = nil
+                            }
                             manager.error(ErrorMessage("VLC player is unable to perform playback"))
                         case .playing:
                             manager.proxy?.isBuffering.value = false
@@ -223,19 +249,19 @@ extension VLCMediaPlayerProxy {
                     }
                     .backport
                     .onChange(of: subtitleColor) { _, newValue in
-                        if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
+                        if let proxy = manager.proxy as? MediaPlayerSubtitleConfigurable {
                             proxy.setSubtitleColor(newValue)
                         }
                     }
                     .backport
                     .onChange(of: subtitleFontName) { _, newValue in
-                        if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
+                        if let proxy = manager.proxy as? MediaPlayerSubtitleConfigurable {
                             proxy.setSubtitleFontName(newValue)
                         }
                     }
                     .backport
                     .onChange(of: subtitleSize) { _, newValue in
-                        if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
+                        if let proxy = manager.proxy as? MediaPlayerSubtitleConfigurable {
                             proxy.setSubtitleFontSize(25 - newValue)
                         }
                     }

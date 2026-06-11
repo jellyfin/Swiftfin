@@ -302,7 +302,7 @@ extension Defaults.Keys {
         }
 
         static var videoPlayerType: Key<VideoPlayerType> {
-            UserKey("videoPlayerType", default: .swiftfin)
+            UserKey("videoPlayerType", default: .avPlayer)
         }
 
         enum Gesture {

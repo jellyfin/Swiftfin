@@ -10,8 +10,6 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: feature implementations
-//       - PiP
 // TODO: Chromecast proxy
 
 /// The proxy for top-down communication to an
@@ -27,7 +25,15 @@ protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
     func jumpForward(_ seconds: Duration)
     func jumpBackward(_ seconds: Duration)
     func setRate(_ rate: Float)
-    func setSeconds(_ seconds: Duration)
+    func setSeconds(_ seconds: Duration, completion: ((Bool) -> Void)?)
+}
+
+extension MediaPlayerProxy {
+
+    /// Convienence for `setSeconds` without a completion action.
+    func setSeconds(_ seconds: Duration) {
+        setSeconds(seconds, completion: nil)
+    }
 }
 
 @MainActor
@@ -49,13 +55,32 @@ protocol VideoMediaPlayerProxy: MediaPlayerProxy {
     var videoPlayerBody: Self.VideoPlayerBody { get }
 }
 
+@MainActor
 protocol MediaPlayerOffsetConfigurable {
     func setAudioOffset(_ seconds: Duration)
     func setSubtitleOffset(_ seconds: Duration)
+}
+
+@MainActor
+protocol MediaPlayerPictureInPictureCapable: AnyObject {
+    func startPiP()
+    func stopPiP()
 }
 
 protocol MediaPlayerSubtitleConfigurable {
     func setSubtitleColor(_ color: Color)
     func setSubtitleFontName(_ fontName: String)
     func setSubtitleFontSize(_ fontSize: Int)
+}
+
+struct MediaPlayerPlaybackInfo {
+    var droppedFrames: Int?
+    var observedBitrateKbps: Double?
+    var indicatedBitrateKbps: Double?
+    var bytesTransferred: Int64?
+}
+
+@MainActor
+protocol MediaPlayerPlaybackInfoProvider: AnyObject {
+    var playbackInfo: PublishedBox<MediaPlayerPlaybackInfo?> { get }
 }

@@ -1028,8 +1028,6 @@ internal enum L10n {
   internal static let mvc = L10n.tr("Localizable", "mvc", fallback: "MVC")
   /// Name
   internal static let name = L10n.tr("Localizable", "name", fallback: "Name")
-  /// Native
-  internal static let native = L10n.tr("Localizable", "native", fallback: "Native")
   /// Network timed out
   internal static let networkTimedOut = L10n.tr("Localizable", "networkTimedOut", fallback: "Network timed out")
   /// Never
@@ -1152,6 +1150,8 @@ internal enum L10n {
   internal static let photoAlbums = L10n.tr("Localizable", "photoAlbums", fallback: "Photo albums")
   /// Photos
   internal static let photos = L10n.tr("Localizable", "photos", fallback: "Photos")
+  /// Picture in picture
+  internal static let pictureInPicture = L10n.tr("Localizable", "pictureInPicture", fallback: "Picture in picture")
   /// Pin
   internal static let pin = L10n.tr("Localizable", "pin", fallback: "Pin")
   /// Pinch
