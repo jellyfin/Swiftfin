@@ -15,12 +15,35 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        @State
+        private var isPiPActive: Bool = false
+        @State
+        private var isPiPAvailable: Bool = false
+
+        private var systemImage: String {
+            if isPiPActive {
+                VideoPlayerActionButton.pictureInPicture.secondarySystemImage
+            } else {
+                VideoPlayerActionButton.pictureInPicture.systemImage
+            }
+        }
+
         var body: some View {
             if let pipProxy = manager.proxy as? MediaPlayerPictureInPictureCapable {
-                Button(L10n.pictureInPicture, systemImage: VideoPlayerActionButton.pictureInPicture.systemImage) {
-                    pipProxy.startPiP()
+                Group {
+                    if isPiPAvailable {
+                        Button(L10n.pictureInPicture, systemImage: systemImage) {
+                            if isPiPActive {
+                                pipProxy.stopPiP()
+                            } else {
+                                pipProxy.startPiP()
+                            }
+                        }
+                        .videoPlayerActionButtonTransition()
+                    }
                 }
-                .videoPlayerActionButtonTransition()
+                .assign(pipProxy.isPiPActive.$value, to: $isPiPActive)
+                .assign(pipProxy.isPiPAvailable.$value, to: $isPiPAvailable)
             }
         }
     }

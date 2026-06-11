@@ -31,14 +31,14 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         private func makeProvider(with bitrate: PlaybackBitrate, for playbackItem: MediaPlayerItem) -> MediaPlayerItemProvider {
             var adjustedBaseItem = playbackItem.baseItem
             adjustedBaseItem.userData?.playbackPositionTicks = manager.seconds.ticks
-            let mediaSource = playbackItem.mediaSource
 
             return MediaPlayerItemProvider(
                 item: adjustedBaseItem,
                 function: { baseItem in
                     try await MediaPlayerItem.build(
                         for: baseItem,
-                        mediaSource: mediaSource,
+                        mediaSource: playbackItem.mediaSource,
+                        videoPlayerType: manager.videoPlayerType,
                         requestedBitrate: bitrate
                     )
                 }

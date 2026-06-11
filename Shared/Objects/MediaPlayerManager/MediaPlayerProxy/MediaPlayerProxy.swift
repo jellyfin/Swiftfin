@@ -30,7 +30,7 @@ protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
 
 extension MediaPlayerProxy {
 
-    /// Convienence for `setSeconds` without a completion action.
+    /// Convenience for `setSeconds` without a completion action.
     func setSeconds(_ seconds: Duration) {
         setSeconds(seconds, completion: nil)
     }
@@ -41,6 +41,7 @@ protocol VideoMediaPlayerProxy: MediaPlayerProxy {
 
     associatedtype VideoPlayerBody: View
 
+    var videoPlayerType: VideoPlayerType { get }
     var videoSize: PublishedBox<CGSize> { get }
     var droppedFrames: PublishedBox<Int> { get }
     var corruptedFrames: PublishedBox<Int> { get }
@@ -63,10 +64,13 @@ protocol MediaPlayerOffsetConfigurable {
 
 @MainActor
 protocol MediaPlayerPictureInPictureCapable: AnyObject {
+    var isPiPActive: PublishedBox<Bool> { get }
+    var isPiPAvailable: PublishedBox<Bool> { get }
     func startPiP()
     func stopPiP()
 }
 
+@MainActor
 protocol MediaPlayerSubtitleConfigurable {
     func setSubtitleColor(_ color: Color)
     func setSubtitleFontName(_ fontName: String)

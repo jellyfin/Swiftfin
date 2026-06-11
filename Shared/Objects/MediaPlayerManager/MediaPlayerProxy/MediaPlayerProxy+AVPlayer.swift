@@ -8,7 +8,6 @@
 
 import AVFoundation
 import AVKit
-import Combine
 import Defaults
 import Foundation
 @preconcurrency import JellyfinAPI
@@ -21,92 +20,65 @@ class AVMediaPlayerProxy: NSObject,
     MediaPlayerPlaybackInfoProvider
 {
 
+    let videoPlayerType: VideoPlayerType = .avPlayer
+
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
-    var isScrubbing: Binding<Bool> = .constant(false)
-    var scrubbedSeconds: Binding<Duration> = .constant(.zero)
     let playbackInfo: PublishedBox<MediaPlayerPlaybackInfo?> = .init(initialValue: nil)
-    var videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
+    let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
     let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
+
+    let isPiPActive: PublishedBox<Bool> = .init(initialValue: false)
+    let isPiPAvailable: PublishedBox<Bool> = .init(initialValue: false)
+
+    var isScrubbing: Binding<Bool> = .constant(false)
+    var scrubbedSeconds: Binding<Duration> = .constant(.zero)
 
     let avPlayerLayer: AVPlayerLayer
     let player: AVPlayer
 
     private(set) var pipController: AVPictureInPictureController?
 
-    private var statusObserver: NSKeyValueObservation?
-    private var timeControlStatusObserver: NSKeyValueObservation?
-    private var videoSizeObserver: NSKeyValueObservation?
-    private var timeObserver: Any?
-    private var itemEndObserver: NSObjectProtocol?
-    private var accessLogObserver: NSObjectProtocol?
-    private var managerItemObserver: AnyCancellable?
-    private var managerStateObserver: AnyCancellable?
+    private var pendingSeekSeconds: Duration?
 
     private var cachedAudioStreams: [MediaStream] = []
     private var cachedSubtitleStreams: [MediaStream] = []
     private var cachedAudioGroup: AVMediaSelectionGroup?
     private var cachedSubtitleGroup: AVMediaSelectionGroup?
 
-    var observers: [any MediaPlayerObserver] = [
-        NowPlayableObserver(),
-    ]
+    private var pipAvailableObserver: NSKeyValueObservation?
+    private var statusObserver: NSKeyValueObservation?
+    private var timeControlStatusObserver: NSKeyValueObservation?
+    private var videoSizeObserver: NSKeyValueObservation?
+    private var timeObserver: Any?
+    private var itemEndObserver: NSObjectProtocol?
+    private var accessLogObserver: NSObjectProtocol?
 
     weak var manager: MediaPlayerManager? {
         didSet {
             for var o in observers {
                 o.manager = manager
             }
-
-            if let manager {
-                managerItemObserver = manager.$playbackItem
-                    .sink { [weak self] playbackItem in
-                        if let playbackItem {
-                            self?.playNew(item: playbackItem)
-                        }
-                    }
-
-                managerStateObserver = manager.$state
-                    .sink { [weak self] state in
-                        switch state {
-                        case .stopped:
-                            self?.playbackStopped()
-                        default: break
-                        }
-                    }
-            } else {
-                managerItemObserver?.cancel()
-                managerStateObserver?.cancel()
-            }
         }
     }
+
+    var observers: [any MediaPlayerObserver] = [
+        NowPlayableObserver(),
+    ]
 
     override init() {
         self.player = AVPlayer()
         self.avPlayerLayer = AVPlayerLayer(player: player)
+
         super.init()
 
         player.appliesMediaSelectionCriteriaAutomatically = false
+
+        #if os(iOS)
+        player.usesExternalPlaybackWhileExternalScreenIsActive = true
+        #endif
+
         addTimeObserver()
-    }
-
-    private func addTimeObserver() {
-        if let timeObserver {
-            player.removeTimeObserver(timeObserver)
-            self.timeObserver = nil
-        }
-
-        timeObserver = player.addPeriodicTimeObserver(
-            forInterval: CMTime(seconds: 1, preferredTimescale: 1000),
-            queue: .main
-        ) { [weak self] newTime in
-            guard let self, newTime.isNumeric else { return }
-            let newSeconds = Duration.seconds(newTime.seconds)
-            if !isScrubbing.wrappedValue {
-                scrubbedSeconds.wrappedValue = newSeconds
-            }
-            manager?.seconds = newSeconds
-        }
     }
 
     func play() {
@@ -122,64 +94,110 @@ class AVMediaPlayerProxy: NSObject,
     }
 
     func jumpForward(_ seconds: Duration) {
-        guard player.currentItem?.status == .readyToPlay else { return }
+        guard player.currentItem?.status == .readyToPlay else {
+            setSeconds((manager?.seconds ?? .zero) + seconds)
+            return
+        }
+
         let currentTime = player.currentTime()
         let newTime = currentTime + CMTime(seconds: seconds.seconds, preferredTimescale: 1)
+
         player.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
     func jumpBackward(_ seconds: Duration) {
-        guard player.currentItem?.status == .readyToPlay else { return }
+        guard player.currentItem?.status == .readyToPlay else {
+            setSeconds(max(.zero, (manager?.seconds ?? .zero) - seconds))
+            return
+        }
+
         let currentTime = player.currentTime()
         let newTime = max(.zero, currentTime - CMTime(seconds: seconds.seconds, preferredTimescale: 1))
+
         player.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
     func setRate(_ rate: Float) {
-        // `play()` applies the rate when playback resumes so don't set rate if paused
+        // `play()` applies the rate when playback resumes while setting one during a pause forces a resume
         guard player.rate != 0 else { return }
         player.rate = rate
     }
 
     func setSeconds(_ seconds: Duration, completion: ((Bool) -> Void)? = nil) {
         guard player.currentItem?.status == .readyToPlay else {
-            completion?(false)
+            pendingSeekSeconds = seconds
+            completion?(true)
             return
         }
+
         let time = CMTime(seconds: seconds.seconds, preferredTimescale: 1)
+
         player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { finished in
             completion?(finished)
         }
+    }
+
+    func setAudioStream(_ stream: MediaStream) {
+        guard let item = player.currentItem,
+              let group = cachedAudioGroup
+        else { return }
+
+        let targetIndex = stream.index ?? -1
+
+        guard let option = selectionOption(matching: targetIndex, in: group, from: cachedAudioStreams) else { return }
+
+        item.select(option, in: group)
+    }
+
+    func setSubtitleStream(_ stream: MediaStream) {
+        guard let item = player.currentItem,
+              let group = cachedSubtitleGroup
+        else { return }
+
+        let targetIndex = stream.index ?? -1
+
+        if targetIndex == -1 {
+            item.select(nil, in: group)
+            return
+        }
+
+        guard let option = selectionOption(matching: targetIndex, in: group, from: cachedSubtitleStreams) else { return }
+
+        item.select(option, in: group)
     }
 
     func setAspectFill(_ aspectFill: Bool) {
         avPlayerLayer.videoGravity = aspectFill ? .resizeAspectFill : .resizeAspect
     }
 
-    func setAudioStream(_ stream: MediaStream) {
-        guard let item = player.currentItem,
-              let group = cachedAudioGroup else { return }
-        let targetIndex = stream.index ?? -1
-        guard let matchingOptionIndex = cachedAudioStreams.firstIndex(where: { $0.index == targetIndex }),
-              matchingOptionIndex < group.options.count else { return }
-        item.select(group.options[matchingOptionIndex], in: group)
-    }
-
-    func setSubtitleStream(_ stream: MediaStream) {
-        guard let item = player.currentItem,
-              let group = cachedSubtitleGroup else { return }
-        let targetIndex = stream.index ?? -1
-        if targetIndex == -1 {
-            item.select(nil, in: group)
-            return
+    private func selectionOption(
+        matching index: Int,
+        in group: AVMediaSelectionGroup,
+        from streams: [MediaStream]
+    ) -> AVMediaSelectionOption? {
+        if streams.count == group.options.count,
+           let position = streams.firstIndex(where: { $0.index == index })
+        {
+            return group.options[position]
         }
-        guard let matchingOptionIndex = cachedSubtitleStreams.firstIndex(where: { $0.index == targetIndex }),
-              matchingOptionIndex < group.options.count else { return }
-        item.select(group.options[matchingOptionIndex], in: group)
+
+        if group.options.count == 1 {
+            return group.options.first
+        }
+
+        if let language = streams.first(where: { $0.index == index })?.language {
+            return AVMediaSelectionGroup.mediaSelectionOptions(
+                from: group.options,
+                filteredAndSortedAccordingToPreferredLanguages: [language]
+            ).first
+        }
+
+        return nil
     }
 
+    @ViewBuilder
     var videoPlayerBody: some View {
-        AVPlayerWrapperView()
+        AVPlayerView()
             .environmentObject(self)
     }
 }
@@ -195,9 +213,19 @@ extension AVMediaPlayerProxy {
         pipController?.delegate = self
         pipController?.requiresLinearPlayback = false
 
-        #if !os(tvOS)
+        #if os(iOS)
         pipController?.canStartPictureInPictureAutomaticallyFromInline = false
         #endif
+
+        pipAvailableObserver = pipController?.observe(
+            \.isPictureInPicturePossible,
+            options: [.initial, .new]
+        ) { [weak self] controller, _ in
+            let isAvailable = controller.isPictureInPicturePossible
+            DispatchQueue.main.async {
+                self?.isPiPAvailable.value = isAvailable
+            }
+        }
     }
 
     func startPiP() {
@@ -207,19 +235,43 @@ extension AVMediaPlayerProxy {
     func stopPiP() {
         pipController?.stopPictureInPicture()
     }
+
+    private func teardownPiP() {
+        if isPiPActive.value {
+            pipController?.stopPictureInPicture()
+        }
+
+        isPiPActive.value = false
+        isPiPAvailable.value = false
+
+        pipAvailableObserver?.invalidate()
+        pipAvailableObserver = nil
+    }
 }
 
 extension AVMediaPlayerProxy: AVPictureInPictureControllerDelegate {
 
-    nonisolated func pictureInPictureControllerWillStartPictureInPicture(_ controller: AVPictureInPictureController) {}
-    nonisolated func pictureInPictureControllerDidStartPictureInPicture(_ controller: AVPictureInPictureController) {}
-    nonisolated func pictureInPictureControllerWillStopPictureInPicture(_ controller: AVPictureInPictureController) {}
-    nonisolated func pictureInPictureControllerDidStopPictureInPicture(_ controller: AVPictureInPictureController) {}
+    nonisolated func pictureInPictureControllerDidStartPictureInPicture(_ controller: AVPictureInPictureController) {
+        Task { @MainActor in
+            isPiPActive.value = true
+        }
+    }
+
+    nonisolated func pictureInPictureControllerDidStopPictureInPicture(_ controller: AVPictureInPictureController) {
+        Task { @MainActor in
+            isPiPActive.value = false
+        }
+    }
 
     nonisolated func pictureInPictureController(
         _ controller: AVPictureInPictureController,
         failedToStartPictureInPictureWithError error: Error
-    ) {}
+    ) {
+        Task { @MainActor in
+            isPiPActive.value = false
+            manager?.logger.error("Unable to start Picture in Picture: \(error.localizedDescription)")
+        }
+    }
 
     nonisolated func pictureInPictureController(
         _ controller: AVPictureInPictureController,
@@ -233,7 +285,32 @@ extension AVMediaPlayerProxy: AVPictureInPictureControllerDelegate {
 
 extension AVMediaPlayerProxy {
 
-    private func playbackStopped() {
+    func playNew(item: MediaPlayerItem) {
+        let playerItem = AVPlayerItem(url: item.url)
+        playerItem.externalMetadata = item.baseItem.avMetadata
+
+        removeItemObservers()
+        addTimeObserver()
+
+        pendingSeekSeconds = nil
+
+        cachedAudioStreams = item.audioStreams.filter { $0.isExternal != true }
+        cachedSubtitleStreams = item.subtitleStreams.filter { $0.isExternal != true }
+
+        player.replaceCurrentItem(with: playerItem)
+
+        observeTimeControlStatus()
+        observeVideoSize(of: playerItem)
+        observeItemEnd(of: playerItem)
+        observeAccessLog(of: playerItem)
+        observeStatus(of: playerItem, for: item)
+    }
+
+    func playbackStopped() {
+        teardownPiP()
+
+        pendingSeekSeconds = nil
+
         player.pause()
 
         if let timeObserver {
@@ -241,10 +318,40 @@ extension AVMediaPlayerProxy {
             self.timeObserver = nil
         }
 
+        removeItemObservers()
+    }
+
+    private func addTimeObserver() {
+        if let timeObserver {
+            player.removeTimeObserver(timeObserver)
+            self.timeObserver = nil
+        }
+
+        timeObserver = player.addPeriodicTimeObserver(
+            forInterval: CMTime(seconds: 1, preferredTimescale: 1000),
+            queue: .main
+        ) { [weak self] newTime in
+            MainActor.assumeIsolated {
+                guard let self, newTime.isNumeric else { return }
+
+                let newSeconds = Duration.seconds(newTime.seconds)
+
+                if !self.isScrubbing.wrappedValue {
+                    self.scrubbedSeconds.wrappedValue = newSeconds
+                }
+
+                self.manager?.seconds = newSeconds
+            }
+        }
+    }
+
+    private func removeItemObservers() {
         statusObserver?.invalidate()
         statusObserver = nil
+
         timeControlStatusObserver?.invalidate()
         timeControlStatusObserver = nil
+
         videoSizeObserver?.invalidate()
         videoSizeObserver = nil
 
@@ -252,6 +359,7 @@ extension AVMediaPlayerProxy {
             NotificationCenter.default.removeObserver(itemEndObserver)
             self.itemEndObserver = nil
         }
+
         if let accessLogObserver {
             NotificationCenter.default.removeObserver(accessLogObserver)
             self.accessLogObserver = nil
@@ -259,40 +367,16 @@ extension AVMediaPlayerProxy {
 
         cachedAudioGroup = nil
         cachedSubtitleGroup = nil
+
         playbackInfo.value = nil
     }
 
-    private func playNew(item: MediaPlayerItem) {
-        let baseItem = item.baseItem
-
-        let newAVPlayerItem = AVPlayerItem(url: item.url)
-        newAVPlayerItem.externalMetadata = item.baseItem.avMetadata
-
-        // Ensure the time observer is active for the new item
-        addTimeObserver()
-
-        statusObserver?.invalidate()
-        videoSizeObserver?.invalidate()
-        timeControlStatusObserver?.invalidate()
-        if let itemEndObserver {
-            NotificationCenter.default.removeObserver(itemEndObserver)
-        }
-        if let accessLogObserver {
-            NotificationCenter.default.removeObserver(accessLogObserver)
-        }
-        cachedAudioGroup = nil
-        cachedSubtitleGroup = nil
-        playbackInfo.value = nil
-
-        // Cache stream lists for track selection mapping
-        cachedAudioStreams = item.audioStreams
-        cachedSubtitleStreams = item.subtitleStreams
-
-        player.replaceCurrentItem(with: newAVPlayerItem)
-
+    private func observeTimeControlStatus() {
         timeControlStatusObserver = player.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
             guard let self else { return }
+
             let status = player.timeControlStatus
+
             DispatchQueue.main.async {
                 switch status {
                 case .waitingToPlayAtSpecifiedRate:
@@ -307,9 +391,12 @@ extension AVMediaPlayerProxy {
                 }
             }
         }
+    }
 
-        videoSizeObserver = newAVPlayerItem.observe(\.presentationSize, options: [.new]) { [weak self] playerItem, _ in
+    private func observeVideoSize(of playerItem: AVPlayerItem) {
+        videoSizeObserver = playerItem.observe(\.presentationSize, options: [.new]) { [weak self] playerItem, _ in
             guard let self else { return }
+
             DispatchQueue.main.async {
                 let size = playerItem.presentationSize
                 if size != .zero {
@@ -317,89 +404,104 @@ extension AVMediaPlayerProxy {
                 }
             }
         }
+    }
 
+    private func observeItemEnd(of playerItem: AVPlayerItem) {
         itemEndObserver = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
-            object: newAVPlayerItem,
+            object: playerItem,
             queue: .main
         ) { [weak self] _ in
-            guard let self, !(self.manager?.playbackItem?.baseItem.isLiveStream ?? false) else { return }
+            MainActor.assumeIsolated {
+                guard let self, !(self.manager?.playbackItem?.baseItem.isLiveStream ?? false) else { return }
 
-            if let runtime = self.manager?.item.runtime {
-                self.manager?.seconds = runtime
-            } else if let duration = self.player.currentItem?.duration, duration.isNumeric {
-                self.manager?.seconds = Duration.seconds(duration.seconds)
+                if let runtime = self.manager?.item.runtime {
+                    self.manager?.seconds = runtime
+                } else if let duration = self.player.currentItem?.duration, duration.isNumeric {
+                    self.manager?.seconds = Duration.seconds(duration.seconds)
+                }
+
+                self.manager?.ended()
             }
-            self.manager?.ended()
         }
+    }
 
+    private func observeAccessLog(of playerItem: AVPlayerItem) {
         accessLogObserver = NotificationCenter.default.addObserver(
             forName: AVPlayerItem.newAccessLogEntryNotification,
-            object: newAVPlayerItem,
+            object: playerItem,
             queue: .main
         ) { [weak self] notification in
-            guard let self,
-                  let playerItem = notification.object as? AVPlayerItem,
-                  let event = playerItem.accessLog()?.events.last else { return }
+            MainActor.assumeIsolated {
+                guard let self,
+                      let playerItem = notification.object as? AVPlayerItem,
+                      let event = playerItem.accessLog()?.events.last
+                else { return }
 
-            let dropped = event.numberOfDroppedVideoFrames >= 0 ? event.numberOfDroppedVideoFrames : nil
-            let observed = event.observedBitrate >= 0 ? event.observedBitrate / 1000 : nil
-            let indicated = event.indicatedBitrate >= 0 ? event.indicatedBitrate / 1000 : nil
-            let bytes = event.numberOfBytesTransferred >= 0 ? event.numberOfBytesTransferred : nil
+                let dropped = event.numberOfDroppedVideoFrames >= 0 ? event.numberOfDroppedVideoFrames : nil
+                let observed = event.observedBitrate >= 0 ? event.observedBitrate / 1000 : nil
+                let indicated = event.indicatedBitrate >= 0 ? event.indicatedBitrate / 1000 : nil
+                let bytes = event.numberOfBytesTransferred >= 0 ? event.numberOfBytesTransferred : nil
 
-            self.playbackInfo.value = MediaPlayerPlaybackInfo(
-                droppedFrames: dropped,
-                observedBitrateKbps: observed,
-                indicatedBitrateKbps: indicated,
-                bytesTransferred: bytes
-            )
+                if let dropped {
+                    self.droppedFrames.value = dropped
+                }
+
+                self.playbackInfo.value = MediaPlayerPlaybackInfo(
+                    droppedFrames: dropped,
+                    observedBitrateKbps: observed,
+                    indicatedBitrateKbps: indicated,
+                    bytesTransferred: bytes
+                )
+            }
         }
+    }
 
-        statusObserver = newAVPlayerItem.observe(\.status, options: [.new]) { [weak self] playerItem, _ in
+    private func observeStatus(of playerItem: AVPlayerItem, for item: MediaPlayerItem) {
+        statusObserver = playerItem.observe(\.status, options: [.new]) { [weak self] playerItem, _ in
             guard let self else { return }
+
             switch playerItem.status {
             case .failed:
-                if let error = self.player.error {
-                    DispatchQueue.main.async {
-                        self.manager?.error(ErrorMessage("AVPlayer error: \(error.localizedDescription)"))
-                    }
+                let error = playerItem.error ?? self.player.error
+                DispatchQueue.main.async {
+                    self.manager?.error(ErrorMessage("AVPlayer error: \(error?.localizedDescription ?? L10n.unknownError)"))
                 }
             case .readyToPlay:
-                let startSeconds = max(
-                    .zero,
-                    (baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset])
-                )
-                DispatchQueue.main.async {
-                    Task { @MainActor [weak self] in
-                        guard let self else { return }
-
-                        do {
-                            self.cachedAudioGroup = try await newAVPlayerItem.asset.loadMediaSelectionGroup(for: .audible)
-                        } catch {
-                            self.cachedAudioGroup = nil
-                        }
-                        do {
-                            self.cachedSubtitleGroup = try await newAVPlayerItem.asset.loadMediaSelectionGroup(for: .legible)
-                        } catch {
-                            self.cachedSubtitleGroup = nil
-                        }
-
-                        // Apply initial stream selections if available
-                        self.setAudioStream(.init(index: item.selectedAudioStreamIndex))
-                        self.setSubtitleStream(.init(index: item.selectedSubtitleStreamIndex ?? -1))
-
-                        self.player.seek(
-                            to: CMTimeMake(value: startSeconds.components.seconds, timescale: 1),
-                            toleranceBefore: .zero,
-                            toleranceAfter: .zero
-                        ) { [weak self] _ in
-                            DispatchQueue.main.async {
-                                self?.player.rate = self?.manager?.rate ?? 1.0
-                            }
-                        }
-                    }
+                Task { @MainActor [weak self] in
+                    await self?.itemDidBecomeReady(playerItem: playerItem, item: item)
                 }
             default: ()
+            }
+        }
+    }
+
+    private func itemDidBecomeReady(playerItem: AVPlayerItem, item: MediaPlayerItem) async {
+        let startSeconds = pendingSeekSeconds ?? max(
+            .zero,
+            (item.baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset])
+        )
+        pendingSeekSeconds = nil
+
+        cachedAudioGroup = try? await playerItem.asset.loadMediaSelectionGroup(for: .audible)
+        cachedSubtitleGroup = try? await playerItem.asset.loadMediaSelectionGroup(for: .legible)
+
+        setAudioStream(.init(index: item.selectedAudioStreamIndex))
+        setSubtitleStream(.init(index: item.selectedSubtitleStreamIndex ?? -1))
+
+        player.seek(
+            to: CMTimeMake(value: startSeconds.components.seconds, timescale: 1),
+            toleranceBefore: .zero,
+            toleranceAfter: .zero
+        ) { [weak self] _ in
+            DispatchQueue.main.async {
+                guard let self,
+                      let manager = self.manager,
+                      manager.state != .stopped,
+                      manager.playbackRequestStatus == .playing
+                else { return }
+
+                self.player.rate = manager.rate
             }
         }
     }
@@ -409,20 +511,38 @@ extension AVMediaPlayerProxy {
 
 extension AVMediaPlayerProxy {
 
-    struct AVPlayerView: UIViewRepresentable {
+    struct AVPlayerView: View {
 
-        @EnvironmentObject
-        private var proxy: AVMediaPlayerProxy
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var proxy: AVMediaPlayerProxy
+
+        var body: some View {
+            AVPlayerLayerView(proxy: proxy)
+                .onReceive(manager.$playbackItem) { playbackItem in
+                    guard let playbackItem else { return }
+                    proxy.playNew(item: playbackItem)
+                }
+                .onReceive(manager.$state) { state in
+                    guard state == .stopped else { return }
+                    proxy.playbackStopped()
+                }
+                .backport
+                .onChange(of: manager.rate) { _, newValue in
+                    proxy.setRate(newValue)
+                }
+        }
+    }
+
+    private struct AVPlayerLayerView: UIViewRepresentable {
+
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
+
+        let proxy: AVMediaPlayerProxy
 
         func makeUIView(context: Context) -> UIView {
-            AVPlayerUIView(proxy: proxy)
-        }
-
-        func updateUIView(_ uiView: UIView, context: Context) {
             proxy.isScrubbing = Binding(
                 get: { containerState.isScrubbing },
                 set: { containerState.isScrubbing = $0 }
@@ -431,23 +551,11 @@ extension AVMediaPlayerProxy {
                 get: { containerState.scrubbedSeconds.value },
                 set: { containerState.scrubbedSeconds.value = $0 }
             )
+
+            return AVPlayerUIView(proxy: proxy)
         }
-    }
 
-    struct AVPlayerWrapperView: View {
-
-        @EnvironmentObject
-        private var proxy: AVMediaPlayerProxy
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-
-        var body: some View {
-            AVPlayerView()
-                .backport
-                .onChange(of: manager.rate) { _, newRate in
-                    proxy.setRate(newRate)
-                }
-        }
+        func updateUIView(_ uiView: UIView, context: Context) {}
     }
 
     private class AVPlayerUIView: UIView {

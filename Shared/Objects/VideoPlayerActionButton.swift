@@ -74,6 +74,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .aspectFill: "arrow.down.right.and.arrow.up.left"
         case .audio: "speaker.wave.2"
         case .autoPlay: "stop.fill"
+        case .pictureInPicture: "pip.exit"
         case .subtitles: "captions.bubble"
         default:
             systemImage
@@ -101,6 +102,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .audio: "speaker.wave.2"
         case .autoPlay: "stop.circle"
         case .gestureLock: "lock.open.fill"
+        case .pictureInPicture: "pip.exit"
         case .subtitles: "captions.bubble"
         default:
             systemImage

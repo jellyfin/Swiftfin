@@ -19,6 +19,8 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     MediaPlayerSubtitleConfigurable
 {
 
+    let videoPlayerType: VideoPlayerType = .vlc
+
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
     let playbackInfo: PublishedBox<MediaPlayerPlaybackInfo?> = .init(initialValue: nil)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)

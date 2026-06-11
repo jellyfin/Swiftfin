@@ -101,6 +101,7 @@ final class MediaPlayerManager: ViewModel {
             if let playbackItem {
                 self.item = playbackItem.baseItem
                 seconds = playbackItem.baseItem.startSeconds ?? .zero
+                playbackRequestStatus = .playing
                 playbackItem.manager = self
                 setSupplements()
 
@@ -171,6 +172,10 @@ final class MediaPlayerManager: ViewModel {
                 proxy.manager = self
             }
         }
+    }
+
+    var videoPlayerType: VideoPlayerType {
+        (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType ?? Defaults[.VideoPlayer.videoPlayerType]
     }
 
     private var itemBuildTask: AnyCancellable?

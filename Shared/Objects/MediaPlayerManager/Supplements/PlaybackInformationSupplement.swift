@@ -73,7 +73,7 @@ extension PlaybackInformationSupplement {
                 .fontWeight(.semibold)
                 .padding(.vertical, 4)
 
-            LabeledContent(L10n.videoPlayer, value: Defaults[.VideoPlayer.videoPlayerType].displayTitle)
+            LabeledContent(L10n.videoPlayer, value: manager.videoPlayerType.displayTitle)
 
             if let playMethod = viewModel.currentSession?.playMethodDisplayTitle {
                 LabeledContent(L10n.method, value: playMethod)
@@ -103,6 +103,12 @@ extension PlaybackInformationSupplement {
                 if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
                     LabeledContent(L10n.droppedFrames, value: "\(proxy.droppedFrames.value)")
                     LabeledContent(L10n.corruptedFrames, value: "\(proxy.corruptedFrames.value)")
+                }
+
+                if let proxy = manager.proxy as? MediaPlayerPlaybackInfoProvider,
+                   let observedBitrate = proxy.playbackInfo.value?.observedBitrateKbps
+                {
+                    LabeledContent(L10n.bitrate, value: Int(observedBitrate * 1000).formatted(.bitRate))
                 }
             }
         }
