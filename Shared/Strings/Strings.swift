@@ -702,6 +702,8 @@ internal enum L10n {
   internal static let error = L10n.tr("Localizable", "error", fallback: "Error")
   /// Error details
   internal static let errorDetails = L10n.tr("Localizable", "errorDetails", fallback: "Error details")
+  /// Evaluate
+  internal static let evaluate = L10n.tr("Localizable", "evaluate", fallback: "Evaluate")
   /// Every
   internal static let every = L10n.tr("Localizable", "every", fallback: "Every")
   /// Everyday

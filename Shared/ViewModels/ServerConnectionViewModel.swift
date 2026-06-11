@@ -22,6 +22,8 @@ final class ServerConnectionViewModel: ViewModel {
     @Published
     private(set) var activeConnection: ServerConnection?
     @Published
+    private(set) var isEvaluatingAutoSwitching: Bool = false
+    @Published
     var isAutoSwitchingEnabled: Bool {
         didSet {
             ServerConnectionStore.setAutoSwitchingEnabled(isAutoSwitchingEnabled, for: server.id)
@@ -164,6 +166,20 @@ final class ServerConnectionViewModel: ViewModel {
             testStates[connection.id] = state
             return state
         }
+    }
+
+    func evaluateAutoSwitching() async {
+        guard !isEvaluatingAutoSwitching else { return }
+
+        isEvaluatingAutoSwitching = true
+        defer { isEvaluatingAutoSwitching = false }
+
+        await Container.shared.serverConnectionManager().evaluate(
+            server: server,
+            accessToken: userSession?.user.accessToken,
+            reason: .manual
+        )
+        reloadConnections()
     }
 
     func saveConnection(_ connection: ServerConnection) async -> ServerConnection.TestState {

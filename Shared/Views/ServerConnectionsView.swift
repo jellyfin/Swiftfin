@@ -66,6 +66,25 @@ struct ServerConnectionsView: View {
         Form(systemImage: "network") {
             Section {
                 Toggle(L10n.autoSwitch, isOn: $viewModel.isAutoSwitchingEnabled)
+
+                if viewModel.isAutoSwitchingEnabled {
+                    Button {
+                        Task {
+                            await viewModel.evaluateAutoSwitching()
+                        }
+                    } label: {
+                        HStack {
+                            Text(L10n.evaluate)
+
+                            Spacer()
+
+                            if viewModel.isEvaluatingAutoSwitching {
+                                ProgressView()
+                            }
+                        }
+                    }
+                    .disabled(viewModel.isEvaluatingAutoSwitching)
+                }
             } footer: {
                 Text(L10n.autoSwitchDescription)
             }

@@ -78,7 +78,20 @@ final class ServerConnectionManager {
 
     func evaluateCurrentSession(reason: ServerConnectionChange.Reason) async {
         guard let session = Container.shared.userSessionManager().currentSession else { return }
-        guard ServerConnectionStore.isAutoSwitchingEnabled(for: session.server.id) else { return }
+
+        await evaluate(
+            server: session.server,
+            accessToken: session.user.accessToken,
+            reason: reason
+        )
+    }
+
+    func evaluate(
+        server: ServerState,
+        accessToken: String?,
+        reason: ServerConnectionChange.Reason
+    ) async {
+        guard ServerConnectionStore.isAutoSwitchingEnabled(for: server.id) else { return }
 
         guard !Container.shared.userSessionManager().hasActivePlayback else {
             logger.info("Skipped server connection switch during active playback")
@@ -88,11 +101,11 @@ final class ServerConnectionManager {
         let currentContext = context
         guard currentContext.isSatisfied else { return }
 
-        let connections = ServerConnectionStore.connections(for: session.server)
+        let connections = ServerConnectionStore.connections(for: server)
         let candidates = connections.filter { $0.matches(currentContext) }
         guard candidates.isNotEmpty else { return }
 
-        let currentConnection = ServerConnectionStore.activeConnection(for: session.server)
+        let currentConnection = ServerConnectionStore.activeConnection(for: server)
 
         for connection in candidates {
             if Task.isCancelled { return }
@@ -100,15 +113,15 @@ final class ServerConnectionManager {
             do {
                 _ = try await test(
                     connection: connection,
-                    accessToken: session.user.accessToken,
-                    matchingServerID: session.server.id
+                    accessToken: accessToken,
+                    matchingServerID: server.id
                 )
                 guard currentConnection?.id != connection.id else { return }
 
-                ServerConnectionStore.setActiveConnection(connection, for: session.server)
+                ServerConnectionStore.setActiveConnection(connection, for: server)
 
                 let change = ServerConnectionChange(
-                    server: session.server,
+                    server: server,
                     previous: currentConnection,
                     current: connection,
                     reason: reason

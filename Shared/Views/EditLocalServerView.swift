@@ -51,11 +51,16 @@ struct EditLocalServerView: View {
             }
 
             Section {
-                ChevronButton(
-                    L10n.connections,
-                    content: viewModel.connections.count.description
-                ) {
+                ChevronButton {
                     router.route(to: .serverConnections(viewModel: viewModel))
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(L10n.connection)
+
+                        Text((viewModel.activeConnection?.url ?? viewModel.server.effectiveServerURL).absoluteString)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             } footer: {
                 if !viewModel.server.isVersionCompatible {
