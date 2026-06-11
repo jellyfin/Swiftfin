@@ -6,33 +6,80 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
 import JellyfinAPI
+import Logging
 import SwiftUI
 
 struct SkipSegmentButton: View {
 
-    @InjectedObject(\.mediaPlayerManager)
-    private var manager: MediaPlayerManager
+    @ObservedObject
+    private var observer: MediaSegmentObserver
+
+    /// Whether the playback overlay is currently presented, which
+    /// presents the button beyond its standalone presentation window.
+    private let isPresentingOverlay: Bool
+
+    init(
+        observer: MediaSegmentObserver,
+        isPresentingOverlay: Bool = true
+    ) {
+        self.observer = observer
+        self.isPresentingOverlay = isPresentingOverlay
+    }
+
+    private var isPresented: Bool {
+        observer.currentSegment != nil && (observer.isStandalonePresentation || isPresentingOverlay)
+    }
 
     var body: some View {
-        if let segment = manager.currentSegment, let type = segment.type {
-            Button(action: {
-                manager.skipCurrentSegment()
-            }) {
-                Label(L10n.skipSegment(type.displayTitle), systemImage: "forward.end.fill")
-                    .fontWeight(.semibold)
-                    .padding(10)
-                    .background(.thinMaterial)
-                    .clipShape(Capsule())
-                    .overlay(
-                        Capsule()
-                            .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
-                    )
+        ZStack {
+            if isPresented, let type = observer.currentSegment?.type {
+                Button {
+                    observer.skipCurrentSegment()
+                } label: {
+                    Label(type.skipActionTitle, systemImage: "forward.end.fill")
+                }
+                .buttonStyle(SkipSegmentButtonStyle())
+                .transition(.opacity)
+                .onAppear {
+                    Logger.swiftfin().debug("[MediaSegments] skip button appeared")
+                }
+                .onDisappear {
+                    Logger.swiftfin().debug("[MediaSegments] skip button disappeared")
+                }
             }
-            .buttonStyle(.plain)
-            .transition(.opacity)
-            .animation(.spring(), value: manager.currentSegment)
+        }
+        .animation(.easeOut(duration: 0.4), value: isPresented)
+    }
+}
+
+/// A plain white capsule that indicates focus by scale
+/// instead of a platter, unlike built-in button styles.
+private struct SkipSegmentButtonStyle: ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        StyleBody(configuration: configuration)
+    }
+
+    private struct StyleBody: View {
+
+        @Environment(\.isFocused)
+        private var isFocused
+
+        let configuration: ButtonStyle.Configuration
+
+        var body: some View {
+            configuration.label
+                .fontWeight(.semibold)
+                .foregroundStyle(.black)
+                .padding(10)
+                .padding(.horizontal, 5)
+                .background(.white, in: Capsule())
+            #if os(tvOS)
+                .scaleEffect(isFocused ? 1.15 : 1)
+                .shadow(radius: isFocused ? 5 : 0)
+                .animation(.easeOut(duration: 0.15), value: isFocused)
+            #endif
         }
     }
 }

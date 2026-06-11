@@ -29,6 +29,9 @@ extension VideoPlayer {
         @FocusState
         private var isPlaybackProgressFocused: Bool
 
+        @FocusState
+        private var isSkipSegmentButtonFocused: Bool
+
         @State
         var speedBoostTimer: Timer?
         @State
@@ -38,6 +41,23 @@ extension VideoPlayer {
 
         var body: some View {
             VStack(spacing: 30) {
+
+                if !containerState.isPresentingSupplement, let segmentObserver = manager.segmentObserver {
+                    SkipSegmentButton(
+                        observer: segmentObserver,
+                        isPresentingOverlay: containerState.isPresentingOverlay
+                    )
+                    .focused($isSkipSegmentButtonFocused)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .focusSection()
+                    .onReceive(segmentObserver.$currentSegment) { segment in
+                        // Only steal focus when the segment was entered by
+                        // natural playback, not by scrubbing into it.
+                        if segment != nil, segmentObserver.enteredCurrentSegmentNaturally {
+                            isSkipSegmentButtonFocused = true
+                        }
+                    }
+                }
 
                 Toolbar()
                     .isVisible(
@@ -57,13 +77,6 @@ extension VideoPlayer {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             .edgePadding(.horizontal)
-            .overlay(alignment: .bottomTrailing) {
-                if !containerState.isPresentingSupplement {
-                    SkipSegmentButton()
-                        .padding(.trailing, 80)
-                        .padding(.bottom, 120)
-                }
-            }
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: containerState.isScrubbing)

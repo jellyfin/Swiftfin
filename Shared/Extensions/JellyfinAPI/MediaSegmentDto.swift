@@ -10,6 +10,19 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
+extension MediaSegmentDto {
+
+    var startSeconds: Duration? {
+        guard let startTicks else { return nil }
+        return .ticks(startTicks)
+    }
+
+    var endSeconds: Duration? {
+        guard let endTicks else { return nil }
+        return .ticks(endTicks)
+    }
+}
+
 extension MediaSegmentType: Displayable, @retroactive Defaults.Serializable {
 
     var displayTitle: String {
@@ -27,5 +40,29 @@ extension MediaSegmentType: Displayable, @retroactive Defaults.Serializable {
         case .unknown:
             L10n.unknown
         }
+    }
+
+    /// The title for the action of skipping a segment
+    /// of this type: `Skip Intro`, `Skip Recap`, etc.
+    var skipActionTitle: String {
+        L10n.skipSegment(displayTitle)
+    }
+}
+
+extension MediaSegmentType: SupportedCaseIterable {
+
+    static var supportedCases: [MediaSegmentType] {
+        allCases.filter { $0 != .unknown }
+    }
+}
+
+extension MediaSegmentType: @retroactive LosslessStringConvertible {
+
+    public init?(_ description: String) {
+        self.init(rawValue: description)
+    }
+
+    public var description: String {
+        rawValue
     }
 }

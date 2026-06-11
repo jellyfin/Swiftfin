@@ -837,6 +837,16 @@ extension VideoPlayer {
 
         private func handleSelectEnded(_ press: UIPress, event: UIPressesEvent?) {
             if !containerState.isPresentingOverlay {
+                // A standalone skip button has implicit focus and
+                // a select press performs the skip.
+                if let segmentObserver = manager.segmentObserver,
+                   segmentObserver.currentSegment != nil,
+                   segmentObserver.isStandalonePresentation
+                {
+                    segmentObserver.skipCurrentSegment()
+                    return
+                }
+
                 containerState.isPresentingOverlay = true
                 containerState.timer.poke()
                 return

@@ -6,7 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-enum MediaSegmentBehavior: String, CaseIterable, Identifiable, Displayable {
+import Defaults
+
+enum MediaSegmentBehavior: String, CaseIterable, Defaults.Serializable, Identifiable, Displayable {
 
     case off
     case ask

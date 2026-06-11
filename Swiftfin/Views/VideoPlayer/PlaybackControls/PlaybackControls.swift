@@ -85,11 +85,14 @@ extension VideoPlayer {
                 PlaybackButtons()
                     .isVisible(!isScrubbing && containerState.isPresentingPlaybackControls)
 
-                if !isPresentingSupplement {
-                    SkipSegmentButton()
-                        .padding(.trailing, safeAreaInsets.leading + 60)
-                        .padding(.bottom, 100)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                if !isPresentingSupplement, let segmentObserver = manager.segmentObserver {
+                    SkipSegmentButton(
+                        observer: segmentObserver,
+                        isPresentingOverlay: isPresentingOverlay
+                    )
+                    .padding(.trailing, safeAreaInsets.leading + 60)
+                    .padding(.bottom, 100)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 }
             }
             .modifier(VideoPlayer.KeyCommandsModifier())

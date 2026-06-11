@@ -42,9 +42,11 @@ struct NativeVideoPlayer: View {
             case .playback:
                 NativeVideoPlayerView(proxy: proxy)
                     .overlay(alignment: .bottomTrailing) {
-                        SkipSegmentButton()
-                            .padding(.trailing, 80)
-                            .padding(.bottom, 120)
+                        if let segmentObserver = manager.segmentObserver {
+                            SkipSegmentButton(observer: segmentObserver)
+                                .padding(.trailing, 80)
+                                .padding(.bottom, 120)
+                        }
                     }
             default:
                 ProgressView()

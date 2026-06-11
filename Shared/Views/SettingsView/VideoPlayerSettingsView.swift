@@ -65,10 +65,8 @@ struct VideoPlayerSettingsView: View {
 
     @Default(.VideoPlayer.enableMediaSegments)
     private var enableMediaSegments
-    @Default(.VideoPlayer.askMediaSegments)
-    private var askMediaSegments
-    @Default(.VideoPlayer.skipMediaSegments)
-    private var skipMediaSegments
+    @Default(.VideoPlayer.mediaSegmentBehaviors)
+    private var mediaSegmentBehaviors
 
     @Router
     private var router
@@ -245,7 +243,7 @@ struct VideoPlayerSettingsView: View {
 
         if enableMediaSegments {
             Section {
-                ForEach(MediaSegmentType.allCases.sorted(by: { $0.displayTitle < $1.displayTitle }), id: \.self) { segment in
+                ForEach(MediaSegmentType.supportedCases, id: \.self) { segment in
                     PlatformPicker(segment.displayTitle, selection: mediaSegmentBinding(segment))
                 }
             }
@@ -254,28 +252,8 @@ struct VideoPlayerSettingsView: View {
 
     private func mediaSegmentBinding(_ segment: MediaSegmentType) -> Binding<MediaSegmentBehavior> {
         Binding(
-            get: {
-                if askMediaSegments.contains(segment) {
-                    .ask
-                } else if skipMediaSegments.contains(segment) {
-                    .skip
-                } else {
-                    .off
-                }
-            },
-            set: { newValue in
-                switch newValue {
-                case .off:
-                    askMediaSegments.removeAll { $0 == segment }
-                    skipMediaSegments.removeAll { $0 == segment }
-                case .ask:
-                    askMediaSegments.append(segment)
-                    skipMediaSegments.removeAll { $0 == segment }
-                case .skip:
-                    askMediaSegments.removeAll { $0 == segment }
-                    skipMediaSegments.append(segment)
-                }
-            }
+            get: { mediaSegmentBehaviors[segment] ?? .off },
+            set: { mediaSegmentBehaviors[segment] = $0 }
         )
     }
 

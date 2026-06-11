@@ -130,8 +130,6 @@ final class MediaPlayerManager: ViewModel {
 
     @Published
     var queue: AnyMediaPlayerQueue? = nil
-    @Published
-    var currentSegment: MediaSegmentDto?
 
     @Published
     var supplements: [any MediaPlayerSupplement] = []
@@ -162,10 +160,7 @@ final class MediaPlayerManager: ViewModel {
 
     var seconds: Duration {
         get { secondsBox.value }
-        set {
-            secondsBox.value = newValue
-            updateCurrentSegment()
-        }
+        set { secondsBox.value = newValue }
     }
 
     /// Holds a weak reference to the current media player proxy.
@@ -332,53 +327,5 @@ final class MediaPlayerManager: ViewModel {
         case .paused:
             setPlaybackRequestStatus(status: .playing)
         }
-    }
-
-    private func updateCurrentSegment() {
-        guard Defaults[.VideoPlayer.enableMediaSegments] else {
-            if currentSegment != nil { currentSegment = nil }
-            return
-        }
-
-        guard let segments = playbackItem?.mediaSegments, !segments.isEmpty else {
-            if currentSegment != nil { currentSegment = nil }
-            return
-        }
-
-        let found = segments.first { segment in
-            guard let start = segment.startTicks,
-                  let end = segment.endTicks,
-                  let type = segment.type
-            else {
-                return false
-            }
-
-            let isWithinRange = seconds.ticks >= start && seconds.ticks < end
-
-            if isWithinRange && Defaults[.VideoPlayer.skipMediaSegments].contains(type) {
-                // TODO: autoskip doesn't work very well with Swiftfin player, only with native
-                self.skipSegment(segment)
-                return false
-            }
-
-            return isWithinRange && Defaults[.VideoPlayer.askMediaSegments].contains(type)
-        }
-
-        if currentSegment != found {
-            currentSegment = found
-        }
-    }
-
-    func skipSegment(_ segment: MediaSegmentDto) {
-        guard let endTicks = segment.endTicks else { return }
-        let endSeconds = Double(endTicks) / 10_000_000
-        let newDuration = Duration.seconds(endSeconds)
-        self.seconds = newDuration
-        self.proxy?.setSeconds(newDuration)
-    }
-
-    func skipCurrentSegment() {
-        guard let currentSegment else { return }
-        skipSegment(currentSegment)
     }
 }
