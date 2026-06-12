@@ -65,12 +65,12 @@ struct ServerConnectionsView: View {
     var body: some View {
         Form(systemImage: "network") {
             Section {
-                Toggle(L10n.autoSwitch, isOn: $viewModel.isAutoSwitchingEnabled)
+                Toggle(L10n.autoSwitch, isOn: $viewModel.isAutoSwitchEnabled)
 
-                if viewModel.isAutoSwitchingEnabled {
+                if viewModel.isAutoSwitchEnabled {
                     Button {
                         Task {
-                            await viewModel.evaluateAutoSwitching()
+                            await viewModel.evaluateAutoSwitchConnection()
                         }
                     } label: {
                         HStack {
@@ -78,16 +78,17 @@ struct ServerConnectionsView: View {
 
                             Spacer()
 
-                            if viewModel.isEvaluatingAutoSwitching {
+                            if viewModel.isEvaluatingAutoSwitchConnection {
                                 ProgressView()
                             }
                         }
                     }
-                    .disabled(viewModel.isEvaluatingAutoSwitching)
+                    .disabled(viewModel.isEvaluatingAutoSwitchConnection)
                 }
             } footer: {
                 Text(L10n.autoSwitchDescription)
             }
+            .disabled(isEditing)
 
             Section(L10n.connections) {
                 ForEach(viewModel.connections) { connection in
@@ -107,8 +108,9 @@ struct ServerConnectionsView: View {
             }
         }
         .environment(\.editMode, $editMode)
-        .animation(.linear(duration: 0.1), value: viewModel.connections)
         .animation(.linear(duration: 0.1), value: isEditing)
+        .animation(.linear(duration: 0.1), value: viewModel.connections)
+        .animation(.linear(duration: 0.1), value: viewModel.isAutoSwitchEnabled)
         .navigationTitle(L10n.connections)
         .topBarTrailing {
             if viewModel.connections.count > 1 {

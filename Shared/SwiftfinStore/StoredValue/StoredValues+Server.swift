@@ -11,8 +11,6 @@ import Factory
 import Foundation
 import JellyfinAPI
 
-// TODO: also have matching properties on `ServerState` that get/set values
-
 // MARK: keys
 
 extension StoredValues.Keys {
@@ -63,6 +61,30 @@ extension StoredValues.Keys {
                 ownerID: id,
                 field: "publicInfo",
                 default: .init()
+            )
+        }
+
+        static func connections(id: String) -> Key<[ServerConnection]> {
+            ServerKey(
+                ownerID: id,
+                field: "serverConnections",
+                default: []
+            )
+        }
+
+        static func activeConnectionID(id: String) -> Key<String> {
+            ServerKey(
+                ownerID: id,
+                field: "activeServerConnectionID",
+                default: .empty
+            )
+        }
+
+        static func isAutoSwitchEnabled(id: String) -> Key<Bool> {
+            ServerKey(
+                ownerID: id,
+                field: "isAutoSwitchEnabled",
+                default: false
             )
         }
     }

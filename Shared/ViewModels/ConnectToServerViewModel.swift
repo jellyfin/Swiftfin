@@ -146,36 +146,28 @@ final class ConnectToServerViewModel: ObservableObject {
             throw ErrorMessage("An internal error has occurred")
         }
 
-        let previousConnection = ServerConnectionStore.activeConnection(for: existingServer)
-        var connections = ServerConnectionStore.ensureConnections(for: existingServer)
-        let connection: ServerConnection
+        let previousConnection = existingServer.activeServerConnection
+        var connections = existingServer.ensureServerConnections()
 
         let normalizedURL = server.currentURL.normalizedServerConnectionURL ?? server.currentURL
 
-        if let index = connections.firstIndex(where: { $0.normalizedURL == normalizedURL }) {
-            connection = connections[index]
-            ServerConnectionStore.save(connections, for: existingServer.id)
-        } else {
-            connection = ServerConnection(
+        let connection = connections.first { $0.normalizedURL == normalizedURL } ?? {
+            let connection = ServerConnection(
                 name: normalizedURL.absoluteString,
                 url: normalizedURL,
                 interface: .any,
                 priority: connections.count
             )
             connections.append(connection)
-            ServerConnectionStore.save(connections, for: existingServer.id)
-        }
+            return connection
+        }()
 
-        ServerConnectionStore.setActiveConnection(connection, for: existingServer)
-        guard previousConnection?.id != connection.id || previousConnection?.url != connection.url else { return }
+        existingServer.serverConnections = connections
 
-        Notifications[.didChangeServerConnection].post(
-            .init(
-                server: existingServer,
-                previous: previousConnection,
-                current: connection,
-                reason: .manual
-            )
+        existingServer.activeServerConnection = connection
+        Notifications.postServerConnectionChange(
+            previous: previousConnection,
+            current: connection
         )
     }
 

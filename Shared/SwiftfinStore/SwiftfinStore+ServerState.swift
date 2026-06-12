@@ -38,6 +38,24 @@ extension SwiftfinStore.State {
 
 extension ServerState {
 
+    var activeServerConnection: ServerConnection? {
+        get {
+            let connections = serverConnections
+            let activeConnectionID = StoredValues[.Server.activeConnectionID(id: id)]
+
+            if activeConnectionID.isNotEmpty,
+               let connection = connections.first(where: { $0.id == activeConnectionID })
+            {
+                return connection
+            }
+
+            return connections.first { $0.url == currentURL } ?? connections.first
+        }
+        nonmutating set {
+            StoredValues[.Server.activeConnectionID(id: id)] = newValue?.id ?? .empty
+        }
+    }
+
     /// Deletes the model that this state represents and
     /// all settings from `StoredValues`.
     func delete() throws {
@@ -62,12 +80,64 @@ extension ServerState {
         }
     }
 
+    var effectiveServerURL: URL {
+        activeServerConnection?.url ?? currentURL
+    }
+
+    func ensureServerConnections() -> [ServerConnection] {
+        let connections = StoredValues[.Server.connections(id: id)]
+        guard connections.isEmpty else { return ServerConnection.normalize(connections) }
+
+        let defaultConnections = ServerConnection.defaults(for: self)
+        serverConnections = defaultConnections
+        return defaultConnections
+    }
+
     func getPublicSystemInfo() async throws -> PublicSystemInfo {
 
         let request = Paths.getPublicSystemInfo
         let response = try await client.send(request)
 
         return response.value
+    }
+
+    func hasServerConnection(url: URL) -> Bool {
+        let normalizedURL = url.normalizedServerConnectionURL ?? url
+        return serverConnections.contains { $0.normalizedURL == normalizedURL }
+    }
+
+    var isAutoSwitchEnabled: Bool {
+        get {
+            StoredValues[.Server.isAutoSwitchEnabled(id: id)]
+        }
+        nonmutating set {
+            StoredValues[.Server.isAutoSwitchEnabled(id: id)] = newValue
+        }
+    }
+
+    var isVersionCompatible: Bool {
+        let publicInfo = StoredValues[.Server.publicInfo(id: self.id)]
+
+        if let version = publicInfo.version {
+            return JellyfinClient.Version(stringLiteral: version).majorMinor >= client.version.majorMinor
+        } else {
+            return false
+        }
+    }
+
+    var serverConnections: [ServerConnection] {
+        get {
+            let connections = StoredValues[.Server.connections(id: id)]
+
+            guard connections.isNotEmpty else {
+                return ServerConnection.defaults(for: self)
+            }
+
+            return ServerConnection.normalize(connections)
+        }
+        nonmutating set {
+            StoredValues[.Server.connections(id: id)] = ServerConnection.normalize(newValue, preservingOrder: true)
+        }
     }
 
     var splashScreenImageSource: ImageSource {
@@ -92,15 +162,5 @@ extension ServerState {
 
         StoredValues[.Server.servers] = servers.map { $0.id == id ? updatedServer : $0 }
         StoredValues[.Server.publicInfo(id: currentServer.id)] = publicInfo
-    }
-
-    var isVersionCompatible: Bool {
-        let publicInfo = StoredValues[.Server.publicInfo(id: self.id)]
-
-        if let version = publicInfo.version {
-            return JellyfinClient.Version(stringLiteral: version).majorMinor >= client.version.majorMinor
-        } else {
-            return false
-        }
     }
 }

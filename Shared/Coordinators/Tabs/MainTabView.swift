@@ -15,8 +15,8 @@ import SwiftUI
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
-    @StateObject
-    private var appURLHandler = AppURLHandler.shared
+    @InjectedObject(\.deepLinkHandler)
+    private var deepLinkHandler
 
     #if os(iOS)
     @StateObject
@@ -46,11 +46,11 @@ struct MainTabView: View {
     #endif
 
     private func routePendingDeepLink() {
-        guard let deepLink = appURLHandler.consumePendingDeepLink() else { return }
+        guard let deepLink = deepLinkHandler.consumePendingDeepLink() else { return }
 
         Task { @MainActor in
             do {
-                let route = try await appURLHandler.route(for: deepLink)
+                let route = try await deepLinkHandler.route(for: deepLink)
                 tabCoordinator.route(to: route)
             } catch {
                 // TODO: surface deep link failures in UI.
@@ -84,7 +84,7 @@ struct MainTabView: View {
         .onAppear {
             routePendingDeepLink()
         }
-        .onReceive(appURLHandler.$pendingDeepLink.compactMap(\.self)) { _ in
+        .onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
             routePendingDeepLink()
         }
     }

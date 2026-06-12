@@ -12,10 +12,42 @@ import JellyfinAPI
 import KeychainSwift
 import Logging
 
-@MainActor
-final class AppURLHandler: ObservableObject {
+extension Container {
+    var deepLinkHandler: Factory<DeepLinkHandler> {
+        self { DeepLinkHandler() }
+            .singleton
+    }
+}
 
-    enum DeepLinkError: LocalizedError {
+@MainActor
+final class DeepLinkHandler: ObservableObject {
+
+    struct DeepLink: Equatable {
+
+        enum Destination: Equatable {
+            case item(id: String)
+            case library(id: String)
+        }
+
+        let serverID: String
+        let userID: String
+        let destination: Destination
+
+        init?(_ url: URL) {
+            guard let match = url.absoluteString.wholeMatch(
+                of: /^swiftfin:\/\/(?<serverID>[A-Za-z0-9]+)\/(?<userID>[A-Za-z0-9]+)\/(?<destinationType>item|library)\/(?<destinationID>[A-Za-z0-9]+)\/?$/
+            ) else { return nil }
+
+            self.serverID = String(match.output.serverID)
+            self.userID = String(match.output.userID)
+
+            self.destination = String(match.output.destinationType) == "item" ?
+                .item(id: String(match.output.destinationID)) :
+                .library(id: String(match.output.destinationID))
+        }
+    }
+
+    enum DeepLinkError: Error {
         case invalidURL
         case missingAuthenticationAction
         case missingCurrentSession
@@ -23,7 +55,7 @@ final class AppURLHandler: ObservableObject {
         case missingUser(String)
         case wrongCurrentSession
 
-        var errorDescription: String? {
+        var localizedDescription: String {
             switch self {
             case .invalidURL:
                 "The URL is not a supported Swiftfin deep link."
@@ -41,8 +73,6 @@ final class AppURLHandler: ObservableObject {
         }
     }
 
-    static let shared = AppURLHandler()
-
     @Injected(\.keychainService)
     private var keychain: KeychainSwift
 
@@ -51,7 +81,7 @@ final class AppURLHandler: ObservableObject {
 
     private let logger = Logger.swiftfin()
 
-    private init() {}
+    nonisolated init() {}
 
     @discardableResult
     func handle(

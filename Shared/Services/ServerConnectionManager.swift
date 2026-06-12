@@ -54,44 +54,40 @@ final class ServerConnectionManager {
         Notifications[.didSignIn]
             .publisher
             .sink { [weak self] in
-                self?.scheduleEvaluation(reason: .automatic)
+                self?.scheduleEvaluation()
             }
             .store(in: &cancellables)
 
         Notifications[.applicationWillEnterForeground]
             .publisher
             .sink { [weak self] in
-                self?.scheduleEvaluation(reason: .automatic)
+                self?.scheduleEvaluation()
             }
             .store(in: &cancellables)
     }
 
-    func scheduleEvaluation(reason: ServerConnectionChange.Reason) {
+    func scheduleEvaluation() {
         evaluationTask?.cancel()
-        let nextTask = Task { [weak self] in
+        evaluationTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: 1_500_000_000)
-            await self?.evaluateCurrentSession(reason: reason)
+            await self?.evaluateCurrentSession()
         }
-
-        evaluationTask = nextTask
     }
 
-    func evaluateCurrentSession(reason: ServerConnectionChange.Reason) async {
+    func evaluateCurrentSession() async {
         guard let session = Container.shared.userSessionManager().currentSession else { return }
 
         await evaluate(
             server: session.server,
-            accessToken: session.user.accessToken,
-            reason: reason
+            accessToken: session.user.accessToken
         )
     }
 
     func evaluate(
         server: ServerState,
-        accessToken: String?,
-        reason: ServerConnectionChange.Reason
+        accessToken: String?
     ) async {
-        guard ServerConnectionStore.isAutoSwitchingEnabled(for: server.id) else { return }
+        guard server.isAutoSwitchEnabled else { return }
 
         guard !Container.shared.userSessionManager().hasActivePlayback else {
             logger.info("Skipped server connection switch during active playback")
@@ -101,44 +97,21 @@ final class ServerConnectionManager {
         let currentContext = context
         guard currentContext.isSatisfied else { return }
 
-        let connections = ServerConnectionStore.connections(for: server)
-        let candidates = connections.filter { $0.matches(currentContext) }
-        guard candidates.isNotEmpty else { return }
+        let candidates = server.serverConnections.filter { $0.matches(currentContext) }
 
-        let currentConnection = ServerConnectionStore.activeConnection(for: server)
+        let currentConnection = server.activeServerConnection
+        guard let reachableConnection = await firstReachableConnection(
+            in: candidates,
+            accessToken: accessToken,
+            serverID: server.id
+        ) else { return }
+        guard currentConnection?.id != reachableConnection.id else { return }
 
-        for connection in candidates {
-            if Task.isCancelled { return }
-
-            do {
-                _ = try await test(
-                    connection: connection,
-                    accessToken: accessToken,
-                    matchingServerID: server.id
-                )
-                guard currentConnection?.id != connection.id else { return }
-
-                ServerConnectionStore.setActiveConnection(connection, for: server)
-
-                let change = ServerConnectionChange(
-                    server: server,
-                    previous: currentConnection,
-                    current: connection,
-                    reason: reason
-                )
-
-                Notifications[.didChangeServerConnection].post(change)
-                return
-            } catch {
-                logger.info(
-                    "Server connection probe failed",
-                    metadata: [
-                        "url": .string(connection.url.absoluteString),
-                        "error": .string(error.localizedDescription),
-                    ]
-                )
-            }
-        }
+        server.activeServerConnection = reachableConnection
+        Notifications.postServerConnectionChange(
+            previous: currentConnection,
+            current: reachableConnection
+        )
     }
 
     func test(
@@ -172,7 +145,36 @@ final class ServerConnectionManager {
 
     private func pathDidUpdate(_ context: NetworkConnectionContext) {
         self.context = context
-        scheduleEvaluation(reason: .automatic)
+        scheduleEvaluation()
+    }
+
+    private func firstReachableConnection(
+        in connections: [ServerConnection],
+        accessToken: String?,
+        serverID: String
+    ) async -> ServerConnection? {
+        for connection in connections {
+            if Task.isCancelled { return nil }
+
+            do {
+                _ = try await test(
+                    connection: connection,
+                    accessToken: accessToken,
+                    matchingServerID: serverID
+                )
+                return connection
+            } catch {
+                logger.info(
+                    "Server connection probe failed",
+                    metadata: [
+                        "url": .string(connection.url.absoluteString),
+                        "error": .string(error.localizedDescription),
+                    ]
+                )
+            }
+        }
+
+        return nil
     }
 }
 

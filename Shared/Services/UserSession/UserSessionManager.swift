@@ -10,47 +10,7 @@ import Combine
 import Defaults
 import Factory
 import Foundation
-import JellyfinAPI
 import Logging
-import Pulse
-
-final class UserSession {
-
-    let client: JellyfinClient
-    let server: ServerState
-    let user: UserState
-
-    init(
-        server: ServerState,
-        user: UserState
-    ) {
-        self.server = server
-        self.user = user
-
-        let client = JellyfinClient(
-            configuration: .swiftfinConfiguration(
-                url: server.effectiveServerURL,
-                accessToken: user.accessToken
-            ),
-            sessionConfiguration: .swiftfin,
-            sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
-        )
-
-        self.client = client
-    }
-}
-
-enum UserSessionError: LocalizedError {
-
-    case missingCurrentSession
-
-    var errorDescription: String? {
-        switch self {
-        case .missingCurrentSession:
-            "No signed-in user session is available."
-        }
-    }
-}
 
 final class UserSessionManager {
 

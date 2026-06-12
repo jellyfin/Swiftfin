@@ -22,14 +22,16 @@ final class ServerConnectionViewModel: ViewModel {
     @Published
     private(set) var activeConnection: ServerConnection?
     @Published
-    private(set) var isEvaluatingAutoSwitching: Bool = false
+    private(set) var isEvaluatingAutoSwitchConnection: Bool = false
     @Published
-    var isAutoSwitchingEnabled: Bool {
+    var isAutoSwitchEnabled: Bool {
         didSet {
-            ServerConnectionStore.setAutoSwitchingEnabled(isAutoSwitchingEnabled, for: server.id)
+            guard oldValue != isAutoSwitchEnabled else { return }
 
-            if isAutoSwitchingEnabled {
-                Container.shared.serverConnectionManager().scheduleEvaluation(reason: .automatic)
+            server.isAutoSwitchEnabled = isAutoSwitchEnabled
+
+            if isAutoSwitchEnabled {
+                Container.shared.serverConnectionManager().scheduleEvaluation()
             }
         }
     }
@@ -39,44 +41,23 @@ final class ServerConnectionViewModel: ViewModel {
 
     init(server: ServerState) {
         self.server = server
-        self.connections = ServerConnectionStore.ensureConnections(for: server)
-        self.activeConnection = ServerConnectionStore.activeConnection(for: server)
-        self.isAutoSwitchingEnabled = ServerConnectionStore.isAutoSwitchingEnabled(for: server.id)
+        self.connections = server.ensureServerConnections()
+        self.activeConnection = server.activeServerConnection
+        self.isAutoSwitchEnabled = server.isAutoSwitchEnabled
         super.init()
 
         Notifications[.didChangeServerConnection]
             .publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] change in
-                guard change.server.id == self?.server.id else { return }
+            .sink { [weak self] _ in
                 self?.reloadConnections()
             }
             .store(in: &cancellables)
     }
 
-    // TODO: this could probably be cleaner
     func delete() {
-        let userStates = StoredValues[.User.users]
-            .filter { $0.serverID == server.id }
-
         do {
-            for user in userStates {
-                try AnyStoredData.deleteAll(ownerID: user.id)
-            }
-            try AnyStoredData.deleteAll(ownerID: self.server.id)
-
-            var users = StoredValues[.User.users]
-            users.removeAll { $0.serverID == self.server.id }
-            StoredValues[.User.users] = users
-
-            var servers = StoredValues[.Server.servers]
-            servers.removeAll { $0.id == server.id }
-            StoredValues[.Server.servers] = servers
-
-            for user in userStates {
-                UserDefaults.userSuite(id: user.id).removeAll()
-            }
-
+            try server.delete()
             Notifications[.didDeleteServer].post(server)
         } catch {
             logger.critical("Unable to delete server: \(server.name)")
@@ -92,32 +73,26 @@ final class ServerConnectionViewModel: ViewModel {
         )
     }
 
-    private func addConnection(_ connection: ServerConnection) {
-        connections.append(connection)
-        saveConnections()
-    }
-
-    private func updateConnection(_ connection: ServerConnection) {
-        guard let index = connections.firstIndex(where: { $0.id == connection.id }) else { return }
-
+    private func upsertConnection(_ connection: ServerConnection) {
         let previous = activeConnection
         let isActiveConnection = activeConnection?.id == connection.id
 
-        connections[index] = connection
+        if let index = connections.firstIndex(where: { $0.id == connection.id }) {
+            connections[index] = connection
+        } else {
+            connections.append(connection)
+        }
+
         saveConnections()
 
-        if isActiveConnection {
-            let nextActiveConnection = connections.first { $0.id == connection.id }
-            guard let nextActiveConnection else { return }
+        guard isActiveConnection,
+              let activeConnection
+        else { return }
 
-            activeConnection = nextActiveConnection
-            ServerConnectionStore.setActiveConnection(nextActiveConnection, for: server)
-            postConnectionChange(
-                previous: previous,
-                current: nextActiveConnection,
-                reason: .manual
-            )
-        }
+        Notifications.postServerConnectionChange(
+            previous: previous,
+            current: activeConnection
+        )
     }
 
     func deleteConnection(_ connection: ServerConnection) {
@@ -126,14 +101,16 @@ final class ServerConnectionViewModel: ViewModel {
 
         connections.removeAll { $0.id == connection.id }
         saveConnections()
-        activeConnection = ServerConnectionStore.activeConnection(for: server)
     }
 
     func setActiveConnection(_ connection: ServerConnection) {
         let previous = activeConnection
         activeConnection = connection
-        ServerConnectionStore.setActiveConnection(connection, for: server)
-        postConnectionChange(previous: previous, current: connection, reason: .manual)
+        server.activeServerConnection = connection
+        Notifications.postServerConnectionChange(
+            previous: previous,
+            current: connection
+        )
     }
 
     func setActiveConnectionIfValid(_ connection: ServerConnection) async -> ServerConnection.TestState {
@@ -168,16 +145,15 @@ final class ServerConnectionViewModel: ViewModel {
         }
     }
 
-    func evaluateAutoSwitching() async {
-        guard !isEvaluatingAutoSwitching else { return }
+    func evaluateAutoSwitchConnection() async {
+        guard !isEvaluatingAutoSwitchConnection else { return }
 
-        isEvaluatingAutoSwitching = true
-        defer { isEvaluatingAutoSwitching = false }
+        isEvaluatingAutoSwitchConnection = true
+        defer { isEvaluatingAutoSwitchConnection = false }
 
         await Container.shared.serverConnectionManager().evaluate(
             server: server,
-            accessToken: userSession?.user.accessToken,
-            reason: .manual
+            accessToken: userSession?.user.accessToken
         )
         reloadConnections()
     }
@@ -192,45 +168,20 @@ final class ServerConnectionViewModel: ViewModel {
         let state = await testConnection(connection)
         guard case .success = state else { return state }
 
-        if connections.contains(where: { $0.id == connection.id }) {
-            updateConnection(connection)
-        } else {
-            addConnection(connection)
-        }
+        upsertConnection(connection)
 
         return state
     }
 
     private func saveConnections() {
-        connections = ServerConnectionStore.normalize(connections, preservingOrder: true)
-        ServerConnectionStore.save(connections, for: server.id)
-
-        if let activeConnection {
-            self.activeConnection = connections.first { $0.id == activeConnection.id }
-        }
+        server.serverConnections = connections
+        connections = server.serverConnections
+        activeConnection = server.activeServerConnection
     }
 
     private func reloadConnections() {
-        connections = ServerConnectionStore.connections(for: server)
-        activeConnection = ServerConnectionStore.activeConnection(for: server)
-        isAutoSwitchingEnabled = ServerConnectionStore.isAutoSwitchingEnabled(for: server.id)
-    }
-
-    private func postConnectionChange(
-        previous: ServerConnection?,
-        current: ServerConnection,
-        reason: ServerConnectionChange.Reason
-    ) {
-        guard previous?.id != current.id || previous?.url != current.url else { return }
-
-        Notifications[.didChangeServerConnection]
-            .post(
-                .init(
-                    server: server,
-                    previous: previous,
-                    current: current,
-                    reason: reason
-                )
-            )
+        connections = server.serverConnections
+        activeConnection = server.activeServerConnection
+        isAutoSwitchEnabled = server.isAutoSwitchEnabled
     }
 }

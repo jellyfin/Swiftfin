@@ -131,23 +131,28 @@ struct ServerConnection: Hashable, Identifiable, Storable {
     }
 
     static func defaults(for server: ServerState) -> [ServerConnection] {
-        let sortedURLs = server.urls
-            .union([server.currentURL])
+        let urls = [server.currentURL] + server.urls
+            .subtracting([server.currentURL])
             .sorted(using: \.absoluteString)
 
-        return sortedURLs.enumerated().map { index, url in
+        return urls.enumerated().map { index, url in
             ServerConnection(
                 name: url == server.currentURL ? L10n.currentURL : url.absoluteString,
                 url: url,
                 interface: .any,
-                priority: url == server.currentURL ? 0 : index + 1
+                priority: index
             )
         }
-        .sorted(using: \.priority)
-        .enumerated()
-        .map { index, connection in
-            connection.with(priority: index)
-        }
+    }
+
+    static func normalize(_ connections: [ServerConnection], preservingOrder: Bool = false) -> [ServerConnection] {
+        let connections = preservingOrder ? connections : connections.sorted(using: \.priority)
+
+        return connections
+            .enumerated()
+            .map { index, connection in
+                connection.with(priority: index)
+            }
     }
 
     func with(priority: Int) -> ServerConnection {
@@ -175,17 +180,4 @@ extension URL {
 
         return components.url
     }
-}
-
-struct ServerConnectionChange: Hashable {
-
-    enum Reason: String, Hashable {
-        case automatic
-        case manual
-    }
-
-    let server: ServerState
-    let previous: ServerConnection?
-    let current: ServerConnection
-    let reason: Reason
 }

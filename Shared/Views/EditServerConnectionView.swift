@@ -33,16 +33,16 @@ struct EditServerConnectionView: View {
     private let initialConnection: ServerConnection
     private let initialDraft: ServerConnectionDraft
 
-    private var storedConnection: ServerConnection? {
+    private var existingConnection: ServerConnection? {
         viewModel.connections.first { $0.id == initialConnection.id }
     }
 
     private var connection: ServerConnection {
-        storedConnection ?? initialConnection
+        existingConnection ?? initialConnection
     }
 
     private var isExistingConnection: Bool {
-        storedConnection != nil
+        existingConnection != nil
     }
 
     private var testState: ServerConnection.TestState {

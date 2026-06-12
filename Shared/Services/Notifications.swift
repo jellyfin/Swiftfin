@@ -107,6 +107,18 @@ enum Notifications {
     }
 }
 
+extension Notifications {
+
+    static func postServerConnectionChange(
+        previous: ServerConnection?,
+        current: ServerConnection
+    ) {
+        guard previous?.id != current.id || previous?.url != current.url else { return }
+
+        Self[.didChangeServerConnection].post(current)
+    }
+}
+
 // MARK: - Keys
 
 extension Notifications.Key {
@@ -127,7 +139,7 @@ extension Notifications.Key {
         Key("didPurge")
     }
 
-    static var didChangeServerConnection: Key<ServerConnectionChange> {
+    static var didChangeServerConnection: Key<ServerConnection> {
         Key("didChangeServerConnection")
     }
 
