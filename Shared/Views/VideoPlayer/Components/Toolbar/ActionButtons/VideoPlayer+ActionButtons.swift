@@ -73,10 +73,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 Audio()
             case .autoPlay:
                 AutoPlay()
-            #if os(iOS)
-            case .gestureLock:
-                GestureLock()
-            #endif
             case .pictureInPicture:
                 PictureInPicture()
             case .playbackSpeed:
@@ -89,6 +85,12 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 PlayPreviousItem()
             case .subtitles:
                 Subtitles()
+            #if os(iOS)
+            case .airPlay:
+                AirPlay()
+            case .gestureLock:
+                GestureLock()
+            #endif
             }
         }
 
@@ -99,7 +101,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 systemImage: "ellipsis.circle"
             ) {
                 ForEach(
-                    barActionButtons,
+                    barActionButtons.filter { VideoPlayerActionButton.supportedCases.contains($0) },
                     content: view(for:)
                 )
                 .environment(\.isInMenu, true)
@@ -107,7 +109,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 Divider()
 
                 ForEach(
-                    menuActionButtons,
+                    menuActionButtons.filter { VideoPlayerActionButton.supportedCases.contains($0) },
                     content: view(for:)
                 )
                 .environment(\.isInMenu, true)
@@ -128,7 +130,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                         systemImage: UIDevice.isTV ? "ellipsis" : "ellipsis.circle"
                     ) {
                         ForEach(
-                            menuActionButtons,
+                            menuActionButtons.filter { VideoPlayerActionButton.supportedCases.contains($0) },
                             content: view(for:)
                         )
                         .environment(\.isInMenu, true)

@@ -21,7 +21,7 @@ extension NavigationRoute {
 
     static func actionMenuButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> NavigationRoute {
         NavigationRoute(id: "actionMenuButtonSelector") {
-            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: VideoPlayerActionButton.allCases)
+            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: VideoPlayerActionButton.supportedCases)
                 .navigationTitle(L10n.menuButtons.localizedCapitalized)
         }
     }

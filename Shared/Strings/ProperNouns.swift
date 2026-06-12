@@ -128,6 +128,7 @@ extension L10n {
 
     // MARK: - Brands
 
+    static let airPlay = "AirPlay"
     static let swiftfin = "Swiftfin"
     static let jellyfin = "Jellyfin"
 

@@ -197,6 +197,12 @@ extension Notifications.Key {
         Key(AVAudioSession.interruptionNotification)
     }
 
+    /// Posted when the availability of playback routes beyond the built-in route (AirPlay, Bluetooth) changes.
+    /// Use `AVRouteDetector().multipleRoutesDetected` to get the routes.
+    static var avRouteDetectorMultipleRoutesDetected: Key<Void> {
+        Key(.AVRouteDetectorMultipleRoutesDetectedDidChange)
+    }
+
     // MARK: - UIApplication
 
     static var applicationDidEnterBackground: Key<Void> {

@@ -160,6 +160,8 @@ internal enum L10n {
   internal static let audioCodecNotSupported = L10n.tr("Localizable", "audioCodecNotSupported", fallback: "The audio codec is not supported")
   /// The audio track is external and requires transcoding
   internal static let audioIsExternal = L10n.tr("Localizable", "audioIsExternal", fallback: "The audio track is external and requires transcoding")
+  /// Audio offset
+  internal static let audioOffset = L10n.tr("Localizable", "audioOffset", fallback: "Audio offset")
   /// The audio profile is not supported
   internal static let audioProfileNotSupported = L10n.tr("Localizable", "audioProfileNotSupported", fallback: "The audio profile is not supported")
   /// Audio sample rate
@@ -1554,6 +1556,8 @@ internal enum L10n {
   internal static let subtitleModeOnlyForcedDescription = L10n.tr("Localizable", "subtitleModeOnlyForcedDescription", fallback: "Only show subtitles marked as Forced, typically for foreign language sections.")
   /// Show subtitles when the audio language differs from your preferred language.
   internal static let subtitleModeSmartDescription = L10n.tr("Localizable", "subtitleModeSmartDescription", fallback: "Show subtitles when the audio language differs from your preferred language.")
+  /// Subtitle offset
+  internal static let subtitleOffset = L10n.tr("Localizable", "subtitleOffset", fallback: "Subtitle offset")
   /// Subtitles
   internal static let subtitles = L10n.tr("Localizable", "subtitles", fallback: "Subtitles")
   /// Settings only affect some subtitle types
