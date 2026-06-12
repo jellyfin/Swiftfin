@@ -37,6 +37,7 @@ final class UserSessionManager {
     init() {
         handleAppLaunch()
         currentSession = Self.resolveCurrentSession()
+        observeMediaPlayerManager()
         observeAppLifecycle()
     }
 
@@ -69,11 +70,6 @@ final class UserSessionManager {
     }
 
     @MainActor
-    func setActiveMediaPlayerManager(_ manager: MediaPlayerManager?) {
-        mediaPlayerManager = manager
-    }
-
-    @MainActor
     func stopActivePlayback() async {
         guard let mediaPlayerManager, mediaPlayerManager.state != .stopped else { return }
         await mediaPlayerManager.stop()
@@ -96,6 +92,14 @@ final class UserSessionManager {
         guard backgroundedInterval > Defaults[.backgroundSignOutInterval] else { return }
 
         signOut(reason: .backgroundTimeout)
+    }
+
+    private func observeMediaPlayerManager() {
+        Container.shared.mediaPlayerManagerPublisher()
+            .sink { [weak self] manager in
+                self?.mediaPlayerManager = manager
+            }
+            .store(in: &cancellables)
     }
 
     private func observeAppLifecycle() {

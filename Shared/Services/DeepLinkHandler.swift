@@ -26,7 +26,9 @@ final class DeepLinkHandler: ObservableObject {
 
         enum Destination: Equatable {
             case item(id: String)
-            case library(id: String)
+
+            // TODO: able to launch library by ID without item pre-retrieval?
+//            case library(id: String)
         }
 
         let serverID: String
@@ -41,9 +43,7 @@ final class DeepLinkHandler: ObservableObject {
             self.serverID = String(match.output.serverID)
             self.userID = String(match.output.userID)
 
-            self.destination = String(match.output.destinationType) == "item" ?
-                .item(id: String(match.output.destinationID)) :
-                .library(id: String(match.output.destinationID))
+            self.destination = .item(id: String(match.output.destinationID))
         }
     }
 
@@ -129,11 +129,10 @@ final class DeepLinkHandler: ObservableObject {
 
         switch deepLink.destination {
         case let .item(id):
-            let item = try await getItem(id: id, userSession: session)
-            return .item(item: item)
-        case let .library(id):
-            let library = try await getItem(id: id, userSession: session)
-            return .library(viewModel: ItemLibraryViewModel(parent: library))
+            return .item(id: id)
+//        case let .library(id):
+//            let library = try await getItem(id: id, userSession: session)
+//            return .library(viewModel: ItemLibraryViewModel(parent: library))
         }
     }
 
@@ -192,11 +191,5 @@ final class DeepLinkHandler: ObservableObject {
                 throw ErrorMessage(L10n.incorrectPinForUser(user.username))
             }
         }
-    }
-
-    private func getItem(id: String, userSession: UserSession) async throws -> BaseItemDto {
-        let request = Paths.getItem(itemID: id, userID: userSession.user.id)
-        let response = try await userSession.client.send(request)
-        return response.value
     }
 }

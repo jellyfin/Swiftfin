@@ -187,6 +187,15 @@ extension NavigationRoute {
         }
     }
 
+    static func item(id: String) -> NavigationRoute {
+        NavigationRoute(
+            id: "item-\(id)",
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
+        ) {
+            ItemView(item: .init(id: id))
+        }
+    }
+
     #if os(iOS)
     static func itemEditor(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
         NavigationRoute(

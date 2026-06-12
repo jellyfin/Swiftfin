@@ -267,7 +267,6 @@ final class MediaPlayerManager: ViewModel {
         }
 
         proxy?.stop()
-        Container.shared.userSessionManager().setActiveMediaPlayerManager(nil)
         Container.shared.mediaPlayerManagerPublisher().send(nil)
         Container.shared.mediaPlayerManager.reset()
     }
@@ -319,7 +318,6 @@ final class MediaPlayerManager: ViewModel {
         //       - check that observers would respond correctly to stopping
         itemBuildTask?.cancel()
         proxy?.stop()
-        Container.shared.userSessionManager().setActiveMediaPlayerManager(nil)
         Container.shared.mediaPlayerManagerPublisher().send(nil)
         Container.shared.mediaPlayerManager.reset()
     }
