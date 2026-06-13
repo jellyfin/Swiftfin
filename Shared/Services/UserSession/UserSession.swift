@@ -19,6 +19,11 @@ final class UserSession {
     let client: JellyfinClient
     let server: ServerState
     let user: UserState
+    lazy var serverConnectionManager = ServerConnectionManager(userSession: self)
+
+    private lazy var services: [any UserSessionService] = [
+        serverConnectionManager,
+    ]
 
     init(
         server: ServerState,
@@ -38,16 +43,18 @@ final class UserSession {
 
         self.client = client
     }
-}
 
-enum UserSessionError: LocalizedError {
+    @MainActor
+    func start() {
+        for service in services {
+            service.userSessionDidStart()
+        }
+    }
 
-    case missingCurrentSession
-
-    var errorDescription: String? {
-        switch self {
-        case .missingCurrentSession:
-            "No signed-in user session is available."
+    @MainActor
+    func willStop() {
+        for service in services.reversed() {
+            service.userSessionWillStop()
         }
     }
 }

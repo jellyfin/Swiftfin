@@ -14,6 +14,7 @@ import JellyfinAPI
 import VLCUI
 
 // TODO: proper error catching
+// TODO: be a UserSessionService?
 
 typealias MediaPlayerManagerPublisher = LegacyEventPublisher<MediaPlayerManager?>
 

@@ -7,16 +7,30 @@
 //
 
 import Defaults
+import Factory
 import SwiftUI
 
 /// `Note`: Used for experimental settings that may be removed or implemented officially. Keep for future settings.
 struct ExperimentalSettingsView: View {
 
-    static let isEnabled = false
+    static let isEnabled = true
 
-    @ViewBuilder
+    @Default(.Experimental.serverConnectionAutoSwitch)
+    private var isServerConnectionAutoSwitchEnabled
+
     var body: some View {
-        Form(systemImage: "flask") {}
-            .navigationTitle(L10n.experimental)
+        Form(systemImage: "flask") {
+            // swiftlint:disable hard_coded_display_string
+            Toggle("Auto switch connection", isOn: $isServerConnectionAutoSwitchEnabled)
+
+            // swiftlint:enable hard_coded_display_string
+        }
+        .backport
+        .onChange(of: isServerConnectionAutoSwitchEnabled) { _, newValue in
+            if newValue {
+                Container.shared.userSessionManager().scheduleServerConnectionEvaluation()
+            }
+        }
+        .navigationTitle(L10n.experimental)
     }
 }

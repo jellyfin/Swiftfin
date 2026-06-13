@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 struct ServerConnectionsView: View {
@@ -18,6 +19,9 @@ struct ServerConnectionsView: View {
 
     @State
     private var editMode: EditMode = .inactive
+
+    @Default(.Experimental.serverConnectionAutoSwitch)
+    private var isAutoSwitchFeatureEnabled
 
     private var isEditing: Bool {
         editMode.isEditing
@@ -64,31 +68,33 @@ struct ServerConnectionsView: View {
 
     var body: some View {
         Form(systemImage: "network") {
-            Section {
-                Toggle(L10n.autoSwitch, isOn: $viewModel.isAutoSwitchEnabled)
+            if isAutoSwitchFeatureEnabled {
+                Section {
+                    Toggle(L10n.autoSwitch, isOn: $viewModel.isAutoSwitchEnabled)
 
-                if viewModel.isAutoSwitchEnabled {
-                    Button {
-                        Task {
-                            await viewModel.evaluateAutoSwitchConnection()
-                        }
-                    } label: {
-                        HStack {
-                            Text(L10n.evaluate)
+                    if viewModel.isAutoSwitchEnabled {
+                        Button {
+                            Task {
+                                await viewModel.evaluateAutoSwitchConnection()
+                            }
+                        } label: {
+                            HStack {
+                                Text(L10n.evaluate)
 
-                            Spacer()
+                                Spacer()
 
-                            if viewModel.isEvaluatingAutoSwitchConnection {
-                                ProgressView()
+                                if viewModel.isEvaluatingAutoSwitchConnection {
+                                    ProgressView()
+                                }
                             }
                         }
+                        .disabled(viewModel.isEvaluatingAutoSwitchConnection)
                     }
-                    .disabled(viewModel.isEvaluatingAutoSwitchConnection)
+                } footer: {
+                    Text(L10n.autoSwitchDescription)
                 }
-            } footer: {
-                Text(L10n.autoSwitchDescription)
+                .disabled(isEditing)
             }
-            .disabled(isEditing)
 
             Section(L10n.connections) {
                 ForEach(viewModel.connections) { connection in

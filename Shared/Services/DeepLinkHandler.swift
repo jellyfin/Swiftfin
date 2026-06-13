@@ -50,7 +50,6 @@ final class DeepLinkHandler: ObservableObject {
     enum DeepLinkError: Error {
         case invalidURL
         case missingAuthenticationAction
-        case missingCurrentSession
         case missingServer(String)
         case missingUser(String)
         case wrongCurrentSession
@@ -61,8 +60,6 @@ final class DeepLinkHandler: ObservableObject {
                 "The URL is not a supported Swiftfin deep link."
             case .missingAuthenticationAction:
                 "Local authentication is unavailable."
-            case .missingCurrentSession:
-                "No signed-in user session is available."
             case let .missingServer(serverID):
                 "No saved server exists for deep link server ID \(serverID)."
             case let .missingUser(userID):
@@ -120,7 +117,7 @@ final class DeepLinkHandler: ObservableObject {
 
     func route(for deepLink: DeepLink) async throws -> NavigationRoute {
         guard let session = Container.shared.userSessionManager().currentSession else {
-            throw DeepLinkError.missingCurrentSession
+            throw UserSessionError.missingCurrentSession
         }
 
         guard session.server.id == deepLink.serverID, session.user.id == deepLink.userID else {

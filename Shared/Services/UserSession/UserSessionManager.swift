@@ -12,6 +12,19 @@ import Factory
 import Foundation
 import Logging
 
+extension Container {
+
+    var userSessionManager: Factory<UserSessionManager> {
+        self { UserSessionManager() }
+            .singleton
+    }
+
+    var currentUserSession: Factory<UserSession?> {
+        self { self.userSessionManager().currentSession }
+            .cached
+    }
+}
+
 final class UserSessionManager {
 
     enum SignOutReason {
@@ -22,9 +35,9 @@ final class UserSessionManager {
         case invalidStoredSession
     }
 
+    private var cancellables = Set<AnyCancellable>()
     private let logger = Logger.swiftfin()
     private var mediaPlayerManager: MediaPlayerManager?
-    private var cancellables = Set<AnyCancellable>()
 
     private(set) var currentSession: UserSession?
 
@@ -36,20 +49,19 @@ final class UserSessionManager {
 
     init() {
         handleAppLaunch()
-        currentSession = Self.resolveCurrentSession()
+        updateCurrentSession(Self.resolveCurrentSession())
         observeMediaPlayerManager()
         observeAppLifecycle()
     }
 
     func refreshCurrentSession() {
-        currentSession = Self.resolveCurrentSession()
-        Container.shared.currentUserSession.reset()
+        updateCurrentSession(Self.resolveCurrentSession())
     }
 
     func signIn(userID: String) {
         Defaults[.lastSignedInUserID] = .signedIn(userID: userID)
         refreshCurrentSession()
-        Notifications[.didSignIn].post()
+        Notifications[.didChangeUserSession].post()
     }
 
     func signOut(reason: SignOutReason) {
@@ -61,7 +73,7 @@ final class UserSessionManager {
             metadata: ["reason": .stringConvertible(String(describing: reason))]
         )
 
-        Notifications[.didSignOut].post()
+        Notifications[.didChangeUserSession].post()
     }
 
     private func handleAppLaunch() {
@@ -74,6 +86,11 @@ final class UserSessionManager {
         guard let mediaPlayerManager, mediaPlayerManager.state != .stopped else { return }
         await mediaPlayerManager.stop()
         self.mediaPlayerManager = nil
+    }
+
+    @MainActor
+    func scheduleServerConnectionEvaluation() {
+        currentSession?.serverConnectionManager.scheduleEvaluation()
     }
 
     func appDidEnterBackground() {
@@ -120,6 +137,17 @@ final class UserSessionManager {
             .store(in: &cancellables)
     }
 
+    private func updateCurrentSession(_ newSession: UserSession?) {
+        let previousSession = currentSession
+        currentSession = newSession
+        Container.shared.currentUserSession.reset()
+
+        Task { @MainActor in
+            previousSession?.willStop()
+            newSession?.start()
+        }
+    }
+
     private static func resolveCurrentSession() -> UserSession? {
         guard case let .signedIn(userId) = Defaults[.lastSignedInUserID] else { return nil }
 
@@ -137,18 +165,5 @@ final class UserSessionManager {
             server: server,
             user: user
         )
-    }
-}
-
-extension Container {
-
-    var userSessionManager: Factory<UserSessionManager> {
-        self { UserSessionManager() }
-            .singleton
-    }
-
-    var currentUserSession: Factory<UserSession?> {
-        self { self.userSessionManager().currentSession }
-            .cached
     }
 }

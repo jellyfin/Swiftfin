@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
@@ -25,96 +26,25 @@ enum ServerConnectionValidationError: Error {
     }
 }
 
-@MainActor
 final class ServerConnectionManager {
 
+    private static let logger = Logger.swiftfin()
+
     private let logger = Logger.swiftfin()
-    private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "Swiftfin.ServerConnectionMonitor")
 
+    private var userSession: UserSession
+    private var monitor: NWPathMonitor?
     private var isStarted = false
     private var context: NetworkConnectionContext = .unavailable
     private var evaluationTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
 
-    nonisolated init() {}
-
-    func start() {
-        guard !isStarted else { return }
-        isStarted = true
-
-        monitor.pathUpdateHandler = { [weak self] path in
-            Task { [weak self] in
-                let context = await NetworkConnectionContext.current(path: path)
-                await self?.pathDidUpdate(context)
-            }
-        }
-        monitor.start(queue: queue)
-
-        Notifications[.didSignIn]
-            .publisher
-            .sink { [weak self] in
-                self?.scheduleEvaluation()
-            }
-            .store(in: &cancellables)
-
-        Notifications[.applicationWillEnterForeground]
-            .publisher
-            .sink { [weak self] in
-                self?.scheduleEvaluation()
-            }
-            .store(in: &cancellables)
+    init(userSession: UserSession) {
+        self.userSession = userSession
     }
 
-    func scheduleEvaluation() {
-        evaluationTask?.cancel()
-        evaluationTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 1_500_000_000)
-            await self?.evaluateCurrentSession()
-        }
-    }
-
-    func evaluateCurrentSession() async {
-        guard let session = Container.shared.userSessionManager().currentSession else { return }
-
-        await evaluate(
-            server: session.server,
-            accessToken: session.user.accessToken
-        )
-    }
-
-    func evaluate(
-        server: ServerState,
-        accessToken: String?
-    ) async {
-        guard server.isAutoSwitchEnabled else { return }
-
-        guard !Container.shared.userSessionManager().hasActivePlayback else {
-            logger.info("Skipped server connection switch during active playback")
-            return
-        }
-
-        let currentContext = context
-        guard currentContext.isSatisfied else { return }
-
-        let candidates = server.serverConnections.filter { $0.matches(currentContext) }
-
-        let currentConnection = server.activeServerConnection
-        guard let reachableConnection = await firstReachableConnection(
-            in: candidates,
-            accessToken: accessToken,
-            serverID: server.id
-        ) else { return }
-        guard currentConnection?.id != reachableConnection.id else { return }
-
-        server.activeServerConnection = reachableConnection
-        Notifications.postServerConnectionChange(
-            previous: currentConnection,
-            current: reachableConnection
-        )
-    }
-
-    func test(
+    static func test(
         connection: ServerConnection,
         accessToken: String? = nil,
         matchingServerID serverID: String? = nil
@@ -143,12 +73,34 @@ final class ServerConnectionManager {
         return publicInfo
     }
 
-    private func pathDidUpdate(_ context: NetworkConnectionContext) {
-        self.context = context
-        scheduleEvaluation()
+    @MainActor
+    static func evaluate(
+        server: ServerState,
+        accessToken: String?,
+        context: NetworkConnectionContext
+    ) async -> ServerConnection? {
+        guard context.isSatisfied else { return nil }
+
+        let candidates = server.serverConnections.filter { $0.matches(context) }
+
+        let currentConnection = server.activeServerConnection
+        guard let reachableConnection = await firstReachableConnection(
+            in: candidates,
+            accessToken: accessToken,
+            serverID: server.id
+        ) else { return nil }
+        guard currentConnection?.id != reachableConnection.id else { return nil }
+
+        server.activeServerConnection = reachableConnection
+        Notifications.postServerConnectionChange(
+            previous: currentConnection,
+            current: reachableConnection
+        )
+
+        return reachableConnection
     }
 
-    private func firstReachableConnection(
+    private static func firstReachableConnection(
         in connections: [ServerConnection],
         accessToken: String?,
         serverID: String
@@ -176,12 +128,106 @@ final class ServerConnectionManager {
 
         return nil
     }
+
+    @MainActor
+    func update(userSession: UserSession) {
+        self.userSession = userSession
+    }
+
+    @MainActor
+    func start() {
+        guard !isStarted else { return }
+        isStarted = true
+
+        let monitor = NWPathMonitor()
+        self.monitor = monitor
+
+        monitor.pathUpdateHandler = { [weak self] path in
+            Task { [weak self] in
+                let context = await NetworkConnectionContext.current(path: path)
+                await self?.pathDidUpdate(context)
+            }
+        }
+        monitor.start(queue: queue)
+
+        Notifications[.applicationWillEnterForeground]
+            .publisher
+            .sink { [weak self] in
+                self?.scheduleEvaluation()
+            }
+            .store(in: &cancellables)
+
+        scheduleEvaluation()
+    }
+
+    @MainActor
+    func stop() {
+        guard isStarted else { return }
+
+        isStarted = false
+        evaluationTask?.cancel()
+        evaluationTask = nil
+        cancellables.removeAll()
+        monitor?.cancel()
+        monitor = nil
+        context = .unavailable
+    }
+
+    @MainActor
+    func scheduleEvaluation() {
+        guard Defaults[.Experimental.serverConnectionAutoSwitch] else { return }
+
+        evaluationTask?.cancel()
+        evaluationTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            await self?.evaluateCurrentSession()
+        }
+    }
+
+    @MainActor
+    func evaluateCurrentSession() async {
+        await evaluate(
+            server: userSession.server,
+            accessToken: userSession.user.accessToken
+        )
+    }
+
+    @MainActor
+    func evaluate(
+        server: ServerState,
+        accessToken: String?
+    ) async {
+        guard Defaults[.Experimental.serverConnectionAutoSwitch] else { return }
+        guard server.isAutoSwitchEnabled else { return }
+
+        guard !Container.shared.userSessionManager().hasActivePlayback else {
+            logger.info("Skipped server connection switch during active playback")
+            return
+        }
+
+        _ = await Self.evaluate(
+            server: server,
+            accessToken: accessToken,
+            context: context
+        )
+    }
+
+    @MainActor
+    private func pathDidUpdate(_ context: NetworkConnectionContext) {
+        self.context = context
+        scheduleEvaluation()
+    }
 }
 
-extension Container {
+extension ServerConnectionManager: UserSessionService {
 
-    var serverConnectionManager: Factory<ServerConnectionManager> {
-        self { ServerConnectionManager() }
-            .singleton
+    @MainActor
+    func userSessionDidStart() {
+        start()
+    }
+
+    @MainActor
+    func userSessionWillStop() {
+        stop()
     }
 }

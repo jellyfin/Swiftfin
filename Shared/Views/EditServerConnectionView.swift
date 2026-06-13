@@ -9,12 +9,12 @@
 import SwiftUI
 
 struct EditServerConnectionView: View {
+    
+    @FocusState
+    private var isNameFocused: Bool
 
     @ObservedObject
     var viewModel: ServerConnectionViewModel
-
-    @FocusState
-    private var isNameFocused: Bool
 
     @Router
     private var router

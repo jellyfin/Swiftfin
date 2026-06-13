@@ -92,14 +92,6 @@ enum Notifications {
                 }
                 .eraseToAnyPublisher()
         }
-
-        func subscribe(_ object: Any, selector: Selector) {
-            notificationCenter.addObserver(object, selector: selector, name: name, object: nil)
-        }
-
-        func subscribe(_ object: Any, selector: Selector, observed: Any) {
-            notificationCenter.addObserver(object, selector: selector, name: name, object: observed)
-        }
     }
 
     static subscript<Payload>(key: Key<Payload>) -> Key<Payload> {
@@ -125,12 +117,8 @@ extension Notifications.Key {
 
     // MARK: - Authentication
 
-    static var didSignIn: Key<Void> {
-        Key("didSignIn")
-    }
-
-    static var didSignOut: Key<Void> {
-        Key("didSignOut")
+    static var didChangeUserSession: Key<Void> {
+        Key("didChangeUserSession")
     }
 
     // MARK: - App Flow

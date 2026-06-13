@@ -58,6 +58,26 @@ struct NetworkConnectionContext: Equatable {
         )
     }
 
+    static func current() async -> NetworkConnectionContext {
+        let monitor = NWPathMonitor()
+        let queue = DispatchQueue(label: "Swiftfin.NetworkConnectionContext")
+        let resumeState = ContinuationResumeState()
+
+        return await withCheckedContinuation { continuation in
+            monitor.pathUpdateHandler = { path in
+                guard resumeState.resume() else { return }
+                monitor.cancel()
+
+                Task {
+                    let context = await Self.current(path: path)
+                    continuation.resume(returning: context)
+                }
+            }
+
+            monitor.start(queue: queue)
+        }
+    }
+
     static var unavailable: NetworkConnectionContext {
         .init(
             isSatisfied: false,
@@ -88,5 +108,20 @@ struct NetworkConnectionContext: Equatable {
         #endif
 
         return nil
+    }
+
+    private final class ContinuationResumeState {
+
+        private let lock = NSLock()
+        private var didResume = false
+
+        func resume() -> Bool {
+            lock.lock()
+            defer { lock.unlock() }
+
+            guard !didResume else { return false }
+            didResume = true
+            return true
+        }
     }
 }

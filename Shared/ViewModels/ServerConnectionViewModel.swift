@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
@@ -27,11 +28,12 @@ final class ServerConnectionViewModel: ViewModel {
     var isAutoSwitchEnabled: Bool {
         didSet {
             guard oldValue != isAutoSwitchEnabled else { return }
+            guard Defaults[.Experimental.serverConnectionAutoSwitch] else { return }
 
             server.isAutoSwitchEnabled = isAutoSwitchEnabled
 
             if isAutoSwitchEnabled {
-                Container.shared.serverConnectionManager().scheduleEvaluation()
+                Container.shared.userSessionManager().scheduleServerConnectionEvaluation()
             }
         }
     }
@@ -130,7 +132,7 @@ final class ServerConnectionViewModel: ViewModel {
         testStates[connection.id] = .testing
 
         do {
-            _ = try await Container.shared.serverConnectionManager().test(
+            _ = try await ServerConnectionManager.test(
                 connection: connection,
                 accessToken: userSession?.user.accessToken,
                 matchingServerID: server.id
@@ -146,14 +148,19 @@ final class ServerConnectionViewModel: ViewModel {
     }
 
     func evaluateAutoSwitchConnection() async {
+        guard Defaults[.Experimental.serverConnectionAutoSwitch] else { return }
+        guard isAutoSwitchEnabled else { return }
         guard !isEvaluatingAutoSwitchConnection else { return }
 
         isEvaluatingAutoSwitchConnection = true
         defer { isEvaluatingAutoSwitchConnection = false }
 
-        await Container.shared.serverConnectionManager().evaluate(
+        guard !Container.shared.userSessionManager().hasActivePlayback else { return }
+
+        await ServerConnectionManager.evaluate(
             server: server,
-            accessToken: userSession?.user.accessToken
+            accessToken: userSession?.user.accessToken,
+            context: NetworkConnectionContext.current()
         )
         reloadConnections()
     }
