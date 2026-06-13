@@ -48,4 +48,14 @@ enum VideoPlayerType: String, CaseIterable, Displayable, Storable {
             Self._vlcSubtitleProfiles
         }
     }
+
+    var remotePlaybackRoutes: [RemotePlaybackRoute] {
+        switch self {
+        case .avPlayer:
+            RemotePlaybackRoute.supportedCases
+        case .vlc:
+            RemotePlaybackRoute.supportedCases
+                .removing(.airPlay)
+        }
+    }
 }
