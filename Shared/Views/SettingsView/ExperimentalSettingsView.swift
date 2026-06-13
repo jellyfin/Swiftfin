@@ -13,7 +13,11 @@ import SwiftUI
 /// `Note`: Used for experimental settings that may be removed or implemented officially. Keep for future settings.
 struct ExperimentalSettingsView: View {
 
+    #if os(tvOS)
+    static let isEnabled = false
+    #else
     static let isEnabled = true
+    #endif
 
     @Default(.Experimental.serverConnectionAutoSwitch)
     private var isServerConnectionAutoSwitchEnabled

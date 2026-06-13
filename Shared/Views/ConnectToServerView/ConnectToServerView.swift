@@ -21,13 +21,14 @@ struct ConnectToServerView: View {
     @Router
     private var router
 
-    @StateObject
-    private var viewModel = ConnectToServerViewModel()
-
     @State
     private var duplicateServer: ServerState? = nil
+
     @State
     private var url: String = ""
+
+    @StateObject
+    private var viewModel = ConnectToServerViewModel()
 
     private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
 

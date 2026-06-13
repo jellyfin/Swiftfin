@@ -20,11 +20,13 @@ struct LocalUserSecurityView: View {
     private var router
 
     @State
-    private var signInPolicy: LocalUserAccessPolicy = .none
+    private var error: Error? = nil
+
     @State
     private var pinHint: String = ""
+
     @State
-    private var error: Error? = nil
+    private var signInPolicy: LocalUserAccessPolicy = .none
 
     @StateObject
     private var viewModel = LocalUserSecurityViewModel()

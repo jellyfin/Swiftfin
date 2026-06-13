@@ -6,12 +6,8 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
-import Defaults
-import Factory
 import Foundation
 import JellyfinAPI
-import Logging
 import Pulse
 
 final class UserSession {

@@ -1780,10 +1780,6 @@ internal enum L10n {
   internal static let useSeriesImageForEpisodes = L10n.tr("Localizable", "useSeriesImageForEpisodes", fallback: "Use series image for episodes")
   /// Use splashscreen
   internal static let useSplashscreen = L10n.tr("Localizable", "useSplashscreen", fallback: "Use splashscreen")
-  /// Using %@
-  internal static func usingConnection(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "usingConnection", String(describing: p1), fallback: "Using %@")
-  }
   /// Version
   internal static let version = L10n.tr("Localizable", "version", fallback: "Version")
   /// Video

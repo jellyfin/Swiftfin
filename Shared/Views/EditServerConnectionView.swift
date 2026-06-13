@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct EditServerConnectionView: View {
-    
+
     @FocusState
     private var isNameFocused: Bool
 

@@ -11,6 +11,9 @@ import SwiftUI
 
 struct ServerConnectionsView: View {
 
+    @Default(.Experimental.serverConnectionAutoSwitch)
+    private var isAutoSwitchFeatureEnabled
+
     @ObservedObject
     var viewModel: ServerConnectionViewModel
 
@@ -19,9 +22,6 @@ struct ServerConnectionsView: View {
 
     @State
     private var editMode: EditMode = .inactive
-
-    @Default(.Experimental.serverConnectionAutoSwitch)
-    private var isAutoSwitchFeatureEnabled
 
     private var isEditing: Bool {
         editMode.isEditing
