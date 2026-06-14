@@ -148,7 +148,7 @@ struct ServerUsersView: View {
         .alert(L10n.deleteUserFailed, isPresented: $isPresentingSelfDeleteError) {
             Button(L10n.ok, role: .cancel) {}
         } message: {
-            Text(L10n.deleteUserSelfDeletion(viewModel.userSession.user.username))
+            Text(L10n.deleteUserSelfDeletion(viewModel.userSession?.user.username ?? ""))
         }
         .onNotification(.didAddServerUser) { newUser in
             viewModel.send(.appendUser(newUser))
@@ -240,7 +240,7 @@ struct ServerUsersView: View {
 
         Button(L10n.delete, role: .destructive) {
             if let userToDelete = selectedUsers.first, selectedUsers.count == 1 {
-                if userToDelete == viewModel.userSession.user.id {
+                if userToDelete == viewModel.userSession?.user.id {
                     isPresentingSelfDeleteError = true
                 } else {
                     viewModel.send(.deleteUsers([userToDelete]))

@@ -116,12 +116,12 @@ struct CustomizeSettingsView: View {
     private var viewModel: ServerUserAdminViewModel
 
     init() {
-        /// If there is no User or UserSession, updating the user on the server has the potential of nuking all settings.
-        /// - Force Unwrap might crash but this is to prevent malformed UserDTO updating over real UserDTOs
-        _viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: Container.shared.currentUserSession()!.user.data))
+        _viewModel =
+            StateObject(wrappedValue: ServerUserAdminViewModel(user: Container.shared.currentUserSession()?.user.data ?? UserDto()))
     }
 
     private func updateConfiguration(_ modify: (inout UserConfiguration) -> Void) {
+        guard viewModel.user.id != nil else { return }
         guard var configuration = viewModel.user.configuration else { return }
         modify(&configuration)
         viewModel.updateConfiguration(configuration)

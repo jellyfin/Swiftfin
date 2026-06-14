@@ -35,7 +35,7 @@ extension SelectUserView {
                     if let selectedServer = serverSelection.server(from: servers) {
                         Button(L10n.editServer, systemImage: "server.rack") {
                             router.route(
-                                to: .editServer(server: selectedServer, isEditing: true),
+                                to: .editLocalServer(server: selectedServer, isEditing: true),
                                 style: .sheet
                             )
                         }
@@ -52,7 +52,7 @@ extension SelectUserView {
                     ForEach(servers) { server in
                         Button {} label: {
                             Text(server.name)
-                            Text(server.currentURL.absoluteString)
+                            Text(server.effectiveServerURL.absoluteString)
                         }
                         .tag(SelectUserServerSelection.server(id: server.id))
                     }

@@ -79,7 +79,9 @@ enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
     private func testBitrate(with testSize: Int) async throws -> Int {
         precondition(testSize > 0, "testSize must be greater than zero")
 
-        let userSession = Container.shared.currentUserSession()!
+        guard let userSession = Container.shared.currentUserSession() else {
+            throw UserSessionError.missingCurrentSession
+        }
 
         let testStartTime = Date()
         let _ = try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))

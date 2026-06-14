@@ -53,7 +53,7 @@ final class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
         parameters.type = imageType
 
         let request = Paths.getRemoteImages(itemID: itemID, parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         await MainActor.run {
             providers = response.value.providers ?? []

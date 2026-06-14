@@ -88,13 +88,13 @@ final class FilterViewModel: ViewModel {
     @Function(\Action.Cases.getQueryFilters)
     private func _getQueryFilters() async throws {
 
-        let parameters = Paths.GetQueryFiltersLegacyParameters(
-            userID: userSession.user.id,
+        let parameters = try Paths.GetQueryFiltersLegacyParameters(
+            userID: authenticatedUser.id,
             parentID: parent?.id
         )
 
         let request = Paths.getQueryFiltersLegacy(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         let genres: [ItemGenre] = (response.value.genres ?? [])
             .map(ItemGenre.init)

@@ -96,7 +96,7 @@ struct DevicesView: View {
         .alert(L10n.deleteDeviceFailed, isPresented: $isPresentingSelfDeleteError) {
             Button(L10n.ok, role: .cancel) {}
         } message: {
-            Text(L10n.deleteDeviceSelfDeletion(viewModel.userSession.client.configuration.deviceName))
+            Text(L10n.deleteDeviceSelfDeletion(viewModel.userSession?.client.configuration.deviceName ?? ""))
         }
         .errorMessage($viewModel.error)
     }
@@ -207,7 +207,7 @@ struct DevicesView: View {
 
         Button(L10n.delete, role: .destructive) {
             if let deviceToDelete = selectedDevices.first, selectedDevices.count == 1 {
-                if deviceToDelete == viewModel.userSession.client.configuration.deviceID {
+                if deviceToDelete == viewModel.userSession?.client.configuration.deviceID {
                     isPresentingSelfDeleteError = true
                 } else {
                     viewModel.delete(ids: [deviceToDelete])

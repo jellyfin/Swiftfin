@@ -53,9 +53,10 @@ final class MediaViewModel: ViewModel {
 
     private func getUserViews() async throws -> [BaseItemDto] {
 
-        let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
+        let client = try authenticatedClient
+        let parameters = try Paths.GetUserViewsParameters(userID: authenticatedUser.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
-        async let userViews = userSession.client.send(userViewsPath)
+        async let userViews = client.send(userViewsPath)
 
         async let excludedLibraryIDs = getExcludedLibraries()
 
@@ -77,7 +78,7 @@ final class MediaViewModel: ViewModel {
 
     private func getExcludedLibraries() async throws -> [String] {
         let currentUserPath = Paths.getCurrentUser
-        let response = try await userSession.client.send(currentUserPath)
+        let response = try await send(currentUserPath)
 
         return response.value.configuration?.myMediaExcludes ?? []
     }
@@ -115,7 +116,7 @@ final class MediaViewModel: ViewModel {
         parameters.sortBy = [ItemSortBy.random]
 
         let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return (response.value.items ?? [])
             .flatMap { $0.landscapeImageSources(maxWidth: 200) }

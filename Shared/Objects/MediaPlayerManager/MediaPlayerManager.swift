@@ -14,6 +14,7 @@ import JellyfinAPI
 import VLCUI
 
 // TODO: proper error catching
+// TODO: be a UserSessionService?
 
 typealias MediaPlayerManagerPublisher = LegacyEventPublisher<MediaPlayerManager?>
 
@@ -236,7 +237,7 @@ final class MediaPlayerManager: ViewModel {
             return
         }
 
-        if let nextItem = queue?.nextItem, userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true {
+        if let nextItem = queue?.nextItem, try authenticatedUser.data.configuration?.enableNextEpisodeAutoPlay == true {
             await self.playNewItem(provider: nextItem)
         } else {
             await self.stop()
@@ -267,6 +268,7 @@ final class MediaPlayerManager: ViewModel {
         }
 
         proxy?.stop()
+        Container.shared.mediaPlayerManagerPublisher().send(nil)
         Container.shared.mediaPlayerManager.reset()
     }
 
@@ -367,6 +369,7 @@ final class MediaPlayerManager: ViewModel {
         await self.cancel()
 
         proxy?.stop()
+        Container.shared.mediaPlayerManagerPublisher().send(nil)
         Container.shared.mediaPlayerManager.reset()
     }
 

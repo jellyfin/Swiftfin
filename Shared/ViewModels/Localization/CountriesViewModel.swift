@@ -14,7 +14,7 @@ final class CountriesViewModel: BaseFetchViewModel<[CountryInfo]> {
 
     override func getValue() async throws -> [CountryInfo] {
         let request = Paths.getCountries
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value
     }
