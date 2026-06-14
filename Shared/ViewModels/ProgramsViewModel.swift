@@ -144,7 +144,7 @@ final class ProgramsViewModel: ViewModel, Stateful {
         parameters.limit = 20
 
         let request = Paths.getRecommendedPrograms(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items ?? []
     }
@@ -164,7 +164,7 @@ final class ProgramsViewModel: ViewModel, Stateful {
         parameters.isSports = section == .sports
 
         let request = Paths.getLiveTvPrograms(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items ?? []
     }

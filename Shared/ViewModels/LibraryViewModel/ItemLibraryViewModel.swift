@@ -22,7 +22,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         let parameters = itemParameters(for: page)
         let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         // 1 - only care to keep collections that hold valid items
         // 2 - if parent is type `folder`, then we are in a folder-view
@@ -114,13 +114,14 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
     // MARK: getRandomItem
 
     override func getRandomItem() async -> BaseItemDto? {
+        guard userSession != nil else { return nil }
 
         var parameters = itemParameters(for: nil)
         parameters.limit = 1
         parameters.sortBy = [ItemSortBy.random]
 
         let request = Paths.getItems(parameters: parameters)
-        let response = try? await userSession.client.send(request)
+        let response = try? await send(request)
 
         return response?.value.items?.first
     }

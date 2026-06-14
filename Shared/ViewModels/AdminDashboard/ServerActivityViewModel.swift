@@ -68,14 +68,14 @@ final class ServerActivityViewModel: PagingLibraryViewModel<ActivityLogEntry> {
         parameters.startIndex = page * pageSize
 
         let request = Paths.getLogEntries(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items ?? []
     }
 
     private func getUsers() async throws -> IdentifiedArrayOf<UserDto> {
         let request = Paths.getUsers()
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return IdentifiedArray(uniqueElements: response.value)
     }

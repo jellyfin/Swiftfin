@@ -181,16 +181,16 @@ final class HomeViewModel: ViewModel, Stateful {
         parameters.limit = 20
 
         let request = Paths.getResumeItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items ?? []
     }
 
     private func getLibraries() async throws -> [LatestInLibraryViewModel] {
 
-        let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
+        let parameters = try Paths.GetUserViewsParameters(userID: authenticatedUser.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
-        async let userViews = userSession.client.send(userViewsPath)
+        async let userViews = try await send(userViewsPath)
 
         async let excludedLibraryIDs = getExcludedLibraries()
 
@@ -211,24 +211,26 @@ final class HomeViewModel: ViewModel, Stateful {
     // TODO: use the more updated server/user data when implemented
     private func getExcludedLibraries() async throws -> [String] {
         let currentUserPath = Paths.getCurrentUser
-        let response = try await userSession.client.send(currentUserPath)
+        let response = try await send(currentUserPath)
 
         return response.value.configuration?.latestItemsExcludes ?? []
     }
 
     private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {
+        guard let itemID = item.id else { return }
+
         let request: Request<UserItemDataDto> = if isPlayed {
-            Paths.markPlayedItem(
-                itemID: item.id!,
-                userID: userSession.user.id
+            try Paths.markPlayedItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
             )
         } else {
-            Paths.markUnplayedItem(
-                itemID: item.id!,
-                userID: userSession.user.id
+            try Paths.markUnplayedItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
             )
         }
 
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
     }
 }

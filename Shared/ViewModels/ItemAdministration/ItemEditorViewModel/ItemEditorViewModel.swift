@@ -103,7 +103,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
         guard let itemID = item.id else { return }
 
         let request = Paths.deleteItem(itemID: itemID)
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
 
         Notifications[.didDeleteItem].post(itemID)
         events.send(.deleted)
@@ -130,7 +130,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
             itemID: itemId,
             parameters: parameters
         )
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
 
         events.send(.metadataRefreshStarted)
 
@@ -176,7 +176,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
 
     @Function(\Action.Cases.refreshItem)
     private func _refreshItem(_ isRefresh: Bool) async throws {
-        self.item = try await item.getFullItem(userSession: userSession, sendNotification: isRefresh)
+        self.item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: isRefresh)
         events.send(.updated)
     }
 
@@ -191,7 +191,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel {
         updateItem.trickplay = nil
 
         let request = Paths.updateItem(itemID: itemId, updateItem)
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
 
         await refreshItem(sendNotification: true)
     }

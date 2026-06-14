@@ -22,9 +22,10 @@ struct ItemImageDetailView: View {
 
     private var imageSource: ImageSource? {
         guard let itemID = viewModel.item.id else { return nil }
+        guard let userSession = viewModel.userSession else { return nil }
         return imageInfo.itemImageSource(
             itemID: itemID,
-            client: viewModel.userSession.client
+            client: userSession.client
         )
     }
 

@@ -15,7 +15,7 @@ final class GenreEditorViewModel: ItemEditorViewModel<String> {
     override func searchElements(_ searchTerm: String) async throws -> [String] {
         let parameters = Paths.GetGenresParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
         let request = Paths.getGenres(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items?.compactMap(\.name) ?? []
     }

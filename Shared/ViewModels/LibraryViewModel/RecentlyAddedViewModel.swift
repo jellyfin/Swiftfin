@@ -27,14 +27,14 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     override func get(page: Int) async throws -> [BaseItemDto] {
 
-        let parameters = parameters(for: page)
+        let parameters = try parameters(for: page, user: authenticatedUser)
         let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items ?? []
     }
 
-    private func parameters(for page: Int) -> Paths.GetItemsParameters {
+    private func parameters(for page: Int, user: UserState) -> Paths.GetItemsParameters {
 
         var parameters = Paths.GetItemsParameters()
         parameters.enableUserData = true
@@ -51,7 +51,7 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         // nothing we can do about it.
         parameters.excludeItemIDs = elements.compactMap(\.id)
 
-        if userSession.user.data.configuration?.isHidePlayedInLatest == true {
+        if user.data.configuration?.isHidePlayedInLatest == true {
             parameters.isPlayed = false
         }
 

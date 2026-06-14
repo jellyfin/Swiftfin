@@ -6,9 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-import JellyfinAPI
+enum UserSessionError: Error {
 
-enum DeepLink {
-    case item(BaseItemDto)
+    case missingCurrentSession
+
+    var localizedDescription: String? {
+        switch self {
+        case .missingCurrentSession:
+            "No signed-in user session is available."
+        }
+    }
 }
