@@ -230,12 +230,8 @@ extension Notifications.Key {
             else {
                 return nil
             }
-            guard let optionsUInt = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt
-            else {
-                return nil
-            }
-
-            let options = AVAudioSession.InterruptionOptions(rawValue: optionsUInt)
+            let options = (userInfo[AVAudioSessionInterruptionOptionKey] as? UInt)
+                .map(AVAudioSession.InterruptionOptions.init(rawValue:)) ?? []
 
             return (type, options)
         }
