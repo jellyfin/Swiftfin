@@ -110,8 +110,8 @@ internal enum L10n {
   internal static let always = L10n.tr("Localizable", "always", fallback: "Always")
   /// Anamorphic video is not supported
   internal static let anamorphicVideoNotSupported = L10n.tr("Localizable", "anamorphicVideoNotSupported", fallback: "Anamorphic video is not supported")
-  /// Any Network
-  internal static let anyNetwork = L10n.tr("Localizable", "anyNetwork", fallback: "Any Network")
+  /// Any
+  internal static let any = L10n.tr("Localizable", "any", fallback: "Any")
   /// Any Wi-Fi Network
   internal static let anyWifiNetwork = L10n.tr("Localizable", "anyWifiNetwork", fallback: "Any Wi-Fi Network")
   /// API key copied
@@ -386,8 +386,6 @@ internal enum L10n {
   internal static let confirmPassword = L10n.tr("Localizable", "confirmPassword", fallback: "Confirm password")
   /// Connect
   internal static let connect = L10n.tr("Localizable", "connect", fallback: "Connect")
-  /// Connected
-  internal static let connected = L10n.tr("Localizable", "connected", fallback: "Connected")
   /// Connection
   internal static let connection = L10n.tr("Localizable", "connection", fallback: "Connection")
   /// Connection already exists
@@ -396,8 +394,6 @@ internal enum L10n {
   internal static let connectionFailed = L10n.tr("Localizable", "connectionFailed", fallback: "Connection Failed")
   /// Connections
   internal static let connections = L10n.tr("Localizable", "connections", fallback: "Connections")
-  /// Connection Saved
-  internal static let connectionSaved = L10n.tr("Localizable", "connectionSaved", fallback: "Connection Saved")
   /// This connection does not point to the current server.
   internal static let connectionServerMismatch = L10n.tr("Localizable", "connectionServerMismatch", fallback: "This connection does not point to the current server.")
   /// Connect to a Jellyfin server to get started

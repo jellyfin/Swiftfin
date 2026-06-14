@@ -49,7 +49,8 @@ extension ServerState {
                 return connection
             }
 
-            return connections.first { $0.url == currentURL } ?? connections.first
+            let normalizedCurrentURL = currentURL.normalizedServerConnectionURL ?? currentURL
+            return connections.first { $0.url == normalizedCurrentURL } ?? connections.first
         }
         nonmutating set {
             StoredValues[.Server.activeConnectionID(id: id)] = newValue?.id ?? .empty
@@ -66,6 +67,7 @@ extension ServerState {
             try AnyStoredData.deleteAll(ownerID: user.id)
         }
         try AnyStoredData.deleteAll(ownerID: id)
+        UserDefaults.userSuite(id: id).removeAll()
 
         var storedUsers = StoredValues[.User.users]
         storedUsers.removeAll { $0.serverID == id }
@@ -86,9 +88,9 @@ extension ServerState {
 
     func ensureServerConnections() -> [ServerConnection] {
         let connections = StoredValues[.Server.connections(id: id)]
-        guard connections.isEmpty else { return ServerConnection.normalize(connections) }
+        guard connections.isEmpty else { return ServerConnection.ordered(connections) }
 
-        let defaultConnections = ServerConnection.defaults(for: self)
+        let defaultConnections = defaultServerConnections
         serverConnections = defaultConnections
         return defaultConnections
     }
@@ -103,7 +105,7 @@ extension ServerState {
 
     func hasServerConnection(url: URL) -> Bool {
         let normalizedURL = url.normalizedServerConnectionURL ?? url
-        return serverConnections.contains { $0.normalizedURL == normalizedURL }
+        return serverConnections.contains { $0.url == normalizedURL }
     }
 
     var isAutoSwitchEnabled: Bool {
@@ -130,18 +132,36 @@ extension ServerState {
             let connections = StoredValues[.Server.connections(id: id)]
 
             guard connections.isNotEmpty else {
-                return ServerConnection.defaults(for: self)
+                return defaultServerConnections
             }
 
-            return ServerConnection.normalize(connections)
+            return ServerConnection.ordered(connections)
         }
         nonmutating set {
-            StoredValues[.Server.connections(id: id)] = ServerConnection.normalize(newValue, preservingOrder: true)
+            StoredValues[.Server.connections(id: id)] = ServerConnection.ordered(newValue, preservingOrder: true)
         }
     }
 
     var splashScreenImageSource: ImageSource {
         ImageSource(url: client.url(with: Paths.getSplashscreen()))
+    }
+
+    private var defaultServerConnections: [ServerConnection] {
+        let urls = [currentURL] + self.urls
+            .subtracting([currentURL])
+            .sorted(using: \.absoluteString)
+
+        return urls.enumerated().map { index, url in
+            let normalizedURL = url.normalizedServerConnectionURL ?? url
+
+            return ServerConnection(
+                id: UUID().uuidString,
+                name: url == currentURL ? L10n.currentURL : normalizedURL.absoluteString,
+                url: normalizedURL,
+                interface: .any,
+                priority: index
+            )
+        }
     }
 
     @MainActor

@@ -15,17 +15,6 @@ import Logging
 import Network
 import Pulse
 
-enum ServerConnectionValidationError: Error {
-    case mismatchedServer
-
-    var localizedDescription: String? {
-        switch self {
-        case .mismatchedServer:
-            L10n.connectionServerMismatch
-        }
-    }
-}
-
 final class ServerConnectionManager {
 
     private static let logger = Logger.swiftfin()
@@ -67,7 +56,7 @@ final class ServerConnectionManager {
         let publicInfo = response.value
 
         if let serverID, publicInfo.id != serverID {
-            throw ServerConnectionValidationError.mismatchedServer
+            throw ErrorMessage(L10n.connectionServerMismatch)
         }
 
         return publicInfo

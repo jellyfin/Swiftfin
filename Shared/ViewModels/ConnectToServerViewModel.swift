@@ -61,9 +61,14 @@ final class ConnectToServerViewModel: ObservableObject {
             .trimmingCharacters(in: ["/"])
             .prepending("http://", if: !url.contains("://"))
 
-        guard let url = URL(string: formattedURL)?.normalizedServerConnectionURL,
-              url.host != nil
+        guard let parsedURL = URL(string: formattedURL)
         else {
+            throw ErrorMessage(L10n.invalidURL)
+        }
+
+        let url = parsedURL.normalizedServerConnectionURL ?? parsedURL
+
+        guard url.host != nil else {
             throw ErrorMessage(L10n.invalidURL)
         }
 
@@ -151,8 +156,9 @@ final class ConnectToServerViewModel: ObservableObject {
 
         let normalizedURL = server.currentURL.normalizedServerConnectionURL ?? server.currentURL
 
-        let connection = connections.first { $0.normalizedURL == normalizedURL } ?? {
+        let connection = connections.first { $0.url == normalizedURL } ?? {
             let connection = ServerConnection(
+                id: UUID().uuidString,
                 name: normalizedURL.absoluteString,
                 url: normalizedURL,
                 interface: .any,

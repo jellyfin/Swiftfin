@@ -10,8 +10,6 @@ import Combine
 import Defaults
 import Factory
 import Foundation
-import JellyfinAPI
-import SwiftUI
 
 @MainActor
 final class ServerConnectionViewModel: ViewModel {
@@ -68,8 +66,9 @@ final class ServerConnectionViewModel: ViewModel {
 
     func newConnection() -> ServerConnection {
         ServerConnection(
+            id: UUID().uuidString,
             name: "",
-            url: server.effectiveServerURL,
+            url: server.effectiveServerURL.normalizedServerConnectionURL ?? server.effectiveServerURL,
             interface: .any,
             priority: connections.count
         )
@@ -166,12 +165,6 @@ final class ServerConnectionViewModel: ViewModel {
     }
 
     func saveConnection(_ connection: ServerConnection) async -> ServerConnection.TestState {
-        if ServerConnection.isDuplicate(connection, in: connections) {
-            let state = ServerConnection.TestState.failure(L10n.connectionAlreadyExists)
-            testStates[connection.id] = state
-            return state
-        }
-
         let state = await testConnection(connection)
         guard case .success = state else { return state }
 

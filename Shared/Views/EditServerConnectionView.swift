@@ -7,6 +7,9 @@
 //
 
 import SwiftUI
+#if os(iOS)
+import UIKit
+#endif
 
 struct EditServerConnectionView: View {
 
@@ -26,9 +29,6 @@ struct EditServerConnectionView: View {
     @State
     private var locationPermissionStatus = AppPermission.location.status
     #endif
-
-    @Toaster
-    private var toaster
 
     private let initialConnection: ServerConnection
     private let initialDraft: ServerConnectionDraft
@@ -65,6 +65,36 @@ struct EditServerConnectionView: View {
         draft != initialDraft
     }
 
+    private var isNameEmpty: Bool {
+        draft.name.nilIfBlank == nil
+    }
+
+    private var isDuplicateConnection: Bool {
+        guard let connection = try? draft.connection() else { return false }
+        return ServerConnection.isDuplicate(connection, in: viewModel.connections)
+    }
+
+    private var isSaveDisabled: Bool {
+        isTesting || !hasChanges || isNameEmpty || isDuplicateConnection
+    }
+
+    private var firstWifiSSID: Binding<String> {
+        $draft.map(
+            getter: { $0.wifiSSIDs.first ?? .empty },
+            setter: { wifiSSID in
+                var updatedDraft = draft
+
+                if updatedDraft.wifiSSIDs.isEmpty {
+                    updatedDraft.wifiSSIDs = [wifiSSID]
+                } else {
+                    updatedDraft.wifiSSIDs[0] = wifiSSID
+                }
+
+                return updatedDraft
+            }
+        )
+    }
+
     init(
         viewModel: ServerConnectionViewModel,
         connection: ServerConnection
@@ -84,56 +114,51 @@ struct EditServerConnectionView: View {
            locationPermissionStatus != .authorized,
            AppPermission.location.privacyDescription.isNotEmpty
         {
-            Label(
-                AppPermission.location.privacyDescription,
-                systemImage: "exclamationmark.circle.fill"
-            )
-            .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+            VStack(alignment: .leading, spacing: 8) {
+                Label(
+                    AppPermission.location.privacyDescription,
+                    systemImage: "exclamationmark.circle.fill"
+                )
+                .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+
+                if locationPermissionStatus == .denied {
+                    Button(L10n.permissions) {
+                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                        UIApplication.shared.open(url)
+                    }
+                    .foregroundStyle(Color.accentColor)
+                    .buttonStyle(.plain)
+                }
+            }
         }
     }
     #endif
 
-    private func save() async {
-        if let validationError = draft.validationError {
-            toaster.present(validationError, systemName: "exclamationmark.circle.fill")
-            return
+    private func save() async throws {
+        guard !isNameEmpty else {
+            throw ErrorMessage(L10n.invalidX(L10n.name))
         }
 
-        guard let connection = draft.connection() else {
-            toaster.present(L10n.invalidURL, systemName: "exclamationmark.circle.fill")
-            return
+        let connection = try draft.connection()
+
+        guard !isDuplicateConnection else {
+            throw ErrorMessage(L10n.connectionAlreadyExists)
         }
 
         let state = await viewModel.saveConnection(connection)
         guard case .success = state else { return }
 
-        toaster.present(L10n.connectionSaved, systemName: "checkmark.circle.fill")
         router.dismiss()
     }
 
     private func setActiveConnection(_ connection: ServerConnection) {
         Task {
-            let state = await viewModel.setActiveConnectionIfValid(connection)
-
-            switch state {
-            case .idle, .testing, .success:
-                break
-            case .failure:
-                toaster.present(L10n.connectionFailed, systemName: "xmark.circle.fill")
-            }
+            _ = await viewModel.setActiveConnectionIfValid(connection)
         }
     }
 
     private func testDraft() {
-        if let validationError = draft.validationError {
-            toaster.present(validationError, systemName: "exclamationmark.circle.fill")
-            return
-        }
-
-        guard let draftConnection = draft.connection() else {
-            toaster.present(L10n.invalidURL, systemName: "exclamationmark.circle.fill")
-            return
-        }
+        guard let draftConnection = try? draft.connection() else { return }
 
         test(draftConnection)
     }
@@ -146,7 +171,7 @@ struct EditServerConnectionView: View {
                 return
             }
 
-            draft.wifiSSID = ssid
+            draft.wifiSSIDs = [ssid]
             draft.useWifiName = true
         }
         #endif
@@ -154,40 +179,45 @@ struct EditServerConnectionView: View {
 
     private func test(_ connection: ServerConnection) {
         Task {
-            let state = await viewModel.testConnection(connection)
-
-            switch state {
-            case .idle, .testing:
-                break
-            case .success:
-                toaster.present(L10n.connected, systemName: "checkmark.circle.fill")
-            case .failure:
-                toaster.present(L10n.connectionFailed, systemName: "xmark.circle.fill")
-            }
+            _ = await viewModel.testConnection(connection)
         }
     }
 
     var body: some View {
         Form(systemImage: "network") {
-            Section(L10n.name) {
+            Section {
                 TextField(L10n.name, text: $draft.name)
                     .focused($isNameFocused)
+            } header: {
+                Text(L10n.name)
+            } footer: {
+                if isNameEmpty {
+                    Label(L10n.required, systemImage: "exclamationmark.circle.fill")
+                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                }
             }
 
-            Section(L10n.url) {
+            Section {
                 TextField(L10n.url, text: $draft.urlString)
                 #if !os(tvOS)
                     .textInputAutocapitalization(.never)
                     .keyboardType(.URL)
                     .autocorrectionDisabled()
                 #endif
+            } header: {
+                Text(L10n.url)
+            } footer: {
+                if isDuplicateConnection {
+                    Label(L10n.connectionAlreadyExists, systemImage: "exclamationmark.circle.fill")
+                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                }
             }
 
             #if os(iOS)
             Section {
                 Picker(L10n.network, selection: $draft.interface) {
                     ForEach(ServerConnectionInterface.allCases, id: \.self) { interface in
-                        Label(interface.displayTitle, systemImage: interface.systemImage)
+                        Text(interface.displayTitle)
                             .tag(interface)
                     }
                 }
@@ -196,7 +226,7 @@ struct EditServerConnectionView: View {
                     Toggle(L10n.wifiName, isOn: $draft.useWifiName)
 
                     if draft.useWifiName {
-                        TextField(L10n.wifiName, text: $draft.wifiSSID)
+                        TextField(L10n.wifiName, text: firstWifiSSID)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
                     }
@@ -257,9 +287,9 @@ struct EditServerConnectionView: View {
         }
         .topBarTrailing {
             Button(L10n.save) {
-                Task { await save() }
+                Task { try? await save() }
             }
-            .disabled(isTesting || !hasChanges)
+            .disabled(isSaveDisabled)
             #if os(iOS)
                 .buttonStyle(.toolbarPill)
             #endif
@@ -272,12 +302,12 @@ struct EditServerConnectionView: View {
         #if os(iOS)
         .backport
         .onChange(of: draft.interface) { _, newValue in
-            guard newValue == .wifi, draft.wifiSSID.nilIfBlank == nil else { return }
+            guard newValue == .wifi, draft.wifiSSIDs.first?.nilIfBlank == nil else { return }
             populateCurrentWifiSSID(keepSpecificOnFailure: false)
         }
         .backport
         .onChange(of: draft.useWifiName) { _, newValue in
-            guard newValue, draft.interface == .wifi, draft.wifiSSID.nilIfBlank == nil else { return }
+            guard newValue, draft.interface == .wifi, draft.wifiSSIDs.first?.nilIfBlank == nil else { return }
             populateCurrentWifiSSID(keepSpecificOnFailure: true)
         }
         .onAppear {
@@ -295,7 +325,7 @@ private struct ServerConnectionDraft: Equatable {
     var name: String
     var urlString: String
     var interface: ServerConnectionInterface
-    var wifiSSID: String
+    var wifiSSIDs: [String]
     var priority: Int
     var useWifiName: Bool
 
@@ -303,69 +333,47 @@ private struct ServerConnectionDraft: Equatable {
         self.id = connection.id
         self.name = connection.name
         self.urlString = connection.url.absoluteString
-        #if os(tvOS)
-        self.interface = .any
-        self.wifiSSID = .empty
-        #else
         self.interface = connection.interface
-        self.wifiSSID = connection.wifiSSID
-        #endif
+        self.wifiSSIDs = connection.wifiSSIDs
         self.priority = connection.priority
-        #if os(tvOS)
-        self.useWifiName = false
-        #else
-        self.useWifiName = connection.interface == .wifi && connection.wifiSSID.nilIfBlank != nil
-        #endif
+        self.useWifiName = connection.interface == .wifi && connection.wifiSSIDs.isNotEmpty
     }
 
-    var formattedURL: URL? {
-        let formattedURL = urlString
+    var url: URL? {
+        let resolvedURLString = urlString
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .prepending("http://", if: !urlString.contains("://"))
 
-        return URL(string: formattedURL)?.normalizedServerConnectionURL
+        return URL(string: resolvedURLString)?.normalizedServerConnectionURL
     }
 
-    var connectionInterface: ServerConnectionInterface {
-        #if os(tvOS)
-        .any
-        #else
-        interface
-        #endif
-    }
-
-    var connectionWifiSSID: String {
-        #if os(tvOS)
-        .empty
-        #else
-        let normalizedSSID = wifiSSID.trimmingCharacters(in: .whitespacesAndNewlines)
-        return interface == .wifi && useWifiName ? normalizedSSID : .empty
-        #endif
-    }
-
-    var validationError: String? {
-        guard let formattedURL, formattedURL.host != nil else { return L10n.invalidURL }
-
-        #if !os(tvOS)
-        let normalizedSSID = wifiSSID.trimmingCharacters(in: .whitespacesAndNewlines)
-        if interface == .wifi, useWifiName, normalizedSSID.nilIfBlank == nil {
-            return L10n.invalidX(L10n.wifiName)
+    func connection() throws -> ServerConnection {
+        guard let url, url.host != nil else {
+            throw ErrorMessage(L10n.invalidURL)
         }
-        #endif
 
-        return nil
-    }
+        let normalizedSSIDs = Self.normalizeSSIDs(wifiSSIDs)
 
-    func connection() -> ServerConnection? {
-        guard validationError == nil, let url = formattedURL else { return nil }
+        if interface == .wifi,
+           useWifiName,
+           normalizedSSIDs.isEmpty
+        {
+            throw ErrorMessage(L10n.invalidX(L10n.wifiName))
+        }
 
         return ServerConnection(
             id: id,
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
             url: url,
-            interface: connectionInterface,
-            wifiSSID: connectionWifiSSID,
+            interface: interface,
+            wifiSSIDs: interface == .wifi && useWifiName ? normalizedSSIDs : [],
             priority: priority
         )
+    }
+
+    private static func normalizeSSIDs(_ wifiSSIDs: [String]) -> [String] {
+        wifiSSIDs
+            .compactMap { $0.trimmingCharacters(in: .whitespacesAndNewlines).nilIfBlank }
+            .sorted()
     }
 }

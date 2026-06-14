@@ -35,14 +35,14 @@ struct ServerConnectionsView: View {
         } label: {
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(connection.displayName)
+                    Text(connection.displayTitle)
 
                     Text(connection.url.absoluteString)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
 
                     if connection.interface == .wifi {
-                        Text(connection.normalizedSSID ?? L10n.anyWifiNetwork)
+                        Text(connection.wifiSSIDs.first ?? L10n.anyWifiNetwork)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

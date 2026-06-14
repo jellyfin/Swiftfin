@@ -8,46 +8,24 @@
 
 import Foundation
 
-enum ServerConnectionInterface: String, CaseIterable, Codable, Displayable, Hashable {
+enum ServerConnectionInterface: String, CaseIterable, Displayable, Hashable, Storable {
     case any
     case wifi
     case cellular
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let rawValue = try container.decode(String.self)
-        self = Self(rawValue: rawValue) ?? .any
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(rawValue)
-    }
-
     var displayTitle: String {
         switch self {
         case .any:
-            L10n.anyNetwork
+            L10n.any
         case .wifi:
             L10n.wifi
         case .cellular:
             L10n.cellular
         }
     }
-
-    var systemImage: String {
-        switch self {
-        case .any:
-            "network"
-        case .wifi:
-            "wifi"
-        case .cellular:
-            "antenna.radiowaves.left.and.right"
-        }
-    }
 }
 
-struct ServerConnection: Hashable, Identifiable, Storable {
+struct ServerConnection: Displayable, Hashable, Identifiable, Storable {
 
     enum TestState {
         case idle
@@ -56,96 +34,62 @@ struct ServerConnection: Hashable, Identifiable, Storable {
         case failure(String)
     }
 
-    var id: String = UUID().uuidString
+    let id: String
     var name: String
-    var url: URL
-    var interface: ServerConnectionInterface
-    var wifiSSID: String
+    private(set) var url: URL
+    private(set) var interface: ServerConnectionInterface
+    private(set) var wifiSSIDs: [String]
     var priority: Int
 
     init(
-        id: String = UUID().uuidString,
+        id: String,
         name: String,
         url: URL,
         interface: ServerConnectionInterface,
-        wifiSSID: String = .empty,
+        wifiSSIDs: [String] = [],
         priority: Int
     ) {
         self.id = id
         self.name = name
         self.url = url
-        #if os(tvOS)
-        self.interface = .any
-        self.wifiSSID = .empty
-        #else
         self.interface = interface
-        self.wifiSSID = wifiSSID
-        #endif
+        self.wifiSSIDs = wifiSSIDs
         self.priority = priority
     }
 
-    var displayName: String {
+    var displayTitle: String {
         name.nilIfBlank ?? url.absoluteString
     }
 
-    var normalizedSSID: String? {
-        #if os(iOS)
-        wifiSSID.nilIfBlank
-        #else
-        nil
-        #endif
-    }
-
     func matches(_ context: NetworkConnectionContext) -> Bool {
-        switch normalizedInterface {
+        switch interface {
         case .any:
             return context.isSatisfied
         case .wifi:
             guard context.interface == .wifi else { return false }
-            guard let normalizedSSID else { return true }
-            return normalizedSSID.caseInsensitiveCompare(context.wifiSSID ?? .empty) == .orderedSame
+            guard wifiSSIDs.isNotEmpty else { return true }
+            return wifiSSIDs.contains {
+                $0.caseInsensitiveCompare(context.wifiSSID ?? .empty) == .orderedSame
+            }
         case .cellular:
             return context.interface == .cellular
         }
     }
 
-    var normalizedInterface: ServerConnectionInterface {
-        #if os(tvOS)
-        .any
-        #else
-        interface
-        #endif
-    }
-
-    var normalizedURL: URL {
-        url.normalizedServerConnectionURL ?? url
+    private var ssidKey: Set<String> {
+        Set(wifiSSIDs.map(\.localizedLowercase))
     }
 
     static func isDuplicate(_ connection: ServerConnection, in connections: [ServerConnection]) -> Bool {
         connections.contains { existingConnection in
             existingConnection.id != connection.id &&
-                existingConnection.normalizedURL == connection.normalizedURL &&
-                existingConnection.normalizedInterface == connection.normalizedInterface &&
-                existingConnection.normalizedSSID == connection.normalizedSSID
+                existingConnection.url == connection.url &&
+                existingConnection.interface == connection.interface &&
+                existingConnection.ssidKey == connection.ssidKey
         }
     }
 
-    static func defaults(for server: ServerState) -> [ServerConnection] {
-        let urls = [server.currentURL] + server.urls
-            .subtracting([server.currentURL])
-            .sorted(using: \.absoluteString)
-
-        return urls.enumerated().map { index, url in
-            ServerConnection(
-                name: url == server.currentURL ? L10n.currentURL : url.absoluteString,
-                url: url,
-                interface: .any,
-                priority: index
-            )
-        }
-    }
-
-    static func normalize(_ connections: [ServerConnection], preservingOrder: Bool = false) -> [ServerConnection] {
+    static func ordered(_ connections: [ServerConnection], preservingOrder: Bool = false) -> [ServerConnection] {
         let connections = preservingOrder ? connections : connections.sorted(using: \.priority)
 
         return connections
@@ -156,28 +100,13 @@ struct ServerConnection: Hashable, Identifiable, Storable {
     }
 
     func with(priority: Int) -> ServerConnection {
-        var copy = self
-        copy.priority = priority
-        #if os(tvOS)
-        copy.interface = .any
-        copy.wifiSSID = .empty
-        #endif
-        return copy
-    }
-}
-
-extension URL {
-
-    var normalizedServerConnectionURL: URL? {
-        guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else { return nil }
-
-        components.scheme = components.scheme?.lowercased()
-        components.host = components.host?.lowercased()
-
-        if components.path.isNotEmpty {
-            components.path = components.path.trimmingSuffix("/")
-        }
-
-        return components.url
+        ServerConnection(
+            id: id,
+            name: name,
+            url: url,
+            interface: interface,
+            wifiSSIDs: wifiSSIDs,
+            priority: priority
+        )
     }
 }
