@@ -20,6 +20,9 @@ struct MainTabView: View {
     private var isLiquidGlassEnabled
     @InjectedObject(\.deepLinkHandler)
     private var deepLinkHandler
+    
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
 
     #if os(iOS)
     @StateObject

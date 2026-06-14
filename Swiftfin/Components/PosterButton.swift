@@ -20,9 +20,6 @@ struct PosterButton<Item: Poster>: View {
     @Namespace
     private var namespace
 
-    @State
-    private var posterSize: CGSize = .zero
-
     private let item: Item
     private let type: PosterDisplayType
     private let label: any View
@@ -55,18 +52,11 @@ struct PosterButton<Item: Poster>: View {
                 .eraseToAnyView()
 
             posterView(overlay: overlay)
-                .trackingSize($posterSize)
         }
         .foregroundStyle(.primary, .secondary)
         .buttonStyle(.plain)
         .matchedContextMenu(for: item) {
-            let frameScale = 1.3
-
             posterView()
-                .frame(
-                    width: posterSize.width * frameScale,
-                    height: posterSize.height * frameScale
-                )
                 .padding(20)
                 .background {
                     RoundedRectangle(cornerRadius: 10)
