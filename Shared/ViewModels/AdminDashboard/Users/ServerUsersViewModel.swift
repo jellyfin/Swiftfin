@@ -192,7 +192,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     private func refreshUser(_ userID: String) async throws {
         let request = Paths.getUserByID(userID: userID)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         let newUser = response.value
 
@@ -207,7 +207,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     private func loadUsers(isHidden: Bool, isDisabled: Bool) async throws {
         let request = Paths.getUsers(isHidden: isHidden ? true : nil, isDisabled: isDisabled ? true : nil)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         let newUsers = response.value
             .sorted(using: \.name)
@@ -225,7 +225,8 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
         }
 
         // Don't allow self-deletion
-        let userIdsToDelete = ids.filter { $0 != userSession.user.id }
+        let currentUserID = try authenticatedUser.id
+        let userIdsToDelete = ids.filter { $0 != currentUserID }
 
         try await withThrowingTaskGroup(of: Void.self) { group in
             for userId in userIdsToDelete {
@@ -246,7 +247,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     private func deleteUser(id: String) async throws {
         let request = Paths.deleteUser(userID: id)
-        try await userSession.client.send(request)
+        try await send(request)
     }
 
     // MARK: - Append User

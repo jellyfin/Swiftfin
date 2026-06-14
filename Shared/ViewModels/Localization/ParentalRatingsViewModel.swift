@@ -14,7 +14,7 @@ final class ParentalRatingsViewModel: BaseFetchViewModel<[ParentalRating]> {
 
     override func getValue() async throws -> [ParentalRating] {
         let request = Paths.getParentalRatings
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value
     }

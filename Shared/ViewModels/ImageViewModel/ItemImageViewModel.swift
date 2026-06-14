@@ -66,7 +66,7 @@ final class ItemImageViewModel: ViewModel {
         guard let itemID = item.id else { return }
 
         let request = Paths.getItemImageInfos(itemID: itemID)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         images = response.value.grouped(by: \.imageType)
             .mapValues { $0.sorted(using: \.imageIndex) }
@@ -110,7 +110,7 @@ final class ItemImageViewModel: ViewModel {
         )
         request.headers = ["Content-Type": contentType]
 
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
     }
 
     @Function(\Action.Cases.saveRemoteImage)
@@ -121,7 +121,7 @@ final class ItemImageViewModel: ViewModel {
 
         let request = Paths.downloadRemoteImage(itemID: itemID, type: type, imageURL: imageURL)
 
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
 
         try await _refresh()
         events.send(.updated)
@@ -138,16 +138,16 @@ final class ItemImageViewModel: ViewModel {
                 imageType: imageType.rawValue,
                 imageIndex: imageIndex
             )
-            try await userSession.client.send(request)
+            try await send(request)
         } else {
             let request = Paths.deleteItemImage(
                 itemID: itemID,
                 imageType: imageType.rawValue
             )
-            try await userSession.client.send(request)
+            try await send(request)
         }
 
-        item = try await item.getFullItem(userSession: userSession, sendNotification: true)
+        item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
 
         try await _refresh()
         events.send(.deleted)

@@ -23,7 +23,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>jellyfin</string>
+				<string>swiftfin</string>
 			</array>
 		</dict>
 	</array>
@@ -50,12 +50,13 @@
 		<string>_F007D354._googlecast._tcp</string>
 	</array>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Use FaceID to lock and access local users.</string>
+	<string>${PRODUCT_NAME} uses Face ID to lock and access local users.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>${PRODUCT_NAME} uses the local network to connect to your Jellyfin server &amp; discover Cast-enabled devices on your WiFi
-network.</string>
+	<string>${PRODUCT_NAME} uses the local network to connect to your Jellyfin server and discover Cast-enabled devices on your Wi-Fi network.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>${PRODUCT_NAME} uses your location to identify the current Wi-Fi network.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>${PRODUCT_NAME} uses microphone access to listen for ultrasonic tokens when pairing with nearby Cast devices.</string>
+	<string>${PRODUCT_NAME} uses the microphone to listen for ultrasonic tokens when pairing with nearby Cast devices.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

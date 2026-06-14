@@ -37,7 +37,7 @@ final class ServerLogsViewModel: ViewModel {
     @Function(\Action.Cases.refresh)
     private func _refresh(_ filter: ServerLogType?) async throws {
         let request = Paths.getServerLogs
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         self.logs = OrderedSet(response.value)
             .filter { filter == nil ? true : $0.type == filter }

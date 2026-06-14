@@ -18,6 +18,8 @@ struct MainTabView: View {
 
     @Default(.isLiquidGlassEnabled)
     private var isLiquidGlassEnabled
+    @InjectedObject(\.deepLinkHandler)
+    private var deepLinkHandler
 
     #if os(iOS)
     @StateObject
@@ -45,6 +47,19 @@ struct MainTabView: View {
         TabItem.settings
     }
     #endif
+
+    private func routePendingDeepLink() {
+        guard let deepLink = deepLinkHandler.consumePendingDeepLink() else { return }
+
+        Task { @MainActor in
+            do {
+                let route = try await deepLinkHandler.route(for: deepLink)
+                tabCoordinator.route(to: route)
+            } catch {
+                // TODO: surface deep link failures in UI.
+            }
+        }
+    }
 
     @ViewBuilder
     var body: some View {
@@ -94,6 +109,12 @@ struct MainTabView: View {
                     .tag(tab.item.id)
                 }
             }
+        }
+        .onAppear {
+            routePendingDeepLink()
+        }
+        .onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
+            routePendingDeepLink()
         }
     }
 }

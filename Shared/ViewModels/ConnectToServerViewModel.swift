@@ -6,27 +6,29 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Factory
 import Foundation
 import Get
 import JellyfinAPI
+import Logging
 import OrderedCollections
 import Pulse
 
 @MainActor
 @Stateful
-final class ConnectToServerViewModel: ViewModel {
+final class ConnectToServerViewModel: ObservableObject {
 
     @CasePathable
     enum Action {
-        case addNewURL(serverState: ServerState)
+        case addConnection(serverState: ServerState)
         case cancel
         case connect(url: String)
         case searchForServers
 
         var transition: Transition {
             switch self {
-            case .addNewURL, .searchForServers: .none
+            case .addConnection, .searchForServers: .none
             case .cancel: .to(.initial)
             case .connect: .loop(.connecting)
             }
@@ -48,6 +50,9 @@ final class ConnectToServerViewModel: ViewModel {
     @Published
     var localServers: OrderedSet<ServerState> = []
 
+    let logger = Logger.swiftfin()
+    var cancellables = Set<AnyCancellable>()
+
     @Function(\Action.Cases.connect)
     private func connectToServer(_ url: String) async throws {
 
@@ -56,7 +61,16 @@ final class ConnectToServerViewModel: ViewModel {
             .trimmingCharacters(in: ["/"])
             .prepending("http://", if: !url.contains("://"))
 
-        guard let url = URL(string: formattedURL) else { throw ErrorMessage("Invalid URL") }
+        guard let parsedURL = URL(string: formattedURL)
+        else {
+            throw ErrorMessage(L10n.invalidURL)
+        }
+
+        let url = parsedURL.normalizedServerConnectionURL ?? parsedURL
+
+        guard url.host != nil else {
+            throw ErrorMessage(L10n.invalidURL)
+        }
 
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: url),
@@ -86,7 +100,7 @@ final class ConnectToServerViewModel: ViewModel {
         )
 
         if isDuplicate(server: newServerState) {
-            // server has same id, but (possible) new URL
+            // server has same id, but (possible) new connection URL
             events.send(.duplicateServer(newServerState))
         } else {
             try await save(server: newServerState)
@@ -97,7 +111,9 @@ final class ConnectToServerViewModel: ViewModel {
     // In the event of redirects, get the new host URL from response
     private func processConnectionURL(initial url: URL, response: URL?) -> URL {
 
-        guard let response else { return url }
+        let normalizedURL = url.normalizedServerConnectionURL ?? url
+
+        guard let response else { return normalizedURL }
 
         if url.scheme != response.scheme ||
             url.host != response.host
@@ -105,10 +121,10 @@ final class ConnectToServerViewModel: ViewModel {
             let newURL = response.absoluteString.trimmingSuffix(
                 Paths.getPublicSystemInfo.url?.absoluteString ?? ""
             )
-            return URL(string: newURL) ?? url
+            return URL(string: newURL)?.normalizedServerConnectionURL ?? normalizedURL
         }
 
-        return url
+        return normalizedURL
     }
 
     private func isDuplicate(server: ServerState) -> Bool {
@@ -127,29 +143,38 @@ final class ConnectToServerViewModel: ViewModel {
         StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
     }
 
-    // server has same id, but (possible) new URL
-    @Function(\Action.Cases.addNewURL)
-    private func _addNewURL(_ server: ServerState) throws {
-        var servers = StoredValues[.Server.servers]
-
-        guard let index = servers.firstIndex(where: { $0.id == server.id }) else {
+    // server has same id, but (possible) new connection URL
+    @Function(\Action.Cases.addConnection)
+    private func _addConnection(_ server: ServerState) throws {
+        guard let existingServer = StoredValues[.Server.servers].first(where: { $0.id == server.id }) else {
             logger.critical("Could not find server to add new url")
             throw ErrorMessage("An internal error has occurred")
         }
 
-        let currentServer = servers[index]
-        let newState = ServerState(
-            urls: currentServer.urls.union([server.currentURL]),
-            currentURL: server.currentURL,
-            name: currentServer.name,
-            id: currentServer.id,
-            userIDs: currentServer.userIDs
+        let previousConnection = existingServer.activeServerConnection
+        var connections = existingServer.ensureServerConnections()
+
+        let normalizedURL = server.currentURL.normalizedServerConnectionURL ?? server.currentURL
+
+        let connection = connections.first { $0.url == normalizedURL } ?? {
+            let connection = ServerConnection(
+                id: UUID().uuidString,
+                name: normalizedURL.absoluteString,
+                url: normalizedURL,
+                interface: .any,
+                priority: connections.count
+            )
+            connections.append(connection)
+            return connection
+        }()
+
+        existingServer.serverConnections = connections
+
+        existingServer.activeServerConnection = connection
+        Notifications.postServerConnectionChange(
+            previous: previousConnection,
+            current: connection
         )
-
-        servers[index] = newState
-        StoredValues[.Server.servers] = servers
-
-        Notifications[.didChangeCurrentServerURL].post(newState)
     }
 
     @Function(\Action.Cases.searchForServers)

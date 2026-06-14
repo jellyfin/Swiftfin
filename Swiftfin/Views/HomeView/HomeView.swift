@@ -80,11 +80,13 @@ struct HomeView: View {
                 ProgressView()
             }
 
-            SettingsBarButton(
-                server: viewModel.userSession.server,
-                user: viewModel.userSession.user
-            ) {
-                router.route(to: .settings)
+            if let userSession = viewModel.userSession {
+                SettingsBarButton(
+                    server: userSession.server,
+                    user: userSession.user
+                ) {
+                    router.route(to: .settings)
+                }
             }
         }
         .sinceLastDisappear { interval in

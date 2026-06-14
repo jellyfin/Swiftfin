@@ -61,7 +61,7 @@ final class ServerActivityDetailViewModel: ViewModel {
         guard let itemID else { return nil }
 
         let request = Paths.getItem(itemID: itemID)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value
     }
@@ -70,7 +70,7 @@ final class ServerActivityDetailViewModel: ViewModel {
         guard let userID else { return nil }
 
         let request = Paths.getUserByID(userID: userID)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value
     }

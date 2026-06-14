@@ -94,7 +94,7 @@ final class ItemSubtitlesViewModel: ViewModel {
     }
 
     private func refreshItem(sendNotification: Bool = false) async throws {
-        let item = try await item.getFullItem(userSession: userSession, sendNotification: sendNotification)
+        let item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: sendNotification)
 
         let subtitles = (item.mediaSources ?? [])
             .compactMap(\.subtitleStreams)
@@ -129,7 +129,7 @@ final class ItemSubtitlesViewModel: ViewModel {
             language: language,
             isPerfectMatch: isPerfectMatch
         )
-        let results = try await userSession.client.send(request)
+        let results = try await send(request)
 
         self.results = results.value
     }
@@ -144,7 +144,7 @@ final class ItemSubtitlesViewModel: ViewModel {
             for subtitleID in subtitles {
                 group.addTask {
                     let request = Paths.downloadRemoteSubtitles(itemID: itemID, subtitleID: subtitleID)
-                    _ = try await self.userSession.client.send(request)
+                    _ = try await self.send(request)
                 }
             }
 
@@ -178,7 +178,7 @@ final class ItemSubtitlesViewModel: ViewModel {
         )
 
         let request = Paths.uploadSubtitle(itemID: itemID, subtitle)
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
 
         try await refreshItem(sendNotification: true)
 
@@ -197,7 +197,7 @@ final class ItemSubtitlesViewModel: ViewModel {
         for index in indices {
             let request = Paths.deleteSubtitle(itemID: itemID, index: index)
             do {
-                _ = try await userSession.client.send(request)
+                _ = try await send(request)
             } catch {
                 throw ErrorMessage(L10n.failedDeletionAtIndexError(index, error))
             }
