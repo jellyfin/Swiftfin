@@ -16,7 +16,7 @@ import SwiftUI
 //       - could remove cinematic, just use landscape
 
 /// A type that is displayed as a poster
-protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
+protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
 
     associatedtype ImageBody: View
 

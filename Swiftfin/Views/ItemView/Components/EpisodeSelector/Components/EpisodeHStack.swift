@@ -30,7 +30,7 @@ extension SeriesEpisodeSelector {
         private func contentView(viewModel: PagingLibraryViewModel<EpisodeLibrary>) -> some View {
             CollectionHStack(
                 uniqueElements: viewModel.elements,
-                id: \.unwrappedIDHashOrZero,
+                id: \.id,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { episode in
                 SeriesEpisodeSelector.EpisodeCard(episode: episode)
@@ -47,7 +47,7 @@ extension SeriesEpisodeSelector {
                 // good enough?
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     guard let playButtonItem else { return }
-                    proxy.scrollTo(id: playButtonItem.unwrappedIDHashOrZero, animated: false)
+                    proxy.scrollTo(id: playButtonItem.id, animated: false)
                 }
             }
         }

@@ -9,11 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-extension UserDto: LibraryIdentifiable {
-
-    var unwrappedIDHashOrZero: Int {
-        id?.hashValue ?? 0
-    }
+extension UserDto {
 
     func profileImageSource(
         client: JellyfinClient,

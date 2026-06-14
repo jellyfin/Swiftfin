@@ -34,4 +34,22 @@ struct ResumeItemsLibrary: PagingLibrary {
 
         return response.value.items ?? []
     }
+
+    func onItemUserDataChanged(
+        viewModel: PagingLibraryViewModel<ResumeItemsLibrary>,
+        userData: UserItemDataDto
+    ) {
+        guard let itemID = userData.itemID else { return }
+
+        if userData.isPlayed == true {
+            viewModel.elements.removeAll { $0.id == itemID }
+            return
+        }
+
+        let isAlreadyLoaded = viewModel.elements.contains { $0.id == itemID }
+        guard !isAlreadyLoaded else { return }
+        guard (userData.playbackPositionTicks ?? 0) > 0 else { return }
+
+        viewModel.scheduleRefreshForItemUserData(minimumInterval: 30)
+    }
 }

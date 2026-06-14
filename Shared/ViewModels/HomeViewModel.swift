@@ -229,6 +229,7 @@ final class HomeViewModel: ViewModel, Stateful {
             )
         }
 
-        _ = try await userSession.client.send(request)
+        let response = try await userSession.client.send(request)
+        Notifications[.itemUserDataDidChange].post(response.value)
     }
 }

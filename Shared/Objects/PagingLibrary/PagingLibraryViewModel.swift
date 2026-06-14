@@ -62,7 +62,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
     }
 
     @Published
-    var elements: IdentifiedArray<Int, Element>
+    var elements: IdentifiedArrayOf<Element>
     @Published
     var environment: Environment
 
@@ -70,16 +70,18 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
     let pageSize: Int
 
     private var hasNextPage: Bool
+    private var itemUserDataRefreshTask: AnyCancellable?
+    private var lastItemUserDataRefresh = Date.distantPast
 
-    var id: String? {
-        library.parent.id
+    var id: String {
+        library.parent.pagingLibraryID
     }
 
     init(
         library: Library,
         pageSize: Int = defaultPagingLibraryPageSize
     ) {
-        self.elements = IdentifiedArray([], id: \.unwrappedIDHashOrZero, uniquingIDsWith: { existing, _ in existing })
+        self.elements = IdentifiedArray([], uniquingIDsWith: { existing, _ in existing })
         self.environment = library.environment ?? .default
         self.hasNextPage = library.hasNextPage
         self.library = library
@@ -90,9 +92,80 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
         Notifications[.didDeleteItem]
             .publisher
             .sink { [weak self] id in
-                self?.elements.remove(id: id.hashValue)
+                self?.removeDeletedItem(withID: id)
             }
             .store(in: &cancellables)
+
+        Notifications[.itemUserDataDidChange]
+            .publisher
+            .sink { [weak self] userData in
+                guard let self else { return }
+
+                updateItemUserData(userData)
+                library.onItemUserDataChanged(viewModel: self, userData: userData)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func removeDeletedItem(withID id: String) {
+        elements.removeAll { element in
+            if let item = element as? BaseItemDto {
+                return item.id == id
+            }
+
+            if let user = element as? UserDto {
+                return user.id == id
+            }
+
+            if let elementID = element.id as? String {
+                return elementID == id
+            }
+
+            if let elementID = element.id as? String? {
+                return elementID == id
+            }
+
+            return false
+        }
+    }
+
+    private func updateItemUserData(_ userData: UserItemDataDto) {
+        guard let itemID = userData.itemID else { return }
+
+        for index in elements.indices {
+            guard var item = elements[index] as? BaseItemDto,
+                  item.id == itemID
+            else { continue }
+
+            item.userData = userData
+            elements[index] = item as! Element
+            return
+        }
+    }
+
+    func scheduleRefreshForItemUserData(
+        debounce: TimeInterval = 0.35,
+        minimumInterval: TimeInterval = 5
+    ) {
+        guard Date.now.timeIntervalSince(lastItemUserDataRefresh) >= minimumInterval else {
+            return
+        }
+
+        itemUserDataRefreshTask?.cancel()
+        itemUserDataRefreshTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            if debounce > 0 {
+                try? await Task.sleep(for: .seconds(debounce))
+            }
+
+            guard !Task.isCancelled else { return }
+
+            await self.background.refresh()
+            self.lastItemUserDataRefresh = Date.now
+            self.itemUserDataRefreshTask = nil
+        }
+        .asAnyCancellable()
     }
 
     @Function(\Action.Cases.refresh)
@@ -145,12 +218,5 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
             pageSize: pageSize,
             userSession: userSession
         )
-    }
-}
-
-extension PagingLibraryViewModel: LibraryIdentifiable {
-
-    var unwrappedIDHashOrZero: Int {
-        id?.hashValue ?? 0
     }
 }

@@ -50,10 +50,6 @@ extension ChannelProgram: Poster {
         .square
     }
 
-    var unwrappedIDHashOrZero: Int {
-        channel.id?.hashValue ?? 0
-    }
-
     var displayTitle: String {
         channel.displayTitle
     }

@@ -151,6 +151,10 @@ extension Notifications.Key {
 
     // TODO: come up with a cleaner, more defined way for item update notifications
 
+    static var itemUserDataDidChange: Key<UserItemDataDto> {
+        Key("itemUserDataDidChange")
+    }
+
     /// - Payload: The new item with updated metadata.
     static var itemMetadataDidChange: Key<BaseItemDto> {
         Key("itemMetadataDidChange")

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct LibraryPageState {
@@ -17,7 +18,7 @@ struct LibraryPageState {
 @MainActor
 protocol PagingLibrary<Element> {
 
-    associatedtype Element: LibraryIdentifiable
+    associatedtype Element: Identifiable
     associatedtype Environment: WithDefaultValue = Empty
     associatedtype Parent: LibraryParent = TitledLibraryParent
 
@@ -29,6 +30,17 @@ protocol PagingLibrary<Element> {
         environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [Element]
+
+    @ViewBuilder
+    func makeLibraryBody(
+        viewModel: PagingLibraryViewModel<Self>,
+        @ViewBuilder content: @escaping () -> some View
+    ) -> AnyView
+
+    func onItemUserDataChanged(
+        viewModel: PagingLibraryViewModel<Self>,
+        userData: UserItemDataDto
+    )
 }
 
 extension PagingLibrary {
@@ -40,6 +52,19 @@ extension PagingLibrary {
     var hasNextPage: Bool {
         true
     }
+
+    func makeLibraryBody(
+        viewModel: PagingLibraryViewModel<Self>,
+        @ViewBuilder content: @escaping () -> some View
+    ) -> AnyView {
+        content()
+            .eraseToAnyView()
+    }
+
+    func onItemUserDataChanged(
+        viewModel: PagingLibraryViewModel<Self>,
+        userData: UserItemDataDto
+    ) {}
 }
 
 protocol WithRandomElementLibrary<Element, Environment>: PagingLibrary {

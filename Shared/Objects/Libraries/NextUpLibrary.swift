@@ -44,4 +44,23 @@ struct NextUpLibrary: PagingLibrary {
 
         return response.value.items ?? []
     }
+
+    func onItemUserDataChanged(
+        viewModel: PagingLibraryViewModel<NextUpLibrary>,
+        userData: UserItemDataDto
+    ) {
+        guard let itemID = userData.itemID else { return }
+
+        if viewModel.elements.contains(where: { $0.id == itemID }) {
+            viewModel.scheduleRefreshForItemUserData(minimumInterval: 3)
+            return
+        }
+
+        let hasResumePosition = (userData.playbackPositionTicks ?? 0) > 0
+        let canAffectMembership = hasResumePosition || userData.isPlayed != nil
+
+        guard canAffectMembership else { return }
+
+        viewModel.scheduleRefreshForItemUserData(minimumInterval: 30)
+    }
 }

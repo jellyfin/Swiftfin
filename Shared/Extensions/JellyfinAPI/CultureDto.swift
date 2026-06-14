@@ -29,11 +29,7 @@ extension CultureDto: Displayable {
     }
 }
 
-extension CultureDto: @retroactive Identifiable, LibraryIdentifiable {
-
-    var unwrappedIDHashOrZero: Int {
-        hashValue
-    }
+extension CultureDto: @retroactive Identifiable {
 
     public var id: Int {
         hashValue

@@ -315,7 +315,7 @@ extension EpisodeMediaPlayerQueue {
                 #if os(tvOS)
                 CollectionHStack(
                     uniqueElements: selectionViewModel.elements,
-                    id: \.unwrappedIDHashOrZero,
+                    id: \.id,
                     layout: .grid(columns: 5, rows: 1, columnTrailingInset: 0)
                 ) { episode in
                     EpisodeButton(episode: episode) {
@@ -327,7 +327,7 @@ extension EpisodeMediaPlayerQueue {
                 #else
                 CollectionHStack(
                     uniqueElements: selectionViewModel.elements,
-                    id: \.unwrappedIDHashOrZero,
+                    id: \.id,
                     layout: .minimumWidth(columnWidth: 170, rows: 1)
                 ) { item in
                     EpisodeButton(episode: item) {

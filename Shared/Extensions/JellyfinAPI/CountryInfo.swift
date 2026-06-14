@@ -24,11 +24,7 @@ extension CountryInfo: Displayable {
     }
 }
 
-extension CountryInfo: @retroactive Identifiable, LibraryIdentifiable {
-
-    var unwrappedIDHashOrZero: Int {
-        hashValue
-    }
+extension CountryInfo: @retroactive Identifiable {
 
     public var id: Int {
         hashValue

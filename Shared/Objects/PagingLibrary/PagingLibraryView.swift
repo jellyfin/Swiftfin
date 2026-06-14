@@ -23,6 +23,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @Router
     private var router
 
+    @ForTypeInEnvironment<Element.Type, (Any) -> (LibraryStyle, Binding<LibraryStyle>?)>(\.libraryStyleRegistry)
+    private var libraryStyleRegistry
+
     @StateObject
     private var gridProxy = CollectionVGridProxy()
     @StateObject
@@ -34,10 +37,18 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     private var parentLibraryStyle: LibraryStyle
 
     private var libraryStyle: LibraryStyle {
-        rememberIndividualLibraryStyle ? parentLibraryStyle : defaultLibraryStyle
+        libraryStyleRegistry?(Element.self).0 ?? storedLibraryStyle
     }
 
     private var libraryStyleBinding: Binding<LibraryStyle> {
+        libraryStyleRegistry?(Element.self).1 ?? storedLibraryStyleBinding
+    }
+
+    private var storedLibraryStyle: LibraryStyle {
+        rememberIndividualLibraryStyle ? parentLibraryStyle : defaultLibraryStyle
+    }
+
+    private var storedLibraryStyleBinding: Binding<LibraryStyle> {
         rememberIndividualLibraryStyle ? $parentLibraryStyle : $defaultLibraryStyle
     }
 
@@ -67,18 +78,23 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     }
 
     var body: some View {
-        ZStack {
-            switch viewModel.state {
-            case .initial, .refreshing:
-                ProgressView()
-            case .content:
-                if viewModel.elements.isEmpty {
-                    ContentUnavailableView(L10n.noItems.localizedCapitalized, systemImage: "rectangle.on.rectangle.slash")
-                } else {
-                    elementsView
+        viewModel.library.makeLibraryBody(viewModel: viewModel) {
+            ZStack {
+                switch viewModel.state {
+                case .initial, .refreshing:
+                    ProgressView()
+                case .content:
+                    if viewModel.elements.isEmpty {
+                        ContentUnavailableView(L10n.noItems.localizedCapitalized, systemImage: "rectangle.on.rectangle.slash")
+                    } else {
+                        elementsView
+                            .libraryStyle(for: Element.self) { _, _ in
+                                (storedLibraryStyle, storedLibraryStyleBinding)
+                            }
+                    }
+                case .error:
+                    viewModel.error.map(ErrorView.init)
                 }
-            case .error:
-                viewModel.error.map(ErrorView.init)
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.background.is(.gettingNextPage))

@@ -40,7 +40,7 @@ extension ItemView {
 
                 CollectionHStack(
                     uniqueElements: element.value.elements,
-                    id: \.unwrappedIDHashOrZero,
+                    id: \.id,
                     columns: 3.5
                 ) { episode in
                     SeriesEpisodeSelector.EpisodeCard(episode: episode)

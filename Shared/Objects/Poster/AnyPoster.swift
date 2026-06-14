@@ -31,10 +31,6 @@ struct AnyPoster: Poster {
         _poster.displayTitle
     }
 
-    var unwrappedIDHashOrZero: Int {
-        _poster.unwrappedIDHashOrZero
-    }
-
     var subtitle: String? {
         _poster.subtitle
     }
@@ -48,7 +44,7 @@ struct AnyPoster: Poster {
     }
 
     func hash(into hasher: inout Hasher) {
-        hasher.combine(_poster.unwrappedIDHashOrZero)
+        hasher.combine(id)
         hasher.combine(_poster.displayTitle)
         hasher.combine(_poster.subtitle)
         hasher.combine(_poster.systemImage)

@@ -36,7 +36,7 @@ extension ItemView {
 
                 CollectionHStack(
                     uniqueElements: element.value.elements,
-                    id: \.unwrappedIDHashOrZero,
+                    id: \.id,
                     columns: UIDevice.isPhone ? 1.5 : 3.5
                 ) { episode in
                     SeriesEpisodeSelector.EpisodeCard(episode: episode)
