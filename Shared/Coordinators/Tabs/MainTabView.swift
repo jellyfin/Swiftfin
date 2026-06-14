@@ -66,7 +66,7 @@ struct MainTabView: View {
 
     @ViewBuilder
     var body: some View {
-        if isLiquidGlassEnabled, #available(iOS 26.0, *) {
+        if isLiquidGlassEnabled, #available(iOS 26.0, tvOS 26.0, *) {
             TabView {
                 ForEach(tabCoordinator.tabs, id: \.item.id) { tabData in
                     if tabData.item.id == "search" {
