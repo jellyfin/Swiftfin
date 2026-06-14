@@ -86,10 +86,10 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             case .subtitles:
                 Subtitles()
             #if os(iOS)
-            case .airPlay:
-                AirPlay()
             case .gestureLock:
                 GestureLock()
+            case .remotePlayback:
+                RemotePlayback()
             #endif
             }
         }
@@ -101,7 +101,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 systemImage: "ellipsis.circle"
             ) {
                 ForEach(
-                    barActionButtons.filter { VideoPlayerActionButton.supportedCases.contains($0) },
+                    barActionButtons.filter { VideoPlayerActionButton.allCases.contains($0) },
                     content: view(for:)
                 )
                 .environment(\.isInMenu, true)
@@ -109,7 +109,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 Divider()
 
                 ForEach(
-                    menuActionButtons.filter { VideoPlayerActionButton.supportedCases.contains($0) },
+                    menuActionButtons.filter { VideoPlayerActionButton.allCases.contains($0) },
                     content: view(for:)
                 )
                 .environment(\.isInMenu, true)
@@ -130,7 +130,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                         systemImage: UIDevice.isTV ? "ellipsis" : "ellipsis.circle"
                     ) {
                         ForEach(
-                            menuActionButtons.filter { VideoPlayerActionButton.supportedCases.contains($0) },
+                            menuActionButtons.filter { VideoPlayerActionButton.allCases.contains($0) },
                             content: view(for:)
                         )
                         .environment(\.isInMenu, true)

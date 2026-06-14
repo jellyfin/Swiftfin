@@ -241,8 +241,8 @@
 				ViewModels/ItemAdministration/RemoteImageInfoViewModel.swift,
 				ViewModels/QuickConnectAuthorizeViewModel.swift,
 				ViewModels/ServerCheckViewModel.swift,
-				Views/VideoPlayer/Components/Toolbar/ActionButtons/AirPlayActionButton.swift,
 				Views/VideoPlayer/Components/Toolbar/ActionButtons/GestureLockActionButton.swift,
+				Views/VideoPlayer/Components/Toolbar/ActionButtons/RemotePlaybackActionButton.swift,
 			);
 			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
 		};

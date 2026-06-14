@@ -88,4 +88,13 @@ extension NavigationRoute {
             VideoPlayer()
         }
     }
+
+    static var remotePlayback: NavigationRoute {
+        NavigationRoute(
+            id: "remotePlayback",
+            style: .sheet
+        ) {
+            RemotePlaybackPickerView()
+        }
+    }
 }

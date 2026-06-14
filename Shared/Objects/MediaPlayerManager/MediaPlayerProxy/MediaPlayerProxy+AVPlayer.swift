@@ -47,6 +47,7 @@ class AVMediaPlayerProxy: NSObject,
     private var cachedSubtitleGroup: AVMediaSelectionGroup?
 
     private var pipAvailableObserver: NSKeyValueObservation?
+    private var externalPlaybackObserver: NSKeyValueObservation?
     private var statusObserver: NSKeyValueObservation?
     private var timeControlStatusObserver: NSKeyValueObservation?
     private var videoSizeObserver: NSKeyValueObservation?
@@ -77,6 +78,18 @@ class AVMediaPlayerProxy: NSObject,
         #if os(iOS)
         player.usesExternalPlaybackWhileExternalScreenIsActive = true
         #endif
+
+        externalPlaybackObserver = player.observe(
+            \.isExternalPlaybackActive,
+            options: [.initial, .new]
+        ) { [weak self] player, _ in
+
+            let isActive = player.isExternalPlaybackActive
+
+            Task { @MainActor [weak self] in
+                self?.manager?.setRemotePlaybackActive(.airPlay, isActive)
+            }
+        }
 
         addTimeObserver()
     }

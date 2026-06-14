@@ -89,6 +89,8 @@ extension VideoPlayer {
 
             @EnvironmentObject
             private var containerState: VideoPlayerContainerState
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
 
             let player: AnyView
 
@@ -111,22 +113,31 @@ extension VideoPlayer {
                 .animation(.linear(duration: 0.2), value: containerState.isPresentingPlaybackControls)
                 #endif
                 .overlay {
-                    GeometryReader { proxy in
-                        LinearGradient(
-                            stops: [
-                                .init(color: .clear, location: 0),
-                                .init(color: .black.opacity(0.04), location: 0.25),
-                                .init(color: .black.opacity(0.18), location: 0.45),
-                                .init(color: .black.opacity(0.42), location: 0.68),
-                                .init(color: .black.opacity(0.68), location: 0.86),
-                                .init(color: .black.opacity(0.82), location: 1),
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                        .isVisible(shouldPresentDimOverlay)
-                        .frame(height: proxy.size.height * 0.55)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    ZStack {
+                        if let state = manager.remotePlaybackState, state.isRouteActive {
+                            ContentUnavailableView(
+                                L10n.playingOnDevice(state.type.displayTitle),
+                                systemImage: state.type.systemImage
+                            )
+                        }
+
+                        GeometryReader { proxy in
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .clear, location: 0),
+                                    .init(color: .black.opacity(0.04), location: 0.25),
+                                    .init(color: .black.opacity(0.18), location: 0.45),
+                                    .init(color: .black.opacity(0.42), location: 0.68),
+                                    .init(color: .black.opacity(0.68), location: 0.86),
+                                    .init(color: .black.opacity(0.82), location: 1),
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .isVisible(shouldPresentDimOverlay)
+                            .frame(height: proxy.size.height * 0.55)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                        }
                     }
                 }
                 .allowsHitTesting(false)

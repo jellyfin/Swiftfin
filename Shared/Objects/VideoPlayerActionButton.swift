@@ -13,38 +13,26 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
 
     case aspectFill
     case audio
-//    case audioOffset
     case autoPlay
     case pictureInPicture
     case playbackSpeed
 //    case playbackQuality
     case playNextItem
     case playPreviousItem
-//    case subtitleOffset
     case subtitles
     #if os(iOS)
-    case airPlay
     case gestureLock
+    case remotePlayback
     #endif
 
     var displayTitle: String {
         switch self {
-        #if os(iOS)
-        case .airPlay:
-            L10n.airPlay
-        #endif
         case .aspectFill:
             L10n.aspectFill
         case .audio:
             L10n.audio
-//        case .audioOffset:
-//            L10n.audioOffset
         case .autoPlay:
             L10n.autoPlay
-        #if os(iOS)
-        case .gestureLock:
-            L10n.gestureLock
-        #endif
         case .pictureInPicture:
             L10n.pictureInPicture
         case .playbackSpeed:
@@ -55,10 +43,14 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.playNextItem
         case .playPreviousItem:
             L10n.playPreviousItem
-//        case .subtitleOffset:
-//            L10n.subtitleOffset
         case .subtitles:
             L10n.subtitles
+        #if os(iOS)
+        case .gestureLock:
+            L10n.gestureLock
+        case .remotePlayback:
+            L10n.castToDevice
+        #endif
         }
     }
 
@@ -71,14 +63,12 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         switch self {
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2"
-//        case .audioOffset: "waveform.circle"
         case .autoPlay: "play.fill"
         case .pictureInPicture: "pip.enter"
         case .playbackSpeed: "speedometer"
 //        case .playbackQuality: "tv.circle"
         case .playNextItem: "forward.end.fill"
         case .playPreviousItem: "backward.end.fill"
-//        case .subtitleOffset: "text.bubble"
         case .subtitles: "captions.bubble.fill"
         }
     }
@@ -97,10 +87,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     #else
     var systemImage: String {
         switch self {
-        case .airPlay: "airplayvideo"
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2.fill"
-//        case .audioOffset: "waveform.circle.fill"
         case .autoPlay: "play.circle.fill"
         case .gestureLock: "lock.circle.fill"
         case .pictureInPicture: "pip.enter"
@@ -108,7 +96,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
 //        case .playbackQuality: "tv.circle.fill"
         case .playNextItem: "forward.end.circle.fill"
         case .playPreviousItem: "backward.end.circle.fill"
-//        case .subtitleOffset: "text.bubble.fill"
+        case .remotePlayback: "airplayvideo"
         case .subtitles: "captions.bubble.fill"
         }
     }
@@ -127,14 +115,6 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     }
     #endif
 
-    /// Cases supported within a `Menu`
-    static let supportedCases: [VideoPlayerActionButton] = {
-        return allCases
-        #if os(iOS)
-            .subtracting([.airPlay])
-        #endif
-    }()
-
     static let defaultBarActionButtons: [VideoPlayerActionButton] = {
         var buttons: [VideoPlayerActionButton] = [
             .aspectFill,
@@ -144,7 +124,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         ]
 
         #if os(iOS)
-        buttons.append(.airPlay)
+        buttons.append(.remotePlayback)
         #endif
 
         return buttons

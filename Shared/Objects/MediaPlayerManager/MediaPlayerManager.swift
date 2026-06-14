@@ -136,6 +136,10 @@ final class MediaPlayerManager: ViewModel {
     @Published
     var supplements: [any MediaPlayerSupplement] = []
 
+    /// The active remote playback route
+    @Published
+    var remotePlaybackState: RemotePlaybackState? = nil
+
     // TODO: replace with graph dependency package
     private func setSupplements() {
         self.supplements = Defaults[.VideoPlayer.supplements].compactMap { kind -> (any MediaPlayerSupplement)? in
@@ -332,6 +336,14 @@ final class MediaPlayerManager: ViewModel {
             setPlaybackRequestStatus(status: .paused)
         case .paused:
             setPlaybackRequestStatus(status: .playing)
+        }
+    }
+
+    func setRemotePlaybackActive(_ route: RemotePlaybackRoute, _ isActive: Bool) {
+        if isActive {
+            remotePlaybackState = RemotePlaybackState(type: route, isRouteActive: true)
+        } else if remotePlaybackState?.type == route {
+            remotePlaybackState = nil
         }
     }
 }

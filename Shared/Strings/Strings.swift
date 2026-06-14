@@ -290,6 +290,8 @@ internal enum L10n {
   internal static let capabilities = L10n.tr("Localizable", "capabilities", fallback: "Capabilities")
   /// Cast & crew
   internal static let castAndCrew = L10n.tr("Localizable", "castAndCrew", fallback: "Cast & crew")
+  /// Cast to device
+  internal static let castToDevice = L10n.tr("Localizable", "castToDevice", fallback: "Cast to device")
   /// Category
   internal static let category = L10n.tr("Localizable", "category", fallback: "Category")
   /// Change pin
@@ -1060,6 +1062,8 @@ internal enum L10n {
   internal static let noChannels = L10n.tr("Localizable", "noChannels", fallback: "No channels")
   /// No profiles defined. Playback issues may occur.
   internal static let noDeviceProfileWarning = L10n.tr("Localizable", "noDeviceProfileWarning", fallback: "No profiles defined. Playback issues may occur.")
+  /// No devices available
+  internal static let noDevicesAvailable = L10n.tr("Localizable", "noDevicesAvailable", fallback: "No devices available")
   /// No episodes available
   internal static let noEpisodesAvailable = L10n.tr("Localizable", "noEpisodesAvailable", fallback: "No episodes available")
   /// No items
@@ -1112,6 +1116,8 @@ internal enum L10n {
   internal static let originalTitle = L10n.tr("Localizable", "originalTitle", fallback: "Original title")
   /// Other
   internal static let other = L10n.tr("Localizable", "other", fallback: "Other")
+  /// Output
+  internal static let output = L10n.tr("Localizable", "output", fallback: "Output")
   /// Overview
   internal static let overview = L10n.tr("Localizable", "overview", fallback: "Overview")
   /// Parental controls
@@ -1182,6 +1188,10 @@ internal enum L10n {
   internal static let playerSwiftfinDescription = L10n.tr("Localizable", "playerSwiftfinDescription", fallback: "Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.")
   /// Play From beginning
   internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From beginning")
+  /// Playing on %@
+  internal static func playingOnDevice(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "playingOnDevice", String(describing: p1), fallback: "Playing on %@")
+  }
   /// Playlist
   internal static let playlist = L10n.tr("Localizable", "playlist", fallback: "Playlist")
   /// Playlists
