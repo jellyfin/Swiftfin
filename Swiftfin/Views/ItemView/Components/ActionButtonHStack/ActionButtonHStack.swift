@@ -59,7 +59,7 @@ extension ItemView {
                             isCheckmarkSelected
                         }, set: { _ in
                             viewModel.send(.toggleIsPlayed)
-                        })).toggleStyle(.button).tint(.jellyfinPurple).buttonStyle(.glass).frame(maxWidth: .infinity)
+                        })).toggleStyle(.button).tint(.jellyfinPurple).buttonStyle(.glass)
                             .if(!equalSpacing) { view in
                                 view.aspectRatio(1, contentMode: .fit)
                             }
@@ -82,7 +82,7 @@ extension ItemView {
                         isHeartSelected
                     }, set: { _ in
                         viewModel.send(.toggleIsFavorite)
-                    })).toggleStyle(.button).tint(.red).buttonStyle(.glass).frame(maxWidth: .infinity)
+                    })).toggleStyle(.button).tint(.red).buttonStyle(.glass)
                         .if(!equalSpacing) { view in
                             view.aspectRatio(1, contentMode: .fit)
                         }
@@ -108,7 +108,6 @@ extension ItemView {
                         mediaSources: mediaSources
                     )
                     .menuStyle(.button)
-                    .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
                     }
@@ -117,6 +116,7 @@ extension ItemView {
                         versionMenu.buttonStyle(.glass)
                     } else {
                         versionMenu
+                            .frame(maxWidth: .infinity)
                     }
                 }
 
@@ -128,7 +128,6 @@ extension ItemView {
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
                     .menuStyle(.button)
-                    .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
                     }
@@ -137,6 +136,7 @@ extension ItemView {
                         trailersMenu.buttonStyle(.glass)
                     } else {
                         trailersMenu
+                            .frame(maxWidth: .infinity)
                     }
                 }
             }

@@ -100,7 +100,7 @@ extension ItemView {
             .enabled(isEnabled)
 
             if isLiquidGlassEnabled, #available(iOS 26.0, *) {
-                button.buttonStyle(.glassProminent).buttonSizing(.flexible)
+                button.buttonStyle(.glassProminent).buttonSizing(.fitted)
             } else {
                 button
                     .buttonStyle(
