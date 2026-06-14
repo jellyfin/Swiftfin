@@ -15,6 +15,9 @@ extension ItemView {
 
     struct PlayButton: View {
 
+        @Default(.isLiquidGlassEnabled)
+        private var isLiquidGlassEnabled
+
         @Default(.accentColor)
         private var accentColor
 
@@ -66,7 +69,7 @@ extension ItemView {
         // MARK: - Body
 
         var body: some View {
-            Button {
+            let button = Button {
                 play()
             } label: {
                 HStack {
@@ -86,12 +89,6 @@ extension ItemView {
                 .font(.callout)
                 .fontWeight(.semibold)
             }
-            .buttonStyle(
-                .tintedMaterial(
-                    tint: accentColor,
-                    foregroundColor: accentColor.overlayColor
-                )
-            )
             .contextMenu {
                 if viewModel.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {
@@ -101,6 +98,18 @@ extension ItemView {
             }
             .isSelected(true)
             .enabled(isEnabled)
+
+            if isLiquidGlassEnabled, #available(iOS 26.0, *) {
+                button.buttonStyle(.glassProminent).buttonSizing(.flexible)
+            } else {
+                button
+                    .buttonStyle(
+                        .tintedMaterial(
+                            tint: accentColor,
+                            foregroundColor: accentColor.overlayColor
+                        )
+                    )
+            }
         }
 
         // MARK: - Play Content

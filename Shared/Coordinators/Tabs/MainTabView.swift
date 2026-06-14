@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
 import SwiftUI
 
@@ -15,12 +16,15 @@ import SwiftUI
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
+
     #if os(iOS)
     @StateObject
     private var tabCoordinator = TabCoordinator {
         TabItem.home
-        TabItem.search
         TabItem.media
+        TabItem.search
     }
     #else
     @StateObject
@@ -44,25 +48,51 @@ struct MainTabView: View {
 
     @ViewBuilder
     var body: some View {
-        TabView(selection: $tabCoordinator.selectedTabID) {
-            ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
-                NavigationInjectionView(
-                    coordinator: tab.coordinator
-                ) {
-                    tab.item.content
+        if isLiquidGlassEnabled, #available(iOS 26.0, *) {
+            TabView {
+                ForEach(tabCoordinator.tabs, id: \.item.id) { tabData in
+                    if tabData.item.id == "search" {
+                        Tab(role: .search) {
+                            NavigationInjectionView(
+                                coordinator: tabData.coordinator
+                            ) {
+                                tabData.item.content
+                            }.environmentObject(tabCoordinator)
+                                .environment(\.tabItemSelected, tabData.publisher).tag(tabData.item.id)
+                        }
+                    } else {
+                        Tab(tabData.item.title, systemImage: tabData.item.systemImage) {
+                            NavigationInjectionView(
+                                coordinator: tabData.coordinator
+                            ) {
+                                tabData.item.content
+                            }.environmentObject(tabCoordinator)
+                                .environment(\.tabItemSelected, tabData.publisher).tag(tabData.item.id)
+                        }
+                    }
                 }
-                .environmentObject(tabCoordinator)
-                .environment(\.tabItemSelected, tab.publisher)
-                .tabItem {
-                    Label(
-                        tab.item.title,
-                        systemImage: tab.item.systemImage
-                    )
-                    .labelStyle(tab.item.labelStyle)
-                    .symbolRenderingMode(.monochrome)
-                    .eraseToAnyView()
+            }.tabViewStyle(.sidebarAdaptable)
+        } else {
+            TabView(selection: $tabCoordinator.selectedTabID) {
+                ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
+                    NavigationInjectionView(
+                        coordinator: tab.coordinator
+                    ) {
+                        tab.item.content
+                    }
+                    .environmentObject(tabCoordinator)
+                    .environment(\.tabItemSelected, tab.publisher)
+                    .tabItem {
+                        Label(
+                            tab.item.title,
+                            systemImage: tab.item.systemImage
+                        )
+                        .labelStyle(tab.item.labelStyle)
+                        .symbolRenderingMode(.monochrome)
+                        .eraseToAnyView()
+                    }
+                    .tag(tab.item.id)
                 }
-                .tag(tab.item.id)
             }
         }
     }

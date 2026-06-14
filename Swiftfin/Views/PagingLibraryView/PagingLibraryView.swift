@@ -226,6 +226,7 @@ struct PagingLibraryView<Element: Poster>: View {
         }
         .proxy(collectionVGridProxy)
         .scrollIndicators(.hidden)
+        .safeAreaInsets(self.safeArea)
     }
 
     @ViewBuilder

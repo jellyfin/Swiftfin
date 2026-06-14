@@ -14,6 +14,9 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
     @Default(.accentColor)
     private var accentColor
 
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
+
     let disabled: Bool
     let action: () -> Void
 
@@ -23,8 +26,8 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
                 Button {
                     action()
                 } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .fontWeight(.bold)
+                    Image(systemName: isLiquidGlassEnabled ? "xmark" : "xmark.circle.fill")
+                        .fontWeight(isLiquidGlassEnabled ? .regular : .bold)
                         .symbolRenderingMode(.palette)
                         .foregroundStyle(accentColor.overlayColor, accentColor)
                         .opacity(disabled ? 0.75 : 1)

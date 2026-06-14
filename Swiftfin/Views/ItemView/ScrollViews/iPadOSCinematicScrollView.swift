@@ -69,27 +69,31 @@ extension ItemView {
         }
 
         var body: some View {
-            OffsetScrollView(
-                heightRatio: globalSize.isLandscape ? 0.75 : 0.5
-            ) {
-                headerView
-            } overlay: {
-                OverlayView(viewModel: viewModel)
-                    .edgePadding()
-                    .frame(maxWidth: .infinity)
-                    .background {
-                        BlurView(style: .systemThinMaterialDark)
-                            .maskLinearGradient {
-                                (location: 0.4, opacity: 0)
-                                (location: 0.8, opacity: 1)
-                            }
-                    }
-            } content: {
-                content
-                    .padding(.top, 10)
-                    .edgePadding(.bottom)
+            GeometryReader { geometry in
+                OffsetScrollView(
+                    heightRatio: globalSize.isLandscape ? 0.75 : 0.5
+                ) {
+                    headerView
+                } overlay: {
+                    VStack {
+                        OverlayView(viewModel: viewModel)
+                            .edgePadding().safeAreaInsets(geometry.safeAreaInsets)
+
+                    }.frame(maxWidth: .infinity)
+                        .background {
+                            BlurView(style: .systemThinMaterialDark)
+                                .maskLinearGradient {
+                                    (location: 0.4, opacity: 0)
+                                    (location: 0.8, opacity: 1)
+                                }
+                        }.ignoresSafeArea()
+                } content: {
+                    content
+                        .padding(.top, 10)
+                        .edgePadding(.bottom)
+                }
+                .trackingSize($globalSize)
             }
-            .trackingSize($globalSize)
         }
     }
 }

@@ -86,7 +86,7 @@ extension ItemView {
             ) {
                 header
                     .frame(height: headerHeight)
-            }
+            }.ignoresSafeArea()
         }
     }
 }

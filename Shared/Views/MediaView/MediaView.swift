@@ -77,7 +77,6 @@ struct MediaView: View {
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
-        .ignoresSafeArea()
         .navigationTitle(L10n.allMedia.localizedCapitalized)
         .refreshable {
             viewModel.refresh()
