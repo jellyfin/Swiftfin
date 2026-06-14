@@ -9,6 +9,7 @@
 import Defaults
 import Factory
 import Foundation
+import JellyfinAPI
 import SwiftUI
 import UIKit
 
@@ -406,6 +407,11 @@ extension Defaults.Keys {
                 UserKey("playInBackground", default: true)
             }
         }
+
+        static let mediaSegmentBehaviors: Key<[MediaSegmentType: MediaSegmentBehavior]> = UserKey(
+            "mediaSegmentBehaviors",
+            default: [.intro: .ask]
+        )
     }
 
     // Experimental settings

@@ -98,5 +98,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
 
         observers.append(MediaProgressObserver(item: self))
+        observers.append(MediaSegmentObserver(item: self))
     }
 }

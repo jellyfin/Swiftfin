@@ -162,7 +162,7 @@ extension MediaPlayerItem {
             return nil
         }()
 
-        return .init(
+        return MediaPlayerItem(
             baseItem: item,
             mediaSource: mediaSource,
             playSessionID: playSessionID,

@@ -29,6 +29,9 @@ extension VideoPlayer {
         @FocusState
         private var isPlaybackProgressFocused: Bool
 
+        @FocusState
+        private var isSkipSegmentButtonFocused: Bool
+
         @State
         var speedBoostTimer: Timer?
         @State
@@ -38,6 +41,21 @@ extension VideoPlayer {
 
         var body: some View {
             VStack(spacing: 30) {
+
+                if !containerState.isPresentingSupplement, let segmentObserver = manager.segmentObserver {
+                    SkipSegmentButton(
+                        observer: segmentObserver,
+                        isPresentingOverlay: containerState.isPresentingOverlay
+                    )
+                    .focused($isSkipSegmentButtonFocused)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .focusSection()
+                    .onReceive(segmentObserver.$currentSegment) { segment in
+                        if segment != nil, segmentObserver.enteredCurrentSegmentNaturally {
+                            isSkipSegmentButtonFocused = true
+                        }
+                    }
+                }
 
                 Toolbar()
                     .isVisible(

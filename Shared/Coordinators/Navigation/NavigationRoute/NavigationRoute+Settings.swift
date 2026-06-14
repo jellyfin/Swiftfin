@@ -191,6 +191,14 @@ extension NavigationRoute {
         }
     }
 
+    static var mediaSegmentSettings: NavigationRoute {
+        NavigationRoute(
+            id: "mediaSegmentSettings"
+        ) {
+            MediaSegmentSettingsView()
+        }
+    }
+
     static var playbackQualitySettings: NavigationRoute {
         NavigationRoute(
             id: "playbackQualitySettings"

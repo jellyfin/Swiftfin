@@ -7,6 +7,7 @@
 //
 
 import AVKit
+import Combine
 import Factory
 import JellyfinAPI
 import Logging
@@ -40,7 +41,19 @@ struct NativeVideoPlayer: View {
 
             switch manager.state {
             case .playback:
-                NativeVideoPlayerView(proxy: proxy)
+                NativeVideoPlayerView(proxy: proxy, manager: manager)
+                #if !os(tvOS)
+                        .overlay(alignment: .bottomTrailing) {
+                            if let segmentObserver = manager.segmentObserver {
+                                SkipSegmentButton(
+                                    observer: segmentObserver,
+                                    isPresentingOverlay: false
+                                )
+                                .padding(.trailing, 80)
+                                .padding(.bottom, 120)
+                            }
+                        }
+                #endif
             default:
                 ProgressView()
             }
@@ -78,22 +91,31 @@ extension NativeVideoPlayer {
     private struct NativeVideoPlayerView: UIViewControllerRepresentable {
 
         let proxy: AVMediaPlayerProxy
+        let manager: MediaPlayerManager
 
         func makeUIViewController(context: Context) -> UINativeVideoPlayerViewController {
-            UINativeVideoPlayerViewController(proxy: proxy)
+            UINativeVideoPlayerViewController(proxy: proxy, manager: manager)
         }
 
         func updateUIViewController(_ uiViewController: UINativeVideoPlayerViewController, context: Context) {}
     }
 
-    private class UINativeVideoPlayerViewController: AVPlayerViewController {
+    private class UINativeVideoPlayerViewController: AVPlayerViewController, UIGestureRecognizerDelegate {
 
         private let proxy: AVMediaPlayerProxy
+        private weak var manager: MediaPlayerManager?
+        private var cancellables: Set<AnyCancellable> = []
+        private var segmentCancellables: Set<AnyCancellable> = []
 
-        init(proxy: AVMediaPlayerProxy) {
+        init(proxy: AVMediaPlayerProxy, manager: MediaPlayerManager) {
             self.proxy = proxy
+            self.manager = manager
 
             super.init(nibName: nil, bundle: nil)
+
+            #if os(tvOS)
+            observeSegments(of: manager)
+            #endif
 
             player = proxy.player
 
@@ -111,5 +133,61 @@ extension NativeVideoPlayer {
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
+
+        #if !os(tvOS)
+        override func viewDidLoad() {
+            super.viewDidLoad()
+
+            let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didReceiveTap))
+            tapRecognizer.cancelsTouchesInView = false
+            tapRecognizer.delegate = self
+            view.addGestureRecognizer(tapRecognizer)
+        }
+
+        @objc
+        private func didReceiveTap() {
+            manager?.segmentObserver?.refreshStandalonePresentation()
+        }
+
+        func gestureRecognizer(
+            _ gestureRecognizer: UIGestureRecognizer,
+            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+        ) -> Bool {
+            true
+        }
+        #endif
+
+        #if os(tvOS)
+        private func observeSegments(of manager: MediaPlayerManager) {
+            manager.$playbackItem
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self, weak manager] _ in
+                    guard let self, let observer = manager?.segmentObserver else { return }
+                    self.observeSegments(of: observer)
+                }
+                .store(in: &cancellables)
+        }
+
+        private func observeSegments(of observer: MediaSegmentObserver) {
+            segmentCancellables = []
+
+            observer.$currentSegment
+                .combineLatest(observer.$isStandalonePresentation)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self, weak observer] segment, isStandalonePresentation in
+                    guard let segment, let type = segment.type, isStandalonePresentation else {
+                        self?.contextualActions = []
+                        return
+                    }
+
+                    self?.contextualActions = [
+                        UIAction(title: type.skipActionTitle) { _ in
+                            observer?.skipCurrentSegment()
+                        },
+                    ]
+                }
+                .store(in: &segmentCancellables)
+        }
+        #endif
     }
 }

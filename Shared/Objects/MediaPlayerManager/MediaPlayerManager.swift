@@ -11,6 +11,7 @@ import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
+import StatefulMacros
 import VLCUI
 
 // TODO: proper error catching
@@ -42,8 +43,6 @@ extension Container {
         .scope(.session)
     }
 }
-
-import StatefulMacros
 
 @MainActor
 @Stateful
@@ -179,13 +178,13 @@ final class MediaPlayerManager: ViewModel {
 
     // MARK: init
 
-//    static let empty: MediaPlayerManager = .init()
+    //    static let empty: MediaPlayerManager = .init()
 
-//    override private init() {
-//        self.item = .init()
-//        self.state = .stopped
-//        super.init()
-//    }
+    //    override private init() {
+    //        self.item = .init()
+    //        self.state = .stopped
+    //        super.init()
+    //    }
 
     init(
         item: BaseItemDto,
