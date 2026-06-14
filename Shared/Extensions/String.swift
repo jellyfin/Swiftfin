@@ -120,6 +120,7 @@ extension String {
         var suffix = suffix
 
         while s.last == suffix.last {
+            guard s.isNotEmpty else { break }
             s.removeLast()
             suffix.removeLast()
         }
