@@ -50,10 +50,10 @@ final class JellyfinPlaybackSession: ViewModel, RemotePlaybackSession {
         parameters.audioStreamIndex = playbackItem?.selectedAudioStreamIndex
         parameters.subtitleStreamIndex = playbackItem?.selectedSubtitleStreamIndex
 
-        logger.info("⏱ jellyfin connect: startingAt=\(seconds.seconds)s sentTicks=\(parameters.startPositionTicks ?? -1)")
+        logger.info("jellyfin connect: startingAt=\(seconds.seconds)s sentTicks=\(parameters.startPositionTicks ?? -1)")
 
         let request = Paths.play(sessionID: sessionID, parameters: parameters)
-        try await userSession.client.send(request)
+        try await userSession?.client.send(request)
 
         hasStartedRemote = false
         startPolling()
@@ -108,7 +108,7 @@ final class JellyfinPlaybackSession: ViewModel, RemotePlaybackSession {
         )
 
         Task {
-            try? await userSession.client.send(request)
+            try? await userSession?.client.send(request)
         }
     }
 
@@ -134,7 +134,7 @@ final class JellyfinPlaybackSession: ViewModel, RemotePlaybackSession {
         var parameters = Paths.GetSessionsParameters()
         parameters.activeWithinSeconds = 60
 
-        guard let response = try? await userSession.client.send(Paths.getSessions(parameters: parameters)),
+        guard let response = try? await userSession?.client.send(Paths.getSessions(parameters: parameters)),
               let session = response.value.first(where: { $0.id == sessionID })
         else { return }
 
