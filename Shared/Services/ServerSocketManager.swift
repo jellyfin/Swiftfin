@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 import Logging
@@ -22,7 +23,7 @@ final class ServerSocketManager {
 
     private struct State {
         var session: JellyfinSocket.Session?
-        var subscriptions: [JellyfinSocket.Subscription: (delay: Duration, interval: Duration)] = [:]
+        var subscriptions: [JellyfinSocket.Subscription: (delay: Duration, interval: Duration, count: Int)] = [:]
     }
 
     private let logger = Logger.swiftfin()
@@ -80,21 +81,33 @@ final class ServerSocketManager {
         delay: Duration = .seconds(0),
         interval: Duration = .seconds(5)
     ) -> AnyCancellable {
-        let session = state.withLock { state in
-            state.subscriptions[subscription] = (delay, interval)
-            return state.session
+        let (session, effectiveDelay, effectiveInterval) = state.withLock { state -> (JellyfinSocket.Session?, Duration, Duration) in
+            let existing = state.subscriptions[subscription]
+            let effectiveDelay = min(existing?.delay ?? delay, delay)
+            let effectiveInterval = min(existing?.interval ?? interval, interval)
+            let count = (existing?.count ?? 0) + 1
+
+            state.subscriptions[subscription] = (effectiveDelay, effectiveInterval, count)
+            return (state.session, effectiveDelay, effectiveInterval)
         }
 
         if let session {
-            session.subscribe(subscription, delay: delay, interval: interval)
+            session.subscribe(subscription, delay: effectiveDelay, interval: effectiveInterval)
         } else {
             wake.yield()
         }
 
         return AnyCancellable { [weak self] in
-            let session = self?.state.withLock { state in
-                state.subscriptions[subscription] = nil
-                return state.session
+            let session = self?.state.withLock { state -> JellyfinSocket.Session? in
+                guard let existing = state.subscriptions[subscription] else { return nil }
+
+                if existing.count <= 1 {
+                    state.subscriptions[subscription] = nil
+                    return state.session
+                }
+
+                state.subscriptions[subscription] = (existing.delay, existing.interval, existing.count - 1)
+                return nil
             }
             session?.unsubscribe(subscription)
         }
@@ -191,5 +204,68 @@ extension ServerSocketManager: UserSessionService {
     @MainActor
     func userSessionWillStop() {
         stop()
+    }
+}
+
+// MARK: - Convenience Subscription Publishers
+
+extension ServerSocketManager {
+
+    static func sessions(
+        delay: Duration = .seconds(2),
+        interval: Duration = .seconds(2)
+    ) -> AnyPublisher<[SessionInfoDto], Never> {
+        publisher(for: .sessions, delay: delay, interval: interval) { event in
+            guard case let .message(.sessionsMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    static func activityLog(
+        delay: Duration = .seconds(0),
+        interval: Duration = .seconds(5)
+    ) -> AnyPublisher<[ActivityLogEntry], Never> {
+        publisher(for: .activityLog, delay: delay, interval: interval) { event in
+            guard case let .message(.activityLogEntryMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    static func scheduledTasks(
+        delay: Duration = .seconds(0),
+        interval: Duration = .seconds(5)
+    ) -> AnyPublisher<[TaskInfo], Never> {
+        publisher(for: .scheduledTasks, delay: delay, interval: interval) { event in
+            guard case let .message(.scheduledTasksInfoMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    private static func publisher<Payload>(
+        for subscription: JellyfinSocket.Subscription,
+        delay: Duration,
+        interval: Duration,
+        extract: @escaping (JellyfinSocket.Session.Event) -> Payload?
+    ) -> AnyPublisher<Payload, Never> {
+        Publishers.Merge(
+            Notifications[.didChangeUserSession].publisher,
+            Notifications[.applicationWillEnterForeground].publisher
+        )
+        .prepend(())
+        .map { _ -> AnyPublisher<Payload, Never> in
+            guard let socket = Container.shared.currentUserSession()?.serverSocketManager else {
+                return Empty().eraseToAnyPublisher()
+            }
+
+            let token = socket.subscribe(subscription, delay: delay, interval: interval)
+
+            return socket.events
+                .compactMap(extract)
+                .handleEvents(receiveCancel: token.cancel)
+                .eraseToAnyPublisher()
+        }
+        .switchToLatest()
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
     }
 }

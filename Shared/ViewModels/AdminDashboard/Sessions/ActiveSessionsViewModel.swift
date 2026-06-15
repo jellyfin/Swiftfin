@@ -55,48 +55,16 @@ final class ActiveSessionsViewModel: ViewModel {
     @Published
     var isPaused = false
 
-    private var sessionCancellables = Set<AnyCancellable>()
-
     override init() {
         super.init()
 
-        Publishers.Merge(
-            Notifications[.didChangeUserSession].publisher,
-            Notifications[.applicationWillEnterForeground].publisher
-        )
-        .prepend(())
-        .sink { [weak self] _ in
-            Task { @MainActor in
-                self?.observeSessions()
-            }
-        }
-        .store(in: &cancellables)
-    }
-
-    private func observeSessions() {
-        sessionCancellables.removeAll()
-
-        $userSession.resolve(reset: .scope)
-
-        guard let socket = userSession?.serverSocketManager else { return }
-
-        socket
-            .subscribe(.sessions, delay: .seconds(2), interval: .seconds(2))
-            .store(in: &sessionCancellables)
-
-        socket.events
-            .compactMap { event -> [SessionInfoDto]? in
-                guard case let .message(.sessionsMessage(msg)) = event else { return nil }
-                return msg.data
-            }
-            .receive(on: DispatchQueue.main)
+        ServerSocketManager.sessions()
             .sink { [weak self] sessions in
                 Task { @MainActor in
-                    guard let self else { return }
-                    self.updateSessions(sessions)
+                    self?.updateSessions(sessions)
                 }
             }
-            .store(in: &sessionCancellables)
+            .store(in: &cancellables)
     }
 
     @Function(\Action.Cases.refresh)
@@ -120,24 +88,22 @@ final class ActiveSessionsViewModel: ViewModel {
         var updatedSessions: OrderedDictionary<String, SessionViewModel> = [:]
 
         let filteredSessions = incomingSessions
-            // Filter to sessions within the timeframe
-                .filter { session in
-                    guard let seconds = activeWithinSeconds else { return true }
-                    guard let date = session.lastActivityDate else { return true }
-                    return Date.now.timeIntervalSince(date) <= TimeInterval(seconds)
+            .filter { session in
+                guard let seconds = activeWithinSeconds else { return true }
+                guard let date = session.lastActivityDate else { return true }
+                return Date.now.timeIntervalSince(date) <= TimeInterval(seconds)
+            }
+            .filter { session in
+                switch showSessionType {
+                case .all:
+                    true
+                case .active:
+                    session.nowPlayingItem != nil
+                case .inactive:
+                    session.nowPlayingItem == nil
                 }
-                // Filter to sessions that match our type
-                .filter { session in
-                    switch showSessionType {
-                    case .all:
-                        true
-                    case .active:
-                        session.nowPlayingItem != nil
-                    case .inactive:
-                        session.nowPlayingItem == nil
-                    }
-                }
-                .sorted()
+            }
+            .sorted()
 
         for session in filteredSessions {
             guard let id = session.id else { continue }

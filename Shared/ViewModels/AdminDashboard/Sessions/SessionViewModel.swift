@@ -56,10 +56,34 @@ final class SessionViewModel: ViewModel, Identifiable {
         session.id
     }
 
-    /// Init from a session that is updated from a parent `ViewModel`
+    /// Init when you want an external source to own the `SessionInfoDto`'s maintenance
+    /// - Example: `ActiveSessionsViewModel`
     init(session: SessionInfoDto) {
         self.session = session
         super.init()
+    }
+
+    /// Init when you want the `SessionViewModel` to maintain its own `SessionInfoDto`'s maintenance
+    /// - Example: `PlaybackInformationSupplement`
+    init(observing itemID: String) {
+        self.session = SessionInfoDto()
+        super.init()
+
+        ServerSocketManager.sessions()
+            .sink { [weak self] sessions in
+                Task { @MainActor in
+                    guard let self else { return }
+
+                    let deviceID = self.userSession?.client.configuration.deviceID
+                    let deviceSessions = sessions.filter { $0.deviceID == deviceID }
+
+                    guard let match = deviceSessions.first(where: { $0.nowPlayingItem?.id == itemID }) ?? deviceSessions.first
+                    else { return }
+
+                    self.session = match
+                }
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Remote Playback Session
