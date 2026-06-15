@@ -200,7 +200,7 @@ extension VLCMediaPlayerProxy {
                             manager.proxy?.isBuffering.value = true
                         case .ended:
                             // Live streams will send stopped/ended events
-                            guard !(manager.playbackItem?.baseItem.isLiveStream ?? false) else { return }
+                            guard manager.playbackItem?.baseItem.isLiveStream == false else { return }
                             manager.proxy?.isBuffering.value = false
                             manager.ended()
                         case .stopped: ()

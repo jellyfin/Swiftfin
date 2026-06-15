@@ -36,7 +36,8 @@ extension Container {
                     baseItem: .init(),
                     mediaSource: .init(),
                     playSessionID: "",
-                    url: URL(string: "/")!
+                    url: URL(string: "/")!,
+                    deviceProfile: .init()
                 )
             )
         }
@@ -113,6 +114,7 @@ final class MediaPlayerManager: ViewModel {
                         "itemID": .stringConvertible(playbackItem.baseItem.id ?? "Unknown"),
                         "itemTitle": .stringConvertible(playbackItem.baseItem.displayTitle),
                         "url": .stringConvertible(playbackItem.url.absoluteString),
+                        "isTranscoding": .stringConvertible(playbackItem.mediaSource.transcodingURL != nil),
                     ]
                 )
 

@@ -159,7 +159,7 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 
 **Notes:**
 
-- [1] Subtitle format can be played if embedded in the container (MKV) but requres server-side encoding for playback is the source is an external file.
+- [1] Subtitle format can be played if embedded in the container (MKV) but requires server-side encoding when the source is an external file.
 - [2] Subtitle format requires server-side encoding for playback.
 
 - Subtitle track selection is not currently supported in Native (AVPlayer) due to issues with HLS file incompatibilities.

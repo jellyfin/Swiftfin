@@ -172,6 +172,7 @@ extension MediaPlayerItem {
             playSessionID: playSessionID,
             url: playbackURL,
             requestedBitrate: requestedBitrate,
+            deviceProfile: deviceProfile,
             initialAudioStreamIndex: audioStreamIndex,
             initialSubtitleStreamIndex: subtitleStreamIndex,
             previewImageProvider: previewImageProvider,
