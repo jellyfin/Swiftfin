@@ -21,7 +21,7 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         let parameters = parameters(for: page)
         let request = Paths.getNextUp(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items ?? []
     }

@@ -14,7 +14,7 @@ final class CulturesViewModel: BaseFetchViewModel<[CultureDto]> {
 
     override func getValue() async throws -> [CultureDto] {
         let request = Paths.getCultures
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value
     }

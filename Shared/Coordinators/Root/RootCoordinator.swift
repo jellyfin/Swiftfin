@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import Factory
 import Logging
@@ -17,6 +18,7 @@ final class RootCoordinator: ObservableObject {
     @Published
     var root: RootItem = .appLoading
 
+    private var cancellables: Set<AnyCancellable> = []
     private let logger = Logger.swiftfin()
 
     init() {
@@ -47,18 +49,28 @@ final class RootCoordinator: ObservableObject {
             }
         }
 
-        // Notification setup for state
-        Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
-        Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
-        Notifications[.didChangeCurrentServerURL].subscribe(self, selector: #selector(didChangeCurrentServerURL(_:)))
+        Notifications[.didChangeUserSession]
+            .publisher
+            .sink(receiveValue: didChangeUserSession)
+            .store(in: &cancellables)
+
+        Notifications[.didChangeServerConnection]
+            .publisher
+            .sink(receiveValue: didChangeServerConnection)
+            .store(in: &cancellables)
     }
 
     func root(_ newRoot: RootItem) {
         root = newRoot
     }
 
-    @objc
-    private func didSignIn() {
+    private func didChangeUserSession() {
+        guard Container.shared.currentUserSession() != nil else {
+            logger.info("Signed out")
+            root(.selectUser)
+            return
+        }
+
         logger.info("Signed in")
 
         #if os(tvOS)
@@ -68,19 +80,11 @@ final class RootCoordinator: ObservableObject {
         #endif
     }
 
-    @objc
-    private func didSignOut() {
-        logger.info("Signed out")
-
-        root(.selectUser)
-    }
-
-    @objc
-    func didChangeCurrentServerURL(_ notification: Notification) {
+    private func didChangeServerConnection(_ connection: ServerConnection) {
 
         guard Container.shared.currentUserSession() != nil else { return }
 
-        Container.shared.currentUserSession.reset()
-        Notifications[.didSignIn].post()
+        Container.shared.userSessionManager().refreshCurrentSession()
+        Notifications[.didChangeUserSession].post()
     }
 }

@@ -16,23 +16,25 @@ final class LocalUserSecurityViewModel: ViewModel {
     var keychain
 
     func check(oldPin: String) throws {
+        let user = try authenticatedUser
 
-        if let storedPin = keychain.get("\(userSession.user.id)-pin") {
+        if let storedPin = keychain.get("\(user.id)-pin") {
             if oldPin != storedPin {
-                throw ErrorMessage(L10n.incorrectPinForUser(userSession.user.username))
+                throw ErrorMessage(L10n.incorrectPinForUser(user.username))
             }
         }
     }
 
-    func set(newPolicy: LocalUserAccessPolicy, newPin: String, newPinHint: String) {
+    func set(newPolicy: LocalUserAccessPolicy, newPin: String, newPinHint: String) throws {
+        let user = try authenticatedUser
 
         if newPolicy == .requirePin {
-            keychain.set(newPin, forKey: "\(userSession.user.id)-pin")
+            keychain.set(newPin, forKey: "\(user.id)-pin")
         } else {
-            keychain.delete("\(userSession.user.id)-pin")
+            keychain.delete("\(user.id)-pin")
         }
 
-        userSession.user.accessPolicy = newPolicy
-        userSession.user.pinHint = newPinHint
+        user.accessPolicy = newPolicy
+        user.pinHint = newPinHint
     }
 }

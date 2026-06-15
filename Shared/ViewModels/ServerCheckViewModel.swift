@@ -36,13 +36,14 @@ final class ServerCheckViewModel: ViewModel {
     @Function(\Action.Cases.checkServer)
     private func _checkServer() async throws {
 
-        try await userSession.server.updateServerInfo()
+        let session = try requireUserSession()
+        try await session.server.updateServerInfo()
 
         let request = Paths.getCurrentUser
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
-        userSession.user.data = response.value
-        Container.shared.currentUserSession.reset()
+        session.user.data = response.value
+        Container.shared.userSessionManager().refreshCurrentSession()
         events.send(.connected)
     }
 }

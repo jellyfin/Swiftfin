@@ -51,34 +51,36 @@ struct SettingsView: View {
 
     @ViewBuilder
     private var serverSection: some View {
-        Section {
-            UserProfileRow(user: viewModel.userSession.user.data) {
-                router.route(to: .localUserSettings(user: viewModel.userSession.user.data))
-            }
-
-            ChevronButton(
-                L10n.server,
-                action: {
-                    router.route(to: .editServer(server: viewModel.userSession.server))
+        if let userSession = viewModel.userSession {
+            Section {
+                UserProfileRow(user: userSession.user.data) {
+                    router.route(to: .localUserSettings(user: userSession.user.data))
                 }
-            ) {
-                Label {
-                    Text(viewModel.userSession.server.name)
-                } icon: {
-                    if !viewModel.userSession.server.isVersionCompatible {
-                        Image(systemName: "exclamationmark.circle.fill")
+
+                ChevronButton(
+                    L10n.server,
+                    action: {
+                        router.route(to: .editLocalServer(server: userSession.server))
+                    }
+                ) {
+                    Label {
+                        Text(userSession.server.name)
+                    } icon: {
+                        if !userSession.server.isVersionCompatible {
+                            Image(systemName: "exclamationmark.circle.fill")
+                        }
+                    }
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                }
+
+                #if os(iOS)
+                if userSession.user.data.policy?.isAdministrator == true {
+                    ChevronButton(L10n.dashboard) {
+                        router.route(to: .adminDashboard)
                     }
                 }
-                .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                #endif
             }
-
-            #if os(iOS)
-            if viewModel.userSession?.user.data.policy?.isAdministrator == true {
-                ChevronButton(L10n.dashboard) {
-                    router.route(to: .adminDashboard)
-                }
-            }
-            #endif
         }
 
         Section {
