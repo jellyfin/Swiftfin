@@ -54,55 +54,10 @@ final class SessionViewModel: ViewModel, Identifiable {
         session.id
     }
 
-    private var sessionCancellables = Set<AnyCancellable>()
-
+    /// Init from a session that is updated from a parent `ViewModel`
     init(session: SessionInfoDto) {
         self.session = session
         super.init()
-    }
-
-    init(observing session: SessionInfoDto) {
-        self.session = session
-        super.init()
-
-        Publishers.Merge(
-            Notifications[.didChangeUserSession].publisher,
-            Notifications[.applicationWillEnterForeground].publisher
-        )
-        .prepend(())
-        .sink { [weak self] _ in
-            Task { @MainActor in
-                self?.observeSession()
-            }
-        }
-        .store(in: &cancellables)
-    }
-
-    private func observeSession() {
-        sessionCancellables.removeAll()
-
-        $userSession.resolve(reset: .scope)
-
-        guard let socket = userSession?.serverSocketManager else { return }
-
-        socket
-            .subscribe(.sessions, delay: .seconds(2), interval: .seconds(2))
-            .store(in: &sessionCancellables)
-
-        socket.events
-            .compactMap { event -> [SessionInfoDto]? in
-                guard case let .message(.sessionsMessage(msg)) = event else { return nil }
-                return msg.data
-            }
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] sessions in
-                Task { @MainActor in
-                    guard let self else { return }
-                    guard let updated = sessions.first(where: { $0.id == self.session.id }) else { return }
-                    self.session = updated
-                }
-            }
-            .store(in: &sessionCancellables)
     }
 
     // MARK: - Remote Playback Session
