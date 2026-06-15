@@ -16,9 +16,11 @@ final class UserSession {
     let server: ServerState
     let user: UserState
     lazy var serverConnectionManager = ServerConnectionManager(userSession: self)
+    lazy var serverSocketManager = ServerSocketManager(userSession: self)
 
     private lazy var services: [any UserSessionService] = [
         serverConnectionManager,
+        serverSocketManager
     ]
 
     init(

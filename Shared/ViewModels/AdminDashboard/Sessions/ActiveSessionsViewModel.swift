@@ -55,14 +55,34 @@ final class ActiveSessionsViewModel: ViewModel {
     @Published
     var isPaused = false
 
+    private var sessionCancellables = Set<AnyCancellable>()
+
     override init() {
         super.init()
 
-        guard let socket = userSession?.socket else { return }
+        Publishers.Merge(
+            Notifications[.didChangeUserSession].publisher,
+            Notifications[.applicationWillEnterForeground].publisher
+        )
+        .prepend(())
+        .sink { [weak self] _ in
+            Task { @MainActor in
+                self?.observeSessions()
+            }
+        }
+        .store(in: &cancellables)
+    }
+
+    private func observeSessions() {
+        sessionCancellables.removeAll()
+
+        $userSession.resolve(reset: .scope)
+
+        guard let socket = userSession?.serverSocketManager else { return }
 
         socket
-            .subscribe(.sessions, delay: .seconds(0), interval: .seconds(2))
-            .store(in: &cancellables)
+            .subscribe(.sessions, delay: .seconds(2), interval: .seconds(2))
+            .store(in: &sessionCancellables)
 
         socket.events
             .compactMap { event -> [SessionInfoDto]? in
@@ -76,14 +96,14 @@ final class ActiveSessionsViewModel: ViewModel {
                     self.updateSessions(sessions)
                 }
             }
-            .store(in: &cancellables)
+            .store(in: &sessionCancellables)
     }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         let parameters = Paths.GetSessionsParameters(activeWithinSeconds: activeWithinSeconds)
         let request = Paths.getSessions(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         updateSessions(response.value)
     }

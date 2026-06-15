@@ -13,7 +13,7 @@ import Network
 import NetworkExtension
 #endif
 
-struct NetworkConnectionContext {
+struct NetworkConnectionContext: Equatable {
 
     let isSatisfied: Bool
     let interface: ServerConnectionInterface

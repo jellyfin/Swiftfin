@@ -203,6 +203,11 @@ final class ServerConnectionManager {
 
     @MainActor
     private func pathDidUpdate(_ context: NetworkConnectionContext) {
+
+        if context != self.context, context.isSatisfied {
+            Notifications[.didChangeNetwork].post()
+        }
+
         self.context = context
         scheduleEvaluation()
     }

@@ -10,11 +10,10 @@ import Combine
 import Foundation
 import JellyfinAPI
 import Logging
-import Network
 import os
 import UIKit
 
-final class SocketManager {
+final class ServerSocketManager {
 
     /// Published socket events
     let events = PassthroughSubject<JellyfinSocket.Session.Event, Never>()
@@ -27,7 +26,7 @@ final class SocketManager {
     }
 
     private let logger = Logger.swiftfin()
-    private let socket: JellyfinSocket
+    private var userSession: UserSession
 
     private var tasks: [Task<Void, Never>] = []
 
@@ -38,19 +37,33 @@ final class SocketManager {
     private let wakeStream: AsyncStream<Void>
     private let wake: AsyncStream<Void>.Continuation
 
-    init(_ socket: JellyfinSocket) {
-        self.socket = socket
+    init(userSession: UserSession) {
+        self.userSession = userSession
         (wakeStream, wake) = AsyncStream<Void>.makeStream()
-        tasks = [
-            Task { [weak self] in await self?.runConnection() },
-            Task { [weak self] in await self?.observeForeground() },
-            Task { [weak self] in await self?.observeNetworkPath() },
-        ]
+    }
+
+    @MainActor
+    func update(userSession: UserSession) {
+        self.userSession = userSession
+        reconnect()
     }
 
     deinit {
-        tasks.forEach { $0.cancel() }
+        stop()
         wake.finish()
+    }
+
+    private func start() {
+        tasks = [
+            Task { [weak self] in await self?.runConnection() },
+            Task { [weak self] in await self?.observeForeground() },
+            Task { [weak self] in await self?.observeNetworkChange() },
+        ]
+    }
+
+    private func stop() {
+        tasks.forEach { $0.cancel() }
+        tasks.removeAll()
         killSession()
     }
 
@@ -98,7 +111,12 @@ final class SocketManager {
         var wakeIterator = wakeStream.makeAsyncIterator()
 
         while !Task.isCancelled {
-            let session = socket.connect(
+            let session = userSession.client.socket(
+                supportsMediaControl: false,
+                supportedCommands: [.displayMessage],
+                playableMediaTypes: [.video]
+            )
+            .connect(
                 reconnectAttempts: 5,
                 reconnectDelay: .seconds(2),
                 responseTimeout: .seconds(10)
@@ -116,7 +134,7 @@ final class SocketManager {
                 )
             }
 
-            logger.debug("Connecting the socket (Initial Startup)")
+            logger.debug("Connecting the socket")
 
             do {
                 for try await event in session.events {
@@ -153,26 +171,25 @@ final class SocketManager {
         }
     }
 
-    /// Reconnect when network transitions from unreachable to reachable.
-    /// Restarts the socket when switching networks (E.G. WiFI to Cellular).
-    private func observeNetworkPath() async {
-        let monitor = NWPathMonitor()
-        defer { monitor.cancel() }
-
-        let stream = AsyncStream<NWPath> {
-            continuation in monitor.pathUpdateHandler = { continuation.yield($0) }
+    /// Reconnect when `ServerConnectionManager` reports the network path changed
+    /// Fixes the socket to send responses to the right IP if new.
+    private func observeNetworkChange() async {
+        for await _ in Notifications[.didChangeNetwork].publisher.values {
+            logger.debug("Reconnecting the socket (Network Changed)")
+            reconnect()
         }
+    }
+}
 
-        monitor.start(queue: .global(qos: .utility))
+extension ServerSocketManager: UserSessionService {
 
-        var previous: NWPath.Status?
+    @MainActor
+    func userSessionDidStart() {
+        start()
+    }
 
-        for await path in stream {
-            if path.status == .satisfied, previous == .unsatisfied {
-                logger.debug("Reconnecting the socket (Network Restored)")
-                reconnect()
-            }
-            previous = path.status
-        }
+    @MainActor
+    func userSessionWillStop() {
+        stop()
     }
 }

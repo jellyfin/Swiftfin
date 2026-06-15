@@ -131,6 +131,10 @@ extension Notifications.Key {
         Key("didChangeServerConnection")
     }
 
+    static var didChangeNetwork: Key<Void> {
+        Key("didChangeNetwork")
+    }
+
     static var didSendStopReport: Key<Void> {
         Key("didSendStopReport")
     }

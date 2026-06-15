@@ -61,12 +61,16 @@ struct ActiveSessionDetailsView: View {
         StateAdapter(
             initialValue: (
                 isPresented: false,
-                header: L10n.messageFrom(viewModel.userSession.user.username),
+                header: L10n.messageFrom(viewModel.userSession?.user.username ?? L10n.server),
                 text: ""
             )
         ) { alert in
             ChevronButton(L10n.message, systemName: "message.fill") {
-                alert.wrappedValue = (isPresented: true, header: L10n.messageFrom(viewModel.userSession.user.username), text: "")
+                alert.wrappedValue = (
+                    isPresented: true,
+                    header: L10n.messageFrom(viewModel.userSession?.user.username ?? L10n.server),
+                    text: ""
+                )
             }
             .alert(L10n.message, isPresented: alert.isPresented) {
                 TextField(L10n.title, text: alert.header)
@@ -118,13 +122,13 @@ struct ActiveSessionDetailsView: View {
                 }
             }
 
+            commandsSection(session: session)
+
             AdminDashboardView.DeviceSection(
                 client: session.client,
                 device: session.deviceName,
                 version: session.applicationVersion
             )
-
-            commandsSection(session: session)
         }
     }
 
