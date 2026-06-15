@@ -66,6 +66,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
     @Published
     var environment: Environment
 
+    let filterViewModel: FilterViewModel?
     let library: Library
     let pageSize: Int
 
@@ -81,8 +82,16 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
         library: Library,
         pageSize: Int = defaultPagingLibraryPageSize
     ) {
+        var environment = library.environment ?? .default
+        let filterViewModel = library.makeFilterViewModel(environment: environment)
+
+        if let filterViewModel {
+            library.setFilters(filterViewModel.currentFilters, on: &environment)
+        }
+
         self.elements = IdentifiedArray([], uniquingIDsWith: { existing, _ in existing })
-        self.environment = library.environment ?? .default
+        self.environment = environment
+        self.filterViewModel = filterViewModel
         self.hasNextPage = library.hasNextPage
         self.library = library
         self.pageSize = pageSize
@@ -103,6 +112,19 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
 
                 updateItemUserData(userData)
                 library.onItemUserDataChanged(viewModel: self, userData: userData)
+            }
+            .store(in: &cancellables)
+
+        filterViewModel?.$currentFilters
+            .dropFirst()
+            .debounce(for: 1, scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] filters in
+                guard let self else { return }
+
+                var environment = self.environment
+                library.setFilters(filters, on: &environment)
+                self.environment = environment
             }
             .store(in: &cancellables)
     }
@@ -170,6 +192,8 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
+        await filterViewModel?.getQueryFilters()
+
         hasNextPage = true
         elements.removeAll()
         try await __actuallyGetNextPage()

@@ -41,6 +41,13 @@ protocol PagingLibrary<Element> {
         viewModel: PagingLibraryViewModel<Self>,
         userData: UserItemDataDto
     )
+
+    func makeFilterViewModel(environment: Environment) -> FilterViewModel?
+
+    func setFilters(
+        _ filters: ItemFilterCollection,
+        on environment: inout Environment
+    )
 }
 
 extension PagingLibrary {
@@ -64,6 +71,15 @@ extension PagingLibrary {
     func onItemUserDataChanged(
         viewModel: PagingLibraryViewModel<Self>,
         userData: UserItemDataDto
+    ) {}
+
+    func makeFilterViewModel(environment: Environment) -> FilterViewModel? {
+        nil
+    }
+
+    func setFilters(
+        _ filters: ItemFilterCollection,
+        on environment: inout Environment
     ) {}
 }
 

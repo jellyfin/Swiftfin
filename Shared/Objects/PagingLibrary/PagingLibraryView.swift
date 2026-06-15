@@ -14,6 +14,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     typealias Element = Library.Element
 
+    @Default(.Customization.Library.enabledDrawerFilters)
+    private var enabledDrawerFilters
     @Default(.Customization.Library.rememberLayout)
     private var rememberIndividualLibraryStyle
 
@@ -99,6 +101,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         }
         .animation(.linear(duration: 0.2), value: viewModel.background.is(.gettingNextPage))
         .animation(.linear(duration: 0.2), value: viewModel.elements)
+        .letterPickerBar(filterViewModel: viewModel.filterViewModel)
         .navigationTitle(viewModel.library.parent.displayTitle)
         .backport
         .toolbarTitleDisplayMode(.inline)
@@ -121,25 +124,46 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .refreshable {
             viewModel.refresh()
         }
+        #if os(iOS)
+        .ifLet(viewModel.filterViewModel) { view, filterViewModel in
+            view.navigationBarFilterDrawer(
+                viewModel: filterViewModel,
+                types: enabledDrawerFilters
+            )
+        }
+        #endif
         .backport
-        .onChange(of: viewModel.environment) {
-            viewModel.refresh()
-        }
-        .backport
-        .onChange(of: libraryStyle) { oldStyle, newStyle in
-            if Element.layout(for: oldStyle) == Element.layout(for: newStyle) {
-                gridProxy.layout()
+            .onChange(of: viewModel.environment) {
+                viewModel.refresh()
             }
-        }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case let .gotRandomItem(element):
-                element.libraryDidSelectElement(router: router, in: namespace)
+            .backport
+            .onChange(of: viewModel.filterViewModel?.currentFilters) { _, newFilters in
+                guard let newFilters,
+                      let id = viewModel.library.parent.id,
+                      Defaults[.Customization.Library.rememberSort]
+                else { return }
+
+                let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
+                    .mutating(\.sortBy, with: newFilters.sortBy)
+                    .mutating(\.sortOrder, with: newFilters.sortOrder)
+
+                StoredValues[.User.libraryFilters(parentID: id)] = storedFilters
             }
-        }
-        .onFirstAppear {
-            viewModel.refresh()
-        }
+            .backport
+            .onChange(of: libraryStyle) { oldStyle, newStyle in
+                if Element.layout(for: oldStyle) == Element.layout(for: newStyle) {
+                    gridProxy.layout()
+                }
+            }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case let .gotRandomItem(element):
+                    element.libraryDidSelectElement(router: router, in: namespace)
+                }
+            }
+            .onFirstAppear {
+                viewModel.refresh()
+            }
     }
 }
 

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 
 @MainActor
@@ -18,6 +19,7 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
     }
 
     let environment: Environment?
+    let isFilterable: Bool
     let parent: AnyLibraryParent
 
     init(
@@ -25,7 +27,33 @@ struct ItemLibrary: PagingLibrary, WithRandomElementLibrary {
         filters: ItemFilterCollection? = nil
     ) {
         self.environment = .init(filters: filters ?? .default)
+        self.isFilterable = filters != nil
         self.parent = .init(parent)
+    }
+
+    func makeFilterViewModel(environment: Environment) -> FilterViewModel? {
+        guard isFilterable else { return nil }
+
+        var filters = environment.filters
+
+        if let id = parent.id, Defaults[.Customization.Library.rememberSort] {
+            let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
+
+            filters.sortBy = storedFilters.sortBy
+            filters.sortOrder = storedFilters.sortOrder
+        }
+
+        return FilterViewModel(
+            parent: parent,
+            currentFilters: filters
+        )
+    }
+
+    func setFilters(
+        _ filters: ItemFilterCollection,
+        on environment: inout Environment
+    ) {
+        environment.filters = filters
     }
 
     func retrievePage(
