@@ -137,6 +137,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             var info = PlaybackStopInfo()
             info.itemID = item.baseItem.id
             info.mediaSourceID = item.mediaSource.id
+            info.playSessionID = item.playSessionID
             info.positionTicks = seconds?.ticks
             info.sessionID = item.playSessionID
 
