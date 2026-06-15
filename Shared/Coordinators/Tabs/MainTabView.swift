@@ -16,11 +16,9 @@ import SwiftUI
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
-    @Default(.isLiquidGlassEnabled)
-    private var isLiquidGlassEnabled
     @InjectedObject(\.deepLinkHandler)
     private var deepLinkHandler
-    
+
     @Default(.isLiquidGlassEnabled)
     private var isLiquidGlassEnabled
 
@@ -89,7 +87,11 @@ struct MainTabView: View {
                         }
                     }
                 }
-            }.tabViewStyle(.sidebarAdaptable)
+            }.tabViewStyle(.sidebarAdaptable).onAppear {
+                routePendingDeepLink()
+            }.onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
+                routePendingDeepLink()
+            }
         } else {
             TabView(selection: $tabCoordinator.selectedTabID) {
                 ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
@@ -111,13 +113,11 @@ struct MainTabView: View {
                     }
                     .tag(tab.item.id)
                 }
+            }.onAppear {
+                routePendingDeepLink()
+            }.onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
+                routePendingDeepLink()
             }
-        }
-        .onAppear {
-            routePendingDeepLink()
-        }
-        .onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
-            routePendingDeepLink()
         }
     }
 }
