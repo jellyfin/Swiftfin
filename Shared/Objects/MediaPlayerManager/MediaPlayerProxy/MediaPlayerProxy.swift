@@ -38,7 +38,7 @@ extension MediaPlayerProxy {
 }
 
 @MainActor
-protocol VideoMediaPlayerProxy: MediaPlayerProxy {
+protocol VideoMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable, MediaPlayerSubtitleTrackConfigurable {
 
     associatedtype VideoPlayerBody: View
 
@@ -49,12 +49,20 @@ protocol VideoMediaPlayerProxy: MediaPlayerProxy {
 
     // TODO: remove when container view handles aspect fill
     func setAspectFill(_ aspectFill: Bool)
-    func setAudioStream(_ stream: MediaStream)
-    func setSubtitleStream(_ stream: MediaStream)
 
     @ViewBuilder
     @MainActor
     var videoPlayerBody: Self.VideoPlayerBody { get }
+}
+
+@MainActor
+protocol MediaPlayerAudioTrackConfigurable {
+    func setAudioStream(_ stream: MediaStream)
+}
+
+@MainActor
+protocol MediaPlayerSubtitleTrackConfigurable {
+    func setSubtitleStream(_ stream: MediaStream)
 }
 
 @MainActor

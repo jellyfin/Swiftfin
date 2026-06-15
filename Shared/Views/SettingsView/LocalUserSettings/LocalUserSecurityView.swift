@@ -20,11 +20,13 @@ struct LocalUserSecurityView: View {
     private var router
 
     @State
-    private var signInPolicy: LocalUserAccessPolicy = .none
+    private var error: Error? = nil
+
     @State
     private var pinHint: String = ""
+
     @State
-    private var error: Error? = nil
+    private var signInPolicy: LocalUserAccessPolicy = .none
 
     @StateObject
     private var viewModel = LocalUserSecurityViewModel()
@@ -36,7 +38,7 @@ struct LocalUserSecurityView: View {
         }
 
         do {
-            let user = viewModel.userSession.user
+            let user = try viewModel.requireUserSession().user
             let oldPolicy = user.accessPolicy
 
             let oldEvaluatedPolicy = try await authenticationAction(
@@ -53,7 +55,7 @@ struct LocalUserSecurityView: View {
                 reason: signInPolicy.createReason(user: user)
             )
 
-            viewModel.set(
+            try viewModel.set(
                 newPolicy: signInPolicy,
                 newPin: (newEvaluatedPolicy as? PinEvaluatedUserAccessPolicy)?.pin ?? "",
                 newPinHint: signInPolicy == .requirePin ? pinHint : ""
@@ -103,22 +105,25 @@ struct LocalUserSecurityView: View {
         .animation(.linear, value: signInPolicy)
         .navigationTitle(L10n.security)
         .onFirstAppear {
-            signInPolicy = viewModel.userSession.user.accessPolicy
-            pinHint = viewModel.userSession.user.pinHint
+            guard let user = viewModel.userSession?.user else { return }
+            signInPolicy = user.accessPolicy
+            pinHint = user.pinHint
         }
         .topBarTrailing {
-            Button(
-                signInPolicy == .requirePin && signInPolicy == viewModel.userSession.user.accessPolicy
-                    ? L10n.changePin
-                    : L10n.save
-            ) {
-                Task { @MainActor in
-                    await performSaveSecurityPolicy()
+            if let user = viewModel.userSession?.user {
+                Button(
+                    signInPolicy == .requirePin && signInPolicy == user.accessPolicy
+                        ? L10n.changePin
+                        : L10n.save
+                ) {
+                    Task { @MainActor in
+                        await performSaveSecurityPolicy()
+                    }
                 }
+                #if os(iOS)
+                .buttonStyle(.toolbarPill)
+                #endif
             }
-            #if os(iOS)
-            .buttonStyle(.toolbarPill)
-            #endif
         }
         .errorMessage($error)
     }

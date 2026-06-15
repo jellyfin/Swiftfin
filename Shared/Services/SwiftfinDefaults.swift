@@ -414,12 +414,13 @@ extension Defaults.Keys {
         static var downloads: Key<Bool> {
             UserKey("experimentalDownloads", default: false)
         }
+
+        static var serverConnectionAutoSwitch: Key<Bool> {
+            UserKey("experimentalServerConnectionAutoSwitch", default: false)
+        }
     }
 
     // tvos specific
-    static var downActionShowsMenu: Key<Bool> {
-        UserKey("downActionShowsMenu", default: true)
-    }
 
     static var confirmClose: Key<Bool> {
         UserKey("confirmClose", default: false)

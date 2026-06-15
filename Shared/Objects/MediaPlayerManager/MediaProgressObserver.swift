@@ -136,7 +136,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             info.subtitleStreamIndex = item.selectedSubtitleStreamIndex
 
             let request = Paths.reportPlaybackStart(info)
-            let _ = try await userSession.client.send(request)
+            try await send(request)
 
             self.hasSentStart = true
         }
@@ -157,7 +157,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             info.sessionID = item.playSessionID
 
             let request = Paths.reportPlaybackStopped(info)
-            let _ = try await userSession.client.send(request)
+            try await send(request)
         }
     }
 
@@ -179,7 +179,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             info.subtitleStreamIndex = item.selectedSubtitleStreamIndex
 
             let request = Paths.reportPlaybackProgress(info)
-            let _ = try await userSession.client.send(request)
+            try await send(request)
         }
     }
 }

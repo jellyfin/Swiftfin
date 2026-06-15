@@ -32,31 +32,33 @@ struct ServerUserDetailsView: View {
 
     var body: some View {
         List {
-            StateAdapter(initialValue: false) { isPhotoPickerPresented in
-                UserProfileHeroImage(
-                    user: viewModel.user,
-                    source: viewModel.user.profileImageSource(
-                        client: viewModel.userSession.client,
-                        maxWidth: 150
+            if let userSession = viewModel.userSession {
+                StateAdapter(initialValue: false) { isPhotoPickerPresented in
+                    UserProfileHeroImage(
+                        user: viewModel.user,
+                        source: viewModel.user.profileImageSource(
+                            client: userSession.client,
+                            maxWidth: 150
+                        )
+                    ) {
+                        isPhotoPickerPresented.wrappedValue = true
+                    } onDelete: {
+                        profileViewModel.delete()
+                    }
+                    .photoPicker(
+                        isPresented: isPhotoPickerPresented,
+                        isSaving: profileViewModel.background.is(.updating),
+                        presetRatio: .alwaysUsingOnePresetFixedRatio(ratio: 1),
+                        onSave: profileViewModel.upload
                     )
-                ) {
-                    isPhotoPickerPresented.wrappedValue = true
-                } onDelete: {
-                    profileViewModel.delete()
-                }
-                .photoPicker(
-                    isPresented: isPhotoPickerPresented,
-                    isSaving: profileViewModel.background.is(.updating),
-                    presetRatio: .alwaysUsingOnePresetFixedRatio(ratio: 1),
-                    onSave: profileViewModel.upload
-                )
-                .onReceive(profileViewModel.events) { event in
-                    switch event {
-                    case .updated:
-                        UIDevice.feedback(.success)
-                        isPhotoPickerPresented.wrappedValue = false
-                    case .deleted:
-                        UIDevice.feedback(.success)
+                    .onReceive(profileViewModel.events) { event in
+                        switch event {
+                        case .updated:
+                            UIDevice.feedback(.success)
+                            isPhotoPickerPresented.wrappedValue = false
+                        case .deleted:
+                            UIDevice.feedback(.success)
+                        }
                     }
                 }
             }

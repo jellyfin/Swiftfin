@@ -65,7 +65,7 @@ final class UserImageViewModel: ViewModel {
         )
         request.headers = ["Content-Type": contentType]
 
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
 
         await cleanImageCache()
         events.send(.updated)
@@ -76,13 +76,15 @@ final class UserImageViewModel: ViewModel {
         guard let userID = user.id else { return }
 
         let request = Paths.deleteUserImage(userID: userID)
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
 
         await cleanImageCache()
         events.send(.deleted)
     }
 
     private func cleanImageCache() async {
+        guard let userSession else { return }
+
         for width: CGFloat in [60, 120, 150] {
             if let url = user.profileImageSource(client: userSession.client, maxWidth: width).url {
                 await ImagePipeline.Swiftfin.local.removeItem(for: url)

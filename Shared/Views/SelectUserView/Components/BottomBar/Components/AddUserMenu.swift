@@ -31,7 +31,7 @@ extension SelectUserView {
                         router.route(to: .userSignIn(server: server))
                     } label: {
                         Text(server.name)
-                        Text(server.currentURL.absoluteString)
+                        Text(server.effectiveServerURL.absoluteString)
                     }
                 }
             } label: {

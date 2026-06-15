@@ -14,6 +14,7 @@ import JellyfinAPI
 import VLCUI
 
 // TODO: proper error catching
+// TODO: be a UserSessionService?
 
 typealias MediaPlayerManagerPublisher = LegacyEventPublisher<MediaPlayerManager?>
 
@@ -35,7 +36,8 @@ extension Container {
                     baseItem: .init(),
                     mediaSource: .init(),
                     playSessionID: "",
-                    url: URL(string: "/")!
+                    url: URL(string: "/")!,
+                    deviceProfile: .init()
                 )
             )
         }
@@ -54,8 +56,10 @@ final class MediaPlayerManager: ViewModel {
         case ended
         case error
         case playNewItem(provider: MediaPlayerItemProvider)
+        case setBitrate(bitrate: PlaybackBitrate)
         case setPlaybackRequestStatus(status: PlaybackRequestStatus)
         case setRate(rate: Float)
+        case setTrack(type: MediaStreamType, from: Int?, to: Int? = nil)
         case start
         case stop
         case togglePlayPause
@@ -98,11 +102,9 @@ final class MediaPlayerManager: ViewModel {
     @Published
     var playbackItem: MediaPlayerItem? = nil {
         didSet {
-            fallbackPlayerType = nil
             if let playbackItem {
                 self.item = playbackItem.baseItem
                 seconds = playbackItem.baseItem.startSeconds ?? .zero
-                playbackRequestStatus = .playing
                 playbackItem.manager = self
                 setSupplements()
 
@@ -112,6 +114,7 @@ final class MediaPlayerManager: ViewModel {
                         "itemID": .stringConvertible(playbackItem.baseItem.id ?? "Unknown"),
                         "itemTitle": .stringConvertible(playbackItem.baseItem.displayTitle),
                         "url": .stringConvertible(playbackItem.url.absoluteString),
+                        "isTranscoding": .stringConvertible(playbackItem.mediaSource.transcodingURL != nil),
                     ]
                 )
 
@@ -136,8 +139,6 @@ final class MediaPlayerManager: ViewModel {
 
     @Published
     var supplements: [any MediaPlayerSupplement] = []
-
-    private(set) var remote: RemotePlaybackManager!
 
     // TODO: replace with graph dependency package
     private func setSupplements() {
@@ -171,26 +172,11 @@ final class MediaPlayerManager: ViewModel {
     /// Holds a weak reference to the current media player proxy.
     weak var proxy: (any MediaPlayerProxy)? {
         didSet {
-            objectWillChange.send()
             if var proxy {
                 proxy.manager = self
             }
         }
     }
-
-    /// `nil` when playback is fully remote (a session, no local engine).
-    var videoPlayerType: VideoPlayerType? {
-        if proxy is any RemotePlaybackSession {
-            return nil
-        }
-        return (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType
-            ?? Defaults[.VideoPlayer.mediaPlaybackStrategy].forcedPlayer
-    }
-
-    private var isSwitchingPlayer = false
-    private var fallbackPlayerType: VideoPlayerType?
-
-    private var itemBuildTask: AnyCancellable?
 
     private var initialMediaPlayerItemProvider: MediaPlayerItemProvider?
 
@@ -218,11 +204,6 @@ final class MediaPlayerManager: ViewModel {
         )
         super.init()
 
-        // Seed from the item's resume point so a cast/AirPlay started before the
-        // video loads transfers from the right position, not zero.
-        seconds = item.startSeconds ?? .zero
-
-        setUpRemote()
         self.queue?.manager = self
     }
 
@@ -235,17 +216,8 @@ final class MediaPlayerManager: ViewModel {
         self.state = .playback
         super.init()
 
-        setUpRemote()
         self.queue?.manager = self
         self.playbackItem = playbackItem
-    }
-
-    private func setUpRemote() {
-        let remote = RemotePlaybackManager(manager: self)
-        remote.objectWillChange
-            .sink { [weak self] in self?.objectWillChange.send() }
-            .store(in: &cancellables)
-        self.remote = remote
     }
 
     @Function(\Action.Cases.ended)
@@ -267,7 +239,7 @@ final class MediaPlayerManager: ViewModel {
             return
         }
 
-        if let nextItem = queue?.nextItem, userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true {
+        if let nextItem = queue?.nextItem, try authenticatedUser.data.configuration?.enableNextEpisodeAutoPlay == true {
             await self.playNewItem(provider: nextItem)
         } else {
             await self.stop()
@@ -297,13 +269,8 @@ final class MediaPlayerManager: ViewModel {
             )
         }
 
-        if let fallback = fallbackPlayerType {
-            remote.setAirPlayActive(false)
-            await switchPlayer(to: fallback, isFallback: true)
-            return
-        }
-
         proxy?.stop()
+        Container.shared.mediaPlayerManagerPublisher().send(nil)
         Container.shared.mediaPlayerManager.reset()
     }
 
@@ -313,6 +280,16 @@ final class MediaPlayerManager: ViewModel {
         setSupplements()
         proxy?.stop()
         playbackItem = try await provider()
+    }
+
+    @Function(\Action.Cases.setBitrate)
+    private func _setBitrate(_ requestedBitrate: PlaybackBitrate) async throws {
+        guard let currentItem = playbackItem else { return }
+
+        try await updateMediaPlayerItem(
+            currentItem: currentItem,
+            requestedBitrate: requestedBitrate
+        )
     }
 
     @Function(\Action.Cases.setPlaybackRequestStatus)
@@ -336,6 +313,47 @@ final class MediaPlayerManager: ViewModel {
         }
     }
 
+    @Function(\Action.Cases.setTrack)
+    private func _setTrack(_ type: MediaStreamType, _ oldIndex: Int?, _ newIndex: Int?) async throws {
+        guard let playbackItem else {
+            logger.warning("MediaPlayerManager.SetTrack call with an invalid playbackItem")
+            return
+        }
+
+        switch type {
+        case .audio:
+            guard playbackItem.audioStreams.contains(where: { $0.index == oldIndex }) else {
+                logger.warning("MediaPlayerManager.SetTrack call with an invalid audio track index")
+                return
+            }
+
+            if playbackItem.isRebuildRequired(type: .audio, from: oldIndex, to: newIndex) {
+                try await updateMediaPlayerItem(
+                    currentItem: playbackItem,
+                    audioStreamIndex: newIndex
+                )
+            } else {
+                playbackItem.switchTrack(type: .audio, index: newIndex)
+            }
+        case .subtitle:
+            guard newIndex == -1 || playbackItem.subtitleStreams.contains(where: { $0.index == newIndex }) else {
+                logger.warning("MediaPlayerManager.SetTrack call with an invalid subtitle track index")
+                return
+            }
+
+            if playbackItem.isRebuildRequired(type: .subtitle, from: oldIndex, to: newIndex) {
+                try await updateMediaPlayerItem(
+                    currentItem: playbackItem,
+                    subtitleStreamIndex: newIndex
+                )
+            } else {
+                playbackItem.switchTrack(type: .subtitle, index: newIndex)
+            }
+        default:
+            logger.warning("MediaPlayerManager.SetTrack called with unsupported type: \(String(describing: type))")
+        }
+    }
+
     @Function(\Action.Cases.start)
     private func _start() async throws {
         guard let initialMediaPlayerItemProvider else {
@@ -346,13 +364,14 @@ final class MediaPlayerManager: ViewModel {
         playbackItem = try await initialMediaPlayerItemProvider()
     }
 
+    // TODO: remove playback item?
+    //       - check that observers would respond correctly to stopping
     @Function(\Action.Cases.stop)
     private func _stop() async throws {
         await self.cancel()
 
-        itemBuildTask?.cancel()
-        remote.stop()
         proxy?.stop()
+        Container.shared.mediaPlayerManagerPublisher().send(nil)
         Container.shared.mediaPlayerManager.reset()
     }
 
@@ -365,119 +384,56 @@ final class MediaPlayerManager: ViewModel {
             setPlaybackRequestStatus(status: .playing)
         }
     }
-}
 
-// MARK: - Player switch
+    /// Rebuilds the playback item with new stream indexes / bitrate.
+    /// Stops the current proxy, requests new playback info from the server, and starts playback with the new configuration.
+    ///
+    /// Rebuilds the current item
+    private func updateMediaPlayerItem(
+        currentItem: MediaPlayerItem,
+        audioStreamIndex: Int? = nil,
+        subtitleStreamIndex: Int? = nil,
+        requestedBitrate: PlaybackBitrate? = nil
+    ) async throws {
 
-extension MediaPlayerManager {
+        // Capture the current playback position before stopping
+        let currentSeconds = self.seconds
 
-    func switchPlayer(to type: VideoPlayerType, isFallback: Bool = false) async {
-        guard !isSwitchingPlayer,
-              let item = playbackItem,
-              item.videoPlayerType != type
-        else { return }
+        logger.info(
+            "Rebuilding Media Player Item",
+            metadata: [
+                "audioIndex": "\(audioStreamIndex ?? -1)",
+                "subtitleIndex": "\(subtitleStreamIndex ?? -1)",
+                "currentSeconds": "\(currentSeconds)",
+            ]
+        )
 
-        isSwitchingPlayer = true
-        defer { isSwitchingPlayer = false }
+        proxy?.stop()
 
-        let previousType = item.videoPlayerType
-        let positionTicks = seconds.ticks
-
-        do {
-            let switched = try await MediaPlayerItem.build(
-                for: item.baseItem,
-                mediaSource: item.mediaSource,
-                strategy: .player(type),
-                requestedBitrate: item.requestedBitrate
-            ) { base in
-                // `modifyItem` runs after `getFullItem`'s re-fetch, which would
-                // otherwise restore the server's stale position.
-                if base.userData == nil { base.userData = .init() }
-                base.userData?.playbackPositionTicks = positionTicks
+        let newItem = try await MediaPlayerItem.build(
+            for: currentItem.baseItem,
+            mediaSource: currentItem.mediaSource,
+            audioStreamIndex: audioStreamIndex ?? currentItem.selectedAudioStreamIndex,
+            subtitleStreamIndex: subtitleStreamIndex ?? currentItem.selectedSubtitleStreamIndex,
+            requestedBitrate: requestedBitrate ?? currentItem.requestedBitrate,
+            modifyItem: { item in
+                if item.userData == nil {
+                    item.userData = UserItemDataDto()
+                }
+                item.userData?.playbackPositionTicks = currentSeconds.ticks
             }
+        )
 
-            logger.info(
-                "⏱ switchPlayer \(previousType)→\(type): captured=\(seconds.seconds)s builtStart=\(switched.baseItem.startSeconds?.seconds ?? -1)s offset=\(switched.transcodeStartOffset.seconds)s transcoding=\(switched.isTranscoding)"
-            )
+        logger.info(
+            "Built new playback item",
+            metadata: [
+                "playSessionID": "\(newItem.playSessionID)",
+                "isTranscoding": "\(newItem.mediaSource.transcodingURL != nil)",
+                "url": "\(newItem.url.absoluteString)",
+            ]
+        )
 
-            playbackItem = switched
-            fallbackPlayerType = isFallback ? nil : previousType
-        } catch {
-            logger.error("Failed to switch player: \(error.localizedDescription)")
-        }
-    }
-
-    func resumeLocal(on proxy: any MediaPlayerProxy) async {
-        guard let item = playbackItem,
-              let type = (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType
-        else {
-            self.proxy = proxy
-            return
-        }
-
-        let positionTicks = seconds.ticks
-
-        do {
-            let resumed = try await MediaPlayerItem.build(
-                for: item.baseItem,
-                mediaSource: item.mediaSource,
-                strategy: .player(type),
-                requestedBitrate: item.requestedBitrate
-            ) { base in
-                if base.userData == nil { base.userData = .init() }
-                base.userData?.playbackPositionTicks = positionTicks
-            }
-
-            logger.info(
-                "⏱ resumeLocal \(type): captured=\(seconds.seconds)s builtStart=\(resumed.baseItem.startSeconds?.seconds ?? -1)s offset=\(resumed.transcodeStartOffset.seconds)s transcoding=\(resumed.isTranscoding)"
-            )
-
-            playbackItem = resumed
-        } catch {
-            logger.error("Failed to resume local playback: \(error.localizedDescription)")
-        }
-
-        self.proxy = proxy
-    }
-}
-
-// MARK: - Picture in Picture
-
-extension MediaPlayerManager {
-
-    func startPictureInPicture() {
-        guard let pipable = proxy as? any PictureInPictureable else { return }
-
-        if pipable.supportsPiP {
-            Task { await startPiPWhenReady(attemptsLeft: 20) }
-            return
-        }
-
-        guard let target = pipable.pipPlayerType else { return }
-
-        Task {
-            await switchPlayer(to: target)
-            await startPiPWhenReady(attemptsLeft: 20)
-        }
-    }
-
-    func stopPictureInPicture() {
-        (proxy as? MediaPlayerPictureInPictureCapable)?.stopPiP()
-    }
-
-    // Retries because the proxy swap is async and AVKit ignores an early start.
-    private func startPiPWhenReady(attemptsLeft: Int) async {
-        guard attemptsLeft > 0,
-              let capable = proxy as? MediaPlayerPictureInPictureCapable
-        else { return }
-
-        if capable.isPiPActive.value { return }
-
-        if capable.isPiPAvailable.value {
-            capable.startPiP()
-        }
-
-        try? await Task.sleep(for: .milliseconds(300))
-        await startPiPWhenReady(attemptsLeft: attemptsLeft - 1)
+        self.playbackItem = newItem
+        self.seconds = currentSeconds
     }
 }

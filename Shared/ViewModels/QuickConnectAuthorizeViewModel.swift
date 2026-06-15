@@ -46,13 +46,14 @@ final class QuickConnectAuthorizeViewModel: ViewModel {
 
     @Function(\Action.Cases.authorize)
     private func _authorize(_ code: String) async throws {
+
         guard let userID = user.id else {
             logger.critical("User ID is nil")
             throw ErrorMessage(L10n.unknownError)
         }
 
         let request = Paths.authorizeQuickConnect(code: code, userID: userID)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         let decoder = JSONDecoder()
         let isAuthorized = (try? decoder.decode(Bool.self, from: response.value)) ?? false

@@ -120,6 +120,7 @@ extension String {
         var suffix = suffix
 
         while s.last == suffix.last {
+            guard s.isNotEmpty else { break }
             s.removeLast()
             suffix.removeLast()
         }
@@ -142,6 +143,11 @@ extension String {
 
     var url: URL? {
         URL(string: self)
+    }
+
+    var nilIfBlank: String? {
+        let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
     }
 }
 

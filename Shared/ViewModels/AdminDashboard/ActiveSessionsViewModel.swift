@@ -57,7 +57,7 @@ final class ActiveSessionsViewModel: ViewModel {
         parameters.activeWithinSeconds = activeWithinSeconds
 
         let request = Paths.getSessions(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         let filteredSessions: [SessionInfoDto] = switch showSessionType {
         case .all:

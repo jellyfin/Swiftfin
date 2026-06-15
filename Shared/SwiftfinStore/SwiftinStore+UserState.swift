@@ -123,7 +123,7 @@ extension UserState {
     /// with an access token
     func getUserData(server: ServerState) async throws -> UserDto {
         let client = JellyfinClient(
-            configuration: .swiftfinConfiguration(url: server.currentURL, accessToken: accessToken),
+            configuration: .swiftfinConfiguration(url: server.effectiveServerURL, accessToken: accessToken),
             sessionConfiguration: .swiftfin,
             sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
         )

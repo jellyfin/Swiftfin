@@ -21,7 +21,9 @@ extension MediaPlayerItem {
     static func build(
         for initialItem: BaseItemDto,
         mediaSource _initialMediaSource: MediaSourceInfo? = nil,
-        strategy: MediaPlaybackStrategy = Defaults[.VideoPlayer.mediaPlaybackStrategy],
+        audioStreamIndex: Int? = nil,
+        subtitleStreamIndex: Int? = nil,
+        videoPlayerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType],
         requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate],
         compatibilityMode: PlaybackCompatibility = Defaults[.VideoPlayer.Playback.compatibilityMode],
         modifyItem: ((inout BaseItemDto) -> Void)? = nil
@@ -63,68 +65,6 @@ extension MediaPlayerItem {
 
         let maxBitrate = try await requestedBitrate.getMaxBitrate()
 
-        if let forced = strategy.forcedPlayer {
-            return try await buildItem(
-                for: forced,
-                item: item,
-                initialMediaSource: initialMediaSource,
-                requestedBitrate: requestedBitrate,
-                maxBitrate: maxBitrate,
-                compatibilityMode: compatibilityMode,
-                userSession: userSession,
-                logger: logger
-            )
-        }
-
-        // auto: AVPlayer only for HDR it can direct-play; otherwise VLC.
-        let isHDR = (initialMediaSource.mediaStreams ?? []).hasHDRVideo
-
-        if isHDR {
-            let avPlayerItem = try await buildItem(
-                for: .avPlayer,
-                item: item,
-                initialMediaSource: initialMediaSource,
-                requestedBitrate: requestedBitrate,
-                maxBitrate: maxBitrate,
-                compatibilityMode: compatibilityMode,
-                userSession: userSession,
-                logger: logger
-            )
-
-            if !avPlayerItem.isTranscoding {
-                return avPlayerItem
-            }
-
-            logger.trace("AVPlayer would transcode HDR item \(itemID), falling back to VLC")
-        }
-
-        return try await buildItem(
-            for: .vlc,
-            item: item,
-            initialMediaSource: initialMediaSource,
-            requestedBitrate: requestedBitrate,
-            maxBitrate: maxBitrate,
-            compatibilityMode: compatibilityMode,
-            userSession: userSession,
-            logger: logger
-        )
-    }
-
-    private static func buildItem(
-        for videoPlayerType: VideoPlayerType,
-        item: BaseItemDto,
-        initialMediaSource: MediaSourceInfo,
-        requestedBitrate: PlaybackBitrate,
-        maxBitrate: Int?,
-        compatibilityMode: PlaybackCompatibility,
-        userSession: UserSession,
-        logger: Logger
-    ) async throws -> MediaPlayerItem {
-
-        guard let itemID = item.id else {
-            throw ErrorMessage(L10n.unknownError)
-        }
-
         let deviceProfile = DeviceProfile.build(
             for: videoPlayerType,
             compatibilityMode: compatibilityMode,
@@ -137,14 +77,8 @@ extension MediaPlayerItem {
         playbackInfo.liveStreamID = initialMediaSource.liveStreamID
         playbackInfo.maxStreamingBitrate = maxBitrate
         playbackInfo.userID = userSession.user.id
-
-        // Anchor an AVPlayer transcode at the start position so its forced
-        // keyframe lands exactly there — AVPlayer can't seek an HLS transcode
-        // accurately, so without this the start snaps to a coarse keyframe.
-        let startPositionTicks = item.userData?.playbackPositionTicks
-        if videoPlayerType == .avPlayer, let startPositionTicks, startPositionTicks > 0 {
-            playbackInfo.startTimeTicks = startPositionTicks
-        }
+        playbackInfo.audioStreamIndex = audioStreamIndex
+        playbackInfo.subtitleStreamIndex = subtitleStreamIndex
 
         if !item.isLiveStream {
             playbackInfo.mediaSourceID = initialMediaSource.id
@@ -232,18 +166,15 @@ extension MediaPlayerItem {
             return nil
         }()
 
-        let transcodeStartOffset: Duration = mediaSource.transcodingURL != nil
-            ? .ticks(playbackInfo.startTimeTicks ?? 0)
-            : .zero
-
         return .init(
             baseItem: item,
             mediaSource: mediaSource,
             playSessionID: playSessionID,
             url: playbackURL,
-            videoPlayerType: videoPlayerType,
-            transcodeStartOffset: transcodeStartOffset,
             requestedBitrate: requestedBitrate,
+            deviceProfile: deviceProfile,
+            initialAudioStreamIndex: audioStreamIndex,
+            initialSubtitleStreamIndex: subtitleStreamIndex,
             previewImageProvider: previewImageProvider,
             thumbnailProvider: item.getNowPlayingImage
         )

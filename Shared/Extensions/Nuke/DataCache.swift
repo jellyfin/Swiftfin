@@ -52,7 +52,7 @@ extension DataCache.Swiftfin {
                 guard let prefixURL = url.absoluteString.trimmingSuffix("/Branding/Splashscreen?").url else { return nil }
 
                 guard let server = StoredValues[.Server.servers].first(
-                    where: { $0.currentURL == prefixURL || $0.urls.contains(prefixURL) }
+                    where: { $0.hasServerConnection(url: prefixURL) }
                 ) else { return nil }
 
                 return "\(server.id)-splashscreen".sha1
