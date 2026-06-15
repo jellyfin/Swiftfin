@@ -115,6 +115,8 @@ struct DefaultLibraryGridElement<Element: LibraryElement>: View {
                 PosterImage(item: element, type: libraryStyle.posterDisplayType)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .posterStyle(libraryStyle.posterDisplayType)
+                    .backport
+                    .matchedTransitionSource(id: "item", in: namespace)
                     .posterShadow()
 
                 if element.showTitle {
@@ -146,36 +148,32 @@ struct DefaultLibraryListElement<Element: LibraryElement>: View {
     }
 
     var body: some View {
-        Button {
-            element.libraryDidSelectElement(router: router, in: namespace)
-        } label: {
-            HStack(spacing: EdgeInsets.edgePadding) {
-                PosterImage(item: element, type: libraryStyle.posterDisplayType)
-                    .posterStyle(libraryStyle.posterDisplayType)
-                    .posterShadow()
-                    .frame(width: posterWidth)
+        ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+            PosterImage(item: element, type: libraryStyle.posterDisplayType)
+                .posterStyle(libraryStyle.posterDisplayType)
+                .frame(width: posterWidth)
+                .backport
+                .matchedTransitionSource(id: "item", in: namespace)
+                .posterShadow()
+        } content: {
+            VStack(alignment: .leading, spacing: 5) {
+                Text(element.displayTitle)
+                    .font(.callout)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
 
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(element.displayTitle)
-                        .font(.callout)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.primary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-
-                    if let subtitle = element.subtitle {
-                        Text(subtitle)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                    }
+                if let subtitle = element.subtitle {
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(.vertical, 8)
-            .padding(.horizontal, EdgeInsets.edgePadding)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        } action: {
+            element.libraryDidSelectElement(router: router, in: namespace)
         }
-        .buttonStyle(.plain)
-        .foregroundStyle(.primary, .secondary)
     }
 }
