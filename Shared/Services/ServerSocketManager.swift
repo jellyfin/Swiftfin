@@ -63,8 +63,7 @@ final class ServerSocketManager {
         killSession()
     }
 
-    /// Drop the current session and start a new one.
-    func reconnect() {
+    private func reconnect() {
         state.withLock { $0.reconnectRequested = true }
         killSession()
         wake.yield()
@@ -109,7 +108,7 @@ final class ServerSocketManager {
         }
     }
 
-    /// Disconnect the current session if one exists.
+    /// Disconnect the current session if one exists
     private func killSession() {
         state.withLock { $0.session }?.disconnect()
     }
@@ -255,6 +254,8 @@ extension ServerSocketManager {
         interval: Duration,
         extract: @escaping (JellyfinSocket.Session.Event) -> Payload?
     ) -> AnyPublisher<Payload, Never> {
+
+        // Reconnect on UserSession or Network Change
         Publishers.Merge(
             Notifications[.didChangeUserSession].publisher,
             Notifications[.applicationWillEnterForeground].publisher
