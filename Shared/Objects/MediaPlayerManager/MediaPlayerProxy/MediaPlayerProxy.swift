@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -68,6 +69,18 @@ protocol MediaPlayerPictureInPictureCapable: AnyObject {
     var isPiPAvailable: PublishedBox<Bool> { get }
     func startPiP()
     func stopPiP()
+}
+
+@MainActor
+protocol AirPlayable {
+    var supportsAirPlay: Bool { get }
+    var airPlayPlayerType: VideoPlayerType? { get }
+}
+
+@MainActor
+protocol PictureInPictureable {
+    var supportsPiP: Bool { get }
+    var pipPlayerType: VideoPlayerType? { get }
 }
 
 @MainActor

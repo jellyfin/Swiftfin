@@ -19,8 +19,8 @@ struct VideoPlayer: View {
     @InjectedObject(\.mediaPlayerManager)
     private var manager: MediaPlayerManager
 
-    @LazyState
-    private var proxy: any VideoMediaPlayerProxy
+    @State
+    private var localProxy: (any VideoMediaPlayerProxy)?
 
     @Router
     private var router
@@ -42,12 +42,25 @@ struct VideoPlayer: View {
     @StateObject
     private var containerState: VideoPlayerContainerState = .init()
 
-    init() {
-        switch Defaults[.VideoPlayer.videoPlayerType] {
+    // Created per item since the strategy can resolve a different player each time.
+    private func ensureProxy(for type: VideoPlayerType) {
+        guard localProxy?.videoPlayerType != type else { return }
+
+        let proxy: any VideoMediaPlayerProxy = switch type {
         case .avPlayer:
-            self._proxy = .init(wrappedValue: AVMediaPlayerProxy())
+            AVMediaPlayerProxy()
         case .vlc:
-            self._proxy = .init(wrappedValue: VLCMediaPlayerProxy())
+            VLCMediaPlayerProxy()
+        }
+
+        localProxy = proxy
+
+        // A remote session owns `manager.proxy`; keep the local proxy ready for
+        // the return instead of replacing the session.
+        if manager.remote.activeSession != nil {
+            manager.remote.registerLocal(proxy)
+        } else {
+            manager.proxy = proxy
         }
     }
 
@@ -57,14 +70,16 @@ struct VideoPlayer: View {
             containerState: containerState,
             manager: manager
         ) {
-            proxy.videoPlayerBody
-                .eraseToAnyView()
+            Color.clear
         } playbackControls: {
             PlaybackControls()
         }
         .onAppear {
-            manager.proxy = proxy
             manager.start()
+        }
+        .onReceive(manager.$playbackItem) { item in
+            guard let item else { return }
+            ensureProxy(for: item.videoPlayerType)
         }
     }
 
@@ -74,14 +89,14 @@ struct VideoPlayer: View {
             .prefersStatusBarHidden(!containerState.isPresentingOverlay)
             .backport
             .onChange(of: audioOffset) { _, newValue in
-                if let proxy = proxy as? MediaPlayerOffsetConfigurable {
+                if let proxy = manager.proxy as? MediaPlayerOffsetConfigurable {
                     proxy.setAudioOffset(newValue)
                 }
             }
             .backport
             .onChange(of: containerState.isAspectFilled) { _, newValue in
                 UIView.animate(withDuration: 0.2) {
-                    proxy.setAspectFill(newValue)
+                    (manager.proxy as? any VideoMediaPlayerProxy)?.setAspectFill(newValue)
                 }
             }
             .backport
@@ -96,11 +111,11 @@ struct VideoPlayer: View {
 
                 let scrubbedSeconds = containerState.scrubbedSeconds.value
                 manager.seconds = scrubbedSeconds
-                proxy.setSeconds(scrubbedSeconds)
+                manager.proxy?.setSeconds(scrubbedSeconds)
             }
             .backport
             .onChange(of: subtitleOffset) { _, newValue in
-                if let proxy = proxy as? MediaPlayerOffsetConfigurable {
+                if let proxy = manager.proxy as? MediaPlayerOffsetConfigurable {
                     proxy.setSubtitleOffset(newValue)
                 }
             }

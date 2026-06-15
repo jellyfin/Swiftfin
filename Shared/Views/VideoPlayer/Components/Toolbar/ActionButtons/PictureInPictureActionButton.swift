@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import SwiftUI
 
 extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
@@ -17,8 +18,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         @State
         private var isPiPActive: Bool = false
-        @State
-        private var isPiPAvailable: Bool = false
 
         private var systemImage: String {
             if isPiPActive {
@@ -28,22 +27,25 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             }
         }
 
+        private var isPiPActivePublisher: AnyPublisher<Bool, Never> {
+            (manager.proxy as? MediaPlayerPictureInPictureCapable)?
+                .isPiPActive
+                .$value
+                .eraseToAnyPublisher()
+                ?? Just(false).eraseToAnyPublisher()
+        }
+
         var body: some View {
-            if let pipProxy = manager.proxy as? MediaPlayerPictureInPictureCapable {
-                Group {
-                    if isPiPAvailable {
-                        Button(L10n.pictureInPicture, systemImage: systemImage) {
-                            if isPiPActive {
-                                pipProxy.stopPiP()
-                            } else {
-                                pipProxy.startPiP()
-                            }
-                        }
-                        .videoPlayerActionButtonTransition()
+            if let pip = manager.proxy as? any PictureInPictureable, pip.supportsPiP || pip.pipPlayerType != nil {
+                Button(L10n.pictureInPicture, systemImage: systemImage) {
+                    if isPiPActive {
+                        manager.stopPictureInPicture()
+                    } else {
+                        manager.startPictureInPicture()
                     }
                 }
-                .assign(pipProxy.isPiPActive.$value, to: $isPiPActive)
-                .assign(pipProxy.isPiPAvailable.$value, to: $isPiPAvailable)
+                .videoPlayerActionButtonTransition()
+                .onReceive(isPiPActivePublisher) { isPiPActive = $0 }
             }
         }
     }

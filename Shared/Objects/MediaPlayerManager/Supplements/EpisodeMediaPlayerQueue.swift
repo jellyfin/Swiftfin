@@ -118,11 +118,11 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         var nextProvider: MediaPlayerItemProvider?
         var previousProvider: MediaPlayerItemProvider?
 
-        let videoPlayerType = manager?.videoPlayerType ?? Defaults[.VideoPlayer.videoPlayerType]
+        let strategy = Defaults[.VideoPlayer.mediaPlaybackStrategy]
 
         if let nextItem {
             nextProvider = MediaPlayerItemProvider(item: nextItem) { item in
-                try await MediaPlayerItem.build(for: item, videoPlayerType: videoPlayerType) {
+                try await MediaPlayerItem.build(for: item, strategy: strategy) {
                     $0.userData?.playbackPositionTicks = .zero
                 }
             }
@@ -130,7 +130,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
         if let previousItem {
             previousProvider = MediaPlayerItemProvider(item: previousItem) { item in
-                try await MediaPlayerItem.build(for: item, videoPlayerType: videoPlayerType) {
+                try await MediaPlayerItem.build(for: item, strategy: strategy) {
                     $0.userData?.playbackPositionTicks = .zero
                 }
             }
@@ -173,8 +173,7 @@ extension EpisodeMediaPlayerQueue {
 
                 return try await MediaPlayerItem.build(
                     for: item,
-                    mediaSource: mediaSource!,
-                    videoPlayerType: manager.videoPlayerType
+                    mediaSource: mediaSource!
                 )
             }
 

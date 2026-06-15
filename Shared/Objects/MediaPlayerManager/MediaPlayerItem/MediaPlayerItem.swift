@@ -54,11 +54,21 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     let thumbnailProvider: ThumbnailProvider?
     let url: URL
 
+    let videoPlayerType: VideoPlayerType
+
+    // The transcode is anchored at this position, so the player's timeline is
+    // relative to it. Add it back when reporting/seeking absolute time.
+    let transcodeStartOffset: Duration
+
     let audioStreams: [MediaStream]
     let subtitleStreams: [MediaStream]
     let videoStreams: [MediaStream]
 
     let requestedBitrate: PlaybackBitrate
+
+    var isTranscoding: Bool {
+        mediaSource.transcodingURL != nil
+    }
 
     // MARK: init
 
@@ -67,6 +77,8 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         mediaSource: MediaSourceInfo,
         playSessionID: String,
         url: URL,
+        videoPlayerType: VideoPlayerType = .avPlayer,
+        transcodeStartOffset: Duration = .zero,
         requestedBitrate: PlaybackBitrate = .max,
         previewImageProvider: (any PreviewImageProvider)? = nil,
         thumbnailProvider: ThumbnailProvider? = nil
@@ -74,6 +86,8 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         self.baseItem = baseItem
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
+        self.videoPlayerType = videoPlayerType
+        self.transcodeStartOffset = transcodeStartOffset
         self.requestedBitrate = requestedBitrate
         self.previewImageProvider = previewImageProvider
         self.thumbnailProvider = thumbnailProvider

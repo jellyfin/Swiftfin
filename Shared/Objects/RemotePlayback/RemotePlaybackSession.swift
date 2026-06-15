@@ -6,7 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-struct RemotePlaybackState {
-    var type: RemotePlaybackRoute
-    var deviceName: String?
+import Foundation
+
+@MainActor
+protocol RemotePlaybackSession: MediaPlayerProxy {
+
+    var route: RemotePlaybackRoute { get }
+    var deviceName: String? { get }
+
+    func connect(startingAt seconds: Duration) async throws
+    func disconnect()
 }

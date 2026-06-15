@@ -175,7 +175,7 @@ class VideoPlayerContainerState: ObservableObject {
             guard let self else { return }
             guard !isScrubbing,
                   !isPresentingSupplement,
-                  manager?.remotePlaybackState?.isRouteActive != true,
+                  manager?.remote.state == nil,
                   manager?.playbackRequestStatus != .paused else { return }
 
             withAnimation(.linear(duration: 0.25)) {

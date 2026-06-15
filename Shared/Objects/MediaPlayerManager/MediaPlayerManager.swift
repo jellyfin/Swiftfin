@@ -98,6 +98,7 @@ final class MediaPlayerManager: ViewModel {
     @Published
     var playbackItem: MediaPlayerItem? = nil {
         didSet {
+            fallbackPlayerType = nil
             if let playbackItem {
                 self.item = playbackItem.baseItem
                 seconds = playbackItem.baseItem.startSeconds ?? .zero
@@ -136,9 +137,7 @@ final class MediaPlayerManager: ViewModel {
     @Published
     var supplements: [any MediaPlayerSupplement] = []
 
-    /// The active remote playback route
-    @Published
-    var remotePlaybackState: RemotePlaybackState? = nil
+    private(set) var remote: RemotePlaybackManager!
 
     // TODO: replace with graph dependency package
     private func setSupplements() {
@@ -172,15 +171,24 @@ final class MediaPlayerManager: ViewModel {
     /// Holds a weak reference to the current media player proxy.
     weak var proxy: (any MediaPlayerProxy)? {
         didSet {
+            objectWillChange.send()
             if var proxy {
                 proxy.manager = self
             }
         }
     }
 
-    var videoPlayerType: VideoPlayerType {
-        (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType ?? Defaults[.VideoPlayer.videoPlayerType]
+    /// `nil` when playback is fully remote (a session, no local engine).
+    var videoPlayerType: VideoPlayerType? {
+        if proxy is any RemotePlaybackSession {
+            return nil
+        }
+        return (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType
+            ?? Defaults[.VideoPlayer.mediaPlaybackStrategy].forcedPlayer
     }
+
+    private var isSwitchingPlayer = false
+    private var fallbackPlayerType: VideoPlayerType?
 
     private var itemBuildTask: AnyCancellable?
 
@@ -210,6 +218,11 @@ final class MediaPlayerManager: ViewModel {
         )
         super.init()
 
+        // Seed from the item's resume point so a cast/AirPlay started before the
+        // video loads transfers from the right position, not zero.
+        seconds = item.startSeconds ?? .zero
+
+        setUpRemote()
         self.queue?.manager = self
     }
 
@@ -222,8 +235,17 @@ final class MediaPlayerManager: ViewModel {
         self.state = .playback
         super.init()
 
+        setUpRemote()
         self.queue?.manager = self
         self.playbackItem = playbackItem
+    }
+
+    private func setUpRemote() {
+        let remote = RemotePlaybackManager(manager: self)
+        remote.objectWillChange
+            .sink { [weak self] in self?.objectWillChange.send() }
+            .store(in: &cancellables)
+        self.remote = remote
     }
 
     @Function(\Action.Cases.ended)
@@ -275,6 +297,12 @@ final class MediaPlayerManager: ViewModel {
             )
         }
 
+        if let fallback = fallbackPlayerType {
+            remote.setAirPlayActive(false)
+            await switchPlayer(to: fallback, isFallback: true)
+            return
+        }
+
         proxy?.stop()
         Container.shared.mediaPlayerManager.reset()
     }
@@ -322,9 +350,8 @@ final class MediaPlayerManager: ViewModel {
     private func _stop() async throws {
         await self.cancel()
 
-        // TODO: remove playback item?
-        //       - check that observers would respond correctly to stopping
         itemBuildTask?.cancel()
+        remote.stop()
         proxy?.stop()
         Container.shared.mediaPlayerManager.reset()
     }
@@ -338,12 +365,119 @@ final class MediaPlayerManager: ViewModel {
             setPlaybackRequestStatus(status: .playing)
         }
     }
+}
 
-    func setRemotePlaybackActive(_ route: RemotePlaybackRoute, _ isActive: Bool) {
-        if isActive {
-            remotePlaybackState = RemotePlaybackState(type: route, isRouteActive: true)
-        } else if remotePlaybackState?.type == route {
-            remotePlaybackState = nil
+// MARK: - Player switch
+
+extension MediaPlayerManager {
+
+    func switchPlayer(to type: VideoPlayerType, isFallback: Bool = false) async {
+        guard !isSwitchingPlayer,
+              let item = playbackItem,
+              item.videoPlayerType != type
+        else { return }
+
+        isSwitchingPlayer = true
+        defer { isSwitchingPlayer = false }
+
+        let previousType = item.videoPlayerType
+        let positionTicks = seconds.ticks
+
+        do {
+            let switched = try await MediaPlayerItem.build(
+                for: item.baseItem,
+                mediaSource: item.mediaSource,
+                strategy: .player(type),
+                requestedBitrate: item.requestedBitrate
+            ) { base in
+                // `modifyItem` runs after `getFullItem`'s re-fetch, which would
+                // otherwise restore the server's stale position.
+                if base.userData == nil { base.userData = .init() }
+                base.userData?.playbackPositionTicks = positionTicks
+            }
+
+            logger.info(
+                "⏱ switchPlayer \(previousType)→\(type): captured=\(seconds.seconds)s builtStart=\(switched.baseItem.startSeconds?.seconds ?? -1)s offset=\(switched.transcodeStartOffset.seconds)s transcoding=\(switched.isTranscoding)"
+            )
+
+            playbackItem = switched
+            fallbackPlayerType = isFallback ? nil : previousType
+        } catch {
+            logger.error("Failed to switch player: \(error.localizedDescription)")
         }
+    }
+
+    func resumeLocal(on proxy: any MediaPlayerProxy) async {
+        guard let item = playbackItem,
+              let type = (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType
+        else {
+            self.proxy = proxy
+            return
+        }
+
+        let positionTicks = seconds.ticks
+
+        do {
+            let resumed = try await MediaPlayerItem.build(
+                for: item.baseItem,
+                mediaSource: item.mediaSource,
+                strategy: .player(type),
+                requestedBitrate: item.requestedBitrate
+            ) { base in
+                if base.userData == nil { base.userData = .init() }
+                base.userData?.playbackPositionTicks = positionTicks
+            }
+
+            logger.info(
+                "⏱ resumeLocal \(type): captured=\(seconds.seconds)s builtStart=\(resumed.baseItem.startSeconds?.seconds ?? -1)s offset=\(resumed.transcodeStartOffset.seconds)s transcoding=\(resumed.isTranscoding)"
+            )
+
+            playbackItem = resumed
+        } catch {
+            logger.error("Failed to resume local playback: \(error.localizedDescription)")
+        }
+
+        self.proxy = proxy
+    }
+}
+
+// MARK: - Picture in Picture
+
+extension MediaPlayerManager {
+
+    func startPictureInPicture() {
+        guard let pipable = proxy as? any PictureInPictureable else { return }
+
+        if pipable.supportsPiP {
+            Task { await startPiPWhenReady(attemptsLeft: 20) }
+            return
+        }
+
+        guard let target = pipable.pipPlayerType else { return }
+
+        Task {
+            await switchPlayer(to: target)
+            await startPiPWhenReady(attemptsLeft: 20)
+        }
+    }
+
+    func stopPictureInPicture() {
+        (proxy as? MediaPlayerPictureInPictureCapable)?.stopPiP()
+    }
+
+    // Retries because the proxy swap is async and AVKit ignores an early start.
+    private func startPiPWhenReady(attemptsLeft: Int) async {
+        guard attemptsLeft > 0,
+              let capable = proxy as? MediaPlayerPictureInPictureCapable
+        else { return }
+
+        if capable.isPiPActive.value { return }
+
+        if capable.isPiPAvailable.value {
+            capable.startPiP()
+        }
+
+        try? await Task.sleep(for: .milliseconds(300))
+        await startPiPWhenReady(attemptsLeft: attemptsLeft - 1)
     }
 }

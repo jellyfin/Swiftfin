@@ -84,7 +84,7 @@ extension DownloadTaskView {
                         }
                     case .complete:
                         Button(L10n.play) {
-                            if Defaults[.VideoPlayer.videoPlayerType] == .vlc {
+                            if Defaults[.VideoPlayer.mediaPlaybackStrategy] != .player(.vlc) {
                                 router.dismiss()
 //                                    router.route(to: .videoPlayer(manager: DownloadVideoPlayerManager(downloadTask: downloadTask)))
                             } else {

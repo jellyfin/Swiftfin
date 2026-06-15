@@ -220,6 +220,8 @@
 		E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Components/RemotePlayback/PlaybackRoutePickerView.swift,
+				Components/RemotePlayback/RemotePlaybackPickerView.swift,
 				Extensions/JellyfinAPI/TaskTriggerInfoType.swift,
 				Objects/ItemArrayElements.swift,
 				ViewModels/AdminDashboard/ActiveSessionsViewModel.swift,

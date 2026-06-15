@@ -16,8 +16,26 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     MediaPlayerOffsetConfigurable,
     // MediaPlayerPictureInPictureCapable, <- TODO: Enable for VLCKit 4.0
     MediaPlayerPlaybackInfoProvider,
-    MediaPlayerSubtitleConfigurable
+    MediaPlayerSubtitleConfigurable,
+    AirPlayable,
+    PictureInPictureable
 {
+
+    var supportsAirPlay: Bool {
+        false
+    }
+
+    var airPlayPlayerType: VideoPlayerType? {
+        Defaults[.VideoPlayer.mediaPlaybackStrategy].allowsEngineFallback ? .avPlayer : nil
+    }
+
+    var supportsPiP: Bool {
+        false
+    }
+
+    var pipPlayerType: VideoPlayerType? {
+        Defaults[.VideoPlayer.mediaPlaybackStrategy].allowsEngineFallback ? .avPlayer : nil
+    }
 
     let videoPlayerType: VideoPlayerType = .vlc
 
@@ -38,6 +56,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
 
     var observers: [any MediaPlayerObserver] = [
         NowPlayableObserver(),
+        AirPlayRouteObserver(),
     ]
 
     func play() {

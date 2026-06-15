@@ -17,8 +17,26 @@ import SwiftUI
 class AVMediaPlayerProxy: NSObject,
     VideoMediaPlayerProxy,
     MediaPlayerPictureInPictureCapable,
-    MediaPlayerPlaybackInfoProvider
+    MediaPlayerPlaybackInfoProvider,
+    AirPlayable,
+    PictureInPictureable
 {
+
+    var supportsAirPlay: Bool {
+        true
+    }
+
+    var airPlayPlayerType: VideoPlayerType? {
+        nil
+    }
+
+    var supportsPiP: Bool {
+        true
+    }
+
+    var pipPlayerType: VideoPlayerType? {
+        nil
+    }
 
     let videoPlayerType: VideoPlayerType = .avPlayer
 
@@ -40,6 +58,7 @@ class AVMediaPlayerProxy: NSObject,
     private(set) var pipController: AVPictureInPictureController?
 
     private var pendingSeekSeconds: Duration?
+    private var transcodeStartOffset: Duration = .zero
 
     private var cachedAudioStreams: [MediaStream] = []
     private var cachedSubtitleStreams: [MediaStream] = []
@@ -87,7 +106,7 @@ class AVMediaPlayerProxy: NSObject,
             let isActive = player.isExternalPlaybackActive
 
             Task { @MainActor [weak self] in
-                self?.manager?.setRemotePlaybackActive(.airPlay, isActive)
+                self?.manager?.remote.setAirPlayActive(isActive)
             }
         }
 
@@ -143,7 +162,8 @@ class AVMediaPlayerProxy: NSObject,
             return
         }
 
-        let time = CMTime(seconds: seconds.seconds, preferredTimescale: 1)
+        let relative = max(.zero, seconds - transcodeStartOffset)
+        let time = CMTime(seconds: relative.seconds, preferredTimescale: 1)
 
         player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { finished in
             completion?(finished)
@@ -306,6 +326,7 @@ extension AVMediaPlayerProxy {
         addTimeObserver()
 
         pendingSeekSeconds = nil
+        transcodeStartOffset = item.transcodeStartOffset
 
         cachedAudioStreams = item.audioStreams.filter { $0.isExternal != true }
         cachedSubtitleStreams = item.subtitleStreams.filter { $0.isExternal != true }
@@ -347,7 +368,7 @@ extension AVMediaPlayerProxy {
             MainActor.assumeIsolated {
                 guard let self, newTime.isNumeric else { return }
 
-                let newSeconds = Duration.seconds(newTime.seconds)
+                let newSeconds = Duration.seconds(newTime.seconds) + self.transcodeStartOffset
 
                 if !self.isScrubbing.wrappedValue {
                     self.scrubbedSeconds.wrappedValue = newSeconds
@@ -496,6 +517,12 @@ extension AVMediaPlayerProxy {
         )
         pendingSeekSeconds = nil
 
+        let relativeStart = max(.zero, startSeconds - transcodeStartOffset)
+
+        manager?.logger.info(
+            "⏱ avReady: baseStart=\(item.baseItem.startSeconds?.seconds ?? -1)s startSeconds=\(startSeconds.seconds)s offset=\(self.transcodeStartOffset.seconds)s → relativeSeek=\(relativeStart.seconds)s url=\(item.url.absoluteString)"
+        )
+
         cachedAudioGroup = try? await playerItem.asset.loadMediaSelectionGroup(for: .audible)
         cachedSubtitleGroup = try? await playerItem.asset.loadMediaSelectionGroup(for: .legible)
 
@@ -503,7 +530,7 @@ extension AVMediaPlayerProxy {
         setSubtitleStream(.init(index: item.selectedSubtitleStreamIndex ?? -1))
 
         player.seek(
-            to: CMTimeMake(value: startSeconds.components.seconds, timescale: 1),
+            to: CMTimeMake(value: relativeStart.components.seconds, timescale: 1),
             toleranceBefore: .zero,
             toleranceAfter: .zero
         ) { [weak self] _ in
