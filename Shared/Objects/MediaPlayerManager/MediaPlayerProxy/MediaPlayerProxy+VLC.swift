@@ -147,12 +147,12 @@ extension VLCMediaPlayerProxy {
             if !baseItem.isLiveStream {
                 configuration.startSeconds = startSeconds
 
-                let subtitleIndex = item.indexMap[item.selectedSubtitleStreamIndex] ?? -1
+                let subtitleIndex = item.indexMap.playerIndex(for: item.selectedSubtitleStreamIndex) ?? -1
 
                 if mediaSource.transcodingURL != nil {
                     configuration.audioIndex = .auto
                 } else {
-                    let audioIndex = item.indexMap[item.selectedAudioStreamIndex] ?? -1
+                    let audioIndex = item.indexMap.playerIndex(for: item.selectedAudioStreamIndex) ?? -1
                     configuration.audioIndex = .absolute(audioIndex)
                 }
 

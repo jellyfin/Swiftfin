@@ -36,7 +36,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         }
     }
 
-    private(set) var indexMap: [Int: Int]
+    private(set) var indexMap: MediaTrackIndexMap
 
     private var externalSubtitlesResolved = false
 
@@ -105,10 +105,11 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
             ?? mediaSource.defaultAudioStreamIndex
             ?? mediaSource.mediaStreams?.first(where: { $0.type == .audio })?.index ?? 0
 
-        self.indexMap = mediaStreams?.buildIndexMap(
+        self.indexMap = MediaTrackIndexMap.build(
+            from: mediaStreams ?? [],
             for: isTranscoding ? .transcode : .directPlay,
             selectedAudioStreamIndex: resolvedAudioStreamIndex
-        ) ?? [:]
+        )
 
         super.init()
 
@@ -170,17 +171,15 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         }
     }
 
-    /// Switches an audio, subtitle, or lyric* track in the player without rebuilding the stream.
-    /// *Lyrics stubs are there but needs a `MediaPlayerLyricTrackConfigurable`
+    /// Switches an audio, subtitle track in the player without rebuilding the stream.
     func switchTrack(type: MediaStreamType, index: Int?) {
         let playerIndex: Int
-        if index == nil || index == -1 {
-            playerIndex = -1
-        } else if let mapped = indexMap[index] {
-            playerIndex = mapped
-        } else {
+
+        guard let mappedPlayerIndex = indexMap.playerIndex(for: index) else {
             return
         }
+
+        playerIndex = mappedPlayerIndex
 
         switch type {
         case .audio:
@@ -189,12 +188,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         case .subtitle:
             guard let proxy = manager?.proxy as? any MediaPlayerSubtitleTrackConfigurable else { return }
             proxy.setSubtitleStream(.init(index: playerIndex))
-        case .lyric:
-
-            // TODO: Enable for Audio Player when Lyrics are needed.
-            // guard let proxy = manager?.proxy as? any MediaPlayerLyricTrackConfigurable else { return }
-            // proxy.setLyricStream(.init(index: playerIndex))
-            return
         default:
             return
         }
@@ -208,9 +201,8 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         let playbackChildren = subtitleStreams.sidecarSubtitles
         guard playbackChildren.isNotEmpty else { return }
 
-        indexMap = [MediaStream].resolveIndexMap(
-            into: indexMap,
-            playbackChildren: playbackChildren,
+        indexMap = indexMap.resolvingPlaybackChildren(
+            playbackChildren,
             subtitleTracks: subtitleTracks,
             isTranscoding: mediaSource.transcodingURL != nil
         )
