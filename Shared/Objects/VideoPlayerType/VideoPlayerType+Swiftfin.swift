@@ -155,12 +155,9 @@ extension VideoPlayerType {
 
         SubtitleProfile.build(method: .external) {
             SubtitleFormat.ass
-            SubtitleFormat.dvbsub
-            SubtitleFormat.dvdsub
             SubtitleFormat.jacosub
             SubtitleFormat.libzvbi_teletextdec
             SubtitleFormat.mpl2
-            SubtitleFormat.pgssub
             SubtitleFormat.pjs
             SubtitleFormat.realtext
             SubtitleFormat.sami
@@ -172,6 +169,12 @@ extension VideoPlayerType {
             SubtitleFormat.ttml
             SubtitleFormat.vplayer
             SubtitleFormat.vtt
+        }
+
+        SubtitleProfile.build(method: .encode) {
+            SubtitleFormat.dvbsub
+            SubtitleFormat.dvdsub
+            SubtitleFormat.pgssub
             SubtitleFormat.xsub
         }
     }
