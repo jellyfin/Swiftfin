@@ -124,7 +124,7 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
             guard let tileWidth = self?.info.width else { return nil }
             guard let itemID = self?.itemID else { return nil }
 
-            let client = Container.shared.currentUserSession()!.client
+            guard let client = Container.shared.currentUserSession()?.client else { return nil }
             let request = Paths.getTrickplayTileImage(
                 itemID: itemID,
                 width: tileWidth,

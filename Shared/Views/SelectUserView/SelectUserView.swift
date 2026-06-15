@@ -157,10 +157,8 @@ struct SelectUserView: View {
     }
 
     private func onSignedIn(_ user: UserState) {
-        Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
-        Container.shared.currentUserSession.reset()
+        Container.shared.userSessionManager().signIn(userID: user.id)
         UIDevice.feedback(.success)
-        Notifications[.didSignIn].post()
     }
 
     @ViewBuilder
@@ -197,7 +195,7 @@ struct SelectUserView: View {
                                     addUser(server: server)
                                 } label: {
                                     Text(server.name)
-                                    Text(server.currentURL.absoluteString)
+                                    Text(server.effectiveServerURL.absoluteString)
                                 }
                             }
                         }
@@ -384,7 +382,7 @@ struct SelectUserView: View {
             viewModel.background.getServers()
             serverSelection = .server(id: server.id)
         }
-        .onNotification(.didChangeCurrentServerURL) { _ in
+        .onNotification(.didChangeServerConnection) { _ in
             viewModel.background.getServers()
         }
         .onNotification(.didDeleteServer) { _ in

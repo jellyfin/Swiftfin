@@ -40,11 +40,11 @@ extension ServerActivityView {
 
         @ViewBuilder
         private var userImage: some View {
-            if let user = viewModel.user {
+            if let user = viewModel.user, let userSession = viewModel.userSession {
                 UserProfileImage(
                     userID: user.id,
                     source: user.profileImageSource(
-                        client: viewModel.userSession.client,
+                        client: userSession.client,
                         maxWidth: 60
                     )
                 )

@@ -53,7 +53,7 @@ class ChapterPreviewImageProvider: PreviewImageProvider {
         }
 
         let newTask = Task<UIImage?, Never> {
-            let client = Container.shared.currentUserSession()!.client
+            guard let client = Container.shared.currentUserSession()?.client else { return nil }
 
             guard let chapterInfo = chapters[safe: chapterIndex], let imageUrl = chapterInfo.imageSource.url else { return nil }
             let request: Request<Data> = .init(url: imageUrl)

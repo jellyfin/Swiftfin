@@ -78,8 +78,6 @@ final class SettingsViewModel: ViewModel {
     }
 
     func signOut() {
-        Defaults[.lastSignedInUserID] = .signedOut
-        Container.shared.currentUserSession.reset()
-        Notifications[.didSignOut].post()
+        Container.shared.userSessionManager().signOut(reason: .explicit)
     }
 }

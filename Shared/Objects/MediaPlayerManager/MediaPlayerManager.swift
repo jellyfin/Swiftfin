@@ -14,6 +14,7 @@ import JellyfinAPI
 import VLCUI
 
 // TODO: proper error catching
+// TODO: be a UserSessionService?
 
 typealias MediaPlayerManagerPublisher = LegacyEventPublisher<MediaPlayerManager?>
 
@@ -35,7 +36,8 @@ extension Container {
                     baseItem: .init(),
                     mediaSource: .init(),
                     playSessionID: "",
-                    url: URL(string: "/")!
+                    url: URL(string: "/")!,
+                    deviceProfile: .init()
                 )
             )
         }
@@ -54,8 +56,10 @@ final class MediaPlayerManager: ViewModel {
         case ended
         case error
         case playNewItem(provider: MediaPlayerItemProvider)
+        case setBitrate(bitrate: PlaybackBitrate)
         case setPlaybackRequestStatus(status: PlaybackRequestStatus)
         case setRate(rate: Float)
+        case setTrack(type: MediaStreamType, from: Int?, to: Int? = nil)
         case start
         case stop
         case togglePlayPause
@@ -110,6 +114,7 @@ final class MediaPlayerManager: ViewModel {
                         "itemID": .stringConvertible(playbackItem.baseItem.id ?? "Unknown"),
                         "itemTitle": .stringConvertible(playbackItem.baseItem.displayTitle),
                         "url": .stringConvertible(playbackItem.url.absoluteString),
+                        "isTranscoding": .stringConvertible(playbackItem.mediaSource.transcodingURL != nil),
                     ]
                 )
 
@@ -173,8 +178,6 @@ final class MediaPlayerManager: ViewModel {
         }
     }
 
-    private var itemBuildTask: AnyCancellable?
-
     private var initialMediaPlayerItemProvider: MediaPlayerItemProvider?
 
     // MARK: init
@@ -236,7 +239,7 @@ final class MediaPlayerManager: ViewModel {
             return
         }
 
-        if let nextItem = queue?.nextItem, userSession.user.data.configuration?.enableNextEpisodeAutoPlay == true {
+        if let nextItem = queue?.nextItem, try authenticatedUser.data.configuration?.enableNextEpisodeAutoPlay == true {
             await self.playNewItem(provider: nextItem)
         } else {
             await self.stop()
@@ -267,6 +270,7 @@ final class MediaPlayerManager: ViewModel {
         }
 
         proxy?.stop()
+        Container.shared.mediaPlayerManagerPublisher().send(nil)
         Container.shared.mediaPlayerManager.reset()
     }
 
@@ -276,6 +280,16 @@ final class MediaPlayerManager: ViewModel {
         setSupplements()
         proxy?.stop()
         playbackItem = try await provider()
+    }
+
+    @Function(\Action.Cases.setBitrate)
+    private func _setBitrate(_ requestedBitrate: PlaybackBitrate) async throws {
+        guard let currentItem = playbackItem else { return }
+
+        try await updateMediaPlayerItem(
+            currentItem: currentItem,
+            requestedBitrate: requestedBitrate
+        )
     }
 
     @Function(\Action.Cases.setPlaybackRequestStatus)
@@ -299,6 +313,47 @@ final class MediaPlayerManager: ViewModel {
         }
     }
 
+    @Function(\Action.Cases.setTrack)
+    private func _setTrack(_ type: MediaStreamType, _ oldIndex: Int?, _ newIndex: Int?) async throws {
+        guard let playbackItem else {
+            logger.warning("MediaPlayerManager.SetTrack call with an invalid playbackItem")
+            return
+        }
+
+        switch type {
+        case .audio:
+            guard playbackItem.audioStreams.contains(where: { $0.index == oldIndex }) else {
+                logger.warning("MediaPlayerManager.SetTrack call with an invalid audio track index")
+                return
+            }
+
+            if playbackItem.isRebuildRequired(type: .audio, from: oldIndex, to: newIndex) {
+                try await updateMediaPlayerItem(
+                    currentItem: playbackItem,
+                    audioStreamIndex: newIndex
+                )
+            } else {
+                playbackItem.switchTrack(type: .audio, index: newIndex)
+            }
+        case .subtitle:
+            guard newIndex == -1 || playbackItem.subtitleStreams.contains(where: { $0.index == newIndex }) else {
+                logger.warning("MediaPlayerManager.SetTrack call with an invalid subtitle track index")
+                return
+            }
+
+            if playbackItem.isRebuildRequired(type: .subtitle, from: oldIndex, to: newIndex) {
+                try await updateMediaPlayerItem(
+                    currentItem: playbackItem,
+                    subtitleStreamIndex: newIndex
+                )
+            } else {
+                playbackItem.switchTrack(type: .subtitle, index: newIndex)
+            }
+        default:
+            logger.warning("MediaPlayerManager.SetTrack called with unsupported type: \(String(describing: type))")
+        }
+    }
+
     @Function(\Action.Cases.start)
     private func _start() async throws {
         guard let initialMediaPlayerItemProvider else {
@@ -309,14 +364,14 @@ final class MediaPlayerManager: ViewModel {
         playbackItem = try await initialMediaPlayerItemProvider()
     }
 
+    // TODO: remove playback item?
+    //       - check that observers would respond correctly to stopping
     @Function(\Action.Cases.stop)
     private func _stop() async throws {
         await self.cancel()
 
-        // TODO: remove playback item?
-        //       - check that observers would respond correctly to stopping
-        itemBuildTask?.cancel()
         proxy?.stop()
+        Container.shared.mediaPlayerManagerPublisher().send(nil)
         Container.shared.mediaPlayerManager.reset()
     }
 
@@ -328,5 +383,57 @@ final class MediaPlayerManager: ViewModel {
         case .paused:
             setPlaybackRequestStatus(status: .playing)
         }
+    }
+
+    /// Rebuilds the playback item with new stream indexes / bitrate.
+    /// Stops the current proxy, requests new playback info from the server, and starts playback with the new configuration.
+    ///
+    /// Rebuilds the current item
+    private func updateMediaPlayerItem(
+        currentItem: MediaPlayerItem,
+        audioStreamIndex: Int? = nil,
+        subtitleStreamIndex: Int? = nil,
+        requestedBitrate: PlaybackBitrate? = nil
+    ) async throws {
+
+        // Capture the current playback position before stopping
+        let currentSeconds = self.seconds
+
+        logger.info(
+            "Rebuilding Media Player Item",
+            metadata: [
+                "audioIndex": "\(audioStreamIndex ?? -1)",
+                "subtitleIndex": "\(subtitleStreamIndex ?? -1)",
+                "currentSeconds": "\(currentSeconds)",
+            ]
+        )
+
+        proxy?.stop()
+
+        let newItem = try await MediaPlayerItem.build(
+            for: currentItem.baseItem,
+            mediaSource: currentItem.mediaSource,
+            audioStreamIndex: audioStreamIndex ?? currentItem.selectedAudioStreamIndex,
+            subtitleStreamIndex: subtitleStreamIndex ?? currentItem.selectedSubtitleStreamIndex,
+            requestedBitrate: requestedBitrate ?? currentItem.requestedBitrate,
+            modifyItem: { item in
+                if item.userData == nil {
+                    item.userData = UserItemDataDto()
+                }
+                item.userData?.playbackPositionTicks = currentSeconds.ticks
+            }
+        )
+
+        logger.info(
+            "Built new playback item",
+            metadata: [
+                "playSessionID": "\(newItem.playSessionID)",
+                "isTranscoding": "\(newItem.mediaSource.transcodingURL != nil)",
+                "url": "\(newItem.url.absoluteString)",
+            ]
+        )
+
+        self.playbackItem = newItem
+        self.seconds = currentSeconds
     }
 }

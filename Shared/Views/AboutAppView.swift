@@ -11,6 +11,9 @@ import SwiftUI
 
 struct AboutAppView: View {
 
+    @Router
+    private var router
+
     var body: some View {
         Form(image: .jellyfinBlobBlue) {
 
@@ -37,6 +40,24 @@ struct AboutAppView: View {
                     L10n.version,
                     value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
+
+                #if os(iOS)
+                ChevronButton(
+                    L10n.permissions,
+                    systemName: "hand.raised.fill"
+                ) {
+                    router.route(to: .appPermissions)
+                }
+                #endif
+
+                ChevronButton(
+                    L10n.settings,
+                    systemName: "gearshape.fill",
+                    external: true
+                ) {
+                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                    UIApplication.shared.open(url)
+                }
             }
 
             Section {
@@ -69,15 +90,6 @@ struct AboutAppView: View {
                 }
                 .symbolRenderingMode(.monochrome)
                 #endif
-
-                ChevronButton(
-                    L10n.settings,
-                    systemName: "gearshape.fill",
-                    external: true
-                ) {
-                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                    UIApplication.shared.open(url)
-                }
             }
         }
         .navigationTitle(L10n.about)

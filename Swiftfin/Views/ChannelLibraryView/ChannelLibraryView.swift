@@ -77,10 +77,12 @@ struct ChannelLibraryView: View {
 
     private func compactChannelView(channel: ChannelProgram) -> some View {
         CompactChannelView(channel: channel.channel) {
+            guard let userSession = viewModel.userSession else { return }
+
             router.route(
                 to: .videoPlayer(
                     provider: channel.channel.getPlaybackItemProvider(
-                        userSession: viewModel.userSession
+                        userSession: userSession
                     )
                 )
             )
@@ -89,10 +91,12 @@ struct ChannelLibraryView: View {
 
     private func detailedChannelView(channel: ChannelProgram) -> some View {
         DetailedChannelView(channel: channel) {
+            guard let userSession = viewModel.userSession else { return }
+
             router.route(
                 to: .videoPlayer(
                     provider: channel.channel.getPlaybackItemProvider(
-                        userSession: viewModel.userSession
+                        userSession: userSession
                     )
                 )
             )

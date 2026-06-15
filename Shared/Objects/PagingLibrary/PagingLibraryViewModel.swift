@@ -212,11 +212,11 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
         events.send(.gotRandomItem(randomElement))
     }
 
-    private func pageState(offset: Int, pageSize: Int) -> LibraryPageState {
-        .init(
+    private func pageState(offset: Int, pageSize: Int) throws -> LibraryPageState {
+        try .init(
             pageOffset: offset,
             pageSize: pageSize,
-            userSession: userSession
+            userSession: requireUserSession()
         )
     }
 }

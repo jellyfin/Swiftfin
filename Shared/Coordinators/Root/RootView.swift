@@ -6,9 +6,16 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import SwiftUI
 
 struct RootView: View {
+
+    @Environment(\.localUserAuthenticationAction)
+    private var authenticationAction
+
+    @Injected(\.deepLinkHandler)
+    private var deepLinkHandler
 
     @StateObject
     private var rootCoordinator: RootCoordinator = .init()
@@ -35,5 +42,13 @@ struct RootView: View {
         }
         .animation(.linear(duration: 0.1), value: rootCoordinator.root.id)
         .environmentObject(rootCoordinator)
+        .onOpenURL { url in
+            Task { @MainActor in
+                await deepLinkHandler.handle(
+                    url,
+                    authenticationAction: authenticationAction
+                )
+            }
+        }
     }
 }

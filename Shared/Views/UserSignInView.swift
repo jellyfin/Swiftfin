@@ -75,9 +75,7 @@ struct UserSignInView: View {
             UIDevice.feedback(.success)
 
             router.dismiss()
-            Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
-            Container.shared.currentUserSession.reset()
-            Notifications[.didSignIn].post()
+            Container.shared.userSessionManager().signIn(userID: user.id)
         }
     }
 
