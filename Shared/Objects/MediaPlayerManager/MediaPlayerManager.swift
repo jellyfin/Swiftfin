@@ -336,7 +336,7 @@ final class MediaPlayerManager: ViewModel {
                 playbackItem.switchTrack(type: .audio, index: newIndex)
             }
         case .subtitle:
-            guard playbackItem.subtitleStreams.contains(where: { $0.index == oldIndex }) else {
+            guard newIndex == -1 || playbackItem.subtitleStreams.contains(where: { $0.index == newIndex }) else {
                 logger.warning("MediaPlayerManager.SetTrack call with an invalid subtitle track index")
                 return
             }
