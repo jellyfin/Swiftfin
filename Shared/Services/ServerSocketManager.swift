@@ -27,7 +27,7 @@ final class ServerSocketManager {
     }
 
     private let logger = Logger.swiftfin()
-    private var userSession: UserSession
+    private let userSession: UserSession
 
     private var tasks: [Task<Void, Never>] = []
 
@@ -41,12 +41,6 @@ final class ServerSocketManager {
     init(userSession: UserSession) {
         self.userSession = userSession
         (wakeStream, wake) = AsyncStream<Void>.makeStream()
-    }
-
-    @MainActor
-    func update(userSession: UserSession) {
-        self.userSession = userSession
-        reconnect()
     }
 
     deinit {

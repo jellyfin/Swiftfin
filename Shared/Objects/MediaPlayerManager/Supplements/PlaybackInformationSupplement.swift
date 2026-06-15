@@ -276,14 +276,20 @@ class PlaybackInformationProvider: ViewModel, MediaPlayerObserver {
 
     weak var manager: MediaPlayerManager?
 
-    private let sessionViewModel: SessionViewModel
-
     init(itemID: String) {
-        sessionViewModel = SessionViewModel(observing: itemID)
         super.init()
 
-        sessionViewModel.$session
-            .map { $0 as SessionInfoDto? }
-            .assign(to: &$currentSession)
+        ServerSocketManager.sessions()
+            .sink { [weak self] sessions in
+                Task { @MainActor in
+                    guard let self else { return }
+
+                    let deviceID = self.userSession?.client.configuration.deviceID
+                    let deviceSessions = sessions.filter { $0.deviceID == deviceID }
+
+                    self.currentSession = deviceSessions.first(where: { $0.nowPlayingItem?.id == itemID }) ?? deviceSessions.first
+                }
+            }
+            .store(in: &cancellables)
     }
 }
