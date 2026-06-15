@@ -112,6 +112,17 @@ extension StoredValues.Keys {
             )
         }
 
+        static var tabs: Key<[TabItemSetting]> {
+            CurrentUserKey(
+                field: "tabs",
+                default: [
+                    .contentGroup(.default),
+                    .search,
+                    .media,
+                ]
+            )
+        }
+
         static func libraryStyle(id: String?) -> Key<LibraryStyle> {
             CurrentUserKey(
                 id,

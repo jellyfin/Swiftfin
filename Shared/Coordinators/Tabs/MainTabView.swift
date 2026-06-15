@@ -19,16 +19,15 @@ struct MainTabView: View {
     private var userSessionManager
 
     #if os(iOS)
+    @StoredValue(.User.tabs)
+    private var storedTabs
+
     @StateObject
-    private var tabCoordinator = TabCoordinator {
-        TabItem.home
-        TabItem.search
-        TabItem.media
-    }
+    private var tabCoordinator: TabCoordinator
     #else
     @StateObject
     private var tabCoordinator = TabCoordinator {
-        TabItem.home
+        TabItem.contentGroup(provider: DefaultContentGroupProvider())
         TabItem.library(
             title: L10n.tvShowsCapitalized,
             systemName: "tv",
@@ -44,6 +43,14 @@ struct MainTabView: View {
         TabItem.settings
     }
     #endif
+
+    init() {
+        #if os(iOS)
+        self._tabCoordinator = StateObject(
+            wrappedValue: TabCoordinator(tabs: StoredValues[.User.tabs])
+        )
+        #endif
+    }
 
     private func routePendingDeepLink(_ deepLink: DeepLink?) {
         guard let deepLink else { return }
@@ -80,5 +87,11 @@ struct MainTabView: View {
         .onChange(of: userSessionManager.pendingDeepLink) { _ in
             routePendingDeepLink(userSessionManager.consumePendingDeepLink())
         }
+        #if os(iOS)
+        .backport
+        .onChange(of: storedTabs) { _, newValue in
+            tabCoordinator.setTabs(newValue)
+        }
+        #endif
     }
 }

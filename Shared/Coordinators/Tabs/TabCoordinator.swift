@@ -41,12 +41,39 @@ final class TabCoordinator: ObservableObject {
 
     init(@ArrayBuilder<TabItem> tabs: () -> [TabItem]) {
         let tabs = tabs()
-        self.tabs = tabs.map { tab in
-            let coordinator = NavigationCoordinator()
-            let event = TabItemSelectedPublisher()
-            return (tab, coordinator, event)
+        setTabs(tabs)
+        self.selectedTabID = tabs.first?.id
+    }
+
+    init(@ArrayBuilder<TabItemSetting> tabs: () -> [TabItemSetting]) {
+        let tabs = tabs()
+        setTabs(tabs.map(\.item))
+        self.selectedTabID = tabs.first?.item.id
+    }
+
+    init(tabs: [TabItemSetting]) {
+        setTabs(tabs.map(\.item))
+        self.selectedTabID = self.tabs.first?.item.id
+    }
+
+    func setTabs(_ tabItems: [TabItem]) {
+        let previousTabsByID = Dictionary(uniqueKeysWithValues: tabs.map { ($0.item.id, $0) })
+
+        self.tabs = tabItems.map { tab in
+            if let previous = previousTabsByID[tab.id] {
+                return (tab, previous.coordinator, previous.publisher)
+            }
+
+            return (tab, NavigationCoordinator(), TabItemSelectedPublisher())
         }
-        selectedTabID = tabs.first?.id
+
+        if !tabItems.contains(where: { $0.id == selectedTabID }) {
+            selectedTabID = tabItems.first?.id
+        }
+    }
+
+    func setTabs(_ tabSettings: [TabItemSetting]) {
+        setTabs(tabSettings.map(\.item))
     }
 
     func route(to route: NavigationRoute) async {

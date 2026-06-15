@@ -9,6 +9,65 @@
 import JellyfinAPI
 import SwiftUI
 
+@MainActor
+enum TabItemSetting: Identifiable, Hashable, Storable {
+
+    case adminDashboard
+    case contentGroup(ContentGroupProviderSetting)
+    case item(id: String, displayTitle: String)
+    case liveTV
+    case library(title: String, systemName: String, filters: ItemFilterCollection)
+    case media
+    case search
+    case settings
+
+    var id: String {
+        switch self {
+        case .adminDashboard:
+            "admin-dashboard"
+        case let .contentGroup(provider):
+            provider.provider.id
+        case let .item(id, _):
+            id
+        case .liveTV:
+            "live-tv"
+        case let .library(title, _, filters):
+            "library-\(title)-\(filters.hashValue)"
+        case .media:
+            "media"
+        case .search:
+            "search"
+        case .settings:
+            "settings"
+        }
+    }
+
+    var item: TabItem {
+        switch self {
+        case .adminDashboard:
+            #if os(iOS)
+            .adminDashboard
+            #else
+            .settings
+            #endif
+        case let .contentGroup(provider):
+            .contentGroup(provider: provider.provider)
+        case let .item(id, displayTitle):
+            .contentGroup(provider: ItemGroupProvider(displayTitle: displayTitle, id: id))
+        case .liveTV:
+            .liveTV
+        case let .library(title, systemName, filters):
+            .library(title: title, systemName: systemName, filters: filters)
+        case .media:
+            .media
+        case .search:
+            .search
+        case .settings:
+            .settings
+        }
+    }
+}
+
 // TODO: selected icon
 @MainActor
 struct TabItem: Identifiable, Hashable {
@@ -18,6 +77,10 @@ struct TabItem: Identifiable, Hashable {
     let title: String
     let systemImage: String
     let labelStyle: any LabelStyle
+
+    var displayTitle: String {
+        title
+    }
 
     init(
         id: String,
@@ -43,6 +106,32 @@ struct TabItem: Identifiable, Hashable {
 }
 
 extension TabItem {
+
+    static var adminDashboard: TabItem {
+        TabItem(
+            id: "admin-dashboard",
+            title: L10n.dashboard,
+            systemImage: "server.rack"
+        ) {
+            #if os(iOS)
+            AdminDashboardView()
+            #else
+            EmptyView()
+            #endif
+        }
+    }
+
+    static func contentGroup(
+        provider: some ContentGroupProvider
+    ) -> TabItem {
+        TabItem(
+            id: provider.id,
+            title: provider.displayTitle,
+            systemImage: "house.fill"
+        ) {
+            ContentGroupView(provider: provider)
+        }
+    }
 
     static var home: TabItem {
         TabItem(
@@ -86,6 +175,16 @@ extension TabItem {
                 .if(UIDevice.isTV) { view in
                     view.toolbar(.hidden, for: .navigationBar)
                 }
+        }
+    }
+
+    static var liveTV: TabItem {
+        TabItem(
+            id: "live-tv",
+            title: L10n.liveTV,
+            systemImage: "play.tv"
+        ) {
+            NavigationRoute.liveTV.destination
         }
     }
 
