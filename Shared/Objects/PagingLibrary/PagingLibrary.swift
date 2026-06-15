@@ -90,3 +90,12 @@ protocol WithRandomElementLibrary<Element, Environment>: PagingLibrary {
         pageState: LibraryPageState
     ) async throws -> Element?
 }
+
+protocol SearchablePagingLibrary<Element, Environment>: PagingLibrary {
+
+    func retrieveSearchPage(
+        query: String,
+        environment: Environment,
+        pageState: LibraryPageState
+    ) async throws -> [Element]
+}

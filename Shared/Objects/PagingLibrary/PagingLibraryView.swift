@@ -62,7 +62,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @ViewBuilder
     private var elementsView: some View {
         CollectionVGrid(
-            uniqueElements: viewModel.elements,
+            uniqueElements: viewModel.displayedElements,
             layout: Element.layout(for: libraryStyle)
         ) { element in
             switch libraryStyle.displayType {
@@ -73,7 +73,11 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
-            viewModel.getNextPage()
+            if viewModel.isSearchActive {
+                viewModel.getNextSearchPage()
+            } else {
+                viewModel.getNextPage()
+            }
         }
         .proxy(gridProxy)
         .scrollIndicators(.hidden)
@@ -86,8 +90,13 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 case .initial, .refreshing:
                     ProgressView()
                 case .content:
-                    if viewModel.elements.isEmpty {
-                        ContentUnavailableView(L10n.noItems.localizedCapitalized, systemImage: "rectangle.on.rectangle.slash")
+                    if viewModel.isSearchActive, viewModel.background.is(.searching) {
+                        ProgressView()
+                    } else if viewModel.displayedElements.isEmpty {
+                        ContentUnavailableView(
+                            viewModel.isSearchActive ? L10n.noResults.localizedCapitalized : L10n.noItems.localizedCapitalized,
+                            systemImage: viewModel.isSearchActive ? "magnifyingglass" : "rectangle.on.rectangle.slash"
+                        )
                     } else {
                         elementsView
                             .libraryStyle(for: Element.self) { _, _ in
@@ -100,7 +109,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.background.is(.gettingNextPage))
+        .animation(.linear(duration: 0.2), value: viewModel.background.is(.searching))
         .animation(.linear(duration: 0.2), value: viewModel.elements)
+        .animation(.linear(duration: 0.2), value: viewModel.searchElements)
         .letterPickerBar(filterViewModel: viewModel.filterViewModel)
         .navigationTitle(viewModel.library.parent.displayTitle)
         .backport
@@ -108,7 +119,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
 
-                if viewModel.background.is(.gettingNextPage) {
+                if viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage) {
                     ProgressView()
                 }
 
