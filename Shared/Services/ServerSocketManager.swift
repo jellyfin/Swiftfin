@@ -24,6 +24,7 @@ final class ServerSocketManager {
     private struct State {
         var session: JellyfinSocket.Session?
         var subscriptions: [JellyfinSocket.Subscription: (delay: Duration, interval: Duration, count: Int)] = [:]
+        var reconnectRequested = false
     }
 
     private let logger = Logger.swiftfin()
@@ -64,6 +65,7 @@ final class ServerSocketManager {
 
     /// Drop the current session and start a new one.
     func reconnect() {
+        state.withLock { $0.reconnectRequested = true }
         killSession()
         wake.yield()
     }
@@ -160,12 +162,24 @@ final class ServerSocketManager {
                 logger.debug("Socket error: \(error.localizedDescription)")
             }
 
-            state.withLock { $0.session = nil }
+            let (hasSubscriptions, explicit) = state.withLock { state -> (Bool, Bool) in
+                state.session = nil
+                defer { state.reconnectRequested = false }
+                return (!state.subscriptions.isEmpty, state.reconnectRequested)
+            }
             isConnected.send(false)
             logger.info("Socket disconnected")
-            logger.debug("Socket waiting for signal")
-            _ = await wakeIterator.next()
-            logger.debug("Socket wake received")
+
+            if explicit {
+                logger.debug("Socket reconnecting")
+                _ = await wakeIterator.next()
+            } else if hasSubscriptions {
+                logger.debug("Socket lost, reconnecting after backoff")
+                try? await Task.sleep(for: .seconds(2))
+            } else {
+                logger.debug("Socket waiting for signal")
+                _ = await wakeIterator.next()
+            }
         }
     }
 
