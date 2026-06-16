@@ -51,7 +51,7 @@ struct PlaybackQualitySettingsView: View {
                     value: L10n.birateAutoDescription
                 )
                 LabeledContent(
-                    L10n.bitrateMax,
+                    L10n.maximum,
                     value: L10n.bitrateMaxDescription(PlaybackBitrate.max.rawValue.formatted(.bitRate))
                 )
             }

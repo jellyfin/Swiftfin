@@ -63,7 +63,7 @@ extension MediaPlayerItem {
             throw ErrorMessage(L10n.unknownError)
         }
 
-        let maxBitrate = try await requestedBitrate.getMaxBitrate()
+        let maxBitrate = try await MediaPlayerManager.getMaxBitrate(for: requestedBitrate)
 
         let deviceProfile = DeviceProfile.build(
             for: videoPlayerType,
@@ -122,6 +122,8 @@ extension MediaPlayerItem {
         guard let mediaSource else {
             throw ErrorMessage("Unable to find media source for item")
         }
+
+        item.runTimeTicks = mediaSource.runTimeTicks ?? item.runTimeTicks
 
         guard let playSessionID = response.value.playSessionID else {
             throw ErrorMessage("No associated play session ID")
@@ -210,9 +212,9 @@ extension MediaPlayerItem {
 
             let videoStreamParameters = Paths.GetVideoStreamParameters(
                 isStatic: true,
-                tag: item.etag,
+                tag: mediaSource.eTag ?? item.etag,
                 playSessionID: playSessionID,
-                mediaSourceID: itemID
+                mediaSourceID: mediaSource.id ?? itemID
             )
 
             let videoStreamRequest = Paths.getVideoStream(

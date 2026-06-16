@@ -169,6 +169,10 @@ final class MediaPlayerManager: ViewModel {
         set { secondsBox.value = newValue }
     }
 
+    var playbackBitrate: PlaybackBitrate {
+        playbackItem?.requestedBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+    }
+
     /// Holds a weak reference to the current media player proxy.
     weak var proxy: (any MediaPlayerProxy)? {
         didSet {
@@ -435,5 +439,25 @@ final class MediaPlayerManager: ViewModel {
 
         self.playbackItem = newItem
         self.seconds = currentSeconds
+    }
+
+    nonisolated static func getMaxBitrate(
+        for requestedBitrate: PlaybackBitrate,
+        testSize: PlaybackBitrateTestSize = Defaults[.VideoPlayer.appMaximumBitrateTest]
+    ) async throws -> Int {
+
+        guard requestedBitrate == .auto else { return requestedBitrate.rawValue }
+
+        guard let userSession = Container.shared.currentUserSession() else {
+            throw UserSessionError.missingCurrentSession
+        }
+
+        let testStartTime = Date()
+        let _ = try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize.rawValue))
+        let testDuration = Date().timeIntervalSince(testStartTime)
+        let testSizeBits = Double(testSize.rawValue * 8)
+        let testBitrate = testSizeBits / testDuration
+
+        return clamp(Int(testBitrate), min: PlaybackBitrate.min.rawValue, max: Int(Int32.max))
     }
 }

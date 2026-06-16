@@ -49,7 +49,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 filteredButtons.removeAll { $0 == .audio }
                 filteredButtons.removeAll { $0 == .autoPlay }
                 filteredButtons.removeAll { $0 == .playbackSpeed }
-//                filteredButtons.removeAll { $0 == .playbackQuality }
+                filteredButtons.removeAll { $0 == .playbackSettings }
                 filteredButtons.removeAll { $0 == .subtitles }
             }
 
@@ -79,8 +79,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             #endif
             case .playbackSpeed:
                 PlaybackRateMenu()
-//            case .playbackQuality:
-//                PlaybackQuality()
+            case .playbackSettings:
+                PlaybackSettings()
             case .playNextItem:
                 PlayNextItem()
             case .playPreviousItem:
