@@ -24,7 +24,7 @@ extension ItemView {
                 items: genres
             ) { genre in
                 let library = ItemLibrary(
-                    parent: TitledLibraryParent(displayTitle: genre.displayTitle, id: genre.value),
+                    parent: BaseItemDto(id: genre.value, name: genre.displayTitle),
                     filters: .init(genres: [genre])
                 )
                 router.route(to: .library(library: library))

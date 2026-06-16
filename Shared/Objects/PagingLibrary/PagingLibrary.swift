@@ -37,6 +37,9 @@ protocol PagingLibrary<Element> {
         @ViewBuilder content: @escaping () -> some View
     ) -> AnyView
 
+    @MenuContentGroupBuilder
+    func menuContent(environment: Binding<Environment>) -> [MenuContentGroup]
+
     func onItemUserDataChanged(
         viewModel: PagingLibraryViewModel<Self>,
         userData: UserItemDataDto
@@ -67,6 +70,9 @@ extension PagingLibrary {
         content()
             .eraseToAnyView()
     }
+
+    @MenuContentGroupBuilder
+    func menuContent(environment: Binding<Environment>) -> [MenuContentGroup] {}
 
     func onItemUserDataChanged(
         viewModel: PagingLibraryViewModel<Self>,

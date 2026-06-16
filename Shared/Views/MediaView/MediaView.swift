@@ -48,7 +48,7 @@ struct MediaView: View {
                 case .favorites:
                     // TODO: favorites should have its own view instead of a library
                     let library = ItemLibrary(
-                        parent: TitledLibraryParent(displayTitle: L10n.favorites, id: "favorites"),
+                        parent: BaseItemDto(id: "favorites", name: L10n.favorites),
                         filters: .favorites
                     )
                     router.route(to: .library(library: library), in: namespace)

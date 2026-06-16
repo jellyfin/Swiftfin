@@ -8,32 +8,36 @@
 
 import Defaults
 import JellyfinAPI
+import SwiftUI
 
 @MainActor
 struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLibrary {
 
     struct Environment: WithDefaultValue {
+        var grouping: BaseItemDto.Grouping?
         var filters: ItemFilterCollection
 
-        static let `default`: Self = .init(filters: .default)
+        static let `default`: Self = .init(
+            grouping: nil,
+            filters: .default
+        )
     }
 
     let environment: Environment?
-    let isFilterable: Bool
-    let parent: AnyLibraryParent
+    let parent: BaseItemDto
 
     init(
-        parent: some LibraryParent,
+        parent: BaseItemDto,
         filters: ItemFilterCollection? = nil
     ) {
-        self.environment = .init(filters: filters ?? .default)
-        self.isFilterable = filters != nil
-        self.parent = .init(parent)
+        self.environment = .init(
+            grouping: parent.groupings?.defaultSelection,
+            filters: filters ?? .default
+        )
+        self.parent = parent
     }
 
     func makeFilterViewModel(environment: Environment) -> FilterViewModel? {
-        guard isFilterable else { return nil }
-
         var filters = environment.filters
 
         if let id = parent.id, Defaults[.Customization.Library.rememberSort] {
@@ -56,13 +60,41 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         environment.filters = filters
     }
 
+    @MenuContentGroupBuilder
+    func menuContent(environment: Binding<Environment>) -> [MenuContentGroup] {
+        if let groupings = parent.groupings, groupings.elements.isNotEmpty {
+            MenuContentGroup(id: "grouping") {
+                Picker(
+                    selection: Binding<BaseItemDto.Grouping?>(
+                        get: { environment.wrappedValue.grouping },
+                        set: { newGrouping in
+                            environment.wrappedValue.grouping = newGrouping
+                        }
+                    )
+                ) {
+                    ForEach(groupings.elements) { grouping in
+                        Text(grouping.displayTitle)
+                            .tag(grouping as BaseItemDto.Grouping?)
+                    }
+                } label: {
+                    Text(L10n.category)
+
+                    if let grouping = environment.wrappedValue.grouping {
+                        Text(grouping.displayTitle)
+                    }
+                }
+                .pickerStyle(.menu)
+            }
+        }
+    }
+
     func retrievePage(
         environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
         var parameters = attachPage(
             to: attachFilters(
-                to: makeBaseItemParameters(),
+                to: makeBaseItemParameters(environment: environment),
                 using: environment.filters
             ),
             pageState: pageState
@@ -80,7 +112,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         pageState: LibraryPageState
     ) async throws -> BaseItemDto? {
         var parameters = attachFilters(
-            to: makeBaseItemParameters(),
+            to: makeBaseItemParameters(environment: environment),
             using: environment.filters
         )
         parameters.limit = 1
@@ -100,7 +132,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
     ) async throws -> [BaseItemDto] {
         var parameters = attachPage(
             to: attachFilters(
-                to: makeBaseItemParameters(),
+                to: makeBaseItemParameters(environment: environment),
                 using: environment.filters,
                 isLetterFilterIncluded: false
             ),
@@ -115,16 +147,32 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         return normalize(response.value.items ?? [])
     }
 
-    private func makeBaseItemParameters() -> Paths.GetItemsParameters {
+    private func makeBaseItemParameters(environment: Environment) -> Paths.GetItemsParameters {
         var parameters = Paths.GetItemsParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
-        parameters.includeItemTypes = BaseItemKind.supportedCases
-        parameters.isRecursive = parent.isRecursiveCollection
+        parameters.includeItemTypes = parent.supportedItemTypes(for: environment.grouping)
+        parameters.isRecursive = parent.isRecursiveCollection(for: environment.grouping)
         parameters.sortBy = [.name]
         parameters.sortOrder = [.ascending]
 
-        return parent.setParentParameters(parameters)
+        guard let parentID = parent.id else { return parameters }
+
+        switch parent.libraryType {
+        case .boxSet, .collectionFolder, .userView:
+            parameters.parentID = parentID
+        case .folder:
+            parameters.parentID = parentID
+            parameters.isRecursive = nil
+        case .person:
+            parameters.personIDs = [parentID]
+        case .studio:
+            parameters.studioIDs = [parentID]
+        default:
+            break
+        }
+
+        return parameters
     }
 
     private func normalize(_ items: [BaseItemDto]) -> [BaseItemDto] {

@@ -19,19 +19,22 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @Default(.Customization.Library.rememberLayout)
     private var rememberIndividualLibraryStyle
 
+    @ForTypeInEnvironment<Element.Type, (Any) -> (LibraryStyle, Binding<LibraryStyle>?)>(\.libraryStyleRegistry)
+    private var libraryStyleRegistry
+
     @Namespace
     private var namespace
 
     @Router
     private var router
 
-    @ForTypeInEnvironment<Element.Type, (Any) -> (LibraryStyle, Binding<LibraryStyle>?)>(\.libraryStyleRegistry)
-    private var libraryStyleRegistry
-
     @StateObject
     private var gridProxy = CollectionVGridProxy()
     @StateObject
     private var viewModel: PagingLibraryViewModel<Library>
+
+    @State
+    private var collectedMenuGroups: [MenuContentGroup] = []
 
     @StoredValue(.User.libraryStyle(id: nil))
     private var defaultLibraryStyle: LibraryStyle
@@ -116,86 +119,139 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .navigationTitle(viewModel.library.parent.displayTitle)
         .backport
         .toolbarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
+        .preference(key: MenuContentKey.self) {
+            MenuContentGroup(id: "library-style") {
+                LibraryStyleSection(libraryStyle: libraryStyleBinding)
+            }
 
-                if viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage) {
-                    ProgressView()
+            viewModel.library.menuContent(environment: $viewModel.environment)
+
+            MenuContentGroup(id: "retrieve-random-element") {
+                Button(L10n.random, systemImage: "dice.fill") {
+                    viewModel.getRandomItem()
                 }
+            }
+        }
+        #if os(iOS)
+        .navigationBarMenuButton(
+            isLoading: viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage)
+        ) {}
+        #else
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    if viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage) {
+                        ProgressView()
+                    }
 
-                Menu(L10n.options, systemImage: "ellipsis.circle") {
-                    LibraryStyleSection(libraryStyle: libraryStyleBinding)
-
-                    Button(L10n.random, systemImage: "dice.fill") {
-                        viewModel.getRandomItem()
+                    if collectedMenuGroups.isNotEmpty {
+                        Menu(L10n.options, systemImage: "ellipsis.circle") {
+                            ForEach(collectedMenuGroups) { group in
+                                group.content
+                            }
+                        }
                     }
                 }
             }
-        }
-        .refreshable {
-            viewModel.refresh()
-        }
-        #if os(iOS)
-        .ifLet(viewModel.filterViewModel) { view, filterViewModel in
-            view.navigationBarFilterDrawer(
-                viewModel: filterViewModel,
-                types: enabledDrawerFilters
-            )
-        }
+            .onPreferenceChange(MenuContentKey.self) { newGroups in
+                collectedMenuGroups = newGroups
+            }
         #endif
-        .backport
-            .onChange(of: viewModel.environment) {
-                viewModel.refresh()
-            }
-            .backport
-            .onChange(of: viewModel.filterViewModel?.currentFilters) { _, newFilters in
-                guard let newFilters,
-                      let id = viewModel.library.parent.id,
-                      Defaults[.Customization.Library.rememberSort]
-                else { return }
-
-                let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
-                    .mutating(\.sortBy, with: newFilters.sortBy)
-                    .mutating(\.sortOrder, with: newFilters.sortOrder)
-
-                StoredValues[.User.libraryFilters(parentID: id)] = storedFilters
-            }
-            .backport
-            .onChange(of: libraryStyle) { oldStyle, newStyle in
-                if Element.layout(for: oldStyle) == Element.layout(for: newStyle) {
-                    gridProxy.layout()
+            .refreshable {
+                    viewModel.refresh()
                 }
-            }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case let .gotRandomItem(element):
-                    element.libraryDidSelectElement(router: router, in: namespace)
+        #if os(iOS)
+                .ifLet(viewModel.filterViewModel) { view, filterViewModel in
+                    view.navigationBarFilterDrawer(
+                        viewModel: filterViewModel,
+                        types: enabledDrawerFilters
+                    )
                 }
-            }
-            .onFirstAppear {
-                viewModel.refresh()
-            }
+        #endif
+                .backport
+                    .onChange(of: viewModel.environment) {
+                        viewModel.refresh()
+                    }
+                    .backport
+                    .onChange(of: viewModel.filterViewModel?.currentFilters) { _, newFilters in
+                        guard let newFilters,
+                              let id = viewModel.library.parent.id,
+                              Defaults[.Customization.Library.rememberSort]
+                        else { return }
+
+                        let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
+                            .mutating(\.sortBy, with: newFilters.sortBy)
+                            .mutating(\.sortOrder, with: newFilters.sortOrder)
+
+                        StoredValues[.User.libraryFilters(parentID: id)] = storedFilters
+                    }
+                    .backport
+                    .onChange(of: libraryStyle) { oldStyle, newStyle in
+                        if Element.layout(for: oldStyle) == Element.layout(for: newStyle) {
+                            gridProxy.layout()
+                        }
+                    }
+                    .onReceive(viewModel.events) { event in
+                        switch event {
+                        case let .gotRandomItem(element):
+                            element.libraryDidSelectElement(router: router, in: namespace)
+                        }
+                    }
+                    .onFirstAppear {
+                        viewModel.refresh()
+                    }
     }
 }
 
 private struct LibraryStyleSection: View {
 
-    @Binding
-    var libraryStyle: LibraryStyle
+    @StateObject
+    private var box: BindingBox<LibraryStyle>
+
+    private var libraryStyle: Binding<LibraryStyle> {
+        $box.value
+    }
+
+    init(libraryStyle: Binding<LibraryStyle>) {
+        self._box = StateObject(wrappedValue: BindingBox(source: libraryStyle))
+    }
 
     var body: some View {
-        Picker(L10n.layout, selection: $libraryStyle.displayType) {
+        Picker(selection: libraryStyle.displayType) {
             ForEach(LibraryDisplayType.allCases, id: \.self) { displayType in
-                Label(displayType.displayTitle, systemImage: displayType.systemImage)
-                    .tag(displayType)
+                Label(
+                    displayType.displayTitle,
+                    systemImage: displayType.systemImage
+                )
+                .tag(displayType)
             }
+        } label: {
+            Text(L10n.layout)
+
+            Text(libraryStyle.wrappedValue.displayType.displayTitle)
+
+            Image(systemName: libraryStyle.wrappedValue.displayType.systemImage)
+        }
+        .pickerStyle(.menu)
+
+        if libraryStyle.wrappedValue.displayType == .list, UIDevice.isPad {
+            // TODO: tvOS
+//            Stepper(
+//                L10n.columnsWithCount(libraryStyle.wrappedValue.listColumnCount),
+//                value: libraryStyle.listColumnCount,
+//                in: 1 ... 3
+//            )
         }
 
-        Picker(L10n.posters, selection: $libraryStyle.posterDisplayType) {
-            ForEach(PosterDisplayType.supportedCases, id: \.self) { posterDisplayType in
-                Label(posterDisplayType.displayTitle, systemImage: posterDisplayType.systemImage)
-                    .tag(posterDisplayType)
+        Picker(selection: libraryStyle.posterDisplayType) {
+            ForEach(PosterDisplayType.allCases, id: \.self) { displayType in
+                Text(displayType.displayTitle)
+                    .tag(displayType)
             }
+        } label: {
+            Text(L10n.posters)
+
+            Text(libraryStyle.wrappedValue.posterDisplayType.displayTitle)
         }
+        .pickerStyle(.menu)
     }
 }

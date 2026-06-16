@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 // TODO: selected icon
@@ -65,7 +66,7 @@ extension TabItem {
         ) {
             PagingLibraryView(
                 library: ItemLibrary(
-                    parent: TitledLibraryParent(displayTitle: title),
+                    parent: BaseItemDto(name: title),
                     filters: filters
                 )
             )

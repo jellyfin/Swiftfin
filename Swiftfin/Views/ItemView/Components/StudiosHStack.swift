@@ -23,7 +23,12 @@ extension ItemView {
                 title: L10n.studios,
                 items: studios
             ) { studio in
-                router.route(to: .library(library: ItemLibrary(parent: studio)))
+                let parent = BaseItemDto(
+                    id: studio.id,
+                    name: studio.displayTitle,
+                    type: .studio
+                )
+                router.route(to: .library(library: ItemLibrary(parent: parent)))
             }
         }
     }

@@ -30,11 +30,11 @@ final class ItemTypeCollection: ViewModel, Stateful {
 
     private var task: AnyCancellable?
 
-    private let parent: any LibraryParent
+    private let parent: BaseItemDto
     private let itemTypes: [BaseItemKind]
 
     init(
-        parent: any LibraryParent,
+        parent: BaseItemDto,
         itemTypes: [BaseItemKind] = BaseItemKind.supportedCases
     ) {
         self.parent = parent
