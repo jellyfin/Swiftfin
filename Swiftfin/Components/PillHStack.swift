@@ -48,7 +48,8 @@ struct PillHStack<Item: Displayable>: View {
                             }
                         }
                         if isLiquidGlassEnabled, #available(iOS 26.0, *) {
-                            button.buttonStyle(.glass).padding(.vertical(5))
+                            button.buttonStyle(.glass)
+                                .padding(.vertical(5))
                         } else {
                             button
                         }

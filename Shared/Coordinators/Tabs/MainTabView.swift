@@ -74,7 +74,8 @@ struct MainTabView: View {
                             ) {
                                 tabData.item.content
                             }.environmentObject(tabCoordinator)
-                                .environment(\.tabItemSelected, tabData.publisher).tag(tabData.item.id)
+                                .environment(\.tabItemSelected, tabData.publisher)
+                                .tag(tabData.item.id)
                         }
                     } else {
                         Tab(tabData.item.title, systemImage: tabData.item.systemImage) {
@@ -83,15 +84,17 @@ struct MainTabView: View {
                             ) {
                                 tabData.item.content
                             }.environmentObject(tabCoordinator)
-                                .environment(\.tabItemSelected, tabData.publisher).tag(tabData.item.id)
+                                .environment(\.tabItemSelected, tabData.publisher)
+                                .tag(tabData.item.id)
                         }
                     }
                 }
-            }.tabViewStyle(.sidebarAdaptable).onAppear {
-                routePendingDeepLink()
-            }.onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
-                routePendingDeepLink()
-            }
+            }.tabViewStyle(.sidebarAdaptable)
+                .onAppear {
+                    routePendingDeepLink()
+                }.onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
+                    routePendingDeepLink()
+                }
         } else {
             TabView(selection: $tabCoordinator.selectedTabID) {
                 ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
