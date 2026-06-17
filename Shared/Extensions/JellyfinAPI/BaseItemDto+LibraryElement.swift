@@ -14,7 +14,6 @@ private let baseItemListPortraitWidth: CGFloat = 60
 
 extension BaseItemDto: LibraryElement {
 
-    @MainActor
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
         switch type {
         case .collectionFolder, .folder, .userView:
