@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -24,40 +25,31 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
     }
 
     let environment: Environment?
+    let filterViewModel: FilterViewModel
     let parent: BaseItemDto
 
     init(
         parent: BaseItemDto,
         filters: ItemFilterCollection? = nil
     ) {
-        self.environment = .init(
+        var environment = Environment(
             grouping: parent.groupings?.defaultSelection,
             filters: filters ?? .default
         )
-        self.parent = parent
-    }
-
-    func makeFilterViewModel(environment: Environment) -> FilterViewModel? {
-        var filters = environment.filters
 
         if let id = parent.id, Defaults[.Customization.Library.rememberSort] {
             let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
 
-            filters.sortBy = storedFilters.sortBy
-            filters.sortOrder = storedFilters.sortOrder
+            environment.filters.sortBy = storedFilters.sortBy
+            environment.filters.sortOrder = storedFilters.sortOrder
         }
 
-        return FilterViewModel(
+        self.environment = environment
+        self.filterViewModel = .init(
             parent: parent,
-            currentFilters: filters
+            currentFilters: environment.filters
         )
-    }
-
-    func setFilters(
-        _ filters: ItemFilterCollection,
-        on environment: inout Environment
-    ) {
-        environment.filters = filters
+        self.parent = parent
     }
 
     @MenuContentGroupBuilder
@@ -86,6 +78,18 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
                 .pickerStyle(.menu)
             }
         }
+    }
+
+    func makeLibraryBody(
+        viewModel: PagingLibraryViewModel<Self>,
+        @ViewBuilder content: @escaping () -> some View
+    ) -> AnyView {
+        ItemLibraryBody(
+            content: content(),
+            filterViewModel: filterViewModel,
+            viewModel: viewModel
+        )
+        .eraseToAnyView()
     }
 
     func retrievePage(
@@ -232,5 +236,67 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         parameters.limit = pageState.pageSize
         parameters.startIndex = pageState.pageOffset
         return parameters
+    }
+}
+
+private struct ItemLibraryBody<Content: View>: View {
+
+    @Default(.Customization.Library.enabledDrawerFilters)
+    private var enabledDrawerFilters
+
+    @ObservedObject
+    private var viewModel: PagingLibraryViewModel<ItemLibrary>
+
+    private let content: Content
+    private let filterViewModel: FilterViewModel
+
+    init(
+        content: Content,
+        filterViewModel: FilterViewModel,
+        viewModel: PagingLibraryViewModel<ItemLibrary>
+    ) {
+        self.content = content
+        self.filterViewModel = filterViewModel
+        self.viewModel = viewModel
+    }
+
+    var body: some View {
+        content
+            .letterPickerBar(filterViewModel: filterViewModel)
+            .onFirstAppear {
+                Task {
+                    await filterViewModel.getQueryFilters()
+                }
+            }
+        #if os(iOS)
+            .navigationBarFilterDrawer(
+                viewModel: filterViewModel,
+                types: enabledDrawerFilters
+            )
+        #endif
+            .backport
+                .onChange(of: filterViewModel.currentFilters) { _, newFilters in
+                    rememberSort(from: newFilters)
+                }
+                .onReceive(
+                    filterViewModel.$currentFilters
+                        .dropFirst()
+                        .removeDuplicates()
+                        .debounce(for: 1, scheduler: RunLoop.main)
+                ) { filters in
+                    viewModel.environment.filters = filters
+                }
+    }
+
+    private func rememberSort(from filters: ItemFilterCollection) {
+        guard let id = viewModel.library.parent.id,
+              Defaults[.Customization.Library.rememberSort]
+        else { return }
+
+        let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
+            .mutating(\.sortBy, with: filters.sortBy)
+            .mutating(\.sortOrder, with: filters.sortOrder)
+
+        StoredValues[.User.libraryFilters(parentID: id)] = storedFilters
     }
 }

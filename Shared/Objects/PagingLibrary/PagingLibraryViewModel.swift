@@ -79,7 +79,6 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
     @Published
     var searchQuery: String = ""
 
-    let filterViewModel: FilterViewModel?
     let library: Library
     let pageSize: Int
 
@@ -116,16 +115,8 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
         library: Library,
         pageSize: Int = defaultPagingLibraryPageSize
     ) {
-        var environment = library.environment ?? .default
-        let filterViewModel = library.makeFilterViewModel(environment: environment)
-
-        if let filterViewModel {
-            library.setFilters(filterViewModel.currentFilters, on: &environment)
-        }
-
         self.elements = IdentifiedArray([], uniquingIDsWith: { existing, _ in existing })
-        self.environment = environment
-        self.filterViewModel = filterViewModel
+        self.environment = library.environment ?? .default
         self.searchElements = IdentifiedArray([], uniquingIDsWith: { existing, _ in existing })
         self.hasNextPage = library.hasNextPage
         self.hasNextSearchPage = false
@@ -151,23 +142,6 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
             }
             .store(in: &cancellables)
 
-        filterViewModel?.$currentFilters
-            .dropFirst()
-            .debounce(for: 1, scheduler: RunLoop.main)
-            .removeDuplicates()
-            .sink { [weak self] filters in
-                guard let self else { return }
-
-                var environment = self.environment
-                library.setFilters(filters, on: &environment)
-                self.environment = environment
-
-                if self.isSearchActive {
-                    self.search(query: self.normalizedSearchQuery)
-                }
-            }
-            .store(in: &cancellables)
-
         $searchQuery
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .removeDuplicates()
@@ -176,6 +150,14 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
                 self?.search(query: query)
             }
             .store(in: &cancellables)
+    }
+
+    func refreshForEnvironmentChange() {
+        if isSearchActive {
+            search(query: normalizedSearchQuery)
+        } else {
+            refresh()
+        }
     }
 
     private func removeDeletedItem(withID id: String) {
@@ -257,8 +239,6 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        await filterViewModel?.getQueryFilters()
-
         hasNextPage = true
         elements.removeAll()
         try await __actuallyGetNextPage()
