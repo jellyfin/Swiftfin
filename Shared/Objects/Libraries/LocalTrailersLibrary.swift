@@ -8,10 +8,11 @@
 
 import JellyfinAPI
 
-struct LocalTrailerLibrary: PagingLibrary {
+struct LocalTrailerLibrary: BaseItemKindLibrary {
 
-    let parent: TitledLibraryParent
     let hasNextPage: Bool = false
+    let libraryItemTypes: [BaseItemKind] = [.trailer]
+    let parent: TitledLibraryParent
 
     init(parentID: String) {
         self.parent = .init(displayTitle: "", id: parentID)

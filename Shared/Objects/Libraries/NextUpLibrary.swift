@@ -10,7 +10,7 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-struct NextUpLibrary: PagingLibrary {
+struct NextUpLibrary: BaseItemKindLibrary {
 
     struct Environment: WithDefaultValue {
         var enableRewatching: Bool
@@ -22,6 +22,7 @@ struct NextUpLibrary: PagingLibrary {
         )
     }
 
+    let libraryItemTypes: [BaseItemKind] = [.episode]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.nextUp, id: "next-up")
 
     func retrievePage(

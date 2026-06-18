@@ -45,6 +45,8 @@ extension BaseItemDto: LibraryParent {
             [.movie]
         case (.tvshows, _):
             grouping == .episodes ? [.episode] : [.series]
+        case (.music, _):
+            [.audio, .musicAlbum, .musicArtist]
         case (.boxsets, _):
             BaseItemKind.supportedCases
         default:

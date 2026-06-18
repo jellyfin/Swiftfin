@@ -11,22 +11,12 @@ import SwiftUI
 
 extension BaseItemPerson: LibraryElement {
 
+    static var supportedLibraryStyleOptions: LibraryStyleOptions {
+        BaseItemKind.libraryStyleOptions(for: [.person])
+    }
+
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
         BaseItemDto(person: self)
             .libraryDidSelectElement(router: router, in: namespace)
-    }
-
-    func makeGridBody(libraryStyle: LibraryStyle) -> some View {
-        DefaultLibraryGridElement(
-            element: self,
-            libraryStyle: libraryStyle.mutating(\.posterDisplayType, with: .portrait)
-        )
-    }
-
-    func makeListBody(libraryStyle: LibraryStyle) -> some View {
-        DefaultLibraryListElement(
-            element: self,
-            libraryStyle: libraryStyle.mutating(\.posterDisplayType, with: .portrait)
-        )
     }
 }

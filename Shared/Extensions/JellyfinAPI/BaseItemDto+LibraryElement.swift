@@ -14,6 +14,17 @@ private let baseItemListPortraitWidth: CGFloat = 60
 
 extension BaseItemDto: LibraryElement {
 
+    var supportedLibraryStyleOptions: LibraryStyleOptions {
+        switch type {
+        case .collectionFolder, .folder, .userView:
+            return BaseItemKind.libraryStyleOptions(for: supportedItemTypes)
+        default:
+            break
+        }
+
+        return type.map { BaseItemKind.libraryStyleOptions(for: [$0]) } ?? .default
+    }
+
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
         switch type {
         case .collectionFolder, .folder, .userView:
@@ -46,11 +57,15 @@ private struct BaseItemDtoLibraryGridElement: View {
     let item: BaseItemDto
     let libraryStyle: LibraryStyle
 
+    private var resolvedLibraryStyle: LibraryStyle {
+        item.resolvedLibraryStyle(libraryStyle)
+    }
+
     var body: some View {
         #if os(iOS)
         PosterButton(
             item: item,
-            type: libraryStyle.posterDisplayType
+            type: resolvedLibraryStyle.posterDisplayType
         ) { namespace in
             item.libraryDidSelectElement(router: router, in: namespace)
         } label: {
@@ -59,7 +74,7 @@ private struct BaseItemDtoLibraryGridElement: View {
         #else
         PosterButton(
             item: item,
-            type: libraryStyle.posterDisplayType
+            type: resolvedLibraryStyle.posterDisplayType
         ) {
             item.libraryDidSelectElement(router: router, in: namespace)
         } label: {
@@ -80,15 +95,19 @@ private struct BaseItemDtoLibraryListElement: View {
     let item: BaseItemDto
     let libraryStyle: LibraryStyle
 
+    private var resolvedLibraryStyle: LibraryStyle {
+        item.resolvedLibraryStyle(libraryStyle)
+    }
+
     var body: some View {
         ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
             PosterImage(
                 item: item,
-                type: libraryStyle.posterDisplayType,
+                type: resolvedLibraryStyle.posterDisplayType,
                 contentMode: .fill
             )
             .posterShadow()
-            .frame(width: libraryStyle.posterDisplayType == .landscape ? baseItemListLandscapeWidth : baseItemListPortraitWidth)
+            .frame(width: resolvedLibraryStyle.posterDisplayType == .landscape ? baseItemListLandscapeWidth : baseItemListPortraitWidth)
         } content: {
             VStack(alignment: .leading, spacing: 5) {
                 Text(item.displayTitle)

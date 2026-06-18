@@ -8,9 +8,10 @@
 
 import JellyfinAPI
 
-struct SpecialFeaturesLibrary: PagingLibrary {
+struct SpecialFeaturesLibrary: BaseItemKindLibrary {
 
     let itemID: String
+    let libraryItemTypes: [BaseItemKind] = [.video]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.specialFeatures, id: "special-features")
 
     func retrievePage(

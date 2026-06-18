@@ -30,8 +30,9 @@ struct SeasonViewModelLibrary: PagingLibrary {
     }
 }
 
-struct SeasonLibrary: PagingLibrary {
+struct SeasonLibrary: BaseItemKindLibrary {
 
+    let libraryItemTypes: [BaseItemKind] = [.season]
     let parent: BaseItemDto
 
     init(series: BaseItemDto) {

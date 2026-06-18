@@ -8,7 +8,7 @@
 
 import JellyfinAPI
 
-struct PeopleLibrary: PagingLibrary {
+struct PeopleLibrary: BaseItemKindLibrary {
 
     struct Environment: WithDefaultValue {
         var query: String?
@@ -19,6 +19,7 @@ struct PeopleLibrary: PagingLibrary {
     }
 
     let environment: Environment
+    let libraryItemTypes: [BaseItemKind] = [.person]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.people, id: "people")
 
     init(environment: Environment = .default) {

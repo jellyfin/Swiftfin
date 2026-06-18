@@ -17,9 +17,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @Default(.Customization.Library.rememberLayout)
     private var rememberIndividualLibraryStyle
 
-    @ForTypeInEnvironment<Element.Type, (Any) -> (LibraryStyle, Binding<LibraryStyle>?)>(\.libraryStyleRegistry)
-    private var libraryStyleRegistry
-
     @Namespace
     private var namespace
 
@@ -39,12 +36,21 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @StoredValue
     private var parentLibraryStyle: LibraryStyle
 
-    private var libraryStyle: LibraryStyle {
-        libraryStyleRegistry?(Element.self).0 ?? storedLibraryStyle
+    private var libraryStyleOptions: LibraryStyleOptions {
+        viewModel.libraryStyleOptions
     }
 
-    private var libraryStyleBinding: Binding<LibraryStyle> {
-        libraryStyleRegistry?(Element.self).1 ?? storedLibraryStyleBinding
+    private var libraryStyle: LibraryStyle {
+        libraryStyleOptions.normalized(storedLibraryStyle)
+    }
+
+    private var isLibraryStyleSectionVisible: Bool {
+        libraryStyleOptions.hasVisibleControls ||
+            (
+                libraryStyle.displayType == .list &&
+                    UIDevice.isPad &&
+                    libraryStyleOptions.displayTypes.contains(.list)
+            )
     }
 
     private var storedLibraryStyle: LibraryStyle {
@@ -64,7 +70,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     private var elementsView: some View {
         CollectionVGrid(
             uniqueElements: viewModel.displayedElements,
-            layout: Element.layout(for: libraryStyle)
+            layout: Element.layout(for: libraryStyle, options: libraryStyleOptions)
         ) { element in
             switch libraryStyle.displayType {
             case .grid:
@@ -100,9 +106,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                         )
                     } else {
                         elementsView
-                            .libraryStyle(for: Element.self) { _, _ in
-                                (storedLibraryStyle, storedLibraryStyleBinding)
-                            }
                     }
                 case .error:
                     viewModel.error.map(ErrorView.init)
@@ -117,8 +120,13 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .backport
         .toolbarTitleDisplayMode(.inline)
         .preference(key: MenuContentKey.self) {
-            MenuContentGroup(id: "library-style") {
-                LibraryStyleSection(libraryStyle: libraryStyleBinding)
+            if isLibraryStyleSectionVisible {
+                MenuContentGroup(id: "library-style") {
+                    LibraryStyleSection(
+                        libraryStyle: storedLibraryStyleBinding,
+                        options: libraryStyleOptions
+                    )
+                }
             }
 
             viewModel.library.menuContent(environment: $viewModel.environment)
@@ -162,7 +170,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 }
                 .backport
                 .onChange(of: libraryStyle) { oldStyle, newStyle in
-                    if Element.layout(for: oldStyle) == Element.layout(for: newStyle) {
+                    if Element.layout(for: oldStyle, options: libraryStyleOptions) ==
+                        Element.layout(for: newStyle, options: libraryStyleOptions)
+                    {
                         gridProxy.layout()
                     }
                 }
@@ -175,59 +185,5 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 .onFirstAppear {
                     viewModel.refresh()
                 }
-    }
-}
-
-private struct LibraryStyleSection: View {
-
-    @StateObject
-    private var box: BindingBox<LibraryStyle>
-
-    private var libraryStyle: Binding<LibraryStyle> {
-        $box.value
-    }
-
-    init(libraryStyle: Binding<LibraryStyle>) {
-        self._box = StateObject(wrappedValue: BindingBox(source: libraryStyle))
-    }
-
-    var body: some View {
-        Picker(selection: libraryStyle.displayType) {
-            ForEach(LibraryDisplayType.allCases, id: \.self) { displayType in
-                Label(
-                    displayType.displayTitle,
-                    systemImage: displayType.systemImage
-                )
-                .tag(displayType)
-            }
-        } label: {
-            Text(L10n.layout)
-
-            Text(libraryStyle.wrappedValue.displayType.displayTitle)
-
-            Image(systemName: libraryStyle.wrappedValue.displayType.systemImage)
-        }
-        .pickerStyle(.menu)
-
-        if libraryStyle.wrappedValue.displayType == .list, UIDevice.isPad {
-            // TODO: tvOS
-//            Stepper(
-//                L10n.columnsWithCount(libraryStyle.wrappedValue.listColumnCount),
-//                value: libraryStyle.listColumnCount,
-//                in: 1 ... 3
-//            )
-        }
-
-        Picker(selection: libraryStyle.posterDisplayType) {
-            ForEach(PosterDisplayType.allCases, id: \.self) { displayType in
-                Text(displayType.displayTitle)
-                    .tag(displayType)
-            }
-        } label: {
-            Text(L10n.posters)
-
-            Text(libraryStyle.wrappedValue.posterDisplayType.displayTitle)
-        }
-        .pickerStyle(.menu)
     }
 }

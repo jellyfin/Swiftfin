@@ -8,8 +8,9 @@
 
 import JellyfinAPI
 
-struct GenresLibrary: PagingLibrary {
+struct GenresLibrary: BaseItemKindLibrary {
 
+    let libraryItemTypes: [BaseItemKind] = [.genre]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.genres, id: "genres")
 
     func retrievePage(

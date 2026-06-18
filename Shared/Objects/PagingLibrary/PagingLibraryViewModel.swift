@@ -333,3 +333,13 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
         )
     }
 }
+
+extension PagingLibraryViewModel where Element: LibraryElement {
+
+    var libraryStyleOptions: LibraryStyleOptions {
+        library.resolvedLibraryStyleOptions(
+            environment: environment,
+            elements: displayedElements
+        )
+    }
+}

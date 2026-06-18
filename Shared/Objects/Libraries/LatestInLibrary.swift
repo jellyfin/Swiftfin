@@ -8,8 +8,9 @@
 
 import JellyfinAPI
 
-struct LatestInLibrary: PagingLibrary {
+struct LatestInLibrary: BaseItemKindLibrary {
 
+    let libraryItemTypes: [BaseItemKind]
     let parent: TitledLibraryParent
 
     init(library: BaseItemDto) {
@@ -17,6 +18,7 @@ struct LatestInLibrary: PagingLibrary {
             displayTitle: L10n.latestWithString(library.displayTitle),
             id: library.id
         )
+        self.libraryItemTypes = library.supportedItemTypes
     }
 
     func retrievePage(

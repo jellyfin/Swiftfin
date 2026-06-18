@@ -8,10 +8,14 @@
 
 import JellyfinAPI
 
-struct ResumeItemsLibrary: PagingLibrary {
+struct ResumeItemsLibrary: BaseItemKindLibrary {
 
     let mediaTypes: [MediaType]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.continue, id: "continue-watching")
+
+    var libraryItemTypes: [BaseItemKind] {
+        mediaTypes.flatMap(\.supportedLibraryItemTypes)
+    }
 
     init(mediaTypes: [MediaType] = [.video]) {
         self.mediaTypes = mediaTypes
@@ -51,5 +55,23 @@ struct ResumeItemsLibrary: PagingLibrary {
         guard (userData.playbackPositionTicks ?? 0) > 0 else { return }
 
         viewModel.scheduleRefreshForItemUserData(minimumInterval: 30)
+    }
+}
+
+private extension MediaType {
+
+    var supportedLibraryItemTypes: [BaseItemKind] {
+        switch self {
+        case .audio:
+            [.audio, .musicAlbum]
+        case .video:
+            [.episode, .movie, .video]
+        case .book:
+            [.book]
+        case .photo:
+            [.photo]
+        case .unknown:
+            []
+        }
     }
 }

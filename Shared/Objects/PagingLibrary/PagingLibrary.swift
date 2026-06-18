@@ -37,6 +37,8 @@ protocol PagingLibrary<Element> {
         @ViewBuilder content: @escaping () -> some View
     ) -> AnyView
 
+    func libraryStyleOptions(environment: Environment) -> LibraryStyleOptions
+
     @MenuContentGroupBuilder
     func menuContent(environment: Binding<Environment>) -> [MenuContentGroup]
 
@@ -44,6 +46,23 @@ protocol PagingLibrary<Element> {
         viewModel: PagingLibraryViewModel<Self>,
         userData: UserItemDataDto
     )
+}
+
+extension PagingLibrary where Element: LibraryElement {
+
+    func libraryStyleOptions(environment: Environment) -> LibraryStyleOptions {
+        Element.supportedLibraryStyleOptions
+    }
+
+    func resolvedLibraryStyleOptions(
+        environment: Environment,
+        elements: some Sequence<Element>
+    ) -> LibraryStyleOptions {
+        LibraryStyleOptions.resolving(
+            elements.map(\.supportedLibraryStyleOptions),
+            fallback: libraryStyleOptions(environment: environment)
+        )
+    }
 }
 
 extension PagingLibrary {
@@ -62,6 +81,10 @@ extension PagingLibrary {
     ) -> AnyView {
         content()
             .eraseToAnyView()
+    }
+
+    func libraryStyleOptions(environment: Environment) -> LibraryStyleOptions {
+        .default
     }
 
     @MenuContentGroupBuilder

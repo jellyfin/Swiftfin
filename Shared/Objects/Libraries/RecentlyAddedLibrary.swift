@@ -8,8 +8,9 @@
 
 import JellyfinAPI
 
-struct RecentlyAddedLibrary: PagingLibrary {
+struct RecentlyAddedLibrary: BaseItemKindLibrary {
 
+    let libraryItemTypes: [BaseItemKind] = [.movie, .series]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.recentlyAdded, id: "recently-added")
 
     func retrievePage(

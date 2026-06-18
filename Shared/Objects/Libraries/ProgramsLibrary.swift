@@ -8,8 +8,9 @@
 
 import JellyfinAPI
 
-struct ProgramsLibrary: PagingLibrary {
+struct ProgramsLibrary: BaseItemKindLibrary {
 
+    let libraryItemTypes: [BaseItemKind] = [.program]
     let parent: TitledLibraryParent
     let section: ProgramSection
 

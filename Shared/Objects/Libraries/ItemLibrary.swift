@@ -92,6 +92,14 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         .eraseToAnyView()
     }
 
+    func libraryStyleOptions(environment: Environment) -> LibraryStyleOptions {
+        let itemTypes = environment.filters.itemTypes.isEmpty ?
+            parent.supportedItemTypes(for: environment.grouping) :
+            environment.filters.itemTypes
+
+        return BaseItemKind.libraryStyleOptions(for: itemTypes)
+    }
+
     func retrievePage(
         environment: Environment,
         pageState: LibraryPageState

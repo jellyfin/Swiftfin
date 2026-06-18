@@ -9,9 +9,10 @@
 import Defaults
 import JellyfinAPI
 
-struct EpisodeLibrary: PagingLibrary {
+struct EpisodeLibrary: BaseItemKindLibrary {
 
     let hasNextPage = false
+    let libraryItemTypes: [BaseItemKind] = [.episode]
     let parent: BaseItemDto
 
     init(season: BaseItemDto) {

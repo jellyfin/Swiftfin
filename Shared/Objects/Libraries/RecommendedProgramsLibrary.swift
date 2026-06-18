@@ -8,8 +8,9 @@
 
 import JellyfinAPI
 
-struct RecommendedProgramsLibrary: PagingLibrary {
+struct RecommendedProgramsLibrary: BaseItemKindLibrary {
 
+    let libraryItemTypes: [BaseItemKind] = [.program]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.onNow, id: "programs-recommended")
 
     func retrievePage(

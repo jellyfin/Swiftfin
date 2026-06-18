@@ -8,9 +8,10 @@
 
 import JellyfinAPI
 
-struct MediaLibrary: PagingLibrary {
+struct MediaLibrary: BaseItemKindLibrary {
 
     let hasNextPage: Bool = false
+    let libraryItemTypes: [BaseItemKind] = [.userView]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.media, id: "media-library")
 
     func retrievePage(

@@ -18,6 +18,10 @@ protocol LibraryElement: Poster {
     associatedtype GridBody: View = DefaultLibraryGridElement<Self>
     associatedtype ListBody: View = DefaultLibraryListElement<Self>
 
+    static var supportedLibraryStyleOptions: LibraryStyleOptions { get }
+
+    var supportedLibraryStyleOptions: LibraryStyleOptions { get }
+
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID)
 
     @ViewBuilder
@@ -26,10 +30,25 @@ protocol LibraryElement: Poster {
     @ViewBuilder
     func makeListBody(libraryStyle: LibraryStyle) -> ListBody
 
-    static func layout(for libraryStyle: LibraryStyle) -> CollectionVGridLayout
+    static func layout(
+        for libraryStyle: LibraryStyle,
+        options: LibraryStyleOptions
+    ) -> CollectionVGridLayout
 }
 
 extension LibraryElement {
+
+    static var supportedLibraryStyleOptions: LibraryStyleOptions {
+        .default
+    }
+
+    var supportedLibraryStyleOptions: LibraryStyleOptions {
+        Self.supportedLibraryStyleOptions
+    }
+
+    func resolvedLibraryStyle(_ libraryStyle: LibraryStyle) -> LibraryStyle {
+        supportedLibraryStyleOptions.normalized(libraryStyle)
+    }
 
     func makeGridBody(libraryStyle: LibraryStyle) -> DefaultLibraryGridElement<Self> {
         DefaultLibraryGridElement(element: self, libraryStyle: libraryStyle)
@@ -39,7 +58,12 @@ extension LibraryElement {
         DefaultLibraryListElement(element: self, libraryStyle: libraryStyle)
     }
 
-    static func layout(for libraryStyle: LibraryStyle) -> CollectionVGridLayout {
+    static func layout(
+        for libraryStyle: LibraryStyle,
+        options: LibraryStyleOptions
+    ) -> CollectionVGridLayout {
+        let libraryStyle = options.normalized(libraryStyle)
+
         #if os(iOS)
         let gridLayout: CollectionVGridLayout = {
             switch libraryStyle.posterDisplayType {
@@ -107,23 +131,38 @@ struct DefaultLibraryGridElement<Element: LibraryElement>: View {
     let element: Element
     let libraryStyle: LibraryStyle
 
+    private var resolvedLibraryStyle: LibraryStyle {
+        element.resolvedLibraryStyle(libraryStyle)
+    }
+
     var body: some View {
         Button {
             element.libraryDidSelectElement(router: router, in: namespace)
         } label: {
             VStack(alignment: .leading, spacing: 6) {
-                PosterImage(item: element, type: libraryStyle.posterDisplayType)
+                PosterImage(item: element, type: resolvedLibraryStyle.posterDisplayType)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .posterStyle(libraryStyle.posterDisplayType)
+                    .posterStyle(resolvedLibraryStyle.posterDisplayType)
                     .backport
                     .matchedTransitionSource(id: "item", in: namespace)
                     .posterShadow()
 
-                if element.showTitle {
-                    Text(element.displayTitle)
-                        .font(.footnote)
-                        .foregroundStyle(.primary)
-                        .lineLimit(1, reservesSpace: true)
+                if element.showTitle || element.subtitle != nil {
+                    VStack(alignment: .leading, spacing: 0) {
+                        if element.showTitle {
+                            Text(element.displayTitle)
+                                .font(.footnote)
+                                .fontWeight(.regular)
+                                .foregroundStyle(.primary)
+                                .lineLimit(1, reservesSpace: true)
+                        }
+
+                        Text(element.subtitle ?? " ")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1, reservesSpace: true)
+                    }
                 }
             }
         }
@@ -143,14 +182,18 @@ struct DefaultLibraryListElement<Element: LibraryElement>: View {
     let element: Element
     let libraryStyle: LibraryStyle
 
+    private var resolvedLibraryStyle: LibraryStyle {
+        element.resolvedLibraryStyle(libraryStyle)
+    }
+
     private var posterWidth: CGFloat {
-        libraryStyle.posterDisplayType == .landscape ? libraryListLandscapeWidth : libraryListPortraitWidth
+        resolvedLibraryStyle.posterDisplayType == .landscape ? libraryListLandscapeWidth : libraryListPortraitWidth
     }
 
     var body: some View {
         ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
-            PosterImage(item: element, type: libraryStyle.posterDisplayType)
-                .posterStyle(libraryStyle.posterDisplayType)
+            PosterImage(item: element, type: resolvedLibraryStyle.posterDisplayType)
+                .posterStyle(resolvedLibraryStyle.posterDisplayType)
                 .frame(width: posterWidth)
                 .backport
                 .matchedTransitionSource(id: "item", in: namespace)
