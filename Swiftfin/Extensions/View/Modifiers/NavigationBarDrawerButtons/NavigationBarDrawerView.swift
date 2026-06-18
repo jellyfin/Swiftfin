@@ -28,7 +28,7 @@ struct NavigationBarDrawerView<Content: View, Drawer: View>: UIViewControllerRep
     func updateUIViewController(_ uiViewController: UINavigationBarDrawerHostingController<Content, Drawer>, context: Context) {}
 }
 
-class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIViewController {
+class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIHostingController<Content> {
 
     private let drawer: () -> Drawer
     private let content: () -> Content
@@ -40,13 +40,6 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
         blurView.translatesAutoresizingMaskIntoConstraints = false
         return blurView
-    }()
-
-    private lazy var contentView: UIHostingController<Content> = {
-        let contentView = UIHostingController(rootView: content())
-        contentView.view.translatesAutoresizingMaskIntoConstraints = false
-        contentView.view.backgroundColor = nil
-        return contentView
     }()
 
     private lazy var drawerButtonsView: UIHostingController<Drawer> = {
@@ -63,7 +56,7 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         self.drawer = buttons
         self.content = content
 
-        super.init(nibName: nil, bundle: nil)
+        super.init(rootView: content())
     }
 
     @available(*, unavailable)
@@ -76,22 +69,11 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
 
         view.backgroundColor = nil
 
-        addChild(contentView)
-        view.addSubview(contentView.view)
-        contentView.didMove(toParent: self)
-
         view.addSubview(blurView)
 
         addChild(drawerButtonsView)
         view.addSubview(drawerButtonsView.view)
         drawerButtonsView.didMove(toParent: self)
-
-        NSLayoutConstraint.activate([
-            contentView.view.topAnchor.constraint(equalTo: view.topAnchor),
-            contentView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            contentView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            contentView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
 
         NSLayoutConstraint.activate([
             drawerButtonsView.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -drawerHeight),
@@ -106,13 +88,6 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
             blurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             blurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
-
-        // The filter drawer sits visually at the top of the screen but is added as an
-        // overlay subview, so by default VoiceOver reads it last (grouped near the
-        // bottom with the section index bar). Explicitly order the drawer before the
-        // content so it is announced near the navigation bar where users expect it.
-        // See https://github.com/jellyfin/Swiftfin/issues/1734
-        view.accessibilityElements = [drawerButtonsView.view as Any, contentView.view as Any]
     }
 
     override func viewWillAppear(_ animated: Bool) {
