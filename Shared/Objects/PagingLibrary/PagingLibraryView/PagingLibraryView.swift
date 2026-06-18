@@ -28,9 +28,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @StateObject
     private var viewModel: PagingLibraryViewModel<Library>
 
-    @State
-    private var collectedMenuGroups: [MenuContentGroup] = []
-
     @StoredValue(.User.libraryStyle(id: nil))
     private var defaultLibraryStyle: LibraryStyle
     @StoredValue
@@ -90,6 +87,22 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .scrollIndicators(.hidden)
     }
 
+    @ViewBuilder
+    private var menuContent: some View {
+        if isLibraryStyleSectionVisible {
+            LibraryStyleSection(
+                libraryStyle: storedLibraryStyleBinding,
+                options: libraryStyleOptions
+            )
+        }
+
+        viewModel.library.makeMenuContent(environment: $viewModel.environment)
+
+        Button(L10n.random, systemImage: "dice.fill") {
+            viewModel.getRandomItem()
+        }
+    }
+
     var body: some View {
         viewModel.library.makeLibraryBody(viewModel: viewModel) {
             ZStack {
@@ -119,28 +132,12 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .navigationTitle(viewModel.library.parent.displayTitle)
         .backport
         .toolbarTitleDisplayMode(.inline)
-        .preference(key: MenuContentKey.self) {
-            if isLibraryStyleSectionVisible {
-                MenuContentGroup(id: "library-style") {
-                    LibraryStyleSection(
-                        libraryStyle: storedLibraryStyleBinding,
-                        options: libraryStyleOptions
-                    )
-                }
-            }
-
-            viewModel.library.menuContent(environment: $viewModel.environment)
-
-            MenuContentGroup(id: "retrieve-random-element") {
-                Button(L10n.random, systemImage: "dice.fill") {
-                    viewModel.getRandomItem()
-                }
-            }
-        }
         #if os(iOS)
-        .navigationBarMenuButton(
-            isLoading: viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage)
-        ) {}
+            .navigationBarMenuButton(
+                isLoading: viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage)
+            ) {
+                menuContent
+            }
         #else
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
@@ -148,17 +145,10 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                         ProgressView()
                     }
 
-                    if collectedMenuGroups.isNotEmpty {
-                        Menu(L10n.options, systemImage: "ellipsis.circle") {
-                            ForEach(collectedMenuGroups) { group in
-                                group.content
-                            }
-                        }
+                    Menu(L10n.options, systemImage: "ellipsis.circle") {
+                        menuContent
                     }
                 }
-            }
-            .onPreferenceChange(MenuContentKey.self) { newGroups in
-                collectedMenuGroups = newGroups
             }
         #endif
             .refreshable {

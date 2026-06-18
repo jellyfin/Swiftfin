@@ -52,16 +52,13 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         self.parent = parent
     }
 
-    @MenuContentGroupBuilder
-    func menuContent(environment: Binding<Environment>) -> [MenuContentGroup] {
-        if let groupings = parent.groupings, groupings.elements.isNotEmpty {
-            MenuContentGroup(id: "grouping") {
+    func makeMenuContent(environment: Binding<Environment>) -> AnyView {
+        Group {
+            if let groupings = parent.groupings, groupings.elements.isNotEmpty {
                 Picker(
-                    selection: Binding<BaseItemDto.Grouping?>(
-                        get: { environment.wrappedValue.grouping },
-                        set: { newGrouping in
-                            environment.wrappedValue.grouping = newGrouping
-                        }
+                    selection: environment.map(
+                        getter: { $0.grouping },
+                        setter: { .init(grouping: $0, filters: environment.wrappedValue.filters) }
                     )
                 ) {
                     ForEach(groupings.elements) { grouping in
@@ -69,7 +66,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
                             .tag(grouping as BaseItemDto.Grouping?)
                     }
                 } label: {
-                    Text(L10n.category)
+                    Text(L10n.grouping)
 
                     if let grouping = environment.wrappedValue.grouping {
                         Text(grouping.displayTitle)
@@ -78,6 +75,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
                 .pickerStyle(.menu)
             }
         }
+        .eraseToAnyView()
     }
 
     func makeLibraryBody(

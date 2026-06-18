@@ -39,8 +39,7 @@ protocol PagingLibrary<Element> {
 
     func libraryStyleOptions(environment: Environment) -> LibraryStyleOptions
 
-    @MenuContentGroupBuilder
-    func menuContent(environment: Binding<Environment>) -> [MenuContentGroup]
+    func makeMenuContent(environment: Binding<Environment>) -> AnyView
 
     func onItemUserDataChanged(
         viewModel: PagingLibraryViewModel<Self>,
@@ -87,8 +86,10 @@ extension PagingLibrary {
         .default
     }
 
-    @MenuContentGroupBuilder
-    func menuContent(environment: Binding<Environment>) -> [MenuContentGroup] {}
+    func makeMenuContent(environment: Binding<Environment>) -> AnyView {
+        EmptyView()
+            .eraseToAnyView()
+    }
 
     func onItemUserDataChanged(
         viewModel: PagingLibraryViewModel<Self>,
