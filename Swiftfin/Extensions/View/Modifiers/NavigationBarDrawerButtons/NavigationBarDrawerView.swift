@@ -107,7 +107,8 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
             blurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
 
-        // The filter drawer sits visually at the top of the screen but is added as an overlay subview, so by default VoiceOver reads it last.
+        // The filter drawer sits visually at the top of the screen but is added as an overlay subview,
+        // so by default VoiceOver reads it last.
         // Explicitly order the drawer before the content so it is announced near the navigation bar where users expect it.
         view.accessibilityElements = [drawerButtonsView.view as Any, contentView.view as Any]
     }
