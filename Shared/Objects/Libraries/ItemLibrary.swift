@@ -249,6 +249,16 @@ private struct ItemLibraryBody<Content: View>: View {
 
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
+    #if os(tvOS)
+    @Default(.Customization.Library.cinematicBackground)
+    private var isCinematicBackgroundEnabled
+
+    @FocusedValue(\.focusedPoster)
+    private var focusedPoster
+
+    @StateObject
+    private var cinematicBackgroundProxy: CinematicBackgroundView.Proxy = .init()
+    #endif
 
     @ObservedObject
     private var viewModel: PagingLibraryViewModel<ItemLibrary>
@@ -267,6 +277,43 @@ private struct ItemLibraryBody<Content: View>: View {
     }
 
     var body: some View {
+        wrappedContent
+            .backport
+            .onChange(of: filterViewModel.currentFilters) { _, newFilters in
+                rememberSort(from: newFilters)
+            }
+            .onReceive(
+                filterViewModel.$currentFilters
+                    .dropFirst()
+                    .removeDuplicates()
+                    .debounce(for: 1, scheduler: RunLoop.main)
+            ) { filters in
+                viewModel.environment.filters = filters
+            }
+    }
+
+    @ViewBuilder
+    private var wrappedContent: some View {
+        #if os(tvOS)
+        contentView
+            .background(alignment: .top) {
+                if isCinematicBackgroundEnabled {
+                    CinematicBackgroundView(viewModel: cinematicBackgroundProxy)
+                        .blurred()
+                        .ignoresSafeArea()
+                }
+            }
+            .backport
+            .onChange(of: focusedPoster) { _, newValue in
+                updateCinematicBackground(with: newValue)
+            }
+        #else
+        contentView
+        #endif
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
         content
             .letterPickerBar(filterViewModel: filterViewModel)
             .onFirstAppear {
@@ -280,18 +327,6 @@ private struct ItemLibraryBody<Content: View>: View {
                 types: enabledDrawerFilters
             )
         #endif
-            .backport
-                .onChange(of: filterViewModel.currentFilters) { _, newFilters in
-                    rememberSort(from: newFilters)
-                }
-                .onReceive(
-                    filterViewModel.$currentFilters
-                        .dropFirst()
-                        .removeDuplicates()
-                        .debounce(for: 1, scheduler: RunLoop.main)
-                ) { filters in
-                    viewModel.environment.filters = filters
-                }
     }
 
     private func rememberSort(from filters: ItemFilterCollection) {
@@ -305,4 +340,14 @@ private struct ItemLibraryBody<Content: View>: View {
 
         StoredValues[.User.libraryFilters(parentID: id)] = storedFilters
     }
+
+    #if os(tvOS)
+    private func updateCinematicBackground(with poster: AnyPoster?) {
+        guard isCinematicBackgroundEnabled,
+              let poster
+        else { return }
+
+        cinematicBackgroundProxy.select(item: poster)
+    }
+    #endif
 }

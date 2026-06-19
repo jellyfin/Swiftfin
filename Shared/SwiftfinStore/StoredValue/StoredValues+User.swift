@@ -120,30 +120,6 @@ extension StoredValues.Keys {
             )
         }
 
-        static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
-            CurrentUserKey(
-                parentID,
-                field: "setting-libraryDisplayType",
-                default: Defaults[.Customization.Library.displayType]
-            )
-        }
-
-        static func libraryListColumnCount(parentID: String?) -> Key<Int> {
-            CurrentUserKey(
-                parentID,
-                field: "setting-libraryListColumnCount",
-                default: Defaults[.Customization.Library.listColumnCount]
-            )
-        }
-
-        static func libraryPosterType(parentID: String?) -> Key<PosterDisplayType> {
-            CurrentUserKey(
-                parentID,
-                field: "setting-libraryPosterType",
-                default: Defaults[.Customization.Library.posterType]
-            )
-        }
-
         // TODO: for now, only used for `sortBy` and `sortOrder`. Need to come up with
         //       rules for how stored filters work with libraries that should init
         //       with non-default filters (atow ex: favorites)

@@ -89,7 +89,7 @@ extension Poster {
 
     func cinematicImageSources(
         maxWidth: CGFloat?,
-        quality: Int? = nil
+        quality: Int?
     ) -> [ImageSource] {
         []
     }

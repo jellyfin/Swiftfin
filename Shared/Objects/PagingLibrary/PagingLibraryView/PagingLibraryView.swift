@@ -16,6 +16,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     @Default(.Customization.Library.rememberLayout)
     private var rememberIndividualLibraryStyle
+    @Default(.Customization.Library.style)
+    private var defaultLibraryStyle
 
     @Namespace
     private var namespace
@@ -28,8 +30,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @StateObject
     private var viewModel: PagingLibraryViewModel<Library>
 
-    @StoredValue(.User.libraryStyle(id: nil))
-    private var defaultLibraryStyle: LibraryStyle
     @StoredValue
     private var parentLibraryStyle: LibraryStyle
 

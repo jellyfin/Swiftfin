@@ -197,16 +197,19 @@ extension Defaults.Keys {
                 UserKey("letterPickerOrientation", default: .disabled)
             }
 
-            static var displayType: Key<LibraryDisplayType> {
-                UserKey("libraryViewType", default: .grid)
-            }
-
-            static var posterType: Key<PosterDisplayType> {
-                UserKey("libraryPosterType", default: .portrait)
-            }
-
-            static var listColumnCount: Key<Int> {
-                UserKey("listColumnCount", default: 1)
+            static var style: Key<LibraryStyle> {
+                UserKey(
+                    "libraryStyle",
+                    default: .init(
+                        displayType: UserDefaults.currentUserSuite
+                            .string(forKey: "libraryViewType")
+                            .flatMap(LibraryDisplayType.init(rawValue:)) ?? .grid,
+                        posterDisplayType: UserDefaults.currentUserSuite
+                            .string(forKey: "libraryPosterType")
+                            .flatMap(PosterDisplayType.init(rawValue:)) ?? .portrait,
+                        listColumnCount: UserDefaults.currentUserSuite.object(forKey: "listColumnCount") as? Int ?? 1
+                    )
+                )
             }
 
             static var randomImage: Key<Bool> {

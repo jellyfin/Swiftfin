@@ -135,6 +135,9 @@ private struct BaseItemDtoLibraryListElement: View {
         }
         .backport
         .matchedTransitionSource(id: "item", in: namespace)
+        #if os(tvOS)
+            .focusedValue(\.focusedPoster, AnyPoster(item))
+        #endif
     }
 
     @ViewBuilder

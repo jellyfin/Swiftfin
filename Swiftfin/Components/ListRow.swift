@@ -14,6 +14,9 @@ import SwiftUI
 /// outside of a `List` or `Form`.
 struct ListRow<Leading: View, Content: View>: View {
 
+    @Environment(\.isFocused)
+    private var isFocused
+
     @ViewContextContains(.isListRowSeparatorVisible)
     private var isListRowSeparatorVisible
 
@@ -57,7 +60,7 @@ struct ListRow<Leading: View, Content: View>: View {
             .foregroundStyle(.primary, .secondary)
             .contentShape(.contextMenuPreview, Rectangle())
 
-            if legacyIsSeparatorVisible && isListRowSeparatorVisible {
+            if legacyIsSeparatorVisible && isListRowSeparatorVisible && !isFocused {
                 Color.secondarySystemFill
                     .frame(width: contentSize.width, height: 1)
                     .padding(.trailing, insets.trailing)
