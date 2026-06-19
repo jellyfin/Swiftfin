@@ -208,6 +208,8 @@ extension BaseItemKind {
             [.square]
         case .person:
             [.portrait]
+        case .userView:
+            [.landscape]
         default:
             [.landscape, .portrait]
         }

@@ -125,6 +125,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .animation(.linear(duration: 0.2), value: viewModel.background.is(.searching))
         .animation(.linear(duration: 0.2), value: viewModel.elements)
         .animation(.linear(duration: 0.2), value: viewModel.searchElements)
+        .ignoresSafeArea()
         .navigationTitle(viewModel.library.parent.displayTitle)
         .backport
         .toolbarTitleDisplayMode(.inline)
@@ -141,9 +142,11 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                         ProgressView()
                     }
 
+                    #if os(iOS)
                     Menu(L10n.options, systemImage: "ellipsis.circle") {
                         menuContent
                     }
+                    #endif
                 }
             }
         #endif

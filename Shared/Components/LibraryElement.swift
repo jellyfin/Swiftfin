@@ -100,15 +100,15 @@ extension LibraryElement {
             switch libraryStyle.posterDisplayType {
             case .landscape:
                 return .columns(
-                    5,
-                    insets: EdgeInsets.edgeInsets,
+                    4,
+                    insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
             case .portrait, .square:
                 return .columns(
                     7,
-                    insets: EdgeInsets.edgeInsets,
+                    insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
@@ -116,7 +116,7 @@ extension LibraryElement {
         case .list:
             return .columns(
                 libraryStyle.listColumnCount,
-                insets: EdgeInsets.edgeInsets,
+                insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
                 itemSpacing: EdgeInsets.edgePadding,
                 lineSpacing: EdgeInsets.edgePadding
             )

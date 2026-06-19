@@ -92,8 +92,6 @@ internal enum L10n {
   internal static let allDevicesDescription = L10n.tr("Localizable", "allDevicesDescription", fallback: "View all past and present devices that have connected.")
   /// All languages
   internal static let allLanguages = L10n.tr("Localizable", "allLanguages", fallback: "All languages")
-  /// All media
-  internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All media")
   /// Allow
   internal static let allow = L10n.tr("Localizable", "allow", fallback: "Allow")
   /// Allowed

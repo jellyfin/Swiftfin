@@ -70,6 +70,9 @@ extension TabItem {
                     filters: filters
                 )
             )
+            .if(UIDevice.isTV) { view in
+                view.toolbar(.hidden, for: .navigationBar)
+            }
         }
     }
 
@@ -79,7 +82,10 @@ extension TabItem {
             title: L10n.media,
             systemImage: "rectangle.stack.fill"
         ) {
-            MediaView()
+            PagingLibraryView(library: UserViewLibrary())
+                .if(UIDevice.isTV) { view in
+                    view.toolbar(.hidden, for: .navigationBar)
+                }
         }
     }
 
