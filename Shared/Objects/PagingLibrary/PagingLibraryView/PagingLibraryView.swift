@@ -81,7 +81,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .proxy(gridProxy)
         .scrollIndicators(.hidden)
         .withViewContext(.isListRowSeparatorVisible)
-        .ignoresSafeArea()
+        .ignoresSafeArea(edges: .vertical)
     }
 
     @ViewBuilder
@@ -121,6 +121,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                     viewModel.error.map(ErrorView.init)
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .animation(.linear(duration: 0.2), value: viewModel.background.is(.gettingNextPage))
         .animation(.linear(duration: 0.2), value: viewModel.background.is(.searching))
