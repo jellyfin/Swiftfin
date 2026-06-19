@@ -10,8 +10,12 @@ import SwiftUI
 
 // TODO: possibly consolidate with ChevronButton
 
-// Meant to be used when making a custom list without `List` or `Form`
+/// A row for list leading and primary content, typically used
+/// outside of a `List` or `Form`.
 struct ListRow<Leading: View, Content: View>: View {
+
+    @ViewContextContains(.isListRowSeparatorVisible)
+    private var isListRowSeparatorVisible
 
     @State
     private var contentSize: CGSize = .zero
@@ -19,7 +23,7 @@ struct ListRow<Leading: View, Content: View>: View {
     private let action: () -> Void
     private let content: Content
     private var insets: EdgeInsets
-    private var isSeparatorVisible: Bool
+    private var legacyIsSeparatorVisible: Bool
     private let leading: Leading
 
     private init(
@@ -33,7 +37,7 @@ struct ListRow<Leading: View, Content: View>: View {
         self.content = content
         self.action = action
         self.insets = insets
-        self.isSeparatorVisible = isSeparatorVisible
+        self.legacyIsSeparatorVisible = isSeparatorVisible
     }
 
     var body: some View {
@@ -53,10 +57,11 @@ struct ListRow<Leading: View, Content: View>: View {
             .foregroundStyle(.primary, .secondary)
             .contentShape(.contextMenuPreview, Rectangle())
 
-            Color.secondarySystemFill
-                .frame(width: contentSize.width, height: 1)
-                .padding(.trailing, insets.trailing)
-                .isVisible(isSeparatorVisible)
+            if legacyIsSeparatorVisible && isListRowSeparatorVisible {
+                Color.secondarySystemFill
+                    .frame(width: contentSize.width, height: 1)
+                    .padding(.trailing, insets.trailing)
+            }
         }
     }
 }
@@ -91,7 +96,8 @@ extension ListRow {
         )
     }
 
+    @available(*, deprecated, message: "Use viewContext.isListRowSeparatorVisible instead")
     func isSeparatorVisible(_ isVisible: Bool) -> Self {
-        copy(modifying: \.isSeparatorVisible, with: isVisible)
+        copy(modifying: \.legacyIsSeparatorVisible, with: isVisible)
     }
 }

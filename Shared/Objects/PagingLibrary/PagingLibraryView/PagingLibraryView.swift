@@ -69,12 +69,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             uniqueElements: viewModel.displayedElements,
             layout: Element.layout(for: libraryStyle, options: libraryStyleOptions)
         ) { element in
-            switch libraryStyle.displayType {
-            case .grid:
-                element.makeGridBody(libraryStyle: libraryStyle)
-            case .list:
-                element.makeListBody(libraryStyle: libraryStyle)
-            }
+            element.makeBody(libraryStyle: libraryStyle)
         }
         .onReachedBottomEdge(offset: .offset(300)) {
             if viewModel.isSearchActive {
@@ -85,6 +80,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         }
         .proxy(gridProxy)
         .scrollIndicators(.hidden)
+        .withViewContext(.isListRowSeparatorVisible)
     }
 
     @ViewBuilder

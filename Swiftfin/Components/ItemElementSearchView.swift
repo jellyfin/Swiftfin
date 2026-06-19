@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: Should be using the expected ItemComponentEditor's element view
+
 struct ItemElementSearchView<Element: Hashable>: View {
 
     @FocusState
@@ -23,13 +25,41 @@ struct ItemElementSearchView<Element: Hashable>: View {
     @Binding
     private var personRole: String
 
-    private let type: ItemArrayElements
+    private let supportsPeopleFields: Bool
     private let population: [Element]
     private let isSearching: Bool
     private let alreadyOnItem: Bool
     private let existsOnServer: Bool
+    private let idForElement: (Element) -> String?
+    private let nameForElement: (Element) -> String
 
-    // MARK: - Body
+    @ViewBuilder
+    private func row(_ match: Element) -> some View {
+        switch match {
+        case let person as BaseItemPerson:
+            BaseItemPersonLibraryListElement(
+                person: person,
+                libraryStyle: .init(displayType: .list, posterDisplayType: .portrait, listColumnCount: 1)
+            ) {
+                select(match)
+            }
+            .disabled(name == nameForElement(match))
+        default:
+            Button {
+                select(match)
+            } label: {
+                Text(nameForElement(match))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .foregroundStyle(.primary)
+            .disabled(name == nameForElement(match))
+        }
+    }
+
+    private func select(_ match: Element) {
+        name = nameForElement(match)
+        id = idForElement(match)
+    }
 
     var body: some View {
         Section {
@@ -60,7 +90,7 @@ struct ItemElementSearchView<Element: Hashable>: View {
             isNameFocused = true
         }
 
-        if type == .people {
+        if supportsPeopleFields {
             Section {
                 Picker(L10n.type, selection: $personKind) {
                     ForEach(PersonKind.allCases, id: \.self) { kind in
@@ -78,14 +108,7 @@ struct ItemElementSearchView<Element: Hashable>: View {
             Section {
                 if population.isNotEmpty {
                     ForEach(population, id: \.self) { result in
-                        Button {
-                            name = type.getName(for: result)
-                            id = type.getId(for: result)
-                        } label: {
-                            rowLabel(result)
-                        }
-                        .foregroundStyle(.primary)
-                        .disabled(name == type.getName(for: result))
+                        row(result)
                     }
                 } else if !isSearching {
                     Text(L10n.none)
@@ -108,29 +131,6 @@ struct ItemElementSearchView<Element: Hashable>: View {
             }
         }
     }
-
-    // MARK: - Row Label
-
-    @ViewBuilder
-    private func rowLabel(_ match: Element) -> some View {
-        switch match {
-        case let person as BaseItemPerson:
-            HStack(spacing: EdgeInsets.edgePadding) {
-                PosterImage(
-                    item: person,
-                    type: .portrait
-                )
-                .frame(width: 60)
-                .posterShadow()
-
-                Text(type.getName(for: person))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-        default:
-            Text(type.getName(for: match))
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
 }
 
 extension ItemElementSearchView {
@@ -140,23 +140,27 @@ extension ItemElementSearchView {
     init(
         name: Binding<String>,
         id: Binding<String?>,
-        type: ItemArrayElements,
+        supportsPeopleFields: Bool,
         personKind: Binding<PersonKind>,
         personRole: Binding<String>,
         population: [Element],
         isSearching: Bool,
         alreadyOnItem: Bool,
-        existsOnServer: Bool
+        existsOnServer: Bool,
+        idForElement: @escaping (Element) -> String?,
+        nameForElement: @escaping (Element) -> String
     ) {
         self._name = name
         self._id = id
         self._personKind = personKind
         self._personRole = personRole
-        self.type = type
+        self.supportsPeopleFields = supportsPeopleFields
         self.population = population
         self.isSearching = isSearching
         self.alreadyOnItem = alreadyOnItem
         self.existsOnServer = existsOnServer
+        self.idForElement = idForElement
+        self.nameForElement = nameForElement
     }
 
     // MARK: - Initializer for Tags
@@ -166,16 +170,20 @@ extension ItemElementSearchView {
         population: [Element],
         isSearching: Bool,
         alreadyOnItem: Bool,
-        existsOnServer: Bool
+        existsOnServer: Bool,
+        idForElement: @escaping (Element) -> String? = { _ in nil },
+        nameForElement: @escaping (Element) -> String
     ) {
         self._name = name
         self._id = .constant(nil)
         self._personKind = .constant(.unknown)
         self._personRole = .constant("")
-        self.type = .tags
+        self.supportsPeopleFields = false
         self.population = population
         self.isSearching = isSearching
         self.alreadyOnItem = alreadyOnItem
         self.existsOnServer = existsOnServer
+        self.idForElement = idForElement
+        self.nameForElement = nameForElement
     }
 }

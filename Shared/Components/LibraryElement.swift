@@ -9,26 +9,28 @@
 import CollectionVGrid
 import SwiftUI
 
-private let libraryListLandscapeWidth: CGFloat = 110
-private let libraryListPortraitWidth: CGFloat = 60
+// TODO: Make an Environemnt?
+//       - for libraryStyle, action, etc.
 
 @MainActor
-protocol LibraryElement: Poster {
+protocol LibraryElement: Displayable, Hashable, Identifiable {
 
-    associatedtype GridBody: View = DefaultLibraryGridElement<Self>
-    associatedtype ListBody: View = DefaultLibraryListElement<Self>
+    associatedtype Body: View
 
     static var supportedLibraryStyleOptions: LibraryStyleOptions { get }
 
     var supportedLibraryStyleOptions: LibraryStyleOptions { get }
 
-    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID)
+    func libraryDidSelectElement(
+        router: Router.Wrapper,
+        in namespace: Namespace.ID
+    )
 
     @ViewBuilder
-    func makeGridBody(libraryStyle: LibraryStyle) -> GridBody
-
-    @ViewBuilder
-    func makeListBody(libraryStyle: LibraryStyle) -> ListBody
+    func makeBody(
+        libraryStyle: LibraryStyle,
+        action: (() -> Void)?
+    ) -> Body
 
     static func layout(
         for libraryStyle: LibraryStyle,
@@ -39,7 +41,11 @@ protocol LibraryElement: Poster {
 extension LibraryElement {
 
     static var supportedLibraryStyleOptions: LibraryStyleOptions {
-        .default
+        .init(
+            displayTypes: [.list],
+            posterDisplayTypes: [.portrait],
+            fallbackPosterDisplayType: .portrait
+        )
     }
 
     var supportedLibraryStyleOptions: LibraryStyleOptions {
@@ -50,12 +56,11 @@ extension LibraryElement {
         supportedLibraryStyleOptions.normalized(libraryStyle)
     }
 
-    func makeGridBody(libraryStyle: LibraryStyle) -> DefaultLibraryGridElement<Self> {
-        DefaultLibraryGridElement(element: self, libraryStyle: libraryStyle)
-    }
+    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {}
 
-    func makeListBody(libraryStyle: LibraryStyle) -> DefaultLibraryListElement<Self> {
-        DefaultLibraryListElement(element: self, libraryStyle: libraryStyle)
+    @ViewBuilder
+    func makeBody(libraryStyle: LibraryStyle) -> Body {
+        makeBody(libraryStyle: libraryStyle, action: nil)
     }
 
     static func layout(
@@ -117,106 +122,5 @@ extension LibraryElement {
             )
         }
         #endif
-    }
-}
-
-struct DefaultLibraryGridElement<Element: LibraryElement>: View {
-
-    @Namespace
-    private var namespace
-
-    @Router
-    private var router
-
-    let element: Element
-    let libraryStyle: LibraryStyle
-
-    private var resolvedLibraryStyle: LibraryStyle {
-        element.resolvedLibraryStyle(libraryStyle)
-    }
-
-    var body: some View {
-        Button {
-            element.libraryDidSelectElement(router: router, in: namespace)
-        } label: {
-            VStack(alignment: .leading, spacing: 6) {
-                PosterImage(item: element, type: resolvedLibraryStyle.posterDisplayType)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .posterStyle(resolvedLibraryStyle.posterDisplayType)
-                    .backport
-                    .matchedTransitionSource(id: "item", in: namespace)
-                    .posterShadow()
-
-                if element.showTitle || element.subtitle != nil {
-                    VStack(alignment: .leading, spacing: 0) {
-                        if element.showTitle {
-                            Text(element.displayTitle)
-                                .font(.footnote)
-                                .fontWeight(.regular)
-                                .foregroundStyle(.primary)
-                                .lineLimit(1, reservesSpace: true)
-                        }
-
-                        Text(element.subtitle ?? " ")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1, reservesSpace: true)
-                    }
-                }
-            }
-        }
-        .buttonStyle(.plain)
-        .foregroundStyle(.primary, .secondary)
-    }
-}
-
-struct DefaultLibraryListElement<Element: LibraryElement>: View {
-
-    @Namespace
-    private var namespace
-
-    @Router
-    private var router
-
-    let element: Element
-    let libraryStyle: LibraryStyle
-
-    private var resolvedLibraryStyle: LibraryStyle {
-        element.resolvedLibraryStyle(libraryStyle)
-    }
-
-    private var posterWidth: CGFloat {
-        resolvedLibraryStyle.posterDisplayType == .landscape ? libraryListLandscapeWidth : libraryListPortraitWidth
-    }
-
-    var body: some View {
-        ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
-            PosterImage(item: element, type: resolvedLibraryStyle.posterDisplayType)
-                .posterStyle(resolvedLibraryStyle.posterDisplayType)
-                .frame(width: posterWidth)
-                .backport
-                .matchedTransitionSource(id: "item", in: namespace)
-                .posterShadow()
-        } content: {
-            VStack(alignment: .leading, spacing: 5) {
-                Text(element.displayTitle)
-                    .font(.callout)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.primary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-
-                if let subtitle = element.subtitle {
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        } action: {
-            element.libraryDidSelectElement(router: router, in: namespace)
-        }
     }
 }

@@ -11,10 +11,10 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct AddItemElementView<Element: Hashable>: View {
+struct AddItemElementView<Editor: ItemComponentEditor>: View {
 
     @ObservedObject
-    var viewModel: ItemEditorViewModel<Element>
+    var viewModel: ItemComponentEditorViewModel<Editor>
 
     @Router
     private var router
@@ -30,8 +30,6 @@ struct AddItemElementView<Element: Hashable>: View {
 
     @State
     private var error: Error?
-
-    let type: ItemArrayElements
 
     // MARK: - Validation
 
@@ -54,16 +52,18 @@ struct AddItemElementView<Element: Hashable>: View {
             ItemElementSearchView(
                 name: $name,
                 id: $id,
-                type: type,
+                supportsPeopleFields: viewModel.supportsPeopleFields,
                 personKind: $personKind,
                 personRole: $personRole,
                 population: viewModel.matches,
                 isSearching: viewModel.background.states.contains(.searching),
                 alreadyOnItem: alreadyOnItem,
-                existsOnServer: existsOnServer
+                existsOnServer: existsOnServer,
+                idForElement: viewModel.id(for:),
+                nameForElement: viewModel.name(for:)
             )
         }
-        .navigationTitle(type.displayTitle)
+        .navigationTitle(viewModel.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
@@ -74,12 +74,12 @@ struct AddItemElementView<Element: Hashable>: View {
             }
 
             Button(L10n.save) {
-                viewModel.add([type.createElement(
-                    name: name,
+                viewModel.add([viewModel.makeElement(input: .init(
                     id: id,
-                    personRole: personRole.isEmpty ? (personKind == .unknown ? nil : personKind.rawValue) : personRole,
-                    personKind: personKind
-                )])
+                    name: name,
+                    personKind: personKind,
+                    personRole: personRole
+                ))])
             }
             .buttonStyle(.toolbarPill)
             .enabled(isValid)
@@ -89,8 +89,6 @@ struct AddItemElementView<Element: Hashable>: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .deleted, .metadataRefreshStarted:
-                break
             case .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()

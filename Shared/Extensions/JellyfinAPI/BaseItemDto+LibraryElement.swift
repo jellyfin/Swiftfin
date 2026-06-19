@@ -25,7 +25,10 @@ extension BaseItemDto: LibraryElement {
         return type.map { BaseItemKind.libraryStyleOptions(for: [$0]) } ?? .default
     }
 
-    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
+    func libraryDidSelectElement(
+        router: Router.Wrapper,
+        in namespace: Namespace.ID
+    ) {
         switch type {
         case .collectionFolder, .folder, .userView:
             router.route(
@@ -37,12 +40,17 @@ extension BaseItemDto: LibraryElement {
         }
     }
 
-    func makeGridBody(libraryStyle: LibraryStyle) -> some View {
-        BaseItemDtoLibraryGridElement(item: self, libraryStyle: libraryStyle)
-    }
-
-    func makeListBody(libraryStyle: LibraryStyle) -> some View {
-        BaseItemDtoLibraryListElement(item: self, libraryStyle: libraryStyle)
+    @ViewBuilder
+    func makeBody(
+        libraryStyle: LibraryStyle,
+        action: (() -> Void)?
+    ) -> some View {
+        switch libraryStyle.displayType {
+        case .grid:
+            BaseItemDtoLibraryGridElement(item: self, libraryStyle: libraryStyle)
+        case .list:
+            BaseItemDtoLibraryListElement(item: self, libraryStyle: libraryStyle)
+        }
     }
 }
 

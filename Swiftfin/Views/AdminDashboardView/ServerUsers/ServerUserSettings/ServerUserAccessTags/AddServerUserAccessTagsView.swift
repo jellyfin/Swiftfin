@@ -25,7 +25,7 @@ struct AddServerUserAccessTagsView: View {
     private var tempTag: String = ""
 
     @StateObject
-    private var tagViewModel: TagEditorViewModel
+    private var tagViewModel: ItemComponentEditorViewModel<TagComponentEditor>
 
     private var alreadyOnItem: Bool {
         let blocked = tempPolicy.blockedTags ?? []
@@ -50,7 +50,10 @@ struct AddServerUserAccessTagsView: View {
             authenticationProviderID: "",
             passwordResetProviderID: ""
         )
-        self._tagViewModel = StateObject(wrappedValue: TagEditorViewModel(item: .init()))
+        self._tagViewModel = StateObject(wrappedValue: ItemComponentEditorViewModel(
+            editor: TagComponentEditor(),
+            item: .init()
+        ))
     }
 
     // MARK: - Body
@@ -79,7 +82,8 @@ struct AddServerUserAccessTagsView: View {
                 population: tagViewModel.matches,
                 isSearching: tagViewModel.background.states.contains(.searching),
                 alreadyOnItem: alreadyOnItem,
-                existsOnServer: existsOnServer
+                existsOnServer: existsOnServer,
+                nameForElement: tagViewModel.name(for:)
             )
         }
         .backport
