@@ -201,13 +201,9 @@ extension Defaults.Keys {
                 UserKey(
                     "libraryStyle",
                     default: .init(
-                        displayType: UserDefaults.currentUserSuite
-                            .string(forKey: "libraryViewType")
-                            .flatMap(LibraryDisplayType.init(rawValue:)) ?? .grid,
-                        posterDisplayType: UserDefaults.currentUserSuite
-                            .string(forKey: "libraryPosterType")
-                            .flatMap(PosterDisplayType.init(rawValue:)) ?? .portrait,
-                        listColumnCount: UserDefaults.currentUserSuite.object(forKey: "listColumnCount") as? Int ?? 1
+                        displayType: .grid,
+                        posterDisplayType: .portrait,
+                        listColumnCount: 1
                     )
                 )
             }

@@ -12,7 +12,6 @@ struct PeopleComponentEditor: ItemComponentEditor {
 
     let description: String = L10n.peopleDescription
     let displayTitle: String = L10n.people
-    let supportsPeopleFields: Bool = true
 
     func elements(in item: BaseItemDto) -> [BaseItemPerson] {
         item.people ?? []

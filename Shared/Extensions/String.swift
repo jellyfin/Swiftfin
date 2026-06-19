@@ -70,6 +70,7 @@ private struct StringLibraryListElement: View {
                 }
             }
         }
+        .foregroundStyle(.primary, .secondary)
     }
 }
 

@@ -10,14 +10,25 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// Note: assumes programs are sorted by start date
 // TODO: rethink implementation
+//       - for updating programs in place
 
 /// Structure that has a channel and associated programs.
-struct ChannelProgram: Hashable, Identifiable {
+struct ChannelProgram: Displayable, Hashable, Identifiable {
 
     let channel: BaseItemDto
     let programs: [BaseItemDto]
+
+    init(channel: BaseItemDto, programs: [BaseItemDto]) {
+        self.channel = channel
+        self.programs = programs
+            .sorted { program1, program2 in
+                guard let start1 = program1.startDate,
+                      let start2 = program2.startDate else { return false }
+
+                return start1 < start2
+            }
+    }
 
     var currentProgram: BaseItemDto? {
         programs.first { program in
@@ -28,6 +39,14 @@ struct ChannelProgram: Hashable, Identifiable {
         }
     }
 
+    var displayTitle: String {
+        channel.displayTitle
+    }
+
+    var id: String? {
+        channel.id
+    }
+
     func programAfterCurrent(offset: Int) -> BaseItemDto? {
         guard let currentStart = currentProgram?.startDate else { return nil }
 
@@ -35,30 +54,5 @@ struct ChannelProgram: Hashable, Identifiable {
             guard let start = program.startDate else { return false }
             return start > currentStart
         }[safe: offset]
-    }
-
-    var id: String? {
-        channel.id
-    }
-}
-
-// TODO: implement all protocols, pass from channel
-
-extension ChannelProgram: Poster {
-
-    var preferredPosterDisplayType: PosterDisplayType {
-        .square
-    }
-
-    var displayTitle: String {
-        channel.displayTitle
-    }
-
-    var systemImage: String {
-        channel.systemImage
-    }
-
-    func transform(image: Image) -> some View {
-        image
     }
 }

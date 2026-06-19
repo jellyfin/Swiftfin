@@ -6,10 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
+import Factory
 import JellyfinAPI
 import SwiftUI
 
-private let channelProgramListWidth: CGFloat = 60
+// TODO: think about what to do for many empty channel number entries
+
+private let channelProgramListWidth: CGFloat = 80
 
 extension ChannelProgram: LibraryElement {
 
@@ -18,7 +22,14 @@ extension ChannelProgram: LibraryElement {
     }
 
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
-        router.route(to: .item(item: channel), in: namespace)
+        guard let userSession = Container.shared.currentUserSession() else { return }
+
+        router.route(
+            to: .videoPlayer(
+                provider: channel.getPlaybackItemProvider(userSession: userSession)
+            ),
+            in: namespace
+        )
     }
 
     @ViewBuilder
@@ -28,9 +39,17 @@ extension ChannelProgram: LibraryElement {
     ) -> some View {
         switch libraryStyle.displayType {
         case .grid:
-            ChannelProgramLibraryGridElement(channelProgram: self, libraryStyle: libraryStyle)
+            ChannelProgramLibraryGridElement(
+                channelProgram: self,
+                libraryStyle: libraryStyle,
+                action: action
+            )
         case .list:
-            ChannelProgramLibraryListElement(channelProgram: self, libraryStyle: libraryStyle)
+            ChannelProgramLibraryListElement(
+                channelProgram: self,
+                libraryStyle: libraryStyle,
+                action: action
+            )
         }
     }
 }
@@ -45,6 +64,7 @@ private struct ChannelProgramLibraryGridElement: View {
 
     let channelProgram: ChannelProgram
     let libraryStyle: LibraryStyle
+    var action: (() -> Void)?
 
     private var resolvedLibraryStyle: LibraryStyle {
         channelProgram.resolvedLibraryStyle(libraryStyle)
@@ -52,31 +72,37 @@ private struct ChannelProgramLibraryGridElement: View {
 
     var body: some View {
         Button {
-            channelProgram.libraryDidSelectElement(router: router, in: namespace)
+            if let action {
+                action()
+            } else {
+                channelProgram.libraryDidSelectElement(router: router, in: namespace)
+            }
         } label: {
             VStack(alignment: .leading, spacing: 6) {
-                PosterImage(item: channelProgram, type: resolvedLibraryStyle.posterDisplayType)
+                PosterImage(item: channelProgram.channel, type: resolvedLibraryStyle.posterDisplayType)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .posterStyle(resolvedLibraryStyle.posterDisplayType)
                     .backport
                     .matchedTransitionSource(id: "item", in: namespace)
                     .posterShadow()
 
-                if channelProgram.showTitle || channelProgram.subtitle != nil {
-                    VStack(alignment: .leading, spacing: 0) {
-                        if channelProgram.showTitle {
-                            Text(channelProgram.displayTitle)
-                                .font(.footnote)
-                                .foregroundStyle(.primary)
-                                .lineLimit(1, reservesSpace: true)
-                        }
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(channelProgram.displayTitle)
+                        .font(.footnote)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1, reservesSpace: true)
 
-                        Text(channelProgram.subtitle ?? " ")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1, reservesSpace: true)
-                    }
+//                    AlternateLayoutView {
+//                        // swiftlint:disable:next hard_coded_display_string
+//                        Text(" ")
+//                    } content: {
+//                        if let channelNumber = channelProgram.channel.channelNumber {
+//                            Text(channelNumber)
+//                                .font(.subheadline)
+//                                .lineLimit(1)
+//                                .foregroundStyle(.secondary)
+//                        }
+//                    }
                 }
             }
         }
@@ -87,14 +113,23 @@ private struct ChannelProgramLibraryGridElement: View {
 
 private struct ChannelProgramLibraryListElement: View {
 
+    @Default(.accentColor)
+    private var accentColor
+
     @Namespace
     private var namespace
 
     @Router
     private var router
 
+    @State
+    private var now: Date = .now
+
     let channelProgram: ChannelProgram
     let libraryStyle: LibraryStyle
+    var action: (() -> Void)?
+
+    private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     private var resolvedLibraryStyle: LibraryStyle {
         channelProgram.resolvedLibraryStyle(libraryStyle)
@@ -102,14 +137,10 @@ private struct ChannelProgramLibraryListElement: View {
 
     var body: some View {
         ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
-            PosterImage(item: channelProgram, type: resolvedLibraryStyle.posterDisplayType)
-                .posterStyle(resolvedLibraryStyle.posterDisplayType)
+            channelLogo
                 .frame(width: channelProgramListWidth)
-                .backport
-                .matchedTransitionSource(id: "item", in: namespace)
-                .posterShadow()
         } content: {
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(channelProgram.displayTitle)
                     .font(.callout)
                     .fontWeight(.semibold)
@@ -117,16 +148,94 @@ private struct ChannelProgramLibraryListElement: View {
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
 
-                if let subtitle = channelProgram.subtitle {
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
+                if channelProgram.programs.isNotEmpty {
+                    programListView
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         } action: {
-            channelProgram.libraryDidSelectElement(router: router, in: namespace)
+            if let action {
+                action()
+            } else {
+                channelProgram.libraryDidSelectElement(router: router, in: namespace)
+            }
         }
+        .onReceive(timer) { newValue in
+            now = newValue
+        }
+        .animation(.linear(duration: 0.2), value: channelProgram.currentProgram)
+    }
+
+    @ViewBuilder
+    private var channelLogo: some View {
+        VStack {
+            PosterImage(item: channelProgram.channel, type: resolvedLibraryStyle.posterDisplayType)
+                .posterStyle(resolvedLibraryStyle.posterDisplayType)
+                .backport
+                .matchedTransitionSource(id: "item", in: namespace)
+                .posterShadow()
+
+//            AlternateLayoutView {
+//                // swiftlint:disable:next hard_coded_display_string
+//                Text(" ")
+//            } content: {
+//                if let channelNumber = channelProgram.channel.channelNumber {
+//                    Text(channelNumber)
+//                        .font(.subheadline)
+//                        .lineLimit(1)
+//                        .foregroundStyle(.secondary)
+//                }
+//            }
+        }
+    }
+
+    @ViewBuilder
+    private var programListView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if let currentProgram = channelProgram.currentProgram {
+                ProgressBar(progress: currentProgram.programProgress(relativeTo: now) ?? 0)
+                    .frame(height: 5)
+                    .padding(.bottom, 5)
+                    .foregroundStyle(accentColor)
+
+                programLabel(for: currentProgram)
+                    .font(.footnote)
+                    .fontWeight(.bold)
+            }
+
+            if let nextProgram = channelProgram.programAfterCurrent(offset: 0) {
+                programLabel(for: nextProgram)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+
+            if let futureProgram = channelProgram.programAfterCurrent(offset: 1) {
+                programLabel(for: futureProgram)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .id(channelProgram.currentProgram)
+    }
+
+    @ViewBuilder
+    private func programLabel(for program: BaseItemDto) -> some View {
+        HStack(alignment: .top) {
+            AlternateLayoutView(alignment: .leading) {
+                // swiftlint:disable:next hard_coded_display_string
+                Text("00:00 AAA")
+                    .monospacedDigit()
+            } content: {
+                if let startDate = program.startDate {
+                    Text(startDate, style: .time)
+                        .monospacedDigit()
+                } else {
+                    Text(String.emptyRuntime)
+                }
+            }
+
+            Text(program.displayTitle)
+        }
+        .lineLimit(1)
     }
 }

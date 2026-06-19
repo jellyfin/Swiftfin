@@ -9,68 +9,59 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Should be using the expected ItemComponentEditor's element view
-
-struct ItemElementSearchView<Element: Hashable>: View {
+struct ItemElementSearchView<Editor: ItemComponentEditor>: View {
 
     @FocusState
     private var isNameFocused: Bool
 
     @Binding
-    private var name: String
-    @Binding
-    private var id: String?
-    @Binding
-    private var personKind: PersonKind
-    @Binding
-    private var personRole: String
+    private var input: ItemComponentEditorInput
 
-    private let supportsPeopleFields: Bool
-    private let population: [Element]
+    private let editor: Editor
+    private let population: [Editor.Element]
     private let isSearching: Bool
     private let alreadyOnItem: Bool
     private let existsOnServer: Bool
-    private let idForElement: (Element) -> String?
-    private let nameForElement: (Element) -> String
 
-    @ViewBuilder
-    private func row(_ match: Element) -> some View {
-        switch match {
-        case let person as BaseItemPerson:
-            BaseItemPersonLibraryListElement(
-                person: person,
-                libraryStyle: .init(displayType: .list, posterDisplayType: .portrait, listColumnCount: 1)
-            ) {
-                select(match)
-            }
-            .disabled(name == nameForElement(match))
-        default:
-            Button {
-                select(match)
-            } label: {
-                Text(nameForElement(match))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .foregroundStyle(.primary)
-            .disabled(name == nameForElement(match))
-        }
+    private var listLibraryStyle: LibraryStyle {
+        .init(
+            displayType: .list,
+            posterDisplayType: Editor.Element.supportedLibraryStyleOptions.fallbackPosterDisplayType,
+            listColumnCount: 1
+        )
     }
 
-    private func select(_ match: Element) {
-        name = nameForElement(match)
-        id = idForElement(match)
+    private func select(_ match: Editor.Element) {
+        input.name = editor.name(for: match)
+        input.id = editor.id(for: match)
+    }
+
+    init(
+        input: Binding<ItemComponentEditorInput>,
+        editor: Editor,
+        population: [Editor.Element],
+        isSearching: Bool,
+        alreadyOnItem: Bool,
+        existsOnServer: Bool
+    ) {
+        self._input = input
+        self.editor = editor
+        self.population = population
+        self.isSearching = isSearching
+        self.alreadyOnItem = alreadyOnItem
+        self.existsOnServer = existsOnServer
     }
 
     var body: some View {
         Section {
-            TextField(L10n.name, text: $name)
+            TextField(L10n.name, text: $input.name)
                 .autocorrectionDisabled()
                 .focused($isNameFocused)
         } header: {
             Text(L10n.name)
         } footer: {
             Group {
-                if name.isEmpty {
+                if input.name.isEmpty {
                     Label(L10n.required, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 } else if alreadyOnItem {
@@ -84,31 +75,34 @@ struct ItemElementSearchView<Element: Hashable>: View {
                         .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
                 }
             }
-            .animation(.linear, value: name)
+            .animation(.linear, value: input.name)
         }
         .onFirstAppear {
             isNameFocused = true
         }
 
-        if supportsPeopleFields {
+        if Editor.self == PeopleComponentEditor.self {
             Section {
-                Picker(L10n.type, selection: $personKind) {
+                Picker(L10n.type, selection: $input.personKind) {
                     ForEach(PersonKind.allCases, id: \.self) { kind in
                         Text(kind.displayTitle).tag(kind)
                     }
                 }
-                if personKind == .actor {
-                    TextField(L10n.role, text: $personRole)
+                if input.personKind == .actor {
+                    TextField(L10n.role, text: $input.personRole)
                         .autocorrectionDisabled()
                 }
             }
         }
 
-        if name.isNotEmpty {
+        if input.name.isNotEmpty {
             Section {
                 if population.isNotEmpty {
                     ForEach(population, id: \.self) { result in
-                        row(result)
+                        result.makeBody(libraryStyle: listLibraryStyle) {
+                            select(result)
+                        }
+                        .disabled(input.name == editor.name(for: result))
                     }
                 } else if !isSearching {
                     Text(L10n.none)
@@ -130,60 +124,5 @@ struct ItemElementSearchView<Element: Hashable>: View {
                 .animation(.linear, value: isSearching)
             }
         }
-    }
-}
-
-extension ItemElementSearchView {
-
-    // MARK: - Initializer for Generic `ItemElement`
-
-    init(
-        name: Binding<String>,
-        id: Binding<String?>,
-        supportsPeopleFields: Bool,
-        personKind: Binding<PersonKind>,
-        personRole: Binding<String>,
-        population: [Element],
-        isSearching: Bool,
-        alreadyOnItem: Bool,
-        existsOnServer: Bool,
-        idForElement: @escaping (Element) -> String?,
-        nameForElement: @escaping (Element) -> String
-    ) {
-        self._name = name
-        self._id = id
-        self._personKind = personKind
-        self._personRole = personRole
-        self.supportsPeopleFields = supportsPeopleFields
-        self.population = population
-        self.isSearching = isSearching
-        self.alreadyOnItem = alreadyOnItem
-        self.existsOnServer = existsOnServer
-        self.idForElement = idForElement
-        self.nameForElement = nameForElement
-    }
-
-    // MARK: - Initializer for Tags
-
-    init(
-        name: Binding<String>,
-        population: [Element],
-        isSearching: Bool,
-        alreadyOnItem: Bool,
-        existsOnServer: Bool,
-        idForElement: @escaping (Element) -> String? = { _ in nil },
-        nameForElement: @escaping (Element) -> String
-    ) {
-        self._name = name
-        self._id = .constant(nil)
-        self._personKind = .constant(.unknown)
-        self._personRole = .constant("")
-        self.supportsPeopleFields = false
-        self.population = population
-        self.isSearching = isSearching
-        self.alreadyOnItem = alreadyOnItem
-        self.existsOnServer = existsOnServer
-        self.idForElement = idForElement
-        self.nameForElement = nameForElement
     }
 }

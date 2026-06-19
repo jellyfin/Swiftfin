@@ -22,7 +22,6 @@ protocol ItemComponentEditor: Displayable {
     associatedtype Element: LibraryElement
 
     var description: String { get }
-    var supportsPeopleFields: Bool { get }
 
     func adding(_ elements: [Element], to item: BaseItemDto) -> BaseItemDto
     func containsElement(named name: String, in item: BaseItemDto) -> Bool
@@ -39,10 +38,6 @@ protocol ItemComponentEditor: Displayable {
 }
 
 extension ItemComponentEditor {
-
-    var supportsPeopleFields: Bool {
-        false
-    }
 
     func containsElement(named name: String, in item: BaseItemDto) -> Bool {
         elements(in: item)

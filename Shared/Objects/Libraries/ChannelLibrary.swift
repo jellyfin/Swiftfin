@@ -9,6 +9,8 @@
 import Foundation
 import JellyfinAPI
 
+// TODO: sorting by number/filtering
+
 struct ChannelLibrary: PagingLibrary {
 
     let parent: TitledLibraryParent = .init(displayTitle: L10n.channels, id: "channels")

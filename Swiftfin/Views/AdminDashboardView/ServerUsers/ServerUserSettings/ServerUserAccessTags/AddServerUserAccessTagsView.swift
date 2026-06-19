@@ -22,7 +22,12 @@ struct AddServerUserAccessTagsView: View {
     @State
     private var tempPolicy: UserPolicy
     @State
-    private var tempTag: String = ""
+    private var input: ItemComponentEditorInput = .init(
+        id: nil,
+        name: "",
+        personKind: .unknown,
+        personRole: ""
+    )
 
     @StateObject
     private var tagViewModel: ItemComponentEditorViewModel<TagComponentEditor>
@@ -30,16 +35,16 @@ struct AddServerUserAccessTagsView: View {
     private var alreadyOnItem: Bool {
         let blocked = tempPolicy.blockedTags ?? []
         let allowed = tempPolicy.allowedTags ?? []
-        return blocked.contains { $0.caseInsensitiveCompare(tempTag) == .orderedSame }
-            || allowed.contains { $0.caseInsensitiveCompare(tempTag) == .orderedSame }
+        return blocked.contains { $0.caseInsensitiveCompare(input.name) == .orderedSame }
+            || allowed.contains { $0.caseInsensitiveCompare(input.name) == .orderedSame }
     }
 
     private var existsOnServer: Bool {
-        tempTag.isNotEmpty && tagViewModel.editor.matchExists(named: tempTag, in: tagViewModel.matches)
+        input.name.isNotEmpty && tagViewModel.editor.matchExists(named: input.name, in: tagViewModel.matches)
     }
 
     private var isValid: Bool {
-        tempTag.isNotEmpty && !alreadyOnItem
+        input.name.isNotEmpty && !alreadyOnItem
     }
 
     // MARK: - Initializer
@@ -78,12 +83,12 @@ struct AddServerUserAccessTagsView: View {
             }
 
             ItemElementSearchView(
-                name: $tempTag,
+                input: $input,
+                editor: tagViewModel.editor,
                 population: tagViewModel.matches,
                 isSearching: tagViewModel.background.states.contains(.searching),
                 alreadyOnItem: alreadyOnItem,
-                existsOnServer: existsOnServer,
-                nameForElement: tagViewModel.editor.name(for:)
+                existsOnServer: existsOnServer
             )
         }
         .backport
@@ -109,10 +114,10 @@ struct AddServerUserAccessTagsView: View {
                 Button(L10n.save) {
                     if access {
                         tempPolicy.allowedTags = tempPolicy.allowedTags
-                            .appendedOrInit(tempTag)
+                            .appendedOrInit(input.name)
                     } else {
                         tempPolicy.blockedTags = tempPolicy.blockedTags
-                            .appendedOrInit(tempTag)
+                            .appendedOrInit(input.name)
                     }
 
                     viewModel.updatePolicy(tempPolicy)
@@ -121,7 +126,7 @@ struct AddServerUserAccessTagsView: View {
                 .disabled(!isValid)
             }
         }
-        .onChange(of: tempTag) { newTag in
+        .onChange(of: input.name) { newTag in
             tagViewModel.search(newTag)
         }
         .onReceive(viewModel.events) { event in

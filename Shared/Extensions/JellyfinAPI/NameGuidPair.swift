@@ -70,5 +70,6 @@ private struct NameIDPairLibraryListElement: View {
                 }
             }
         }
+        .foregroundStyle(.primary, .secondary)
     }
 }
