@@ -259,7 +259,7 @@ struct CustomizeSettingsView: View {
             Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
 
             Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
-            
+
             #if os(tvOS)
             Toggle(L10n.cinematic, isOn: $cinematicBackground)
             #endif

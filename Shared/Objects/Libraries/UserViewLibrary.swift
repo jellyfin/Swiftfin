@@ -11,6 +11,8 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
+private let userViewLibraryListImageWidth: CGFloat = 110
+
 struct UserViewLibrary: PagingLibrary {
 
     let hasNextPage: Bool = false
@@ -36,7 +38,7 @@ struct UserViewLibrary: PagingLibrary {
         async let currentUser = pageState.userSession.client.send(Paths.getCurrentUser)
 
         let excludedLibraryIDs = try await currentUser.value.configuration?.myMediaExcludes ?? []
-        var elements = try await (userViews.value.items ?? [])
+        let elements = try await (userViews.value.items ?? [])
             .coalesced(property: \.collectionType, with: .folders)
             .intersecting(CollectionType.supportedCases, using: \.collectionType)
             .subtracting(excludedLibraryIDs, using: \.id)
@@ -49,15 +51,12 @@ struct UserViewLibrary: PagingLibrary {
             }
             .map(UserViewLibraryElement.userView)
 
-        if Defaults[.Customization.Library.showFavorites] {
-            elements.insert(.favorites, at: 0)
-        }
-
         return elements
+            .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
     }
 }
 
-enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement {
+enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement, SystemImageable {
 
     case favorites
     case userView(BaseItemDto)
@@ -81,6 +80,19 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
             "favorites"
         case let .userView(item):
             item.id ?? item.displayTitle
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .favorites:
+            "heart.fill"
+        case let .userView(item):
+            if item.collectionType == .livetv {
+                "tv.fill"
+            } else {
+                "folder.fill"
+            }
         }
     }
 
@@ -137,8 +149,13 @@ private struct UserViewLibraryGridElement: View {
 
     let element: UserViewLibraryElement
 
-    private var useTitleLabel: Bool {
-        useRandomImage || element == .favorites
+    private var isTitleLabelVisible: Bool {
+        switch element {
+        case .favorites:
+            true
+        case .userView:
+            useRandomImage
+        }
     }
 
     var body: some View {
@@ -147,7 +164,7 @@ private struct UserViewLibraryGridElement: View {
         } label: {
             ImageView(imageSources)
                 .image { image in
-                    if useTitleLabel {
+                    if isTitleLabelVisible {
                         titleLabelOverlay(with: image)
                     } else {
                         image
@@ -202,11 +219,7 @@ private struct UserViewLibraryGridElement: View {
 
     private func setImageSources() {
         Task { @MainActor in
-            if useRandomImage {
-                imageSources = await (try? element.randomItemImageSources()) ?? []
-            } else {
-                imageSources = element.imageSources()
-            }
+            imageSources = await element.libraryImageSources(useRandomImage: useRandomImage)
         }
     }
 }
@@ -229,19 +242,7 @@ private struct UserViewLibraryListElement: View {
 
     var body: some View {
         ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
-            ImageView(imageSources)
-                .failure {
-                    Color.secondarySystemFill
-                        .opacity(0.75)
-                        .overlay {
-                            Image(systemName: "rectangle.fill")
-                                .foregroundStyle(.secondary)
-                        }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .posterStyle(.landscape)
-                .posterShadow()
-                .frame(width: 110)
+            imageView
         } content: {
             Text(element.displayTitle)
                 .font(.callout)
@@ -262,25 +263,46 @@ private struct UserViewLibraryListElement: View {
         }
     }
 
+    private var imageView: some View {
+        ZStack {
+            Color.secondarySystemFill
+                .opacity(0.75)
+
+            ImageView(imageSources)
+                .placeholder { imageSource in
+                    DefaultPlaceholderView(blurHash: imageSource.blurHash)
+                }
+                .failure {
+                    Image(systemName: element.systemImage)
+                        .foregroundStyle(.secondary)
+                }
+                .id(imageSources.hashValue)
+        }
+        .posterStyle(.landscape)
+        .posterShadow()
+        .frame(width: userViewLibraryListImageWidth)
+    }
+
     private func setImageSources() {
         Task { @MainActor in
-            if useRandomImage {
-                imageSources = await (try? element.randomItemImageSources()) ?? []
-            } else {
-                imageSources = element.imageSources()
-            }
+            imageSources = await element.libraryImageSources(useRandomImage: useRandomImage)
         }
     }
 }
 
 private extension UserViewLibraryElement {
 
-    func imageSources() -> [ImageSource] {
+    @MainActor
+    func libraryImageSources(useRandomImage: Bool) async -> [ImageSource] {
+        if useRandomImage {
+            return await (try? randomItemImageSources()) ?? []
+        }
+
         switch self {
         case .favorites:
-            []
+            return []
         case let .userView(item):
-            [item.imageSource(.primary, maxWidth: 500)]
+            return [item.imageSource(.primary, maxWidth: 500)]
         }
     }
 

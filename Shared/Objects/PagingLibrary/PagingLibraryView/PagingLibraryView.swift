@@ -150,10 +150,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 }
             }
         #endif
-            .refreshable {
-                    viewModel.refresh()
-                }
-                .backport
+            .backport
                 .onChange(of: viewModel.environment) {
                     viewModel.refreshForEnvironmentChange()
                 }

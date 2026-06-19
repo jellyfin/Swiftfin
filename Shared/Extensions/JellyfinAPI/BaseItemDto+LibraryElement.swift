@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: consolidate width constants
+
 private let baseItemListLandscapeWidth: CGFloat = 110
 private let baseItemListPortraitWidth: CGFloat = 60
 
