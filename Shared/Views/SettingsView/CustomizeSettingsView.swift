@@ -261,7 +261,7 @@ struct CustomizeSettingsView: View {
             Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
 
             #if os(tvOS)
-            Toggle(L10n.cinematic, isOn: $cinematicBackground)
+            Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
             #endif
         }
     }
