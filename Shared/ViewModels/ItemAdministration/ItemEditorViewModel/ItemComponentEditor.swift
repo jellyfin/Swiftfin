@@ -16,11 +16,6 @@ struct ItemComponentEditorInput {
     var personRole: String
 }
 
-struct ItemComponentEditorState {
-
-    let userSession: UserSession
-}
-
 @MainActor
 protocol ItemComponentEditor: Displayable {
 
@@ -40,7 +35,7 @@ protocol ItemComponentEditor: Displayable {
     func reordering(_ elements: [Element], in item: BaseItemDto) -> BaseItemDto
 
     func didAdd(_ elements: [Element])
-    func search(_ searchTerm: String, state: ItemComponentEditorState) async throws -> [Element]
+    func search(_ searchTerm: String, userSession: UserSession) async throws -> [Element]
 }
 
 extension ItemComponentEditor {

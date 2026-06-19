@@ -51,29 +51,12 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
     }
 
     @Published
-    var item: BaseItemDto
-
+    private(set) var item: BaseItemDto
     @Published
     private(set) var matches: [Element] = []
 
-    private(set) var editor: Editor
+    let editor: Editor
     private var searchQuery: CurrentValueSubject<String, Never> = .init("")
-
-    var description: String {
-        editor.description
-    }
-
-    var displayTitle: String {
-        editor.displayTitle
-    }
-
-    var elements: [Element] {
-        editor.elements(in: item)
-    }
-
-    var supportsPeopleFields: Bool {
-        editor.supportsPeopleFields
-    }
 
     init(editor: Editor, item: BaseItemDto) {
         self.editor = editor
@@ -94,26 +77,6 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
             .store(in: &cancellables)
     }
 
-    func containsElement(named name: String) -> Bool {
-        editor.containsElement(named: name, in: item)
-    }
-
-    func id(for element: Element) -> String? {
-        editor.id(for: element)
-    }
-
-    func makeElement(input: ItemComponentEditorInput) -> Element {
-        editor.makeElement(input: input)
-    }
-
-    func matchExists(named name: String) -> Bool {
-        editor.matchExists(named: name, in: matches)
-    }
-
-    func name(for element: Element) -> String {
-        editor.name(for: element)
-    }
-
     @Function(\Action.Cases.search)
     private func _search(_ searchTerm: String) async throws {
         searchQuery.value = searchTerm
@@ -123,8 +86,7 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
 
     @Function(\Action.Cases.actuallySearch)
     private func _actuallySearch(_ searchTerm: String) async throws {
-        let state = try ItemComponentEditorState(userSession: requireUserSession())
-        matches = try await editor.search(searchTerm, state: state)
+        matches = try await editor.search(searchTerm, userSession: requireUserSession())
     }
 
     @Function(\Action.Cases.add)

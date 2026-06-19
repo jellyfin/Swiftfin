@@ -52,11 +52,11 @@ struct TagComponentEditor: ItemComponentEditor {
         trie.insert(contentsOf: tags.keyed(using: \.localizedLowercase))
     }
 
-    func search(_ searchTerm: String, state: ItemComponentEditorState) async throws -> [String] {
+    func search(_ searchTerm: String, userSession: UserSession) async throws -> [String] {
         if trie.isEmpty {
-            let parameters = Paths.GetQueryFiltersLegacyParameters(userID: state.userSession.user.id)
+            let parameters = Paths.GetQueryFiltersLegacyParameters(userID: userSession.user.id)
             let request = Paths.getQueryFiltersLegacy(parameters: parameters)
-            let response = try await state.userSession.client.send(request)
+            let response = try await userSession.client.send(request)
             trie.insert(contentsOf: (response.value.tags ?? []).keyed(using: \.localizedLowercase))
         }
 

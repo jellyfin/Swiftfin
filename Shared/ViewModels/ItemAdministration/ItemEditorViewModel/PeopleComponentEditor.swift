@@ -60,10 +60,10 @@ struct PeopleComponentEditor: ItemComponentEditor {
         return item
     }
 
-    func search(_ searchTerm: String, state: ItemComponentEditorState) async throws -> [BaseItemPerson] {
+    func search(_ searchTerm: String, userSession: UserSession) async throws -> [BaseItemPerson] {
         let parameters = Paths.GetPersonsParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
         let request = Paths.getPersons(parameters: parameters)
-        let response = try await state.userSession.client.send(request)
+        let response = try await userSession.client.send(request)
 
         return response.value.items?.map { person in
             BaseItemPerson(id: person.id, name: person.name)

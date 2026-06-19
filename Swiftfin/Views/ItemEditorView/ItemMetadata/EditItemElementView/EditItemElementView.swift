@@ -37,7 +37,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
 
     init(viewModel: ItemComponentEditorViewModel<Editor>) {
         self.viewModel = viewModel
-        self.elements = viewModel.elements
+        self.elements = viewModel.editor.elements(in: viewModel.item)
     }
 
     @ViewBuilder
@@ -54,7 +54,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
     @ViewBuilder
     private var contentView: some View {
         List {
-            InsetGroupedListHeader(viewModel.displayTitle, description: viewModel.description)
+            InsetGroupedListHeader(viewModel.editor.displayTitle, description: viewModel.editor.description)
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
                 .padding(.vertical, 24)
@@ -100,7 +100,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
 
     var body: some View {
         contentView
-            .navigationTitle(viewModel.displayTitle)
+            .navigationTitle(viewModel.editor.displayTitle)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isEditing || isReordering)
             .toolbar {
@@ -118,7 +118,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                             }
 
                             if isReordering {
-                                elements = viewModel.elements
+                                elements = viewModel.editor.elements(in: viewModel.item)
                                 isReordering.toggle()
                             }
 
@@ -146,7 +146,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                             isReordering = false
                         }
                         .buttonStyle(.toolbarPill)
-                        .disabled(viewModel.elements == elements)
+                        .disabled(viewModel.editor.elements(in: viewModel.item) == elements)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                 }
@@ -170,12 +170,12 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                 }
             }
             .onNotification(.itemMetadataDidChange) { _ in
-                elements = viewModel.elements
+                elements = viewModel.editor.elements(in: viewModel.item)
             }
             .onReceive(viewModel.events) { event in
                 switch event {
                 case .updated:
-                    elements = viewModel.elements
+                    elements = viewModel.editor.elements(in: viewModel.item)
                     UIDevice.feedback(.success)
                 }
             }

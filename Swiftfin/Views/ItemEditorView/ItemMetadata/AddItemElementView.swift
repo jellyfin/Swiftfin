@@ -34,11 +34,11 @@ struct AddItemElementView<Editor: ItemComponentEditor>: View {
     // MARK: - Validation
 
     private var alreadyOnItem: Bool {
-        name.isNotEmpty && viewModel.containsElement(named: name)
+        name.isNotEmpty && viewModel.editor.containsElement(named: name, in: viewModel.item)
     }
 
     private var existsOnServer: Bool {
-        name.isNotEmpty && viewModel.matchExists(named: name)
+        name.isNotEmpty && viewModel.editor.matchExists(named: name, in: viewModel.matches)
     }
 
     private var isValid: Bool {
@@ -52,18 +52,18 @@ struct AddItemElementView<Editor: ItemComponentEditor>: View {
             ItemElementSearchView(
                 name: $name,
                 id: $id,
-                supportsPeopleFields: viewModel.supportsPeopleFields,
+                supportsPeopleFields: viewModel.editor.supportsPeopleFields,
                 personKind: $personKind,
                 personRole: $personRole,
                 population: viewModel.matches,
                 isSearching: viewModel.background.states.contains(.searching),
                 alreadyOnItem: alreadyOnItem,
                 existsOnServer: existsOnServer,
-                idForElement: viewModel.id(for:),
-                nameForElement: viewModel.name(for:)
+                idForElement: viewModel.editor.id(for:),
+                nameForElement: viewModel.editor.name(for:)
             )
         }
-        .navigationTitle(viewModel.displayTitle)
+        .navigationTitle(viewModel.editor.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
@@ -74,7 +74,7 @@ struct AddItemElementView<Editor: ItemComponentEditor>: View {
             }
 
             Button(L10n.save) {
-                viewModel.add([viewModel.makeElement(input: .init(
+                viewModel.add([viewModel.editor.makeElement(input: .init(
                     id: id,
                     name: name,
                     personKind: personKind,

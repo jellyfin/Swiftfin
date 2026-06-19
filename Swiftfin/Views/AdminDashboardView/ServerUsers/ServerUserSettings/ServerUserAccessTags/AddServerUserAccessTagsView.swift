@@ -35,7 +35,7 @@ struct AddServerUserAccessTagsView: View {
     }
 
     private var existsOnServer: Bool {
-        tempTag.isNotEmpty && tagViewModel.matchExists(named: tempTag)
+        tempTag.isNotEmpty && tagViewModel.editor.matchExists(named: tempTag, in: tagViewModel.matches)
     }
 
     private var isValid: Bool {
@@ -83,7 +83,7 @@ struct AddServerUserAccessTagsView: View {
                 isSearching: tagViewModel.background.states.contains(.searching),
                 alreadyOnItem: alreadyOnItem,
                 existsOnServer: existsOnServer,
-                nameForElement: tagViewModel.name(for:)
+                nameForElement: tagViewModel.editor.name(for:)
             )
         }
         .backport

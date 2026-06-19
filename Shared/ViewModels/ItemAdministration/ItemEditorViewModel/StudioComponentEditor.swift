@@ -50,10 +50,10 @@ struct StudioComponentEditor: ItemComponentEditor {
         return item
     }
 
-    func search(_ searchTerm: String, state: ItemComponentEditorState) async throws -> [NameIDPair] {
+    func search(_ searchTerm: String, userSession: UserSession) async throws -> [NameIDPair] {
         let parameters = Paths.GetStudiosParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
         let request = Paths.getStudios(parameters: parameters)
-        let response = try await state.userSession.client.send(request)
+        let response = try await userSession.client.send(request)
 
         return response.value.items?.map { studio in
             NameIDPair(id: studio.id, name: studio.name)
