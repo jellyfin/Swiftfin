@@ -8,26 +8,42 @@
 
 import SwiftUI
 
-// TODO: come up with better name along with `ListRowButton`
+// TODO: possibly consolidate with ChevronButton
 
-// Meant to be used when making a custom list without `List` or `Form`
+/// A row for list leading and primary content, typically used
+/// outside of a `List` or `Form`.
 struct ListRow<Leading: View, Content: View>: View {
+
+    @ViewContextContains(.isListRowSeparatorVisible)
+    private var isListRowSeparatorVisible
+
+    @FocusState
+    private var isButtonFocused
 
     @State
     private var contentSize: CGSize = .zero
 
-    private let leading: Leading
-    private let content: Content
     private let action: () -> Void
+    private let content: Content
     private var insets: EdgeInsets
-    private var isSeparatorVisible: Bool
+    private let leading: Leading
+
+    private init(
+        leading: Leading,
+        content: Content,
+        action: @escaping () -> Void,
+        insets: EdgeInsets
+    ) {
+        self.leading = leading
+        self.content = content
+        self.action = action
+        self.insets = insets
+    }
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
 
-            Button {
-                action()
-            } label: {
+            Button(action: action) {
                 HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
 
                     leading
@@ -36,18 +52,21 @@ struct ListRow<Leading: View, Content: View>: View {
                         .frame(maxHeight: .infinity)
                         .trackingSize($contentSize)
                 }
-                .padding(.top, insets.top)
-                .padding(.bottom, insets.bottom)
-                .padding(.leading, insets.leading)
-                .padding(.trailing, insets.trailing)
+                .padding(insets)
             }
             .foregroundStyle(.primary, .secondary)
-            .buttonStyle(.plain)
+            .focused($isButtonFocused)
+            #if os(tvOS)
+                .buttonStyle(.card)
+            #else
+                .contentShape(.contextMenuPreview, Rectangle())
+            #endif
 
-            Color.secondarySystemFill
-                .frame(width: contentSize.width, height: 1)
-                .padding(.trailing, insets.trailing)
-                .isVisible(isSeparatorVisible)
+            if isListRowSeparatorVisible, !isButtonFocused {
+                Color.secondarySystemFill
+                    .frame(width: contentSize.width, height: 1)
+                    .padding(.trailing, insets.trailing)
+            }
         }
     }
 }
@@ -77,12 +96,7 @@ extension ListRow {
             leading: leading(),
             content: content(),
             action: action,
-            insets: insets,
-            isSeparatorVisible: true
+            insets: insets
         )
-    }
-
-    func isSeparatorVisible(_ isVisible: Bool) -> Self {
-        copy(modifying: \.isSeparatorVisible, with: isVisible)
     }
 }

@@ -58,10 +58,7 @@ struct ServerActivityView: View {
             viewModel.refresh()
             usersViewModel.refresh()
         }
-        .onChange(of: viewModel.environment.hasUserID) { _ in
-            viewModel.refresh()
-        }
-        .onChange(of: viewModel.environment.minDate) { _ in
+        .onChange(of: viewModel.environment) { _ in
             viewModel.refresh()
         }
     }
