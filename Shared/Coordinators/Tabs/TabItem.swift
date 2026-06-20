@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 // TODO: selected icon
@@ -63,11 +64,15 @@ extension TabItem {
             title: title,
             systemImage: systemName
         ) {
-            let viewModel = ItemLibraryViewModel(
-                filters: filters
+            PagingLibraryView(
+                library: ItemLibrary(
+                    parent: BaseItemDto(name: title),
+                    filters: filters
+                )
             )
-
-            PagingLibraryView(viewModel: viewModel)
+            .if(UIDevice.isTV) { view in
+                view.toolbar(.hidden, for: .navigationBar)
+            }
         }
     }
 
@@ -77,7 +82,10 @@ extension TabItem {
             title: L10n.media,
             systemImage: "rectangle.stack.fill"
         ) {
-            MediaView()
+            PagingLibraryView(library: UserViewLibrary())
+                .if(UIDevice.isTV) { view in
+                    view.toolbar(.hidden, for: .navigationBar)
+                }
         }
     }
 

@@ -1,0 +1,30 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+struct StaticLibrary<Element: LibraryElement>: PagingLibrary {
+
+    let elements: [Element]
+    let hasNextPage: Bool = false
+    let parent: TitledLibraryParent
+
+    init(
+        title: String,
+        id: String,
+        elements: [Element]
+    ) {
+        self.elements = elements
+        self.parent = .init(displayTitle: title, id: id)
+    }
+
+    func retrievePage(
+        environment: Empty,
+        pageState: LibraryPageState
+    ) async throws -> [Element] {
+        elements
+    }
+}

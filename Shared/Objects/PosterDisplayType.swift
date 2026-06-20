@@ -34,11 +34,3 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
         }
     }
 }
-
-// TODO: remove after library views support all types
-extension PosterDisplayType: SupportedCaseIterable {
-
-    static var supportedCases: [PosterDisplayType] {
-        [.landscape, .portrait]
-    }
-}

@@ -375,7 +375,8 @@ class ItemViewModel: ViewModel, Stateful {
             )
         }
 
-        _ = try await send(request)
+        let response = try await send(request)
+        Notifications[.itemUserDataDidChange].post(response.value)
         Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 
@@ -395,7 +396,8 @@ class ItemViewModel: ViewModel, Stateful {
             )
         }
 
-        _ = try await send(request)
+        let response = try await send(request)
+        Notifications[.itemUserDataDidChange].post(response.value)
         Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 }
