@@ -20,7 +20,6 @@ struct ServerActivityView: View {
 
     @StateObject
     private var usersViewModel = PagingLibraryViewModel(library: ServerUsersLibrary())
-
     @StateObject
     private var viewModel = PagingLibraryViewModel(library: ServerActivityLibrary())
 
@@ -41,8 +40,8 @@ struct ServerActivityView: View {
         .navigationTitle(L10n.activity)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
-            await viewModel.refresh()
             await usersViewModel.refresh()
+            await viewModel.refresh()
         }
         .topBarTrailing {
             if viewModel.background.is(.gettingNextPage) {
@@ -55,8 +54,10 @@ struct ServerActivityView: View {
             }
         }
         .onFirstAppear {
-            viewModel.refresh()
-            usersViewModel.refresh()
+            Task {
+                await usersViewModel.refresh()
+                await viewModel.refresh()
+            }
         }
         .onChange(of: viewModel.environment) { _ in
             viewModel.refresh()
