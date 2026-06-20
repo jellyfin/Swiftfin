@@ -8,7 +8,7 @@
 
 import Algorithms
 import AVKit
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import MediaPlayer

@@ -7,7 +7,7 @@
 //
 
 import Engine
-import Factory
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 

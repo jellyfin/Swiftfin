@@ -8,7 +8,7 @@
 
 import AVFoundation
 import Combine
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -115,12 +115,6 @@ extension Notifications {
 
 extension Notifications.Key {
 
-    // MARK: - Authentication
-
-    static var didChangeUserSession: Key<Void> {
-        Key("didChangeUserSession")
-    }
-
     // MARK: - App Flow
 
     static var didPurge: Key<Void> {
@@ -137,10 +131,6 @@ extension Notifications.Key {
 
     static var didRequestGlobalRefresh: Key<Void> {
         Key("didRequestGlobalRefresh")
-    }
-
-    static var didFailMigration: Key<Void> {
-        Key("didFailMigration")
     }
 
     // MARK: - Media Items

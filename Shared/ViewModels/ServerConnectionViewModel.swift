@@ -8,7 +8,7 @@
 
 import Combine
 import Defaults
-import Factory
+import FactoryKit
 import Foundation
 
 @MainActor
@@ -22,6 +22,10 @@ final class ServerConnectionViewModel: ViewModel {
     private(set) var activeConnection: ServerConnection?
     @Published
     private(set) var isEvaluatingAutoSwitchConnection: Bool = false
+
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
+
     @Published
     var isAutoSwitchEnabled: Bool {
         didSet {
@@ -31,7 +35,7 @@ final class ServerConnectionViewModel: ViewModel {
             server.isAutoSwitchEnabled = isAutoSwitchEnabled
 
             if isAutoSwitchEnabled {
-                Container.shared.userSessionManager().scheduleServerConnectionEvaluation()
+                userSessionManager.scheduleServerConnectionResolution()
             }
         }
     }
@@ -154,13 +158,18 @@ final class ServerConnectionViewModel: ViewModel {
         isEvaluatingAutoSwitchConnection = true
         defer { isEvaluatingAutoSwitchConnection = false }
 
-        guard !Container.shared.userSessionManager().hasActivePlayback else { return }
+        guard !userSessionManager.hasActivePlayback else { return }
 
-        await ServerConnectionManager.evaluate(
-            server: server,
-            accessToken: userSession?.user.accessToken,
-            context: NetworkConnectionContext.current()
-        )
+        if userSession?.server.id == server.id {
+            await userSession?.serverConnectionManager.resolveActiveConnection()
+        } else {
+            await ServerConnectionManager.evaluate(
+                server: server,
+                accessToken: userSession?.user.accessToken,
+                context: NetworkConnectionContext.current()
+            )
+        }
+
         reloadConnections()
     }
 

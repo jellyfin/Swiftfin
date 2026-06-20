@@ -8,7 +8,7 @@
 
 import CoreStore
 import Defaults
-import Factory
+import FactoryKit
 import Logging
 import Nuke
 import PulseLogHandler
@@ -53,7 +53,5 @@ extension SwiftfinApp {
         }
 
         ImagePipeline.shared = .Swiftfin.posters
-
-        _ = Container.shared.userSessionManager()
     }
 }

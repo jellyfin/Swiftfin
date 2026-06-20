@@ -6,7 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
+import FactoryKit
 import SwiftUI
 
 // TODO: move popup to router
@@ -17,6 +17,8 @@ struct MainTabView: View {
 
     @InjectedObject(\.deepLinkHandler)
     private var deepLinkHandler
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
 
     #if os(iOS)
     @StateObject
@@ -45,16 +47,16 @@ struct MainTabView: View {
     }
     #endif
 
-    private func routePendingDeepLink() {
-        guard let deepLink = deepLinkHandler.consumePendingDeepLink() else { return }
+    private func routePendingDeepLink(_ deepLink: DeepLinkHandler.DeepLink?) {
+        guard let deepLink else { return }
 
         Task { @MainActor in
-            do {
-                let route = try await deepLinkHandler.route(for: deepLink)
-                tabCoordinator.route(to: route)
-            } catch {
-                // TODO: surface deep link failures in UI.
+            guard let currentSession = userSessionManager.currentSession else {
+                throw UserSessionError.missingCurrentSession
             }
+
+            let route = try await deepLinkHandler.route(for: deepLink, using: currentSession)
+            await tabCoordinator.route(to: route)
         }
     }
 
@@ -82,10 +84,12 @@ struct MainTabView: View {
             }
         }
         .onAppear {
-            routePendingDeepLink()
+            if let deepLink = deepLinkHandler.consumePendingDeepLink() {
+                routePendingDeepLink(deepLink)
+            }
         }
         .onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
-            routePendingDeepLink()
+            routePendingDeepLink(deepLinkHandler.consumePendingDeepLink())
         }
     }
 }

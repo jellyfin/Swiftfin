@@ -6,11 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import KeychainSwift
-import Logging
 
 extension Container {
     var deepLinkHandler: Factory<DeepLinkHandler> {
@@ -48,64 +47,19 @@ final class DeepLinkHandler: ObservableObject {
     }
 
     enum DeepLinkError: Error {
-        case invalidURL
         case missingAuthenticationAction
         case missingServer(String)
         case missingUser(String)
         case wrongCurrentSession
-
-        var localizedDescription: String {
-            switch self {
-            case .invalidURL:
-                "The URL is not a supported Swiftfin deep link."
-            case .missingAuthenticationAction:
-                "Local authentication is unavailable."
-            case let .missingServer(serverID):
-                "No saved server exists for deep link server ID \(serverID)."
-            case let .missingUser(userID):
-                "No saved user exists for deep link user ID \(userID)."
-            case .wrongCurrentSession:
-                "The active user session does not match the deep link."
-            }
-        }
     }
 
     @Injected(\.keychainService)
     private var keychain: KeychainSwift
 
     @Published
-    private(set) var pendingDeepLink: DeepLink?
-
-    private let logger = Logger.swiftfin()
+    var pendingDeepLink: DeepLink?
 
     nonisolated init() {}
-
-    @discardableResult
-    func handle(
-        _ url: URL,
-        authenticationAction: LocalUserAuthenticationAction?
-    ) async -> Bool {
-        guard let deepLink = DeepLink(url) else {
-            return false
-        }
-
-        do {
-            try await prepareSession(for: deepLink, authenticationAction: authenticationAction)
-            pendingDeepLink = deepLink
-            return true
-        } catch is CancellationError {
-            return true
-        } catch {
-            logger.error(
-                "Failed to process deep link",
-                metadata: [
-                    "url": .string(url.absoluteString),
-                    "error": .stringConvertible(error.localizedDescription),
-                ]
-            )
-            return true
-        }
-    }
 
     func consumePendingDeepLink() -> DeepLink? {
         defer {
@@ -115,11 +69,7 @@ final class DeepLinkHandler: ObservableObject {
         return pendingDeepLink
     }
 
-    func route(for deepLink: DeepLink) async throws -> NavigationRoute {
-        guard let session = Container.shared.userSessionManager().currentSession else {
-            throw UserSessionError.missingCurrentSession
-        }
-
+    func route(for deepLink: DeepLink, using session: UserSession) async throws -> NavigationRoute {
         guard session.server.id == deepLink.serverID, session.user.id == deepLink.userID else {
             throw DeepLinkError.wrongCurrentSession
         }
@@ -133,10 +83,7 @@ final class DeepLinkHandler: ObservableObject {
         }
     }
 
-    private func prepareSession(
-        for deepLink: DeepLink,
-        authenticationAction: LocalUserAuthenticationAction?
-    ) async throws {
+    func sessionTarget(for deepLink: DeepLink) throws -> (server: ServerState, user: UserState) {
         guard let server = StoredValues[.Server.servers].first(where: { $0.id == deepLink.serverID }) else {
             throw DeepLinkError.missingServer(deepLink.serverID)
         }
@@ -145,28 +92,10 @@ final class DeepLinkHandler: ObservableObject {
             throw DeepLinkError.missingUser(deepLink.userID)
         }
 
-        let sessionManager = Container.shared.userSessionManager()
-        let currentSession = sessionManager.currentSession
-        let isSameUserSession = currentSession?.server.id == server.id && currentSession?.user.id == user.id
-
-        guard !isSameUserSession else {
-            return
-        }
-
-        try await authenticate(user: user, authenticationAction: authenticationAction)
-
-        if sessionManager.hasActivePlayback {
-            await sessionManager.stopActivePlayback()
-        }
-
-        if currentSession != nil {
-            sessionManager.signOut(reason: .deepLinkUserSwitch)
-        }
-
-        sessionManager.signIn(userID: user.id)
+        return (server, user)
     }
 
-    private func authenticate(
+    func authenticate(
         user: UserState,
         authenticationAction: LocalUserAuthenticationAction?
     ) async throws {

@@ -48,13 +48,8 @@ final class TabCoordinator: ObservableObject {
         }
     }
 
-    func route(to route: NavigationRoute, in tabID: String = "home") {
-        guard let tab = tabs.first(where: { $0.item.id == tabID }) ?? tabs.first else { return }
-
-        selectedTabID = tab.item.id
-        tab.coordinator.path = []
-        tab.coordinator.presentedSheet = nil
-        tab.coordinator.presentedFullScreen = nil
+    func route(to route: NavigationRoute) async {
+        guard let tab = tabs.first(where: { $0.item.id == selectedTabID }) ?? tabs.first else { return }
         tab.coordinator.push(route)
     }
 }

@@ -7,13 +7,10 @@
 //
 
 import Defaults
-import Factory
+import FactoryKit
 import JellyfinAPI
 import OrderedCollections
 import SwiftUI
-
-// TODO: Need to change handling of splashscreen
-//       - change root item, needs to be background of navigation stack
 
 struct SelectUserView: View {
 
@@ -36,6 +33,9 @@ struct SelectUserView: View {
     private var authenticationAction
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass
+
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
 
     @Router
     private var router
@@ -156,20 +156,23 @@ struct SelectUserView: View {
         }
     }
 
-    private func onSignedIn(_ user: UserState) {
-        Container.shared.userSessionManager().signIn(userID: user.id)
+    private func onSignedIn(_ user: UserState) throws {
+        try userSessionManager.signIn(userID: user.id)
         UIDevice.feedback(.success)
     }
 
     @ViewBuilder
     private var splashScreenBackground: some View {
         if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
-            ZStack(alignment: .top) {
+            AlternateLayoutView {
+                Color.clear
+            } content: {
                 ImageView(splashScreenImageSources)
                     .pipeline(.Swiftfin.local)
                     .aspectRatio(contentMode: .fill)
                     .id(splashScreenImageSources)
-
+            }
+            .overlay {
                 Color.black
                     .opacity(0.9)
             }
@@ -375,7 +378,11 @@ struct SelectUserView: View {
         .onReceive(viewModel.events) { event in
             switch event {
             case let .signedIn(user):
-                onSignedIn(user)
+                do {
+                    try onSignedIn(user)
+                } catch {
+                    viewModel.error(error)
+                }
             }
         }
         .onNotification(.didConnectToServer) { server in

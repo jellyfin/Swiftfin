@@ -15,8 +15,11 @@ final class UserSession {
     let client: JellyfinClient
     let server: ServerState
     let user: UserState
+
+    @MainActor
     lazy var serverConnectionManager = ServerConnectionManager(userSession: self)
 
+    @MainActor
     private lazy var services: [any UserSessionService] = [
         serverConnectionManager,
     ]

@@ -7,19 +7,60 @@
 //
 
 import Combine
-import Defaults
-import Factory
 import Foundation
 import JellyfinAPI
 import Logging
 import Network
 import Pulse
 
-final class ServerConnectionManager {
+@MainActor
+@Stateful
+final class ServerConnectionManager: ObservableObject {
+
+    @CasePathable
+    enum Action {
+        case pathDidUpdate(NetworkConnectionContext)
+        case resolveActiveConnection
+        case scheduleConnectionResolution
+        case start
+        case stop
+
+        case _resolutionDidUpdate(Resolution)
+
+        var transition: Transition {
+            switch self {
+            case .pathDidUpdate, .scheduleConnectionResolution, .start:
+                .none
+            case .resolveActiveConnection:
+                .to(.evaluating)
+            case let ._resolutionDidUpdate(.offline(context)):
+                .to(.offline(context))
+            case let ._resolutionDidUpdate(.connected(connection)):
+                .to(.connected(connection))
+            case let ._resolutionDidUpdate(.unreachable(connections)):
+                .to(.unreachable(connections))
+            case .stop:
+                .to(.initial)
+            }
+        }
+    }
+
+    enum State: Equatable {
+        case initial
+        case offline(NetworkConnectionContext)
+        case evaluating
+        case connected(ServerConnection)
+        case unreachable([ServerConnection])
+    }
+
+    enum Resolution: Equatable {
+        case offline(NetworkConnectionContext)
+        case connected(ServerConnection)
+        case unreachable([ServerConnection])
+    }
 
     private static let logger = Logger.swiftfin()
 
-    private let logger = Logger.swiftfin()
     private let queue = DispatchQueue(label: "Swiftfin.ServerConnectionMonitor")
 
     private var userSession: UserSession
@@ -73,8 +114,9 @@ final class ServerConnectionManager {
         let candidates = server.serverConnections.filter { $0.matches(context) }
 
         let currentConnection = server.activeServerConnection
+        let orderedCandidates = orderedConnectionCandidates(candidates, currentConnection: currentConnection)
         guard let reachableConnection = await firstReachableConnection(
-            in: candidates,
+            in: orderedCandidates,
             accessToken: accessToken,
             serverID: server.id
         ) else { return nil }
@@ -95,7 +137,9 @@ final class ServerConnectionManager {
         serverID: String
     ) async -> ServerConnection? {
         for connection in connections {
-            if Task.isCancelled { return nil }
+            if Task.isCancelled {
+                return nil
+            }
 
             do {
                 _ = try await test(
@@ -118,13 +162,8 @@ final class ServerConnectionManager {
         return nil
     }
 
-    @MainActor
-    func update(userSession: UserSession) {
-        self.userSession = userSession
-    }
-
-    @MainActor
-    func start() {
+    @Function(\Action.Cases.start)
+    private func _start() {
         guard !isStarted else { return }
         isStarted = true
 
@@ -142,15 +181,17 @@ final class ServerConnectionManager {
         Notifications[.applicationWillEnterForeground]
             .publisher
             .sink { [weak self] in
-                self?.scheduleEvaluation()
+                Task { @MainActor in
+                    self?.scheduleConnectionResolution()
+                }
             }
             .store(in: &cancellables)
 
-        scheduleEvaluation()
+        scheduleConnectionResolution()
     }
 
-    @MainActor
-    func stop() {
+    @Function(\Action.Cases.stop)
+    private func _stop() {
         guard isStarted else { return }
 
         isStarted = false
@@ -162,49 +203,90 @@ final class ServerConnectionManager {
         context = .unavailable
     }
 
-    @MainActor
-    func scheduleEvaluation() {
-        guard Defaults[.Experimental.serverConnectionAutoSwitch] else { return }
-
+    @Function(\Action.Cases.scheduleConnectionResolution)
+    private func _scheduleConnectionResolution() {
         evaluationTask?.cancel()
         evaluationTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 1_500_000_000)
-            await self?.evaluateCurrentSession()
+            try? await Task.sleep(for: .seconds(1.5))
+            guard !Task.isCancelled else { return }
+            await self?.resolveActiveConnection()
         }
     }
 
-    @MainActor
-    func evaluateCurrentSession() async {
-        await evaluate(
-            server: userSession.server,
-            accessToken: userSession.user.accessToken
-        )
-    }
+    @Function(\Action.Cases.resolveActiveConnection)
+    private func _resolveActiveConnection() async {
+        guard !Task.isCancelled else { return }
 
-    @MainActor
-    func evaluate(
-        server: ServerState,
-        accessToken: String?
-    ) async {
-        guard Defaults[.Experimental.serverConnectionAutoSwitch] else { return }
-        guard server.isAutoSwitchEnabled else { return }
+        func apply(_ resolution: Resolution) async {
+            await _resolutionDidUpdate(resolution)
+        }
 
-        guard !Container.shared.userSessionManager().hasActivePlayback else {
-            logger.info("Skipped server connection switch during active playback")
+        let context = self.context
+
+        guard context.isSatisfied else {
+            guard !Task.isCancelled else { return }
+            await apply(.offline(context))
             return
         }
 
-        _ = await Self.evaluate(
-            server: server,
-            accessToken: accessToken,
-            context: context
+        let candidates = userSession.server.serverConnections.filter { $0.matches(context) }
+        guard candidates.isNotEmpty else {
+            guard !Task.isCancelled else { return }
+            await apply(.unreachable([]))
+            return
+        }
+
+        let currentConnection = userSession.server.activeServerConnection
+        let orderedCandidates = Self.orderedConnectionCandidates(candidates, currentConnection: currentConnection)
+
+        let reachableConnection = await Self.firstReachableConnection(
+            in: orderedCandidates,
+            accessToken: userSession.user.accessToken,
+            serverID: userSession.server.id
         )
+        guard !Task.isCancelled else { return }
+
+        guard let reachableConnection else {
+            await apply(.unreachable(orderedCandidates))
+            return
+        }
+
+        if currentConnection?.id != reachableConnection.id {
+            userSession.server.activeServerConnection = reachableConnection
+            Notifications.postServerConnectionChange(
+                previous: currentConnection,
+                current: reachableConnection
+            )
+        }
+
+        guard !Task.isCancelled else { return }
+        await apply(.connected(reachableConnection))
     }
 
-    @MainActor
-    private func pathDidUpdate(_ context: NetworkConnectionContext) {
+    @Function(\Action.Cases._resolutionDidUpdate)
+    private func _commitResolutionUpdate(_ resolution: Resolution) {
+        _ = resolution
+    }
+
+    @Function(\Action.Cases.pathDidUpdate)
+    private func _pathDidUpdate(_ context: NetworkConnectionContext) {
         self.context = context
-        scheduleEvaluation()
+        scheduleConnectionResolution()
+    }
+
+    private static func orderedConnectionCandidates(
+        _ candidates: [ServerConnection],
+        currentConnection: ServerConnection?
+    ) -> [ServerConnection] {
+        guard let currentConnection,
+              let currentIndex = candidates.firstIndex(where: { $0.id == currentConnection.id })
+        else {
+            return candidates
+        }
+
+        var candidates = candidates
+        let current = candidates.remove(at: currentIndex)
+        return [current] + candidates
     }
 }
 

@@ -9,7 +9,7 @@
 import Combine
 import CoreStore
 import Defaults
-import Factory
+import FactoryKit
 import Foundation
 import Logging
 import SwiftUI

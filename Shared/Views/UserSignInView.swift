@@ -8,9 +8,8 @@
 
 import CollectionVGrid
 import Defaults
-import Factory
+import FactoryKit
 import JellyfinAPI
-import Logging
 import SwiftUI
 
 struct UserSignInView: View {
@@ -22,6 +21,9 @@ struct UserSignInView: View {
 
     @Environment(\.localUserAuthenticationAction)
     private var authenticationAction
+
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
 
     @FocusState
     private var focusedTextField: Field?
@@ -45,8 +47,6 @@ struct UserSignInView: View {
     @StateObject
     private var viewModel: UserSignInViewModel
 
-    private let logger = Logger.swiftfin()
-
     init(server: ServerState) {
         self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
     }
@@ -54,9 +54,8 @@ struct UserSignInView: View {
     private func handleEvent(_ event: UserSignInViewModel._Event) {
         switch event {
         case let .connected(user):
-            guard let authenticationAction else {
-                return
-            }
+            guard let authenticationAction else { return }
+
             viewModel.save(
                 user: user,
                 authenticationAction: (
@@ -72,10 +71,13 @@ struct UserSignInView: View {
             self.existingUser = existingUser
             self.isPresentingExistingUser = true
         case let .saved(user):
-            UIDevice.feedback(.success)
-
-            router.dismiss()
-            Container.shared.userSessionManager().signIn(userID: user.id)
+            do {
+                try userSessionManager.signIn(userID: user.id)
+                UIDevice.feedback(.success)
+                router.dismiss()
+            } catch {
+                viewModel.error(error)
+            }
         }
     }
 
@@ -110,8 +112,7 @@ struct UserSignInView: View {
                 L10n.password,
                 text: $password,
                 maskToggle: .enabled
-            )
-            .onSubmit {
+            ) {
                 focusedTextField = nil
 
                 viewModel.signIn(

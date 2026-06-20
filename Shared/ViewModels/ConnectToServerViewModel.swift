@@ -7,7 +7,7 @@
 //
 
 import Combine
-import Factory
+import FactoryKit
 import Foundation
 import Get
 import JellyfinAPI
