@@ -18,6 +18,9 @@ extension ItemView {
         @Default(.accentColor)
         private var accentColor
 
+        @Default(.isLiquidGlassEnabled)
+        private var isLiquidGlassEnabled
+
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
@@ -51,14 +54,22 @@ extension ItemView {
 
                     let isCheckmarkSelected = viewModel.item.userData?.isPlayed == true
 
-                    Button(L10n.played, systemImage: "checkmark") {
-                        viewModel.send(.toggleIsPlayed)
-                    }
-                    .buttonStyle(.tintedMaterial(tint: .jellyfinPurple, foregroundColor: .white))
-                    .isSelected(isCheckmarkSelected)
-                    .frame(maxWidth: .infinity)
-                    .if(!equalSpacing) { view in
-                        view.aspectRatio(1, contentMode: .fit)
+                    if isLiquidGlassEnabled, #available(iOS 26.0, *) {
+                        Toggle(L10n.played, systemImage: "checkmark", isOn: Binding(get: {
+                            isCheckmarkSelected
+                        }, set: { _ in
+                            viewModel.send(.toggleIsPlayed)
+                        })).toggleStyle(.button).tint(.jellyfinPurple).buttonStyle(.glass)
+                            .if(!equalSpacing) { view in
+                                view.aspectRatio(1, contentMode: .fit)
+                            }
+                    } else {
+                        Button(L10n.played, systemImage: "checkmark") {
+                            viewModel.send(.toggleIsPlayed)
+                        }
+                        .isSelected(isCheckmarkSelected)
+                        .frame(minWidth: 100, maxWidth: .infinity)
+                        .buttonStyle(.tintedMaterial(tint: .jellyfinPurple, foregroundColor: .primary))
                     }
                 }
 
@@ -66,14 +77,25 @@ extension ItemView {
 
                 let isHeartSelected = viewModel.item.userData?.isFavorite == true
 
-                Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
-                    viewModel.send(.toggleIsFavorite)
-                }
-                .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
-                .isSelected(isHeartSelected)
-                .frame(maxWidth: .infinity)
-                .if(!equalSpacing) { view in
-                    view.aspectRatio(1, contentMode: .fit)
+                if isLiquidGlassEnabled, #available(iOS 26.0, *) {
+                    Toggle(L10n.favorite, systemImage: "heart.fill", isOn: Binding(get: {
+                        isHeartSelected
+                    }, set: { _ in
+                        viewModel.send(.toggleIsFavorite)
+                    })).toggleStyle(.button).tint(.red).buttonStyle(.glass)
+                        .if(!equalSpacing) { view in
+                            view.aspectRatio(1, contentMode: .fit)
+                        }
+                } else {
+                    Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
+                        viewModel.send(.toggleIsFavorite)
+                    }
+                    .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
+                    .isSelected(isHeartSelected)
+                    .frame(maxWidth: .infinity)
+                    .if(!equalSpacing) { view in
+                        view.aspectRatio(1, contentMode: .fit)
+                    }
                 }
 
                 // MARK: - Select a Version
@@ -81,28 +103,40 @@ extension ItemView {
                 if let mediaSources = viewModel.playButtonItem?.mediaSources,
                    mediaSources.count > 1
                 {
-                    VersionMenu(
+                    let versionMenu = VersionMenu(
                         viewModel: viewModel,
                         mediaSources: mediaSources
                     )
                     .menuStyle(.button)
-                    .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
+                    }
+
+                    if isLiquidGlassEnabled, #available(iOS 26.0, *) {
+                        versionMenu.buttonStyle(.glass)
+                    } else {
+                        versionMenu
+                            .frame(maxWidth: .infinity)
                     }
                 }
 
                 // MARK: - Watch a Trailer
 
                 if hasTrailers {
-                    TrailerMenu(
+                    let trailersMenu = TrailerMenu(
                         localTrailers: viewModel.localTrailers,
                         externalTrailers: viewModel.item.remoteTrailers ?? []
                     )
                     .menuStyle(.button)
-                    .frame(maxWidth: .infinity)
                     .if(!equalSpacing) { view in
                         view.aspectRatio(1, contentMode: .fit)
+                    }
+
+                    if isLiquidGlassEnabled, #available(iOS 26.0, *) {
+                        trailersMenu.buttonStyle(.glass)
+                    } else {
+                        trailersMenu
+                            .frame(maxWidth: .infinity)
                     }
                 }
             }

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 struct PillHStack<Item: Displayable>: View {
@@ -13,6 +14,9 @@ struct PillHStack<Item: Displayable>: View {
     let title: String
     let items: [Item]
     let action: (Item) -> Void
+
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -25,18 +29,29 @@ struct PillHStack<Item: Displayable>: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(items, id: \.displayTitle) { item in
-                        Button {
+                        let button = Button {
                             action(item)
                         } label: {
-                            Text(item.displayTitle)
+                            let text = Text(item.displayTitle)
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)
-                                .padding(10)
-                                .background {
+
+                            if isLiquidGlassEnabled, #available(iOS 26.0, *) {
+                                text
+                            } else {
+                                text.background {
                                     Color.systemFill
                                         .cornerRadius(10)
                                 }
+                                .padding(10)
+                            }
+                        }
+                        if isLiquidGlassEnabled, #available(iOS 26.0, *) {
+                            button.buttonStyle(.glass)
+                                .padding(.vertical(5))
+                        } else {
+                            button
                         }
                     }
                 }

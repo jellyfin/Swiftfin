@@ -14,6 +14,9 @@ struct NavigationBarMenuButtonModifier<Content: View>: ViewModifier {
     @Default(.accentColor)
     private var accentColor
 
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
+
     let isLoading: Bool
     let isHidden: Bool
     let items: () -> Content
@@ -27,7 +30,7 @@ struct NavigationBarMenuButtonModifier<Content: View>: ViewModifier {
                 }
 
                 if !isHidden {
-                    Menu(L10n.options, systemImage: "ellipsis.circle") {
+                    Menu(L10n.options, systemImage: isLiquidGlassEnabled ? "ellipsis" : "ellipsis.circle") {
                         items()
                     }
                     .labelStyle(.iconOnly)

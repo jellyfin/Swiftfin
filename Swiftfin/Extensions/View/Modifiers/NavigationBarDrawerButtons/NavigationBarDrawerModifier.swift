@@ -18,8 +18,10 @@ struct NavigationBarDrawerModifier<Drawer: View>: ViewModifier {
 
     func body(content: Content) -> some View {
         NavigationBarDrawerView {
-            drawer()
-                .ignoresSafeArea()
+            GeometryReader { geometry in
+                drawer().offset(y: -geometry.safeAreaInsets.top)
+            }
+
         } content: {
             content
         }
