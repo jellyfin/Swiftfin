@@ -15,6 +15,9 @@ import SwiftUI
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
+    @InjectedObject(\.deepLinkHandler)
+    private var deepLinkHandler
+
     #if os(iOS)
     @StateObject
     private var tabCoordinator = TabCoordinator {
@@ -42,6 +45,19 @@ struct MainTabView: View {
     }
     #endif
 
+    private func routePendingDeepLink() {
+        guard let deepLink = deepLinkHandler.consumePendingDeepLink() else { return }
+
+        Task { @MainActor in
+            do {
+                let route = try await deepLinkHandler.route(for: deepLink)
+                tabCoordinator.route(to: route)
+            } catch {
+                // TODO: surface deep link failures in UI.
+            }
+        }
+    }
+
     @ViewBuilder
     var body: some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
@@ -64,6 +80,12 @@ struct MainTabView: View {
                 }
                 .tag(tab.item.id)
             }
+        }
+        .onAppear {
+            routePendingDeepLink()
+        }
+        .onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
+            routePendingDeepLink()
         }
     }
 }

@@ -1,0 +1,166 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+import Defaults
+import SwiftUI
+
+extension VideoPlayer.PlaybackControls {
+
+    struct SplitTimeStamp: PlatformView {
+
+        @Default(.VideoPlayer.Overlay.trailingTimestampType)
+        private var trailingTimestampType
+
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
+        @EnvironmentObject
+        private var scrubbedSecondsBox: PublishedBox<Duration>
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+
+        @State
+        private var activeSeconds: Duration = .zero
+        @State
+        private var contentSize: CGSize = .zero
+        @State
+        private var leadingTimestampSize: CGSize = .zero
+        @State
+        private var trailingTimestampSize: CGSize = .zero
+
+        private var scrubbedProgress: Double {
+            guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+            return scrubbedSeconds / runtime
+        }
+
+        private var previewXOffset: CGFloat {
+            let p = contentSize.width * scrubbedProgress - (leadingTimestampSize.width / 2)
+            return clamp(p, min: 0, max: contentSize.width - leadingTimestampSize.width)
+        }
+
+        private var shouldHideTrailingTimestamp: Bool {
+            let leadingTimestampMaxX = previewXOffset + leadingTimestampSize.width
+            let trailingTimestampMinX = contentSize.width - trailingTimestampSize.width
+
+            return leadingTimestampMaxX >= trailingTimestampMinX
+        }
+
+        private var isScrubbing: Bool {
+            containerState.isScrubbing
+        }
+
+        private var scrubbedSeconds: Duration {
+            scrubbedSecondsBox.value
+        }
+
+        @ViewBuilder
+        private var leadingTimestamp: some View {
+            HStack(spacing: 2) {
+
+                Text(scrubbedSeconds, format: .runtime)
+
+                Group {
+                    // swiftlint:disable:next hard_coded_display_string
+                    Text("/")
+
+                    Text(activeSeconds, format: .runtime)
+                }
+                .foregroundStyle(.secondary)
+                .isVisible(isScrubbing)
+            }
+        }
+
+        @ViewBuilder
+        private var trailingTimestamp: some View {
+            HStack(spacing: 2) {
+                Group {
+                    if let runtime = manager.item.runtime {
+                        Text(runtime - activeSeconds, format: .runtime)
+                    } else {
+                        Text(verbatim: .emptyRuntime)
+                    }
+
+                    // swiftlint:disable:next hard_coded_display_string
+                    Text("/")
+                }
+                .foregroundStyle(.secondary)
+                .isVisible(isScrubbing)
+
+                if let runtime = manager.item.runtime {
+                    switch trailingTimestampType {
+                    case .timeLeft:
+                        Text(.zero - (runtime - scrubbedSeconds), format: .runtime)
+                    case .totalTime:
+                        Text(runtime, format: .runtime)
+                    }
+                } else {
+                    Text(verbatim: .emptyRuntime)
+                }
+            }
+        }
+
+        var iOSView: some View {
+            HStack {
+                Button {
+                    switch trailingTimestampType {
+                    case .timeLeft:
+                        trailingTimestampType = .totalTime
+                    case .totalTime:
+                        trailingTimestampType = .timeLeft
+                    }
+                } label: {
+                    leadingTimestamp
+                }
+                .foregroundStyle(.primary, .secondary)
+
+                Spacer()
+
+                Button {
+                    switch trailingTimestampType {
+                    case .timeLeft:
+                        trailingTimestampType = .totalTime
+                    case .totalTime:
+                        trailingTimestampType = .timeLeft
+                    }
+                } label: {
+                    trailingTimestamp
+                }
+                .foregroundStyle(.primary, .secondary)
+            }
+            .font(.caption2)
+            .monospacedDigit()
+            .lineLimit(1)
+            .foregroundStyle(isScrubbing ? .primary : .secondary, .secondary)
+            .assign(manager.secondsBox.$value, to: $activeSeconds)
+        }
+
+        var tvOSView: some View {
+            ZStack {
+                if let runtime = manager.item.runtime {
+                    Text(.zero - (runtime - scrubbedSeconds), format: .runtime)
+                } else {
+                    Text(verbatim: .emptyRuntime)
+                }
+            }
+            .opacity(shouldHideTrailingTimestamp ? 0 : 1)
+            .animation(.linear(duration: 0.1), value: shouldHideTrailingTimestamp)
+            .trackingSize($trailingTimestampSize)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .overlay(alignment: .leading) {
+                Text(scrubbedSeconds, format: .runtime)
+                    .trackingSize($leadingTimestampSize)
+                    .offset(x: previewXOffset)
+            }
+            .font(.caption)
+            .fontWeight(UIDevice.isTV ? .medium : nil)
+            .monospacedDigit()
+            .trackingSize($contentSize)
+            .foregroundStyle(containerState.isProgressBarFocused ? .primary : .secondary)
+            .opacity(containerState.isProgressBarFocused ? 1 : 0.7)
+        }
+    }
+}

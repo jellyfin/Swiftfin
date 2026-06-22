@@ -11,59 +11,46 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct AddItemElementView<Element: Hashable>: View {
+struct AddItemElementView<Editor: ItemComponentEditor>: View {
 
     @ObservedObject
-    var viewModel: ItemEditorViewModel<Element>
+    var viewModel: ItemComponentEditorViewModel<Editor>
 
     @Router
     private var router
 
     @State
-    private var id: String?
-    @State
-    private var name: String = ""
-    @State
-    private var personKind: PersonKind = .unknown
-    @State
-    private var personRole: String = ""
-
-    @State
-    private var error: Error?
-
-    let type: ItemArrayElements
-
-    // MARK: - Validation
+    private var input: ItemComponentEditorInput = .init(
+        id: nil,
+        name: "",
+        personKind: .unknown,
+        personRole: ""
+    )
 
     private var alreadyOnItem: Bool {
-        name.isNotEmpty && viewModel.containsElement(named: name)
+        input.name.isNotEmpty && viewModel.editor.containsElement(named: input.name, in: viewModel.item)
     }
 
     private var existsOnServer: Bool {
-        name.isNotEmpty && viewModel.matchExists(named: name)
+        input.name.isNotEmpty && viewModel.editor.matchExists(named: input.name, in: viewModel.matches)
     }
 
     private var isValid: Bool {
-        name.isNotEmpty && !alreadyOnItem
+        input.name.isNotEmpty && !alreadyOnItem
     }
-
-    // MARK: - Body
 
     var body: some View {
         List {
             ItemElementSearchView(
-                name: $name,
-                id: $id,
-                type: type,
-                personKind: $personKind,
-                personRole: $personRole,
+                input: $input,
+                editor: viewModel.editor,
                 population: viewModel.matches,
                 isSearching: viewModel.background.states.contains(.searching),
                 alreadyOnItem: alreadyOnItem,
                 existsOnServer: existsOnServer
             )
         }
-        .navigationTitle(type.displayTitle)
+        .navigationTitle(viewModel.editor.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
@@ -74,23 +61,16 @@ struct AddItemElementView<Element: Hashable>: View {
             }
 
             Button(L10n.save) {
-                viewModel.add([type.createElement(
-                    name: name,
-                    id: id,
-                    personRole: personRole.isEmpty ? (personKind == .unknown ? nil : personKind.rawValue) : personRole,
-                    personKind: personKind
-                )])
+                viewModel.add([viewModel.editor.makeElement(input: input)])
             }
             .buttonStyle(.toolbarPill)
             .enabled(isValid)
         }
-        .onChange(of: name) { newName in
+        .onChange(of: input.name) { newName in
             viewModel.search(newName)
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .deleted, .metadataRefreshStarted:
-                break
             case .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()

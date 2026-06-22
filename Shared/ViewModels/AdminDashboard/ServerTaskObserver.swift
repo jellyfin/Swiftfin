@@ -66,7 +66,7 @@ final class ServerTaskObserver: ViewModel, Identifiable {
         guard let id = task.id else { return }
 
         let request = Paths.startTask(taskID: id)
-        try await userSession.client.send(request)
+        try await send(request)
 
         try await pollTaskProgress(id: id)
     }
@@ -76,7 +76,7 @@ final class ServerTaskObserver: ViewModel, Identifiable {
         guard let id = task.id else { return }
 
         let request = Paths.stopTask(taskID: id)
-        try await userSession.client.send(request)
+        try await send(request)
 
         try await pollTaskProgress(id: id)
     }
@@ -100,7 +100,7 @@ final class ServerTaskObserver: ViewModel, Identifiable {
     private func pollTaskProgress(id: String) async throws {
         while true {
             let request = Paths.getTask(taskID: id)
-            let response = try await userSession.client.send(request)
+            let response = try await send(request)
 
             task = response.value
 
@@ -115,7 +115,7 @@ final class ServerTaskObserver: ViewModel, Identifiable {
     private func updateTriggers(_ updatedTriggers: [TaskTriggerInfo]) async throws {
         guard let id = task.id else { return }
         let updateRequest = Paths.updateTask(taskID: id, updatedTriggers)
-        try await userSession.client.send(updateRequest)
+        try await send(updateRequest)
 
         task.triggers = updatedTriggers
     }

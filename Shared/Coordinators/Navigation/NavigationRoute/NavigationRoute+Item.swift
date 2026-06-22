@@ -14,54 +14,29 @@ extension NavigationRoute {
     // MARK: - Item Editing
 
     #if os(iOS)
-    static func addGenre(viewModel: GenreEditorViewModel) -> NavigationRoute {
+    static func addItemElement<Editor: ItemComponentEditor>(
+        viewModel: ItemComponentEditorViewModel<Editor>
+    ) -> NavigationRoute {
         NavigationRoute(
-            id: "addGenre",
+            id: "addItemElement-\(Editor.self)",
             style: .sheet
         ) {
-            AddItemElementView(viewModel: viewModel, type: .genres)
-        }
-    }
-
-    static func addPeople(viewModel: PeopleEditorViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "addPeople",
-            style: .sheet
-        ) {
-            AddItemElementView(viewModel: viewModel, type: .people)
-        }
-    }
-
-    static func addStudio(viewModel: StudioEditorViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "addStudio",
-            style: .sheet
-        ) {
-            AddItemElementView(viewModel: viewModel, type: .studios)
-        }
-    }
-
-    static func addTag(viewModel: TagEditorViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "addTag",
-            style: .sheet
-        ) {
-            AddItemElementView(viewModel: viewModel, type: .tags)
+            AddItemElementView(viewModel: viewModel)
         }
     }
     #endif
 
     @MainActor
     static func castAndCrew(people: [BaseItemPerson], itemID: String?) -> NavigationRoute {
-        let id: String? = itemID == nil ? nil : "castAndCrew-\(itemID!)"
-        let viewModel = PagingLibraryViewModel(
+        let id = itemID == nil ? "castAndCrew" : "castAndCrew-\(itemID!)"
+        let library = StaticLibrary(
             title: L10n.castAndCrew.localizedCapitalized,
             id: id,
-            people
+            elements: people
         )
 
         return NavigationRoute(id: "castAndCrew") {
-            PagingLibraryView(viewModel: viewModel)
+            PagingLibraryView(library: library)
         }
     }
 
@@ -69,18 +44,17 @@ extension NavigationRoute {
     @MainActor
     static func editGenres(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editGenres") {
-            EditItemElementView<String>(
-                viewModel: GenreEditorViewModel(item: item),
-                type: .genres,
-                route: { router, viewModel in
-                    router.route(to: .addGenre(viewModel: viewModel as! GenreEditorViewModel))
-                }
+            EditItemElementView(
+                viewModel: ItemComponentEditorViewModel(
+                    editor: GenreComponentEditor(),
+                    item: item
+                )
             )
         }
     }
 
     @MainActor
-    static func editMetadata(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
+    static func editMetadata(viewModel: ItemEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "editMetadata",
             style: .sheet
@@ -92,12 +66,11 @@ extension NavigationRoute {
     @MainActor
     static func editPeople(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editPeople") {
-            EditItemElementView<BaseItemPerson>(
-                viewModel: PeopleEditorViewModel(item: item),
-                type: .people,
-                route: { router, viewModel in
-                    router.route(to: .addPeople(viewModel: viewModel as! PeopleEditorViewModel))
-                }
+            EditItemElementView(
+                viewModel: ItemComponentEditorViewModel(
+                    editor: PeopleComponentEditor(),
+                    item: item
+                )
             )
         }
     }
@@ -105,12 +78,11 @@ extension NavigationRoute {
     @MainActor
     static func editStudios(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editStudios") {
-            EditItemElementView<NameIDPair>(
-                viewModel: StudioEditorViewModel(item: item),
-                type: .studios,
-                route: { router, viewModel in
-                    router.route(to: .addStudio(viewModel: viewModel as! StudioEditorViewModel))
-                }
+            EditItemElementView(
+                viewModel: ItemComponentEditorViewModel(
+                    editor: StudioComponentEditor(),
+                    item: item
+                )
             )
         }
     }
@@ -127,12 +99,11 @@ extension NavigationRoute {
     @MainActor
     static func editTags(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editTags") {
-            EditItemElementView<String>(
-                viewModel: TagEditorViewModel(item: item),
-                type: .tags,
-                route: { router, viewModel in
-                    router.route(to: .addTag(viewModel: viewModel as! TagEditorViewModel))
-                }
+            EditItemElementView(
+                viewModel: ItemComponentEditorViewModel(
+                    editor: TagComponentEditor(),
+                    item: item
+                )
             )
         }
     }
@@ -187,8 +158,17 @@ extension NavigationRoute {
         }
     }
 
+    static func item(id: String) -> NavigationRoute {
+        NavigationRoute(
+            id: "item-\(id)",
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
+        ) {
+            ItemView(item: .init(id: id))
+        }
+    }
+
     #if os(iOS)
-    static func itemEditor(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
+    static func itemEditor(viewModel: ItemEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemEditor",
             style: .sheet
@@ -244,7 +224,7 @@ extension NavigationRoute {
 
     #endif
 
-    static func itemMetadataRefresh(viewModel: ItemEditorViewModel<BaseItemDto>) -> NavigationRoute {
+    static func itemMetadataRefresh(viewModel: ItemEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemMetadataRefresh",
             style: .sheet

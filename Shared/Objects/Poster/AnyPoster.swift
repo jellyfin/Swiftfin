@@ -13,8 +13,14 @@ struct AnyPoster: Poster {
 
     let _poster: any Poster
 
-    init(_ poster: any Poster) {
+    private let _withLandscapeImages: ((CGFloat?, Int?) -> [ImageSource])?
+
+    init(
+        _ poster: any Poster,
+        _withLandscapeImages: ((CGFloat?, Int?) -> [ImageSource])? = nil
+    ) {
         self._poster = poster
+        self._withLandscapeImages = _withLandscapeImages
     }
 
     var preferredPosterDisplayType: PosterDisplayType {
@@ -23,10 +29,6 @@ struct AnyPoster: Poster {
 
     var displayTitle: String {
         _poster.displayTitle
-    }
-
-    var unwrappedIDHashOrZero: Int {
-        _poster.unwrappedIDHashOrZero
     }
 
     var subtitle: String? {
@@ -42,7 +44,7 @@ struct AnyPoster: Poster {
     }
 
     func hash(into hasher: inout Hasher) {
-        hasher.combine(_poster.unwrappedIDHashOrZero)
+        hasher.combine(id)
         hasher.combine(_poster.displayTitle)
         hasher.combine(_poster.subtitle)
         hasher.combine(_poster.systemImage)
@@ -57,7 +59,11 @@ struct AnyPoster: Poster {
     }
 
     func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.landscapeImageSources(maxWidth: maxWidth, quality: quality)
+        if let _withLandscapeImages {
+            _withLandscapeImages(maxWidth, quality)
+        } else {
+            _poster.landscapeImageSources(maxWidth: maxWidth, quality: quality)
+        }
     }
 
     func cinematicImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {

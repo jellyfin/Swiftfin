@@ -144,16 +144,12 @@ extension View {
     func posterCornerRadius(
         _ type: PosterDisplayType
     ) -> some View {
-        #if !os(tvOS)
         switch type {
         case .landscape:
             cornerRadius(ratio: 1 / 30, of: \.width)
         case .portrait, .square:
             cornerRadius(ratio: 0.0375, of: \.width)
         }
-        #else
-        self
-        #endif
     }
 
     func posterBorder() -> some View {
@@ -433,6 +429,14 @@ extension View {
 
     func onSceneWillEnterForeground(_ action: @escaping () -> Void) -> some View {
         onNotification(.sceneWillEnterForeground, perform: action)
+    }
+
+    @ViewBuilder
+    func preference<Key: PreferenceKey, V>(
+        key: Key.Type,
+        @ArrayBuilder<V> value: () -> [V]
+    ) -> some View where Key.Value == [V] {
+        preference(key: Key.self, value: value())
     }
 
     func scrollIfLargerThanContainer(axes: Axis.Set = .vertical, padding: CGFloat = 0, alignment: Alignment = .center) -> some View {

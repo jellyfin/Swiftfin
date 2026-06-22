@@ -12,13 +12,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: current button
 // TODO: scroll to current chapter on appear
-// TODO: fix swapping between chapters on selection
-//       - little flicker at seconds boundary
 // TODO: sometimes safe area for CollectionHStack doesn't trigger
-// TODO: fix chapter image aspect fit
-//       - still be in a 1.77 box
 
 class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
 
@@ -26,21 +21,22 @@ class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
     let displayTitle: String = L10n.chapters
     let id: String
 
+    @Published
+    var activeChapterID: ChapterInfo.FullInfo.ID?
+
     init(chapters: [ChapterInfo.FullInfo]) {
         self.chapters = chapters
         self.id = "Chapters-\(chapters.hashValue)"
     }
 
-    func isCurrentChapter(seconds: Duration, chapter: ChapterInfo.FullInfo) -> Bool {
-        guard let currentChapterIndex = chapters
-            .firstIndex(where: {
-                guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
-                return startSeconds > seconds
-            }
-            ) else { return false }
-
-        guard let currentChapter = chapters[safe: max(0, currentChapterIndex - 1)] else { return false }
-        return currentChapter.id == chapter.id
+    func chapterID(at seconds: Duration) -> ChapterInfo.FullInfo.ID? {
+        guard let nextIndex = chapters.firstIndex(where: {
+            guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
+            return startSeconds > seconds
+        }) else {
+            return chapters.last?.id
+        }
+        return chapters[safe: max(0, nextIndex - 1)]?.id
     }
 
     var videoPlayerBody: some PlatformView {
@@ -63,8 +59,10 @@ extension MediaChaptersSupplement {
         @ObservedObject
         private var supplement: MediaChaptersSupplement
 
-        @StateObject
-        private var collectionHStackProxy: CollectionHStackProxy = .init()
+        //        @StateObject
+        //        private var collectionHStackProxy: CollectionHStackProxy = .init()
+        //        @StateObject
+        //        private var collectionVGridProxy: CollectionVGridProxy = .init()
 
         init(supplement: MediaChaptersSupplement) {
             self.supplement = supplement
@@ -74,13 +72,16 @@ extension MediaChaptersSupplement {
             supplement.chapters
         }
 
-        private var currentChapter: ChapterInfo.FullInfo? {
-            chapters.first(
-                where: {
-                    guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
-                    return startSeconds <= manager.seconds
-                }
-            )
+        private var activeChapter: ChapterInfo.FullInfo? {
+            guard let id = supplement.activeChapterID else { return nil }
+            return chapters.first { $0.id == id }
+        }
+
+        private func updateActiveChapter(for seconds: Duration) {
+            let newID = supplement.chapterID(at: seconds)
+            if newID != supplement.activeChapterID {
+                supplement.activeChapterID = newID
+            }
         }
 
         var iOSView: some View {
@@ -91,188 +92,184 @@ extension MediaChaptersSupplement {
             } regularView: {
                 iOSRegularView
             }
+            .onReceive(manager.secondsBox.$value, perform: updateActiveChapter(for:))
         }
 
         @ViewBuilder
         private var iOSCompactView: some View {
-            // TODO: scroll to current chapter
+            // TODO: Scroll to current chapter
             CollectionVGrid(
                 uniqueElements: chapters,
+                id: \.id,
                 layout: .columns(
                     1,
-                    insets: .init(top: 0, leading: 0, bottom: EdgeInsets.edgePadding, trailing: 0)
+                    insets: .init(EdgeInsets.edgePadding)
                 )
             ) { chapter, _ in
-                ChapterRow(chapter: chapter) {
+                ChapterRow(supplement: supplement, chapter: chapter) {
                     guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
                     manager.proxy?.setSeconds(startSeconds)
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
-                .edgePadding(.horizontal)
-                .environmentObject(supplement)
             }
+            //            .proxy(collectionVGridProxy)
+            //            .onAppear {
+            //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            //                    guard let currentChapter else { return }
+            //                    collectionVGridProxy.scrollTo(id: currentChapter.id, animated: false)
+            //                }
+            //            }
         }
 
         @ViewBuilder
         private var iOSRegularView: some View {
-            // TODO: change to continuousLeadingEdge after
-            // layout inset fix in CollectionHStack
+            // TODO: Scroll to current chapter
             CollectionHStack(
-                uniqueElements: chapters
+                uniqueElements: chapters,
+                id: \.id,
+                layout: .minimumWidth(columnWidth: 170, rows: 1)
             ) { chapter in
-                ChapterButton(chapter: chapter) {
+                ChapterButton(supplement: supplement, chapter: chapter) {
                     guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
                     manager.proxy?.setSeconds(startSeconds)
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
-                .frame(height: 150)
-                .environmentObject(supplement)
             }
+            .clipsToBounds(false)
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-            .proxy(collectionHStackProxy)
-            .frame(height: 150)
-            .onAppear {
-                guard let currentChapter else { return }
-                collectionHStackProxy.scrollTo(id: currentChapter.id)
-            }
+            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .scrollBehavior(.continuousLeadingEdge)
+            //            .proxy(collectionHStackProxy)
+            //            .onAppear {
+            //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            //                    guard let currentChapter else { return }
+            //                    collectionHStackProxy.scrollTo(id: currentChapter.id, animated: false)
+            //                }
+            //            }
         }
 
         var tvOSView: some View {
-            EmptyView()
-        }
-    }
-
-    struct ChapterPreview: View {
-
-        @Default(.accentColor)
-        private var accentColor
-
-        @Environment(\.isSelected)
-        private var isSelected
-
-        let chapter: ChapterInfo.FullInfo
-
-        var body: some View {
-            PosterImage(
-                item: chapter,
-                type: .landscape,
-                contentMode: .fill
-            )
-            .overlay {
-                if isSelected {
-                    ContainerRelativeShape()
-                        .stroke(
-                            accentColor,
-                            lineWidth: 8
-                        )
-                        .clipped()
+            CollectionHStack(
+                uniqueElements: chapters,
+                id: \.id,
+                layout: .grid(columns: 5, rows: 1, columnTrailingInset: 0)
+//                layout: .minimumWidth(columnWidth: 170, rows: 1)
+            ) { chapter in
+                ChapterButton(supplement: supplement, chapter: chapter) {
+                    guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
+                    manager.proxy?.setSeconds(startSeconds)
+                    manager.setPlaybackRequestStatus(status: .playing)
                 }
             }
-            .posterStyle(.landscape)
-        }
-    }
-
-    struct ChapterContent: View {
-
-        let chapter: ChapterInfo.FullInfo
-
-        var body: some View {
-            VStack(alignment: .leading, spacing: 5) {
-                Text(chapter.chapterInfo.displayTitle)
-                    .lineLimit(1)
-                    .foregroundStyle(.white)
-                    .frame(height: 15)
-
-                Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
-                    .frame(height: 20)
-                    .foregroundStyle(Color(UIColor.systemBlue))
-                    .padding(.horizontal, 4)
-                    .background {
-                        Color(.darkGray)
-                            .opacity(0.2)
-                            .cornerRadius(4)
-                    }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .font(.subheadline)
-            .fontWeight(.semibold)
-        }
-    }
-
-    struct ChapterRow: View {
-
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var supplement: MediaChaptersSupplement
-
-        @State
-        private var activeSeconds: Duration = .zero
-
-        let chapter: ChapterInfo.FullInfo
-        let action: () -> Void
-
-        private var isCurrentChapter: Bool {
-            supplement.isCurrentChapter(
-                seconds: activeSeconds,
-                chapter: chapter
-            )
+            //            .proxy(collectionHStackProxy)
+            //            .onAppear {
+            //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            //                    guard let currentChapter else { return }
+            //                    collectionHStackProxy.scrollTo(id: currentChapter.id, animated: false)
+            //                }
+            //            }
+            .ignoresSafeArea(.container, edges: .horizontal)
+            .focusSection()
+            .onReceive(manager.secondsBox.$value, perform: updateActiveChapter(for:))
         }
 
-        var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
-                ChapterPreview(
-                    chapter: chapter
+        struct ChapterPreview: View {
+
+            @Default(.accentColor)
+            private var accentColor
+
+            @Environment(\.isSelected)
+            private var isSelected
+
+            let chapter: ChapterInfo.FullInfo
+
+            var body: some View {
+                PosterImage(
+                    item: chapter,
+                    type: .landscape,
+                    contentMode: .fill
                 )
-                .frame(width: 110)
-                .padding(.vertical, 8)
-            } content: {
-                ChapterContent(chapter: chapter)
-            } action: {
-                action()
-            }
-            .assign(manager.secondsBox.$value, to: $activeSeconds)
-            .isSelected(isCurrentChapter)
-        }
-    }
-
-    struct ChapterButton: View {
-
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var supplement: MediaChaptersSupplement
-
-        @State
-        private var activeSeconds: Duration = .zero
-
-        let chapter: ChapterInfo.FullInfo
-        let action: () -> Void
-
-        private var isCurrentChapter: Bool {
-            supplement.isCurrentChapter(
-                seconds: activeSeconds,
-                chapter: chapter
-            )
-        }
-
-        var body: some View {
-            Button(action: action) {
-                VStack(alignment: .leading, spacing: 5) {
-                    ChapterPreview(
-                        chapter: chapter
-                    )
-
-                    ChapterContent(
-                        chapter: chapter
-                    )
+                .overlay {
+                    if isSelected {
+                        ContainerRelativeShape()
+                            .stroke(
+                                accentColor,
+                                lineWidth: UIDevice.isTV ? 12 : 8
+                            )
+                            .clipped()
+                    }
                 }
-                .font(.subheadline)
-                .fontWeight(.semibold)
+                .posterStyle(.landscape)
+                .posterShadow()
+                .hoverEffect(.highlight)
             }
-            .foregroundStyle(.primary, .secondary)
-            .assign(manager.secondsBox.$value, to: $activeSeconds)
-            .isSelected(isCurrentChapter)
+        }
+
+        struct ChapterContent: View {
+
+            let chapter: ChapterInfo.FullInfo
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(chapter.chapterInfo.displayTitle)
+                        .font(.subheadline.weight(.semibold))
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+
+                    Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                        .font(UIDevice.isTV ? .caption : .subheadline.weight(.semibold))
+                        .foregroundStyle(Color(UIColor.systemBlue))
+                        .padding(.horizontal, 4)
+                        .background {
+                            Color(.darkGray)
+                                .opacity(0.2)
+                                .cornerRadius(4)
+                        }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+
+        struct ChapterRow: View {
+
+            @ObservedObject
+            var supplement: MediaChaptersSupplement
+
+            let chapter: ChapterInfo.FullInfo
+            let action: () -> Void
+
+            var body: some View {
+                ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+                    ChapterPreview(chapter: chapter)
+                        .frame(width: 110)
+                        .padding(.vertical, 8)
+                } content: {
+                    ChapterContent(chapter: chapter)
+                } action: {
+                    action()
+                }
+                .isSelected(chapter.id == supplement.activeChapterID)
+            }
+        }
+
+        struct ChapterButton: View {
+
+            @ObservedObject
+            var supplement: MediaChaptersSupplement
+
+            let chapter: ChapterInfo.FullInfo
+            let action: () -> Void
+
+            var body: some View {
+                SupplementPosterButton(
+                    item: chapter,
+                    action: action
+                ) {
+                    ChapterContent(chapter: chapter)
+                }
+                .isSelected(chapter.id == supplement.activeChapterID)
+            }
         }
     }
 }

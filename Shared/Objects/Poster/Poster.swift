@@ -16,7 +16,7 @@ import SwiftUI
 //       - could remove cinematic, just use landscape
 
 /// A type that is displayed as a poster
-protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
+protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
 
     associatedtype ImageBody: View
 
@@ -89,7 +89,7 @@ extension Poster {
 
     func cinematicImageSources(
         maxWidth: CGFloat?,
-        quality: Int? = nil
+        quality: Int?
     ) -> [ImageSource] {
         []
     }
@@ -104,5 +104,9 @@ extension Poster {
     // TODO: change to observe preferred poster display type
     func thumbImageSources() -> [ImageSource] {
         []
+    }
+
+    func _withLandscapeImages(_ imageSources: @escaping (CGFloat?, Int?) -> [ImageSource]) -> AnyPoster {
+        .init(self, _withLandscapeImages: imageSources)
     }
 }

@@ -114,7 +114,7 @@ final class IdentifyItemViewModel: ViewModel {
                 )
             )
             let request = Paths.getBoxSetRemoteSearchResults(parameters)
-            let response = try await userSession.client.send(request)
+            let response = try await send(request)
 
             searchResults = response.value
 
@@ -128,7 +128,7 @@ final class IdentifyItemViewModel: ViewModel {
                 )
             )
             let request = Paths.getMovieRemoteSearchResults(parameters)
-            let response = try await userSession.client.send(request)
+            let response = try await send(request)
 
             searchResults = response.value
 
@@ -142,7 +142,7 @@ final class IdentifyItemViewModel: ViewModel {
                 )
             )
             let request = Paths.getPersonRemoteSearchResults(parameters)
-            let response = try await userSession.client.send(request)
+            let response = try await send(request)
 
             searchResults = response.value
 
@@ -156,7 +156,7 @@ final class IdentifyItemViewModel: ViewModel {
                 )
             )
             let request = Paths.getSeriesRemoteSearchResults(parameters)
-            let response = try await userSession.client.send(request)
+            let response = try await send(request)
 
             searchResults = response.value
 
@@ -170,9 +170,9 @@ final class IdentifyItemViewModel: ViewModel {
         guard let itemID = item.id else { return }
 
         let request = Paths.applySearchCriteria(itemID: itemID, searchResult)
-        _ = try await userSession.client.send(request)
+        _ = try await send(request)
 
-        _ = try await item.getFullItem(userSession: userSession, sendNotification: true)
+        _ = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
 
         events.send(.updated)
     }

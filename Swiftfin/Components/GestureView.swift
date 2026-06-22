@@ -11,13 +11,6 @@ import Foundation
 import Logging
 import SwiftUI
 
-// TODO: figure out this directional response stuff
-extension EnvironmentValues {
-
-    @Entry
-    var panGestureDirection: Direction = .all
-}
-
 struct GestureView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UIView {

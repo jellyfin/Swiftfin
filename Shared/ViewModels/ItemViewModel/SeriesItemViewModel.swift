@@ -14,12 +14,12 @@ import IdentifiedCollections
 import JellyfinAPI
 
 // TODO: care for one long episodes list?
-//       - after SeasonItemViewModel is bidirectional
+//       - after season paging is bidirectional
 //       - would have to see if server returns right amount of episodes/season
 final class SeriesItemViewModel: ItemViewModel {
 
     @Published
-    var seasons: IdentifiedArrayOf<SeasonItemViewModel> = []
+    var seasons: IdentifiedArrayOf<PagingLibraryViewModel<EpisodeLibrary>> = []
 
     // MARK: - Task
 
@@ -50,7 +50,7 @@ final class SeriesItemViewModel: ItemViewModel {
 
                     let newSeasons = try await seasons
                         .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) }
-                        .map(SeasonItemViewModel.init)
+                        .map { PagingLibraryViewModel(library: EpisodeLibrary(season: $0)) }
 
                     await MainActor.run {
                         self.seasons.append(contentsOf: newSeasons)
@@ -83,7 +83,7 @@ final class SeriesItemViewModel: ItemViewModel {
         parameters.seriesID = item.id
 
         let request = Paths.getNextUp(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         guard let item = response.value.items?.first, !item.isMissing else {
             return nil
@@ -102,7 +102,7 @@ final class SeriesItemViewModel: ItemViewModel {
         parameters.parentID = item.id
 
         let request = Paths.getResumeItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items?.first
     }
@@ -120,7 +120,7 @@ final class SeriesItemViewModel: ItemViewModel {
         parameters.sortOrder = [.ascending]
 
         let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items?.first
     }
@@ -128,15 +128,16 @@ final class SeriesItemViewModel: ItemViewModel {
     // MARK: - Get First Item Seasons
 
     private func getSeasons() async throws -> [BaseItemDto] {
+        guard let itemID = item.id else { return [] }
 
         var parameters = Paths.GetSeasonsParameters()
         parameters.isMissing = Defaults[.Customization.shouldShowMissingSeasons] ? nil : false
 
         let request = Paths.getSeasons(
-            seriesID: item.id!,
+            seriesID: itemID,
             parameters: parameters
         )
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items ?? []
     }

@@ -20,6 +20,17 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
+    static var appPermissions: NavigationRoute {
+        NavigationRoute(
+            id: "app-permissions"
+        ) {
+            AppPermissionsView()
+        }
+    }
+
+    #endif
+
+    #if os(iOS)
     static func appIconSelector(viewModel: SettingsViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "app-icon-selector"

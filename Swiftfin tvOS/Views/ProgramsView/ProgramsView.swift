@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import JellyfinAPI
 import SwiftUI
 
@@ -18,6 +19,9 @@ struct ProgramsView: View {
     @Router
     private var router
 
+    @Injected(\.currentUserSession)
+    private var userSession
+
     @StateObject
     private var programsViewModel = ProgramsViewModel()
 
@@ -25,6 +29,7 @@ struct ProgramsView: View {
     private var contentView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
+
                 if programsViewModel.recommended.isNotEmpty {
                     programsSection(title: L10n.onNow, keyPath: \.recommended)
                 }

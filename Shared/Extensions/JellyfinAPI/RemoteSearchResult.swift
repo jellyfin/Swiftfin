@@ -16,10 +16,6 @@ extension RemoteSearchResult: Poster {
         .portrait // Some exceptions (E.G. Music Videos)
     }
 
-    var unwrappedIDHashOrZero: Int {
-        id.hashValue
-    }
-
     var systemImage: String {
         "questionmark"
     }

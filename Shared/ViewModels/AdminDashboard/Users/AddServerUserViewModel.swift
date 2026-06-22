@@ -42,7 +42,7 @@ final class AddServerUserViewModel: ViewModel {
     private func _add(_ username: String, _ password: String) async throws {
         let parameters = CreateUserByName(name: username, password: password)
         let request = Paths.createUserByName(parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         try await Task.sleep(for: .seconds(5))
 

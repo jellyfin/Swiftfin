@@ -17,7 +17,7 @@ extension SeriesEpisodeSelector {
     struct EpisodeHStack: View {
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
+        var viewModel: PagingLibraryViewModel<EpisodeLibrary>
 
         @State
         private var didScrollToPlayButtonItem = false
@@ -27,10 +27,10 @@ extension SeriesEpisodeSelector {
 
         let playButtonItem: BaseItemDto?
 
-        private func contentView(viewModel: SeasonItemViewModel) -> some View {
+        private func contentView(viewModel: PagingLibraryViewModel<EpisodeLibrary>) -> some View {
             CollectionHStack(
                 uniqueElements: viewModel.elements,
-                id: \.unwrappedIDHashOrZero,
+                id: \.id,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { episode in
                 SeriesEpisodeSelector.EpisodeCard(episode: episode)
@@ -47,7 +47,7 @@ extension SeriesEpisodeSelector {
                 // good enough?
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     guard let playButtonItem else { return }
-                    proxy.scrollTo(id: playButtonItem.unwrappedIDHashOrZero, animated: false)
+                    proxy.scrollTo(id: playButtonItem.id, animated: false)
                 }
             }
         }
@@ -60,8 +60,10 @@ extension SeriesEpisodeSelector {
                 } else {
                     contentView(viewModel: viewModel)
                 }
-            case let .error(error):
-                ErrorHStack(viewModel: viewModel, error: error)
+            case .error:
+                viewModel.error.map { error in
+                    ErrorHStack(viewModel: viewModel, error: ErrorMessage(error.localizedDescription))
+                }
             case .initial, .refreshing:
                 LoadingHStack()
             }
@@ -87,7 +89,7 @@ extension SeriesEpisodeSelector {
     struct ErrorHStack: View {
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
+        var viewModel: PagingLibraryViewModel<EpisodeLibrary>
 
         let error: ErrorMessage
 
@@ -97,7 +99,7 @@ extension SeriesEpisodeSelector {
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { _ in
                 SeriesEpisodeSelector.ErrorCard(error: error) {
-                    viewModel.send(.refresh)
+                    viewModel.refresh()
                 }
             }
             .insets(horizontal: EdgeInsets.edgePadding)

@@ -41,7 +41,7 @@ final class HomeViewModel: ViewModel, Stateful {
     }
 
     @Published
-    private(set) var libraries: [LatestInLibraryViewModel] = []
+    private(set) var libraries: [PagingLibraryViewModel<LatestInLibrary>] = []
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
 
@@ -58,8 +58,8 @@ final class HomeViewModel: ViewModel, Stateful {
     private var backgroundRefreshTask: AnyCancellable?
     private var refreshTask: AnyCancellable?
 
-    var nextUpViewModel: NextUpLibraryViewModel = .init()
-    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
+    var nextUpViewModel = PagingLibraryViewModel(library: NextUpLibrary())
+    var recentlyAddedViewModel = PagingLibraryViewModel(library: RecentlyAddedLibrary())
 
     override init() {
         super.init()
@@ -86,8 +86,8 @@ final class HomeViewModel: ViewModel, Stateful {
 
             backgroundRefreshTask = Task { [weak self] in
                 do {
-                    self?.nextUpViewModel.send(.refresh)
-                    self?.recentlyAddedViewModel.send(.refresh)
+                    await self?.nextUpViewModel.refresh()
+                    await self?.recentlyAddedViewModel.refresh()
 
                     let resumeItems = try await self?.getResumeItems() ?? []
 
@@ -157,14 +157,14 @@ final class HomeViewModel: ViewModel, Stateful {
 
     private func refresh() async throws {
 
-        await nextUpViewModel.send(.refresh)
-        await recentlyAddedViewModel.send(.refresh)
+        await nextUpViewModel.refresh()
+        await recentlyAddedViewModel.refresh()
 
         let resumeItems = try await getResumeItems()
         let libraries = try await getLibraries()
 
         for library in libraries {
-            await library.send(.refresh)
+            await library.refresh()
         }
 
         await MainActor.run {
@@ -181,16 +181,16 @@ final class HomeViewModel: ViewModel, Stateful {
         parameters.limit = 20
 
         let request = Paths.getResumeItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items ?? []
     }
 
-    private func getLibraries() async throws -> [LatestInLibraryViewModel] {
+    private func getLibraries() async throws -> [PagingLibraryViewModel<LatestInLibrary>] {
 
-        let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
+        let parameters = try Paths.GetUserViewsParameters(userID: authenticatedUser.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
-        async let userViews = userSession.client.send(userViewsPath)
+        async let userViews = try await send(userViewsPath)
 
         async let excludedLibraryIDs = getExcludedLibraries()
 
@@ -205,30 +205,33 @@ final class HomeViewModel: ViewModel, Stateful {
                 using: \.collectionType
             )
             .subtracting(excludedLibraryIDs, using: \.id)
-            .map { LatestInLibraryViewModel(parent: $0) }
+            .map { PagingLibraryViewModel(library: LatestInLibrary(library: $0)) }
     }
 
     // TODO: use the more updated server/user data when implemented
     private func getExcludedLibraries() async throws -> [String] {
         let currentUserPath = Paths.getCurrentUser
-        let response = try await userSession.client.send(currentUserPath)
+        let response = try await send(currentUserPath)
 
         return response.value.configuration?.latestItemsExcludes ?? []
     }
 
     private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {
+        guard let itemID = item.id else { return }
+
         let request: Request<UserItemDataDto> = if isPlayed {
-            Paths.markPlayedItem(
-                itemID: item.id!,
-                userID: userSession.user.id
+            try Paths.markPlayedItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
             )
         } else {
-            Paths.markUnplayedItem(
-                itemID: item.id!,
-                userID: userSession.user.id
+            try Paths.markUnplayedItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
             )
         }
 
-        _ = try await userSession.client.send(request)
+        let response = try await send(request)
+        Notifications[.itemUserDataDidChange].post(response.value)
     }
 }

@@ -16,10 +16,10 @@ struct ItemEditorMenu: View {
     private var router
 
     @StateObject
-    private var viewModel: ItemEditorViewModel<BaseItemDto>
+    private var viewModel: ItemEditorViewModel
 
     init(item: BaseItemDto) {
-        self._viewModel = StateObject(wrappedValue: ItemEditorViewModel<BaseItemDto>(item: item))
+        self._viewModel = StateObject(wrappedValue: ItemEditorViewModel(item: item))
     }
 
     @ViewBuilder
