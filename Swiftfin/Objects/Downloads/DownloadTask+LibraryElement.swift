@@ -9,18 +9,18 @@
 import JellyfinAPI
 import SwiftUI
 
-private let downloadListLandscapeWidth: CGFloat = 110
-private let downloadListPortraitWidth: CGFloat = 60
-
 extension DownloadTask: LibraryElement {
+
+    var supportedLibraryStyleOptions: LibraryStyleOptions {
+        item.supportedLibraryStyleOptions
+    }
 
     func libraryDidSelectElement(
         router: Router.Wrapper,
         in namespace: Namespace.ID
     ) {
-        #if os(iOS)
-        router.route(to: .downloadItem(task: self), in: namespace)
-        #endif
+        // TODO: route downloaded items to the item view
+        // router.route(to: .item(item: item), in: namespace)
     }
 
     @ViewBuilder
@@ -98,7 +98,7 @@ private struct DownloadTaskLibraryListElement: View {
                 contentMode: .fill
             )
             .posterShadow()
-            .frame(width: resolvedLibraryStyle.posterDisplayType == .landscape ? downloadListLandscapeWidth : downloadListPortraitWidth)
+            .frame(width: resolvedLibraryStyle.posterDisplayType.libraryListWidth)
         } content: {
             VStack(alignment: .leading, spacing: 5) {
                 Text(task.displayTitle)

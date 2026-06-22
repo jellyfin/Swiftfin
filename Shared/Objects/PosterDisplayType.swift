@@ -6,11 +6,22 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CoreGraphics
+
 enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 
     case landscape
     case portrait
     case square
+
+    var libraryListWidth: CGFloat {
+        switch self {
+        case .landscape:
+            110
+        case .portrait, .square:
+            60
+        }
+    }
 
     var displayTitle: String {
         switch self {
