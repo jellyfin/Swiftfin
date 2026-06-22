@@ -244,7 +244,7 @@ extension DownloadTask {
     }
 }
 
-extension DownloadTask: Displayable, LibraryIdentifiable, SystemImageable {
+extension DownloadTask: Displayable, SystemImageable {
 
     var displayTitle: String {
         item.displayTitle

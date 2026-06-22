@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import JellyfinAPI
 import SwiftUI
 
@@ -13,18 +14,30 @@ extension NavigationRoute {
 
     @MainActor
     static var downloadList: NavigationRoute {
-        NavigationRoute(
+        let manager = Container.shared.downloadManager()
+        let roots = manager.topLevel()
+        let completed = roots.filter { manager.isFullyCompleted($0) }
+        let completedIDs = Set(completed.map(\.id))
+        let active = roots
+            .filter { !completedIDs.contains($0.id) }
+            .sorted { lhs, rhs in
+                if lhs.state != rhs.state { return lhs.state < rhs.state }
+                return lhs.createdAt < rhs.createdAt
+            }
+
+        let library = StaticLibrary(
+            title: L10n.downloads,
+            id: "downloads",
+            elements: active + completed
+        )
+
+        return NavigationRoute(
             id: "downloadList"
         ) {
-            #if os(iOS)
-            PagingLibraryView(viewModel: DownloadLibraryViewModel())
-            #else
-            EmptyView()
-            #endif
+            PagingLibraryView(library: library)
         }
     }
 
-    #if os(iOS)
     static func downloadItem(task: DownloadTask) -> NavigationRoute {
         NavigationRoute(
             id: "downloadItem"
@@ -32,5 +45,4 @@ extension NavigationRoute {
             DownloadItemView(task: task)
         }
     }
-    #endif
 }
