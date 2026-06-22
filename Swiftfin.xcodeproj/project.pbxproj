@@ -221,7 +221,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Extensions/JellyfinAPI/TaskTriggerInfoType.swift,
-				ViewModels/AdminDashboard/ActiveSessionsViewModel.swift,
 				ViewModels/AdminDashboard/APIKeysViewModel.swift,
 				ViewModels/AdminDashboard/DevicesViewModel.swift,
 				ViewModels/AdminDashboard/ServerActivityDetailViewModel.swift,
