@@ -9,20 +9,27 @@
 import AVKit
 import SwiftUI
 
-struct PlaybackRoutePickerView: UIViewRepresentable {
+struct AirplayRoutePickerModifier: ViewModifier {
 
     @Binding
     var present: Bool
 
-    let onBeginPresenting: () -> Void
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(onBeginPresenting: onBeginPresenting)
+    func body(content: Content) -> some View {
+        content
+            .overlay {
+                AirplayRoutePickerView(present: $present)
+                    .allowsHitTesting(false)
+            }
     }
+}
+
+private struct AirplayRoutePickerView: UIViewRepresentable {
+
+    @Binding
+    var present: Bool
 
     func makeUIView(context: Context) -> AVRoutePickerView {
         let routePickerView = AVRoutePickerView()
-        routePickerView.delegate = context.coordinator
         routePickerView.prioritizesVideoDevices = true
         routePickerView.tintColor = .clear
         routePickerView.activeTintColor = .clear
@@ -40,19 +47,6 @@ struct PlaybackRoutePickerView: UIViewRepresentable {
                     button.sendActions(for: .touchUpInside)
                 }
             }
-        }
-    }
-
-    class Coordinator: NSObject, AVRoutePickerViewDelegate {
-
-        private let onBeginPresenting: () -> Void
-
-        init(onBeginPresenting: @escaping () -> Void) {
-            self.onBeginPresenting = onBeginPresenting
-        }
-
-        func routePickerViewWillBeginPresentingRoutes(_ routePickerView: AVRoutePickerView) {
-            onBeginPresenting()
         }
     }
 }

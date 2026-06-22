@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Engine
 import Factory
 import SwiftUI
 
@@ -20,9 +21,6 @@ struct RemotePlaybackPickerView: View {
 
     @InjectedObject(\.mediaPlayerManager)
     private var manager: MediaPlayerManager
-
-    @State
-    private var presentRoutePicker: Bool = false
 
     private var availableProviders: [any RemotePlaybackProvider] {
         manager.remote.availableProviders
@@ -84,34 +82,30 @@ struct RemotePlaybackPickerView: View {
     }
 
     private func systemPickerRow(_ provider: any RemotePlaybackProvider) -> some View {
-        ListRow {
-            Image(systemName: provider.route.systemImage)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .padding(8)
-                .frame(width: 60, height: 60)
-                .foregroundStyle(provider.isActive ? AnyShapeStyle(accentColor) : AnyShapeStyle(.primary))
-        } content: {
-            HStack {
-                // swiftlint:disable:next hard_coded_display_string
-                Text("\(L10n.airPlay) & \(L10n.bluetooth)")
-                    .font(.headline)
+        StateAdapter(initialValue: false) { presentAirplayRoutePicker in
+            ListRow {
+                Image(systemName: provider.route.systemImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding(8)
+                    .frame(width: 60, height: 60)
+                    .foregroundStyle(provider.isActive ? AnyShapeStyle(accentColor) : AnyShapeStyle(.primary))
+            } content: {
+                HStack {
+                    // swiftlint:disable:next hard_coded_display_string
+                    Text("\(L10n.airPlay) & \(L10n.bluetooth)")
+                        .font(.headline)
 
-                Spacer()
+                    Spacer()
 
-                ListRowCheckbox()
+                    ListRowCheckbox()
+                }
+            } action: {
+                presentAirplayRoutePicker.wrappedValue = true
             }
-        } action: {
-            presentRoutePicker = true
-        }
-        .isSeparatorVisible(false)
-        .isSelected(provider.isActive)
-        .background {
-            PlaybackRoutePickerView(present: $presentRoutePicker) {
-                router.dismiss()
-            }
-            .frame(width: 1, height: 1)
-            .allowsHitTesting(false)
+            .isSeparatorVisible(false)
+            .isSelected(provider.isActive)
+            .airplayRoutePicker(present: presentAirplayRoutePicker)
         }
     }
 
