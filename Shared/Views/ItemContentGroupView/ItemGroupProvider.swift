@@ -6,41 +6,57 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
+import Get
 import JellyfinAPI
 import SwiftUI
 
-struct ItemGroupProvider: ContentGroupProvider {
+@MainActor
+final class ItemGroupProvider: ViewModel, ContentGroupProvider {
 
-    let displayTitle: String
     let id: String
 
-    let viewModel: ItemViewModel
+    @Published
+    private(set) var item: BaseItemDto
+    @Published
+    private(set) var localTrailers: [BaseItemDto] = []
+    @Published
+    private(set) var playButtonItem: BaseItemDto?
+    @Published
+    private(set) var selectedMediaSource: MediaSourceInfo?
 
-    init(displayTitle: String, id: String) {
-        self.displayTitle = displayTitle
+    var displayTitle: String {
+        item.displayTitle
+    }
+
+    init(item: BaseItemDto) {
+        self.id = item.id ?? "Unknown"
+        self.item = item
+        super.init()
+    }
+
+    init(id: String) {
         self.id = id
-
-        self.viewModel = .init(item: .init(id: id, name: displayTitle))
+        self.item = .init(id: id)
+        super.init()
     }
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
-        await viewModel.refresh()
+        let fullItem = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
+        let newPlayButtonItem = try await playButtonItem(for: fullItem)
+        let newLocalTrailers = try? await localTrailers(for: fullItem)
 
-        if case let .error(error) = viewModel.state {
-            throw error
-        }
+        item = fullItem
+        localTrailers = newLocalTrailers ?? []
+        setPlayButtonItem(newPlayButtonItem)
 
         return try await _makeGroups(
-            item: viewModel.item,
+            item: fullItem,
             itemID: id
         )
     }
 
     @ContentGroupBuilder
     private func _makeGroups(item: BaseItemDto, itemID: String) async throws -> [any ContentGroup] {
-
-        ItemHeaderContentGroup(item: item)
 
         // TODO: show age of person
         if let birthday = item.birthday?.formatted(date: .long, time: .omitted) {
@@ -65,7 +81,7 @@ struct ItemGroupProvider: ContentGroupProvider {
         }
 
         if item.type == .series {
-            SeriesEpisodeContentGroup(viewModel: SeriesItemViewModel(item: item))
+            SeriesEpisodeContentGroup(series: item)
         }
 
         if let genres = item.itemGenres, genres.isNotEmpty {
@@ -168,61 +184,142 @@ struct ItemGroupProvider: ContentGroupProvider {
             item: item
         )
     }
-}
 
-private struct ItemHeaderContentGroup: ContentGroup {
+    func selectMediaSource(_ mediaSource: MediaSourceInfo) {
+        selectedMediaSource = mediaSource
+    }
 
-    let id = "item-view-header"
-    let item: BaseItemDto
+    func toggleIsFavorite() async {
+        let beforeIsFavorite = item.userData?.isFavorite ?? false
 
-    func body(with viewModel: Empty) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .bottom, spacing: 16) {
-                PosterImage(
-                    item: item,
-                    type: item.preferredPosterDisplayType,
-                    contentMode: .fit
-                )
-                .frame(width: UIDevice.isPhone ? 120 : 180)
-                .posterShadow()
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(item.displayTitle)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .lineLimit(3)
-
-                    DotHStack {
-                        if let firstGenre = item.genres?.first {
-                            Text(firstGenre)
-                        }
-
-                        if let premiereYear = item.premiereDateYear {
-                            Text(premiereYear)
-                        }
-
-                        if let runtime = item.runtime {
-                            Text(runtime, format: .hourMinuteAbbreviated)
-                        }
-
-                        if let seasonEpisodeLabel = item.seasonEpisodeLabel {
-                            Text(seasonEpisodeLabel)
-                        }
-                    }
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
-            if let overview = item.overview, overview.isNotEmpty {
-                Text(overview)
-                    .font(.footnote)
-                    .lineLimit(4)
-            }
+        item.userData?.isFavorite = !beforeIsFavorite
+        do {
+            try await setIsFavorite(!beforeIsFavorite)
+        } catch {
+            item.userData?.isFavorite = beforeIsFavorite
         }
-        .edgePadding(.horizontal)
-        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    func toggleIsPlayed() async {
+        let beforeIsPlayed = item.userData?.isPlayed ?? false
+
+        item.userData?.isPlayed = !beforeIsPlayed
+        do {
+            try await setIsPlayed(!beforeIsPlayed)
+        } catch {
+            item.userData?.isPlayed = beforeIsPlayed
+        }
+    }
+
+    private func setPlayButtonItem(_ item: BaseItemDto?) {
+        playButtonItem = item
+        selectedMediaSource = item?.mediaSources?.first
+    }
+
+    private func playButtonItem(for item: BaseItemDto) async throws -> BaseItemDto? {
+        guard item.type == .series else {
+            return item.isPlayable ? item : nil
+        }
+
+        if let nextUp = try await nextUpItem(for: item) {
+            return nextUp
+        }
+
+        if let resumeItem = try await resumeItem(for: item) {
+            return resumeItem
+        }
+
+        return try await firstAvailableItem(for: item)
+    }
+
+    private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {
+        var parameters = Paths.GetNextUpParameters()
+        parameters.fields = .MinimumFields
+        parameters.seriesID = item.id
+
+        let request = Paths.getNextUp(parameters: parameters)
+        let response = try await send(request)
+
+        guard let item = response.value.items?.first, !item.isMissing else {
+            return nil
+        }
+
+        return item
+    }
+
+    private func resumeItem(for item: BaseItemDto) async throws -> BaseItemDto? {
+        var parameters = Paths.GetResumeItemsParameters()
+        parameters.fields = .MinimumFields
+        parameters.limit = 1
+        parameters.parentID = item.id
+
+        let request = Paths.getResumeItems(parameters: parameters)
+        let response = try await send(request)
+
+        return response.value.items?.first
+    }
+
+    private func firstAvailableItem(for item: BaseItemDto) async throws -> BaseItemDto? {
+        var parameters = Paths.GetItemsParameters()
+        parameters.fields = .MinimumFields
+        parameters.includeItemTypes = [.episode]
+        parameters.isRecursive = true
+        parameters.limit = 1
+        parameters.parentID = item.id
+        parameters.sortOrder = [.ascending]
+
+        let request = Paths.getItems(parameters: parameters)
+        let response = try await send(request)
+
+        return response.value.items?.first
+    }
+
+    private func localTrailers(for item: BaseItemDto) async throws -> [BaseItemDto] {
+        guard let itemID = item.id else { return [] }
+
+        let request = try Paths.getLocalTrailers(itemID: itemID, userID: authenticatedUser.id)
+        let response = try await send(request)
+
+        return response.value
+    }
+
+    private func setIsPlayed(_ isPlayed: Bool) async throws {
+        guard let itemID = item.id else { return }
+
+        let request: Request<UserItemDataDto> = if isPlayed {
+            try Paths.markPlayedItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
+            )
+        } else {
+            try Paths.markUnplayedItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
+            )
+        }
+
+        let response = try await send(request)
+        Notifications[.itemUserDataDidChange].post(response.value)
+        Notifications[.itemShouldRefreshMetadata].post(itemID)
+    }
+
+    private func setIsFavorite(_ isFavorite: Bool) async throws {
+        guard let itemID = item.id else { return }
+
+        let request: Request<UserItemDataDto> = if isFavorite {
+            try Paths.markFavoriteItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
+            )
+        } else {
+            try Paths.unmarkFavoriteItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
+            )
+        }
+
+        let response = try await send(request)
+        Notifications[.itemUserDataDidChange].post(response.value)
+        Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 }

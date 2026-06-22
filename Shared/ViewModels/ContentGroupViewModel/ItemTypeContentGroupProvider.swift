@@ -51,9 +51,10 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
             if itemType == .episode {
                 return EpisodeGroup(
                     library: ItemLibrary(
-                        parent: TitledLibraryParent(
-                            displayTitle: itemType.pluralDisplayTitle,
+                        parent: BaseItemDto(
                             id: parent?.id,
+                            name: itemType.pluralDisplayTitle,
+                            type: itemType
                         ),
                         filters: filters
                     )
@@ -62,9 +63,10 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
                 return PosterGroup(
                     id: "\(parent?.id ?? "unknown")-\(itemType.rawValue)",
                     library: ItemLibrary(
-                        parent: TitledLibraryParent(
-                            displayTitle: itemType.pluralDisplayTitle,
+                        parent: BaseItemDto(
                             id: parent?.id,
+                            name: itemType.pluralDisplayTitle,
+                            type: itemType
                         ),
                         filters: filters
                     ),

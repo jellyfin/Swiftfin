@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: LibraryElement {
+struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: LibraryElement, Library.Element: Poster {
 
     let displayTitle: String
     let id: String

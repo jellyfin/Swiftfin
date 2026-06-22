@@ -10,6 +10,18 @@ import Foundation
 
 extension Dictionary {
 
+    func inserting(value: Value, for key: Key) -> Self {
+        var copy = self
+        copy[key] = value
+        return copy
+    }
+
+    func removingValue(for key: Key) -> Self {
+        var copy = self
+        copy.removeValue(forKey: key)
+        return copy
+    }
+
     subscript(key: Key?) -> Value? {
         guard let key else { return nil }
         return self[key]

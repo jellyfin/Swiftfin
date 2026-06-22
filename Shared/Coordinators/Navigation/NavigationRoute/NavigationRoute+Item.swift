@@ -149,21 +149,31 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static func item(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(
             id: "item-\(item.id ?? "Unknown")",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            ItemView(item: item)
+            ItemContentGroupView(
+                provider: ItemGroupProvider(
+                    item: item
+                )
+            )
         }
     }
 
+    @MainActor
     static func item(id: String) -> NavigationRoute {
         NavigationRoute(
             id: "item-\(id)",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            ItemView(item: .init(id: id))
+            ItemContentGroupView(
+                provider: ItemGroupProvider(
+                    id: id
+                )
+            )
         }
     }
 

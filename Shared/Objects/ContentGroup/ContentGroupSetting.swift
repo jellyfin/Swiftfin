@@ -84,7 +84,7 @@ enum ContentGroupSetting: Equatable, Hashable, Storable {
             PosterGroup(
                 id: id,
                 library: ItemLibrary(
-                    parent: TitledLibraryParent(displayTitle: displayTitle, id: libraryID),
+                    parent: BaseItemDto(id: libraryID, name: displayTitle),
                     filters: filters
                 ),
                 posterDisplayType: posterDisplayType,

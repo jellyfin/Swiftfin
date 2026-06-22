@@ -80,12 +80,6 @@ struct CustomizeSettingsView: View {
     @Default(.Customization.shouldShowMissingSeasons)
     private var shouldShowMissingSeasons
 
-    // MARK: - Item View Defaults
-
-    @Default(.Customization.itemViewType)
-    private var itemViewType
-    @Default(.Customization.CinematicItemViewType.usePrimaryImage)
-    private var cinematicItemViewTypeUsePrimaryImage
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
 
@@ -317,19 +311,9 @@ struct CustomizeSettingsView: View {
     private var itemViewSettings: some View {
         if UIDevice.isPhone {
             Section {
-                PlatformPicker(L10n.type, selection: $itemViewType)
-
-                if itemViewType == .cinematic {
-                    Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
-                }
-
                 Toggle(L10n.useSeriesImageForEpisodes, isOn: $useSeriesLandscapeBackdrop)
             } header: {
                 Text(L10n.itemView)
-            } footer: {
-                if itemViewType == .cinematic {
-                    Text(L10n.usePrimaryImageDescription)
-                }
             }
         }
     }

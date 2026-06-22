@@ -9,6 +9,10 @@
 import JellyfinAPI
 import SwiftUI
 
+#if os(iOS)
+import Factory
+#endif
+
 @MainActor
 enum TabItemSetting: Identifiable, Hashable, Storable {
 
@@ -53,7 +57,7 @@ enum TabItemSetting: Identifiable, Hashable, Storable {
         case let .contentGroup(provider):
             .contentGroup(provider: provider.provider)
         case let .item(id, displayTitle):
-            .contentGroup(provider: ItemGroupProvider(displayTitle: displayTitle, id: id))
+            .item(id: id, displayTitle: displayTitle)
         case .liveTV:
             .liveTV
         case let .library(title, systemName, filters):
@@ -129,7 +133,23 @@ extension TabItem {
             title: provider.displayTitle,
             systemImage: "house.fill"
         ) {
-            ContentGroupView(provider: provider)
+            PrimaryTabRootView {
+                ContentGroupView(provider: provider)
+            }
+        }
+    }
+
+    static func item(id: String, displayTitle: String) -> TabItem {
+        let item = BaseItemDto(id: id, name: displayTitle)
+
+        return TabItem(
+            id: id,
+            title: displayTitle,
+            systemImage: item.systemImage
+        ) {
+            PrimaryTabRootView {
+                ItemContentGroupView(provider: ItemGroupProvider(item: item))
+            }
         }
     }
 
@@ -153,14 +173,16 @@ extension TabItem {
             title: title,
             systemImage: systemName
         ) {
-            PagingLibraryView(
-                library: ItemLibrary(
-                    parent: BaseItemDto(name: title),
-                    filters: filters
+            PrimaryTabRootView {
+                PagingLibraryView(
+                    library: ItemLibrary(
+                        parent: BaseItemDto(name: title),
+                        filters: filters
+                    )
                 )
-            )
-            .if(UIDevice.isTV) { view in
-                view.toolbar(.hidden, for: .navigationBar)
+                .if(UIDevice.isTV) { view in
+                    view.toolbar(.hidden, for: .navigationBar)
+                }
             }
         }
     }
@@ -171,10 +193,12 @@ extension TabItem {
             title: L10n.media,
             systemImage: "rectangle.stack.fill"
         ) {
-            PagingLibraryView(library: UserViewLibrary())
-                .if(UIDevice.isTV) { view in
-                    view.toolbar(.hidden, for: .navigationBar)
-                }
+            PrimaryTabRootView {
+                PagingLibraryView(library: UserViewLibrary())
+                    .if(UIDevice.isTV) { view in
+                        view.toolbar(.hidden, for: .navigationBar)
+                    }
+            }
         }
     }
 
@@ -184,7 +208,9 @@ extension TabItem {
             title: L10n.liveTV,
             systemImage: "play.tv"
         ) {
-            NavigationRoute.liveTV.destination
+            PrimaryTabRootView {
+                NavigationRoute.liveTV.destination
+            }
         }
     }
 
@@ -194,7 +220,9 @@ extension TabItem {
             title: L10n.search,
             systemImage: "magnifyingglass"
         ) {
-            SearchView()
+            PrimaryTabRootView {
+                SearchView()
+            }
         }
     }
 
@@ -207,4 +235,46 @@ extension TabItem {
             SettingsView()
         }
     }
+}
+
+private struct PrimaryTabRootView<Content: View>: View {
+
+    @Router
+    private var router
+
+    private let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        #if os(iOS)
+        content
+            .topBarTrailing {
+                settingsButton
+            }
+        #else
+        content
+        #endif
+    }
+
+    #if os(iOS)
+    @Injected(\.currentUserSession)
+    private var userSession
+
+    @ViewBuilder
+    private var settingsButton: some View {
+        if router.isRootOfPath,
+           let userSession
+        {
+            SettingsBarButton(
+                server: userSession.server,
+                user: userSession.user
+            ) {
+                router.route(to: .settings)
+            }
+        }
+    }
+    #endif
 }

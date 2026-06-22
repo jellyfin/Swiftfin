@@ -27,12 +27,13 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static var liveTV: NavigationRoute {
         NavigationRoute(
             id: "liveTV",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            ProgramsView()
+            ContentGroupView(provider: LiveTVGroupProvider())
         }
     }
 

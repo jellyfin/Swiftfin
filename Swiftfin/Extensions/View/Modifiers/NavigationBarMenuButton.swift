@@ -14,6 +14,9 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
     @Default(.accentColor)
     private var accentColor
 
+    @State
+    private var collectedMenuGroups: [MenuContentGroup] = []
+
     private let menuContent: MenuContent
     private let isLoading: Bool
     private let isHidden: Bool
@@ -37,15 +40,22 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
                         ProgressView()
                     }
 
-                    if !isHidden {
+                    if !isHidden, collectedMenuGroups.isNotEmpty {
                         Menu(L10n.options, systemImage: "ellipsis.circle") {
                             menuContent
+
+                            ForEach(collectedMenuGroups) { group in
+                                group.content
+                            }
                         }
                         .labelStyle(.iconOnly)
                         .fontWeight(.semibold)
                         .foregroundStyle(accentColor)
                     }
                 }
+            }
+            .onPreferenceChange(MenuContentKey.self) { newGroups in
+                collectedMenuGroups = newGroups
             }
     }
 }

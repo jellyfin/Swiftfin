@@ -49,17 +49,22 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     lazy var previousItemPublisher: Published<MediaPlayerItemProvider?>.Publisher = $previousItem
 
     private var currentAdjacentEpisodesTask: AnyCancellable?
-    private let seriesViewModel: SeriesItemViewModel
+    private let seasonsViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
     init(episode: BaseItemDto) {
-        self.seriesViewModel = SeriesItemViewModel(episode: episode)
+        self.seasonsViewModel = PagingLibraryViewModel(
+            library: SeasonViewModelLibrary(
+                series: BaseItemDto(id: episode.seriesID, name: episode.seriesName)
+            ),
+            pageSize: 100
+        )
         super.init()
 
-        seriesViewModel.send(.refresh)
+        seasonsViewModel.refresh()
     }
 
     var videoPlayerBody: some PlatformView {
-        EpisodeOverlay(viewModel: seriesViewModel)
+        EpisodeOverlay(viewModel: seasonsViewModel)
     }
 
     private func didReceive(newItem: MediaPlayerItem?) {
@@ -157,14 +162,14 @@ extension EpisodeMediaPlayerQueue {
         private var manager: MediaPlayerManager
 
         @ObservedObject
-        var viewModel: SeriesItemViewModel
+        var viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
         @State
         private var selection: PagingLibraryViewModel<EpisodeLibrary>.ID?
 
         private var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>? {
             guard let selection else { return nil }
-            return viewModel.seasons[id: selection]
+            return viewModel.elements[id: selection]
         }
 
         private func select(episode: BaseItemDto) {
@@ -182,13 +187,13 @@ extension EpisodeMediaPlayerQueue {
         }
 
         private func selectInitialSeason() {
-            if let seasonID = manager.item.seasonID, let season = viewModel.seasons[id: seasonID] {
+            if let seasonID = manager.item.seasonID, let season = viewModel.elements[id: seasonID] {
                 if season.elements.isEmpty {
                     season.refresh()
                 }
                 selection = season.id
             } else {
-                selection = viewModel.seasons.first?.id
+                selection = viewModel.elements.first?.id
             }
         }
 
@@ -212,11 +217,11 @@ extension EpisodeMediaPlayerQueue {
                     action: select
                 )
             }
-            .environmentObject(viewModel)
             .onAppear { selectInitialSeason() }
-            .onReceive(viewModel.$seasons) { newSeasons in
+            .onReceive(viewModel.$elements) { newSeasons in
                 setSelectionIfNeeded(seasons: newSeasons)
             }
+            .environmentObject(viewModel)
         }
 
         var tvOSView: some View {
@@ -224,27 +229,27 @@ extension EpisodeMediaPlayerQueue {
                 selection: $selection,
                 action: select
             )
-            .environmentObject(viewModel)
             .onFirstAppear {
                 selectInitialSeason()
             }
-            .onReceive(viewModel.$seasons) { newSeasons in
+            .onReceive(viewModel.$elements) { newSeasons in
                 setSelectionIfNeeded(seasons: newSeasons)
             }
+            .environmentObject(viewModel)
         }
     }
 
     private struct CompactSeasonStackObserver: View {
 
         @EnvironmentObject
-        private var seriesViewModel: SeriesItemViewModel
+        private var seasonsViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
         let selection: Binding<PagingLibraryViewModel<EpisodeLibrary>.ID?>
         let action: (BaseItemDto) -> Void
 
         private var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>? {
             guard let id = selection.wrappedValue else { return nil }
-            return seriesViewModel.seasons[id: id]
+            return seasonsViewModel.elements[id: id]
         }
 
         private struct _Body: View {
@@ -291,14 +296,14 @@ extension EpisodeMediaPlayerQueue {
     private struct RegularSeasonStackObserver: View {
 
         @EnvironmentObject
-        private var seriesViewModel: SeriesItemViewModel
+        private var seasonsViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
         let selection: Binding<PagingLibraryViewModel<EpisodeLibrary>.ID?>
         let action: (BaseItemDto) -> Void
 
         private var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>? {
             guard let id = selection.wrappedValue else { return nil }
-            return seriesViewModel.seasons[id: id]
+            return seasonsViewModel.elements[id: id]
         }
 
         private struct _Body: View {

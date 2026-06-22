@@ -8,7 +8,9 @@
 
 import SwiftUI
 
-struct PosterHStackLibrarySection<Library: PagingLibrary>: View where Library.Element: LibraryElement {
+struct PosterHStackLibrarySection<Library: PagingLibrary>: View
+    where Library.Element: LibraryElement, Library.Element: Poster
+{
 
     @ObservedObject
     private var viewModel: PagingLibraryViewModel<Library>

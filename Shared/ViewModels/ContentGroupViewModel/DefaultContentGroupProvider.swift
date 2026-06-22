@@ -57,7 +57,7 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
         if Defaults[.Customization.Home.showRecentlyAdded] {
             PosterGroup(
                 library: ItemLibrary(
-                    parent: TitledLibraryParent(displayTitle: L10n.recentlyAdded),
+                    parent: BaseItemDto(name: L10n.recentlyAdded),
                     filters: .init(
                         itemTypes: [.movie, .series],
                         sortBy: [.dateCreated],

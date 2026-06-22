@@ -12,7 +12,6 @@ import Foundation
 import SwiftUI
 
 // TODO: seems to redraw view when popped to sometimes?
-//       - similar to MediaView TODO bug?
 //       - indicated by snapping to the top
 struct HomeView: View {
 

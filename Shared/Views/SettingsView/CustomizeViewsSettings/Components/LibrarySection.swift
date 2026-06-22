@@ -19,12 +19,8 @@ extension CustomizeViewsSettings {
         private var libraryEnabledDrawerFilters
         @Default(.Customization.Library.randomImage)
         private var libraryRandomImage
-        @Default(.Customization.Library.displayType)
-        private var libraryDisplayType
-        @Default(.Customization.Library.posterType)
-        private var libraryPosterType
-        @Default(.Customization.Library.listColumnCount)
-        private var listColumnCount
+        @Default(.Customization.Library.style)
+        private var libraryStyle
         @Default(.Customization.Library.letterPickerOrientation)
         private var letterPickerOrientation
 
@@ -58,13 +54,13 @@ extension CustomizeViewsSettings {
                 }
 
                 Section(L10n.layout) {
-                    Picker(L10n.layout, selection: $libraryDisplayType)
+                    Picker(L10n.layout, selection: $libraryStyle.displayType)
 
-                    Picker(L10n.posters, selection: $libraryPosterType)
+                    Picker(L10n.posters, selection: $libraryStyle.posterDisplayType)
 
-                    if libraryDisplayType == .list, !UIDevice.isPhone {
-                        Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 4, step: 1) {
-                            LabeledContent(L10n.columns, value: listColumnCount.description)
+                    if libraryStyle.displayType == .list, !UIDevice.isPhone {
+                        Stepper(L10n.columns, value: $libraryStyle.listColumnCount, in: 1 ... 4, step: 1) {
+                            LabeledContent(L10n.columns, value: libraryStyle.listColumnCount.description)
                         }
                     }
                 }
