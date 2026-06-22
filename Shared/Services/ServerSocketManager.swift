@@ -263,7 +263,9 @@ extension ServerSocketManager {
         .prepend(())
         .map { _ -> AnyPublisher<Payload, Never> in
             guard let socket = Container.shared.currentUserSession()?.serverSocketManager else {
-                return Empty().eraseToAnyPublisher()
+                return Combine
+                    .Empty()
+                    .eraseToAnyPublisher()
             }
 
             let token = socket.subscribe(subscription, delay: delay, interval: interval)
