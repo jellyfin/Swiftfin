@@ -71,7 +71,7 @@ extension View {
             NavigationBarMenuButtonModifier(
                 isLoading: isLoading,
                 isHidden: isHidden,
-                items: items
+                menuContent: items
             )
         )
     }

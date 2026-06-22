@@ -17,15 +17,15 @@ struct SeriesEpisodeSelector: View {
     @State
     private var didSelectPlayButtonSeason = false
     @State
-    private var selection: SeasonItemViewModel.ID?
+    private var selection: PagingLibraryViewModel<EpisodeLibrary>.ID?
 
-    private var selectionViewModel: SeasonItemViewModel? {
+    private var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>? {
         viewModel.seasons.first(where: { $0.id == selection })
     }
 
     @ViewBuilder
     private var seasonSelectorMenu: some View {
-        if let seasonDisplayName = selectionViewModel?.season.displayTitle,
+        if let seasonDisplayName = selectionViewModel?.library.parent.displayTitle,
            viewModel.seasons.count <= 1
         {
             Text(seasonDisplayName)
@@ -33,20 +33,20 @@ struct SeriesEpisodeSelector: View {
                 .fontWeight(.semibold)
         } else {
             Menu {
-                ForEach(viewModel.seasons, id: \.season.id) { seasonViewModel in
+                ForEach(viewModel.seasons, id: \.library.parent.id) { seasonViewModel in
                     Button {
                         selection = seasonViewModel.id
                     } label: {
                         if seasonViewModel.id == selection {
-                            Label(seasonViewModel.season.displayTitle, systemImage: "checkmark")
+                            Label(seasonViewModel.library.parent.displayTitle, systemImage: "checkmark")
                         } else {
-                            Text(seasonViewModel.season.displayTitle)
+                            Text(seasonViewModel.library.parent.displayTitle)
                         }
                     }
                 }
             } label: {
                 Label(
-                    selectionViewModel?.season.displayTitle ?? .emptyDash,
+                    selectionViewModel?.library.parent.displayTitle ?? .emptyDash,
                     systemImage: "chevron.down"
                 )
                 .labelStyle(.episodeSelector)
@@ -84,7 +84,7 @@ struct SeriesEpisodeSelector: View {
             guard let selectionViewModel else { return }
 
             if selectionViewModel.state == .initial {
-                selectionViewModel.send(.refresh)
+                selectionViewModel.refresh()
             }
         }
     }

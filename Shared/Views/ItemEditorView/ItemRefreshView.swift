@@ -19,7 +19,7 @@ struct ItemRefreshView: View {
     private var accentColor
 
     @ObservedObject
-    var viewModel: ItemEditorViewModel<BaseItemDto>
+    var viewModel: ItemEditorViewModel
 
     @State
     private var refreshType: MetadataRefreshType = .scan

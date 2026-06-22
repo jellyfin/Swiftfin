@@ -24,12 +24,12 @@ struct CinematicBackgroundView: View {
         RotateContentView(proxy: proxy)
             .onChange(of: viewModel.currentItem) { _, newItem in
                 proxy.update {
-                    ImageView(newItem?.cinematicImageSources(maxWidth: nil) ?? [])
+                    ImageView(newItem?.cinematicImageSources(maxWidth: nil, quality: nil) ?? [])
                         .placeholder { _ in
-                            Color.clear
+                            EmptyView()
                         }
                         .failure {
-                            Color.clear
+                            EmptyView()
                         }
                         .aspectRatio(contentMode: .fill)
                 }

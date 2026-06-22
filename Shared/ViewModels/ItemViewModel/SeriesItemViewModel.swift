@@ -14,12 +14,12 @@ import IdentifiedCollections
 import JellyfinAPI
 
 // TODO: care for one long episodes list?
-//       - after SeasonItemViewModel is bidirectional
+//       - after season paging is bidirectional
 //       - would have to see if server returns right amount of episodes/season
 final class SeriesItemViewModel: ItemViewModel {
 
     @Published
-    var seasons: IdentifiedArrayOf<SeasonItemViewModel> = []
+    var seasons: IdentifiedArrayOf<PagingLibraryViewModel<EpisodeLibrary>> = []
 
     // MARK: - Task
 
@@ -50,7 +50,7 @@ final class SeriesItemViewModel: ItemViewModel {
 
                     let newSeasons = try await seasons
                         .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) }
-                        .map(SeasonItemViewModel.init)
+                        .map { PagingLibraryViewModel(library: EpisodeLibrary(season: $0)) }
 
                     await MainActor.run {
                         self.seasons.append(contentsOf: newSeasons)

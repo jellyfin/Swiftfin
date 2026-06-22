@@ -14,17 +14,22 @@ import Transmission
 
 extension NavigationRoute {
 
+    @MainActor
     static var channels: NavigationRoute {
         NavigationRoute(
             id: "channels"
         ) {
-            ChannelLibraryView()
+            PagingLibraryView(library: ChannelLibrary())
+                .if(UIDevice.isTV) { view in
+                    view.toolbar(.hidden, for: .navigationBar)
+                }
         }
     }
 
     static var liveTV: NavigationRoute {
         NavigationRoute(
-            id: "liveTV"
+            id: "liveTV",
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
             ProgramsView()
         }
