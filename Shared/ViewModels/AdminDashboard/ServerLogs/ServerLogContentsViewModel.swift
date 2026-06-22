@@ -83,9 +83,9 @@ final class ServerLogContentsViewModel<Parser: LogParser>: ViewModel {
         }
 
         let request = Paths.getLogFile(name: name)
-        let response = try await userSession.client.download(for: request)
+        let response = try await userSession?.client.download(for: request)
 
-        self.downloadLocation = response.value
+        self.downloadLocation = response?.value
 
         await self.parsedLog?.refresh()
         await self.rawLog?.refresh()

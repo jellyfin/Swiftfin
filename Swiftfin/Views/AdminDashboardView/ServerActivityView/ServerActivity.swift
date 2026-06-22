@@ -92,11 +92,11 @@ struct ServerActivityView: View {
                         router.route(to: .activityDetails(viewModel: logViewModel))
                     }
                 ) {
-                    if let user {
+                    if let user, let userSession = viewModel.userSession {
                         UserProfileImage(
                             userID: user.id,
                             source: user.profileImageSource(
-                                client: viewModel.userSession.client,
+                                client: userSession.client,
                                 maxWidth: 60
                             )
                         )
