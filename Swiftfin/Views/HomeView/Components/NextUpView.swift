@@ -21,7 +21,7 @@ extension HomeView {
         private var router
 
         @ObservedObject
-        var viewModel: NextUpLibraryViewModel
+        var viewModel: PagingLibraryViewModel<NextUpLibrary>
 
         let onSetPlayed: (BaseItemDto) -> Void
 
@@ -42,7 +42,7 @@ extension HomeView {
                 }
                 .trailing {
                     SeeAllButton {
-                        router.route(to: .library(viewModel: viewModel))
+                        router.route(to: .library(library: viewModel.library))
                     }
                 }
                 .contextMenu(for: BaseItemDto.self) { item in

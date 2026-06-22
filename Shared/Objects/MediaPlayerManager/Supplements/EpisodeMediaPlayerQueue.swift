@@ -160,9 +160,9 @@ extension EpisodeMediaPlayerQueue {
         var viewModel: SeriesItemViewModel
 
         @State
-        private var selection: SeasonItemViewModel.ID?
+        private var selection: PagingLibraryViewModel<EpisodeLibrary>.ID?
 
-        private var selectionViewModel: SeasonItemViewModel? {
+        private var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>? {
             guard let selection else { return nil }
             return viewModel.seasons[id: selection]
         }
@@ -184,7 +184,7 @@ extension EpisodeMediaPlayerQueue {
         private func selectInitialSeason() {
             if let seasonID = manager.item.seasonID, let season = viewModel.seasons[id: seasonID] {
                 if season.elements.isEmpty {
-                    season.send(.refresh)
+                    season.refresh()
                 }
                 selection = season.id
             } else {
@@ -192,10 +192,10 @@ extension EpisodeMediaPlayerQueue {
             }
         }
 
-        private func setSelectionIfNeeded(seasons: IdentifiedArrayOf<SeasonItemViewModel>) {
+        private func setSelectionIfNeeded(seasons: IdentifiedArrayOf<PagingLibraryViewModel<EpisodeLibrary>>) {
             guard selection == nil, !seasons.isEmpty else { return }
             selection = seasons.first?.id
-            seasons.first?.send(.refresh)
+            seasons.first?.refresh()
         }
 
         var iOSView: some View {
@@ -239,10 +239,10 @@ extension EpisodeMediaPlayerQueue {
         @EnvironmentObject
         private var seriesViewModel: SeriesItemViewModel
 
-        let selection: Binding<SeasonItemViewModel.ID?>
+        let selection: Binding<PagingLibraryViewModel<EpisodeLibrary>.ID?>
         let action: (BaseItemDto) -> Void
 
-        private var selectionViewModel: SeasonItemViewModel? {
+        private var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>? {
             guard let id = selection.wrappedValue else { return nil }
             return seriesViewModel.seasons[id: id]
         }
@@ -250,7 +250,7 @@ extension EpisodeMediaPlayerQueue {
         private struct _Body: View {
 
             @ObservedObject
-            var selectionViewModel: SeasonItemViewModel
+            var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
             let action: (BaseItemDto) -> Void
 
@@ -293,10 +293,10 @@ extension EpisodeMediaPlayerQueue {
         @EnvironmentObject
         private var seriesViewModel: SeriesItemViewModel
 
-        let selection: Binding<SeasonItemViewModel.ID?>
+        let selection: Binding<PagingLibraryViewModel<EpisodeLibrary>.ID?>
         let action: (BaseItemDto) -> Void
 
-        private var selectionViewModel: SeasonItemViewModel? {
+        private var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>? {
             guard let id = selection.wrappedValue else { return nil }
             return seriesViewModel.seasons[id: id]
         }
@@ -309,7 +309,7 @@ extension EpisodeMediaPlayerQueue {
             #endif
 
             @ObservedObject
-            var selectionViewModel: SeasonItemViewModel
+            var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
             let action: (BaseItemDto) -> Void
 
@@ -318,7 +318,7 @@ extension EpisodeMediaPlayerQueue {
                 #if os(tvOS)
                 CollectionHStack(
                     uniqueElements: selectionViewModel.elements,
-                    id: \.unwrappedIDHashOrZero,
+                    id: \.id,
                     layout: .grid(columns: 5, rows: 1, columnTrailingInset: 0)
                 ) { episode in
                     EpisodeButton(episode: episode) {
@@ -330,7 +330,7 @@ extension EpisodeMediaPlayerQueue {
                 #else
                 CollectionHStack(
                     uniqueElements: selectionViewModel.elements,
-                    id: \.unwrappedIDHashOrZero,
+                    id: \.id,
                     layout: .minimumWidth(columnWidth: 170, rows: 1)
                 ) { item in
                     EpisodeButton(episode: item) {
@@ -374,7 +374,7 @@ extension EpisodeMediaPlayerQueue {
         private var isRetryButtonFocused: Bool
 
         @ObservedObject
-        var viewModel: SeasonItemViewModel
+        var viewModel: PagingLibraryViewModel<EpisodeLibrary>
 
         // TODO: Supplements are dismissed on retry, probably due to focus change
         @ViewBuilder
@@ -387,7 +387,7 @@ extension EpisodeMediaPlayerQueue {
                     .frame(height: UIDevice.isTV ? 80 : 40)
             } content: {
                 Button {
-                    viewModel.send(.refresh)
+                    viewModel.refresh()
                 } label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 7)
