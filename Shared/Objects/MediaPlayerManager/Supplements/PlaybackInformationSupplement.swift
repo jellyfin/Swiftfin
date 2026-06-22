@@ -108,12 +108,6 @@ extension PlaybackInformationSupplement {
                     LabeledContent(L10n.droppedFrames, value: "\(proxy.droppedFrames.value)")
                     LabeledContent(L10n.corruptedFrames, value: "\(proxy.corruptedFrames.value)")
                 }
-
-                if let proxy = manager.proxy as? MediaPlayerPlaybackInfoProvider,
-                   let observedBitrate = proxy.playbackInfo.value?.observedBitrateKbps
-                {
-                    LabeledContent(L10n.bitrate, value: Int(observedBitrate * 1000).formatted(.bitRate))
-                }
             }
         }
 

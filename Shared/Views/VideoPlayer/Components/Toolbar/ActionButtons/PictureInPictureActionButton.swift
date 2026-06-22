@@ -36,7 +36,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         }
 
         var body: some View {
-            if let pip = manager.proxy as? any PictureInPictureable, pip.supportsPiP || pip.pipPlayerType != nil {
+            if manager.proxy is any PictureInPictureable {
                 Button(L10n.pictureInPicture, systemImage: systemImage) {
                     if isPiPActive {
                         manager.stopPictureInPicture()

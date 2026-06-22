@@ -23,7 +23,7 @@ extension MediaPlayerItem {
         mediaSource _initialMediaSource: MediaSourceInfo? = nil,
         audioStreamIndex: Int? = nil,
         subtitleStreamIndex: Int? = nil,
-        strategy: MediaPlaybackStrategy = Defaults[.VideoPlayer.mediaPlaybackStrategy],
+        videoPlayerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType],
         requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate],
         compatibilityMode: PlaybackCompatibility = Defaults[.VideoPlayer.Playback.compatibilityMode],
         modifyItem: ((inout BaseItemDto) -> Void)? = nil
@@ -65,47 +65,8 @@ extension MediaPlayerItem {
 
         let maxBitrate = try await requestedBitrate.getMaxBitrate()
 
-        if let forced = strategy.forcedPlayer {
-            return try await buildItem(
-                for: forced,
-                item: item,
-                initialMediaSource: initialMediaSource,
-                audioStreamIndex: audioStreamIndex,
-                subtitleStreamIndex: subtitleStreamIndex,
-                requestedBitrate: requestedBitrate,
-                maxBitrate: maxBitrate,
-                compatibilityMode: compatibilityMode,
-                userSession: userSession,
-                logger: logger
-            )
-        }
-
-        // auto: AVPlayer only for HDR it can direct-play; otherwise VLC.
-        let isHDR = (initialMediaSource.mediaStreams ?? []).hasHDRVideo
-
-        if isHDR {
-            let avPlayerItem = try await buildItem(
-                for: .avPlayer,
-                item: item,
-                initialMediaSource: initialMediaSource,
-                audioStreamIndex: audioStreamIndex,
-                subtitleStreamIndex: subtitleStreamIndex,
-                requestedBitrate: requestedBitrate,
-                maxBitrate: maxBitrate,
-                compatibilityMode: compatibilityMode,
-                userSession: userSession,
-                logger: logger
-            )
-
-            if !avPlayerItem.isTranscoding {
-                return avPlayerItem
-            }
-
-            logger.trace("AVPlayer would transcode HDR item \(itemID), falling back to VLC")
-        }
-
         return try await buildItem(
-            for: .vlc,
+            for: videoPlayerType,
             item: item,
             initialMediaSource: initialMediaSource,
             audioStreamIndex: audioStreamIndex,

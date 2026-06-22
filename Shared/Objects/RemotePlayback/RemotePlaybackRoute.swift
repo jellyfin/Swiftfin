@@ -21,7 +21,7 @@ enum RemotePlaybackRoute: Hashable, Identifiable, CaseIterable, SupportedCaseIte
         case .airPlay:
             "airplayvideo"
         case .chromecast:
-            "rectangle.connected.to.line.below"
+            "play.tv"
         case .jellyfin:
             "tv.badge.wifi"
         }

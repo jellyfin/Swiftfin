@@ -80,32 +80,14 @@ protocol MediaPlayerPictureInPictureCapable: AnyObject {
 }
 
 @MainActor
-protocol AirPlayable {
-    var supportsAirPlay: Bool { get }
-    var airPlayPlayerType: VideoPlayerType? { get }
-}
+protocol AirPlayable {}
 
 @MainActor
-protocol PictureInPictureable {
-    var supportsPiP: Bool { get }
-    var pipPlayerType: VideoPlayerType? { get }
-}
+protocol PictureInPictureable {}
 
 @MainActor
 protocol MediaPlayerSubtitleConfigurable {
     func setSubtitleColor(_ color: Color)
     func setSubtitleFontName(_ fontName: String)
     func setSubtitleFontSize(_ fontSize: Int)
-}
-
-struct MediaPlayerPlaybackInfo {
-    var droppedFrames: Int?
-    var observedBitrateKbps: Double?
-    var indicatedBitrateKbps: Double?
-    var bytesTransferred: Int64?
-}
-
-@MainActor
-protocol MediaPlayerPlaybackInfoProvider: AnyObject {
-    var playbackInfo: PublishedBox<MediaPlayerPlaybackInfo?> { get }
 }

@@ -301,8 +301,8 @@ extension Defaults.Keys {
             )
         }
 
-        static var mediaPlaybackStrategy: Key<MediaPlaybackStrategy> {
-            UserKey("mediaPlaybackStrategy", default: .auto)
+        static var videoPlayerType: Key<VideoPlayerType> {
+            UserKey("videoPlayerType", default: .vlc)
         }
 
         enum Gesture {

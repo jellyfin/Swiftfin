@@ -15,32 +15,12 @@ import VLCUI
 class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     MediaPlayerOffsetConfigurable,
     // MediaPlayerPictureInPictureCapable, <- TODO: Enable for VLCKit 4.0
-    MediaPlayerPlaybackInfoProvider,
-    MediaPlayerSubtitleConfigurable,
-    AirPlayable,
-    PictureInPictureable
+    MediaPlayerSubtitleConfigurable
 {
-
-    var supportsAirPlay: Bool {
-        false
-    }
-
-    var airPlayPlayerType: VideoPlayerType? {
-        Defaults[.VideoPlayer.mediaPlaybackStrategy].allowsEngineFallback ? .avPlayer : nil
-    }
-
-    var supportsPiP: Bool {
-        false
-    }
-
-    var pipPlayerType: VideoPlayerType? {
-        Defaults[.VideoPlayer.mediaPlaybackStrategy].allowsEngineFallback ? .avPlayer : nil
-    }
 
     let videoPlayerType: VideoPlayerType = .vlc
 
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
-    let playbackInfo: PublishedBox<MediaPlayerPlaybackInfo?> = .init(initialValue: nil)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
     let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
@@ -56,7 +36,6 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
 
     var observers: [any MediaPlayerObserver] = [
         NowPlayableObserver(),
-        AirPlayRouteObserver(),
     ]
 
     func play() {
@@ -220,15 +199,6 @@ extension VLCMediaPlayerProxy {
                             proxy.droppedFrames.value = info.statistics.lostPictures
                             proxy.corruptedFrames.value = info.statistics.demuxCorrupted
                         }
-
-                        if let proxy = manager.proxy as? MediaPlayerPlaybackInfoProvider {
-                            proxy.playbackInfo.value = MediaPlayerPlaybackInfo(
-                                droppedFrames: info.statistics.lostPictures,
-                                observedBitrateKbps: Double(info.statistics.inputBitrate) * 8 / 1000,
-                                indicatedBitrateKbps: Double(info.statistics.demuxBitrate) * 8 / 1000,
-                                bytesTransferred: Int64(info.statistics.readBytes)
-                            )
-                        }
                     }
                     .onStateUpdated { state, info in
                         manager.logger.trace("VLC state updated: \(state)")
@@ -243,9 +213,6 @@ extension VLCMediaPlayerProxy {
                             // Live streams will send stopped/ended events
                             guard manager.playbackItem?.baseItem.isLiveStream == false else { return }
                             manager.proxy?.isBuffering.value = false
-                            if let proxy = manager.proxy as? MediaPlayerPlaybackInfoProvider {
-                                proxy.playbackInfo.value = nil
-                            }
                             manager.ended()
                         case .stopped: ()
                         // Stopped is ignored as the `MediaPlayerManager`
@@ -253,9 +220,6 @@ extension VLCMediaPlayerProxy {
                         // than react to the event.
                         case .error:
                             manager.proxy?.isBuffering.value = false
-                            if let proxy = manager.proxy as? MediaPlayerPlaybackInfoProvider {
-                                proxy.playbackInfo.value = nil
-                            }
                             manager.error(ErrorMessage("VLC player is unable to perform playback"))
                         case .playing:
                             manager.proxy?.isBuffering.value = false

@@ -89,7 +89,6 @@ extension NavigationRoute {
         }
     }
 
-    #if os(iOS)
     static var remotePlayback: NavigationRoute {
         NavigationRoute(
             id: "remotePlayback",
@@ -98,5 +97,4 @@ extension NavigationRoute {
             RemotePlaybackPickerView()
         }
     }
-    #endif
 }

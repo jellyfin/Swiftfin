@@ -70,10 +70,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     let requestedBitrate: PlaybackBitrate
 
-    var isTranscoding: Bool {
-        mediaSource.transcodingURL != nil
-    }
-
     // MARK: init
 
     init(

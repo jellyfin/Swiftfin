@@ -19,10 +19,10 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
 //    case playbackQuality
     case playNextItem
     case playPreviousItem
+    case remotePlayback
     case subtitles
     #if os(iOS)
     case gestureLock
-    case remotePlayback
     #endif
 
     var displayTitle: String {
@@ -43,13 +43,13 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.playNextItem
         case .playPreviousItem:
             L10n.playPreviousItem
+        case .remotePlayback:
+            L10n.castToDevice
         case .subtitles:
             L10n.subtitles
         #if os(iOS)
         case .gestureLock:
             L10n.gestureLock
-        case .remotePlayback:
-            L10n.castToDevice
         #endif
         }
     }
@@ -69,6 +69,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
 //        case .playbackQuality: "tv.circle"
         case .playNextItem: "forward.end.fill"
         case .playPreviousItem: "backward.end.fill"
+        case .remotePlayback: "airplayvideo"
         case .subtitles: "captions.bubble.fill"
         }
     }
@@ -115,20 +116,13 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     }
     #endif
 
-    static let defaultBarActionButtons: [VideoPlayerActionButton] = {
-        var buttons: [VideoPlayerActionButton] = [
-            .aspectFill,
-            .autoPlay,
-            .playPreviousItem,
-            .playNextItem,
-        ]
-
-        #if os(iOS)
-        buttons.append(.remotePlayback)
-        #endif
-
-        return buttons
-    }()
+    static let defaultBarActionButtons: [VideoPlayerActionButton] = [
+        .aspectFill,
+        .autoPlay,
+        .playPreviousItem,
+        .playNextItem,
+        .remotePlayback,
+    ]
 
     static let defaultMenuActionButtons: [VideoPlayerActionButton] = [
         .audio,

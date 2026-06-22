@@ -187,7 +187,7 @@ final class MediaPlayerManager: ViewModel {
             return nil
         }
         return (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType
-            ?? Defaults[.VideoPlayer.mediaPlaybackStrategy].forcedPlayer
+            ?? Defaults[.VideoPlayer.videoPlayerType]
     }
 
     private var isSwitchingPlayer = false
@@ -451,7 +451,7 @@ final class MediaPlayerManager: ViewModel {
             mediaSource: currentItem.mediaSource,
             audioStreamIndex: audioStreamIndex ?? currentItem.selectedAudioStreamIndex,
             subtitleStreamIndex: subtitleStreamIndex ?? currentItem.selectedSubtitleStreamIndex,
-            strategy: .player(currentItem.videoPlayerType),
+            videoPlayerType: currentItem.videoPlayerType,
             requestedBitrate: requestedBitrate ?? currentItem.requestedBitrate,
             modifyItem: { item in
                 if item.userData == nil {
@@ -490,7 +490,7 @@ final class MediaPlayerManager: ViewModel {
             let switched = try await MediaPlayerItem.build(
                 for: item.baseItem,
                 mediaSource: item.mediaSource,
-                strategy: .player(type),
+                videoPlayerType: type,
                 requestedBitrate: item.requestedBitrate
             ) { base in
                 // `modifyItem` runs after `getFullItem`'s re-fetch, which would
@@ -520,7 +520,7 @@ final class MediaPlayerManager: ViewModel {
             let resumed = try await MediaPlayerItem.build(
                 for: item.baseItem,
                 mediaSource: item.mediaSource,
-                strategy: .player(type),
+                videoPlayerType: type,
                 requestedBitrate: item.requestedBitrate
             ) { base in
                 if base.userData == nil { base.userData = .init() }
@@ -541,19 +541,9 @@ final class MediaPlayerManager: ViewModel {
 extension MediaPlayerManager {
 
     func startPictureInPicture() {
-        guard let pipable = proxy as? any PictureInPictureable else { return }
+        guard proxy is any PictureInPictureable else { return }
 
-        if pipable.supportsPiP {
-            Task { await startPiPWhenReady(attemptsLeft: 20) }
-            return
-        }
-
-        guard let target = pipable.pipPlayerType else { return }
-
-        Task {
-            await switchPlayer(to: target)
-            await startPiPWhenReady(attemptsLeft: 20)
-        }
+        Task { await startPiPWhenReady(attemptsLeft: 5) }
     }
 
     func stopPictureInPicture() {

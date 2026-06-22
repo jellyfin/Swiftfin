@@ -8,16 +8,12 @@
 
 import Defaults
 import Factory
-import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 struct RemotePlaybackPickerView: View {
 
     @Default(.accentColor)
     private var accentColor
-    @Default(.VideoPlayer.mediaPlaybackStrategy)
-    private var mediaPlaybackStrategy
 
     @Router
     private var router
@@ -28,93 +24,73 @@ struct RemotePlaybackPickerView: View {
     @State
     private var presentRoutePicker: Bool = false
 
-    @StateObject
-    private var viewModel = ActiveSessionsViewModel()
-
-    private var castableSessions: [SessionInfoDto] {
-        viewModel.sessions.values
-            .compactMap(\.value)
-            .filter {
-                $0.isSupportsRemoteControl ?? false
-            }
-    }
-
-    private func isCasting(to session: SessionInfoDto) -> Bool {
-        guard let active = manager.remote.activeSession, active.route == .jellyfin else { return false }
-        return active.deviceName == (session.deviceName ?? session.client)
-    }
-
-    private func toggleCast(to session: SessionInfoDto) {
-        if isCasting(to: session) {
-            manager.remote.end(route: .jellyfin)
-        } else {
-            Task { await manager.remote.select(JellyfinPlaybackSession(session: session)) }
-        }
-
-        router.dismiss()
-    }
-
-    private var isAirPlayAvailable: Bool {
-        mediaPlaybackStrategy != .player(.vlc)
-    }
-
-    private var hasNoTargets: Bool {
-        !isAirPlayAvailable && castableSessions.isEmpty
+    private var availableProviders: [any RemotePlaybackProvider] {
+        manager.remote.availableProviders
     }
 
     var body: some View {
         List {
             FormItemSection(item: manager.item)
 
-            if isAirPlayAvailable {
-                Section {
-                    airPlayRow
-                }
+            ForEach(availableProviders, id: \.route) { provider in
+                section(for: provider)
             }
 
-            if castableSessions.isNotEmpty {
-                Section(L10n.devices) {
-                    ForEach(castableSessions, id: \.id) { session in
-                        sessionRow(session)
-                    }
-                }
-            }
-
-            if hasNoTargets {
-                Section {
-                    // swiftlint:disable:next hard_coded_display_string
-                    Text("No valid targets")
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }
+            if availableProviders.isEmpty {
+                noTargetsSection
             }
         }
         .navigationTitle(L10n.output)
-        .navigationBarTitleDisplayMode(.inline)
-        .if(UIDevice.isPhone) { view in
-            view
-                .presentationDetents([.medium, .large])
-        }
-        .onFirstAppear {
-            viewModel.refresh()
-        }
-        .navigationBarCloseButton {
-            router.dismiss()
+        #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            .if(UIDevice.isPhone) { view in
+                view.presentationDetents([.medium, .large])
+            }
+        #endif
+            .onFirstAppear {
+                    availableProviders.forEach { $0.refresh() }
+                }
+                .navigationBarCloseButton {
+                    router.dismiss()
+                }
+    }
+
+    @ViewBuilder
+    private func section(for provider: any RemotePlaybackProvider) -> some View {
+        switch provider.kind {
+        case .systemPicker:
+            Section {
+                systemPickerRow(provider)
+            }
+        case .deviceList:
+            if provider.targets.isNotEmpty {
+                Section(provider.route.displayTitle) {
+                    ForEach(provider.targets) { target in
+                        targetRow(provider, target)
+                    }
+                }
+            }
         }
     }
 
-    private var isAirPlaying: Bool {
-        manager.remote.state?.type == .airPlay
+    @ViewBuilder
+    private var noTargetsSection: some View {
+        Section {
+            // swiftlint:disable:next hard_coded_display_string
+            Text("No valid targets")
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .center)
+        }
     }
 
-    private var airPlayRow: some View {
+    private func systemPickerRow(_ provider: any RemotePlaybackProvider) -> some View {
         ListRow {
-            Image(systemName: "airplayvideo")
+            Image(systemName: provider.route.systemImage)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .padding(8)
                 .frame(width: 60, height: 60)
-                .foregroundStyle(isAirPlaying ? AnyShapeStyle(accentColor) : AnyShapeStyle(.primary))
+                .foregroundStyle(provider.isActive ? AnyShapeStyle(accentColor) : AnyShapeStyle(.primary))
         } content: {
             HStack {
                 // swiftlint:disable:next hard_coded_display_string
@@ -129,7 +105,7 @@ struct RemotePlaybackPickerView: View {
             presentRoutePicker = true
         }
         .isSeparatorVisible(false)
-        .isSelected(isAirPlaying)
+        .isSelected(provider.isActive)
         .background {
             PlaybackRoutePickerView(present: $presentRoutePicker) {
                 router.dismiss()
@@ -140,51 +116,43 @@ struct RemotePlaybackPickerView: View {
     }
 
     @ViewBuilder
-    private func sessionRow(_ session: SessionInfoDto) -> some View {
+    private func targetRow(_ provider: any RemotePlaybackProvider, _ target: RemotePlaybackTarget) -> some View {
         ListRow {
-            ZStack {
-                session.device.clientColor
-
-                Image(session.device.image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .padding(8)
-            }
-            .posterStyle(.square)
-            .frame(width: 60, height: 60)
-            .posterShadow()
+            Image(systemName: target.systemImage ?? provider.route.systemImage)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .padding(8)
+                .frame(width: 60, height: 60)
         } content: {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-
-                    Text(session.userName ?? L10n.unknown)
+                    Text(target.title)
                         .font(.headline)
 
-                    if let client = session.client {
-                        LabeledContent(
-                            L10n.client,
-                            value: client
-                        )
-                    }
-
-                    if let device = session.deviceName {
-                        LabeledContent(
-                            L10n.device,
-                            value: device
-                        )
+                    if let subtitle = target.subtitle {
+                        Text(subtitle)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                     }
                 }
-                .font(.subheadline)
 
                 Spacer()
 
                 ListRowCheckbox()
             }
             .isEditing(true)
-            .isSelected(isCasting(to: session))
+            .isSelected(provider.isActive(target))
         } action: {
-            toggleCast(to: session)
+            select(provider, target)
         }
         .isSeparatorVisible(false)
+    }
+
+    private func select(_ provider: any RemotePlaybackProvider, _ target: RemotePlaybackTarget) {
+        if let session = provider.makeSession(for: target) {
+            Task { await manager.remote.select(session) }
+        }
+
+        router.dismiss()
     }
 }

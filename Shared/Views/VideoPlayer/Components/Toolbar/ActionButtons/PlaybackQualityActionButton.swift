@@ -42,7 +42,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     try await MediaPlayerItem.build(
                         for: baseItem,
                         mediaSource: playbackItem.mediaSource,
-                        strategy: .player(videoPlayerType),
+                        videoPlayerType: videoPlayerType,
                         requestedBitrate: bitrate
                     )
                 }

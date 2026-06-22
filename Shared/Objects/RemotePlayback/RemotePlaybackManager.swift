@@ -23,6 +23,16 @@ final class RemotePlaybackManager: ObservableObject {
 
     private weak var localProxy: (any MediaPlayerProxy)?
 
+    private(set) lazy var providers: [any RemotePlaybackProvider] = [
+        AirPlayRemotePlaybackProvider(manager: manager),
+        JellyfinRemotePlaybackProvider(manager: manager),
+        ChromecastRemotePlaybackProvider(),
+    ]
+
+    var availableProviders: [any RemotePlaybackProvider] {
+        providers.filter(\.isAvailable)
+    }
+
     init(manager: MediaPlayerManager? = nil) {
         self.manager = manager
     }

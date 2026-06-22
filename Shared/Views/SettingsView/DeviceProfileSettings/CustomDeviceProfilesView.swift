@@ -14,12 +14,8 @@ struct CustomDeviceProfilesView: View {
 
     @Default(.VideoPlayer.Playback.customDeviceProfileAction)
     private var customDeviceProfileAction
-    @Default(.VideoPlayer.mediaPlaybackStrategy)
-    private var mediaPlaybackStrategy
-
-    private var videoPlayerType: VideoPlayerType {
-        mediaPlaybackStrategy.forcedPlayer ?? .avPlayer
-    }
+    @Default(.VideoPlayer.videoPlayerType)
+    private var videoPlayerType
 
     @StoredValue(.User.customDeviceProfiles)
     private var customProfiles: [CustomDeviceProfile]

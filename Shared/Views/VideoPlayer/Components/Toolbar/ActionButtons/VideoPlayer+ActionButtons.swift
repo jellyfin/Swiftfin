@@ -83,13 +83,13 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 PlayNextItem()
             case .playPreviousItem:
                 PlayPreviousItem()
+            case .remotePlayback:
+                RemotePlayback()
             case .subtitles:
                 Subtitles()
             #if os(iOS)
             case .gestureLock:
                 GestureLock()
-            case .remotePlayback:
-                RemotePlayback()
             #endif
             }
         }

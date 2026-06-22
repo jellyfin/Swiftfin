@@ -17,31 +17,13 @@ import SwiftUI
 class AVMediaPlayerProxy: NSObject,
     VideoMediaPlayerProxy,
     MediaPlayerPictureInPictureCapable,
-    MediaPlayerPlaybackInfoProvider,
     AirPlayable,
     PictureInPictureable
 {
 
-    var supportsAirPlay: Bool {
-        true
-    }
-
-    var airPlayPlayerType: VideoPlayerType? {
-        nil
-    }
-
-    var supportsPiP: Bool {
-        true
-    }
-
-    var pipPlayerType: VideoPlayerType? {
-        nil
-    }
-
     let videoPlayerType: VideoPlayerType = .avPlayer
 
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
-    let playbackInfo: PublishedBox<MediaPlayerPlaybackInfo?> = .init(initialValue: nil)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
     let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
@@ -401,8 +383,6 @@ extension AVMediaPlayerProxy {
 
         cachedAudioGroup = nil
         cachedSubtitleGroup = nil
-
-        playbackInfo.value = nil
     }
 
     private func observeTimeControlStatus() {
@@ -472,21 +452,9 @@ extension AVMediaPlayerProxy {
                       let event = playerItem.accessLog()?.events.last
                 else { return }
 
-                let dropped = event.numberOfDroppedVideoFrames >= 0 ? event.numberOfDroppedVideoFrames : nil
-                let observed = event.observedBitrate >= 0 ? event.observedBitrate / 1000 : nil
-                let indicated = event.indicatedBitrate >= 0 ? event.indicatedBitrate / 1000 : nil
-                let bytes = event.numberOfBytesTransferred >= 0 ? event.numberOfBytesTransferred : nil
-
-                if let dropped {
-                    self.droppedFrames.value = dropped
+                if event.numberOfDroppedVideoFrames >= 0 {
+                    self.droppedFrames.value = event.numberOfDroppedVideoFrames
                 }
-
-                self.playbackInfo.value = MediaPlayerPlaybackInfo(
-                    droppedFrames: dropped,
-                    observedBitrateKbps: observed,
-                    indicatedBitrateKbps: indicated,
-                    bytesTransferred: bytes
-                )
             }
         }
     }
