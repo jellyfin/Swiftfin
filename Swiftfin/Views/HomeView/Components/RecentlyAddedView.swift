@@ -21,7 +21,7 @@ extension HomeView {
         private var router
 
         @ObservedObject
-        var viewModel: RecentlyAddedLibraryViewModel
+        var viewModel: PagingLibraryViewModel<RecentlyAddedLibrary>
 
         var body: some View {
             if viewModel.elements.isNotEmpty {
@@ -34,10 +34,7 @@ extension HomeView {
                 }
                 .trailing {
                     SeeAllButton {
-                        // Give a new view model becaues we don't want to
-                        // keep paginated items on the home view model
-                        let viewModel = RecentlyAddedLibraryViewModel()
-                        router.route(to: .library(viewModel: viewModel))
+                        router.route(to: .library(library: RecentlyAddedLibrary()))
                     }
                 }
             }

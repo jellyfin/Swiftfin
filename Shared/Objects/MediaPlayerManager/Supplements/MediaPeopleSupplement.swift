@@ -94,7 +94,7 @@ extension MediaPeopleSupplement {
         private var iOSRegularView: some View {
             CollectionHStack(
                 uniqueElements: people,
-                id: \.unwrappedIDHashOrZero,
+                id: \.id,
                 layout: .minimumWidth(columnWidth: 80, rows: 1)
             ) { person in
                 personView(for: person)
@@ -108,7 +108,7 @@ extension MediaPeopleSupplement {
         var tvOSView: some View {
             CollectionVGrid(
                 uniqueElements: people,
-                id: \.unwrappedIDHashOrZero,
+                id: \.id,
                 layout: .columns(
                     10,
                     insets: .init(EdgeInsets.edgePadding),

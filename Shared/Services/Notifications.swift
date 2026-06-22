@@ -92,18 +92,22 @@ enum Notifications {
                 }
                 .eraseToAnyPublisher()
         }
-
-        func subscribe(_ object: Any, selector: Selector) {
-            notificationCenter.addObserver(object, selector: selector, name: name, object: nil)
-        }
-
-        func subscribe(_ object: Any, selector: Selector, observed: Any) {
-            notificationCenter.addObserver(object, selector: selector, name: name, object: observed)
-        }
     }
 
     static subscript<Payload>(key: Key<Payload>) -> Key<Payload> {
         key
+    }
+}
+
+extension Notifications {
+
+    static func postServerConnectionChange(
+        previous: ServerConnection?,
+        current: ServerConnection
+    ) {
+        guard previous?.id != current.id || previous?.url != current.url else { return }
+
+        Self[.didChangeServerConnection].post(current)
     }
 }
 
@@ -113,26 +117,18 @@ extension Notifications.Key {
 
     // MARK: - Authentication
 
-    static var didSignIn: Key<Void> {
-        Key("didSignIn")
-    }
-
-    static var didSignOut: Key<Void> {
-        Key("didSignOut")
+    static var didChangeUserSession: Key<Void> {
+        Key("didChangeUserSession")
     }
 
     // MARK: - App Flow
-
-    static var processDeepLink: Key<Void> {
-        Key("processDeepLink")
-    }
 
     static var didPurge: Key<Void> {
         Key("didPurge")
     }
 
-    static var didChangeCurrentServerURL: Key<ServerState> {
-        Key("didChangeCurrentServerURL")
+    static var didChangeServerConnection: Key<ServerConnection> {
+        Key("didChangeServerConnection")
     }
 
     static var didSendStopReport: Key<Void> {
@@ -150,6 +146,10 @@ extension Notifications.Key {
     // MARK: - Media Items
 
     // TODO: come up with a cleaner, more defined way for item update notifications
+
+    static var itemUserDataDidChange: Key<UserItemDataDto> {
+        Key("itemUserDataDidChange")
+    }
 
     /// - Payload: The new item with updated metadata.
     static var itemMetadataDidChange: Key<BaseItemDto> {
@@ -230,12 +230,8 @@ extension Notifications.Key {
             else {
                 return nil
             }
-            guard let optionsUInt = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt
-            else {
-                return nil
-            }
-
-            let options = AVAudioSession.InterruptionOptions(rawValue: optionsUInt)
+            let options = (userInfo[AVAudioSessionInterruptionOptionKey] as? UInt)
+                .map(AVAudioSession.InterruptionOptions.init(rawValue:)) ?? []
 
             return (type, options)
         }

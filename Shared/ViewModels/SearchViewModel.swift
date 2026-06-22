@@ -174,7 +174,7 @@ final class SearchViewModel: ViewModel {
         }
 
         let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items ?? []
     }
@@ -186,7 +186,7 @@ final class SearchViewModel: ViewModel {
         parameters.searchTerm = query
 
         let request = Paths.getPersons(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         return response.value.items ?? []
     }
@@ -205,7 +205,7 @@ final class SearchViewModel: ViewModel {
         parameters.sortBy = [ItemSortBy.random]
 
         let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await send(request)
 
         self.suggestions = response.value.items ?? []
     }

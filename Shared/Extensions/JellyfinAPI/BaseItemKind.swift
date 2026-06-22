@@ -193,13 +193,54 @@ extension BaseItemKind {
 
     var preferredPosterDisplayType: PosterDisplayType {
         switch self {
-        case .audio, .channel, .musicAlbum, .tvChannel:
+        case .audio, .channel, .liveTvChannel, .musicAlbum, .musicArtist, .tvChannel:
             .square
         case .folder, .program, .musicVideo, .video, .userView:
             .landscape
         default:
             .portrait
         }
+    }
+
+    var supportedPosterDisplayTypes: [PosterDisplayType] {
+        switch self {
+        case .audio, .channel, .liveTvChannel, .musicAlbum, .musicArtist, .tvChannel:
+            [.square]
+        case .person:
+            [.portrait]
+        case .userView:
+            [.landscape]
+        default:
+            [.landscape, .portrait]
+        }
+    }
+
+    static func libraryStyleOptions(for itemTypes: [BaseItemKind]) -> LibraryStyleOptions {
+        guard itemTypes.isNotEmpty else { return .default }
+
+        let posterDisplayTypes = PosterDisplayType.allCases
+            .filter { posterDisplayType in
+                itemTypes.contains { itemType in
+                    itemType.supportedPosterDisplayTypes.contains(posterDisplayType)
+                }
+            }
+
+        let preferredPosterDisplayTypes = itemTypes.map(\.preferredPosterDisplayType)
+        let fallbackPosterDisplayType = if let firstPreferredPosterDisplayType = preferredPosterDisplayTypes.first,
+                                           preferredPosterDisplayTypes.allSatisfy({ $0 == firstPreferredPosterDisplayType }),
+                                           posterDisplayTypes.contains(firstPreferredPosterDisplayType)
+        {
+            firstPreferredPosterDisplayType
+        } else if posterDisplayTypes.contains(LibraryStyle.default.posterDisplayType) {
+            LibraryStyle.default.posterDisplayType
+        } else {
+            posterDisplayTypes.first ?? LibraryStyle.default.posterDisplayType
+        }
+
+        return .init(
+            posterDisplayTypes: posterDisplayTypes,
+            fallbackPosterDisplayType: fallbackPosterDisplayType
+        )
     }
 }
 

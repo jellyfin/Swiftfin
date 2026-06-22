@@ -16,7 +16,9 @@ extension SwiftfinStore.State {
 
     struct Server: Hashable, Identifiable, Codable {
 
+        @available(*, message: "Use connections instead")
         let urls: Set<URL>
+        @available(*, message: "Use connections instead")
         let currentURL: URL
         let name: String
         let id: String
@@ -26,7 +28,7 @@ extension SwiftfinStore.State {
         ///         have a user access token.
         var client: JellyfinClient {
             JellyfinClient(
-                configuration: .swiftfinConfiguration(url: currentURL),
+                configuration: .swiftfinConfiguration(url: effectiveServerURL),
                 sessionConfiguration: .swiftfin,
                 sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
             )
@@ -35,6 +37,25 @@ extension SwiftfinStore.State {
 }
 
 extension ServerState {
+
+    var activeServerConnection: ServerConnection? {
+        get {
+            let connections = serverConnections
+            let activeConnectionID = StoredValues[.Server.activeConnectionID(id: id)]
+
+            if activeConnectionID.isNotEmpty,
+               let connection = connections.first(where: { $0.id == activeConnectionID })
+            {
+                return connection
+            }
+
+            let normalizedCurrentURL = currentURL.normalizedServerConnectionURL ?? currentURL
+            return connections.first { $0.url == normalizedCurrentURL } ?? connections.first
+        }
+        nonmutating set {
+            StoredValues[.Server.activeConnectionID(id: id)] = newValue?.id ?? .empty
+        }
+    }
 
     /// Deletes the model that this state represents and
     /// all settings from `StoredValues`.
@@ -46,6 +67,7 @@ extension ServerState {
             try AnyStoredData.deleteAll(ownerID: user.id)
         }
         try AnyStoredData.deleteAll(ownerID: id)
+        UserDefaults.userSuite(id: id).removeAll()
 
         var storedUsers = StoredValues[.User.users]
         storedUsers.removeAll { $0.serverID == id }
@@ -60,6 +82,19 @@ extension ServerState {
         }
     }
 
+    var effectiveServerURL: URL {
+        activeServerConnection?.url ?? currentURL
+    }
+
+    func ensureServerConnections() -> [ServerConnection] {
+        let connections = StoredValues[.Server.connections(id: id)]
+        guard connections.isEmpty else { return ServerConnection.ordered(connections) }
+
+        let defaultConnections = defaultServerConnections
+        serverConnections = defaultConnections
+        return defaultConnections
+    }
+
     func getPublicSystemInfo() async throws -> PublicSystemInfo {
 
         let request = Paths.getPublicSystemInfo
@@ -68,8 +103,65 @@ extension ServerState {
         return response.value
     }
 
+    func hasServerConnection(url: URL) -> Bool {
+        let normalizedURL = url.normalizedServerConnectionURL ?? url
+        return serverConnections.contains { $0.url == normalizedURL }
+    }
+
+    var isAutoSwitchEnabled: Bool {
+        get {
+            StoredValues[.Server.isAutoSwitchEnabled(id: id)]
+        }
+        nonmutating set {
+            StoredValues[.Server.isAutoSwitchEnabled(id: id)] = newValue
+        }
+    }
+
+    var isVersionCompatible: Bool {
+        let publicInfo = StoredValues[.Server.publicInfo(id: self.id)]
+
+        if let version = publicInfo.version {
+            return JellyfinClient.Version(stringLiteral: version).majorMinor >= client.version.majorMinor
+        } else {
+            return false
+        }
+    }
+
+    var serverConnections: [ServerConnection] {
+        get {
+            let connections = StoredValues[.Server.connections(id: id)]
+
+            guard connections.isNotEmpty else {
+                return defaultServerConnections
+            }
+
+            return ServerConnection.ordered(connections)
+        }
+        nonmutating set {
+            StoredValues[.Server.connections(id: id)] = ServerConnection.ordered(newValue, preservingOrder: true)
+        }
+    }
+
     var splashScreenImageSource: ImageSource {
         ImageSource(url: client.url(with: Paths.getSplashscreen()))
+    }
+
+    private var defaultServerConnections: [ServerConnection] {
+        let urls = [currentURL] + self.urls
+            .subtracting([currentURL])
+            .sorted(using: \.absoluteString)
+
+        return urls.enumerated().map { index, url in
+            let normalizedURL = url.normalizedServerConnectionURL ?? url
+
+            return ServerConnection(
+                id: UUID().uuidString,
+                name: url == currentURL ? L10n.currentURL : normalizedURL.absoluteString,
+                url: normalizedURL,
+                interface: .any,
+                priority: index
+            )
+        }
     }
 
     @MainActor
@@ -90,15 +182,5 @@ extension ServerState {
 
         StoredValues[.Server.servers] = servers.map { $0.id == id ? updatedServer : $0 }
         StoredValues[.Server.publicInfo(id: currentServer.id)] = publicInfo
-    }
-
-    var isVersionCompatible: Bool {
-        let publicInfo = StoredValues[.Server.publicInfo(id: self.id)]
-
-        if let version = publicInfo.version {
-            return JellyfinClient.Version(stringLiteral: version).majorMinor >= client.version.majorMinor
-        } else {
-            return false
-        }
     }
 }

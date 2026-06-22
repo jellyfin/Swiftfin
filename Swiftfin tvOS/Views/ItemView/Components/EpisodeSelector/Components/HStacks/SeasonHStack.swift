@@ -23,12 +23,12 @@ extension SeriesEpisodeSelector {
         // MARK: - Selection Binding
 
         @Binding
-        var selection: SeasonItemViewModel.ID?
+        var selection: PagingLibraryViewModel<EpisodeLibrary>.ID?
 
         // MARK: - Focus Variables
 
         @FocusState
-        private var focusedSeason: SeasonItemViewModel.ID?
+        private var focusedSeason: PagingLibraryViewModel<EpisodeLibrary>.ID?
 
         @State
         private var didScrollToPlayButtonSeason = false
@@ -92,11 +92,11 @@ extension SeriesEpisodeSelector {
         // MARK: - Season Button
 
         @ViewBuilder
-        private func seasonButton(season: SeasonItemViewModel) -> some View {
+        private func seasonButton(season: PagingLibraryViewModel<EpisodeLibrary>) -> some View {
             Button {
                 selection = season.id
             } label: {
-                Marquee(season.season.displayTitle, animateWhenFocused: true)
+                Marquee(season.library.parent.displayTitle, animateWhenFocused: true)
                     .frame(maxWidth: 300)
                     .font(.headline)
                     .fontWeight(.semibold)

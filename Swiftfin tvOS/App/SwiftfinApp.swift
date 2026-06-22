@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import Factory
 import SwiftUI
 
 @main
@@ -24,20 +23,11 @@ struct SwiftfinApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .onNotification(.applicationDidEnterBackground) {
-                    Defaults[.backgroundTimeStamp] = Date.now
+            OverlayToastView {
+                WithUserAuthentication {
+                    RootView()
                 }
-                .onNotification(.applicationWillEnterForeground) {
-                    // TODO: needs to check if any background playback is happening
-                    let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
-
-                    if Defaults[.signOutOnBackground], backgroundedInterval > Defaults[.backgroundSignOutInterval] {
-                        Defaults[.lastSignedInUserID] = .signedOut
-                        Container.shared.currentUserSession.reset()
-                        Notifications[.didSignOut].post()
-                    }
-                }
+            }
         }
     }
 }

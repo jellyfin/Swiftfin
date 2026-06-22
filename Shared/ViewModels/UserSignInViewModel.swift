@@ -12,6 +12,7 @@ import Foundation
 import Get
 import JellyfinAPI
 import KeychainSwift
+import Logging
 import OrderedCollections
 import SwiftUI
 
@@ -27,7 +28,7 @@ import SwiftUI
 
 @MainActor
 @Stateful
-final class UserSignInViewModel: ViewModel {
+final class UserSignInViewModel: ObservableObject {
 
     typealias AccessPolicyPair = (policy: LocalUserAccessPolicy, evaluated: any EvaluatedLocalUserAccessPolicy)
     typealias UserStateDataPair = (state: (state: UserState, accessToken: String), data: UserDto)
@@ -96,11 +97,13 @@ final class UserSignInViewModel: ViewModel {
     @Published
     private(set) var serverDisclaimer: String? = nil
 
+    let logger = Logger.swiftfin()
+    var cancellables = Set<AnyCancellable>()
+
     let server: ServerState
 
     init(server: ServerState) {
         self.server = server
-        super.init()
     }
 
     @Function(\Action.Cases.getPublicData)

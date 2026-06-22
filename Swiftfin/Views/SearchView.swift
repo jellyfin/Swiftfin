@@ -149,7 +149,8 @@ struct SearchView: View {
     private func select(_ item: BaseItemDto, in namespace: Namespace.ID) {
         switch item.type {
         case .program, .tvChannel:
-            let provider = item.getPlaybackItemProvider(userSession: viewModel.userSession)
+            guard let userSession = viewModel.userSession else { return }
+            let provider = item.getPlaybackItemProvider(userSession: userSession)
             router.route(to: .videoPlayer(provider: provider))
         default:
             router.route(to: .item(item: item), in: namespace)
@@ -171,12 +172,12 @@ struct SearchView: View {
         )
         .trailing {
             SeeAllButton {
-                let viewModel = PagingLibraryViewModel(
+                let library = StaticLibrary(
                     title: title,
                     id: "search-\(type.hashValue)",
-                    items
+                    elements: items
                 )
-                router.route(to: .library(viewModel: viewModel))
+                router.route(to: .library(library: library))
             }
         }
     }

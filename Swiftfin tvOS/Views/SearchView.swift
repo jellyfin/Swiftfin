@@ -138,7 +138,9 @@ struct SearchView: View {
     private func select(_ item: BaseItemDto) {
         switch item.type {
         case .program, .tvChannel:
-            let provider = item.getPlaybackItemProvider(userSession: viewModel.userSession)
+            guard let userSession = viewModel.userSession else { return }
+
+            let provider = item.getPlaybackItemProvider(userSession: userSession)
             router.route(to: .videoPlayer(provider: provider))
         default:
             router.route(to: .item(item: item))

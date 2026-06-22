@@ -8,7 +8,6 @@
 
 import Defaults
 import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 extension ItemView {
@@ -21,24 +20,31 @@ extension ItemView {
         @Router
         private var router
 
-        @StateObject
-        private var viewModel: PagingLibraryViewModel<BaseItemDto>
+        let items: [BaseItemDto]
 
         init(items: [BaseItemDto]) {
-            self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(items, parent: BaseItemDto(name: L10n.recommended)))
+            self.items = items
         }
 
         var body: some View {
             PosterHStack(
                 title: L10n.recommended,
                 type: similarPosterType,
-                items: viewModel.elements
+                items: items
             ) { item, namespace in
                 router.route(to: .item(item: item), in: namespace)
             }
             .trailing {
                 SeeAllButton {
-                    router.route(to: .library(viewModel: viewModel))
+                    router.route(
+                        to: .library(
+                            library: StaticLibrary(
+                                title: L10n.recommended,
+                                id: "recommended",
+                                elements: items
+                            )
+                        )
+                    )
                 }
             }
         }

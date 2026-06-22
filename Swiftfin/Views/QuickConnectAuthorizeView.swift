@@ -37,14 +37,16 @@ struct QuickConnectAuthorizeView: View {
     @ViewBuilder
     private var loginUserRow: some View {
         HStack {
-            UserProfileImage(
-                userID: viewModel.user.id,
-                source: viewModel.user.profileImageSource(
-                    client: viewModel.userSession.client,
-                    maxWidth: 120
+            if let userSession = viewModel.userSession {
+                UserProfileImage(
+                    userID: viewModel.user.id,
+                    source: viewModel.user.profileImageSource(
+                        client: userSession.client,
+                        maxWidth: 120
+                    )
                 )
-            )
-            .frame(width: 50, height: 50)
+                .frame(width: 50, height: 50)
+            }
 
             Text(viewModel.user.name ?? L10n.unknown)
                 .fontWeight(.semibold)

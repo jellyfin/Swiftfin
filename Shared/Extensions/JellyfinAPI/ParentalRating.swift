@@ -17,6 +17,7 @@ extension ParentalRating: Displayable {
 }
 
 extension ParentalRating: @retroactive Identifiable {
+
     public var id: Int {
         hashValue
     }

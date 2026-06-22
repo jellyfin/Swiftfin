@@ -14,9 +14,6 @@ extension URL {
         guard let string else { return nil }
         self.init(string: string)
     }
-}
-
-extension URL {
 
     static let swiftfinGithub: URL = URL(string: "https://github.com/jellyfin/Swiftfin")!
 
@@ -83,5 +80,18 @@ extension URL {
 
     var components: URLComponents? {
         URLComponents(url: self, resolvingAgainstBaseURL: false)
+    }
+
+    var normalizedServerConnectionURL: URL? {
+        guard var components else { return nil }
+
+        components.scheme = components.scheme?.lowercased()
+        components.host = components.host?.lowercased()
+
+        if components.path.isNotEmpty {
+            components.path = components.path.trimmingSuffix("/")
+        }
+
+        return components.url
     }
 }
