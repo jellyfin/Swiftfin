@@ -103,7 +103,6 @@ struct RemotePlaybackPickerView: View {
             } action: {
                 presentAirplayRoutePicker.wrappedValue = true
             }
-            .isSeparatorVisible(false)
             .isSelected(provider.isActive)
             .airplayRoutePicker(present: presentAirplayRoutePicker)
         }
@@ -139,7 +138,6 @@ struct RemotePlaybackPickerView: View {
         } action: {
             select(provider, target)
         }
-        .isSeparatorVisible(false)
     }
 
     private func select(_ provider: any RemotePlaybackProvider, _ target: RemotePlaybackTarget) {
