@@ -172,12 +172,12 @@ struct SearchView: View {
         )
         .trailing {
             SeeAllButton {
-                let viewModel = PagingLibraryViewModel(
+                let library = StaticLibrary(
                     title: title,
                     id: "search-\(type.hashValue)",
-                    items
+                    elements: items
                 )
-                router.route(to: .library(viewModel: viewModel))
+                router.route(to: .library(library: library))
             }
         }
     }

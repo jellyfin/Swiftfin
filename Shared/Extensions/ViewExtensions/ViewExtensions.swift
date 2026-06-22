@@ -431,6 +431,14 @@ extension View {
         onNotification(.sceneWillEnterForeground, perform: action)
     }
 
+    @ViewBuilder
+    func preference<Key: PreferenceKey, V>(
+        key: Key.Type,
+        @ArrayBuilder<V> value: () -> [V]
+    ) -> some View where Key.Value == [V] {
+        preference(key: Key.self, value: value())
+    }
+
     func scrollIfLargerThanContainer(axes: Axis.Set = .vertical, padding: CGFloat = 0, alignment: Alignment = .center) -> some View {
         modifier(ScrollIfLargerThanContainerModifier(axes: axes, padding: padding, alignment: alignment))
     }

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import SwiftUI
 
 struct RotateContentView: UIViewRepresentable {
@@ -25,7 +26,8 @@ struct RotateContentView: UIViewRepresentable {
 
         func update(_ content: () -> any View) {
 
-            let newHostingController = UIHostingController(rootView: AnyView(content()), ignoreSafeArea: true)
+            let newHostingController = HostingController(content: AnyView(content()))
+            newHostingController.disablesSafeArea = true
             newHostingController.view.translatesAutoresizingMaskIntoConstraints = false
             newHostingController.view.backgroundColor = .clear
 

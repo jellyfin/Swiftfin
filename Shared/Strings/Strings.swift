@@ -92,8 +92,6 @@ internal enum L10n {
   internal static let allDevicesDescription = L10n.tr("Localizable", "allDevicesDescription", fallback: "View all past and present devices that have connected.")
   /// All languages
   internal static let allLanguages = L10n.tr("Localizable", "allLanguages", fallback: "All languages")
-  /// All media
-  internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All media")
   /// Allow
   internal static let allow = L10n.tr("Localizable", "allow", fallback: "Allow")
   /// Allowed
@@ -304,8 +302,6 @@ internal enum L10n {
   internal static let changePin = L10n.tr("Localizable", "changePin", fallback: "Change pin")
   /// Channel
   internal static let channel = L10n.tr("Localizable", "channel", fallback: "Channel")
-  /// Channel display
-  internal static let channelDisplay = L10n.tr("Localizable", "channelDisplay", fallback: "Channel display")
   /// Channel folder item
   internal static let channelFolderItem = L10n.tr("Localizable", "channelFolderItem", fallback: "Channel folder item")
   /// Channel folder items
@@ -322,6 +318,8 @@ internal enum L10n {
   internal static let chapterSlider = L10n.tr("Localizable", "chapterSlider", fallback: "Chapter slider")
   /// Cinematic
   internal static let cinematic = L10n.tr("Localizable", "cinematic", fallback: "Cinematic")
+  /// Cinematic background
+  internal static let cinematicBackground = L10n.tr("Localizable", "cinematicBackground", fallback: "Cinematic background")
   /// Client
   internal static let client = L10n.tr("Localizable", "client", fallback: "Client")
   /// Clip
@@ -560,8 +558,6 @@ internal enum L10n {
   internal static let delivery = L10n.tr("Localizable", "delivery", fallback: "Delivery")
   /// Descending
   internal static let descending = L10n.tr("Localizable", "descending", fallback: "Descending")
-  /// Detailed
-  internal static let detailed = L10n.tr("Localizable", "detailed", fallback: "Detailed")
   /// Details
   internal static let details = L10n.tr("Localizable", "details", fallback: "Details")
   /// Device
@@ -782,6 +778,8 @@ internal enum L10n {
   internal static let green = L10n.tr("Localizable", "green", fallback: "Green")
   /// Grid
   internal static let grid = L10n.tr("Localizable", "grid", fallback: "Grid")
+  /// Grouping
+  internal static let grouping = L10n.tr("Localizable", "grouping", fallback: "Grouping")
   /// Guest star
   internal static let guestStar = L10n.tr("Localizable", "guestStar", fallback: "Guest star")
   /// Half side-by-side
@@ -1102,8 +1100,6 @@ internal enum L10n {
   internal static let no = L10n.tr("Localizable", "no", fallback: "No")
   /// No activity
   internal static let noActivity = L10n.tr("Localizable", "noActivity", fallback: "No activity")
-  /// No channels
-  internal static let noChannels = L10n.tr("Localizable", "noChannels", fallback: "No channels")
   /// No profiles defined. Playback issues may occur.
   internal static let noDeviceProfileWarning = L10n.tr("Localizable", "noDeviceProfileWarning", fallback: "No profiles defined. Playback issues may occur.")
   /// No episodes available

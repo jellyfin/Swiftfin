@@ -9,38 +9,59 @@
 import JellyfinAPI
 import SwiftUI
 
-struct ItemElementSearchView<Element: Hashable>: View {
+struct ItemElementSearchView<Editor: ItemComponentEditor>: View {
 
     @FocusState
     private var isNameFocused: Bool
 
     @Binding
-    private var name: String
-    @Binding
-    private var id: String?
-    @Binding
-    private var personKind: PersonKind
-    @Binding
-    private var personRole: String
+    private var input: ItemComponentEditorInput
 
-    private let type: ItemArrayElements
-    private let population: [Element]
+    private let editor: Editor
+    private let population: [Editor.Element]
     private let isSearching: Bool
     private let alreadyOnItem: Bool
     private let existsOnServer: Bool
 
-    // MARK: - Body
+    private var listLibraryStyle: LibraryStyle {
+        .init(
+            displayType: .list,
+            posterDisplayType: Editor.Element.supportedLibraryStyleOptions.fallbackPosterDisplayType,
+            listColumnCount: 1
+        )
+    }
+
+    private func select(_ match: Editor.Element) {
+        input.name = editor.name(for: match)
+        input.id = editor.id(for: match)
+    }
+
+    init(
+        input: Binding<ItemComponentEditorInput>,
+        editor: Editor,
+        population: [Editor.Element],
+        isSearching: Bool,
+        alreadyOnItem: Bool,
+        existsOnServer: Bool
+    ) {
+        self._input = input
+        self.editor = editor
+        self.population = population
+        self.isSearching = isSearching
+        self.alreadyOnItem = alreadyOnItem
+        self.existsOnServer = existsOnServer
+    }
 
     var body: some View {
         Section {
-            TextField(L10n.name, text: $name)
+            TextField(L10n.name, text: $input.name)
                 .autocorrectionDisabled()
                 .focused($isNameFocused)
         } header: {
             Text(L10n.name)
         } footer: {
             Group {
-                if name.isEmpty {
+                if input.name.isEmpty {
                     Label(L10n.required, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 } else if alreadyOnItem {
@@ -54,38 +75,34 @@ struct ItemElementSearchView<Element: Hashable>: View {
                         .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
                 }
             }
-            .animation(.linear, value: name)
+            .animation(.linear, value: input.name)
         }
         .onFirstAppear {
             isNameFocused = true
         }
 
-        if type == .people {
+        if Editor.self == PeopleComponentEditor.self {
             Section {
-                Picker(L10n.type, selection: $personKind) {
+                Picker(L10n.type, selection: $input.personKind) {
                     ForEach(PersonKind.allCases, id: \.self) { kind in
                         Text(kind.displayTitle).tag(kind)
                     }
                 }
-                if personKind == .actor {
-                    TextField(L10n.role, text: $personRole)
+                if input.personKind == .actor {
+                    TextField(L10n.role, text: $input.personRole)
                         .autocorrectionDisabled()
                 }
             }
         }
 
-        if name.isNotEmpty {
+        if input.name.isNotEmpty {
             Section {
                 if population.isNotEmpty {
                     ForEach(population, id: \.self) { result in
-                        Button {
-                            name = type.getName(for: result)
-                            id = type.getId(for: result)
-                        } label: {
-                            rowLabel(result)
+                        result.makeBody(libraryStyle: listLibraryStyle) {
+                            select(result)
                         }
-                        .foregroundStyle(.primary)
-                        .disabled(name == type.getName(for: result))
+                        .disabled(input.name == editor.name(for: result))
                     }
                 } else if !isSearching {
                     Text(L10n.none)
@@ -107,75 +124,5 @@ struct ItemElementSearchView<Element: Hashable>: View {
                 .animation(.linear, value: isSearching)
             }
         }
-    }
-
-    // MARK: - Row Label
-
-    @ViewBuilder
-    private func rowLabel(_ match: Element) -> some View {
-        switch match {
-        case let person as BaseItemPerson:
-            HStack(spacing: EdgeInsets.edgePadding) {
-                PosterImage(
-                    item: person,
-                    type: .portrait
-                )
-                .frame(width: 60)
-                .posterShadow()
-
-                Text(type.getName(for: person))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-        default:
-            Text(type.getName(for: match))
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-}
-
-extension ItemElementSearchView {
-
-    // MARK: - Initializer for Generic `ItemElement`
-
-    init(
-        name: Binding<String>,
-        id: Binding<String?>,
-        type: ItemArrayElements,
-        personKind: Binding<PersonKind>,
-        personRole: Binding<String>,
-        population: [Element],
-        isSearching: Bool,
-        alreadyOnItem: Bool,
-        existsOnServer: Bool
-    ) {
-        self._name = name
-        self._id = id
-        self._personKind = personKind
-        self._personRole = personRole
-        self.type = type
-        self.population = population
-        self.isSearching = isSearching
-        self.alreadyOnItem = alreadyOnItem
-        self.existsOnServer = existsOnServer
-    }
-
-    // MARK: - Initializer for Tags
-
-    init(
-        name: Binding<String>,
-        population: [Element],
-        isSearching: Bool,
-        alreadyOnItem: Bool,
-        existsOnServer: Bool
-    ) {
-        self._name = name
-        self._id = .constant(nil)
-        self._personKind = .constant(.unknown)
-        self._personRole = .constant("")
-        self.type = .tags
-        self.population = population
-        self.isSearching = isSearching
-        self.alreadyOnItem = alreadyOnItem
-        self.existsOnServer = existsOnServer
     }
 }

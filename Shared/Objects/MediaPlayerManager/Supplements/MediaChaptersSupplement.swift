@@ -100,7 +100,7 @@ extension MediaChaptersSupplement {
             // TODO: Scroll to current chapter
             CollectionVGrid(
                 uniqueElements: chapters,
-                id: \.unwrappedIDHashOrZero,
+                id: \.id,
                 layout: .columns(
                     1,
                     insets: .init(EdgeInsets.edgePadding)
@@ -116,7 +116,7 @@ extension MediaChaptersSupplement {
             //            .onAppear {
             //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             //                    guard let currentChapter else { return }
-            //                    collectionVGridProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+            //                    collectionVGridProxy.scrollTo(id: currentChapter.id, animated: false)
             //                }
             //            }
         }
@@ -126,7 +126,7 @@ extension MediaChaptersSupplement {
             // TODO: Scroll to current chapter
             CollectionHStack(
                 uniqueElements: chapters,
-                id: \.unwrappedIDHashOrZero,
+                id: \.id,
                 layout: .minimumWidth(columnWidth: 170, rows: 1)
             ) { chapter in
                 ChapterButton(supplement: supplement, chapter: chapter) {
@@ -143,7 +143,7 @@ extension MediaChaptersSupplement {
             //            .onAppear {
             //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             //                    guard let currentChapter else { return }
-            //                    collectionHStackProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+            //                    collectionHStackProxy.scrollTo(id: currentChapter.id, animated: false)
             //                }
             //            }
         }
@@ -151,7 +151,7 @@ extension MediaChaptersSupplement {
         var tvOSView: some View {
             CollectionHStack(
                 uniqueElements: chapters,
-                id: \.unwrappedIDHashOrZero,
+                id: \.id,
                 layout: .grid(columns: 5, rows: 1, columnTrailingInset: 0)
 //                layout: .minimumWidth(columnWidth: 170, rows: 1)
             ) { chapter in
@@ -165,7 +165,7 @@ extension MediaChaptersSupplement {
             //            .onAppear {
             //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             //                    guard let currentChapter else { return }
-            //                    collectionHStackProxy.scrollTo(id: currentChapter.unwrappedIDHashOrZero, animated: false)
+            //                    collectionHStackProxy.scrollTo(id: currentChapter.id, animated: false)
             //                }
             //            }
             .ignoresSafeArea(.container, edges: .horizontal)

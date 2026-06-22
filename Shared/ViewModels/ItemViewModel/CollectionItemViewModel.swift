@@ -15,7 +15,7 @@ import OrderedCollections
 final class CollectionItemViewModel: ItemViewModel {
 
     @ObservedPublisher
-    var sections: OrderedDictionary<BaseItemKind, ItemLibraryViewModel>
+    var sections: OrderedDictionary<BaseItemKind, PagingLibraryViewModel<ItemLibrary>>
 
     private let itemCollection: ItemTypeCollection
 

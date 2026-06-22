@@ -6,59 +6,29 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+import Combine
 import JellyfinAPI
 
-final class RemoteImageInfoViewModel: PagingLibraryViewModel<RemoteImageInfo> {
+@MainActor
+final class RemoteImageInfoViewModel: ObservableObject {
 
-    // Image providers come from the paging call
-    @Published
-    private(set) var providers: [String] = []
+    var remoteImageLibrary: PagingLibraryViewModel<RemoteImageLibrary>
+    let remoteImageProvidersLibrary: PagingLibraryViewModel<RemoteImageProvidersLibrary>
 
-    @Published
-    var includeAllLanguages: Bool = false {
-        didSet {
-            DispatchQueue.main.async {
-                self.send(.refresh)
-            }
-        }
+    init(itemID: String, imageType: ImageType) {
+        self.remoteImageLibrary = .init(
+            library: .init(
+                imageType: imageType,
+                itemID: itemID
+            )
+        )
+        self.remoteImageProvidersLibrary = .init(
+            library: .init(itemID: itemID)
+        )
     }
 
-    @Published
-    var provider: String? = nil {
-        didSet {
-            DispatchQueue.main.async {
-                self.send(.refresh)
-            }
-        }
-    }
-
-    let imageType: ImageType
-
-    init(imageType: ImageType, parent: BaseItemDto) {
-
-        self.imageType = imageType
-
-        super.init(parent: parent)
-    }
-
-    override func get(page: Int) async throws -> [RemoteImageInfo] {
-        guard let itemID = parent?.id else { return [] }
-
-        var parameters = Paths.GetRemoteImagesParameters()
-        parameters.isIncludeAllLanguages = includeAllLanguages
-        parameters.limit = pageSize
-        parameters.providerName = provider
-        parameters.startIndex = page * pageSize
-        parameters.type = imageType
-
-        let request = Paths.getRemoteImages(itemID: itemID, parameters: parameters)
-        let response = try await send(request)
-
-        await MainActor.run {
-            providers = response.value.providers ?? []
-        }
-
-        return response.value.images ?? []
+    func refresh() {
+        remoteImageLibrary.refresh()
+        remoteImageProvidersLibrary.refresh()
     }
 }

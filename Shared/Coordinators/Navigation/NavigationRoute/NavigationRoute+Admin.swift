@@ -44,12 +44,12 @@ extension NavigationRoute {
         }
     }
 
-    static func activityFilters(viewModel: ServerActivityViewModel) -> NavigationRoute {
+    static func activityFilters(environment: Binding<ServerActivityLibrary.Environment>) -> NavigationRoute {
         NavigationRoute(
             id: "activityFilters",
             style: .sheet
         ) {
-            ServerActivityFilterView(viewModel: viewModel)
+            ServerActivityFilterView(environment: environment)
         }
     }
 

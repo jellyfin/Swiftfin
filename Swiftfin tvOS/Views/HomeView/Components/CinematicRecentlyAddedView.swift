@@ -17,7 +17,7 @@ extension HomeView {
         private var router
 
         @ObservedObject
-        var viewModel: RecentlyAddedLibraryViewModel
+        var viewModel: PagingLibraryViewModel<RecentlyAddedLibrary>
 
         private func itemSelectorImageSource(for item: BaseItemDto) -> ImageSource {
             if item.type == .episode {

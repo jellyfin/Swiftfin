@@ -17,10 +17,6 @@ extension BaseItemPerson: Poster {
         .portrait
     }
 
-    var unwrappedIDHashOrZero: Int {
-        id?.hashValue ?? 0
-    }
-
     var subtitle: String? {
         firstRole
     }
