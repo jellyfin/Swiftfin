@@ -35,13 +35,6 @@ extension BaseItemDto: Displayable {
     }
 }
 
-extension BaseItemDto: LibraryIdentifiable {
-
-    var unwrappedIDHashOrZero: Int {
-        id?.hashValue ?? 0
-    }
-}
-
 extension BaseItemDto {
 
     var avMetadata: [AVMetadataItem] {

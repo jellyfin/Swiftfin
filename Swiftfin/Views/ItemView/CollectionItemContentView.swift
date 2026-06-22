@@ -17,7 +17,7 @@ extension ItemView {
 
     struct CollectionItemContentView: View {
 
-        typealias Element = OrderedDictionary<BaseItemKind, ItemLibraryViewModel>.Elements.Element
+        typealias Element = OrderedDictionary<BaseItemKind, PagingLibraryViewModel<ItemLibrary>>.Elements.Element
 
         @Router
         private var router
@@ -36,7 +36,7 @@ extension ItemView {
 
                 CollectionHStack(
                     uniqueElements: element.value.elements,
-                    id: \.unwrappedIDHashOrZero,
+                    id: \.id,
                     columns: UIDevice.isPhone ? 1.5 : 3.5
                 ) { episode in
                     SeriesEpisodeSelector.EpisodeCard(episode: episode)
@@ -57,7 +57,7 @@ extension ItemView {
             }
             .trailing {
                 SeeAllButton {
-                    router.route(to: .library(viewModel: element.value))
+                    router.route(to: .library(library: element.value.library))
                 }
             }
         }
