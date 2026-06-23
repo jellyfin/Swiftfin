@@ -106,14 +106,21 @@ extension TabItem {
         }
     }
 
-    // Bruno: open the existing Jellyfin "Kids" library.
+    // Bruno: the owner's kids content is split across separate Jellyfin libraries (e.g.
+    // "Kids Movies" + "Kids Shows") with no single "Kids" user view — so match several
+    // candidate names / a "kids" keyword and merge them into one grid.
     static var kids: TabItem {
         TabItem(
             id: "kids",
             title: L10n.kids,
             systemImage: "teddybear.fill"
         ) {
-            BrunoUserViewLibraryTab(viewName: "Kids")
+            BrunoUserViewLibraryTab(
+                title: "Kids",
+                anyOf: ["Kids", "Kids Movies", "Kids Shows", "Kids TV", "Kids Movies & Shows"],
+                keyword: "kids",
+                itemTypes: [.movie, .series]
+            )
         }
     }
     #endif
