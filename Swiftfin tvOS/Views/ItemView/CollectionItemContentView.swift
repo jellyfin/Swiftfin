@@ -53,24 +53,44 @@ extension ItemView {
             .focusSection()
         }
 
-        // MARK: - Default Poster HStack
+        // MARK: - Default Poster Grid
 
-        private func posterHStack(element: Element) -> some View {
-            PosterHStack(
-                title: element.key.pluralDisplayTitle,
-                type: .portrait,
-                items: element.value.elements
-            ) { item in
-                router.route(to: .item(item: item))
+        // Portrait poster columns matching the stock library grid ("TV section": 7-wide on tvOS,
+        // see `LibraryElement.layout`). A multi-line `LazyVGrid` (laid out inline in the cinematic
+        // ScrollView — no nested scroll) so every title in the collection is reachable, instead of
+        // a single horizontal shelf that capped at one page. Trailing items page the next batch in.
+        private static let posterColumns = Array(
+            repeating: GridItem(.flexible(), spacing: EdgeInsets.edgePadding),
+            count: 7
+        )
+
+        private func posterGrid(element: Element) -> some View {
+            VStack(alignment: .leading, spacing: 20) {
+                Text(element.key.pluralDisplayTitle)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .accessibility(addTraits: [.isHeader])
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, EdgeInsets.edgePadding)
+
+                LazyVGrid(columns: Self.posterColumns, spacing: EdgeInsets.edgePadding) {
+                    ForEach(element.value.elements, id: \.id) { item in
+                        PosterButton(
+                            item: item,
+                            type: .portrait,
+                            action: { router.route(to: .item(item: item)) },
+                            label: { PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item) }
+                        )
+                        .onAppear {
+                            if element.value.elements.last?.id == item.id {
+                                element.value.getNextPage()
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, EdgeInsets.edgePadding)
             }
             .focusSection()
-
-            // TODO: Is this possible?
-            /* .trailing {
-                 SeeMoreButton() {
-                     router.route(to: .library(library: element.value.library))
-                 }
-             } */
         }
 
         var body: some View {
@@ -82,7 +102,7 @@ extension ItemView {
                     if element.key == .episode {
                         episodeHStack(element: element)
                     } else {
-                        posterHStack(element: element)
+                        posterGrid(element: element)
                     }
                 }
 

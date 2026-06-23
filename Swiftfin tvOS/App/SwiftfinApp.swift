@@ -28,6 +28,8 @@ struct SwiftfinApp: App {
             // launched with `BRUNO_SNAPSHOT=1` (see BrunoPreviewSupport.swift). Inert otherwise.
             if ProcessInfo.processInfo.environment["BRUNO_SNAPSHOT"] == "1" {
                 BrunoSnapshotGallery()
+            } else if ProcessInfo.processInfo.environment["BRUNO_COLLECTION_PROBE"] != nil {
+                BrunoCollectionProbe()
             } else {
                 root
                     .task { await BrunoAutoSignIn.runIfRequested() }
