@@ -34,6 +34,12 @@ iOS gate: `-scheme Swiftfin -destination 'generic/platform=iOS Simulator' -skipM
 schemes were verified **BUILD SUCCEEDED on Xcode 26.3**. Without `-skipMacroValidation` the build can die
 at `ComputeTargetDependencyGraph` with `Macro "CasePathsMacros"/"StatefulMacrosMacros" ... must be enabled`.
 
+⚠️ `CODE_SIGNING_ALLOWED=NO` is for **verifying compilation only**. To *run* the app on the sim across
+relaunches, build WITH simulator ad-hoc signing — otherwise the keychain-access-group entitlement is
+stripped, the access token doesn't persist, and the stock upstream `assertionFailure("access token
+missing in keychain")` (`SwiftinStore+UserState.swift:33`) traps on the next launch. See
+`docs/SIM_VIEWING_HANDOFF.md`.
+
 **Gotcha after upgrading Xcode:** the iOS sim build's asset-catalog step (`actool`) can fail with
 `No simulator runtime version from ["22G86"] available to use with iphonesimulator SDK version 23C57`
 even after installing the iOS 26 platform — a *stale CoreSimulator service* from the previous Xcode is
