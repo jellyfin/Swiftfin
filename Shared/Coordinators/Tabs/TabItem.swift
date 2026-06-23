@@ -94,6 +94,30 @@ extension TabItem {
         }
     }
 
+    #if os(tvOS)
+    // Bruno: open the existing Jellyfin "Collections" library (the curated group BoxSets).
+    static var collections: TabItem {
+        TabItem(
+            id: "collections",
+            title: L10n.collections,
+            systemImage: "square.stack.fill"
+        ) {
+            BrunoUserViewLibraryTab(viewName: "Collections")
+        }
+    }
+
+    // Bruno: open the existing Jellyfin "Kids" library.
+    static var kids: TabItem {
+        TabItem(
+            id: "kids",
+            title: L10n.kids,
+            systemImage: "teddybear.fill"
+        ) {
+            BrunoUserViewLibraryTab(viewName: "Kids")
+        }
+    }
+    #endif
+
     static var search: TabItem {
         TabItem(
             id: "search",
