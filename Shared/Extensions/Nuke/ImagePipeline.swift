@@ -92,11 +92,7 @@ extension ImagePipeline.Swiftfin {
     static let other: ImagePipeline = ImagePipeline(configuration: .withURLCache)
 }
 
-// Bruno toolchain-compat: Nuke pinned to 12.9.0 (13.x uses `nonisolated deinit`,
-// which Swift 6.1.2's production compiler refuses to build). In Nuke 12.x the
-// pipeline delegate protocol is the top-level `ImagePipelineDelegate` (renamed to
-// the nested `ImagePipeline.Delegate` in 13.x). See BRUNO_NOTES.md §Toolchain.
-final class SwiftfinImagePipelineDelegate: ImagePipelineDelegate {
+final class SwiftfinImagePipelineDelegate: ImagePipeline.Delegate {
 
     func cacheKey(for request: ImageRequest, pipeline: ImagePipeline) -> String? {
         guard let url = request.url else { return nil }

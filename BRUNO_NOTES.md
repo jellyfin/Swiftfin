@@ -9,61 +9,39 @@
 
 ---
 
-## §Toolchain (environment + the one non-obvious build fix)
+## §Toolchain
+
+**Now on Xcode 26.3 (Swift 6.2.4, iOS/tvOS 26.2 SDKs) — the toolchain this fork was authored for.**
+All the `Bruno toolchain-compat` workarounds have been **reverted**; the fork builds as authored
+(Nuke 13.0.2, Pulse 5.2.0, isolated conformance, Liquid Glass `glassEffect`, `cornerConfiguration`),
+with Bruno added on top.
 
 | Thing | Value |
 |---|---|
-| Xcode | 16.4 (16F6), Swift 6.1.2, target arm64-apple-macosx15 |
-| tvOS sim runtime | tvOS 18.5 (22L572) — installed via `xcodebuild -downloadPlatform tvOS` (none was preinstalled) |
-| Carthage | VLCKit only: `MobileVLCKit.xcframework` + `TVVLCKit.xcframework` built under `Carthage/Build/` |
-| SPM | JellyfinAPI 2.1.0, StatefulMacros 0.1.4, Nuke (see below), Defaults 9.0.2, etc. resolved into DerivedData |
+| Xcode | 26.3 (17C529), Swift 6.2.4 |
+| SDKs | tvOS 26.2, iOS 26.2 (installed via Xcode); macOS host |
+| tvOS sim runtime | tvOS 18.5 present (satisfies the `generic/platform=tvOS Simulator` compile gate). To *run* on the sim, install a tvOS 26 runtime; deploying to a physical Apple TV needs no sim runtime. |
+| Carthage | VLCKit only: `MobileVLCKit.xcframework` + `TVVLCKit.xcframework` under `Carthage/Build/` |
+| SPM | JellyfinAPI 2.1.0, StatefulMacros 0.1.4, Nuke 13.0.2, Pulse 5.2.0, Defaults 9.0.2, etc. |
 | Dev team xcconfig | `XcodeConfig/DevelopmentTeam.xcconfig` (gitignored): `DEVELOPMENT_TEAM = ABCDE12345`, `PRODUCT_BUNDLE_IDENTIFIER = com.diplomacymusic.bruno` |
 
-### THE COMPILE GATE (use this exact command — `-skipMacroValidation` is mandatory)
+### THE COMPILE GATE (`-skipMacroValidation` keeps CLI macro trust from blocking the first build)
 ```bash
 xcodebuild -project Swiftfin.xcodeproj -scheme "Swiftfin tvOS" \
   -destination 'generic/platform=tvOS Simulator' -skipMacroValidation build CODE_SIGNING_ALLOWED=NO
 ```
-iOS gate (T9): `-scheme Swiftfin -destination 'generic/platform=iOS Simulator' -skipMacroValidation`.
-Without `-skipMacroValidation` the build dies at `ComputeTargetDependencyGraph` with
-`Macro "CasePathsMacros"/"StatefulMacrosMacros" ... must be enabled before it can be used`.
+iOS gate: `-scheme Swiftfin -destination 'generic/platform=iOS' -skipMacroValidation` (needs the iOS 26.2
+platform installed — `xcodebuild -downloadPlatform iOS`; the simulator destination additionally needs an
+iOS 26 sim runtime). Without `-skipMacroValidation` the build can die at `ComputeTargetDependencyGraph`
+with `Macro "CasePathsMacros"/"StatefulMacrosMacros" ... must be enabled before it can be used`.
 
-### Nuke pinned 13.0.0→**12.9.0** (toolchain-compat, unavoidable)
-Baseline (unmodified) Swiftfin does NOT compile on Xcode 16.4: **Nuke 13.0.2** uses `nonisolated deinit`
-(`ImagePipeline.swift:68`, `ImagePrefetcher.swift:79`) — the Swift 6.2 `IsolatedDeinit` feature.
-Swift 6.1.2 errors `'isolated' deinit requires -enable-experimental-feature IsolatedDeinit`, and when you
-DO pass that flag it errors `experimental feature 'IsolatedDeinit' cannot be enabled in production
-compiler`. So the flag route AND a fork-with-`enableExperimentalFeature` route are both dead on this
-toolchain. Every Nuke 13.x tag has the same `nonisolated deinit`; **12.9.0 is the last clean version**.
-Fix applied (2 edits, both necessary just to get a green baseline):
-- `Swiftfin.xcodeproj/project.pbxproj` Nuke `XCRemoteSwiftPackageReference` requirement →
-  `upToNextMajorVersion minimumVersion 12.9.0` (resolves 12.9.0). Package.resolved updated by re-resolve.
-- `Shared/Extensions/Nuke/ImagePipeline.swift:95` — `ImagePipeline.Delegate` (13.x nested) →
-  `ImagePipelineDelegate` (12.x top-level). The ONLY 13.x-specific API Swiftfin used; everything else
-  (`ImagePipeline(delegate:_:)`, `ImageRequest(url:)`, `.withURLCache`, `LazyImage`, `cache`,
-  `configuration.dataCache`, NukeUI) is identical in 12.9.0.
-- **When the owner moves to Xcode 26 (Swift 6.2):** revert both edits to return to Nuke 13.x.
-
-### Swiftfin source written for Swift 6.2 / tvOS 26 SDK — 2 source patches to compile on 16.4
-The fork's own source targets Xcode 26 (Swift 6.2 + tvOS 26 SDK). Two compat patches were needed
-(all marked `Bruno toolchain-compat` in-code; **revert all when building with Xcode 26**):
-1. `Shared/Objects/PagingLibrary/PagingLibraryViewModel.swift` — class declared
-   `ViewModel, @MainActor Identifiable` (a Swift 6.2 *isolated conformance*). On 6.1.2 → plain
-   `Identifiable` + a `private nonisolated let _id` captured at (main-actor) init, returned by
-   `nonisolated var id`. (Can't make `id` directly nonisolated — `library.parent` is main-actor-isolated.)
-2. `Shared/Components/ButtonStyles/SupplementTitleButtonStyle.swift` — `glassBody`/`iOSGlassBody` used
-   `.glassEffect(...)` (tvOS/iOS **26 SDK** "Liquid Glass"). The 18.5 SDK doesn't define the symbol, so
-   even the `@available(tvOS 26.0,*)`-guarded path fails to *compile*. Routed both to the file's existing
-   `legacyBody` (the capsule/material fallback the code already ships). Only affects the video player's
-   supplement buttons — not Bruno Home. (`_Alert.swift` had `glassEffect` only in a TODO comment — no change.)
-
-3. `Swiftfin/Extensions/View/View-iOS.swift` (iOS target) — `listRowCornerRadius` used
-   `UICollectionViewCell.cornerConfiguration = .uniformCorners(...)` (iOS **26 SDK** UIKit).
-   Routed to the existing `cell.layer.cornerRadius` fallback so the iOS scheme compiles.
-
-**Net toolchain delta:** Nuke 13→12.9.0 (+1-line delegate rename), Pulse 5.2→5.1.4, the three source
-patches above, and `-skipMacroValidation` on the gate. Everything else builds as authored. The fork is
-authored for Xcode 26 (Swift 6.2 / iOS+tvOS 26 SDK); revert all `Bruno toolchain-compat` edits there.
+### History (for reference): building on the earlier Xcode 16.4
+This fork's source + `Package.resolved` target Xcode 26, so on the original Xcode 16.4 (Swift 6.1.2 /
+tvOS 18.5 SDK) it would not compile. The bridge — now all reverted — pinned Nuke 13→12.9.0 (+ a
+`ImagePipeline.Delegate`→`ImagePipelineDelegate` rename), Pinned Pulse 5.2→5.1.4, replaced the
+`@MainActor Identifiable` isolated conformance with a captured `nonisolated let _id`, and routed
+`glassEffect` / `cornerConfiguration` to their legacy fallbacks. If you ever need to build on a pre-26
+Xcode again, see git history around commit `3476b66b`.
 
 ### GitHub Actions disabled (per owner)
 `.github/workflows/{ci.yml,testflight.yml,validate-pr.yaml}` renamed to `*.disabled` so no heavy
@@ -199,7 +177,7 @@ independently via the live API (see §Live library snapshot).
 ## §Deferred TODOs
 
 - Direct hero-play (build `MediaPlayerItemProvider` → `.videoPlayer`) — proto uses `router.route(to:.item(item:))` (stock detail → Play).
-- Revert all `Bruno toolchain-compat` edits + Nuke/Pulse pins once on Xcode 26 / Swift 6.2 (restores Liquid Glass + isolated conformance + 13.x Nuke).
+- ~~Revert toolchain-compat edits + Nuke/Pulse pins once on Xcode 26~~ — **DONE** (now building on Xcode 26.3; fork restored to authored state).
 - Localize Bruno UI strings via `L10n` (prototype is English-only; `hard_coded_display_string` is disabled in the two Bruno view files).
 - Licensed Knockout font (Oswald is the brand stand-in).
 - Hero auto-rotation (9s) — current hero is dot-switchable + seeded; auto-advance deferred to keep tvOS focus stable.

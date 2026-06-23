@@ -79,10 +79,11 @@ extension View {
     @ViewBuilder
     func listRowCornerRadius(_ radius: CGFloat) -> some View {
         introspect(.listCell, on: .iOS(.v16...)) { cell in
-            // Bruno toolchain-compat: `UICollectionViewCell.cornerConfiguration` requires the
-            // iOS 26 SDK (Xcode 26); on the installed SDK use the layer cornerRadius fallback.
-            // Restore the `cornerConfiguration` branch on Xcode 26. See BRUNO_NOTES.md §Toolchain.
-            cell.layer.cornerRadius = radius
+            if #available(iOS 26, *) {
+                cell.cornerConfiguration = .uniformCorners(radius: .fixed(radius))
+            } else {
+                cell.layer.cornerRadius = radius
+            }
         }
     }
 
