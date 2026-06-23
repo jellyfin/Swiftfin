@@ -153,6 +153,8 @@ struct BrunoCategoryShelves: View {
         }
         .buttonStyle(.card)
         // Source for the route's zoom transition, matching the stock library convention.
+        // Via .backport so it no-ops below tvOS 18 instead of failing to compile.
+        .backport
         .matchedTransitionSource(id: "item", in: namespace)
     }
 }
