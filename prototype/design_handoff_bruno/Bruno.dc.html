@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#14120f}
+  *::-webkit-scrollbar{width:0;height:0;background:transparent}
+  html{scrollbar-width:none}
+  @keyframes heroDrift{0%{transform:scale(1.04)}100%{transform:scale(1.13)}}
+  @keyframes pulseDot{0%,100%{opacity:.35}50%{opacity:1}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#14120f;color:#F2F1F0;font-family:'Inter',system-ui,sans-serif;overflow-x:hidden;">
+
+  <!-- ============ TOP CHROME ============ -->
+  <header style="position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;gap:30px;padding:14px 40px;background:linear-gradient(180deg, rgba(20,18,15,.96) 0%, rgba(20,18,15,.7) 55%, rgba(20,18,15,0) 100%);backdrop-filter:blur(2px);">
+    <div onClick="{{ goHome }}" style="display:flex;align-items:baseline;gap:9px;cursor:pointer;">
+      <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:26px;letter-spacing:.16em;text-transform:uppercase;color:#F2F1F0;">Bruno</span>
+      <span style="width:7px;height:7px;border-radius:50%;background:{{ accent }};margin-bottom:3px;"></span>
+    </div>
+    <nav style="display:flex;gap:22px;align-items:center;">
+      <span onClick="{{ goHome }}" style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:#F2F1F0;cursor:pointer;">Home</span>
+      <span onClick="{{ openMovies }}" style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:#9b958c;cursor:pointer;" style-hover="color:#F2F1F0;">Movies</span>
+      <span onClick="{{ openSeries }}" style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:#9b958c;cursor:pointer;" style-hover="color:#F2F1F0;">Series</span>
+      <span onClick="{{ openGroups }}" style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:#9b958c;cursor:pointer;" style-hover="color:#F2F1F0;">Collections</span>
+      <span style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:#9b958c;cursor:pointer;" style-hover="color:#F2F1F0;">Search</span>
+    </nav>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:12px;">
+      <button onClick="{{ reshuffle }}" title="Reshuffle home" style="display:flex;align-items:center;gap:7px;border:1px solid rgba(242,241,240,.18);background:rgba(242,241,240,.05);color:#F2F1F0;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:7px 13px;border-radius:6px;cursor:pointer;" style-hover="background:rgba(242,241,240,.12);">↻ Shuffle</button>
+      <button onClick="{{ toggleTv }}" style="display:flex;align-items:center;gap:7px;border:1px solid {{ tvBorder }};background:{{ tvBg }};color:{{ tvFg }};font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:7px 13px;border-radius:6px;cursor:pointer;">◉ TV Mode</button>
+      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(150deg,#849396,#4E433D);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:600;font-size:14px;color:#F2F1F0;">B</div>
+    </div>
+  </header>
+
+  <!-- ============ HOME ============ -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <section style="position:relative;height:66vh;min-height:540px;width:100%;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:{{ hero.bg }};animation:heroDrift 26s ease-in-out infinite alternate;"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg, rgba(20,18,15,.97) 0%, rgba(20,18,15,.78) 30%, rgba(20,18,15,.25) 58%, rgba(20,18,15,0) 78%);"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(0deg, #14120f 1%, rgba(20,18,15,0) 38%);"></div>
+      <div style="position:relative;max-width:660px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:0 0 60px 40px;">
+        <span style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.26em;text-transform:uppercase;color:{{ accent }};margin-bottom:14px;">{{ hero.lens }}</span>
+        <h1 style="font-family:'Oswald',sans-serif;font-weight:600;font-size:clamp(44px,5.6vw,82px);line-height:.94;letter-spacing:.01em;text-transform:uppercase;margin:0 0 16px;text-shadow:0 4px 30px rgba(0,0,0,.5);">{{ hero.title }}</h1>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;font-family:'Inter',sans-serif;font-size:14px;color:#cfc9bf;">{{ hero.metaLine }}</div>
+        <p style="font-size:15px;line-height:1.55;color:#d4cec4;max-width:560px;margin:0 0 24px;">{{ hero.blurb }}</p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button onClick="{{ hero.onPlay }}" style="display:flex;align-items:center;gap:10px;border:none;background:#F2F1F0;color:#14120f;font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;letter-spacing:.06em;text-transform:uppercase;padding:14px 30px;border-radius:7px;cursor:pointer;transform:{{ hero.playTf }};box-shadow:{{ hero.playFx }};" style-hover="background:#fff;">▶ Play</button>
+          <button onClick="{{ hero.onInfo }}" style="display:flex;align-items:center;gap:9px;border:1px solid rgba(242,241,240,.34);background:rgba(242,241,240,.08);color:#F2F1F0;font-family:'Oswald',sans-serif;font-weight:500;font-size:16px;letter-spacing:.06em;text-transform:uppercase;padding:14px 26px;border-radius:7px;cursor:pointer;backdrop-filter:blur(6px);transform:{{ hero.infoTf }};box-shadow:{{ hero.infoFx }};" style-hover="background:rgba(242,241,240,.16);">ⓘ More Info</button>
+          <div style="display:flex;gap:8px;margin-left:14px;">
+            <sc-for list="{{ heroDots }}" as="d" hint-placeholder-count="5">
+              <span onClick="{{ d.onClick }}" style="width:26px;height:3px;border-radius:2px;background:{{ d.bg }};cursor:pointer;transition:background .3s;"></span>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div style="position:relative;margin-top:-30px;padding-bottom:80px;">
+      <sc-for list="{{ shelvesV }}" as="shelf" hint-placeholder-count="6">
+        <section ref="{{ shelf.secRef }}" style="margin-bottom:8px;">
+          <div style="display:flex;align-items:flex-end;gap:14px;padding:24px 40px 12px;">
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <sc-if value="{{ shelf.hasLens }}" hint-placeholder-val="{{ true }}">
+                <span style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:{{ accent }};">{{ shelf.lens }}</span>
+              </sc-if>
+              <h2 style="font-family:'Oswald',sans-serif;font-weight:600;font-size:25px;letter-spacing:.02em;text-transform:uppercase;margin:0;color:#F2F1F0;">{{ shelf.title }}</h2>
+            </div>
+            <button onClick="{{ shelf.onAll }}" style="margin-left:auto;border:none;background:transparent;color:#9b958c;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:6px 4px;" style-hover="color:#F2F1F0;">See all →</button>
+          </div>
+
+          <sc-if value="{{ shelf.isA }}" hint-placeholder-val="{{ true }}">
+            <div ref="{{ shelf.rowRef }}" style="display:flex;gap:16px;overflow-x:auto;padding:8px 40px 14px;scroll-behavior:smooth;">
+              <sc-for list="{{ shelf.items }}" as="item" hint-placeholder-count="6">
+                <div onClick="{{ item.onClick }}" tabindex="0" style="position:relative;flex:0 0 auto;width:300px;height:169px;border-radius:8px;overflow:hidden;cursor:pointer;background:#1c1a16;transition:transform .24s cubic-bezier(.2,.7,.2,1),box-shadow .24s;transform:{{ item.tf }};box-shadow:{{ item.fx }};z-index:{{ item.z }};" style-hover="transform:scale(1.055);box-shadow:0 0 0 2px rgba(161,204,224,.85),0 18px 38px rgba(0,0,0,.55);">
+                  <div style="position:absolute;inset:0;background:{{ item.bg }};"></div>
+                  <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(8,7,6,.86) 0%, rgba(8,7,6,.2) 46%, transparent 72%);"></div>
+                  <sc-if value="{{ item.hasBadge }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;top:10px;left:10px;font-family:'Oswald',sans-serif;font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#14120f;background:{{ accent }};padding:3px 7px;border-radius:4px;">{{ item.badge }}</div>
+                  </sc-if>
+                  <sc-if value="{{ item.isStudio }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;">
+                      <span style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#A1CCE0;">Studio</span>
+                      <span style="font-family:'Oswald',sans-serif;font-weight:600;font-size:24px;letter-spacing:.04em;text-transform:uppercase;color:#F2F1F0;text-align:center;padding:0 16px;">{{ item.title }}</span>
+                      <span style="font-family:'Inter',sans-serif;font-size:11px;color:#9b958c;">{{ item.meta }}</span>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ item.showBottom }}" hint-placeholder-val="{{ true }}">
+                    <div style="position:absolute;left:14px;right:14px;bottom:13px;">
+                      <div style="font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;letter-spacing:.02em;text-transform:uppercase;color:#F2F1F0;line-height:1.05;text-shadow:0 1px 6px rgba(0,0,0,.6);">{{ item.title }}</div>
+                      <div style="font-family:'Inter',sans-serif;font-size:11px;color:#b7b1a7;margin-top:3px;">{{ item.meta }}</div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ item.hasProgress }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.16);">
+                      <div style="height:100%;width:{{ item.progress }};background:{{ accent }};"></div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ shelf.isB }}" hint-placeholder-val="{{ false }}">
+            <div ref="{{ shelf.rowRef }}" style="display:flex;gap:16px;overflow-x:auto;padding:8px 40px 14px;scroll-behavior:smooth;">
+              <sc-for list="{{ shelf.items }}" as="item" hint-placeholder-count="6">
+                <div onClick="{{ item.onClick }}" tabindex="0" style="position:relative;flex:0 0 auto;width:170px;height:248px;border-radius:10px;overflow:hidden;cursor:pointer;background:{{ item.bg }};transition:transform .24s cubic-bezier(.2,.7,.2,1),box-shadow .24s;transform:{{ item.tf }};box-shadow:{{ item.fx }};z-index:{{ item.z }};" style-hover="transform:scale(1.06);box-shadow:0 0 0 2px rgba(161,204,224,.85),0 18px 38px rgba(0,0,0,.55);">
+                  <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(10,11,20,.9) 0%, rgba(10,11,20,.1) 55%, transparent 78%);"></div>
+                  <sc-if value="{{ item.hasAvatar }}" hint-placeholder-val="{{ true }}">
+                    <div style="position:absolute;top:30px;left:50%;transform:translateX(-50%);width:78px;height:78px;border-radius:50%;background:{{ item.avatarBg }};display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:600;font-size:26px;color:#F2F1F0;border:2px solid rgba(242,241,240,.25);">{{ item.initials }}</div>
+                  </sc-if>
+                  <div style="position:absolute;left:12px;right:12px;bottom:14px;text-align:center;">
+                    <div style="font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;letter-spacing:.03em;text-transform:uppercase;color:#F2F1F0;line-height:1.05;">{{ item.title }}</div>
+                    <div style="font-family:'Inter',sans-serif;font-size:11px;color:#A1CCE0;margin-top:4px;letter-spacing:.04em;">{{ item.meta }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ shelf.isC }}" hint-placeholder-val="{{ false }}">
+            <div ref="{{ shelf.rowRef }}" style="display:flex;gap:16px;overflow-x:auto;padding:8px 40px 14px;scroll-behavior:smooth;">
+              <sc-for list="{{ shelf.items }}" as="item" hint-placeholder-count="6">
+                <div onClick="{{ item.onClick }}" tabindex="0" style="position:relative;flex:0 0 auto;width:232px;height:150px;border-radius:8px;overflow:hidden;cursor:pointer;background:{{ item.bg }};transition:transform .24s cubic-bezier(.2,.7,.2,1),box-shadow .24s;transform:{{ item.tf }};box-shadow:{{ item.fx }};z-index:{{ item.z }};display:flex;flex-direction:column;justify-content:space-between;padding:16px 18px;" style-hover="transform:scale(1.05);box-shadow:0 0 0 2px rgba(161,204,224,.85),0 18px 38px rgba(0,0,0,.55);">
+                  <span style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:{{ item.tileEyebrow }};">{{ item.sub }}</span>
+                  <span style="font-family:'Oswald',sans-serif;font-weight:600;font-size:34px;letter-spacing:.02em;text-transform:uppercase;color:{{ item.tileFg }};line-height:.92;">{{ item.big }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </section>
+      </sc-for>
+
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:30px 40px;color:#6f6a62;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;">
+        <span style="width:6px;height:6px;border-radius:50%;background:{{ accent }};animation:pulseDot 1.4s ease-in-out infinite;"></span>
+        Loading more from your library…
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ COLLECTION GRID ============ -->
+  <sc-if value="{{ isGrid }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <section style="position:relative;height:300px;width:100%;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:{{ grid.bg }};"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(0deg, #14120f 2%, rgba(20,18,15,.35) 55%, rgba(20,18,15,.55) 100%);"></div>
+      <div style="position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:0 40px 28px;">
+        <button onClick="{{ back }}" style="position:absolute;top:84px;left:40px;border:1px solid rgba(242,241,240,.25);background:rgba(20,18,15,.5);color:#F2F1F0;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:8px 16px;border-radius:6px;cursor:pointer;backdrop-filter:blur(6px);" style-hover="background:rgba(20,18,15,.8);">‹ Back</button>
+        <span style="font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:{{ accent }};margin-bottom:10px;">{{ grid.lens }}</span>
+        <h1 style="font-family:'Oswald',sans-serif;font-weight:600;font-size:clamp(40px,5vw,64px);letter-spacing:.02em;text-transform:uppercase;margin:0;">{{ grid.title }}</h1>
+        <span style="font-family:'Inter',sans-serif;font-size:14px;color:#b7b1a7;margin-top:8px;">{{ grid.count }}</span>
+      </div>
+    </section>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:18px;padding:30px 40px 80px;">
+      <sc-for list="{{ grid.items }}" as="item" hint-placeholder-count="12">
+        <div onClick="{{ item.onClick }}" tabindex="0" style="position:relative;width:100%;aspect-ratio:16/9;border-radius:8px;overflow:hidden;cursor:pointer;background:#1c1a16;transition:transform .24s cubic-bezier(.2,.7,.2,1),box-shadow .24s;" style-hover="transform:scale(1.035);box-shadow:0 0 0 2px rgba(161,204,224,.85),0 18px 38px rgba(0,0,0,.55);">
+          <div style="position:absolute;inset:0;background:{{ item.bg }};"></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(8,7,6,.85) 0%, rgba(8,7,6,.15) 48%, transparent 72%);"></div>
+          <sc-if value="{{ item.hasBadge }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:10px;left:10px;font-family:'Oswald',sans-serif;font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#14120f;background:{{ accent }};padding:3px 7px;border-radius:4px;">{{ item.badge }}</div>
+          </sc-if>
+          <div style="position:absolute;left:14px;right:14px;bottom:13px;">
+            <div style="font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;letter-spacing:.02em;text-transform:uppercase;color:#F2F1F0;line-height:1.05;">{{ item.title }}</div>
+            <div style="font-family:'Inter',sans-serif;font-size:11px;color:#b7b1a7;margin-top:3px;">{{ item.meta }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ ITEM DETAIL ============ -->
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <section style="position:relative;height:74vh;min-height:560px;width:100%;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:{{ detail.bg }};animation:heroDrift 30s ease-in-out infinite alternate;"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg, rgba(20,18,15,.96) 0%, rgba(20,18,15,.72) 34%, rgba(20,18,15,.2) 64%, rgba(20,18,15,0) 84%);"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(0deg, #14120f 1%, rgba(20,18,15,0) 42%);"></div>
+      <button onClick="{{ back }}" style="position:absolute;top:84px;left:40px;z-index:5;border:1px solid rgba(242,241,240,.25);background:rgba(20,18,15,.5);color:#F2F1F0;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:8px 16px;border-radius:6px;cursor:pointer;backdrop-filter:blur(6px);" style-hover="background:rgba(20,18,15,.8);">‹ Back</button>
+      <div style="position:relative;max-width:740px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:0 0 50px 40px;">
+        <span style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:{{ accent }};margin-bottom:12px;">{{ detail.dirLabel }}</span>
+        <h1 style="font-family:'Oswald',sans-serif;font-weight:600;font-size:clamp(46px,6vw,88px);line-height:.92;letter-spacing:.01em;text-transform:uppercase;margin:0 0 14px;text-shadow:0 4px 30px rgba(0,0,0,.5);">{{ detail.title }}</h1>
+        <sc-if value="{{ detail.hasTagline }}" hint-placeholder-val="{{ false }}">
+          <p style="font-family:'Inter',sans-serif;font-style:italic;font-size:16px;color:#cfc9bf;margin:0 0 14px;">{{ detail.tagline }}</p>
+        </sc-if>
+        <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:16px;">
+          <span style="font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.05em;color:#e8e6e1;border:1px solid rgba(242,241,240,.4);padding:2px 8px;border-radius:4px;">{{ detail.cr }}</span>
+          <span style="font-family:'Inter',sans-serif;font-size:14px;color:#cfc9bf;">{{ detail.yearLabel }}</span>
+          <span style="font-family:'Inter',sans-serif;font-size:14px;color:#cfc9bf;">{{ detail.lengthLabel }}</span>
+          <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:14px;color:{{ accent }};font-weight:600;">★ {{ detail.rating }}</span>
+          <sc-if value="{{ detail.hasCritic }}" hint-placeholder-val="{{ false }}">
+            <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:14px;color:#cfc9bf;"><span style="width:9px;height:9px;border-radius:50%;background:#C44;display:inline-block;"></span>{{ detail.critic }}</span>
+          </sc-if>
+          <sc-if value="{{ detail.hasEndsAt }}" hint-placeholder-val="{{ false }}">
+            <span style="font-family:'Inter',sans-serif;font-size:14px;color:#9b958c;">{{ detail.endsAt }}</span>
+          </sc-if>
+        </div>
+        <p style="font-size:15px;line-height:1.6;color:#d4cec4;max-width:640px;margin:0 0 16px;">{{ detail.blurb }}</p>
+        <div style="display:flex;gap:8px;margin-bottom:24px;">
+          <span style="font-family:'Inter',sans-serif;font-size:12px;color:#b7b1a7;border:1px solid rgba(242,241,240,.16);background:rgba(242,241,240,.05);padding:4px 11px;border-radius:5px;">IMDb</span>
+          <span style="font-family:'Inter',sans-serif;font-size:12px;color:#b7b1a7;border:1px solid rgba(242,241,240,.16);background:rgba(242,241,240,.05);padding:4px 11px;border-radius:5px;">TheMovieDb</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button style="display:flex;align-items:center;gap:10px;border:none;background:#F2F1F0;color:#14120f;font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;letter-spacing:.06em;text-transform:uppercase;padding:14px 32px;border-radius:7px;cursor:pointer;" style-hover="background:#fff;">▶ {{ detail.playLabel }}</button>
+          <button style="display:flex;align-items:center;gap:8px;border:1px solid rgba(242,241,240,.34);background:rgba(242,241,240,.08);color:#F2F1F0;font-family:'Oswald',sans-serif;font-weight:500;font-size:16px;letter-spacing:.06em;text-transform:uppercase;padding:14px 24px;border-radius:7px;cursor:pointer;backdrop-filter:blur(6px);" style-hover="background:rgba(242,241,240,.16);">Trailer</button>
+          <button style="width:50px;height:50px;border:1px solid rgba(242,241,240,.34);background:rgba(242,241,240,.08);color:#F2F1F0;font-size:18px;border-radius:7px;cursor:pointer;backdrop-filter:blur(6px);" style-hover="background:rgba(242,241,240,.16);">✓</button>
+          <button style="width:50px;height:50px;border:1px solid rgba(242,241,240,.34);background:rgba(242,241,240,.08);color:#F2F1F0;font-size:20px;border-radius:7px;cursor:pointer;backdrop-filter:blur(6px);" style-hover="background:rgba(242,241,240,.16);">♡</button>
+        </div>
+      </div>
+    </section>
+
+    <div style="padding:0 40px 80px;margin-top:-6px;">
+      <!-- META PANELS -->
+      <div style="display:flex;gap:20px;flex-wrap:wrap;padding:26px 0 8px;">
+        <div style="flex:1 1 380px;border:1px solid rgba(242,241,240,.1);border-radius:10px;overflow:hidden;background:rgba(242,241,240,.025);">
+          <div style="display:flex;justify-content:space-between;gap:20px;padding:13px 18px;border-bottom:1px solid rgba(242,241,240,.08);"><span style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9b958c;">Genres</span><span style="font-family:'Inter',sans-serif;font-size:14px;color:#F2F1F0;text-align:right;">{{ detail.genre }}</span></div>
+          <sc-if value="{{ detail.hasDirector }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;justify-content:space-between;gap:20px;padding:13px 18px;border-bottom:1px solid rgba(242,241,240,.08);"><span style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9b958c;">Director</span><span style="font-family:'Inter',sans-serif;font-size:14px;color:#F2F1F0;text-align:right;">{{ detail.director }}</span></div>
+          </sc-if>
+          <sc-if value="{{ detail.hasNetwork }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;justify-content:space-between;gap:20px;padding:13px 18px;border-bottom:1px solid rgba(242,241,240,.08);"><span style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9b958c;">Network</span><span style="font-family:'Inter',sans-serif;font-size:14px;color:#F2F1F0;text-align:right;">{{ detail.network }}</span></div>
+          </sc-if>
+          <div style="display:flex;justify-content:space-between;gap:20px;padding:13px 18px;border-bottom:1px solid rgba(242,241,240,.08);"><span style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9b958c;">Studios</span><span style="font-family:'Inter',sans-serif;font-size:14px;color:#F2F1F0;text-align:right;">{{ detail.studio }}</span></div>
+          <sc-if value="{{ detail.hasStatus }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;justify-content:space-between;gap:20px;padding:13px 18px;"><span style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9b958c;">Status</span><span style="font-family:'Inter',sans-serif;font-size:14px;color:#F2F1F0;text-align:right;">{{ detail.status }}</span></div>
+          </sc-if>
+        </div>
+        <div style="flex:1 1 380px;border:1px solid rgba(242,241,240,.1);border-radius:10px;overflow:hidden;background:rgba(242,241,240,.025);height:fit-content;">
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 18px;border-bottom:1px solid rgba(242,241,240,.08);"><span style="font-size:16px;">▦</span><span style="font-family:'Inter',sans-serif;font-size:14px;color:#F2F1F0;">{{ detail.media.video }}</span></div>
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 18px;border-bottom:1px solid rgba(242,241,240,.08);"><span style="font-size:16px;">♪</span><span style="font-family:'Inter',sans-serif;font-size:14px;color:#F2F1F0;">{{ detail.media.audio }}</span></div>
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 18px;"><span style="font-size:16px;">⊟</span><span style="font-family:'Inter',sans-serif;font-size:14px;color:#F2F1F0;">Subtitles · {{ detail.media.subs }}</span></div>
+        </div>
+      </div>
+
+      <!-- EPISODES (shows only) -->
+      <sc-if value="{{ detail.hasEpisodes }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;align-items:center;gap:18px;padding:30px 0 6px;">
+            <h2 style="font-family:'Oswald',sans-serif;font-weight:600;font-size:23px;letter-spacing:.02em;text-transform:uppercase;margin:0;">Episodes</h2>
+            <div style="display:flex;gap:8px;margin-left:6px;flex-wrap:wrap;">
+              <sc-for list="{{ detail.seasons }}" as="s" hint-placeholder-count="2">
+                <button onClick="{{ s.onClick }}" style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:7px 16px;border-radius:6px;cursor:pointer;border:1px solid {{ s.border }};background:{{ s.bg }};color:{{ s.fg }};">{{ s.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:26px 22px;padding:18px 0 10px;">
+            <sc-for list="{{ detail.episodes }}" as="ep" hint-placeholder-count="6">
+              <div style="display:flex;flex-direction:column;gap:11px;">
+                <div onClick="{{ ep.onPlay }}" tabindex="0" style="position:relative;aspect-ratio:16/9;border-radius:8px;overflow:hidden;cursor:pointer;background:#1c1a16;transition:transform .2s,box-shadow .2s;" style-hover="transform:scale(1.025);box-shadow:0 0 0 2px rgba(161,204,224,.85),0 14px 30px rgba(0,0,0,.5);">
+                  <div style="position:absolute;inset:0;background:{{ ep.bg }};"></div>
+                  <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(8,7,6,.5) 0%, rgba(8,7,6,.05) 50%, rgba(8,7,6,.2) 100%);"></div>
+                  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:rgba(20,18,15,.55);border:1.5px solid rgba(242,241,240,.85);display:flex;align-items:center;justify-content:center;color:#F2F1F0;font-size:16px;padding-left:3px;backdrop-filter:blur(2px);">▶</div>
+                  <sc-if value="{{ ep.watched }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;top:9px;right:9px;width:22px;height:22px;border-radius:50%;background:{{ accent }};color:#14120f;display:flex;align-items:center;justify-content:center;font-size:12px;">✓</div>
+                  </sc-if>
+                  <sc-if value="{{ ep.hasProgress }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.18);"><div style="height:100%;width:{{ ep.progress }};background:{{ accent }};"></div></div>
+                  </sc-if>
+                </div>
+                <div>
+                  <div style="font-family:'Oswald',sans-serif;font-weight:500;font-size:15px;letter-spacing:.02em;color:#F2F1F0;">{{ ep.numTitle }}</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:12px;color:#9b958c;margin-top:4px;">{{ ep.meta }}</div>
+                  <sc-if value="{{ ep.hasBlurb }}" hint-placeholder-val="{{ false }}">
+                    <p style="font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;color:#b7b1a7;margin:8px 0 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">{{ ep.blurb }}</p>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- CAST & CREW -->
+      <sc-if value="{{ detail.hasCast }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h2 style="font-family:'Oswald',sans-serif;font-weight:600;font-size:23px;letter-spacing:.02em;text-transform:uppercase;margin:0;padding:30px 0 14px;">Cast &amp; Crew</h2>
+          <div style="display:flex;gap:20px;overflow-x:auto;padding:4px 0 12px;">
+            <sc-for list="{{ detail.cast }}" as="c" hint-placeholder-count="6">
+              <div style="flex:0 0 auto;width:108px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;">
+                <div style="width:84px;height:84px;border-radius:50%;background:{{ c.bg }};display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:600;font-size:26px;color:#F2F1F0;border:1px solid rgba(242,241,240,.12);">{{ c.initials }}</div>
+                <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#F2F1F0;line-height:1.2;">{{ c.name }}</div>
+                <div style="font-family:'Inter',sans-serif;font-size:12px;color:#9b958c;line-height:1.2;">{{ c.role }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- RELATED ROWS -->
+      <sc-for list="{{ detail.rows }}" as="shelf" hint-placeholder-count="2">
+        <section style="margin-top:8px;">
+          <h2 style="font-family:'Oswald',sans-serif;font-weight:600;font-size:23px;letter-spacing:.02em;text-transform:uppercase;margin:0;padding:28px 0 14px;">{{ shelf.title }}</h2>
+          <div style="display:flex;gap:16px;overflow-x:auto;padding:2px 0 10px;scroll-behavior:smooth;">
+            <sc-for list="{{ shelf.items }}" as="item" hint-placeholder-count="6">
+              <div onClick="{{ item.onClick }}" tabindex="0" style="position:relative;flex:0 0 auto;width:300px;height:169px;border-radius:8px;overflow:hidden;cursor:pointer;background:#1c1a16;transition:transform .24s cubic-bezier(.2,.7,.2,1),box-shadow .24s;" style-hover="transform:scale(1.055);box-shadow:0 0 0 2px rgba(161,204,224,.85),0 18px 38px rgba(0,0,0,.55);">
+                <div style="position:absolute;inset:0;background:{{ item.bg }};"></div>
+                <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(8,7,6,.86) 0%, rgba(8,7,6,.2) 46%, transparent 72%);"></div>
+                <sc-if value="{{ item.hasBadge }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;top:10px;left:10px;font-family:'Oswald',sans-serif;font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#14120f;background:{{ accent }};padding:3px 7px;border-radius:4px;">{{ item.badge }}</div>
+                </sc-if>
+                <div style="position:absolute;left:14px;right:14px;bottom:13px;">
+                  <div style="font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;letter-spacing:.02em;text-transform:uppercase;color:#F2F1F0;line-height:1.05;">{{ item.title }}</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:11px;color:#b7b1a7;margin-top:3px;">{{ item.meta }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- TV MODE HINT -->
+  <sc-if value="{{ tvMode }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:70;display:flex;align-items:center;gap:18px;background:rgba(20,18,15,.92);border:1px solid rgba(242,241,240,.16);border-radius:10px;padding:11px 20px;backdrop-filter:blur(8px);box-shadow:0 12px 40px rgba(0,0,0,.5);">
+      <span style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#A1CCE0;">Focus Mode</span>
+      <span style="font-family:'Inter',sans-serif;font-size:13px;color:#cfc9bf;">Arrow keys to navigate · Enter to open · Esc to exit</span>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#A1CCE0&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#A1CCE0&quot;,&quot;#849396&quot;,&quot;#D9D7C2&quot;]}}">
+class Component extends DCLogic {
+  state = { screen:'home', seed:7, tvMode:false, heroIdx:0, focRow:0, focCol:0, tick:0, grid:null, detailSeason:0 };
+
+  FILMS = [
+    {t:'2001: A Space Odyssey',y:1968,d:'Stanley Kubrick',g:'Science Fiction',s:'MGM',r:8.3,m:149,b:"A voyage to Jupiter becomes a confrontation with the infinite, as a sentient computer turns on its crew and humankind reaches for the next stage of evolution."},
+    {t:'Stalker',y:1979,d:'Andrei Tarkovsky',g:'Science Fiction',s:'Mosfilm',r:8.1,m:162,b:"A guide leads two men into the Zone, a forbidden landscape where a hidden room is said to grant one's deepest, most secret wish."},
+    {t:'In the Mood for Love',y:2000,d:'Wong Kar-wai',g:'Romance',s:'Block 2',r:8.1,m:98,b:"Two neighbors in 1960s Hong Kong, each betrayed by their spouses, drift into a tender, restrained romance bound by longing and propriety."},
+    {t:'Mulholland Drive',y:2001,d:'David Lynch',g:'Neo-Noir',s:'Universal',r:7.9,m:147,b:"An aspiring actress and an amnesiac collide in a dreamlike Los Angeles where identity, desire, and reality slowly dissolve."},
+    {t:'There Will Be Blood',y:2007,d:'Paul Thomas Anderson',g:'Drama',s:'Paramount Vantage',r:8.2,m:158,b:"A silver-miner-turned-oilman ruthlessly builds an empire across turn-of-the-century California, consumed by greed and a war of wills with a young preacher."},
+    {t:'Parasite',y:2019,d:'Bong Joon-ho',g:'Thriller',s:'CJ Entertainment',r:8.5,m:132,b:"A destitute family schemes its way into the household of the wealthy Parks, until a buried secret threatens to upend them all."},
+    {t:'Seven Samurai',y:1954,d:'Akira Kurosawa',g:'Action',s:'Toho',r:8.6,m:207,b:"A poor village hires seven masterless samurai to defend it from marauding bandits in Kurosawa's towering epic of honor and sacrifice."},
+    {t:'Apocalypse Now',y:1979,d:'Francis Ford Coppola',g:'War',s:'United Artists',r:8.4,m:147,b:"A captain journeys up-river to assassinate a renegade colonel, descending ever deeper into the heart of darkness and the madness of war."},
+    {t:'Persona',y:1966,d:'Ingmar Bergman',g:'Drama',s:'AB Svensk',r:8.1,m:83},
+    {t:'Tokyo Story',y:1953,d:'Yasujiro Ozu',g:'Drama',s:'Shochiku',r:8.2,m:136},
+    {t:'The Godfather',y:1972,d:'Francis Ford Coppola',g:'Crime',s:'Paramount',r:9.2,m:175},
+    {t:'Chungking Express',y:1994,d:'Wong Kar-wai',g:'Romance',s:'Jet Tone',r:8.0,m:102},
+    {t:'Blade Runner',y:1982,d:'Ridley Scott',g:'Science Fiction',s:'Warner Bros.',r:8.1,m:117},
+    {t:'No Country for Old Men',y:2007,d:'Coen Brothers',g:'Neo-Noir',s:'Miramax',r:8.2,m:122},
+    {t:'The Shining',y:1980,d:'Stanley Kubrick',g:'Horror',s:'Warner Bros.',r:8.4,m:146},
+    {t:'Vertigo',y:1958,d:'Alfred Hitchcock',g:'Thriller',s:'Paramount',r:8.3,m:128},
+    {t:'Rashomon',y:1950,d:'Akira Kurosawa',g:'Crime',s:'Daiei',r:8.2,m:88},
+    {t:'8 1/2',y:1963,d:'Federico Fellini',g:'Drama',s:'Cineriz',r:8.0,m:138},
+    {t:'Taxi Driver',y:1976,d:'Martin Scorsese',g:'Neo-Noir',s:'Columbia',r:8.2,m:114},
+    {t:'Goodfellas',y:1990,d:'Martin Scorsese',g:'Crime',s:'Warner Bros.',r:8.7,m:145},
+    {t:'Punch-Drunk Love',y:2002,d:'Paul Thomas Anderson',g:'Romance',s:'Columbia',r:7.3,m:95},
+    {t:'Drive',y:2011,d:'Nicolas Winding Refn',g:'Neo-Noir',s:'FilmDistrict',r:7.8,m:100},
+    {t:'The Master',y:2012,d:'Paul Thomas Anderson',g:'Drama',s:'The Weinstein Co.',r:7.4,m:138},
+    {t:'Aguirre, the Wrath of God',y:1972,d:'Werner Herzog',g:'Adventure',s:'Werner Herzog',r:7.8,m:95},
+    {t:'Solaris',y:1972,d:'Andrei Tarkovsky',g:'Science Fiction',s:'Mosfilm',r:8.0,m:167},
+    {t:'Yi Yi',y:2000,d:'Edward Yang',g:'Drama',s:'1+2 Seisaku',r:8.1,m:173},
+    {t:'Come and See',y:1985,d:'Elem Klimov',g:'War',s:'Mosfilm',r:8.3,m:142},
+    {t:'Days of Heaven',y:1978,d:'Terrence Malick',g:'Romance',s:'Paramount',r:7.8,m:94},
+    {t:'Barry Lyndon',y:1975,d:'Stanley Kubrick',g:'Drama',s:'Warner Bros.',r:8.1,m:185},
+    {t:'Fargo',y:1996,d:'Coen Brothers',g:'Crime',s:'Gramercy',r:8.1,m:98},
+    {t:'The Big Lebowski',y:1998,d:'Coen Brothers',g:'Comedy',s:'Gramercy',r:8.1,m:117},
+    {t:'Heat',y:1995,d:'Michael Mann',g:'Crime',s:'Warner Bros.',r:8.3,m:170},
+    {t:'Oldboy',y:2003,d:'Park Chan-wook',g:'Neo-Noir',s:'Show East',r:8.3,m:120},
+    {t:'Memories of Murder',y:2003,d:'Bong Joon-ho',g:'Crime',s:'CJ Entertainment',r:8.1,m:131},
+    {t:'A Brighter Summer Day',y:1991,d:'Edward Yang',g:'Drama',s:'Yang & His Gang',r:8.1,m:237},
+    {t:'Mirror',y:1975,d:'Andrei Tarkovsky',g:'Drama',s:'Mosfilm',r:8.1,m:107},
+  ];
+
+  SHOWS = [
+    {t:'Andor',ys:'2022',ye:'2025',g:'Science Fiction',net:'Disney+',studio:'Lucasfilm',r:8.3,cr:'TV-14',tag:'A Star Wars Story',ended:true,
+      ov:"In an era filled with danger, deception and intrigue, Cassian Andor discovers the difference he can make in the struggle against the tyrannical Galactic Empire. He embarks on a path destined to turn him into a rebel hero.",
+      seasons:[{n:1,eps:12},{n:2,eps:12}]},
+    {t:'The West Wing',ys:'1999',ye:'2006',g:'Drama',net:'NBC',studio:'Warner Bros. Television',r:8.8,cr:'TV-PG',tag:'Let Bartlet be Bartlet.',ended:true,
+      ov:"The lives of the staffers in the West Wing of the Bartlet White House, where the great issues of the day are debated with wit, idealism and breakneck dialogue.",
+      seasons:[{n:1,eps:10},{n:2,eps:10}]},
+    {t:'Breaking Bad',ys:'2008',ye:'2013',g:'Crime',net:'AMC',studio:'Sony Pictures Television',r:9.5,cr:'TV-MA',tag:'Change the equation.',ended:true,
+      ov:"A high-school chemistry teacher diagnosed with terminal lung cancer turns to manufacturing methamphetamine to secure his family's future, partnering with a former student.",
+      seasons:[{n:1,eps:7},{n:2,eps:13}]},
+    {t:'Mad Men',ys:'2007',ye:'2015',g:'Drama',net:'AMC',studio:'Lionsgate Television',r:8.7,cr:'TV-MA',tag:'Where the truth lies.',ended:true,
+      ov:"A drama about one of New York's most prestigious ad agencies at the dawn of the 1960s, centered on the enigmatic, brilliant, self-invented Don Draper.",
+      seasons:[{n:1,eps:13}]},
+    {t:'The Wire',ys:'2002',ye:'2008',g:'Crime',net:'HBO',studio:'HBO',r:9.3,cr:'TV-MA',tag:'Listen carefully.',ended:true,
+      ov:"Told from the points of view of both the Baltimore homicide and narcotics detectives and their targets, the series captures a city in which the war on drugs has become a self-sustaining bureaucracy.",
+      seasons:[{n:1,eps:13}]},
+    {t:'Succession',ys:'2018',ye:'2023',g:'Drama',net:'HBO',studio:'HBO',r:8.9,cr:'TV-MA',tag:'Money changes everything.',ended:true,
+      ov:"The Roy family controls one of the biggest media and entertainment conglomerates in the world, but their world changes when their father steps back from the company.",
+      seasons:[{n:1,eps:10}]},
+    {t:'Band of Brothers',ys:'2001',ye:'2001',g:'War',net:'HBO',studio:'HBO',r:9.4,cr:'TV-MA',tag:'They depended on each other. And the world depended on them.',ended:true,
+      ov:"The story of Easy Company of the U.S. Army 101st Airborne Division and their mission in WWII Europe, from Operation Overlord through V-J Day.",
+      seasons:[{n:1,eps:10}]},
+    {t:'Barry',ys:'2018',ye:'2023',g:'Comedy',net:'HBO',studio:'HBO',r:8.4,cr:'TV-MA',tag:'A hitman finds his calling.',ended:true,
+      ov:"A depressed, low-rent hitman from the Midwest travels to Los Angeles to kill someone and stumbles into the city's theatre-arts scene, longing to leave his old life behind.",
+      seasons:[{n:1,eps:8}]},
+  ];
+
+  EPISODES = {
+    'The West Wing S1':[
+      {t:'Pilot',m:44,r:7.1,o:"The senior staff are summoned early to handle a brewing crisis as hundreds of Cubans cross the Atlantic, while the President injures himself in a bicycle accident."},
+      {t:'Post Hoc, Ergo Propter Hoc',m:41,r:6.7,o:"The Vice President refuses to fall in line with Bartlet. Sam discusses the problem of Laurie with Josh and Toby. Bartlet hires Mandy as his media consultant."},
+      {t:'A Proportional Response',m:44,r:8.0,o:"Still enraged, Bartlet wants a show of deadly force. C.J. is upset about being kept out of the loop, and Josh hires the President's new personal aide, Charlie."},
+      {t:'Five Votes Down',m:44,r:7.8,o:"Five votes keep an important gun-control bill from passing and the staff has 72 hours to find the errant congressmen. Toby is accused of insider trading."},
+      {t:'The Crackpots and These Women',m:44,r:7.8,o:'On "Big Block of Cheese Day" the staff meet fringe groups. Sam deals with a UFO enthusiast while C.J. fields a proposal for a wolves-only highway.'},
+      {t:'Mr. Willis of Ohio',m:44,r:8.0,o:"Toby and Mandy push a commerce bill with a census provision; three votes are decisive. Sam tutors C.J. on the census as Josh and Sam take Charlie out."},
+      {t:'The State Dinner',m:44,r:6.3,o:"The President of Indonesia is honored at a state dinner while the staff juggles a hurricane at sea, a teamster strike, and a tense standoff in Idaho."},
+      {t:'Enemies',m:44,r:7.7,o:"Bartlet and Hoynes clash before the Cabinet. C.J. fends off Danny; Mallory asks Sam out as the staff races to attach a measure to a banking bill."},
+      {t:'The Short List',m:44,r:8.1,o:"Bartlet must name a Supreme Court nominee when the favorite proves imperfect. A congressman claims one in three staffers use drugs."},
+      {t:'In Excelsis Deo',m:44,r:8.6,o:"Toby arranges a proper funeral for a homeless veteran while Josh and Sam plan a strike against Lillienfield, who is attacking Leo's past."},
+    ],
+    'Breaking Bad S1':[
+      {t:'Pilot',m:58,r:9.0,o:"Diagnosed with terminal cancer, chemistry teacher Walter White partners with former student Jesse Pinkman to cook methamphetamine and provide for his family."},
+      {t:"Cat's in the Bag...",m:48,r:8.7,o:"Walt and Jesse are left with two bodies and a mess to clean up, forcing a series of impossible and increasingly grim decisions."},
+      {t:"...And the Bag's in the River",m:48,r:8.8,o:"Walt wrestles with what to do about a captive while Skyler grows suspicious of his lengthening, unexplained absences."},
+      {t:'Cancer Man',m:48,r:8.3,o:"Walt finally tells his family about his diagnosis as the DEA traces an unusual windfall of high-purity meth to Albuquerque."},
+      {t:'Gray Matter',m:48,r:8.4,o:"Offered help by wealthy former colleagues, Walt makes a proud and fateful choice, while Jesse tries to go straight."},
+      {t:"Crazy Handful of Nothin'",m:48,r:9.3,o:"As chemotherapy takes its toll, Walt adopts the alias Heisenberg and walks into a violent confrontation with distributor Tuco."},
+      {t:'A No-Rough-Stuff-Type Deal',m:48,r:8.6,o:"Walt embraces his new identity and strikes a high-volume deal with Tuco that dramatically raises the stakes for everyone."},
+    ],
+  };
+
+  CAST = {
+    'The West Wing':[{n:'Martin Sheen',r:'President Bartlet'},{n:'Allison Janney',r:'C.J. Cregg'},{n:'Bradley Whitford',r:'Josh Lyman'},{n:'Rob Lowe',r:'Sam Seaborn'},{n:'John Spencer',r:'Leo McGarry'},{n:'Richard Schiff',r:'Toby Ziegler'},{n:'Janel Moloney',r:'Donna Moss'}],
+    'Breaking Bad':[{n:'Bryan Cranston',r:'Walter White'},{n:'Aaron Paul',r:'Jesse Pinkman'},{n:'Anna Gunn',r:'Skyler White'},{n:'Dean Norris',r:'Hank Schrader'},{n:'Bob Odenkirk',r:'Saul Goodman'},{n:'Giancarlo Esposito',r:'Gus Fring'}],
+    'Andor':[{n:'Diego Luna',r:'Cassian Andor'},{n:'Stellan Skarsgard',r:'Luthen Rael'},{n:"Genevieve O'Reilly",r:'Mon Mothma'},{n:'Adria Arjona',r:'Bix Caleen'},{n:'Denise Gough',r:'Dedra Meero'}],
+    'Goodfellas':[{n:'Robert De Niro',r:'James Conway'},{n:'Ray Liotta',r:'Henry Hill'},{n:'Joe Pesci',r:'Tommy DeVito'},{n:'Lorraine Bracco',r:'Karen Hill'}],
+    'The Godfather':[{n:'Marlon Brando',r:'Vito Corleone'},{n:'Al Pacino',r:'Michael Corleone'},{n:'James Caan',r:'Sonny Corleone'},{n:'Robert Duvall',r:'Tom Hagen'}],
+    'There Will Be Blood':[{n:'Daniel Day-Lewis',r:'Daniel Plainview'},{n:'Paul Dano',r:'Eli Sunday'},{n:'Dillon Freasier',r:'H.W. Plainview'}],
+    '2001: A Space Odyssey':[{n:'Keir Dullea',r:'Dr. Dave Bowman'},{n:'Gary Lockwood',r:'Dr. Frank Poole'},{n:'Douglas Rain',r:'HAL 9000 (voice)'}],
+    'Parasite':[{n:'Song Kang-ho',r:'Ki-taek'},{n:'Lee Sun-kyun',r:'Mr. Park'},{n:'Cho Yeo-jeong',r:'Yeon-kyo'},{n:'Choi Woo-shik',r:'Ki-woo'}],
+    'Seven Samurai':[{n:'Toshiro Mifune',r:'Kikuchiyo'},{n:'Takashi Shimura',r:'Kambei Shimada'}],
+    'Taxi Driver':[{n:'Robert De Niro',r:'Travis Bickle'},{n:'Jodie Foster',r:'Iris'},{n:'Cybill Shepherd',r:'Betsy'}],
+  };
+
+  GRADS = [['#1f3a3a','#0b1716'],['#3a2420','#150c0a'],['#272c46','#0f1119'],['#3a3220','#16120a'],['#33203a','#140c17'],['#1f331f','#0b160b'],['#2b2f33','#101113'],['#3a2433','#150c13'],['#203a36','#0b1614'],['#3a2a20','#160f0a'],['#26303a','#0d1318'],['#3a2030','#150b11']];
+  TILES = [['#4E433D','#241f1b','#D9D7C2','#A1CCE0'],['#2b3033','#161819','#D9D7C2','#A1CCE0'],['#302D26','#1a1814','#849396','#D9D7C2'],['#3a4346','#1d2223','#D9D7C2','#A1CCE0'],['#433a3f','#211d20','#D9D7C2','#849396']];
+  VIDEOS = ['1080p HEVC SDR','2160p HEVC HDR10','1080p H.264 SDR','2160p HEVC Dolby Vision'];
+  AUDIOS = ['English · AAC 5.1','English · DTS-HD MA 5.1','English · TrueHD Atmos 7.1','Original · FLAC 2.0'];
+  SUBS = ['English (SRT)','English, French (PGS)','English SDH','None'];
+  MOVIE_CR = ['PG-13','R','PG','R'];
+
+  get accent(){ return this.props.accent || '#A1CCE0'; }
+
+  hash(str){ let h=0; str=''+str; for(let i=0;i<str.length;i++){ h=(h*31+str.charCodeAt(i))>>>0; } return h; }
+  fmt(min){ return Math.floor(min/60)+'h '+(min%60)+'m'; }
+  rng(seed){ let t=seed>>>0; return ()=>{ t+=0x6D2B79F5; let r=Math.imul(t^t>>>15,1|t); r^=r+Math.imul(r^r>>>7,61|r); return ((r^r>>>14)>>>0)/4294967296; }; }
+  shuf(arr,rnd){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  initials(name){ return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
+  endsAt(min){ const d=new Date(Date.now()+min*60000); let h=d.getHours(), ap=h>=12?'PM':'AM'; h=h%12||12; const mm=(''+d.getMinutes()).padStart(2,'0'); return 'Ends at '+h+':'+mm+' '+ap; }
+  crit(t){ return 70+(this.hash('c'+t)%30); }
+  mediaInfo(t){ const h=this.hash('m'+t); return { video:this.VIDEOS[h%4], audio:this.AUDIOS[(h>>>2)%4], subs:this.SUBS[(h>>>4)%4] }; }
+
+  bgFor(t){ const [a,b]=this.GRADS[this.hash(t)%this.GRADS.length]; return `radial-gradient(120% 95% at 76% 14%, rgba(255,255,255,.14), rgba(255,255,255,0) 52%), radial-gradient(90% 130% at 12% 105%, rgba(0,0,0,.55), transparent 55%), linear-gradient(150deg, ${a} 0%, ${b} 100%)`; }
+  dirBg(name){ return `radial-gradient(100% 70% at 50% -10%, rgba(255,255,255,.12), transparent 60%), linear-gradient(160deg, #3c4267 0%, #1d2034 100%)`; }
+  dirAvatar(name){ const hues=[['#849396','#4E433D'],['#A1CCE0','#3c4267'],['#9b8f7e','#4E433D'],['#6f8a8f','#23303a'],['#7e6f86','#2c2435']]; const [a,b]=hues[this.hash(name)%hues.length]; return `linear-gradient(150deg, ${a}, ${b})`; }
+
+  mv(f){ return { id:f.t, title:f.t, meta:f.y+' · '+this.fmt(f.m), bg:this.bgFor(f.t), showBottom:true, z:'1', tf:'none', fx:'0 6px 18px rgba(0,0,0,.4)', _f:f, onClick:()=>this.openDetail(f) }; }
+  sv(sh){ const n=sh.seasons.length; const yr=sh.ys+((sh.ye&&sh.ye!==sh.ys)?'–'+sh.ye:''); return { id:sh.t, title:sh.t, meta:n+' Season'+(n>1?'s':'')+' · '+yr, bg:this.bgFor(sh.t), showBottom:true, hasBadge:true, badge:'Series', z:'1', tf:'none', fx:'0 6px 18px rgba(0,0,0,.4)', _show:sh, onClick:()=>this.openDetail(sh) }; }
+
+  directors(){ const map={}; this.FILMS.forEach(f=>{ (map[f.d]=map[f.d]||[]).push(f); }); return Object.keys(map).map(d=>({d,films:map[d]})).sort((a,b)=>b.films.length-a.films.length); }
+  studios(){ const map={}; this.FILMS.forEach(f=>{ (map[f.s]=map[f.s]||[]).push(f); }); return Object.keys(map).map(s=>({s,films:map[s]})).sort((a,b)=>b.films.length-a.films.length); }
+
+  epsFor(show,seasonN){
+    const real=this.EPISODES[show.t+' S'+seasonN];
+    const cnt=(show.seasons.find(s=>s.n===seasonN)||{eps:10}).eps;
+    const out=[];
+    for(let i=1;i<=cnt;i++){
+      const rd=real&&real[i-1];
+      const title=rd?rd.t:'Episode '+i;
+      const rt=rd&&rd.m?rd.m:(42+this.hash(show.t+seasonN+'l'+i)%16);
+      const rat=rd&&rd.r?rd.r:(Math.max(6.5,show.r-1.2+(this.hash(show.t+seasonN+'r'+i)%14)/10));
+      const watched=(seasonN===1&&i<3);
+      const prog=(seasonN===1&&i===3)?'42%':null;
+      out.push({ num:i, title, m:rt, rat,
+        numTitle:i+'. '+title,
+        meta:rt+'m  ·  ★ '+(typeof rat==='number'?rat.toFixed(1):rat)+'  ·  '+this.endsAt(rt),
+        blurb:rd?rd.o:'', hasBlurb:!!(rd&&rd.o), bg:this.bgFor(show.t+' '+seasonN+'x'+i),
+        watched, progress:prog, hasProgress:!!prog, onPlay:()=>{} });
+    }
+    return out;
+  }
+
+  exploreGen(key, rnd){
+    const F=this.FILMS;
+    if(key==='year'){ const years=[...new Set(F.map(f=>f.y))]; const y=this.shuf(years,rnd)[0]; return {lens:'A Year in Film',title:this.shuf(years,rnd)[0]+' & Around',items:this.shuf(F,rnd).slice(0,10).map(f=>this.mv(f)),layout:'A'}; }
+    if(key==='acclaimed'){ return {lens:'Hidden Gems',title:'Acclaimed & Unwatched',items:this.shuf(F.filter(f=>f.r>=8.1),rnd).map(f=>this.mv(f)),layout:'A'}; }
+    if(key==='spotlight'){ const d=this.shuf(this.directors().filter(x=>x.films.length>=2),rnd)[0]; return {lens:'Director Spotlight',title:d.d,items:d.films.map(f=>this.mv(f)),layout:'A'}; }
+    if(key==='genre'){ const gs=[...new Set(F.map(f=>f.g))]; const g=this.shuf(gs,rnd)[0]; return {lens:'If You Like',title:g,items:this.shuf(F.filter(f=>f.g===g),rnd).map(f=>this.mv(f)),layout:'A'}; }
+    if(key==='studio'){ const st=this.shuf(this.studios().filter(x=>x.films.length>=2),rnd)[0]; return {lens:'From the Vault',title:st.s,items:this.shuf(st.films,rnd).map(f=>this.mv(f)),layout:'A'}; }
+    if(key==='decade'){ const decs=[...new Set(F.map(f=>Math.floor(f.y/10)*10))]; const dc=this.shuf(decs,rnd)[0]; return {lens:'Lost in Time',title:'Hidden in the '+dc+'s',items:this.shuf(F.filter(f=>Math.floor(f.y/10)*10===dc),rnd).map(f=>this.mv(f)),layout:'A'}; }
+    if(key==='critics'){ return {lens:'Top of the Library',title:"Critics' Highest Rated",items:F.slice().sort((a,b)=>b.r-a.r).slice(0,10).map(f=>this.mv(f)),layout:'A'}; }
+    if(key==='world'){ return {lens:'Passport',title:'Around the World',items:this.shuf(F.filter(f=>['Mosfilm','Toho','Daiei','Shochiku','CJ Entertainment','Jet Tone','Block 2','AB Svensk','Cineriz','Show East','1+2 Seisaku','Yang & His Gang'].includes(f.s)),rnd).map(f=>this.mv(f)),layout:'A'}; }
+    return {lens:'Explore',title:'Surprise Me',items:this.shuf(F,rnd).slice(0,10).map(f=>this.mv(f)),layout:'A'};
+  }
+
+  buildBase(){
+    const rnd=this.rng(this.state.seed);
+    const F=this.FILMS;
+    const shelves=[];
+    const cw=this.shuf(F,rnd).slice(0,6).map(f=>{ const v=this.mv(f); v.hasProgress=true; v.progress=(18+Math.floor(rnd()*64))+'%'; return v; });
+    shelves.push({lens:'Pick Up Where You Left Off',title:'Continue Watching',items:cw,layout:'A'});
+    // Up Next (episodes)
+    const upnext=this.shuf(this.SHOWS,rnd).slice(0,5).map((sh,i)=>{ const e=2+i; const ep=this.epsFor(sh,1)[e-1]||{title:'Episode '+e}; return { title:sh.t, meta:'S1 · E'+e+' · '+ep.title, bg:this.bgFor(sh.t+' '+e), showBottom:true, hasBadge:true, badge:'Up Next', hasProgress:true, progress:(20+i*12)+'%', z:'1',tf:'none',fx:'0 6px 18px rgba(0,0,0,.4)', onClick:()=>this.openDetail(sh,1) }; });
+    shelves.push({lens:'Next Episode',title:'Up Next',items:upnext,layout:'A'});
+    const nr=F.slice().sort((a,b)=>b.y-a.y).slice(0,12).map(f=>{ const v=this.mv(f); v.meta='Added '+(['2d','5d','1w','2w','3w','1mo'][this.hash(f.t)%6])+' ago'; return v; });
+    shelves.push({lens:'Just Added',title:'New Releases',items:nr,layout:'A'});
+    const dpick=this.shuf(this.directors().filter(x=>x.films.length>=3),rnd)[0];
+    shelves.push({lens:'Director Spotlight',title:'Spotlight on '+dpick.d,items:dpick.films.map(f=>this.mv(f)).concat(this.shuf(F.filter(f=>f.d!==dpick.d),rnd).slice(0,4).map(f=>this.mv(f))),layout:'A'});
+    const gpick=this.shuf([...new Set(F.map(f=>f.g))].filter(g=>F.filter(f=>f.g===g).length>=3),rnd)[0];
+    shelves.push({lens:'If You Like',title:gpick,items:this.shuf(F.filter(f=>f.g===gpick),rnd).map(f=>this.mv(f)),layout:'A'});
+    // Series
+    shelves.push({lens:'Television',title:'Series in the Library',items:this.shuf(this.SHOWS,rnd).map(sh=>this.sv(sh)),layout:'A'});
+    const spick=this.shuf(this.studios().filter(x=>x.films.length>=2),rnd)[0];
+    shelves.push({lens:'From the Vault',title:spick.s,items:this.shuf(spick.films,rnd).map(f=>this.mv(f)),layout:'A'});
+    const decs=[...new Set(F.map(f=>Math.floor(f.y/10)*10))].sort();
+    const decItems=decs.map((dc,i)=>{ const T=this.TILES[i%this.TILES.length]; return { big:dc+'s', sub:F.filter(f=>Math.floor(f.y/10)*10===dc).length+' films', bg:`linear-gradient(155deg, ${T[0]}, ${T[1]})`, tileFg:T[2], tileEyebrow:T[3], z:'1',tf:'none',fx:'0 6px 18px rgba(0,0,0,.4)', onClick:()=>this.openGridFor('Decade · '+dc+'s','Browse by Decade',F.filter(f=>Math.floor(f.y/10)*10===dc)) }; });
+    shelves.push({lens:'Browse by Decade',title:'Eras',items:decItems,layout:'C'});
+    const dirItems=this.directors().slice(0,12).map(x=>({ title:x.d, meta:x.films.length+' films', bg:this.dirBg(x.d), avatarBg:this.dirAvatar(x.d), initials:this.initials(x.d), hasAvatar:true, z:'1',tf:'none',fx:'0 6px 18px rgba(0,0,0,.4)', onClick:()=>this.openGridFor('Director · '+x.d,'Auteurs',x.films) }));
+    shelves.push({lens:'Auteurs',title:'Browse by Director',items:dirItems,layout:'B'});
+    const keys=this.shuf(['acclaimed','year','genre','studio','decade','critics','world','spotlight'],rnd);
+    for(let i=0;i<5;i++){ shelves.push(this.exploreGen(keys[i],this.rng(this.state.seed*97+i*13))); }
+    this.exKeys=keys; this.exCount=5;
+    return shelves;
+  }
+
+  addMore(){
+    if(!this.baseShelves||this.baseShelves.length>18) return;
+    const i=this.exCount; const allKeys=['year','genre','studio','decade','critics','world','acclaimed','spotlight'];
+    for(let k=0;k<2;k++){ this.baseShelves.push(this.exploreGen(allKeys[(i+k)%allKeys.length],this.rng(this.state.seed*131+(i+k)*29+this.state.tick))); }
+    this.exCount+=2; this.setState(s=>({tick:s.tick+1}));
+  }
+
+  openDetail(item, seasonN){ const isShow=!!item.seasons; this.detailItem=item; this.setState({screen:'detail', detailId:item.t, detailSeason:isShow?((seasonN||1)-1):0}); window.scrollTo({top:0}); }
+  openGridWith(title,lens,items){ this.setState({screen:'grid', grid:{ title, lens, count:items.length+' titles', bg:(items[0]&&items[0].bg)||this.bgFor(title), items }}); window.scrollTo({top:0}); }
+  openGridFor(title,lens,films){ this.openGridWith(title,lens,films.map(f=>this.mv(f))); }
+  openMovies(){ this.openGridFor('All Movies','The Library',this.FILMS.slice().sort((a,b)=>a.t.localeCompare(b.t))); }
+  openSeries(){ this.openGridWith('All Series','Television',this.SHOWS.map(sh=>this.sv(sh))); }
+  openGroups(){ this.openGridFor('Collections','Browse Groups',this.FILMS); }
+  goHome(){ this.setState({screen:'home'}); window.scrollTo({top:0}); }
+  back(){ this.setState({screen:'home'}); window.scrollTo({top:0}); }
+  reshuffle(){ this.setState(s=>({seed:s.seed+Math.floor(Math.random()*9000)+11, heroIdx:0}), ()=>{ this.baseShelves=this.buildBase(); this.heroItems=null; this.setState(s=>({tick:s.tick+1})); window.scrollTo({top:0}); }); }
+  toggleTv(){ this.setState(s=>({tvMode:!s.tvMode, focRow:0, focCol:0})); }
+
+  handleKey(e){
+    if(e.key==='Escape'&&this.state.tvMode){ this.setState({tvMode:false}); return; }
+    if(!this.state.tvMode||this.state.screen!=='home') return;
+    const sh=this.baseShelves||[];
+    const rowLen=(r)=> r===0?2:(sh[r-1]?sh[r-1].items.length:0);
+    let {focRow,focCol}=this.state;
+    if(e.key==='ArrowRight'){ focCol=Math.min(focCol+1,rowLen(focRow)-1); }
+    else if(e.key==='ArrowLeft'){ focCol=Math.max(focCol-1,0); }
+    else if(e.key==='ArrowDown'){ focRow=Math.min(focRow+1,sh.length); focCol=Math.min(focCol,rowLen(focRow)-1); }
+    else if(e.key==='ArrowUp'){ focRow=Math.max(focRow-1,0); focCol=Math.min(focCol,rowLen(focRow)-1); }
+    else if(e.key==='Enter'){ this.activate(); return; }
+    else return;
+    e.preventDefault();
+    this.setState({focRow,focCol},()=>this.scrollFocus());
+  }
+  activate(){
+    const {focRow,focCol}=this.state;
+    if(focRow===0){ if(this.heroItems&&this.heroItems[this.state.heroIdx]) this.openDetail(this.heroItems[this.state.heroIdx]); return; }
+    const sh=this.baseShelves[focRow-1]; const it=sh&&sh.items[focCol]; if(it&&it.onClick) it.onClick();
+  }
+  scrollFocus(){
+    const {focRow,focCol}=this.state;
+    if(focRow===0){ window.scrollTo({top:0,behavior:'smooth'}); return; }
+    const row=this.rowEls&&this.rowEls[focRow-1];
+    if(!row) return;
+    const card=row.children[focCol];
+    if(!card) return;
+    const rr=row.getBoundingClientRect(), cr=card.getBoundingClientRect();
+    row.scrollLeft=Math.max(0,row.scrollLeft+(cr.left-rr.left)-100);
+    const y=Math.max(0,window.scrollY+cr.top-window.innerHeight*0.42);
+    try{ window.scrollTo({top:y,behavior:'smooth'}); }catch(e){}
+    window.scrollTo(0,y);
+  }
+
+  detailVM(){
+    const it=this.detailItem; const isShow=!!it.seasons; const cast=(this.CAST[it.t]||[]).map(c=>({name:c.n,role:c.r,initials:this.initials(c.n),bg:this.dirAvatar(c.n)}));
+    const media=this.mediaInfo(it.t);
+    if(isShow){
+      const seasons=it.seasons.map((s,i)=>{ const active=i===this.state.detailSeason; return { label:'Season '+s.n, onClick:()=>this.setState({detailSeason:i}), bg:active?this.accent:'rgba(242,241,240,.05)', fg:active?'#14120f':'#cfc9bf', border:active?this.accent:'rgba(242,241,240,.18)' }; });
+      const cur=it.seasons[this.state.detailSeason]||it.seasons[0];
+      const eps=this.epsFor(it,cur.n);
+      const yr=it.ys+((it.ye&&it.ye!==it.ys)?' – '+it.ye:'');
+      return { isShow:true, title:it.t, bg:this.bgFor(it.t), dirLabel:'Series', playLabel:'Resume S1 E3',
+        hasTagline:!!it.tag, tagline:it.tag, cr:it.cr||'TV-14', yearLabel:yr, lengthLabel:it.seasons.length+' Season'+(it.seasons.length>1?'s':''), rating:it.r.toFixed(1),
+        hasCritic:false, hasEndsAt:false, blurb:it.ov,
+        genre:it.g, hasDirector:false, hasNetwork:true, network:it.net, studio:it.studio, hasStatus:true, status:it.ended?'Ended':'Continuing',
+        media, cast, hasCast:cast.length>0,
+        hasEpisodes:true, seasons, episodes:eps,
+        rows:[{title:'More Like This', items:this.shuf(this.SHOWS.filter(s=>s.t!==it.t),this.rng(this.hash(it.t))).slice(0,8).map(s=>this.sv(s))}] };
+    }
+    const same=this.FILMS.filter(x=>x.d===it.d&&x.t!==it.t);
+    const sim=this.shuf(this.FILMS.filter(x=>x.g===it.g&&x.t!==it.t),this.rng(this.hash(it.t))).slice(0,10);
+    const rows=[]; if(same.length) rows.push({title:'More from '+it.d,items:same.map(x=>this.mv(x))});
+    rows.push({title:'You Might Also Like',items:(sim.length?sim:this.shuf(this.FILMS,this.rng(this.hash(it.t))).slice(0,10)).map(x=>this.mv(x))});
+    return { isShow:false, title:it.t, bg:this.bgFor(it.t), dirLabel:'Directed by '+it.d, playLabel:'Play',
+      hasTagline:false, cr:this.MOVIE_CR[this.hash(it.t)%4], yearLabel:''+it.y, lengthLabel:this.fmt(it.m), rating:it.r.toFixed(1),
+      hasCritic:true, critic:this.crit(it.t)+'% critics', hasEndsAt:true, endsAt:this.endsAt(it.m),
+      blurb:it.b||(it.d+"'s "+it.y+' '+it.g.toLowerCase()+' is a cornerstone of the collection — essential viewing among the auteurs.'),
+      genre:it.g, hasDirector:true, director:it.d, hasNetwork:false, studio:it.s, hasStatus:false,
+      media, cast, hasCast:cast.length>0,
+      hasEpisodes:false, seasons:[], episodes:[], rows };
+  }
+
+  componentDidMount(){
+    this.baseShelves=this.buildBase();
+    this.rowEls={}; this.secEls={};
+    this.heroTimer=setInterval(()=>{ if(this.state.screen==='home'&&!this.state.tvMode) this.setState(s=>({heroIdx:(s.heroIdx+1)%(this.heroItems?this.heroItems.length:1)})); },9000);
+    this.onScroll=()=>{ if(this.state.screen!=='home')return; if(window.innerHeight+window.scrollY>document.body.offsetHeight-900) this.addMore(); };
+    window.addEventListener('scroll',this.onScroll,{passive:true});
+    this.onKey=(e)=>this.handleKey(e);
+    window.addEventListener('keydown',this.onKey);
+    this.setState(s=>({tick:s.tick+1}));
+  }
+  componentWillUnmount(){ clearInterval(this.heroTimer); window.removeEventListener('scroll',this.onScroll); window.removeEventListener('keydown',this.onKey); }
+
+  renderVals(){
+    const S=this.state;
+    const sh=this.baseShelves||[];
+    this.heroItems=this.heroItems||this.shuf(this.FILMS.filter(f=>f.r>=8.2),this.rng(S.seed*3+1)).slice(0,5);
+    const hf=this.heroItems[S.heroIdx%this.heroItems.length]||this.FILMS[0];
+    const heroFocP=S.tvMode&&S.focRow===0&&S.focCol===0;
+    const heroFocI=S.tvMode&&S.focRow===0&&S.focCol===1;
+    const hero={
+      title:hf.t, lens:'Spotlight', metaLine:hf.y+'  ·  '+hf.g+'  ·  '+this.fmt(hf.m)+'  ·  ★ '+hf.r.toFixed(1),
+      blurb:hf.b||(hf.d+"'s "+hf.y+' masterwork — among the most celebrated films in the collection.'),
+      bg:this.bgFor(hf.t), onPlay:()=>this.openDetail(hf), onInfo:()=>this.openDetail(hf),
+      playTf:heroFocP?'scale(1.05)':'none', playFx:heroFocP?'0 0 0 3px '+this.accent+', 0 12px 30px rgba(0,0,0,.5)':'none',
+      infoTf:heroFocI?'scale(1.05)':'none', infoFx:heroFocI?'0 0 0 3px '+this.accent:'none'
+    };
+    const heroDots=this.heroItems.map((f,i)=>({ bg:i===(S.heroIdx%this.heroItems.length)?this.accent:'rgba(242,241,240,.28)', onClick:()=>this.setState({heroIdx:i}) }));
+
+    const shelvesV=sh.map((shelf,si)=>{
+      const items=shelf.items.map((it,ci)=>{
+        const foc=S.tvMode&&S.focRow-1===si&&S.focCol===ci;
+        return Object.assign({},it,{ tf:foc?'scale(1.07)':'none', fx:foc?'0 0 0 3px '+this.accent+', 0 20px 44px rgba(0,0,0,.6)':'0 6px 18px rgba(0,0,0,.4)', z:foc?'40':'1' });
+      });
+      return { idx:si, lens:shelf.lens, hasLens:!!shelf.lens, title:shelf.title, items,
+        isA:shelf.layout==='A', isB:shelf.layout==='B', isC:shelf.layout==='C',
+        onAll:()=>{ const films=shelf.items.map(x=>x._f).filter(Boolean); const shows=shelf.items.map(x=>x._show).filter(Boolean); if(shows.length) this.openGridWith(shelf.title,shelf.lens||'Shelf',shelf.items.slice()); else this.openGridFor(shelf.title,shelf.lens||'Shelf',films.length?films:this.FILMS); },
+        secRef:(el)=>{ if(this.secEls)this.secEls[si]=el; }, rowRef:(el)=>{ if(this.rowEls)this.rowEls[si]=el; } };
+    });
+
+    const tvOn=S.tvMode;
+    const blank={rows:[],seasons:[],episodes:[],cast:[],media:{}};
+    // Reload/hot-reload safety: re-resolve the detail item from its id if the instance field was lost.
+    if(S.screen==='detail'&&!this.detailItem&&S.detailId){ this.detailItem=this.FILMS.find(f=>f.t===S.detailId)||this.SHOWS.find(s=>s.t===S.detailId)||null; }
+    const showDetail=S.screen==='detail'&&!!this.detailItem;
+    const showGrid=S.screen==='grid'&&!!S.grid;
+    return {
+      accent:this.accent,
+      isHome:!showDetail&&!showGrid, isGrid:showGrid, isDetail:showDetail,
+      hero, heroDots, shelvesV, grid:S.grid||{items:[]},
+      detail:showDetail?this.detailVM():blank,
+      tvMode:tvOn, tvBg:tvOn?this.accent:'rgba(242,241,240,.05)', tvFg:tvOn?'#14120f':'#F2F1F0', tvBorder:tvOn?this.accent:'rgba(242,241,240,.18)',
+      goHome:()=>this.goHome(), back:()=>this.back(), reshuffle:()=>this.reshuffle(), toggleTv:()=>this.toggleTv(),
+      openMovies:()=>this.openMovies(), openSeries:()=>this.openSeries(), openGroups:()=>this.openGroups()
+    };
+  }
+}
+</script>
+</body>
+</html>
