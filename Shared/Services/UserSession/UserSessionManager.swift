@@ -68,6 +68,10 @@ final class UserSessionManager {
         Defaults[.lastSignedInUserID] = .signedOut
         refreshCurrentSession()
 
+        // Drop the shared Top Shelf credentials so the system Top Shelf falls back to the static
+        // image rather than the signed-out user's content (no-op until the App Group is configured).
+        BrunoTopShelfCredentials.clear()
+
         logger.info(
             "Signed out current user",
             metadata: ["reason": .stringConvertible(String(describing: reason))]

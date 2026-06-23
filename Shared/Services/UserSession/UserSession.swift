@@ -45,6 +45,16 @@ final class UserSession {
         for service in services {
             service.userSessionDidStart()
         }
+
+        // Publish the session to the shared App Group so the system Top Shelf extension can
+        // render Continue Watching / Recently Added (roadmap §1b). No-op until the App Group
+        // capability is configured — see docs/TOP_SHELF_SETUP.md.
+        BrunoTopShelfCredentials.save(
+            serverURL: server.effectiveServerURL,
+            accessToken: user.accessToken,
+            userID: user.id,
+            serverID: server.id
+        )
     }
 
     @MainActor

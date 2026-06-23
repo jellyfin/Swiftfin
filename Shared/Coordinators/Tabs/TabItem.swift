@@ -94,7 +94,50 @@ extension TabItem {
         }
     }
 
+    #if os(tvOS)
+    // Bruno: the curated-collections hub — a category row + one capped shelf per group
+    // (Directors, Decades, Studios, …), each with "Show all" -> the full grid (roadmap §3).
+    static var collections: TabItem {
+        TabItem(
+            id: "collections",
+            title: L10n.collections,
+            systemImage: "square.stack.fill"
+        ) {
+            BrunoCollectionsView()
+        }
+    }
+
+    // Bruno: the owner's kids content is split across separate Jellyfin libraries (e.g.
+    // "Kids Movies" + "Kids Shows") with no single "Kids" user view — so match several
+    // candidate names / a "kids" keyword and merge them into one grid.
+    static var kids: TabItem {
+        TabItem(
+            id: "kids",
+            title: L10n.kids,
+            systemImage: "teddybear.fill"
+        ) {
+            BrunoUserViewLibraryTab(
+                title: "Kids",
+                anyOf: ["Kids", "Kids Movies", "Kids Shows", "Kids TV", "Kids Movies & Shows"],
+                keyword: "kids",
+                itemTypes: [.movie, .series]
+            )
+        }
+    }
+    #endif
+
     static var search: TabItem {
+        // Bruno tvOS IA: Search/Settings are trailing utility tabs — icon-only, no text.
+        #if os(tvOS)
+        TabItem(
+            id: "search",
+            title: L10n.search,
+            systemImage: "magnifyingglass",
+            labelStyle: .iconOnly
+        ) {
+            SearchView()
+        }
+        #else
         TabItem(
             id: "search",
             title: L10n.search,
@@ -102,9 +145,20 @@ extension TabItem {
         ) {
             SearchView()
         }
+        #endif
     }
 
     static var settings: TabItem {
+        #if os(tvOS)
+        TabItem(
+            id: "settings",
+            title: L10n.settings,
+            systemImage: "gearshape",
+            labelStyle: .iconOnly
+        ) {
+            SettingsView()
+        }
+        #else
         TabItem(
             id: "settings",
             title: L10n.settings,
@@ -112,5 +166,6 @@ extension TabItem {
         ) {
             SettingsView()
         }
+        #endif
     }
 }

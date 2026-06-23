@@ -28,19 +28,22 @@ struct MainTabView: View {
     #else
     @StateObject
     private var tabCoordinator = TabCoordinator {
+        // Bruno tvOS IA: Home · Movies · TV Shows · Collections · Kids · Search · Settings.
+        // "Media" (all-libraries) dropped — Movies/TV/Collections/Kids cover it without duplication.
         TabItem.home
-        TabItem.library(
-            title: L10n.tvShowsCapitalized,
-            systemName: "tv",
-            filters: .init(itemTypes: [.series])
-        )
         TabItem.library(
             title: L10n.movies,
             systemName: "film",
             filters: .init(itemTypes: [.movie])
         )
+        TabItem.library(
+            title: L10n.tvShowsCapitalized,
+            systemName: "tv",
+            filters: .init(itemTypes: [.series])
+        )
+        TabItem.collections
+        TabItem.kids
         TabItem.search
-        TabItem.media
         TabItem.settings
     }
     #endif
