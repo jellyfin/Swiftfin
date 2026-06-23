@@ -119,6 +119,17 @@ extension TabItem {
     #endif
 
     static var search: TabItem {
+        // Bruno tvOS IA: Search/Settings are trailing utility tabs — icon-only, no text.
+        #if os(tvOS)
+        TabItem(
+            id: "search",
+            title: L10n.search,
+            systemImage: "magnifyingglass",
+            labelStyle: .iconOnly
+        ) {
+            SearchView()
+        }
+        #else
         TabItem(
             id: "search",
             title: L10n.search,
@@ -126,9 +137,20 @@ extension TabItem {
         ) {
             SearchView()
         }
+        #endif
     }
 
     static var settings: TabItem {
+        #if os(tvOS)
+        TabItem(
+            id: "settings",
+            title: L10n.settings,
+            systemImage: "gearshape",
+            labelStyle: .iconOnly
+        ) {
+            SettingsView()
+        }
+        #else
         TabItem(
             id: "settings",
             title: L10n.settings,
@@ -136,5 +158,6 @@ extension TabItem {
         ) {
             SettingsView()
         }
+        #endif
     }
 }
