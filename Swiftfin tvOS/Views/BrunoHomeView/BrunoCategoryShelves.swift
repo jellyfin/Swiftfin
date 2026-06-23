@@ -27,6 +27,9 @@ struct BrunoCollectionCategory: Identifiable {
         case shelves
         /// The Genres page: a core-category panel on top, then the mixed sub-genre shelves.
         case genres
+        /// A grid of this category's own `children` — for synthetic categories with no parent
+        /// BoxSet (e.g. Boxed Sets, a computed set of box sets).
+        case items
     }
 
     let boxSet: BaseItemDto
@@ -141,7 +144,8 @@ struct BrunoCategoryShelves: View {
 
             PosterHStack(
                 title: nil,
-                type: .landscape,
+                // Big portrait cards (like the old Collections grid), not landscape.
+                type: .portrait,
                 items: Array(category.children.prefix(shelfCap))
             ) { item in
                 router.route(to: .item(item: item))
@@ -156,6 +160,8 @@ struct BrunoCategoryShelves: View {
                 router.route(to: .brunoGenres(parent: category.boxSet, core: nil))
             case .shelves:
                 router.route(to: .brunoCategoryShelves(parent: category.boxSet), in: namespace)
+            case .items:
+                router.route(to: .brunoItemsGrid(title: category.name, items: category.children), in: namespace)
             case .grid:
                 if category.boxSet.libraryType == .boxSet {
                     router.route(
