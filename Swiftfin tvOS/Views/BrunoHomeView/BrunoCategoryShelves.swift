@@ -72,8 +72,8 @@ struct BrunoCategoryShelves: View {
     @Namespace
     private var namespace
 
-    /// Items shown before "Show all" (roadmap §3: single line, ~12).
-    private let shelfCap = 12
+    /// Items lazily loaded into each shelf before the trailing "Show all" card.
+    private let shelfCap = 36
 
     var body: some View {
         ScrollView {
@@ -113,35 +113,32 @@ struct BrunoCategoryShelves: View {
 
     private func shelf(for category: BrunoCollectionCategory) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(eyebrow.uppercased())
-                        .font(.brunoBody(20, weight: .semibold))
-                        .tracking(3)
-                        .foregroundStyle(Color.bruno.accent)
+            VStack(alignment: .leading, spacing: 0) {
+                Text(eyebrow.uppercased())
+                    .font(.brunoBody(20, weight: .semibold))
+                    .tracking(3)
+                    .foregroundStyle(Color.bruno.accent)
 
-                    Text(category.name)
-                        .font(.brunoDisplay(36, weight: .semibold))
-                        .foregroundStyle(Color.bruno.fg)
-                }
-
-                Spacer()
-
-                if category.drillStyle != .grid || category.children.count > shelfCap {
-                    showAllButton(for: category)
-                }
+                Text(category.name)
+                    .font(.brunoDisplay(36, weight: .semibold))
+                    .foregroundStyle(Color.bruno.fg)
             }
             .padding(.horizontal, 50)
 
-            PosterHStack(
-                title: nil,
-                // Big portrait cards (like the old Collections grid), not landscape.
-                type: .portrait,
-                items: Array(category.children.prefix(shelfCap))
-            ) { item in
-                router.route(to: .item(item: item))
-            }
+            BrunoShelfRow(
+                items: Array(subCollections(of: category).prefix(shelfCap)),
+                onItem: { router.route(to: .item(item: $0)) },
+                onShowAll: { routeToShowAll(category) }
+            )
         }
+    }
+
+    /// A group shelf should show its sub-COLLECTIONS, not the loose movies inside each one
+    /// (the Directors shelf was listing every director's movies after the directors). Show only
+    /// the box sets; fall back to all children for a genuinely flat group (e.g. New Releases).
+    private func subCollections(of category: BrunoCollectionCategory) -> [BaseItemDto] {
+        let boxSets = category.children.filter { $0.type == .boxSet }
+        return boxSets.isEmpty ? category.children : boxSets
     }
 
     private func routeToShowAll(_ category: BrunoCollectionCategory) {
@@ -166,20 +163,4 @@ struct BrunoCategoryShelves: View {
         }
     }
 
-    private func showAllButton(for category: BrunoCollectionCategory) -> some View {
-        Button {
-            routeToShowAll(category)
-        } label: {
-            Label("Show all", systemImage: "chevron.right")
-                .font(.brunoBody(20, weight: .semibold))
-                .labelStyle(.titleAndIcon)
-                .padding(.horizontal, 22)
-                .padding(.vertical, 10)
-        }
-        .buttonStyle(.card)
-        // Source for the route's zoom transition, matching the stock library convention.
-        // Via .backport so it no-ops below tvOS 18 instead of failing to compile.
-        .backport
-        .matchedTransitionSource(id: "item", in: namespace)
-    }
 }
