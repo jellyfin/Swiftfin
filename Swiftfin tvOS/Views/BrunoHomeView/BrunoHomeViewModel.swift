@@ -71,6 +71,10 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
     func respond(to action: Action) -> State {
         switch action {
         case .refresh, .backgroundRefresh:
+            // Cancel any in-flight explore append too, so a stale-seed append can't resume after
+            // the rebuild and graft old shelves onto the new plan (its `Task.isCancelled` guards
+            // only protect against this if the task is actually cancelled here).
+            appendTask?.cancel()
             refreshTask?.cancel()
             refreshTask = Task { [weak self] in
                 await self?.performRefresh()
@@ -82,6 +86,7 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
             seed = Self.reseedRandom()
             explorePage = 0
             scrollResetToken &+= 1
+            appendTask?.cancel()
             refreshTask?.cancel()
             refreshTask = Task { [weak self] in
                 await self?.performRefresh()
