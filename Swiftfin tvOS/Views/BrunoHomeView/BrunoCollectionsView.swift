@@ -16,22 +16,13 @@ import SwiftUI
 
 //
 // The Collections tab, redesigned from a flat BoxSet grid into per-category shelves (roadmap §3):
-// a category row across the top that jumps to each shelf, then one capped horizontal shelf per
-// curated group (Directors, Decades, Studios, …). Each shelf header carries a "Show all" that
-// routes to the full grid for that group via the stock ItemLibrary -> PagingLibraryView.
+// a category row across the top, then one capped shelf per curated group (Directors, Decades,
+// Studios, …). Genres/Decades "Show all" drills into a further shelf-per-sub-group view (§4);
+// the rest open the stock full grid. Rendering is delegated to the shared BrunoCategoryShelves.
 struct BrunoCollectionsView: View {
 
     @StateObject
     private var viewModel = BrunoCollectionsViewModel()
-
-    @Router
-    private var router
-
-    @Namespace
-    private var namespace
-
-    /// Items shown before the "Show all" card (roadmap §3: single line, ~12).
-    private let shelfCap = 12
 
     var body: some View {
         Group {
@@ -43,7 +34,7 @@ struct BrunoCollectionsView: View {
             } else if viewModel.categories.isEmpty {
                 emptyState
             } else {
-                content
+                BrunoCategoryShelves(categories: viewModel.categories, eyebrow: "Collection")
             }
         }
         .toolbar(.hidden, for: .navigationBar)
@@ -51,100 +42,6 @@ struct BrunoCollectionsView: View {
             Task { await viewModel.load() }
         }
     }
-
-    private var content: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 36) {
-                    categoryRow(proxy: proxy)
-                        .padding(.top, 20)
-
-                    ForEach(viewModel.categories) { category in
-                        shelf(for: category)
-                            .id(category.id)
-                    }
-                }
-                .padding(.bottom, 60)
-            }
-        }
-    }
-
-    // MARK: Category row
-
-    private func categoryRow(proxy: ScrollViewProxy) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 16) {
-                ForEach(viewModel.categories) { category in
-                    Button {
-                        withAnimation { proxy.scrollTo(category.id, anchor: .top) }
-                    } label: {
-                        Text(category.name.uppercased())
-                            .font(.brunoBody(20, weight: .semibold))
-                            .tracking(2)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 12)
-                    }
-                    .buttonStyle(.card)
-                }
-            }
-            .padding(.horizontal, 50)
-        }
-        .focusSection()
-    }
-
-    // MARK: Shelf
-
-    private func shelf(for category: BrunoCollectionCategory) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("Collection".uppercased())
-                        .font(.brunoBody(20, weight: .semibold))
-                        .tracking(3)
-                        .foregroundStyle(Color.bruno.accent)
-
-                    Text(category.name)
-                        .font(.brunoDisplay(36, weight: .semibold))
-                        .foregroundStyle(Color.bruno.fg)
-                }
-
-                Spacer()
-
-                if category.children.count > shelfCap {
-                    showAllButton(for: category)
-                }
-            }
-            .padding(.horizontal, 50)
-
-            PosterHStack(
-                title: nil,
-                type: .landscape,
-                items: Array(category.children.prefix(shelfCap))
-            ) { item in
-                router.route(to: .item(item: item))
-            }
-        }
-    }
-
-    private func showAllButton(for category: BrunoCollectionCategory) -> some View {
-        Button {
-            router.route(
-                to: .library(library: ItemLibrary(parent: category.boxSet, filters: .default)),
-                in: namespace
-            )
-        } label: {
-            Label("Show all", systemImage: "chevron.right")
-                .font(.brunoBody(20, weight: .semibold))
-                .labelStyle(.titleAndIcon)
-                .padding(.horizontal, 22)
-                .padding(.vertical, 10)
-        }
-        .buttonStyle(.card)
-        // Source for the .library route's zoom transition, matching the stock library convention.
-        .matchedTransitionSource(id: "item", in: namespace)
-    }
-
-    // MARK: Empty
 
     private var emptyState: some View {
         VStack(spacing: 16) {
@@ -160,24 +57,6 @@ struct BrunoCollectionsView: View {
     }
 }
 
-// MARK: - BrunoCollectionCategory
-
-//
-// One curated group (a favorited BoxSet) plus its child sub-collections.
-struct BrunoCollectionCategory: Identifiable {
-
-    let boxSet: BaseItemDto
-    let children: [BaseItemDto]
-
-    var id: String {
-        boxSet.id ?? boxSet.displayTitle
-    }
-
-    var name: String {
-        boxSet.displayTitle
-    }
-}
-
 // MARK: - BrunoCollectionsViewModel
 
 @MainActor
@@ -187,6 +66,9 @@ final class BrunoCollectionsViewModel: ViewModel {
     private(set) var categories: [BrunoCollectionCategory] = []
     @Published
     private(set) var isLoading = true
+
+    /// Groups whose "Show all" should drill into a further shelf-per-sub-group view (§4).
+    private static let shelvesDrillGroups: Set<String> = ["genres", "decades"]
 
     func load() async {
         guard let userSession else {
@@ -204,7 +86,11 @@ final class BrunoCollectionsViewModel: ViewModel {
             guard let name = boxSet.name else { return nil }
             let children = snapshot.childrenByGroupName[name] ?? []
             guard children.isNotEmpty else { return nil }
-            return BrunoCollectionCategory(boxSet: boxSet, children: children)
+            return BrunoCollectionCategory(
+                boxSet: boxSet,
+                children: children,
+                showAllAsShelves: Self.shelvesDrillGroups.contains(name.lowercased())
+            )
         }
 
         isLoading = false
