@@ -1,52 +1,61 @@
 # Handoff — view Bruno Home on the tvOS Simulator
 
-> The native build is complete and merged. The **only** open item is a tvOS *Simulator*
-> text-entry quirk on this host (the focused field doesn't accept typed characters), which
-> blocks signing the app into Jellyfin from a fresh install. This is a host/Simulator issue,
-> **not** a Bruno code issue — do not modify Bruno source to "fix" it.
+> The native build is complete and merged (`bruno` → `main`, PR #1), green on Xcode 26.3
+> (tvOS + iOS), RNG + determinism verified. The remaining items below are **host/Simulator
+> artifacts, not Bruno code** — do **not** modify Bruno source to "fix" them.
 
-## Current state
-- Branch `bruno` is **merged into `main`** (PR #1). Builds **green on Xcode 26.3** for both
-  `Swiftfin tvOS` and `Swiftfin` (iOS). RNG + determinism verified (`./bruno-verify/run.sh`).
-- The Bruno tvOS app installs, launches, and renders the Bruno accent + Oswald/Inter fonts on
-  the booted Apple TV 4K (tvOS 18.5) simulator. Bundle id `com.diplomacymusic.bruno`.
-- It sits on the **"Connect to server"** screen: the URL field focuses, but typed characters
-  don't land — `I/O ▸ Keyboard ▸ Connect Hardware Keyboard` shows checked yet input doesn't
-  reach the field, and toggling it doesn't help.
+## 1. Text input into the "Connect to server" URL field — ✅ SOLVED
+Not a hardware-keyboard problem. The tvOS **on-screen keyboard drops characters when fed a
+whole string at once** (automation `type` overruns its input rate, so all but ~1 char are
+lost). Fix: focus the field → Select/Return to enter edit mode → **type one character at a
+time / slowly**. Single discrete key presses land reliably. No I/O-menu toggle or source
+change needed.
 
-## Goal
-Enter the server URL, connect, sign in, and reach the **Bruno Home** rendering the real
-library; screenshot it.
+## 2. Crash on relaunch after sign-in — ⚠️ environment/signing artifact
+Once a session is persisted, the app **traps on every subsequent launch** (looks like "animates
+then nothing" from the tvOS app switcher).
 
-- Server URL: `http://192.168.50.19:8899`
-- Credentials: **in the gitignored `bruno_jellyfin.env`** at the repo root (`JF_USER_NAME` /
-  `JF_PASS`). Never commit them. `source bruno_jellyfin.env` to load.
+- **Crash site:** `assertionFailure("access token missing in keychain")` —
+  `Shared/SwiftfinStore/SwiftinStore+UserState.swift:33`, reached from `UserSession.init`
+  (`UserSession.swift:34`) via `UserSessionManager.resolveCurrentSession()` at
+  `SwiftfinApp.configure()` launch.
+- **Why:** the sim build is compiled with `CODE_SIGNING_ALLOWED=NO` (our compile gate), which
+  strips the keychain-access-group entitlement. Keychain writes work *within* a running process
+  but **don't persist across relaunch**. After sign-in, `Defaults[.lastSignedInUserID]` + the
+  user/server records persist but the keychain access-token is gone next launch → the stock
+  upstream `assertionFailure` traps (Debug build).
+- **Not a Bruno bug:** a properly signed device build persists the token; a Release build returns
+  `""` instead of trapping. Out of the original (compile-green) scope.
 
-## Build / run the sim
+### `CODE_SIGNING_ALLOWED=NO` is for the COMPILE GATE only
+That flag is correct for *verifying the build compiles* (no team needed). To *run a usable app
+on the sim across relaunches*, build with signing so entitlements are embedded (below).
+
+## 3. Two ways to actually view the Home
+**Quick (no rebuild) — screenshot in the first session, don't relaunch:**
 ```bash
-# build (Xcode 26.3)
-xcodebuild -project Swiftfin.xcodeproj -scheme "Swiftfin tvOS" \
-  -destination 'generic/platform=tvOS Simulator' -skipMacroValidation build CODE_SIGNING_ALLOWED=NO
-# boot + install + launch
 DEV=$(xcrun simctl list devices tvOS available | grep -m1 -oE '[0-9A-F-]{36}')
-xcrun simctl boot "$DEV"; open -a Simulator
-APP=$(find ~/Library/Developer/Xcode/DerivedData/Swiftfin-*/Build/Products/Debug-appletvsimulator -maxdepth 1 -name "*.app" | head -1)
-xcrun simctl install "$DEV" "$APP"
-xcrun simctl launch "$DEV" com.diplomacymusic.bruno
+xcrun simctl terminate "$DEV" com.diplomacymusic.bruno 2>/dev/null
+xcrun simctl uninstall "$DEV" com.diplomacymusic.bruno          # clear the crash-looping stale session
+APP="$(find ~/Library/Developer/Xcode/DerivedData/Swiftfin-*/Build/Products/Debug-appletvsimulator -maxdepth 1 -name '*.app' | head -1)"
+xcrun simctl install "$DEV" "$APP"; xcrun simctl launch "$DEV" com.diplomacymusic.bruno
+# sign in (type slowly, per §1), reach Home, then DON'T press TV/Home or relaunch:
+xcrun simctl io "$DEV" screenshot ~/Desktop/bruno-home.png
 ```
 
-## Things to try for the sim text entry
-1. Click the Simulator window body once (host focus), then on the focused URL field press
-   **Return to enter edit mode**, *then* type — tvOS often needs Select before it accepts keys.
-2. Toggle **I/O ▸ Keyboard ▸ Toggle Software Keyboard** and drive the on-screen keyboard with
-   arrow keys + Return.
-3. Paste: copy the URL to the host clipboard and use the Simulator's **Edit ▸ Paste** while the
-   field is focused.
-4. As a fallback to skip the URL screen, check whether the `swiftfin://` URL scheme can
-   pre-register the server.
+**Durable (survives relaunch) — rebuild the tvOS scheme WITH simulator ad-hoc signing**
+(build-config only, no Bruno source edits): omit `CODE_SIGNING_ALLOWED=NO` and let the sim
+ad-hoc-sign so the keychain-access-group entitlement is present and the token persists, e.g.
+`CODE_SIGN_IDENTITY="-"` for the simulator destination.
 
-## What's already verified (so you can scope the work)
-- The app **runs without crashing** and the rebrand is applied (accent `#A1CCE0`, fonts).
-- Every Bruno shelf's query was validated against the live Jellyfin API (635 movies, 19
-  series, 7 favorited group BoxSets, 23 genres) — see `BRUNO_NOTES.md`.
-- The Home renders via the stock tvOS `PosterHStack`, so once signed in it will populate.
+## Credentials
+In the gitignored `bruno_jellyfin.env` at the **main checkout** repo root
+(`/Users/danielbrunelle/Documents/Claude/Projects/bruno/bruno_jellyfin.env`) —
+`JF_USER_NAME` / `JF_PASS`, server `http://192.168.50.19:8899`. Never commit them. Note: the
+env file lives only in the main checkout, not in any git worktree.
+
+## Already verified
+App runs, rebrand applied (accent `#A1CCE0`, Oswald/Inter). Every Bruno shelf query validated
+against the live API (635 movies, 19 series, 7 favorited group BoxSets, 23 genres) — see
+`BRUNO_NOTES.md`. The Home renders via the stock tvOS `PosterHStack`, so it populates once
+signed in (confirmed: the Home rendered in the first in-session sign-in).
