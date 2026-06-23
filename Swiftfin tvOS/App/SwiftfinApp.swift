@@ -30,6 +30,7 @@ struct SwiftfinApp: App {
                 BrunoSnapshotGallery()
             } else {
                 root
+                    .task { await BrunoAutoSignIn.runIfRequested() }
             }
             #else
             root
