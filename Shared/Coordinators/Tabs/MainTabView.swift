@@ -28,8 +28,9 @@ struct MainTabView: View {
     #else
     @StateObject
     private var tabCoordinator = TabCoordinator {
-        // Bruno tvOS IA: Home · Movies · TV Shows · Collections · Kids · Search · Settings.
-        // "Media" (all-libraries) dropped — Movies/TV/Collections/Kids cover it without duplication.
+        // Bruno tvOS IA: Search · Home · Movies · TV Shows · Collections · Kids · Settings.
+        // Search (icon) leads, Settings (icon) trails; the app still opens on Home (see onAppear).
+        TabItem.search
         TabItem.home
         TabItem.library(
             title: L10n.movies,
@@ -43,7 +44,6 @@ struct MainTabView: View {
         )
         TabItem.collections
         TabItem.kids
-        TabItem.search
         TabItem.settings
     }
     #endif
@@ -85,6 +85,10 @@ struct MainTabView: View {
             }
         }
         .onAppear {
+            // Land on Home even though Search is the leading tab.
+            if tabCoordinator.selectedTabID == nil {
+                tabCoordinator.selectedTabID = "home"
+            }
             routePendingDeepLink()
         }
         .onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
