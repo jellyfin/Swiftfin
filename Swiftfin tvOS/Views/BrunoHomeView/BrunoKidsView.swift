@@ -79,25 +79,31 @@ struct BrunoKidsView: View {
     }
 
     private var filterBar: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 24) {
             ForEach(KidsFilter.allCases) { option in
                 Button {
                     filter = option
                 } label: {
                     Text(option.rawValue)
-                        .font(.brunoBody(24, weight: .semibold))
-                        .foregroundStyle(option == filter ? Color.bruno.accent : Color.bruno.fg)
-                        .padding(.horizontal, 28)
-                        .padding(.vertical, 12)
+                        .font(.brunoBody(26, weight: .semibold))
+                        .foregroundStyle(option == filter ? Color.bruno.page : Color.bruno.fg)
+                        .frame(minWidth: 200)
+                        .padding(.vertical, 22)
+                        .background {
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .fill(option == filter ? Color.bruno.accent : Color.bruno.fg.opacity(0.14))
+                        }
                 }
-                .buttonStyle(.card)
+                .buttonStyle(.plain)
             }
 
             Spacer()
         }
         .padding(.horizontal, 50)
-        .padding(.top, 20)
-        .padding(.bottom, 8)
+        .padding(.top, 30)
+        .padding(.bottom, 18)
+        // Opaque so the grid (which ignores the top safe area) can't bleed up under the bar.
+        .background(Color.bruno.page)
         .focusSection()
     }
 

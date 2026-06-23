@@ -258,6 +258,10 @@ private struct ItemLibraryBody<Content: View>: View {
 
     @StateObject
     private var cinematicBackgroundProxy: CinematicBackgroundView.Proxy = .init()
+    // Bruno: pick ONE backdrop and keep it. Re-blurring a full-res cover on every focus change
+    // made scrolling janky; the background is decorative, so a single still is plenty.
+    @State
+    private var didSetCinematicBackground = false
     #endif
 
     @ObservedObject
@@ -344,9 +348,11 @@ private struct ItemLibraryBody<Content: View>: View {
     #if os(tvOS)
     private func updateCinematicBackground(with poster: AnyPoster?) {
         guard isCinematicBackgroundEnabled,
+              !didSetCinematicBackground,
               let poster
         else { return }
 
+        didSetCinematicBackground = true
         cinematicBackgroundProxy.select(item: poster)
     }
     #endif

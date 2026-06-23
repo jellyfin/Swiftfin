@@ -36,8 +36,9 @@ struct BrunoHomeView: View {
 
     var body: some View {
         ZStack {
-            BrunoAmbientBackground(item: spotlightItem)
-                .animation(.easeInOut(duration: 0.6), value: spotlightItem?.id)
+            // One fixed backdrop (the first spotlight), not the cycling one — keeps the home
+            // snappy by never re-blurring a full-res cover as the hero rotates or you scroll.
+            BrunoAmbientBackground(item: viewModel.heroItems.first)
 
             if viewModel.sections.isNotEmpty || !viewModel.heroItems.isEmpty {
                 content
@@ -100,7 +101,24 @@ struct BrunoHomeView: View {
                 .frame(width: 12, height: 12)
 
             Spacer()
+
+            // Build stamp: the app executable's build time. Auto-updates every build, so it's an
+            // unambiguous "which build am I looking at?" marker. (Temporary diagnostic.)
+            Text(Self.buildStamp)
+                .font(.brunoBody(20, weight: .semibold))
+                .foregroundStyle(Color.bruno.accent)
         }
+    }
+
+    private static var buildStamp: String {
+        guard let executableURL = Bundle.main.executableURL,
+              let attributes = try? FileManager.default.attributesOfItem(atPath: executableURL.path),
+              let date = attributes[.modificationDate] as? Date
+        else { return "BUILD —" }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d · HH:mm:ss"
+        return "BUILD \(formatter.string(from: date))"
     }
 
     private func errorView(_ error: ErrorMessage) -> some View {

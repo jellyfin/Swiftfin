@@ -76,48 +76,39 @@ struct BrunoCategoryShelves: View {
     private let shelfCap = 12
 
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 36) {
-                    if let header {
-                        header
-                            .padding(.top, 20)
-                    }
-
-                    if showCategoryRow {
-                        categoryRow(proxy: proxy)
-                            .padding(.top, header == nil ? 20 : 0)
-                    }
-
-                    ForEach(categories) { category in
-                        shelf(for: category)
-                            .id(category.id)
-                    }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 36) {
+                if let header {
+                    header
+                        .padding(.top, 20)
                 }
-                .padding(.bottom, 60)
+
+                if showCategoryRow {
+                    categoryCardRow
+                        .padding(.top, header == nil ? 20 : 0)
+                }
+
+                ForEach(categories) { category in
+                    shelf(for: category)
+                }
             }
+            .padding(.bottom, 60)
         }
     }
 
-    private func categoryRow(proxy: ScrollViewProxy) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 16) {
-                ForEach(categories) { category in
-                    Button {
-                        withAnimation { proxy.scrollTo(category.id, anchor: .top) }
-                    } label: {
-                        Text(category.name.uppercased())
-                            .font(.brunoBody(20, weight: .semibold))
-                            .tracking(2)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 12)
-                    }
-                    .buttonStyle(.card)
-                }
+    // The big gradient category cards (the group artwork). Tapping one jumps straight to that
+    // category's full "Show all" destination — no scroll-jump to the inline shelf.
+    private var categoryCardRow: some View {
+        PosterHStack(
+            title: nil,
+            type: .portrait,
+            items: categories.map(\.boxSet)
+        ) { boxSet in
+            let key = boxSet.id ?? boxSet.displayTitle
+            if let category = categories.first(where: { $0.id == key }) {
+                routeToShowAll(category)
             }
-            .padding(.horizontal, 50)
         }
-        .focusSection()
     }
 
     private func shelf(for category: BrunoCollectionCategory) -> some View {
@@ -153,27 +144,31 @@ struct BrunoCategoryShelves: View {
         }
     }
 
+    private func routeToShowAll(_ category: BrunoCollectionCategory) {
+        switch category.drillStyle {
+        case .genres:
+            router.route(to: .brunoGenres(parent: category.boxSet, core: nil))
+        case .shelves:
+            router.route(to: .brunoCategoryShelves(parent: category.boxSet), in: namespace)
+        case .items:
+            router.route(to: .brunoItemsGrid(title: category.name, items: category.children), in: namespace)
+        case .grid:
+            if category.boxSet.libraryType == .boxSet {
+                router.route(
+                    to: .library(library: ItemLibrary(parent: category.boxSet, filters: .default)),
+                    in: namespace
+                )
+            } else {
+                // Not a BoxSet: ItemLibrary(parent:) would fall through to an unscoped, whole-
+                // library query, so open the item detail instead.
+                router.route(to: .item(item: category.boxSet))
+            }
+        }
+    }
+
     private func showAllButton(for category: BrunoCollectionCategory) -> some View {
         Button {
-            switch category.drillStyle {
-            case .genres:
-                router.route(to: .brunoGenres(parent: category.boxSet, core: nil))
-            case .shelves:
-                router.route(to: .brunoCategoryShelves(parent: category.boxSet), in: namespace)
-            case .items:
-                router.route(to: .brunoItemsGrid(title: category.name, items: category.children), in: namespace)
-            case .grid:
-                if category.boxSet.libraryType == .boxSet {
-                    router.route(
-                        to: .library(library: ItemLibrary(parent: category.boxSet, filters: .default)),
-                        in: namespace
-                    )
-                } else {
-                    // Not a BoxSet: ItemLibrary(parent:) would fall through to an unscoped, whole-
-                    // library query, so open the item detail instead.
-                    router.route(to: .item(item: category.boxSet))
-                }
-            }
+            routeToShowAll(category)
         } label: {
             Label("Show all", systemImage: "chevron.right")
                 .font(.brunoBody(20, weight: .semibold))
