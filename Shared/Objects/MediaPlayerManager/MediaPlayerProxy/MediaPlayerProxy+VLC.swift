@@ -169,6 +169,14 @@ extension VLCMediaPlayerProxy {
             configuration.playbackChildren = item.subtitleStreams.sidecarSubtitles
                 .compactMap(\.asVLCPlaybackChild)
 
+            // Audio dynamic-range compression ("night mode"). `.off` adds no
+            // options, so playback is bit-identical to having none configured.
+            // Audio filters are applied at media-open, so a change only takes
+            // effect on the next item / playback.
+            configuration.options.merge(
+                Defaults[.VideoPlayer.nightMode].vlcOptions
+            ) { _, new in new }
+
             return configuration
         }
 

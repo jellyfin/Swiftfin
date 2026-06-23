@@ -35,6 +35,13 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
 
+    // MARK: - Audio Defaults
+
+    @Default(.VideoPlayer.nightMode)
+    private var nightMode
+    @Default(.VideoPlayer.videoPlayerType)
+    private var videoPlayerType
+
     // MARK: - Slider Defaults
 
     @Default(.VideoPlayer.Overlay.chapterSlider)
@@ -250,6 +257,7 @@ struct VideoPlayerSettingsView: View {
                 }
             ))
         } learnMore: {
+
             LabeledContent(
                 L10n.playDefault,
                 value: L10n.playDefaultTrackDescription
@@ -258,6 +266,19 @@ struct VideoPlayerSettingsView: View {
             LabeledContent(
                 L10n.rememberTrackSelection,
                 value: L10n.rememberTrackSelectionDescription
+            )
+        }
+
+        Section {
+            PlatformPicker(L10n.nightMode, selection: $nightMode)
+                .disabled(videoPlayerType == .native)
+        } header: {
+            Text(L10n.nightMode)
+        } footer: {
+            Text(
+                videoPlayerType == .native
+                    ? L10n.nightModeNativeUnsupported
+                    : L10n.nightModeDescription
             )
         }
     }

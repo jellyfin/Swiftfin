@@ -294,6 +294,11 @@ extension Defaults.Keys {
             )
         }
 
+        /// Audio dynamic-range compression ("night mode"). VLC player only.
+        static var nightMode: Key<AudioNightMode> {
+            UserKey("audioNightMode", default: .off)
+        }
+
         static var resumeOffset: Key<Int> {
             UserKey("resumeOffset", default: 0)
         }

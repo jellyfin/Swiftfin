@@ -1086,6 +1086,18 @@ internal enum L10n {
   internal static let nextUpDaysDescription = L10n.tr("Localizable", "nextUpDaysDescription", fallback: "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.")
   /// Rewatching in Next Up
   internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
+  /// Night Mode
+  internal static let nightMode = L10n.tr("Localizable", "nightMode", fallback: "Night Mode")
+  /// Compresses the audio dynamic range so quiet dialog is easier to hear and loud music or effects aren't jarring. Tune to taste.
+  internal static let nightModeDescription = L10n.tr("Localizable", "nightModeDescription", fallback: "Compresses the audio dynamic range so quiet dialog is easier to hear and loud music or effects aren't jarring. Tune to taste.")
+  /// Gentle
+  internal static let nightModeGentle = L10n.tr("Localizable", "nightModeGentle", fallback: "Gentle")
+  /// Medium
+  internal static let nightModeMedium = L10n.tr("Localizable", "nightModeMedium", fallback: "Medium")
+  /// Night Mode is only available with the Swiftfin player.
+  internal static let nightModeNativeUnsupported = L10n.tr("Localizable", "nightModeNativeUnsupported", fallback: "Night Mode is only available with the Swiftfin player.")
+  /// Strong
+  internal static let nightModeStrong = L10n.tr("Localizable", "nightModeStrong", fallback: "Strong")
   /// No
   internal static let no = L10n.tr("Localizable", "no", fallback: "No")
   /// No activity
@@ -1118,6 +1130,8 @@ internal enum L10n {
   internal static func notImplementedYetWithType(_ p1: Any) -> String {
     return L10n.tr("Localizable", "notImplementedYetWithType", String(describing: p1), fallback: "Type: %@ not implemented yet :(")
   }
+  /// Off
+  internal static let off = L10n.tr("Localizable", "off", fallback: "Off")
   /// Official rating
   internal static let officialRating = L10n.tr("Localizable", "officialRating", fallback: "Official rating")
   /// OK
