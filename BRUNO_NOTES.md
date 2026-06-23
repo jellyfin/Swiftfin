@@ -30,10 +30,15 @@ with Bruno added on top.
 xcodebuild -project Swiftfin.xcodeproj -scheme "Swiftfin tvOS" \
   -destination 'generic/platform=tvOS Simulator' -skipMacroValidation build CODE_SIGNING_ALLOWED=NO
 ```
-iOS gate: `-scheme Swiftfin -destination 'generic/platform=iOS' -skipMacroValidation` (needs the iOS 26.2
-platform installed — `xcodebuild -downloadPlatform iOS`; the simulator destination additionally needs an
-iOS 26 sim runtime). Without `-skipMacroValidation` the build can die at `ComputeTargetDependencyGraph`
-with `Macro "CasePathsMacros"/"StatefulMacrosMacros" ... must be enabled before it can be used`.
+iOS gate: `-scheme Swiftfin -destination 'generic/platform=iOS Simulator' -skipMacroValidation`. Both
+schemes were verified **BUILD SUCCEEDED on Xcode 26.3**. Without `-skipMacroValidation` the build can die
+at `ComputeTargetDependencyGraph` with `Macro "CasePathsMacros"/"StatefulMacrosMacros" ... must be enabled`.
+
+**Gotcha after upgrading Xcode:** the iOS sim build's asset-catalog step (`actool`) can fail with
+`No simulator runtime version from ["22G86"] available to use with iphonesimulator SDK version 23C57`
+even after installing the iOS 26 platform — a *stale CoreSimulator service* from the previous Xcode is
+still loaded. Fix: `killall -9 com.apple.CoreSimulator.CoreSimulatorService` (or a fresh login), then the
+new runtime appears in `xcrun simctl list runtimes` and the build passes.
 
 ### History (for reference): building on the earlier Xcode 16.4
 This fork's source + `Package.resolved` target Xcode 26, so on the original Xcode 16.4 (Swift 6.1.2 /
