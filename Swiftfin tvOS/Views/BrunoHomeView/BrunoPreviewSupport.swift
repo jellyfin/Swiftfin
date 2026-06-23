@@ -144,18 +144,20 @@ struct BrunoSnapshotGallery: View {
     @StateObject
     private var model = BrunoSnapshotModel()
 
+    @State
+    private var heroIndex = 0
+
     private var surface: String {
         ProcessInfo.processInfo.environment["BRUNO_SNAPSHOT_VIEW"] ?? "home"
     }
 
     var body: some View {
         ZStack {
-            Color.bruno.page
-                .ignoresSafeArea()
+            BrunoAmbientBackground(item: BrunoMock.heroItems[safe: heroIndex])
 
             switch surface {
             case "hero":
-                BrunoHeroView(items: BrunoMock.heroItems)
+                BrunoHeroView(items: BrunoMock.heroItems, index: $heroIndex)
             case "shelf":
                 VStack(alignment: .leading, spacing: 40) {
                     ForEach(model.shelves.prefix(2)) { shelf in
@@ -177,7 +179,7 @@ struct BrunoSnapshotGallery: View {
                     .padding(.horizontal, 50)
                     .padding(.top, 20)
 
-                BrunoHeroView(items: BrunoMock.heroItems)
+                BrunoHeroView(items: BrunoMock.heroItems, index: $heroIndex)
 
                 ForEach(model.shelves) { shelf in
                     BrunoShelfView(viewModel: shelf)
@@ -214,7 +216,7 @@ struct BrunoSnapshotGallery: View {
 // MARK: - Previews
 
 #Preview("Bruno Hero") {
-    BrunoHeroView(items: BrunoMock.heroItems)
+    BrunoHeroView(items: BrunoMock.heroItems, index: .constant(0))
         .background(Color.bruno.page)
 }
 
