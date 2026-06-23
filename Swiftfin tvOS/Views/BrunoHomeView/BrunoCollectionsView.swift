@@ -67,8 +67,13 @@ final class BrunoCollectionsViewModel: ViewModel {
     @Published
     private(set) var isLoading = true
 
-    /// Groups whose "Show all" should drill into a further shelf-per-sub-group view (§4).
-    private static let shelvesDrillGroups: Set<String> = ["genres", "decades"]
+    private static func drillStyle(for groupName: String) -> BrunoCollectionCategory.DrillStyle {
+        switch groupName.lowercased() {
+        case "genres": .genres // core-category panel + mixed sub-genre shelves (§4 + core panel)
+        case "decades": .shelves // shelf per decade (§4)
+        default: .grid // flat full grid (§3)
+        }
+    }
 
     func load() async {
         guard let userSession else {
@@ -89,7 +94,7 @@ final class BrunoCollectionsViewModel: ViewModel {
             return BrunoCollectionCategory(
                 boxSet: boxSet,
                 children: children,
-                showAllAsShelves: Self.shelvesDrillGroups.contains(name.lowercased())
+                drillStyle: Self.drillStyle(for: name)
             )
         }
 

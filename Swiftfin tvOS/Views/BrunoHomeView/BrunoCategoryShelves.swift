@@ -19,16 +19,24 @@ import SwiftUI
 // Genres/Decades drill-in, which render identically — only their data source differs.
 struct BrunoCollectionCategory: Identifiable {
 
+    /// What "Show all" does for this category.
+    enum DrillStyle {
+        /// Flat full grid for the group (a stock ItemLibrary). The default leaf behaviour.
+        case grid
+        /// Shelf-per-sub-group drill-in (Decades).
+        case shelves
+        /// The Genres page: a core-category panel on top, then the mixed sub-genre shelves.
+        case genres
+    }
+
     let boxSet: BaseItemDto
     let children: [BaseItemDto]
-    /// When true, "Show all" drills into a further shelf-per-sub-group view (Genres/Decades);
-    /// otherwise it opens the flat full grid for this group (roadmap §3/§4).
-    let showAllAsShelves: Bool
+    let drillStyle: DrillStyle
 
-    init(boxSet: BaseItemDto, children: [BaseItemDto], showAllAsShelves: Bool = false) {
+    init(boxSet: BaseItemDto, children: [BaseItemDto], drillStyle: DrillStyle = .grid) {
         self.boxSet = boxSet
         self.children = children
-        self.showAllAsShelves = showAllAsShelves
+        self.drillStyle = drillStyle
     }
 
     var id: String {
@@ -50,6 +58,10 @@ struct BrunoCategoryShelves: View {
 
     let categories: [BrunoCollectionCategory]
     let eyebrow: String
+    /// Optional content rendered above everything (e.g. the Genres core-category panel).
+    var header: AnyView?
+    /// The scroll-jump chip row. Hidden when a header replaces it (e.g. the Genres main page).
+    var showCategoryRow: Bool = true
 
     @Router
     private var router
@@ -64,8 +76,15 @@ struct BrunoCategoryShelves: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 36) {
-                    categoryRow(proxy: proxy)
-                        .padding(.top, 20)
+                    if let header {
+                        header
+                            .padding(.top, 20)
+                    }
+
+                    if showCategoryRow {
+                        categoryRow(proxy: proxy)
+                            .padding(.top, header == nil ? 20 : 0)
+                    }
 
                     ForEach(categories) { category in
                         shelf(for: category)
@@ -114,7 +133,7 @@ struct BrunoCategoryShelves: View {
 
                 Spacer()
 
-                if category.showAllAsShelves || category.children.count > shelfCap {
+                if category.drillStyle != .grid || category.children.count > shelfCap {
                     showAllButton(for: category)
                 }
             }
@@ -132,17 +151,22 @@ struct BrunoCategoryShelves: View {
 
     private func showAllButton(for category: BrunoCollectionCategory) -> some View {
         Button {
-            if category.showAllAsShelves {
+            switch category.drillStyle {
+            case .genres:
+                router.route(to: .brunoGenres(parent: category.boxSet, core: nil))
+            case .shelves:
                 router.route(to: .brunoCategoryShelves(parent: category.boxSet), in: namespace)
-            } else if category.boxSet.libraryType == .boxSet {
-                router.route(
-                    to: .library(library: ItemLibrary(parent: category.boxSet, filters: .default)),
-                    in: namespace
-                )
-            } else {
-                // Not a BoxSet: ItemLibrary(parent:) would fall through to an unscoped, whole-
-                // library query, so open the item detail instead.
-                router.route(to: .item(item: category.boxSet))
+            case .grid:
+                if category.boxSet.libraryType == .boxSet {
+                    router.route(
+                        to: .library(library: ItemLibrary(parent: category.boxSet, filters: .default)),
+                        in: namespace
+                    )
+                } else {
+                    // Not a BoxSet: ItemLibrary(parent:) would fall through to an unscoped, whole-
+                    // library query, so open the item detail instead.
+                    router.route(to: .item(item: category.boxSet))
+                }
             }
         } label: {
             Label("Show all", systemImage: "chevron.right")

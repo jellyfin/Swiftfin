@@ -49,9 +49,13 @@ Current tvOS order: **Home · TV Shows · Movies · Search · Media · Settings*
   - Category-row scroll-jump + focus landing want an on-device pass (LazyVStack + `scrollTo`).
 
 ## 4. Genres & Decades — same shelf pattern  ✅ DONE
-- [x] Genres/Decades "Show all" drills into `BrunoBoxSetShelvesView`: a shelf per sub-category
-  (each genre / each decade), capped, with **"Show all" → full grid** of that sub-category.
-  Reuses `BrunoCategoryShelves`; gated on group name + the live BoxSet-of-BoxSets shape.
+- [x] Decades "Show all" drills into `BrunoBoxSetShelvesView`: a shelf per decade, capped, with
+  **"Show all" → full grid**. Reuses `BrunoCategoryShelves`; gated on group name + the live
+  BoxSet-of-BoxSets shape.
+- [x] **Genres page (`BrunoGenresView`)** — first line is a **core-category panel** (Action ·
+  Sci-Fi & Fantasy · Romance · Comedy · Drama); selecting a core opens a page of only that
+  bucket's fine-grain genre shelves (keyword-matched to server genres). Below the panel: the
+  mixed-together sub-genre shelves. Cores map to genres by keyword, so no hardcoded genre names.
 
 ---
 
