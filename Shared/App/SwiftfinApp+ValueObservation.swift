@@ -81,7 +81,8 @@ extension SwiftfinApp {
             splashScreenCancellable?.cancel()
 
             accentColorCancellable = Task {
-                await applyAccentColor(.jellyfinPurple)
+                // Bruno: app-level accent (pre-login / no-user chrome) uses the brand accent.
+                await applyAccentColor(Color.bruno.accent)
             }
             .asAnyCancellable()
 
