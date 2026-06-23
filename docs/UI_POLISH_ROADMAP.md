@@ -13,15 +13,20 @@
 - [x] **Auto-cycling spotlight.** `BrunoHeroView` was labelled "rotating spotlight" but never
   had a timer — `index` only changed on dot tap. Added an 8s `Timer.publish` auto-advance
   (wraps, gated on `!reduceMotion` and `items.count > 1`). `Swiftfin tvOS/Views/BrunoHomeView/BrunoHeroView.swift`.
-- [ ] Pause auto-advance while the hero row is focused / a button is focused (TV-app behaviour).
+- [x] **Pause auto-advance while focused** (TV-app behaviour) — plus two more hero fixes shipped
+  together: the backdrop now actually re-fetches on cycle (`.id(item.id)` + cross-fade), and the
+  dots became a passive page indicator while the whole hero is one chrome-less focusable element
+  whose left/right move-commands cycle the spotlight. Focus *feel* needs an on-device pass.
 
 ## 1b. System Top Shelf — dynamic content (DECIDED: this is the "previews like Apple TV app")
-- [ ] Build a **Top Shelf extension** (new app-extension target, `TVTopShelfContentProvider`)
-  that returns sectioned poster items (Continue Watching / recent / featured) above the icon row.
-- [ ] **Auth sharing:** the extension runs in its own process — it needs the saved server +
-  token via an **App Group / shared keychain access group** (the keychain group already declared
-  for device sign-in is the hook). This is the main plumbing.
-- [ ] Tapping a Top Shelf poster deep-links into the item (wire to the existing deep-link handler).
+- [~] **Groundwork shipped; target creation is the owner's (needs Xcode + App Group + signing).**
+  - [x] `BrunoTopShelfCredentials` cross-process bridge (App Group `UserDefaults`), written by
+    `UserSession.start()` and cleared on sign-out — a no-op until the App Group exists.
+  - [x] `TVTopShelfContentProvider` (Continue Watching / Recently Added, poster art, deep links via
+    the existing `swiftfin://…/item/<id>` scheme) + Info.plist + entitlements, as ready-to-add
+    template files in `BrunoTopShelf/` (not compiled).
+  - [ ] Owner: create the extension target, add the App Group to both targets, sign. Full
+    step-by-step in **docs/TOP_SHELF_SETUP.md**.
 - Static `BRUNO.` top-shelf image stays as the fallback when no content/auth is available.
 
 ## 2. Top bar / tab IA  — `Shared/Coordinators/Tabs/MainTabView.swift` (tvOS branch)
@@ -35,17 +40,18 @@ Current tvOS order: **Home · TV Shows · Movies · Search · Media · Settings*
 - [ ] **Drop the redundant Media tab** (`UserViewLibrary`) — duplicated Movies + TV Shows.
 - [ ] **Search + Settings at the end.**
 
-## 3. Collections page — category row + per-category shelves
-Today: category row (NEW RELEASES, DIRECTORS, DECADES, GENRES, STUDIOS, CURATED, SEASONAL)
-over one big poster grid.
-- [ ] Keep the **category row across the top**.
-- [ ] Beneath it, **one horizontal-scroll shelf per category**, single line each.
-- [ ] **Cap each shelf at ~12 items**, then a trailing **"Show all" card**.
-- [ ] "Show all" → routes to the **full grid** for that category.
+## 3. Collections page — category row + per-category shelves  ✅ DONE
+- [x] **Category row across the top** (scroll-jumps to each shelf).
+- [x] **One horizontal shelf per category**, single line each (`BrunoCategoryShelves`).
+- [x] **Capped at ~12 items** + a **"Show all"** — in the shelf header (PosterHStack's trailing
+  slot is a no-op in this codebase), routing to the **full grid** for that category.
+  - `Swiftfin tvOS/Views/BrunoHomeView/BrunoCollectionsView.swift` + `BrunoCategoryShelves.swift`.
+  - Category-row scroll-jump + focus landing want an on-device pass (LazyVStack + `scrollTo`).
 
-## 4. Genres & Decades — same shelf pattern
-- [ ] Inside **Genres** and **Decades**, mirror §3: a shelf per sub-category (each genre /
-  each decade), capped, with a **"Show all" → full grid** of that sub-category's contents.
+## 4. Genres & Decades — same shelf pattern  ✅ DONE
+- [x] Genres/Decades "Show all" drills into `BrunoBoxSetShelvesView`: a shelf per sub-category
+  (each genre / each decade), capped, with **"Show all" → full grid** of that sub-category.
+  Reuses `BrunoCategoryShelves`; gated on group name + the live BoxSet-of-BoxSets shape.
 
 ---
 
