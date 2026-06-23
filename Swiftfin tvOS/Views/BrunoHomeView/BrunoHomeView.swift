@@ -90,28 +90,16 @@ struct BrunoHomeView: View {
     }
 
     private var header: some View {
-        HStack(alignment: .center) {
-            HStack(spacing: 8) {
-                Text("BRUNO")
-                    .font(.brunoDisplay(40, weight: .bold))
-                    .tracking(6)
-                    .foregroundStyle(Color.bruno.fg)
-                Circle()
-                    .fill(Color.bruno.accent)
-                    .frame(width: 12, height: 12)
-            }
+        HStack(spacing: 8) {
+            Text("BRUNO")
+                .font(.brunoDisplay(40, weight: .bold))
+                .tracking(6)
+                .foregroundStyle(Color.bruno.fg)
+            Circle()
+                .fill(Color.bruno.accent)
+                .frame(width: 12, height: 12)
 
             Spacer()
-
-            Button {
-                viewModel.send(.shuffle)
-            } label: {
-                Label("Shuffle", systemImage: "shuffle")
-                    .font(.brunoBody(22, weight: .semibold))
-                    .padding(.horizontal, 22)
-                    .padding(.vertical, 10)
-            }
-            .buttonStyle(.card)
         }
     }
 
