@@ -77,15 +77,25 @@ struct BrunoHeroView: View {
 
     private func heroCard(for item: BaseItemDto) -> some View {
         ZStack(alignment: .bottomLeading) {
-            ImageView(item.imageSource(.backdrop, maxWidth: 1920))
-                .aspectRatio(contentMode: .fill)
-                .frame(height: 720)
-                .clipped()
-                // Keyed on the item id (ImageView caches its source in @State and ignores
-                // later parent updates) so the backdrop actually re-fetches each cycle; the
-                // opacity transition cross-fades the swap instead of hard-cutting.
-                .id(item.id)
-                .transition(.opacity)
+            // Backdrop layer: a placeholder fill reserves the full 720×width frame from the first
+            // render (the image then fills within those fixed bounds), so the ImageView's (zero)
+            // intrinsic size can't drive layout until it loads — which made the whole home "lift
+            // then reset" on the very first load. Clipping is scoped to THIS layer so a tall
+            // title/overview is never clipped.
+            ZStack {
+                Color.bruno.page
+
+                ImageView(item.imageSource(.backdrop, maxWidth: 1920))
+                    .aspectRatio(contentMode: .fill)
+                    // Keyed on the item id (ImageView caches its source in @State and ignores
+                    // later parent updates) so the backdrop actually re-fetches each cycle; the
+                    // opacity transition cross-fades the swap instead of hard-cutting.
+                    .id(item.id)
+                    .transition(.opacity)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 720)
+            .clipped()
 
             // Left + bottom scrims for legibility (README scrim system).
             LinearGradient(
@@ -105,7 +115,6 @@ struct BrunoHeroView: View {
                 .padding(.trailing, 600)
         }
         .frame(height: 720)
-        .frame(maxWidth: .infinity)
     }
 
     @ViewBuilder

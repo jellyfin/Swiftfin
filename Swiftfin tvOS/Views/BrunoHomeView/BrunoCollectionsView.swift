@@ -81,13 +81,12 @@ final class BrunoCollectionsViewModel: ViewModel {
             return
         }
 
-        let snapshot = await BrunoLibrarySnapshot.load(
-            client: userSession.client,
-            userID: userSession.user.id
-        )
+        let client = userSession.client
+        let userID = userSession.user.id
+        let snapshot = await BrunoLibrarySnapshot.load(client: client, userID: userID)
 
         // Same curated groups the home spine derives from, in server order; drop empties.
-        categories = snapshot.favoriteGroupBoxSets.compactMap { boxSet in
+        var built = snapshot.favoriteGroupBoxSets.compactMap { boxSet -> BrunoCollectionCategory? in
             guard let name = boxSet.name else { return nil }
             let children = snapshot.childrenByGroupName[name] ?? []
             guard children.isNotEmpty else { return nil }
@@ -98,6 +97,44 @@ final class BrunoCollectionsViewModel: ViewModel {
             )
         }
 
+        // Boxed Sets: every box set NOT already surfaced by a curated group (or as a group child),
+        // i.e. the standalone franchise collections.
+        let groupIDs = Set(snapshot.favoriteGroupBoxSets.compactMap(\.id))
+        let childIDs = Set(snapshot.childrenByGroupName.values.flatMap(\.self).compactMap(\.id))
+        let franchiseBoxSets = await Self.fetchAllBoxSets(client: client, userID: userID)
+            .filter { boxSet in
+                guard let id = boxSet.id else { return false }
+                return !groupIDs.contains(id) && !childIDs.contains(id)
+            }
+        if franchiseBoxSets.isNotEmpty {
+            built.append(
+                BrunoCollectionCategory(
+                    boxSet: BaseItemDto(name: "Boxed Sets"),
+                    children: franchiseBoxSets,
+                    drillStyle: .items
+                )
+            )
+        }
+
+        categories = built
         isLoading = false
+    }
+
+    private nonisolated static func fetchAllBoxSets(client: JellyfinClient, userID: String) async -> [BaseItemDto] {
+        var parameters = Paths.GetItemsParameters()
+        parameters.userID = userID
+        parameters.isRecursive = true
+        parameters.includeItemTypes = [.boxSet]
+        parameters.fields = .MinimumFields
+        parameters.enableUserData = true
+        parameters.sortBy = [.name]
+        parameters.sortOrder = [.ascending]
+        parameters.limit = 200
+        do {
+            let response = try await client.send(Paths.getItems(parameters: parameters))
+            return response.value.items ?? []
+        } catch {
+            return []
+        }
     }
 }
