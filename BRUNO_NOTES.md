@@ -175,6 +175,15 @@ a `Defaults.Keys` `Key<Int>` is enough for the day-seed (see T4).
 
 ---
 
+## §Runtime smoke test (tvOS 18.5 Simulator)
+
+Built `Swiftfin tvOS.app` was installed and launched on the Apple TV 4K (3rd gen) tvOS 18.5 sim:
+the binary **runs without crashing**, fonts load, and the **Bruno sky-blue accent** renders
+(Connect button) — confirming the rebrand is applied app-wide, not just in Bruno Home. Signing in
+to the live Jellyfin (LAN) and rendering the Bruno Home is the **owner's on-device step** (tvOS
+sign-in automation in the sim is out of scope); the data behind every shelf was validated
+independently via the live API (see §Live library snapshot).
+
 ## §Owner device-run steps
 
 1. Open `Swiftfin.xcodeproj` in Xcode 16.4 (or run the §LOCKED gate from the CLI).
