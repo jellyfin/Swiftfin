@@ -12,6 +12,21 @@ extension Color {
 
     static let jellyfinPurple = Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255, opacity: 1)
 
+    /// Bruno brand palette (Diplomacy → Bruno dark theme). See prototype/design_handoff_bruno/README.md.
+    enum bruno {
+        static let page = Color(hex: "14120F") // app background (warm umber)
+        static let surface = Color(hex: "1C1A16") // card base before art loads
+        static let diplomacyDark = Color(hex: "302D26")
+        static let diplomacyBrown = Color(hex: "4E433D") // elevated warm surface / portrait cards
+        static let fg = Color(hex: "F2F1F0") // primary text
+        static let fgMuted = Color(hex: "CFC9BF") // body / blurbs
+        static let fgSubtle = Color(hex: "9B958C") // meta, idle nav
+        static let accent = Color(hex: "A1CCE0") // focus ring, progress, ★, active states (Apolla sky)
+        static let accentAlt = Color(hex: "849396") // Diplomacy blue
+        static let sand = Color(hex: "D9D7C2") // tile text / warm highlights
+        static let critic = Color(hex: "CC4444") // critic-score dot
+    }
+
     var uiColor: UIColor {
         UIColor(self)
     }
