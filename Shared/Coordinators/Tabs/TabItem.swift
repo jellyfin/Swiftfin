@@ -95,14 +95,15 @@ extension TabItem {
     }
 
     #if os(tvOS)
-    // Bruno: open the existing Jellyfin "Collections" library (the curated group BoxSets).
+    // Bruno: the curated-collections hub — a category row + one capped shelf per group
+    // (Directors, Decades, Studios, …), each with "Show all" -> the full grid (roadmap §3).
     static var collections: TabItem {
         TabItem(
             id: "collections",
             title: L10n.collections,
             systemImage: "square.stack.fill"
         ) {
-            BrunoUserViewLibraryTab(viewName: "Collections")
+            BrunoCollectionsView()
         }
     }
 
