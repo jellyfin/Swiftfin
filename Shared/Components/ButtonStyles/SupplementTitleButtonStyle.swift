@@ -40,23 +40,12 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                 .frame(minHeight: 56)
         }
 
+        // Bruno toolchain-compat: `.glassEffect` requires the tvOS 26 SDK (Xcode 26); on the
+        // installed tvOS 18.5 SDK it is undefined, so route to the existing legacy styling.
+        // Restore the glass body when building with Xcode 26. See BRUNO_NOTES.md §Toolchain.
         @available(tvOS 26.0, *)
         private func glassBody(_ configuration: Configuration) -> some View {
-            baseLabel(configuration)
-                .foregroundStyle(isSelected ? .black : .white)
-                .glassEffect(
-                    .regular
-                        .tint(isSelected ? .white : nil)
-                        .interactive(isFocused),
-                    in: Capsule()
-                )
-                .overlay {
-                    Capsule()
-                        .stroke(.white.opacity(0.1), lineWidth: 1)
-                }
-                .opacity(inactiveSelectedOpacity)
-                .animation(.easeInOut(duration: 0.1), value: isFocused)
-                .animation(.easeInOut(duration: 0.1), value: isSelected)
+            legacyBody(configuration)
         }
 
         private func legacyBody(_ configuration: Configuration) -> some View {
@@ -137,18 +126,12 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
             )
         }
 
+        // Bruno toolchain-compat: `.glassEffect` requires the iOS 26 SDK (Xcode 26); on the
+        // installed SDK it is undefined, so route to the existing legacy styling.
+        // Restore the glass body when building with Xcode 26. See BRUNO_NOTES.md §Toolchain.
         @available(iOS 26.0, *)
         private func iOSGlassBody(_ configuration: Configuration) -> some View {
-            pressableBody(
-                baseLabel(configuration)
-                    .foregroundStyle(isSelected ? .black : .white)
-                    .glassEffect(
-                        .regular
-                            .tint(isSelected ? .white : nil),
-                        in: Capsule()
-                    ),
-                configuration: configuration
-            )
+            legacyBody(configuration)
         }
 
         private func pressableBody(

@@ -15,7 +15,10 @@ let defaultPagingLibraryPageSize = 50
 
 @MainActor
 @Stateful(conformances: [WithRefresh.self])
-class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Identifiable {
+// Bruno toolchain-compat: `@MainActor Identifiable` is a Swift 6.2 isolated conformance;
+// on Swift 6.1.2 (Xcode 16.4) the equivalent is a plain `Identifiable` conformance with a
+// `nonisolated` `id`. Revert to `@MainActor Identifiable` on Xcode 26. See BRUNO_NOTES.md §Toolchain.
+class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     typealias Background = _BackgroundActions
     typealias Element = Library.Element
@@ -82,13 +85,17 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
     let library: Library
     let pageSize: Int
 
+    // Bruno toolchain-compat: captured at (main-actor) init so `id` can be `nonisolated`
+    // without a Swift 6.2 isolated conformance. See BRUNO_NOTES.md §Toolchain.
+    private nonisolated let _id: String
+
     private var hasNextPage: Bool
     private var hasNextSearchPage: Bool
     private var itemUserDataRefreshTask: AnyCancellable?
     private var lastItemUserDataRefresh = Date.distantPast
 
-    var id: String {
-        library.parent.pagingLibraryID
+    nonisolated var id: String {
+        _id
     }
 
     var isSearchActive: Bool {
@@ -122,6 +129,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
         self.hasNextSearchPage = false
         self.library = library
         self.pageSize = pageSize
+        self._id = library.parent.pagingLibraryID
 
         super.init()
 
