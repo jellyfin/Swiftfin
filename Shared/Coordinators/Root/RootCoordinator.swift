@@ -26,6 +26,11 @@ final class RootCoordinator: ObservableObject {
             do {
                 try await SwiftfinStore.setupDataStack()
 
+                // DEV CONVENIENCE: on a clean install (no session), connect + sign in with the
+                // owner's hardcoded home-server credentials so updates don't force onboarding.
+                // No-ops once a session exists. Remove via BrunoDevAutoLogin.isEnabled = false.
+                await BrunoDevAutoLogin.runIfNeeded()
+
                 if Container.shared.currentUserSession() != nil, !Defaults[.signOutOnClose] {
                     #if os(tvOS)
                     await MainActor.run {
