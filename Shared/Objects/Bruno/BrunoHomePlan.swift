@@ -13,11 +13,12 @@ import JellyfinAPI
 
 //
 // The "never the same twice" engine, ported from the prototype (`buildBase` L503,
-// `exploreGen` L490, `addMore` L533). `build(seed:snapshot:)` is PURE over shelf
-// DESCRIPTORS given (seed, snapshot) — same seed ⇒ same home (plan §D). The stable spine
-// (Continue → Up Next → New Releases → Director → Genre → Series → Studio → Eras → Auteurs
-// → Collections) reseeds its *contents* by seed; the explore tail is fully seed-derived and
-// grows +2 per scroll page (`appendExplore`).
+// `exploreGen` L490, `addMore` L533). `build(seed:snapshot:now:)` is PURE over shelf
+// DESCRIPTORS given (seed, snapshot, now) — same inputs ⇒ same home (plan §D). `now` is
+// injected (not read from the wall clock) so the date-aware seasonal shelf stays reproducible
+// and testable. The stable spine (Continue → Up Next → New Releases → Director → Genre →
+// Series → Studio → Eras → Auteurs → Collections) reseeds its *contents* by seed; the explore
+// tail is fully seed-derived and grows +2 per scroll page (`appendExplore`).
 enum BrunoHomePlan {
 
     static let minItems = 3
@@ -30,13 +31,27 @@ enum BrunoHomePlan {
 
     // MARK: Spine + initial explore tail
 
-    static func build(seed: UInt32, snapshot: BrunoLibrarySnapshot) -> [BrunoShelf] {
+    static func build(seed: UInt32, snapshot: BrunoLibrarySnapshot, now: Date) -> [BrunoShelf] {
         var shelves: [BrunoShelf] = []
 
         // 2. Continue Watching · 3. Up Next · 4. New Releases (stock libraries)
-        shelves.append(.init(id: "resume", lens: "Pick Up Where You Left Off", title: "Continue Watching", source: .resume))
-        shelves.append(.init(id: "nextup", lens: "Next Episode", title: "Up Next", source: .nextUp))
-        shelves.append(.init(id: "recent", lens: "Just Added", title: "New Releases", source: .recentlyAdded))
+        shelves.append(.init(
+            id: "resume",
+            lens: "Pick Up Where You Left Off",
+            title: "Continue Watching",
+            kind: .resume,
+            dedupeKey: "resume",
+            source: .resume
+        ))
+        shelves.append(.init(id: "nextup", lens: "Next Episode", title: "Up Next", kind: .nextUp, dedupeKey: "nextUp", source: .nextUp))
+        shelves.append(.init(
+            id: "recent",
+            lens: "Just Added",
+            title: "New Releases",
+            kind: .recentlyAdded,
+            dedupeKey: "recentlyAdded",
+            source: .recentlyAdded
+        ))
 
         // 5. Spotlight on {director} — seeded director group child → its films.
         if let director = seededPick(snapshot.directorBoxSets, seed: seed, salt: 11),
@@ -46,6 +61,8 @@ enum BrunoHomePlan {
                 id: "spotlight-\(id)",
                 lens: "Director Spotlight",
                 title: "Spotlight on \(name)",
+                kind: .spotlight,
+                dedupeKey: "parent:\(id)",
                 source: .query(parentQuery(parentID: id, seed: seed, salt: 11))
             ))
         }
@@ -55,14 +72,28 @@ enum BrunoHomePlan {
             var query = BrunoQuery()
             query.genres = [genre]
             query.shuffleSeed = derive(seed, 23)
-            shelves.append(.init(id: "genre-\(genre)", lens: "If You Like", title: genre, source: .query(query)))
+            shelves.append(.init(
+                id: "genre-\(genre)",
+                lens: "If You Like",
+                title: genre,
+                kind: .genre,
+                dedupeKey: "genre:\(genre)",
+                source: .query(query)
+            ))
         }
 
         // 7. Series in the Library.
         var seriesQuery = BrunoQuery()
         seriesQuery.includeItemTypes = [.series]
         seriesQuery.shuffleSeed = derive(seed, 31)
-        shelves.append(.init(id: "series", lens: "Television", title: "Series in the Library", source: .query(seriesQuery)))
+        shelves.append(.init(
+            id: "series",
+            lens: "Television",
+            title: "Series in the Library",
+            kind: .series,
+            dedupeKey: "series",
+            source: .query(seriesQuery)
+        ))
 
         // 8. From the {studio} Vault — seeded studio group child.
         if let studio = seededPick(snapshot.studioBoxSets, seed: seed, salt: 41),
@@ -72,6 +103,8 @@ enum BrunoHomePlan {
                 id: "studio-\(id)",
                 lens: "From the Vault",
                 title: name,
+                kind: .studio,
+                dedupeKey: "parent:\(id)",
                 source: .query(parentQuery(parentID: id, seed: seed, salt: 41))
             ))
         }
@@ -82,6 +115,7 @@ enum BrunoHomePlan {
             id: "eras",
             lens: "Browse by Decade",
             title: "Eras",
+            kind: .eras,
             posterType: .portrait,
             items: snapshot.decadeBoxSets
         )
@@ -90,6 +124,7 @@ enum BrunoHomePlan {
             id: "auteurs",
             lens: "Auteurs",
             title: "Browse by Director",
+            kind: .auteurs,
             posterType: .portrait,
             items: Array(snapshot.directorBoxSets.prefix(14))
         )
@@ -98,6 +133,7 @@ enum BrunoHomePlan {
             id: "collections",
             lens: "Collections",
             title: "Browse the Collection",
+            kind: .collections,
             posterType: .portrait,
             items: snapshot.favoriteGroupBoxSets
         )
@@ -107,7 +143,7 @@ enum BrunoHomePlan {
         let keys = rng.shuffled(exploreKeys)
         for index in 0 ..< min(5, keys.count) {
             let slotSeed = BrunoRNG.subSeed(seed, 97, UInt32(index), 13)
-            if let shelf = explore(key: keys[index], seed: slotSeed, snapshot: snapshot) {
+            if let shelf = explore(key: keys[index], seed: slotSeed, snapshot: snapshot, now: now) {
                 shelves.append(shelf)
             }
         }
@@ -118,20 +154,26 @@ enum BrunoHomePlan {
     // MARK: Infinite-scroll tail (+2 per page)
 
     /// Two more explore shelves for scroll page `page` (1-based), seed-derived per slot
-    /// (mirrors the prototype's `addMore`: `rng(seed*131 + (i+k)*29 + tick)`).
-    static func appendExplore(seed: UInt32, page: Int, alreadyShown: Int, snapshot: BrunoLibrarySnapshot) -> [BrunoShelf] {
-        guard alreadyShown < shelfCap else { return [] }
+    /// (mirrors the prototype's `addMore`: `rng(seed*131 + (i+k)*29 + tick)`). Cross-page
+    /// content dedupe is the view model's job (via `BrunoShelf.dedupeKey`); here we just bound
+    /// the batch to the cap and walk distinct keys.
+    static func appendExplore(seed: UInt32, page: Int, alreadyShown: Int, snapshot: BrunoLibrarySnapshot, now: Date) -> [BrunoShelf] {
+        let remaining = shelfCap - alreadyShown
+        guard remaining > 0 else { return [] }
+
         var out: [BrunoShelf] = []
-        for k in 0 ..< 2 {
+        for k in 0 ..< min(2, remaining) {
             let slot = alreadyShown + k
-            let key = exploreKeys[(slot &* 1 + page) % exploreKeys.count]
+            let key = exploreKeys[(slot + page) % exploreKeys.count]
             let slotSeed = BrunoRNG.subSeed(seed, 131, UInt32(slot) &+ UInt32(page), 29)
-            if let shelf = explore(key: key, seed: slotSeed, snapshot: snapshot) {
+            if let shelf = explore(key: key, seed: slotSeed, snapshot: snapshot, now: now) {
                 out.append(.init(
                     id: "\(shelf.id)-p\(page)s\(slot)",
                     lens: shelf.lens,
                     title: shelf.title,
                     posterType: shelf.posterType,
+                    kind: shelf.kind,
+                    dedupeKey: shelf.dedupeKey,
                     source: shelf.source
                 ))
             }
@@ -141,7 +183,7 @@ enum BrunoHomePlan {
 
     // MARK: Generators (exploreGen port)
 
-    static func explore(key: String, seed: UInt32, snapshot: BrunoLibrarySnapshot) -> BrunoShelf? {
+    static func explore(key: String, seed: UInt32, snapshot: BrunoLibrarySnapshot, now: Date) -> BrunoShelf? {
         switch key {
         case "acclaimed":
             var query = BrunoQuery()
@@ -150,47 +192,82 @@ enum BrunoHomePlan {
             query.sortBy = [.communityRating]
             query.sortOrder = [.descending]
             query.shuffleSeed = seed
-            return .init(id: "x-acclaimed", lens: "Hidden Gems", title: "Acclaimed & Unwatched", source: .query(query))
+            return .init(
+                id: "x-acclaimed",
+                lens: "Hidden Gems",
+                title: "Acclaimed & Unwatched",
+                kind: .acclaimed,
+                dedupeKey: "acclaimed",
+                source: .query(query)
+            )
 
         case "critics":
             var query = BrunoQuery()
+            query.minCommunityRating = 7.5 // floor so the title ("Highest Rated") is honest
             query.sortBy = [.communityRating]
             query.sortOrder = [.descending]
             query.limit = 15
-            return .init(id: "x-critics", lens: "Top of the Library", title: "Critics' Highest Rated", source: .query(query))
+            return .init(
+                id: "x-critics",
+                lens: "Top of the Library",
+                title: "Critics' Highest Rated",
+                kind: .critics,
+                dedupeKey: "critics",
+                source: .query(query)
+            )
 
         case "year":
             guard let year = seededPick(snapshot.years, seed: seed, salt: 7) else { return nil }
             var query = BrunoQuery()
             query.years = Array((year - 2) ... (year + 2))
             query.shuffleSeed = seed
-            return .init(id: "x-year-\(year)", lens: "A Year in Film", title: "\(year) & Around", source: .query(query))
+            return .init(
+                id: "x-year-\(year)",
+                lens: "A Year in Film",
+                title: "\(year) & Around",
+                kind: .year,
+                dedupeKey: "year:\(year)",
+                source: .query(query)
+            )
 
         case "genre":
             guard let genre = seededPick(snapshot.genres, seed: seed, salt: 7) else { return nil }
             var query = BrunoQuery()
             query.genres = [genre]
             query.shuffleSeed = seed
-            return .init(id: "x-genre-\(genre)", lens: "If You Like", title: genre, source: .query(query))
+            return .init(
+                id: "x-genre-\(genre)",
+                lens: "If You Like",
+                title: genre,
+                kind: .genre,
+                dedupeKey: "genre:\(genre)",
+                source: .query(query)
+            )
 
         case "studio":
-            return boxSetShelf(snapshot.studioBoxSets, idPrefix: "x-studio", lens: "From the Vault", seed: seed) { name in name }
+            return boxSetShelf(snapshot.studioBoxSets, idPrefix: "x-studio", lens: "From the Vault", kind: .studio, seed: seed) { name in
+                name
+            }
 
         case "decade":
-            return boxSetShelf(snapshot.decadeBoxSets, idPrefix: "x-decade", lens: "Lost in Time", seed: seed) { name in
+            return boxSetShelf(snapshot.decadeBoxSets, idPrefix: "x-decade", lens: "Lost in Time", kind: .decade, seed: seed) { name in
                 "Hidden in the \(name)"
             }
 
         case "spotlight":
-            return boxSetShelf(snapshot.directorBoxSets, idPrefix: "x-spotlight", lens: "Director Spotlight", seed: seed) { name in
-                "Spotlight on \(name)"
-            }
+            return boxSetShelf(
+                snapshot.directorBoxSets,
+                idPrefix: "x-spotlight",
+                lens: "Director Spotlight",
+                kind: .spotlight,
+                seed: seed
+            ) { name in "Spotlight on \(name)" }
 
         case "curated", "world":
-            return boxSetShelf(snapshot.curatedBoxSets, idPrefix: "x-curated", lens: "Curated", seed: seed) { name in name }
+            return boxSetShelf(snapshot.curatedBoxSets, idPrefix: "x-curated", lens: "Curated", kind: .curated, seed: seed) { name in name }
 
         case "seasonal":
-            return seasonalShelf(snapshot: snapshot, seed: seed)
+            return seasonalShelf(snapshot: snapshot, seed: seed, now: now)
 
         default:
             return nil
@@ -199,11 +276,12 @@ enum BrunoHomePlan {
 
     // MARK: Helpers
 
-    /// A query that lists the members of a BoxSet (group child), seed-shuffled.
+    /// A query that lists the members of a BoxSet (group child), seed-shuffled. Explicitly scoped
+    /// to movies+series so a mixed collection never surfaces folders/extras (red-team L1).
     private static func parentQuery(parentID: String, seed: UInt32, salt: UInt32) -> BrunoQuery {
         var query = BrunoQuery()
         query.parentID = parentID
-        query.includeItemTypes = []
+        query.includeItemTypes = [.movie, .series]
         query.shuffleSeed = derive(seed, salt)
         return query
     }
@@ -213,6 +291,7 @@ enum BrunoHomePlan {
         _ boxSets: [BaseItemDto],
         idPrefix: String,
         lens: String,
+        kind: BrunoShelf.Kind,
         seed: UInt32,
         title: (String) -> String
     ) -> BrunoShelf? {
@@ -222,13 +301,15 @@ enum BrunoHomePlan {
             id: "\(idPrefix)-\(id)",
             lens: lens,
             title: title(name),
+            kind: kind,
+            dedupeKey: "parent:\(id)",
             source: .query(parentQuery(parentID: id, seed: seed, salt: 3))
         )
     }
 
     /// Date-aware seasonal pick (Christmas in Dec, Halloween in Oct, 4th of July in early Jul);
-    /// otherwise a seeded seasonal collection.
-    private static func seasonalShelf(snapshot: BrunoLibrarySnapshot, seed: UInt32, now: Date = Date()) -> BrunoShelf? {
+    /// otherwise a seeded seasonal collection. `now` is injected to keep `build` reproducible.
+    private static func seasonalShelf(snapshot: BrunoLibrarySnapshot, seed: UInt32, now: Date) -> BrunoShelf? {
         let month = Calendar.current.component(.month, from: now)
         let keyword: String? = switch month {
         case 12: "christmas"
@@ -251,6 +332,8 @@ enum BrunoHomePlan {
             id: "x-seasonal-\(id)",
             lens: "In Season",
             title: "\(name) Picks",
+            kind: .seasonal,
+            dedupeKey: "parent:\(id)",
             source: .query(parentQuery(parentID: id, seed: seed, salt: 5))
         )
     }
@@ -260,11 +343,12 @@ enum BrunoHomePlan {
         id: String,
         lens: String,
         title: String,
+        kind: BrunoShelf.Kind,
         posterType: PosterDisplayType,
         items: [BaseItemDto]
     ) {
         guard items.count >= minItems else { return }
-        shelves.append(.init(id: id, lens: lens, title: title, posterType: posterType, source: .items(items)))
+        shelves.append(.init(id: id, lens: lens, title: title, posterType: posterType, kind: kind, dedupeKey: id, source: .items(items)))
     }
 
     /// Independent, stable seeded pick (each call site uses a distinct `salt`).
@@ -277,18 +361,20 @@ enum BrunoHomePlan {
         seed &+ salt &* 2_654_435_761
     }
 
-    /// Drop adjacent shelves of the same kind, drop empty `.items` shelves, cap the count.
+    /// Drop adjacent shelves of the same kind, drop shelves whose content was already shown,
+    /// drop empty `.items` shelves, cap the count.
     private static func dedupedAndCapped(_ shelves: [BrunoShelf]) -> [BrunoShelf] {
         var out: [BrunoShelf] = []
         var seenIDs = Set<String>()
+        var seenContent = Set<String>()
         for shelf in shelves {
             if seenIDs.contains(shelf.id) { continue }
+            if seenContent.contains(shelf.dedupeKey) { continue }
             if case let .items(items) = shelf.source, items.count < minItems { continue }
-            if let last = out.last, last.kindTag == shelf.kindTag, shelf.kindTag.hasPrefix("query") {
-                continue // no two adjacent same-kind explore/query shelves
-            }
+            if let last = out.last, last.kind == shelf.kind { continue } // no two adjacent same kind
             out.append(shelf)
             seenIDs.insert(shelf.id)
+            seenContent.insert(shelf.dedupeKey)
             if out.count >= shelfCap { break }
         }
         return out

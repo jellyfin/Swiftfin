@@ -18,6 +18,29 @@ import JellyfinAPI
 // into something `PosterHStack` can render (a child paging VM, or a pre-resolved item array).
 struct BrunoShelf: Identifiable {
 
+    /// The role of a shelf. Used for the "no two adjacent shelves of the same kind" rule —
+    /// distinct from `dedupeKey`, which dedupes by *content*. (Without a per-role kind, all
+    /// parentID-backed shelves would collapse together and the adjacency rule would wrongly
+    /// drop e.g. a Decade row that follows a Studio row.)
+    enum Kind: String {
+        case resume
+        case nextUp
+        case recentlyAdded
+        case spotlight
+        case genre
+        case series
+        case studio
+        case eras
+        case auteurs
+        case collections
+        case acclaimed
+        case critics
+        case year
+        case decade
+        case curated
+        case seasonal
+    }
+
     enum Source {
         /// Continue Watching — `ResumeItemsLibrary` (movies + episodes).
         case resume
@@ -37,6 +60,10 @@ struct BrunoShelf: Identifiable {
     let lens: String
     let title: String
     let posterType: PosterDisplayType
+    let kind: Kind
+    /// Content identity (e.g. the BoxSet parentID, genre, or year) so the same collection is
+    /// never shown twice — including across infinite-scroll pages.
+    let dedupeKey: String
     let source: Source
 
     init(
@@ -44,31 +71,16 @@ struct BrunoShelf: Identifiable {
         lens: String,
         title: String,
         posterType: PosterDisplayType = .landscape,
+        kind: Kind,
+        dedupeKey: String,
         source: Source
     ) {
         self.id = id
         self.lens = lens
         self.title = title
         self.posterType = posterType
+        self.kind = kind
+        self.dedupeKey = dedupeKey
         self.source = source
-    }
-
-    /// A coarse kind used for the "no two adjacent shelves of the same kind" dedupe rule
-    /// and for determinism assertions (PRODUCT_SPEC §4).
-    var kindTag: String {
-        switch source {
-        case .resume: "resume"
-        case .nextUp: "nextUp"
-        case .recentlyAdded: "recentlyAdded"
-        case let .items(items): "items(\(items.count))"
-        case let .query(query):
-            if query.parentID != nil { "query.parent" }
-            else if query.genres.isNotEmpty { "query.genre" }
-            else if query.studioIDs.isNotEmpty { "query.studio" }
-            else if query.personIDs.isNotEmpty { "query.person" }
-            else if query.years.isNotEmpty { "query.year" }
-            else if query.minCommunityRating != nil { "query.acclaimed" }
-            else { "query" }
-        }
     }
 }

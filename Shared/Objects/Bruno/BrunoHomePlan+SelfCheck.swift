@@ -22,18 +22,30 @@ extension BrunoHomePlan {
 
     static func selfCheckPassed() -> Bool {
         let mock = mockSnapshot()
+        // Fixed injected dates so the (date-aware) plan is reproducible and wall-clock-independent.
+        let june = Date(timeIntervalSince1970: 1_718_000_000) // 2024-06
+        let december = Date(timeIntervalSince1970: 1_734_000_000) // 2024-12
 
-        let a = build(seed: 4242, snapshot: mock).map(\.id)
-        let b = build(seed: 4242, snapshot: mock).map(\.id)
-        let c = build(seed: 9999, snapshot: mock).map(\.id)
+        let a = build(seed: 4242, snapshot: mock, now: june).map(\.id)
+        let b = build(seed: 4242, snapshot: mock, now: june).map(\.id)
+        let c = build(seed: 9999, snapshot: mock, now: june).map(\.id)
 
-        guard a == b else { return false } // stable for a fixed seed
+        guard a == b else { return false } // stable for a fixed (seed, now)
         guard a != c else { return false } // varies by seed
 
-        let shelves = build(seed: 4242, snapshot: mock)
-        for index in 1 ..< shelves.count where shelves[index].kindTag.hasPrefix("query") {
-            if shelves[index].kindTag == shelves[index - 1].kindTag { return false }
+        // Pure over `now`: same inputs incl. a different month are themselves stable (no Date() leak).
+        let d1 = build(seed: 4242, snapshot: mock, now: december).map(\.id)
+        let d2 = build(seed: 4242, snapshot: mock, now: december).map(\.id)
+        guard d1 == d2 else { return false }
+
+        // No two adjacent shelves share a kind.
+        let shelves = build(seed: 4242, snapshot: mock, now: june)
+        for index in 1 ..< shelves.count {
+            if shelves[index].kind == shelves[index - 1].kind { return false }
         }
+        // No collection appears twice in one build (content dedupe).
+        let keys = shelves.map(\.dedupeKey)
+        guard Set(keys).count == keys.count else { return false }
 
         // A group with < minItems children must drop its `.items` shelf (here: Eras).
         let sparse = BrunoLibrarySnapshot(
@@ -42,7 +54,7 @@ extension BrunoHomePlan {
             genres: ["Drama"],
             years: [1999]
         )
-        guard !build(seed: 1, snapshot: sparse).contains(where: { $0.id == "eras" }) else { return false }
+        guard !build(seed: 1, snapshot: sparse, now: june).contains(where: { $0.id == "eras" }) else { return false }
 
         return true
     }

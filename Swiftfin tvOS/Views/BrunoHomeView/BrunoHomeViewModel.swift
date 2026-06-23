@@ -52,6 +52,11 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
 
     private var snapshot: BrunoLibrarySnapshot = .empty
     private var explorePage = 0
+    /// Content already on screen (by `BrunoShelf.dedupeKey`) so the explore tail never repeats a
+    /// collection it (or the spine) already showed — including across infinite-scroll pages.
+    private var seenDedupeKeys: Set<String> = []
+    /// Set once the explore tail can produce nothing new, so the bottom sentinel stops re-firing.
+    private var exploreExhausted = false
     private var refreshTask: AnyCancellable?
     private var appendTask: AnyCancellable?
 
@@ -85,7 +90,7 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
             return .refreshing
 
         case .appendExplore:
-            guard state == .content, sections.count < BrunoHomePlan.shelfCap else { return state }
+            guard state == .content, !exploreExhausted, sections.count < BrunoHomePlan.shelfCap else { return state }
             appendTask?.cancel()
             appendTask = Task { [weak self] in
                 await self?.performAppendExplore()
@@ -113,7 +118,7 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
 
         async let heroTask = loadHero(seed: seed, session: userSession)
 
-        let plan = BrunoHomePlan.build(seed: seed, snapshot: snapshot)
+        let plan = BrunoHomePlan.build(seed: seed, snapshot: snapshot, now: Date())
         let sectionVMs = plan.map { BrunoShelfViewModel(shelf: $0) }
         await withTaskGroup(of: Void.self) { group in
             for section in sectionVMs {
@@ -124,21 +129,36 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         guard !Task.isCancelled else { return }
 
         heroItems = await heroTask
-        sections = sectionVMs.filter(\.shouldDisplay)
+        let kept = sectionVMs.filter(\.shouldDisplay)
+        sections = kept
+        seenDedupeKeys = Set(kept.map(\.shelf.dedupeKey))
+        explorePage = 0
+        exploreExhausted = false
         state = .content
     }
 
     private func performAppendExplore() async {
-        guard let userSession else { return }
+        guard let userSession, !exploreExhausted else { return }
 
+        // Advance the page regardless of yield so an empty batch can't busy-loop the sentinel.
+        let page = explorePage + 1
+        explorePage = page
+
+        // Filter out collections already shown (spine or earlier pages) BEFORE fetching.
         let newShelves = BrunoHomePlan.appendExplore(
             seed: seed,
-            page: explorePage + 1,
+            page: page,
             alreadyShown: sections.count,
-            snapshot: snapshot
+            snapshot: snapshot,
+            now: Date()
         )
-        guard newShelves.isNotEmpty else { return }
-        explorePage += 1
+        .filter { !seenDedupeKeys.contains($0.dedupeKey) }
+
+        if newShelves.isEmpty {
+            // Walked a full lap of the key pool with nothing new → stop appending.
+            if page >= BrunoHomePlan.exploreKeys.count { exploreExhausted = true }
+            return
+        }
 
         let newVMs = newShelves.map { BrunoShelfViewModel(shelf: $0) }
         await withTaskGroup(of: Void.self) { group in
@@ -150,7 +170,13 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         guard !Task.isCancelled else { return }
 
         let existingIDs = Set(sections.map(\.id))
-        sections.append(contentsOf: newVMs.filter { $0.shouldDisplay && !existingIDs.contains($0.id) })
+        let kept = newVMs.filter { $0.shouldDisplay && !existingIDs.contains($0.id) }
+        for section in kept {
+            seenDedupeKeys.insert(section.shelf.dedupeKey)
+        }
+        sections.append(contentsOf: kept)
+
+        if sections.count >= BrunoHomePlan.shelfCap { exploreExhausted = true }
     }
 
     /// Seeded hero spotlight: a stable high-rated superset (plan §D), seed-shuffled, take 5.
