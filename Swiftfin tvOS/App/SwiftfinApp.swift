@@ -23,10 +23,28 @@ struct SwiftfinApp: App {
 
     var body: some Scene {
         WindowGroup {
-            OverlayToastView {
-                WithUserAuthentication {
-                    RootView()
-                }
+            #if DEBUG
+            // Bruno: render the GUI from mock data with no server/sign-in/keychain when
+            // launched with `BRUNO_SNAPSHOT=1` (see BrunoPreviewSupport.swift). Inert otherwise.
+            if ProcessInfo.processInfo.environment["BRUNO_SNAPSHOT"] == "1" {
+                BrunoSnapshotGallery()
+            } else if ProcessInfo.processInfo.environment["BRUNO_COLLECTION_PROBE"] != nil {
+                BrunoCollectionProbe()
+            } else {
+                root
+                    .task { await BrunoAutoSignIn.runIfRequested() }
+            }
+            #else
+            root
+            #endif
+        }
+    }
+
+    @ViewBuilder
+    private var root: some View {
+        OverlayToastView {
+            WithUserAuthentication {
+                RootView()
             }
         }
     }

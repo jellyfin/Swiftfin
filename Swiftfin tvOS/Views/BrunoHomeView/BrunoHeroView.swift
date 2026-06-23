@@ -22,11 +22,12 @@ struct BrunoHeroView: View {
 
     let items: [BaseItemDto]
 
+    /// Bound so the home's ambient backdrop can track the selected spotlight.
+    @Binding
+    var index: Int
+
     @Router
     private var router
-
-    @State
-    private var index = 0
 
     private var current: BaseItemDto? {
         items[safe: index] ?? items.first

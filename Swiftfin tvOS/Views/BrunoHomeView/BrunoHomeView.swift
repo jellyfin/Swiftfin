@@ -26,10 +26,18 @@ struct BrunoHomeView: View {
     @Environment(\.accessibilityReduceMotion)
     private var reduceMotion
 
+    /// Selected hero spotlight, shared with the ambient backdrop so it tracks the feature.
+    @State
+    private var spotlightIndex = 0
+
+    private var spotlightItem: BaseItemDto? {
+        viewModel.heroItems[safe: spotlightIndex] ?? viewModel.heroItems.first
+    }
+
     var body: some View {
         ZStack {
-            Color.bruno.page
-                .ignoresSafeArea()
+            BrunoAmbientBackground(item: spotlightItem)
+                .animation(.easeInOut(duration: 0.6), value: spotlightItem?.id)
 
             if viewModel.sections.isNotEmpty || !viewModel.heroItems.isEmpty {
                 content
@@ -59,7 +67,7 @@ struct BrunoHomeView: View {
                         .padding(.top, 20)
                         .id("bruno-top")
 
-                    BrunoHeroView(items: viewModel.heroItems)
+                    BrunoHeroView(items: viewModel.heroItems, index: $spotlightIndex)
 
                     ForEach(viewModel.sections) { section in
                         BrunoShelfView(viewModel: section)
