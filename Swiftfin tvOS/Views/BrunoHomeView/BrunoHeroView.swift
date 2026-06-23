@@ -29,6 +29,12 @@ struct BrunoHeroView: View {
     @Router
     private var router
 
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    /// Auto-advance cadence for the spotlight (the "rotating" part the dots also drive).
+    private let autoAdvance = Timer.publish(every: 8, on: .main, in: .common).autoconnect()
+
     private var current: BaseItemDto? {
         items[safe: index] ?? items.first
     }
@@ -59,6 +65,12 @@ struct BrunoHeroView: View {
                     .padding(.trailing, 600)
             }
             .frame(height: 720)
+            .onReceive(autoAdvance) { _ in
+                guard !reduceMotion, items.count > 1 else { return }
+                withAnimation(.easeInOut(duration: 0.6)) {
+                    index = (index + 1) % items.count
+                }
+            }
         }
     }
 
