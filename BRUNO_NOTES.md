@@ -57,8 +57,13 @@ The fork's own source targets Xcode 26 (Swift 6.2 + tvOS 26 SDK). Two compat pat
    `legacyBody` (the capsule/material fallback the code already ships). Only affects the video player's
    supplement buttons — not Bruno Home. (`_Alert.swift` had `glassEffect` only in a TODO comment — no change.)
 
-**Net T0 toolchain delta:** Nuke 13→12.9.0 (+1-line delegate rename), Pulse 5.2→5.1.4, the two source
-patches above, and `-skipMacroValidation` on the gate. Everything else builds as authored.
+3. `Swiftfin/Extensions/View/View-iOS.swift` (iOS target) — `listRowCornerRadius` used
+   `UICollectionViewCell.cornerConfiguration = .uniformCorners(...)` (iOS **26 SDK** UIKit).
+   Routed to the existing `cell.layer.cornerRadius` fallback so the iOS scheme compiles.
+
+**Net toolchain delta:** Nuke 13→12.9.0 (+1-line delegate rename), Pulse 5.2→5.1.4, the three source
+patches above, and `-skipMacroValidation` on the gate. Everything else builds as authored. The fork is
+authored for Xcode 26 (Swift 6.2 / iOS+tvOS 26 SDK); revert all `Bruno toolchain-compat` edits there.
 
 ### GitHub Actions disabled (per owner)
 `.github/workflows/{ci.yml,testflight.yml,validate-pr.yaml}` renamed to `*.disabled` so no heavy
@@ -170,12 +175,23 @@ a `Defaults.Keys` `Key<Int>` is enough for the day-seed (see T4).
 
 ---
 
-## §Owner device-run steps  (filled in at T9)
+## §Owner device-run steps
 
-_TODO at T9._
+1. Open `Swiftfin.xcodeproj` in Xcode 16.4 (or run the §LOCKED gate from the CLI).
+2. Set a real `DEVELOPMENT_TEAM` in `XcodeConfig/DevelopmentTeam.xcconfig` (placeholder is `ABCDE12345`)
+   and a unique `PRODUCT_BUNDLE_IDENTIFIER` (currently `com.diplomacymusic.bruno`).
+3. Select the **Swiftfin tvOS** scheme + your Apple TV (or the tvOS 18.5 Simulator), and Run.
+4. On first launch, add the Jellyfin server `http://192.168.50.19:8899` and sign in (creds in the local
+   gitignored `bruno_jellyfin.env`). The Home tab is now **Bruno**: a seeded hero + the §E shelves of
+   your real library. Tap a card → stock detail → **Play**. Tap **Shuffle** to re-roll the day's seed.
+5. To run the determinism/RNG checks: `./bruno-verify/run.sh` (prints `ALL RNG CHECKS PASSED`). The
+   plan determinism is also asserted at every `BrunoHomeViewModel.init` in DEBUG builds.
 
 ## §Deferred TODOs
 
 - Direct hero-play (build `MediaPlayerItemProvider` → `.videoPlayer`) — proto uses `router.route(to:.item(item:))` (stock detail → Play).
-- Revert Nuke pin + delegate edit once on Xcode 26 / Swift 6.2.
+- Revert all `Bruno toolchain-compat` edits + Nuke/Pulse pins once on Xcode 26 / Swift 6.2 (restores Liquid Glass + isolated conformance + 13.x Nuke).
+- Localize Bruno UI strings via `L10n` (prototype is English-only; `hard_coded_display_string` is disabled in the two Bruno view files).
 - Licensed Knockout font (Oswald is the brand stand-in).
+- Hero auto-rotation (9s) — current hero is dot-switchable + seeded; auto-advance deferred to keep tvOS focus stable.
+- A formal XCTest target (none exists in the fork) — RNG verified via `bruno-verify/`, determinism via DEBUG self-check.

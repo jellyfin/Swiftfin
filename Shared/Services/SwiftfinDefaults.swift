@@ -90,6 +90,11 @@ extension Defaults.Keys {
 
     static let signOutOnBackground: Key<Bool> = AppKey("signOutOnBackground", default: true)
     static let signOutOnClose: Key<Bool> = AppKey("signOutOnClose", default: false)
+
+    // Bruno home seed: day-stable, persisted so reloads are consistent; Shuffle re-rolls it.
+    // `brunoSeedDay` is the yyyymmdd stamp the seed was minted on (new day → new seed).
+    static let brunoSeed: Key<Int> = AppKey("brunoSeed", default: 0)
+    static let brunoSeedDay: Key<Int> = AppKey("brunoSeedDay", default: 0)
 }
 
 // MARK: User
