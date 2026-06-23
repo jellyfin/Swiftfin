@@ -1,0 +1,84 @@
+:root {
+  --bg: #0b0c10;
+  --bg2: #111218;
+  --text: #f3f4f6;
+  --muted: #9aa0ac;
+  --accent: #6366f1;
+  --card-w: 320px;
+  --card-h: 180px;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+.app { padding-bottom: 60px; }
+
+/* Hero */
+.hero {
+  position: relative;
+  height: 70vh;
+  min-height: 460px;
+  background-size: cover;
+  background-position: center 20%;
+  display: flex;
+  align-items: flex-end;
+}
+.hero-fade {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(11,12,16,.95) 0%, rgba(11,12,16,.4) 45%, rgba(11,12,16,0) 70%),
+    linear-gradient(0deg, var(--bg) 2%, rgba(11,12,16,0) 45%);
+}
+.hero-inner { position: relative; padding: 0 56px 56px; max-width: 720px; }
+.hero-inner h1 { font-size: 3.2rem; margin: 0 0 12px; line-height: 1.02; }
+.hero-inner p { color: #d7dae2; font-size: 1.05rem; line-height: 1.5; }
+.hero-actions { margin-top: 18px; display: flex; gap: 12px; }
+.hero-actions button {
+  border: 0; border-radius: 8px; padding: 12px 26px;
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+}
+.play { background: #fff; color: #000; }
+.more { background: rgba(255,255,255,.18); color: #fff; }
+
+/* Shelves */
+main { margin-top: -40px; position: relative; z-index: 2; }
+.shelf { margin: 34px 0; }
+.shelf h2 { font-size: 1.3rem; margin: 0 0 14px; padding: 0 56px; }
+.row {
+  display: flex; gap: 14px; overflow-x: auto; padding: 6px 56px 18px;
+  scroll-snap-type: x proximity; scrollbar-width: none;
+}
+.row::-webkit-scrollbar { display: none; }
+
+/* Cards — backdrop-forward (the "sexy cover art") */
+.card {
+  flex: 0 0 var(--card-w);
+  width: var(--card-w);
+  scroll-snap-align: start;
+  cursor: pointer;
+  transition: transform .18s ease;
+  outline: none;
+}
+.card img {
+  width: var(--card-w); height: var(--card-h);
+  object-fit: cover; border-radius: 10px;
+  background: var(--bg2);
+  display: block;
+  box-shadow: 0 6px 18px rgba(0,0,0,.5);
+}
+.card-title { margin-top: 8px; font-size: .92rem; color: #e6e8ee; }
+.card-title .year { color: var(--muted); }
+.card:hover, .card:focus { transform: scale(1.06); }
+.card:focus img { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Error / footer */
+.error { padding: 80px 56px; }
+.error h2 { color: #ff6b6b; }
+.error .hint { color: var(--muted); }
+.error code { background: var(--bg2); padding: 2px 6px; border-radius: 4px; }
+.foot { color: var(--muted); padding: 30px 56px 0; font-size: .85rem; }

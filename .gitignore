@@ -104,3 +104,6 @@ XcodeConfig/DevelopmentTeam.xcconfig
 
 # Other
 .idea
+
+# Bruno local Jellyfin creds (never commit)
+bruno_jellyfin.env

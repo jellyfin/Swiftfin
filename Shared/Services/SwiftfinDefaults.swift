@@ -66,7 +66,7 @@ extension Defaults.Keys {
     ///
     /// This is set externally whenever the app or user accent colors change,
     /// depending on the current app state.
-    static var accentColor: Key<Color> = AppKey("accentColor", default: .jellyfinPurple)
+    static var accentColor: Key<Color> = AppKey("accentColor", default: Color.bruno.accent)
 
     /// The _real_ appearance key to be used.
     ///
@@ -90,6 +90,11 @@ extension Defaults.Keys {
 
     static let signOutOnBackground: Key<Bool> = AppKey("signOutOnBackground", default: true)
     static let signOutOnClose: Key<Bool> = AppKey("signOutOnClose", default: false)
+
+    // Bruno home seed: day-stable, persisted so reloads are consistent; Shuffle re-rolls it.
+    // `brunoSeedDay` is the yyyymmdd stamp the seed was minted on (new day → new seed).
+    static let brunoSeed: Key<Int> = AppKey("brunoSeed", default: 0)
+    static let brunoSeedDay: Key<Int> = AppKey("brunoSeedDay", default: 0)
 }
 
 // MARK: User
@@ -99,7 +104,7 @@ extension Defaults.Keys {
     /// The accent color default for user contexts.
     /// Only use for `set`, use `accentColor` for `get`.
     static var userAccentColor: Key<Color> {
-        UserKey("userAccentColor", default: .jellyfinPurple)
+        UserKey("userAccentColor", default: Color.bruno.accent)
     }
 
     /// The appearance default for user contexts.

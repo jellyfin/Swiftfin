@@ -50,7 +50,12 @@ extension TabItem {
             title: L10n.home,
             systemImage: "house"
         ) {
+            // Bruno: tvOS gets the Bruno streamer home; iOS keeps stock Home (and stays compiling).
+            #if os(tvOS)
+            BrunoHomeView()
+            #else
             HomeView()
+            #endif
         }
     }
 
