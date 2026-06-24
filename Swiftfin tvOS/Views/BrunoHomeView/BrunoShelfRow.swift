@@ -57,7 +57,9 @@ struct BrunoShelfRow: View {
             }
         }
         .clipsToBounds(false)
-        .dataPrefix(40)
+        // Realize only the capped preview set (shelfCap items + the trailing Show-all card).
+        // Fewer realized UIHostingController cells per row is the dominant vertical-scroll win.
+        .dataPrefix(cards.count)
         .insets(horizontal: EdgeInsets.edgePadding, vertical: 20)
         .itemSpacing(EdgeInsets.edgePadding - 20)
         .scrollBehavior(.continuousLeadingEdge)

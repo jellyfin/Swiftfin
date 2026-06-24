@@ -12,7 +12,7 @@
 >
 > Status legend: `[ ]` not started · `[~]` in progress · `[x]` done · `[!]` blocked
 
-_Last synced: 2026-06-23 (initial creation). Update this date on every edit._
+_Last synced: 2026-06-23 (browse vertical-scroll perf pass). Update this date on every edit._
 
 ---
 
@@ -25,10 +25,11 @@ _Last synced: 2026-06-23 (initial creation). Update this date on every edit._
 | [~] | System Top Shelf extension (dynamic previews) | `BrunoTopShelf/`, `BrunoTopShelfCredentials.swift` | Groundwork shipped; owner must create the target + App Group + signing. See `docs/TOP_SHELF_SETUP.md`. |
 | [ ] | Night-mode / settings surface | (TBD) | Called out as outstanding in the latest handoff. Scope undefined. |
 | [ ] | On-device shelf check (focus feel, scroll-jump landing) | Home / Collections / Genres | Category-row scroll-jump + hero focus feel want a real Apple TV pass. |
+| [ ] | **Browse → Home realignment redesign** | Collections / Genres / Decades browse surfaces | Browse drifts from Home in 3 ways: (1) no persistent hero banner — **owner confirmed (2026-06-23) they want the cinematic featured-content banner (à la Home's `BrunoHeroView`, NOT a streamer logo) to persist across browse views**, (2) eyebrows are repeated group-names rather than lenses, (3) flat vs elevated posters. Make browse consistent with Home on color/type/spacing. Cheapen `.posterShadow()` *with* on-device measurement here (keep the shadow — it's brand, README.md:189-193); revisit `.hoverEffect(.highlight)` removal under measurement. Brief authored 2026-06-23. |
 
 ## Done (recent, newest first)
 
-- [x] Directors/Studios "Show all" lists only the collections, not their movies (`d7de39ef`)
+- [x] Browse vertical-scroll perf: fewer realized poster cells per row (browse only; Home untouched) — `BrunoCategoryShelves.swift` `shelfCap` 36→14, `BrunoShelfRow.swift` `.dataPrefix(40)`→`.dataPrefix(cards.count)`. Each cell is a focusable UIHostingController, so realizing fewer per row is the dominant scroll-cost lever; a shelf is a preview, "Show all" covers the rest. Declined (recorded so not re-attempted blindly): dropping `.posterShadow()` on browse (it's brand — README.md:189-193 — and browse-only drop is the drift the redesign fixes); removing `.hoverEffect(.highlight)` (focus-appearance risk, held for on-device measurement); grow-on-scroll sentinel (mockup treats browse as finite/fully-present; `LazyVStack` already virtualizes rows; would add off-brand pop-in). Branch `claude/strange-cray-165196`; not yet built (no TVVLCKit in worktree — owner builds `main` on device).
 - [x] Dev auto-login to home server on fresh install (`b6fdacdb`, `BrunoDevAutoLogin.swift`)
 - [x] Custom shelf: trailing Show-all card, ~36 items, hide loose movies (`d0d6e32f`)
 - [x] Collections page: category row + per-category capped shelves + Show-all → grid (roadmap §3)

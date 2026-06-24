@@ -72,8 +72,10 @@ struct BrunoCategoryShelves: View {
     @Namespace
     private var namespace
 
-    /// Items lazily loaded into each shelf before the trailing "Show all" card.
-    private let shelfCap = 36
+    /// Items previewed in each shelf before the trailing "Show all" card. Kept small: a shelf is a
+    /// preview, and every card is a focusable UIHostingController, so realizing fewer per row is the
+    /// dominant lever on vertical-scroll cost. "Show all" covers the rest.
+    private let shelfCap = 14
 
     var body: some View {
         ScrollView {
