@@ -27,7 +27,10 @@ struct BrunoAmbientBackground: View {
             Color.bruno.page
 
             if let item {
-                ImageView(item.imageSource(.backdrop, maxWidth: 1280))
+                // 480 not 1280: the still is blurred at radius 90 + 50% opacity, so detail above a
+                // few px is destroyed anyway — a 480px decode is visually identical for ~7x less
+                // memory/decode than a full backdrop.
+                ImageView(item.imageSource(.backdrop, maxWidth: 480))
                     .aspectRatio(contentMode: .fill)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .clipped()

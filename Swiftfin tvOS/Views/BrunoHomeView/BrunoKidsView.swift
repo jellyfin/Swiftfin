@@ -55,21 +55,26 @@ struct BrunoKidsView: View {
             } else if viewModel.parents.isEmpty {
                 notFound
             } else {
-                PagingLibraryView(
-                    library: BrunoCombinedLibrary(
-                        parents: viewModel.parents,
-                        title: "Kids",
-                        id: "bruno-kids-\(filter.id)",
-                        itemTypes: filter.itemTypes
+                // Bar + grid as SIBLINGS in one vertical focus plane (Home's pattern), NOT a
+                // safeAreaInset overlay. The old overlay let the grid's frame extend up under the
+                // bar (PagingLibraryView ignores the vertical safe area), so the collection view ate
+                // every up-press and focus could never climb from the grid back to the filters —
+                // you could only reach them coming down from the tab bar. As siblings the up-press
+                // from the grid's top row finds the bar as the nearest focusable above.
+                VStack(spacing: 0) {
+                    filterBar
+
+                    PagingLibraryView(
+                        library: BrunoCombinedLibrary(
+                            parents: viewModel.parents,
+                            title: "Kids",
+                            id: "bruno-kids-\(filter.id)",
+                            itemTypes: filter.itemTypes
+                        )
                     )
-                )
-                // Rebuild the grid when the filter changes (new item-type scope).
-                .id(filter)
-                    // safeAreaInset (not a VStack) so the bar sits above while the grid's content
-                    // insets below it — robust even though PagingLibraryView ignores vertical safe area.
-                    .safeAreaInset(edge: .top, spacing: 0) {
-                        filterBar
-                    }
+                    // Rebuild the grid when the filter changes (new item-type scope).
+                    .id(filter)
+                }
             }
         }
         .toolbar(.hidden, for: .navigationBar)

@@ -24,15 +24,29 @@ enum BrunoHomePlan {
     static let minItems = 3
     static let shelfCap = 18
 
-    /// All explore generator keys (mirrors the prototype's pool).
+    /// All explore generator keys (mirrors the prototype's pool). `year` is intentionally NOT in
+    /// the random tail pool: the owner promoted "A Year in Film" into the spine (three distinct
+    /// years, placed high — see `build`), so the tail must not surface a fourth, colliding year.
     static let exploreKeys = [
-        "acclaimed", "year", "genre", "studio", "decade", "critics", "world", "spotlight", "curated", "seasonal",
+        "acclaimed", "genre", "studio", "decade", "critics", "world", "spotlight", "curated", "seasonal",
     ]
+
+    /// How many distinct "A Year in Film" shelves the spine surfaces (promoted from the tail).
+    static let spineYearCount = 3
 
     // MARK: Spine + initial explore tail
 
     static func build(seed: UInt32, snapshot: BrunoLibrarySnapshot, now: Date) -> [BrunoShelf] {
         var shelves: [BrunoShelf] = []
+
+        // "A Year in Film" — promoted into the spine. Three distinct years from one seeded
+        // permutation (so they never repeat), each shelf seeded independently. Placed high and
+        // spread apart below so no two land adjacent (the same-kind adjacency rule would drop one).
+        let yearPicks = seededPicks(snapshot.years, seed: seed, salt: 7, count: spineYearCount)
+        func yearSpineShelf(_ index: Int) -> BrunoShelf? {
+            guard index < yearPicks.count else { return nil }
+            return yearShelf(for: yearPicks[index], seed: BrunoRNG.subSeed(seed, 7, UInt32(index), 19))
+        }
 
         // 2. Continue Watching · 3. Up Next · 4. New Releases (stock libraries)
         shelves.append(.init(
@@ -52,6 +66,9 @@ enum BrunoHomePlan {
             dedupeKey: "recentlyAdded",
             source: .recentlyAdded
         ))
+
+        // 4b. A Year in Film (promoted) — first of the three distinct years, near the top.
+        if let yearShelf = yearSpineShelf(0) { shelves.append(yearShelf) }
 
         // 5. Spotlight on {director} — seeded director group child → its films.
         if let director = seededPick(snapshot.directorBoxSets, seed: seed, salt: 11),
@@ -95,6 +112,9 @@ enum BrunoHomePlan {
             source: .query(seriesQuery)
         ))
 
+        // 7b. A Year in Film (promoted) — second distinct year, mid-spine.
+        if let yearShelf = yearSpineShelf(1) { shelves.append(yearShelf) }
+
         // 8. From the {studio} Vault — seeded studio group child.
         if let studio = seededPick(snapshot.studioBoxSets, seed: seed, salt: 41),
            let id = studio.id, let name = studio.name
@@ -128,6 +148,10 @@ enum BrunoHomePlan {
             posterType: .portrait,
             items: Array(snapshot.directorBoxSets.prefix(14))
         )
+
+        // 10b. A Year in Film (promoted) — third distinct year, before Collections.
+        if let yearShelf = yearSpineShelf(2) { shelves.append(yearShelf) }
+
         appendItemsShelf(
             &shelves,
             id: "collections",
@@ -216,20 +240,6 @@ enum BrunoHomePlan {
                 source: .query(query)
             )
 
-        case "year":
-            guard let year = seededPick(snapshot.years, seed: seed, salt: 7) else { return nil }
-            var query = BrunoQuery()
-            query.years = Array((year - 2) ... (year + 2))
-            query.shuffleSeed = seed
-            return .init(
-                id: "x-year-\(year)",
-                lens: "A Year in Film",
-                title: "\(year) & Around",
-                kind: .year,
-                dedupeKey: "year:\(year)",
-                source: .query(query)
-            )
-
         case "genre":
             guard let genre = seededPick(snapshot.genres, seed: seed, salt: 7) else { return nil }
             var query = BrunoQuery()
@@ -275,6 +285,23 @@ enum BrunoHomePlan {
     }
 
     // MARK: Helpers
+
+    /// "A Year in Film": titles released within ±2 years of `year`, seed-shuffled. Promoted into
+    /// the spine (three distinct years per home) — see `build`. `dedupeKey` is the year so the
+    /// three never collide.
+    static func yearShelf(for year: Int, seed: UInt32) -> BrunoShelf {
+        var query = BrunoQuery()
+        query.years = Array((year - 2) ... (year + 2))
+        query.shuffleSeed = seed
+        return .init(
+            id: "x-year-\(year)",
+            lens: "A Year in Film",
+            title: "\(year) & Around",
+            kind: .year,
+            dedupeKey: "year:\(year)",
+            source: .query(query)
+        )
+    }
 
     /// A query that lists the members of a BoxSet (group child), seed-shuffled. Explicitly scoped
     /// to movies+series so a mixed collection never surfaces folders/extras (red-team L1).
@@ -355,6 +382,12 @@ enum BrunoHomePlan {
     private static func seededPick<T>(_ array: [T], seed: UInt32, salt: UInt32) -> T? {
         guard array.isNotEmpty else { return nil }
         return BrunoRNG.shuffled(array, seed: derive(seed, salt)).first
+    }
+
+    /// The first `count` DISTINCT elements of one seeded shuffle — distinct because they're the
+    /// front of a single permutation (used for the spine's three different "A Year in Film" years).
+    private static func seededPicks<T>(_ array: [T], seed: UInt32, salt: UInt32, count: Int) -> [T] {
+        Array(BrunoRNG.shuffled(array, seed: derive(seed, salt)).prefix(count))
     }
 
     private static func derive(_ seed: UInt32, _ salt: UInt32) -> UInt32 {
