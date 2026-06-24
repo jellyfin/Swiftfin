@@ -13,8 +13,6 @@ import SwiftUI
 // TODO: WebSocket
 struct ServerActivityView: View {
 
-    // MARK: - Router
-
     @Router
     private var router
 
@@ -22,8 +20,6 @@ struct ServerActivityView: View {
     private var usersViewModel = PagingLibraryViewModel(library: ServerUsersLibrary())
     @StateObject
     private var viewModel = PagingLibraryViewModel(library: ServerActivityLibrary())
-
-    // MARK: - Body
 
     var body: some View {
         ZStack {
@@ -64,8 +60,6 @@ struct ServerActivityView: View {
         }
     }
 
-    // MARK: - Content View
-
     @ViewBuilder
     private var contentView: some View {
         if viewModel.elements.isEmpty {
@@ -89,18 +83,46 @@ struct ServerActivityView: View {
                     user: user
                 )
 
-                LogEntry(viewModel: logViewModel) {
-                    router.route(to: .activityDetails(viewModel: logViewModel))
+                LogEntryButton(
+                    title: user?.name ?? L10n.system,
+                    logLevel: log.severity ?? LogLevel.none,
+                    contents: log.name ?? .emptyDash,
+                    timestamp: log.date,
+                    action: {
+                        router.route(to: .activityDetails(viewModel: logViewModel))
+                    }
+                ) {
+                    if let user, let userSession = viewModel.userSession {
+                        UserProfileImage(
+                            userID: user.id,
+                            source: user.profileImageSource(
+                                client: userSession.client,
+                                maxWidth: 60
+                            )
+                        )
+                    } else {
+                        ZStack {
+                            Rectangle()
+                                .fill(.complexSecondary)
+
+                            SystemImageContentView(
+                                systemName: "gearshape.fill",
+                                ratio: 0.5
+                            )
+                        }
+                        .posterBorder()
+                        .clipShape(.circle)
+                        .aspectRatio(1, contentMode: .fit)
+                        .shadow(radius: 5)
+                    }
                 }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 viewModel.getNextPage()
             }
-            .frame(maxWidth: .infinity)
+            .ignoresSafeArea(edges: .bottom)
         }
     }
-
-    // MARK: - User Filter Button
 
     @ViewBuilder
     private var userFilterButton: some View {
@@ -136,8 +158,6 @@ struct ServerActivityView: View {
         }
         .pickerStyle(.menu)
     }
-
-    // MARK: - Start Date Button
 
     @ViewBuilder
     private var startDateButton: some View {

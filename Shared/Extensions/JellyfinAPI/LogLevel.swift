@@ -49,6 +49,41 @@ extension LogLevel: SystemImageable, Displayable {
     }
 
     public var displayTitle: String {
-        rawValue
+        switch self {
+        case .trace:
+            L10n.trace
+        case .debug:
+            L10n.debug
+        case .information:
+            L10n.information
+        case .warning:
+            L10n.warning
+        case .error:
+            L10n.error
+        case .critical:
+            L10n.critical
+        case .none:
+            L10n.none
+        }
+    }
+
+    /// Creates a `LogLevel` from a `LogFile` abbreviated type
+    init(abbreviation: String) {
+        switch abbreviation {
+        case "TRC":
+            self = .trace
+        case "DBG":
+            self = .debug
+        case "INF":
+            self = .information
+        case "WRN":
+            self = .warning
+        case "ERR":
+            self = .error
+        case "CRT":
+            self = .critical
+        default:
+            self = .none
+        }
     }
 }

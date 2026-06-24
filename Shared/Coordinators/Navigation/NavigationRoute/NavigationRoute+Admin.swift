@@ -136,6 +136,30 @@ extension NavigationRoute {
         }
     }
 
+    static func serverLogContents(logFile: LogFile) -> NavigationRoute {
+        NavigationRoute(id: "serverLogContents") {
+            ServerLogContentsView(logFile: logFile)
+        }
+    }
+
+    static func serverLogEntry(entry: ServerLogEntry) -> NavigationRoute {
+        NavigationRoute(id: "serverLogEntry") {
+            ServerLogEntryView(entry: entry)
+        }
+    }
+
+    // MARK: - Share
+
+    // TODO: Move to a more central file if used in other locations.
+    static func shareSheet(urls: [URL]) -> NavigationRoute {
+        NavigationRoute(
+            id: "shareSheet",
+            style: .sheet
+        ) {
+            ShareSheet(urls: urls)
+        }
+    }
+
     // MARK: - Server Tasks
 
     static var tasks: NavigationRoute {
