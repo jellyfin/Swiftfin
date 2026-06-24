@@ -90,9 +90,11 @@ struct BrunoHeroView: View {
 
                 ImageView(item.imageSource(.backdrop, maxWidth: 1920))
                     .aspectRatio(contentMode: .fill)
-                    // Keyed on the item id (ImageView caches its source in @State and ignores
-                    // later parent updates) so the backdrop actually re-fetches each cycle; the
-                    // opacity transition cross-fades the swap instead of hard-cutting.
+                    // Bias the fill-crop downward so subjects' heads (usually high in the frame)
+                    // aren't clipped at the top. The extra bottom it trims sits under the bottom
+                    // scrim + content anyway. (110 < the ~180pt top overflow of a 16:9 backdrop in
+                    // this 720pt frame, so no page-color gap appears at the top.)
+                    .offset(y: 110)
                     .id(item.id)
                     .transition(.opacity)
             }

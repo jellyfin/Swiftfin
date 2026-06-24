@@ -66,6 +66,14 @@ struct BrunoShelfRow: View {
         .insets(horizontal: EdgeInsets.edgePadding, vertical: 20)
         .itemSpacing(EdgeInsets.edgePadding - 20)
         .scrollBehavior(.continuousLeadingEdge)
+        // Pin the row height so the LazyVStack never re-reads CollectionHStack's intrinsic size on
+        // vertical focus moves. CollectionHStack computes height lazily (throwaway UIHostingController
+        // + sizeToFit) and its size.didSet schedules invalidateLayout()+invalidateIntrinsicContentSize()
+        // on the NEXT runloop — that cross-frame renegotiation is the up/down focus "hitch"/"math
+        // conflict". A constant height removes it from the vertical layout path. Value = portrait
+        // poster (~241w x 3/2) + two-line title area + 40pt vertical insets, rounded up for headroom;
+        // clipsToBounds(false) keeps the focus-scaled poster from clipping against this frame.
+        .frame(height: 460)
     }
 
     private var showAllCard: some View {
