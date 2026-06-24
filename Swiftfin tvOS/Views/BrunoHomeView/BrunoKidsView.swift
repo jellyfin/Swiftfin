@@ -81,20 +81,13 @@ struct BrunoKidsView: View {
     private var filterBar: some View {
         HStack(spacing: 24) {
             ForEach(KidsFilter.allCases) { option in
-                Button {
+                BrunoSelectorCard(
+                    title: option.rawValue,
+                    isSelected: option == filter,
+                    width: 280
+                ) {
                     filter = option
-                } label: {
-                    Text(option.rawValue)
-                        .font(.brunoBody(26, weight: .semibold))
-                        .foregroundStyle(option == filter ? Color.bruno.page : Color.bruno.fg)
-                        .frame(minWidth: 200)
-                        .padding(.vertical, 22)
-                        .background {
-                            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .fill(option == filter ? Color.bruno.accent : Color.bruno.fg.opacity(0.14))
-                        }
                 }
-                .buttonStyle(.plain)
             }
 
             Spacer()
