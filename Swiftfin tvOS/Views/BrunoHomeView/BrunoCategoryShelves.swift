@@ -119,6 +119,9 @@ struct BrunoCategoryShelves: View {
             }
             .padding(.bottom, 60)
         }
+        // Home's warm-umber ambient page (tinted to the featured item) instead of flat system
+        // black, so browse surfaces read as the same branded, glowing page as Home.
+        .background { BrunoAmbientBackground(item: featured) }
     }
 
     // The big gradient category cards (the group artwork). Tapping one jumps straight to that

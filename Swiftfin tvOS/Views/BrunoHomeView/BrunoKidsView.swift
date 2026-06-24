@@ -81,6 +81,9 @@ struct BrunoKidsView: View {
         .onFirstAppear {
             Task { await viewModel.load() }
         }
+        // Warm ambient page (no hero art on Kids -> degrades to the page + accent glow + vignette)
+        // so the grid + filter chips sit on Bruno's branded surface, not flat system black.
+        .background { BrunoAmbientBackground(item: nil) }
     }
 
     private var filterBar: some View {
