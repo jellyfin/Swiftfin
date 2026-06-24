@@ -129,9 +129,12 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
             return
         }
 
-        let snapshot = await BrunoLibrarySnapshot.load(
+        // forceReload: Home always refreshes fresh (unchanged behavior), but stores the result so
+        // Collections / drill-ins can reuse it instead of refetching the whole library.
+        let snapshot = await BrunoLibrarySnapshot.loadShared(
             client: userSession.client,
-            userID: userSession.user.id
+            userID: userSession.user.id,
+            forceReload: true
         )
 
         guard !Task.isCancelled else { return }

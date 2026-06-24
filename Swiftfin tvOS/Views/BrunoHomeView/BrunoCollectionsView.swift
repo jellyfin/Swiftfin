@@ -103,7 +103,9 @@ final class BrunoCollectionsViewModel: ViewModel {
 
         let client = userSession.client
         let userID = userSession.user.id
-        let snapshot = await BrunoLibrarySnapshot.load(client: client, userID: userID)
+        // Reuse the snapshot Home just loaded (shared cache) instead of refetching the whole
+        // library on every Home -> Collections navigation.
+        let snapshot = await BrunoLibrarySnapshot.loadShared(client: client, userID: userID)
 
         // Same curated groups the home spine derives from, in server order; drop empties.
         var built = snapshot.favoriteGroupBoxSets.compactMap { boxSet -> BrunoCollectionCategory? in

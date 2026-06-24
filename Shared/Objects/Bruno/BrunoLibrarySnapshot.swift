@@ -162,3 +162,51 @@ extension BrunoLibrarySnapshot {
         }
     }
 }
+
+// MARK: - Shared cache
+
+extension BrunoLibrarySnapshot {
+
+    /// In-memory cache so navigating Home -> Collections reuses the snapshot Home just loaded
+    /// instead of refetching the whole library each time (the "slow loads between pages"). Short
+    /// TTL; keyed by userID so a user switch never serves stale data; explicit refreshes bypass it.
+    private actor Cache {
+        private var snapshot: BrunoLibrarySnapshot?
+        private var userID: String?
+        private var loadedAt: Date?
+
+        func value(userID: String, maxAge: TimeInterval) -> BrunoLibrarySnapshot? {
+            guard self.userID == userID,
+                  let snapshot, let loadedAt,
+                  !snapshot.isEmpty,
+                  Date().timeIntervalSince(loadedAt) < maxAge
+            else { return nil }
+            return snapshot
+        }
+
+        func store(_ snapshot: BrunoLibrarySnapshot, userID: String) {
+            guard !snapshot.isEmpty else { return }
+            self.snapshot = snapshot
+            self.userID = userID
+            self.loadedAt = Date()
+        }
+    }
+
+    private static let cache = Cache()
+
+    /// Like `load`, but reuses a recent in-memory snapshot for the same user (default 5 min). Pass
+    /// `forceReload: true` for explicit refreshes (still stores the fresh result so peers can reuse).
+    static func loadShared(
+        client: JellyfinClient,
+        userID: String,
+        maxAge: TimeInterval = 300,
+        forceReload: Bool = false
+    ) async -> BrunoLibrarySnapshot {
+        if !forceReload, let cached = await cache.value(userID: userID, maxAge: maxAge) {
+            return cached
+        }
+        let fresh = await load(client: client, userID: userID)
+        await cache.store(fresh, userID: userID)
+        return fresh
+    }
+}
