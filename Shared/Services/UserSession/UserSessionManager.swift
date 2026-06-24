@@ -44,11 +44,6 @@ final class UserSessionManager: ObservableObject {
         case missingAuthenticationAction
     }
 
-    private var cancellables = Set<AnyCancellable>()
-    private let logger = Logger.swiftfin()
-    private let serverInformationRefreshPolicy = DataRefreshPolicy.daily
-    private var mediaPlayerManager: MediaPlayerManager?
-
     @Injected(\.keychainService)
     private var keychain: KeychainSwift
 
@@ -61,6 +56,10 @@ final class UserSessionManager: ObservableObject {
     @Published
     private(set) var pendingDeepLink: DeepLink?
 
+    private var cancellables = Set<AnyCancellable>()
+    private let logger = Logger.swiftfin()
+    private var mediaPlayerManager: MediaPlayerManager?
+
     @MainActor
     var hasActivePlayback: Bool {
         guard let mediaPlayerManager else { return false }
@@ -68,8 +67,7 @@ final class UserSessionManager: ObservableObject {
     }
 
     init() {
-        observeMediaPlayerManager()
-        observeAppLifecycle()
+        setupObservations()
     }
 
     @MainActor
@@ -77,29 +75,24 @@ final class UserSessionManager: ObservableObject {
         guard state == .initial else { return }
 
         do {
-            try restoreLaunchSession()
-        } catch UserSessionError.invalidStoredSession {
-            updateCurrentSession(with: nil)
+            if Defaults[.signOutOnClose] {
+                Defaults[.lastSignedInUserID] = .signedOut
+            }
+
+            try updateCurrentSession(with: resolveStoredSession())
         } catch {
             logger.error(
                 "Unable to restore launch session",
                 metadata: ["error": .string(error.localizedDescription)]
             )
+
             updateCurrentSession(with: nil)
         }
     }
 
-    private func restoreLaunchSession() throws {
-        if Defaults[.signOutOnClose] {
-            Defaults[.lastSignedInUserID] = .signedOut
-        }
-
-        try refreshCurrentSessionOrThrow()
-    }
-
     private func refreshCurrentSession() {
         do {
-            try refreshCurrentSessionOrThrow()
+            try updateCurrentSession(with: resolveStoredSession())
         } catch {
             logger.error(
                 "Unable to refresh current user session",
@@ -109,13 +102,9 @@ final class UserSessionManager: ObservableObject {
         }
     }
 
-    private func refreshCurrentSessionOrThrow() throws {
-        try updateCurrentSession(with: resolveStoredSession())
-    }
-
     func signIn(userID: String) throws {
         Defaults[.lastSignedInUserID] = .signedIn(userID: userID)
-        try refreshCurrentSessionOrThrow()
+        try updateCurrentSession(with: resolveStoredSession())
 
         Task {
             await refreshServerInformationIfNeeded(reason: .explicitSignIn)
@@ -136,9 +125,8 @@ final class UserSessionManager: ObservableObject {
     }
 
     @MainActor
-    func stopActivePlayback() async {
-        guard let mediaPlayerManager, mediaPlayerManager.state != .stopped else { return }
-        await mediaPlayerManager.stop()
+    private func stopActivePlayback() async {
+        await mediaPlayerManager?.stop()
         self.mediaPlayerManager = nil
     }
 
@@ -150,7 +138,7 @@ final class UserSessionManager: ObservableObject {
     @MainActor
     func handleOpenURL(
         _ url: URL,
-        authenticationAction: LocalUserAuthenticationAction?
+        authenticationAction: LocalUserAuthenticationAction
     ) async {
         guard let deepLink = DeepLink(url) else { return }
 
@@ -233,13 +221,9 @@ final class UserSessionManager: ObservableObject {
 
     private func authenticate(
         user: UserState,
-        authenticationAction: LocalUserAuthenticationAction?
+        authenticationAction: LocalUserAuthenticationAction
     ) async throws {
         guard user.accessPolicy != .none else { return }
-
-        guard let authenticationAction else {
-            throw AuthenticationError.missingAuthenticationAction
-        }
 
         let evaluatedPolicy = try await authenticationAction(
             policy: user.accessPolicy,
@@ -263,9 +247,7 @@ final class UserSessionManager: ObservableObject {
         case .explicitSignIn:
             break
         case .stale:
-            guard serverInformationRefreshPolicy.isStale(
-                since: Defaults[.lastServerInformationRefreshDate]
-            ) else { return }
+            guard Defaults[.lastServerInformationRefreshDate].isStale(with: .hours(24)) else { return }
         }
 
         do {
@@ -281,17 +263,7 @@ final class UserSessionManager: ObservableObject {
         }
     }
 
-    private func observeMediaPlayerManager() {
-        Container.shared.mediaPlayerManagerPublisher()
-            .sink { [weak self] manager in
-                Task { @MainActor in
-                    self?.mediaPlayerManager = manager
-                }
-            }
-            .store(in: &cancellables)
-    }
-
-    private func observeAppLifecycle() {
+    private func setupObservations() {
         Notifications[.applicationDidEnterBackground]
             .publisher
             .sink { [weak self] in
@@ -306,6 +278,14 @@ final class UserSessionManager: ObservableObject {
             .sink { [weak self] in
                 Task { @MainActor in
                     self?.appWillEnterForeground()
+                }
+            }
+            .store(in: &cancellables)
+
+        Container.shared.mediaPlayerManagerPublisher()
+            .sink { [weak self] manager in
+                Task { @MainActor in
+                    self?.mediaPlayerManager = manager
                 }
             }
             .store(in: &cancellables)

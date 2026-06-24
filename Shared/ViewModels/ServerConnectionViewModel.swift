@@ -108,22 +108,19 @@ final class ServerConnectionViewModel: ViewModel {
         saveConnections()
     }
 
-    func setActiveConnection(_ connection: ServerConnection) {
+    func setActiveConnectionIfValid(_ connection: ServerConnection) async {
+        let state = await testConnection(connection)
+        guard case .success = state else { return }
+
         let previous = activeConnection
+
+        guard previous?.id != connection.id || previous?.url != connection.url else { return }
+
         activeConnection = connection
         server.activeServerConnection = connection
-        Notifications.postServerConnectionChange(
-            previous: previous,
-            current: connection
-        )
-    }
 
-    func setActiveConnectionIfValid(_ connection: ServerConnection) async -> ServerConnection.TestState {
-        let state = await testConnection(connection)
-        guard case .success = state else { return state }
-
-        setActiveConnection(connection)
-        return state
+        Notifications[.didChangeServerConnection]
+            .post(connection)
     }
 
     func moveConnections(fromOffsets offsets: IndexSet, toOffset destination: Int) {
@@ -163,11 +160,12 @@ final class ServerConnectionViewModel: ViewModel {
         if userSession?.server.id == server.id {
             await userSession?.serverConnectionManager.resolveActiveConnection()
         } else {
-            await ServerConnectionManager.evaluate(
-                server: server,
-                accessToken: userSession?.user.accessToken,
-                context: NetworkConnectionContext.current()
-            )
+//            await ServerConnectionManager.evaluate(
+//                server: server,
+//                accessToken: userSession?.user.accessToken,
+//                context: <#T##NetworkConnectionContext#>
+//                context: NetworkConnectionContext.current()
+//            )
         }
 
         reloadConnections()

@@ -151,12 +151,6 @@ struct EditServerConnectionView: View {
         router.dismiss()
     }
 
-    private func setActiveConnection(_ connection: ServerConnection) {
-        Task {
-            _ = await viewModel.setActiveConnectionIfValid(connection)
-        }
-    }
-
     private func testDraft() {
         guard let draftConnection = try? draft.connection() else { return }
 
@@ -244,7 +238,9 @@ struct EditServerConnectionView: View {
                         .foregroundStyle(.green)
                 } else if isExistingConnection {
                     Button(L10n.use) {
-                        setActiveConnection(connection)
+                        Task {
+                            await viewModel.setActiveConnectionIfValid(connection)
+                        }
                     }
                     .disabled(isTesting || hasChanges)
                 }

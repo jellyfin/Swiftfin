@@ -58,16 +58,12 @@ final class ServerConnectionManager: ObservableObject {
 
     private let queue = DispatchQueue(label: "Swiftfin.ServerConnectionMonitor")
 
-    private var userSession: UserSession
+    private weak var userSession: UserSession?
     private var monitor: NWPathMonitor?
     private var isStarted = false
     private var context: NetworkConnectionContext = .unavailable
     private var evaluationTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
-
-    init(userSession: UserSession) {
-        self.userSession = userSession
-    }
 
     static func test(
         connection: ServerConnection,
@@ -168,8 +164,8 @@ final class ServerConnectionManager: ObservableObject {
 
         monitor.pathUpdateHandler = { [weak self] path in
             Task { [weak self] in
-                let context = await NetworkConnectionContext.current(path: path)
-                await self?.pathDidUpdate(context)
+                let newContext = await NetworkConnectionContext(path: path)
+                await self?.pathDidUpdate(newContext)
             }
         }
         monitor.start(queue: queue)
@@ -182,8 +178,6 @@ final class ServerConnectionManager: ObservableObject {
                 }
             }
             .store(in: &cancellables)
-
-        scheduleConnectionResolution()
     }
 
     @Function(\Action.Cases.stop)
@@ -211,7 +205,7 @@ final class ServerConnectionManager: ObservableObject {
 
     @Function(\Action.Cases.resolveActiveConnection)
     private func _resolveActiveConnection() async {
-        guard !Task.isCancelled else { return }
+        guard !Task.isCancelled, let userSession else { return }
 
         guard context.isSatisfied else {
             guard !Task.isCancelled else { return }
@@ -278,13 +272,12 @@ final class ServerConnectionManager: ObservableObject {
 
 extension ServerConnectionManager: UserSessionService {
 
-    @MainActor
-    func userSessionDidStart() {
+    func didStart(userSession: UserSession) {
+        self.userSession = userSession
         start()
     }
 
-    @MainActor
-    func userSessionWillStop() {
+    func willStop(userSession: UserSession) {
         stop()
     }
 }

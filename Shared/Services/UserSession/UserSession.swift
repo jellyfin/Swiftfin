@@ -17,7 +17,7 @@ final class UserSession {
     let user: UserState
 
     @MainActor
-    lazy var serverConnectionManager = ServerConnectionManager(userSession: self)
+    lazy var serverConnectionManager = ServerConnectionManager()
 
     @MainActor
     private lazy var services: [any UserSessionService] = [
@@ -46,14 +46,14 @@ final class UserSession {
     @MainActor
     func start() {
         for service in services {
-            service.userSessionDidStart()
+            service.didStart(userSession: self)
         }
     }
 
     @MainActor
     func willStop() {
         for service in services.reversed() {
-            service.userSessionWillStop()
+            service.willStop(userSession: self)
         }
     }
 }

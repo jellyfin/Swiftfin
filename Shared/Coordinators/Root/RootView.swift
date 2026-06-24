@@ -31,39 +31,3 @@ struct RootView: View {
         }
     }
 }
-
-struct UserSessionRootView: View {
-
-    @Environment(\.localUserAuthenticationAction)
-    private var authenticationAction
-
-    @InjectedObject(\.userSessionManager)
-    private var userSessionManager
-
-    var body: some View {
-        ZStack {
-            switch userSessionManager.state {
-            case .initial:
-                ProgressView()
-            case .signedOut:
-                NavigationInjectionView(coordinator: .init()) {
-                    SelectUserView()
-                }
-            case .signedIn:
-                MainTabView()
-            }
-        }
-        .animation(.linear(duration: 0.1), value: userSessionManager.state)
-        .task {
-            await userSessionManager.start()
-        }
-        .onOpenURL { url in
-            Task {
-                await userSessionManager.handleOpenURL(
-                    url,
-                    authenticationAction: authenticationAction
-                )
-            }
-        }
-    }
-}

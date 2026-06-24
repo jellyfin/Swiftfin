@@ -105,7 +105,6 @@ extension Notifications {
         previous: ServerConnection?,
         current: ServerConnection
     ) {
-        guard previous?.id != current.id || previous?.url != current.url else { return }
 
         Self[.didChangeServerConnection].post(current)
     }

@@ -6,9 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-@MainActor
-protocol UserSessionService {
+import Foundation
 
-    func didStart(userSession: UserSession)
-    func willStop(userSession: UserSession)
+extension Date {
+
+    func isStale(with interval: Duration) -> Bool {
+        Date.now.timeIntervalSince(self) > interval.seconds
+    }
 }

@@ -29,35 +29,13 @@ struct NetworkConnectionContext: Equatable {
         self.wifiSSID = wifiSSID?.nilIfBlank
     }
 
-    static func current(path: Network.NWPath) async -> NetworkConnectionContext {
+    init(path: Network.NWPath) async {
         let interface = Self.interface(for: path)
-        let wifiSSID = path.status == .satisfied && interface == .wifi ? await currentWifiSSID() : nil
+        let wifiSSID = path.status == .satisfied && interface == .wifi ? await Self.currentWifiSSID() : nil
 
-        return .init(
-            isSatisfied: path.status == .satisfied,
-            interface: interface,
-            wifiSSID: wifiSSID
-        )
-    }
-
-    static func current() async -> NetworkConnectionContext {
-        let monitor = NWPathMonitor()
-        let queue = DispatchQueue(label: "Swiftfin.NetworkConnectionContext")
-        let resumeState = ContinuationResumeState()
-
-        return await withCheckedContinuation { continuation in
-            monitor.pathUpdateHandler = { path in
-                guard resumeState.resume() else { return }
-                monitor.cancel()
-
-                Task {
-                    let context = await Self.current(path: path)
-                    continuation.resume(returning: context)
-                }
-            }
-
-            monitor.start(queue: queue)
-        }
+        self.isSatisfied = path.status == .satisfied
+        self.interface = interface
+        self.wifiSSID = wifiSSID
     }
 
     static var unavailable: NetworkConnectionContext {
