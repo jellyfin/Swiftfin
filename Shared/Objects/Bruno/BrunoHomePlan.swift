@@ -24,6 +24,16 @@ enum BrunoHomePlan {
     static let minItems = 3
     static let shelfCap = 18
 
+    /// The Romance split (owner request): Romance titles released before this year are their own
+    /// "Classic Romance" category, and the regular Romance lens excludes them — so a romcom browse
+    /// surfaces modern films, not 1959 ones. The cutoff is the first MODERN year (1985 onward is
+    /// "regular Romance"; 1984 and earlier is "Classic Romance").
+    static let romanceModernCutoff = 1985
+
+    /// The genre name we split on. Matched case-insensitively against the snapshot's genres so a
+    /// library without a literal "Romance" genre simply never produces the Classic Romance shelf.
+    static let romanceGenre = "Romance"
+
     /// All explore generator keys (mirrors the prototype's pool). `year` is intentionally NOT in
     /// the random tail pool: the owner promoted "A Year in Film" into the spine (three distinct
     /// years, placed high — see `build`), so the tail must not surface a fourth, colliding year.
@@ -84,19 +94,24 @@ enum BrunoHomePlan {
             ))
         }
 
-        // 6. {Genre} — "If You Like" a seeded genre.
+        // 6. {Genre} — "If You Like" a seeded genre. Romance is bounded to modern titles so the
+        // pre-1985 classics live only in their own Classic Romance category (owner request).
         if let genre = seededPick(snapshot.genres, seed: seed, salt: 23) {
-            var query = BrunoQuery()
-            query.genres = [genre]
-            query.shuffleSeed = derive(seed, 23)
             shelves.append(.init(
                 id: "genre-\(genre)",
                 lens: "If You Like",
                 title: genre,
                 kind: .genre,
                 dedupeKey: "genre:\(genre)",
-                source: .query(query)
+                source: .query(genreQuery(genre: genre, seed: seed, salt: 23, snapshot: snapshot))
             ))
+        }
+
+        // 6b. Classic Romance — the pre-1985 romances carved out of the Romance genre so a romcom
+        // browse never mixes in 1959 (owner request). A deliberate, branded category, surfaced in
+        // the spine. Dropped automatically if the library lacks a Romance genre or enough classics.
+        if let classicRomance = classicRomanceShelf(seed: seed, snapshot: snapshot) {
+            shelves.append(classicRomance)
         }
 
         // 7. Series in the Library.
@@ -242,16 +257,14 @@ enum BrunoHomePlan {
 
         case "genre":
             guard let genre = seededPick(snapshot.genres, seed: seed, salt: 7) else { return nil }
-            var query = BrunoQuery()
-            query.genres = [genre]
-            query.shuffleSeed = seed
             return .init(
                 id: "x-genre-\(genre)",
                 lens: "If You Like",
                 title: genre,
                 kind: .genre,
                 dedupeKey: "genre:\(genre)",
-                source: .query(query)
+                // `shuffleSeed = seed` (no salt) preserves the prior explore-tail ordering.
+                source: .query(genreQuery(genre: genre, seed: seed, salt: nil, snapshot: snapshot))
             )
 
         case "studio":
@@ -285,6 +298,58 @@ enum BrunoHomePlan {
     }
 
     // MARK: Helpers
+
+    /// An "If You Like {genre}" query. Romance is special-cased to MODERN titles only
+    /// (years >= `romanceModernCutoff`) so the pre-1985 classics never bleed into a romcom
+    /// browse — they live solely in the Classic Romance category. All other genres are unbounded.
+    /// `salt == nil` shuffles with the bare `seed` (preserves the explore tail's existing ordering);
+    /// a salt derives a distinct shuffle (the spine).
+    private static func genreQuery(genre: String, seed: UInt32, salt: UInt32?, snapshot: BrunoLibrarySnapshot) -> BrunoQuery {
+        var query = BrunoQuery()
+        query.genres = [genre]
+        query.shuffleSeed = salt.map { derive(seed, $0) } ?? seed
+        if isRomance(genre) {
+            query.years = yearsInRange(snapshot.years, min: romanceModernCutoff, max: nil)
+        }
+        return query
+    }
+
+    /// "Classic Romance": Romance titles released before `romanceModernCutoff`, seed-shuffled.
+    /// A deliberate, branded category (lens "Vintage Hearts"). Returns nil when the library has no
+    /// Romance genre or too few classics to fill a shelf — the dedupe/cap step drops it then too.
+    private static func classicRomanceShelf(seed: UInt32, snapshot: BrunoLibrarySnapshot) -> BrunoShelf? {
+        guard let genre = snapshot.genres.first(where: isRomance) else { return nil }
+        let classicYears = yearsInRange(snapshot.years, min: nil, max: romanceModernCutoff - 1)
+        guard classicYears.count >= 2 else { return nil } // need a real span of vintage years
+
+        var query = BrunoQuery()
+        query.genres = [genre]
+        query.years = classicYears
+        // Stable server sort + seeded client shuffle (the standard Bruno shelf contract): the row
+        // stays reproducible for a seed yet rotates day-to-day like every other Bruno shelf.
+        query.shuffleSeed = derive(seed, 53)
+        return .init(
+            id: "classic-romance",
+            lens: "Vintage Hearts",
+            title: "Classic Romance",
+            kind: .classicRomance,
+            dedupeKey: "classic-romance",
+            source: .query(query)
+        )
+    }
+
+    private static func isRomance(_ genre: String) -> Bool {
+        genre.caseInsensitiveCompare(romanceGenre) == .orderedSame
+    }
+
+    /// The snapshot's known years that fall within the inclusive `[min, max]` bound. Jellyfin's
+    /// GetItems has no min/max year parameter — only a `Years` inclusion set — so the plan expands
+    /// a bound into an explicit list here, keeping `BrunoQueryLibrary` on verified SDK fields.
+    static func yearsInRange(_ years: [Int], min: Int?, max: Int?) -> [Int] {
+        years.filter { year in
+            (min.map { year >= $0 } ?? true) && (max.map { year <= $0 } ?? true)
+        }
+    }
 
     /// "A Year in Film": titles released within ±2 years of `year`, seed-shuffled. Promoted into
     /// the spine (three distinct years per home) — see `build`. `dedupeKey` is the year so the

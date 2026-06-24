@@ -23,6 +23,10 @@ struct BrunoQuery {
     var genres: [String] = []
     var studioIDs: [String] = []
     var personIDs: [String] = []
+    /// Explicit production-year inclusion set (Jellyfin's `Years` param). The plan expands a
+    /// year BOUND into this list against the snapshot's known years (see
+    /// `BrunoHomePlan.yearsInRange`) — e.g. Classic Romance fills it with the pre-1985 years and
+    /// the regular Romance lens with 1985-onward — because GetItems has no min/max year parameter.
     var years: [Int] = []
     var parentID: String?
     var minCommunityRating: Double?

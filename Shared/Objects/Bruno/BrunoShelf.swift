@@ -39,6 +39,7 @@ struct BrunoShelf: Identifiable {
         case decade
         case curated
         case seasonal
+        case classicRomance
     }
 
     enum Source {
