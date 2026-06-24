@@ -71,6 +71,7 @@ final class BrunoCollectionsViewModel: ViewModel {
         switch groupName.lowercased() {
         case "genres": .genres // core-category panel + mixed sub-genre shelves (§4 + core panel)
         case "decades": .shelves // shelf per decade (§4)
+        case "curated": .shelves // shelf per curated sub-collection (Asian Cinema, Oscar Buzz, …)
         default: .grid // flat full grid (§3)
         }
     }

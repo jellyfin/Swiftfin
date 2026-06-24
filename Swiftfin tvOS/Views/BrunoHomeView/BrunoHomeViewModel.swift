@@ -27,6 +27,8 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         case backgroundRefresh
         case shuffle
         case appendExplore
+        /// Re-pick the hero spotlights only (cheap, local) — on every home (re)entry / after playback.
+        case reshuffleHero
     }
 
     enum State: Hashable {
@@ -51,6 +53,8 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
     private(set) var seed: UInt32
 
     private var snapshot: BrunoLibrarySnapshot = .empty
+    /// The fetched hero candidate pool (high-rated movies); re-shuffled locally on each (re)entry.
+    private var heroSuperset: [BaseItemDto] = []
     private var explorePage = 0
     /// Content already on screen (by `BrunoShelf.dedupeKey`) so the explore tail never repeats a
     /// collection it (or the spine) already showed — including across infinite-scroll pages.
@@ -102,7 +106,19 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
             }
             .asAnyCancellable()
             return state
+
+        case .reshuffleHero:
+            reshuffleHero()
+            return state
         }
+    }
+
+    /// Re-pick the 5 hero spotlights from the already-fetched superset in a fresh random order.
+    /// Local and instant (no network), so it's safe to run on every home (re)appearance. No-op
+    /// until the superset has been fetched by the first refresh.
+    private func reshuffleHero() {
+        guard heroSuperset.isNotEmpty else { return }
+        heroItems = Array(BrunoRNG.shuffled(heroSuperset, seed: UInt32.random(in: 1 ... UInt32.max)).prefix(5))
     }
 
     // MARK: Work
@@ -121,7 +137,7 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         guard !Task.isCancelled else { return }
         self.snapshot = snapshot
 
-        async let heroTask = loadHero(seed: seed, session: userSession)
+        async let heroTask = loadHero(session: userSession)
 
         let plan = BrunoHomePlan.build(seed: seed, snapshot: snapshot, now: Date())
         let sectionVMs = plan.map { BrunoShelfViewModel(shelf: $0) }
@@ -184,8 +200,10 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         if sections.count >= BrunoHomePlan.shelfCap { exploreExhausted = true }
     }
 
-    /// Seeded hero spotlight: a stable high-rated superset (plan §D), seed-shuffled, take 5.
-    private func loadHero(seed: UInt32, session: UserSession) async -> [BaseItemDto] {
+    /// Hero spotlight: fetch a high-rated superset (plan §D), cache it, and return 5 in a fresh
+    /// random order. Unlike the day-stable shelf plan, the hero is intentionally random on every
+    /// entry — `reshuffleHero()` re-picks from the cached superset on each re-appearance.
+    private func loadHero(session: UserSession) async -> [BaseItemDto] {
         var parameters = Paths.GetItemsParameters()
         parameters.userID = session.user.id
         parameters.isRecursive = true
@@ -198,7 +216,8 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         parameters.limit = 30
         do {
             let items = try await session.client.send(Paths.getItems(parameters: parameters)).value.items ?? []
-            return Array(BrunoRNG.shuffled(items, seed: seed).prefix(5))
+            heroSuperset = items
+            return Array(BrunoRNG.shuffled(items, seed: UInt32.random(in: 1 ... UInt32.max)).prefix(5))
         } catch {
             return []
         }

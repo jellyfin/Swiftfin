@@ -150,7 +150,16 @@ struct BrunoCategoryShelves: View {
         case .items:
             router.route(to: .brunoItemsGrid(title: category.name, items: category.children), in: namespace)
         case .grid:
-            if category.boxSet.libraryType == .boxSet {
+            // A group whose children are sub-collections (Directors, Studios, …) must show ONLY
+            // those box sets on "Show all". The stock ItemLibrary(parent:) query returns the
+            // group's movies recursively as well — that's the "all the contributing movies are
+            // listed after the directors" bug. Render a static grid of just the box-set children
+            // instead (same filter the inline shelf uses). Flat movie groups (no box-set children,
+            // e.g. New Releases) keep the live, paged library.
+            let boxSetChildren = category.children.filter { $0.type == .boxSet }
+            if boxSetChildren.isNotEmpty {
+                router.route(to: .brunoItemsGrid(title: category.name, items: boxSetChildren), in: namespace)
+            } else if category.boxSet.libraryType == .boxSet {
                 router.route(
                     to: .library(library: ItemLibrary(parent: category.boxSet, filters: .default)),
                     in: namespace

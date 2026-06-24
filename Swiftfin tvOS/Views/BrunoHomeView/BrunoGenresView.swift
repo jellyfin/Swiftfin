@@ -112,22 +112,15 @@ struct BrunoGenresView: View {
                 .padding(.horizontal, 50)
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 20) {
+                HStack(spacing: 24) {
                     ForEach(BrunoCoreGenre.all) { coreGenre in
-                        Button {
+                        BrunoSelectorCard(title: coreGenre.title) {
                             router.route(to: .brunoGenres(parent: parent, core: coreGenre))
-                        } label: {
-                            Text(coreGenre.title)
-                                .font(.brunoBody(28, weight: .semibold))
-                                .foregroundStyle(Color.bruno.fg)
-                                .frame(minWidth: 240)
-                                .padding(.horizontal, 34)
-                                .padding(.vertical, 28)
                         }
-                        .buttonStyle(.card)
                     }
                 }
                 .padding(.horizontal, 50)
+                .padding(.vertical, 8)
             }
             .focusSection()
         }
