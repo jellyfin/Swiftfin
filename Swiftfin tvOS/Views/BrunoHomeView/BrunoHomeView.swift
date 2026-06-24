@@ -57,6 +57,15 @@ struct BrunoHomeView: View {
         .onFirstAppear {
             viewModel.send(.refresh)
         }
+        .onAppear {
+            // Re-entry (tab switch back) or returning from playback re-fires onAppear but not
+            // onFirstAppear: re-pick the hero so the banner is fresh on every entry. Skipped on the
+            // very first appearance (hero still empty → the initial refresh seeds it).
+            if !viewModel.heroItems.isEmpty {
+                spotlightIndex = 0
+                viewModel.send(.reshuffleHero)
+            }
+        }
     }
 
     private var content: some View {

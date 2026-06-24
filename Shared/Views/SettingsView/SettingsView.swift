@@ -24,6 +24,9 @@ struct SettingsView: View {
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
 
+    @Default(.VideoPlayer.nightMode)
+    private var nightMode
+
     @Router
     private var router
 
@@ -34,6 +37,7 @@ struct SettingsView: View {
 
     var body: some View {
         Form(image: .jellyfinBlobBlue) {
+            nightModeSection
             serverSection
             videoPlayerSection
             customizeSection
@@ -45,6 +49,32 @@ struct SettingsView: View {
             router.dismiss()
         }
         #endif
+    }
+
+    // MARK: - Night Mode Section
+
+    // Surfaced at the top of Settings for quick access; the same control also lives under
+    // Video Player → Audio. Compresses audio dynamic range (VLC player only).
+    @ViewBuilder
+    private var nightModeSection: some View {
+        Section {
+            Group {
+                #if os(iOS)
+                Picker(L10n.nightMode, selection: $nightMode)
+                #else
+                ListRowMenu(L10n.nightMode, selection: $nightMode)
+                #endif
+            }
+            .disabled(videoPlayerType == .native)
+        } header: {
+            Text(L10n.nightMode)
+        } footer: {
+            Text(
+                videoPlayerType == .native
+                    ? L10n.nightModeNativeUnsupported
+                    : L10n.nightModeDescription
+            )
+        }
     }
 
     // MARK: - Server Section
