@@ -49,10 +49,11 @@ extension NavigationRoute {
             id: id,
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
+            // Keep the nav bar VISIBLE here (unlike the shelf drills, which hide it and lead with a
+            // hero): this is a flat PagingLibraryView grid that ignores the top safe area, so with
+            // the bar hidden its top row clipped at the screen edge and there was no chrome to escape
+            // to — you got stuck. A titled bar insets the grid below it and gives a clear back path.
             PagingLibraryView(library: BrunoStaticItemsLibrary(items: items, title: title, id: id))
-                .if(UIDevice.isTV) { view in
-                    view.toolbar(.hidden, for: .navigationBar)
-                }
         }
     }
 }
