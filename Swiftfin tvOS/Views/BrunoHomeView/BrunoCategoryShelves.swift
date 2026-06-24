@@ -95,6 +95,18 @@ struct BrunoCategoryShelves: View {
     private let shelfCap = 14
 
     var body: some View {
+        ZStack {
+            // Ambient as a SIBLING layer (matching BrunoHomeView — the smooth surface), NOT a
+            // .background of the ScrollView. Keeps the radius-90 blur out of the ScrollView's
+            // per-frame compositing so it doesn't re-rasterize during the focus-driven
+            // scroll-to-reveal animation (the residual vertical-scroll hitch).
+            BrunoAmbientBackground(item: featured)
+
+            scrollContent
+        }
+    }
+
+    private var scrollContent: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 36) {
                 // Full-bleed cinematic hero (Home pattern): a row in the same scroll plane as the
@@ -119,9 +131,6 @@ struct BrunoCategoryShelves: View {
             }
             .padding(.bottom, 60)
         }
-        // Home's warm-umber ambient page (tinted to the featured item) instead of flat system
-        // black, so browse surfaces read as the same branded, glowing page as Home.
-        .background { BrunoAmbientBackground(item: featured) }
     }
 
     // The big gradient category cards (the group artwork). Tapping one jumps straight to that
