@@ -51,6 +51,16 @@ struct BrunoCollectionCategory: Identifiable {
     }
 }
 
+/// The single item to feature in a browse surface's hero banner: the first movie/series WITH a
+/// backdrop image across the categories' children, else the first such item, else nil. Keeps the
+/// hero to real watchable content (group BoxSets frequently lack backdrops, movies reliably have them).
+func brunoFeaturedItem(in categories: [BrunoCollectionCategory]) -> BaseItemDto? {
+    let leaves = categories
+        .flatMap(\.children)
+        .filter { $0.type == .movie || $0.type == .series }
+    return leaves.first(where: { $0.backdropImageTags?.isNotEmpty == true }) ?? leaves.first
+}
+
 // MARK: - BrunoCategoryShelves
 
 //
@@ -65,6 +75,10 @@ struct BrunoCategoryShelves: View {
     var header: AnyView?
     /// The scroll-jump chip row. Hidden when a header replaces it (e.g. the Genres main page).
     var showCategoryRow: Bool = true
+    /// A single featured item for the cinematic hero banner atop the surface (nil → no hero row).
+    var featured: BaseItemDto?
+    /// Eyebrow shown on the hero banner ("Featured", "Featured Film", …).
+    var heroEyebrow: String = "Featured"
 
     @Router
     private var router
@@ -80,14 +94,20 @@ struct BrunoCategoryShelves: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 36) {
+                // Full-bleed cinematic hero (Home pattern): a row in the same scroll plane as the
+                // shelves, so vertical focus traverses hero <-> content with no special handling.
+                if let featured {
+                    BrunoHeroView(items: [featured], index: .constant(0), eyebrow: heroEyebrow)
+                }
+
                 if let header {
                     header
-                        .padding(.top, 20)
+                        .padding(.top, featured == nil ? 20 : 0)
                 }
 
                 if showCategoryRow {
                     categoryCardRow
-                        .padding(.top, header == nil ? 20 : 0)
+                        .padding(.top, (header == nil && featured == nil) ? 20 : 0)
                 }
 
                 ForEach(categories) { category in
@@ -128,10 +148,35 @@ struct BrunoCategoryShelves: View {
             .padding(.horizontal, 50)
 
             BrunoShelfRow(
-                items: Array(subCollections(of: category).prefix(shelfCap)),
+                items: shelfItems(for: category),
                 onItem: { router.route(to: .item(item: $0)) },
                 onShowAll: { routeToShowAll(category) }
             )
+        }
+    }
+
+    /// The items rendered in a category's inline shelf. The `shelfCap` is a PREVIEW cap: it only
+    /// applies when "Show all" leads somewhere richer than the inline row (Decades/Curated → a
+    /// shelf-per-sub-group drill-in; Genres → the genres surface). For terminal categories whose
+    /// "Show all" is just a flat grid of these same box-set children (Directors, Studios, … →
+    /// `.grid`; Boxed Sets → `.items`), the row IS the full set, so we populate everything — the
+    /// cap there would only hide collections that "Show all" can't add back.
+    private func shelfItems(for category: BrunoCollectionCategory) -> [BaseItemDto] {
+        let items = subCollections(of: category)
+        switch category.drillStyle {
+        case .items:
+            // Synthetic box-set grid (Boxed Sets): the row mirrors the Show-all grid 1:1.
+            return items
+        case .grid:
+            // Box-set groups (Directors, Studios, …) "Show all" to a flat grid of these exact
+            // box-set children — the row IS the full set, so populate all. Flat MOVIE groups
+            // (no box-set children, e.g. New Releases) instead "Show all" to a live paged library
+            // of every contributing movie, so their inline row stays a capped preview.
+            let hasBoxSetChildren = category.children.contains { $0.type == .boxSet }
+            return hasBoxSetChildren ? items : Array(items.prefix(shelfCap))
+        case .shelves, .genres:
+            // "Show all" opens a richer drill-in (shelf-per-sub-group / genres surface): preview.
+            return Array(items.prefix(shelfCap))
         }
     }
 
@@ -173,5 +218,4 @@ struct BrunoCategoryShelves: View {
             }
         }
     }
-
 }

@@ -32,6 +32,9 @@ struct BrunoHeroView: View {
     @Binding
     var index: Int
 
+    /// Eyebrow above the title. "Spotlight" on Home; browse surfaces pass their own ("Featured", …).
+    var eyebrow: String = "Spotlight"
+
     @Router
     private var router
 
@@ -120,7 +123,7 @@ struct BrunoHeroView: View {
     @ViewBuilder
     private func content(for item: BaseItemDto) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Spotlight".uppercased())
+            Text(eyebrow.uppercased())
                 .font(.brunoBody(18, weight: .semibold))
                 .tracking(5)
                 .foregroundStyle(Color.bruno.accent)

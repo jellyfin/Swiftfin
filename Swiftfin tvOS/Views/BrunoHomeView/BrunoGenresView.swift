@@ -72,10 +72,12 @@ struct BrunoGenresView: View {
             } else {
                 BrunoCategoryShelves(
                     categories: shownCategories,
-                    eyebrow: "Genre",
+                    eyebrow: "If You Like",
                     header: AnyView(header),
                     // Main page leads with the core panel; a core sub-page keeps the chip row.
-                    showCategoryRow: core != nil
+                    showCategoryRow: core != nil,
+                    featured: brunoFeaturedItem(in: shownCategories),
+                    heroEyebrow: core.map { "\($0.title) Pick" } ?? "Featured Film"
                 )
             }
         }

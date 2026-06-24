@@ -35,7 +35,12 @@ struct BrunoBoxSetShelvesView: View {
             } else if viewModel.categories.isEmpty {
                 emptyState
             } else {
-                BrunoCategoryShelves(categories: viewModel.categories, eyebrow: eyebrow)
+                BrunoCategoryShelves(
+                    categories: viewModel.categories,
+                    eyebrow: lensEyebrow,
+                    featured: brunoFeaturedItem(in: viewModel.categories),
+                    heroEyebrow: "Featured Film"
+                )
             }
         }
         .toolbar(.hidden, for: .navigationBar)
@@ -44,10 +49,19 @@ struct BrunoBoxSetShelvesView: View {
         }
     }
 
-    /// Singularised group name for the shelf eyebrow ("Genres" -> "Genre", "Decades" -> "Decade").
+    /// Singularised group name ("Genres" -> "Genre", "Decades" -> "Decade").
     private var eyebrow: String {
         let name = parent.displayTitle
         return name.count > 1 && name.hasSuffix("s") ? String(name.dropLast()) : name
+    }
+
+    /// Lens-style shelf eyebrow per surface (mockup lens system); falls back to the singular name.
+    private var lensEyebrow: String {
+        switch parent.displayTitle.lowercased() {
+        case "decades": "Browse by Decade"
+        case "curated": "Curated"
+        default: eyebrow
+        }
     }
 
     private var emptyState: some View {

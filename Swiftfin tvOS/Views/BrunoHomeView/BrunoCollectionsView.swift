@@ -34,7 +34,12 @@ struct BrunoCollectionsView: View {
             } else if viewModel.categories.isEmpty {
                 emptyState
             } else {
-                BrunoCategoryShelves(categories: viewModel.categories, eyebrow: "Collection")
+                BrunoCategoryShelves(
+                    categories: viewModel.categories,
+                    eyebrow: "Browse the Library",
+                    featured: brunoFeaturedItem(in: viewModel.categories),
+                    heroEyebrow: "Featured"
+                )
             }
         }
         .toolbar(.hidden, for: .navigationBar)
