@@ -45,6 +45,11 @@ struct BrunoShelfView: View {
                 ) { item in
                     router.route(to: .item(item: item))
                 }
+                // Pin portrait shelves so the LazyVStack stops re-reading CollectionHStack's
+                // intrinsic height on vertical focus moves (the up/down "math conflict" hitch).
+                // Portrait geometry here is identical to BrunoShelfRow, so the same 460 applies.
+                // Landscape rows keep their intrinsic height (nil) — different aspect, no clip risk.
+                .frame(height: viewModel.posterType == .portrait ? 460 : nil)
             }
         }
     }
