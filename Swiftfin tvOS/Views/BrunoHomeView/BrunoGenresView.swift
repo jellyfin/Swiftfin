@@ -96,10 +96,18 @@ struct BrunoGenresView: View {
     @ViewBuilder
     private var header: some View {
         if let core {
-            Text(core.title)
-                .font(.brunoDisplay(56, weight: .bold))
-                .foregroundStyle(Color.bruno.fg)
-                .padding(.horizontal, 50)
+            // Standard Bruno header lockup (accent eyebrow over Oswald title), not a one-off
+            // 56/bold title — keeps the sub-page in the same design language as the shelves.
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Genre".uppercased())
+                    .font(.brunoBody(20, weight: .semibold))
+                    .tracking(3)
+                    .foregroundStyle(Color.bruno.accent)
+                Text(core.title)
+                    .font(.brunoDisplay(40, weight: .semibold))
+                    .foregroundStyle(Color.bruno.fg)
+            }
+            .padding(.horizontal, 50)
         } else {
             corePanel
         }

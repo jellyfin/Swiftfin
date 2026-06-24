@@ -130,7 +130,15 @@ struct BrunoCategoryShelves: View {
         PosterHStack(
             title: nil,
             type: .portrait,
-            items: categories.map(\.boxSet)
+            // These are navigation tiles, not library items: strip userData so the stock
+            // favorite-heart / watched overlays don't decorate the branded category artwork.
+            // (The unwatched corner-triangle is driven by canBePlayed and would need a dedicated
+            // tile to fully suppress — deferred.)
+            items: categories.map { category in
+                var card = category.boxSet
+                card.userData = nil
+                return card
+            }
         ) { boxSet in
             let key = boxSet.id ?? boxSet.displayTitle
             if let category = categories.first(where: { $0.id == key }) {

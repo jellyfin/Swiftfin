@@ -24,6 +24,9 @@ struct BrunoShelfRow: View {
     let onItem: (BaseItemDto) -> Void
     let onShowAll: () -> Void
 
+    @FocusState
+    private var showAllFocused: Bool
+
     private enum Card: Identifiable, Hashable {
         case item(BaseItemDto)
         case showAll
@@ -70,7 +73,14 @@ struct BrunoShelfRow: View {
             VStack(spacing: 0) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(Color.bruno.fg.opacity(0.12))
+                        .fill(Color.bruno.fg.opacity(showAllFocused ? 0.2 : 0.12))
+
+                    // Accent focus ring (matches BrunoSelectorCard / the hero pills) so the card
+                    // reads as a deliberate branded affordance, not an inert grey placeholder.
+                    if showAllFocused {
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(Color.bruno.accent, lineWidth: 3)
+                    }
 
                     VStack(spacing: 10) {
                         Image(systemName: "chevron.right")
@@ -89,5 +99,6 @@ struct BrunoShelfRow: View {
             }
         }
         .buttonStyle(.card)
+        .focused($showAllFocused)
     }
 }
