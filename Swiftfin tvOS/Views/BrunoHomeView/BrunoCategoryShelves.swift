@@ -35,11 +35,14 @@ struct BrunoCollectionCategory: Identifiable {
     let boxSet: BaseItemDto
     let children: [BaseItemDto]
     let drillStyle: DrillStyle
+    /// Per-category lens eyebrow ("Auteurs" for Directors, …). Falls back to the surface eyebrow.
+    let lens: String?
 
-    init(boxSet: BaseItemDto, children: [BaseItemDto], drillStyle: DrillStyle = .grid) {
+    init(boxSet: BaseItemDto, children: [BaseItemDto], drillStyle: DrillStyle = .grid, lens: String? = nil) {
         self.boxSet = boxSet
         self.children = children
         self.drillStyle = drillStyle
+        self.lens = lens
     }
 
     var id: String {
@@ -136,7 +139,7 @@ struct BrunoCategoryShelves: View {
     private func shelf(for category: BrunoCollectionCategory) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             VStack(alignment: .leading, spacing: 0) {
-                Text(eyebrow.uppercased())
+                Text((category.lens ?? eyebrow).uppercased())
                     .font(.brunoBody(20, weight: .semibold))
                     .tracking(3)
                     .foregroundStyle(Color.bruno.accent)

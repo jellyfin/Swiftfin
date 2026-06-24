@@ -81,6 +81,20 @@ final class BrunoCollectionsViewModel: ViewModel {
         }
     }
 
+    /// Per-category lens eyebrow so each Collections shelf reads with its own flavor instead of a
+    /// flat repeated "Browse the Library" (matches Home's lens variety). nil → surface default.
+    private static func lens(for groupName: String) -> String? {
+        switch groupName.lowercased() {
+        case "directors": "Auteurs"
+        case "studios": "From the Vault"
+        case "curated": "Hand-Picked"
+        case "decades": "Through the Years"
+        case "new releases": "Just Added"
+        case "seasonal": "In Season"
+        default: nil
+        }
+    }
+
     func load() async {
         guard let userSession else {
             isLoading = false
@@ -99,7 +113,8 @@ final class BrunoCollectionsViewModel: ViewModel {
             return BrunoCollectionCategory(
                 boxSet: boxSet,
                 children: children,
-                drillStyle: Self.drillStyle(for: name)
+                drillStyle: Self.drillStyle(for: name),
+                lens: Self.lens(for: name)
             )
         }
 
@@ -117,7 +132,8 @@ final class BrunoCollectionsViewModel: ViewModel {
                 BrunoCollectionCategory(
                     boxSet: BaseItemDto(name: "Boxed Sets"),
                     children: franchiseBoxSets,
-                    drillStyle: .items
+                    drillStyle: .items,
+                    lens: "Franchises"
                 )
             )
         }
