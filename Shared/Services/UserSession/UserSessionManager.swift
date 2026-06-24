@@ -11,6 +11,7 @@ import Defaults
 import FactoryKit
 import Foundation
 import JellyfinAPI
+import KeychainSwift
 import Logging
 
 extension Container {
@@ -39,19 +40,26 @@ final class UserSessionManager: ObservableObject {
         case explicit
     }
 
+    enum AuthenticationError: Error {
+        case missingAuthenticationAction
+    }
+
     private var cancellables = Set<AnyCancellable>()
     private let logger = Logger.swiftfin()
     private let serverInformationRefreshPolicy = DataRefreshPolicy.daily
     private var mediaPlayerManager: MediaPlayerManager?
 
-    @Injected(\.deepLinkHandler)
-    private var deepLinkHandler: DeepLinkHandler
+    @Injected(\.keychainService)
+    private var keychain: KeychainSwift
 
     @Published
     private(set) var state: State = .initial
 
     @Published
     private(set) var currentSession: UserSession?
+
+    @Published
+    private(set) var pendingDeepLink: DeepLink?
 
     @MainActor
     var hasActivePlayback: Bool {
@@ -70,10 +78,6 @@ final class UserSessionManager: ObservableObject {
 
         do {
             try restoreLaunchSession()
-
-            Task {
-                await refreshServerInformationIfNeeded(reason: .stale)
-            }
         } catch UserSessionError.invalidStoredSession {
             updateCurrentSession(with: nil)
         } catch {
@@ -85,8 +89,7 @@ final class UserSessionManager: ObservableObject {
         }
     }
 
-    @MainActor
-    func restoreLaunchSession() throws {
+    private func restoreLaunchSession() throws {
         if Defaults[.signOutOnClose] {
             Defaults[.lastSignedInUserID] = .signedOut
         }
@@ -94,8 +97,7 @@ final class UserSessionManager: ObservableObject {
         try refreshCurrentSessionOrThrow()
     }
 
-    @MainActor
-    func refreshCurrentSession() {
+    private func refreshCurrentSession() {
         do {
             try refreshCurrentSessionOrThrow()
         } catch {
@@ -107,15 +109,14 @@ final class UserSessionManager: ObservableObject {
         }
     }
 
-    @MainActor
-    func refreshCurrentSessionOrThrow() throws {
+    private func refreshCurrentSessionOrThrow() throws {
         try updateCurrentSession(with: resolveStoredSession())
     }
 
-    @MainActor
     func signIn(userID: String) throws {
         Defaults[.lastSignedInUserID] = .signedIn(userID: userID)
         try refreshCurrentSessionOrThrow()
+
         Task {
             await refreshServerInformationIfNeeded(reason: .explicitSignIn)
         }
@@ -151,16 +152,17 @@ final class UserSessionManager: ObservableObject {
         _ url: URL,
         authenticationAction: LocalUserAuthenticationAction?
     ) async {
-        guard let deepLink = DeepLinkHandler.DeepLink(url) else { return }
+        guard let deepLink = DeepLink(url) else { return }
 
         do {
-            let target = try deepLinkHandler.sessionTarget(for: deepLink)
+            let deepLinkSession = try session(for: deepLink)
             let currentSession = currentSession
-            let isSameUserSession = currentSession?.server.id == target.server.id && currentSession?.user.id == target.user.id
+            let isSameUserSession = currentSession?.server.id == deepLinkSession.server.id && currentSession?.user.id == deepLinkSession
+                .user.id
 
             if !isSameUserSession {
-                try await deepLinkHandler.authenticate(
-                    user: target.user,
+                try await authenticate(
+                    user: deepLinkSession.user,
                     authenticationAction: authenticationAction
                 )
 
@@ -168,16 +170,25 @@ final class UserSessionManager: ObservableObject {
                     await stopActivePlayback()
                 }
 
-                try signIn(userID: target.user.id)
+                try signIn(userID: deepLinkSession.user.id)
             }
 
-            deepLinkHandler.pendingDeepLink = deepLink
+            pendingDeepLink = deepLink
         } catch {
             logger.error(
                 "Failed to process deep link",
                 metadata: ["error": .string(error.localizedDescription)]
             )
         }
+    }
+
+    @MainActor
+    func consumePendingDeepLink() -> DeepLink? {
+        defer {
+            pendingDeepLink = nil
+        }
+
+        return pendingDeepLink
     }
 
     @MainActor
@@ -208,6 +219,42 @@ final class UserSessionManager: ObservableObject {
         case stale
     }
 
+    private func session(for deepLink: DeepLink) throws -> (server: ServerState, user: UserState) {
+        guard let server = StoredValues[.Server.servers].first(where: { $0.id == deepLink.serverID }) else {
+            throw DeepLinkError.missingServer(deepLink.serverID)
+        }
+
+        guard let user = StoredValues[.User.users].first(where: { $0.id == deepLink.userID && $0.serverID == server.id }) else {
+            throw DeepLinkError.missingUser(deepLink.userID)
+        }
+
+        return (server, user)
+    }
+
+    private func authenticate(
+        user: UserState,
+        authenticationAction: LocalUserAuthenticationAction?
+    ) async throws {
+        guard user.accessPolicy != .none else { return }
+
+        guard let authenticationAction else {
+            throw AuthenticationError.missingAuthenticationAction
+        }
+
+        let evaluatedPolicy = try await authenticationAction(
+            policy: user.accessPolicy,
+            reason: user.accessPolicy.authenticateReason(user: user)
+        )
+
+        guard let pinPolicy = evaluatedPolicy as? PinEvaluatedUserAccessPolicy else { return }
+
+        if let storedPin = keychain.get("\(user.id)-pin") {
+            guard pinPolicy.pin == storedPin else {
+                throw ErrorMessage(L10n.incorrectPinForUser(user.username))
+            }
+        }
+    }
+
     @MainActor
     private func refreshServerInformationIfNeeded(reason: ServerInformationRefreshReason) async {
         guard let currentSession else { return }
@@ -223,9 +270,7 @@ final class UserSessionManager: ObservableObject {
 
         do {
             try await currentSession.server.updateServerInfo()
-
-            let response = try await currentSession.client.send(Paths.getCurrentUser)
-            currentSession.user.data = response.value
+            try await currentSession.user.updateUserData(server: currentSession.server)
 
             Defaults[.lastServerInformationRefreshDate] = Date.now
         } catch {
@@ -266,7 +311,6 @@ final class UserSessionManager: ObservableObject {
             .store(in: &cancellables)
     }
 
-    @MainActor
     private func updateCurrentSession(with newSession: UserSession?) {
         let previousSession = currentSession
         currentSession = newSession

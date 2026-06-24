@@ -216,7 +216,7 @@ struct EditServerConnectionView: View {
             #if os(iOS)
             Section {
                 Picker(L10n.network, selection: $draft.interface) {
-                    ForEach(ServerConnectionInterface.allCases, id: \.self) { interface in
+                    ForEach(ServerConnection.Interface.allCases, id: \.self) { interface in
                         Text(interface.displayTitle)
                             .tag(interface)
                     }
@@ -324,7 +324,7 @@ private struct ServerConnectionDraft: Equatable {
     let id: String
     var name: String
     var urlString: String
-    var interface: ServerConnectionInterface
+    var interface: ServerConnection.Interface
     var wifiSSIDs: [String]
     var priority: Int
     var useWifiName: Bool

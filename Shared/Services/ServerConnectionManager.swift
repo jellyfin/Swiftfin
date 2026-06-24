@@ -19,7 +19,6 @@ final class ServerConnectionManager: ObservableObject {
 
     @CasePathable
     enum Action {
-        case pathDidUpdate(NetworkConnectionContext)
         case resolveActiveConnection
         case scheduleConnectionResolution
         case start
@@ -29,12 +28,10 @@ final class ServerConnectionManager: ObservableObject {
 
         var transition: Transition {
             switch self {
-            case .pathDidUpdate, .scheduleConnectionResolution, .start:
+            case .scheduleConnectionResolution, .start:
                 .none
             case .resolveActiveConnection:
                 .to(.evaluating)
-            case let ._resolutionDidUpdate(.offline(context)):
-                .to(.offline(context))
             case let ._resolutionDidUpdate(.connected(connection)):
                 .to(.connected(connection))
             case let ._resolutionDidUpdate(.unreachable(connections)):
@@ -47,14 +44,12 @@ final class ServerConnectionManager: ObservableObject {
 
     enum State: Equatable {
         case initial
-        case offline(NetworkConnectionContext)
         case evaluating
         case connected(ServerConnection)
         case unreachable([ServerConnection])
     }
 
     enum Resolution: Equatable {
-        case offline(NetworkConnectionContext)
         case connected(ServerConnection)
         case unreachable([ServerConnection])
     }
@@ -77,7 +72,7 @@ final class ServerConnectionManager: ObservableObject {
     static func test(
         connection: ServerConnection,
         accessToken: String? = nil,
-        matchingServerID serverID: String? = nil
+        matchingServerID serverID: String
     ) async throws -> PublicSystemInfo {
         let sessionConfiguration = URLSessionConfiguration.swiftfin.copy() as! URLSessionConfiguration
         sessionConfiguration.timeoutIntervalForRequest = 8
@@ -96,7 +91,7 @@ final class ServerConnectionManager: ObservableObject {
         let response = try await client.send(Paths.getPublicSystemInfo)
         let publicInfo = response.value
 
-        if let serverID, publicInfo.id != serverID {
+        guard publicInfo.id != serverID else {
             throw ErrorMessage(L10n.connectionServerMismatch)
         }
 
@@ -115,6 +110,7 @@ final class ServerConnectionManager: ObservableObject {
 
         let currentConnection = server.activeServerConnection
         let orderedCandidates = orderedConnectionCandidates(candidates, currentConnection: currentConnection)
+
         guard let reachableConnection = await firstReachableConnection(
             in: orderedCandidates,
             accessToken: accessToken,
@@ -217,37 +213,32 @@ final class ServerConnectionManager: ObservableObject {
     private func _resolveActiveConnection() async {
         guard !Task.isCancelled else { return }
 
-        func apply(_ resolution: Resolution) async {
-            await _resolutionDidUpdate(resolution)
-        }
-
-        let context = self.context
-
         guard context.isSatisfied else {
             guard !Task.isCancelled else { return }
-            await apply(.offline(context))
+            await _resolutionDidUpdate(.unreachable([]))
             return
         }
 
         let candidates = userSession.server.serverConnections.filter { $0.matches(context) }
+
         guard candidates.isNotEmpty else {
             guard !Task.isCancelled else { return }
-            await apply(.unreachable([]))
+            await _resolutionDidUpdate(.unreachable([]))
             return
         }
 
         let currentConnection = userSession.server.activeServerConnection
         let orderedCandidates = Self.orderedConnectionCandidates(candidates, currentConnection: currentConnection)
-
         let reachableConnection = await Self.firstReachableConnection(
             in: orderedCandidates,
             accessToken: userSession.user.accessToken,
             serverID: userSession.server.id
         )
+
         guard !Task.isCancelled else { return }
 
         guard let reachableConnection else {
-            await apply(.unreachable(orderedCandidates))
+            await _resolutionDidUpdate(.unreachable(orderedCandidates))
             return
         }
 
@@ -260,16 +251,11 @@ final class ServerConnectionManager: ObservableObject {
         }
 
         guard !Task.isCancelled else { return }
-        await apply(.connected(reachableConnection))
+
+        await _resolutionDidUpdate(.connected(reachableConnection))
     }
 
-    @Function(\Action.Cases._resolutionDidUpdate)
-    private func _commitResolutionUpdate(_ resolution: Resolution) {
-        _ = resolution
-    }
-
-    @Function(\Action.Cases.pathDidUpdate)
-    private func _pathDidUpdate(_ context: NetworkConnectionContext) {
+    private func pathDidUpdate(_ context: NetworkConnectionContext) {
         self.context = context
         scheduleConnectionResolution()
     }

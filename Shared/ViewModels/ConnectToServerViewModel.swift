@@ -99,13 +99,17 @@ final class ConnectToServerViewModel: ObservableObject {
             userIDs: []
         )
 
-        if isDuplicate(server: newServerState) {
+        let isDuplicateServer = StoredValues[.Server.servers]
+            .contains { $0.id == newServerState.id }
+
+        guard !isDuplicateServer else {
             // server has same id, but (possible) new connection URL
             events.send(.duplicateServer(newServerState))
-        } else {
-            try await save(server: newServerState)
-            events.send(.connected(newServerState))
+            return
         }
+
+        try await save(server: newServerState)
+        events.send(.connected(newServerState))
     }
 
     // In the event of redirects, get the new host URL from response
@@ -125,11 +129,6 @@ final class ConnectToServerViewModel: ObservableObject {
         }
 
         return normalizedURL
-    }
-
-    private func isDuplicate(server: ServerState) -> Bool {
-        StoredValues[.Server.servers]
-            .contains { $0.id == server.id }
     }
 
     private func save(server: ServerState) async throws {

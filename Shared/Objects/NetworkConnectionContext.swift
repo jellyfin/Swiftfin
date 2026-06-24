@@ -16,12 +16,12 @@ import NetworkExtension
 struct NetworkConnectionContext: Equatable {
 
     let isSatisfied: Bool
-    let interface: ServerConnectionInterface
+    let interface: ServerConnection.Interface
     let wifiSSID: String?
 
     init(
         isSatisfied: Bool,
-        interface: ServerConnectionInterface,
+        interface: ServerConnection.Interface,
         wifiSSID: String?
     ) {
         self.isSatisfied = isSatisfied
@@ -68,7 +68,7 @@ struct NetworkConnectionContext: Equatable {
         )
     }
 
-    private static func interface(for path: Network.NWPath) -> ServerConnectionInterface {
+    private static func interface(for path: Network.NWPath) -> ServerConnection.Interface {
         if path.usesInterfaceType(.wifi) {
             .wifi
         } else if path.usesInterfaceType(.cellular) {

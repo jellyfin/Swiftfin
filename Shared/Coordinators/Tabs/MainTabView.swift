@@ -15,10 +15,8 @@ import SwiftUI
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
-    @InjectedObject(\.deepLinkHandler)
-    private var deepLinkHandler
-    @Injected(\.userSessionManager)
-    private var userSessionManager: UserSessionManager
+    @InjectedObject(\.userSessionManager)
+    private var userSessionManager
 
     #if os(iOS)
     @StateObject
@@ -47,15 +45,11 @@ struct MainTabView: View {
     }
     #endif
 
-    private func routePendingDeepLink(_ deepLink: DeepLinkHandler.DeepLink?) {
+    private func routePendingDeepLink(_ deepLink: DeepLink?) {
         guard let deepLink else { return }
 
         Task { @MainActor in
-            guard let currentSession = userSessionManager.currentSession else {
-                throw UserSessionError.missingCurrentSession
-            }
-
-            let route = try await deepLinkHandler.route(for: deepLink, using: currentSession)
+            let route = deepLink.route()
             await tabCoordinator.route(to: route)
         }
     }
@@ -84,12 +78,10 @@ struct MainTabView: View {
             }
         }
         .onAppear {
-            if let deepLink = deepLinkHandler.consumePendingDeepLink() {
-                routePendingDeepLink(deepLink)
-            }
+            tabCoordinator.selectedTabID = tabCoordinator.tabs.first?.item.id
         }
-        .onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
-            routePendingDeepLink(deepLinkHandler.consumePendingDeepLink())
+        .onReceive(userSessionManager.$pendingDeepLink.compactMap(\.self)) { _ in
+            routePendingDeepLink(userSessionManager.consumePendingDeepLink())
         }
     }
 }

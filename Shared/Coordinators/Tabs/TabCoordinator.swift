@@ -49,7 +49,7 @@ final class TabCoordinator: ObservableObject {
     }
 
     func route(to route: NavigationRoute) async {
-        guard let tab = tabs.first(where: { $0.item.id == selectedTabID }) ?? tabs.first else { return }
+        guard let tab = tabs.first(where: { $0.item.id == selectedTabID }) else { return }
         tab.coordinator.push(route)
     }
 }
