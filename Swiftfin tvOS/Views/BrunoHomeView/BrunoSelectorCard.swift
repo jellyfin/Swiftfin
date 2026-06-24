@@ -14,34 +14,75 @@ import SwiftUI
 // MARK: - BrunoSelectorCard
 
 //
-// A landscape selector tile styled to match the home page's landscape movie cards: a 16:9 rounded
-// card with the stock tvOS `.card` focus lift. Used for category / filter pickers (the Genres core
-// panel, the Kids filter) in place of small pills, so selectors read as cards like the rest of the
-// browse surface. Title-in-card (no art) since these are text buckets, not media items.
+// A branded pill selector matching the hero's chip vocabulary (BrunoHeroView.heroPill): a Capsule
+// with a translucent fg wash idle, accent fill when active, and an accent focus ring + lift on
+// focus — NOT a chunky media card. Used for the Genres core panel (.bucket) and the Kids filter
+// (.toggle); these are controls, not content, so they read as first-class branded pills.
 struct BrunoSelectorCard: View {
+
+    enum Style {
+        case toggle // dense segmented toggle (Kids All / Movies / TV Shows)
+        case bucket // roomier category bucket (Genres core panel)
+
+        var font: Font {
+            switch self {
+            case .toggle: .brunoBody(26, weight: .semibold)
+            case .bucket: .brunoBody(30, weight: .semibold)
+            }
+        }
+
+        var horizontalPadding: CGFloat {
+            switch self {
+            case .toggle: 38
+            case .bucket: 46
+            }
+        }
+
+        var verticalPadding: CGFloat {
+            switch self {
+            case .toggle: 16
+            case .bucket: 20
+            }
+        }
+    }
 
     let title: String
     var isSelected: Bool = false
-    var width: CGFloat = 340
+    var style: Style = .bucket
     let action: () -> Void
+
+    @FocusState
+    private var isFocused: Bool
 
     var body: some View {
         Button(action: action) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(isSelected ? Color.bruno.accent : Color.bruno.diplomacyBrown)
-
-                Text(title)
-                    .font(.brunoBody(30, weight: .semibold))
-                    .foregroundStyle(isSelected ? Color.bruno.page : Color.bruno.fg)
-                    .multilineTextAlignment(.center)
-                    .minimumScaleFactor(0.6)
-                    .lineLimit(2)
-                    .padding(.horizontal, 20)
-            }
-            .aspectRatio(16.0 / 9.0, contentMode: .fit)
-            .frame(width: width)
+            Text(title)
+                .font(style.font)
+                .foregroundStyle(isSelected ? Color.bruno.page : Color.bruno.fg)
+                .lineLimit(1)
+                .padding(.horizontal, style.horizontalPadding)
+                .padding(.vertical, style.verticalPadding)
+                .background {
+                    Capsule(style: .continuous)
+                        .fill(
+                            isSelected
+                                ? Color.bruno.accent
+                                : Color.bruno.fg.opacity(isFocused ? 0.22 : 0.12)
+                        )
+                }
+                .overlay {
+                    // Focus cursor: a 3px accent ring (README focus system). Only when focused but
+                    // not already accent-filled, so a focused chip is an obvious target without
+                    // faking "selected."
+                    if isFocused, !isSelected {
+                        Capsule(style: .continuous)
+                            .stroke(Color.bruno.accent, lineWidth: 3)
+                    }
+                }
+                .scaleEffect(isFocused ? 1.05 : 1.0)
+                .animation(.easeOut(duration: 0.15), value: isFocused)
         }
-        .buttonStyle(.card)
+        .buttonStyle(.plain)
+        .focused($isFocused)
     }
 }

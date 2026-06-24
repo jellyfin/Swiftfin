@@ -84,24 +84,29 @@ struct BrunoKidsView: View {
     }
 
     private var filterBar: some View {
-        HStack(spacing: 24) {
+        HStack(spacing: 20) {
             ForEach(KidsFilter.allCases) { option in
                 BrunoSelectorCard(
                     title: option.rawValue,
                     isSelected: option == filter,
-                    width: 280
+                    style: .toggle
                 ) {
                     filter = option
                 }
             }
-
-            Spacer()
         }
-        .padding(.horizontal, 50)
+        .frame(maxWidth: .infinity)
         .padding(.top, 30)
         .padding(.bottom, 18)
-        // Opaque so the grid (which ignores the top safe area) can't bleed up under the bar.
-        .background(Color.bruno.page)
+        // Soft top-down fade so the grid dissolves under the chips instead of a hard black slab —
+        // keeps the page reading as one continuous gradient surface like every other Bruno screen.
+        .background {
+            LinearGradient(
+                colors: [Color.bruno.page, Color.bruno.page, Color.bruno.page.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
         .focusSection()
     }
 
