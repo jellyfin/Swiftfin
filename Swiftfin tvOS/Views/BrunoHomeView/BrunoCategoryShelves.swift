@@ -251,15 +251,19 @@ struct BrunoCategoryShelves: View {
             // of every contributing movie, so their inline row stays a capped preview.
             let hasBoxSetChildren = category.children.contains { $0.type == .boxSet }
             guard hasBoxSetChildren else { return Array(items.prefix(shelfCap)) }
-            // Studios: a weighted-random "cream of the crop" preview — studios with more titles in the
-            // library bubble up, reshuffled daily for freshness. "Show all" still lists every studio,
-            // so capping the row only curates the preview. Other box-set groups (Directors) show all.
+            // Studios / Directors: a weighted-random "cream of the crop" preview — collections with
+            // more titles in the library bubble up, reshuffled daily for freshness. "Show all" still
+            // lists every one, so capping the row only curates the preview.
             if category.name.lowercased() == "studios" {
-                return Self.studiosPreview(items, count: shelfCap)
+                return Self.weightedPreview(items, count: shelfCap, salt: 0x5747)
             }
-            return items
-        case .shelves, .genres:
-            // "Show all" opens a richer drill-in (shelf-per-sub-group / genres surface): preview.
+            return Self.weightedPreview(items, count: shelfCap, salt: 0x91A3)
+        case .genres:
+            // Genres: same weighted-random preview (sub-genres with more films bubble up); "Show all"
+            // opens the full genres surface, so the cap only curates the row.
+            return Self.weightedPreview(items, count: shelfCap, salt: 0xC0DE)
+        case .shelves:
+            // "Show all" opens a richer drill-in (shelf-per-sub-group, e.g. Decades): simple preview.
             return Array(items.prefix(shelfCap))
         }
     }
@@ -272,25 +276,25 @@ struct BrunoCategoryShelves: View {
         return boxSets.isEmpty ? category.children : boxSets
     }
 
-    /// Day-stable seed (same lineup all day, refreshes tomorrow); salted so it differs from other
-    /// seeded shelves. Mirrors BrunoBoxSetShelvesView's day-stable shuffle.
-    private static var studiosSeed: UInt32 {
-        UInt32(truncatingIfNeeded: Int(Date().timeIntervalSince1970 / 86400)) &+ 0x5747
+    /// Day-stable base seed (same lineup all day, refreshes tomorrow). Mirrors BrunoBoxSetShelvesView.
+    private static var dailySeed: UInt32 {
+        UInt32(truncatingIfNeeded: Int(Date().timeIntervalSince1970 / 86400))
     }
 
-    /// `bias` < 1 dampens the title-count weight so the majors bubble up without the row going
-    /// static — bigger bias = stronger "cream of the crop", smaller = more rotation.
-    private static let studiosBias = 0.6
+    /// `weightBias` < 1 dampens the title-count weight so the heavyweights bubble up without the row
+    /// going static — bigger = stronger "cream of the crop", smaller = more rotation.
+    private static let weightBias = 0.6
 
-    /// Weighted-random preview favouring studios with more titles in the library. Efraimidis–Spirakis
-    /// weighted sampling: key = u^(1/weight), keep the highest `count`. Seeded so it's stable per day.
-    private static func studiosPreview(_ items: [BaseItemDto], count: Int) -> [BaseItemDto] {
+    /// Weighted-random preview favouring collections with more titles in the library (Efraimidis–
+    /// Spirakis: key = u^(1/weight), keep the highest `count`). Seeded per-shelf (via `salt`) so each
+    /// row rotates independently but stays stable within a day. Used by Studios / Directors / Genres.
+    private static func weightedPreview(_ items: [BaseItemDto], count: Int, salt: UInt32) -> [BaseItemDto] {
         guard items.count > count else { return items }
-        var rng = BrunoRNG(seed: studiosSeed)
+        var rng = BrunoRNG(seed: dailySeed &+ salt)
         var keyed: [(item: BaseItemDto, key: Double)] = []
         keyed.reserveCapacity(items.count)
         for item in items {
-            let weight = pow(Double(max(item.childCount ?? 1, 1)), studiosBias)
+            let weight = pow(Double(max(item.childCount ?? 1, 1)), weightBias)
             let u = max(rng.nextUnit(), 1e-9)
             keyed.append((item, pow(u, 1.0 / weight)))
         }
