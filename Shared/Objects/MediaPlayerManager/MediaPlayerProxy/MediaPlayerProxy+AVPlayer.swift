@@ -37,6 +37,17 @@ class AVMediaPlayerProxy: NSObject,
     let avPlayerLayer: AVPlayerLayer
     let player: AVPlayer
 
+    #if os(tvOS)
+    weak var displayManager: AVDisplayManager? {
+        didSet {
+            observeDisplayModeSwitch()
+            Task { await updatePreferredDisplayCriteria() }
+        }
+    }
+
+    private var displayModeSwitchObserver: NSKeyValueObservation?
+    #endif
+
     private(set) var pipController: AVPictureInPictureController?
 
     private var pendingSeekSeconds: Duration?
@@ -325,6 +336,10 @@ extension AVMediaPlayerProxy {
     func playbackStopped() {
         teardownPiP()
 
+        #if os(tvOS)
+        displayManager?.preferredDisplayCriteria = nil
+        #endif
+
         pendingSeekSeconds = nil
 
         player.pause()
@@ -392,16 +407,21 @@ extension AVMediaPlayerProxy {
             let status = player.timeControlStatus
 
             DispatchQueue.main.async {
+
+                #if os(tvOS)
+                self.isBuffering.value = player.timeControlStatus == .waitingToPlayAtSpecifiedRate
+                    || self.displayManager?.isDisplayModeSwitchInProgress == true
+                #else
+                self.isBuffering.value = player.timeControlStatus == .waitingToPlayAtSpecifiedRate
+                #endif
+
                 switch status {
-                case .waitingToPlayAtSpecifiedRate:
-                    self.isBuffering.value = true
                 case .playing:
-                    self.isBuffering.value = false
                     self.manager?.setPlaybackRequestStatus(status: .playing)
                 case .paused:
-                    self.isBuffering.value = false
                     self.manager?.setPlaybackRequestStatus(status: .paused)
-                @unknown default: ()
+                default:
+                    break
                 }
             }
         }
@@ -494,6 +514,10 @@ extension AVMediaPlayerProxy {
         cachedAudioGroup = try? await playerItem.asset.loadMediaSelectionGroup(for: .audible)
         cachedSubtitleGroup = try? await playerItem.asset.loadMediaSelectionGroup(for: .legible)
 
+        #if os(tvOS)
+        await updatePreferredDisplayCriteria()
+        #endif
+
         setAudioStream(.init(index: item.selectedAudioStreamIndex))
         setSubtitleStream(.init(index: item.selectedSubtitleStreamIndex ?? -1))
 
@@ -513,6 +537,57 @@ extension AVMediaPlayerProxy {
             }
         }
     }
+
+    #if os(tvOS)
+    private func observeDisplayModeSwitch() {
+        guard let displayManager else {
+            displayModeSwitchObserver = nil
+            return
+        }
+
+        displayModeSwitchObserver = displayManager.observe(
+            \.isDisplayModeSwitchInProgress,
+            options: [.new]
+        ) { [weak self] displayManager, _ in
+            let inProgress = displayManager.isDisplayModeSwitchInProgress
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated {
+                    guard let self else { return }
+
+                    guard !inProgress else {
+                        self.isBuffering.value = true
+                        return
+                    }
+
+                    // isDisplayModeSwitchInProgress can be initially blank so wait 0.5 seconds for this to populate
+                    // https://developer.apple.com/documentation/avkit/avdisplaymanager/isdisplaymodeswitchinprogress
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        MainActor.assumeIsolated {
+                            self.isBuffering.value = self.player.timeControlStatus == .waitingToPlayAtSpecifiedRate
+                                || self.displayManager?.isDisplayModeSwitchInProgress == true
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func updatePreferredDisplayCriteria() async {
+        guard let displayManager,
+              let playerItem = player.currentItem,
+              playerItem.status == .readyToPlay,
+              let track = try? await playerItem.asset.loadTracks(withMediaType: .video).first,
+              let formatDescription = try? await track.load(.formatDescriptions).first
+        else { return }
+
+        let nominalFrameRate = await (try? track.load(.nominalFrameRate)) ?? 0
+
+        displayManager.preferredDisplayCriteria = AVDisplayCriteria(
+            refreshRate: nominalFrameRate,
+            formatDescription: formatDescription
+        )
+    }
+    #endif
 }
 
 // MARK: - AVPlayerView
@@ -588,10 +663,13 @@ extension AVMediaPlayerProxy {
 
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            if window != nil {
-                Task { @MainActor [weak self] in
-                    self?.proxy.setupPiP()
-                }
+            guard let window else { return }
+
+            Task { @MainActor [weak self] in
+                self?.proxy.setupPiP()
+                #if os(tvOS)
+                self?.proxy.displayManager = window.avDisplayManager
+                #endif
             }
         }
     }

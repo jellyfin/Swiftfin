@@ -21,7 +21,11 @@ final class AirPlayRemotePlaybackProvider: RemotePlaybackProvider {
     }
 
     var isAvailable: Bool {
+        #if os(tvOS)
+        false
+        #else
         Defaults[.VideoPlayer.videoPlayerType] == .avPlayer
+        #endif
     }
 
     var isActive: Bool {

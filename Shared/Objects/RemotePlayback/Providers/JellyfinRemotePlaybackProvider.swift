@@ -6,6 +6,8 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+// TODO: Implement. Will need Socket.
+
 @MainActor
 final class JellyfinRemotePlaybackProvider: RemotePlaybackProvider {
 
