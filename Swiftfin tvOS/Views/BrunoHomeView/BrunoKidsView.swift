@@ -191,26 +191,30 @@ final class BrunoKidsViewModel: ViewModel {
         isLoading = false
     }
 
-    /// Merge the kids parent libraries into one item list (mirrors BrunoCombinedLibrary): one
-    /// recursive request per parent, deduped by id, sorted by title. Movies + series in one pass so
-    /// the filter chips can re-slice client-side without refetching.
+    /// Merge the kids parent libraries into one item list (mirrors BrunoCombinedLibrary): each parent
+    /// is paged to completion (was a single hard limit=400 request per parent), then the whole merge
+    /// is deduped by id + sorted by title ONCE. Movies + series in one pass so the filter chips can
+    /// re-slice client-side without refetching.
     private func loadItems(session: UserSession) async -> [BaseItemDto] {
+        let userID = session.user.id
         var merged: [BaseItemDto] = []
         for parentID in parents.compactMap(\.id) {
-            var parameters = Paths.GetItemsParameters()
-            parameters.userID = session.user.id
-            parameters.parentID = parentID
-            parameters.isRecursive = true
-            parameters.includeItemTypes = [.movie, .series]
-            parameters.enableUserData = true
-            // Studios feed the Pixar / Disney filters; overview + genres feed the hero meta.
-            parameters.fields = [.overview, .genres, .studios]
-            parameters.sortBy = [.name]
-            parameters.sortOrder = [.ascending]
-            parameters.limit = 400
-            if let items = try? await session.client.send(Paths.getItems(parameters: parameters)).value.items {
-                merged.append(contentsOf: items)
+            let page = try? await BrunoItemPaging.fetchAll(client: session.client) { startIndex, limit in
+                var parameters = Paths.GetItemsParameters()
+                parameters.userID = userID
+                parameters.parentID = parentID
+                parameters.isRecursive = true
+                parameters.includeItemTypes = [.movie, .series]
+                parameters.enableUserData = true
+                // Studios feed the Pixar / Disney filters; overview + genres feed the hero meta.
+                parameters.fields = [.overview, .genres, .studios]
+                parameters.sortBy = [.name]
+                parameters.sortOrder = [.ascending]
+                parameters.startIndex = startIndex
+                parameters.limit = limit
+                return parameters
             }
+            if let page { merged.append(contentsOf: page) }
         }
 
         var seen = Set<String>()

@@ -26,6 +26,10 @@ struct BrunoShelfRow: View {
     /// Studios / Directors: focus-driven card that cycles the collection's film posters
     /// (BrunoArtCarouselCard). Same card geometry as the PosterButton, so INV-1's row height holds.
     var artCarousel: Bool = false
+    /// Decade surface only: replace the (blank-for-movies) subtitle line with the full release date.
+    /// Default false ⇒ every other caller renders the shared TitleSubtitleContentView byte-identically.
+    /// Only affects the standard PosterButton cell; the artCarousel branch is untouched.
+    var showsDate: Bool = false
 
     @FocusState
     private var showAllFocused: Bool
@@ -63,7 +67,11 @@ struct BrunoShelfRow: View {
                     PosterButton(item: item, type: .portrait) {
                         onItem(item)
                     } label: {
-                        PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
+                        if showsDate {
+                            BrunoTitleDateContentView(item: item)
+                        } else {
+                            PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
+                        }
                     }
                 }
             case .showAll:

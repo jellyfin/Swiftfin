@@ -43,19 +43,41 @@ struct BrunoShelfView: View {
                 }
                 .padding(.horizontal, 50)
 
-                PosterHStack(
-                    title: nil,
-                    type: viewModel.posterType,
-                    items: viewModel.items
-                ) { item in
-                    router.route(to: .item(item: item))
-                }
+                // New Releases (the .recentlyAdded spine shelf) shows the full release date in the
+                // poster subtitle line — movies' item.subtitle is nil there, so BrunoTitleDateContentView
+                // fills the already-reserved blank line (INV-1 row height unchanged). Every other shelf
+                // omits the label argument and renders PosterHStack's default TitleSubtitleContentView
+                // byte-identically.
                 // INV-1: Pin EVERY shelf (portrait AND landscape) so the LazyVStack stops re-reading
                 // CollectionHStack's intrinsic height on vertical focus moves — that renegotiation is
                 // the up/down "math conflict" that hard-snaps the row with no intervening frames. It
                 // also keeps the spine geometry constant while shelves stream in. Both heights are the
-                // single source of truth in BrunoShelfMetrics (see docs/BRUNO_PERF_INVARIANTS.md).
-                .frame(height: BrunoShelfMetrics.shelfRowHeight(for: viewModel.posterType))
+                // single source of truth in BrunoShelfMetrics (see docs/BRUNO_PERF_INVARIANTS.md). The
+                // pinned height is identical in both branches — the only difference is the New Releases
+                // poster label — so the row geometry is unchanged.
+                if viewModel.shelf.kind == .recentlyAdded {
+                    PosterHStack(
+                        title: nil,
+                        type: viewModel.posterType,
+                        items: viewModel.items,
+                        action: { item in
+                            router.route(to: .item(item: item))
+                        },
+                        label: { item in
+                            BrunoTitleDateContentView(item: item)
+                        }
+                    )
+                    .frame(height: BrunoShelfMetrics.shelfRowHeight(for: viewModel.posterType))
+                } else {
+                    PosterHStack(
+                        title: nil,
+                        type: viewModel.posterType,
+                        items: viewModel.items
+                    ) { item in
+                        router.route(to: .item(item: item))
+                    }
+                    .frame(height: BrunoShelfMetrics.shelfRowHeight(for: viewModel.posterType))
+                }
             }
             .onAppear {
                 prefetcher.warm(viewModel.items.elements, type: viewModel.posterType)

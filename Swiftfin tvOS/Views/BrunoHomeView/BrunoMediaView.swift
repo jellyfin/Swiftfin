@@ -135,34 +135,49 @@ final class BrunoMediaViewModel: ViewModel {
             return
         }
 
-        var parameters = Paths.GetItemsParameters()
-        parameters.userID = userSession.user.id
-        parameters.isRecursive = true
-        parameters.includeItemTypes = [itemType]
-        parameters.sortBy = [.sortName]
-        parameters.sortOrder = [.ascending]
-        // Overview + genres feed the hero's meta line; the rest (backdrop tags, community rating,
-        // user data for the poster overlays) come back by default.
-        parameters.fields = [.overview, .genres]
-        parameters.enableUserData = true
-        parameters.limit = 1000
+        let itemType = itemType
+        let userID = userSession.user.id
 
         do {
-            let all = try await userSession.client.send(Paths.getItems(parameters: parameters)).value.items ?? []
-            items = all
+            // Page the full A–Z set to completion (was a single hard limit=1000 request). The loop
+            // only fetches + appends raw pages; we assign `items` EXACTLY ONCE below so there is a
+            // single body pass and no mid-load focus churn. `isLoading` stays true until done.
+            let all = try await BrunoItemPaging.fetchAll(client: userSession.client) { startIndex, limit in
+                var parameters = Paths.GetItemsParameters()
+                parameters.userID = userID
+                parameters.isRecursive = true
+                parameters.includeItemTypes = [itemType]
+                parameters.sortBy = [.sortName]
+                parameters.sortOrder = [.ascending]
+                // Overview + genres feed the hero's meta line; the rest (backdrop tags, community
+                // rating, user data for the poster overlays) come back by default.
+                parameters.fields = [.overview, .genres]
+                parameters.enableUserData = true
+                parameters.startIndex = startIndex
+                parameters.limit = limit
+                return parameters
+            }
 
-            // Spotlight pool: the highest-rated titles that actually have a backdrop, in a fresh
-            // random order so re-entry varies (mirrors the home hero).
-            let candidates = all
-                .filter { $0.backdropImageTags?.isNotEmpty == true && brunoHeroEligible($0) }
-                .sorted { ($0.communityRating ?? 0) > ($1.communityRating ?? 0) }
-            heroItems = Array(
-                BrunoRNG.shuffled(Array(candidates.prefix(30)), seed: UInt32.random(in: 1 ... UInt32.max)).prefix(5)
-            )
+            // Derive the hero pool from the FULL set, off-MainActor, ONCE.
+            let hero = Self.heroPool(from: all)
+
+            items = all
+            heroItems = hero
         } catch {
             // Leave items/heroItems empty; the grid simply shows nothing rather than trapping.
         }
 
         isLoading = false
+    }
+
+    /// Spotlight pool from the full set: the highest-rated titles that actually have a backdrop, in a
+    /// fresh random order so re-entry varies (mirrors the home hero). Runs once after the paging loop.
+    private nonisolated static func heroPool(from all: [BaseItemDto]) -> [BaseItemDto] {
+        let candidates = all
+            .filter { $0.backdropImageTags?.isNotEmpty == true && brunoHeroEligible($0) }
+            .sorted { ($0.communityRating ?? 0) > ($1.communityRating ?? 0) }
+        return Array(
+            BrunoRNG.shuffled(Array(candidates.prefix(30)), seed: UInt32.random(in: 1 ... UInt32.max)).prefix(5)
+        )
     }
 }
