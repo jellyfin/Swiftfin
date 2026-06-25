@@ -7,7 +7,7 @@
 //
 
 import Combine
-import Factory
+import FactoryKit
 import Foundation
 import Get
 import JellyfinAPI
@@ -27,7 +27,6 @@ class ViewModel: ObservableObject {
         Notifications[.didChangeServerConnection]
             .publisher
             .sink { [weak self] _ in
-                Container.shared.userSessionManager().refreshCurrentSession()
                 self?.$userSession.resolve(reset: .scope)
             }
             .store(in: &cancellables)
@@ -36,7 +35,6 @@ class ViewModel: ObservableObject {
     func requireUserSession() throws -> UserSession {
         guard let userSession else {
             logger.error("Missing user session for authenticated view model")
-            Container.shared.userSessionManager().refreshCurrentSession()
             throw UserSessionError.missingCurrentSession
         }
 

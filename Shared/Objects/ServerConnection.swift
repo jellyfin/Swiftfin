@@ -8,24 +8,24 @@
 
 import Foundation
 
-enum ServerConnectionInterface: String, CaseIterable, Displayable, Hashable, Storable {
-    case any
-    case wifi
-    case cellular
+struct ServerConnection: Displayable, Hashable, Identifiable, Storable {
 
-    var displayTitle: String {
-        switch self {
-        case .any:
-            L10n.any
-        case .wifi:
-            L10n.wifi
-        case .cellular:
-            L10n.cellular
+    enum Interface: String, CaseIterable, Displayable, Storable {
+        case any
+        case wifi
+        case cellular
+
+        var displayTitle: String {
+            switch self {
+            case .any:
+                L10n.any
+            case .wifi:
+                L10n.wifi
+            case .cellular:
+                L10n.cellular
+            }
         }
     }
-}
-
-struct ServerConnection: Displayable, Hashable, Identifiable, Storable {
 
     enum TestState {
         case idle
@@ -37,7 +37,7 @@ struct ServerConnection: Displayable, Hashable, Identifiable, Storable {
     let id: String
     var name: String
     private(set) var url: URL
-    private(set) var interface: ServerConnectionInterface
+    private(set) var interface: Interface
     private(set) var wifiSSIDs: [String]
     var priority: Int
 
@@ -45,7 +45,7 @@ struct ServerConnection: Displayable, Hashable, Identifiable, Storable {
         id: String,
         name: String,
         url: URL,
-        interface: ServerConnectionInterface,
+        interface: Interface,
         wifiSSIDs: [String] = [],
         priority: Int
     ) {

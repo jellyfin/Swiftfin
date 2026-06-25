@@ -6,14 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 @main
 struct SwiftfinApp: App {
-
-    @StateObject
-    private var valueObservation = ValueObservation()
 
     init() {
         Self.configure()

@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-struct ServerConnectionsView: View {
+struct ServerConnectionView: View {
 
     @Default(.Experimental.serverConnectionAutoSwitch)
     private var isAutoSwitchFeatureEnabled

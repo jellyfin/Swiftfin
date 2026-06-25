@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import Factory
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -75,9 +74,5 @@ final class SettingsViewModel: ViewModel {
     private func getServers() -> [ServerState] {
         StoredValues[.Server.servers]
             .sorted(using: \.name)
-    }
-
-    func signOut() {
-        Container.shared.userSessionManager().signOut(reason: .explicit)
     }
 }

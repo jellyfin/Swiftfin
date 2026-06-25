@@ -7,13 +7,10 @@
 //
 
 import Defaults
-import Factory
+import FactoryKit
 import JellyfinAPI
 import OrderedCollections
 import SwiftUI
-
-// TODO: Need to change handling of splashscreen
-//       - change root item, needs to be background of navigation stack
 
 struct SelectUserView: View {
 
@@ -36,6 +33,9 @@ struct SelectUserView: View {
     private var authenticationAction
     @Environment(\.horizontalSizeClass)
     private var horizontalSizeClass
+
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
 
     @Router
     private var router
@@ -127,14 +127,10 @@ struct SelectUserView: View {
     }
 
     private func select(user: UserState) {
-        selectedUsers.insert(user)
-
         Task { @MainActor in
+
             do {
-                guard let authenticationAction else {
-                    selectedUsers.remove(user)
-                    return
-                }
+                guard let authenticationAction else { return }
 
                 let evaluatedPolicy = try await authenticationAction(
                     policy: user.accessPolicy,
@@ -143,33 +139,24 @@ struct SelectUserView: View {
                 let pin = (evaluatedPolicy as? PinEvaluatedUserAccessPolicy)?.pin ?? ""
 
                 await viewModel.signIn(user, pin: pin)
-
-                if user.accessPolicy == .requirePin {
-                    selectedUsers.remove(user)
-                }
-            } catch is CancellationError {
-                selectedUsers.remove(user)
             } catch {
-                selectedUsers.remove(user)
                 await viewModel.error(error)
             }
         }
     }
 
-    private func onSignedIn(_ user: UserState) {
-        Container.shared.userSessionManager().signIn(userID: user.id)
-        UIDevice.feedback(.success)
-    }
-
     @ViewBuilder
     private var splashScreenBackground: some View {
         if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
-            ZStack(alignment: .top) {
+            AlternateLayoutView {
+                Color.clear
+            } content: {
                 ImageView(splashScreenImageSources)
                     .pipeline(.Swiftfin.local)
                     .aspectRatio(contentMode: .fill)
                     .id(splashScreenImageSources)
-
+            }
+            .overlay {
                 Color.black
                     .opacity(0.9)
             }
@@ -375,7 +362,14 @@ struct SelectUserView: View {
         .onReceive(viewModel.events) { event in
             switch event {
             case let .signedIn(user):
-                onSignedIn(user)
+                Task { @MainActor in
+                    do {
+                        try await userSessionManager.signIn(userID: user.id)
+                        UIDevice.feedback(.success)
+                    } catch {
+                        await viewModel.error(error)
+                    }
+                }
             }
         }
         .onNotification(.didConnectToServer) { server in

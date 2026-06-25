@@ -7,7 +7,7 @@
 //
 
 import CoreStore
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import Logging

@@ -6,49 +6,28 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
+import FactoryKit
 import SwiftUI
 
 struct RootView: View {
-
-    @Environment(\.localUserAuthenticationAction)
-    private var authenticationAction
-
-    @Injected(\.deepLinkHandler)
-    private var deepLinkHandler
 
     @StateObject
     private var rootCoordinator: RootCoordinator = .init()
 
     var body: some View {
         ZStack {
-            if rootCoordinator.root.id == RootItem.appLoading.id {
-                RootItem.appLoading.content
+            switch rootCoordinator.state {
+            case .initial:
+                ProgressView()
+            case .error:
+                ErrorView(error: rootCoordinator.error ?? ErrorMessage(L10n.unknownError))
+            case .ready:
+                UserSessionRootView()
             }
-
-            if rootCoordinator.root.id == RootItem.mainTab.id {
-                RootItem.mainTab.content
-            }
-
-            if rootCoordinator.root.id == RootItem.selectUser.id {
-                RootItem.selectUser.content
-            }
-
-            #if os(iOS)
-            if rootCoordinator.root.id == RootItem.serverCheck.id {
-                RootItem.serverCheck.content
-            }
-            #endif
         }
-        .animation(.linear(duration: 0.1), value: rootCoordinator.root.id)
-        .environmentObject(rootCoordinator)
-        .onOpenURL { url in
-            Task { @MainActor in
-                await deepLinkHandler.handle(
-                    url,
-                    authenticationAction: authenticationAction
-                )
-            }
+        .animation(.linear(duration: 0.1), value: rootCoordinator.state)
+        .task {
+            rootCoordinator.start()
         }
     }
 }

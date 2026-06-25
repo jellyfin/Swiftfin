@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import Factory
+import FactoryKit
 import SwiftUI
 
 /// `Note`: Used for experimental settings that may be removed or implemented officially. Keep for future settings.
@@ -22,6 +22,9 @@ struct ExperimentalSettingsView: View {
     @Default(.Experimental.serverConnectionAutoSwitch)
     private var isServerConnectionAutoSwitchEnabled
 
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
+
     var body: some View {
         Form(systemImage: "flask") {
             // swiftlint:disable hard_coded_display_string
@@ -32,7 +35,7 @@ struct ExperimentalSettingsView: View {
         .backport
         .onChange(of: isServerConnectionAutoSwitchEnabled) { _, newValue in
             if newValue {
-                Container.shared.userSessionManager().scheduleServerConnectionEvaluation()
+                userSessionManager.scheduleServerConnectionResolution()
             }
         }
         .navigationTitle(L10n.experimental)
