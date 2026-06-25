@@ -32,9 +32,11 @@ Every one of those steps depends on the invariants below.
 
 ## The invariants
 
-### INV-1 — Shelf rows are height-pinned
-**What:** Each portrait shelf row is a fixed `BrunoShelfMetrics.shelfRowHeight` (460) tall. Sites:
-`BrunoShelfView`, `BrunoShelfRow`.
+### INV-1 — Shelf rows are height-pinned (portrait AND landscape)
+**What:** Every shelf row is pinned to a fixed height — `BrunoShelfMetrics.shelfRowHeight` (460,
+portrait/7-col) or `BrunoShelfMetrics.landscapeShelfRowHeight` (348, landscape/4-col), via
+`shelfRowHeight(for:)`. Sites: `BrunoShelfView`, `BrunoShelfRow`. **Landscape must be pinned too** —
+leaving it at intrinsic height made landscape rows hard-snap (no intervening frames) on up-navigation.
 **Why:** Two reasons, both load-bearing. (a) `CollectionHStack` computes its height lazily and reschedules
 layout on the *next* runloop; if the `LazyVStack` re-reads that intrinsic height on a vertical focus move,
 you get the up/down "hitch". (b) A constant spine geometry is what lets shelves stream in and reconcile

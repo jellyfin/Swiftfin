@@ -29,6 +29,12 @@ final class BrunoPosterPrefetcher {
 
     private let prefetcher: ImagePrefetcher
 
+    /// Warm only the first screenful (+ a little horizontal lookahead). Building `ImageSource`s is
+    /// synchronous on the main thread in `onAppear`, so warming the whole ~20-item row on every
+    /// shelf that scrolls into view was a per-appear cost during fast vertical nav. A screenful is
+    /// the high-value set; the rest warm lazily as the row scrolls.
+    private static let warmCount = 10
+
     init() {
         prefetcher = ImagePrefetcher(pipeline: .Swiftfin.posters, destination: .memoryCache)
         prefetcher.priority = .low
@@ -45,7 +51,7 @@ final class BrunoPosterPrefetcher {
     private func posterURLs(_ items: some Sequence<BaseItemDto>, type: PosterDisplayType) -> [URL] {
         let width = BrunoShelfMetrics.posterMaxWidth(for: type)
         let quality = BrunoShelfMetrics.posterQuality
-        return items.compactMap { item in
+        return items.prefix(Self.warmCount).compactMap { item in
             switch type {
             case .landscape:
                 item.landscapeImageSources(maxWidth: width, quality: quality).first?.url

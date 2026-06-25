@@ -19,11 +19,23 @@ import CoreGraphics
 // every consumer follows; never hardcode these numbers at a call site.
 enum BrunoShelfMetrics {
 
-    // INV-1: Fixed shelf-row height. Pins each portrait shelf so the LazyVStack never re-reads
-    // CollectionHStack's intrinsic size on vertical focus moves (the up/down hitch) AND so the
-    // spine geometry stays constant while shelves stream/reconcile under live focus. Read by
-    // BrunoShelfView and BrunoShelfRow. Break symptom: hitch returns / rows shift under the cursor.
+    // INV-1: Fixed shelf-row height. Pins each shelf so the LazyVStack never re-reads
+    // CollectionHStack's intrinsic size on vertical focus moves (the up/down hitch / "hard snap")
+    // AND so the spine geometry stays constant while shelves stream/reconcile under live focus. Read
+    // by BrunoShelfView and BrunoShelfRow. Break symptom: hitch returns / rows shift under the cursor.
+    //
+    // PORTRAIT (7 columns): card ~241w x 3/2 = ~362h + ~58 two-line label + 40 vertical insets ≈ 460.
     static let shelfRowHeight: CGFloat = 460
+
+    // INV-1 (landscape): landscape shelves are 4-column (PosterHStack), so the card is far larger
+    // and MUST be pinned too — leaving it intrinsic made landscape rows hard-snap on up-navigation.
+    // LANDSCAPE (4 columns): card ~440w / 1.77 = ~249h + ~58 two-line label + 40 vertical insets ≈ 347.
+    static let landscapeShelfRowHeight: CGFloat = 348
+
+    /// The pinned row height for a shelf of the given poster type.
+    static func shelfRowHeight(for type: PosterDisplayType) -> CGFloat {
+        type == .landscape ? landscapeShelfRowHeight : shelfRowHeight
+    }
 
     // INV-4: Poster request width must equal the width the prefetcher warms, or the Nuke cache key
     // (salted by maxWidth) misses and prefetch silently warms nothing. These MIRROR the stock-private

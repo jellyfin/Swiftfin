@@ -50,12 +50,12 @@ struct BrunoShelfView: View {
                 ) { item in
                     router.route(to: .item(item: item))
                 }
-                // INV-1: Pin portrait shelves so the LazyVStack stops re-reading CollectionHStack's
-                // intrinsic height on vertical focus moves (the up/down "math conflict" hitch) and
-                // so the spine geometry stays constant while shelves stream in. Height is the single
-                // source of truth in BrunoShelfMetrics (see docs/BRUNO_PERF_INVARIANTS.md).
-                // Landscape rows keep their intrinsic height (nil) — different aspect, no clip risk.
-                .frame(height: viewModel.posterType == .portrait ? BrunoShelfMetrics.shelfRowHeight : nil)
+                // INV-1: Pin EVERY shelf (portrait AND landscape) so the LazyVStack stops re-reading
+                // CollectionHStack's intrinsic height on vertical focus moves — that renegotiation is
+                // the up/down "math conflict" that hard-snaps the row with no intervening frames. It
+                // also keeps the spine geometry constant while shelves stream in. Both heights are the
+                // single source of truth in BrunoShelfMetrics (see docs/BRUNO_PERF_INVARIANTS.md).
+                .frame(height: BrunoShelfMetrics.shelfRowHeight(for: viewModel.posterType))
             }
             .onAppear {
                 prefetcher.warm(viewModel.items.elements, type: viewModel.posterType)
