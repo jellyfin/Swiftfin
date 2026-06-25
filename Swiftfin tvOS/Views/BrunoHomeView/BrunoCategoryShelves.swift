@@ -252,12 +252,12 @@ struct BrunoCategoryShelves: View {
             let hasBoxSetChildren = category.children.contains { $0.type == .boxSet }
             guard hasBoxSetChildren else { return Array(items.prefix(shelfCap)) }
             // Studios / Directors: a weighted-random "cream of the crop" preview — collections with
-            // more titles in the library bubble up, reshuffled daily for freshness. "Show all" still
-            // lists every one, so capping the row only curates the preview.
+            // more titles in the library bubble up, reshuffled daily for freshness. Capped to 12
+            // before the "Show all" card; "Show all" still lists every one, so the cap only curates.
             if category.name.lowercased() == "studios" {
-                return Self.weightedPreview(items, count: shelfCap, salt: 0x5747)
+                return Self.weightedPreview(items, count: 12, salt: 0x5747)
             }
-            return Self.weightedPreview(items, count: shelfCap, salt: 0x91A3)
+            return Self.weightedPreview(items, count: 12, salt: 0x91A3)
         case .genres:
             // Genres: same weighted-random preview (sub-genres with more films bubble up); "Show all"
             // opens the full genres surface, so the cap only curates the row.
