@@ -27,7 +27,7 @@ extension DataCache.Swiftfin {
             return ImagePipeline.cacheKey(for: url)
         }
 
-        dataCache?.sizeLimit = 1024 * 1024 * 1000 // 1000 MB
+        dataCache?.sizeLimit = 1024 * 1024 * 1024 * 10 // 10 GB — Apple TV has ample free storage; keep the whole library's art resident so browse never re-downloads.
 
         return dataCache
     }()
