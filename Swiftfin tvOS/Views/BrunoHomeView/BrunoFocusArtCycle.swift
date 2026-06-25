@@ -62,10 +62,10 @@ struct BrunoFocusArtCycle<Background: View, Foreground: View>: View {
     private var art = BrunoArtCycleViewModel()
     @State
     private var index = 0
-    /// The outgoing frame, rendered on TOP of the (opaque) current frame and faded to 0 — this is the
+    /// The outgoing frame's index, rendered on TOP of the (opaque) current frame and faded to 0 — the
     /// seamless dissolve: the new frame is already fully painted underneath, so nothing dips to black.
     @State
-    private var fadingSource: [ImageSource]?
+    private var fadingIndex: Int?
     @State
     private var fadeOpacity: Double = 0
     @State
@@ -97,10 +97,10 @@ struct BrunoFocusArtCycle<Background: View, Foreground: View>: View {
             if active {
                 ZStack {
                     if let current = art.frames[safe: index] {
-                        frame(current) // current frame, opaque, underneath
+                        frame(current, key: index) // current frame, opaque, underneath
                     }
-                    if let fadingSource {
-                        frame(fadingSource).opacity(fadeOpacity) // previous frame, fading out on top
+                    if let fadingIndex, let fading = art.frames[safe: fadingIndex] {
+                        frame(fading, key: fadingIndex).opacity(fadeOpacity) // previous frame, fading out on top
                     }
                 }
                 .transition(.opacity)
@@ -112,7 +112,7 @@ struct BrunoFocusArtCycle<Background: View, Foreground: View>: View {
         .onChange(of: isFocused) { _, focused in
             if focused {
                 index = 0
-                fadingSource = nil
+                fadingIndex = nil
                 fadeOpacity = 0
                 rolling = false
                 art.load(parentID: parentID, fallbackItems: fallbackItems, type: type)
@@ -124,12 +124,15 @@ struct BrunoFocusArtCycle<Background: View, Foreground: View>: View {
         .onDisappear(perform: stop)
     }
 
-    private func frame(_ source: [ImageSource]) -> some View {
+    // `key` forces a fresh ImageView identity per frame: ImageView holds its sources in @State, so
+    // without a changing id it would freeze on the first image.
+    private func frame(_ source: [ImageSource], key: Int) -> some View {
         ImageView(source)
             .aspectRatio(contentMode: .fill)
             .frame(maxWidth: .infinity, maxHeight: .infinity) // fill the card, don't adopt the art's size
             .clipped()
             .overlay(Color.black.opacity(dim)) // dim so the foreground stays legible
+            .id(key)
     }
 
     private func start() {
@@ -149,7 +152,7 @@ struct BrunoFocusArtCycle<Background: View, Foreground: View>: View {
 
                 // Paint the new frame underneath (instant), cover it with the old frame on top, then
                 // fade the old out → seamless dissolve, no black between.
-                fadingSource = art.frames[safe: index]
+                fadingIndex = index
                 index = (index + 1) % count
                 fadeOpacity = 1
                 try? await Task.sleep(for: .milliseconds(20))
@@ -163,7 +166,7 @@ struct BrunoFocusArtCycle<Background: View, Foreground: View>: View {
         cycle?.cancel()
         cycle = nil
         rolling = false
-        fadingSource = nil
+        fadingIndex = nil
         fadeOpacity = 0
         art.stopPrefetch()
     }
