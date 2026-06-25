@@ -124,7 +124,9 @@ extension BrunoLibrarySnapshot {
         var parameters = Paths.GetItemsParameters()
         parameters.userID = userID
         parameters.parentID = parentID
-        parameters.fields = .MinimumFields
+        // .genres so the child movies/series carry genre tags for the hero child-safety filter
+        // (brunoHeroEligible); MinimumFields omits them, which would make the filter a silent no-op.
+        parameters.fields = .MinimumFields + [.genres]
         parameters.enableUserData = true
         parameters.limit = 200
         return await send(client: client, parameters: parameters)

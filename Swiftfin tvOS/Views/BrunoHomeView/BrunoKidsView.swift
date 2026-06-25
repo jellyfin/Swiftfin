@@ -181,7 +181,7 @@ final class BrunoKidsViewModel: ViewModel {
 
             // Spotlight pool: highest-rated kids titles that actually have a backdrop, shuffled.
             let candidates = allItems
-                .filter { $0.backdropImageTags?.isNotEmpty == true }
+                .filter { $0.backdropImageTags?.isNotEmpty == true && brunoHeroEligible($0) }
                 .sorted { ($0.communityRating ?? 0) > ($1.communityRating ?? 0) }
             heroItems = Array(
                 BrunoRNG.shuffled(Array(candidates.prefix(30)), seed: UInt32.random(in: 1 ... UInt32.max)).prefix(5)

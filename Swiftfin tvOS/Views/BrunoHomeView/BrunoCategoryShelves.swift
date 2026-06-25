@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import JellyfinAPI
 import SwiftUI
 
@@ -64,13 +65,24 @@ struct BrunoCollectionCategory: Identifiable {
     }
 }
 
+/// Whether an item may appear on a hero banner. Excludes anything tagged Horror (substring, so
+/// "Horror Comedy" / "Post-Horror" are caught too): a hero backdrop is full-bleed and unskippable,
+/// and even a horror still can be too much for a child glancing at the screen (owner request). A
+/// nil `genres` (field not requested) is treated as eligible rather than over-rejecting — callers
+/// that rely on this for safety MUST request `.genres` on their fetch.
+func brunoHeroEligible(_ item: BaseItemDto) -> Bool {
+    guard let genres = item.genres else { return true }
+    return !genres.contains { $0.localizedCaseInsensitiveContains("horror") }
+}
+
 /// The single item to feature in a browse surface's hero banner: the first movie/series WITH a
 /// backdrop image across the categories' children, else the first such item, else nil. Keeps the
-/// hero to real watchable content (group BoxSets frequently lack backdrops, movies reliably have them).
+/// hero to real watchable content (group BoxSets frequently lack backdrops, movies reliably have
+/// them) and never a Horror title (`brunoHeroEligible`).
 func brunoFeaturedItem(in categories: [BrunoCollectionCategory]) -> BaseItemDto? {
     let leaves = categories
         .flatMap(\.children)
-        .filter { $0.type == .movie || $0.type == .series }
+        .filter { ($0.type == .movie || $0.type == .series) && brunoHeroEligible($0) }
     return leaves.first(where: { $0.backdropImageTags?.isNotEmpty == true }) ?? leaves.first
 }
 
@@ -154,27 +166,30 @@ struct BrunoCategoryShelves: View {
         }
     }
 
-    // The big gradient category cards (the group artwork). Tapping one jumps straight to that
-    // category's full "Show all" destination — no scroll-jump to the inline shelf.
+    // The big gradient category cards. Code-drawn tiles (BrunoCategoryTile) rather than the group's
+    // server poster, so every label renders at a controlled size (fixes the giant "NEW") and the
+    // synthetic "Boxed Sets" category gets real art instead of a grey placeholder. Tapping one jumps
+    // straight to that category's full "Show all" destination. CollectionHStack (the same primitive
+    // BrunoShelfRow uses) keeps native tvOS focus scaling + continuous-leading-edge scroll; .card
+    // owns focus so the tile itself stays pure drawing.
     private var categoryCardRow: some View {
-        PosterHStack(
-            title: nil,
-            type: .portrait,
-            // These are navigation tiles, not library items: strip userData so the stock
-            // favorite-heart / watched overlays don't decorate the branded category artwork.
-            // (The unwatched corner-triangle is driven by canBePlayed and would need a dedicated
-            // tile to fully suppress — deferred.)
-            items: categories.map { category in
-                var card = category.boxSet
-                card.userData = nil
-                return card
-            }
-        ) { boxSet in
-            let key = boxSet.id ?? boxSet.displayTitle
-            if let category = categories.first(where: { $0.id == key }) {
+        CollectionHStack(
+            uniqueElements: categories,
+            columns: 7
+        ) { category in
+            Button {
                 routeToShowAll(category)
+            } label: {
+                BrunoCategoryTile(category: category)
             }
+            .buttonStyle(.card)
         }
+        .clipsToBounds(false)
+        .dataPrefix(categories.count)
+        .insets(horizontal: EdgeInsets.edgePadding, vertical: 20)
+        .itemSpacing(EdgeInsets.edgePadding - 20)
+        .scrollBehavior(.continuousLeadingEdge)
+        .focusSection()
     }
 
     private func shelf(for category: BrunoCollectionCategory) -> some View {
@@ -239,7 +254,17 @@ struct BrunoCategoryShelves: View {
         case .shelves:
             router.route(to: .brunoCategoryShelves(parent: category.boxSet), in: namespace)
         case .items:
-            router.route(to: .brunoItemsGrid(title: category.name, items: category.children), in: namespace)
+            // Boxed Sets: landscape cards so the franchise names aren't scrunched, with the
+            // collection-name / "Collection" / film-count + year-range lockup.
+            router.route(
+                to: .brunoBoxSetGrid(
+                    title: category.name,
+                    items: category.children,
+                    posterType: .landscape,
+                    collectionLabel: true
+                ),
+                in: namespace
+            )
         case .grid:
             // A group whose children are sub-collections (Directors, Studios, …) must show ONLY
             // those box sets on "Show all". The stock ItemLibrary(parent:) query returns the
@@ -249,7 +274,17 @@ struct BrunoCategoryShelves: View {
             // e.g. New Releases) keep the live, paged library.
             let boxSetChildren = category.children.filter { $0.type == .boxSet }
             if boxSetChildren.isNotEmpty {
-                router.route(to: .brunoItemsGrid(title: category.name, items: boxSetChildren), in: namespace)
+                // Studios: landscape so the wide studio logos read big. Directors stay portrait
+                // (headshots). Both route through the same grid (inherits the header-overlap fix).
+                let isStudios = category.name.lowercased() == "studios"
+                router.route(
+                    to: .brunoBoxSetGrid(
+                        title: category.name,
+                        items: boxSetChildren,
+                        posterType: isStudios ? .landscape : .portrait
+                    ),
+                    in: namespace
+                )
             } else if category.boxSet.libraryType == .boxSet {
                 // Genre grids sort newest-first so the pre-1985 classics sink to the literal bottom
                 // of the barrel (owner request) — still reachable, just never up top. Other grids
