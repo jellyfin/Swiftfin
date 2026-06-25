@@ -250,7 +250,14 @@ struct BrunoCategoryShelves: View {
             // (no box-set children, e.g. New Releases) instead "Show all" to a live paged library
             // of every contributing movie, so their inline row stays a capped preview.
             let hasBoxSetChildren = category.children.contains { $0.type == .boxSet }
-            return hasBoxSetChildren ? items : Array(items.prefix(shelfCap))
+            guard hasBoxSetChildren else { return Array(items.prefix(shelfCap)) }
+            // Studios: a weighted-random "cream of the crop" preview — studios with more titles in the
+            // library bubble up, reshuffled daily for freshness. "Show all" still lists every studio,
+            // so capping the row only curates the preview. Other box-set groups (Directors) show all.
+            if category.name.lowercased() == "studios" {
+                return Self.studiosPreview(items, count: shelfCap)
+            }
+            return items
         case .shelves, .genres:
             // "Show all" opens a richer drill-in (shelf-per-sub-group / genres surface): preview.
             return Array(items.prefix(shelfCap))
@@ -263,6 +270,31 @@ struct BrunoCategoryShelves: View {
     private func subCollections(of category: BrunoCollectionCategory) -> [BaseItemDto] {
         let boxSets = category.children.filter { $0.type == .boxSet }
         return boxSets.isEmpty ? category.children : boxSets
+    }
+
+    /// Day-stable seed (same lineup all day, refreshes tomorrow); salted so it differs from other
+    /// seeded shelves. Mirrors BrunoBoxSetShelvesView's day-stable shuffle.
+    private static var studiosSeed: UInt32 {
+        UInt32(truncatingIfNeeded: Int(Date().timeIntervalSince1970 / 86400)) &+ 0x5747
+    }
+
+    /// `bias` < 1 dampens the title-count weight so the majors bubble up without the row going
+    /// static — bigger bias = stronger "cream of the crop", smaller = more rotation.
+    private static let studiosBias = 0.6
+
+    /// Weighted-random preview favouring studios with more titles in the library. Efraimidis–Spirakis
+    /// weighted sampling: key = u^(1/weight), keep the highest `count`. Seeded so it's stable per day.
+    private static func studiosPreview(_ items: [BaseItemDto], count: Int) -> [BaseItemDto] {
+        guard items.count > count else { return items }
+        var rng = BrunoRNG(seed: studiosSeed)
+        var keyed: [(item: BaseItemDto, key: Double)] = []
+        keyed.reserveCapacity(items.count)
+        for item in items {
+            let weight = pow(Double(max(item.childCount ?? 1, 1)), studiosBias)
+            let u = max(rng.nextUnit(), 1e-9)
+            keyed.append((item, pow(u, 1.0 / weight)))
+        }
+        return keyed.sorted { $0.key > $1.key }.prefix(count).map(\.item)
     }
 
     private func routeToShowAll(_ category: BrunoCollectionCategory) {
