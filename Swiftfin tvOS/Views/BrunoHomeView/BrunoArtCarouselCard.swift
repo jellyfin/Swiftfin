@@ -13,10 +13,10 @@ import SwiftUI
 
 //
 // A poster card for the Studios / Directors grids that, WHILE FOCUSED, swaps its static art (studio
-// logo / director headshot) for a contained carousel of the collection's movie posters, advancing
-// every 2s and cross-fading; on unfocus it reverts to the static art. Mirrors PosterButton's button
-// structure (PosterImage isn't injectable, so we rebuild the thin shell) so focus scale / shadow /
-// zoom-push behave identically — only the image content differs.
+// logo / director headshot) for a carousel of the collection's movie art, cross-fading every 2s; on
+// unfocus it reverts to the static art. Mirrors PosterButton's button structure (PosterImage isn't
+// injectable, so we rebuild the thin shell) so focus scale / shadow / zoom-push behave identically —
+// only the image content differs.
 //
 // Gated to Studios + Directors; Boxed Sets keep the plain PosterButton.
 struct BrunoArtCarouselCard<Label: View>: View {
@@ -47,11 +47,17 @@ struct BrunoArtCarouselCard<Label: View>: View {
 // MARK: - FocusCyclingArt
 
 //
-// The card's image area. Reads the enclosing card's focus via `\.isFocused` (true when the card is
-// focused). On focus it lazily loads the collection's movie posters and runs a 2s cross-fade cycle;
-// only the focused card has a live cycle task (started on focus, cancelled on unfocus/disappear),
-// honoring the "one timer at a time" rule. Respects Reduce Motion (shows the first poster, no auto-
-// advance).
+// The card's image area. Reads the enclosing card's focus via `\.isFocused`. On focus it lazily
+// loads the collection's films and (after a brief hold) cross-fades through their art; on unfocus it
+// reverts to the static card art. Only the focused card runs a cycle task (started on focus,
+// cancelled on unfocus/disappear). Respects Reduce Motion (stays on the static art, no auto-advance).
+//
+// Behaviour notes:
+//  • HOLD: a 2s pause after focus shows the card AS-IS first, so a quick pass-through doesn't flash.
+//  • NO-GAP: all frames are prefetched into the Nuke memory cache on load (BrunoPosterPrefetcher,
+//    same pipeline + request width as the cells), so each swap reads from cache — no blank between.
+//  • FILL: landscape cards use the films' 16:9 art (Thumb/Backdrop) and portrait cards use posters,
+//    each `.fill` — so the art fills the card with no letterbox wings and minimal crop.
 private struct FocusCyclingArt: View {
 
     let item: BaseItemDto
@@ -66,26 +72,32 @@ private struct FocusCyclingArt: View {
     private var children = BrunoChildArtViewModel()
     @State
     private var index = 0
+    /// Flips true only after the post-focus hold elapses; gates the carousel on/off.
+    @State
+    private var rolling = false
     @State
     private var cycle: Task<Void, Never>?
 
-    /// Show posters only once focused AND some have loaded — otherwise the static art stays put.
+    private static let holdSeconds: Double = 2
+    private static let frameSeconds: Double = 2
+
+    /// Show film art only once the hold has elapsed AND frames have loaded; otherwise the static art.
     private var active: Bool {
-        isFocused && !children.sources.isEmpty
+        rolling && !children.frames.isEmpty
     }
 
     var body: some View {
         ZStack {
-            // Dark backing so a contained (letterboxed) poster sits on the card surface, not on void.
+            // Backing for the brief moment before the first frame resolves.
             Color.bruno.surface
 
             PosterImage(item: item, type: type)
                 .opacity(active ? 0 : 1)
 
-            if active, let source = children.sources[safe: index] {
-                ImageView(source)
-                    .aspectRatio(contentMode: .fit)
-                    .id(source.url?.hashValue)
+            if active, let frame = children.frames[safe: index] {
+                ImageView(frame)
+                    .aspectRatio(contentMode: .fill)
+                    .id(index)
                     .transition(.opacity)
             }
         }
@@ -93,8 +105,9 @@ private struct FocusCyclingArt: View {
         .animation(.easeInOut(duration: reduceMotion ? 0 : 0.3), value: active)
         .onChange(of: isFocused) { _, focused in
             if focused {
-                children.load(parentID: item.id ?? "")
                 index = 0
+                rolling = false
+                children.load(item: item, type: type)
                 startCycle()
             } else {
                 stopCycle()
@@ -107,10 +120,15 @@ private struct FocusCyclingArt: View {
         stopCycle()
         guard !reduceMotion else { return }
         cycle = Task { @MainActor in
+            // (1) Hold: show the card as-is so a quick focus pass doesn't flash the carousel.
+            try? await Task.sleep(for: .seconds(Self.holdSeconds))
+            if Task.isCancelled { return }
+            rolling = true
+            // (2) Advance one frame every `frameSeconds`; frames are pre-warmed so swaps are instant.
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(2))
+                try? await Task.sleep(for: .seconds(Self.frameSeconds))
                 if Task.isCancelled { return }
-                let count = children.sources.count
+                let count = children.frames.count
                 guard count > 1 else { continue }
                 index = (index + 1) % count
             }
@@ -120,28 +138,38 @@ private struct FocusCyclingArt: View {
     private func stopCycle() {
         cycle?.cancel()
         cycle = nil
+        rolling = false
+        children.stopPrefetch()
     }
 }
 
 // MARK: - BrunoChildArtViewModel
 
 //
-// Loads a collection's child-movie poster sources once (cached), on first focus. Random order so the
-// carousel varies between visits. Studios/Directors are box sets of movies — same fetch as
-// BrunoBoxSetYearRangesViewModel, but keeping primary posters instead of years.
+// Loads a collection's child-film art once (cached) on first focus, and prefetches every frame into
+// the Nuke memory cache so the carousel never shows a gap. Random order so it varies between visits.
+// Frames are type-matched to the card: landscape (Thumb/Backdrop) for landscape cards, posters for
+// portrait — built at the SAME request width the prefetcher warms, so the cache keys line up (INV-4).
 @MainActor
 final class BrunoChildArtViewModel: ViewModel {
 
+    /// One ordered ImageSource list per film (fallback chain), already type-matched.
     @Published
-    private(set) var sources: [ImageSource] = []
+    private(set) var frames: [[ImageSource]] = []
 
+    private let prefetcher = BrunoPosterPrefetcher()
+    private var warmed: [BaseItemDto] = []
+    private var warmedType: PosterDisplayType = .portrait
     private var loaded = false
 
-    func load(parentID: String) {
-        guard !loaded, !parentID.isEmpty, let userSession else { return }
+    func load(item: BaseItemDto, type: PosterDisplayType) {
+        guard !loaded, let parentID = item.id, let userSession else { return }
         loaded = true
+        warmedType = type
         let client = userSession.client
         let userID = userSession.user.id
+        let width = BrunoShelfMetrics.posterMaxWidth(for: type)
+        let quality = BrunoShelfMetrics.posterQuality
         Task {
             var parameters = Paths.GetItemsParameters()
             parameters.userID = userID
@@ -149,13 +177,32 @@ final class BrunoChildArtViewModel: ViewModel {
             parameters.includeItemTypes = [.movie]
             parameters.isRecursive = true
             parameters.sortBy = [ItemSortBy.random]
-            parameters.limit = 20
+            // Cap to the prefetcher's warm window so every shown frame is pre-warmed.
+            parameters.limit = 10
             do {
                 let items = try await client.send(Paths.getItems(parameters: parameters)).value.items ?? []
-                sources = items
-                    .map { $0.imageSource(.primary, maxWidth: 300) }
-                    .filter { $0.url != nil }
+                let usable = items.filter { item in
+                    sources(for: item, type: type, width: width, quality: quality).contains { $0.url != nil }
+                }
+                warmed = usable
+                frames = usable.map { sources(for: $0, type: type, width: width, quality: quality) }
+                prefetcher.warm(usable, type: type)
             } catch {}
         }
+    }
+
+    func stopPrefetch() {
+        prefetcher.stop(warmed, type: warmedType)
+    }
+
+    private func sources(
+        for item: BaseItemDto,
+        type: PosterDisplayType,
+        width: CGFloat,
+        quality: Int
+    ) -> [ImageSource] {
+        type == .landscape
+            ? item.landscapeImageSources(maxWidth: width, quality: quality)
+            : item.portraitImageSources(maxWidth: width, quality: quality)
     }
 }
