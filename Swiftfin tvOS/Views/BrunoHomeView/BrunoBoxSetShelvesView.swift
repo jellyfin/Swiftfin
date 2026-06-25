@@ -100,6 +100,14 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
         let client = userSession.client
         let userID = userSession.user.id
 
+        // Genre rows are biased to modern films (owner request): pre-1985 titles are dropped from the
+        // "If You Like {genre}" shelves and the same film can't fill two overlapping genre rows. They
+        // still appear in each genre's full "Show all" grid (sunk to the bottom). Decades / Curated /
+        // any other group are NOT biased — they exist precisely to surface older eras. We fetch a
+        // deeper page when biased so enough modern titles survive the filter to fill a preview row.
+        let recencyBiased = parent.displayTitle.lowercased() == "genres"
+        let childFetch = recencyBiased ? 60 : perShelfFetch
+
         let subGroups = await Self.fetchChildren(
             client: client,
             userID: userID,
@@ -112,7 +120,7 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
         await withTaskGroup(of: (Int, BaseItemDto, [BaseItemDto]).self) { group in
             for (index, subGroup) in subGroups.enumerated() {
                 guard let subID = subGroup.id else { continue }
-                let fetch = perShelfFetch
+                let fetch = childFetch
                 group.addTask {
                     let children = await Self.fetchChildren(
                         client: client,
@@ -125,15 +133,45 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
             }
 
             for await (index, subGroup, children) in group {
-                guard children.isNotEmpty else { continue }
-                indexed.append((index, BrunoCollectionCategory(boxSet: subGroup, children: children)))
+                let shown = recencyBiased ? BrunoRecencyBias.modernOnly(children) : children
+                guard shown.isNotEmpty else { continue }
+                indexed.append((
+                    index,
+                    BrunoCollectionCategory(boxSet: subGroup, children: shown, recencyBiased: recencyBiased)
+                ))
             }
         }
 
-        categories = indexed
+        let ordered = indexed
             .sorted { $0.0 < $1.0 }
             .map(\.1)
+
+        categories = recencyBiased ? Self.dedupeAcrossCategories(ordered) : ordered
         isLoading = false
+    }
+
+    /// Drop a film from every genre shelf after the first that lists it (server order wins), so the
+    /// same title can't fill both "Romantic Comedy" and "Romantic Drama" when the server's genre tags
+    /// overlap. A category emptied by the pass is dropped. Duplicates still resurface in each genre's
+    /// full "Show all" grid — they're only deduped across the preview rows.
+    private static func dedupeAcrossCategories(_ categories: [BrunoCollectionCategory]) -> [BrunoCollectionCategory] {
+        var seen: Set<String> = []
+        var out: [BrunoCollectionCategory] = []
+        for category in categories {
+            let fresh = category.children.filter { item in
+                guard let id = item.id else { return true }
+                return seen.insert(id).inserted
+            }
+            guard fresh.isNotEmpty else { continue }
+            out.append(BrunoCollectionCategory(
+                boxSet: category.boxSet,
+                children: fresh,
+                drillStyle: category.drillStyle,
+                lens: category.lens,
+                recencyBiased: category.recencyBiased
+            ))
+        }
+        return out
     }
 
     private nonisolated static func fetchChildren(

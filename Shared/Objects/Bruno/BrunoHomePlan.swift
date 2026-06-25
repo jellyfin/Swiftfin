@@ -24,14 +24,9 @@ enum BrunoHomePlan {
     static let minItems = 3
     static let shelfCap = 18
 
-    /// The Romance split (owner request): Romance titles released before this year are their own
-    /// "Classic Romance" category, and the regular Romance lens excludes them — so a romcom browse
-    /// surfaces modern films, not 1959 ones. The cutoff is the first MODERN year (1985 onward is
-    /// "regular Romance"; 1984 and earlier is "Classic Romance").
-    static let romanceModernCutoff = 1985
-
-    /// The genre name we split on. Matched case-insensitively against the snapshot's genres so a
-    /// library without a literal "Romance" genre simply never produces the Classic Romance shelf.
+    /// The genre name the Classic carve-out splits on. Matched case-insensitively against the
+    /// snapshot's genres so a library without a literal "Romance" genre simply never produces the
+    /// Classic Romance shelf. (The modern-year cutoff itself lives in `BrunoRecencyBias.modernCutoff`.)
     static let romanceGenre = "Romance"
 
     /// All explore generator keys (mirrors the prototype's pool). `year` is intentionally NOT in
@@ -299,27 +294,26 @@ enum BrunoHomePlan {
 
     // MARK: Helpers
 
-    /// An "If You Like {genre}" query. Romance is special-cased to MODERN titles only
-    /// (years >= `romanceModernCutoff`) so the pre-1985 classics never bleed into a romcom
-    /// browse — they live solely in the Classic Romance category. All other genres are unbounded.
-    /// `salt == nil` shuffles with the bare `seed` (preserves the explore tail's existing ordering);
-    /// a salt derives a distinct shuffle (the spine).
+    /// An "If You Like {genre}" query, biased to MODERN titles only (production year >=
+    /// `BrunoRecencyBias.modernCutoff`) for EVERY genre — the owner's "kill the pre-80s bias" rule.
+    /// Pre-1985 films are deliberately kept out of the genre rows; they surface only in each genre's
+    /// full "Show all" grid (sunk to the bottom) and the Classic carve-outs. `salt == nil` shuffles
+    /// with the bare `seed` (preserves the explore tail's existing ordering); a salt derives a
+    /// distinct shuffle (the spine).
     private static func genreQuery(genre: String, seed: UInt32, salt: UInt32?, snapshot: BrunoLibrarySnapshot) -> BrunoQuery {
         var query = BrunoQuery()
         query.genres = [genre]
         query.shuffleSeed = salt.map { derive(seed, $0) } ?? seed
-        if isRomance(genre) {
-            query.years = yearsInRange(snapshot.years, min: romanceModernCutoff, max: nil)
-        }
+        query.years = yearsInRange(snapshot.years, min: BrunoRecencyBias.modernCutoff, max: nil)
         return query
     }
 
-    /// "Classic Romance": Romance titles released before `romanceModernCutoff`, seed-shuffled.
+    /// "Classic Romance": Romance titles released before `BrunoRecencyBias.modernCutoff`, seed-shuffled.
     /// A deliberate, branded category (lens "Vintage Hearts"). Returns nil when the library has no
     /// Romance genre or too few classics to fill a shelf — the dedupe/cap step drops it then too.
     private static func classicRomanceShelf(seed: UInt32, snapshot: BrunoLibrarySnapshot) -> BrunoShelf? {
         guard let genre = snapshot.genres.first(where: isRomance) else { return nil }
-        let classicYears = yearsInRange(snapshot.years, min: nil, max: romanceModernCutoff - 1)
+        let classicYears = yearsInRange(snapshot.years, min: nil, max: BrunoRecencyBias.modernCutoff - 1)
         guard classicYears.count >= 2 else { return nil } // need a real span of vintage years
 
         var query = BrunoQuery()

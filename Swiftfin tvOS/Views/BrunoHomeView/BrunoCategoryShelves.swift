@@ -37,12 +37,22 @@ struct BrunoCollectionCategory: Identifiable {
     let drillStyle: DrillStyle
     /// Per-category lens eyebrow ("Auteurs" for Directors, …). Falls back to the surface eyebrow.
     let lens: String?
+    /// Genre categories are recency-biased: their row is modern-only and their "Show all" grid sorts
+    /// newest-first so pre-1985 films sink to the bottom of the barrel. Non-genre categories don't.
+    let recencyBiased: Bool
 
-    init(boxSet: BaseItemDto, children: [BaseItemDto], drillStyle: DrillStyle = .grid, lens: String? = nil) {
+    init(
+        boxSet: BaseItemDto,
+        children: [BaseItemDto],
+        drillStyle: DrillStyle = .grid,
+        lens: String? = nil,
+        recencyBiased: Bool = false
+    ) {
         self.boxSet = boxSet
         self.children = children
         self.drillStyle = drillStyle
         self.lens = lens
+        self.recencyBiased = recencyBiased
     }
 
     var id: String {
@@ -230,8 +240,14 @@ struct BrunoCategoryShelves: View {
             if boxSetChildren.isNotEmpty {
                 router.route(to: .brunoItemsGrid(title: category.name, items: boxSetChildren), in: namespace)
             } else if category.boxSet.libraryType == .boxSet {
+                // Genre grids sort newest-first so the pre-1985 classics sink to the literal bottom
+                // of the barrel (owner request) — still reachable, just never up top. Other grids
+                // keep the default sortName order.
+                let filters: ItemFilterCollection = category.recencyBiased
+                    ? .init(sortBy: [.premiereDate], sortOrder: [.descending])
+                    : .default
                 router.route(
-                    to: .library(library: ItemLibrary(parent: category.boxSet, filters: .default)),
+                    to: .library(library: ItemLibrary(parent: category.boxSet, filters: filters)),
                     in: namespace
                 )
             } else {
