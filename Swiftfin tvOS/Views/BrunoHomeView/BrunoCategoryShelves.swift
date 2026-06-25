@@ -104,6 +104,9 @@ struct BrunoCategoryShelves: View {
     var featured: BaseItemDto?
     /// Eyebrow shown on the hero banner ("Featured", "Featured Film", …).
     var heroEyebrow: String = "Featured"
+    /// Decade surface only: show each poster's full release date on line 2. Default false ⇒ every
+    /// other surface (Home / Genres / Kids / Collections) renders the shared label byte-identically.
+    var showsDate: Bool = false
 
     @Router
     private var router
@@ -210,7 +213,8 @@ struct BrunoCategoryShelves: View {
                 items: shelfItems(for: category),
                 onItem: { router.route(to: .item(item: $0)) },
                 onShowAll: { routeToShowAll(category) },
-                artCarousel: ["studios", "directors"].contains(category.name.lowercased())
+                artCarousel: ["studios", "directors"].contains(category.name.lowercased()),
+                showsDate: showsDate
             )
         }
     }

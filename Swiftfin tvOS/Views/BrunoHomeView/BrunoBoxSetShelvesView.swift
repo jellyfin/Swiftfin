@@ -57,7 +57,9 @@ struct BrunoBoxSetShelvesView: View {
                     header: isDecades ? AnyView(decadePanel) : nil,
                     showCategoryRow: !isDecades,
                     featured: brunoFeaturedItem(in: shownCategories),
-                    heroEyebrow: "Featured Film"
+                    heroEyebrow: "Featured Film",
+                    // Decade surface opts in to per-poster release dates; Genres/Curated keep the default.
+                    showsDate: isDecades
                 )
             }
         }

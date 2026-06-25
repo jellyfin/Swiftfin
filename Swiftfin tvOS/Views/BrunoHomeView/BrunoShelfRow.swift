@@ -26,6 +26,10 @@ struct BrunoShelfRow: View {
     /// Studios / Directors: focus-driven card that cycles the collection's film posters
     /// (BrunoArtCarouselCard). Same card geometry as the PosterButton, so INV-1's row height holds.
     var artCarousel: Bool = false
+    /// Decade surface only: replace the (blank-for-movies) subtitle line with the full release date.
+    /// Default false ⇒ every other caller renders the shared TitleSubtitleContentView byte-identically.
+    /// Only affects the standard PosterButton cell; the artCarousel branch is untouched.
+    var showsDate: Bool = false
 
     @FocusState
     private var showAllFocused: Bool
@@ -63,7 +67,11 @@ struct BrunoShelfRow: View {
                     PosterButton(item: item, type: .portrait) {
                         onItem(item)
                     } label: {
-                        PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
+                        if showsDate {
+                            BrunoTitleDateContentView(item: item)
+                        } else {
+                            PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
+                        }
                     }
                 }
             case .showAll:
@@ -123,5 +131,48 @@ struct BrunoShelfRow: View {
         // Debug HUD: a discrete nav-input marker when the trailing card takes focus (inert unless
         // a debug overlay is on). See Shared/Objects/Bruno/BrunoDebugInstrument.swift.
         .brunoDebugNavFocus("show-all", isFocused: showAllFocused)
+    }
+}
+
+// MARK: - BrunoTitleDateContentView
+
+//
+// Bruno-LOCAL poster label: title + full release date. A deliberate, geometry-faithful clone of the
+// shared PosterButton.TitleSubtitleContentView (Components/PosterButton.swift:113) so INV-1's pinned
+// BrunoShelfMetrics.shelfRowHeight (460) holds with NO height change — same VStack(.leading), same
+// title font/opacity, same .lineLimit(1, reservesSpace: true) on BOTH lines. The only divergence is
+// line 2: the medium-style premiere date ("May 25, 1977") in place of the (blank-for-movies) subtitle.
+// Used ONLY by the Decade browse shelves (showsDate: true). Do NOT modify the shared view.
+private struct BrunoTitleDateContentView: View {
+
+    let item: BaseItemDto
+
+    // SINGLE shared formatter. premiereDateLabel allocates a fresh DateFormatter per call, and SwiftUI
+    // re-evaluates focused labels often, so a per-cell DateFormatter is a perf trap. .medium → "May 25, 1977".
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter
+    }()
+
+    private var dateString: String {
+        guard let premiereDate = item.premiereDate else { return "" }
+        return Self.dateFormatter.string(from: premiereDate)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            if item.showTitle {
+                Text(item.displayTitle)
+                    .font(.footnote.weight(.regular))
+                    .foregroundColor(.primary)
+                    .lineLimit(1, reservesSpace: true)
+            }
+
+            Text(dateString)
+                .font(.caption.weight(.medium))
+                .foregroundColor(.secondary)
+                .lineLimit(1, reservesSpace: true)
+        }
     }
 }
