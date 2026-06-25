@@ -47,5 +47,6 @@ struct SwiftfinApp: App {
                 RootView()
             }
         }
+        .brunoDebugOverlay()
     }
 }

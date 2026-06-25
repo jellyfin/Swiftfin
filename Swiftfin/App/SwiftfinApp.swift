@@ -42,6 +42,7 @@ struct SwiftfinApp: App {
                 }
             }
             .ignoresSafeArea()
+            .brunoDebugOverlay()
         }
     }
 }

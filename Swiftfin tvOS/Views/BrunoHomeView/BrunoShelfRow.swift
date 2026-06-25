@@ -109,5 +109,8 @@ struct BrunoShelfRow: View {
         }
         .buttonStyle(.card)
         .focused($showAllFocused)
+        // Debug HUD: a discrete nav-input marker when the trailing card takes focus (inert unless
+        // a debug overlay is on). See Shared/Objects/Bruno/BrunoDebugInstrument.swift.
+        .brunoDebugNavFocus("show-all", isFocused: showAllFocused)
     }
 }

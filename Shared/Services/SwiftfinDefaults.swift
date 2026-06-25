@@ -453,6 +453,12 @@ extension Defaults.Keys {
 
     static let isLiquidGlassEnabled: Key<Bool> = DebugKey("experimentalLiquidGlass", default: false)
     static let sendProgressReports: Key<Bool> = DebugKey("sendProgressReports", default: true)
+
+    // Bruno debug overlay panels (see Shared/Objects/Bruno/BrunoDebugCore.swift). Each toggles one
+    // HUD window for diagnosing UX / nav hitches and frame drag; off by default, zero cost when off.
+    static let brunoDebugFPS: Key<Bool> = DebugKey("brunoDebugFPS", default: false)
+    static let brunoDebugNav: Key<Bool> = DebugKey("brunoDebugNav", default: false)
+    static let brunoDebugLog: Key<Bool> = DebugKey("brunoDebugLog", default: false)
 }
 #else
 extension Defaults.Keys {

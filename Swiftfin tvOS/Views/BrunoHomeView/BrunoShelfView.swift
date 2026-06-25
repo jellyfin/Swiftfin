@@ -63,6 +63,11 @@ struct BrunoShelfView: View {
             .onDisappear {
                 prefetcher.stop(viewModel.items.elements, type: viewModel.posterType)
             }
+            // Debug HUD instrumentation (inert unless a debug overlay is on): count shelf redraws
+            // and track the shelf's vertical movement — the up/down "graphic math" the perf
+            // invariants fight. See Shared/Objects/Bruno/BrunoDebugInstrument.swift.
+            .brunoDebugRedraw("shelf:\(viewModel.title)")
+            .brunoDebugLayout("shelf:\(viewModel.title)")
         }
     }
 }

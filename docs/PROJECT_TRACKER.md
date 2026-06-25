@@ -12,7 +12,7 @@
 >
 > Status legend: `[ ]` not started · `[~]` in progress · `[x]` done · `[!]` blocked
 
-_Last synced: 2026-06-24 (snappiness pass + landscape-snap & pill fixes; scroll-reveal hitch root-caused & deferred). Update this date on every edit._
+_Last synced: 2026-06-24 (DEBUG nav/UX-hitch overlay HUD landed; snappiness pass + landscape-snap & pill fixes; scroll-reveal hitch root-caused & deferred). Update this date on every edit._
 
 ---
 
@@ -30,6 +30,7 @@ _Last synced: 2026-06-24 (snappiness pass + landscape-snap & pill fixes; scroll-
 
 ## Done (recent, newest first)
 
+- [x] **Debug overlay HUD for nav/UX hitch diagnosis** (DEBUG-only, tvOS + iOS). On-screen HUD with three independently-toggleable panels for diagnosing UX/navigation hitches and frame drag: **FRAME** (live FPS, frame time, worst frame, hitch count, frame-time sparkline; CADisplayLink-driven — ground truth on long/dropped frames), **NAV/LAYOUT** (redraws/sec per tracked view + recent layout movements (shelf Δy) and focus events — the "graphic math" nav triggers), **LOG** (timestamped event stream mixing layout + frame-drag events; any long frame within 0.5s of an interaction is tagged "(nav)" to separate nav-induced drag from background work). Toggles live at the **top of Settings** in a new "Debug Overlays" section (DEBUG builds only). New: `Shared/Objects/Bruno/BrunoDebugCore.swift` (frame monitor + log bus), `BrunoDebugOverlayView.swift` (HUD + layout/nav modifiers), `BrunoDebugInstrument.swift` (always-compiled public API — real in DEBUG, no-op in release, so call sites carry no `#if`). Edited: `SwiftfinDefaults.swift` (3 DEBUG keys brunoDebugFPS/Nav/Log), `SettingsView.swift` (top section), both `SwiftfinApp.swift` roots (`.brunoDebugOverlay()`), `BrunoShelfView.swift` + `BrunoShelfRow.swift` (instrumented with `.brunoDebugRedraw`/`.brunoDebugLayout`/`.brunoDebugNavFocus`). Builds pass on both schemes; runtime-verified on the tvOS sim (all three panels render, toggle independently, capture real shelf-layout Δy + frame drags). Zero release cost (DEBUG-gated; CADisplayLink only runs while a panel is on). Additive — no perf invariant (INV-1..9) touched.
 - [x] **Landscape shelf hard-snap fix** — landscape shelves were unpinned (only portrait was), so an up-nav focus-move renegotiated their height and hard-snapped the scroll. Pinned landscape too (`BrunoShelfMetrics.landscapeShelfRowHeight = 348`); sim-verified fit. Also capped poster prefetch to a screenful. INV-1 now covers both orientations.
 - [x] **Selector-pill ("bubbles") highlight fix** — the accent focus ring was an `if`-inserted view that popped mid-scale; now always-present + opacity-animated so it cross-fades with scale/fill (`BrunoSelectorCard`).
 - [x] **Home snappiness pass** (on `main`, branch `claude/tvos-perf-snappiness`). Four workstreams, all Bruno-owned/additive, build-verified:

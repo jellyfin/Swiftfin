@@ -27,6 +27,15 @@ struct SettingsView: View {
     @Default(.VideoPlayer.nightMode)
     private var nightMode
 
+    #if DEBUG
+    @Default(.brunoDebugFPS)
+    private var brunoDebugFPS
+    @Default(.brunoDebugNav)
+    private var brunoDebugNav
+    @Default(.brunoDebugLog)
+    private var brunoDebugLog
+    #endif
+
     @Router
     private var router
 
@@ -37,6 +46,9 @@ struct SettingsView: View {
 
     var body: some View {
         Form(image: .jellyfinBlobBlue) {
+            #if DEBUG
+            debugOverlaySection
+            #endif
             nightModeSection
             serverSection
             videoPlayerSection
@@ -50,6 +62,27 @@ struct SettingsView: View {
         }
         #endif
     }
+
+    // MARK: - Debug Overlay Section
+
+    #if DEBUG
+    // Top-of-Settings switches for the on-screen debug HUD (BrunoDebugCore.swift): a frame-rate
+    // window, a nav-input / layout-movement / redraw window, and a richer event log. DEBUG only.
+    // swiftlint:disable hard_coded_display_string
+    @ViewBuilder
+    private var debugOverlaySection: some View {
+        Section {
+            Toggle("Frame rate", isOn: $brunoDebugFPS)
+            Toggle("Nav / layout / redraws", isOn: $brunoDebugNav)
+            Toggle("Event log", isOn: $brunoDebugLog)
+        } header: {
+            Text("Debug Overlays")
+        } footer: {
+            Text("On-screen HUD for diagnosing nav hitches and frame drag.")
+        }
+    }
+    // swiftlint:enable hard_coded_display_string
+    #endif
 
     // MARK: - Night Mode Section
 
