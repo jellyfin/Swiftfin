@@ -12,7 +12,7 @@
 >
 > Status legend: `[ ]` not started · `[~]` in progress · `[x]` done · `[!]` blocked
 
-_Last synced: 2026-06-24 (Home snappiness pass: streaming paint + disk cache + prefetch + invariants doc). Update this date on every edit._
+_Last synced: 2026-06-24 (snappiness pass + landscape-snap & pill fixes; scroll-reveal hitch root-caused & deferred). Update this date on every edit._
 
 ---
 
@@ -25,11 +25,14 @@ _Last synced: 2026-06-24 (Home snappiness pass: streaming paint + disk cache + p
 | [~] | System Top Shelf extension (dynamic previews) | `BrunoTopShelf/`, `BrunoTopShelfCredentials.swift` | Groundwork shipped; owner must create the target + App Group + signing. See `docs/TOP_SHELF_SETUP.md`. |
 | [ ] | Night-mode / settings surface | (TBD) | Called out as outstanding in the latest handoff. Scope undefined. |
 | [ ] | On-device shelf check (focus feel, scroll-jump landing) | Home / Collections / Genres | Category-row scroll-jump + hero focus feel want a real Apple TV pass. |
+| [ ] | **Scroll-reveal hitch: CollectionHStack hosting-controller reuse** | vendored `CollectionHStack` (remote SPM) + stock `.posterShadow()` | **Root cause found 2026-06-24, confirmed ON-DEVICE.** Each vertical shelf reveal freezes ~200-450ms (sim/Debug; less on device but real). Cause: vendored `CollectionHStack` rebuilds a fresh `UIHostingController` per cell on every `cellForItemAt` (`HostingCollectionViewCell.setup`) — no reuse — so a reveal instantiates ~7 SwiftUI poster graphs at once. Secondary: stock `.posterShadow()` on alpha-edged rounded posters forces an offscreen render pass, recurring on focus-scale. **Fix = fork CollectionHStack to set `hostingController.rootView` instead of re-alloc** (biggest win; crosses no-dep guardrail) and/or path-based posterShadow (touches stock, iOS-shared). NOT fixable additively in Bruno code. Levers that DON'T help: `dataPrefix` (horizontal/memory only), `drawingGroup` (breaks focus). Owner holding for a dedicated pass. |
 | [ ] | **Browse → Home realignment redesign** | Collections / Genres / Decades browse surfaces | Browse drifts from Home in 3 ways: (1) no persistent hero banner — **owner confirmed (2026-06-23) they want the cinematic featured-content banner (à la Home's `BrunoHeroView`, NOT a streamer logo) to persist across browse views**, (2) eyebrows are repeated group-names rather than lenses, (3) flat vs elevated posters. Make browse consistent with Home on color/type/spacing. Cheapen `.posterShadow()` *with* on-device measurement here (keep the shadow — it's brand, README.md:189-193); revisit `.hoverEffect(.highlight)` removal under measurement. Brief authored 2026-06-23. |
 
 ## Done (recent, newest first)
 
-- [x] **Home snappiness pass** (branch `claude/tvos-perf-snappiness`, not yet on `main`). Four workstreams, all Bruno-owned/additive, build-verified:
+- [x] **Landscape shelf hard-snap fix** — landscape shelves were unpinned (only portrait was), so an up-nav focus-move renegotiated their height and hard-snapped the scroll. Pinned landscape too (`BrunoShelfMetrics.landscapeShelfRowHeight = 348`); sim-verified fit. Also capped poster prefetch to a screenful. INV-1 now covers both orientations.
+- [x] **Selector-pill ("bubbles") highlight fix** — the accent focus ring was an `if`-inserted view that popped mid-scale; now always-present + opacity-animated so it cross-fades with scale/fill (`BrunoSelectorCard`).
+- [x] **Home snappiness pass** (on `main`, branch `claude/tvos-perf-snappiness`). Four workstreams, all Bruno-owned/additive, build-verified:
   - **Streaming Home paint** — hero published the moment it lands (no more waiting on all ~18 shelves); shelves stream in top-down in plan order via a flush-consecutive reveal (load parallel, reveal shelf *i* only once 0..*i* settle → append-only, never shifts shown rows). Same for the explore tail. Generation-guarded. Soft fade+drift reveal (reduce-motion aware); hero auto-advance held until spine settles. `BrunoHomeViewModel`, `BrunoHomeView`, `BrunoHeroView`, `BrunoShelfView`.
   - **Disk-persisted Home payload + stale-while-revalidate** — `BrunoLibrarySnapshot` is `Codable`; new `BrunoHomeCache` (actor, off-main I/O, `try?`-tolerant) persists snapshot + hero superset pool + `.query` items, seed+userID-keyed. Relaunch paints instantly, then revalidates and reconciles in place by `shelf.id` (identity/focus survive). Live rows (`.resume`/`.nextUp`/`.recentlyAdded`) never cached.
   - **Bruno-owned poster prefetch** — `BrunoPosterPrefetcher` warms each row on appear via `.Swiftfin.posters` at the cell's exact width (`BrunoShelfMetrics`), low-priority, cancel-on-disappear. No stock edits. (spec §6 L159)
