@@ -23,6 +23,9 @@ struct BrunoShelfRow: View {
     let items: [BaseItemDto]
     let onItem: (BaseItemDto) -> Void
     let onShowAll: () -> Void
+    /// Studios / Directors: focus-driven card that cycles the collection's film posters
+    /// (BrunoArtCarouselCard). Same card geometry as the PosterButton, so INV-1's row height holds.
+    var artCarousel: Bool = false
 
     @FocusState
     private var showAllFocused: Bool
@@ -50,10 +53,18 @@ struct BrunoShelfRow: View {
         ) { card in
             switch card {
             case let .item(item):
-                PosterButton(item: item, type: .portrait) {
-                    onItem(item)
-                } label: {
-                    PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
+                if artCarousel {
+                    BrunoArtCarouselCard(item: item, type: .portrait) {
+                        onItem(item)
+                    } label: {
+                        PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
+                    }
+                } else {
+                    PosterButton(item: item, type: .portrait) {
+                        onItem(item)
+                    } label: {
+                        PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
+                    }
                 }
             case .showAll:
                 showAllCard

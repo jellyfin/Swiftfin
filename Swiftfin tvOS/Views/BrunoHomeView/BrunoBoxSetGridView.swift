@@ -32,6 +32,9 @@ struct BrunoBoxSetGridView: View {
     /// Boxed Sets only: the "{Title} Collection" / film-count / year-range lockup (+ the year fetch).
     /// Off for Studios/Directors, which are plain name tiles.
     var collectionLabel: Bool = false
+    /// Directors: focus-driven card that cycles the director's film posters (BrunoArtCarouselCard).
+    /// Off for Boxed Sets, which keep the plain PosterButton.
+    var artCarousel: Bool = false
 
     @Router
     private var router
@@ -53,10 +56,18 @@ struct BrunoBoxSetGridView: View {
             uniqueElements: items,
             layout: layout
         ) { item in
-            PosterButton(item: item, type: posterType) {
-                router.route(to: .item(item: item))
-            } label: {
-                cardLabel(for: item)
+            if artCarousel {
+                BrunoArtCarouselCard(item: item, type: posterType) {
+                    router.route(to: .item(item: item))
+                } label: {
+                    cardLabel(for: item)
+                }
+            } else {
+                PosterButton(item: item, type: posterType) {
+                    router.route(to: .item(item: item))
+                } label: {
+                    cardLabel(for: item)
+                }
             }
         }
         // CollectionVGrid is UIKit-backed and won't re-render cells when the year ranges arrive
@@ -210,7 +221,8 @@ extension NavigationRoute {
         title: String,
         items: [BaseItemDto],
         posterType: PosterDisplayType,
-        collectionLabel: Bool = false
+        collectionLabel: Bool = false,
+        artCarousel: Bool = false
     ) -> NavigationRoute {
         NavigationRoute(
             id: "bruno-boxset-grid-\(title.lowercased())",
@@ -220,7 +232,8 @@ extension NavigationRoute {
                 title: title,
                 items: items,
                 posterType: posterType,
-                collectionLabel: collectionLabel
+                collectionLabel: collectionLabel,
+                artCarousel: artCarousel
             )
         }
     }

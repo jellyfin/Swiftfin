@@ -209,7 +209,8 @@ struct BrunoCategoryShelves: View {
             BrunoShelfRow(
                 items: shelfItems(for: category),
                 onItem: { router.route(to: .item(item: $0)) },
-                onShowAll: { routeToShowAll(category) }
+                onShowAll: { routeToShowAll(category) },
+                artCarousel: ["studios", "directors"].contains(category.name.lowercased())
             )
         }
     }
@@ -274,17 +275,29 @@ struct BrunoCategoryShelves: View {
             // e.g. New Releases) keep the live, paged library.
             let boxSetChildren = category.children.filter { $0.type == .boxSet }
             if boxSetChildren.isNotEmpty {
-                // Studios: landscape so the wide studio logos read big. Directors stay portrait
-                // (headshots). Both route through the same grid (inherits the header-overlap fix).
+                // Studios get the cinematic Hollywood-backdrop grid (landscape cards under a
+                // detail-page-style hero band). Directors stay the plain portrait grid (headshots,
+                // header-overlap fix).
                 let isStudios = category.name.lowercased() == "studios"
-                router.route(
-                    to: .brunoBoxSetGrid(
-                        title: category.name,
-                        items: boxSetChildren,
-                        posterType: isStudios ? .landscape : .portrait
-                    ),
-                    in: namespace
-                )
+                if isStudios {
+                    router.route(
+                        to: .brunoStudiosGrid(
+                            title: category.name,
+                            items: boxSetChildren
+                        ),
+                        in: namespace
+                    )
+                } else {
+                    router.route(
+                        to: .brunoBoxSetGrid(
+                            title: category.name,
+                            items: boxSetChildren,
+                            posterType: .portrait,
+                            artCarousel: true
+                        ),
+                        in: namespace
+                    )
+                }
             } else if category.boxSet.libraryType == .boxSet {
                 // Genre grids sort newest-first so the pre-1985 classics sink to the literal bottom
                 // of the barrel (owner request) — still reachable, just never up top. Other grids
