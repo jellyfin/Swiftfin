@@ -31,18 +31,18 @@ struct ItemView: View {
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
         case .boxSet, .person, .musicArtist:
-            return CollectionItemViewModel(item: item)
+            CollectionItemViewModel(item: item)
         case .episode:
-            return EpisodeItemViewModel(item: item)
+            EpisodeItemViewModel(item: item)
         case .movie:
-            return MovieItemViewModel(item: item)
+            MovieItemViewModel(item: item)
         case .musicVideo, .video:
-            return ItemViewModel(item: item)
+            ItemViewModel(item: item)
         case .series:
-            return SeriesItemViewModel(item: item)
+            SeriesItemViewModel(item: item)
         default:
-            assertionFailure("Unsupported item")
-            return ItemViewModel(item: item)
+//            assertionFailure("Unsupported item")
+            MovieItemViewModel(item: item)
         }
     }
 

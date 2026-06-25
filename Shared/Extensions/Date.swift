@@ -6,8 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-enum UserSessionError: Error {
+import Foundation
 
-    case invalidStoredSession(userID: String)
-    case missingCurrentSession
+extension Date {
+
+    func isStale(with interval: Duration) -> Bool {
+        Date.now.timeIntervalSince(self) > interval.seconds
+    }
 }

@@ -7,8 +7,16 @@
 //
 
 @MainActor
-protocol UserSessionService: AnyObject {
+protocol UserSessionService {
 
-    func userSessionDidStart()
-    func userSessionWillStop()
+    func willStart(userSession: UserSession) async
+    func didStart(userSession: UserSession)
+    func willStop(userSession: UserSession)
+}
+
+extension UserSessionService {
+
+    func willStart(userSession: UserSession) async {}
+    func didStart(userSession: UserSession) {}
+    func willStop(userSession: UserSession) {}
 }

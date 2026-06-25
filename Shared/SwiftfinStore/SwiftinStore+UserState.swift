@@ -7,7 +7,7 @@
 //
 
 import CoreStore
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import KeychainSwift
@@ -132,6 +132,24 @@ extension UserState {
         let response = try await client.send(request)
 
         return response.value
+    }
+
+    @MainActor
+    func updateUserData(server: ServerState) async throws {
+        let users = StoredValues[.User.users]
+        guard let currentUser = users.first(where: { $0.id == id }) else { return }
+
+        let userData = try await getUserData(server: server)
+        let updatedUsername = userData.name ?? currentUser.username
+
+        let updatedUser = UserState(
+            id: currentUser.id,
+            serverID: currentUser.serverID,
+            username: updatedUsername
+        )
+
+        StoredValues[.User.users] = users.map { $0.id == id ? updatedUser : $0 }
+        StoredValues[.User.data(id: currentUser.id)] = userData
     }
 
     // we will always crop to a square, so just use width
