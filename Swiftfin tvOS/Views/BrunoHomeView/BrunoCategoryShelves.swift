@@ -242,8 +242,9 @@ struct BrunoCategoryShelves: View {
         let items = subCollections(of: category)
         switch category.drillStyle {
         case .items:
-            // Synthetic box-set grid (Boxed Sets): the row mirrors the Show-all grid 1:1.
-            return items
+            // Boxed Sets: weighted-random preview (bigger franchises bubble up), capped to 16 before
+            // the "Show all" card, which still lists every set. Reshuffles daily.
+            return Self.weightedPreview(items, count: 16, salt: 0xB075)
         case .grid:
             // Box-set groups (Directors, Studios, …) "Show all" to a flat grid of these exact
             // box-set children — the row IS the full set, so populate all. Flat MOVIE groups
@@ -252,12 +253,12 @@ struct BrunoCategoryShelves: View {
             let hasBoxSetChildren = category.children.contains { $0.type == .boxSet }
             guard hasBoxSetChildren else { return Array(items.prefix(shelfCap)) }
             // Studios / Directors: a weighted-random "cream of the crop" preview — collections with
-            // more titles in the library bubble up, reshuffled daily for freshness. Capped to 12
+            // more titles in the library bubble up, reshuffled daily for freshness. Capped to 16
             // before the "Show all" card; "Show all" still lists every one, so the cap only curates.
             if category.name.lowercased() == "studios" {
-                return Self.weightedPreview(items, count: 12, salt: 0x5747)
+                return Self.weightedPreview(items, count: 16, salt: 0x5747)
             }
-            return Self.weightedPreview(items, count: 12, salt: 0x91A3)
+            return Self.weightedPreview(items, count: 16, salt: 0x91A3)
         case .genres:
             // Genres: same weighted-random preview (sub-genres with more films bubble up); "Show all"
             // opens the full genres surface, so the cap only curates the row.
