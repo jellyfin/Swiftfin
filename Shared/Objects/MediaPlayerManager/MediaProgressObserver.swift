@@ -114,6 +114,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             var info = PlaybackStateInfo()
             info.audioStreamIndex = item.selectedAudioStreamIndex
             info.itemID = item.baseItem.id
+            info.liveStreamID = item.mediaSource.liveStreamID
             info.mediaSourceID = item.mediaSource.id
             info.playSessionID = item.playSessionID
             info.positionTicks = seconds?.ticks
@@ -136,6 +137,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
         Task {
             var info = PlaybackStopInfo()
             info.itemID = item.baseItem.id
+            info.liveStreamID = item.mediaSource.liveStreamID
             info.mediaSourceID = item.mediaSource.id
             info.playSessionID = item.playSessionID
             info.positionTicks = seconds?.ticks
@@ -157,6 +159,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             info.audioStreamIndex = item.selectedAudioStreamIndex
             info.isPaused = isPaused
             info.itemID = item.baseItem.id
+            info.liveStreamID = item.mediaSource.liveStreamID
             info.mediaSourceID = item.mediaSource.id
             info.playSessionID = item.playSessionID
             info.positionTicks = seconds?.ticks
