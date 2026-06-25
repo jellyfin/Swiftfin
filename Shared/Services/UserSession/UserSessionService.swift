@@ -9,6 +9,14 @@
 @MainActor
 protocol UserSessionService {
 
+    func willStart(userSession: UserSession) async
     func didStart(userSession: UserSession)
     func willStop(userSession: UserSession)
+}
+
+extension UserSessionService {
+
+    func willStart(userSession: UserSession) async {}
+    func didStart(userSession: UserSession) {}
+    func willStop(userSession: UserSession) {}
 }

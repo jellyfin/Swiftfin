@@ -77,10 +77,7 @@ struct MainTabView: View {
                 .tag(tab.item.id)
             }
         }
-        .onAppear {
-            tabCoordinator.selectedTabID = tabCoordinator.tabs.first?.item.id
-        }
-        .onReceive(userSessionManager.$pendingDeepLink.compactMap(\.self)) { _ in
+        .onChange(of: userSessionManager.pendingDeepLink) { _ in
             routePendingDeepLink(userSessionManager.consumePendingDeepLink())
         }
     }

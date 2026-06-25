@@ -71,12 +71,14 @@ struct UserSignInView: View {
             self.existingUser = existingUser
             self.isPresentingExistingUser = true
         case let .saved(user):
-            do {
-                try userSessionManager.signIn(userID: user.id)
-                UIDevice.feedback(.success)
-                router.dismiss()
-            } catch {
-                viewModel.error(error)
+            Task { @MainActor in
+                do {
+                    try await userSessionManager.signIn(userID: user.id)
+                    UIDevice.feedback(.success)
+                    router.dismiss()
+                } catch {
+                    await viewModel.error(error)
+                }
             }
         }
     }

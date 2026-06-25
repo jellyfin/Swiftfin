@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
 import Logging
@@ -87,7 +88,7 @@ final class ServerConnectionManager: ObservableObject {
         let response = try await client.send(Paths.getPublicSystemInfo)
         let publicInfo = response.value
 
-        guard publicInfo.id != serverID else {
+        if publicInfo.id != serverID {
             throw ErrorMessage(L10n.connectionServerMismatch)
         }
 
@@ -103,12 +104,10 @@ final class ServerConnectionManager: ObservableObject {
         guard context.isSatisfied else { return nil }
 
         let candidates = server.serverConnections.filter { $0.matches(context) }
-
         let currentConnection = server.activeServerConnection
-        let orderedCandidates = orderedConnectionCandidates(candidates, currentConnection: currentConnection)
 
         guard let reachableConnection = await firstReachableConnection(
-            in: orderedCandidates,
+            in: candidates,
             accessToken: accessToken,
             serverID: server.id
         ) else { return nil }
@@ -129,9 +128,7 @@ final class ServerConnectionManager: ObservableObject {
         serverID: String
     ) async -> ServerConnection? {
         for connection in connections {
-            if Task.isCancelled {
-                return nil
-            }
+            guard !Task.isCancelled else { return nil }
 
             do {
                 _ = try await test(
@@ -195,6 +192,8 @@ final class ServerConnectionManager: ObservableObject {
 
     @Function(\Action.Cases.scheduleConnectionResolution)
     private func _scheduleConnectionResolution() {
+        guard isAutoSwitchEnabled else { return }
+
         evaluationTask?.cancel()
         evaluationTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(1.5))
@@ -205,7 +204,7 @@ final class ServerConnectionManager: ObservableObject {
 
     @Function(\Action.Cases.resolveActiveConnection)
     private func _resolveActiveConnection() async {
-        guard !Task.isCancelled, let userSession else { return }
+        guard !Task.isCancelled, isAutoSwitchEnabled, let userSession else { return }
 
         guard context.isSatisfied else {
             guard !Task.isCancelled else { return }
@@ -222,9 +221,8 @@ final class ServerConnectionManager: ObservableObject {
         }
 
         let currentConnection = userSession.server.activeServerConnection
-        let orderedCandidates = Self.orderedConnectionCandidates(candidates, currentConnection: currentConnection)
         let reachableConnection = await Self.firstReachableConnection(
-            in: orderedCandidates,
+            in: candidates,
             accessToken: userSession.user.accessToken,
             serverID: userSession.server.id
         )
@@ -232,7 +230,7 @@ final class ServerConnectionManager: ObservableObject {
         guard !Task.isCancelled else { return }
 
         guard let reachableConnection else {
-            await _resolutionDidUpdate(.unreachable(orderedCandidates))
+            await _resolutionDidUpdate(.unreachable(candidates))
             return
         }
 
@@ -249,31 +247,34 @@ final class ServerConnectionManager: ObservableObject {
         await _resolutionDidUpdate(.connected(reachableConnection))
     }
 
+    @Function(\Action.Cases._resolutionDidUpdate)
+    private func __resolutionDidUpdate(_ resolution: Resolution) {
+        // no-op, just for state transition
+    }
+
     private func pathDidUpdate(_ context: NetworkConnectionContext) {
         self.context = context
         scheduleConnectionResolution()
     }
 
-    private static func orderedConnectionCandidates(
-        _ candidates: [ServerConnection],
-        currentConnection: ServerConnection?
-    ) -> [ServerConnection] {
-        guard let currentConnection,
-              let currentIndex = candidates.firstIndex(where: { $0.id == currentConnection.id })
-        else {
-            return candidates
-        }
-
-        var candidates = candidates
-        let current = candidates.remove(at: currentIndex)
-        return [current] + candidates
+    private var isAutoSwitchEnabled: Bool {
+        guard let userSession else { return false }
+        return Defaults[.Experimental.serverConnectionAutoSwitch] && userSession.server.isAutoSwitchEnabled
     }
 }
 
 extension ServerConnectionManager: UserSessionService {
 
-    func didStart(userSession: UserSession) {
+    func willStart(userSession: UserSession) async {
         self.userSession = userSession
+
+        guard isAutoSwitchEnabled else { return }
+
+        context = await NetworkConnectionContext.current()
+        await resolveActiveConnection()
+    }
+
+    func didStart(userSession: UserSession) {
         start()
     }
 

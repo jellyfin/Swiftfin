@@ -362,11 +362,13 @@ struct SelectUserView: View {
         .onReceive(viewModel.events) { event in
             switch event {
             case let .signedIn(user):
-                do {
-                    try userSessionManager.signIn(userID: user.id)
-                    UIDevice.feedback(.success)
-                } catch {
-                    viewModel.error(error)
+                Task { @MainActor in
+                    do {
+                        try await userSessionManager.signIn(userID: user.id)
+                        UIDevice.feedback(.success)
+                    } catch {
+                        await viewModel.error(error)
+                    }
                 }
             }
         }

@@ -160,12 +160,11 @@ final class ServerConnectionViewModel: ViewModel {
         if userSession?.server.id == server.id {
             await userSession?.serverConnectionManager.resolveActiveConnection()
         } else {
-//            await ServerConnectionManager.evaluate(
-//                server: server,
-//                accessToken: userSession?.user.accessToken,
-//                context: <#T##NetworkConnectionContext#>
-//                context: NetworkConnectionContext.current()
-//            )
+            _ = await ServerConnectionManager.evaluate(
+                server: server,
+                accessToken: userSession?.user.accessToken,
+                context: NetworkConnectionContext.current()
+            )
         }
 
         reloadConnections()

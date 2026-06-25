@@ -88,9 +88,11 @@ struct SettingsView: View {
 
         Section {
             Button(L10n.switchUser) {
-                UIDevice.impact(.medium)
-                userSessionManager.signOut(reason: .explicit)
-                router.dismiss()
+                Task { @MainActor in
+                    UIDevice.impact(.medium)
+                    await userSessionManager.signOut(reason: .explicit)
+                    router.dismiss()
+                }
             }
             .buttonStyle(.primary)
             .foregroundStyle(accentColor.overlayColor, accentColor)

@@ -54,7 +54,11 @@ final class UserSessionManager: ObservableObject {
     private(set) var currentSession: UserSession?
 
     @Published
-    private(set) var pendingDeepLink: DeepLink?
+    private(set) var pendingDeepLink: DeepLink? {
+        didSet {
+            print("Pending deep link updated: \(String(describing: pendingDeepLink))")
+        }
+    }
 
     private var cancellables = Set<AnyCancellable>()
     private let logger = Logger.swiftfin()
@@ -79,32 +83,34 @@ final class UserSessionManager: ObservableObject {
                 Defaults[.lastSignedInUserID] = .signedOut
             }
 
-            try updateCurrentSession(with: resolveStoredSession())
+            try await updateCurrentSession(with: resolveStoredSession())
         } catch {
             logger.error(
                 "Unable to restore launch session",
                 metadata: ["error": .string(error.localizedDescription)]
             )
 
-            updateCurrentSession(with: nil)
+            await updateCurrentSession(with: nil)
         }
     }
 
-    private func refreshCurrentSession() {
+    @MainActor
+    private func refreshCurrentSession() async {
         do {
-            try updateCurrentSession(with: resolveStoredSession())
+            try await updateCurrentSession(with: resolveStoredSession())
         } catch {
             logger.error(
                 "Unable to refresh current user session",
                 metadata: ["error": .string(error.localizedDescription)]
             )
-            updateCurrentSession(with: nil)
+            await updateCurrentSession(with: nil)
         }
     }
 
-    func signIn(userID: String) throws {
+    @MainActor
+    func signIn(userID: String) async throws {
         Defaults[.lastSignedInUserID] = .signedIn(userID: userID)
-        try updateCurrentSession(with: resolveStoredSession())
+        try await updateCurrentSession(with: resolveStoredSession())
 
         Task {
             await refreshServerInformationIfNeeded(reason: .explicitSignIn)
@@ -112,11 +118,11 @@ final class UserSessionManager: ObservableObject {
     }
 
     @MainActor
-    func signOut(reason: SignOutReason) {
+    func signOut(reason: SignOutReason) async {
         guard currentSession != nil else { return }
 
         Defaults[.lastSignedInUserID] = .signedOut
-        refreshCurrentSession()
+        await refreshCurrentSession()
 
         logger.info(
             "Signed out current user",
@@ -158,7 +164,7 @@ final class UserSessionManager: ObservableObject {
                     await stopActivePlayback()
                 }
 
-                try signIn(userID: deepLinkSession.user.id)
+                try await signIn(userID: deepLinkSession.user.id)
             }
 
             pendingDeepLink = deepLink
@@ -185,8 +191,8 @@ final class UserSessionManager: ObservableObject {
     }
 
     @MainActor
-    func appWillEnterForeground() {
-        refreshCurrentSession()
+    func appWillEnterForeground() async {
+        await refreshCurrentSession()
 
         Task {
             await refreshServerInformationIfNeeded(reason: .stale)
@@ -198,7 +204,7 @@ final class UserSessionManager: ObservableObject {
 
         let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
         if backgroundedInterval > Defaults[.backgroundSignOutInterval] {
-            signOut(reason: .backgroundTimeout)
+            await signOut(reason: .backgroundTimeout)
         }
     }
 
@@ -277,7 +283,7 @@ final class UserSessionManager: ObservableObject {
             .publisher
             .sink { [weak self] in
                 Task { @MainActor in
-                    self?.appWillEnterForeground()
+                    await self?.appWillEnterForeground()
                 }
             }
             .store(in: &cancellables)
@@ -291,8 +297,13 @@ final class UserSessionManager: ObservableObject {
             .store(in: &cancellables)
     }
 
-    private func updateCurrentSession(with newSession: UserSession?) {
+    @MainActor
+    private func updateCurrentSession(with newSession: UserSession?) async {
         let previousSession = currentSession
+
+        previousSession?.willStop()
+        await newSession?.willStart()
+
         currentSession = newSession
         Container.shared.currentUserSession.reset()
 
@@ -306,10 +317,7 @@ final class UserSessionManager: ObservableObject {
             state = .signedIn
         }
 
-        Task { @MainActor in
-            previousSession?.willStop()
-            newSession?.start()
-        }
+        newSession?.didStart()
     }
 
     private func resolveStoredSession() throws -> UserSession? {
