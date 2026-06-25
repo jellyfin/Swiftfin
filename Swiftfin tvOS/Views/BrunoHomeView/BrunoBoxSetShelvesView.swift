@@ -26,9 +26,33 @@ struct BrunoBoxSetShelvesView: View {
     @StateObject
     private var viewModel = BrunoBoxSetShelvesViewModel()
 
-    /// Decades only: the active decade filter (mirrors the Genres core panel). In-place, no refetch.
+    /// Decades only: the COMMITTED decade filter — what `shownCategories` filters on AND what drives
+    /// the per-year fetch (the `onChange` below). In-place, no refetch of the base set. Driven by the
+    /// debounced commit ~150 ms after focus settles, so a fast scrub rebuilds the shelves (and fires
+    /// the per-year fetch) exactly ONCE, not per pill.
     @State
     private var selectedDecade: String?
+
+    /// The FOCUSED decade (transient, set instantly as the focus ring passes each pill). Drives the
+    /// pill highlight (cheap) for instant feedback while the shelves settle via `selectedDecade`.
+    /// `nil` ⇒ the "All" chip.
+    @State
+    private var focusedDecade: String?
+
+    /// The pending debounced write of `focusedDecade → selectedDecade`. Stored so each new focus
+    /// cancels the previous pending commit (coalescing a scrub) and `onDisappear` can cancel it.
+    @State
+    private var commitTask: Task<Void, Never>?
+
+    /// INV-7 guard: true only AFTER the first paint, so the focus engine's initial focus assignment to
+    /// the pill row can't fire a filter (or the per-year fetch) on cold enter. Until set, a commit no-ops.
+    @State
+    private var filterRowAppeared = false
+
+    /// The hero's featured item, computed ONCE from the FULL unfiltered set and held fixed. A pill
+    /// change must never reload the 720pt hero backdrop, so this is decoupled from `shownCategories`.
+    @State
+    private var featuredItem: BaseItemDto?
 
     private var isDecades: Bool {
         parent.displayTitle.lowercased() == "decades"
@@ -73,7 +97,9 @@ struct BrunoBoxSetShelvesView: View {
                     eyebrow: lensEyebrow,
                     header: isDecades ? AnyView(decadePanel) : nil,
                     showCategoryRow: !isDecades,
-                    featured: brunoFeaturedItem(in: shownCategories),
+                    // INV-7 / decoupled hero: the FIXED item from the full set, never re-derived per
+                    // pill, so a decade change can't reload the hero backdrop.
+                    featured: featuredItem,
                     heroEyebrow: "Featured Film",
                     // Decade surface opts in to per-poster release dates; Genres/Curated keep the default.
                     showsDate: isDecades
@@ -84,13 +110,22 @@ struct BrunoBoxSetShelvesView: View {
         .onFirstAppear {
             Task { await viewModel.load(parent: parent) }
         }
-        // Trigger the COMPLETE per-year fetch when a specific decade is picked (the setter path, not
-        // a computed var). Memoized in the view model, so re-selecting is a no-op. The resulting
-        // shelf-set swap is non-animated (no withAnimation anywhere on this transition) and honors
-        // reduce-motion by construction — INV-9.
+        // Compute the hero ONCE from the FULL unfiltered set when categories land (and never per pill).
+        .onChange(of: viewModel.categories.map(\.id)) { _, _ in
+            featuredItem = brunoFeaturedItem(in: viewModel.categories)
+        }
+        // Trigger the COMPLETE per-year fetch when a specific decade is COMMITTED (the committed
+        // selectedDecade, not the transient focus). Fires at most once per settled focus because the
+        // debounce coalesces a scrub into one write. Memoized in the view model, so re-selecting is a
+        // no-op. The resulting shelf-set swap is non-animated (no withAnimation anywhere on this
+        // transition) and honors reduce-motion by construction — INV-9.
         .onChange(of: selectedDecade) { _, _ in
             guard let category = selectedDecadeCategory else { return }
             Task { await viewModel.loadYearShelves(for: category) }
+        }
+        .onDisappear {
+            commitTask?.cancel()
+            commitTask = nil
         }
     }
 
@@ -104,12 +139,29 @@ struct BrunoBoxSetShelvesView: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 24) {
+                    // "All" chip: a first-class in-HStack pill (matches Kids' uniformity) and the only
+                    // path back to the decade-overview. Highlighted off the FOCUSED value (instant).
+                    BrunoSelectorCard(
+                        title: "All",
+                        isSelected: focusedDecade == nil,
+                        selectsOnFocus: true
+                    ) {
+                        commitFocus(nil)
+                    }
+
+                    // Keep iterating viewModel.categories (NOT shownCategories) so pills never vanish
+                    // when a specific decade swaps the shelves to per-year.
                     ForEach(viewModel.categories) { category in
                         BrunoSelectorCard(
+                            // Highlight off FOCUSED (cheap/instant); the filter + per-year fetch follow
+                            // ~150 ms later via the committed value.
                             title: category.name,
-                            isSelected: selectedDecade == category.name
+                            isSelected: focusedDecade == category.name,
+                            // Move-to-select: landing the ring focuses the pill; the shelves settle once
+                            // via the debounced commit (non-toggling — "All" is the only clear path).
+                            selectsOnFocus: true
                         ) {
-                            selectedDecade = selectedDecade == category.name ? nil : category.name
+                            commitFocus(category.name)
                         }
                     }
                 }
@@ -117,6 +169,27 @@ struct BrunoBoxSetShelvesView: View {
                 .padding(.vertical, 8)
             }
             .focusSection()
+        }
+        // INV-7: flip the appeared guard only after the first paint, so the focus engine's initial
+        // assignment to the pill row can't fire a commit (or per-year fetch) on cold enter.
+        .task { filterRowAppeared = true }
+    }
+
+    /// Record the focused decade instantly (drives the highlight) and DEBOUNCE the write to the
+    /// committed `selectedDecade` (~150 ms after focus settles), so a fast scrub rebuilds the shelves —
+    /// and fires the per-year fetch — at most once. No-ops before first paint (INV-7) and when unchanged.
+    private func commitFocus(_ decade: String?) {
+        guard filterRowAppeared else { return }
+        guard focusedDecade != decade || selectedDecade != decade else { return }
+
+        focusedDecade = decade
+        commitTask?.cancel()
+        commitTask = Task {
+            try? await Task.sleep(for: .milliseconds(150))
+            guard !Task.isCancelled else { return }
+            // Commit only if focus still rests on the same pill (no-op if already committed there).
+            guard focusedDecade == decade, selectedDecade != decade else { return }
+            selectedDecade = decade
         }
     }
 
