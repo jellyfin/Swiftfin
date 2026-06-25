@@ -28,9 +28,14 @@ struct BrunoCategoryTile: View {
 
     var body: some View {
         let palette = Self.palette(for: category.name)
-        // Test run: on focus, dimmed film art from this category cross-fades behind the title; at
-        // rest it's the existing branded gradient tile. BrunoFocusArtCycle is the reusable module.
-        BrunoFocusArtCycle(parentID: category.boxSet.id) {
+        // On focus, dimmed film art from this category cross-fades behind the title; at rest it's the
+        // existing branded gradient tile. Portrait art to match the tile shape; children are the
+        // fallback art source for synthetic categories (Boxed Sets) whose group BoxSet has no real id.
+        BrunoFocusArtCycle(
+            parentID: category.boxSet.id,
+            fallbackItems: category.children,
+            type: .portrait
+        ) {
             ZStack {
                 LinearGradient(
                     colors: [palette.top, palette.bottom],
