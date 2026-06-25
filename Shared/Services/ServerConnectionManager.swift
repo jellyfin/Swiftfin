@@ -164,14 +164,16 @@ final class ServerConnectionManager: ObservableObject {
         }
         monitor.start(queue: queue)
 
-        Notifications[.applicationWillEnterForeground]
-            .publisher
-            .sink { [weak self] in
-                Task { @MainActor in
-                    self?.scheduleConnectionResolution()
-                }
-            }
-            .store(in: &cancellables)
+        // TODO: determine if should be part of connection resolution
+        //       - probably a bit too greedy
+//        Notifications[.applicationWillEnterForeground]
+//            .publisher
+//            .sink { [weak self] in
+//                Task { @MainActor in
+//                    self?.scheduleConnectionResolution()
+//                }
+//            }
+//            .store(in: &cancellables)
     }
 
     @Function(\Action.Cases.stop)
@@ -202,6 +204,10 @@ final class ServerConnectionManager: ObservableObject {
     @Function(\Action.Cases.resolveActiveConnection)
     private func _resolveActiveConnection() async {
         guard !Task.isCancelled, isAutoSwitchEnabled, let userSession else { return }
+
+        if context == .unavailable {
+            context = await NetworkConnectionContext.current()
+        }
 
         let currentConnection = userSession.server.activeServerConnection
         let resolution = await Self.evaluate(
@@ -241,9 +247,6 @@ extension ServerConnectionManager: UserSessionService {
     func willStart(userSession: UserSession) async {
         self.userSession = userSession
 
-        guard isAutoSwitchEnabled else { return }
-
-        context = await NetworkConnectionContext.current()
         await resolveActiveConnection()
     }
 
