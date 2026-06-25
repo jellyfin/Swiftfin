@@ -30,16 +30,16 @@ struct RemotePlaybackPickerView: View {
         Form {
             FormItemSection(item: manager.item)
 
-            ForEach(availableProviders, id: \.route) { provider in
-                section(for: provider)
-            }
-
             if availableProviders.isEmpty {
                 Section {
                     // swiftlint:disable:next hard_coded_display_string
                     Text("No valid targets")
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .center)
+                }
+            } else {
+                ForEach(availableProviders, id: \.route) { provider in
+                    providerSection(for: provider)
                 }
             }
         } image: {
@@ -66,31 +66,15 @@ struct RemotePlaybackPickerView: View {
     }
 
     @ViewBuilder
-    private func section(for provider: any RemotePlaybackProvider) -> some View {
+    private func providerSection(for provider: any RemotePlaybackProvider) -> some View {
         switch provider.kind {
         case .systemPicker:
             Section {
                 StateAdapter(initialValue: false) { presentAirplayRoutePicker in
-                    ListRow {
-                        Image(systemName: provider.route.systemImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .padding(8)
-                            .frame(width: 60, height: 60)
-                            .foregroundStyle(provider.isActive ? AnyShapeStyle(accentColor) : AnyShapeStyle(.primary))
-                    } content: {
-                        HStack {
-                            // swiftlint:disable:next hard_coded_display_string
-                            Text("\(L10n.airPlay) & \(L10n.bluetooth)")
-                                .font(.headline)
-
-                            Spacer()
-
-                            ListRowCheckbox()
-                        }
-                    } action: {
+                    ChevronButton("\(L10n.airPlay) & \(L10n.bluetooth)", systemName: provider.route.systemImage) {
                         presentAirplayRoutePicker.wrappedValue = true
                     }
+                    .isEditing(provider.isActive)
                     .isSelected(provider.isActive)
                     .airplayRoutePicker(present: presentAirplayRoutePicker)
                 }

@@ -34,9 +34,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     L10n.castToDevice,
                     systemImage: activeRoute?.systemImage ?? "airplayvideo"
                 )
-                .labelStyle(.iconOnly)
-                .symbolVariant(activeRoute == nil ? .none : .fill)
-                .foregroundStyle(activeRoute == nil ? Color.white : accentColor)
                 .videoPlayerActionButtonTransition()
             }
         }

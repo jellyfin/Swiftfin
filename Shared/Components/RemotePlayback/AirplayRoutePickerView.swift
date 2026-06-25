@@ -30,9 +30,12 @@ private struct AirplayRoutePickerView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> AVRoutePickerView {
         let routePickerView = AVRoutePickerView()
+
         routePickerView.prioritizesVideoDevices = true
         routePickerView.tintColor = .clear
         routePickerView.activeTintColor = .clear
+        routePickerView.alpha = 0
+
         return routePickerView
     }
 
