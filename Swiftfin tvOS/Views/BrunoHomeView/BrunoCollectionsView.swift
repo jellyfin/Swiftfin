@@ -121,13 +121,21 @@ final class BrunoCollectionsViewModel: ViewModel {
         }
 
         // Boxed Sets: every box set NOT already surfaced by a curated group (or as a group child),
-        // i.e. the standalone franchise collections.
+        // i.e. the standalone franchise collections. Director collections (e.g. "Joel Coen",
+        // "Ethan Coen") belong to the Directors section — exclude any standalone box set whose name
+        // matches a Directors-group child (the id-exclusion below already drops director collections
+        // that ARE nested under Directors; this catches name-identical standalone duplicates). A
+        // genuinely orphan director collection — one that is neither nested nor name-matched — is a
+        // server-curation gap (add it under Directors); the DEBUG log below surfaces strays.
         let groupIDs = Set(snapshot.favoriteGroupBoxSets.compactMap(\.id))
         let childIDs = Set(snapshot.childrenByGroupName.values.flatMap(\.self).compactMap(\.id))
+        let directorNames = Set(snapshot.directorBoxSets.compactMap { $0.name?.trimmedLowercased })
         let franchiseBoxSets = await Self.fetchAllBoxSets(client: client, userID: userID)
             .filter { boxSet in
                 guard let id = boxSet.id else { return false }
-                return !groupIDs.contains(id) && !childIDs.contains(id)
+                guard !groupIDs.contains(id), !childIDs.contains(id) else { return false }
+                if let name = boxSet.name?.trimmedLowercased, directorNames.contains(name) { return false }
+                return true
             }
         if franchiseBoxSets.isNotEmpty {
             built.append(
@@ -138,9 +146,26 @@ final class BrunoCollectionsViewModel: ViewModel {
                     lens: "Franchises"
                 )
             )
+            #if DEBUG
+            print("[Bruno] Boxed Sets (\(franchiseBoxSets.count)): \(franchiseBoxSets.compactMap(\.name).sorted())")
+            #endif
         }
 
-        categories = built
+        // Fixed top-shelf order (owner request). Explicit rank by group name; unknown names fall to
+        // the end in server order. Decorate-with-index so the sort is stable independent of the
+        // standard library's (unspecified) sort stability. Reordering doesn't change any category's
+        // id, so focus identity holds.
+        let rank: [String: Int] = [
+            "new releases": 0, "genres": 1, "directors": 2, "boxed sets": 3,
+            "decades": 4, "curated": 5, "studios": 6, "seasonal": 7,
+        ]
+        categories = built.enumerated()
+            .sorted { lhs, rhs in
+                let l = rank[lhs.element.name.lowercased()] ?? .max
+                let r = rank[rhs.element.name.lowercased()] ?? .max
+                return l != r ? l < r : lhs.offset < rhs.offset
+            }
+            .map(\.element)
         isLoading = false
     }
 
@@ -149,11 +174,15 @@ final class BrunoCollectionsViewModel: ViewModel {
         parameters.userID = userID
         parameters.isRecursive = true
         parameters.includeItemTypes = [.boxSet]
-        parameters.fields = .MinimumFields
+        // .childCount feeds the "N films" line on the landscape collection cards; it is NOT in
+        // MinimumFields, so without this the count is nil and that line is hidden.
+        parameters.fields = .MinimumFields + [.childCount]
         parameters.enableUserData = true
         parameters.sortBy = [.name]
         parameters.sortOrder = [.ascending]
-        parameters.limit = 200
+        // The library has 300+ box sets; a 200 cap (sorted by name) silently dropped late-alphabet
+        // franchises (Star Wars, The Lord of the Rings, …). Fetch them all.
+        parameters.limit = 1000
         do {
             let response = try await client.send(Paths.getItems(parameters: parameters))
             return response.value.items ?? []

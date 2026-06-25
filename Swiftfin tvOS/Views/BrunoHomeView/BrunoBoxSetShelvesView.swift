@@ -25,6 +25,20 @@ struct BrunoBoxSetShelvesView: View {
     @StateObject
     private var viewModel = BrunoBoxSetShelvesViewModel()
 
+    /// Decades only: the active decade filter (mirrors the Genres core panel). In-place, no refetch.
+    @State
+    private var selectedDecade: String?
+
+    private var isDecades: Bool {
+        parent.displayTitle.lowercased() == "decades"
+    }
+
+    /// Decades use a pill selector that filters to one decade; everything else shows all shelves.
+    private var shownCategories: [BrunoCollectionCategory] {
+        guard isDecades, let selectedDecade else { return viewModel.categories }
+        return viewModel.categories.filter { $0.name == selectedDecade }
+    }
+
     var body: some View {
         Group {
             if viewModel.isLoading {
@@ -35,10 +49,14 @@ struct BrunoBoxSetShelvesView: View {
             } else if viewModel.categories.isEmpty {
                 emptyState
             } else {
+                // Decades mirror the Genres page: a pill row instead of the big decade cards,
+                // switching the shown decade in place. Other groups (Curated) keep the card row.
                 BrunoCategoryShelves(
-                    categories: viewModel.categories,
+                    categories: shownCategories,
                     eyebrow: lensEyebrow,
-                    featured: brunoFeaturedItem(in: viewModel.categories),
+                    header: isDecades ? AnyView(decadePanel) : nil,
+                    showCategoryRow: !isDecades,
+                    featured: brunoFeaturedItem(in: shownCategories),
                     heroEyebrow: "Featured Film"
                 )
             }
@@ -46,6 +64,32 @@ struct BrunoBoxSetShelvesView: View {
         .toolbar(.hidden, for: .navigationBar)
         .onFirstAppear {
             Task { await viewModel.load(parent: parent) }
+        }
+    }
+
+    private var decadePanel: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Browse by Decade".uppercased())
+                .font(.brunoBody(20, weight: .semibold))
+                .tracking(3)
+                .foregroundStyle(Color.bruno.accent)
+                .padding(.horizontal, 50)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 24) {
+                    ForEach(viewModel.categories) { category in
+                        BrunoSelectorCard(
+                            title: category.name,
+                            isSelected: selectedDecade == category.name
+                        ) {
+                            selectedDecade = selectedDecade == category.name ? nil : category.name
+                        }
+                    }
+                }
+                .padding(.horizontal, 50)
+                .padding(.vertical, 8)
+            }
+            .focusSection()
         }
     }
 
@@ -142,12 +186,26 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
             }
         }
 
-        let ordered = indexed
+        let baseOrdered = indexed
             .sorted { $0.0 < $1.0 }
             .map(\.1)
 
+        // Decades render newest-first (owner request): sort by leading year descending, which also
+        // drops the "1950s & Earlier" catch-all (year 1950, the smallest) to the bottom. Other
+        // groups keep server order.
+        let isDecades = parent.displayTitle.lowercased() == "decades"
+        let ordered = isDecades
+            ? baseOrdered.sorted { Self.leadingYear($0.name) > Self.leadingYear($1.name) }
+            : baseOrdered
+
         categories = recencyBiased ? Self.dedupeAcrossCategories(ordered) : ordered
         isLoading = false
+    }
+
+    /// The leading numeric year in a decade sub-group name ("2020s" → 2020, "1950s & Earlier" →
+    /// 1950); 0 when none, so any non-decade name sorts last under the descending sort.
+    private static func leadingYear(_ name: String) -> Int {
+        Int(name.prefix { $0.isNumber }) ?? 0
     }
 
     /// Drop a film from every genre shelf after the first that lists it (server order wins), so the
@@ -183,7 +241,9 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
         var parameters = Paths.GetItemsParameters()
         parameters.userID = userID
         parameters.parentID = parentID
-        parameters.fields = .MinimumFields
+        // .genres feeds the hero child-safety filter (brunoHeroEligible) on this drill-in's
+        // "Featured Film"; MinimumFields omits genres, which would make the filter a no-op.
+        parameters.fields = .MinimumFields + [.genres]
         parameters.enableUserData = true
         parameters.limit = limit
         do {

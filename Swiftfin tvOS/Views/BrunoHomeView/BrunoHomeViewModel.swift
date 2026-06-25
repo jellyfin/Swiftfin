@@ -176,7 +176,9 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
 
         sections = kept
         seenDedupeKeys = Set(kept.map(\.shelf.dedupeKey))
-        heroSuperset = payload.heroSuperset
+        // Re-apply the hero child-safety filter to the disk-cached pool: a snapshot written before
+        // the filter shipped could otherwise surface a Horror title for one session until revalidate.
+        heroSuperset = payload.heroSuperset.filter(brunoHeroEligible)
         reshuffleHero() // instant hero from the cached superset
         explorePage = 0
         exploreExhausted = false
@@ -363,7 +365,10 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         parameters.enableUserData = true
         parameters.limit = 30
         do {
-            let items = try await session.client.send(Paths.getItems(parameters: parameters)).value.items ?? []
+            // Filter the candidate POOL (not the seeded pick) so no Horror title can land on the
+            // hero, while keeping "same seed ⇒ same hero" deterministic (INV-3).
+            let items = try await (session.client.send(Paths.getItems(parameters: parameters)).value.items ?? [])
+                .filter(brunoHeroEligible)
             heroSuperset = items
             return Array(BrunoRNG.shuffled(items, seed: UInt32.random(in: 1 ... UInt32.max)).prefix(5))
         } catch {

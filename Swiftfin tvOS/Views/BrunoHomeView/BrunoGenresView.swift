@@ -37,7 +37,9 @@ struct BrunoCoreGenre: Identifiable, Hashable {
             title: "Sci-Fi & Fantasy",
             keywords: ["sci-fi", "scifi", "science fiction", "fantasy", "superhero", "supernatural"]
         ),
-        .init(id: "romance", title: "Romance", keywords: ["romance", "romantic"]),
+        // "romcom"/"rom-com" so the curated "RomCom All-Timers" shelf lands in this bucket
+        // (its name contains neither "romance" nor "romantic").
+        .init(id: "romance", title: "Romance", keywords: ["romance", "romantic", "romcom", "rom-com"]),
         .init(id: "comedy", title: "Comedy", keywords: ["comedy", "comedies", "sitcom", "stand-up"]),
         .init(id: "drama", title: "Drama", keywords: ["drama"]),
     ]
@@ -57,8 +59,16 @@ struct BrunoGenresView: View {
     @StateObject
     private var viewModel = BrunoBoxSetShelvesViewModel()
 
-    @Router
-    private var router
+    /// The active core-genre filter. Changed IN PLACE by the core panel (no navigation push, no
+    /// refetch) so switching genres is instant — the full set is already loaded in `viewModel`.
+    @State
+    private var selectedCore: BrunoCoreGenre?
+
+    init(parent: BaseItemDto, core: BrunoCoreGenre?) {
+        self.parent = parent
+        self.core = core
+        _selectedCore = State(initialValue: core)
+    }
 
     var body: some View {
         Group {
@@ -67,17 +77,19 @@ struct BrunoGenresView: View {
                     .scaleEffect(2)
                     .tint(Color.bruno.accent)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if shownCategories.isEmpty {
+            } else if viewModel.categories.isEmpty {
                 emptyState
             } else {
+                // No sub-genre card row: the core panel is the only chrome up top; each shelf's
+                // "Show all" reaches the full grid. Selecting a core re-filters `shownCategories`
+                // from the already-loaded set — instant, no spinner.
                 BrunoCategoryShelves(
                     categories: shownCategories,
                     eyebrow: "If You Like",
-                    header: AnyView(header),
-                    // Main page leads with the core panel; a core sub-page keeps the chip row.
-                    showCategoryRow: core != nil,
+                    header: AnyView(corePanel),
+                    showCategoryRow: false,
                     featured: brunoFeaturedItem(in: shownCategories),
-                    heroEyebrow: core.map { "\($0.title) Pick" } ?? "Featured Film"
+                    heroEyebrow: selectedCore.map { "\($0.title) Pick" } ?? "Featured Film"
                 )
             }
         }
@@ -87,30 +99,10 @@ struct BrunoGenresView: View {
         }
     }
 
-    /// All fine-grain genres on the main page; only the bucket's genres on a core sub-page.
+    /// All fine-grain genres when nothing is selected; only the bucket's genres when a core is active.
     private var shownCategories: [BrunoCollectionCategory] {
-        guard let core else { return viewModel.categories }
-        return viewModel.categories.filter { core.matches($0.name) }
-    }
-
-    @ViewBuilder
-    private var header: some View {
-        if let core {
-            // Standard Bruno header lockup (accent eyebrow over Oswald title), not a one-off
-            // 56/bold title — keeps the sub-page in the same design language as the shelves.
-            VStack(alignment: .leading, spacing: 0) {
-                Text("Genre".uppercased())
-                    .font(.brunoBody(20, weight: .semibold))
-                    .tracking(3)
-                    .foregroundStyle(Color.bruno.accent)
-                Text(core.title)
-                    .font(.brunoDisplay(40, weight: .semibold))
-                    .foregroundStyle(Color.bruno.fg)
-            }
-            .padding(.horizontal, 50)
-        } else {
-            corePanel
-        }
+        guard let selectedCore else { return viewModel.categories }
+        return viewModel.categories.filter { selectedCore.matches($0.name) }
     }
 
     private var corePanel: some View {
@@ -124,8 +116,12 @@ struct BrunoGenresView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 24) {
                     ForEach(BrunoCoreGenre.all) { coreGenre in
-                        BrunoSelectorCard(title: coreGenre.title) {
-                            router.route(to: .brunoGenres(parent: parent, core: coreGenre))
+                        BrunoSelectorCard(
+                            title: coreGenre.title,
+                            isSelected: selectedCore?.id == coreGenre.id
+                        ) {
+                            // Toggle: tapping the active chip clears the filter (back to all).
+                            selectedCore = selectedCore?.id == coreGenre.id ? nil : coreGenre
                         }
                     }
                 }
@@ -138,7 +134,7 @@ struct BrunoGenresView: View {
 
     private var emptyState: some View {
         VStack(spacing: 16) {
-            Text(core == nil ? "No genres yet" : "Nothing in \(core?.title ?? "")")
+            Text("No genres yet")
                 .font(.brunoDisplay(40, weight: .semibold))
                 .foregroundStyle(Color.bruno.fg)
             Text("Genres from this server will appear here.")
