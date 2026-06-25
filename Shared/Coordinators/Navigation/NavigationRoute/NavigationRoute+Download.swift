@@ -6,31 +6,16 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
 
 extension NavigationRoute {
 
+    @MainActor
     static var downloadList: NavigationRoute {
         NavigationRoute(
             id: "downloadList"
         ) {
-            #if os(iOS)
-            DownloadListView(viewModel: .init())
-            #else
-            EmptyView()
-            #endif
+            PagingLibraryView(library: DownloadLibrary())
         }
     }
-
-    #if os(iOS)
-    static func downloadTask(downloadTask: DownloadTask) -> NavigationRoute {
-        NavigationRoute(
-            id: "downloadTask",
-            style: .sheet
-        ) {
-            DownloadTaskView(downloadTask: downloadTask)
-        }
-    }
-    #endif
 }

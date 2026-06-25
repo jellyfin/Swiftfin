@@ -318,7 +318,7 @@ private struct ItemLibraryBody<Content: View>: View {
             .letterPickerBar(filterViewModel: filterViewModel)
             .onFirstAppear {
                 Task {
-                    await filterViewModel.getQueryFilters()
+                    await filterViewModel.getQueryFilters(isDownloads: false)
                 }
             }
         #if os(iOS)

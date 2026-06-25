@@ -31,6 +31,13 @@ extension URL {
 
     static let jellyfinDocsManagingUsers: URL = URL(string: "https://jellyfin.org/docs/general/server/users/adding-managing-users")!
 
+    static let swiftfinDownloads: URL = {
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let downloads = documents.appendingPathComponent("Downloads", isDirectory: true)
+        try? FileManager.default.createDirectory(at: downloads, withIntermediateDirectories: true)
+        return downloads
+    }()
+
     func isDirectoryAndReachable() throws -> Bool {
         guard try resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true else {
             return false

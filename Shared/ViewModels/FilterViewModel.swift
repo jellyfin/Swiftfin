@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Factory
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -19,7 +20,7 @@ final class FilterViewModel: ViewModel {
     @CasePathable
     enum Action {
         case cancel
-        case getQueryFilters
+        case getQueryFilters(isDownloads: Bool)
         case reset(filterType: ItemFilterType?)
 
         var transition: Transition {
@@ -86,8 +87,15 @@ final class FilterViewModel: ViewModel {
     }
 
     @Function(\Action.Cases.getQueryFilters)
-    private func _getQueryFilters() async throws {
+    private func _getQueryFilters(_ isDownloads: Bool) async throws {
+        if isDownloads {
+            try await getLocalQueryFilters()
+        } else {
+            try await getServerQueryFilters()
+        }
+    }
 
+    private func getServerQueryFilters() async throws {
         let parameters = try Paths.GetQueryFiltersLegacyParameters(
             userID: authenticatedUser.id,
             parentID: parent?.id
@@ -110,5 +118,37 @@ final class FilterViewModel: ViewModel {
         allFilters.genres = genres
         allFilters.tags = tags
         allFilters.years = years
+    }
+
+    private func getLocalQueryFilters() async throws {
+        let manager = Container.shared.downloadManager()
+
+        var genreSet = Set<String>()
+        var tagSet = Set<String>()
+        var yearSet = Set<Int>()
+
+        for item in manager.tasks where item.isCompleted {
+            if let genres = item.item.genres {
+                genreSet.formUnion(genres)
+            }
+            if let tags = item.item.tags {
+                tagSet.formUnion(tags)
+            }
+            if let year = item.item.productionYear {
+                yearSet.insert(year)
+            }
+        }
+
+        allFilters.genres = genreSet.sorted().map {
+            ItemGenre(from: .init(displayTitle: $0, value: $0))
+        }
+
+        allFilters.tags = tagSet.sorted().map {
+            ItemTag(from: .init(displayTitle: $0, value: $0))
+        }
+
+        allFilters.years = yearSet.sorted(by: >).map { year in
+            ItemYear(from: .init(displayTitle: "\(year)", value: "\(year)"))
+        }
     }
 }

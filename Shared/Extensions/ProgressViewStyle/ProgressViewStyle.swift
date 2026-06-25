@@ -33,3 +33,10 @@ extension ProgressViewStyle where Self == PlaybackProgressViewStyle {
         copy(self, modifying: \.cornerStyle, to: .square)
     }
 }
+
+extension ProgressViewStyle where Self == DownloadProgressStyle {
+
+    static var download: DownloadProgressStyle {
+        DownloadProgressStyle()
+    }
+}

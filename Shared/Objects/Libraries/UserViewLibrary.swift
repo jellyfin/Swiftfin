@@ -51,14 +51,21 @@ struct UserViewLibrary: PagingLibrary {
             }
             .map(UserViewLibraryElement.userView)
 
-        return elements
+        var result = elements
             .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
+
+        #if os(iOS)
+        result = result.appending(.downloads, if: Defaults[.Experimental.downloads])
+        #endif
+
+        return result
     }
 }
 
 enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement, SystemImageable {
 
     case favorites
+    case downloads
     case userView(BaseItemDto)
 
     static var supportedLibraryStyleOptions: LibraryStyleOptions {
@@ -69,6 +76,8 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         switch self {
         case .favorites:
             L10n.favorites
+        case .downloads:
+            L10n.downloads
         case let .userView(item):
             item.displayTitle
         }
@@ -78,6 +87,8 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         switch self {
         case .favorites:
             "favorites"
+        case .downloads:
+            "downloads"
         case let .userView(item):
             item.id ?? item.displayTitle
         }
@@ -87,6 +98,8 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         switch self {
         case .favorites:
             "heart.fill"
+        case .downloads:
+            "arrow.down.circle.fill"
         case let .userView(item):
             if item.collectionType == .livetv {
                 "tv.fill"
@@ -107,6 +120,10 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
                 filters: .favorites
             )
             router.route(to: .library(library: library), in: namespace)
+        case .downloads:
+            #if os(iOS)
+            router.route(to: .downloadList, in: namespace)
+            #endif
         case let .userView(item):
             if item.collectionType == .livetv {
                 router.route(to: .liveTV, in: namespace)
@@ -152,6 +169,8 @@ private struct UserViewLibraryGridElement: View {
     private var isTitleLabelVisible: Bool {
         switch element {
         case .favorites:
+            true
+        case .downloads:
             true
         case .userView:
             useRandomImage
@@ -301,6 +320,8 @@ private extension UserViewLibraryElement {
         switch self {
         case .favorites:
             return []
+        case .downloads:
+            return []
         case let .userView(item):
             return [item.imageSource(.primary, maxWidth: 500)]
         }
@@ -322,6 +343,8 @@ private extension UserViewLibraryElement {
         switch self {
         case .favorites:
             filters = [.isFavorite]
+        case .downloads:
+            return []
         case let .userView(item):
             parentID = item.id
         }

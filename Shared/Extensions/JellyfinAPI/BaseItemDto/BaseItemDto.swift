@@ -398,31 +398,34 @@ extension BaseItemDto {
             }
     }
 
-    // TODO: series-season-episode hierarchy for episodes
-    // TODO: user hierarchy for downloads
     var downloadFolder: URL? {
         guard let type, let id else { return nil }
 
-        let root = URL.downloadsDirectory
+        var path = URL.swiftfinDownloads
 //            .appendingPathComponent(userSession.user.id)
 
-        switch type {
-        case .movie, .episode:
-            return root
-                .appendingPathComponent(id)
-//        case .episode:
-//            guard let seasonID = seasonID,
-//                  let seriesID = seriesID
-//            else {
-//                return nil
-//            }
-//            return root
-//                .appendingPathComponent(seriesID)
-//                .appendingPathComponent(seasonID)
-//                .appendingPathComponent(id)
+        let segments: [String] = switch type {
+        case .season:
+            [seriesID, id].compactMap(\.self)
+        case .episode:
+            [seriesID, seasonID, id].compactMap(\.self)
+        case .musicAlbum:
+            [albumArtists?.first?.id, id].compactMap(\.self)
+        case .audio, .audioBook, .musicVideo:
+            [albumArtists?.first?.id, albumID, id].compactMap(\.self)
+        case .book:
+            [artists?.first, id].compactMap(\.self)
+        case .photo:
+            [parentID, id].compactMap(\.self)
         default:
-            return nil
+            [id]
         }
+
+        for segment in segments {
+            path.appendPathComponent(segment, isDirectory: true)
+        }
+
+        return path
     }
 
     /// Returns `originalTitle` if it is not the same as `displayTitle`
