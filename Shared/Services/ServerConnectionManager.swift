@@ -114,10 +114,7 @@ final class ServerConnectionManager: ObservableObject {
         guard currentConnection?.id != reachableConnection.id else { return nil }
 
         server.activeServerConnection = reachableConnection
-        Notifications.postServerConnectionChange(
-            previous: currentConnection,
-            current: reachableConnection
-        )
+        Notifications[.didChangeServerConnection].post(reachableConnection)
 
         return reachableConnection
     }
@@ -236,10 +233,7 @@ final class ServerConnectionManager: ObservableObject {
 
         if currentConnection?.id != reachableConnection.id {
             userSession.server.activeServerConnection = reachableConnection
-            Notifications.postServerConnectionChange(
-                previous: currentConnection,
-                current: reachableConnection
-            )
+            Notifications[.didChangeServerConnection].post(reachableConnection)
         }
 
         guard !Task.isCancelled else { return }

@@ -79,7 +79,6 @@ final class ServerConnectionViewModel: ViewModel {
     }
 
     private func upsertConnection(_ connection: ServerConnection) {
-        let previous = activeConnection
         let isActiveConnection = activeConnection?.id == connection.id
 
         if let index = connections.firstIndex(where: { $0.id == connection.id }) {
@@ -94,10 +93,7 @@ final class ServerConnectionViewModel: ViewModel {
               let activeConnection
         else { return }
 
-        Notifications.postServerConnectionChange(
-            previous: previous,
-            current: activeConnection
-        )
+        Notifications[.didChangeServerConnection].post(activeConnection)
     }
 
     func deleteConnection(_ connection: ServerConnection) {

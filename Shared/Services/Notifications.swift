@@ -99,17 +99,6 @@ enum Notifications {
     }
 }
 
-extension Notifications {
-
-    static func postServerConnectionChange(
-        previous: ServerConnection?,
-        current: ServerConnection
-    ) {
-
-        Self[.didChangeServerConnection].post(current)
-    }
-}
-
 // MARK: - Keys
 
 extension Notifications.Key {

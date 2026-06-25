@@ -150,7 +150,6 @@ final class ConnectToServerViewModel: ObservableObject {
             throw ErrorMessage("An internal error has occurred")
         }
 
-        let previousConnection = existingServer.activeServerConnection
         var connections = existingServer.ensureServerConnections()
 
         let normalizedURL = server.currentURL.normalizedServerConnectionURL ?? server.currentURL
@@ -170,10 +169,7 @@ final class ConnectToServerViewModel: ObservableObject {
         existingServer.serverConnections = connections
 
         existingServer.activeServerConnection = connection
-        Notifications.postServerConnectionChange(
-            previous: previousConnection,
-            current: connection
-        )
+        Notifications[.didChangeServerConnection].post(connection)
     }
 
     @Function(\Action.Cases.searchForServers)
