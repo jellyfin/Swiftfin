@@ -48,6 +48,13 @@ final class BrunoShelfViewModel: ObservableObject, Identifiable {
         self.shelf = shelf
     }
 
+    /// Set items directly, without a network fetch — used to hydrate from the disk cache on launch
+    /// and to adopt fresh items into an existing VM during background-revalidate reconcile (keeps
+    /// this VM's identity stable so focus survives — INV-2).
+    func hydrate(items: [BaseItemDto]) {
+        self.items = IdentifiedArray(items, uniquingIDsWith: { existing, _ in existing })
+    }
+
     func load() async {
         switch shelf.source {
         case let .items(items):

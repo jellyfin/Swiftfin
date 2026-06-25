@@ -137,45 +137,134 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         refreshGeneration &+= 1
         let generation = refreshGeneration
 
-        // forceReload: Home always refreshes fresh (unchanged behavior), but stores the result so
-        // Collections / drill-ins can reuse it instead of refetching the whole library.
+        // WS2: paint instantly from the last session's disk payload (if any), then revalidate from
+        // the network and reconcile in place. Cold (no payload, or Shuffle's fresh seed) falls
+        // through to the top-down streaming cold path inside `revalidate`.
+        let hydrated = await hydrateFromDisk(userSession: userSession, generation: generation)
+        await revalidate(userSession: userSession, generation: generation, reconcile: hydrated)
+    }
+
+    /// Best-effort instant paint from the disk payload. Returns true iff it painted (so `revalidate`
+    /// reconciles in place rather than streaming cold). Seed-guarded so Shuffle never hydrates a
+    /// stale-seed spine (INV-5).
+    private func hydrateFromDisk(userSession: UserSession, generation: Int) async -> Bool {
+        guard let payload = await BrunoHomeCache.shared.load(
+            userID: userSession.user.id,
+            seed: seed,
+            maxAge: 60 * 60 * 24
+        ), !Task.isCancelled, generation == refreshGeneration else { return false }
+
+        snapshot = payload.snapshot
+        // Let Collections / drill-ins reuse this snapshot in-session too.
+        await BrunoLibrarySnapshot.seedCache(payload.snapshot, userID: userSession.user.id)
+
+        let plan = BrunoHomePlan.build(seed: seed, snapshot: payload.snapshot, now: Date())
+        let vms = plan.map { BrunoShelfViewModel(shelf: $0) }
+        for vm in vms {
+            switch vm.shelf.source {
+            case let .items(items):
+                vm.hydrate(items: items) // reproduced from the cached snapshot
+            case .query:
+                if let cached = payload.queryItems[vm.id] { vm.hydrate(items: cached) }
+            case .resume, .nextUp, .recentlyAdded:
+                break // live user-state — filled fresh by revalidate (INV-5)
+            }
+        }
+
+        let kept = vms.filter(\.shouldDisplay)
+        guard kept.isNotEmpty || payload.heroSuperset.isNotEmpty else { return false }
+
+        sections = kept
+        seenDedupeKeys = Set(kept.map(\.shelf.dedupeKey))
+        heroSuperset = payload.heroSuperset
+        reshuffleHero() // instant hero from the cached superset
+        explorePage = 0
+        exploreExhausted = false
+        state = .content
+        return true
+    }
+
+    /// Network refresh. When `reconcile` is true the spine is already on screen (from disk): load
+    /// fresh items and merge by `shelf.id`, reusing the existing VM instances so identity — and
+    /// focus — survive (INV-2; rows are height-pinned so no reflow). When false, stream in cold
+    /// (top-down, INV-8). Either way the hero publishes the moment it lands (the cold-spinner lever).
+    private func revalidate(userSession: UserSession, generation: Int, reconcile: Bool) async {
         let snapshot = await BrunoLibrarySnapshot.loadShared(
             client: userSession.client,
             userID: userSession.user.id,
             forceReload: true
         )
-
         guard !Task.isCancelled, generation == refreshGeneration else { return }
         self.snapshot = snapshot
 
-        // WS1: publish the hero the moment it lands — independent of the shelf load — so the page
-        // paints its banner in ~1-2s instead of waiting on all ~18 shelves (the cold-spinner). The
-        // paint gate (BrunoHomeView) lights on `heroItems` alone.
         async let heroPublish: Void = publishHero(session: userSession, generation: generation)
 
         let plan = BrunoHomePlan.build(seed: seed, snapshot: snapshot, now: Date())
-        let sectionVMs = plan.map { BrunoShelfViewModel(shelf: $0) }
+        let freshVMs = plan.map { BrunoShelfViewModel(shelf: $0) }
 
-        // Clear the old spine for this fresh roll; shelves stream back in below. Hero stays painted
-        // (heroItems untouched) so the gate never drops to a spinner on Shuffle/refresh.
-        sections = []
-
-        // WS1: stream shelves in. Load ALL concurrently, but REVEAL strictly top-down in plan order
-        // (INV-3/INV-8): a late-finishing early shelf never inserts ABOVE an already-shown shelf and
-        // shifts it under the user's focus. `shouldDisplay` is only knowable post-load, so the
-        // keep/drop decision is made at flush time; dropped shelves are simply never appended.
-        await streamReveal(sectionVMs, generation: generation) { [weak self] vm in
-            guard let self, vm.shouldDisplay else { return }
-            self.sections.append(vm)
+        if reconcile {
+            await loadAll(freshVMs)
+            guard !Task.isCancelled, generation == refreshGeneration else { return }
+            let existingByID = Dictionary(sections.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+            var merged: [BrunoShelfViewModel] = []
+            for fresh in freshVMs where fresh.shouldDisplay {
+                if let existing = existingByID[fresh.id] {
+                    existing.hydrate(items: Array(fresh.items)) // update in place, keep identity
+                    merged.append(existing)
+                } else {
+                    merged.append(fresh)
+                }
+            }
+            sections = merged
+            seenDedupeKeys = Set(merged.map(\.shelf.dedupeKey))
+        } else {
+            // Clear the old spine for this fresh roll; shelves stream back in below. Hero stays
+            // painted so the gate never drops to a spinner on Shuffle/refresh.
+            sections = []
+            await streamReveal(freshVMs, generation: generation) { [weak self] vm in
+                guard let self, vm.shouldDisplay else { return }
+                self.sections.append(vm)
+            }
+            seenDedupeKeys = Set(sections.map(\.shelf.dedupeKey))
         }
 
         await heroPublish
         guard !Task.isCancelled, generation == refreshGeneration else { return }
-
-        seenDedupeKeys = Set(sections.map(\.shelf.dedupeKey))
         explorePage = 0
         exploreExhausted = false
         state = .content
+
+        await persistPayload(userID: userSession.user.id)
+    }
+
+    /// Load every shelf concurrently with no reveal ordering — used by the reconcile path, which
+    /// merges all at once after the spine is already on screen (vs `streamReveal`'s top-down paint).
+    private func loadAll(_ vms: [BrunoShelfViewModel]) async {
+        await withTaskGroup(of: Void.self) { group in
+            for vm in vms {
+                group.addTask { await vm.load() }
+            }
+        }
+    }
+
+    /// Persist the current render payload for instant relaunch. Only `.query` items are cached (the
+    /// snapshot reproduces `.items`; live rows are never cached — INV-5). The encode runs off-main
+    /// inside the `BrunoHomeCache` actor.
+    private func persistPayload(userID: String) async {
+        let queryItems: [String: [BaseItemDto]] = sections.reduce(into: [:]) { dict, vm in
+            if case .query = vm.shelf.source {
+                dict[vm.id] = Array(vm.items)
+            }
+        }
+        let payload = BrunoHomePayload(
+            savedAt: Date(),
+            userID: userID,
+            seed: seed,
+            snapshot: snapshot,
+            heroSuperset: heroSuperset,
+            queryItems: queryItems
+        )
+        await BrunoHomeCache.shared.store(payload)
     }
 
     /// Load `vms` concurrently, then reveal each in strict plan order (INV-8): shelf *i* is flushed

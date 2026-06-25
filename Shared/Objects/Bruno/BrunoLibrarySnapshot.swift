@@ -17,7 +17,11 @@ import JellyfinAPI
 // (Directors, Decades, Studios, Genres, Curated, Seasonal, New Releases) whose children are
 // the real sub-collections. We never hardcode IDs — everything is derived here from the
 // live library (validated in BRUNO_NOTES.md §Live library snapshot).
-struct BrunoLibrarySnapshot {
+//
+// Codable + Sendable so it can be persisted to disk (instant relaunch — see BrunoHomeCache) and
+// crossed to a detached encode/decode task without `nonisolated(unsafe)`. All stored members are
+// already Sendable/Codable (`BaseItemDto` is both).
+struct BrunoLibrarySnapshot: Codable {
 
     /// The favorited top-level group BoxSets (the spec's 7 groups), in server order.
     let favoriteGroupBoxSets: [BaseItemDto]
@@ -208,5 +212,11 @@ extension BrunoLibrarySnapshot {
         let fresh = await load(client: client, userID: userID)
         await cache.store(fresh, userID: userID)
         return fresh
+    }
+
+    /// Seed the in-memory cache with a snapshot we already have (e.g. one hydrated from disk on
+    /// launch), so Collections / drill-ins reuse it this session instead of refetching.
+    static func seedCache(_ snapshot: BrunoLibrarySnapshot, userID: String) async {
+        await cache.store(snapshot, userID: userID)
     }
 }
