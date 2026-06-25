@@ -59,28 +59,6 @@ extension TabItem {
         }
     }
 
-    static func library(
-        title: String,
-        systemName: String,
-        filters: ItemFilterCollection
-    ) -> TabItem {
-        TabItem(
-            id: "library-\(UUID().uuidString)",
-            title: title,
-            systemImage: systemName
-        ) {
-            PagingLibraryView(
-                library: ItemLibrary(
-                    parent: BaseItemDto(name: title),
-                    filters: filters
-                )
-            )
-            .if(UIDevice.isTV) { view in
-                view.toolbar(.hidden, for: .navigationBar)
-            }
-        }
-    }
-
     static var media: TabItem {
         TabItem(
             id: "media",
@@ -95,6 +73,28 @@ extension TabItem {
     }
 
     #if os(tvOS)
+    // Bruno: Movies / TV Shows get a branded surface — a cinematic spotlight hero for the category
+    // atop the full A–Z poster grid (BrunoMediaView), replacing the bare stock library grid.
+    static var movies: TabItem {
+        TabItem(
+            id: "movies",
+            title: L10n.movies,
+            systemImage: "film"
+        ) {
+            BrunoMediaView(itemType: .movie, heroEyebrow: "Featured Film")
+        }
+    }
+
+    static var tvShows: TabItem {
+        TabItem(
+            id: "tvShows",
+            title: L10n.tvShowsCapitalized,
+            systemImage: "tv"
+        ) {
+            BrunoMediaView(itemType: .series, heroEyebrow: "Featured Series")
+        }
+    }
+
     // Bruno: the curated-collections hub — a category row + one capped shelf per group
     // (Directors, Decades, Studios, …), each with "Show all" -> the full grid (roadmap §3).
     static var collections: TabItem {

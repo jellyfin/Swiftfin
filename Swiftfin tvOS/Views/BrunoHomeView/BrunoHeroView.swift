@@ -36,10 +36,13 @@ struct BrunoHeroView: View {
     /// Eyebrow above the title. "Spotlight" on Home; browse surfaces pass their own ("Featured", …).
     var eyebrow: String = "Spotlight"
 
-    /// Browse surfaces put the hero in the FIRST scroll row, so it should also bleed up under the
-    /// floating tab bar. On Home a wordmark header sits above the hero, so top-bleed is suppressed
-    /// there (it would pull the backdrop up over the header).
+    /// The hero is the first scroll row, so bleed the backdrop up under the floating tab bar.
     var bleedsTop: Bool = false
+
+    /// Grow the banner taller (and its bottom edge lower) by this much. A taller banner crops less of
+    /// the 16:9 backdrop, so MORE of the source — including its top — survives, and the subject reads
+    /// centered below the nav. Home also uses it to restore the space the wordmark row vacated.
+    var extraHeight: CGFloat = 0
 
     /// INV-8: while the home spine is still streaming in, hold the spotlight auto-advance so a
     /// backdrop swap never competes with shelves rising into place (two motion events at once reads
@@ -92,35 +95,21 @@ struct BrunoHeroView: View {
 
     private func heroCard(for item: BaseItemDto) -> some View {
         let insets = UIApplication.shared.brunoOverscanInsets
-        // bleedsTop ENLARGES the banner upward by the top overscan so it fills the gap under the tab
-        // bar; the matching negative top padding (below) nets the LAYOUT height back to 720, so the
-        // banner's bottom edge, its content, and every shelf below stay exactly where they were.
         let topBleed = bleedsTop ? insets.top : 0
-        let bannerHeight = 720 + topBleed
+        // Three independent knobs (see swift-reference / hero notes):
+        //  • layoutHeight  — the ONLY height the parent VStack measures, so it alone fixes the banner's
+        //    bottom edge and the shelves below. extraHeight grows it downward (Home restores the
+        //    wordmark-row space the overlay vacated).
+        //  • visualHeight  — how tall the backdrop DRAWS. It lives in a `.background` (never measured by
+        //    the parent), bottom-pinned to the layout box, so its surplus over layoutHeight spills
+        //    UPWARD behind the tab bar — exactly topBleed's worth, landing the source's true top at the
+        //    physical screen top (full-bleed top) without moving any sibling.
+        //  • imageAnchor   — which slice of the (overflowing) fill survives the crop. .top keeps the
+        //    source's true top; .center balances it. Replaces the old magic offset.
+        let layoutHeight = 720 + extraHeight
+        let visualHeight = layoutHeight + topBleed
         return ZStack(alignment: .bottomLeading) {
-            // Backdrop layer: a placeholder fill reserves the full 720×width frame from the first
-            // render (the image then fills within those fixed bounds), so the ImageView's (zero)
-            // intrinsic size can't drive layout until it loads — which made the whole home "lift
-            // then reset" on the very first load. Clipping is scoped to THIS layer so a tall
-            // title/overview is never clipped.
-            ZStack {
-                Color.bruno.page
-
-                ImageView(item.imageSource(.backdrop, maxWidth: 1920))
-                    .aspectRatio(contentMode: .fill)
-                    // Bias the fill-crop downward so subjects' heads (usually high in the frame)
-                    // aren't clipped at the top. The extra bottom it trims sits under the bottom
-                    // scrim + content anyway. (110 < the ~180pt top overflow of a 16:9 backdrop in
-                    // this 720pt frame, so no page-color gap appears at the top.)
-                    .offset(y: 110)
-                    .id(item.id)
-                    .transition(.opacity)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: bannerHeight)
-            .clipped()
-
-            // Left + bottom scrims for legibility (README scrim system).
+            // Left + bottom scrims for legibility (README scrim system), sized to the layout box.
             LinearGradient(
                 colors: [Color.bruno.page.opacity(0.96), Color.bruno.page.opacity(0.1)],
                 startPoint: .leading,
@@ -138,12 +127,31 @@ struct BrunoHeroView: View {
                     .padding(.bottom, 50)
                     .padding(.trailing, 600)
         }
-        .frame(height: bannerHeight)
-        // Full-bleed: negate the ScrollView's title-safe content inset so the backdrop + scrims reach
-        // the physical screen edges. Horizontal always; the top pull cancels the enlarged height so
-        // the banner grows UP into the safe area without moving its bottom or the shelves.
+        .frame(maxWidth: .infinity)
+        .frame(height: layoutHeight)
+        .background(alignment: .bottom) {
+            // The drawn backdrop: taller than the layout box, bottom-pinned so the surplus spills up
+            // behind the nav. A page-color fill reserves the frame from first render (anti-jump).
+            ZStack(alignment: imageAnchor) {
+                Color.bruno.page
+                ImageView(item.imageSource(.backdrop, maxWidth: 1920))
+                    .aspectRatio(contentMode: .fill)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: visualHeight, alignment: imageAnchor)
+            .clipped()
+            .id(item.id)
+            .transition(.opacity)
+        }
+        // Full-bleed horizontally: negate the ScrollView's title-safe content inset so the backdrop +
+        // scrims reach the physical screen edges. (Top bleed is produced by visualHeight spilling up.)
         .padding(.horizontal, -insets.left)
-        .padding(.top, -topBleed)
+    }
+
+    /// Which vertical slice of the filled backdrop survives the crop. `.top` shows the source's true
+    /// top (subjects sit lower, clear of the nav); `.center` balances top and bottom.
+    private var imageAnchor: Alignment {
+        .top
     }
 
     @ViewBuilder

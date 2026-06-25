@@ -27,26 +27,41 @@ struct BrunoKidsView: View {
     @State
     private var filter: KidsFilter = .all
 
+    @State
+    private var spotlightIndex = 0
+
+    @Router
+    private var router
+
     enum KidsFilter: String, CaseIterable, Identifiable {
         case all = "All"
         case movies = "Movies"
         case shows = "TV Shows"
+        case pixar = "Pixar"
+        case disney = "Disney"
 
         var id: String {
             rawValue
         }
 
-        var itemTypes: [BaseItemKind] {
+        // Studio filters are mutually exclusive by owner's rule: if Pixar is a studio on the title
+        // it's a Pixar title, so it's excluded from Disney (no cross-population).
+        func matches(_ item: BaseItemDto) -> Bool {
             switch self {
-            case .all: [.movie, .series]
-            case .movies: [.movie]
-            case .shows: [.series]
+            case .all: true
+            case .movies: item.type == .movie
+            case .shows: item.type == .series
+            case .pixar: item.hasStudio("pixar")
+            case .disney: item.hasStudio("disney") && !item.hasStudio("pixar")
             }
         }
     }
 
     var body: some View {
-        Group {
+        ZStack {
+            // Ambient now tracks the kids spotlight (was a flat hero-less page).
+            BrunoAmbientBackground(item: viewModel.heroItems.first)
+
             if viewModel.isLoading {
                 ProgressView()
                     .scaleEffect(2)
@@ -55,35 +70,43 @@ struct BrunoKidsView: View {
             } else if viewModel.parents.isEmpty {
                 notFound
             } else {
-                // Bar + grid as SIBLINGS in one vertical focus plane (Home's pattern), NOT a
-                // safeAreaInset overlay. The old overlay let the grid's frame extend up under the
-                // bar (PagingLibraryView ignores the vertical safe area), so the collection view ate
-                // every up-press and focus could never climb from the grid back to the filters —
-                // you could only reach them coming down from the tab bar. As siblings the up-press
-                // from the grid's top row finds the bar as the nearest focusable above.
-                VStack(spacing: 0) {
-                    filterBar
-
-                    PagingLibraryView(
-                        library: BrunoCombinedLibrary(
-                            parents: viewModel.parents,
-                            title: "Kids",
-                            id: "bruno-kids-\(filter.id)",
-                            itemTypes: filter.itemTypes
-                        )
-                    )
-                    // Rebuild the grid when the filter changes (new item-type scope).
-                    .id(filter)
-                }
+                content
             }
         }
+        .ignoresSafeArea()
         .toolbar(.hidden, for: .navigationBar)
         .onFirstAppear {
             Task { await viewModel.load() }
         }
-        // Warm ambient page (no hero art on Kids -> degrades to the page + accent glow + vignette)
-        // so the grid + filter chips sit on Bruno's branded surface, not flat system black.
-        .background { BrunoAmbientBackground(item: nil) }
+    }
+
+    // Hero + filter chips + grid share ONE scroll plane (Movies/TV pattern), so the spotlight
+    // scrolls away and vertical focus traverses hero <-> chips <-> grid with no special handling.
+    private var content: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 36) {
+                if viewModel.heroItems.isNotEmpty {
+                    BrunoHeroView(
+                        items: viewModel.heroItems,
+                        index: $spotlightIndex,
+                        eyebrow: "Featured",
+                        bleedsTop: true,
+                        extraHeight: 160
+                    )
+                }
+
+                filterBar
+
+                BrunoPosterGrid(items: filteredItems) { item in
+                    router.route(to: .item(item: item))
+                }
+            }
+            .padding(.bottom, 60)
+        }
+    }
+
+    private var filteredItems: [BaseItemDto] {
+        viewModel.allItems.filter { filter.matches($0) }
     }
 
     private var filterBar: some View {
@@ -92,24 +115,16 @@ struct BrunoKidsView: View {
                 BrunoSelectorCard(
                     title: option.rawValue,
                     isSelected: option == filter,
-                    style: .toggle
+                    style: .toggle,
+                    // Move-to-select: landing the cursor on a chip applies it, no Select press.
+                    selectsOnFocus: true
                 ) {
                     filter = option
                 }
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 30)
-        .padding(.bottom, 18)
-        // Soft top-down fade so the grid dissolves under the chips instead of a hard black slab —
-        // keeps the page reading as one continuous gradient surface like every other Bruno screen.
-        .background {
-            LinearGradient(
-                colors: [Color.bruno.page, Color.bruno.page, Color.bruno.page.opacity(0)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        }
+        .padding(.horizontal, 50)
         .focusSection()
     }
 
@@ -135,6 +150,10 @@ final class BrunoKidsViewModel: ViewModel {
     @Published
     private(set) var parents: [BaseItemDto] = []
     @Published
+    private(set) var allItems: [BaseItemDto] = []
+    @Published
+    private(set) var heroItems: [BaseItemDto] = []
+    @Published
     private(set) var isLoading = true
 
     /// Candidate library names, plus a "kids" keyword fallback (matches "Kids Movies"/"Kids Shows"/…).
@@ -157,6 +176,60 @@ final class BrunoKidsViewModel: ViewModel {
             return name.localizedCaseInsensitiveContains("kids")
         }
 
+        if parents.isNotEmpty {
+            allItems = await loadItems(session: userSession)
+
+            // Spotlight pool: highest-rated kids titles that actually have a backdrop, shuffled.
+            let candidates = allItems
+                .filter { $0.backdropImageTags?.isNotEmpty == true }
+                .sorted { ($0.communityRating ?? 0) > ($1.communityRating ?? 0) }
+            heroItems = Array(
+                BrunoRNG.shuffled(Array(candidates.prefix(30)), seed: UInt32.random(in: 1 ... UInt32.max)).prefix(5)
+            )
+        }
+
         isLoading = false
+    }
+
+    /// Merge the kids parent libraries into one item list (mirrors BrunoCombinedLibrary): one
+    /// recursive request per parent, deduped by id, sorted by title. Movies + series in one pass so
+    /// the filter chips can re-slice client-side without refetching.
+    private func loadItems(session: UserSession) async -> [BaseItemDto] {
+        var merged: [BaseItemDto] = []
+        for parentID in parents.compactMap(\.id) {
+            var parameters = Paths.GetItemsParameters()
+            parameters.userID = session.user.id
+            parameters.parentID = parentID
+            parameters.isRecursive = true
+            parameters.includeItemTypes = [.movie, .series]
+            parameters.enableUserData = true
+            // Studios feed the Pixar / Disney filters; overview + genres feed the hero meta.
+            parameters.fields = [.overview, .genres, .studios]
+            parameters.sortBy = [.name]
+            parameters.sortOrder = [.ascending]
+            parameters.limit = 400
+            if let items = try? await session.client.send(Paths.getItems(parameters: parameters)).value.items {
+                merged.append(contentsOf: items)
+            }
+        }
+
+        var seen = Set<String>()
+        return merged
+            .filter { item in
+                guard let id = item.id else { return true }
+                return seen.insert(id).inserted
+            }
+            .sorted { $0.displayTitle.localizedCaseInsensitiveCompare($1.displayTitle) == .orderedAscending }
+    }
+}
+
+// MARK: - Studio matching
+
+private extension BaseItemDto {
+
+    /// Whether any of the title's studios' names contain `keyword` (case-insensitive) — matches
+    /// "Pixar" / "Pixar Animation Studios", "Walt Disney Pictures" / "Walt Disney Animation", etc.
+    func hasStudio(_ keyword: String) -> Bool {
+        studios?.contains { $0.name?.localizedCaseInsensitiveContains(keyword) == true } ?? false
     }
 }

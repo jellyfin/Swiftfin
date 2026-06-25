@@ -32,16 +32,8 @@ struct MainTabView: View {
         // Search (icon) leads, Settings (icon) trails; the app still opens on Home (see onAppear).
         TabItem.search
         TabItem.home
-        TabItem.library(
-            title: L10n.movies,
-            systemName: "film",
-            filters: .init(itemTypes: [.movie])
-        )
-        TabItem.library(
-            title: L10n.tvShowsCapitalized,
-            systemName: "tv",
-            filters: .init(itemTypes: [.series])
-        )
+        TabItem.movies
+        TabItem.tvShows
         TabItem.collections
         TabItem.kids
         TabItem.settings

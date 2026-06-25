@@ -49,6 +49,9 @@ struct BrunoSelectorCard: View {
     let title: String
     var isSelected: Bool = false
     var style: Style = .bucket
+    /// Activate on FOCUS instead of on Select press — the remote cursor selects just by landing on
+    /// the chip (move-to-select). Used by the Kids filter row.
+    var selectsOnFocus: Bool = false
     let action: () -> Void
 
     @FocusState
@@ -83,7 +86,21 @@ struct BrunoSelectorCard: View {
                 // Animate scale + ring opacity + fill together off the single focus signal.
                 .animation(.easeOut(duration: 0.15), value: isFocused)
         }
-        .buttonStyle(.plain)
+        // Chrome-less style (like the hero button): the focus cursor is OUR accent capsule, so suppress
+        // the system's default rounded-rect button highlight — it was a larger, offset shape that
+        // didn't match the pill (the geometry mismatch).
+        .buttonStyle(BrunoSelectorButtonStyle())
         .focused($isFocused)
+        .onChange(of: isFocused) { _, focused in
+            if focused, selectsOnFocus { action() }
+        }
+    }
+}
+
+// MARK: - BrunoSelectorButtonStyle
+
+private struct BrunoSelectorButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
     }
 }

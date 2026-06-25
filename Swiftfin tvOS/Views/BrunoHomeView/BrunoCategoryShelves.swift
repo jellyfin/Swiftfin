@@ -126,7 +126,14 @@ struct BrunoCategoryShelves: View {
                 // Full-bleed cinematic hero (Home pattern): a row in the same scroll plane as the
                 // shelves, so vertical focus traverses hero <-> content with no special handling.
                 if let featured {
-                    BrunoHeroView(items: [featured], index: .constant(0), eyebrow: heroEyebrow, bleedsTop: true)
+                    BrunoHeroView(
+                        items: [featured],
+                        index: .constant(0),
+                        eyebrow: heroEyebrow,
+                        bleedsTop: true,
+                        // Taller banner shows more of the backdrop (incl. its top), subject centered.
+                        extraHeight: 160
+                    )
                 }
 
                 if let header {

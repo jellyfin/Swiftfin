@@ -76,6 +76,9 @@ struct BrunoHomeView: View {
                         items: viewModel.heroItems,
                         index: $spotlightIndex,
                         bleedsTop: true,
+                        // Taller banner: restores the vacated wordmark-row space AND shows more of the
+                        // backdrop (incl. its top) so the subject reads centered below the nav.
+                        extraHeight: 200,
                         autoAdvanceEnabled: viewModel.state == .content
                     )
                     // BRUNO wordmark floats ON TOP of the hero (z-order), at the same title-safe
