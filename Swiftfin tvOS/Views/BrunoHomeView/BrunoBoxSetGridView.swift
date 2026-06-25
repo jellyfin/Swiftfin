@@ -29,15 +29,26 @@ struct BrunoBoxSetGridView: View {
     let title: String
     let items: [BaseItemDto]
     let posterType: PosterDisplayType
+    /// Boxed Sets only: the "{Title} Collection" / film-count / year-range lockup (+ the year fetch).
+    /// Off for Studios/Directors, which are plain name tiles.
+    var collectionLabel: Bool = false
 
     @Router
     private var router
 
-    /// Per-collection release-year ranges (Boxed Sets / landscape only), fetched lazily on appear.
+    /// Per-collection release-year ranges (Boxed Sets only), fetched lazily on appear.
     @StateObject
     private var yearRanges = BrunoBoxSetYearRangesViewModel()
 
     var body: some View {
+        grid
+            .navigationTitle(title)
+            .onFirstAppear {
+                if collectionLabel { yearRanges.load(items: items) }
+            }
+    }
+
+    private var grid: some View {
         CollectionVGrid(
             uniqueElements: items,
             layout: layout
@@ -50,13 +61,10 @@ struct BrunoBoxSetGridView: View {
         }
         // CollectionVGrid is UIKit-backed and won't re-render cells when the year ranges arrive
         // async; rebuild the grid ONCE when the fetch completes (the @StateObject VM persists, so
-        // this doesn't refetch). `done` flips false→true a single time.
+        // this doesn't refetch). `done` flips false→true a single time (and stays false when no
+        // year fetch runs, e.g. Studios/Directors).
         .id(yearRanges.done)
         .scrollIndicators(.hidden)
-        .navigationTitle(title)
-        .onFirstAppear {
-            if posterType == .landscape { yearRanges.load(items: items) }
-        }
     }
 
     // Mirrors the stock tvOS landscape/portrait grid layout (LibraryElement.layout): 4 columns
@@ -73,7 +81,7 @@ struct BrunoBoxSetGridView: View {
 
     @ViewBuilder
     private func cardLabel(for item: BaseItemDto) -> some View {
-        if posterType == .landscape {
+        if posterType == .landscape, collectionLabel {
             BrunoBoxSetCardLabel(item: item, yearRange: yearRanges.ranges[item.id ?? ""])
         } else {
             PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
@@ -198,12 +206,22 @@ final class BrunoBoxSetYearRangesViewModel: ViewModel {
 extension NavigationRoute {
 
     @MainActor
-    static func brunoBoxSetGrid(title: String, items: [BaseItemDto], posterType: PosterDisplayType) -> NavigationRoute {
+    static func brunoBoxSetGrid(
+        title: String,
+        items: [BaseItemDto],
+        posterType: PosterDisplayType,
+        collectionLabel: Bool = false
+    ) -> NavigationRoute {
         NavigationRoute(
             id: "bruno-boxset-grid-\(title.lowercased())",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            BrunoBoxSetGridView(title: title, items: items, posterType: posterType)
+            BrunoBoxSetGridView(
+                title: title,
+                items: items,
+                posterType: posterType,
+                collectionLabel: collectionLabel
+            )
         }
     }
 }

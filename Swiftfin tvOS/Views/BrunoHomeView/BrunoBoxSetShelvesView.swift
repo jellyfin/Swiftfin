@@ -135,6 +135,11 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
     /// One past the shelf cap so the shared scaffold can tell whether "Show all" is warranted.
     private let perShelfFetch = 13
 
+    /// Day-stable seed for shelf shuffling — same order all day, reshuffles the next day.
+    private static var shuffleSeed: UInt32 {
+        UInt32(truncatingIfNeeded: Int(Date().timeIntervalSince1970 / 86400))
+    }
+
     func load(parent: BaseItemDto) async {
         guard let userSession, let parentID = parent.id else {
             isLoading = false
@@ -177,7 +182,10 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
             }
 
             for await (index, subGroup, children) in group {
-                let shown = recencyBiased ? BrunoRecencyBias.modernOnly(children) : children
+                let modern = recencyBiased ? BrunoRecencyBias.modernOnly(children) : children
+                // Seeded shuffle so shelves read varied rather than alphabetical (owner request).
+                // Day-stable seed + per-shelf offset → stable within a day, fresh the next.
+                let shown = BrunoRNG.shuffled(modern, seed: Self.shuffleSeed &+ UInt32(truncatingIfNeeded: index))
                 guard shown.isNotEmpty else { continue }
                 indexed.append((
                     index,

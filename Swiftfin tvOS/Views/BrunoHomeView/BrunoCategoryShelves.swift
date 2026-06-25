@@ -255,9 +255,14 @@ struct BrunoCategoryShelves: View {
             router.route(to: .brunoCategoryShelves(parent: category.boxSet), in: namespace)
         case .items:
             // Boxed Sets: landscape cards so the franchise names aren't scrunched, with the
-            // collection-name / "Collection" / film-count lockup.
+            // collection-name / "Collection" / film-count + year-range lockup.
             router.route(
-                to: .brunoBoxSetGrid(title: category.name, items: category.children, posterType: .landscape),
+                to: .brunoBoxSetGrid(
+                    title: category.name,
+                    items: category.children,
+                    posterType: .landscape,
+                    collectionLabel: true
+                ),
                 in: namespace
             )
         case .grid:
@@ -269,10 +274,15 @@ struct BrunoCategoryShelves: View {
             // e.g. New Releases) keep the live, paged library.
             let boxSetChildren = category.children.filter { $0.type == .boxSet }
             if boxSetChildren.isNotEmpty {
-                // Directors / Studios: portrait grid of just the sub-collections. Routed through the
-                // same dedicated grid as Boxed Sets so it inherits the header-doesn't-overlap fix.
+                // Studios: landscape so the wide studio logos read big. Directors stay portrait
+                // (headshots). Both route through the same grid (inherits the header-overlap fix).
+                let isStudios = category.name.lowercased() == "studios"
                 router.route(
-                    to: .brunoBoxSetGrid(title: category.name, items: boxSetChildren, posterType: .portrait),
+                    to: .brunoBoxSetGrid(
+                        title: category.name,
+                        items: boxSetChildren,
+                        posterType: isStudios ? .landscape : .portrait
+                    ),
                     in: namespace
                 )
             } else if category.boxSet.libraryType == .boxSet {
