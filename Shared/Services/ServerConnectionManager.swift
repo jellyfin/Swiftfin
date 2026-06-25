@@ -100,23 +100,23 @@ final class ServerConnectionManager: ObservableObject {
         server: ServerState,
         accessToken: String?,
         context: NetworkConnectionContext
-    ) async -> ServerConnection? {
-        guard context.isSatisfied else { return nil }
+    ) async -> Resolution {
+        guard context.isSatisfied else { return .unreachable([]) }
 
         let candidates = server.serverConnections.filter { $0.matches(context) }
-        let currentConnection = server.activeServerConnection
+        guard candidates.isNotEmpty else { return .unreachable([]) }
 
         guard let reachableConnection = await firstReachableConnection(
             in: candidates,
             accessToken: accessToken,
             serverID: server.id
-        ) else { return nil }
-        guard currentConnection?.id != reachableConnection.id else { return nil }
+        ) else { return .unreachable(candidates) }
 
-        server.activeServerConnection = reachableConnection
-        Notifications[.didChangeServerConnection].post(reachableConnection)
+        if server.activeServerConnection?.id != reachableConnection.id {
+            server.activeServerConnection = reachableConnection
+        }
 
-        return reachableConnection
+        return .connected(reachableConnection)
     }
 
     private static func firstReachableConnection(
@@ -159,7 +159,7 @@ final class ServerConnectionManager: ObservableObject {
         monitor.pathUpdateHandler = { [weak self] path in
             Task { [weak self] in
                 let newContext = await NetworkConnectionContext(path: path)
-                await self?.pathDidUpdate(newContext)
+                await self?.contextDidUpdate(newContext)
             }
         }
         monitor.start(queue: queue)
@@ -203,42 +203,21 @@ final class ServerConnectionManager: ObservableObject {
     private func _resolveActiveConnection() async {
         guard !Task.isCancelled, isAutoSwitchEnabled, let userSession else { return }
 
-        guard context.isSatisfied else {
-            guard !Task.isCancelled else { return }
-            await _resolutionDidUpdate(.unreachable([]))
-            return
-        }
-
-        let candidates = userSession.server.serverConnections.filter { $0.matches(context) }
-
-        guard candidates.isNotEmpty else {
-            guard !Task.isCancelled else { return }
-            await _resolutionDidUpdate(.unreachable([]))
-            return
-        }
-
         let currentConnection = userSession.server.activeServerConnection
-        let reachableConnection = await Self.firstReachableConnection(
-            in: candidates,
+        let resolution = await Self.evaluate(
+            server: userSession.server,
             accessToken: userSession.user.accessToken,
-            serverID: userSession.server.id
+            context: context
         )
-
         guard !Task.isCancelled else { return }
 
-        guard let reachableConnection else {
-            await _resolutionDidUpdate(.unreachable(candidates))
-            return
-        }
-
-        if currentConnection?.id != reachableConnection.id {
-            userSession.server.activeServerConnection = reachableConnection
+        if case let .connected(reachableConnection) = resolution,
+           currentConnection?.id != reachableConnection.id
+        {
             Notifications[.didChangeServerConnection].post(reachableConnection)
         }
 
-        guard !Task.isCancelled else { return }
-
-        await _resolutionDidUpdate(.connected(reachableConnection))
+        await _resolutionDidUpdate(resolution)
     }
 
     @Function(\Action.Cases._resolutionDidUpdate)
@@ -246,7 +225,7 @@ final class ServerConnectionManager: ObservableObject {
         // no-op, just for state transition
     }
 
-    private func pathDidUpdate(_ context: NetworkConnectionContext) {
+    private func contextDidUpdate(_ context: NetworkConnectionContext) {
         self.context = context
         scheduleConnectionResolution()
     }
