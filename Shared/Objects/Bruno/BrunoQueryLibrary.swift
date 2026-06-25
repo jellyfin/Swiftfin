@@ -18,6 +18,19 @@ import JellyfinAPI
 // provides the "seeded" ordering). One page covers a shelf; we don't paginate Bruno rows.
 struct BrunoQueryLibrary: BaseItemKindLibrary {
 
+    // Lean field set for poster-cell shelves: only `.parentID` beyond what GetItems returns by
+    // default. We deliberately DROP `.mediaSources`, `.overview`, `.taglines` (vs stock
+    // `.MinimumFields`) because:
+    //  - poster cells never drive playback — the detail/Play path re-fetches full fields via
+    //    `ItemViewModel.getFullItem`, so dropping `.mediaSources` here cannot regress playback;
+    //  - poster cells never read `item.overview`/taglines (synopsis is a detail/hero concern);
+    //  - `productionYear`/`premiereDate` are top-level `BaseItemDto` properties that return
+    //    WITHOUT any `ItemFields` entry, so decade/year shelves are unaffected.
+    // Scope is intentionally narrow: this is NOT used by the snapshot/boxset child fetches, which
+    // keep `.MinimumFields + [.genres]` because they feed a drill-in hero synopsis + the
+    // `brunoHeroEligible` child-safety filter.
+    static let brunoPosterFields: [ItemFields] = [.parentID]
+
     let query: BrunoQuery
     let parent: TitledLibraryParent
 
@@ -38,7 +51,7 @@ struct BrunoQueryLibrary: BaseItemKindLibrary {
         parameters.userID = pageState.userSession.user.id
         parameters.enableUserData = true
         parameters.isRecursive = true
-        parameters.fields = query.richFields ? [.overview, .genres, .people, .mediaSources] : .MinimumFields
+        parameters.fields = query.richFields ? [.overview, .genres, .people, .mediaSources] : Self.brunoPosterFields
         parameters.limit = query.limit
         parameters.startIndex = pageState.pageOffset
 

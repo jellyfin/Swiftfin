@@ -83,22 +83,26 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
             // Cancel any in-flight explore append too, so a stale-seed append can't resume after
             // the rebuild and graft old shelves onto the new plan (its `Task.isCancelled` guards
             // only protect against this if the task is actually cancelled here).
+            // `forceReload: false` — first-appear / background revalidate reuse the warm snapshot
+            // cache; live user-state rows are not gated by it (see INV-5 note in `revalidate`).
             appendTask?.cancel()
             refreshTask?.cancel()
             refreshTask = Task { [weak self] in
-                await self?.performRefresh()
+                await self?.performRefresh(forceReload: false)
             }
             .asAnyCancellable()
             return .refreshing
 
         case .shuffle:
+            // `forceReload: true` — "Surprise me" mints a fresh seed and must pull the snapshot
+            // fresh (an explicit user-driven reroll bypasses the warm cache).
             seed = Self.reseedRandom()
             explorePage = 0
             scrollResetToken &+= 1
             appendTask?.cancel()
             refreshTask?.cancel()
             refreshTask = Task { [weak self] in
-                await self?.performRefresh()
+                await self?.performRefresh(forceReload: true)
             }
             .asAnyCancellable()
             return .refreshing
@@ -128,7 +132,7 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
 
     // MARK: Work
 
-    private func performRefresh() async {
+    private func performRefresh(forceReload: Bool) async {
         guard let userSession else {
             state = .error(.init("Not signed in"))
             return
@@ -141,7 +145,7 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         // the network and reconcile in place. Cold (no payload, or Shuffle's fresh seed) falls
         // through to the top-down streaming cold path inside `revalidate`.
         let hydrated = await hydrateFromDisk(userSession: userSession, generation: generation)
-        await revalidate(userSession: userSession, generation: generation, reconcile: hydrated)
+        await revalidate(userSession: userSession, generation: generation, reconcile: hydrated, forceReload: forceReload)
     }
 
     /// Best-effort instant paint from the disk payload. Returns true iff it painted (so `revalidate`
@@ -190,11 +194,17 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
     /// fresh items and merge by `shelf.id`, reusing the existing VM instances so identity — and
     /// focus — survive (INV-2; rows are height-pinned so no reflow). When false, stream in cold
     /// (top-down, INV-8). Either way the hero publishes the moment it lands (the cold-spinner lever).
-    private func revalidate(userSession: UserSession, generation: Int, reconcile: Bool) async {
+    private func revalidate(userSession: UserSession, generation: Int, reconcile: Bool, forceReload: Bool) async {
+        // INV-5: passing `forceReload: false` reuses the in-session snapshot Cache (the win for
+        // first-appear / background revalidate). This is safe for live user-state rows — Continue
+        // Watching / Next Up / Recently Added load through their own `PagingLibraryViewModel`s in
+        // `BrunoShelfViewModel.load()` and are NOT gated by this snapshot Cache, so a non-forced
+        // reload can never stale them. Only `.shuffle` (and a future explicit pull-to-refresh)
+        // forces a fresh pull.
         let snapshot = await BrunoLibrarySnapshot.loadShared(
             client: userSession.client,
             userID: userSession.user.id,
-            forceReload: true
+            forceReload: forceReload
         )
         guard !Task.isCancelled, generation == refreshGeneration else { return }
         self.snapshot = snapshot
