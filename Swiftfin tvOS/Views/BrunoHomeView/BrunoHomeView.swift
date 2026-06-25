@@ -72,16 +72,22 @@ struct BrunoHomeView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 36) {
-                    header
-                        .padding(.horizontal, 50)
-                        .padding(.top, 20)
-                        .id("bruno-top")
-
                     BrunoHeroView(
                         items: viewModel.heroItems,
                         index: $spotlightIndex,
+                        bleedsTop: true,
                         autoAdvanceEnabled: viewModel.state == .content
                     )
+                    // BRUNO wordmark floats ON TOP of the hero (z-order), at the same title-safe
+                    // top-left spot it held as a row — the banner now extends up under it. The overlay
+                    // aligns to the hero's layout box (still title-safe), so the original 50/20 insets
+                    // place it exactly where it was; no overscan compensation needed.
+                    .overlay(alignment: .top) {
+                            header
+                                .padding(.horizontal, 50)
+                                .padding(.top, 20)
+                        }
+                        .id("bruno-top")
 
                     ForEach(viewModel.sections) { section in
                         BrunoShelfView(viewModel: section)

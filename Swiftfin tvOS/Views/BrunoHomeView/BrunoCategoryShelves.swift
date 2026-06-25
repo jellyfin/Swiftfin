@@ -114,6 +114,10 @@ struct BrunoCategoryShelves: View {
 
             scrollContent
         }
+        // Let the ScrollView fill the screen (matching BrunoHomeView) so the hero's full-bleed
+        // backdrop reaches the physical edges instead of being clipped at the title-safe inset. The
+        // ScrollView still re-insets its own content to the safe area, so shelves stay title-safe.
+        .ignoresSafeArea()
     }
 
     private var scrollContent: some View {
@@ -122,7 +126,7 @@ struct BrunoCategoryShelves: View {
                 // Full-bleed cinematic hero (Home pattern): a row in the same scroll plane as the
                 // shelves, so vertical focus traverses hero <-> content with no special handling.
                 if let featured {
-                    BrunoHeroView(items: [featured], index: .constant(0), eyebrow: heroEyebrow)
+                    BrunoHeroView(items: [featured], index: .constant(0), eyebrow: heroEyebrow, bleedsTop: true)
                 }
 
                 if let header {

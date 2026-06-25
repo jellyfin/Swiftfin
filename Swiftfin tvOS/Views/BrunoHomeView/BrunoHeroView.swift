@@ -8,6 +8,7 @@
 
 import JellyfinAPI
 import SwiftUI
+import UIKit
 
 // Prototype copy is English-only; localization (L10n) is a deferred TODO (see BRUNO_NOTES.md).
 // swiftlint:disable hard_coded_display_string
@@ -34,6 +35,11 @@ struct BrunoHeroView: View {
 
     /// Eyebrow above the title. "Spotlight" on Home; browse surfaces pass their own ("Featured", …).
     var eyebrow: String = "Spotlight"
+
+    /// Browse surfaces put the hero in the FIRST scroll row, so it should also bleed up under the
+    /// floating tab bar. On Home a wordmark header sits above the hero, so top-bleed is suppressed
+    /// there (it would pull the backdrop up over the header).
+    var bleedsTop: Bool = false
 
     /// INV-8: while the home spine is still streaming in, hold the spotlight auto-advance so a
     /// backdrop swap never competes with shelves rising into place (two motion events at once reads
@@ -85,7 +91,13 @@ struct BrunoHeroView: View {
     }
 
     private func heroCard(for item: BaseItemDto) -> some View {
-        ZStack(alignment: .bottomLeading) {
+        let insets = UIApplication.shared.brunoOverscanInsets
+        // bleedsTop ENLARGES the banner upward by the top overscan so it fills the gap under the tab
+        // bar; the matching negative top padding (below) nets the LAYOUT height back to 720, so the
+        // banner's bottom edge, its content, and every shelf below stay exactly where they were.
+        let topBleed = bleedsTop ? insets.top : 0
+        let bannerHeight = 720 + topBleed
+        return ZStack(alignment: .bottomLeading) {
             // Backdrop layer: a placeholder fill reserves the full 720×width frame from the first
             // render (the image then fills within those fixed bounds), so the ImageView's (zero)
             // intrinsic size can't drive layout until it loads — which made the whole home "lift
@@ -105,7 +117,7 @@ struct BrunoHeroView: View {
                     .transition(.opacity)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 720)
+            .frame(height: bannerHeight)
             .clipped()
 
             // Left + bottom scrims for legibility (README scrim system).
@@ -121,11 +133,17 @@ struct BrunoHeroView: View {
             )
 
             content(for: item)
-                .padding(.leading, 50)
-                .padding(.bottom, 50)
-                .padding(.trailing, 600)
+                // +overscan keeps the copy title-safe after the card bleeds left to the screen edge.
+                    .padding(.leading, 50 + insets.left)
+                    .padding(.bottom, 50)
+                    .padding(.trailing, 600)
         }
-        .frame(height: 720)
+        .frame(height: bannerHeight)
+        // Full-bleed: negate the ScrollView's title-safe content inset so the backdrop + scrims reach
+        // the physical screen edges. Horizontal always; the top pull cancels the enlarged height so
+        // the banner grows UP into the safe area without moving its bottom or the shelves.
+        .padding(.horizontal, -insets.left)
+        .padding(.top, -topBleed)
     }
 
     @ViewBuilder
@@ -217,5 +235,21 @@ struct BrunoHeroView: View {
 private struct BrunoHeroButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+    }
+}
+
+// MARK: - Overscan
+
+extension UIApplication {
+
+    /// The key window's tvOS title-safe overscan insets. The page ScrollView insets its content to
+    /// this, so Bruno's full-bleed hero negates it to reach the physical screen edges; the Home
+    /// wordmark (overlaid on the top-bleeding hero) re-applies it to stay title-safe.
+    var brunoOverscanInsets: UIEdgeInsets {
+        connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .first { $0.isKeyWindow }?
+            .safeAreaInsets ?? .zero
     }
 }
