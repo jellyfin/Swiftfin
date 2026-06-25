@@ -43,6 +43,7 @@ struct ThumbSlider<V: BinaryFloatingPoint>: View {
 
                 currentTranslation = translationStartLocation.x - newValue.location.x
 
+                guard contentSize.width > 0 else { return }
                 let newProgress = translationStartValue - V(currentTranslation / contentSize.width) * total
                 value = clamp(newProgress, min: 0, max: total)
             }
@@ -60,7 +61,7 @@ struct ThumbSlider<V: BinaryFloatingPoint>: View {
                     .foregroundStyle(.primary)
                     .frame(height: 20)
                     .gesture(trackDrag)
-                    .offset(x: Double(value / total) * contentSize.width - 10)
+                    .offset(x: total > 0 && contentSize.width > 0 ? Double(value / total) * contentSize.width - 10 : -10)
             }
             .trackingSize($contentSize)
     }

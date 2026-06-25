@@ -130,7 +130,6 @@ struct PlaybackQualitySettingsView: View {
                     isOn: $forceHDRTranscode
                 )
             } header: {
-                /// Proper nouns. Do not localize.
                 Text(L10n.hdr)
             } footer: {
                 VStack(alignment: .leading) {

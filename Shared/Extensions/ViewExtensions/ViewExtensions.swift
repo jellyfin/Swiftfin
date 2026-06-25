@@ -180,6 +180,10 @@ extension View {
         modifier(BackgroundParallaxHeaderModifier(scrollViewOffset, height: height, multiplier: multiplier, header: header))
     }
 
+    func airplayRoutePicker(present: Binding<Bool>) -> some View {
+        modifier(AirplayRoutePickerModifier(present: present))
+    }
+
     func bottomEdgeGradient(bottomColor: Color) -> some View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }

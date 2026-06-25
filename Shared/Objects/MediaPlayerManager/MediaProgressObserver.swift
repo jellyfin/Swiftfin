@@ -38,6 +38,9 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
     private func sendReport() {
         guard let item else { return }
 
+        // A remote session reports its own progress.
+        guard manager?.remote.activeSession == nil else { return }
+
         switch lastPlaybackRequestStatus {
         case .playing:
             if hasSentStart {
@@ -70,6 +73,18 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
         manager.$playbackRequestStatus
             .sink { [weak self] in self?.playbackRequestStatusDidChange($0) }
             .store(in: &cancellables)
+
+        manager.remote.$activeSession
+            .sink { [weak self] in self?.remoteSessionDidChange($0) }
+            .store(in: &cancellables)
+    }
+
+    private func remoteSessionDidChange(_ session: (any RemotePlaybackSession)?) {
+        // Close our session out so the server doesn't see two for one item.
+        guard session != nil, let item else { return }
+
+        sendStopReport(for: item, seconds: manager?.seconds)
+        hasSentStart = false
     }
 
     private func playbackItemDidChange(_ newItem: MediaPlayerItem?) {

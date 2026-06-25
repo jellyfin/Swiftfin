@@ -65,6 +65,37 @@ extension MediaPlayerItem {
 
         let maxBitrate = try await requestedBitrate.getMaxBitrate()
 
+        return try await buildItem(
+            for: videoPlayerType,
+            item: item,
+            initialMediaSource: initialMediaSource,
+            audioStreamIndex: audioStreamIndex,
+            subtitleStreamIndex: subtitleStreamIndex,
+            requestedBitrate: requestedBitrate,
+            maxBitrate: maxBitrate,
+            compatibilityMode: compatibilityMode,
+            userSession: userSession,
+            logger: logger
+        )
+    }
+
+    private static func buildItem(
+        for videoPlayerType: VideoPlayerType,
+        item: BaseItemDto,
+        initialMediaSource: MediaSourceInfo,
+        audioStreamIndex: Int?,
+        subtitleStreamIndex: Int?,
+        requestedBitrate: PlaybackBitrate,
+        maxBitrate: Int?,
+        compatibilityMode: PlaybackCompatibility,
+        userSession: UserSession,
+        logger: Logger
+    ) async throws -> MediaPlayerItem {
+
+        guard let itemID = item.id else {
+            throw ErrorMessage(L10n.unknownError)
+        }
+
         let deviceProfile = DeviceProfile.build(
             for: videoPlayerType,
             compatibilityMode: compatibilityMode,
@@ -79,6 +110,14 @@ extension MediaPlayerItem {
         playbackInfo.userID = userSession.user.id
         playbackInfo.audioStreamIndex = audioStreamIndex
         playbackInfo.subtitleStreamIndex = subtitleStreamIndex
+
+        // Anchor an AVPlayer transcode at the start position so its forced
+        // keyframe lands exactly there — AVPlayer can't seek an HLS transcode
+        // accurately, so without this the start snaps to a coarse keyframe.
+        let startPositionTicks = item.userData?.playbackPositionTicks
+        if videoPlayerType == .avPlayer, let startPositionTicks, startPositionTicks > 0 {
+            playbackInfo.startTimeTicks = startPositionTicks
+        }
 
         if !item.isLiveStream {
             playbackInfo.mediaSourceID = initialMediaSource.id
@@ -166,11 +205,17 @@ extension MediaPlayerItem {
             return nil
         }()
 
+        let transcodeStartOffset: Duration = mediaSource.transcodingURL != nil
+            ? .ticks(playbackInfo.startTimeTicks ?? 0)
+            : .zero
+
         return .init(
             baseItem: item,
             mediaSource: mediaSource,
             playSessionID: playSessionID,
             url: playbackURL,
+            videoPlayerType: videoPlayerType,
+            transcodeStartOffset: transcodeStartOffset,
             requestedBitrate: requestedBitrate,
             deviceProfile: deviceProfile,
             initialAudioStreamIndex: audioStreamIndex,

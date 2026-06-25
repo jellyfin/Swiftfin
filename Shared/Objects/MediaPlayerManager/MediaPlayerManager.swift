@@ -140,6 +140,8 @@ final class MediaPlayerManager: ViewModel {
     @Published
     var supplements: [any MediaPlayerSupplement] = []
 
+    private(set) var remote: RemotePlaybackManager!
+
     // TODO: replace with graph dependency package
     private func setSupplements() {
         self.supplements = Defaults[.VideoPlayer.supplements].compactMap { kind -> (any MediaPlayerSupplement)? in
@@ -172,11 +174,24 @@ final class MediaPlayerManager: ViewModel {
     /// Holds a weak reference to the current media player proxy.
     weak var proxy: (any MediaPlayerProxy)? {
         didSet {
+            objectWillChange.send()
             if var proxy {
                 proxy.manager = self
             }
         }
     }
+
+    /// `nil` when playback is fully remote (a session, no local engine).
+    var videoPlayerType: VideoPlayerType? {
+        if proxy is any RemotePlaybackSession {
+            return nil
+        }
+        return (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType
+            ?? Defaults[.VideoPlayer.videoPlayerType]
+    }
+
+    private var isSwitchingPlayer = false
+    private var fallbackPlayerType: VideoPlayerType?
 
     private var initialMediaPlayerItemProvider: MediaPlayerItemProvider?
 
@@ -204,6 +219,11 @@ final class MediaPlayerManager: ViewModel {
         )
         super.init()
 
+        // Seed from the item's resume point so a cast/AirPlay started before the
+        // video loads transfers from the right position, not zero.
+        seconds = item.startSeconds ?? .zero
+
+        setUpRemote()
         self.queue?.manager = self
     }
 
@@ -216,8 +236,17 @@ final class MediaPlayerManager: ViewModel {
         self.state = .playback
         super.init()
 
+        setUpRemote()
         self.queue?.manager = self
         self.playbackItem = playbackItem
+    }
+
+    private func setUpRemote() {
+        let remote = RemotePlaybackManager(manager: self)
+        remote.objectWillChange
+            .sink { [weak self] in self?.objectWillChange.send() }
+            .store(in: &cancellables)
+        self.remote = remote
     }
 
     @Function(\Action.Cases.ended)
@@ -267,6 +296,12 @@ final class MediaPlayerManager: ViewModel {
                     "itemTitle": .stringConvertible(item.displayTitle),
                 ]
             )
+        }
+
+        if let fallback = fallbackPlayerType {
+            remote.setAirPlayActive(false)
+            await switchPlayer(to: fallback, isFallback: true)
+            return
         }
 
         proxy?.stop()
@@ -370,6 +405,7 @@ final class MediaPlayerManager: ViewModel {
     private func _stop() async throws {
         await self.cancel()
 
+        remote.stop()
         proxy?.stop()
         Container.shared.mediaPlayerManagerPublisher().send(nil)
         Container.shared.mediaPlayerManager.reset()
@@ -415,6 +451,7 @@ final class MediaPlayerManager: ViewModel {
             mediaSource: currentItem.mediaSource,
             audioStreamIndex: audioStreamIndex ?? currentItem.selectedAudioStreamIndex,
             subtitleStreamIndex: subtitleStreamIndex ?? currentItem.selectedSubtitleStreamIndex,
+            videoPlayerType: currentItem.videoPlayerType,
             requestedBitrate: requestedBitrate ?? currentItem.requestedBitrate,
             modifyItem: { item in
                 if item.userData == nil {
@@ -435,5 +472,97 @@ final class MediaPlayerManager: ViewModel {
 
         self.playbackItem = newItem
         self.seconds = currentSeconds
+    }
+
+    func switchPlayer(to type: VideoPlayerType, isFallback: Bool = false) async {
+        guard !isSwitchingPlayer,
+              let item = playbackItem,
+              item.videoPlayerType != type
+        else { return }
+
+        isSwitchingPlayer = true
+        defer { isSwitchingPlayer = false }
+
+        let previousType = item.videoPlayerType
+        let positionTicks = seconds.ticks
+
+        do {
+            let switched = try await MediaPlayerItem.build(
+                for: item.baseItem,
+                mediaSource: item.mediaSource,
+                videoPlayerType: type,
+                requestedBitrate: item.requestedBitrate
+            ) { base in
+                // `modifyItem` runs after `getFullItem`'s re-fetch, which would
+                // otherwise restore the server's stale position.
+                if base.userData == nil { base.userData = .init() }
+                base.userData?.playbackPositionTicks = positionTicks
+            }
+
+            playbackItem = switched
+            fallbackPlayerType = isFallback ? nil : previousType
+        } catch {
+            logger.error("Failed to switch player: \(error.localizedDescription)")
+        }
+    }
+
+    func resumeLocal(on proxy: any MediaPlayerProxy) async {
+        guard let item = playbackItem,
+              let type = (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType
+        else {
+            self.proxy = proxy
+            return
+        }
+
+        let positionTicks = seconds.ticks
+
+        do {
+            let resumed = try await MediaPlayerItem.build(
+                for: item.baseItem,
+                mediaSource: item.mediaSource,
+                videoPlayerType: type,
+                requestedBitrate: item.requestedBitrate
+            ) { base in
+                if base.userData == nil { base.userData = .init() }
+                base.userData?.playbackPositionTicks = positionTicks
+            }
+
+            playbackItem = resumed
+        } catch {
+            logger.error("Failed to resume local playback: \(error.localizedDescription)")
+        }
+
+        self.proxy = proxy
+    }
+}
+
+// MARK: - Picture in Picture
+
+extension MediaPlayerManager {
+
+    func startPictureInPicture() {
+        guard proxy is any PictureInPictureable else { return }
+
+        Task { await startPiPWhenReady(attemptsLeft: 5) }
+    }
+
+    func stopPictureInPicture() {
+        (proxy as? MediaPlayerPictureInPictureCapable)?.stopPiP()
+    }
+
+    // Retries because the proxy swap is async and AVKit ignores an early start.
+    private func startPiPWhenReady(attemptsLeft: Int) async {
+        guard attemptsLeft > 0,
+              let capable = proxy as? MediaPlayerPictureInPictureCapable
+        else { return }
+
+        if capable.isPiPActive.value { return }
+
+        if capable.isPiPAvailable.value {
+            capable.startPiP()
+        }
+
+        try? await Task.sleep(for: .milliseconds(300))
+        await startPiPWhenReady(attemptsLeft: attemptsLeft - 1)
     }
 }

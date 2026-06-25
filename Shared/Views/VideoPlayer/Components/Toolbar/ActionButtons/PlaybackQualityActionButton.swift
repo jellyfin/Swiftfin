@@ -28,17 +28,21 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        private func makeProvider(with bitrate: PlaybackBitrate, for playbackItem: MediaPlayerItem) -> MediaPlayerItemProvider {
+        private func makeProvider(
+            with bitrate: PlaybackBitrate,
+            for playbackItem: MediaPlayerItem,
+            videoPlayerType: VideoPlayerType
+        ) -> MediaPlayerItemProvider {
             var adjustedBaseItem = playbackItem.baseItem
             adjustedBaseItem.userData?.playbackPositionTicks = manager.seconds.ticks
-            let mediaSource = playbackItem.mediaSource
 
             return MediaPlayerItemProvider(
                 item: adjustedBaseItem,
                 function: { baseItem in
                     try await MediaPlayerItem.build(
                         for: baseItem,
-                        mediaSource: mediaSource,
+                        mediaSource: playbackItem.mediaSource,
+                        videoPlayerType: videoPlayerType,
                         requestedBitrate: bitrate
                     )
                 }
@@ -48,11 +52,11 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         // TODO: transition to Picker
         //       - need local State value
         @ViewBuilder
-        private func content(playbackItem: MediaPlayerItem) -> some View {
+        private func content(playbackItem: MediaPlayerItem, videoPlayerType: VideoPlayerType) -> some View {
             ForEach(PlaybackBitrate.allCases, id: \.rawValue) { bitrate in
                 Button {
                     guard playbackItem.requestedBitrate != bitrate else { return }
-                    let provider = makeProvider(with: bitrate, for: playbackItem)
+                    let provider = makeProvider(with: bitrate, for: playbackItem, videoPlayerType: videoPlayerType)
                     manager.playNewItem(provider: provider)
                 } label: {
                     if playbackItem.requestedBitrate == bitrate {
@@ -65,17 +69,17 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         }
 
         var body: some View {
-            if let playbackItem = manager.playbackItem {
+            if let playbackItem = manager.playbackItem, let videoPlayerType = manager.videoPlayerType {
                 Menu(
                     L10n.playbackQuality,
                     systemImage: ""
 //                    systemImage: VideoPlayerActionButton.playbackQuality.systemImage
                 ) {
                     if isInMenu {
-                        content(playbackItem: playbackItem)
+                        content(playbackItem: playbackItem, videoPlayerType: videoPlayerType)
                     } else {
                         Section(L10n.playbackQuality) {
-                            content(playbackItem: playbackItem)
+                            content(playbackItem: playbackItem, videoPlayerType: videoPlayerType)
                         }
                     }
                 }

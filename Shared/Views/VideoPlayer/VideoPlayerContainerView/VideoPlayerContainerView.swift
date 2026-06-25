@@ -89,6 +89,8 @@ extension VideoPlayer {
 
             @EnvironmentObject
             private var containerState: VideoPlayerContainerState
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
 
             let player: AnyView
 
@@ -104,8 +106,30 @@ extension VideoPlayer {
                 }
             }
 
+            @ViewBuilder
+            private var surface: some View {
+                ZStack {
+                    // Stays mounted under the placeholder — AirPlay needs the
+                    // AVPlayer layer on-screen to route video.
+                    if let video = manager.proxy as? any VideoMediaPlayerProxy {
+                        video.videoPlayerBody
+                            .eraseToAnyView()
+                            .id(video.videoPlayerType)
+                    } else {
+                        player
+                    }
+
+                    if let state = manager.remote.state {
+                        RemotePlaybackSessionView(
+                            route: state.type,
+                            deviceName: state.deviceName
+                        )
+                    }
+                }
+            }
+
             var body: some View {
-                player
+                surface
                 #if os(iOS)
                 .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
                 .animation(.linear(duration: 0.2), value: containerState.isPresentingPlaybackControls)

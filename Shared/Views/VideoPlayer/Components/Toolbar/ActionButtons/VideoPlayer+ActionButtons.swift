@@ -73,10 +73,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 Audio()
             case .autoPlay:
                 AutoPlay()
-            #if os(iOS)
-            case .gestureLock:
-                GestureLock()
-            #endif
+            case .pictureInPicture:
+                PictureInPicture()
             case .playbackSpeed:
                 PlaybackRateMenu()
 //            case .playbackQuality:
@@ -85,8 +83,14 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 PlayNextItem()
             case .playPreviousItem:
                 PlayPreviousItem()
+            case .remotePlayback:
+                RemotePlayback()
             case .subtitles:
                 Subtitles()
+            #if os(iOS)
+            case .gestureLock:
+                GestureLock()
+            #endif
             }
         }
 
@@ -97,7 +101,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 systemImage: "ellipsis.circle"
             ) {
                 ForEach(
-                    barActionButtons,
+                    barActionButtons.filter { VideoPlayerActionButton.allCases.contains($0) },
                     content: view(for:)
                 )
                 .environment(\.isInMenu, true)
@@ -105,7 +109,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 Divider()
 
                 ForEach(
-                    menuActionButtons,
+                    menuActionButtons.filter { VideoPlayerActionButton.allCases.contains($0) },
                     content: view(for:)
                 )
                 .environment(\.isInMenu, true)
@@ -126,7 +130,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                         systemImage: UIDevice.isTV ? "ellipsis" : "ellipsis.circle"
                     ) {
                         ForEach(
-                            menuActionButtons,
+                            menuActionButtons.filter { VideoPlayerActionButton.allCases.contains($0) },
                             content: view(for:)
                         )
                         .environment(\.isInMenu, true)

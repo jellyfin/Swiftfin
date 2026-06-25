@@ -6,12 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: feature implementations
-//       - PiP
 // TODO: Chromecast proxy
 
 /// The proxy for top-down communication to an
@@ -27,7 +26,15 @@ protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
     func jumpForward(_ seconds: Duration)
     func jumpBackward(_ seconds: Duration)
     func setRate(_ rate: Float)
-    func setSeconds(_ seconds: Duration)
+    func setSeconds(_ seconds: Duration, completion: ((Bool) -> Void)?)
+}
+
+extension MediaPlayerProxy {
+
+    /// Convenience for `setSeconds` without a completion action.
+    func setSeconds(_ seconds: Duration) {
+        setSeconds(seconds, completion: nil)
+    }
 }
 
 @MainActor
@@ -35,6 +42,7 @@ protocol VideoMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigura
 
     associatedtype VideoPlayerBody: View
 
+    var videoPlayerType: VideoPlayerType { get }
     var videoSize: PublishedBox<CGSize> { get }
     var droppedFrames: PublishedBox<Int> { get }
     var corruptedFrames: PublishedBox<Int> { get }
@@ -47,19 +55,37 @@ protocol VideoMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigura
     var videoPlayerBody: Self.VideoPlayerBody { get }
 }
 
+@MainActor
 protocol MediaPlayerAudioTrackConfigurable {
     func setAudioStream(_ stream: MediaStream)
 }
 
+@MainActor
 protocol MediaPlayerSubtitleTrackConfigurable {
     func setSubtitleStream(_ stream: MediaStream)
 }
 
+@MainActor
 protocol MediaPlayerOffsetConfigurable {
     func setAudioOffset(_ seconds: Duration)
     func setSubtitleOffset(_ seconds: Duration)
 }
 
+@MainActor
+protocol MediaPlayerPictureInPictureCapable: AnyObject {
+    var isPiPActive: PublishedBox<Bool> { get }
+    var isPiPAvailable: PublishedBox<Bool> { get }
+    func startPiP()
+    func stopPiP()
+}
+
+@MainActor
+protocol AirPlayable {}
+
+@MainActor
+protocol PictureInPictureable {}
+
+@MainActor
 protocol MediaPlayerSubtitleConfigurable {
     func setSubtitleColor(_ color: Color)
     func setSubtitleFontName(_ fontName: String)
