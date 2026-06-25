@@ -12,7 +12,7 @@
 >
 > Status legend: `[ ]` not started · `[~]` in progress · `[x]` done · `[!]` blocked
 
-_Last synced: 2026-06-23 (browse vertical-scroll perf pass). Update this date on every edit._
+_Last synced: 2026-06-24 (Home snappiness pass: streaming paint + disk cache + prefetch + invariants doc). Update this date on every edit._
 
 ---
 
@@ -29,6 +29,11 @@ _Last synced: 2026-06-23 (browse vertical-scroll perf pass). Update this date on
 
 ## Done (recent, newest first)
 
+- [x] **Home snappiness pass** (branch `claude/tvos-perf-snappiness`, not yet on `main`). Four workstreams, all Bruno-owned/additive, build-verified:
+  - **Streaming Home paint** — hero published the moment it lands (no more waiting on all ~18 shelves); shelves stream in top-down in plan order via a flush-consecutive reveal (load parallel, reveal shelf *i* only once 0..*i* settle → append-only, never shifts shown rows). Same for the explore tail. Generation-guarded. Soft fade+drift reveal (reduce-motion aware); hero auto-advance held until spine settles. `BrunoHomeViewModel`, `BrunoHomeView`, `BrunoHeroView`, `BrunoShelfView`.
+  - **Disk-persisted Home payload + stale-while-revalidate** — `BrunoLibrarySnapshot` is `Codable`; new `BrunoHomeCache` (actor, off-main I/O, `try?`-tolerant) persists snapshot + hero superset pool + `.query` items, seed+userID-keyed. Relaunch paints instantly, then revalidates and reconciles in place by `shelf.id` (identity/focus survive). Live rows (`.resume`/`.nextUp`/`.recentlyAdded`) never cached.
+  - **Bruno-owned poster prefetch** — `BrunoPosterPrefetcher` warms each row on appear via `.Swiftfin.posters` at the cell's exact width (`BrunoShelfMetrics`), low-priority, cancel-on-disappear. No stock edits. (spec §6 L159)
+  - **Fragility guardrails** — `BrunoShelfMetrics` centralizes the 460 height + poster widths; `docs/BRUNO_PERF_INVARIANTS.md` documents INV-1..9 (what/why/break/safe-recipe + safe-to-touch surface); `// INV-n` anchors at each site. **Browse streaming deferred** into the Browse→Home redesign (shared-file collision); prefetch lands on the shared `BrunoShelfRow` row.
 - [x] Browse vertical-scroll perf: fewer realized poster cells per row (browse only; Home untouched) — `BrunoCategoryShelves.swift` `shelfCap` 36→14, `BrunoShelfRow.swift` `.dataPrefix(40)`→`.dataPrefix(cards.count)`. Each cell is a focusable UIHostingController, so realizing fewer per row is the dominant scroll-cost lever; a shelf is a preview, "Show all" covers the rest. Declined (recorded so not re-attempted blindly): dropping `.posterShadow()` on browse (it's brand — README.md:189-193 — and browse-only drop is the drift the redesign fixes); removing `.hoverEffect(.highlight)` (focus-appearance risk, held for on-device measurement); grow-on-scroll sentinel (mockup treats browse as finite/fully-present; `LazyVStack` already virtualizes rows; would add off-brand pop-in). Branch `claude/strange-cray-165196`; not yet built (no TVVLCKit in worktree — owner builds `main` on device).
 - [x] Dev auto-login to home server on fresh install (`b6fdacdb`, `BrunoDevAutoLogin.swift`)
 - [x] Custom shelf: trailing Show-all card, ~36 items, hide loose movies (`d0d6e32f`)
@@ -66,5 +71,9 @@ is pure given `(seed, librarySnapshot)`. Full taxonomy + generators: `PRODUCT_SP
 - New files in the file-system-synchronized tvOS group → **no `.pbxproj` edits**. Non-Bruno edits stay
   DEBUG-gated and inert-by-default (see `SwiftfinApp.swift`).
 - Never hardcode BoxSet/library IDs — discover groups dynamically (favorited BoxSets of BoxSets).
+- **Before UX-polishing Home/browse shelves, read `docs/BRUNO_PERF_INVARIANTS.md`** (INV-1..9). The
+  Home perf rests on non-obvious invariants (fixed row height, stable shelf ids, prefetch width ==
+  cell width, seed-keyed/source-restricted cache); `// INV-n` anchors mark each site. Restyle freely —
+  just keep those nine intact.
 - No secrets in the repo. Live creds live only in gitignored `bruno_jellyfin.env`.
 - Land finished work on **`main`** — the owner builds `main` in Xcode.

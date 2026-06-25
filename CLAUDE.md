@@ -65,4 +65,14 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ---
 
+## Performance invariants (Home / browse shelves)
+
+The Bruno tvOS Home is fast because of a handful of non-obvious rules (fixed shelf-row height, stable
+shelf ids, prefetch width == cell width, seed-keyed/source-restricted cache, top-down reveal). **Before
+UX-polishing the shelves, read `docs/BRUNO_PERF_INVARIANTS.md`** — INV-1..9, each with what/why/break/safe
+recipe. The sites are anchored with `// INV-n` comments; the fragile constants live in `BrunoShelfMetrics`.
+Restyle freely — just keep those nine intact.
+
+---
+
 These guidelines are working if: fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.

@@ -27,9 +27,11 @@ struct BrunoAmbientBackground: View {
             Color.bruno.page
 
             if let item {
-                // 480 not 1280: the still is blurred at radius 90 + 50% opacity, so detail above a
-                // few px is destroyed anyway — a 480px decode is visually identical for ~7x less
-                // memory/decode than a full backdrop.
+                // INV-6: 480 not 1280 — the still is blurred at radius 90 + 50% opacity, so detail
+                // above a few px is destroyed anyway; a 480px decode is visually identical for ~7x
+                // less memory/decode. This view is used as a SIBLING layer (not a ScrollView
+                // .background) so the radius-90 blur stays out of the per-frame scroll compositing.
+                // See docs/BRUNO_PERF_INVARIANTS.md.
                 ImageView(item.imageSource(.backdrop, maxWidth: 480))
                     .aspectRatio(contentMode: .fill)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
