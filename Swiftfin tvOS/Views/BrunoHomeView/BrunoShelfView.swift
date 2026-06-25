@@ -23,6 +23,11 @@ struct BrunoShelfView: View {
     @Router
     private var router
 
+    // INV-4: warms this row's posters into the same pipeline at the same width the cells request,
+    // so a freshly-revealed or horizontally-scrolled row isn't blank. Cancelled on disappear.
+    @State
+    private var prefetcher = BrunoPosterPrefetcher()
+
     var body: some View {
         if viewModel.items.isNotEmpty {
             VStack(alignment: .leading, spacing: 2) {
@@ -51,6 +56,12 @@ struct BrunoShelfView: View {
                 // source of truth in BrunoShelfMetrics (see docs/BRUNO_PERF_INVARIANTS.md).
                 // Landscape rows keep their intrinsic height (nil) — different aspect, no clip risk.
                 .frame(height: viewModel.posterType == .portrait ? BrunoShelfMetrics.shelfRowHeight : nil)
+            }
+            .onAppear {
+                prefetcher.warm(viewModel.items.elements, type: viewModel.posterType)
+            }
+            .onDisappear {
+                prefetcher.stop(viewModel.items.elements, type: viewModel.posterType)
             }
         }
     }
