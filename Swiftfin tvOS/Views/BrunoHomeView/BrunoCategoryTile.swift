@@ -28,20 +28,24 @@ struct BrunoCategoryTile: View {
 
     var body: some View {
         let palette = Self.palette(for: category.name)
-        ZStack {
-            LinearGradient(
-                colors: [palette.top, palette.bottom],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+        // Test run: on focus, dimmed film art from this category cross-fades behind the title; at
+        // rest it's the existing branded gradient tile. BrunoFocusArtCycle is the reusable module.
+        BrunoFocusArtCycle(parentID: category.boxSet.id) {
+            ZStack {
+                LinearGradient(
+                    colors: [palette.top, palette.bottom],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
 
-            // Legibility wash where the label sits.
-            LinearGradient(
-                colors: [.clear, .black.opacity(0.35)],
-                startPoint: .center,
-                endPoint: .bottom
-            )
-
+                // Legibility wash where the label sits.
+                LinearGradient(
+                    colors: [.clear, .black.opacity(0.35)],
+                    startPoint: .center,
+                    endPoint: .bottom
+                )
+            }
+        } foreground: {
             VStack(spacing: 16) {
                 Text(category.name.uppercased())
                     .font(.brunoDisplay(38, weight: .bold))
