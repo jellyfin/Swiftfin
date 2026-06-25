@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Foundation
 import JellyfinAPI
 import SwiftUI
 
@@ -33,9 +34,25 @@ struct BrunoBoxSetShelvesView: View {
         parent.displayTitle.lowercased() == "decades"
     }
 
-    /// Decades use a pill selector that filters to one decade; everything else shows all shelves.
+    /// The decade category currently selected by a pill (nil ⇒ "All", the overview).
+    private var selectedDecadeCategory: BrunoCollectionCategory? {
+        guard let selectedDecade else { return nil }
+        return viewModel.categories.first { $0.name == selectedDecade }
+    }
+
+    /// Decades use a pill selector. "All" (nil) keeps the decade-overview (one shelf per decade).
+    /// Selecting a specific decade swaps the SHELVES below to one shelf PER YEAR of that decade
+    /// (memoized in the view model); the catch-all "1950s & Earlier" has no fixed 10-year window, so
+    /// it stays its single overview shelf. The PILLS keep iterating viewModel.categories regardless,
+    /// so they never vanish. Falls back to the single decade shelf until the per-year fetch lands.
     private var shownCategories: [BrunoCollectionCategory] {
-        guard isDecades, let selectedDecade else { return viewModel.categories }
+        guard isDecades, let selectedDecade, let category = selectedDecadeCategory else {
+            return viewModel.categories
+        }
+        if let id = category.boxSet.id, let perYear = viewModel.yearShelvesByDecadeID[id] {
+            return perYear
+        }
+        // Not yet fetched (or non-splittable "1950s & Earlier"): show the single decade shelf.
         return viewModel.categories.filter { $0.name == selectedDecade }
     }
 
@@ -66,6 +83,14 @@ struct BrunoBoxSetShelvesView: View {
         .toolbar(.hidden, for: .navigationBar)
         .onFirstAppear {
             Task { await viewModel.load(parent: parent) }
+        }
+        // Trigger the COMPLETE per-year fetch when a specific decade is picked (the setter path, not
+        // a computed var). Memoized in the view model, so re-selecting is a no-op. The resulting
+        // shelf-set swap is non-animated (no withAnimation anywhere on this transition) and honors
+        // reduce-motion by construction — INV-9.
+        .onChange(of: selectedDecade) { _, _ in
+            guard let category = selectedDecadeCategory else { return }
+            Task { await viewModel.loadYearShelves(for: category) }
         }
     }
 
@@ -133,6 +158,14 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
     private(set) var categories: [BrunoCollectionCategory] = []
     @Published
     private(set) var isLoading = true
+
+    /// Per-decade-id → that decade's complete film set regrouped into one synthetic category PER
+    /// YEAR (newest-year-first, then an "Other" catch-all). Memoized: selecting a decade fetches its
+    /// COMPLETE set once (the inline shelf children are a 13-item shuffled preview — far too sparse
+    /// to bucket into 10 years), then re-selecting reads straight from here. Keyed by the decade
+    /// sub-BoxSet id, which is per-snapshot, so a user/library switch can't serve stale buckets.
+    @Published
+    private(set) var yearShelvesByDecadeID: [String: [BrunoCollectionCategory]] = [:]
 
     /// One past the shelf cap so the shared scaffold can tell whether "Show all" is warranted.
     private let perShelfFetch = 13
@@ -210,6 +243,155 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
 
         categories = recencyBiased ? Self.dedupeAcrossCategories(ordered) : ordered
         isLoading = false
+    }
+
+    // MARK: - Per-year decade shelves (Step 3b)
+
+    /// Decade names that must NOT be split into per-year shelves: the open-ended catch-all has no
+    /// fixed 10-year window, so it stays a single shelf (owner request).
+    private static func isSplittableDecade(_ name: String) -> Bool {
+        // "1950s & Earlier" is the sole non-window bucket; every "NNNNs" decade splits.
+        !name.localizedCaseInsensitiveContains("earlier")
+    }
+
+    /// Fetch a decade's COMPLETE film set and regroup it into one synthetic category per year
+    /// (newest-year-first) plus an "Other" catch-all. Memoized per decade BoxSet id — a no-op once
+    /// loaded, and skipped entirely for the non-splittable "1950s & Earlier". Pure regroup given the
+    /// fetched set (INV-3): the only ordering inputs are premiereDate / productionYear / id.
+    func loadYearShelves(for decade: BrunoCollectionCategory) async {
+        guard let decadeID = decade.boxSet.id,
+              Self.isSplittableDecade(decade.name),
+              yearShelvesByDecadeID[decadeID] == nil,
+              let userSession
+        else { return }
+
+        let client = userSession.client
+        let userID = userSession.user.id
+        let decadeBoxSet = decade.boxSet
+
+        let complete: [BaseItemDto]
+        do {
+            complete = try await BrunoItemPaging.fetchAll(client: client) { startIndex, limit in
+                var parameters = Paths.GetItemsParameters()
+                parameters.userID = userID
+                parameters.parentID = decadeID
+                // Decades hold their films as direct children; honour the parent's own recursion
+                // policy for safety if the curation ever nests them.
+                parameters.isRecursive = decadeBoxSet.isRecursiveCollection
+                // The decades curation is movies-only (verified live: every 2000s child is a Movie).
+                parameters.includeItemTypes = [.movie]
+                // premiereDate & productionYear return implicitly; .genres keeps brunoFeaturedItem /
+                // brunoHeroEligible working on the surface's hero. NO shuffle — completeness matters.
+                parameters.fields = .MinimumFields + [.genres]
+                parameters.enableUserData = true
+                parameters.startIndex = startIndex
+                parameters.limit = limit
+                return parameters
+            }
+        } catch {
+            complete = []
+        }
+
+        yearShelvesByDecadeID[decadeID] = Self.yearCategories(
+            from: complete,
+            decade: decadeBoxSet
+        )
+    }
+
+    /// Regroup a decade's complete film list into per-year synthetic categories (newest-year-first)
+    /// plus a trailing "Other" catch-all. Deterministic and side-effect free. `decade` is the REAL
+    /// decade BoxSet — threaded onto each synthetic category as `gridParent` so "Show all" scopes the
+    /// live year-filtered library correctly.
+    private static func yearCategories(
+        from items: [BaseItemDto],
+        decade: BaseItemDto
+    ) -> [BrunoCollectionCategory] {
+        let decadeName = decade.displayTitle
+        let decadeStart = leadingYear(decadeName) // e.g. "2000s" → 2000
+        let window = decadeStart ... (decadeStart + 9) // [2000, 2009] inclusive
+
+        // Bucket by resolved year; the Other key (nil) holds anything with no year OR out-of-window.
+        var buckets: [Int?: [BaseItemDto]] = [:]
+        for item in items {
+            let resolved = resolvedYear(of: item)
+            let key: Int? = (resolved.map { window.contains($0) } == true) ? resolved : nil
+            buckets[key, default: []].append(item)
+        }
+
+        // Intra-year order: premiereDate descending, then id as a stable tiebreaker (NO BrunoRNG).
+        func ordered(_ films: [BaseItemDto]) -> [BaseItemDto] {
+            films.sorted { lhs, rhs in
+                let lDate = lhs.premiereDate ?? .distantPast
+                let rDate = rhs.premiereDate ?? .distantPast
+                if lDate != rDate { return lDate > rDate }
+                return (lhs.id ?? "") < (rhs.id ?? "")
+            }
+        }
+
+        let slug = decadeName.lowercased()
+        var out: [BrunoCollectionCategory] = []
+
+        // Real years, newest-first; skip empty years.
+        for year in window.reversed() {
+            guard let films = buckets[year], films.isNotEmpty else { continue }
+            out.append(yearCategory(
+                id: "decade-\(slug)-year-\(year)",
+                title: "\(year)",
+                films: ordered(films),
+                decade: decade,
+                year: year
+            ))
+        }
+
+        // Other catch-all (nil / out-of-window) sorts LAST; skipped when empty so nothing is dropped
+        // yet no empty shelf appears. No single year applies → Show-all opens the decade's full
+        // library (gridYear nil).
+        if let other = buckets[nil], other.isNotEmpty {
+            out.append(yearCategory(
+                id: "decade-\(slug)-other",
+                title: "Other",
+                films: ordered(other),
+                decade: decade,
+                year: nil
+            ))
+        }
+
+        return out
+    }
+
+    /// A synthetic per-year category. The boxSet is a placeholder whose displayTitle is the label and
+    /// whose id is a STABLE UNIQUE string (INV-2) so it never collides across years or with the
+    /// parent decade category. drillStyle .grid + gridParent/gridYear so "Show all" reaches the full
+    /// year-filtered live library (not the landscape franchise grid that .items routes to).
+    private static func yearCategory(
+        id: String,
+        title: String,
+        films: [BaseItemDto],
+        decade: BaseItemDto,
+        year: Int?
+    ) -> BrunoCollectionCategory {
+        BrunoCollectionCategory(
+            boxSet: BaseItemDto(id: id, name: title),
+            children: films,
+            drillStyle: .grid,
+            gridParent: decade,
+            gridYear: year
+        )
+    }
+
+    /// Resolve an item's release year: the calendar year of premiereDate (UTC, so a UTC-midnight
+    /// date can't roll into an adjacent year on a non-UTC device), else productionYear, else nil.
+    private static let utcCalendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC") ?? .current
+        return calendar
+    }()
+
+    private static func resolvedYear(of item: BaseItemDto) -> Int? {
+        if let premiere = item.premiereDate {
+            return utcCalendar.component(.year, from: premiere)
+        }
+        return item.productionYear
     }
 
     /// The leading numeric year in a decade sub-group name ("2020s" → 2020, "1950s & Earlier" →

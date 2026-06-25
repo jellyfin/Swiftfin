@@ -41,19 +41,29 @@ struct BrunoCollectionCategory: Identifiable {
     /// Genre categories are recency-biased: their row is modern-only and their "Show all" grid sorts
     /// newest-first so pre-1985 films sink to the bottom of the barrel. Non-genre categories don't.
     let recencyBiased: Bool
+    /// `.grid` Show-all override: when set, "Show all" opens a live, fully-paged `ItemLibrary` scoped
+    /// to `gridParent` (filtered to `gridYear` when non-nil) instead of deriving the parent from
+    /// `boxSet`. Used by the per-year decade shelves, whose `boxSet` is a synthetic label-only stub
+    /// (no real id/type) — routing must point at the REAL decade BoxSet, narrowed to one year.
+    let gridParent: BaseItemDto?
+    let gridYear: Int?
 
     init(
         boxSet: BaseItemDto,
         children: [BaseItemDto],
         drillStyle: DrillStyle = .grid,
         lens: String? = nil,
-        recencyBiased: Bool = false
+        recencyBiased: Bool = false,
+        gridParent: BaseItemDto? = nil,
+        gridYear: Int? = nil
     ) {
         self.boxSet = boxSet
         self.children = children
         self.drillStyle = drillStyle
         self.lens = lens
         self.recencyBiased = recencyBiased
+        self.gridParent = gridParent
+        self.gridYear = gridYear
     }
 
     var id: String {
@@ -271,6 +281,23 @@ struct BrunoCategoryShelves: View {
                 in: namespace
             )
         case .grid:
+            // Per-year decade shelf: route to a live, fully-paged ItemLibrary scoped to the REAL
+            // decade BoxSet, filtered to this single year (the inline row is only a preview, so
+            // "Show all" must reach the complete year). The synthetic category's own `boxSet` is a
+            // label-only stub, so we can't derive the parent from it — `gridParent` carries the real
+            // decade BoxSet and `gridYear` the year. "Other" has no single year (gridYear == nil), so
+            // it opens the decade's full library unfiltered.
+            if let gridParent = category.gridParent {
+                let filters: ItemFilterCollection = category.gridYear.map { year in
+                    .init(years: [ItemYear(integerLiteral: year)])
+                } ?? .default
+                router.route(
+                    to: .library(library: ItemLibrary(parent: gridParent, filters: filters)),
+                    in: namespace
+                )
+                return
+            }
+
             // A group whose children are sub-collections (Directors, Studios, …) must show ONLY
             // those box sets on "Show all". The stock ItemLibrary(parent:) query returns the
             // group's movies recursively as well — that's the "all the contributing movies are
