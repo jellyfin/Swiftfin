@@ -18,6 +18,9 @@ import SwiftUI
 //
 // One group/sub-group (a BoxSet) plus its child items. Shared by the Collections hub and the
 // Genres/Decades drill-in, which render identically — only their data source differs.
+// Implicitly Sendable (all members are Sendable: BaseItemDto is Sendable, DrillStyle has no
+// associated values), so the loaded category set crosses into the actor-isolated drill-in cache
+// (BrunoBoxSetShelvesCache) without ceremony.
 struct BrunoCollectionCategory: Identifiable {
 
     /// What "Show all" does for this category.

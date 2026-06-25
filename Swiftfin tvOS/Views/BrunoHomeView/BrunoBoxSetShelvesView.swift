@@ -243,12 +243,33 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
     /// One past the shelf cap so the shared scaffold can tell whether "Show all" is warranted.
     private let perShelfFetch = 13
 
+    /// Re-entrancy guard: the in-flight (or completed) load for THIS view model instance. The
+    /// cache read below is `await`ed, so a fast double-`onFirstAppear` (two pushes before the first
+    /// suspension resumes) could otherwise launch two concurrent fan-outs. We start the load once,
+    /// stash the Task, and have later calls await the same Task instead of re-running. A new
+    /// @StateObject per push means this only coalesces re-entry within one push's lifetime — exactly
+    /// the double-fire window; cross-push reuse comes from BrunoBoxSetShelvesCache.
+    private var loadTask: Task<Void, Never>?
+
     /// Day-stable seed for shelf shuffling — same order all day, reshuffles the next day.
     private static var shuffleSeed: UInt32 {
         UInt32(truncatingIfNeeded: Int(Date().timeIntervalSince1970 / 86400))
     }
 
     func load(parent: BaseItemDto) async {
+        // Re-entrancy guard: if a load is already running/done on this instance, await it instead of
+        // launching a second fan-out. The `await` on the cache read is the suspension a quick
+        // re-push could slip through, so the guard wraps the whole thing.
+        if let loadTask {
+            await loadTask.value
+            return
+        }
+        let task = Task { await performLoad(parent: parent) }
+        loadTask = task
+        await task.value
+    }
+
+    private func performLoad(parent: BaseItemDto) async {
         guard let userSession, let parentID = parent.id else {
             isLoading = false
             return
@@ -256,6 +277,17 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
 
         let client = userSession.client
         let userID = userSession.user.id
+
+        // Cross-push cache: re-entering this drill-in (Genres / Decades / Curated) within the TTL
+        // reuses the categories the fan-out already produced — skipping the 20+ request storm — since
+        // the @StateObject is re-instantiated per navigation push and would otherwise re-run it every
+        // time. Keyed by (userID, parentID); 300s TTL bounds staleness of the children's
+        // enableUserData (watched / resume ticks), matching the snapshot cache's contract (INV-5).
+        if let cached = await BrunoBoxSetShelvesCache.shared.value(userID: userID, parentID: parentID) {
+            categories = cached
+            isLoading = false
+            return
+        }
 
         // Genre rows are biased to modern films (owner request): pre-1985 titles are dropped from the
         // "If You Like {genre}" shelves and the same film can't fill two overlapping genre rows. They
@@ -314,8 +346,15 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
             ? baseOrdered.sorted { Self.leadingYear($0.name) > Self.leadingYear($1.name) }
             : baseOrdered
 
-        categories = recencyBiased ? Self.dedupeAcrossCategories(ordered) : ordered
+        let result = recencyBiased ? Self.dedupeAcrossCategories(ordered) : ordered
+        categories = result
         isLoading = false
+
+        // Store the fan-out result so a re-entry within the TTL skips the request storm. Empty results
+        // are not cached (let a later push retry), mirroring the snapshot cache.
+        if result.isNotEmpty {
+            await BrunoBoxSetShelvesCache.shared.store(result, userID: userID, parentID: parentID)
+        }
     }
 
     // MARK: - Per-year decade shelves (Step 3b)
@@ -517,6 +556,52 @@ final class BrunoBoxSetShelvesViewModel: ViewModel {
         } catch {
             return []
         }
+    }
+}
+
+// MARK: - BrunoBoxSetShelvesCache
+
+//
+// In-memory cache so re-entering a browse drill-in (Genres / Decades / Curated) reuses the
+// categories its fan-out already produced instead of re-running the 20+ request storm on every
+// navigation push (the view's @StateObject is re-instantiated per push). Mirrors
+// BrunoLibrarySnapshot.Cache: an actor, keyed by (userID, parentID), short TTL.
+//
+// TTL (not session-permanent) because the cached children carry enableUserData=true (watched /
+// resume state); a permanent cache would show stale watched ticks (INV-5). 300s bounds staleness
+// and matches the snapshot cache's contract. Keyed by userID so a user switch never serves stale
+// data, and by parentID so each group (Genres / Decades / Curated …) caches independently. Per-year
+// decade splits are NOT cached here — they're memoized separately in `yearShelvesByDecadeID`.
+private actor BrunoBoxSetShelvesCache {
+
+    static let shared = BrunoBoxSetShelvesCache()
+
+    private struct Entry {
+        let userID: String
+        let categories: [BrunoCollectionCategory]
+        let loadedAt: Date
+    }
+
+    /// Keyed by parentID; the entry also pins the userID so a user switch is treated as a miss.
+    private var entries: [String: Entry] = [:]
+
+    private let maxAge: TimeInterval = 300
+
+    func value(userID: String, parentID: String) -> [BrunoCollectionCategory]? {
+        guard let entry = entries[parentID],
+              entry.userID == userID,
+              Date().timeIntervalSince(entry.loadedAt) < maxAge
+        else {
+            // Evict on expiry / user mismatch so a stale entry can't linger past its TTL.
+            entries[parentID] = nil
+            return nil
+        }
+        return entry.categories
+    }
+
+    func store(_ categories: [BrunoCollectionCategory], userID: String, parentID: String) {
+        guard categories.isNotEmpty else { return }
+        entries[parentID] = Entry(userID: userID, categories: categories, loadedAt: Date())
     }
 }
 
