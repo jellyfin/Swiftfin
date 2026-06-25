@@ -65,7 +65,7 @@ extension ItemView {
 }
 
 extension ItemView.OverviewView {
-#if compiler(<6.4)
+    #if compiler(<6.4)
     init(item: BaseItemDto) {
         self.init(
             item: item,
@@ -73,7 +73,7 @@ extension ItemView.OverviewView {
             taglineLineLimit: nil
         )
     }
-#endif
+    #endif
     func overviewLineLimit(_ limit: Int) -> Self {
         copy(modifying: \.overviewLineLimit, with: limit)
     }

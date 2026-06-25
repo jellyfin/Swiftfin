@@ -1,5 +1,5 @@
 {
-  "originHash" : "7ec54c37c9193d5e227efb16aa23f2cf463955649f014ffbd3610ee3e0dacd7a",
+  "originHash" : "0f98fea88b698b5a975f481b6c07f3e037d6a37d631ead73628acc99c6c0bb02",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnEstropia/CoreStore.git",
       "state" : {
-        "revision" : "5a0d27cf343c6e341b0ef3c8d36104770b27a839",
-        "version" : "9.3.0"
+        "branch" : "develop",
+        "revision" : "332883717578c009e1e8917a647a2f6c975e8f0a"
       }
     },
     {
