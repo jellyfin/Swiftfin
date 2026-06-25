@@ -54,11 +54,7 @@ final class UserSessionManager: ObservableObject {
     private(set) var currentSession: UserSession?
 
     @Published
-    private(set) var pendingDeepLink: DeepLink? {
-        didSet {
-            print("Pending deep link updated: \(String(describing: pendingDeepLink))")
-        }
-    }
+    private(set) var pendingDeepLink: DeepLink?
 
     private var cancellables = Set<AnyCancellable>()
     private let logger = Logger.swiftfin()

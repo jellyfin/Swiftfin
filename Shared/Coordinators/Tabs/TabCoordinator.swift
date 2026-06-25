@@ -25,7 +25,6 @@ final class TabCoordinator: ObservableObject {
     @Published
     var selectedTabID: String! = nil {
         didSet {
-            print("TabCoordinator: selectedTabID changed from \(oldValue ?? "nil") to \(selectedTabID ?? "nil")")
             guard let tab = tabs.first(property: \.item.id, equalTo: selectedTabID) else { return }
 
             tab.publisher.send(
@@ -51,7 +50,7 @@ final class TabCoordinator: ObservableObject {
     }
 
     func route(to route: NavigationRoute) async {
-        guard let tab = tabs.first(where: { $0.item.id == selectedTabID }) ?? tabs.first else { return }
+        guard let tab = tabs.first(where: { $0.item.id == selectedTabID }) else { return }
         tab.coordinator.push(route)
     }
 }
