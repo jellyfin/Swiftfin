@@ -77,10 +77,18 @@ struct BrunoHomeView: View {
                         .padding(.top, 20)
                         .id("bruno-top")
 
-                    BrunoHeroView(items: viewModel.heroItems, index: $spotlightIndex)
+                    BrunoHeroView(
+                        items: viewModel.heroItems,
+                        index: $spotlightIndex,
+                        autoAdvanceEnabled: viewModel.state == .content
+                    )
 
                     ForEach(viewModel.sections) { section in
                         BrunoShelfView(viewModel: section)
+                            // INV-8/INV-9: shelves stream in top-down (the VM reveals them in plan
+                            // order); each rises into place with a soft fade + 16pt drift so the fill
+                            // reads as an intentional reveal, not random pop-in. Honors reduce-motion.
+                                .transition(reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 16)))
                     }
 
                     Color.clear
@@ -88,6 +96,7 @@ struct BrunoHomeView: View {
                         .onAppear { viewModel.send(.appendExplore) }
                 }
                 .padding(.bottom, 60)
+                .animation(reduceMotion ? nil : .easeOut(duration: 0.35), value: viewModel.sections.count)
             }
             .onChange(of: viewModel.scrollResetToken) { _, _ in
                 if reduceMotion {

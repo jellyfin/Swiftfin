@@ -35,6 +35,11 @@ struct BrunoHeroView: View {
     /// Eyebrow above the title. "Spotlight" on Home; browse surfaces pass their own ("Featured", …).
     var eyebrow: String = "Spotlight"
 
+    /// INV-8: while the home spine is still streaming in, hold the spotlight auto-advance so a
+    /// backdrop swap never competes with shelves rising into place (two motion events at once reads
+    /// as "busy/loading", not cinematic). The page passes `state == .content` once it has settled.
+    var autoAdvanceEnabled: Bool = true
+
     @Router
     private var router
 
@@ -71,8 +76,9 @@ struct BrunoHeroView: View {
                 }
             }
             .onReceive(autoAdvance) { _ in
-                // Pause while focused (TV-app behaviour) so the swap never yanks focus.
-                guard !reduceMotion, !isFocused, items.count > 1 else { return }
+                // Pause while focused (TV-app behaviour) so the swap never yanks focus, and while the
+                // spine is still streaming in (autoAdvanceEnabled — INV-8).
+                guard autoAdvanceEnabled, !reduceMotion, !isFocused, items.count > 1 else { return }
                 step(by: 1)
             }
         }

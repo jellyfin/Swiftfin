@@ -56,6 +56,11 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
     /// The fetched hero candidate pool (high-rated movies); re-shuffled locally on each (re)entry.
     private var heroSuperset: [BaseItemDto] = []
     private var explorePage = 0
+    /// Bumped at the start of every `performRefresh`. Streaming shelf-inserts and explore appends
+    /// are guarded on it so a superseded refresh (e.g. Shuffle restarts the task) can never graft
+    /// stale-generation rows onto the new spine. (`Task.isCancelled` covers the same case; the
+    /// generation guard is the belt to that suspenders, and survives a same-seed re-refresh.)
+    private var refreshGeneration = 0
     /// Content already on screen (by `BrunoShelf.dedupeKey`) so the explore tail never repeats a
     /// collection it (or the spine) already showed — including across infinite-scroll pages.
     private var seenDedupeKeys: Set<String> = []
@@ -129,6 +134,9 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
             return
         }
 
+        refreshGeneration &+= 1
+        let generation = refreshGeneration
+
         // forceReload: Home always refreshes fresh (unchanged behavior), but stores the result so
         // Collections / drill-ins can reuse it instead of refetching the whole library.
         let snapshot = await BrunoLibrarySnapshot.loadShared(
@@ -137,32 +145,79 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
             forceReload: true
         )
 
-        guard !Task.isCancelled else { return }
+        guard !Task.isCancelled, generation == refreshGeneration else { return }
         self.snapshot = snapshot
 
-        async let heroTask = loadHero(session: userSession)
+        // WS1: publish the hero the moment it lands — independent of the shelf load — so the page
+        // paints its banner in ~1-2s instead of waiting on all ~18 shelves (the cold-spinner). The
+        // paint gate (BrunoHomeView) lights on `heroItems` alone.
+        async let heroPublish: Void = publishHero(session: userSession, generation: generation)
 
         let plan = BrunoHomePlan.build(seed: seed, snapshot: snapshot, now: Date())
         let sectionVMs = plan.map { BrunoShelfViewModel(shelf: $0) }
-        await withTaskGroup(of: Void.self) { group in
-            for section in sectionVMs {
-                group.addTask { await section.load() }
-            }
+
+        // Clear the old spine for this fresh roll; shelves stream back in below. Hero stays painted
+        // (heroItems untouched) so the gate never drops to a spinner on Shuffle/refresh.
+        sections = []
+
+        // WS1: stream shelves in. Load ALL concurrently, but REVEAL strictly top-down in plan order
+        // (INV-3/INV-8): a late-finishing early shelf never inserts ABOVE an already-shown shelf and
+        // shifts it under the user's focus. `shouldDisplay` is only knowable post-load, so the
+        // keep/drop decision is made at flush time; dropped shelves are simply never appended.
+        await streamReveal(sectionVMs, generation: generation) { [weak self] vm in
+            guard let self, vm.shouldDisplay else { return }
+            self.sections.append(vm)
         }
 
-        guard !Task.isCancelled else { return }
+        await heroPublish
+        guard !Task.isCancelled, generation == refreshGeneration else { return }
 
-        heroItems = await heroTask
-        let kept = sectionVMs.filter(\.shouldDisplay)
-        sections = kept
-        seenDedupeKeys = Set(kept.map(\.shelf.dedupeKey))
+        seenDedupeKeys = Set(sections.map(\.shelf.dedupeKey))
         explorePage = 0
         exploreExhausted = false
         state = .content
     }
 
+    /// Load `vms` concurrently, then reveal each in strict plan order (INV-8): shelf *i* is flushed
+    /// only once shelves 0…*i* have all finished loading, so `reveal` only ever APPENDS — it never
+    /// inserts above visible content. `reveal` decides keep/drop (and any dedupe side effects) at
+    /// flush time. Generation-guarded so a superseded refresh can't graft rows.
+    private func streamReveal(
+        _ vms: [BrunoShelfViewModel],
+        generation: Int,
+        reveal: @escaping (BrunoShelfViewModel) -> Void
+    ) async {
+        var loaded: Set<Int> = []
+        var nextReveal = 0
+        await withTaskGroup(of: Int.self) { group in
+            for (index, vm) in vms.enumerated() {
+                group.addTask {
+                    await vm.load()
+                    return index
+                }
+            }
+            for await index in group {
+                guard !Task.isCancelled, generation == refreshGeneration else { continue }
+                loaded.insert(index)
+                while loaded.contains(nextReveal) {
+                    reveal(vms[nextReveal])
+                    nextReveal += 1
+                }
+            }
+        }
+    }
+
+    /// Fetch the hero superset and publish the 5 picks as soon as they land (generation-guarded).
+    private func publishHero(session: UserSession, generation: Int) async {
+        let hero = await loadHero(session: session)
+        guard !Task.isCancelled, generation == refreshGeneration else { return }
+        heroItems = hero
+    }
+
     private func performAppendExplore() async {
         guard let userSession, !exploreExhausted else { return }
+        // Tie this append to the live refresh generation so a refresh mid-append stops the inserts.
+        let generation = refreshGeneration
 
         // Advance the page regardless of yield so an empty batch can't busy-loop the sentinel.
         let page = explorePage + 1
@@ -185,20 +240,21 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         }
 
         let newVMs = newShelves.map { BrunoShelfViewModel(shelf: $0) }
-        await withTaskGroup(of: Void.self) { group in
-            for section in newVMs {
-                group.addTask { await section.load() }
-            }
-        }
-
-        guard !Task.isCancelled else { return }
-
         let existingIDs = Set(sections.map(\.id))
-        let kept = newVMs.filter { $0.shouldDisplay && !existingIDs.contains($0.id) }
-        for section in kept {
-            seenDedupeKeys.insert(section.shelf.dedupeKey)
+
+        // Stream the appended shelves in top-down (plan) order, same as performRefresh — so one slow
+        // explore query doesn't gate the rest of the page. Dedupe at flush time (keys can repeat
+        // within a batch); kept shelves are recorded in `seenDedupeKeys` as they append.
+        await streamReveal(newVMs, generation: generation) { [weak self] vm in
+            guard let self,
+                  vm.shouldDisplay,
+                  !existingIDs.contains(vm.id),
+                  !self.seenDedupeKeys.contains(vm.shelf.dedupeKey) else { return }
+            self.seenDedupeKeys.insert(vm.shelf.dedupeKey)
+            self.sections.append(vm)
         }
-        sections.append(contentsOf: kept)
+
+        guard !Task.isCancelled, generation == refreshGeneration else { return }
 
         if sections.count >= BrunoHomePlan.shelfCap { exploreExhausted = true }
     }
