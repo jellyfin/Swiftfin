@@ -71,15 +71,16 @@ struct BrunoSelectorCard: View {
                         )
                 }
                 .overlay {
-                    // Focus cursor: a 3px accent ring (README focus system). Only when focused but
-                    // not already accent-filled, so a focused chip is an obvious target without
-                    // faking "selected."
-                    if isFocused, !isSelected {
-                        Capsule(style: .continuous)
-                            .stroke(Color.bruno.accent, lineWidth: 3)
-                    }
+                    // Focus cursor: a 3px accent ring (README focus system), shown when focused but
+                    // not already accent-filled. ALWAYS present and toggled via opacity — never an
+                    // `if`-inserted view — so it cross-fades with the scale/fill under the value
+                    // animation instead of popping in abruptly mid-scale (the janky highlight).
+                    Capsule(style: .continuous)
+                        .stroke(Color.bruno.accent, lineWidth: 3)
+                        .opacity(isFocused && !isSelected ? 1 : 0)
                 }
                 .scaleEffect(isFocused ? 1.05 : 1.0)
+                // Animate scale + ring opacity + fill together off the single focus signal.
                 .animation(.easeOut(duration: 0.15), value: isFocused)
         }
         .buttonStyle(.plain)
