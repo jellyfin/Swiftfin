@@ -28,7 +28,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         @FocusState
         private var focusedButton: String?
 
-        private func filteredActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
+        private func resolvedActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
             var filteredButtons = rawButtons
 
             if manager.playbackItem?.audioStreams.isEmpty == true {
@@ -49,7 +49,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 filteredButtons.removeAll { $0 == .audio }
                 filteredButtons.removeAll { $0 == .autoPlay }
                 filteredButtons.removeAll { $0 == .playbackSpeed }
-//                filteredButtons.removeAll { $0 == .playbackQuality }
+                filteredButtons.removeAll { $0 == .playbackSettings }
                 filteredButtons.removeAll { $0 == .subtitles }
             }
 
@@ -57,11 +57,11 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         }
 
         private var barActionButtons: [VideoPlayerActionButton] {
-            filteredActionButtons(rawBarActionButtons)
+            resolvedActionButtons(rawBarActionButtons)
         }
 
         private var menuActionButtons: [VideoPlayerActionButton] {
-            filteredActionButtons(rawMenuActionButtons)
+            resolvedActionButtons(rawMenuActionButtons)
         }
 
         @ViewBuilder
@@ -79,8 +79,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             #endif
             case .playbackSpeed:
                 PlaybackRateMenu()
-//            case .playbackQuality:
-//                PlaybackQuality()
+            case .playbackSettings:
+                PlaybackSettings()
             case .playNextItem:
                 PlayNextItem()
             case .playPreviousItem:
@@ -100,7 +100,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                     barActionButtons,
                     content: view(for:)
                 )
-                .environment(\.isInMenu, true)
 
                 Divider()
 
@@ -108,8 +107,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                     menuActionButtons,
                     content: view(for:)
                 )
-                .environment(\.isInMenu, true)
             }
+            .withViewContext(.isInMenu)
         }
 
         @ViewBuilder
@@ -129,7 +128,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                             menuActionButtons,
                             content: view(for:)
                         )
-                        .environment(\.isInMenu, true)
+                        .withViewContext(.isInMenu)
                     }
                     .focused($focusedButton, equals: "menu")
                 }

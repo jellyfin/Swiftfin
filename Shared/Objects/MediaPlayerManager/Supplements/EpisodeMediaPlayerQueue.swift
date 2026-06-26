@@ -119,16 +119,18 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         var previousProvider: MediaPlayerItemProvider?
 
         if let nextItem {
-            nextProvider = MediaPlayerItemProvider(item: nextItem) { item in
-                try await MediaPlayerItem.build(for: item) {
+            nextProvider = MediaPlayerItemProvider(item: nextItem) { [weak self] item in
+                let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+                return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) {
                     $0.userData?.playbackPositionTicks = .zero
                 }
             }
         }
 
         if let previousItem {
-            previousProvider = MediaPlayerItemProvider(item: previousItem) { item in
-                try await MediaPlayerItem.build(for: item) {
+            previousProvider = MediaPlayerItemProvider(item: previousItem) { [weak self] item in
+                let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+                return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) {
                     $0.userData?.playbackPositionTicks = .zero
                 }
             }
@@ -166,12 +168,13 @@ extension EpisodeMediaPlayerQueue {
         }
 
         private func select(episode: BaseItemDto) {
-            let provider = MediaPlayerItemProvider(item: episode) { item in
+            let provider = MediaPlayerItemProvider(item: episode) { [manager] item in
                 let mediaSource = item.mediaSources?.first
 
                 return try await MediaPlayerItem.build(
                     for: item,
-                    mediaSource: mediaSource!
+                    mediaSource: mediaSource!,
+                    requestedBitrate: manager.playbackBitrate
                 )
             }
 
