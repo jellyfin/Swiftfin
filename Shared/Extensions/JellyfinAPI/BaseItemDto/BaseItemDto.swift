@@ -206,7 +206,7 @@ extension BaseItemDto {
                 else {
                     throw ErrorMessage(L10n.unknownError)
                 }
-                return try await MediaPlayerItem.build(for: program, mediaSource: mediaSource)
+                return try await MediaPlayerItem.build(for: channel, mediaSource: mediaSource)
             }
         default:
             MediaPlayerItemProvider(item: self) { item in
