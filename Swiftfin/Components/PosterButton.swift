@@ -39,6 +39,7 @@ struct PosterButton<Item: Poster>: View {
                 .backport
                 .matchedTransitionSource(id: "item", in: namespace)
                 .posterShadow()
+                .accessibilityElement(children: .ignore)
 
             label
                 .eraseToAnyView()
