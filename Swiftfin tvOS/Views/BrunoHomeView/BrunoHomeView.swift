@@ -30,6 +30,12 @@ struct BrunoHomeView: View {
     @State
     private var spotlightIndex = 0
 
+    /// Cap-and-grow window: how many of the already-revealed shelves are mounted at once. Bounds the
+    /// mount burst that hitches vertical scrolling. Independent of the explore tail's data loading
+    /// (appendExplore) — this only limits how many of the streamed-in `sections` are realized.
+    @State
+    private var visibleShelfCount = 4
+
     private var spotlightItem: BaseItemDto? {
         viewModel.heroItems[safe: spotlightIndex] ?? viewModel.heroItems.first
     }
@@ -92,12 +98,25 @@ struct BrunoHomeView: View {
                         }
                         .id("bruno-top")
 
-                    ForEach(viewModel.sections) { section in
+                    // INV-2: cap-and-grow window — mount only the first `visibleShelfCount` of the
+                    // already-revealed sections, keyed on the section's stable id (not array index).
+                    ForEach(viewModel.sections.prefix(visibleShelfCount)) { section in
                         BrunoShelfView(viewModel: section)
                             // INV-8/INV-9: shelves stream in top-down (the VM reveals them in plan
                             // order); each rises into place with a soft fade + 16pt drift so the fill
                             // reads as an intentional reveal, not random pop-in. Honors reduce-motion.
                                 .transition(reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 16)))
+                    }
+
+                    // Window-grow sentinel: sits ABOVE the explore tail. When more revealed sections
+                    // exist than are mounted, scrolling near here grows the *mounted* count in steps of
+                    // 4. This is purely a mount cap — it does not load data; the appendExplore sentinel
+                    // below owns the streaming reveal. The two coexist: this gates on the mounted count,
+                    // appendExplore gates on the data tail.
+                    if visibleShelfCount < viewModel.sections.count {
+                        Color.clear
+                            .frame(height: 1)
+                            .onAppear { visibleShelfCount = min(visibleShelfCount + 4, viewModel.sections.count) }
                     }
 
                     Color.clear
@@ -106,6 +125,9 @@ struct BrunoHomeView: View {
                 }
                 .padding(.bottom, 60)
                 .animation(reduceMotion ? nil : .easeOut(duration: 0.35), value: viewModel.sections.count)
+                // Reset the mount window whenever the revealed-sections set changes (e.g. reshuffle /
+                // refresh re-seeds the spine), keyed on the same stable ids the ForEach uses.
+                .onChange(of: viewModel.sections.map(\.id)) { _, _ in visibleShelfCount = 4 }
             }
             .onChange(of: viewModel.scrollResetToken) { _, _ in
                 if reduceMotion {

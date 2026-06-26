@@ -29,13 +29,14 @@ struct PosterButton<Item: Poster>: View {
 
     @ViewBuilder
     private func poster(overlay: some View) -> some View {
-        PosterImage(item: item, type: type)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .overlay { overlay }
-            .contentShape(.contextMenuPreview, Rectangle())
-            .posterStyle(type)
-            .posterShadow()
-            .hoverEffect(.highlight)
+        FocusShadowPoster {
+            PosterImage(item: item, type: type)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay { overlay }
+                .contentShape(.contextMenuPreview, Rectangle())
+                .posterStyle(type)
+        }
+        .hoverEffect(.highlight)
     }
 
     var body: some View {
@@ -56,6 +57,30 @@ struct PosterButton<Item: Poster>: View {
         .accessibilityLabel(item.displayTitle)
         .matchedContextMenu(for: item) {
             EmptyView()
+        }
+    }
+}
+
+// Applies `.posterShadow()` only while the enclosing poster button is focused. The
+// drop shadow rasterizes offscreen every frame during scroll; gating it on focus keeps
+// it off the dozens of unfocused posters in a shelf. Reads the Button's focus via
+// `@Environment(\.isFocused)` (this view is a Button descendant), matching the
+// BrunoArtCarouselCard / BrunoFocusArtCycle pattern. Focus scale/ring is unchanged —
+// those come from the borderless button style, not from here.
+private struct FocusShadowPoster<Content: View>: View {
+
+    @Environment(\.isFocused)
+    private var isFocused
+
+    @ViewBuilder
+    let content: Content
+
+    @ViewBuilder
+    var body: some View {
+        if isFocused {
+            content.posterShadow()
+        } else {
+            content
         }
     }
 }
