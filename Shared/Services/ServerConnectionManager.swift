@@ -226,19 +226,16 @@ final class ServerConnectionManager: ObservableObject {
         await _resolutionDidUpdate(resolution)
     }
 
-    @MainActor
-    private func pathDidUpdate(_ context: NetworkConnectionContext) {
-
-        if context != self.context, context.isSatisfied {
-            Notifications[.didChangeNetwork].post()
-        }
-
     @Function(\Action.Cases._resolutionDidUpdate)
     private func __resolutionDidUpdate(_ resolution: Resolution) {
         // no-op, just for state transition
     }
 
     private func contextDidUpdate(_ context: NetworkConnectionContext) {
+        if context != self.context, context.isSatisfied {
+            Notifications[.didChangeNetwork].post()
+        }
+
         self.context = context
         scheduleConnectionResolution()
     }

@@ -7,7 +7,7 @@
 //
 
 import Combine
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import Logging
@@ -28,7 +28,7 @@ final class ServerSocketManager {
     }
 
     private let logger = Logger.swiftfin()
-    private let userSession: UserSession
+    private weak var userSession: UserSession?
 
     private var tasks: [Task<Void, Never>] = []
 
@@ -39,8 +39,7 @@ final class ServerSocketManager {
     private let wakeStream: AsyncStream<Void>
     private let wake: AsyncStream<Void>.Continuation
 
-    init(userSession: UserSession) {
-        self.userSession = userSession
+    init() {
         (wakeStream, wake) = AsyncStream<Void>.makeStream()
     }
 
@@ -119,6 +118,8 @@ final class ServerSocketManager {
         var wakeIterator = wakeStream.makeAsyncIterator()
 
         while !Task.isCancelled {
+            guard let userSession else { break }
+
             let session = userSession.client.socket(
                 supportsMediaControl: false,
                 supportedCommands: [.displayMessage],
@@ -203,13 +204,15 @@ final class ServerSocketManager {
 
 extension ServerSocketManager: UserSessionService {
 
-    @MainActor
-    func userSessionDidStart() {
+    func willStart(userSession: UserSession) async {
+        self.userSession = userSession
+    }
+
+    func didStart(userSession: UserSession) {
         start()
     }
 
-    @MainActor
-    func userSessionWillStop() {
+    func willStop(userSession: UserSession) {
         stop()
     }
 }
@@ -255,9 +258,9 @@ extension ServerSocketManager {
         extract: @escaping (JellyfinSocket.Session.Event) -> Payload?
     ) -> AnyPublisher<Payload, Never> {
 
-        // Reconnect on UserSession or Network Change
+        // Reconnect on Server Connection or Foreground Change
         Publishers.Merge(
-            Notifications[.didChangeUserSession].publisher,
+            Notifications[.didChangeServerConnection].publisher.map { _ in () },
             Notifications[.applicationWillEnterForeground].publisher
         )
         .prepend(())

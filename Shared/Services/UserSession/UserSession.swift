@@ -15,9 +15,6 @@ final class UserSession {
     let server: ServerState
     let user: UserState
 
-    lazy var serverConnectionManager = ServerConnectionManager(userSession: self)
-    lazy var serverSocketManager = ServerSocketManager(userSession: self)
-
     lazy var client: JellyfinClient = JellyfinClient(
         configuration: .swiftfinConfiguration(
             url: server.effectiveServerURL,
@@ -30,10 +27,12 @@ final class UserSession {
     @MainActor
     lazy var serverConnectionManager = ServerConnectionManager()
 
+    lazy var serverSocketManager = ServerSocketManager()
+
     @MainActor
     private lazy var services: [any UserSessionService] = [
         serverConnectionManager,
-        serverSocketManager
+        serverSocketManager,
     ]
 
     init(
