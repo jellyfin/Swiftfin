@@ -36,20 +36,11 @@ struct BrunoCategoryTile: View {
             fallbackItems: category.children,
             type: .portrait
         ) {
-            ZStack {
-                LinearGradient(
-                    colors: [palette.top, palette.bottom],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-
-                // Legibility wash where the label sits.
-                LinearGradient(
-                    colors: [.clear, .black.opacity(0.35)],
-                    startPoint: .center,
-                    endPoint: .bottom
-                )
-            }
+            // At-rest background: a bundled, dimmed category photo over the brand gradient (the
+            // gradient is the fallback for art-less categories and a backstop behind each photo).
+            // Seasonal is date-gated + slow cross-fades; others swap daily. (On focus, the art cycle
+            // above cross-fades server film art over this, unchanged.)
+            BrunoCollectionArtBackground(categoryName: category.name, palette: palette)
         } foreground: {
             VStack(spacing: 16) {
                 Text(category.name.uppercased())

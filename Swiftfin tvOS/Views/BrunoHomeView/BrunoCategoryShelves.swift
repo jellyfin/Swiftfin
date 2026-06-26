@@ -85,12 +85,20 @@ struct BrunoCollectionCategory: Identifiable {
 extension BrunoCollectionCategory {
 
     /// Fixed top-shelf order (owner request); unknown names fall to the end. Shared by the Collections
-    /// hub and the Home feed's terminal footer so both order the group tiles identically.
-    static func rank(for name: String) -> Int {
-        [
-            "new releases": 0, "genres": 1, "directors": 2, "boxed sets": 3,
-            "decades": 4, "curated": 5, "studios": 6, "seasonal": 7,
-        ][name.lowercased()] ?? .max
+    /// hub and the Home feed's terminal footer so both order the group tiles identically. Seasonal is
+    /// promoted to 2nd place (after New Releases) for the Halloween→Christmas window
+    /// (`BrunoCollectionArtwork.seasonalPromoted`); the rest shift down one. Default last slot otherwise.
+    static func rank(for name: String, on date: Date = Date()) -> Int {
+        let order = BrunoCollectionArtwork.seasonalPromoted(on: date)
+            ? [
+                "new releases": 0, "seasonal": 1, "genres": 2, "directors": 3,
+                "boxed sets": 4, "decades": 5, "curated": 6, "studios": 7,
+            ]
+            : [
+                "new releases": 0, "genres": 1, "directors": 2, "boxed sets": 3,
+                "decades": 4, "curated": 5, "studios": 6, "seasonal": 7,
+            ]
+        return order[name.lowercased()] ?? .max
     }
 
     /// What "Show all" does for a group.
@@ -316,7 +324,8 @@ struct BrunoCategoryShelves: View {
                 onShowAll: { brunoRouteToShowAll(category, router: router, namespace: namespace) },
                 artCarousel: ["studios", "directors"].contains(category.name.lowercased()),
                 // Per-category opt-in (New Releases) on top of the surface-wide flag (Decades).
-                showsDate: showsDate || category.showsDate
+                showsDate: showsDate || category.showsDate,
+                labelArt: Self.labelArtStyle(for: category.name)
             )
         }
     }
@@ -355,6 +364,18 @@ struct BrunoCategoryShelves: View {
         case .shelves:
             // "Show all" opens a richer drill-in (shelf-per-sub-group, e.g. Decades): simple preview.
             return Array(items.prefix(shelfCap))
+        }
+    }
+
+    /// Genres / Decades render their items with the category-tile treatment (title over cycling
+    /// film art) instead of poster-with-title-below. Genres keep their representative poster at rest;
+    /// Decades fall back to a brand gradient (their box-set poster bakes the label into the bitmap).
+    /// nil ⇒ standard poster cells.
+    private static func labelArtStyle(for groupName: String) -> BrunoLabelArtStyle? {
+        switch groupName.lowercased() {
+        case "genres": .poster
+        case "decades": .gradient(top: Color(hex: "201408"), bottom: Color(hex: "9C6A1E"))
+        default: nil
         }
     }
 

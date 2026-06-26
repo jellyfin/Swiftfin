@@ -30,6 +30,10 @@ struct BrunoShelfRow: View {
     /// Default false ⇒ every other caller renders the shared TitleSubtitleContentView byte-identically.
     /// Only affects the standard PosterButton cell; the artCarousel branch is untouched.
     var showsDate: Bool = false
+    /// Genres / Decades: render each item as a `BrunoLabelArtCard` — the category-tile treatment
+    /// (title over the art, film art cycling on focus) — instead of a poster with a title below.
+    /// nil ⇒ the standard PosterButton cell. Mutually exclusive with `artCarousel`.
+    var labelArt: BrunoLabelArtStyle?
 
     @FocusState
     private var showAllFocused: Bool
@@ -57,7 +61,11 @@ struct BrunoShelfRow: View {
         ) { card in
             switch card {
             case let .item(item):
-                if artCarousel {
+                if let labelArt {
+                    BrunoLabelArtCard(item: item, style: labelArt) {
+                        onItem(item)
+                    }
+                } else if artCarousel {
                     BrunoArtCarouselCard(item: item, type: .portrait) {
                         onItem(item)
                     } label: {
