@@ -146,6 +146,13 @@ struct BrunoCategoryShelves: View {
     /// dominant lever on vertical-scroll cost. "Show all" covers the rest.
     private let shelfCap = 14
 
+    /// Cap-and-grow window: how many shelves are mounted right now. Starts small so entering a
+    /// surface (or selecting a decade) doesn't mount every CollectionHStack at once — the synchronous
+    /// per-cell UIHostingController mount burst that froze the main thread. Grows append-only as the
+    /// user scrolls (a bottom sentinel), and resets when the category set changes (decade swap / load).
+    @State
+    private var visibleShelfCount = 4
+
     var body: some View {
         ZStack {
             // Ambient as a SIBLING layer (matching BrunoHomeView — the smooth surface), NOT a
@@ -194,8 +201,15 @@ struct BrunoCategoryShelves: View {
                             .id(ScrollAnchor.selector)
                     }
 
-                    ForEach(categories) { category in
+                    ForEach(categories.prefix(visibleShelfCount)) { category in
                         shelf(for: category)
+                    }
+
+                    // Grow the mounted window as the user nears the bottom (append-only — INV-2 keeps focus/identity).
+                    if visibleShelfCount < categories.count {
+                        Color.clear
+                            .frame(height: 1)
+                            .onAppear { visibleShelfCount = min(visibleShelfCount + 4, categories.count) }
                     }
                 }
                 .padding(.bottom, 60)
@@ -210,6 +224,9 @@ struct BrunoCategoryShelves: View {
                 } else {
                     withAnimation(.easeInOut(duration: 0.35)) { jump() }
                 }
+            }
+            .onChange(of: categories.map(\.id)) { _, _ in
+                visibleShelfCount = 4
             }
         }
     }
