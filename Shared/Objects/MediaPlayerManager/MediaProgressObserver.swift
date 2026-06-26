@@ -70,14 +70,24 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
         manager.$playbackRequestStatus
             .sink { [weak self] in self?.playbackRequestStatusDidChange($0) }
             .store(in: &cancellables)
+
+        Notifications[.applicationWillTerminate]
+            .publisher
+            .sink { [weak self] _ in self?.endPlaybackSession() }
+            .store(in: &cancellables)
+    }
+
+    private func endPlaybackSession() {
+        guard let item else { return }
+        sendStopReport(for: item, seconds: manager?.seconds)
+        stopEncoding(for: item)
     }
 
     private func playbackItemDidChange(_ newItem: MediaPlayerItem?) {
         timer.poke()
 
         if let item, newItem !== item {
-            sendStopReport(for: item, seconds: manager?.seconds)
-
+            endPlaybackSession()
             self.item = newItem
             self.hasSentStart = false
             sendReport()
@@ -94,9 +104,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
     private func didReceive(action: MediaPlayerManager._Action) {
         switch action {
         case .stop:
-            if let item {
-                sendStopReport(for: item, seconds: manager?.seconds)
-            }
+            endPlaybackSession()
             timer.stop()
             cancellables = []
             item = nil
@@ -142,6 +150,20 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             info.sessionID = item.playSessionID
 
             let request = Paths.reportPlaybackStopped(info)
+            try await send(request)
+        }
+    }
+
+    private func stopEncoding(for item: MediaPlayerItem) {
+        guard item.mediaSource.transcodingURL != nil,
+              let deviceID = userSession?.client.configuration.deviceID
+        else { return }
+
+        Task {
+            let request = Paths.stopEncodingProcess(
+                deviceID: deviceID,
+                playSessionID: item.playSessionID
+            )
             try await send(request)
         }
     }
