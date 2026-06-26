@@ -154,8 +154,6 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
         }
     }
 
-    /// Cleans up any outstanding transcodes on Server.
-    /// Reference: Jellyfin-Web - src/components/playback/playbackmanager.js
     private func stopEncoding(for item: MediaPlayerItem) {
         guard item.mediaSource.transcodingURL != nil,
               let deviceID = userSession?.client.configuration.deviceID
