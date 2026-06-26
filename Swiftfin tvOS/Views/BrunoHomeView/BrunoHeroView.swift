@@ -74,12 +74,16 @@ struct BrunoHeroView: View {
             }
             .buttonStyle(BrunoHeroButtonStyle())
             .focused($isFocused)
-            // No `onMoveCommand` on the hero: it's a CONSUMING responder (any direction it "handles",
-            // incl. a no-op `default`, suppresses the focus engine's neighbor move), which trapped Up
-            // on the hero so focus couldn't rise to the app tab bar — the reported bug (only Settings,
-            // which has no hero, let Up through). The spotlight advances via the auto-advance timer +
-            // Select; manual left/right spotlight stepping is deferred to a UIKit responder that can
-            // step horizontally while letting Up/Down fall through to the focus engine (tracker backlog).
+            .onMoveCommand { direction in
+                switch direction {
+                case .left:
+                    step(by: -1)
+                case .right:
+                    step(by: 1)
+                default:
+                    break
+                }
+            }
             .onReceive(autoAdvance) { _ in
                 // Pause while focused (TV-app behaviour) so the swap never yanks focus, and while the
                 // spine is still streaming in (autoAdvanceEnabled — INV-8).
