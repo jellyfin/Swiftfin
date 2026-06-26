@@ -7,7 +7,7 @@
 //
 
 import AVKit
-import Factory
+import FactoryKit
 import JellyfinAPI
 import Logging
 import SwiftUI

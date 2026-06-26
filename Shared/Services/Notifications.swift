@@ -8,7 +8,7 @@
 
 import AVFoundation
 import Combine
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import UIKit
@@ -99,27 +99,9 @@ enum Notifications {
     }
 }
 
-extension Notifications {
-
-    static func postServerConnectionChange(
-        previous: ServerConnection?,
-        current: ServerConnection
-    ) {
-        guard previous?.id != current.id || previous?.url != current.url else { return }
-
-        Self[.didChangeServerConnection].post(current)
-    }
-}
-
 // MARK: - Keys
 
 extension Notifications.Key {
-
-    // MARK: - Authentication
-
-    static var didChangeUserSession: Key<Void> {
-        Key("didChangeUserSession")
-    }
 
     // MARK: - App Flow
 
@@ -141,10 +123,6 @@ extension Notifications.Key {
 
     static var didRequestGlobalRefresh: Key<Void> {
         Key("didRequestGlobalRefresh")
-    }
-
-    static var didFailMigration: Key<Void> {
-        Key("didFailMigration")
     }
 
     // MARK: - Media Items

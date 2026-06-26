@@ -7,7 +7,7 @@
 //
 
 import BlurHashKit
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import UIKit

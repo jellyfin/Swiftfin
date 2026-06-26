@@ -7,145 +7,249 @@ on:
   repository_dispatch:
     types: [testflight]
   workflow_dispatch:
+    inputs:
+      platform:
+        description: "Platform"
+        required: true
+        type: choice
+        options:
+          - All
+          - iOS
+          - tvOS
+      version:
+        description: "Version"
+        required: false
+        type: string
+      build:
+        description: "Build"
+        required: false
+        type: number
+      xcodeVersion:
+        description: "Xcode"
+        required: false
+        type: string
 
 jobs:
-  build:
-    name: "TestFlight ✈️"
+  resolve_platform:
+    name: Resolve platform
+    runs-on: ubuntu-latest
+    env:
+      IOS_SCHEME: "Swiftfin"
+      TVOS_SCHEME: "Swiftfin tvOS"
+      EVENT_NAME: ${{ github.event_name }}
+      PLATFORM_INPUT: ${{ github.event.client_payload.platform || github.event.inputs.platform }}
+    outputs:
+      platform: ${{ steps.resolve.outputs.platform }}
+      matrix: ${{ steps.resolve.outputs.matrix }}
+    steps:
+      - name: Resolve platform and matrix
+        id: resolve
+        run: |
+          set -euo pipefail
+
+          clean() {
+            printf '%s' "${1:-}" | tr -d '\r\n'
+          }
+
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            platform="all"
+          else
+            platform="$(clean "$PLATFORM_INPUT" | tr '[:upper:]' '[:lower:]')"
+          fi
+
+          case "$platform" in
+            ios)
+              matrix="{\"include\":[{\"platform\":\"ios\",\"scheme\":\"$IOS_SCHEME\"}]}"
+              ;;
+            tvos)
+              matrix="{\"include\":[{\"platform\":\"tvos\",\"scheme\":\"$TVOS_SCHEME\"}]}"
+              ;;
+            all)
+              matrix="{\"include\":[{\"platform\":\"ios\",\"scheme\":\"$IOS_SCHEME\"},{\"platform\":\"tvos\",\"scheme\":\"$TVOS_SCHEME\"}]}"
+              ;;
+            *)
+              echo "Invalid platform '$platform'. Use ios, tvos, or all."
+              exit 1
+              ;;
+          esac
+
+          echo "platform=$platform" >> "$GITHUB_OUTPUT"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  test_build:
+    name: Build and upload to TestFlight
+    needs: resolve_platform
     runs-on: macos-15
+    strategy:
+      matrix: ${{ fromJSON(needs.resolve_platform.outputs.matrix) }}
     env:
       XCODE_VERSION: "26.3"
-      DEFAULT_IOS_SCHEME: "Swiftfin"
-      DEFAULT_TVOS_SCHEME: "Swiftfin tvOS"
+      PLATFORM: ${{ matrix.platform }}
+      SCHEME: ${{ matrix.scheme }}
+      BUILD_CERTIFICATE_BASE64: ${{ github.event.client_payload.BUILD_CERTIFICATE_BASE64 || secrets.BUILD_CERTIFICATE_BASE64 }}
+      BUILD_PROVISION_PROFILE_BASE64: ${{ matrix.platform == 'ios' && (github.event.client_payload.BUILD_PROVISION_PROFILE_IOS_BASE64 || secrets.BUILD_PROVISION_PROFILE_IOS_BASE64) || (github.event.client_payload.BUILD_PROVISION_PROFILE_TVOS_BASE64 || secrets.BUILD_PROVISION_PROFILE_TVOS_BASE64) }}
+      FL_PROFILE_NAME_BASE64: ${{ matrix.platform == 'ios' && (github.event.client_payload.PROFILE_NAME_IOS_BASE64 || secrets.PROFILE_NAME_IOS_BASE64) || (github.event.client_payload.PROFILE_NAME_TVOS_BASE64 || secrets.PROFILE_NAME_TVOS_BASE64) }}
+      P12_PASSWORD: ${{ github.event.client_payload.P12_PASSWORD || secrets.P12_PASSWORD }}
+      KEYCHAIN_PASSWORD: CI_PASSWORD
+      FL_KEY_ID: ${{ github.event.client_payload.APP_STORE_KEY_ID || secrets.APP_STORE_KEY_ID }}
+      FL_ISSUER_ID: ${{ github.event.client_payload.APP_STORE_ISSUER_ID || secrets.APP_STORE_ISSUER_ID }}
+      FL_KEY_CONTENTS: ${{ github.event.client_payload.APP_STORE_KEY_CONTENTS || secrets.APP_STORE_KEY_CONTENTS }}
+      FL_CODE_SIGN_BASE64: ${{ github.event.client_payload.CODE_SIGN_BASE64 || secrets.CODE_SIGN_BASE64 }}
+      PAYLOAD_XCODE_VERSION: ${{ github.event.client_payload.XCODE_VERSION || github.event.inputs.xcodeVersion }}
+      PAYLOAD_BUILD: ${{ github.event.client_payload.BUILD || github.event.inputs.build }}
+      PAYLOAD_VERSION: ${{ github.event.client_payload.VERSION || github.event.inputs.version }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-      with:
-        ref: ${{ github.event.client_payload.ref || 'main' }}
-        token: ${{ secrets.GITHUB_TOKEN }}
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.client_payload.ref || 'main' }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-    - name: git Checkout
-      if: ${{ github.event.client_payload.hasCheckoutCommit }}
-      run: |
-        git checkout ${{ github.event.client_payload.commitSHA }}
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
 
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '3.3'
-        bundler-cache: true
+      - name: Install Homebrew dependencies
+        run: brew bundle --file Brewfile
 
-    - name: Install Homebrew dependencies
-      run: brew bundle --file Brewfile
+      - name: Update Carthage
+        run: carthage update --use-xcframeworks --cache-builds
 
-    - name: Update Carthage
-      run: carthage update --use-xcframeworks --cache-builds
+      - name: Install certificate and provisioning profile
+        run: |
+          set -euo pipefail
 
-    - name: Install the Apple certificate and provisioning profile
-      env:
-        BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-        BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
-        KEYCHAIN_PASSWORD: "CI_PASSWORD"
-        P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-      run: |
-        CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-        PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
-        KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          clean() {
+            printf '%s' "${1:-}" | tr -d '\r\n'
+          }
 
-        # import certificate and provisioning profile from secrets
-        echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-        echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+          decode_base64_to_file() {
+            local value="$1"
+            local path="$2"
+            printf '%s' "$value" | base64 --decode -o "$path"
+          }
 
-        # create temporary keychain
-        security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-        security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-        security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          cert_base64="$(clean "$BUILD_CERTIFICATE_BASE64")"
+          profile_base64="$(clean "$BUILD_PROVISION_PROFILE_BASE64")"
+          p12_password="$(clean "$P12_PASSWORD")"
 
-        # import certificate to keychain
-        security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-        security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-        security list-keychain -d user -s $KEYCHAIN_PATH
+          if [ -z "$cert_base64" ] || [ -z "$profile_base64" ] || [ -z "$p12_password" ]; then
+            echo "Missing required signing values"
+            exit 1
+          fi
 
-        # apply provisioning profile
-        mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-        sudo mkdir -p /Library/MobileDevice/Provisioning\ Profiles
-        cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-        sudo cp $PP_PATH /Library/MobileDevice/Provisioning\ Profiles
+          cert_path="$RUNNER_TEMP/build_certificate.p12"
+          profile_path="$RUNNER_TEMP/build_${PLATFORM}.mobileprovision"
+          keychain_path="$RUNNER_TEMP/app-signing.keychain-db"
 
-    - name: Generate Changelog
-      id: changelog
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        # Get the date of the latest release to filter PRs merged after it
-        RELEASE_DATE=$(gh release view --json publishedAt -q '.publishedAt' 2>/dev/null || echo "")
+          decode_base64_to_file "$cert_base64" "$cert_path"
+          decode_base64_to_file "$profile_base64" "$profile_path"
 
-        if [ -n "$RELEASE_DATE" ]; then
-          echo "Finding 'release highlight' PRs merged after $RELEASE_DATE"
-          LOG=$(gh pr list \
-            --state merged \
-            --label "release highlight" \
-            --search "merged:>=$RELEASE_DATE" \
-            --json title \
-            --jq '.[].title' | sed 's/^/- /')
-        fi
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$keychain_path"
+          security set-keychain-settings -lut 21600 "$keychain_path"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$keychain_path"
 
-        # Fallback if no release found or no PR with "Release Highlight" tag
-        if [ -z "$LOG" ]; then
-          LOG="General performance changes, fixes, and localization changes."
-        fi
+          security import "$cert_path" -P "$p12_password" -A -t cert -f pkcs12 -k "$keychain_path"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$keychain_path"
+          security list-keychain -d user -s "$keychain_path"
 
-        # Write to multiline output
-        {
-          echo "changelog<<CHANGELOG_EOF"
-          echo "$LOG"
-          echo "CHANGELOG_EOF"
-        } >> $GITHUB_OUTPUT
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          sudo mkdir -p "/Library/MobileDevice/Provisioning Profiles"
+          cp "$profile_path" "$HOME/Library/MobileDevice/Provisioning Profiles"
+          sudo cp "$profile_path" "/Library/MobileDevice/Provisioning Profiles"
 
-    - name: Build and Upload to TestFlight
-      env:
-        FL_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
-        FL_ISSUER_ID: ${{ secrets.APP_STORE_ISSUER_ID }}
-        FL_KEY_CONTENTS: ${{ secrets.APP_STORE_KEY_CONTENTS }}
-        FL_CODE_SIGN_64: ${{ secrets.CODE_SIGN_64 }}
-        FL_PROFILE_NAME_64: ${{ secrets.PROFILE_NAME_64 }}
-        PAYLOAD_SCHEME: ${{ github.event.client_payload.scheme }}
-        PAYLOAD_XCODE_VERSION: ${{ github.event.client_payload.xcodeVersion }}
-        PAYLOAD_BUILD: ${{ github.event.client_payload.build }}
-        PAYLOAD_VERSION: ${{ github.event.client_payload.version }}
-        AUTO_CHANGELOG: ${{ steps.changelog.outputs.changelog }}
-      run: |
-        RESOLVED_XCODE_VERSION="${PAYLOAD_XCODE_VERSION:-$XCODE_VERSION}"
-        CHANGELOG_FILE=$(mktemp)
+      - name: Generate changelog
+        id: changelog
+        env:
+          GH_TOKEN: ${{ github.event.client_payload.githubToken || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
 
-        echo "$AUTO_CHANGELOG" > "$CHANGELOG_FILE"
+          release_date="$(gh release view --json publishedAt -q '.publishedAt' 2>/dev/null || true)"
+          log=""
 
-        COMMON_ARGS=(
-          "keyID:$FL_KEY_ID"
-          "issuerID:$FL_ISSUER_ID"
-          "keyContents:$FL_KEY_CONTENTS"
-          "codeSign64:$FL_CODE_SIGN_64"
-          "profileName64:$FL_PROFILE_NAME_64"
-          "xcodeVersion:$RESOLVED_XCODE_VERSION"
-          "changelogFile:$CHANGELOG_FILE"
-        )
+          if [ -n "$release_date" ]; then
+            log="$(gh pr list \
+              --state merged \
+              --label 'release highlight' \
+              --search "merged:>=$release_date" \
+              --json title \
+              --jq '.[].title' | sed 's/^/- /')"
+          fi
 
-        if [ -n "$PAYLOAD_BUILD" ]; then
-          COMMON_ARGS+=("build:$PAYLOAD_BUILD")
-        fi
+          if [ -z "$log" ]; then
+            log="General performance changes, fixes, and localization changes."
+          fi
 
-        if [ -n "$PAYLOAD_VERSION" ]; then
-          COMMON_ARGS+=("version:$PAYLOAD_VERSION")
-        fi
+          {
+            echo "changelog<<CHANGELOG_EOF"
+            echo "$log"
+            echo "CHANGELOG_EOF"
+          } >> "$GITHUB_OUTPUT"
 
-        if [ -n "$PAYLOAD_SCHEME" ]; then
-          SCHEMES=("$PAYLOAD_SCHEME")
-        else
-          SCHEMES=("$DEFAULT_IOS_SCHEME" "$DEFAULT_TVOS_SCHEME")
-        fi
+      - name: Build and upload to TestFlight
+        env:
+          AUTO_CHANGELOG: ${{ steps.changelog.outputs.changelog }}
+        run: |
+          set -euo pipefail
 
-        for scheme in "${SCHEMES[@]}"; do
-          echo "Building and uploading scheme: $scheme"
-          bundle exec fastlane testFlightLane "${COMMON_ARGS[@]}" "scheme:$scheme"
-        done
+          clean() {
+            printf '%s' "${1:-}" | tr -d '\r\n'
+          }
+
+          require_non_empty() {
+            local value="$1"
+            local label="$2"
+            if [ -z "$value" ]; then
+              echo "Missing required value: $label"
+              exit 1
+            fi
+          }
+
+          key_id="$(clean "$FL_KEY_ID")"
+          issuer_id="$(clean "$FL_ISSUER_ID")"
+          key_contents="$(clean "$FL_KEY_CONTENTS")"
+          code_sign_base64="$(clean "$FL_CODE_SIGN_BASE64")"
+          profile_name_base64="$(clean "$FL_PROFILE_NAME_BASE64")"
+          payload_xcode_version="$(clean "$PAYLOAD_XCODE_VERSION")"
+          payload_build="$(clean "$PAYLOAD_BUILD")"
+          payload_version="$(clean "$PAYLOAD_VERSION")"
+
+          resolved_xcode_version="$(clean "${payload_xcode_version:-$XCODE_VERSION}")"
+
+          require_non_empty "$key_id" "FL_KEY_ID"
+          require_non_empty "$issuer_id" "FL_ISSUER_ID"
+          require_non_empty "$key_contents" "FL_KEY_CONTENTS"
+          require_non_empty "$code_sign_base64" "FL_CODE_SIGN_BASE64"
+          require_non_empty "$profile_name_base64" "FL_PROFILE_NAME_BASE64"
+          require_non_empty "$resolved_xcode_version" "XCODE_VERSION"
+          require_non_empty "$SCHEME" "SCHEME"
+
+          changelog_file="$(mktemp)"
+          printf '%s' "$AUTO_CHANGELOG" > "$changelog_file"
+
+          args=(
+            "keyID:$key_id"
+            "issuerID:$issuer_id"
+            "keyContents:$key_contents"
+            "codeSign64:$code_sign_base64"
+            "profileName64:$profile_name_base64"
+            "xcodeVersion:$resolved_xcode_version"
+            "changelogFile:$changelog_file"
+            "scheme:\"$SCHEME\""
+          )
+
+          if [ -n "$payload_build" ]; then
+            args+=("build:$payload_build")
+          fi
+
+          if [ -n "$payload_version" ]; then
+            args+=("version:$payload_version")
+          fi
+
+          echo "Building and uploading scheme '$SCHEME' for platform '$PLATFORM'"
+          bundle exec fastlane testFlightLane "${args[@]}"

@@ -151,12 +151,6 @@ struct EditServerConnectionView: View {
         router.dismiss()
     }
 
-    private func setActiveConnection(_ connection: ServerConnection) {
-        Task {
-            _ = await viewModel.setActiveConnectionIfValid(connection)
-        }
-    }
-
     private func testDraft() {
         guard let draftConnection = try? draft.connection() else { return }
 
@@ -216,7 +210,7 @@ struct EditServerConnectionView: View {
             #if os(iOS)
             Section {
                 Picker(L10n.network, selection: $draft.interface) {
-                    ForEach(ServerConnectionInterface.allCases, id: \.self) { interface in
+                    ForEach(ServerConnection.Interface.allCases, id: \.self) { interface in
                         Text(interface.displayTitle)
                             .tag(interface)
                     }
@@ -244,7 +238,9 @@ struct EditServerConnectionView: View {
                         .foregroundStyle(.green)
                 } else if isExistingConnection {
                     Button(L10n.use) {
-                        setActiveConnection(connection)
+                        Task {
+                            await viewModel.setActiveConnectionIfValid(connection)
+                        }
                     }
                     .disabled(isTesting || hasChanges)
                 }
@@ -324,7 +320,7 @@ private struct ServerConnectionDraft: Equatable {
     let id: String
     var name: String
     var urlString: String
-    var interface: ServerConnectionInterface
+    var interface: ServerConnection.Interface
     var wifiSSIDs: [String]
     var priority: Int
     var useWifiName: Bool

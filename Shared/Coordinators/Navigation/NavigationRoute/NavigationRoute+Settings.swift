@@ -128,7 +128,7 @@ extension NavigationRoute {
         NavigationRoute(
             id: "serverConnections-\(viewModel.server.id)"
         ) {
-            ServerConnectionsView(viewModel: viewModel)
+            ServerConnectionView(viewModel: viewModel)
         }
     }
 

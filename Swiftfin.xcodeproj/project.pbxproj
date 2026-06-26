@@ -49,7 +49,6 @@
 		E10706122942F57D00646DAF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E10706112942F57D00646DAF /* PulseLogHandler */; };
 		E10706142942F57D00646DAF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E10706132942F57D00646DAF /* PulseUI */; };
 		E1079FDA2FC6FFCE004B5C54 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1079FD92FC6FFCE004B5C54 /* StatefulMacros */; };
-		E1079FDD2FC700D2004B5C54 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1079FDC2FC700D2004B5C54 /* StatefulMacros */; };
 		E1137D2F2E090C1A0091EB60 /* VLCUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1137D2E2E090C1A0091EB60 /* VLCUI */; };
 		E1137D312E090C230091EB60 /* VLCUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1137D302E090C230091EB60 /* VLCUI */; };
 		E113A2A72B5A178D009CAAAA /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E113A2A62B5A178D009CAAAA /* CollectionHStack */; };
@@ -62,6 +61,7 @@
 		E1155ACB2D0584A90021557A /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E1155ACA2D0584A90021557A /* IdentifiedCollections */; };
 		E11ADE842E7E73B6008074FC /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E11ADE832E7E73B6008074FC /* StatefulMacros */; };
 		E12186DE2718F1C50010884C /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E12186DD2718F1C50010884C /* Defaults */; };
+		E1240A292FEA4F69004E6588 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1240A282FEA4F69004E6588 /* StatefulMacros */; };
 		E12B93072947CD0F00CE0BD9 /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E15210532946DF1B00375CC2 /* Pulse */; };
 		E132D3C82BD200C10058A2DF /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E132D3C72BD200C10058A2DF /* CollectionVGrid */; };
 		E134DD2C2E7F4DC300AED027 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E134DD2B2E7F4DC300AED027 /* StatefulMacros */; };
@@ -93,8 +93,6 @@
 		E176EBE92D050925009F4CF1 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBE82D050925009F4CF1 /* CollectionVGrid */; };
 		E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E18D6AA52BAA96F000A0D167 /* CollectionHStack */; };
 		E19138CA2E7E7FA20061E464 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19138C92E7E7FA20061E464 /* StatefulMacros */; };
-		E192608328D2D0DB002314B4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E192608228D2D0DB002314B4 /* Factory */; };
-		E192608828D2E5F0002314B4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E192608728D2E5F0002314B4 /* Factory */; };
 		E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E19D41B12BF2BFA50082B8B2 /* KeychainSwift */; };
 		E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E19DDEC62948EF9900954E10 /* OrderedCollections */; };
 		E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0428A0B958005C10C8 /* Nuke */; };
@@ -115,6 +113,8 @@
 		E1B9743B2E86F51D008CED48 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1B9743A2E86F51D008CED48 /* StatefulMacros */; };
 		E1BD95B22FBE8E44001CDA57 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E1BD95B12FBE8E44001CDA57 /* JellyfinAPI */; };
 		E1BD95B42FBE8E50001CDA57 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E1BD95B32FBE8E50001CDA57 /* JellyfinAPI */; };
+		E1BE3EBC2FE8DEA100327990 /* FactoryKit in Frameworks */ = {isa = PBXBuildFile; productRef = E1BE3EBB2FE8DEA100327990 /* FactoryKit */; };
+		E1BE3EBE2FE8DEAA00327990 /* FactoryKit in Frameworks */ = {isa = PBXBuildFile; productRef = E1BE3EBD2FE8DEAA00327990 /* FactoryKit */; };
 		E1C5CB822EF61A650047C249 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E1C5CB812EF61A650047C249 /* StatefulMacros */; };
 		E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1DC9813296DC06200982F06 /* PulseLogHandler */; };
 		E1E2D7BF2E3FD936004E2E5F /* Transmission in Frameworks */ = {isa = PBXBuildFile; productRef = E1E2D7BE2E3FD936004E2E5F /* Transmission */; };
@@ -233,7 +233,6 @@
 				ViewModels/ItemAdministration/IdentifyItemViewModel.swift,
 				ViewModels/ItemAdministration/RemoteImageInfoViewModel.swift,
 				ViewModels/QuickConnectAuthorizeViewModel.swift,
-				ViewModels/ServerCheckViewModel.swift,
 				Views/VideoPlayer/Components/Toolbar/ActionButtons/GestureLockActionButton.swift,
 			);
 			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
@@ -245,6 +244,22 @@
 			);
 			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
 		};
+		E1BE3EDA2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				DevelopmentTeam.xcconfig,
+				Shared.xcconfig,
+			);
+			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
+		};
+		E1BE3EDB2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				DevelopmentTeam.xcconfig,
+				Shared.xcconfig,
+			);
+			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -253,7 +268,7 @@
 		E14565DD2DFCAE78008FF700 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
 		E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14567272DFCAEFD008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Swiftfin tvOS"; sourceTree = "<group>"; };
 		E1456FC82DFCB323008FF700 /* Translations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Translations; sourceTree = "<group>"; };
-		E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = XcodeConfig; sourceTree = "<group>"; };
+		E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E1BE3EDA2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E1BE3EDB2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = XcodeConfig; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -285,6 +300,7 @@
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E1BD95B42FBE8E50001CDA57 /* JellyfinAPI in Frameworks */,
+				E1BE3EBE2FE8DEAA00327990 /* FactoryKit in Frameworks */,
 				E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */,
 				E1155ACB2D0584A90021557A /* IdentifiedCollections in Frameworks */,
 				62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */,
@@ -298,11 +314,9 @@
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
-				E1079FDD2FC700D2004B5C54 /* StatefulMacros in Frameworks */,
 				E1E2D7BF2E3FD936004E2E5F /* Transmission in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
-				E192608828D2E5F0002314B4 /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,7 +342,6 @@
 				E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */,
 				E10706102942F57D00646DAF /* Pulse in Frameworks */,
 				E176EBE92D050925009F4CF1 /* CollectionVGrid in Frameworks */,
-				E192608328D2D0DB002314B4 /* Factory in Frameworks */,
 				E13866322FC4BF0200121558 /* StatefulMacros in Frameworks */,
 				E1C5CB822EF61A650047C249 /* StatefulMacros in Frameworks */,
 				E113A2A72B5A178D009CAAAA /* CollectionHStack in Frameworks */,
@@ -345,6 +358,7 @@
 				E1FADDF12E84B63600FB310E /* StatefulMacros in Frameworks */,
 				E14EA1652BF70A8E00DE757A /* Mantis in Frameworks */,
 				E176EBDE2D050067009F4CF1 /* IdentifiedCollections in Frameworks */,
+				E1BE3EBC2FE8DEA100327990 /* FactoryKit in Frameworks */,
 				62666E1027E501B400EC0ECD /* VideoToolbox.framework in Frameworks */,
 				E1BD95B22FBE8E44001CDA57 /* JellyfinAPI in Frameworks */,
 				62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */,
@@ -362,6 +376,7 @@
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
 				E176EBE32D0502C6009F4CF1 /* CollectionHStack in Frameworks */,
 				62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */,
+				E1240A292FEA4F69004E6588 /* StatefulMacros in Frameworks */,
 				E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */,
 				E15EFA842BA167350080E926 /* CollectionHStack in Frameworks */,
 				E15EFA862BA1685F0080E926 /* SwiftUIIntrospect in Frameworks */,
@@ -500,7 +515,6 @@
 				E13AF3B728A0C598009093AB /* NukeExtensions */,
 				E13AF3B928A0C598009093AB /* NukeUI */,
 				E13AF3BB28A0C59E009093AB /* BlurHashKit */,
-				E192608728D2E5F0002314B4 /* Factory */,
 				E1575E57293E7685001665B1 /* Files */,
 				E1B5F7A629577BCE004B26CF /* Pulse */,
 				E1B5F7A829577BCE004B26CF /* PulseLogHandler */,
@@ -518,7 +532,7 @@
 				E1E2D7BE2E3FD936004E2E5F /* Transmission */,
 				E1BD95B32FBE8E50001CDA57 /* JellyfinAPI */,
 				E1079FD92FC6FFCE004B5C54 /* StatefulMacros */,
-				E1079FDC2FC700D2004B5C54 /* StatefulMacros */,
+				E1BE3EBD2FE8DEAA00327990 /* FactoryKit */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -555,7 +569,6 @@
 				E19E6E0428A0B958005C10C8 /* Nuke */,
 				E19E6E0628A0B958005C10C8 /* NukeUI */,
 				E19E6E0928A0BEFF005C10C8 /* BlurHashKit */,
-				E192608228D2D0DB002314B4 /* Factory */,
 				E1575E3B293C6B15001665B1 /* Files */,
 				E15210532946DF1B00375CC2 /* Pulse */,
 				E15210552946DF1B00375CC2 /* PulseLogHandler */,
@@ -597,6 +610,8 @@
 				E1BD95B12FBE8E44001CDA57 /* JellyfinAPI */,
 				E1B354BA2FC4BB0600827DC1 /* StatefulMacros */,
 				E13866312FC4BF0200121558 /* StatefulMacros */,
+				E1BE3EBB2FE8DEA100327990 /* FactoryKit */,
+				E1240A282FEA4F69004E6588 /* StatefulMacros */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -613,7 +628,7 @@
 					New,
 				);
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1610;
+				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					5358705F2669D21600D05A09 = {
 						CreatedOnToolsVersion = 12.5;
@@ -709,7 +724,7 @@
 				E164308A2E3AA9710028D4E8 /* XCRemoteSwiftPackageReference "Transmission" */,
 				E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */,
 				E1BD95B02FBE8E44001CDA57 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
-				E1079FDB2FC700D2004B5C54 /* XCRemoteSwiftPackageReference "StatefulMacro" */,
+				E1240A272FEA4F69004E6588 /* XCRemoteSwiftPackageReference "StatefulMacro" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -1036,6 +1051,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1095,6 +1111,7 @@
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
@@ -1112,7 +1129,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_BITCODE = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				EXCLUDED_ARCHS = "";
@@ -1150,7 +1169,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_BITCODE = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				EXCLUDED_ARCHS = "";
@@ -1248,14 +1269,6 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		E1079FDB2FC700D2004B5C54 /* XCRemoteSwiftPackageReference "StatefulMacro" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/StatefulMacro";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.4;
-			};
-		};
 		E1137D2D2E090C1A0091EB60 /* XCRemoteSwiftPackageReference "VLCUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/VLCUI";
@@ -1270,6 +1283,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 3.0.0;
+			};
+		};
+		E1240A272FEA4F69004E6588 /* XCRemoteSwiftPackageReference "StatefulMacro" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/StatefulMacro";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.5;
 			};
 		};
 		E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */ = {
@@ -1349,7 +1370,7 @@
 			repositoryURL = "https://github.com/hmlongco/Factory";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				minimumVersion = 3.0.0;
 			};
 		};
 		E19DDEC52948EF9900954E10 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
@@ -1445,11 +1466,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = StatefulMacros;
 		};
-		E1079FDC2FC700D2004B5C54 /* StatefulMacros */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1079FDB2FC700D2004B5C54 /* XCRemoteSwiftPackageReference "StatefulMacro" */;
-			productName = StatefulMacros;
-		};
 		E1137D2E2E090C1A0091EB60 /* VLCUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E1137D2D2E090C1A0091EB60 /* XCRemoteSwiftPackageReference "VLCUI" */;
@@ -1503,6 +1519,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		E1240A282FEA4F69004E6588 /* StatefulMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1240A272FEA4F69004E6588 /* XCRemoteSwiftPackageReference "StatefulMacro" */;
+			productName = StatefulMacros;
 		};
 		E132D3C72BD200C10058A2DF /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1648,16 +1669,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = StatefulMacros;
 		};
-		E192608228D2D0DB002314B4 /* Factory */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */;
-			productName = Factory;
-		};
-		E192608728D2E5F0002314B4 /* Factory */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */;
-			productName = Factory;
-		};
 		E19D41B12BF2BFA50082B8B2 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */;
@@ -1753,6 +1764,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1BD95B02FBE8E44001CDA57 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
 			productName = JellyfinAPI;
+		};
+		E1BE3EBB2FE8DEA100327990 /* FactoryKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryKit;
+		};
+		E1BE3EBD2FE8DEAA00327990 /* FactoryKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryKit;
 		};
 		E1C5CB812EF61A650047C249 /* StatefulMacros */ = {
 			isa = XCSwiftPackageProductDependency;

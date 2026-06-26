@@ -8,7 +8,7 @@
 
 import Combine
 import Defaults
-import Factory
+import FactoryKit
 import Foundation
 
 @MainActor
@@ -22,6 +22,10 @@ final class ServerConnectionViewModel: ViewModel {
     private(set) var activeConnection: ServerConnection?
     @Published
     private(set) var isEvaluatingAutoSwitchConnection: Bool = false
+
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
+
     @Published
     var isAutoSwitchEnabled: Bool {
         didSet {
@@ -31,7 +35,7 @@ final class ServerConnectionViewModel: ViewModel {
             server.isAutoSwitchEnabled = isAutoSwitchEnabled
 
             if isAutoSwitchEnabled {
-                Container.shared.userSessionManager().scheduleServerConnectionEvaluation()
+                userSessionManager.scheduleServerConnectionResolution()
             }
         }
     }
@@ -75,7 +79,6 @@ final class ServerConnectionViewModel: ViewModel {
     }
 
     private func upsertConnection(_ connection: ServerConnection) {
-        let previous = activeConnection
         let isActiveConnection = activeConnection?.id == connection.id
 
         if let index = connections.firstIndex(where: { $0.id == connection.id }) {
@@ -90,10 +93,7 @@ final class ServerConnectionViewModel: ViewModel {
               let activeConnection
         else { return }
 
-        Notifications.postServerConnectionChange(
-            previous: previous,
-            current: activeConnection
-        )
+        Notifications[.didChangeServerConnection].post(activeConnection)
     }
 
     func deleteConnection(_ connection: ServerConnection) {
@@ -104,22 +104,19 @@ final class ServerConnectionViewModel: ViewModel {
         saveConnections()
     }
 
-    func setActiveConnection(_ connection: ServerConnection) {
+    func setActiveConnectionIfValid(_ connection: ServerConnection) async {
+        let state = await testConnection(connection)
+        guard case .success = state else { return }
+
         let previous = activeConnection
+
+        guard previous?.id != connection.id || previous?.url != connection.url else { return }
+
         activeConnection = connection
         server.activeServerConnection = connection
-        Notifications.postServerConnectionChange(
-            previous: previous,
-            current: connection
-        )
-    }
 
-    func setActiveConnectionIfValid(_ connection: ServerConnection) async -> ServerConnection.TestState {
-        let state = await testConnection(connection)
-        guard case .success = state else { return state }
-
-        setActiveConnection(connection)
-        return state
+        Notifications[.didChangeServerConnection]
+            .post(connection)
     }
 
     func moveConnections(fromOffsets offsets: IndexSet, toOffset destination: Int) {
@@ -154,13 +151,18 @@ final class ServerConnectionViewModel: ViewModel {
         isEvaluatingAutoSwitchConnection = true
         defer { isEvaluatingAutoSwitchConnection = false }
 
-        guard !Container.shared.userSessionManager().hasActivePlayback else { return }
+        guard !userSessionManager.hasActivePlayback else { return }
 
-        await ServerConnectionManager.evaluate(
-            server: server,
-            accessToken: userSession?.user.accessToken,
-            context: NetworkConnectionContext.current()
-        )
+        if userSession?.server.id == server.id {
+            await userSession?.serverConnectionManager.resolveActiveConnection()
+        } else {
+            _ = await ServerConnectionManager.evaluate(
+                server: server,
+                accessToken: userSession?.user.accessToken,
+                context: NetworkConnectionContext.current()
+            )
+        }
+
         reloadConnections()
     }
 

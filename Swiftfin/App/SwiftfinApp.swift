@@ -6,19 +6,12 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import PreferencesView
 import SwiftUI
 import UIKit
 
 @main
 struct SwiftfinApp: App {
-
-    @UIApplicationDelegateAdaptor(AppDelegate.self)
-    private var appDelegate
-
-    @StateObject
-    private var valueObservation = ValueObservation()
 
     init() {
         Self.configure()
