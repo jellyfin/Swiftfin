@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import JellyfinAPI
 import SwiftUI
 
@@ -68,6 +69,11 @@ struct BrunoShelfView: View {
                         }
                     )
                     .frame(height: BrunoShelfMetrics.shelfRowHeight(for: viewModel.posterType))
+                } else if viewModel.items.first?.type == .boxSet {
+                    // Collection shelves (Studios / Directors / Eras / Boxed Sets, …): focus-cycling
+                    // carousel cards. Same card geometry as PosterButton, so INV-1's row height holds.
+                    carouselRow
+                        .frame(height: BrunoShelfMetrics.shelfRowHeight(for: viewModel.posterType))
                 } else {
                     PosterHStack(
                         title: nil,
@@ -91,5 +97,27 @@ struct BrunoShelfView: View {
             .brunoDebugRedraw("shelf:\(viewModel.title)")
             .brunoDebugLayout("shelf:\(viewModel.title)")
         }
+    }
+
+    /// Mirrors PosterHStack's CollectionHStack layout exactly (same columns / insets / spacing /
+    /// scroll behaviour, so the row matches every other shelf), but draws BrunoArtCarouselCard so a
+    /// focused collection card cycles its films behind the static art.
+    private var carouselRow: some View {
+        CollectionHStack(
+            uniqueElements: viewModel.items,
+            columns: viewModel.posterType == .landscape ? 4 : 7
+        ) { item in
+            BrunoArtCarouselCard(item: item, type: viewModel.posterType) {
+                router.route(to: .item(item: item))
+            } label: {
+                PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
+            }
+        }
+        .clipsToBounds(false)
+        .dataPrefix(20)
+        .insets(horizontal: EdgeInsets.edgePadding, vertical: 20)
+        .itemSpacing(EdgeInsets.edgePadding - 20)
+        .scrollBehavior(.continuousLeadingEdge)
+        .focusSection()
     }
 }
