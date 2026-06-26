@@ -6,7 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
+import FactoryKit
 import SwiftUI
 
 // TODO: move popup to router
@@ -15,8 +15,8 @@ import SwiftUI
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
-    @InjectedObject(\.deepLinkHandler)
-    private var deepLinkHandler
+    @InjectedObject(\.userSessionManager)
+    private var userSessionManager
 
     #if os(iOS)
     @StateObject
@@ -45,16 +45,12 @@ struct MainTabView: View {
     }
     #endif
 
-    private func routePendingDeepLink() {
-        guard let deepLink = deepLinkHandler.consumePendingDeepLink() else { return }
+    private func routePendingDeepLink(_ deepLink: DeepLink?) {
+        guard let deepLink else { return }
 
         Task { @MainActor in
-            do {
-                let route = try await deepLinkHandler.route(for: deepLink)
-                tabCoordinator.route(to: route)
-            } catch {
-                // TODO: surface deep link failures in UI.
-            }
+            let route = deepLink.route()
+            await tabCoordinator.route(to: route)
         }
     }
 
@@ -81,11 +77,8 @@ struct MainTabView: View {
                 .tag(tab.item.id)
             }
         }
-        .onAppear {
-            routePendingDeepLink()
-        }
-        .onReceive(deepLinkHandler.$pendingDeepLink.compactMap(\.self)) { _ in
-            routePendingDeepLink()
+        .onChange(of: userSessionManager.pendingDeepLink) { _ in
+            routePendingDeepLink(userSessionManager.consumePendingDeepLink())
         }
     }
 }

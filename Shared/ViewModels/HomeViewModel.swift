@@ -8,7 +8,7 @@
 
 import Combine
 import CoreStore
-import Factory
+import FactoryKit
 import Get
 import JellyfinAPI
 import OrderedCollections

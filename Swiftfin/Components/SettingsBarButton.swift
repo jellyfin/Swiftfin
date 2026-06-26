@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
 import SwiftUI
 
 struct SettingsBarButton: View {

@@ -8,7 +8,7 @@
 
 import Combine
 import Defaults
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import VLCUI

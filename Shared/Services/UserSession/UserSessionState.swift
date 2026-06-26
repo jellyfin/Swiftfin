@@ -6,7 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-enum UserSignInState: RawRepresentable, Codable, Hashable, Storable {
+enum UserSessionState: RawRepresentable, Storable {
 
     case signedOut
     case signedIn(userID: String)
