@@ -35,6 +35,9 @@ struct BrunoBoxSetGridView: View {
     /// Directors: focus-driven card that cycles the director's film posters (BrunoArtCarouselCard).
     /// Off for Boxed Sets, which keep the plain PosterButton.
     var artCarousel: Bool = false
+    /// New Releases "Show all": render each poster's full release date on line 2 (the deeper New
+    /// Releases collection, matching the Home/Collections inline rows). Portrait, non-collectionLabel.
+    var showsDate: Bool = false
 
     @Router
     private var router
@@ -94,6 +97,8 @@ struct BrunoBoxSetGridView: View {
     private func cardLabel(for item: BaseItemDto) -> some View {
         if posterType == .landscape, collectionLabel {
             BrunoBoxSetCardLabel(item: item, yearRange: yearRanges.ranges[item.id ?? ""])
+        } else if showsDate {
+            BrunoTitleDateContentView(item: item)
         } else {
             PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
         }
@@ -222,7 +227,8 @@ extension NavigationRoute {
         items: [BaseItemDto],
         posterType: PosterDisplayType,
         collectionLabel: Bool = false,
-        artCarousel: Bool = false
+        artCarousel: Bool = false,
+        showsDate: Bool = false
     ) -> NavigationRoute {
         NavigationRoute(
             id: "bruno-boxset-grid-\(title.lowercased())",
@@ -233,7 +239,8 @@ extension NavigationRoute {
                 items: items,
                 posterType: posterType,
                 collectionLabel: collectionLabel,
-                artCarousel: artCarousel
+                artCarousel: artCarousel,
+                showsDate: showsDate
             )
         }
     }

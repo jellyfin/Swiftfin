@@ -24,6 +24,15 @@ enum BrunoHomePlan {
     static let minItems = 3
     static let shelfCap = 18
 
+    /// The home reseeds the explore tail into up to this many "blocks" as the user keeps scrolling —
+    /// each block a fresh-random set off a DERIVED per-block seed (so it stays deterministic per day /
+    /// per Shuffle). Block 0 is the original tail; blocks 1…n-1 are the reseeds.
+    static let exploreBlockCount = 3
+    /// Hard safety ceiling on total mounted sections (spine + every explore block) so a degenerate
+    /// append loop can never run away. The tail is normally bounded by `exploreBlockCount` × key-walk;
+    /// on a finite library content dedupe usually stops it well before this.
+    static let tailCeiling = 60
+
     /// The genre name the Classic carve-out splits on. Matched case-insensitively against the
     /// snapshot's genres so a library without a literal "Romance" genre simply never produces the
     /// Classic Romance shelf. (The modern-year cutoff itself lives in `BrunoRecencyBias.modernCutoff`.)
@@ -65,8 +74,8 @@ enum BrunoHomePlan {
         shelves.append(.init(id: "nextup", lens: "Next Episode", title: "Up Next", kind: .nextUp, dedupeKey: "nextUp", source: .nextUp))
         shelves.append(.init(
             id: "recent",
-            lens: "Just Added",
-            title: "New Releases",
+            lens: "New to the Library",
+            title: "Just Added",
             kind: .recentlyAdded,
             dedupeKey: "recentlyAdded",
             source: .recentlyAdded
@@ -185,24 +194,35 @@ enum BrunoHomePlan {
         return dedupedAndCapped(shelves)
     }
 
-    // MARK: Infinite-scroll tail (+2 per page)
+    // MARK: Infinite-scroll tail (+2 per page, reseeding per block)
 
-    /// Two more explore shelves for scroll page `page` (1-based), seed-derived per slot
-    /// (mirrors the prototype's `addMore`: `rng(seed*131 + (i+k)*29 + tick)`). Cross-page
-    /// content dedupe is the view model's job (via `BrunoShelf.dedupeKey`); here we just bound
-    /// the batch to the cap and walk distinct keys.
-    static func appendExplore(seed: UInt32, page: Int, alreadyShown: Int, snapshot: BrunoLibrarySnapshot, now: Date) -> [BrunoShelf] {
-        let remaining = shelfCap - alreadyShown
-        guard remaining > 0 else { return [] }
+    /// Two more explore shelves for scroll page `page` (1-based) of reseed `block`, seed-derived per
+    /// slot (mirrors the prototype's `addMore`: `rng(seed*131 + (i+k)*29 + tick)`). Cross-page content
+    /// dedupe is the view model's job (via `BrunoShelf.dedupeKey`); here we just walk distinct keys. The
+    /// VM bounds the tail by `exploreBlockCount` × key-walk plus `tailCeiling` (no per-call cap here).
+    static func appendExplore(
+        seed: UInt32,
+        block: Int,
+        page: Int,
+        alreadyShown: Int,
+        snapshot: BrunoLibrarySnapshot,
+        now: Date
+    ) -> [BrunoShelf] {
+        // Each block reseeds off a DERIVED per-block seed (block 0 is the base seed, preserving the
+        // original tail), so a reseed surfaces a fresh-random set while staying pure over (seed, block)
+        // — deterministic per day and a clean miss after Shuffle (INV-3/INV-5).
+        let blockSeed = block == 0 ? seed : derive(seed, 211 &* UInt32(block))
 
         var out: [BrunoShelf] = []
-        for k in 0 ..< min(2, remaining) {
+        for k in 0 ..< 2 {
             let slot = alreadyShown + k
             let key = exploreKeys[(slot + page) % exploreKeys.count]
-            let slotSeed = BrunoRNG.subSeed(seed, 131, UInt32(slot) &+ UInt32(page), 29)
+            let slotSeed = BrunoRNG.subSeed(blockSeed, 131, UInt32(slot) &+ UInt32(page), 29)
             if let shelf = explore(key: key, seed: slotSeed, snapshot: snapshot, now: now) {
                 out.append(.init(
-                    id: "\(shelf.id)-p\(page)s\(slot)",
+                    // Block index in the id so a reseeded block never id-collides an earlier block's
+                    // same-key shelf (INV-2 stable-unique identity; the focus engine restores by id).
+                    id: "\(shelf.id)-b\(block)p\(page)s\(slot)",
                     lens: shelf.lens,
                     title: shelf.title,
                     posterType: shelf.posterType,

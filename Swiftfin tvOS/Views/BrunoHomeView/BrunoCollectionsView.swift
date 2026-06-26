@@ -72,29 +72,6 @@ final class BrunoCollectionsViewModel: ViewModel {
     @Published
     private(set) var isLoading = true
 
-    private static func drillStyle(for groupName: String) -> BrunoCollectionCategory.DrillStyle {
-        switch groupName.lowercased() {
-        case "genres": .genres // core-category panel + mixed sub-genre shelves (§4 + core panel)
-        case "decades": .shelves // shelf per decade (§4)
-        case "curated": .shelves // shelf per curated sub-collection (Asian Cinema, Oscar Buzz, …)
-        default: .grid // flat full grid (§3)
-        }
-    }
-
-    /// Per-category lens eyebrow so each Collections shelf reads with its own flavor instead of a
-    /// flat repeated "Browse the Library" (matches Home's lens variety). nil → surface default.
-    private static func lens(for groupName: String) -> String? {
-        switch groupName.lowercased() {
-        case "directors": "Auteurs"
-        case "studios": "From the Vault"
-        case "curated": "Hand-Picked"
-        case "decades": "Through the Years"
-        case "new releases": "Just Added"
-        case "seasonal": "In Season"
-        default: nil
-        }
-    }
-
     func load() async {
         guard let userSession else {
             isLoading = false
@@ -107,18 +84,9 @@ final class BrunoCollectionsViewModel: ViewModel {
         // library on every Home -> Collections navigation.
         let snapshot = await BrunoLibrarySnapshot.loadShared(client: client, userID: userID)
 
-        // Same curated groups the home spine derives from, in server order; drop empties.
-        var built = snapshot.favoriteGroupBoxSets.compactMap { boxSet -> BrunoCollectionCategory? in
-            guard let name = boxSet.name else { return nil }
-            let children = snapshot.childrenByGroupName[name] ?? []
-            guard children.isNotEmpty else { return nil }
-            return BrunoCollectionCategory(
-                boxSet: boxSet,
-                children: children,
-                drillStyle: Self.drillStyle(for: name),
-                lens: Self.lens(for: name)
-            )
-        }
+        // The favorited group tiles (Directors, Decades, …), built + ranked from the snapshot. Shared
+        // with the Home feed's terminal footer via `fromSnapshot` (which also flags New Releases dates).
+        var built = BrunoCollectionCategory.fromSnapshot(snapshot)
 
         // Boxed Sets: every box set NOT already surfaced by a curated group (or as a group child),
         // i.e. the standalone franchise collections. Director collections (e.g. "Joel Coen",
@@ -151,18 +119,12 @@ final class BrunoCollectionsViewModel: ViewModel {
             #endif
         }
 
-        // Fixed top-shelf order (owner request). Explicit rank by group name; unknown names fall to
-        // the end in server order. Decorate-with-index so the sort is stable independent of the
-        // standard library's (unspecified) sort stability. Reordering doesn't change any category's
-        // id, so focus identity holds.
-        let rank: [String: Int] = [
-            "new releases": 0, "genres": 1, "directors": 2, "boxed sets": 3,
-            "decades": 4, "curated": 5, "studios": 6, "seasonal": 7,
-        ]
+        // Re-apply the fixed top-shelf order now that "Boxed Sets" is appended (owner request). Stable
+        // decorate-with-index sort; reordering doesn't change any category's id, so focus identity holds.
         categories = built.enumerated()
             .sorted { lhs, rhs in
-                let l = rank[lhs.element.name.lowercased()] ?? .max
-                let r = rank[rhs.element.name.lowercased()] ?? .max
+                let l = BrunoCollectionCategory.rank(for: lhs.element.name)
+                let r = BrunoCollectionCategory.rank(for: rhs.element.name)
                 return l != r ? l < r : lhs.offset < rhs.offset
             }
             .map(\.element)

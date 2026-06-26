@@ -36,6 +36,13 @@ struct BrunoHomeView: View {
     @State
     private var visibleShelfCount = 4
 
+    /// Drives an explicit focus move back to the hero when the user taps "Back to Top" — `scrollTo`
+    /// moves the content, not the focus, so the off-screen pill would otherwise keep the focus ring.
+    @FocusState
+    private var homeFocus: HomeFocus?
+
+    private enum HomeFocus: Hashable { case hero }
+
     private var spotlightItem: BaseItemDto? {
         viewModel.heroItems[safe: spotlightIndex] ?? viewModel.heroItems.first
     }
@@ -97,6 +104,9 @@ struct BrunoHomeView: View {
                                 .padding(.top, 20)
                         }
                         .id("bruno-top")
+                        // Back-to-Top focus target: setting `homeFocus = .hero` pulls focus here after
+                        // the scroll (the hero stays the natural first-focus element otherwise — INV-7).
+                        .focused($homeFocus, equals: .hero)
 
                     // INV-2: cap-and-grow window — mount only the first `visibleShelfCount` of the
                     // already-revealed sections, keyed on the section's stable id (not array index).
@@ -122,12 +132,39 @@ struct BrunoHomeView: View {
                     Color.clear
                         .frame(height: 1)
                         .onAppear { viewModel.send(.appendExplore) }
+
+                    // Terminal footer: once the explore tail is fully reseeded/exhausted, re-surface the
+                    // collections group cards + a centered "Back to Top" pill. Gated on exhaustion so it
+                    // appears only at the true end of the feed (INV-7: post-content, never first-focus).
+                    if viewModel.exploreExhausted, viewModel.sections.isNotEmpty {
+                        VStack(spacing: 28) {
+                            BrunoCategoryCardRow(categories: viewModel.collectionCategories)
+
+                            HStack {
+                                Spacer()
+                                BrunoSelectorCard(title: "Back to Top") {
+                                    viewModel.send(.scrollToTop)
+                                    // scrollTo moves content, not focus — pull focus back to the hero.
+                                    Task { @MainActor in homeFocus = .hero }
+                                }
+                                Spacer()
+                            }
+                        }
+                        .focusSection()
+                        .padding(.top, 12)
+                        .transition(reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 16)))
+                    }
                 }
                 .padding(.bottom, 60)
                 .animation(reduceMotion ? nil : .easeOut(duration: 0.35), value: viewModel.sections.count)
-                // Reset the mount window whenever the revealed-sections set changes (e.g. reshuffle /
-                // refresh re-seeds the spine), keyed on the same stable ids the ForEach uses.
-                .onChange(of: viewModel.sections.map(\.id)) { _, _ in visibleShelfCount = 4 }
+                // Reveal the terminal footer with the same cadence as the shelves.
+                .animation(reduceMotion ? nil : .easeOut(duration: 0.35), value: viewModel.exploreExhausted)
+                // Reset the mount window only on a genuine spine REPLACEMENT (reshuffle/refresh), not on
+                // append GROWTH: if every prior id survives (append or in-place reconcile) the new set is
+                // a superset → keep the window; otherwise the spine changed → collapse back to the start.
+                .onChange(of: viewModel.sections.map(\.id)) { old, new in
+                    if !Set(new).isSuperset(of: Set(old)) { visibleShelfCount = 4 }
+                }
             }
             .onChange(of: viewModel.scrollResetToken) { _, _ in
                 if reduceMotion {

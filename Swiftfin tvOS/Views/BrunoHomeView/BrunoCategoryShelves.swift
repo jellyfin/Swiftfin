@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionHStack
 import JellyfinAPI
 import SwiftUI
 
@@ -44,6 +43,9 @@ struct BrunoCollectionCategory: Identifiable {
     /// Genre categories are recency-biased: their row is modern-only and their "Show all" grid sorts
     /// newest-first so pre-1985 films sink to the bottom of the barrel. Non-genre categories don't.
     let recencyBiased: Bool
+    /// New Releases only: render each poster's full release date on line 2 — on the inline shelf AND
+    /// the dated "Show all" grid. Default false ⇒ every other category renders the shared label.
+    let showsDate: Bool
     /// `.grid` Show-all override: when set, "Show all" opens a live, fully-paged `ItemLibrary` scoped
     /// to `gridParent` (filtered to `gridYear` when non-nil) instead of deriving the parent from
     /// `boxSet`. Used by the per-year decade shelves, whose `boxSet` is a synthetic label-only stub
@@ -57,6 +59,7 @@ struct BrunoCollectionCategory: Identifiable {
         drillStyle: DrillStyle = .grid,
         lens: String? = nil,
         recencyBiased: Bool = false,
+        showsDate: Bool = false,
         gridParent: BaseItemDto? = nil,
         gridYear: Int? = nil
     ) {
@@ -65,6 +68,7 @@ struct BrunoCollectionCategory: Identifiable {
         self.drillStyle = drillStyle
         self.lens = lens
         self.recencyBiased = recencyBiased
+        self.showsDate = showsDate
         self.gridParent = gridParent
         self.gridYear = gridYear
     }
@@ -75,6 +79,67 @@ struct BrunoCollectionCategory: Identifiable {
 
     var name: String {
         boxSet.displayTitle
+    }
+}
+
+extension BrunoCollectionCategory {
+
+    /// Fixed top-shelf order (owner request); unknown names fall to the end. Shared by the Collections
+    /// hub and the Home feed's terminal footer so both order the group tiles identically.
+    static func rank(for name: String) -> Int {
+        [
+            "new releases": 0, "genres": 1, "directors": 2, "boxed sets": 3,
+            "decades": 4, "curated": 5, "studios": 6, "seasonal": 7,
+        ][name.lowercased()] ?? .max
+    }
+
+    /// What "Show all" does for a group.
+    static func drillStyle(for groupName: String) -> DrillStyle {
+        switch groupName.lowercased() {
+        case "genres": .genres // core-category panel + mixed sub-genre shelves (§4 + core panel)
+        case "decades": .shelves // shelf per decade (§4)
+        case "curated": .shelves // shelf per curated sub-collection (Asian Cinema, Oscar Buzz, …)
+        default: .grid // flat full grid (§3)
+        }
+    }
+
+    /// Per-category lens eyebrow so each shelf reads with its own flavor instead of a flat repeated
+    /// surface eyebrow (matches Home's lens variety). nil → surface default.
+    static func lens(for groupName: String) -> String? {
+        switch groupName.lowercased() {
+        case "directors": "Auteurs"
+        case "studios": "From the Vault"
+        case "curated": "Hand-Picked"
+        case "decades": "Through the Years"
+        case "new releases": "Just Added"
+        case "seasonal": "In Season"
+        default: nil
+        }
+    }
+
+    /// The favorited "group" tiles (Directors, Decades, …) built purely from a loaded snapshot — NO
+    /// network — in the fixed order, dropping empties. Excludes the synthetic "Boxed Sets" category
+    /// (that needs its own box-set fetch). Reused by the Collections hub and the Home feed's footer.
+    static func fromSnapshot(_ snapshot: BrunoLibrarySnapshot) -> [BrunoCollectionCategory] {
+        snapshot.favoriteGroupBoxSets
+            .compactMap { boxSet -> BrunoCollectionCategory? in
+                guard let name = boxSet.name else { return nil }
+                let children = snapshot.childrenByGroupName[name] ?? []
+                guard children.isNotEmpty else { return nil }
+                return BrunoCollectionCategory(
+                    boxSet: boxSet,
+                    children: children,
+                    drillStyle: drillStyle(for: name),
+                    lens: lens(for: name),
+                    showsDate: name.lowercased() == "new releases"
+                )
+            }
+            .enumerated()
+            .sorted { lhs, rhs in
+                let l = rank(for: lhs.element.name), r = rank(for: rhs.element.name)
+                return l != r ? l < r : lhs.offset < rhs.offset
+            }
+            .map(\.element)
     }
 }
 
@@ -194,7 +259,7 @@ struct BrunoCategoryShelves: View {
                     }
 
                     if showCategoryRow {
-                        categoryCardRow
+                        BrunoCategoryCardRow(categories: categories)
                             .padding(.top, (header == nil && featured == nil) ? 20 : 0)
                             // Mutually exclusive with `header`; anchored too so any selector-row surface
                             // that adopts pillScrollKey lands here.
@@ -231,32 +296,6 @@ struct BrunoCategoryShelves: View {
         }
     }
 
-    // The big gradient category cards. Code-drawn tiles (BrunoCategoryTile) rather than the group's
-    // server poster, so every label renders at a controlled size (fixes the giant "NEW") and the
-    // synthetic "Boxed Sets" category gets real art instead of a grey placeholder. Tapping one jumps
-    // straight to that category's full "Show all" destination. CollectionHStack (the same primitive
-    // BrunoShelfRow uses) keeps native tvOS focus scaling + continuous-leading-edge scroll; .card
-    // owns focus so the tile itself stays pure drawing.
-    private var categoryCardRow: some View {
-        CollectionHStack(
-            uniqueElements: categories,
-            columns: 7
-        ) { category in
-            Button {
-                routeToShowAll(category)
-            } label: {
-                BrunoCategoryTile(category: category)
-            }
-            .buttonStyle(.card)
-        }
-        .clipsToBounds(false)
-        .dataPrefix(categories.count)
-        .insets(horizontal: EdgeInsets.edgePadding, vertical: 20)
-        .itemSpacing(EdgeInsets.edgePadding - 20)
-        .scrollBehavior(.continuousLeadingEdge)
-        .focusSection()
-    }
-
     private func shelf(for category: BrunoCollectionCategory) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             VStack(alignment: .leading, spacing: 0) {
@@ -274,9 +313,10 @@ struct BrunoCategoryShelves: View {
             BrunoShelfRow(
                 items: shelfItems(for: category),
                 onItem: { router.route(to: .item(item: $0)) },
-                onShowAll: { routeToShowAll(category) },
+                onShowAll: { brunoRouteToShowAll(category, router: router, namespace: namespace) },
                 artCarousel: ["studios", "directors"].contains(category.name.lowercased()),
-                showsDate: showsDate
+                // Per-category opt-in (New Releases) on top of the surface-wide flag (Decades).
+                showsDate: showsDate || category.showsDate
             )
         }
     }
@@ -349,91 +389,5 @@ struct BrunoCategoryShelves: View {
             keyed.append((item, pow(u, 1.0 / weight)))
         }
         return keyed.sorted { $0.key > $1.key }.prefix(count).map(\.item)
-    }
-
-    private func routeToShowAll(_ category: BrunoCollectionCategory) {
-        switch category.drillStyle {
-        case .genres:
-            router.route(to: .brunoGenres(parent: category.boxSet, core: nil))
-        case .shelves:
-            router.route(to: .brunoCategoryShelves(parent: category.boxSet), in: namespace)
-        case .items:
-            // Boxed Sets: landscape cards so the franchise names aren't scrunched, with the
-            // collection-name / "Collection" / film-count + year-range lockup.
-            router.route(
-                to: .brunoBoxSetGrid(
-                    title: category.name,
-                    items: category.children,
-                    posterType: .landscape,
-                    collectionLabel: true
-                ),
-                in: namespace
-            )
-        case .grid:
-            // Per-year decade shelf: route to a live, fully-paged ItemLibrary scoped to the REAL
-            // decade BoxSet, filtered to this single year (the inline row is only a preview, so
-            // "Show all" must reach the complete year). The synthetic category's own `boxSet` is a
-            // label-only stub, so we can't derive the parent from it — `gridParent` carries the real
-            // decade BoxSet and `gridYear` the year. "Other" has no single year (gridYear == nil), so
-            // it opens the decade's full library unfiltered.
-            if let gridParent = category.gridParent {
-                let filters: ItemFilterCollection = category.gridYear.map { year in
-                    .init(years: [ItemYear(integerLiteral: year)])
-                } ?? .default
-                router.route(
-                    to: .library(library: ItemLibrary(parent: gridParent, filters: filters)),
-                    in: namespace
-                )
-                return
-            }
-
-            // A group whose children are sub-collections (Directors, Studios, …) must show ONLY
-            // those box sets on "Show all". The stock ItemLibrary(parent:) query returns the
-            // group's movies recursively as well — that's the "all the contributing movies are
-            // listed after the directors" bug. Render a static grid of just the box-set children
-            // instead (same filter the inline shelf uses). Flat movie groups (no box-set children,
-            // e.g. New Releases) keep the live, paged library.
-            let boxSetChildren = category.children.filter { $0.type == .boxSet }
-            if boxSetChildren.isNotEmpty {
-                // Studios get the cinematic Hollywood-backdrop grid (landscape cards under a
-                // detail-page-style hero band). Directors stay the plain portrait grid (headshots,
-                // header-overlap fix).
-                let isStudios = category.name.lowercased() == "studios"
-                if isStudios {
-                    router.route(
-                        to: .brunoStudiosGrid(
-                            title: category.name,
-                            items: boxSetChildren
-                        ),
-                        in: namespace
-                    )
-                } else {
-                    router.route(
-                        to: .brunoBoxSetGrid(
-                            title: category.name,
-                            items: boxSetChildren,
-                            posterType: .portrait,
-                            artCarousel: true
-                        ),
-                        in: namespace
-                    )
-                }
-            } else if category.boxSet.libraryType == .boxSet {
-                // Genre grids sort newest-first so the pre-1985 classics sink to the literal bottom
-                // of the barrel (owner request) — still reachable, just never up top. Other grids
-                // keep the default sortName order.
-                let filters: ItemFilterCollection = category.recencyBiased
-                    ? .init(sortBy: [.premiereDate], sortOrder: [.descending])
-                    : .default
-                router.route(
-                    to: .library(library: ItemLibrary(parent: category.boxSet, filters: filters)),
-                    in: namespace
-                )
-            } else {
-                // Not a BoxSet: ItemLibrary(parent:) would fall through to an unscoped, whole-
-                // library query, so open the item detail instead.
-                router.route(to: .item(item: category.boxSet))
-            }
-        }
     }
 }

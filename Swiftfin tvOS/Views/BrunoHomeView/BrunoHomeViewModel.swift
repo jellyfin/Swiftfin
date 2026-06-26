@@ -27,6 +27,8 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         case backgroundRefresh
         case shuffle
         case appendExplore
+        /// Scroll the home back to the hero — the "Back to Top" pill at the very bottom of the feed.
+        case scrollToTop
         /// Re-pick the hero spotlights only (cheap, local) — on every home (re)entry / after playback.
         case reshuffleHero
     }
@@ -50,12 +52,21 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
     @Published
     private(set) var scrollResetToken = 0
 
+    /// The collection group tiles for the Home feed's terminal footer — the same group set as the
+    /// Collections tab (minus the network-only "Boxed Sets"), pure over the already-loaded snapshot.
+    var collectionCategories: [BrunoCollectionCategory] {
+        BrunoCollectionCategory.fromSnapshot(snapshot)
+    }
+
     private(set) var seed: UInt32
 
     private var snapshot: BrunoLibrarySnapshot = .empty
     /// The fetched hero candidate pool (high-rated movies); re-shuffled locally on each (re)entry.
     private var heroSuperset: [BaseItemDto] = []
     private var explorePage = 0
+    /// Which reseed block the explore tail is currently filling (0 = the original tail). Advances when a
+    /// block's key-walk yields nothing new, up to `BrunoHomePlan.exploreBlockCount` (then exhausts).
+    private var currentBlock = 0
     /// Bumped at the start of every `performRefresh`. Streaming shelf-inserts and explore appends
     /// are guarded on it so a superseded refresh (e.g. Shuffle restarts the task) can never graft
     /// stale-generation rows onto the new spine. (`Task.isCancelled` covers the same case; the
@@ -64,8 +75,10 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
     /// Content already on screen (by `BrunoShelf.dedupeKey`) so the explore tail never repeats a
     /// collection it (or the spine) already showed — including across infinite-scroll pages.
     private var seenDedupeKeys: Set<String> = []
-    /// Set once the explore tail can produce nothing new, so the bottom sentinel stops re-firing.
-    private var exploreExhausted = false
+    /// Set once the explore tail can produce nothing new (all reseed blocks walked), so the bottom
+    /// sentinel stops re-firing and the terminal footer (collections cards + Back to Top) can appear.
+    @Published
+    private(set) var exploreExhausted = false
     private var refreshTask: AnyCancellable?
     private var appendTask: AnyCancellable?
 
@@ -98,6 +111,7 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
             // fresh (an explicit user-driven reroll bypasses the warm cache).
             seed = Self.reseedRandom()
             explorePage = 0
+            currentBlock = 0
             scrollResetToken &+= 1
             appendTask?.cancel()
             refreshTask?.cancel()
@@ -108,12 +122,17 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
             return .refreshing
 
         case .appendExplore:
-            guard state == .content, !exploreExhausted, sections.count < BrunoHomePlan.shelfCap else { return state }
+            guard state == .content, !exploreExhausted, sections.count < BrunoHomePlan.tailCeiling else { return state }
             appendTask?.cancel()
             appendTask = Task { [weak self] in
                 await self?.performAppendExplore()
             }
             .asAnyCancellable()
+            return state
+
+        case .scrollToTop:
+            // Reuse the view's existing reduce-motion-aware scroll handler, which is keyed on this token.
+            scrollResetToken &+= 1
             return state
 
         case .reshuffleHero:
@@ -185,6 +204,7 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         heroSuperset = payload.heroSuperset.filter(brunoHeroEligible)
         reshuffleHero() // instant hero from the cached superset
         explorePage = 0
+        currentBlock = 0
         exploreExhausted = false
         state = .content
         return true
@@ -243,6 +263,7 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         await heroPublish
         guard !Task.isCancelled, generation == refreshGeneration else { return }
         explorePage = 0
+        currentBlock = 0
         exploreExhausted = false
         state = .content
 
@@ -324,9 +345,10 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         let page = explorePage + 1
         explorePage = page
 
-        // Filter out collections already shown (spine or earlier pages) BEFORE fetching.
+        // Filter out collections already shown (spine or earlier pages/blocks) BEFORE fetching.
         let newShelves = BrunoHomePlan.appendExplore(
             seed: seed,
+            block: currentBlock,
             page: page,
             alreadyShown: sections.count,
             snapshot: snapshot,
@@ -335,8 +357,16 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
         .filter { !seenDedupeKeys.contains($0.dedupeKey) }
 
         if newShelves.isEmpty {
-            // Walked a full lap of the key pool with nothing new → stop appending.
-            if page >= BrunoHomePlan.exploreKeys.count { exploreExhausted = true }
+            // Walked a full lap of this block's key pool with nothing new: reseed into the next block
+            // (a fresh-random set) if one remains, else the tail is done — the terminal footer shows.
+            if page >= BrunoHomePlan.exploreKeys.count {
+                if currentBlock + 1 < BrunoHomePlan.exploreBlockCount {
+                    currentBlock += 1
+                    explorePage = 0
+                } else {
+                    exploreExhausted = true
+                }
+            }
             return
         }
 
@@ -357,7 +387,8 @@ final class BrunoHomeViewModel: ViewModel, Stateful {
 
         guard !Task.isCancelled, generation == refreshGeneration else { return }
 
-        if sections.count >= BrunoHomePlan.shelfCap { exploreExhausted = true }
+        // Safety ceiling only — the tail is normally bounded by block count × key-walk above.
+        if sections.count >= BrunoHomePlan.tailCeiling { exploreExhausted = true }
     }
 
     /// Hero spotlight: fetch a high-rated superset (plan §D), cache it, and return 5 in a fresh
