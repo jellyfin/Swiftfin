@@ -59,7 +59,7 @@ struct BrunoHeroView: View {
     private var isFocused: Bool
 
     /// Auto-advance cadence for the spotlight (paused while focused).
-    private let autoAdvance = Timer.publish(every: 8, on: .main, in: .common).autoconnect()
+    private let autoAdvance = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     private var current: BaseItemDto? {
         items[safe: index] ?? items.first
