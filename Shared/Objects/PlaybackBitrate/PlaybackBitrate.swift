@@ -60,20 +60,4 @@ enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
             nil
         }
     }
-
-    /// Convenience for the smallest bitrate.
-    static let min: PlaybackBitrate = allCases
-        .filter { $0 != .auto }
-        .min(by: { $0.rawValue < $1.rawValue }) ?? .kbps420
-
-    /// Return all validate bitrate selections for a `MediaSourceInfo`
-    static func validBitrates(for mediaSource: MediaSourceInfo) -> [PlaybackBitrate] {
-        guard let sourceBitrate = mediaSource.bitrate else {
-            return PlaybackBitrate.allCases
-        }
-
-        return PlaybackBitrate.allCases.filter {
-            $0 == .max || $0.rawValue <= sourceBitrate
-        }
-    }
 }

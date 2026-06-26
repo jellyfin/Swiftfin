@@ -458,6 +458,10 @@ final class MediaPlayerManager: ViewModel {
         let testSizeBits = Double(testSize.rawValue * 8)
         let testBitrate = testSizeBits / testDuration
 
-        return clamp(Int(testBitrate), min: PlaybackBitrate.min.rawValue, max: Int(Int32.max))
+        return clamp(
+            Int(testBitrate),
+            min: PlaybackBitrate.kbps420.rawValue,
+            max: Int(Int32.max)
+        )
     }
 }

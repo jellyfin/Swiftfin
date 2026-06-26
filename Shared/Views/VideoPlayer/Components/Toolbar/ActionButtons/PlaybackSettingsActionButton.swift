@@ -36,37 +36,54 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         var body: some View {
             if let playbackItem = manager.playbackItem {
+                let bitrates = playbackItem.mediaSource.supportedBitrates
+                let versions = playbackItem.baseItem.mediaSources ?? []
+                let hasVersionSection = versions.count > 1
+                let hasBitrateSection = bitrates.isNotEmpty
+                let hasMultipleSections = hasVersionSection && hasBitrateSection
+                let menuTitle: String = {
+                    if hasMultipleSections {
+                        VideoPlayerActionButton.playbackSettings.displayTitle
+                    } else if hasVersionSection {
+                        L10n.version
+                    } else {
+                        L10n.playbackQuality
+                    }
+                }()
+
                 Menu(
-                    VideoPlayerActionButton.playbackSettings.displayTitle,
+                    menuTitle,
                     systemImage: VideoPlayerActionButton.playbackSettings.systemImage
                 ) {
-                    let versions = playbackItem.baseItem.mediaSources ?? []
+                    if hasVersionSection {
+                        Picker(
+                            selection: Binding(
+                                get: { playbackItem.mediaSource.id },
+                                set: { newID in
+                                    guard let newID,
+                                          newID != playbackItem.mediaSource.id,
+                                          let newSource = versions.first(where: { $0.id == newID })
+                                    else { return }
 
-                    if versions.count > 1 {
-                        Menu(L10n.version) {
-                            Picker(
-                                L10n.version,
-                                selection: Binding(
-                                    get: { playbackItem.mediaSource.id },
-                                    set: { newID in
-                                        guard let newID, newID != playbackItem.mediaSource.id,
-                                              let newSource = playbackItem.baseItem.mediaSources?.first(where: { $0.id == newID })
-                                        else { return }
-                                        manager.playNewItem(provider: makeProvider(for: newSource, playbackItem: playbackItem))
-                                    }
-                                )
-                            ) {
-                                ForEach(versions, id: \.hashValue) { version in
-                                    Text(version.displayTitle)
-                                        .tag(version.id)
+                                    manager.playNewItem(provider: makeProvider(for: newSource, playbackItem: playbackItem))
                                 }
+                            )
+                        ) {
+                            ForEach(versions, id: \.hashValue) { version in
+                                Text(version.displayTitle)
+                                    .tag(version.id)
                             }
+                        } label: {
+                            Text(L10n.version)
+                            Text(playbackItem.mediaSource.displayTitle)
+                        }
+                        .if(hasMultipleSections) { picker in
+                            picker.pickerStyle(.menu)
                         }
                     }
 
-                    Section(L10n.bitrate) {
+                    if hasBitrateSection {
                         Picker(
-                            L10n.bitrate,
                             selection: Binding(
                                 get: { playbackItem.requestedBitrate },
                                 set: { newBitrate in
@@ -75,10 +92,16 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                                 }
                             )
                         ) {
-                            ForEach(PlaybackBitrate.validBitrates(for: playbackItem.mediaSource), id: \.rawValue) { bitrate in
+                            ForEach(bitrates, id: \.rawValue) { bitrate in
                                 Text(bitrate.displayTitle)
                                     .tag(bitrate)
                             }
+                        } label: {
+                            Text(L10n.playbackQuality)
+                            Text(playbackItem.requestedBitrate.displayTitle)
+                        }
+                        .if(hasMultipleSections) { picker in
+                            picker.pickerStyle(.menu)
                         }
                     }
                 }
