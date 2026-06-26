@@ -82,7 +82,8 @@ struct BrunoCategoryTile: View {
         case "directors":
             (Color(hex: "08191E"), Color(hex: "2E6B7C"), Color(hex: "5BB6CC"))
         case "boxed sets":
-            (Color(hex: "241803"), Color(hex: "9C7320"), Color(hex: "E0A93A"))
+            // Cobalt — distinct from the amber Decades tile it sits beside (and every other tile).
+            (Color(hex: "0B1430"), Color(hex: "2A45A8"), Color(hex: "5C7CE6"))
         case "decades":
             (Color(hex: "201408"), Color(hex: "9C6A1E"), Color(hex: "E0902E"))
         case "curated":
