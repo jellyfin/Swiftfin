@@ -120,12 +120,26 @@ struct BrunoCategoryShelves: View {
     /// Decade surface only: show each poster's full release date on line 2. Default false ⇒ every
     /// other surface (Home / Genres / Kids / Collections) renders the shared label byte-identically.
     var showsDate: Bool = false
+    /// When this key changes, the surface scroll-jumps so the selector/pill region sits at the top —
+    /// the "pills near top, first shelf in full view" framing you otherwise only reach by focusing a
+    /// shelf. Driven by the COMMITTED selection (e.g. the debounced `selectedDecade`), so a fast pill
+    /// scrub scrolls once on settle rather than per pill. nil (the default) ⇒ no scroll-jumps.
+    var pillScrollKey: String?
 
     @Router
     private var router
 
     @Namespace
     private var namespace
+
+    /// INV-9: collapse the pill-select scroll-jump to an instant move when reduce-motion is on.
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    /// Scroll anchor for the selector/pill region — `pillScrollKey` jumps the view here.
+    private enum ScrollAnchor: Hashable {
+        case selector
+    }
 
     /// Items previewed in each shelf before the trailing "Show all" card. Kept small: a shelf is a
     /// preview, and every card is a focusable UIHostingController, so realizing fewer per row is the
@@ -149,36 +163,54 @@ struct BrunoCategoryShelves: View {
     }
 
     private var scrollContent: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 36) {
-                // Full-bleed cinematic hero (Home pattern): a row in the same scroll plane as the
-                // shelves, so vertical focus traverses hero <-> content with no special handling.
-                if let featured {
-                    BrunoHeroView(
-                        items: [featured],
-                        index: .constant(0),
-                        eyebrow: heroEyebrow,
-                        bleedsTop: true,
-                        // Taller banner shows more of the backdrop (incl. its top), subject centered.
-                        extraHeight: 160
-                    )
-                }
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 36) {
+                    // Full-bleed cinematic hero (Home pattern): a row in the same scroll plane as the
+                    // shelves, so vertical focus traverses hero <-> content with no special handling.
+                    if let featured {
+                        BrunoHeroView(
+                            items: [featured],
+                            index: .constant(0),
+                            eyebrow: heroEyebrow,
+                            bleedsTop: true,
+                            // Taller banner shows more of the backdrop (incl. its top), subject centered.
+                            extraHeight: 160
+                        )
+                    }
 
-                if let header {
-                    header
-                        .padding(.top, featured == nil ? 20 : 0)
-                }
+                    if let header {
+                        header
+                            .padding(.top, featured == nil ? 20 : 0)
+                            // Pill/selector region (Decades pills, Genres core panel): the scroll target.
+                            .id(ScrollAnchor.selector)
+                    }
 
-                if showCategoryRow {
-                    categoryCardRow
-                        .padding(.top, (header == nil && featured == nil) ? 20 : 0)
-                }
+                    if showCategoryRow {
+                        categoryCardRow
+                            .padding(.top, (header == nil && featured == nil) ? 20 : 0)
+                            // Mutually exclusive with `header`; anchored too so any selector-row surface
+                            // that adopts pillScrollKey lands here.
+                            .id(ScrollAnchor.selector)
+                    }
 
-                ForEach(categories) { category in
-                    shelf(for: category)
+                    ForEach(categories) { category in
+                        shelf(for: category)
+                    }
+                }
+                .padding(.bottom, 60)
+            }
+            // Jump to the "pills near top, first shelf in full view" framing when the COMMITTED pill
+            // selection settles (onChange fires on real changes only, so the cold-enter hero-intro
+            // framing — INV-7 — is left untouched). INV-9: instant under reduce-motion.
+            .onChange(of: pillScrollKey) { _, _ in
+                let jump = { proxy.scrollTo(ScrollAnchor.selector, anchor: .top) }
+                if reduceMotion {
+                    jump()
+                } else {
+                    withAnimation(.easeInOut(duration: 0.35)) { jump() }
                 }
             }
-            .padding(.bottom, 60)
         }
     }
 

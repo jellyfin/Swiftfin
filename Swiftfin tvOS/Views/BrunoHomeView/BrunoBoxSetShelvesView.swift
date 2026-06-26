@@ -102,7 +102,10 @@ struct BrunoBoxSetShelvesView: View {
                     featured: featuredItem,
                     heroEyebrow: "Featured Film",
                     // Decade surface opts in to per-poster release dates; Genres/Curated keep the default.
-                    showsDate: isDecades
+                    showsDate: isDecades,
+                    // Decades only: scroll the pills to the top on a COMMITTED decade change (the
+                    // debounced value, so a fast scrub scrolls once on settle). Other groups pass nil.
+                    pillScrollKey: isDecades ? selectedDecade : nil
                 )
             }
         }

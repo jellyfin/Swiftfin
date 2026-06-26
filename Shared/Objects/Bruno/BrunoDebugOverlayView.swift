@@ -10,6 +10,7 @@
 
 import Defaults
 import SwiftUI
+import UIKit
 
 // swiftlint:disable hard_coded_display_string
 
@@ -39,8 +40,18 @@ struct BrunoDebugOverlayModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .overlay(alignment: .topTrailing) {
+                #if os(tvOS)
+                // tvOS: the HUD is hosted in a passthrough overlay UIWindow (see BrunoDebugOverlayWindow),
+                // not this root .overlay — the browse/decade/Studios/Kids drill-ins are full-screen
+                // NavigationStack pushes (.ignoresSafeArea, nav bar hidden) that cover a root-level
+                // overlay, and the frame-drag log is needed precisely on those pushed surfaces. A higher
+                // window level floats above every push (and any future drill-in) with no per-surface
+                // wiring. sync() below drives that window; this overlay stays empty.
+                EmptyView()
+                #else
                 BrunoDebugHUD(showFPS: showFPS, showNav: showNav, showLog: showLog)
                     .allowsHitTesting(false)
+                #endif
             }
             .onAppear { sync() }
             .onChange(of: showFPS) { _ in sync() }
@@ -57,8 +68,84 @@ struct BrunoDebugOverlayModifier: ViewModifier {
         } else {
             BrunoFrameMonitor.shared.stop()
         }
+        #if os(tvOS)
+        BrunoDebugOverlayWindow.shared.update(showFPS: showFPS, showNav: showNav, showLog: showLog)
+        #endif
     }
 }
+
+// MARK: Overlay window (tvOS)
+
+#if os(tvOS)
+
+//
+// The HUD's host on tvOS. A separate, non-interactive UIWindow one level above the app window, so it
+// composites over full-screen NavigationStack pushes (which a root .overlay sits *under*). Created
+// lazily when the first panel turns on, torn down when the last turns off; zero windows while idle.
+// The hosted BrunoDebugHUD @ObservedObject's the same shared monitor/log singletons as the root copy,
+// so it updates live.
+@MainActor
+final class BrunoDebugOverlayWindow {
+
+    static let shared = BrunoDebugOverlayWindow()
+
+    private var window: UIWindow?
+    private var host: UIHostingController<AnyView>?
+
+    private init() {}
+
+    func update(showFPS: Bool, showNav: Bool, showLog: Bool) {
+        guard showFPS || showNav || showLog else {
+            teardown()
+            return
+        }
+
+        // Full-screen clear container so the HUD pins to the top-trailing safe-inset corner, matching
+        // the iOS .overlay placement. ignoresSafeArea so only the HUD's own screenInset (title-safe)
+        // applies, not a doubled overscan inset.
+        let root = AnyView(
+            ZStack(alignment: .topTrailing) {
+                Color.clear
+                BrunoDebugHUD(showFPS: showFPS, showNav: showNav, showLog: showLog)
+            }
+            .ignoresSafeArea()
+            .allowsHitTesting(false)
+        )
+
+        if let host {
+            host.rootView = root
+            return
+        }
+
+        guard let scene = activeScene else { return }
+        let host = UIHostingController(rootView: root)
+        host.view.backgroundColor = .clear
+
+        let window = UIWindow(windowScene: scene)
+        window.windowLevel = .normal + 100
+        window.isUserInteractionEnabled = false
+        window.backgroundColor = .clear
+        window.rootViewController = host
+        window.isHidden = false
+
+        self.host = host
+        self.window = window
+    }
+
+    private func teardown() {
+        window?.isHidden = true
+        window = nil
+        host = nil
+    }
+
+    /// The foreground-active window scene (falls back to the first connected one) to attach to.
+    private var activeScene: UIWindowScene? {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        return scenes.first { $0.activationState == .foregroundActive } ?? scenes.first
+    }
+}
+
+#endif
 
 // MARK: HUD
 

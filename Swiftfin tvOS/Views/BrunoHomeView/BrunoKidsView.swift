@@ -30,8 +30,22 @@ struct BrunoKidsView: View {
     @State
     private var spotlightIndex = 0
 
+    /// Measured scroll viewport height — used to reserve trailing room under the grid so a sparse
+    /// filter (e.g. one row of TV Shows) can still scroll its last row into the focus band. See `content`.
+    @State
+    private var viewportHeight: CGFloat = 0
+
     @Router
     private var router
+
+    /// INV-9: collapse the filter-select scroll-jump to an instant move when reduce-motion is on.
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    /// Scroll anchor for the filter chip row — selecting a filter jumps the view here.
+    private enum ScrollAnchor: Hashable {
+        case filter
+    }
 
     enum KidsFilter: String, CaseIterable, Identifiable {
         case all = "All"
@@ -83,25 +97,57 @@ struct BrunoKidsView: View {
     // Hero + filter chips + grid share ONE scroll plane (Movies/TV pattern), so the spotlight
     // scrolls away and vertical focus traverses hero <-> chips <-> grid with no special handling.
     private var content: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 36) {
-                if viewModel.heroItems.isNotEmpty {
-                    BrunoHeroView(
-                        items: viewModel.heroItems,
-                        index: $spotlightIndex,
-                        eyebrow: "Featured",
-                        bleedsTop: true,
-                        extraHeight: 160
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 36) {
+                    if viewModel.heroItems.isNotEmpty {
+                        BrunoHeroView(
+                            items: viewModel.heroItems,
+                            index: $spotlightIndex,
+                            eyebrow: "Featured",
+                            bleedsTop: true,
+                            extraHeight: 160
+                        )
+                    }
+
+                    filterBar
+                        .id(ScrollAnchor.filter)
+
+                    // Reserve at least a viewport of height for the grid region (top-aligned) so a
+                    // sparse filter — e.g. "TV Shows" yielding one row — leaves empty space BELOW the
+                    // row instead of pinning it to the content bottom. Without this, tvOS blocks
+                    // Down-focus to that lone row (it can't be scrolled clear of the bottom edge) and
+                    // the pills get shoved up. A no-op once the grid is taller than the viewport.
+                    BrunoPosterGrid(items: filteredItems) { item in
+                        router.route(to: .item(item: item))
+                    }
+                    .frame(
+                        minHeight: viewportHeight > 0 ? viewportHeight : nil,
+                        alignment: .top
                     )
                 }
-
-                filterBar
-
-                BrunoPosterGrid(items: filteredItems) { item in
-                    router.route(to: .item(item: item))
+                .padding(.bottom, 60)
+            }
+            // Measure the scroll viewport (the ScrollView's own frame, independent of content height)
+            // to size the grid's minHeight above.
+            .background {
+                GeometryReader { geo in
+                    Color.clear
+                        .onAppear { viewportHeight = geo.size.height }
+                        .onChange(of: geo.size.height) { _, height in viewportHeight = height }
                 }
             }
-            .padding(.bottom, 60)
+            // Jump the pills to the top when the (committed) filter changes — same framing as Decades.
+            // INV-9: instant under reduce-motion. Re-scrolls land on the already-pinned anchor (no-op),
+            // so a fast chip scrub doesn't thrash.
+            .onChange(of: filter) { _, _ in
+                let jump = { proxy.scrollTo(ScrollAnchor.filter, anchor: .top) }
+                if reduceMotion {
+                    jump()
+                } else {
+                    withAnimation(.easeInOut(duration: 0.35)) { jump() }
+                }
+            }
         }
     }
 
