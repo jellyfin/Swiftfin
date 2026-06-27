@@ -18,14 +18,25 @@ struct ProgressIndicator: View {
     let progress: CGFloat
     let height: CGFloat
 
-    var body: some View {
-        VStack {
-            Spacer()
+    // Very thin outline on the top and trailing edges of the filled bar so it
+    // stays visible against light/white poster artwork. Sized by width (rather
+    // than scaleEffect) so the right border keeps a constant thickness.
+    private let borderWidth: CGFloat = 1
+    private let borderColor = Color.black.opacity(0.4)
 
+    var body: some View {
+        GeometryReader { proxy in
             accentColor
-                .scaleEffect(x: progress, y: 1, anchor: .leading)
-                .frame(height: height)
+                .frame(width: proxy.size.width * progress, height: height)
+                .overlay(alignment: .top) {
+                    borderColor
+                        .frame(height: borderWidth)
+                }
+                .overlay(alignment: .trailing) {
+                    borderColor
+                        .frame(width: borderWidth)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
         }
-        .frame(maxWidth: .infinity)
     }
 }

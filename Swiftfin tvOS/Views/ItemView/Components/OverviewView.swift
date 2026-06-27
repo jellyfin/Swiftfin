@@ -20,6 +20,16 @@ extension ItemView {
         private var overviewLineLimit: Int?
         private var taglineLineLimit: Int?
 
+        init(
+            item: BaseItemDto,
+            overviewLineLimit: Int? = nil,
+            taglineLineLimit: Int? = nil
+        ) {
+            self.item = item
+            self.overviewLineLimit = overviewLineLimit
+            self.taglineLineLimit = taglineLineLimit
+        }
+
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
 
@@ -60,19 +70,14 @@ extension ItemView {
             }
             .font(.footnote)
             .labeledContentStyle(.itemAttribute)
+            // Tight legibility shadow (same as the poster labels) so the tagline/overview stays readable
+            // over a light backdrop in the cinematic detail header (this is OverviewView's only use site).
+            .posterLabelShadow()
         }
     }
 }
 
 extension ItemView.OverviewView {
-
-    init(item: BaseItemDto) {
-        self.init(
-            item: item,
-            overviewLineLimit: nil,
-            taglineLineLimit: nil
-        )
-    }
 
     func overviewLineLimit(_ limit: Int) -> Self {
         copy(modifying: \.overviewLineLimit, with: limit)

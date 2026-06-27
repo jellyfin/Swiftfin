@@ -20,6 +20,24 @@ final class EpisodeItemViewModel: ItemViewModel {
     // MARK: - Task
 
     private var seriesItemTask: AnyCancellable?
+    private var toggleSeriesFavoriteTask: AnyCancellable?
+    private var toggleSeriesWatchlistTask: AnyCancellable?
+    private var toggleSeriesPlayedTask: AnyCancellable?
+
+    #if os(tvOS)
+    // The tvOS episode page never shows the EPISODE's own related content — its "More Like This" row
+    // uses the SERIES' similar items, its trailer button uses the SERIES' trailers, and it renders no
+    // special-features or additional-parts rows. Skip those episode-level fetches entirely (they were
+    // pure waste — see SimpleItemContentView). The episode's own full item IS still fetched (it drives
+    // the header, cast and About). iOS is unaffected.
+    override var fetchesSimilarItems: Bool {
+        false
+    }
+
+    override var fetchesExtras: Bool {
+        false
+    }
+    #endif
 
     // MARK: - Override Response
 
@@ -49,17 +67,76 @@ final class EpisodeItemViewModel: ItemViewModel {
 
         guard let seriesID = item.seriesID else { throw ErrorMessage("Expected series ID missing") }
 
-        var parameters = Paths.GetItemsParameters()
-        parameters.enableUserData = true
-        parameters.fields = .MinimumFields
-        parameters.ids = [seriesID]
-        parameters.limit = 1
-
-        let request = Paths.getItems(parameters: parameters)
+        // Use the full-item endpoint (rather than `getItems` + minimum fields) so the series carries
+        // its `remoteTrailers` and complete `userData` — both needed to drive the episode page's
+        // series-level favorite/watchlist and the series trailer button.
+        let request = try Paths.getItem(itemID: seriesID, userID: authenticatedUser.id)
         let response = try await send(request)
 
-        guard let seriesItem = response.value.items?.first else { throw ErrorMessage("Expected series item missing") }
+        return response.value
+    }
 
-        return seriesItem
+    // MARK: - Series-Level Toggles
+
+    // On an episode page, favorite/watchlist act on the parent SERIES, not the single episode.
+    // Each toggle optimistically updates the cached `seriesItem` and reverts on failure.
+
+    func toggleSeriesIsFavorite() {
+        guard let seriesID = seriesItem?.id else { return }
+
+        toggleSeriesFavoriteTask?.cancel()
+        let before = seriesItem?.userData?.isFavorite ?? false
+        seriesItem?.userData?.isFavorite = !before
+
+        toggleSeriesFavoriteTask = Task {
+            do {
+                try await setIsFavorite(!before, itemID: seriesID)
+            } catch {
+                await MainActor.run { self.seriesItem?.userData?.isFavorite = before }
+            }
+        }
+        .asAnyCancellable()
+    }
+
+    func toggleSeriesIsInWatchlist() {
+        guard let seriesID = seriesItem?.id else { return }
+
+        toggleSeriesWatchlistTask?.cancel()
+        let before = seriesItem?.userData?.isLikes ?? false
+        seriesItem?.userData?.isLikes = !before
+
+        toggleSeriesWatchlistTask = Task {
+            do {
+                try await setIsInWatchlist(!before, itemID: seriesID)
+            } catch {
+                await MainActor.run { self.seriesItem?.userData?.isLikes = before }
+            }
+        }
+        .asAnyCancellable()
+    }
+
+    /// Unwatches the series and adds it to the watchlist in one step — used when the series is
+    /// already watched and the user opts to re-add it from the episode page.
+    func unwatchSeriesAndAddToWatchlist() {
+        guard let seriesID = seriesItem?.id else { return }
+
+        toggleSeriesPlayedTask?.cancel()
+        let beforePlayed = seriesItem?.userData?.isPlayed ?? false
+        let beforeLikes = seriesItem?.userData?.isLikes ?? false
+        seriesItem?.userData?.isPlayed = false
+        seriesItem?.userData?.isLikes = true
+
+        toggleSeriesPlayedTask = Task {
+            do {
+                try await setIsPlayed(false, itemID: seriesID)
+                try await setIsInWatchlist(true, itemID: seriesID)
+            } catch {
+                await MainActor.run {
+                    self.seriesItem?.userData?.isPlayed = beforePlayed
+                    self.seriesItem?.userData?.isLikes = beforeLikes
+                }
+            }
+        }
+        .asAnyCancellable()
     }
 }

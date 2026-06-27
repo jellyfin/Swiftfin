@@ -182,14 +182,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         ) {
             action(item)
         } label: {
-            if item.showTitle {
-                PosterButton<Element>.TitleContentView(item: item)
-                    .lineLimit(1, reservesSpace: true)
-            } else if viewModel.parent?.libraryType == .folder {
-                PosterButton<Element>.TitleContentView(item: item)
-                    .lineLimit(1, reservesSpace: true)
-                    .hidden()
-            }
+            // No title under the artwork — clean poster grid (Movies / TV Shows / Collections, etc.).
+            EmptyView()
         }
     }
 
@@ -203,14 +197,8 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         ) {
             action(item)
         } label: {
-            if item.showTitle {
-                PosterButton<Element>.TitleContentView(item: item)
-                    .lineLimit(1, reservesSpace: true)
-            } else if viewModel.parent?.libraryType == .folder {
-                PosterButton<Element>.TitleContentView(item: item)
-                    .lineLimit(1, reservesSpace: true)
-                    .hidden()
-            }
+            // No title under the artwork — clean poster grid.
+            EmptyView()
         }
     }
 
@@ -305,7 +293,9 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
         }
         .frame(maxWidth: .infinity)
         .animation(.linear(duration: 0.1), value: viewModel.state)
-        .navigationTitle(viewModel.parent?.displayTitle ?? "")
+        // No navigation title: on tvOS the large title sits FIXED over the top poster row (the grid
+        // ignores the safe area and scrolls under it). The library tile you tapped already tells you
+        // where you are (Movies / TV Shows / Collections / Favorites …), so the title is just clutter.
         .ignoresSafeArea(.all, edges: .vertical)
         .letterPickerBar(filterViewModel: viewModel.filterViewModel)
         .refreshable {

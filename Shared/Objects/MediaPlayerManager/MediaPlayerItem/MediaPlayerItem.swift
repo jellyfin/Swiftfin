@@ -52,6 +52,10 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     let baseItem: BaseItemDto
     let deviceProfile: DeviceProfile
+    /// The player engine (VLC `.swiftfin` vs native AVPlayer) resolved for this item — see
+    /// `VideoPlayerType.hybrid(for:)`. Stored so the whole playback session (e.g. the episode
+    /// auto-play queue) builds adjacent items with the SAME engine the presented view/proxy uses.
+    let videoPlayerType: VideoPlayerType
     let mediaSource: MediaSourceInfo
     let playSessionID: String
     let previewImageProvider: (any PreviewImageProvider)?
@@ -73,6 +77,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         url: URL,
         requestedBitrate: PlaybackBitrate = .max,
         deviceProfile: DeviceProfile,
+        videoPlayerType: VideoPlayerType = .swiftfin,
         initialAudioStreamIndex: Int? = nil,
         initialSubtitleStreamIndex: Int? = nil,
         previewImageProvider: (any PreviewImageProvider)? = nil,
@@ -83,6 +88,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         self.playSessionID = playSessionID
         self.requestedBitrate = requestedBitrate
         self.deviceProfile = deviceProfile
+        self.videoPlayerType = videoPlayerType
         self.previewImageProvider = previewImageProvider
         self.thumbnailProvider = thumbnailProvider
         self.url = url

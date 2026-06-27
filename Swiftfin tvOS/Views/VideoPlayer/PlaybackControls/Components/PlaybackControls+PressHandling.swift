@@ -12,7 +12,39 @@ extension VideoPlayer.PlaybackControls {
 
     func handlePressEvent(_ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent) {
 
+        // GuamaFlix Skip Intro/Credits: in full screen the player routes Select/Back through this
+        // `onPressEvent` path (notably on the simulator) rather than as `.select`/`.menu`. While the
+        // full-screen pill is showing, Select skips the segment and Back dismisses it — both consume the
+        // press so the transport bar doesn't appear. (On a physical Apple TV, Select/Back arrive as
+        // `.select`/`.menu` and are handled by `handleSelectEnded`/`handleMenuEnded`; the raw values here
+        // cover the simulator's Select=2040 / Back=2041.)
+        if !containerState.isPresentingOverlay, SkipSegmentState.shared.isShowing {
+            let raw = press.type.rawValue
+            let isBack = press.type == .menu || raw == 2041
+            let isSelect = press.type == .select || raw == 2040
+
+            if isBack {
+                if press.phase == .began { SkipSegmentState.shared.dismiss() }
+                press.resolve(.handled)
+                return
+            }
+
+            if isSelect {
+                if press.phase == .began { SkipSegmentState.shared.skip() }
+                press.resolve(.handled)
+                return
+            }
+            // Any other press in this state falls through to reveal the controls.
+        }
+
         if !containerState.isPresentingOverlay {
+            // Right after a full-screen dismiss, swallow the trailing presses of that Back action so the
+            // transport bar doesn't appear.
+            if SkipSegmentState.shared.shouldSwallowWakePress {
+                press.resolve(.handled)
+                return
+            }
+
             containerState.isPresentingOverlay = true
             press.resolve(.handled)
             return

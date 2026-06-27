@@ -25,7 +25,7 @@ extension UserDefaults {
     // MARK: App
 
     /// Settings that should apply to the app
-    static let appSuite = UserDefaults(suiteName: "swiftfinApp")!
+    static let appSuite = UserDefaults(suiteName: "guamaflixApp")!
 
     // MARK: User
 
@@ -66,7 +66,7 @@ extension Defaults.Keys {
     ///
     /// This is set externally whenever the app or user accent colors change,
     /// depending on the current app state.
-    static var accentColor: Key<Color> = AppKey("accentColor", default: .jellyfinPurple)
+    static var accentColor: Key<Color> = AppKey("accentColor", default: .white)
 
     /// The _real_ appearance key to be used.
     ///
@@ -99,7 +99,7 @@ extension Defaults.Keys {
     /// The accent color default for user contexts.
     /// Only use for `set`, use `accentColor` for `get`.
     static var userAccentColor: Key<Color> {
-        UserKey("userAccentColor", default: .jellyfinPurple)
+        UserKey("userAccentColor", default: .white)
     }
 
     /// The appearance default for user contexts.
@@ -256,6 +256,9 @@ extension Defaults.Keys {
 
     enum VideoPlayer {
 
+        // Legacy alias — shares the same storage id as `Playback.appMaximumBitrate` below. Kept in sync
+        // so reads through either path resolve to the same default. `.max` = the 20 Mbps ceiling (see
+        // `PlaybackBitrate.ceiling`): Direct Play up to 20 Mbps, transcode only above it.
         static var appMaximumBitrate: Key<PlaybackBitrate> {
             UserKey("appMaximumBitrate", default: .max)
         }
@@ -360,8 +363,17 @@ extension Defaults.Keys {
         }
 
         enum Playback {
+            // Default to a 20 Mbps cap — a near-transparent 4K-HDR HEVC streaming bitrate. This is the
+            // sweet spot between the two failure modes we hit: `.auto` ran a per-play speed test (latency)
+            // AND tone-mapped HDR→SDR; `.max` (no cap) Direct Played the full ~50–100 Mbps remux, which the
+            // network couldn't sustain → stutter. A fixed cap asks the server to transcode down in bitrate
+            // ONLY — the native device profile advertises the HDR range types (see `VideoPlayerType+Native`
+            // `nativeHDRProfiles`), so the HEVC→HEVC transcode KEEPS the dynamic range (no SDR tone-map) and
+            // no speed test runs. `.max` is the 20 Mbps app ceiling (`PlaybackBitrate.ceiling`): Direct Play
+            // up to 20 Mbps, transcode only above. Users can lower it in Settings → Video Player → Maximum
+            // Bitrate.
             static var appMaximumBitrate: Key<PlaybackBitrate> {
-                UserKey("appMaximumBitrate", default: .auto)
+                UserKey("appMaximumBitrate", default: .max)
             }
 
             static var appMaximumBitrateTest: Key<PlaybackBitrateTestSize> {

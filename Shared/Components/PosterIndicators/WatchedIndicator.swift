@@ -6,13 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct WatchedIndicator: View {
-
-    @Default(.accentColor)
-    private var accentColor
 
     let size: CGFloat
 
@@ -20,12 +16,14 @@ struct WatchedIndicator: View {
         ZStack(alignment: .bottomTrailing) {
             Color.clear
 
-            Image(systemName: "checkmark.circle.fill")
-                .resizable()
-                .frame(width: size, height: size)
-                .symbolRenderingMode(.palette)
-                .foregroundStyle(.white, accentColor)
-                .padding(3)
+            // A plain white checkmark with a soft shadow — matching the home rows' watched
+            // indicator — instead of a filled circle (which became invisible once the accent
+            // color, the circle's fill, was set to white).
+            Image(systemName: "checkmark")
+                .font(.system(size: size * 0.62, weight: .bold))
+                .foregroundStyle(.white)
+                .shadow(color: .black.opacity(0.6), radius: 3)
+                .padding(size * 0.18)
         }
     }
 }

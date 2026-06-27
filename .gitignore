@@ -104,3 +104,6 @@ XcodeConfig/DevelopmentTeam.xcconfig
 
 # Other
 .idea
+
+# Backups of edited legacy pages reverted to stock Swiftfin (safety net, not for publishing)
+_QuarantinedLegacy/

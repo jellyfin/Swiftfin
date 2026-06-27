@@ -49,7 +49,13 @@ extension TabItem {
             title: L10n.home,
             systemImage: "house"
         ) {
+            // tvOS uses the native GuamaFlix home. The original `HomeView()` is left intact for
+            // iOS and can be restored by reverting this one line.
+            #if os(tvOS)
+            GuamaFlixHomeView()
+            #else
             HomeView()
+            #endif
         }
     }
 
@@ -71,13 +77,47 @@ extension TabItem {
         }
     }
 
+    #if os(tvOS)
+    static var liveTV: TabItem {
+        TabItem(
+            id: "liveTV",
+            title: L10n.liveTV,
+            systemImage: "tv"
+        ) {
+            // Landing page is the UIKit-backed EPG (`LiveTVGuideView`): a UICollectionView grid that fixes
+            // fast-scroll focus jumps and adds Menu→live-program behavior. The all-SwiftUI
+            // `NativeProgramGuideView()` (and the original `ProgramGuideView()`) are left intact — revert
+            // this one line to switch back.
+            LiveTVGuideView()
+        }
+    }
+
+    static var requests: TabItem {
+        TabItem(
+            id: "requests",
+            title: "Requests",
+            systemImage: "rectangle.stack.badge.plus"
+        ) {
+            // Landing page swapped to the from-scratch, 100% native rebuild (`NativeRequestsView`).
+            // The original `RequestsView()` is left intact — revert this one line to switch back.
+            NativeRequestsView()
+        }
+    }
+    #endif
+
     static var media: TabItem {
         TabItem(
             id: "media",
             title: L10n.media,
             systemImage: "rectangle.stack.fill"
         ) {
+            // Landing page swapped to the from-scratch, 100% native rebuild (`NativeMediaView`).
+            // The original `MediaView()` is left intact — revert this one line to switch back.
+            #if os(tvOS)
+            NativeMediaView()
+            #else
             MediaView()
+            #endif
         }
     }
 
@@ -87,7 +127,13 @@ extension TabItem {
             title: L10n.search,
             systemImage: "magnifyingglass"
         ) {
+            // Landing page swapped to the from-scratch, 100% native rebuild (`NativeSearchView`).
+            // The original `SearchView()` is left intact — revert this one line to switch back.
+            #if os(tvOS)
+            NativeSearchView()
+            #else
             SearchView()
+            #endif
         }
     }
 
@@ -95,9 +141,18 @@ extension TabItem {
         TabItem(
             id: "settings",
             title: L10n.settings,
-            systemImage: "gearshape"
+            systemImage: "gearshape",
+            // Settings is the ONLY tab shown icon-only (just the gear) — no "Settings" text label. The
+            // `title` is still set so VoiceOver/accessibility reads it; only the visible label is hidden.
+            labelStyle: .iconOnly
         ) {
+            // Landing page swapped to the from-scratch, 100% native rebuild (`NativeSettingsView`).
+            // The original `SettingsView` is left intact — revert this one line to switch back.
+            #if os(tvOS)
+            NativeSettingsView()
+            #else
             SettingsView()
+            #endif
         }
     }
 }

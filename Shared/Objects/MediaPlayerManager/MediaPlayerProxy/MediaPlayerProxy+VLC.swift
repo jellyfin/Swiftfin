@@ -140,7 +140,17 @@ extension VLCMediaPlayerProxy {
             let mediaSource = item.mediaSource
 
             var configuration = VLCVideoPlayer.Configuration(url: item.url)
-            configuration.autoPlay = true
+            // Honour the manager's requested status: normal playback is `.playing` (default) so libVLC
+            // auto-starts as before. But when SyncPlay adopts this player into a PAUSED group it sets the
+            // status to `.paused` BEFORE this config is built, so we open paused instead of auto-starting —
+            // which previously played locally AND got re-broadcast to the whole group as an Unpause. The
+            // server's later Unpause command resumes us in lockstep.
+            configuration.autoPlay = manager.playbackRequestStatus == .playing
+
+            // Faster start: libVLC defaults to ~1000ms of network buffering before the first frame. A
+            // smaller 300ms buffer starts playback noticeably sooner (small rebuffer risk on weak/remote
+            // networks). Matches the trailer player.
+            configuration.options = ["network-caching": 300]
 
             let startSeconds = max(.zero, (baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset]))
 

@@ -11,9 +11,6 @@ import SwiftUI
 
 struct IndicatorSettingsView: View {
 
-    @Default(.Customization.Indicators.showUnplayed)
-    private var showUnplayed
-
     @Default(.Customization.Indicators.showPlayed)
     private var showPlayed
     @Default(.Customization.Indicators.showFavorited)
@@ -24,16 +21,6 @@ struct IndicatorSettingsView: View {
     var body: some View {
         Form(systemImage: "checkmark.circle.fill") {
             Section(L10n.posters) {
-
-                #if os(tvOS)
-                ListRowMenu(L10n.showUnwatched, selection: $showUnplayed)
-                #else
-                Picker(L10n.showUnwatched, selection: $showUnplayed) {
-                    ForEach(UnplayedIndicatorType.allCases) { option in
-                        Text(option.displayTitle).tag(option)
-                    }
-                }
-                #endif
 
                 Toggle(L10n.showWatched, isOn: $showPlayed)
 

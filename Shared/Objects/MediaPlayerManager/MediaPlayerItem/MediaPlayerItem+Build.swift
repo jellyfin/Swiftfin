@@ -166,6 +166,12 @@ extension MediaPlayerItem {
             return nil
         }()
 
+        // Live TV (ATSC/cable) channels carry embedded CEA-608/708 closed captions that the server
+        // commonly exposes as the DEFAULT subtitle track. Unlike jellyfin-web — which leaves Live TV
+        // subtitles off — the player would honor that default and render captions on screen. Start live
+        // streams with subtitles OFF (the viewer can still turn them on from the player's subtitle menu).
+        let resolvedSubtitleStreamIndex = item.isLiveStream ? -1 : subtitleStreamIndex
+
         return .init(
             baseItem: item,
             mediaSource: mediaSource,
@@ -173,8 +179,9 @@ extension MediaPlayerItem {
             url: playbackURL,
             requestedBitrate: requestedBitrate,
             deviceProfile: deviceProfile,
+            videoPlayerType: videoPlayerType,
             initialAudioStreamIndex: audioStreamIndex,
-            initialSubtitleStreamIndex: subtitleStreamIndex,
+            initialSubtitleStreamIndex: resolvedSubtitleStreamIndex,
             previewImageProvider: previewImageProvider,
             thumbnailProvider: item.getNowPlayingImage
         )

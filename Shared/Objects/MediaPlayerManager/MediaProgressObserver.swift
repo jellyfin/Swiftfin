@@ -77,6 +77,9 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
         if let item, newItem !== item {
             sendStopReport(for: item, seconds: manager?.seconds)
+            // Release the previous item's server-side live stream (e.g. the IPTV tuner) before the next item
+            // opens its own — otherwise a one-stream-per-account provider stays blocked on channel change.
+            closeLiveStreamIfNeeded(for: item)
 
             self.item = newItem
             self.hasSentStart = false
@@ -96,11 +99,32 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
         case .stop:
             if let item {
                 sendStopReport(for: item, seconds: manager?.seconds)
+                // Tell the server to tear down the opened live stream so the tuner / IPTV slot is freed the
+                // moment the player closes — the app's responsibility, not the server's (which only times it
+                // out minutes later). Without this a one-stream-per-account provider can't tune another
+                // channel until the stale stream expires.
+                closeLiveStreamIfNeeded(for: item)
             }
             timer.stop()
             cancellables = []
             item = nil
         default: ()
+        }
+    }
+
+    /// Closes the server-side live stream opened for this item (Live TV channels, and any source the server
+    /// opened via `isAutoOpenLiveStream`). Best-effort and OUTSIDE the debug progress-report gate — this is
+    /// resource cleanup, not telemetry, so it must run even when progress reporting is disabled.
+    private func closeLiveStreamIfNeeded(for item: MediaPlayerItem) {
+        guard let liveStreamID = item.mediaSource.liveStreamID, liveStreamID.isNotEmpty else { return }
+
+        Task {
+            do {
+                try await send(Paths.closeLiveStream(liveStreamID: liveStreamID))
+            } catch {
+                // Best-effort: if the close fails (network drop, already closed), the server's inactivity
+                // timeout will eventually reclaim the stream.
+            }
         }
     }
 
@@ -114,6 +138,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             var info = PlaybackStateInfo()
             info.audioStreamIndex = item.selectedAudioStreamIndex
             info.itemID = item.baseItem.id
+            info.liveStreamID = item.mediaSource.liveStreamID
             info.mediaSourceID = item.mediaSource.id
             info.playSessionID = item.playSessionID
             info.positionTicks = seconds?.ticks
@@ -136,6 +161,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
         Task {
             var info = PlaybackStopInfo()
             info.itemID = item.baseItem.id
+            info.liveStreamID = item.mediaSource.liveStreamID
             info.mediaSourceID = item.mediaSource.id
             info.playSessionID = item.playSessionID
             info.positionTicks = seconds?.ticks
@@ -143,6 +169,14 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
             let request = Paths.reportPlaybackStopped(info)
             try await send(request)
+
+            // Tell any open item detail page (and the home rows) to reload this item from the server, so
+            // the play button flips to "Resume" and progress shows immediately after watching — instead
+            // of staying stale until the app is relaunched. The view models listen for this and do a
+            // non-disruptive background refresh.
+            if let itemID = item.baseItem.id {
+                Notifications[.itemShouldRefreshMetadata].post(itemID)
+            }
         }
     }
 
@@ -157,6 +191,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             info.audioStreamIndex = item.selectedAudioStreamIndex
             info.isPaused = isPaused
             info.itemID = item.baseItem.id
+            info.liveStreamID = item.mediaSource.liveStreamID
             info.mediaSourceID = item.mediaSource.id
             info.playSessionID = item.playSessionID
             info.positionTicks = seconds?.ticks

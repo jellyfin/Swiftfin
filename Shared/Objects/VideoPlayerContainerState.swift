@@ -146,11 +146,30 @@ class VideoPlayerContainerState: ObservableObject {
 
     var scrubOriginSeconds: Duration?
 
+    /// Optional hook invoked when a scrub is committed, AFTER the local seek but BEFORE the default resume.
+    /// Returns `true` if the seek was handled externally (e.g. SyncPlay coordinating it across a Watch
+    /// Together group), in which case `commitScrub` skips its own `.playing`. Set by the tvOS player while
+    /// in a group; unset (and thus a no-op) otherwise.
+    var onSeekCommit: ((Duration) -> Bool)?
+
+    /// Optional hook invoked when the USER toggles play/pause from the transport, with the desired playing
+    /// state. Returns `true` if handled externally (SyncPlay coordinates it across the group), in which case
+    /// the caller skips its own `setPlaybackRequestStatus`. Capturing the explicit press here — instead of
+    /// inferring intent from the player's published status, which also flips for buffering / applied commands
+    /// — is what keeps Watch Together play/pause reliable. Unset (no-op) outside a group / on iOS.
+    var onUserPlayPauseIntent: ((Bool) -> Bool)?
+
     func commitScrub() {
         guard isScrubbing else { return }
 
         manager?.proxy?.setSeconds(scrubbedSeconds.value)
-        manager?.setPlaybackRequestStatus(status: .playing)
+        // When something external handles the seek (SyncPlay coordinates it across the Watch Together group),
+        // skip the default local resume — SyncPlay holds us paused and resumes everyone together on the
+        // server's coordinated command. Outside a group the hook is unset and we resume immediately as usual.
+        let handledExternally = onSeekCommit?(scrubbedSeconds.value) ?? false
+        if !handledExternally {
+            manager?.setPlaybackRequestStatus(status: .playing)
+        }
         isScrubbing = false
         scrubOriginSeconds = nil
     }

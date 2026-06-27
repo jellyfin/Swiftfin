@@ -54,12 +54,9 @@ extension SwiftfinApp {
             appearanceCancellable?.cancel()
             splashScreenCancellable?.cancel()
 
+            // Accent color customization is removed; the app accent is always white.
             accentColorCancellable = Task {
-                await applyAccentColor(Defaults[.userAccentColor])
-
-                for await newValue in Defaults.updates(.userAccentColor) {
-                    await applyAccentColor(newValue)
-                }
+                await applyAccentColor(.white)
             }
             .asAnyCancellable()
 
@@ -81,7 +78,7 @@ extension SwiftfinApp {
             splashScreenCancellable?.cancel()
 
             accentColorCancellable = Task {
-                await applyAccentColor(.jellyfinPurple)
+                await applyAccentColor(.white)
             }
             .asAnyCancellable()
 

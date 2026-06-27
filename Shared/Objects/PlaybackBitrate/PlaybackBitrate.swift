@@ -31,6 +31,17 @@ enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
     case kbps720 = 720_000
     case kbps420 = 420_000
 
+    /// Hard app ceiling. "Maximum" — and the adaptive `auto` network test — never exceed this, so any
+    /// source at or below 20 Mbps Direct Plays and only higher-bitrate sources are transcoded down.
+    static let ceiling = 20_000_000 // 20 Mbps
+
+    /// Bitrate-only options offered in the UI, all at or below the 20 Mbps `ceiling`. "Maximum" IS the
+    /// ceiling (Direct Play up to 20 Mbps); presets above it are omitted since they'd clamp to the same
+    /// value. (The full enum is kept so any previously-stored higher value still resolves — clamped.)
+    static var allCases: [PlaybackBitrate] {
+        [.max, .auto, .mbps15, .mbps10, .mbps8, .mbps6, .mbps4, .mbps3, .kbps1500, .kbps720, .kbps420]
+    }
+
     var displayTitle: String {
         switch self {
         case .auto:
@@ -70,10 +81,14 @@ enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
 
     func getMaxBitrate() async throws -> Int {
 
-        guard self == .auto else { return rawValue }
+        // Every selection is clamped to the 20 Mbps ceiling: "Maximum" → 20 Mbps, explicit caps use
+        // their stated value, and `auto`'s measured speed is also capped at 20 Mbps. The server then
+        // Direct Plays anything at or below the result and only transcodes sources above it.
+        guard self == .auto else { return min(rawValue, Self.ceiling) }
 
         let bitrateTestSize = Defaults[.VideoPlayer.appMaximumBitrateTest]
-        return try await testBitrate(with: bitrateTestSize.rawValue)
+        let tested = try await testBitrate(with: bitrateTestSize.rawValue)
+        return min(tested, Self.ceiling)
     }
 
     private func testBitrate(with testSize: Int) async throws -> Int {

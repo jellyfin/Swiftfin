@@ -226,7 +226,7 @@ extension VideoPlayer {
                     .environmentObject(manager)
                     .eraseToAnyView()
             )
-            controller.disablesSafeArea = true
+            controller.disableSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
             controller.view.translatesAutoresizingMaskIntoConstraints = false
             return controller
@@ -239,7 +239,7 @@ extension VideoPlayer {
                     .environmentObject(manager)
                     .eraseToAnyView()
             )
-            controller.disablesSafeArea = true
+            controller.disableSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
             controller.view.translatesAutoresizingMaskIntoConstraints = false
             return controller
@@ -251,7 +251,7 @@ extension VideoPlayer {
                 .environmentObject(manager)
                 .eraseToAnyView()
             let controller = HostingController(content: content)
-            controller.disablesSafeArea = true
+            controller.disableSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
             controller.view.translatesAutoresizingMaskIntoConstraints = false
             return controller
@@ -743,6 +743,11 @@ extension VideoPlayer {
             lastTouchPokeTime = now
 
             if !containerState.isPresentingOverlay {
+                // GuamaFlix Skip Intro/Credits: while a Skip affordance is showing in full screen, a touch
+                // must NOT wake the transport — otherwise the touch that precedes a Select click reveals the
+                // controls first, and the click then hits the transport instead of skipping. Leaving the
+                // controls hidden lets the Select click reach `handleSelectEnded`'s skip intercept.
+                if SkipSegmentState.shared.isShowing { return }
                 containerState.isPresentingOverlay = true
             } else {
                 containerState.timer.poke()
@@ -811,6 +816,13 @@ extension VideoPlayer {
             }
         }
 
+        /// Route a USER play/pause toggle through SyncPlay when in a Watch Together group (so the explicit
+        /// press is broadcast to the group), otherwise change the local player directly as usual.
+        private func setUserPlaybackStatus(playing: Bool) {
+            if containerState.onUserPlayPauseIntent?(playing) == true { return }
+            manager.setPlaybackRequestStatus(status: playing ? .playing : .paused)
+        }
+
         private func handlePlayPauseEnded() {
             if containerState.isScrubbing {
                 containerState.cancelScrub()
@@ -820,15 +832,15 @@ extension VideoPlayer {
 
             if !containerState.isPresentingOverlay {
                 if manager.playbackRequestStatus == .paused {
-                    manager.setPlaybackRequestStatus(status: .playing)
+                    setUserPlaybackStatus(playing: true)
                 }
                 containerState.isPresentingOverlay = true
             } else {
                 switch manager.playbackRequestStatus {
                 case .playing:
-                    manager.setPlaybackRequestStatus(status: .paused)
+                    setUserPlaybackStatus(playing: false)
                 case .paused:
-                    manager.setPlaybackRequestStatus(status: .playing)
+                    setUserPlaybackStatus(playing: true)
                 }
             }
 
@@ -837,6 +849,15 @@ extension VideoPlayer {
 
         private func handleSelectEnded(_ press: UIPress, event: UIPressesEvent?) {
             if !containerState.isPresentingOverlay {
+                // GuamaFlix Skip Intro/Credits: in full screen, Select skips the active segment instead of
+                // revealing the transport bar. The affordance is non-focusable in this mode, so the press
+                // reaches the container here.
+                let skipState = SkipSegmentState.shared
+                if skipState.isShowing {
+                    skipState.skip()
+                    return
+                }
+
                 containerState.isPresentingOverlay = true
                 containerState.timer.poke()
                 return
@@ -848,9 +869,9 @@ extension VideoPlayer {
             } else if containerState.isProgressBarFocused {
                 switch manager.playbackRequestStatus {
                 case .playing:
-                    manager.setPlaybackRequestStatus(status: .paused)
+                    setUserPlaybackStatus(playing: false)
                 case .paused:
-                    manager.setPlaybackRequestStatus(status: .playing)
+                    setUserPlaybackStatus(playing: true)
                 }
                 containerState.timer.poke()
             } else {
@@ -870,6 +891,10 @@ extension VideoPlayer {
                 containerState.timer.poke()
             } else if containerState.isPresentingOverlay {
                 containerState.isPresentingOverlay = false
+            } else if SkipSegmentState.shared.isShowing {
+                // GuamaFlix: in full screen with a Skip affordance showing, Back dismisses it (suppressed
+                // until the controls are next shown) instead of closing the player.
+                SkipSegmentState.shared.dismiss()
             } else if Defaults[.confirmClose] {
                 containerState.isPresentingCloseConfirmation = true
             } else {

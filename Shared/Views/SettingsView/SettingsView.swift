@@ -18,17 +18,32 @@ struct SettingsView: View {
     private var appearance
     #endif
 
-    @Default(.userAccentColor)
+    @Default(.accentColor)
     private var accentColor
 
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
+
+    @Default(.VideoPlayer.Playback.appMaximumBitrate)
+    private var appMaximumBitrate
 
     @Router
     private var router
 
     @StateObject
     private var viewModel = SettingsViewModel()
+
+    // Advanced / playback settings are HIDDEN from the published tvOS app to keep behavior
+    // server-default and low-customization: the Video Player TYPE picker, the Playback Quality page
+    // (max bitrate / device profile / HDR transcode), and the Advanced (Customize) page (home /
+    // poster / library / indicators / missing-episodes). The underlying views + routes are left
+    // intact — flip this to `true` to restore them. iOS is unaffected (mirrors
+    // `ExperimentalSettingsView.isEnabled`).
+    #if os(tvOS)
+    private static let showsAdvancedSettings = false
+    #else
+    private static let showsAdvancedSettings = true
+    #endif
 
     // MARK: - Body
 
@@ -99,18 +114,38 @@ struct SettingsView: View {
     @ViewBuilder
     private var videoPlayerSection: some View {
         Section(L10n.videoPlayer) {
-            #if os(iOS)
-            Picker(L10n.videoPlayerType, selection: $videoPlayerType)
-            #else
-            ListRowMenu(L10n.videoPlayerType, selection: $videoPlayerType)
-            #endif
+            // Hidden in production: forcing the player engine avoids users switching to Native and
+            // breaking codec/transcode behavior — the server-default engine is used instead.
+            if Self.showsAdvancedSettings {
+                #if os(iOS)
+                Picker(L10n.videoPlayerType, selection: $videoPlayerType)
+                #else
+                ListRowMenu(L10n.videoPlayerType, selection: $videoPlayerType)
+                #endif
+            }
 
             ChevronButton(L10n.videoPlayer) {
                 router.route(to: .videoPlayerSettings)
             }
 
-            ChevronButton(L10n.playbackQuality) {
-                router.route(to: .playbackQualitySettings)
+            // The full Playback Quality page is hidden in production, but Maximum Bitrate matters a lot for
+            // HDR: `Auto` caps below 4K-HDR bitrates and forces a slow server transcode. So when the
+            // advanced page isn't available, surface JUST this control inline — Maximum = Direct Play
+            // (fast start), Auto = adaptive cap (better for slow/remote networks).
+            if !Self.showsAdvancedSettings {
+                #if os(iOS)
+                Picker(L10n.maximumBitrate, selection: $appMaximumBitrate)
+                #else
+                ListRowMenu(L10n.maximumBitrate, selection: $appMaximumBitrate)
+                #endif
+            }
+
+            // Hidden in production: bitrate caps / device profiles / HDR-DV force-transcode can
+            // degrade or break playback. Auto / server defaults are used instead.
+            if Self.showsAdvancedSettings {
+                ChevronButton(L10n.playbackQuality) {
+                    router.route(to: .playbackQualitySettings)
+                }
             }
         } learnMore: {
             LabeledContent(
@@ -128,20 +163,23 @@ struct SettingsView: View {
 
     @ViewBuilder
     private var customizeSection: some View {
-        Section {
-            #if os(iOS)
-            Picker(L10n.appearance, selection: $appearance)
-            #endif
+        // Hidden in production: the Advanced (Customize) page is the bulk of the UI customization
+        // (home rows, poster types, library layouts, indicators, "show missing seasons/episodes",
+        // etc.) that fights the curated experience. Whole section hidden on tvOS.
+        if Self.showsAdvancedSettings {
+            Section {
+                #if os(iOS)
+                Picker(L10n.appearance, selection: $appearance)
+                #endif
 
-            ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
-
-            ChevronButton(L10n.advanced) {
-                router.route(to: .customizeSettingsView)
+                ChevronButton(L10n.advanced) {
+                    router.route(to: .customizeSettingsView)
+                }
+            } header: {
+                Text(L10n.customize)
+            } footer: {
+                Text(L10n.viewsMayRequireRestart)
             }
-        } header: {
-            Text(L10n.customize)
-        } footer: {
-            Text(L10n.viewsMayRequireRestart)
         }
     }
 

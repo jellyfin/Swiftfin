@@ -27,6 +27,7 @@ class ItemViewModel: ViewModel, Stateful {
         case replace(BaseItemDto)
         case toggleIsFavorite
         case toggleIsPlayed
+        case toggleIsInWatchlist
         case selectMediaSource(MediaSourceInfo)
     }
 
@@ -95,6 +96,7 @@ class ItemViewModel: ViewModel, Stateful {
 
     private var toggleIsFavoriteTask: AnyCancellable?
     private var toggleIsPlayedTask: AnyCancellable?
+    private var toggleWatchlistTask: AnyCancellable?
     private var refreshTask: AnyCancellable?
 
     // MARK: init
@@ -125,6 +127,19 @@ class ItemViewModel: ViewModel, Stateful {
                 }
             }
             .store(in: &cancellables)
+
+        // Live user-data push (WebSocket → `UserDataSocketObserver`): when THIS item's played/favorite/
+        // watchlist/progress changes on the server (e.g. from another client), patch its `userData` in
+        // place from the fresh server data — instantly, without waiting on the heavier metadata refetch.
+        Notifications[.itemUserDataDidChange]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] userData in
+                guard let self, let itemID = userData.itemID, itemID == self.item.id else { return }
+                guard self.item.userData != userData else { return }
+                self.item.userData = userData
+            }
+            .store(in: &cancellables)
     }
 
     @MainActor
@@ -144,36 +159,24 @@ class ItemViewModel: ViewModel, Stateful {
             Task { [weak self] in
                 guard let self else { return }
                 do {
-                    async let fullItem = getFullItem()
-                    async let similarItems = getSimilarItems()
-                    async let specialFeatures = getSpecialFeatures()
-                    async let localTrailers = getLocalTrailers()
-
-                    let results = try await (
-                        fullItem: fullItem,
-                        similarItems: similarItems,
-                        specialFeatures: specialFeatures,
-                        localTrailers: localTrailers
-                    )
+                    // A background refresh (return-from-pushed-page / playback) ONLY re-fetches the full item,
+                    // for live play / resume / watched state. The STATIC rows — More Like This, special
+                    // features, local trailers — cannot change between leaving and returning to a detail page,
+                    // so re-fetching them is pure waste AND caused a visible bug: the server's
+                    // `/Items/{id}/Similar` returns a different top-N SUBSET on each call (ties in the
+                    // similarity score get cut differently), so the `Set(ids)` membership genuinely changes →
+                    // "More Like This" was reassigned and RESHUFFLED on every return, losing the last-focused
+                    // card (the reported regression). Episode pages never showed it because they don't fetch
+                    // similar items. Those rows are loaded once by `.refresh` (initial open / pull-to-refresh)
+                    // and left untouched here. (Shared VM → applies to iOS too; correct there as well.)
+                    let fullItem = try await getFullItem()
 
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
                         self.backgroundStates.remove(.refresh)
-                        if results.fullItem.id != self.item.id || results.fullItem != self.item {
-                            self.item = results.fullItem
-                        }
-
-                        if !results.similarItems.elementsEqual(self.similarItems, by: { $0.id == $1.id }) {
-                            self.similarItems = results.similarItems
-                        }
-
-                        if !results.specialFeatures.elementsEqual(self.specialFeatures, by: { $0.id == $1.id }) {
-                            self.specialFeatures = results.specialFeatures
-                        }
-
-                        if !results.localTrailers.elementsEqual(self.localTrailers, by: { $0.id == $1.id }) {
-                            self.localTrailers = results.localTrailers
+                        if fullItem.id != self.item.id || fullItem != self.item {
+                            self.item = fullItem
                         }
                     }
                 } catch {
@@ -292,6 +295,39 @@ class ItemViewModel: ViewModel, Stateful {
                         item.userData?.isPlayed = beforeIsPlayed
                         // emit event that toggle unsuccessful
                     }
+                    return
+                }
+
+                // Marking an item watched removes it from the watchlist (the KefinTweaks
+                // "Likes" flag), mirroring the server-side behavior.
+                if !beforeIsPlayed, item.userData?.isLikes == true {
+                    await MainActor.run {
+                        item.userData?.isLikes = false
+                    }
+                    try? await setIsInWatchlist(false)
+                }
+            }
+            .asAnyCancellable()
+
+            return state
+        case .toggleIsInWatchlist:
+
+            toggleWatchlistTask?.cancel()
+
+            toggleWatchlistTask = Task {
+
+                let beforeIsInWatchlist = item.userData?.isLikes ?? false
+
+                await MainActor.run {
+                    item.userData?.isLikes = !beforeIsInWatchlist
+                }
+
+                do {
+                    try await setIsInWatchlist(!beforeIsInWatchlist)
+                } catch {
+                    await MainActor.run {
+                        item.userData?.isLikes = beforeIsInWatchlist
+                    }
                 }
             }
             .asAnyCancellable()
@@ -305,11 +341,34 @@ class ItemViewModel: ViewModel, Stateful {
         }
     }
 
+    // Granular refresh switches so a subclass can skip network calls whose results its detail page
+    // never displays. All default to `true` (fetch everything); subclasses override only what they
+    // don't need. See `EpisodeItemViewModel` / `SeriesItemViewModel` (episode page) for the rationale.
+
+    /// Re-fetch the full item on refresh. A view model that was already handed a complete item (e.g.
+    /// the series hosted inside an episode page) can set this to `false` to avoid a redundant fetch.
+    var fetchesFullItem: Bool {
+        true
+    }
+
+    /// Fetch "More Like This" similar items.
+    var fetchesSimilarItems: Bool {
+        true
+    }
+
+    /// Fetch the item's extras — special features, local trailers and additional parts.
+    var fetchesExtras: Bool {
+        true
+    }
+
     private func getFullItem() async throws -> BaseItemDto {
-        try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
+        // Already have a complete item — return it unchanged rather than re-downloading it.
+        guard fetchesFullItem else { return item }
+        return try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
     }
 
     private func getSimilarItems() async throws -> [BaseItemDto] {
+        guard fetchesSimilarItems else { return [] }
         guard let itemID = item.id else { return [] }
 
         var parameters = Paths.GetSimilarItemsParameters()
@@ -327,6 +386,7 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     private func getSpecialFeatures() async throws -> [BaseItemDto] {
+        guard fetchesExtras else { return [] }
         guard let itemID = item.id else { return [] }
 
         let request = try Paths.getSpecialFeatures(
@@ -340,6 +400,7 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     private func getLocalTrailers() async throws -> [BaseItemDto] {
+        guard fetchesExtras else { return [] }
 
         let request = try Paths.getLocalTrailers(itemID: itemID, userID: authenticatedUser.id)
         let response = try? await send(request)
@@ -348,6 +409,7 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     private func getAdditionalParts() async throws -> [BaseItemDto] {
+        guard fetchesExtras else { return [] }
 
         guard let partCount = item.partCount,
               partCount > 1,
@@ -359,9 +421,11 @@ class ItemViewModel: ViewModel, Stateful {
         return response?.value.items ?? []
     }
 
-    private func setIsPlayed(_ isPlayed: Bool) async throws {
+    // `itemID` defaults to this view model's own item, but callers (e.g. an episode acting on its
+    // parent series) may target a different item.
+    func setIsPlayed(_ isPlayed: Bool, itemID: String? = nil) async throws {
 
-        guard let itemID = item.id else { return }
+        guard let itemID = itemID ?? item.id else { return }
 
         let request: Request<UserItemDataDto> = if isPlayed {
             try Paths.markPlayedItem(
@@ -379,9 +443,9 @@ class ItemViewModel: ViewModel, Stateful {
         Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 
-    private func setIsFavorite(_ isFavorite: Bool) async throws {
+    func setIsFavorite(_ isFavorite: Bool, itemID: String? = nil) async throws {
 
-        guard let itemID = item.id else { return }
+        guard let itemID = itemID ?? item.id else { return }
 
         let request: Request<UserItemDataDto> = if isFavorite {
             try Paths.markFavoriteItem(
@@ -390,6 +454,29 @@ class ItemViewModel: ViewModel, Stateful {
             )
         } else {
             try Paths.unmarkFavoriteItem(
+                itemID: itemID,
+                userID: authenticatedUser.id
+            )
+        }
+
+        _ = try await send(request)
+        Notifications[.itemShouldRefreshMetadata].post(itemID)
+    }
+
+    /// Adds/removes the item from the watchlist. Matches the KefinTweaks plugin, whose
+    /// watchlist is the Jellyfin "Likes" user-data flag (`/UserItems/{id}/Rating`).
+    func setIsInWatchlist(_ isInWatchlist: Bool, itemID: String? = nil) async throws {
+
+        guard let itemID = itemID ?? item.id else { return }
+
+        let request: Request<UserItemDataDto> = if isInWatchlist {
+            try Paths.updateUserItemRating(
+                itemID: itemID,
+                userID: authenticatedUser.id,
+                isLikes: true
+            )
+        } else {
+            try Paths.deleteUserItemRating(
                 itemID: itemID,
                 userID: authenticatedUser.id
             )

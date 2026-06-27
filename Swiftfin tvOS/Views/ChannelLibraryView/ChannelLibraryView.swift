@@ -26,11 +26,9 @@ struct ChannelLibraryView: View {
             layout: .columns(3, insets: .init(0), itemSpacing: 25, lineSpacing: 25)
         ) { channel in
             WideChannelGridItem(channel: channel) {
-                guard let mediaSource = channel.channel.mediaSources?.first else { return }
-//                    router.route(
-//                        to: \.liveVideoPlayer,
-//                        LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
-//                    )
+                // Tune the channel live. The player build path resolves the channel's live media
+                // source and auto-opens the live stream, so route the channel item directly.
+                router.route(to: .videoPlayer(item: channel.channel))
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {

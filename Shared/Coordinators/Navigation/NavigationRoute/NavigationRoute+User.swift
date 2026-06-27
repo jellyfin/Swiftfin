@@ -16,7 +16,11 @@ extension NavigationRoute {
             id: "connectToServer",
             style: .sheet
         ) {
+            #if os(tvOS)
+            NativeConnectToServerView()
+            #else
             ConnectToServerView()
+            #endif
         }
     }
 
@@ -50,7 +54,11 @@ extension NavigationRoute {
             style: .sheet
         ) {
             WithUserAuthentication {
+                #if os(tvOS)
+                NativeUserSignInView(server: server)
+                #else
                 UserSignInView(server: server)
+                #endif
             }
         }
     }

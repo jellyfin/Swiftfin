@@ -1,6 +1,9 @@
 only_rules:
   - custom_rules
 
+excluded:
+  - CoreStore
+
 custom_rules:
   hard_coded_display_string:
     name: "Hard-coded Display String"

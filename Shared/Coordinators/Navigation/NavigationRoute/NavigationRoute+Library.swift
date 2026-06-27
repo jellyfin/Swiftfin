@@ -30,7 +30,13 @@ extension NavigationRoute {
             id: "library-(\(viewModel.parent?.id ?? "Unparented"))",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
+            // tvOS: the from-scratch native rebuild (`NativePagingLibraryView`); the original
+            // `PagingLibraryView` is left intact (revert this one line). iOS keeps its own view.
+            #if os(tvOS)
+            NativePagingLibraryView(viewModel: viewModel)
+            #else
             PagingLibraryView(viewModel: viewModel)
+            #endif
         }
     }
 }

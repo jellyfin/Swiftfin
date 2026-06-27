@@ -352,8 +352,49 @@ extension BaseItemDto {
     var premiereDateYear: String? {
         guard let premiereDate else { return nil }
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY"
+        // "yyyy" = calendar year. ("YYYY" is the ISO week-numbering year, which renders the WRONG
+        // year for late-Dec / early-Jan dates — a source of off-by-one years on poster labels.)
+        dateFormatter.dateFormat = "yyyy"
         return dateFormatter.string(from: premiereDate)
+    }
+
+    var endDateYear: String? {
+        guard let endDate else { return nil }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy"
+        return dateFormatter.string(from: endDate)
+    }
+
+    /// A release-year label: a single year for movies (e.g. "2019"), or a broadcast
+    /// range for series (e.g. "2019 - 2023", or "2019 - Present" while still airing).
+    /// Mirrors how jellyfin-web presents years in "More Like This".
+    ///
+    /// Series **always** show a range. We key off the series `status` (like the web does), NOT the
+    /// `endDate` — a still-airing show often carries a stale/season-level `endDate`, so trusting it
+    /// would wrongly cap an ongoing series (e.g. Jujutsu Kaisen showing "2020 - 2021").
+    var yearRangeLabel: String? {
+        guard let start = premiereDateYear ?? productionYear.map(String.init) else { return nil }
+
+        // Non-series (movies, etc.) show the single year.
+        guard type == .series else { return start }
+
+        switch SeriesStatus(rawValue: status ?? "") {
+        case .continuing:
+            // Still airing → through "Present", regardless of any end date on the record.
+            return "\(start) - Present"
+        case .ended:
+            // Concluded → show through the final broadcast year (range even if same year).
+            return "\(start) - \(endDateYear ?? start)"
+        case .unreleased:
+            // Not yet aired → just the (expected) year.
+            return start
+        case nil:
+            // Unknown status: use the end date if present, else assume still going.
+            if let end = endDateYear {
+                return "\(start) - \(end)"
+            }
+            return "\(start) - Present"
+        }
     }
 
     var hasExternalLinks: Bool {

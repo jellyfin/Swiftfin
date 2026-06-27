@@ -19,15 +19,23 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
     private var label: (Element) -> any View
     private var trailingContent: () -> any View
     private let action: (Element) -> Void
+    // When set, EVERY poster carries this focus binding keyed by `AnyHashable(item.id)`, so callers
+    // can both observe which item is focused and RESTORE focus to an arbitrary item (e.g. the
+    // last-focused cast member) by setting the bound value.
+    private var focusedItem: FocusState<AnyHashable?>.Binding?
+    private var titleFont: Font = .system(size: 32, weight: .semibold)
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 6) {
 
             if let title {
                 HStack {
                     Text(title)
-                        .font(.title2)
-                        .fontWeight(.semibold)
+                        .font(titleFont)
+                        // Same legibility treatment as the poster labels, so section headers stay
+                        // readable when a bright/white spotlight bleeds through the frosted home
+                        // sections. No-op over dark backgrounds elsewhere.
+                        .posterLabelShadow()
                         .accessibility(addTraits: [.isHeader])
                         .padding(.leading, 50)
 
@@ -39,22 +47,35 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
                 uniqueElements: data,
                 columns: type == .landscape ? 4 : 7
             ) { item in
-                PosterButton(
-                    item: item,
-                    type: type
-                ) {
-                    action(item)
-                } label: {
-                    label(item).eraseToAnyView()
-                }
+                posterButton(for: item)
             }
             .clipsToBounds(false)
             .dataPrefix(20)
-            .insets(horizontal: EdgeInsets.edgePadding, vertical: 20)
+            .insets(horizontal: EdgeInsets.edgePadding, vertical: 10)
             .itemSpacing(EdgeInsets.edgePadding - 20)
             .scrollBehavior(.continuousLeadingEdge)
         }
         .focusSection()
+    }
+
+    @ViewBuilder
+    private func posterButton(for item: Element) -> some View {
+        let button = PosterButton(
+            item: item,
+            type: type
+        ) {
+            action(item)
+        } label: {
+            label(item).eraseToAnyView()
+        }
+
+        // Per-item focus binding (keyed by id) lets the caller track and restore focus to any specific
+        // poster (used by the cast/first-row "remember the last-focused card" logic).
+        if let focusedItem {
+            button.focused(focusedItem, equals: AnyHashable(item.id))
+        } else {
+            button
+        }
     }
 }
 
@@ -64,6 +85,8 @@ extension PosterHStack {
         title: String? = nil,
         type: PosterDisplayType,
         items: Data,
+        focusedItem: FocusState<AnyHashable?>.Binding? = nil,
+        titleFont: Font = .system(size: 32, weight: .semibold),
         action: @escaping (Element) -> Void,
         @ViewBuilder label: @escaping (Element) -> any View = { PosterButton<Element>.TitleSubtitleContentView(item: $0) }
     ) {
@@ -73,7 +96,9 @@ extension PosterHStack {
             type: type,
             label: label,
             trailingContent: { EmptyView() },
-            action: action
+            action: action,
+            focusedItem: focusedItem,
+            titleFont: titleFont
         )
     }
 

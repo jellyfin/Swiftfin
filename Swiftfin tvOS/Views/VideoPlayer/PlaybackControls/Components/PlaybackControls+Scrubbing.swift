@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Factory
 import Foundation
 import SwiftUI
 
@@ -91,13 +92,37 @@ extension VideoPlayer.PlaybackControls {
             : jumpBackwardInterval.rawValue
 
         let work = DispatchWorkItem { [weak manager, weak containerState] in
+            guard let manager else { return }
             let totalDuration = interval * jumpCount
 
-            switch direction {
-            case .forward:
-                manager?.proxy?.jumpForward(totalDuration)
-            case .backward:
-                manager?.proxy?.jumpBackward(totalDuration)
+            // In a Watch Together group, coordinate the jump as a group seek (seek to the absolute target +
+            // hold paused + resume everyone together on the server's command) instead of jumping the local
+            // player ahead of the group and snapping back. Outside a group, jump locally as usual.
+            let syncPlay = Container.shared.syncPlayManager()
+            if syncPlay.state == .inGroup {
+                let current = manager.seconds
+                var target = direction == .forward ? current + totalDuration : max(.zero, current - totalDuration)
+                if let runtime = manager.item.runtime {
+                    target = min(target, runtime)
+                }
+                manager.proxy?.setSeconds(target)
+                syncPlay.userDidSeek(toTicks: target.ticks)
+
+                // While PAUSED, VLCKit's time-changed delegate doesn't fire (it only reflects active
+                // playback), so `manager.seconds` would stay frozen at the pause point and every subsequent
+                // jump would recompute the SAME `target` — landing in the same spot, never stacking. Write the
+                // new position into the cache + scrubber so paused jumps accumulate (matching the relative
+                // native jump the non-group path uses). Done AFTER `userDidSeek`, whose echo-suppression
+                // window keeps this manual write from re-broadcasting as a fresh seek.
+                manager.seconds = target
+                containerState?.scrubbedSeconds.value = target
+            } else {
+                switch direction {
+                case .forward:
+                    manager.proxy?.jumpForward(totalDuration)
+                case .backward:
+                    manager.proxy?.jumpBackward(totalDuration)
+                }
             }
             containerState?.jumpProgressObserver.reset()
         }

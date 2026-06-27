@@ -35,10 +35,9 @@ struct ColorPicker: View {
                 Text(title)
             }
         }
-        ._alert(
-            title,
-            isPresented: $isPresented
-        ) {
+        // Native `.sheet` now that the app-wide modal-button bug is fixed (was the custom `._alert`, which
+        // hosted this rich color editor that native `.alert` can't). Commit still happens in `.onDisappear`.
+        .sheet(isPresented: $isPresented) {
             StateAdapter(initialValue: selection.wrappedValue) { color in
                 Self._Alert(value: color)
                     .onDisappear {

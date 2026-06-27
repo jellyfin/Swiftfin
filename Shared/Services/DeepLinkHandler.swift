@@ -36,8 +36,10 @@ final class DeepLinkHandler: ObservableObject {
         let destination: Destination
 
         init?(_ url: URL) {
+            // IDs may contain hyphens (e.g. a server/user ID stored as a dashed UUID), so the ID groups
+            // accept `[A-Za-z0-9-]` — a stricter `[A-Za-z0-9]` would silently reject those links.
             guard let match = url.absoluteString.wholeMatch(
-                of: /^swiftfin:\/\/(?<serverID>[A-Za-z0-9]+)\/(?<userID>[A-Za-z0-9]+)\/(?<destinationType>item|library)\/(?<destinationID>[A-Za-z0-9]+)\/?$/
+                of: /^guamaflix:\/\/(?<serverID>[A-Za-z0-9-]+)\/(?<userID>[A-Za-z0-9-]+)\/(?<destinationType>item|library)\/(?<destinationID>[A-Za-z0-9-]+)\/?$/
             ) else { return nil }
 
             self.serverID = String(match.output.serverID)
@@ -57,7 +59,7 @@ final class DeepLinkHandler: ObservableObject {
         var localizedDescription: String {
             switch self {
             case .invalidURL:
-                "The URL is not a supported Swiftfin deep link."
+                "The URL is not a supported GuamaFlix deep link."
             case .missingAuthenticationAction:
                 "Local authentication is unavailable."
             case let .missingServer(serverID):
@@ -85,13 +87,17 @@ final class DeepLinkHandler: ObservableObject {
         _ url: URL,
         authenticationAction: LocalUserAuthenticationAction?
     ) async -> Bool {
+        logger.info("Handling deep link", metadata: ["url": .string(url.absoluteString)])
+
         guard let deepLink = DeepLink(url) else {
+            logger.warning("Deep link did not match the expected format", metadata: ["url": .string(url.absoluteString)])
             return false
         }
 
         do {
             try await prepareSession(for: deepLink, authenticationAction: authenticationAction)
             pendingDeepLink = deepLink
+            logger.info("Deep link prepared; pending route set", metadata: ["itemID": .string("\(deepLink.destination)")])
             return true
         } catch is CancellationError {
             return true
@@ -126,11 +132,20 @@ final class DeepLinkHandler: ObservableObject {
 
         switch deepLink.destination {
         case let .item(id):
-            return .item(id: id)
+            // Fetch the FULL item first so it carries its real `type`. `ItemView` chooses its view model
+            // (and casts to it) from `item.type`, so routing a typeless stub (`.item(id:)`) would crash
+            // on the `assertionFailure`/`as!` paths and otherwise render an empty (black) screen.
+            let item = try await getItem(id: id, session: session)
+            return .item(item: item)
 //        case let .library(id):
 //            let library = try await getItem(id: id, userSession: session)
 //            return .library(viewModel: ItemLibraryViewModel(parent: library))
         }
+    }
+
+    private func getItem(id: String, session: UserSession) async throws -> BaseItemDto {
+        let response = try await session.client.send(Paths.getItem(itemID: id))
+        return response.value
     }
 
     private func prepareSession(

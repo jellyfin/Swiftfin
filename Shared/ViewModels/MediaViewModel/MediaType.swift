@@ -17,6 +17,9 @@ extension MediaViewModel {
         case downloads
         case favorites
         case liveTV(BaseItemDto)
+        // The KefinTweaks "Watchlist" — items the user marked via the Jellyfin `Likes` flag.
+        // Only surfaced on tvOS (see `MediaViewModel`), so iOS is unaffected.
+        case watchlist
 
         var displayTitle: String {
             switch self {
@@ -28,6 +31,9 @@ extension MediaViewModel {
                 L10n.favorites
             case .liveTV:
                 L10n.liveTV
+            case .watchlist:
+                // Matches the on-item "Watchlist" action button label.
+                "Watchlist"
             }
         }
 
@@ -41,6 +47,24 @@ extension MediaViewModel {
                 "favorites"
             case let .liveTV(item):
                 item.id
+            case .watchlist:
+                "watchlist"
+            }
+        }
+
+        /// Fallback icon (tvOS) for tiles whose backdrop artwork is missing/empty.
+        var systemImage: String {
+            switch self {
+            case .collectionFolder:
+                "rectangle.stack.fill"
+            case .downloads:
+                "arrow.down.circle.fill"
+            case .favorites:
+                "heart.fill"
+            case .liveTV:
+                "tv.fill"
+            case .watchlist:
+                "bookmark.fill"
             }
         }
     }

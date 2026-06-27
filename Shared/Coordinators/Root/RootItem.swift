@@ -24,7 +24,12 @@ struct RootItem: Identifiable {
 
     static let appLoading = RootItem(id: "appLoading") {
         NavigationInjectionView(coordinator: .init()) {
+            #if os(tvOS)
+            // Native GuamaFlix-branded launch screen.
+            GuamaFlixAppLoadingView()
+            #else
             AppLoadingView()
+            #endif
         }
     }
 
@@ -34,7 +39,12 @@ struct RootItem: Identifiable {
 
     static let selectUser = RootItem(id: "selectUser") {
         NavigationInjectionView(coordinator: .init()) {
+            #if os(tvOS)
+            // Native rebuild; iOS keeps the original SelectUserView.
+            NativeSelectUserView()
+            #else
             SelectUserView()
+            #endif
         }
     }
 

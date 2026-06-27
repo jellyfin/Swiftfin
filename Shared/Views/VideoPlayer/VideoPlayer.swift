@@ -18,6 +18,12 @@ struct VideoPlayer: View {
     @InjectedObject(\.mediaPlayerManager)
     private var manager: MediaPlayerManager
 
+    #if os(tvOS)
+    // Drives the full-screen SyncPlay border (shown while in a group, riding in/out with the controls).
+    @InjectedObject(\.syncPlayManager)
+    private var syncPlayManager
+    #endif
+
     @LazyState
     private var proxy: any VideoMediaPlayerProxy
 
@@ -53,6 +59,28 @@ struct VideoPlayer: View {
         } playbackControls: {
             PlaybackControls()
         }
+        // The SyncPlay group border framing the ENTIRE player. Placed here (not in PlaybackControls) because
+        // on tvOS the controls layer is pinned ~120pt above the screen bottom to clear the Info/Chapters bar,
+        // which clipped the border there. This overlay sits on the full-screen container, so it reaches all
+        // four edges. Tied to the overlay so it rides in/out with the playback controls.
+        .overlay {
+            #if os(tvOS)
+            if syncPlayManager.state == .inGroup, containerState.isPresentingOverlay {
+                SyncPlayActiveBorder(lineWidth: 5, cornerRadius: 25)
+                    .transition(.opacity)
+                    .allowsHitTesting(false)
+            }
+            #endif
+        }
+        // Watch Together event banners (user/group join & leave), lower-left. Mounted here too because the
+        // full-screen player covers the app-level banner overlay. Always visible (not gated on the controls
+        // overlay) so notifications show even while the controls are hidden.
+        .overlay {
+            #if os(tvOS)
+            SyncPlayNotificationBanner()
+            #endif
+        }
+        .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
         .onAppear {
             manager.proxy = proxy
             manager.start()

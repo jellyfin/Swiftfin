@@ -37,6 +37,12 @@ struct ChevronButton<Label: View>: View {
             }
         }
         .foregroundStyle(.primary, .secondary)
+        // On tvOS the default button style is focusable inside a `Form` but its Select press doesn't
+        // fire the action. `.listRow` wires the press (borderless, like `ListRowMenu`) AND matches the
+        // native row look — a flat row that fills white on focus — instead of a raised "glass" card.
+        #if os(tvOS)
+            .buttonStyle(.listRow)
+        #endif
     }
 }
 
@@ -250,3 +256,53 @@ private struct BoldIconLabelStyle: LabelStyle {
         }
     }
 }
+
+#if os(tvOS)
+
+extension PrimitiveButtonStyle where Self == ListRowButtonStyle {
+
+    /// tvOS list-row navigation button (see `ChevronButton`/`UserProfileRow`).
+    static var listRow: ListRowButtonStyle {
+        ListRowButtonStyle()
+    }
+}
+
+/// A tvOS list-row button that fires reliably inside a `Form` — a plain `Button`'s Select press is
+/// swallowed there — while matching the native `ListRowMenu` look: a flat, clear row that fills
+/// WHITE on focus with black text (no raised "glass" card). `.borderless` captures the press without
+/// drawing any card chrome, the same flat treatment `ListRowMenu`'s `Menu` uses.
+struct ListRowButtonStyle: PrimitiveButtonStyle {
+
+    @FocusState
+    private var isFocused: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        Button {
+            configuration.trigger()
+        } label: {
+            configuration.label
+                .foregroundStyle(
+                    isFocused ? Color.black : Color.white,
+                    isFocused ? Color.black.opacity(0.6) : Color.secondary
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .background {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(isFocused ? Color.white : Color.clear)
+                }
+                // The `.borderless` style auto-attaches a `.highlight` hover effect to the FIRST image
+                // in the label (the trailing chevron) — that's what makes the arrow lift/scale wildly
+                // on focus. Disable hover effects on the whole row so the ONLY focus cue is our flat
+                // white-row highlight (matching `ListRowMenu`). See Apple's borderless docs.
+                .hoverEffectDisabled()
+                .scaleEffect(isFocused ? 1.04 : 1.0)
+                .animation(.easeInOut(duration: 0.125), value: isFocused)
+        }
+        .buttonStyle(.borderless)
+        .focused($isFocused)
+        .listRowInsets(.zero)
+    }
+}
+
+#endif

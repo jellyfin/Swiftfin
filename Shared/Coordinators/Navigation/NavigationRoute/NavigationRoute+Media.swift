@@ -50,18 +50,39 @@ extension NavigationRoute {
     static func videoPlayer(
         item: BaseItemDto,
         mediaSource: MediaSourceInfo? = nil,
-        queue: (any MediaPlayerQueue)? = nil
+        queue: (any MediaPlayerQueue)? = nil,
+        startTimeTicks: Int? = nil
     ) -> NavigationRoute {
+        // Hybrid engine selection happens HERE, at route time, because the player view fixes its proxy
+        // (VLC vs AVPlayer) in its initializer — before the async build runs. We resolve the engine once
+        // from the item's media streams and thread the SAME value to both the build (so the device
+        // profile matches) and the view shim (so the proxy matches). See `VideoPlayerType.hybrid(for:)`.
+        let playerType = VideoPlayerType.hybrid(for: mediaSource ?? item.mediaSources?.first)
+
         let provider = MediaPlayerItemProvider(item: item) { item in
-            try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+            try await MediaPlayerItem.build(
+                for: item,
+                mediaSource: mediaSource,
+                videoPlayerType: playerType,
+                // `build` re-fetches the item via `getFullItem`, which replaces any resume position the
+                // caller set on `item.userData`. SyncPlay needs the player to start at the GROUP's current
+                // position (not this user's saved one), so we re-apply it here, AFTER the re-fetch.
+                modifyItem: startTimeTicks.map { ticks in
+                    { (built: inout BaseItemDto) in
+                        if built.userData == nil { built.userData = UserItemDataDto() }
+                        built.userData?.playbackPositionTicks = ticks
+                    }
+                }
+            )
         }
-        return Self.videoPlayer(provider: provider, queue: queue)
+        return Self.videoPlayer(provider: provider, queue: queue, playerType: playerType)
     }
 
     @MainActor
     static func videoPlayer(
         provider: MediaPlayerItemProvider,
-        queue: (any MediaPlayerQueue)? = nil
+        queue: (any MediaPlayerQueue)? = nil,
+        playerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
     ) -> NavigationRoute {
         let manager = MediaPlayerManager(
             item: provider.item,
@@ -69,11 +90,14 @@ extension NavigationRoute {
             mediaPlayerItemProvider: provider.function
         )
 
-        return Self.videoPlayer(manager: manager)
+        return Self.videoPlayer(manager: manager, playerType: playerType)
     }
 
     @MainActor
-    static func videoPlayer(manager: MediaPlayerManager) -> NavigationRoute {
+    static func videoPlayer(
+        manager: MediaPlayerManager,
+        playerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
+    ) -> NavigationRoute {
 
         Container.shared.mediaPlayerManager.register {
             manager
@@ -86,7 +110,7 @@ extension NavigationRoute {
             id: "videoPlayer",
             style: .fullscreen
         ) {
-            VideoPlayerViewShim(manager: manager)
+            VideoPlayerViewShim(manager: manager, videoPlayerType: playerType)
         }
     }
 }
@@ -102,9 +126,14 @@ struct VideoPlayerViewShim: View {
 
     let manager: MediaPlayerManager
 
+    /// The engine resolved for this item by `VideoPlayerType.hybrid(for:)` (native AVPlayer for HDR /
+    /// Dolby Vision, VLC otherwise). Drives which proxy-backed view — and therefore which player — is
+    /// presented, kept consistent with the device profile the item was built with.
+    let videoPlayerType: VideoPlayerType
+
     var body: some View {
         Group {
-            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+            if videoPlayerType == .swiftfin {
                 VideoPlayer()
             } else {
                 NativeVideoPlayer()

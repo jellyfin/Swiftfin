@@ -162,6 +162,25 @@ extension Notifications.Key {
         Key("didDeleteItem")
     }
 
+    /// Posted by `UserDataSocketObserver` for EACH item whose user data the server pushed over the
+    /// WebSocket. The payload is the fresh `UserItemDataDto` (carries `itemID`, `isPlayed`, `isFavorite`,
+    /// `isLikes`, progress). Listeners that hold the item (a detail-page `ItemViewModel`, the episode
+    /// cards in `SeasonItemViewModel`) patch that item's `userData` **in place** — no refetch — so
+    /// played/favorite/watchlist/progress flips reflect instantly, including for episodes and seasons
+    /// that have no dedicated view model of their own.
+    static var itemUserDataDidChange: Key<UserItemDataDto> {
+        Key("itemUserDataDidChange")
+    }
+
+    /// Posted (debounced) by `UserDataSocketObserver` when the server pushes a `UserDataChanged` over
+    /// the WebSocket — i.e. an item's played/favorite/watchlist/progress state changed, possibly on
+    /// another client. Listeners should do a *targeted* refresh of user-data-driven rows (Continue
+    /// Watching, Next Up, favorites) — NOT a full re-render. Carries no payload (it's a "something
+    /// changed, refresh the live rows" nudge); per-item updates come via `itemShouldRefreshMetadata`.
+    static var userDataDidChangeRemotely: Key<Void> {
+        Key("userDataDidChangeRemotely")
+    }
+
     // MARK: - Server
 
     static var didConnectToServer: Key<ServerState> {

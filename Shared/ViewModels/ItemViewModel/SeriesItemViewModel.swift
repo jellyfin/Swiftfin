@@ -21,9 +21,54 @@ final class SeriesItemViewModel: ItemViewModel {
     @Published
     var seasons: IdentifiedArrayOf<SeasonItemViewModel> = []
 
+    /// When set (e.g. the series is hosted inside an episode page), this episode is used as the
+    /// `playButtonItem` instead of the series' next-up item — so the season/episode selector
+    /// preselects and focuses *this* episode rather than next-up.
+    private let preferredPlayButtonItem: BaseItemDto?
+
     // MARK: - Task
 
     private var seriesItemTask: AnyCancellable?
+
+    @MainActor
+    init(item: BaseItemDto, preferredPlayButtonItem: BaseItemDto? = nil) {
+        self.preferredPlayButtonItem = preferredPlayButtonItem
+        super.init(item: item)
+    }
+
+    // Defining a designated init above stops the superclass's `init(episode:)` from being
+    // inherited, so re-declare it (mirrors `ItemViewModel.init(episode:)`).
+    @MainActor
+    convenience init(episode: BaseItemDto) {
+        let shellSeriesItem = BaseItemDto(id: episode.seriesID, name: episode.seriesName)
+        self.init(item: shellSeriesItem)
+    }
+
+    // MARK: - Episode-hosted lite load
+
+    /// True when this series view model is embedded in the tvOS episode page (the only caller that
+    /// passes `preferredPlayButtonItem`). In that case the page shows ONLY the season/episode selector
+    /// and the series' "More Like This" row, and it was already handed the full series item — so the
+    /// redundant full-item re-fetch, the extras (special features / trailers / parts) and the
+    /// next-up/resume/first-available lookups (the play item is forced to the hosting episode) are all
+    /// pure waste and skipped. Always `false` on iOS, so the iOS series page is completely unaffected.
+    private var isEpisodeHosted: Bool {
+        #if os(tvOS)
+        preferredPlayButtonItem != nil
+        #else
+        false
+        #endif
+    }
+
+    // Skip the redundant full series re-fetch (already in hand) and the extras the episode page never
+    // shows. "More Like This" (similar items) is still fetched — it IS shown on the episode page.
+    override var fetchesFullItem: Bool {
+        !isEpisodeHosted
+    }
+
+    override var fetchesExtras: Bool {
+        !isEpisodeHosted
+    }
 
     // MARK: - Override Response
 
@@ -31,16 +76,11 @@ final class SeriesItemViewModel: ItemViewModel {
 
         switch action {
         case .backgroundRefresh, .refresh:
-            let parentState = super.respond(to: action)
 
             seriesItemTask?.cancel()
 
             Task { [weak self] in
                 guard let self else { return }
-
-                await MainActor.run {
-                    self.seasons.removeAll()
-                }
 
                 do {
                     async let nextUp = getNextUp()
@@ -52,17 +92,26 @@ final class SeriesItemViewModel: ItemViewModel {
                         .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) }
                         .map(SeasonItemViewModel.init)
 
-                    await MainActor.run {
-                        self.seasons.append(contentsOf: newSeasons)
-                    }
+                    // Await all candidates so the structured-concurrency tasks complete, then pick
+                    // the play-button item (preferred episode wins on an episode-hosted series).
+                    let nextOrResume = try await [nextUp, resume].compacted().first
+                    let firstAvailableItem = try await firstAvailable
 
-                    if let episodeItem = try await [nextUp, resume].compacted().first {
-                        await MainActor.run {
-                            self.playButtonItem = episodeItem
+                    await MainActor.run {
+                        // Only replace the seasons when the set actually changes (by id). A
+                        // background refresh fired by a favorite/watchlist/played toggle has the
+                        // same seasons, so skipping reassignment avoids the carousel flickering
+                        // (clearing to empty then repopulating). We never `removeAll()` first.
+                        if self.seasons.map(\.id) != newSeasons.map(\.id) {
+                            self.seasons = IdentifiedArrayOf(uniqueElements: newSeasons)
                         }
-                    } else if let firstAvailable = try await firstAvailable {
-                        await MainActor.run {
-                            self.playButtonItem = firstAvailable
+
+                        if let preferredPlayButtonItem = self.preferredPlayButtonItem {
+                            self.playButtonItem = preferredPlayButtonItem
+                        } else if let episodeItem = nextOrResume {
+                            self.playButtonItem = episodeItem
+                        } else if let firstAvailableItem {
+                            self.playButtonItem = firstAvailableItem
                         }
                     }
                 }
@@ -77,6 +126,8 @@ final class SeriesItemViewModel: ItemViewModel {
     // MARK: - Get Next Up Item
 
     private func getNextUp() async throws -> BaseItemDto? {
+        // The hosting episode is the play item — next-up isn't needed.
+        guard !isEpisodeHosted else { return nil }
 
         var parameters = Paths.GetNextUpParameters()
         parameters.fields = .MinimumFields
@@ -95,6 +146,8 @@ final class SeriesItemViewModel: ItemViewModel {
     // MARK: - Get Resumable Item
 
     private func getResumeItem() async throws -> BaseItemDto? {
+        // The hosting episode is the play item — resume lookup isn't needed.
+        guard !isEpisodeHosted else { return nil }
 
         var parameters = Paths.GetResumeItemsParameters()
         parameters.fields = .MinimumFields
@@ -110,6 +163,8 @@ final class SeriesItemViewModel: ItemViewModel {
     // MARK: - Get First Available Item
 
     private func getFirstAvailableItem() async throws -> BaseItemDto? {
+        // The hosting episode is the play item — the first-available fallback isn't needed.
+        guard !isEpisodeHosted else { return nil }
 
         var parameters = Paths.GetItemsParameters()
         parameters.fields = .MinimumFields

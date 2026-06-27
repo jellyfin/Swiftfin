@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Factory
 import SwiftUI
 
 extension VideoPlayer {
@@ -57,6 +58,12 @@ extension VideoPlayer {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             .edgePadding(.horizontal)
+            // Floating contextual Skip Intro / Skip Credits affordance (GuamaFlix). Always mounted so it can
+            // observe playback time; it renders the affordance (and positions itself) only while the
+            // playhead is inside a media segment. See `GuamaFlixSkipSegmentButton`.
+            .overlay {
+                GuamaFlixSkipSegmentButton()
+            }
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
@@ -72,6 +79,21 @@ extension VideoPlayer {
             .onFirstAppear {
                 containerState.isPresentingOverlay = true
                 isPlaybackProgressFocused = true
+
+                // While in a Watch Together group, route a committed scrub through SyncPlay so it's
+                // coordinated across the group (seek + hold paused + resume everyone together on the
+                // server's command) instead of seeking and resuming locally ahead of the group. The hook
+                // returns false when not in a group, so the player resumes normally on its own.
+                containerState.onSeekCommit = { seconds in
+                    Container.shared.syncPlayManager().userDidSeek(toTicks: seconds.ticks)
+                }
+
+                // Capture explicit play/pause presses for SyncPlay (broadcast the press to the group; hold
+                // local playback until the server's coordinated command). Returns false when not in a group,
+                // so the player toggles normally.
+                containerState.onUserPlayPauseIntent = { playing in
+                    Container.shared.syncPlayManager().userDidRequestPlayPause(playing: playing)
+                }
             }
             .onChange(of: containerState.isPresentingOverlay) { _, _ in
                 isPlaybackProgressFocused = true

@@ -22,7 +22,7 @@ extension DataCache.Swiftfin {
 
     static let posters: DataCache? = {
 
-        let dataCache = try? DataCache(name: "org.jellyfin.swiftfin/Posters") { name in
+        let dataCache = try? DataCache(name: "dev.guama.guamaflix/Posters") { name in
             guard let url = name.url else { return nil }
             return ImagePipeline.cacheKey(for: url)
         }
@@ -39,7 +39,7 @@ extension DataCache.Swiftfin {
             return nil
         }
 
-        let path = root.appendingPathComponent("Caches/org.jellyfin.swiftfin.local", isDirectory: true)
+        let path = root.appendingPathComponent("Caches/dev.guama.guamaflix.local", isDirectory: true)
 
         return try? DataCache(path: path) { name in
 

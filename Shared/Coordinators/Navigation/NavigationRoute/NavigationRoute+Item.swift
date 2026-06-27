@@ -61,7 +61,11 @@ extension NavigationRoute {
         )
 
         return NavigationRoute(id: "castAndCrew") {
+            #if os(tvOS)
+            NativePagingLibraryView(viewModel: viewModel)
+            #else
             PagingLibraryView(viewModel: viewModel)
+            #endif
         }
     }
 
@@ -183,16 +187,48 @@ extension NavigationRoute {
             id: "item-\(item.id ?? "Unknown")",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
+            // Landing page swapped to the from-scratch, 100% native standalone rebuild (`GuamaFlixItemView`).
+            #if os(tvOS)
+            GuamaFlixItemView(item: item)
+            #else
             ItemView(item: item)
+            #endif
         }
     }
+
+    #if os(tvOS)
+    /// A virtual collection page (Favorites / Watchlist): the cinematic collection-style detail, with
+    /// rows grouped by type (Movies, TV Shows, Actors), filtered by `traits` (e.g. `.isFavorite` / `.likes`).
+    static func mediaCollection(
+        title: String,
+        id: String,
+        itemTypes: [BaseItemKind],
+        traits: [ItemTrait]
+    ) -> NavigationRoute {
+        NavigationRoute(
+            id: "mediaCollection-\(id)",
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
+        ) {
+            GuamaFlixItemView(
+                virtualCollection: title,
+                id: id,
+                itemTypes: itemTypes,
+                traits: traits
+            )
+        }
+    }
+    #endif
 
     static func item(id: String) -> NavigationRoute {
         NavigationRoute(
             id: "item-\(id)",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
+            #if os(tvOS)
+            GuamaFlixItemView(item: .init(id: id))
+            #else
             ItemView(item: .init(id: id))
+            #endif
         }
     }
 

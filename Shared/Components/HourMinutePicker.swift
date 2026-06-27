@@ -28,9 +28,11 @@ struct HourMinutePicker: View {
             isPresented.toggle()
         }
         #if os(tvOS)
-        ._alert(title, isPresented: $isPresented) {
-            _HourMinutePickerView(interval: interval)
-        }
+        // Native `.sheet` now that the app-wide modal-button bug is fixed (was the custom `._alert`, which
+        // hosted this rich time picker that native `.alert` can't). tvOS-only branch; iOS path unchanged.
+        .sheet(isPresented: $isPresented) {
+                _HourMinutePickerView(interval: interval)
+            }
         #endif
 
         #if !os(tvOS)
