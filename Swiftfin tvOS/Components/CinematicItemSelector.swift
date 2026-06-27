@@ -21,8 +21,8 @@ struct CinematicItemSelector<Item: Poster>: View {
     @FocusedValue(\.focusedPoster)
     private var focusedPoster
 
-    @StateObject
-    private var viewModel: CinematicBackgroundView.Proxy = .init()
+    @State
+    private var backgroundItem: AnyPoster?
 
     private var topContent: (Item) -> any View
     private var itemContent: (Item) -> any View
@@ -53,10 +53,21 @@ struct CinematicItemSelector<Item: Poster>: View {
         .frame(height: UIScreen.main.bounds.height - 75, alignment: .bottomLeading)
         .frame(maxWidth: .infinity)
         .background(alignment: .top) {
-            CinematicBackgroundView(
-                viewModel: viewModel,
-                initialItem: items.first
-            )
+            let selectedBackgroundItem = backgroundItem ?? items.first.map { AnyPoster($0) }
+
+            FadeContentTransitionView(
+                item: selectedBackgroundItem,
+                debounce: 0.5
+            ) { item in
+                ImageView(item?.cinematicImageSources(maxWidth: nil, quality: nil) ?? [])
+                    .placeholder { _ in
+                        EmptyView()
+                    }
+                    .failure {
+                        EmptyView()
+                    }
+                    .aspectRatio(contentMode: .fill)
+            }
             .overlay {
                 Color.black
                     .maskLinearGradient {
@@ -73,7 +84,7 @@ struct CinematicItemSelector<Item: Poster>: View {
         }
         .onChange(of: focusedPoster) {
             guard let focusedPoster, isSectionFocused else { return }
-            viewModel.select(item: focusedPoster)
+            backgroundItem = focusedPoster
         }
         .focusSection()
         .focused($isSectionFocused)

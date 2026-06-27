@@ -56,7 +56,11 @@ struct PosterImage<Item: Poster>: View {
                     .image(item.transform)
                     .placeholder { imageSource in
                         if let blurHash = imageSource.blurHash {
-                            BlurHashView(blurHash: blurHash)
+                            Image(
+                                blurHash: blurHash,
+                                size: .init(width: 8, height: 8)
+                            )?
+                                .resizable()
                         } else if item.showTitle {
                             SystemImageContentView(
                                 systemName: item.systemImage
