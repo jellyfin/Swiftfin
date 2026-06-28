@@ -19,6 +19,9 @@ extension ItemView {
         @ObservedObject
         private var viewModel: ItemViewModel
 
+        @State
+        private var bottomColor: Color?
+
         private let content: Content
 
         init(
@@ -30,7 +33,7 @@ extension ItemView {
         }
 
         private func withHeaderImageItem(
-            @ViewBuilder content: @escaping (ImageSource, Color) -> some View
+            @ViewBuilder content: @escaping (ImageSource, Color?) -> some View
         ) -> some View {
 
             let item: BaseItemDto = if viewModel.item.type == .person || viewModel.item.type == .musicArtist,
@@ -43,22 +46,25 @@ extension ItemView {
             }
 
             let imageType: ImageType = item.type == .episode ? .primary : .backdrop
-            let bottomColor = item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
             let imageSource = item.imageSource(imageType, maxWidth: 1320)
 
             return content(imageSource, bottomColor)
                 .id(imageSource.url?.hashValue)
+                .onChange(of: imageSource.url) { _ in
+                    bottomColor = nil
+                }
                 .animation(.linear(duration: 0.1), value: imageSource.url?.hashValue)
         }
 
         @ViewBuilder
         private var headerView: some View {
             GeometryReader { proxy in
-                withHeaderImageItem { imageSource, bottomColor in
+                withHeaderImageItem { imageSource, gradientColor in
                     ImageView(imageSource)
+                        .resolvedColor($bottomColor)
                         .aspectRatio(1.77, contentMode: .fill)
                         .frame(width: proxy.size.width, height: proxy.size.height * 0.78, alignment: .top)
-                        .bottomEdgeGradient(bottomColor: bottomColor)
+                        .bottomEdgeGradient(bottomColor: gradientColor ?? Color.secondarySystemFill)
                 }
             }
         }

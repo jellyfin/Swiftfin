@@ -18,6 +18,9 @@ extension ItemView {
         @ObservedObject
         private var viewModel: ItemViewModel
 
+        @State
+        private var bottomColor: Color?
+
         private let content: Content
 
         init(
@@ -30,14 +33,15 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-
-            let bottomColor = viewModel.item.blurHash(for: .backdrop)?.averageLinearColor ?? Color.secondarySystemFill
-
             GeometryReader { proxy in
                 ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1320))
+                    .resolvedColor($bottomColor)
                     .aspectRatio(1.77, contentMode: .fill)
                     .frame(width: proxy.size.width, height: proxy.size.height * 0.70, alignment: .top)
-                    .bottomEdgeGradient(bottomColor: bottomColor)
+                    .bottomEdgeGradient(bottomColor: bottomColor ?? Color.secondarySystemFill)
+            }
+            .onChange(of: viewModel.item.imageSource(.backdrop).url) { _ in
+                bottomColor = nil
             }
         }
 
