@@ -10,8 +10,6 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-/// - Note: This should almost always be called from the `ActiveSessionViewModel`
-
 @MainActor
 @Stateful
 final class SessionViewModel: ViewModel, Identifiable {

@@ -7,19 +7,12 @@
 //
 
 import Combine
-import FactoryKit
 import Foundation
 import JellyfinAPI
 import Logging
 import os
-import UIKit
 
 final class ServerSocketManager {
-
-    /// Published socket events
-    let events = PassthroughSubject<JellyfinSocket.Session.Event, Never>()
-    /// Published convenience for tracking if the socket is connected
-    let isConnected = CurrentValueSubject<Bool, Never>(false)
 
     private struct State {
         var session: JellyfinSocket.Session?
@@ -27,17 +20,24 @@ final class ServerSocketManager {
         var reconnectRequested = false
     }
 
+    let isConnected = CurrentValueSubject<Bool, Never>(false)
+
+    var events: AnyPublisher<JellyfinSocket.Session.Event, Never> {
+        allEvents
+            .filter { !$0.isSubscription }
+            .eraseToAnyPublisher()
+    }
+
     private let logger = Logger.swiftfin()
-    private weak var userSession: UserSession?
+
+    private let allEvents = PassthroughSubject<JellyfinSocket.Session.Event, Never>()
+    private let state = OSAllocatedUnfairLock(initialState: State())
+    private let wakeStream: AsyncStream<Void>
+    private let wake: AsyncStream<Void>.Continuation
 
     private var tasks: [Task<Void, Never>] = []
 
-    /// Thread-safe guard for `session` and `subscriptions`, because they are touched outside the main thread
-    private let state = OSAllocatedUnfairLock(initialState: State())
-
-    /// Signals the `runConnection` loop to start a new connection
-    private let wakeStream: AsyncStream<Void>
-    private let wake: AsyncStream<Void>.Continuation
+    private weak var userSession: UserSession?
 
     init() {
         (wakeStream, wake) = AsyncStream<Void>.makeStream()
@@ -51,8 +51,7 @@ final class ServerSocketManager {
     private func start() {
         tasks = [
             Task { [weak self] in await self?.runConnection() },
-            Task { [weak self] in await self?.observeForeground() },
-            Task { [weak self] in await self?.observeNetworkChange() },
+            Task { [weak self] in await self?.observeServerConnectionChange() },
         ]
     }
 
@@ -107,13 +106,10 @@ final class ServerSocketManager {
         }
     }
 
-    /// Disconnect the current session if one exists
     private func killSession() {
         state.withLock { $0.session }?.disconnect()
     }
 
-    /// Connects to the socket and publish events for multiple consumers.
-    /// This will attempt to reconnect the socket if it goes offline.
     private func runConnection() async {
         var wakeIterator = wakeStream.makeAsyncIterator()
 
@@ -156,7 +152,7 @@ final class ServerSocketManager {
                     case let .message(message):
                         logger.debug("Socket message", metadata: ["message": .string("\(message)")])
                     }
-                    events.send(event)
+                    allEvents.send(event)
                 }
             } catch {
                 logger.debug("Socket error: \(error.localizedDescription)")
@@ -184,20 +180,9 @@ final class ServerSocketManager {
         }
     }
 
-    /// Reconnect when the app returns to the foreground.
-    /// Fixes the socket when it expires in the background.
-    private func observeForeground() async {
-        for await _ in NotificationCenter.default.notifications(named: UIApplication.willEnterForegroundNotification) {
-            logger.debug("Reconnecting the socket (Background -> Foreground)")
-            reconnect()
-        }
-    }
-
-    /// Reconnect when `ServerConnectionManager` reports the network path changed
-    /// Fixes the socket to send responses to the right IP if new.
-    private func observeNetworkChange() async {
-        for await _ in Notifications[.didChangeNetwork].publisher.values {
-            logger.debug("Reconnecting the socket (Network Changed)")
+    private func observeServerConnectionChange() async {
+        for await _ in Notifications[.didChangeServerConnection].publisher.values {
+            logger.debug("Reconnecting the socket (Server Connection Changed)")
             reconnect()
         }
     }
@@ -222,7 +207,7 @@ extension ServerSocketManager: UserSessionService {
 
 extension ServerSocketManager {
 
-    static func sessions(
+    func sessions(
         delay: Duration = .seconds(2),
         interval: Duration = .seconds(2)
     ) -> AnyPublisher<[SessionInfoDto], Never> {
@@ -232,7 +217,7 @@ extension ServerSocketManager {
         }
     }
 
-    static func activityLog(
+    func activityLog(
         delay: Duration = .seconds(0),
         interval: Duration = .seconds(5)
     ) -> AnyPublisher<[ActivityLogEntry], Never> {
@@ -242,7 +227,7 @@ extension ServerSocketManager {
         }
     }
 
-    static func scheduledTasks(
+    func scheduledTasks(
         delay: Duration = .seconds(0),
         interval: Duration = .seconds(5)
     ) -> AnyPublisher<[TaskInfo], Never> {
@@ -252,34 +237,25 @@ extension ServerSocketManager {
         }
     }
 
-    private static func publisher<Payload>(
+    private func publisher<Payload>(
         for subscription: JellyfinSocket.Subscription,
         delay: Duration,
         interval: Duration,
         extract: @escaping (JellyfinSocket.Session.Event) -> Payload?
     ) -> AnyPublisher<Payload, Never> {
-
-        // Reconnect on Server Connection or Foreground Change
-        Publishers.Merge(
-            Notifications[.didChangeServerConnection].publisher.map { _ in () },
-            Notifications[.applicationWillEnterForeground].publisher
-        )
-        .prepend(())
-        .map { _ -> AnyPublisher<Payload, Never> in
-            guard let socket = Container.shared.currentUserSession()?.serverSocketManager else {
-                return Combine
-                    .Empty()
-                    .eraseToAnyPublisher()
+        Deferred { [weak self] () -> AnyPublisher<Payload, Never> in
+            guard let self else {
+                return Combine.Empty<Payload, Never>().eraseToAnyPublisher()
             }
 
-            let token = socket.subscribe(subscription, delay: delay, interval: interval)
+            let token = self.subscribe(subscription, delay: delay, interval: interval)
 
-            return socket.events
+            return self.allEvents
+                .filter(\.isSubscription)
                 .compactMap(extract)
                 .handleEvents(receiveCancel: token.cancel)
                 .eraseToAnyPublisher()
         }
-        .switchToLatest()
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }

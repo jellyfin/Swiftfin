@@ -8,6 +8,7 @@
 
 import Combine
 import Defaults
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -279,7 +280,12 @@ class PlaybackInformationProvider: ViewModel, MediaPlayerObserver {
     init(itemID: String) {
         super.init()
 
-        ServerSocketManager.sessions()
+        Container.shared.userSessionManager()
+            .$currentSession
+            .map { session -> AnyPublisher<[SessionInfoDto], Never> in
+                session?.serverSocketManager.sessions() ?? Combine.Empty<[SessionInfoDto], Never>().eraseToAnyPublisher()
+            }
+            .switchToLatest()
             .sink { [weak self] sessions in
                 Task { @MainActor in
                     guard let self else { return }

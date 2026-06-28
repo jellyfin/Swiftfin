@@ -7,6 +7,7 @@
 //
 
 import Combine
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -58,7 +59,12 @@ final class ActiveSessionsViewModel: ViewModel {
     override init() {
         super.init()
 
-        ServerSocketManager.sessions()
+        Container.shared.userSessionManager()
+            .$currentSession
+            .map { session -> AnyPublisher<[SessionInfoDto], Never> in
+                session?.serverSocketManager.sessions() ?? Combine.Empty<[SessionInfoDto], Never>().eraseToAnyPublisher()
+            }
+            .switchToLatest()
             .sink { [weak self] sessions in
                 Task { @MainActor in
                     self?.updateSessions(sessions)

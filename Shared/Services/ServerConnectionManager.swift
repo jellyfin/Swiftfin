@@ -232,11 +232,13 @@ final class ServerConnectionManager: ObservableObject {
     }
 
     private func contextDidUpdate(_ context: NetworkConnectionContext) {
-        if context != self.context, context.isSatisfied {
-            Notifications[.didChangeNetwork].post()
+        let didChange = context != self.context && context.isSatisfied
+        self.context = context
+
+        if didChange, let connection = userSession?.server.activeServerConnection {
+            Notifications[.didChangeServerConnection].post(connection)
         }
 
-        self.context = context
         scheduleConnectionResolution()
     }
 
