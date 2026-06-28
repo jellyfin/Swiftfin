@@ -60,9 +60,6 @@ struct CinematicItemSelector<Item: Poster>: View {
                 debounce: 0.5
             ) { item in
                 ImageView(item?.cinematicImageSources(maxWidth: nil, quality: nil) ?? [])
-                    .placeholder { _ in
-                        EmptyView()
-                    }
                     .failure {
                         EmptyView()
                     }

@@ -15,6 +15,7 @@ import SwiftUI
 //       make it so when displaying an SVG there is a unified `image` caller modifier
 // TODO: look at replacing view phase resolution with `FadeContentTransitionView`
 // TODO: make Image and Placeholder generic constraints rather than any View
+// TODO: Allow failure to reserve previous state, keeping placeholder if image fails
 struct ImageView<Failure: View>: View {
 
     @State
