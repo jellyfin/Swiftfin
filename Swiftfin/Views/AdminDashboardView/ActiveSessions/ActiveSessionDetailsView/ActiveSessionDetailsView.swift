@@ -21,7 +21,7 @@ struct ActiveSessionDetailsView: View {
     var viewModel: SessionViewModel
 
     private var isPaused: Bool {
-        viewModel.session.playState?.isPaused ?? false
+        viewModel.session.playState?.isPaused == true
     }
 
     @ViewBuilder
