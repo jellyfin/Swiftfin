@@ -72,8 +72,8 @@ final class ServerSocketManager {
     /// Releasing the cancellable unsubscribes the socket from that subscription.
     func subscribe(
         _ subscription: JellyfinSocket.Subscription,
-        delay: Duration = .seconds(0),
-        interval: Duration = .seconds(5)
+        delay: Duration,
+        interval: Duration
     ) -> AnyCancellable {
         let (session, effectiveDelay, effectiveInterval) = state.withLock { state -> (JellyfinSocket.Session?, Duration, Duration) in
             let existing = state.subscriptions[subscription]
@@ -151,10 +151,10 @@ final class ServerSocketManager {
                     case .connecting:
                         logger.debug("Socket retrying...")
                     case let .connected(url):
-                        logger.info("Socket connected to \(url)!")
+                        logger.info("Socket connected", metadata: ["url": .stringConvertible(url)])
                         isConnected.send(true)
                     case let .message(message):
-                        logger.debug("Socket message: \(message)")
+                        logger.debug("Socket message", metadata: ["message": .string("\(message)")])
                     }
                     events.send(event)
                 }
@@ -165,8 +165,9 @@ final class ServerSocketManager {
             let (hasSubscriptions, explicit) = state.withLock { state -> (Bool, Bool) in
                 state.session = nil
                 defer { state.reconnectRequested = false }
-                return (!state.subscriptions.isEmpty, state.reconnectRequested)
+                return (state.subscriptions.isNotEmpty, state.reconnectRequested)
             }
+
             isConnected.send(false)
             logger.info("Socket disconnected")
 
