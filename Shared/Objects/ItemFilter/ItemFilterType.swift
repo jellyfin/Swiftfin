@@ -23,9 +23,23 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
     case tags
     case traits
     case years
+    case category
+
+    static var allCases: [ItemFilterType] {
+        [
+            .genres,
+            .letter,
+            .sortBy,
+            .tags,
+            .traits,
+            .years,
+        ]
+    }
 
     var displayTitle: String {
         switch self {
+        case .category:
+            L10n.category
         case .genres:
             L10n.genres
         case .letter:
@@ -44,6 +58,13 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
     @ArrayBuilder<Group>
     var group: [Group] {
         switch self {
+        case .category:
+            (
+                displayTitle: displayTitle,
+                keyPath: \ItemFilterCollection.categories.asAnyItemFilter,
+                setter: { $1.currentFilters.categories = $0.map(ChannelCategory.init) },
+                selectorType: .multi
+            )
         case .genres:
             (
                 displayTitle: displayTitle,
@@ -101,6 +122,8 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
 
     var systemImage: String {
         switch self {
+        case .category:
+            "tv"
         case .genres:
             "theatermasks"
         case .letter:

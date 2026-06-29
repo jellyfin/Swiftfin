@@ -44,10 +44,12 @@ final class FilterViewModel: ViewModel {
 
     init(
         parent: (any LibraryParent)? = nil,
-        currentFilters: ItemFilterCollection = .default
+        currentFilters: ItemFilterCollection = .default,
+        allFilters: ItemFilterCollection = .all
     ) {
         self.parent = parent
         self.currentFilters = currentFilters
+        self.allFilters = allFilters
 
         super.init()
     }
@@ -69,6 +71,8 @@ final class FilterViewModel: ViewModel {
         }
 
         switch type {
+        case .category:
+            currentFilters.categories = ItemFilterCollection.default.categories
         case .genres:
             currentFilters.genres = ItemFilterCollection.default.genres
         case .letter:

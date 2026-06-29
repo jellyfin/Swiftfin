@@ -6,24 +6,60 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
-// TODO: sorting by number/filtering
-
+@MainActor
 struct ChannelLibrary: PagingLibrary {
 
+    struct Environment: WithDefaultValue {
+        var filters: ItemFilterCollection
+
+        static let `default`: Self = .init(filters: .channels)
+    }
+
+    let environment: Environment?
+    let filterViewModel: FilterViewModel
     let parent: TitledLibraryParent = .init(displayTitle: L10n.channels, id: "channels")
 
+    init() {
+        self.environment = .default
+        self.filterViewModel = .init(
+            currentFilters: .channels,
+            allFilters: .init(
+                categories: ChannelCategory.allCases,
+                sortBy: [.name, .sortName],
+                sortOrder: ItemSortOrder.allCases,
+                traits: [ItemTrait.isFavorite]
+            )
+        )
+    }
+
     func retrievePage(
-        environment: Empty,
+        environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [ChannelProgram] {
         var parameters = Paths.GetLiveTvChannelsParameters()
         parameters.fields = .MinimumFields
         parameters.limit = pageState.pageSize
-        parameters.sortBy = [.name]
+        parameters.sortBy = environment.filters.sortBy
+        parameters.sortOrder = environment.filters.sortOrder.first
         parameters.startIndex = pageState.pageOffset
+        parameters.userID = pageState.userSession.user.id
+
+        if environment.filters.traits.contains(ItemTrait.isFavorite) {
+            parameters.isFavorite = true
+        }
+
+        let categories = environment.filters.categories
+
+        parameters.isMovie = categories.contains(.movies) ? true : nil
+        parameters.isSeries = categories.contains(.series) ? true : nil
+        parameters.isNews = categories.contains(.news) ? true : nil
+        parameters.isKids = categories.contains(.kids) ? true : nil
+        parameters.isSports = categories.contains(.sports) ? true : nil
 
         let request = Paths.getLiveTvChannels(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
@@ -32,6 +68,18 @@ struct ChannelLibrary: PagingLibrary {
             for: response.value.items ?? [],
             pageState: pageState
         )
+    }
+
+    func makeLibraryBody(
+        viewModel: PagingLibraryViewModel<Self>,
+        @ViewBuilder content: @escaping () -> some View
+    ) -> AnyView {
+        ChannelLibraryBody(
+            filterViewModel: filterViewModel,
+            viewModel: viewModel,
+            content: content
+        )
+        .eraseToAnyView()
     }
 
     private func getPrograms(
@@ -57,12 +105,48 @@ struct ChannelLibrary: PagingLibrary {
                 channels.first(where: { $0.id == program.channelID })
             }
 
-        return channels
-            .reduce(into: [:]) { partialResult, channel in
-                partialResult[channel] = (groupedPrograms[channel] ?? [])
-                    .sorted(using: \.startDate)
+        return channels.map { channel in
+            ChannelProgram(
+                channel: channel,
+                programs: groupedPrograms[channel] ?? []
+            )
+        }
+    }
+}
+
+private struct ChannelLibraryBody<Content: View>: View {
+
+    @ObservedObject
+    private var viewModel: PagingLibraryViewModel<ChannelLibrary>
+
+    private let content: Content
+    private let filterViewModel: FilterViewModel
+
+    init(
+        filterViewModel: FilterViewModel,
+        viewModel: PagingLibraryViewModel<ChannelLibrary>,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.filterViewModel = filterViewModel
+        self.viewModel = viewModel
+        self.content = content()
+    }
+
+    var body: some View {
+        content
+            .onReceive(
+                filterViewModel.$currentFilters
+                    .dropFirst()
+                    .removeDuplicates()
+                    .debounce(for: 1, scheduler: RunLoop.main)
+            ) { filters in
+                viewModel.environment.filters = filters
             }
-            .map(ChannelProgram.init)
-            .sorted(using: \.channel.name)
+        #if os(iOS)
+            .navigationBarFilterDrawer(
+                viewModel: filterViewModel,
+                types: [.sortBy, .traits, .category]
+            )
+        #endif
     }
 }

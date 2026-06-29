@@ -11,6 +11,7 @@ import JellyfinAPI
 /// A structure representing a collection of item filters
 struct ItemFilterCollection: Hashable, Storable {
 
+    var categories: [ChannelCategory] = []
     var genres: [ItemGenre] = []
     var itemTypes: [BaseItemKind] = []
     var letter: [ItemLetter] = []
@@ -30,6 +31,10 @@ struct ItemFilterCollection: Hashable, Storable {
         sortBy: [ItemSortBy.dateCreated],
         sortOrder: [ItemSortOrder.descending]
     )
+    static let channels: ItemFilterCollection = .init(
+        sortBy: [ItemSortBy.sortName],
+        sortOrder: [ItemSortOrder.ascending]
+    )
 
     /// A collection that has all statically available values.
     ///
@@ -47,6 +52,7 @@ struct ItemFilterCollection: Hashable, Storable {
     }
 
     var hasQueryableFilters: Bool {
-        genres.isNotEmpty || itemTypes.isNotEmpty || letter.isNotEmpty || tags.isNotEmpty || traits.isNotEmpty || years.isNotEmpty
+        categories.isNotEmpty || genres.isNotEmpty || itemTypes.isNotEmpty || letter.isNotEmpty || tags.isNotEmpty || traits
+            .isNotEmpty || years.isNotEmpty
     }
 }
