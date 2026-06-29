@@ -31,10 +31,6 @@ struct ItemFilterCollection: Hashable, Storable {
         sortBy: [ItemSortBy.dateCreated],
         sortOrder: [ItemSortOrder.descending]
     )
-    static let channels: ItemFilterCollection = .init(
-        sortBy: [ItemSortBy.sortName],
-        sortOrder: [ItemSortOrder.ascending]
-    )
 
     /// A collection that has all statically available values.
     ///

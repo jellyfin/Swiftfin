@@ -17,7 +17,12 @@ struct ChannelLibrary: PagingLibrary {
     struct Environment: WithDefaultValue {
         var filters: ItemFilterCollection
 
-        static let `default`: Self = .init(filters: .channels)
+        static let `default`: Self = .init(
+            filters: .init(
+                sortBy: [ItemSortBy.sortName],
+                sortOrder: [ItemSortOrder.ascending]
+            )
+        )
     }
 
     let environment: Environment?
@@ -27,7 +32,6 @@ struct ChannelLibrary: PagingLibrary {
     init() {
         self.environment = .default
         self.filterViewModel = .init(
-            currentFilters: .channels,
             allFilters: .init(
                 categories: ChannelCategory.allCases,
                 sortBy: [.name, .sortName],
