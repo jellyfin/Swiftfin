@@ -30,6 +30,10 @@ struct ChannelProgram: Displayable, Hashable, Identifiable {
             }
     }
 
+    var channelNumber: String? {
+        channel.number ?? channel.channelNumber
+    }
+
     var currentProgram: BaseItemDto? {
         programs.first { program in
             guard let start = program.startDate,

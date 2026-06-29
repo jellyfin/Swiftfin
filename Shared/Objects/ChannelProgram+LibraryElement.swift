@@ -92,17 +92,16 @@ private struct ChannelProgramLibraryGridElement: View {
                         .foregroundStyle(.primary)
                         .lineLimit(1, reservesSpace: true)
 
-//                    AlternateLayoutView {
-//                        // swiftlint:disable:next hard_coded_display_string
-//                        Text(" ")
-//                    } content: {
-//                        if let channelNumber = channelProgram.channel.channelNumber {
-//                            Text(channelNumber)
-//                                .font(.subheadline)
-//                                .lineLimit(1)
-//                                .foregroundStyle(.secondary)
-//                        }
-//                    }
+                    AlternateLayoutView {
+                        Text(channelProgram.channelNumber ?? .emDash)
+                    } content: {
+                        if let channelNumber = channelProgram.channelNumber {
+                            Text(channelNumber)
+                        }
+                    }
+                    .font(.subheadline)
+                    .lineLimit(1)
+                    .foregroundStyle(.secondary)
                 }
             }
         }
@@ -175,17 +174,16 @@ private struct ChannelProgramLibraryListElement: View {
                 .matchedTransitionSource(id: "item", in: namespace)
                 .posterShadow()
 
-//            AlternateLayoutView {
-//                // swiftlint:disable:next hard_coded_display_string
-//                Text(" ")
-//            } content: {
-//                if let channelNumber = channelProgram.channel.channelNumber {
-//                    Text(channelNumber)
-//                        .font(.subheadline)
-//                        .lineLimit(1)
-//                        .foregroundStyle(.secondary)
-//                }
-//            }
+            AlternateLayoutView {
+                Text(channelProgram.channelNumber ?? .emDash)
+            } content: {
+                if let channelNumber = channelProgram.channelNumber {
+                    Text(channelNumber)
+                }
+            }
+            .font(.subheadline)
+            .lineLimit(1)
+            .foregroundStyle(.secondary)
         }
     }
 
