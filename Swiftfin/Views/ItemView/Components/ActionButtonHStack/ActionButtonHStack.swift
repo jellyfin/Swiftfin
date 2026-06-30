@@ -64,16 +64,29 @@ extension ItemView {
 
                 // MARK: - Toggle Favorite
 
-                let isHeartSelected = viewModel.item.userData?.isFavorite == true
+                if viewModel.item.canBeLiked {
 
-                Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
-                    viewModel.send(.toggleIsFavorite)
+                    let isHeartSelected = viewModel.item.userData?.isFavorite == true
+
+                    Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
+                        viewModel.send(.toggleIsFavorite)
+                    }
+                    .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
+                    .isSelected(isHeartSelected)
+                    .frame(maxWidth: .infinity)
+                    .if(!equalSpacing) { view in
+                        view.aspectRatio(1, contentMode: .fit)
+                    }
                 }
-                .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
-                .isSelected(isHeartSelected)
-                .frame(maxWidth: .infinity)
-                .if(!equalSpacing) { view in
-                    view.aspectRatio(1, contentMode: .fit)
+
+                // MARK: - Toggle Recording
+
+                if let liveViewModel = viewModel as? LiveContentViewModel, liveViewModel.item.canBeRecorded {
+                    /* RecordingMenu(viewModel: liveViewModel.recording)
+                     .frame(maxWidth: .infinity)
+                     .if(!equalSpacing) { view in
+                         view.aspectRatio(1, contentMode: .fit)
+                     }*/
                 }
 
                 // MARK: - Select a Version

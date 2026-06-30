@@ -365,7 +365,7 @@ extension BaseItemKind {
             ItemSortBy.dateLastContentAdded
             ItemSortBy.isFavoriteOrLiked
             ItemSortBy.runtime
-        case .program:
+        case .program, .liveTvProgram, .tvProgram, .channel, .liveTvChannel, .tvChannel:
             ItemSortBy.airTime
             ItemSortBy.communityRating
             ItemSortBy.officialRating
@@ -386,11 +386,6 @@ extension BaseItemKind {
             ItemSortBy.premiereDate
             ItemSortBy.productionYear
             ItemSortBy.studio
-        case .tvChannel:
-            ItemSortBy.airTime
-            ItemSortBy.communityRating
-            ItemSortBy.officialRating
-            ItemSortBy.startDate
         case .userView:
             ItemSortBy.dateCreated
             ItemSortBy.dateLastContentAdded

@@ -34,8 +34,12 @@ struct ItemView: View {
             CollectionItemViewModel(item: item)
         case .episode:
             EpisodeItemViewModel(item: item)
+        case .liveTvChannel, .tvChannel:
+            ChannelItemViewModel(item: item)
         case .movie:
             MovieItemViewModel(item: item)
+        case .program, .liveTvProgram, .tvProgram:
+            LiveContentViewModel(item: item)
         case .musicVideo, .video:
             ItemViewModel(item: item)
         case .series:
@@ -55,7 +59,9 @@ struct ItemView: View {
         switch viewModel.item.type {
         case .boxSet, .person, .musicArtist:
             CollectionItemContentView(viewModel: viewModel as! CollectionItemViewModel)
-        case .episode, .musicVideo, .video:
+        case .liveTvChannel, .tvChannel:
+            ChannelItemContentView(viewModel: viewModel as! ChannelItemViewModel)
+        case .episode, .program, .liveTvProgram, .tvProgram, .musicVideo, .video:
             SimpleItemContentView(viewModel: viewModel)
         case .movie:
             MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)

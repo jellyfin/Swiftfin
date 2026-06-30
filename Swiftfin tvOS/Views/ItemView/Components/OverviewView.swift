@@ -44,7 +44,7 @@ extension ItemView {
                     )
                 }
 
-                if let firstTagline = item.taglines?.first {
+                if let firstTagline = item.taglines?.first ?? item.currentProgram?.taglines?.first ?? item.currentProgram?.displayTitle {
                     Text(firstTagline)
                         .font(.subheadline)
                         .fontWeight(.bold)
@@ -52,7 +52,7 @@ extension ItemView {
                         .lineLimit(taglineLineLimit)
                 }
 
-                if let itemOverview = item.overview {
+                if let itemOverview = item.overview ?? item.currentProgram?.overview {
                     Text(itemOverview)
                         .font(.subheadline)
                         .lineLimit(overviewLineLimit)

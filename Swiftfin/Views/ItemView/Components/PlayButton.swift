@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import FactoryKit
 import JellyfinAPI
 import Logging
 import SwiftUI
@@ -29,7 +30,7 @@ extension ItemView {
         // MARK: - Validation
 
         private var isEnabled: Bool {
-            viewModel.selectedMediaSource != nil
+            viewModel.selectedMediaSource != nil || viewModel.playButtonItem?.isAiring == true
         }
 
         // MARK: - Title
@@ -106,10 +107,22 @@ extension ItemView {
         // MARK: - Play Content
 
         private func play(fromBeginning: Bool = false) {
-            guard let playButtonItem = viewModel.playButtonItem,
-                  let selectedMediaSource = viewModel.selectedMediaSource
-            else {
-                logger.error("Play selected with no item or media source")
+            guard let playButtonItem = viewModel.playButtonItem else {
+                logger.error("Play selected with no item")
+                return
+            }
+
+            guard let selectedMediaSource = viewModel.selectedMediaSource else {
+                guard playButtonItem.isAiring,
+                      let userSession = Container.shared.currentUserSession()
+                else {
+                    logger.error("Play selected with no media source")
+                    return
+                }
+
+                router.route(
+                    to: .videoPlayer(provider: playButtonItem.getPlaybackItemProvider(userSession: userSession))
+                )
                 return
             }
 

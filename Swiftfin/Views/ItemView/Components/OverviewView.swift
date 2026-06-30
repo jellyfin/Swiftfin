@@ -26,7 +26,7 @@ extension ItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
 
-                if let firstTagline = item.taglines?.first {
+                if let firstTagline = item.taglines?.first ?? item.currentProgram?.taglines?.first ?? item.currentProgram?.displayTitle {
                     Text(firstTagline)
                         .font(.body)
                         .fontWeight(.semibold)
@@ -34,7 +34,7 @@ extension ItemView {
                         .lineLimit(taglineLineLimit)
                 }
 
-                if let itemOverview = item.overview {
+                if let itemOverview = item.overview ?? item.currentProgram?.overview {
                     TruncatedText(itemOverview)
                         .onSeeMore {
                             router.route(to: .itemOverview(item: item))

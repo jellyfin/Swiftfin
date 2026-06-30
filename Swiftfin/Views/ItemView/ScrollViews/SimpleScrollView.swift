@@ -88,11 +88,20 @@ extension ItemView {
             }
         }
 
+        private var headerItem: BaseItemDto {
+            switch viewModel.item.type {
+            case .liveTvChannel, .tvChannel:
+                viewModel.item.currentProgram ?? viewModel.item
+            default:
+                viewModel.item
+            }
+        }
+
         // TODO: remove and just use `PosterImage` with landscape
         //       after poster environment implemented
         private var imageType: ImageType {
-            switch viewModel.item.type {
-            case .episode, .musicVideo, .video:
+            switch headerItem.type {
+            case .episode, .musicVideo, .program, .liveTvProgram, .video:
                 .primary
             default:
                 .backdrop
@@ -106,9 +115,9 @@ extension ItemView {
                     Rectangle()
                         .fill(.complexSecondary)
 
-                    ImageView(viewModel.item.imageSource(imageType, maxWidth: 600))
+                    ImageView(headerItem.imageSource(imageType, maxWidth: 600))
                         .failure {
-                            SystemImageContentView(systemName: viewModel.item.systemImage)
+                            SystemImageContentView(systemName: headerItem.systemImage)
                         }
                 }
                 .frame(maxHeight: 300)

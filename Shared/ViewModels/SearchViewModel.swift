@@ -164,6 +164,14 @@ final class SearchViewModel: ViewModel {
         parameters.tags = filters.tags.map(\.value)
         parameters.years = filters.years.map(\.intValue)
 
+        // Channel Filters
+        parameters.isMovie = filters.categories.contains(.movies) ? true : nil
+        parameters.isSeries = filters.categories.contains(.series) ? true : nil
+        parameters.isNews = filters.categories.contains(.news) ? true : nil
+        parameters.isKids = filters.categories.contains(.kids) ? true : nil
+        parameters.isSports = filters.categories.contains(.sports) ? true : nil
+        parameters.isHd = filters.categories.contains(.hd) ? true : nil
+
         if filters.letter.first?.value == "#" {
             parameters.nameLessThan = "A"
         } else {

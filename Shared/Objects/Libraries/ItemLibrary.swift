@@ -216,6 +216,14 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         parameters.tags = filters.tags.map(\.value)
         parameters.years = filters.years.compactMap { Int($0.value) }
 
+        // Channel Filters
+        parameters.isMovie = filters.categories.contains(.movies) ? true : nil
+        parameters.isSeries = filters.categories.contains(.series) ? true : nil
+        parameters.isNews = filters.categories.contains(.news) ? true : nil
+        parameters.isKids = filters.categories.contains(.kids) ? true : nil
+        parameters.isSports = filters.categories.contains(.sports) ? true : nil
+        parameters.isHd = filters.categories.contains(.hd) ? true : nil
+
         if filters.itemTypes.isNotEmpty {
             parameters.includeItemTypes = filters.itemTypes
         }
