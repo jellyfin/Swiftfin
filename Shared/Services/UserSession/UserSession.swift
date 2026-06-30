@@ -27,9 +27,12 @@ final class UserSession {
     @MainActor
     lazy var serverConnectionManager = ServerConnectionManager()
 
+    lazy var serverSocketManager = ServerSocketManager()
+
     @MainActor
     private lazy var services: [any UserSessionService] = [
         serverConnectionManager,
+        serverSocketManager,
     ]
 
     init(

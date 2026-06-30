@@ -690,6 +690,8 @@ internal enum L10n {
   }
   /// Failed logins
   internal static let failedLogins = L10n.tr("Localizable", "failedLogins", fallback: "Failed logins")
+  /// Fast Forward
+  internal static let fastForward = L10n.tr("Localizable", "fastForward", fallback: "Fast Forward")
   /// Favorite
   internal static let favorite = L10n.tr("Localizable", "favorite", fallback: "Favorite")
   /// Favorited
@@ -1000,6 +1002,12 @@ internal enum L10n {
   internal static let menuButtons = L10n.tr("Localizable", "menuButtons", fallback: "Menu buttons")
   /// A menu image originally intended for DVD or Blu-ray style menu navigation screens.
   internal static let menuImageDescription = L10n.tr("Localizable", "menuImageDescription", fallback: "A menu image originally intended for DVD or Blu-ray style menu navigation screens.")
+  /// Message
+  internal static let message = L10n.tr("Localizable", "message", fallback: "Message")
+  /// Message from %@
+  internal static func messageFrom(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "messageFrom", String(describing: p1), fallback: "Message from %@")
+  }
   /// Metadata
   internal static let metadata = L10n.tr("Localizable", "metadata", fallback: "Metadata")
   /// Metadata preferences
@@ -1048,6 +1056,8 @@ internal enum L10n {
   internal static let news = L10n.tr("Localizable", "news", fallback: "News")
   /// New user
   internal static let newUser = L10n.tr("Localizable", "newUser", fallback: "New user")
+  /// Next
+  internal static let next = L10n.tr("Localizable", "next", fallback: "Next")
   /// Next item
   internal static let nextItem = L10n.tr("Localizable", "nextItem", fallback: "Next item")
   /// Next Up
@@ -1084,8 +1094,6 @@ internal enum L10n {
   internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
   /// No runtime limit
   internal static let noRuntimeLimit = L10n.tr("Localizable", "noRuntimeLimit", fallback: "No runtime limit")
-  /// No session
-  internal static let noSession = L10n.tr("Localizable", "noSession", fallback: "No session")
   /// Type: %@ not implemented yet :(
   internal static func notImplementedYetWithType(_ p1: Any) -> String {
     return L10n.tr("Localizable", "notImplementedYetWithType", String(describing: p1), fallback: "Type: %@ not implemented yet :(")
@@ -1214,6 +1222,8 @@ internal enum L10n {
   internal static let premiereDate = L10n.tr("Localizable", "premiereDate", fallback: "Premiere date")
   /// Preview image
   internal static let previewImage = L10n.tr("Localizable", "previewImage", fallback: "Preview image")
+  /// Previous
+  internal static let previous = L10n.tr("Localizable", "previous", fallback: "Previous")
   /// Previous item
   internal static let previousItem = L10n.tr("Localizable", "previousItem", fallback: "Previous item")
   /// Primary
@@ -1358,6 +1368,8 @@ internal enum L10n {
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
   /// Reviews
   internal static let reviews = L10n.tr("Localizable", "reviews", fallback: "Reviews")
+  /// Rewind
+  internal static let rewind = L10n.tr("Localizable", "rewind", fallback: "Rewind")
   /// Right
   internal static let `right` = L10n.tr("Localizable", "right", fallback: "Right")
   /// Right vertical pan
@@ -1410,6 +1422,8 @@ internal enum L10n {
   internal static let security = L10n.tr("Localizable", "security", fallback: "Security")
   /// See all
   internal static let seeAll = L10n.tr("Localizable", "seeAll", fallback: "See all")
+  /// Seek
+  internal static let seek = L10n.tr("Localizable", "seek", fallback: "Seek")
   /// See more
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See more")
   /// Select all
@@ -1418,6 +1432,8 @@ internal enum L10n {
   internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select image")
   /// Select server
   internal static let selectServer = L10n.tr("Localizable", "selectServer", fallback: "Select server")
+  /// Send
+  internal static let send = L10n.tr("Localizable", "send", fallback: "Send")
   /// Send progress reports
   internal static let sendProgressReports = L10n.tr("Localizable", "sendProgressReports", fallback: "Send progress reports")
   /// Series
@@ -1522,6 +1538,8 @@ internal enum L10n {
   internal static let status = L10n.tr("Localizable", "status", fallback: "Status")
   /// Stop
   internal static let stop = L10n.tr("Localizable", "stop", fallback: "Stop")
+  /// Are you sure you want to stop this user's playback?
+  internal static let stopPlaybackWarning = L10n.tr("Localizable", "stopPlaybackWarning", fallback: "Are you sure you want to stop this user's playback?")
   /// Story arc
   internal static let storyArc = L10n.tr("Localizable", "storyArc", fallback: "Story arc")
   /// The stream count exceeds the allowed limit

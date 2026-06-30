@@ -20,6 +20,7 @@ extension BaseItemDto {
 
     // MARK: Item Images
 
+    /// Image URL for this `BaseItemDto`
     func imageURL(
         _ type: ImageType,
         index: Int? = nil,
@@ -39,6 +40,28 @@ extension BaseItemDto {
         )
     }
 
+    /// Image URL for a specified `BaseItemDto`
+    func imageURL(
+        _ sourceID: String?,
+        type: ImageType,
+        index: Int? = nil,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil,
+        quality: Int? = nil
+    ) -> URL? {
+        guard let sourceID else { return nil }
+
+        return _imageURL(
+            type,
+            index: index,
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            quality: quality,
+            itemID: sourceID,
+            requireTag: false
+        )
+    }
+
     func blurHashString(for type: ImageType) -> String? {
         guard type != .logo else { return nil }
 
@@ -51,6 +74,7 @@ extension BaseItemDto {
         return nil
     }
 
+    /// Image source for this `BaseItemDto`
     func imageSource(
         _ type: ImageType,
         index: Int? = nil,
@@ -69,44 +93,24 @@ extension BaseItemDto {
         )
     }
 
-    // MARK: Series Images
-
-    /// - Note: Will force the creation of an image source even if it doesn't have a tag, due
-    /// to episodes also retrieving series images in some areas. This may cause more 404s.
-    func seriesImageURL(
-        _ type: ImageType,
+    /// Image source for a specified `BaseItemDto`
+    func imageSource(
+        _ sourceID: String?,
         index: Int? = nil,
-        maxWidth: CGFloat? = nil,
-        maxHeight: CGFloat? = nil,
-        quality: Int? = nil
-    ) -> URL? {
-        _imageURL(
-            type,
-            index: index,
-            maxWidth: maxWidth,
-            maxHeight: maxHeight,
-            quality: quality,
-            itemID: seriesID ?? "",
-            requireTag: false
-        )
-    }
-
-    /// - Note: Will force the creation of an image source even if it doesn't have a tag, due
-    /// to episodes also retrieving series images in some areas. This may cause more 404s.
-    func seriesImageSource(
-        _ type: ImageType,
-        index: Int? = nil,
+        type: ImageType,
         maxWidth: CGFloat? = nil,
         maxHeight: CGFloat? = nil,
         quality: Int? = nil
     ) -> ImageSource {
+        guard let sourceID else { return ImageSource() }
+
         let url = _imageURL(
             type,
             index: index,
             maxWidth: maxWidth,
             maxHeight: maxHeight,
             quality: quality,
-            itemID: seriesID ?? "",
+            itemID: sourceID,
             requireTag: false
         )
 

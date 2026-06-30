@@ -63,23 +63,12 @@ extension BaseItemDto: Poster {
     func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
         switch type {
         case .episode:
-            [seriesImageSource(.primary, maxWidth: maxWidth, quality: quality)]
+            [imageSource(seasonID, type: .primary, maxWidth: maxWidth, quality: quality)]
         case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
-            // TODO: cleanup
-            // parentBackdropItemID seems good enough
-            if extraType != nil, let parentBackdropItemID {
-                [.init(
-                    url: _imageURL(
-                        .primary,
-                        maxWidth: maxWidth,
-                        maxHeight: nil,
-                        quality: quality,
-                        itemID: parentBackdropItemID,
-                        requireTag: false
-                    )
-                )]
+            if extraType != nil {
+                [imageSource(parentID, type: .primary, maxWidth: maxWidth, quality: quality)]
             } else {
                 []
             }
@@ -91,8 +80,8 @@ extension BaseItemDto: Poster {
         case .episode:
             if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
                 [
-                    seriesImageSource(.thumb, maxWidth: maxWidth, quality: quality),
-                    seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality),
+                    imageSource(seriesID, type: .thumb, maxWidth: maxWidth, quality: quality),
+                    imageSource(seriesID, type: .backdrop, maxWidth: maxWidth, quality: quality),
                     imageSource(.primary, maxWidth: maxWidth, quality: quality),
                 ]
             } else {
@@ -111,7 +100,7 @@ extension BaseItemDto: Poster {
     func cinematicImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
         switch type {
         case .episode:
-            [seriesImageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
+            [imageSource(seriesID, type: .backdrop, maxWidth: maxWidth, quality: quality)]
         default:
             [imageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
         }
@@ -119,7 +108,12 @@ extension BaseItemDto: Poster {
 
     func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {
         switch type {
-        case .audio, .channel, .musicAlbum, .tvChannel:
+        case .audio:
+            [
+                imageSource(.primary, maxWidth: maxWidth, quality: quality),
+                imageSource(albumID, type: .primary, maxWidth: maxWidth, quality: quality)
+            ]
+        case .channel, .musicAlbum, .tvChannel:
             [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
         default:
             []
