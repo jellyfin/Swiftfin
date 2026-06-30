@@ -16,6 +16,20 @@ import OrderedCollections
 @Stateful
 final class ActiveSessionsViewModel: ViewModel {
 
+    struct Environment: WithDefaultValue {
+        var activeWithinSeconds: Int?
+        var showSessionType: ActiveSessionFilter
+        var isPaused: Bool
+
+        static var `default`: Self {
+            .init(
+                activeWithinSeconds: 900,
+                showSessionType: .all,
+                isPaused: false
+            )
+        }
+    }
+
     @CasePathable
     enum Action {
         case refresh
@@ -31,40 +45,33 @@ final class ActiveSessionsViewModel: ViewModel {
     }
 
     enum State {
-        case initial
-        case error
         case content
+        case error
+        case initial
     }
 
     @Published
-    var activeWithinSeconds: Int? = 900 {
+    var environment: Environment = .default {
         didSet {
-            refresh()
-        }
-    }
+            guard environment.activeWithinSeconds != oldValue.activeWithinSeconds ||
+                environment.showSessionType != oldValue.showSessionType
+            else {
+                return
+            }
 
-    @Published
-    var showSessionType: ActiveSessionFilter = .all {
-        didSet {
-            refresh()
+            self.background.refresh()
         }
     }
 
     @Published
     private(set) var sessions: OrderedDictionary<String, SessionViewModel> = [:]
 
-    @Published
-    var isPaused = false
-
     override init() {
         super.init()
 
-        Container.shared.userSessionManager()
-            .$currentSession
-            .map { session -> AnyPublisher<[SessionInfoDto], Never> in
-                session?.serverSocketManager.sessions() ?? Combine.Empty<[SessionInfoDto], Never>().eraseToAnyPublisher()
-            }
-            .switchToLatest()
+        userSession?
+            .serverSocketManager
+            .sessions()
             .sink { [weak self] sessions in
                 Task { @MainActor in
                     self?.updateSessions(sessions)
@@ -75,7 +82,7 @@ final class ActiveSessionsViewModel: ViewModel {
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        let parameters = Paths.GetSessionsParameters(activeWithinSeconds: activeWithinSeconds)
+        let parameters = Paths.GetSessionsParameters(activeWithinSeconds: environment.activeWithinSeconds)
         let request = Paths.getSessions(parameters: parameters)
         let response = try await send(request)
 
@@ -84,8 +91,7 @@ final class ActiveSessionsViewModel: ViewModel {
 
     private func updateSessions(_ incomingSessions: [SessionInfoDto]) {
 
-        // Disable refreshing when menus are presented
-        guard !isPaused else {
+        guard !environment.isPaused else {
             logger.debug("Socket updates are paused")
             return
         }
@@ -95,12 +101,12 @@ final class ActiveSessionsViewModel: ViewModel {
 
         let filteredSessions = incomingSessions
             .filter { session in
-                guard let seconds = activeWithinSeconds else { return true }
+                guard let seconds = environment.activeWithinSeconds else { return true }
                 guard let date = session.lastActivityDate else { return true }
                 return Date.now.timeIntervalSince(date) <= TimeInterval(seconds)
             }
             .filter { session in
-                switch showSessionType {
+                switch environment.showSessionType {
                 case .all:
                     true
                 case .active:

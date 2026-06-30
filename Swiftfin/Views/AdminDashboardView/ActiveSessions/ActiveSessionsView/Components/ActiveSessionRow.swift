@@ -112,7 +112,7 @@ extension ActiveSessionsView {
         }
 
         var body: some View {
-            ListRow(insets: .init(vertical: isPlaying ? 8 : 12, horizontal: EdgeInsets.edgePadding)) {
+            ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
                 rowLeading
             } content: {
                 if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
@@ -123,6 +123,7 @@ extension ActiveSessionsView {
             } action: {
                 action()
             }
+            .withViewContext(.isListRowSeparatorVisible)
         }
     }
 }

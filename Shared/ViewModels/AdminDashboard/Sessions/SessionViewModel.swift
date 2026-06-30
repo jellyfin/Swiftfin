@@ -12,7 +12,7 @@ import JellyfinAPI
 
 @MainActor
 @Stateful
-final class SessionViewModel: ViewModel, Identifiable {
+final class SessionViewModel: ViewModel, @preconcurrency Identifiable {
 
     @CasePathable
     enum Action {
@@ -71,7 +71,7 @@ final class SessionViewModel: ViewModel, Identifiable {
         _ subtitleStreamIndex: Int? = nil,
         _ startIndex: Int? = nil
     ) async throws {
-        guard let id = session.id else { return }
+        guard let id else { return }
 
         let request = Paths.play(
             sessionID: id,
@@ -97,7 +97,7 @@ final class SessionViewModel: ViewModel, Identifiable {
 
     @Function(\Action.Cases.sendMessage)
     private func _sendMessage(_ command: MessageCommand) async throws {
-        guard let id = session.id else { return }
+        guard let id else { return }
 
         let request = Paths.sendMessageCommand(sessionID: id, command)
         try await send(request)
@@ -105,7 +105,7 @@ final class SessionViewModel: ViewModel, Identifiable {
 
     @Function(\Action.Cases.sendPlaystateCommand)
     private func _sendPlaystateCommand(_ command: PlaystateCommand, _ seekPositionTicks: Int?) async throws {
-        guard let id = session.id else { return }
+        guard let id else { return }
 
         let request = Paths.sendPlaystateCommand(
             sessionID: id,
@@ -117,7 +117,7 @@ final class SessionViewModel: ViewModel, Identifiable {
 
     @Function(\Action.Cases.sendGeneralCommand)
     private func _sendGeneralCommand(_ command: GeneralCommandType) async throws {
-        guard let id = session.id else { return }
+        guard let id else { return }
 
         let request = Paths.sendGeneralCommand(sessionID: id, command: command.rawValue)
         try await send(request)

@@ -16,11 +16,72 @@ struct ActiveSessionsView: View {
     @Router
     private var router
 
-    @State
-    private var isFiltersPresented = false
-
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
+
+    @ViewBuilder
+    private var activeWithinFilterButton: some View {
+        Picker(selection: $viewModel.environment.activeWithinSeconds) {
+            Label(
+                L10n.all,
+                systemImage: "infinity"
+            )
+            .tag(nil as Int?)
+
+            Label(
+                Duration.seconds(300).formatted(.hourMinuteAbbreviated),
+                systemImage: "clock"
+            )
+            .tag(300 as Int?)
+
+            Label(
+                Duration.seconds(900).formatted(.hourMinuteAbbreviated),
+                systemImage: "clock"
+            )
+            .tag(900 as Int?)
+
+            Label(
+                Duration.seconds(1800).formatted(.hourMinuteAbbreviated),
+                systemImage: "clock"
+            )
+            .tag(1800 as Int?)
+
+            Label(
+                Duration.seconds(3600).formatted(.hourMinuteAbbreviated),
+                systemImage: "clock"
+            )
+            .tag(3600 as Int?)
+        } label: {
+            Text(L10n.lastSeen)
+
+            if let activeWithinSeconds = viewModel.environment.activeWithinSeconds {
+                Text(Duration.seconds(activeWithinSeconds).formatted(.units(allowed: [.hours, .minutes])))
+            } else {
+                Text(L10n.all)
+            }
+
+            Image(systemName: viewModel.environment.activeWithinSeconds == nil ? "infinity" : "clock")
+        }
+        .pickerStyle(.menu)
+    }
+
+    @ViewBuilder
+    private var showInactiveSessionsButton: some View {
+        Picker(selection: $viewModel.environment.showSessionType) {
+            ForEach(ActiveSessionFilter.allCases, id: \.self) { filter in
+                Label(
+                    filter.displayTitle,
+                    systemImage: filter.systemImage
+                )
+                .tag(filter)
+            }
+        } label: {
+            Text(L10n.sessions)
+            Text(viewModel.environment.showSessionType.displayTitle)
+            Image(systemName: viewModel.environment.showSessionType.systemImage)
+        }
+        .pickerStyle(.menu)
+    }
 
     @ViewBuilder
     private var contentView: some View {
@@ -41,7 +102,6 @@ struct ActiveSessionsView: View {
         }
     }
 
-    @ViewBuilder
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -76,70 +136,8 @@ struct ActiveSessionsView: View {
             }
             .menuStyle(.button)
             .buttonStyle(.isPressed { isPressed in
-                isFiltersPresented = isPressed
+                viewModel.environment.isPaused = isPressed
             })
         }
-    }
-
-    private var activeWithinFilterButton: some View {
-        Picker(selection: $viewModel.activeWithinSeconds) {
-            Label(
-                L10n.all,
-                systemImage: "infinity"
-            )
-            .tag(nil as Int?)
-
-            Label(
-                Duration.seconds(300).formatted(.hourMinuteAbbreviated),
-                systemImage: "clock"
-            )
-            .tag(300 as Int?)
-
-            Label(
-                Duration.seconds(900).formatted(.hourMinuteAbbreviated),
-                systemImage: "clock"
-            )
-            .tag(900 as Int?)
-
-            Label(
-                Duration.seconds(1800).formatted(.hourMinuteAbbreviated),
-                systemImage: "clock"
-            )
-            .tag(1800 as Int?)
-
-            Label(
-                Duration.seconds(3600).formatted(.hourMinuteAbbreviated),
-                systemImage: "clock"
-            )
-            .tag(3600 as Int?)
-        } label: {
-            Text(L10n.lastSeen)
-
-            if let activeWithinSeconds = viewModel.activeWithinSeconds {
-                Text(Duration.seconds(activeWithinSeconds).formatted(.units(allowed: [.hours, .minutes])))
-            } else {
-                Text(L10n.all)
-            }
-
-            Image(systemName: viewModel.activeWithinSeconds == nil ? "infinity" : "clock")
-        }
-        .pickerStyle(.menu)
-    }
-
-    private var showInactiveSessionsButton: some View {
-        Picker(selection: $viewModel.showSessionType) {
-            ForEach(ActiveSessionFilter.allCases, id: \.self) { filter in
-                Label(
-                    filter.displayTitle,
-                    systemImage: filter.systemImage
-                )
-                .tag(filter)
-            }
-        } label: {
-            Text(L10n.sessions)
-            Text(viewModel.showSessionType.displayTitle)
-            Image(systemName: viewModel.showSessionType.systemImage)
-        }
-        .pickerStyle(.menu)
     }
 }

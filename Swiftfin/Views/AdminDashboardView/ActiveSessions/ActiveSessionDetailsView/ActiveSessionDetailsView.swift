@@ -14,11 +14,11 @@ import SwiftUIIntrospect
 
 struct ActiveSessionDetailsView: View {
 
-    @Router
-    private var router
-
     @ObservedObject
     var viewModel: SessionViewModel
+
+    @Router
+    private var router
 
     private var isPaused: Bool {
         viewModel.session.playState?.isPaused == true
@@ -79,11 +79,12 @@ struct ActiveSessionDetailsView: View {
                 Button(L10n.cancel, role: .cancel) {}
 
                 Button(L10n.send) {
-                    let command = MessageCommand(
-                        header: alert.header.wrappedValue.isEmpty ? nil : alert.header.wrappedValue,
-                        text: alert.text.wrappedValue
+                    viewModel.sendMessage(
+                        .init(
+                            header: alert.header.wrappedValue.nilIfBlank ?? alert.header.wrappedValue,
+                            text: alert.text.wrappedValue
+                        )
                     )
-                    viewModel.sendMessage(command)
                 }
                 .disabled(alert.text.wrappedValue.isEmpty)
             }
