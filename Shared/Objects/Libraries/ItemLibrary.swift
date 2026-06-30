@@ -83,9 +83,9 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         @ViewBuilder content: @escaping () -> some View
     ) -> AnyView {
         ItemLibraryBody(
-            content: content(),
             filterViewModel: filterViewModel,
-            viewModel: viewModel
+            viewModel: viewModel,
+            content: content
         )
         .eraseToAnyView()
     }
@@ -256,8 +256,6 @@ private struct ItemLibraryBody<Content: View>: View {
     @FocusedValue(\.focusedPoster)
     private var focusedPoster
 
-    @StateObject
-    private var cinematicBackgroundProxy: CinematicBackgroundView.Proxy = .init()
     #endif
 
     @ObservedObject
@@ -267,17 +265,23 @@ private struct ItemLibraryBody<Content: View>: View {
     private let filterViewModel: FilterViewModel
 
     init(
-        content: Content,
         filterViewModel: FilterViewModel,
-        viewModel: PagingLibraryViewModel<ItemLibrary>
+        viewModel: PagingLibraryViewModel<ItemLibrary>,
+        @ViewBuilder content: () -> Content
     ) {
-        self.content = content
         self.filterViewModel = filterViewModel
         self.viewModel = viewModel
+        self.content = content()
     }
 
     var body: some View {
-        wrappedContent
+        content
+            .letterPickerBar(filterViewModel: filterViewModel)
+            .onFirstAppear {
+                Task {
+                    await filterViewModel.getQueryFilters()
+                }
+            }
             .backport
             .onChange(of: filterViewModel.currentFilters) { _, newFilters in
                 rememberSort(from: newFilters)
@@ -290,38 +294,24 @@ private struct ItemLibraryBody<Content: View>: View {
             ) { filters in
                 viewModel.environment.filters = filters
             }
-    }
-
-    @ViewBuilder
-    private var wrappedContent: some View {
         #if os(tvOS)
-        contentView
             .background(alignment: .top) {
                 if isCinematicBackgroundEnabled {
-                    CinematicBackgroundView(viewModel: cinematicBackgroundProxy)
-                        .blurred()
-                        .ignoresSafeArea()
+                    FadeContentTransitionView(
+                        item: focusedPoster,
+                        debounce: 0.5
+                    ) { item in
+                        ImageView(item?.cinematicImageSources(maxWidth: nil, quality: nil) ?? [])
+                            .failure {
+                                EmptyView()
+                            }
+                            .aspectRatio(contentMode: .fill)
+                    }
+                    .blurred()
+                    .ignoresSafeArea()
                 }
-            }
-            .backport
-            .onChange(of: focusedPoster) { _, newValue in
-                updateCinematicBackground(with: newValue)
             }
         #else
-        contentView
-        #endif
-    }
-
-    @ViewBuilder
-    private var contentView: some View {
-        content
-            .letterPickerBar(filterViewModel: filterViewModel)
-            .onFirstAppear {
-                Task {
-                    await filterViewModel.getQueryFilters()
-                }
-            }
-        #if os(iOS)
             .navigationBarFilterDrawer(
                 viewModel: filterViewModel,
                 types: enabledDrawerFilters
@@ -340,14 +330,4 @@ private struct ItemLibraryBody<Content: View>: View {
 
         StoredValues[.User.libraryFilters(parentID: id)] = storedFilters
     }
-
-    #if os(tvOS)
-    private func updateCinematicBackground(with poster: AnyPoster?) {
-        guard isCinematicBackgroundEnabled,
-              let poster
-        else { return }
-
-        cinematicBackgroundProxy.select(item: poster)
-    }
-    #endif
 }

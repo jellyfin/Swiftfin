@@ -13,21 +13,20 @@ import SwiftUI
 
 // TODO: currently SVGs are only supported for logos, which are only used in a few places.
 //       make it so when displaying an SVG there is a unified `image` caller modifier
-// TODO: `LazyImage` uses a transaction for view swapping, which will fade out old views
-//       and fade in new views, causing a black "flash" between the placeholder and final image.
-//       Since we use blur hashes, we actually just want the final image to fade in on top while
-//       the blur hash view is at full opacity.
-//       - refactor for option
-//       - take a look at `RotateContentView`
+// TODO: look at replacing view phase resolution with `FadeContentTransitionView`
 // TODO: make Image and Placeholder generic constraints rather than any View
+// TODO: Allow failure to reserve previous state, keeping placeholder if image fails
 struct ImageView<Failure: View>: View {
 
     @State
     private var sources: [ImageSource]
+    @State
+    private var resolvedColorSourceID: String?
 
     private var image: (Image) -> any View
     private var pipeline: ImagePipeline
     private var placeholder: ((ImageSource) -> any View)?
+    private var resolvedColor: Binding<Color?>?
     private var failure: Failure
 
     @ViewBuilder
@@ -37,6 +36,18 @@ struct ImageView<Failure: View>: View {
                 .eraseToAnyView()
         } else {
             DefaultPlaceholderView(blurHash: currentSource.blurHash)
+        }
+    }
+
+    private func resolveColor(from imageContainer: ImageContainer?) {
+        guard let resolvedColor, let imageContainer else { return }
+
+        Task.detached(priority: .utility) {
+            let color = imageContainer.image.interestingColor()
+
+            await MainActor.run {
+                resolvedColor.wrappedValue = color
+            }
         }
     }
 
@@ -50,6 +61,9 @@ struct ImageView<Failure: View>: View {
                         FastSVGView(data: data)
                     } else {
                         image(_image.resizable())
+                            .onAppear {
+                                resolveColor(from: state.imageContainer)
+                            }
                             .eraseToAnyView()
                     }
                 } else if state.error != nil {
@@ -112,12 +126,17 @@ extension ImageView {
         copy(modifying: \.placeholder, with: content)
     }
 
+    func resolvedColor(_ color: Binding<Color?>) -> Self {
+        copy(modifying: \.resolvedColor, with: color)
+    }
+
     func failure<NewFailure: View>(@ViewBuilder _ content: @escaping () -> NewFailure) -> ImageView<NewFailure> {
         ImageView<NewFailure>(
             sources: sources,
             image: image,
             pipeline: pipeline,
             placeholder: placeholder,
+            resolvedColor: resolvedColor,
             failure: content()
         )
     }
@@ -139,7 +158,11 @@ struct DefaultPlaceholderView: View {
 
     var body: some View {
         if let blurHash {
-            BlurHashView(blurHash: blurHash, size: .Square(length: 8))
+            Image(
+                blurHash: blurHash,
+                size: .init(width: 8, height: 8)
+            )?
+                .resizable()
         }
     }
 }

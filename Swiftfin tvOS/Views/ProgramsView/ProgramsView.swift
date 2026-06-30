@@ -66,12 +66,10 @@ struct ProgramsView: View {
             title: title,
             type: .landscape,
             items: programsViewModel[keyPath: keyPath]
-        ) { _ in
-//            guard let mediaSource = channelProgram.channel.mediaSources?.first else { return }
-//            router.route(
-//                to: \.liveVideoPlayer,
-//                LiveVideoPlayerManager(item: channelProgram.channel, mediaSource: mediaSource)
-//            )
+        ) { item in
+            guard let userSession = programsViewModel.userSession else { return }
+            let provider = item.getPlaybackItemProvider(userSession: userSession)
+            router.route(to: .videoPlayer(provider: provider))
         } label: {
             ProgramButtonContent(program: $0)
         }

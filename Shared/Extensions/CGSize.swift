@@ -10,10 +10,6 @@ import UIKit
 
 extension CGSize {
 
-    static func Square(length: CGFloat) -> CGSize {
-        CGSize(width: length, height: length)
-    }
-
     var aspectRatio: CGFloat {
         width / height
     }

@@ -16,7 +16,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct AutoPlay: View {
 
-        @Environment(\.isInMenu)
+        @ViewContextContains(.isInMenu)
         private var isInMenu
 
         @EnvironmentObject
