@@ -166,7 +166,11 @@ extension BaseItemDto {
     /// image used in the now playing system.
     @MainActor
     func getNowPlayingImage() async -> UIImage? {
-        let imageSources = thumbImageSources()
+        let imageSources = imageSources(
+            for: preferredPosterDisplayType,
+            size: .small,
+            environment: .init(useParent: true)
+        )
 
         guard let firstImage = await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageSources) else {
             let failedSystemContentView = SystemImageContentView(
@@ -184,7 +188,7 @@ extension BaseItemDto {
             Rectangle()
                 .fill(Color.secondarySystemFill)
 
-            transform(image: image)
+            transform(image: image, displayType: preferredPosterDisplayType)
         }
         .posterAspectRatio(preferredPosterDisplayType, contentMode: .fit)
         .frame(width: 400)

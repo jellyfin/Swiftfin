@@ -157,7 +157,7 @@ extension MediaPeopleSupplement {
                     item: person,
                     type: .portrait,
                     contentMode: .fit,
-                    maxWidth: 60
+                    size: .extraSmall
                 )
                 .frame(height: 90)
                 .padding(.vertical, 8)

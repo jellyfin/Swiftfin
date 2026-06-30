@@ -54,7 +54,7 @@ extension ItemView {
                 viewModel.item
             }
 
-            let imageSource = item.imageSource(imageType, maxWidth: 1920)
+            let imageSource = item.imageSource(imageType, environment: ImageSourceOptions(maxWidth: 1920))
 
             return content(imageSource, bottomColor)
                 .id(imageSource.url?.hashValue)
@@ -118,7 +118,7 @@ extension ItemView.iPadOSCinematicScrollView {
 
                         ImageView(viewModel.item.imageSource(
                             .logo,
-                            maxHeight: 130
+                            environment: ImageSourceOptions(maxHeight: 130)
                         ))
                         .placeholder { _ in
                             EmptyView()
@@ -177,7 +177,7 @@ extension ItemView.iPadOSCinematicScrollView {
 
                     VStack(spacing: 10) {
                         if viewModel.item.type == .person || viewModel.item.type == .musicArtist {
-                            ImageView(viewModel.item.imageSource(.primary, maxWidth: 200))
+                            ImageView(viewModel.item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 200)))
                                 .failure {
                                     SystemImageContentView(systemName: viewModel.item.systemImage)
                                 }

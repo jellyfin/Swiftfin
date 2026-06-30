@@ -51,6 +51,7 @@ extension HomeView {
             }
             .clipsToBounds(false)
             .scrollBehavior(.continuousLeadingEdge)
+            .withViewContext(.isThumb)
             .contextMenu(for: BaseItemDto.self) { item in
                 Button {
                     viewModel.send(.setIsPlayed(true, item))

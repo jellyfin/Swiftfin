@@ -445,7 +445,7 @@ extension EpisodeMediaPlayerQueue {
                 Rectangle()
                     .fill(.complexSecondary)
 
-                ImageView(episode.imageSource(.primary, maxWidth: 200))
+                ImageView(episode.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 200)))
                     .failure {
                         SystemImageContentView(systemName: episode.systemImage)
                     }
@@ -531,7 +531,14 @@ extension EpisodeMediaPlayerQueue {
 
         var body: some View {
             SupplementPosterButton(
-                item: episode._withLandscapeImages { [episode.imageSource(.primary, maxWidth: $0, quality: $1)] },
+                item: episode._withLandscapeImages { environment in
+                    [
+                        episode.imageSource(
+                            .primary,
+                            environment: environment
+                        )
+                    ]
+                },
                 action: action
             ) {
                 VStack(alignment: .leading, spacing: 5) {

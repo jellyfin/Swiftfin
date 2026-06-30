@@ -114,7 +114,8 @@ private struct BaseItemDtoLibraryListElement: View {
             PosterImage(
                 item: item,
                 type: resolvedLibraryStyle.posterDisplayType,
-                contentMode: .fill
+                contentMode: .fill,
+                size: .extraSmall
             )
             .posterShadow()
             .frame(width: resolvedLibraryStyle.posterDisplayType == .landscape ? baseItemListLandscapeWidth : baseItemListPortraitWidth)

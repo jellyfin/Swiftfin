@@ -18,6 +18,7 @@ struct ViewContext: OptionSet {
 
     static let isListRowSeparatorVisible = ViewContext(rawValue: 1 << 0)
     static let isInMenu = ViewContext(rawValue: 1 << 1)
+    static let isThumb = ViewContext(rawValue: 1 << 2)
 }
 
 extension EnvironmentValues {

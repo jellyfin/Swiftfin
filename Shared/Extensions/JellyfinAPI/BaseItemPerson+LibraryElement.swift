@@ -115,12 +115,16 @@ struct BaseItemPersonLibraryListElement: View {
 
     var body: some View {
         ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
-            PosterImage(item: person, type: person.resolvedLibraryStyle(libraryStyle).posterDisplayType)
-                .posterStyle(person.resolvedLibraryStyle(libraryStyle).posterDisplayType)
-                .frame(width: baseItemPersonListWidth)
-                .backport
-                .matchedTransitionSource(id: "item", in: namespace)
-                .posterShadow()
+            PosterImage(
+                item: person,
+                type: person.resolvedLibraryStyle(libraryStyle).posterDisplayType,
+                size: .extraSmall
+            )
+            .posterStyle(person.resolvedLibraryStyle(libraryStyle).posterDisplayType)
+            .frame(width: baseItemPersonListWidth)
+            .backport
+            .matchedTransitionSource(id: "item", in: namespace)
+            .posterShadow()
         } content: {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {

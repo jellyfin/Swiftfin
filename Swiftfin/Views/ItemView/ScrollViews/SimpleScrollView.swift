@@ -106,7 +106,7 @@ extension ItemView {
                     Rectangle()
                         .fill(.complexSecondary)
 
-                    ImageView(viewModel.item.imageSource(imageType, maxWidth: 600))
+                    ImageView(viewModel.item.imageSource(imageType, environment: ImageSourceOptions(maxWidth: 600)))
                         .failure {
                             SystemImageContentView(systemName: viewModel.item.systemImage)
                         }

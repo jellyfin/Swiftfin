@@ -302,7 +302,7 @@ private extension UserViewLibraryElement {
         case .favorites:
             return []
         case let .userView(item):
-            return [item.imageSource(.primary, maxWidth: 500)]
+            return [item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 500))]
         }
     }
 
@@ -339,6 +339,6 @@ private extension UserViewLibraryElement {
         let response = try await userSession.client.send(request)
 
         return (response.value.items ?? [])
-            .flatMap { $0.landscapeImageSources(maxWidth: 200) }
+            .flatMap { $0.imageSources(for: .landscape, size: .custom(width: 200)) }
     }
 }

@@ -70,6 +70,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             layout: Element.layout(for: libraryStyle, options: libraryStyleOptions)
         ) { element in
             element.makeBody(libraryStyle: libraryStyle)
+                .withViewContext(.isThumb)
         }
         .onReachedBottomEdge(offset: .offset(300)) {
             if viewModel.isSearchActive {
