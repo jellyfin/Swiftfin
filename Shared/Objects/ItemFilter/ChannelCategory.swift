@@ -15,7 +15,9 @@ enum ChannelCategory: String, CaseIterable, Codable, Displayable, Hashable, Item
     case news
     case kids
     case sports
+    case hd
 
+    // swiftlint:disable:next hard_coded_display_string
     var displayTitle: String {
         switch self {
         case .movies:
@@ -28,6 +30,8 @@ enum ChannelCategory: String, CaseIterable, Codable, Displayable, Hashable, Item
             L10n.kids
         case .sports:
             L10n.sports
+        case .hd:
+            "HD"
         }
     }
 }

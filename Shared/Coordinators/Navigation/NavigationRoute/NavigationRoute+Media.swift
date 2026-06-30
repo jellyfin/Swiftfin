@@ -20,10 +20,18 @@ extension NavigationRoute {
         NavigationRoute(
             id: "channels"
         ) {
-            PagingLibraryView(library: ChannelLibrary())
-                .if(UIDevice.isTV) { view in
-                    view.toolbar(.hidden, for: .navigationBar)
-                }
+            PagingLibraryView(
+                library: ItemLibrary(
+                    parent: BaseItemDto(
+                        collectionType: .livetv,
+                        id: "channels",
+                        name: L10n.channels
+                    )
+                )
+            )
+            .if(UIDevice.isTV) { view in
+                view.toolbar(.hidden, for: .navigationBar)
+            }
         }
     }
 

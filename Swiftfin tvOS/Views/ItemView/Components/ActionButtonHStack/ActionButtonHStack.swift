@@ -57,14 +57,24 @@ extension ItemView {
 
                 // MARK: Toggle Favorite
 
-                let isHeartSelected = viewModel.item.userData?.isFavorite == true
+                if viewModel.item.canBeLiked {
 
-                Button(L10n.favorited, systemImage: isHeartSelected ? "heart.fill" : "heart") {
-                    viewModel.send(.toggleIsFavorite)
+                    let isHeartSelected = viewModel.item.userData?.isFavorite == true
+
+                    Button(L10n.favorited, systemImage: isHeartSelected ? "heart.fill" : "heart") {
+                        viewModel.send(.toggleIsFavorite)
+                    }
+                    .buttonStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
+                    .isSelected(isHeartSelected)
+                    .frame(minWidth: 100, maxWidth: .infinity)
                 }
-                .buttonStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
-                .isSelected(isHeartSelected)
-                .frame(minWidth: 100, maxWidth: .infinity)
+
+                // MARK: Toggle Recording
+
+                if viewModel.item.canBeRecorded, let liveViewModel = viewModel as? LiveContentViewModel {
+                    /* RecordingMenu(viewModel: liveViewModel.recording)
+                     .frame(minWidth: 100, maxWidth: .infinity)*/
+                }
 
                 // MARK: Watch a Trailer
 

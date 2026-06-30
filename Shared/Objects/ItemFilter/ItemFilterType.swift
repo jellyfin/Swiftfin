@@ -25,17 +25,6 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
     case years
     case category
 
-    static var allCases: [ItemFilterType] {
-        [
-            .genres,
-            .letter,
-            .sortBy,
-            .tags,
-            .traits,
-            .years,
-        ]
-    }
-
     var displayTitle: String {
         switch self {
         case .category:

@@ -25,14 +25,14 @@ struct ItemOverviewView: View {
                     .font(.title)
                 #endif
 
-                if let firstTagline = item.taglines?.first {
+                if let firstTagline = item.taglines?.first ?? item.currentProgram?.taglines?.first ?? item.currentProgram?.displayTitle {
                     Text(firstTagline)
                         .font(.title3)
                         .fontWeight(.semibold)
                         .multilineTextAlignment(.leading)
                 }
 
-                if let itemOverview = item.overview {
+                if let itemOverview = item.overview ?? item.currentProgram?.overview {
                     Text(itemOverview)
                         .font(.body)
                         .multilineTextAlignment(.leading)

@@ -115,7 +115,7 @@ extension MediaInfoSupplement {
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
 
-                if let overview = item.overview {
+                if let overview = item.overview ?? item.currentProgram?.overview {
                     Text(overview)
                         .font(.subheadline)
                         .fontWeight(.regular)
@@ -155,7 +155,7 @@ extension MediaInfoSupplement {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
-                    if let overview = item.overview {
+                    if let overview = item.overview ?? item.currentProgram?.overview {
                         Text(overview)
                             .font(.subheadline)
                             .fontWeight(.regular)

@@ -44,14 +44,20 @@ final class FilterViewModel: ViewModel {
 
     init(
         parent: (any LibraryParent)? = nil,
-        currentFilters: ItemFilterCollection = .default,
-        allFilters: ItemFilterCollection = .all
+        currentFilters: ItemFilterCollection = .default
     ) {
         self.parent = parent
         self.currentFilters = currentFilters
-        self.allFilters = allFilters
 
         super.init()
+
+        if let parent {
+            let supported = Set(parent.supportedItemTypes.flatMap(\.supportedItemSortBy))
+
+            if supported.isNotEmpty {
+                allFilters.sortBy = ItemSortBy.supportedCases.filter(supported.contains)
+            }
+        }
     }
 
     func isFilterSelected(type: ItemFilterType) -> Bool {

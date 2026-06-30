@@ -22,7 +22,7 @@ extension ItemView.AboutView {
             Card(title: item.displayTitle) {
                 router.route(to: .itemOverview(item: item))
             } content: {
-                TruncatedText(item.overview ?? L10n.noOverviewAvailable)
+                TruncatedText(item.overview ?? item.currentProgram?.overview ?? L10n.noOverviewAvailable)
                     .font(.subheadline)
                     .lineLimit(4)
             }

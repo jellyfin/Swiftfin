@@ -22,7 +22,7 @@ extension ItemView.AboutView {
             Card(title: item.displayTitle, subtitle: item.alternateTitle) {
                 router.route(to: .itemOverview(item: item))
             } content: {
-                if let overview = item.overview {
+                if let overview = item.overview ?? item.currentProgram?.overview {
                     TruncatedText(overview)
                         .lineLimit(4)
                         .font(.footnote)
