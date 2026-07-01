@@ -57,7 +57,7 @@ extension SeriesEpisodeSelector {
                         )
                     )
                 } label: {
-                    ImageView(episode.imageSource(.primary, maxWidth: 250))
+                    ImageView(episode.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 250)))
                         .failure {
                             SystemImageContentView(systemName: episode.systemImage)
                         }

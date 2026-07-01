@@ -50,7 +50,7 @@ extension ItemView {
                 }
             }()
 
-            let imageSource = item.imageSource(imageType, maxWidth: 1920)
+            let imageSource = item.imageSource(imageType, environment: ImageSourceOptions(maxWidth: 1920))
 
             return content(imageSource)
                 .id(imageSource.url?.hashValue)
@@ -137,7 +137,7 @@ extension ItemView {
 
                         ImageView(viewModel.item.imageSource(
                             .logo,
-                            maxHeight: 250
+                            environment: ImageSourceOptions(maxHeight: 250)
                         ))
                         .placeholder { _ in
                             EmptyView()
@@ -187,7 +187,7 @@ extension ItemView {
 
                     VStack(spacing: 30) {
                         if viewModel.item.type == .person || viewModel.item.type == .musicArtist {
-                            ImageView(viewModel.item.imageSource(.primary, maxWidth: 450))
+                            ImageView(viewModel.item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 450)))
                                 .failure {
                                     SystemImageContentView(systemName: viewModel.item.systemImage)
                                 }

@@ -46,7 +46,7 @@ extension ItemView {
             }
 
             let imageType: ImageType = item.type == .episode ? .primary : .backdrop
-            let imageSource = item.imageSource(imageType, maxWidth: 1320)
+            let imageSource = item.imageSource(imageType, environment: ImageSourceOptions(maxWidth: 1320))
 
             return content(imageSource, bottomColor)
                 .id(imageSource.url?.hashValue)

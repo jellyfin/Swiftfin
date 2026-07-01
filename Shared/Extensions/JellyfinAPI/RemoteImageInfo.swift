@@ -48,22 +48,19 @@ extension RemoteImageInfo: Poster {
     }
 
     func portraitImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?
+        environment: Empty
     ) -> [ImageSource] {
         imageSources
     }
 
     func landscapeImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?
+        environment: Empty
     ) -> [ImageSource] {
         imageSources
     }
 
     func squareImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?
+        environment: Empty
     ) -> [ImageSource] {
         imageSources
     }

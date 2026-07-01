@@ -52,11 +52,13 @@ extension ChapterInfo {
             self.imageSource = imageSource
         }
 
-        func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
+        func landscapeImageSources(
+            environment: Empty
+        ) -> [ImageSource] {
             [imageSource]
         }
 
-        func transform(image: Image) -> some View {
+        func transform(image: Image, displayType: PosterDisplayType) -> some View {
             ZStack {
                 Color.black
 

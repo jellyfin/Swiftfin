@@ -34,13 +34,13 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             GeometryReader { proxy in
-                ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1320))
+                ImageView(viewModel.item.imageSource(.backdrop, environment: ImageSourceOptions(maxWidth: 1320)))
                     .resolvedColor($bottomColor)
                     .aspectRatio(1.77, contentMode: .fill)
                     .frame(width: proxy.size.width, height: proxy.size.height * 0.70, alignment: .top)
                     .bottomEdgeGradient(bottomColor: bottomColor ?? Color.secondarySystemFill)
             }
-            .onChange(of: viewModel.item.imageSource(.backdrop).url) { _ in
+            .onChange(of: viewModel.item.imageSource(.backdrop, environment: ImageSourceOptions()).url) { _ in
                 bottomColor = nil
             }
         }
@@ -94,7 +94,7 @@ extension ItemView.CompactLogoScrollView {
 
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
-                ImageView(viewModel.item.imageURL(.logo, maxHeight: 70))
+                ImageView(viewModel.item.imageSource(.logo, environment: ImageSourceOptions(maxHeight: 70)))
                     .placeholder { _ in
                         EmptyView()
                     }

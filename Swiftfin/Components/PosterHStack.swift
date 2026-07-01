@@ -56,6 +56,7 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
         .insets(horizontal: EdgeInsets.edgePadding)
         .itemSpacing(EdgeInsets.edgePadding / 2)
         .scrollBehavior(.continuousLeadingEdge)
+        .withViewContext(.isThumb)
     }
 
     var body: some View {

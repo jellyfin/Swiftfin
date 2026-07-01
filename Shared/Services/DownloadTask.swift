@@ -146,10 +146,10 @@ class DownloadTask: NSObject, ObservableObject {
         // TODO: move to BaseItemDto
         switch type {
         case .movie, .series:
-            guard let url = item.imageSource(.backdrop, maxWidth: 600).url else { return }
+            guard let url = item.imageSource(.backdrop, environment: ImageSourceOptions(maxWidth: 600)).url else { return }
             imageURL = url
         case .episode:
-            guard let url = item.imageSource(.primary, maxWidth: 600).url else { return }
+            guard let url = item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 600)).url else { return }
             imageURL = url
         default:
             return
@@ -173,7 +173,7 @@ class DownloadTask: NSObject, ObservableObject {
 
         switch type {
         case .movie, .series:
-            guard let url = item.imageSource(.primary, maxWidth: 300).url else { return }
+            guard let url = item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 300)).url else { return }
             imageURL = url
         default:
             return

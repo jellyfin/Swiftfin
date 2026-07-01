@@ -11,9 +11,20 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// MARK: Poster
-
 extension BaseItemDto: Poster {
+
+    struct Environment: WithDefaultValue, WithImageSourceOptions, WithViewContext {
+
+        var maxWidth: CGFloat?
+        var maxHeight: CGFloat?
+        var quality: Int?
+        var useParent: Bool = Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop]
+        var viewContext: ViewContext = .init()
+
+        static var `default`: Self {
+            .init()
+        }
+    }
 
     var preferredPosterDisplayType: PosterDisplayType {
         type?.preferredPosterDisplayType ?? .portrait
@@ -49,7 +60,7 @@ extension BaseItemDto: Poster {
             "tv"
         case .episode, .movie, .series, .video:
             "film"
-        case .folder:
+        case .collectionFolder, .folder, .userView:
             "folder.fill"
         case .musicVideo:
             "music.note.tv.fill"
@@ -60,84 +71,89 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
+    @ImageSourceBuilder
+    func portraitImageSources(
+        environment: Environment
+    ) -> [ImageSource] {
         switch type {
         case .episode:
-            [imageSource(seasonID, type: .primary, maxWidth: maxWidth, quality: quality)]
+            imageSource(itemID: seasonID, .primary, environment: environment)
         case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
-        default:
-            if extraType != nil {
-                [imageSource(parentID, type: .primary, maxWidth: maxWidth, quality: quality)]
-            } else {
-                []
-            }
-        }
-    }
-
-    func landscapeImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        switch type {
-        case .episode:
-            if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
-                [
-                    imageSource(seriesID, type: .thumb, maxWidth: maxWidth, quality: quality),
-                    imageSource(seriesID, type: .backdrop, maxWidth: maxWidth, quality: quality),
-                    imageSource(.primary, maxWidth: maxWidth, quality: quality),
-                ]
-            } else {
-                [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
-            }
-        case .folder, .program, .musicVideo, .video:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
-        default:
-            [
-                imageSource(.thumb, maxWidth: maxWidth, quality: quality),
-                imageSource(.backdrop, maxWidth: maxWidth, quality: quality),
-            ]
-        }
-    }
-
-    func cinematicImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-        switch type {
-        case .episode:
-            [imageSource(seriesID, type: .backdrop, maxWidth: maxWidth, quality: quality)]
-        default:
-            [imageSource(.backdrop, maxWidth: maxWidth, quality: quality)]
-        }
-    }
-
-    func squareImageSources(maxWidth: CGFloat?, quality: Int? = nil) -> [ImageSource] {
-        switch type {
-        case .audio:
-            [
-                imageSource(.primary, maxWidth: maxWidth, quality: quality),
-                imageSource(albumID, type: .primary, maxWidth: maxWidth, quality: quality)
-            ]
-        case .channel, .musicAlbum, .tvChannel:
-            [imageSource(.primary, maxWidth: maxWidth, quality: quality)]
+            imageSource(.primary, environment: environment)
         default:
             []
         }
     }
 
-    func thumbImageSources() -> [ImageSource] {
-        switch preferredPosterDisplayType {
-        case .portrait:
-            portraitImageSources(maxWidth: 200, quality: 90)
-        case .landscape:
-            landscapeImageSources(maxWidth: 200, quality: 90)
-        case .square:
-            squareImageSources(maxWidth: 200, quality: 90)
+    @ImageSourceBuilder
+    func landscapeImageSources(
+        environment: Environment
+    ) -> [ImageSource] {
+        switch type {
+        case .episode:
+            if environment.useParent {
+                if environment.viewContext.contains(.isThumb) {
+                    imageSource(itemID: seriesID, .thumb, environment: environment)
+                }
+                imageSource(itemID: seriesID, .backdrop, environment: environment)
+                imageSource(.primary, environment: environment)
+            } else {
+                imageSource(.primary, environment: environment)
+            }
+        case .collectionFolder, .folder, .liveTvProgram, .musicVideo, .program, .userView, .video:
+            imageSource(.primary, environment: environment)
+        default:
+            if environment.viewContext.contains(.isThumb) {
+                imageSource(.thumb, environment: environment)
+            }
+            imageSource(.backdrop, environment: environment)
+        }
+    }
+
+    @ImageSourceBuilder
+    func squareImageSources(
+        environment: Environment
+    ) -> [ImageSource] {
+        switch type {
+        case .audio:
+            imageSource(.primary, environment: environment)
+            imageSource(
+                itemID: albumID,
+                .primary,
+                environment: environment
+            )
+        case .channel, .musicAlbum, .tvChannel:
+            imageSource(.primary, environment: environment)
+        case .program:
+            if let channelID {
+                imageSource(
+                    itemID: channelID,
+                    .primary,
+                    environment: environment
+                )
+            }
+        default:
+            []
         }
     }
 
     @ViewBuilder
-    func transform(image: Image) -> some View {
+    func transform(image: Image, displayType: PosterDisplayType) -> some View {
         switch type {
         case .channel, .tvChannel:
             ContainerRelativeView(ratio: 0.95) {
                 image
                     .aspectRatio(contentMode: .fit)
+            }
+        case .program:
+            if displayType == .square {
+                ContainerRelativeView(ratio: 0.95) {
+                    image
+                        .aspectRatio(contentMode: .fit)
+                }
+            } else {
+                image
+                    .aspectRatio(contentMode: .fill)
             }
         default:
             image

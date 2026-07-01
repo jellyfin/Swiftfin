@@ -47,8 +47,10 @@ extension ItemView {
                 else {
                     ImageView(viewModel.item.imageSource(
                         imageType,
-                        maxWidth: usePrimaryImage ? proxy.size.width : 0,
-                        maxHeight: usePrimaryImage ? 0 : proxy.size.height * 0.6
+                        environment: ImageSourceOptions(
+                            maxWidth: usePrimaryImage ? proxy.size.width : 0,
+                            maxHeight: usePrimaryImage ? 0 : proxy.size.height * 0.6
+                        )
                     ))
                     .resolvedColor($bottomColor)
                     .aspectRatio(usePrimaryImage ? (2 / 3) : 1.77, contentMode: .fill)
@@ -56,7 +58,7 @@ extension ItemView {
                     .bottomEdgeGradient(bottomColor: bottomColor ?? Color.secondarySystemFill)
                 }
             }
-            .onChange(of: viewModel.item.imageSource(imageType).url) { _ in
+            .onChange(of: viewModel.item.imageSource(imageType, environment: ImageSourceOptions()).url) { _ in
                 bottomColor = nil
             }
         }
@@ -105,7 +107,7 @@ extension ItemView.CinematicScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .center, spacing: 10) {
                     if !usePrimaryImage {
-                        ImageView(viewModel.item.imageURL(.logo, maxHeight: 100))
+                        ImageView(viewModel.item.imageSource(.logo, environment: ImageSourceOptions(maxHeight: 100)))
                             .placeholder { _ in
                                 EmptyView()
                             }

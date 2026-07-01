@@ -9,15 +9,52 @@
 import Foundation
 import SwiftUI
 
+private func anyPosterPortraitImageSources(
+    for poster: some Poster
+) -> [ImageSource] {
+    poster.portraitImageSources(environment: .default)
+}
+
+private func anyPosterLandscapeImageSources(
+    for poster: some Poster
+) -> [ImageSource] {
+    poster.landscapeImageSources(environment: .default)
+}
+
+private func anyPosterSquareImageSources(
+    for poster: some Poster
+) -> [ImageSource] {
+    poster.squareImageSources(environment: .default)
+}
+
+private func anyPosterImageSources(
+    for poster: some Poster,
+    displayType: PosterDisplayType,
+    size: PosterDisplayType.Size
+) -> [ImageSource] {
+    poster.imageSources(for: displayType, size: size)
+}
+
 struct AnyPoster: Poster {
+
+    struct Environment: WithDefaultValue, WithImageSourceOptions {
+
+        var maxWidth: CGFloat?
+        var maxHeight: CGFloat?
+        var quality: Int?
+
+        static var `default`: Self {
+            .init()
+        }
+    }
 
     let _poster: any Poster
 
-    private let _withLandscapeImages: ((CGFloat?, Int?) -> [ImageSource])?
+    private let _withLandscapeImages: ((Environment) -> [ImageSource])?
 
     init(
         _ poster: any Poster,
-        _withLandscapeImages: ((CGFloat?, Int?) -> [ImageSource])? = nil
+        _withLandscapeImages: ((Environment) -> [ImageSource])? = nil
     ) {
         self._poster = poster
         self._withLandscapeImages = _withLandscapeImages
@@ -54,28 +91,64 @@ struct AnyPoster: Poster {
         _poster.showTitle
     }
 
-    func portraitImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.portraitImageSources(maxWidth: maxWidth, quality: quality)
+    func portraitImageSources(
+        environment: Environment
+    ) -> [ImageSource] {
+        anyPosterPortraitImageSources(for: _poster)
     }
 
-    func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
+    func landscapeImageSources(
+        environment: Environment
+    ) -> [ImageSource] {
         if let _withLandscapeImages {
-            _withLandscapeImages(maxWidth, quality)
+            _withLandscapeImages(environment)
         } else {
-            _poster.landscapeImageSources(maxWidth: maxWidth, quality: quality)
+            anyPosterLandscapeImageSources(for: _poster)
         }
     }
 
-    func cinematicImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.cinematicImageSources(maxWidth: maxWidth, quality: quality)
+    func squareImageSources(
+        environment: Environment
+    ) -> [ImageSource] {
+        anyPosterSquareImageSources(for: _poster)
     }
 
-    func squareImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
-        _poster.squareImageSources(maxWidth: maxWidth, quality: quality)
+    func imageSources(
+        for displayType: PosterDisplayType,
+        size: PosterDisplayType.Size,
+        environment: Environment
+    ) -> [ImageSource] {
+        if displayType == .landscape, let _withLandscapeImages {
+            _withLandscapeImages(
+                imageSourceEnvironment(
+                    for: displayType,
+                    size: size,
+                    environment: environment
+                )
+            )
+        } else {
+            anyPosterImageSources(
+                for: _poster,
+                displayType: displayType,
+                size: size
+            )
+        }
     }
 
-    func transform(image: Image) -> some View {
-        _poster.transform(image: image)
+    private func imageSourceEnvironment(
+        for displayType: PosterDisplayType,
+        size: PosterDisplayType.Size,
+        environment: Environment
+    ) -> Environment {
+        var environment = environment
+        environment.maxWidth = size.width(for: displayType)
+        environment.quality = size.quality
+
+        return environment
+    }
+
+    func transform(image: Image, displayType: PosterDisplayType) -> some View {
+        _poster.transform(image: image, displayType: displayType)
             .eraseToAnyView()
     }
 

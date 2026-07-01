@@ -59,7 +59,7 @@ struct CinematicItemSelector<Item: Poster>: View {
                 item: selectedBackgroundItem,
                 debounce: 0.5
             ) { item in
-                ImageView(item?.cinematicImageSources(maxWidth: nil, quality: nil) ?? [])
+                ImageView(item?.landscapeImageSources(environment: .default) ?? [])
                     .failure {
                         EmptyView()
                     }
