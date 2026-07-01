@@ -83,15 +83,7 @@ extension BaseItemDto: Poster {
         case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
             imageSource(.primary, environment: environment)
         default:
-            // TODO: cleanup
-            // parentBackdropItemID seems good enough
-            if extraType != nil, let parentBackdropItemID {
-                imageSource(
-                    itemID: parentBackdropItemID,
-                    .primary,
-                    environment: environment
-                )
-            }
+            []
         }
     }
 
