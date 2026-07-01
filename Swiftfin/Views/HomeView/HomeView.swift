@@ -40,6 +40,8 @@ struct HomeView: View {
                     viewModel.send(.setIsPlayed(true, item))
                 }
 
+                OnNowView(viewModel: viewModel.onNowViewModel)
+
                 if showRecentlyAdded {
                     RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
                 }

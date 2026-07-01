@@ -284,7 +284,10 @@ private struct ItemLibraryBody<Content: View>: View {
 
     var body: some View {
         content
-            .letterPickerBar(filterViewModel: filterViewModel)
+            .if(viewModel.library.parent.supportsLetterPickerBar) { view in
+                view
+                    .letterPickerBar(filterViewModel: filterViewModel)
+            }
             .onFirstAppear {
                 Task {
                     await filterViewModel.getQueryFilters()

@@ -15,35 +15,6 @@ import Transmission
 
 extension NavigationRoute {
 
-    @MainActor
-    static var channels: NavigationRoute {
-        NavigationRoute(
-            id: "channels"
-        ) {
-            PagingLibraryView(
-                library: ItemLibrary(
-                    parent: BaseItemDto(
-                        collectionType: .livetv,
-                        id: "channels",
-                        name: L10n.channels
-                    )
-                )
-            )
-            .if(UIDevice.isTV) { view in
-                view.toolbar(.hidden, for: .navigationBar)
-            }
-        }
-    }
-
-    static var liveTV: NavigationRoute {
-        NavigationRoute(
-            id: "liveTV",
-            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
-        ) {
-            ProgramsView()
-        }
-    }
-
     static func mediaSourceInfo(source: MediaSourceInfo) -> NavigationRoute {
         NavigationRoute(
             id: "mediaSourceInfo",

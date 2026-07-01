@@ -34,7 +34,7 @@ extension SelectUserView {
             }
 
             Picker(selection: $userListDisplayType) {
-                ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
+                ForEach(LibraryDisplayType.supportedCases, id: \.hashValue) {
                     Label($0.displayTitle, systemImage: $0.systemImage)
                         .tag($0)
                 }

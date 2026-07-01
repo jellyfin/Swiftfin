@@ -109,7 +109,10 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
             router.route(to: .library(library: library), in: namespace)
         case let .userView(item):
             if item.collectionType == .livetv {
-                router.route(to: .liveTV, in: namespace)
+                router.route(
+                    to: .library(library: LiveTVChannelLibrary()),
+                    in: namespace
+                )
             } else {
                 router.route(
                     to: .library(library: ItemLibrary(parent: item, filters: .default)),
@@ -125,7 +128,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         action: (() -> Void)?
     ) -> some View {
         switch libraryStyle.displayType {
-        case .grid:
+        case .grid, .guide:
             UserViewLibraryGridElement(element: self)
         case .list:
             UserViewLibraryListElement(element: self)

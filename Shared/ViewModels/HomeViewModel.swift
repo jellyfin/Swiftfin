@@ -60,6 +60,7 @@ final class HomeViewModel: ViewModel, Stateful {
 
     var nextUpViewModel = PagingLibraryViewModel(library: NextUpLibrary())
     var recentlyAddedViewModel = PagingLibraryViewModel(library: RecentlyAddedLibrary())
+    var onNowViewModel = PagingLibraryViewModel(library: RecommendedProgramsLibrary())
 
     override init() {
         super.init()
@@ -88,6 +89,7 @@ final class HomeViewModel: ViewModel, Stateful {
                 do {
                     await self?.nextUpViewModel.refresh()
                     await self?.recentlyAddedViewModel.refresh()
+                    await self?.onNowViewModel.refresh()
 
                     let resumeItems = try await self?.getResumeItems() ?? []
 
@@ -159,6 +161,7 @@ final class HomeViewModel: ViewModel, Stateful {
 
         await nextUpViewModel.refresh()
         await recentlyAddedViewModel.refresh()
+        await onNowViewModel.refresh()
 
         let resumeItems = try await getResumeItems()
         let libraries = try await getLibraries()

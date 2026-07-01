@@ -31,7 +31,7 @@ extension BaseItemPerson: LibraryElement {
         action: (() -> Void)?
     ) -> some View {
         switch libraryStyle.displayType {
-        case .grid:
+        case .grid, .guide:
             BaseItemPersonLibraryGridElement(
                 person: self,
                 libraryStyle: libraryStyle

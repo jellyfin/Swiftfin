@@ -65,23 +65,27 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     @ViewBuilder
     private var elementsView: some View {
-        CollectionVGrid(
-            uniqueElements: viewModel.displayedElements,
-            layout: Element.layout(for: libraryStyle, options: libraryStyleOptions)
-        ) { element in
-            element.makeBody(libraryStyle: libraryStyle)
-        }
-        .onReachedBottomEdge(offset: .offset(300)) {
-            if viewModel.isSearchActive {
-                viewModel.getNextSearchPage()
-            } else {
-                viewModel.getNextPage()
+        if libraryStyle.displayType == .guide {
+            GuideLibraryView(viewModel: viewModel, gridProxy: gridProxy, libraryStyle: libraryStyle)
+        } else {
+            CollectionVGrid(
+                uniqueElements: viewModel.displayedElements,
+                layout: Element.layout(for: libraryStyle, options: libraryStyleOptions)
+            ) { element in
+                element.makeBody(libraryStyle: libraryStyle)
             }
+            .onReachedBottomEdge(offset: .offset(300)) {
+                if viewModel.isSearchActive {
+                    viewModel.getNextSearchPage()
+                } else {
+                    viewModel.getNextPage()
+                }
+            }
+            .proxy(gridProxy)
+            .scrollIndicators(.hidden)
+            .withViewContext(.isListRowSeparatorVisible)
+            .ignoresSafeArea(edges: .vertical)
         }
-        .proxy(gridProxy)
-        .scrollIndicators(.hidden)
-        .withViewContext(.isListRowSeparatorVisible)
-        .ignoresSafeArea(edges: .vertical)
     }
 
     @ViewBuilder

@@ -37,6 +37,15 @@ extension LibraryParent {
         }
     }
 
+    var supportsLetterPickerBar: Bool {
+        switch libraryType {
+        case .channel, .liveTvChannel, .tvChannel, .program, .liveTvProgram, .tvProgram:
+            false
+        default:
+            true
+        }
+    }
+
     func setParentParameters(_ parameters: Paths.GetItemsParameters) -> Paths.GetItemsParameters {
 
         guard let id else { return parameters }

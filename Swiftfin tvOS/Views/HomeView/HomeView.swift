@@ -32,6 +32,8 @@ struct HomeView: View {
 
                     NextUpView(viewModel: viewModel.nextUpViewModel)
 
+                    OnNowView(viewModel: viewModel.onNowViewModel)
+
                     if showRecentlyAdded {
                         RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
                     }
@@ -42,6 +44,8 @@ struct HomeView: View {
 
                     NextUpView(viewModel: viewModel.nextUpViewModel)
                         .safeAreaPadding(.top, 150)
+
+                    OnNowView(viewModel: viewModel.onNowViewModel)
                 }
 
                 ForEach(viewModel.libraries) { viewModel in

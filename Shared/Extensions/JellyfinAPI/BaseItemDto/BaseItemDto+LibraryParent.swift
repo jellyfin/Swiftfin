@@ -23,6 +23,17 @@ extension BaseItemDto: LibraryParent {
         type
     }
 
+    var supportsLetterPickerBar: Bool {
+        guard collectionType != .livetv else { return false }
+
+        switch libraryType {
+        case .channel, .liveTvChannel, .tvChannel, .program, .liveTvProgram, .tvProgram:
+            return false
+        default:
+            return true
+        }
+    }
+
     var groupings: (defaultSelection: Grouping, elements: [Grouping])? {
         switch collectionType {
         case .tvshows:
