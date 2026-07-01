@@ -11,8 +11,6 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// MARK: Poster
-
 extension BaseItemDto: Poster {
 
     struct Environment: WithDefaultValue, WithImageSourceOptions, WithViewContext {

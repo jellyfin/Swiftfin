@@ -25,13 +25,11 @@ struct PosterImage<Element: Poster>: View {
         item: Element,
         type: PosterDisplayType,
         contentMode: ContentMode = .fill,
-//        maxWidth: CGFloat? = nil,
         size: PosterDisplayType.Size = .small
     ) {
         self.contentMode = contentMode
         self.element = item
         self.pipeline = .shared
-//        self.size = maxWidth.map { .custom(width: $0) } ?? size
         self.size = size
         self.type = type
     }
