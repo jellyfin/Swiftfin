@@ -7,6 +7,7 @@
 //
 
 import JellyfinAPI
+import SwiftUI
 
 struct ChannelProgramsLibrary: BaseItemKindLibrary {
 
@@ -14,9 +15,11 @@ struct ChannelProgramsLibrary: BaseItemKindLibrary {
     let parent: TitledLibraryParent
 
     private let channelID: String?
+    private let startDate: Date
 
-    init(channel: BaseItemDto) {
+    init(channel: BaseItemDto, startDate: Date = .now) {
         self.channelID = channel.id
+        self.startDate = startDate
         self.parent = .init(
             displayTitle: channel.displayTitle,
             id: "channel-programs-\(channel.id ?? "unknown")"
@@ -31,7 +34,7 @@ struct ChannelProgramsLibrary: BaseItemKindLibrary {
         parameters.channelIDs = [channelID].compactMap(\.self)
         parameters.fields = .MinimumFields.appending(.channelInfo)
         parameters.limit = pageState.pageSize
-        parameters.minEndDate = .now
+        parameters.minEndDate = startDate
         parameters.sortBy = [.startDate]
         parameters.startIndex = pageState.pageOffset
         parameters.userID = pageState.userSession.user.id

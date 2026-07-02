@@ -32,6 +32,9 @@ struct GuideTimeRuler: View {
                 labels
             }
             .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
+                #if os(tvOS)
+                scrollView.contentInsetAdjustmentBehavior = .never
+                #endif
                 scrollProxy.register(
                     scrollView,
                     nowX: width(from: baseStart, to: now),

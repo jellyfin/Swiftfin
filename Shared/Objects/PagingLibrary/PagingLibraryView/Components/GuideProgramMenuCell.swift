@@ -83,6 +83,7 @@ extension GuideProgramMenuCell {
         var body: some View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
+                    // swiftlint:disable:next hard_coded_display_string
                     Text("\(count) \(L10n.programs)")
                         .font(.footnote)
                         .lineLimit(1)

@@ -56,6 +56,7 @@ struct GuideLibraryView<Library: PagingLibrary>: View where Library.Element: Lib
             #endif
         }
         #if os(tvOS)
+        .padding(.leading, EdgeInsets.edgePadding * 2)
         .ignoresSafeArea(edges: .horizontal)
         #endif
     }

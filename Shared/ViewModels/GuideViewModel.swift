@@ -13,6 +13,8 @@ import JellyfinAPI
 @MainActor
 final class GuideViewModel: ViewModel {
 
+    private static let pageSize = 20
+
     let baseStart: Date = GuideViewModel.currentHalfHour()
     let scrollProxy = GuideScrollProxy()
 
@@ -41,7 +43,10 @@ final class GuideViewModel: ViewModel {
             return existing
         }
 
-        let viewModel = PagingLibraryViewModel(library: ChannelProgramsLibrary(channel: channel))
+        let viewModel = PagingLibraryViewModel(
+            library: ChannelProgramsLibrary(channel: channel, startDate: baseStart),
+            pageSize: Self.pageSize
+        )
         programsViewModels[key] = viewModel
         return viewModel
     }

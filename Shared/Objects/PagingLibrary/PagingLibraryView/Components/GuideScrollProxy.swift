@@ -11,6 +11,10 @@ import UIKit
 final class GuideScrollProxy: NSObject, ObservableObject, UIScrollViewDelegate {
 
     private static let trailingEdgeThreshold: CGFloat = 600
+    private static let windowQuantum: CGFloat = 300
+
+    @Published
+    private(set) var windowOrigin: CGFloat = 0
 
     private let scrollViews = NSHashTable<UIScrollView>.weakObjects()
     private var trailingEdgeActions: [ObjectIdentifier: () -> Void] = [:]
@@ -69,10 +73,19 @@ final class GuideScrollProxy: NSObject, ObservableObject, UIScrollViewDelegate {
         #endif
 
         offsetX = scrollView.contentOffset.x
+        updateWindowOrigin()
         apply(except: scrollView)
 
         for scrollView in scrollViews.allObjects {
             checkTrailingEdge(scrollView)
+        }
+    }
+
+    private func updateWindowOrigin() {
+        let quantized = (offsetX / Self.windowQuantum).rounded(.down) * Self.windowQuantum
+
+        if quantized != windowOrigin {
+            windowOrigin = quantized
         }
     }
 
