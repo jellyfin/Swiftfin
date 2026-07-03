@@ -186,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/StatefulMacro",
       "state" : {
-        "revision" : "872efd9250a2cdbb3a2a249ff2123ca69cff1a08",
-        "version" : "0.1.5"
+        "revision" : "12d7ee449891457e8cc73074ac7aeba4b50f48ca",
+        "version" : "0.1.7"
       }
     },
     {

@@ -1290,7 +1290,7 @@
 			repositoryURL = "https://github.com/LePips/StatefulMacro";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.5;
+				minimumVersion = 0.1.7;
 			};
 		};
 		E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */ = {

@@ -219,7 +219,8 @@ class Fastfile: LaneFile {
             skipArchive: .userDefined(false),
             sdk: .userDefined(sdk),
             xcargs: .userDefined("-skipMacroValidation"),
-            skipProfileDetection: false
+            skipProfileDetection: false,
+            disablePackageAutomaticUpdates: true
         )
 
         var changelog: String?
