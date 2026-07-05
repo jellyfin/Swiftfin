@@ -20,6 +20,8 @@ struct ItemFilterCollection: Hashable, Storable {
     var traits: [ItemTrait] = []
     var years: [ItemYear] = []
 
+    var query: String?
+
     /// The default collection of filters
     static let `default`: ItemFilterCollection = .init()
 
@@ -47,6 +49,12 @@ struct ItemFilterCollection: Hashable, Storable {
     }
 
     var hasQueryableFilters: Bool {
-        genres.isNotEmpty || itemTypes.isNotEmpty || letter.isNotEmpty || tags.isNotEmpty || traits.isNotEmpty || years.isNotEmpty
+        genres.isNotEmpty ||
+            itemTypes.isNotEmpty ||
+            letter.isNotEmpty ||
+            tags.isNotEmpty ||
+            traits.isNotEmpty ||
+            years.isNotEmpty ||
+            !query.isNilOrEmpty
     }
 }

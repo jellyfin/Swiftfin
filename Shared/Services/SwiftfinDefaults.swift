@@ -112,7 +112,7 @@ extension Defaults.Keys {
     enum Customization {
 
         static var itemViewType: Key<ItemViewType> {
-            UserKey("mediaItemViewType", default: .enhanced)
+            UserKey("itemViewType", default: .compactLogo)
         }
 
         static var showPosterLabels: Key<Bool> {
@@ -146,6 +146,13 @@ extension Defaults.Keys {
         // TODO: have search poster type by types of items if applicable
         static var searchPosterType: Key<PosterDisplayType> {
             UserKey("searchPosterType", default: .portrait)
+        }
+
+        enum CinematicItemViewType {
+
+            static var usePrimaryImage: Key<Bool> {
+                UserKey("cinematicItemViewTypeUsePrimaryImage", default: false)
+            }
         }
 
         enum Episodes {

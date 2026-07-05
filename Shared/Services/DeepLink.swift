@@ -32,6 +32,7 @@ struct DeepLink: Equatable {
         self.destination = .item(id: String(match.output.destinationID))
     }
 
+    @MainActor
     func route() -> NavigationRoute {
         switch destination {
         case let .item(id):

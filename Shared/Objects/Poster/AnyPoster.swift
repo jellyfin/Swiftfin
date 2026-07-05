@@ -80,15 +80,25 @@ struct AnyPoster: Poster {
         AnyHashable(_poster).hashValue
     }
 
+    var showTitle: Bool {
+        _poster.showTitle
+    }
+
+    var posterLabel: some View {
+        _poster.posterLabel
+            .eraseToAnyView()
+    }
+
+    func posterOverlay(for displayType: PosterDisplayType) -> some View {
+        _poster.posterOverlay(for: displayType)
+            .eraseToAnyView()
+    }
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(_poster.displayTitle)
         hasher.combine(_poster.subtitle)
         hasher.combine(_poster.systemImage)
-    }
-
-    var showTitle: Bool {
-        _poster.showTitle
     }
 
     func portraitImageSources(

@@ -73,21 +73,17 @@ private struct BaseItemPersonLibraryGridElement: View {
                     .matchedTransitionSource(id: "item", in: namespace)
                     .posterShadow()
 
-                if person.showTitle || person.subtitle != nil {
-                    VStack(alignment: .leading, spacing: 0) {
-                        if person.showTitle {
-                            Text(person.displayTitle)
-                                .font(.footnote)
-                                .foregroundStyle(.primary)
-                                .lineLimit(1, reservesSpace: true)
-                        }
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(person.displayTitle)
+                        .font(.footnote)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1, reservesSpace: true)
 
-                        Text(person.subtitle ?? " ")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1, reservesSpace: true)
-                    }
+                    Text(person.subtitle ?? " ")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1, reservesSpace: true)
                 }
             }
         }

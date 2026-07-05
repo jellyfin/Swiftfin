@@ -19,19 +19,19 @@ struct PosterImage<Element: Poster>: View {
     private let element: Element
     private var pipeline: ImagePipeline
     private let size: PosterDisplayType.Size
-    private let type: PosterDisplayType
+    private let displayType: PosterDisplayType
 
     init(
         item: Element,
         type: PosterDisplayType,
-        contentMode: ContentMode = .fill,
-        size: PosterDisplayType.Size = .small
+        size: PosterDisplayType.Size = .small,
+        contentMode: ContentMode = .fill
     ) {
         self.contentMode = contentMode
+        self.displayType = type
         self.element = item
         self.pipeline = .shared
         self.size = size
-        self.type = type
     }
 
     private var imageSources: [ImageSource] {
@@ -43,7 +43,7 @@ struct PosterImage<Element: Poster>: View {
         }
 
         return element.imageSources(
-            for: type,
+            for: displayType,
             size: size,
             environment: environment
         )
@@ -60,7 +60,7 @@ struct PosterImage<Element: Poster>: View {
                 ImageView(imageSources)
                     .pipeline(pipeline)
                     .image { image in
-                        element.transform(image: image, displayType: type)
+                        element.transform(image: image, displayType: displayType)
                     }
                     .placeholder { imageSource in
                         if let blurHash = imageSource.blurHash {
@@ -96,7 +96,7 @@ struct PosterImage<Element: Poster>: View {
             }
         }
         .posterStyle(
-            type,
+            displayType,
             contentMode: contentMode
         )
     }

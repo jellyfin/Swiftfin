@@ -7,7 +7,7 @@
 //
 
 @MainActor
-protocol ContentGroupProvider: Displayable {
+protocol ContentGroupProvider: Displayable, Identifiable {
 
     associatedtype Environment = Empty
 

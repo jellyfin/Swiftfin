@@ -139,8 +139,6 @@ extension RemoteImageSearchView {
                         remoteImageInfo: image
                     ), in: namespace
                 )
-            } label: {
-                EmptyView()
             }
         }
 

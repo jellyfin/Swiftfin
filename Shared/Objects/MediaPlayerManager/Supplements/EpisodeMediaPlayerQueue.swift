@@ -545,21 +545,7 @@ extension EpisodeMediaPlayerQueue {
                     ]
                 },
                 action: action
-            ) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(episode.displayTitle)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.primary)
-                        .lineLimit(1, reservesSpace: true)
-
-                    EpisodeDescription(episode: episode)
-                        .font(UIDevice.isTV ? .caption : .subheadline.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1, reservesSpace: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
+            )
             .isSelected(manager.item.id == episode.id)
         }
     }

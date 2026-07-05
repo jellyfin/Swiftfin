@@ -72,25 +72,12 @@ private struct BaseItemDtoLibraryGridElement: View {
     }
 
     var body: some View {
-        #if os(iOS)
         PosterButton(
             item: item,
             type: resolvedLibraryStyle.posterDisplayType
         ) { namespace in
             item.libraryDidSelectElement(router: router, in: namespace)
-        } label: {
-            PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
         }
-        #else
-        PosterButton(
-            item: item,
-            type: resolvedLibraryStyle.posterDisplayType
-        ) {
-            item.libraryDidSelectElement(router: router, in: namespace)
-        } label: {
-            PosterButton<BaseItemDto>.TitleSubtitleContentView(item: item)
-        }
-        #endif
     }
 }
 
@@ -114,7 +101,6 @@ private struct BaseItemDtoLibraryListElement: View {
             PosterImage(
                 item: item,
                 type: resolvedLibraryStyle.posterDisplayType,
-                contentMode: .fill,
                 size: .extraSmall
             )
             .posterShadow()

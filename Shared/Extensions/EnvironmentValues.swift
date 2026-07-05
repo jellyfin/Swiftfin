@@ -14,6 +14,9 @@ extension EnvironmentValues {
     var audioOffset: Binding<Duration> = .constant(.zero)
 
     @Entry
+    var frameForParentView: [CoordinateSpace: FrameAndSafeAreaInsets] = [:]
+
+    @Entry
     var isEditing: Bool = false
 
     @Entry

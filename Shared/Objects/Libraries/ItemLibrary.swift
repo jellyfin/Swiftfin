@@ -216,6 +216,10 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         parameters.tags = filters.tags.map(\.value)
         parameters.years = filters.years.compactMap { Int($0.value) }
 
+        if let query = filters.query {
+            parameters.searchTerm = query
+        }
+
         if filters.itemTypes.isNotEmpty {
             parameters.includeItemTypes = filters.itemTypes
         }

@@ -13,7 +13,16 @@ struct LiveTVGroupProvider: ContentGroupProvider {
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
 
-        LiveTVChannelsPillGroup()
+        PillGroup(
+            displayTitle: "",
+            id: "live-tv-channels",
+            elements: [LiveTVPill.channels]
+        ) { router, pill in
+            switch pill {
+            case .channels:
+                router.route(to: .library(library: ChannelProgramLibrary()))
+            }
+        }
 
         PosterGroup(
             id: "programs-recommended",
@@ -40,39 +49,20 @@ struct LiveTVGroupProvider: ContentGroupProvider {
     }
 }
 
-import SwiftUI
+private enum LiveTVPill: Displayable, SystemImageable {
+    case channels
 
-struct LiveTVChannelsPillGroup: ContentGroup {
+    var displayTitle: String {
+        switch self {
+        case .channels:
+            L10n.channels
+        }
+    }
 
-    let id: String = "asdf"
-    let displayTitle: String = ""
-    let viewModel: Empty = .init()
-
-    @ViewBuilder
-    func body(with viewModel: Empty) -> some View {
-        WithRouter { router in
-            ScrollView(.horizontal) {
-                HStack {
-                    Button {
-                        router.route(to: .library(library: ChannelProgramLibrary()))
-                    } label: {
-                        Label(
-                            L10n.channels,
-                            systemImage: "play.square.stack"
-                        )
-                        .font(.callout)
-                        .fontWeight(.semibold)
-                        .padding(8)
-                        .background {
-                            Color.systemFill
-                                .cornerRadius(10)
-                        }
-                    }
-                    .foregroundStyle(.primary, .secondary)
-                }
-                .edgePadding(.horizontal)
-            }
-            .scrollIndicators(.hidden)
+    var systemImage: String {
+        switch self {
+        case .channels:
+            "play.square.stack"
         }
     }
 }

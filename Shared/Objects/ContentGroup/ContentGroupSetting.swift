@@ -31,13 +31,13 @@ enum ContentGroupSetting: Equatable, Hashable, Storable {
     case continueWatching(
         id: String,
         posterDisplayType: PosterDisplayType = .landscape,
-        posterSize: PosterDisplayType.Size = .medium
+        posterSize: PosterDisplayType.Size = .small
     )
 
     case nextUp(
         id: String,
         posterDisplayType: PosterDisplayType = .portrait,
-        posterSize: PosterDisplayType.Size = .medium
+        posterSize: PosterDisplayType.Size = .small
     )
 
     case library(
@@ -46,7 +46,7 @@ enum ContentGroupSetting: Equatable, Hashable, Storable {
         libraryID: String,
         filters: ItemFilterCollection = .init(),
         posterDisplayType: PosterDisplayType = .portrait,
-        posterSize: PosterDisplayType.Size = .medium
+        posterSize: PosterDisplayType.Size = .small
     )
 
     var group: any ContentGroup {

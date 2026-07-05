@@ -138,6 +138,7 @@ struct AboutItemGroup: ContentGroup {
                             }
                             .font(.largeTitle)
 
+                            // swiftlint:disable:next hard_coded_display_string
                             Text("\(criticRating, specifier: "%.0f")")
                                 .fontWeight(.semibold)
                         }
@@ -150,6 +151,7 @@ struct AboutItemGroup: ContentGroup {
                                 .foregroundStyle(.yellow)
                                 .font(.largeTitle)
 
+                            // swiftlint:disable:next hard_coded_display_string
                             Text("\(communityRating, specifier: "%.1f")")
                                 .fontWeight(.semibold)
                         }
@@ -160,52 +162,51 @@ struct AboutItemGroup: ContentGroup {
             .buttonStyle(.card)
         }
 
-        private func cardWidth(for frameWidth: CGFloat) -> CGFloat {
+        private var cardHeight: CGFloat {
             #if os(tvOS)
-            700
+            400
             #else
-            if UIDevice.isPhone {
-                max(300, frameWidth - EdgeInsets.edgePadding * 2.5)
-            } else {
-                400
-            }
+            200
             #endif
+        }
+
+        private let cardAspectRatio: CGFloat = 1.77
+
+        private var cardSize: CGSize {
+            .init(width: cardHeight * cardAspectRatio, height: cardHeight)
         }
 
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
                 Section {
-                    GeometryReader { proxy in
-                        ZStack {
-                            ScrollView(.horizontal) {
-                                HStack(spacing: UIDevice.isPhone ? EdgeInsets.edgePadding / 2 : 40) {
-                                    descriptionCard
-                                        .frame(width: cardWidth(for: proxy.size.width))
+                    ScrollView(.horizontal) {
+                        HStack(spacing: UIDevice.isPhone ? EdgeInsets.edgePadding / 2 : 40) {
+                            descriptionCard
+                                .frame(width: cardSize.width, height: cardSize.height)
 
-                                    if let mediaSources = item.mediaSources {
-                                        ForEach(mediaSources) { source in
-                                            mediaSourceCard(for: source, hasMultipleSources: mediaSources.count > 1)
-                                                .frame(width: cardWidth(for: proxy.size.width))
-                                        }
-                                    }
-
-                                    if item.criticRating != nil || item.communityRating != nil {
-                                        ratingsCard(
-                                            criticRating: item.criticRating ?? -1,
-                                            communityRating: item.communityRating ?? -1
-                                        )
-                                    }
+                            if let mediaSources = item.mediaSources {
+                                ForEach(mediaSources) { source in
+                                    mediaSourceCard(for: source, hasMultipleSources: mediaSources.count > 1)
+                                        .frame(width: cardSize.width, height: cardSize.height)
                                 }
-                                .edgePadding(.horizontal)
                             }
-                            #if os(tvOS)
-                            .scrollClipDisabled()
-                            .withViewContext(.isOverComplexContent)
-                            #endif
+
+                            if item.criticRating != nil || item.communityRating != nil {
+                                ratingsCard(
+                                    criticRating: item.criticRating ?? -1,
+                                    communityRating: item.communityRating ?? -1
+                                )
+                                .frame(width: cardSize.width, height: cardSize.height)
+                            }
                         }
-                        .frame(height: UIDevice.isTV ? 400 : 200)
-                        .frame(maxWidth: .infinity)
+                        .edgePadding(.horizontal)
                     }
+                    #if os(tvOS)
+                    .scrollClipDisabled()
+                    .withViewContext(.isOverComplexContent)
+                    #endif
+                    .frame(height: cardSize.height)
+                    .frame(maxWidth: .infinity)
                 } header: {
                     Text(L10n.about)
                         .font(.title2)

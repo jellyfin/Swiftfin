@@ -71,6 +71,27 @@ extension BaseItemDto: Poster {
         }
     }
 
+    @ViewBuilder
+    var posterLabel: some View {
+        switch type {
+        case .program:
+            BaseItemDtoProgramPosterLabel(program: self)
+        default:
+            PosterButton<BaseItemDto>.TitleSubtitleContentView(item: self)
+        }
+    }
+
+    @ViewBuilder
+    func posterOverlay(for displayType: PosterDisplayType) -> some View {
+        ZStack {
+            PosterButton<BaseItemDto>.DefaultOverlay(item: self)
+
+            if type == .program, displayType == .landscape {
+                BaseItemDtoProgramPosterOverlay(program: self)
+            }
+        }
+    }
+
     @ImageSourceBuilder
     func portraitImageSources(
         environment: Environment
@@ -158,6 +179,67 @@ extension BaseItemDto: Poster {
         default:
             image
                 .aspectRatio(contentMode: .fill)
+        }
+    }
+}
+
+private struct BaseItemDtoProgramPosterLabel: View {
+
+    let program: BaseItemDto
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(program.channelName ?? .emptyDash)
+                .font(.footnote.weight(.semibold))
+                .foregroundColor(.primary)
+                .lineLimit(1, reservesSpace: true)
+
+            Text(program.displayTitle)
+                .font(.footnote.weight(.regular))
+                .foregroundColor(.primary)
+                .lineLimit(1, reservesSpace: true)
+
+            HStack(spacing: 2) {
+                if let startDate = program.startDate {
+                    Text(startDate, style: .time)
+                } else {
+                    Text(String.emptyDash)
+                }
+
+                Text(String.hyphen)
+
+                if let endDate = program.endDate {
+                    Text(endDate, style: .time)
+                } else {
+                    Text(String.emptyDash)
+                }
+            }
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+        }
+    }
+}
+
+private struct BaseItemDtoProgramPosterOverlay: View {
+
+    @State
+    private var progress: Double?
+
+    let program: BaseItemDto
+
+    private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
+
+    var body: some View {
+        ZStack {
+            if let startDate = program.startDate, startDate < Date.now {
+                LandscapePosterProgressBar(
+                    progress: progress ?? program.programProgress ?? 0
+                )
+            }
+        }
+        .onReceive(timer) { date in
+            guard let startDate = program.startDate, startDate < date else { return }
+            progress = program.programProgress(relativeTo: date)
         }
     }
 }

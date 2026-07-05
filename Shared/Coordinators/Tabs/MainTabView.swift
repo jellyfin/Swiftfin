@@ -7,6 +7,7 @@
 //
 
 import FactoryKit
+import JellyfinAPI
 import SwiftUI
 
 // TODO: move popup to router

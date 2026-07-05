@@ -9,6 +9,7 @@
 import Foundation
 import JellyfinAPI
 
+@MainActor
 struct SearchContentGroupProvider: ContentGroupProvider {
 
     struct Environment: WithDefaultValue {
@@ -19,9 +20,17 @@ struct SearchContentGroupProvider: ContentGroupProvider {
         }
     }
 
-    let id: String = ""
-    let displayTitle: String = ""
-    var environment: Environment = .default
+    let id: String = UUID().uuidString
+    let displayTitle: String = L10n.search
+    let filterViewModel: FilterViewModel
+    var environment: Environment
+
+    init() {
+        let filterViewModel: FilterViewModel = .init()
+
+        self.filterViewModel = filterViewModel
+        self.environment = .init(filters: filterViewModel.currentFilters)
+    }
 
     @ContentGroupBuilder
     func makeGroups(environment: Environment) async throws -> [any ContentGroup] {
@@ -41,8 +50,9 @@ struct SearchContentGroupProvider: ContentGroupProvider {
         .makeGroups(environment: .init(filters: environment.filters))
 
         PosterGroup(
-            id: UUID().uuidString,
-            library: PeopleLibrary()
+            library: PeopleLibrary(
+                environment: .init(query: environment.filters.query)
+            )
         )
     }
 }

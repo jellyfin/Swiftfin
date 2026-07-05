@@ -14,6 +14,9 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
     @Default(.accentColor)
     private var accentColor
 
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
+
     @State
     private var collectedMenuGroups: [MenuContentGroup] = []
 
@@ -40,8 +43,12 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
                         ProgressView()
                     }
 
-                    if !isHidden, collectedMenuGroups.isNotEmpty {
-                        Menu(L10n.options, systemImage: "ellipsis.circle") {
+//                    if !isHidden, collectedMenuGroups.isNotEmpty {
+                    if !isHidden {
+
+                        let systemImage = isLiquidGlassEnabled ? "ellipsis" : "ellipsis.circle"
+
+                        Menu(L10n.options, systemImage: systemImage) {
                             menuContent
 
                             ForEach(collectedMenuGroups) { group in

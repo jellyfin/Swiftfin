@@ -22,6 +22,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
 
         var transition: Transition {
             .to(.refreshing, then: .content)
+                .whenBackground(.refreshing)
         }
     }
 
@@ -39,46 +40,11 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     @Published
     private(set) var groups: [any ContentGroup] = []
 
-    private var lastRefreshDate = Date.distantPast
-    private var lastRefreshSignalDate = Date.distantPast
-
-    private var hasPendingRefreshSignals: Bool {
-        lastRefreshSignalDate > lastRefreshDate
-    }
-
     var provider: Provider
 
     init(provider: Provider) {
         self.provider = provider
         super.init()
-
-//        Publishers.Merge2(
-//            Notifications[.itemUserDataDidChange].publisher.map { _ in () },
-//            Notifications[.itemMetadataDidChange].publisher.map { _ in () }
-//        )
-//        .sink { [weak self] _ in
-//            self?.lastRefreshSignalDate = Date.now
-//        }
-//        .store(in: &cancellables)
-    }
-
-//    func refreshIfNeeded(
-//        sinceLastDisappear interval: TimeInterval,
-//        staleThreshold: TimeInterval = 60
-//    ) {
-//        guard interval > staleThreshold || hasPendingRefreshSignals else { return }
-//
-//        self.background.inPlaceRefresh()
-//    }
-//
-//    func refreshIfPendingChanges() {
-//        guard hasPendingRefreshSignals else { return }
-//
-//        refresh()
-//    }
-
-    private func getViewModel(for group: some ContentGroup) -> any WithRefresh {
-        group.viewModel
     }
 
     @Function(\Action.Cases.refresh)
@@ -88,6 +54,10 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         } else {
             try await fullRefresh()
         }
+    }
+
+    private func getViewModel(for group: some ContentGroup) -> any WithRefresh {
+        group.viewModel
     }
 
     private func backgroundRefresh() async throws {

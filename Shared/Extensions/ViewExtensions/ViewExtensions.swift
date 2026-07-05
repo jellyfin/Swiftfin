@@ -152,6 +152,7 @@ extension View {
         }
     }
 
+    @ViewBuilder
     func posterBorder() -> some View {
         overlay {
             ContainerRelativeShape()
@@ -163,6 +164,7 @@ extension View {
         }
     }
 
+    @ViewBuilder
     func posterShadow() -> some View {
         shadow(radius: 4, y: 2)
     }
@@ -254,50 +256,6 @@ extension View {
         )
     }
 
-    func onFrameChanged(perform action: @escaping (CGRect, EdgeInsets) -> Void) -> some View {
-        onGeometryChange(for: OnFrameChangedValue.self) { proxy in
-            let frame = proxy.frame(in: .global)
-            let safeAreaInsets = proxy.safeAreaInsets
-
-            return .init(
-                frame: frame,
-                safeAreaInsets: safeAreaInsets
-            )
-        } action: { newValue in
-            action(newValue.frame, newValue.safeAreaInsets)
-        }
-    }
-
-    func trackingFrame(_ binding: Binding<CGRect>) -> some View {
-        onFrameChanged { newFrame, _ in
-            binding.wrappedValue = newFrame
-        }
-    }
-
-    func onSizeChanged(perform action: @escaping (CGSize, EdgeInsets) -> Void) -> some View {
-        onGeometryChange(for: OnFrameChangedValue.self) { proxy in
-            let size = proxy.size
-            let safeAreaInsets = proxy.safeAreaInsets
-
-            return .init(
-                frame: CGRect(origin: .zero, size: size),
-                safeAreaInsets: safeAreaInsets
-            )
-        } action: { newValue in
-            action(newValue.frame.size, newValue.safeAreaInsets)
-        }
-    }
-
-    func trackingSize(
-        _ sizeBinding: Binding<CGSize>,
-        _ safeAreaInsetBinding: Binding<EdgeInsets> = .constant(.zero)
-    ) -> some View {
-        onSizeChanged {
-            sizeBinding.wrappedValue = $0
-            safeAreaInsetBinding.wrappedValue = $1
-        }
-    }
-
     func copy<Value>(modifying keyPath: WritableKeyPath<Self, Value>, with newValue: Value) -> Self {
         var copy = self
         copy[keyPath: keyPath] = newValue
@@ -319,8 +277,8 @@ extension View {
     /// - Important: Do not use this to add or remove a view from the view heirarchy.
     ///              Use a conditional statement instead.
     @inlinable
-    func isVisible(opacity: Double = 1.0, _ isVisible: Bool) -> some View {
-        self.opacity(isVisible ? opacity : 0)
+    func isVisible(_ isVisible: Bool) -> some View {
+        opacity(isVisible ? 1 : 0)
     }
 
     @inlinable
@@ -501,9 +459,4 @@ extension View {
             .debugHLine(fill)
     }
     #endif
-}
-
-private struct OnFrameChangedValue: Equatable {
-    let frame: CGRect
-    let safeAreaInsets: EdgeInsets
 }

@@ -72,22 +72,10 @@ extension MediaPeopleSupplement {
 
         @ViewBuilder
         private func personView(for person: BaseItemPerson) -> some View {
-            #if os(iOS)
             PosterButton(
                 item: person,
                 type: .portrait
-            ) { _ in
-            } label: {
-                PosterButton<BaseItemPerson>.TitleSubtitleContentView(item: person)
-            }
-            #else
-            PosterButton(
-                item: person,
-                type: .portrait
-            ) {} label: {
-                PosterButton<BaseItemPerson>.TitleSubtitleContentView(item: person)
-            }
-            #endif
+            ) { _ in }
         }
 
         @ViewBuilder
@@ -156,8 +144,8 @@ extension MediaPeopleSupplement {
                 PosterImage(
                     item: person,
                     type: .portrait,
-                    contentMode: .fit,
-                    size: .extraSmall
+                    size: .extraSmall,
+                    contentMode: .fit
                 )
                 .frame(height: 90)
                 .padding(.vertical, 8)

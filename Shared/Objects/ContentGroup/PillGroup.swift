@@ -32,18 +32,65 @@ struct PillGroup<Element: Displayable>: ContentGroup {
         self.elements = elements
     }
 
-    func body(with viewModel: Empty) -> some View {
-        #if os(tvOS)
-        EmptyView()
-        #else
-        WithRouter { router in
-            PillHStack(
-                title: displayTitle,
-                items: elements
-            ) { element in
-                action(router, element)
+    func body(with viewModel: Empty) -> Body {
+        Body(
+            action: action,
+            displayTitle: displayTitle,
+            elements: elements
+        )
+    }
+
+    struct Body: View {
+
+        @Router
+        private var router
+
+        let action: (Router.Wrapper, Element) -> Void
+        let displayTitle: String
+        let elements: [Element]
+
+        @ViewBuilder
+        private func label(for element: Element) -> some View {
+            if let imageable = element as? SystemImageable {
+                Label(element.displayTitle, systemImage: imageable.systemImage)
+            } else {
+                Text(element.displayTitle)
             }
         }
-        #endif
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 10) {
+                if displayTitle.isNotEmpty {
+                    Text(displayTitle)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .accessibility(addTraits: [.isHeader])
+                        .edgePadding(.leading)
+                }
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(Array(elements.enumerated()), id: \.offset) { _, element in
+                            Button {
+                                action(router, element)
+                            } label: {
+                                label(for: element)
+                                    .font(.callout)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.primary, .secondary)
+                                    .padding(8)
+                                    .background {
+                                        Color.systemFill
+                                            .cornerRadius(10)
+                                    }
+                            }
+                            .foregroundStyle(.primary, .secondary)
+                        }
+                    }
+                    .edgePadding(.horizontal)
+                }
+                .scrollIndicators(.hidden)
+            }
+        }
     }
 }

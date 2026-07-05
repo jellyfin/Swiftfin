@@ -13,6 +13,7 @@ import Get
 import JellyfinAPI
 import Logging
 
+@MainActor
 class ViewModel: ObservableObject {
 
     let logger = Logger.swiftfin()

@@ -13,51 +13,69 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
 {
 
     @ObservedObject
-    private var viewModel: PagingLibraryViewModel<Library>
-
-    @Router
-    private var router
+    var viewModel: PagingLibraryViewModel<Library>
 
     @Namespace
     private var namespace
 
-    private let group: PosterGroup<Library>
+    @Router
+    private var router
 
-    init(viewModel: PagingLibraryViewModel<Library>, group: PosterGroup<Library>) {
-        self.group = group
-        self.viewModel = viewModel
-    }
+    let group: PosterGroup<Library>
 
     private func routeToLibrary() {
         router.route(to: .library(library: viewModel.library))
     }
 
+    @ViewBuilder
+    private var header: some View {
+//        #if os(tvOS)
+//        Text(viewModel.library.parent.displayTitle)
+//            .font(.title3)
+//            .lineLimit(1)
+//            .accessibilityAddTraits(.isHeader)
+//            .edgePadding(.horizontal)
+//        #else
+        Button(action: routeToLibrary) {
+            HStack(spacing: 3) {
+                Text(viewModel.library.parent.displayTitle)
+                    .font(.title2)
+                    .lineLimit(1)
+
+                Image(systemName: "chevron.forward")
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+            }
+            .fontWeight(.semibold)
+        }
+        .foregroundStyle(.primary, .secondary)
+        .accessibilityAddTraits(.isHeader)
+//        .accessibilityAction(named: Text("Open library"), routeToLibrary)
+        .edgePadding(.horizontal)
+//        #endif
+    }
+
     var body: some View {
         if viewModel.elements.isNotEmpty {
-            #if os(tvOS)
-            PosterHStack(
-                title: viewModel.library.parent.displayTitle,
-                type: group.posterDisplayType,
-                items: viewModel.elements.elements
-            ) { element in
-                element.libraryDidSelectElement(router: router, in: namespace)
-            }
-            #else
-            PosterHStack(
-                title: viewModel.library.parent.displayTitle,
-                type: group.posterDisplayType,
-                items: viewModel.elements.elements
-            ) { element, namespace in
-                element.libraryDidSelectElement(router: router, in: namespace)
-            }
-            .trailing {
-                Button(L10n.seeAll, systemImage: "chevron.forward") {
-                    routeToLibrary()
+            VStack(alignment: .leading, spacing: 10) {
+                Section {
+                    PosterHStack(
+                        elements: viewModel.elements.elements,
+                        displayType: group.posterDisplayType,
+                        size: group.posterSize
+                    ) { element, namespace in
+                        element.libraryDidSelectElement(router: router, in: namespace)
+                    }
+                    .withViewContext(.isThumb)
+                    .focusSection()
+//                .prefersDefaultFocus(in: namespace)
+                } header: {
+                    header
+//                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .labelStyle(.iconOnly)
-                .accessibilityLabel(L10n.seeAll)
             }
-            #endif
+//            .focusScope(namespace)
+//            .debugBackground()
         }
     }
 }

@@ -10,7 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 #if os(iOS)
-import Factory
+import FactoryKit
 #endif
 
 @MainActor
@@ -148,18 +148,8 @@ extension TabItem {
             systemImage: item.systemImage
         ) {
             PrimaryTabRootView {
-                ItemContentGroupView(provider: ItemGroupProvider(item: item))
+                ItemView(item: item)
             }
-        }
-    }
-
-    static var home: TabItem {
-        TabItem(
-            id: "home",
-            title: L10n.home,
-            systemImage: "house"
-        ) {
-            HomeView()
         }
     }
 

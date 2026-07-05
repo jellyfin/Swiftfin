@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -19,12 +19,18 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
 
     @State
     private var contentGroupOptions: ContentGroupParentOption = .init()
+    @State
+    private var carriedHeaderFrame: CGRect = .zero
 
     @StateObject
     private var viewModel: ContentGroupViewModel<Provider>
 
     @TabItemSelected
     private var tabItemSelected
+
+    private var carriedUseOffsetNavigationBar: Bool {
+        contentGroupOptions.contains(.useOffsetNavigationBar)
+    }
 
     init(provider: Provider) {
         _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
@@ -41,39 +47,45 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
 
     @ViewBuilder
     private var contentView: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                Color.clear
-                    .frame(height: 0)
-                    .id("top")
+        OffsetNavigationBar(headerMaxY: carriedUseOffsetNavigationBar ? carriedHeaderFrame.maxY : nil) {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    Color.clear
+                        .frame(height: 0)
+                        .id("top")
 
-                VStack(alignment: .leading, spacing: 10) {
-                    ForEach(Array(viewModel.groups.enumerated()), id: \.element.id) { _, group in
-                        makeGroupBody(group)
-                            .eraseToAnyView()
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(Array(viewModel.groups.enumerated()), id: \.element.id) { _, group in
+                            makeGroupBody(group)
+                                .eraseToAnyView()
+                        }
+                        .onPreferenceChange(ContentGroupCustomizationKey.self) { value in
+                            contentGroupOptions = value
+                        }
+                        .onPreferenceChange(ScrollViewHeaderFrameKey.self) { value in
+                            carriedHeaderFrame = value.frame
+                        }
                     }
-                    .onPreferenceChange(ContentGroupCustomizationKey.self) { value in
-                        contentGroupOptions = value
-                    }
+                    .edgePadding(contentGroupOptions.contains(.ignoreTopSafeArea) ? [.top, .bottom] : .bottom)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .edgePadding(contentGroupOptions.contains(.ignoreTopSafeArea) ? [.top, .bottom] : .bottom)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .ignoresSafeArea(
-                edges: contentGroupOptions.contains(.ignoreTopSafeArea) ? [.horizontal, .top] : .horizontal
-            )
-            .scrollIndicators(.hidden)
-            .refreshable {
-                await viewModel.background.refresh()
-            }
-            .onReceive(tabItemSelected) { event in
-                if event.isRepeat, event.isRoot {
-                    withAnimation {
-                        proxy.scrollTo("top", anchor: .top)
+                .ignoresSafeArea(
+                    edges: contentGroupOptions.contains(.ignoreTopSafeArea) ? [.horizontal, .top] : .horizontal
+                )
+                .scrollIndicators(.hidden)
+//                .refreshable {
+//                    await viewModel.background.refresh()
+//                }
+                .onReceive(tabItemSelected) { event in
+                    if event.isRepeat, event.isRoot {
+                        withAnimation {
+                            proxy.scrollTo("top", anchor: .top)
+                        }
                     }
                 }
             }
         }
+        .trackingFrame(for: .scrollView)
     }
 
     var body: some View {
@@ -99,7 +111,7 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
         .navigationTitle(viewModel.provider.displayTitle)
         .backport
-        .toolbarTitleDisplayMode(.inline)
+        .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
         .onFirstAppear {
             viewModel.refresh()
         }

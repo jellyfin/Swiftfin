@@ -58,6 +58,14 @@ extension ChapterInfo {
             [imageSource]
         }
 
+        var posterLabel: some View {
+            ChapterPosterLabel(chapter: self)
+        }
+
+        func posterOverlay(for displayType: PosterDisplayType) -> some View {
+            PosterButton<ChapterInfo.FullInfo>.SelectionOverlay()
+        }
+
         func transform(image: Image, displayType: PosterDisplayType) -> some View {
             ZStack {
                 Color.black
@@ -66,5 +74,31 @@ extension ChapterInfo {
                     .aspectRatio(contentMode: .fit)
             }
         }
+    }
+}
+
+private struct ChapterPosterLabel: View {
+
+    let chapter: ChapterInfo.FullInfo
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(chapter.chapterInfo.displayTitle)
+                .font(.subheadline.weight(.semibold))
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+
+            Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                .font(UIDevice.isTV ? .caption : .subheadline.weight(.semibold))
+                .foregroundStyle(Color(UIColor.systemBlue))
+                .padding(.horizontal, 4)
+                .background {
+                    Color(.darkGray)
+                        .opacity(0.2)
+                        .cornerRadius(4)
+                }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

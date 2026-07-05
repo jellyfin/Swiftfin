@@ -36,6 +36,10 @@ extension BaseItemPerson: Poster {
         "person.fill"
     }
 
+    var posterLabel: some View {
+        PosterButton<BaseItemPerson>.TitleSubtitleContentView(item: self)
+    }
+
     func portraitImageSources(
         environment: Environment
     ) -> [ImageSource] {
