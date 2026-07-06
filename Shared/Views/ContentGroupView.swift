@@ -111,11 +111,11 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         .onFirstAppear {
             viewModel.refresh()
         }
-        .sinceLastDisappear { _ in
-//            viewModel.refreshIfNeeded(sinceLastDisappear: interval)
+        .sinceLastDisappear { interval in
+            viewModel.refreshIfNeeded(sinceLastDisappear: interval)
         }
         .onSceneWillEnterForeground {
-//            viewModel.refreshIfPendingChanges()
+            viewModel.refreshIfPendingChanges()
         }
         .topBarTrailing {
             if viewModel.background.is(.refreshing) {

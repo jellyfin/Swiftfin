@@ -40,11 +40,43 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     @Published
     private(set) var groups: [any ContentGroup] = []
 
+    private var candidateGroups: [any ContentGroup] = []
+    private var lastRefreshDate = Date.distantPast
+    private var lastRefreshSignalDate = Date.distantPast
+
+    private var hasPendingRefreshSignals: Bool {
+        lastRefreshSignalDate > lastRefreshDate
+    }
+
     var provider: Provider
 
     init(provider: Provider) {
         self.provider = provider
         super.init()
+
+        Publishers.Merge(
+            Notifications[.itemUserDataDidChange].publisher.map { _ in () },
+            Notifications[.itemMetadataDidChange].publisher.map { _ in () }
+        )
+        .sink { [weak self] _ in
+            self?.lastRefreshSignalDate = Date.now
+        }
+        .store(in: &cancellables)
+    }
+
+    func refreshIfNeeded(
+        sinceLastDisappear interval: TimeInterval,
+        staleThreshold: TimeInterval = 60
+    ) {
+        guard interval > staleThreshold || hasPendingRefreshSignals else { return }
+
+        background.refresh()
+    }
+
+    func refreshIfPendingChanges() {
+        guard hasPendingRefreshSignals else { return }
+
+        refresh()
     }
 
     @Function(\Action.Cases.refresh)
@@ -54,17 +86,34 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         } else {
             try await fullRefresh()
         }
+
+        lastRefreshDate = Date.now
     }
 
     private func getViewModel(for group: some ContentGroup) -> any WithRefresh {
         group.viewModel
     }
 
-    private func backgroundRefresh() async throws {
+    private func resolveGroups() {
+        groups = candidateGroups
+            .filter(\._shouldBeResolved)
+    }
+
+    private func refreshViewModels(
+        for groups: [any ContentGroup],
+        inBackground: Bool
+    ) async throws {
+        let viewModels = groups.map { getViewModel(for: $0) }
+            .uniqued { ObjectIdentifier($0 as AnyObject) }
+
         try await withThrowingTaskGroup(of: Void.self) { group in
-            for viewModel in groups.map({ getViewModel(for: $0) }) {
+            for viewModel in viewModels {
                 group.addTask {
-                    await viewModel.background.refresh()
+                    if inBackground {
+                        await viewModel.background.refresh()
+                    } else {
+                        await viewModel.refresh()
+                    }
                 }
             }
 
@@ -72,26 +121,28 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         }
     }
 
+    private func backgroundRefresh() async throws {
+        try await refreshViewModels(
+            for: candidateGroups,
+            inBackground: true
+        )
+
+        resolveGroups()
+    }
+
     private func fullRefresh() async throws {
 
         self.groups = []
+        self.candidateGroups = []
 
         let newGroups = try await provider.makeGroups(environment: provider.environment)
-        let viewModels = newGroups.map { getViewModel(for: $0) }
-            .uniqued { ObjectIdentifier($0 as AnyObject) }
 
-        try await withThrowingTaskGroup(of: Void.self) { group in
+        try await refreshViewModels(
+            for: newGroups,
+            inBackground: false
+        )
 
-            for viewModel in viewModels {
-                group.addTask {
-                    await viewModel.refresh()
-                }
-            }
-
-            try await group.waitForAll()
-        }
-
-        self.groups = newGroups
-            .filter(\._shouldBeResolved)
+        candidateGroups = newGroups
+        resolveGroups()
     }
 }
