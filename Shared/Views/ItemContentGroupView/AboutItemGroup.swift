@@ -30,49 +30,53 @@ struct AboutItemGroup: ContentGroup {
 
             let title: String
             let subtitle: String?
-            let minWidth: CGFloat?
+            let action: () -> Void
             let content: Content
 
             init(
                 title: String,
                 subtitle: String? = nil,
-                minWidth: CGFloat? = nil,
+                action: @escaping () -> Void,
                 @ViewBuilder content: () -> Content
             ) {
                 self.title = title
                 self.subtitle = subtitle
-                self.minWidth = minWidth
+                self.action = action
                 self.content = content()
             }
 
             var body: some View {
-                VStack(alignment: .leading) {
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(title)
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity, alignment: .topLeading)
-
-                        if let subtitle, subtitle.isNotEmpty {
-                            Text(subtitle)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                Button(action: action) {
+                    VStack(alignment: .leading) {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(title)
+                                .font(.title3)
+                                .fontWeight(.semibold)
                                 .lineLimit(2)
                                 .multilineTextAlignment(.leading)
-                        }
-                    }
-                    .frame(maxHeight: .infinity, alignment: .topLeading)
+                                .frame(maxWidth: .infinity, alignment: .topLeading)
 
-                    content
+                            if let subtitle, subtitle.isNotEmpty {
+                                Text(subtitle)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.leading)
+                            }
+                        }
+                        .frame(maxHeight: .infinity, alignment: .topLeading)
+
+                        content
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(.complexSecondary)
+                    )
                 }
-                .padding()
-                .frame(minWidth: minWidth, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(.complexSecondary)
-                )
+                .foregroundStyle(.primary, .secondary)
+                .buttonStyle(.card)
             }
         }
 
@@ -80,86 +84,86 @@ struct AboutItemGroup: ContentGroup {
         private var descriptionCard: some View {
             let subtitle = item.taglines?.first
 
-            Button {
+            AboutCard(
+                title: item.displayTitle,
+                subtitle: subtitle
+            ) {
                 router.route(to: .itemOverview(item: item))
-            } label: {
-                AboutCard(title: item.displayTitle, subtitle: subtitle) {
-                    if let overview = item.overview, overview.isNotEmpty {
-                        Text(overview)
-                            .font(.footnote)
-                            .lineLimit(4)
-                            .multilineTextAlignment(.leading)
-                    }
+            } content: {
+                if let overview = item.overview, overview.isNotEmpty {
+                    Text(overview)
+                        .font(.footnote)
+                        .lineLimit(4)
+                        .multilineTextAlignment(.leading)
                 }
             }
-            .foregroundStyle(.primary, .secondary)
-            .buttonStyle(.card)
+            .aspectRatio(cardAspectRatio, contentMode: .fit)
         }
 
         @ViewBuilder
         private func mediaSourceCard(for mediaSource: MediaSourceInfo, hasMultipleSources: Bool) -> some View {
             let subtitle = hasMultipleSources ? mediaSource.displayTitle : nil
 
-            Button {
+            AboutCard(
+                title: L10n.media,
+                subtitle: subtitle
+            ) {
                 router.route(to: .mediaSourceInfo(source: mediaSource))
-            } label: {
-                AboutCard(title: L10n.media, subtitle: subtitle) {
-                    if let mediaStreams = mediaSource.mediaStreams {
-                        let text = mediaStreams.compactMap(\.displayTitle)
-                            .joined(separator: ", ")
+            } content: {
+                if let mediaStreams = mediaSource.mediaStreams {
+                    let text = mediaStreams.compactMap(\.displayTitle)
+                        .joined(separator: ", ")
 
-                        Text(text)
-                            .font(.footnote)
-                            .lineLimit(4)
-                            .multilineTextAlignment(.leading)
-                    }
+                    Text(text)
+                        .font(.footnote)
+                        .lineLimit(4)
+                        .multilineTextAlignment(.leading)
                 }
             }
-            .foregroundStyle(.primary, .secondary)
-            .buttonStyle(.card)
+            .aspectRatio(cardAspectRatio, contentMode: .fit)
         }
 
         @ViewBuilder
         private func ratingsCard(criticRating: Float, communityRating: Float) -> some View {
-            Button {} label: {
-                AboutCard(title: L10n.ratings, minWidth: 200) {
-                    if criticRating > -1 {
-                        HStack {
-                            Group {
-                                if criticRating >= 60 {
-                                    Image(.tomatoFresh)
-                                        .symbolRenderingMode(.multicolor)
-                                        .foregroundStyle(.green, .red)
-                                } else {
-                                    Image(.tomatoRotten)
-                                        .symbolRenderingMode(.monochrome)
-                                        .foregroundColor(.green)
-                                }
+            AboutCard(
+                title: L10n.ratings,
+                action: {}
+            ) {
+                if criticRating > -1 {
+                    HStack {
+                        Group {
+                            if criticRating >= 60 {
+                                Image(.tomatoFresh)
+                                    .symbolRenderingMode(.multicolor)
+                                    .foregroundStyle(.green, .red)
+                            } else {
+                                Image(.tomatoRotten)
+                                    .symbolRenderingMode(.monochrome)
+                                    .foregroundColor(.green)
                             }
+                        }
+                        .font(.largeTitle)
+
+                        // swiftlint:disable:next hard_coded_display_string
+                        Text("\(criticRating, specifier: "%.0f")")
+                            .fontWeight(.semibold)
+                    }
+                }
+
+                if communityRating > -1 {
+                    HStack {
+                        Image(systemName: "star.fill")
+                            .symbolRenderingMode(.multicolor)
+                            .foregroundStyle(.yellow)
                             .font(.largeTitle)
 
-                            // swiftlint:disable:next hard_coded_display_string
-                            Text("\(criticRating, specifier: "%.0f")")
-                                .fontWeight(.semibold)
-                        }
-                    }
-
-                    if communityRating > -1 {
-                        HStack {
-                            Image(systemName: "star.fill")
-                                .symbolRenderingMode(.multicolor)
-                                .foregroundStyle(.yellow)
-                                .font(.largeTitle)
-
-                            // swiftlint:disable:next hard_coded_display_string
-                            Text("\(communityRating, specifier: "%.1f")")
-                                .fontWeight(.semibold)
-                        }
+                        // swiftlint:disable:next hard_coded_display_string
+                        Text("\(communityRating, specifier: "%.1f")")
+                            .fontWeight(.semibold)
                     }
                 }
             }
-            .foregroundStyle(.primary, .secondary)
-            .buttonStyle(.card)
+            .aspectRatio(1, contentMode: .fit)
         }
 
         private var cardHeight: CGFloat {
@@ -172,22 +176,16 @@ struct AboutItemGroup: ContentGroup {
 
         private let cardAspectRatio: CGFloat = 1.77
 
-        private var cardSize: CGSize {
-            .init(width: cardHeight * cardAspectRatio, height: cardHeight)
-        }
-
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
                 Section {
-                    ScrollView(.horizontal) {
+                    ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: UIDevice.isPhone ? EdgeInsets.edgePadding / 2 : 40) {
                             descriptionCard
-                                .frame(width: cardSize.width, height: cardSize.height)
 
                             if let mediaSources = item.mediaSources {
                                 ForEach(mediaSources) { source in
                                     mediaSourceCard(for: source, hasMultipleSources: mediaSources.count > 1)
-                                        .frame(width: cardSize.width, height: cardSize.height)
                                 }
                             }
 
@@ -196,17 +194,17 @@ struct AboutItemGroup: ContentGroup {
                                     criticRating: item.criticRating ?? -1,
                                     communityRating: item.communityRating ?? -1
                                 )
-                                .frame(width: cardSize.width, height: cardSize.height)
                             }
                         }
                         .edgePadding(.horizontal)
                     }
-                    #if os(tvOS)
+                    .backport
                     .scrollClipDisabled()
-                    .withViewContext(.isOverComplexContent)
+                    #if os(tvOS)
+                        .withViewContext(.isOverComplexContent)
                     #endif
-                    .frame(height: cardSize.height)
-                    .frame(maxWidth: .infinity)
+                        .frame(height: cardHeight)
+                        .frame(maxWidth: .infinity)
                 } header: {
                     Text(L10n.about)
                         .font(.title2)
