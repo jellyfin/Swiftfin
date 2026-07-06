@@ -33,6 +33,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @StoredValue
     private var parentLibraryStyle: LibraryStyle
 
+    @TabItemSelected
+    private var tabItemSelected
+
     private var libraryStyleOptions: LibraryStyleOptions {
         viewModel.libraryStyleOptions
     }
@@ -83,6 +86,14 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .withViewContext(.isListRowSeparatorVisible)
         .withViewContext(.isThumb)
         .ignoresSafeArea(edges: .vertical)
+        .onReceive(tabItemSelected) { event in
+            if event.isRepeat, event.isRoot {
+                gridProxy.scrollToTop(animated: true)
+//                withAnimation {
+//                    proxy.scrollTo("top", anchor: .top)
+//                }
+            }
+        }
     }
 
     @ViewBuilder

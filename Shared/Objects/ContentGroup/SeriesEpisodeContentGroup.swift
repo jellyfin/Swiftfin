@@ -96,7 +96,9 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                         }
                     }
                 }
+                #if os(iOS)
                 .labelStyle(.episodeSelector)
+                #endif
             }
         }
 
@@ -306,8 +308,8 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
         private struct EpisodeCard: View {
 
-            @Default(.Customization.Indicators.showPlayed)
-            private var showPlayed
+            @Default(.Customization.Indicators.enabled)
+            private var indicators
 
             @Namespace
             private var namespace
@@ -319,13 +321,17 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
             @ViewBuilder
             private var overlayView: some View {
-                if let progressLabel = episode.progressLabel {
-                    LandscapePosterProgressBar(
+                if indicators.contains(.progress), let progressLabel = episode.progressLabel {
+                    ProgressIndicator(
                         title: progressLabel,
-                        progress: (episode.userData?.playedPercentage ?? 0) / 100
+                        progress: (episode.userData?.playedPercentage ?? 0) / 100,
+                        posterDisplayType: .landscape
                     )
-                } else if episode.userData?.isPlayed ?? false, showPlayed {
-                    WatchedIndicator(size: UIDevice.isTV ? 45 : 25)
+                } else if indicators.contains(.played), episode.userData?.isPlayed ?? false {
+                    PlayedIndicator()
+                        .frame(width: UIDevice.isTV ? 45 : 25, height: UIDevice.isTV ? 45 : 25)
+                        .padding(3)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 }
             }
 

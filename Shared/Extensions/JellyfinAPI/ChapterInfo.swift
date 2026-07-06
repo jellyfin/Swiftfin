@@ -63,7 +63,7 @@ extension ChapterInfo {
         }
 
         func posterOverlay(for displayType: PosterDisplayType) -> some View {
-            PosterButton<ChapterInfo.FullInfo>.SelectionOverlay()
+            PosterSelectionOverlay()
         }
 
         func transform(image: Image, displayType: PosterDisplayType) -> some View {

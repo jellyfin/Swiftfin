@@ -25,6 +25,7 @@ extension BaseItemDto {
             name: person.name,
             type: .person
         )
+        self.people = [person]
     }
 }
 

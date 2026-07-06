@@ -36,10 +36,6 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
     }
 
-    init(viewModel: ContentGroupViewModel<Provider>) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
-
     @ViewBuilder
     private func makeGroupBody(_ group: some ContentGroup) -> some View {
         group.body(with: group.viewModel)
@@ -47,45 +43,45 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
 
     @ViewBuilder
     private var contentView: some View {
-        OffsetNavigationBar(headerMaxY: carriedUseOffsetNavigationBar ? carriedHeaderFrame.maxY : nil) {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    Color.clear
-                        .frame(height: 0)
-                        .id("top")
+//        OffsetNavigationBar(headerMaxY: carriedUseOffsetNavigationBar ? carriedHeaderFrame.maxY : nil) {
+        ScrollViewReader { proxy in
+            ScrollView {
+                Color.clear
+                    .frame(height: 0)
+                    .id("top")
 
-                    VStack(alignment: .leading, spacing: 10) {
-                        ForEach(Array(viewModel.groups.enumerated()), id: \.element.id) { _, group in
-                            makeGroupBody(group)
-                                .eraseToAnyView()
-                        }
-                        .onPreferenceChange(ContentGroupCustomizationKey.self) { value in
-                            contentGroupOptions = value
-                        }
-                        .onPreferenceChange(ScrollViewHeaderFrameKey.self) { value in
-                            carriedHeaderFrame = value.frame
-                        }
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(Array(viewModel.groups.enumerated()), id: \.element.id) { _, group in
+                        makeGroupBody(group)
+                            .eraseToAnyView()
                     }
-                    .edgePadding(contentGroupOptions.contains(.ignoreTopSafeArea) ? [.top, .bottom] : .bottom)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .onPreferenceChange(ContentGroupCustomizationKey.self) { value in
+                        contentGroupOptions = value
+                    }
+                    .onPreferenceChange(ScrollViewHeaderFrameKey.self) { value in
+                        carriedHeaderFrame = value.frame
+                    }
                 }
-                .ignoresSafeArea(
-                    edges: contentGroupOptions.contains(.ignoreTopSafeArea) ? [.horizontal, .top] : .horizontal
-                )
-                .scrollIndicators(.hidden)
-//                .refreshable {
-//                    await viewModel.background.refresh()
-//                }
-                .onReceive(tabItemSelected) { event in
-                    if event.isRepeat, event.isRoot {
-                        withAnimation {
-                            proxy.scrollTo("top", anchor: .top)
-                        }
+                .edgePadding(contentGroupOptions.contains(.ignoreTopSafeArea) ? [.top, .bottom] : .bottom)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .ignoresSafeArea(
+                edges: contentGroupOptions.contains(.ignoreTopSafeArea) ? [.horizontal, .top] : .horizontal
+            )
+            .scrollIndicators(.hidden)
+            .refreshable {
+                await viewModel.background.refresh()
+            }
+            .onReceive(tabItemSelected) { event in
+                if event.isRepeat, event.isRoot {
+                    withAnimation {
+                        proxy.scrollTo("top", anchor: .top)
                     }
                 }
             }
         }
-        .trackingFrame(for: .scrollView)
+//        }
+//        .trackingFrame(for: .scrollView)
     }
 
     var body: some View {
@@ -122,7 +118,6 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
 //            viewModel.refreshIfPendingChanges()
         }
         .topBarTrailing {
-
             if viewModel.background.is(.refreshing) {
                 ProgressView()
             }

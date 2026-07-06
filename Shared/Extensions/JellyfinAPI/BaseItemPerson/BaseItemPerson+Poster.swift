@@ -37,7 +37,7 @@ extension BaseItemPerson: Poster {
     }
 
     var posterLabel: some View {
-        PosterButton<BaseItemPerson>.TitleSubtitleContentView(item: self)
+        BaseItemDto(person: self).posterLabel
     }
 
     func portraitImageSources(

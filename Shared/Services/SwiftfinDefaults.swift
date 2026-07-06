@@ -164,20 +164,8 @@ extension Defaults.Keys {
 
         enum Indicators {
 
-            static var showFavorited: Key<Bool> {
-                UserKey("showFavoritedIndicator", default: true)
-            }
-
-            static var showProgress: Key<Bool> {
-                UserKey("showProgressIndicator", default: true)
-            }
-
-            static var showUnplayed: Key<UnplayedIndicatorType> {
-                UserKey("showUnplayedIndicator", default: .indicator)
-            }
-
-            static var showPlayed: Key<Bool> {
-                UserKey("showPlayedIndicator", default: true)
+            static var enabled: Key<PosterIndicator> {
+                UserKey("enabledPosterIndicators", default: .all)
             }
         }
 

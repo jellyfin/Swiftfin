@@ -6,14 +6,18 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
-struct FavoriteIndicator: View {
+struct PlayedIndicator: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     var body: some View {
-        Image(systemName: "heart.circle.fill")
+        Image(systemName: "checkmark.circle.fill")
             .resizable()
             .symbolRenderingMode(.palette)
-            .foregroundStyle(.white, .pink)
+            .foregroundStyle(accentColor.overlayColor, accentColor)
     }
 }

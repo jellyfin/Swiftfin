@@ -34,14 +34,8 @@ extension CustomizeViewsSettings {
         @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
         private var useSeriesLandscapeBackdrop
 
-        @Default(.Customization.Indicators.showFavorited)
-        private var showFavorited
-        @Default(.Customization.Indicators.showProgress)
-        private var showProgress
-        @Default(.Customization.Indicators.showUnplayed)
-        private var showUnplayed
-        @Default(.Customization.Indicators.showPlayed)
-        private var showPlayed
+        @Default(.Customization.Indicators.enabled)
+        private var indicators
 
         @State
         private var previewItemState: PreviewItemState = .unplayed
@@ -56,14 +50,30 @@ extension CustomizeViewsSettings {
             )
         )
 
+        private var previewItem: BaseItemDto {
+            var item = sampleItem
+
+            item.userData?.isPlayed = previewItemState == .played
+            item.userData?.playbackPositionTicks = previewItemState == .inProgress ? Duration.seconds(600).ticks : 0
+
+            return item
+        }
+
         @ViewBuilder
         private func posterPreview(type: PosterDisplayType) -> some View {
             VStack(alignment: .leading) {
                 PosterImage(
-                    item: sampleItem,
+                    item: previewItem,
                     type: type,
                     contentMode: .fit
                 )
+                .overlay {
+                    PosterIndicatorsOverlay(
+                        item: previewItem,
+                        indicators: indicators,
+                        posterDisplayType: type
+                    )
+                }
                 .posterCornerRadius(type)
 
                 VStack(alignment: .leading, spacing: 0) {
@@ -71,15 +81,12 @@ extension CustomizeViewsSettings {
                         .font(.footnote)
                         .foregroundStyle(.primary)
 
-                    Text("Subtitle")
+                    Text(L10n.subtitle)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
-            .animation(.linear(duration: 0.1), value: showFavorited)
-            .animation(.linear(duration: 0.1), value: showProgress)
-            .animation(.linear(duration: 0.1), value: showUnplayed)
-            .animation(.linear(duration: 0.1), value: showPlayed)
+            .animation(.linear(duration: 0.1), value: indicators)
             .animation(.linear(duration: 0.1), value: previewItemState)
         }
 
@@ -103,19 +110,19 @@ extension CustomizeViewsSettings {
                     }
                     .scrollIndicators(.hidden)
 
-                    Picker("Status", selection: $previewItemState)
+                    Picker(L10n.status, selection: $previewItemState)
                 }
                 #endif
 
                 Section(L10n.indicators) {
 
-                    Toggle(L10n.favorited, isOn: $showFavorited)
+                    Toggle(L10n.favorited, isOn: $indicators.contains(.favorited))
 
-                    Toggle(L10n.progress, isOn: $showProgress)
+                    Toggle(L10n.progress, isOn: $indicators.contains(.progress))
 
-                    Toggle(L10n.played, isOn: $showPlayed)
+                    Toggle(L10n.played, isOn: $indicators.contains(.played))
 
-                    Picker(L10n.unplayed, selection: $showUnplayed)
+                    Toggle(L10n.unplayed, isOn: $indicators.contains(.unplayed))
                 }
 
                 Section {

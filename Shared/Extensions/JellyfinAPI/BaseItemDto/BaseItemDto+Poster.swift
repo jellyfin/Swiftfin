@@ -34,6 +34,8 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             seasonEpisodeLabel
+        case .person:
+            people?.first?.firstRole
         case .video:
             extraType?.displayTitle
         default:
@@ -73,22 +75,19 @@ extension BaseItemDto: Poster {
 
     @ViewBuilder
     var posterLabel: some View {
-        switch type {
-        case .program:
-            BaseItemDtoProgramPosterLabel(program: self)
-        default:
-            PosterButton<BaseItemDto>.TitleSubtitleContentView(item: self)
-        }
+        BaseItemDtoPosterLabel(item: self)
     }
 
     @ViewBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         ZStack {
-            PosterButton<BaseItemDto>.DefaultOverlay(item: self)
+            PosterSelectionOverlay()
 
-            if type == .program, displayType == .landscape {
-                BaseItemDtoProgramPosterOverlay(program: self)
-            }
+            PosterIndicatorsOverlay(
+                item: self,
+                indicators: Defaults[.Customization.Indicators.enabled],
+                posterDisplayType: displayType
+            )
         }
     }
 
@@ -183,24 +182,93 @@ extension BaseItemDto: Poster {
     }
 }
 
-private struct BaseItemDtoProgramPosterLabel: View {
+private struct BaseItemDtoPosterLabel: View {
 
-    let program: BaseItemDto
+    @Default(.Customization.showPosterLabels)
+    private var showPosterLabels
+
+    #if os(iOS)
+    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
+    #endif
+
+    let item: BaseItemDto
 
     var body: some View {
+        switch item.type {
+        case .program:
+            programLabel
+        case .episode:
+            episodeLabel
+        default:
+            titleSubtitleLabel
+        }
+    }
+
+    private var titleSubtitleLabel: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if item.showTitle {
+                Text(item.displayTitle)
+                    .font(.footnote)
+                    .foregroundColor(.primary)
+                    .accessibilityLabel(item.displayTitle)
+                    .lineLimit(1, reservesSpace: true)
+            }
+
+            Text(item.subtitle ?? " ")
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(.secondary)
+                .lineLimit(1, reservesSpace: true)
+        }
+    }
+
+    private var episodeLabel: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if showPosterLabels, let seriesName = item.seriesName {
+                Text(seriesName)
+                    .font(.footnote.weight(.regular))
+                    .foregroundColor(.primary)
+                    .lineLimit(1, reservesSpace: true)
+            }
+
+            DotHStack {
+                Text(item.seasonEpisodeLabel ?? .emptyDash)
+
+                if showsEpisodeTitle {
+                    Text(item.displayTitle)
+                } else if let seriesName = item.seriesName {
+                    Text(seriesName)
+                }
+            }
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .lineLimit(1)
+        }
+    }
+
+    private var showsEpisodeTitle: Bool {
+        #if os(iOS)
+        showPosterLabels || useSeriesLandscapeBackdrop
+        #else
+        showPosterLabels
+        #endif
+    }
+
+    private var programLabel: some View {
         VStack(alignment: .leading) {
-            Text(program.channelName ?? .emptyDash)
+            Text(item.channelName ?? .emptyDash)
                 .font(.footnote.weight(.semibold))
                 .foregroundColor(.primary)
                 .lineLimit(1, reservesSpace: true)
 
-            Text(program.displayTitle)
+            Text(item.displayTitle)
                 .font(.footnote.weight(.regular))
                 .foregroundColor(.primary)
                 .lineLimit(1, reservesSpace: true)
 
             HStack(spacing: 2) {
-                if let startDate = program.startDate {
+                if let startDate = item.startDate {
                     Text(startDate, style: .time)
                 } else {
                     Text(String.emptyDash)
@@ -208,7 +276,7 @@ private struct BaseItemDtoProgramPosterLabel: View {
 
                 Text(String.hyphen)
 
-                if let endDate = program.endDate {
+                if let endDate = item.endDate {
                     Text(endDate, style: .time)
                 } else {
                     Text(String.emptyDash)
@@ -216,30 +284,6 @@ private struct BaseItemDtoProgramPosterLabel: View {
             }
             .font(.footnote)
             .foregroundStyle(.secondary)
-        }
-    }
-}
-
-private struct BaseItemDtoProgramPosterOverlay: View {
-
-    @State
-    private var progress: Double?
-
-    let program: BaseItemDto
-
-    private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
-
-    var body: some View {
-        ZStack {
-            if let startDate = program.startDate, startDate < Date.now {
-                LandscapePosterProgressBar(
-                    progress: progress ?? program.programProgress ?? 0
-                )
-            }
-        }
-        .onReceive(timer) { date in
-            guard let startDate = program.startDate, startDate < date else { return }
-            progress = program.programProgress(relativeTo: date)
         }
     }
 }

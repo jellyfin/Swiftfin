@@ -10,46 +10,43 @@ import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
-// TODO: move popup to router
-//       - or, make tab view environment object
-
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
     @InjectedObject(\.userSessionManager)
     private var userSessionManager
 
-    #if os(iOS)
-    @StoredValue(.User.tabs)
-    private var storedTabs
-
     @StateObject
     private var tabCoordinator: TabCoordinator
-    #else
-    @StateObject
-    private var tabCoordinator = TabCoordinator {
-        TabItem.contentGroup(provider: DefaultContentGroupProvider())
-        TabItem.library(
-            title: L10n.tvShowsCapitalized,
-            systemName: "tv",
-            filters: .init(itemTypes: [.series])
-        )
-        TabItem.library(
-            title: L10n.movies,
-            systemName: "film",
-            filters: .init(itemTypes: [.movie])
-        )
-        TabItem.search
-        TabItem.media
-        TabItem.settings
-    }
-    #endif
 
     init() {
+        _tabCoordinator = StateObject(wrappedValue: Self.defaultTabCoordinator)
+    }
+
+    private static var defaultTabCoordinator: TabCoordinator {
         #if os(iOS)
-        self._tabCoordinator = StateObject(
-            wrappedValue: TabCoordinator(tabs: StoredValues[.User.tabs])
-        )
+        TabCoordinator {
+            TabItem.contentGroup(provider: DefaultContentGroupProvider())
+            TabItem.search
+            TabItem.media
+        }
+        #else
+        TabCoordinator {
+            TabItem.contentGroup(provider: DefaultContentGroupProvider())
+            TabItem.library(
+                title: L10n.tvShowsCapitalized,
+                systemName: "tv",
+                filters: .init(itemTypes: [.series])
+            )
+            TabItem.library(
+                title: L10n.movies,
+                systemName: "film",
+                filters: .init(itemTypes: [.movie])
+            )
+            TabItem.search
+            TabItem.media
+            TabItem.settings
+        }
         #endif
     }
 
@@ -62,7 +59,6 @@ struct MainTabView: View {
         }
     }
 
-    @ViewBuilder
     var body: some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
@@ -70,12 +66,19 @@ struct MainTabView: View {
                     coordinator: tab.coordinator
                 ) {
                     tab.item.content
+                    #if os(iOS)
+                        .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
+                            view.topBarTrailing {
+                                FirstTabSettingsBarButton()
+                            }
+                        }
+                    #endif
                 }
                 .environmentObject(tabCoordinator)
                 .environment(\.tabItemSelected, tab.publisher)
                 .tabItem {
                     Label(
-                        tab.item.title,
+                        tab.item.displayTitle,
                         systemImage: tab.item.systemImage
                     )
                     .labelStyle(tab.item.labelStyle)
@@ -88,11 +91,29 @@ struct MainTabView: View {
         .onChange(of: userSessionManager.pendingDeepLink) { _ in
             routePendingDeepLink(userSessionManager.consumePendingDeepLink())
         }
-        #if os(iOS)
-        .backport
-        .onChange(of: storedTabs) { _, newValue in
-            tabCoordinator.setTabs(newValue)
-        }
-        #endif
     }
 }
+
+#if os(iOS)
+private struct FirstTabSettingsBarButton: View {
+
+    @Injected(\.currentUserSession)
+    private var userSession
+
+    @Router
+    private var router
+
+    var body: some View {
+        if router.isRootOfPath,
+           let userSession
+        {
+            SettingsBarButton(
+                server: userSession.server,
+                user: userSession.user
+            ) {
+                router.route(to: .settings)
+            }
+        }
+    }
+}
+#endif

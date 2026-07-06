@@ -24,18 +24,10 @@ struct SupplementPosterButton<Item: Poster>: View {
     }
 
     var body: some View {
-        #if os(tvOS)
-        PosterButton(
-            item: item,
-            type: .landscape,
-            action: action
-        )
-        #else
         PosterButton(
             item: item,
             type: .landscape,
             action: { _ in action() }
         )
-        #endif
     }
 }
