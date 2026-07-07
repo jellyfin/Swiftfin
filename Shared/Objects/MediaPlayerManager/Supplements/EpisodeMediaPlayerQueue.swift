@@ -535,7 +535,7 @@ extension EpisodeMediaPlayerQueue {
         let action: () -> Void
 
         var body: some View {
-            SupplementPosterButton(
+            PosterButton(
                 item: episode._withLandscapeImages { environment in
                     [
                         episode.imageSource(
@@ -544,8 +544,10 @@ extension EpisodeMediaPlayerQueue {
                         )
                     ]
                 },
-                action: action
-            )
+                displayType: .landscape
+            ) { _ in
+                action()
+            }
             .isSelected(manager.item.id == episode.id)
         }
     }

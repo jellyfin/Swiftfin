@@ -408,7 +408,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                         SeeMoreText(content)
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                            .lineLimit(3)
+                            .lineLimit(3, reservesSpace: true)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }

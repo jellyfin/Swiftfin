@@ -261,10 +261,12 @@ extension MediaChaptersSupplement {
             let action: () -> Void
 
             var body: some View {
-                SupplementPosterButton(
+                PosterButton(
                     item: chapter,
-                    action: action
-                )
+                    displayType: .landscape
+                ) { _ in
+                    action()
+                }
                 .isSelected(chapter.id == supplement.activeChapterID)
             }
         }

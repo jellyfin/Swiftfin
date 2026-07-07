@@ -74,7 +74,7 @@ extension MediaPeopleSupplement {
         private func personView(for person: BaseItemPerson) -> some View {
             PosterButton(
                 item: person,
-                type: .portrait
+                displayType: .portrait
             ) { _ in }
         }
 

@@ -89,6 +89,11 @@ struct AnyPoster: Poster {
             .eraseToAnyView()
     }
 
+    var posterContextMenu: some View {
+        _poster.posterContextMenu
+            .eraseToAnyView()
+    }
+
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         _poster.posterOverlay(for: displayType)
             .eraseToAnyView()

@@ -54,7 +54,7 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
                         parent: BaseItemDto(
                             id: parent?.id,
                             name: itemType.pluralDisplayTitle,
-                            type: itemType
+                            type: parent?.type
                         ),
                         filters: filters
                     )
@@ -66,7 +66,7 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
                         parent: BaseItemDto(
                             id: parent?.id,
                             name: itemType.pluralDisplayTitle,
-                            type: itemType
+                            type: parent?.type
                         ),
                         filters: filters
                     ),

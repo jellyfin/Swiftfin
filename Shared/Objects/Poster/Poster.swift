@@ -17,6 +17,7 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
     associatedtype Environment: WithDefaultValue = Empty
     associatedtype ImageBody: View = Image
     associatedtype LabelBody: View = EmptyView
+    associatedtype ContextMenuBody: View = EmptyView
     associatedtype OverlayBody: View = EmptyView
 
     var preferredPosterDisplayType: PosterDisplayType { get }
@@ -59,6 +60,10 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
 
     @MainActor
     @ViewBuilder
+    var posterContextMenu: ContextMenuBody { get }
+
+    @MainActor
+    @ViewBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> OverlayBody
 }
 
@@ -81,6 +86,15 @@ extension Poster where LabelBody == EmptyView {
     @MainActor
     @ViewBuilder
     var posterLabel: LabelBody {
+        EmptyView()
+    }
+}
+
+extension Poster where ContextMenuBody == EmptyView {
+
+    @MainActor
+    @ViewBuilder
+    var posterContextMenu: ContextMenuBody {
         EmptyView()
     }
 }
@@ -164,5 +178,25 @@ extension Poster {
 
     func _withLandscapeImages(_ imageSources: @escaping (AnyPoster.Environment) -> [ImageSource]) -> AnyPoster {
         .init(self, _withLandscapeImages: imageSources)
+    }
+}
+
+extension View {
+
+    @MainActor
+    @ViewBuilder
+    func posterContextMenu<Item: Poster>(
+        for item: Item,
+        @ViewBuilder preview: @escaping () -> some View
+    ) -> some View {
+        if Item.ContextMenuBody.self == EmptyView.self {
+            self
+        } else {
+            contextMenu {
+                item.posterContextMenu
+            } preview: {
+                preview()
+            }
+        }
     }
 }

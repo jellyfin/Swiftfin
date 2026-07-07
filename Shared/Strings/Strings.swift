@@ -52,6 +52,8 @@ internal enum L10n {
   internal static let additionalSecurityAccessDescription = L10n.tr("Localizable", "additionalSecurityAccessDescription", fallback: "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.")
   /// Add server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add server")
+  /// Add to favorites
+  internal static let addToFavorites = L10n.tr("Localizable", "addToFavorites", fallback: "Add to favorites")
   /// Add trigger
   internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add trigger")
   /// Add user
@@ -744,6 +746,10 @@ internal enum L10n {
   internal static let gesturesUnlocked = L10n.tr("Localizable", "gesturesUnlocked", fallback: "Gestures unlocked")
   /// Gbps
   internal static let gigabitsPerSecond = L10n.tr("Localizable", "gigabitsPerSecond", fallback: "Gbps")
+  /// Go to item
+  internal static let goToItem = L10n.tr("Localizable", "goToItem", fallback: "Go to item")
+  /// Go to series
+  internal static let goToSeries = L10n.tr("Localizable", "goToSeries", fallback: "Go to series")
   /// Green
   internal static let green = L10n.tr("Localizable", "green", fallback: "Green")
   /// Grid
@@ -962,6 +968,10 @@ internal enum L10n {
   internal static let manualPlaylistsFolder = L10n.tr("Localizable", "manualPlaylistsFolder", fallback: "Manual playlists folder")
   /// Manual playlists folders
   internal static let manualPlaylistsFolders = L10n.tr("Localizable", "manualPlaylistsFolders", fallback: "Manual playlists folders")
+  /// Mark as played
+  internal static let markAsPlayed = L10n.tr("Localizable", "markAsPlayed", fallback: "Mark as played")
+  /// Mark as unplayed
+  internal static let markAsUnplayed = L10n.tr("Localizable", "markAsUnplayed", fallback: "Mark as unplayed")
   /// Maximum
   internal static let maximum = L10n.tr("Localizable", "maximum", fallback: "Maximum")
   /// Maximum bitrate
@@ -1322,6 +1332,8 @@ internal enum L10n {
   internal static let remoteControl = L10n.tr("Localizable", "remoteControl", fallback: "Remote control")
   /// Remove all
   internal static let removeAll = L10n.tr("Localizable", "removeAll", fallback: "Remove all")
+  /// Remove from favorites
+  internal static let removeFromFavorites = L10n.tr("Localizable", "removeFromFavorites", fallback: "Remove from favorites")
   /// Remux
   internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
   /// Reorder

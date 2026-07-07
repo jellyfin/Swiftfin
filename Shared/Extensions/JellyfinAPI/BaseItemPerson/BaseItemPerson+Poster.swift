@@ -40,6 +40,10 @@ extension BaseItemPerson: Poster {
         BaseItemDto(person: self).posterLabel
     }
 
+    var posterContextMenu: some View {
+        BaseItemDto(person: self).posterContextMenu
+    }
+
     func portraitImageSources(
         environment: Environment
     ) -> [ImageSource] {

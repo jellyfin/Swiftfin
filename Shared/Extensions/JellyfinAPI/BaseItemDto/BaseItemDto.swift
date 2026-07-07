@@ -123,7 +123,7 @@ extension BaseItemDto {
 
     var birthplace: String? {
         guard type == .person else { return nil }
-        return productionLocations?.first
+        return productionLocations?.first { $0.isNotEmpty }
     }
 
     var deathday: Date? {

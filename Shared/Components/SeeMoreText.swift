@@ -8,9 +8,6 @@
 
 import SwiftUI
 
-// TODO: fix when using `lineLimit(reserveSpace > 1)`
-//       - see more button gets large frame
-
 struct SeeMoreText: View {
 
     @State
@@ -46,6 +43,7 @@ struct SeeMoreText: View {
         Text(L10n.seeMore)
             .textCase(.uppercase)
             .fontWeight(.semibold)
+            .lineLimit(1, reservesSpace: false)
     }
 
     var body: some View {

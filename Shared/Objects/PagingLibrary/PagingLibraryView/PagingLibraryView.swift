@@ -89,9 +89,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .onReceive(tabItemSelected) { event in
             if event.isRepeat, event.isRoot {
                 gridProxy.scrollToTop(animated: true)
-//                withAnimation {
-//                    proxy.scrollTo("top", anchor: .top)
-//                }
             }
         }
     }

@@ -10,47 +10,38 @@ import SwiftUI
 
 struct PosterButton<Item: Poster>: View {
 
+    @Environment(\.viewContext)
+    private var viewContext
+
     @Namespace
     private var namespace
 
     @State
     private var posterSize: CGSize = .zero
 
-    private let action: (Namespace.ID) -> Void
-    private let displayType: PosterDisplayType
-    private let item: Item
+    let item: Item
+    let displayType: PosterDisplayType
+    let action: (Namespace.ID) -> Void
 
-    init(
-        item: Item,
-        type: PosterDisplayType,
-        action: @escaping (Namespace.ID) -> Void
-    ) {
-        self.action = action
-        self.displayType = type
-        self.item = item
+    @ViewBuilder
+    private var contextMenuPreview: some View {
+        // TODO: determine if want to be used or just increase size
+        let frameScale = 1.3
+
+        buttonLabel()
+            .frame(
+                width: posterSize.width * frameScale,
+                height: posterSize.height * frameScale
+            )
+            .padding(20)
+            .background {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.secondarySystemFill)
+            }
     }
 
     @ViewBuilder
     private func posterImage(overlay: some View) -> some View {
-//        #if os(tvOS)
-//        PosterImage(item: item, type: displayType)
-//            .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            .overlay { overlay }
-//            .contentShape(.contextMenuPreview, Rectangle())
-//            .posterStyle(displayType)
-//            .posterShadow()
-//            .hoverEffect(.highlight)
-//        #else
-//        PosterImage(item: item, type: displayType)
-//            .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            .overlay { overlay }
-//            .contentShape(.contextMenuPreview, Rectangle())
-//            .posterCornerRadius(displayType)
-//            .backport
-//            .matchedTransitionSource(id: "item", in: namespace)
-//            .posterShadow()
-//        #endif
-
         PosterImage(
             item: item,
             type: displayType
@@ -92,21 +83,9 @@ struct PosterButton<Item: Poster>: View {
         .buttonStyle(.borderless)
         .buttonBorderShape(.roundedRectangle)
         .focusedValue(\.focusedPoster, AnyPoster(item))
-//        .buttonStyle(.plain)
-//        .matchedContextMenu(for: item) {
-//            let frameScale = 1.3
-//
-//            posterView()
-//                .frame(
-//                    width: posterSize.width * frameScale,
-//                    height: posterSize.height * frameScale
-//                )
-//                .padding(20)
-//                .background {
-//                    RoundedRectangle(cornerRadius: 10)
-//                        .fill(Color(uiColor: UIColor.secondarySystemGroupedBackground))
-//                }
-//        }
-//        #endif
+        .posterContextMenu(for: item) {
+            contextMenuPreview
+                .withViewContext(viewContext)
+        }
     }
 }

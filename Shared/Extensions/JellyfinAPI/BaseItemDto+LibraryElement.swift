@@ -74,7 +74,7 @@ private struct BaseItemDtoLibraryGridElement: View {
     var body: some View {
         PosterButton(
             item: item,
-            type: resolvedLibraryStyle.posterDisplayType
+            displayType: resolvedLibraryStyle.posterDisplayType
         ) { namespace in
             item.libraryDidSelectElement(router: router, in: namespace)
         }

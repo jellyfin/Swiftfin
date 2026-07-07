@@ -76,7 +76,7 @@ struct PosterHStack<
         ) { item in
             PosterButton(
                 item: item,
-                type: displayType
+                displayType: displayType
             ) { namespace in
                 action(item, namespace)
             }

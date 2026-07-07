@@ -7,7 +7,9 @@
 //
 
 import Defaults
+import FactoryKit
 import Foundation
+import Get
 import JellyfinAPI
 import SwiftUI
 
@@ -76,6 +78,11 @@ extension BaseItemDto: Poster {
     @ViewBuilder
     var posterLabel: some View {
         BaseItemDtoPosterLabel(item: self)
+    }
+
+    @ViewBuilder
+    var posterContextMenu: some View {
+        BaseItemDtoPosterContextMenu(item: self)
     }
 
     @ViewBuilder
@@ -179,6 +186,127 @@ extension BaseItemDto: Poster {
             image
                 .aspectRatio(contentMode: .fill)
         }
+    }
+}
+
+private struct BaseItemDtoPosterContextMenu: View {
+
+    @Router
+    private var router
+
+    @State
+    private var item: BaseItemDto
+
+    init(item: BaseItemDto) {
+        self.item = item
+    }
+
+    private var isFavorite: Bool {
+        item.userData?.isFavorite == true
+    }
+
+    private var isPlayed: Bool {
+        item.userData?.isPlayed == true
+    }
+
+    var body: some View {
+        if let itemID = item.id {
+            Button(L10n.goToItem, systemImage: "arrow.forward.circle") {
+                router.route(to: .item(id: itemID))
+            }
+        }
+
+        if item.type == .episode, let seriesID = item.seriesID {
+            Button(L10n.goToSeries, systemImage: "tv") {
+                router.route(to: .item(id: seriesID))
+            }
+        }
+
+        if item.canBePlayed {
+            Button(isPlayed ? L10n.markAsUnplayed : L10n.markAsPlayed, systemImage: isPlayed ? "circle" : "checkmark.circle") {
+                Task {
+                    await toggleIsPlayed()
+                }
+            }
+        }
+
+        if item.id != nil {
+            Button(isFavorite ? L10n.removeFromFavorites : L10n.addToFavorites, systemImage: isFavorite ? "heart.slash" : "heart") {
+                Task {
+                    await toggleIsFavorite()
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func toggleIsPlayed() async {
+        let beforeIsPlayed = item.userData?.isPlayed ?? false
+
+        item.userData?.isPlayed = !beforeIsPlayed
+        do {
+            try await setIsPlayed(!beforeIsPlayed)
+        } catch {
+            item.userData?.isPlayed = beforeIsPlayed
+        }
+    }
+
+    @MainActor
+    private func toggleIsFavorite() async {
+        let beforeIsFavorite = item.userData?.isFavorite ?? false
+
+        item.userData?.isFavorite = !beforeIsFavorite
+        do {
+            try await setIsFavorite(!beforeIsFavorite)
+        } catch {
+            item.userData?.isFavorite = beforeIsFavorite
+        }
+    }
+
+    private func setIsPlayed(_ isPlayed: Bool) async throws {
+        guard let itemID = item.id,
+              let userSession = Container.shared.currentUserSession()
+        else { return }
+
+        let request: Request<UserItemDataDto> = if isPlayed {
+            Paths.markPlayedItem(
+                itemID: itemID,
+                userID: userSession.user.id
+            )
+        } else {
+            Paths.markUnplayedItem(
+                itemID: itemID,
+                userID: userSession.user.id
+            )
+        }
+
+        let response = try await userSession.client.send(request)
+        item.userData = response.value
+        Notifications[.itemUserDataDidChange].post(response.value)
+        Notifications[.itemShouldRefreshMetadata].post(itemID)
+    }
+
+    private func setIsFavorite(_ isFavorite: Bool) async throws {
+        guard let itemID = item.id,
+              let userSession = Container.shared.currentUserSession()
+        else { return }
+
+        let request: Request<UserItemDataDto> = if isFavorite {
+            Paths.markFavoriteItem(
+                itemID: itemID,
+                userID: userSession.user.id
+            )
+        } else {
+            Paths.unmarkFavoriteItem(
+                itemID: itemID,
+                userID: userSession.user.id
+            )
+        }
+
+        let response = try await userSession.client.send(request)
+        item.userData = response.value
+        Notifications[.itemUserDataDidChange].post(response.value)
+        Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 }
 
