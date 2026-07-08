@@ -10,8 +10,6 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-// TODO: allow in-place changes in groups
-
 @MainActor
 @Stateful
 final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {

@@ -87,13 +87,14 @@ extension TabItem {
 
     static func item(id: String, displayTitle: String) -> TabItem {
         let item = BaseItemDto(id: id, name: displayTitle)
+        let provider = ItemContentGroupProvider(item: item)
 
         return TabItem(
             id: id,
             title: displayTitle,
             systemImage: item.systemImage
         ) {
-            ItemView(item: item)
+            ItemView(provider: provider)
         }
     }
 

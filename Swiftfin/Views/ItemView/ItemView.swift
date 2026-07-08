@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import JellyfinAPI
 import SwiftUI
 
 struct ItemView: View {
@@ -31,8 +30,7 @@ struct ItemView: View {
     @StateObject
     private var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
 
-    init(item: BaseItemDto) {
-        let provider = ItemContentGroupProvider(item: item)
+    init(provider: ItemContentGroupProvider) {
         self._provider = StateObject(wrappedValue: provider)
         self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
     }

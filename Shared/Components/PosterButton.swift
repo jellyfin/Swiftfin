@@ -21,7 +21,20 @@ struct PosterButton<Item: Poster>: View {
 
     let item: Item
     let displayType: PosterDisplayType
+    let size: PosterDisplayType.Size
     let action: (Namespace.ID) -> Void
+
+    init(
+        item: Item,
+        displayType: PosterDisplayType,
+        size: PosterDisplayType.Size = .small,
+        action: @escaping (Namespace.ID) -> Void
+    ) {
+        self.item = item
+        self.displayType = displayType
+        self.size = size
+        self.action = action
+    }
 
     @ViewBuilder
     private var contextMenuPreview: some View {
@@ -44,8 +57,10 @@ struct PosterButton<Item: Poster>: View {
     private func posterImage(overlay: some View) -> some View {
         PosterImage(
             item: item,
-            type: displayType
+            type: displayType,
+            size: size
         )
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay { overlay.posterStyle(displayType) }
         .contentShape(.contextMenuPreview, Rectangle())
         .backport

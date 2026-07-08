@@ -69,6 +69,14 @@ struct PosterHStack<
         #endif
     }
 
+    private var itemSpacing: CGFloat {
+        #if os(tvOS)
+        40
+        #else
+        EdgeInsets.edgePadding / 2
+        #endif
+    }
+
     var body: some View {
         CollectionHStack(
             uniqueElements: elements,
@@ -76,14 +84,15 @@ struct PosterHStack<
         ) { item in
             PosterButton(
                 item: item,
-                displayType: displayType
+                displayType: displayType,
+                size: size
             ) { namespace in
                 action(item, namespace)
             }
         }
         .clipsToBounds(false)
         .insets(horizontal: EdgeInsets.edgePadding)
-        .itemSpacing(EdgeInsets.edgePadding / 2)
+        .itemSpacing(itemSpacing)
         .scrollBehavior(.continuousLeadingEdge)
         .withViewContext(.isThumb)
     }

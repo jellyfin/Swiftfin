@@ -14,30 +14,17 @@ import SwiftUI
 // TODO: currently SVGs are only supported for logos, which are only used in a few places.
 //       make it so when displaying an SVG there is a unified `image` caller modifier
 // TODO: look at replacing view phase resolution with `FadeContentTransitionView`
-// TODO: make Image and Placeholder generic constraints rather than any View
 // TODO: Allow failure to reserve previous state, keeping placeholder if image fails
-struct ImageView<Failure: View>: View {
+struct ImageView<_Image: View, Placeholder: View, Failure: View>: View {
 
     @State
     private var sources: [ImageSource]
-    @State
-    private var resolvedColorSourceID: String?
 
-    private var image: (Image) -> any View
+    private var image: (Image) -> _Image
     private var pipeline: ImagePipeline
-    private var placeholder: ((ImageSource) -> any View)?
+    private var placeholder: (ImageSource) -> Placeholder
     private var resolvedColor: Binding<Color?>?
     private var failure: Failure
-
-    @ViewBuilder
-    private func _placeholder(_ currentSource: ImageSource) -> some View {
-        if let placeholder {
-            placeholder(currentSource)
-                .eraseToAnyView()
-        } else {
-            DefaultPlaceholderView(blurHash: currentSource.blurHash)
-        }
-    }
 
     private func resolveColor(from imageContainer: ImageContainer?) {
         guard let resolvedColor, let imageContainer else { return }
@@ -55,7 +42,7 @@ struct ImageView<Failure: View>: View {
         if let currentSource = sources.first {
             LazyImage(url: currentSource.url, transaction: .init(animation: .linear)) { state in
                 if state.isLoading {
-                    _placeholder(currentSource)
+                    placeholder(currentSource)
                 } else if let _image = state.image {
                     if let data = state.imageContainer?.data {
                         FastSVGView(data: data)
@@ -64,7 +51,6 @@ struct ImageView<Failure: View>: View {
                             .onAppear {
                                 resolveColor(from: state.imageContainer)
                             }
-                            .eraseToAnyView()
                     }
                 } else if state.error != nil {
                     failure
@@ -81,7 +67,7 @@ struct ImageView<Failure: View>: View {
     }
 }
 
-extension ImageView where Failure == EmptyView {
+extension ImageView where _Image == Image, Placeholder == DefaultPlaceholderView, Failure == EmptyView {
 
     init(_ source: ImageSource) {
         self.init([source].compacted(using: \.url))
@@ -92,7 +78,8 @@ extension ImageView where Failure == EmptyView {
             sources: sources.compacted(using: \.url),
             image: { $0 },
             pipeline: .shared,
-            placeholder: nil,
+            placeholder: { DefaultPlaceholderView(blurHash: $0.blurHash) },
+            resolvedColor: nil,
             failure: EmptyView()
         )
     }
@@ -114,24 +101,44 @@ extension ImageView where Failure == EmptyView {
 
 extension ImageView {
 
-    func image(@ViewBuilder _ content: @escaping (Image) -> any View) -> Self {
-        copy(modifying: \.image, with: content)
+    func image<NewImage: View>(
+        @ViewBuilder _ content: @escaping (Image) -> NewImage
+    ) -> ImageView<NewImage, Placeholder, Failure> {
+        ImageView<NewImage, Placeholder, Failure>(
+            sources: sources,
+            image: content,
+            pipeline: pipeline,
+            placeholder: placeholder,
+            resolvedColor: resolvedColor,
+            failure: failure
+        )
     }
 
     func pipeline(_ pipeline: ImagePipeline) -> Self {
         copy(modifying: \.pipeline, with: pipeline)
     }
 
-    func placeholder(@ViewBuilder _ content: @escaping (ImageSource) -> any View) -> Self {
-        copy(modifying: \.placeholder, with: content)
+    func placeholder<NewPlaceholder: View>(
+        @ViewBuilder _ content: @escaping (ImageSource) -> NewPlaceholder
+    ) -> ImageView<_Image, NewPlaceholder, Failure> {
+        ImageView<_Image, NewPlaceholder, Failure>(
+            sources: sources,
+            image: image,
+            pipeline: pipeline,
+            placeholder: content,
+            resolvedColor: resolvedColor,
+            failure: failure
+        )
     }
 
     func resolvedColor(_ color: Binding<Color?>) -> Self {
         copy(modifying: \.resolvedColor, with: color)
     }
 
-    func failure<NewFailure: View>(@ViewBuilder _ content: @escaping () -> NewFailure) -> ImageView<NewFailure> {
-        ImageView<NewFailure>(
+    func failure<NewFailure: View>(
+        @ViewBuilder _ content: @escaping () -> NewFailure
+    ) -> ImageView<_Image, Placeholder, NewFailure> {
+        ImageView<_Image, Placeholder, NewFailure>(
             sources: sources,
             image: image,
             pipeline: pipeline,
