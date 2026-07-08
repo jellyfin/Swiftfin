@@ -67,7 +67,7 @@ struct ItemView: View {
     @ViewBuilder
     private var innerBody: some View {
         scrollContainerView(provider: provider) {
-            ItemContentGroupContentView(groups: viewModel.groups)
+            ContentGroupVStack(groups: viewModel.groups)
         }
         .eraseToAnyView()
     }

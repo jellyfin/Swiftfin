@@ -44,14 +44,9 @@ struct SearchView: View {
     }
 
     @ViewBuilder
-    private func makeGroupBody(_ group: some ContentGroup) -> some View {
-        group.body(with: group.viewModel)
-    }
-
-    @ViewBuilder
     private var resultsView: some View {
         ScrollView {
-            ItemContentGroupContentView(
+            ContentGroupVStack(
                 groups: viewModel.itemContentGroupViewModel.groups
             )
         }

@@ -91,7 +91,7 @@ struct AboutItemGroup: ContentGroup {
                 router.route(to: .itemOverview(item: item))
             } content: {
                 if let overview = item.overview, overview.isNotEmpty {
-                    Text(overview)
+                    SeeMoreText(overview)
                         .font(.footnote)
                         .lineLimit(4)
                         .multilineTextAlignment(.leading)

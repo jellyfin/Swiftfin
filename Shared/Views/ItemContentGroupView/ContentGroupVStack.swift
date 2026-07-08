@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct ItemContentGroupContentView: View {
+struct ContentGroupVStack: View {
 
     let groups: [any ContentGroup]
 
@@ -18,17 +18,12 @@ struct ItemContentGroupContentView: View {
     }
 
     var body: some View {
-        if groups.isEmpty {
-            ContentUnavailableView(L10n.noResults, systemImage: "rectangle.on.rectangle.slash")
-                .edgePadding(.horizontal)
-        } else {
-            VStack(alignment: .leading, spacing: 20) {
-                ForEach(groups, id: \.id) { group in
-                    makeGroupBody(group)
-                        .eraseToAnyView()
-                }
+        VStack(alignment: .leading, spacing: 20) {
+            ForEach(groups, id: \.id) { group in
+                makeGroupBody(group)
+                    .eraseToAnyView()
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .edgePadding(.vertical)
     }
 }
