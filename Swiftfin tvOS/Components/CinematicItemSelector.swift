@@ -6,14 +6,13 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import JellyfinAPI
 import SwiftUI
 
-// TODO: make new protocol for cinematic view image provider
-// TODO: better name
+struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
 
-struct CinematicItemSelector<Item: Poster>: View {
+    @Environment(\.frameForParentView)
+    private var frameForParentView
 
     @FocusState
     private var isSectionFocused
@@ -24,33 +23,48 @@ struct CinematicItemSelector<Item: Poster>: View {
     @State
     private var backgroundItem: AnyPoster?
 
-    private var topContent: (Item) -> any View
-    private var itemContent: (Item) -> any View
-    private var trailingContent: () -> any View
     private let action: (Item) -> Void
+    private let items: [Item]
+    private let topContent: (Item) -> TopContent
 
-    let items: [Item]
+    init(
+        items: [Item],
+        action: @escaping (Item) -> Void,
+        @ViewBuilder topContent: @escaping (Item) -> TopContent
+    ) {
+        self.items = items
+        self.action = action
+        self.topContent = topContent
+    }
+
+    private var parentFrame: CGRect {
+        frameForParentView[.scrollView, default: .zero].frame
+    }
+
+    private var resolvedHeight: CGFloat {
+        max(parentFrame.height - CinematicItemSelectorLayout.backgroundHeightOffset, 0)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
 
             if let focusedPoster, let focusedItem = focusedPoster._poster as? Item {
                 topContent(focusedItem)
-                    .eraseToAnyView()
                     .id(focusedItem.hashValue)
                     .transition(.opacity)
             }
 
             // TODO: fix intrinsic content sizing without frame
-//            PosterHStack(
-//                type: .landscape,
-//                items: items,
-//                action: action,
-//                label: itemContent
-//            )
-//            .frame(height: 400)
+            PosterHStack(
+                elements: items,
+                displayType: .landscape,
+                size: .medium
+            ) { item, _ in
+                action(item)
+            }
+            .frame(height: CinematicItemSelectorLayout.posterRowHeight)
         }
-        .frame(height: UIScreen.main.bounds.height - 75, alignment: .bottomLeading)
+        .frame(height: resolvedHeight, alignment: .bottomLeading)
         .frame(maxWidth: .infinity)
         .background(alignment: .top) {
             let selectedBackgroundItem = backgroundItem ?? items.first.map { AnyPoster($0) }
@@ -73,7 +87,7 @@ struct CinematicItemSelector<Item: Poster>: View {
                         (location: 1, opacity: 1)
                     }
             }
-            .frame(height: UIScreen.main.bounds.height)
+            .frame(height: parentFrame.height)
             .maskLinearGradient {
                 (location: 0.9, opacity: 1)
                 (location: 1, opacity: 0)
@@ -85,33 +99,27 @@ struct CinematicItemSelector<Item: Poster>: View {
         }
         .focusSection()
         .focused($isSectionFocused)
+        .debugBackground()
     }
 }
 
-extension CinematicItemSelector {
+private enum CinematicItemSelectorLayout {
 
-    init(items: [Item], action: @escaping (Item) -> Void = { _ in }) {
+    static let backgroundHeightOffset: CGFloat = 75
+    static let posterRowHeight: CGFloat = 400
+}
+
+extension CinematicItemSelector where TopContent == EmptyView {
+
+    init(
+        items: [Item],
+        action: @escaping (Item) -> Void = { _ in }
+    ) {
         self.init(
-            topContent: { _ in EmptyView() },
-            itemContent: { _ in EmptyView() },
-            trailingContent: { EmptyView() },
-            action: action,
-            items: items
-        )
-    }
-}
-
-extension CinematicItemSelector {
-
-    func topContent(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
-        copy(modifying: \.topContent, with: content)
-    }
-
-    func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
-        copy(modifying: \.itemContent, with: content)
-    }
-
-    func trailingContent(@ViewBuilder _ content: @escaping () -> some View) -> Self {
-        copy(modifying: \.trailingContent, with: content)
+            items: items,
+            action: action
+        ) { _ in
+            EmptyView()
+        }
     }
 }

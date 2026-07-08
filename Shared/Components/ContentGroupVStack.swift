@@ -24,6 +24,6 @@ struct ContentGroupVStack: View {
                     .eraseToAnyView()
             }
         }
-        .edgePadding(.vertical)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
     }
 }

@@ -12,8 +12,7 @@ struct ContentGroupParentOption: OptionSet {
 
     let rawValue: Int
 
-    static let ignoreTopSafeArea = Self(rawValue: 1 << 0)
-    static let useOffsetNavigationBar = Self(rawValue: 1 << 1)
+    static let ignoreSafeAreaTop = Self(rawValue: 1 << 0)
 }
 
 struct ContentGroupCustomizationKey: PreferenceKey {

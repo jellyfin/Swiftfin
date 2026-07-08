@@ -31,36 +31,24 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
     }
 
     @ViewBuilder
-    private func makeGroupBody(_ group: some ContentGroup) -> some View {
-        group.body(with: group.viewModel)
-    }
-
-    @ViewBuilder
     private var contentView: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                Color.clear
-                    .frame(height: 0)
-                    .id("top")
+                VStack(spacing: 0) {
+                    Color.clear
+                        .frame(height: 0)
+                        .id("top")
 
-//                VStack(alignment: .leading, spacing: 10) {
-//                    ForEach(Array(viewModel.groups.enumerated()), id: \.element.id) { _, group in
-//                        makeGroupBody(group)
-//                            .eraseToAnyView()
-//                    }
-//                    .onPreferenceChange(ContentGroupCustomizationKey.self) { value in
-//                        contentGroupOptions = value
-//                    }
-//                    .onPreferenceChange(ScrollViewHeaderFrameKey.self) { value in
-//                        carriedHeaderFrame = value.frame
-//                    }
-//                }
-                ContentGroupVStack(groups: viewModel.groups)
-                    .edgePadding(contentGroupOptions.contains(.ignoreTopSafeArea) ? [.top, .bottom] : .bottom)
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                    ContentGroupVStack(groups: viewModel.groups)
+                        .edgePadding(contentGroupOptions.contains(.ignoreSafeAreaTop) ? .bottom : .vertical)
+                        .onPreferenceChange(ContentGroupCustomizationKey.self) { value in
+                            contentGroupOptions = value
+                        }
+                }
             }
+            .trackingFrame(for: .scrollView)
             .ignoresSafeArea(
-                edges: contentGroupOptions.contains(.ignoreTopSafeArea) ? [.horizontal, .top] : .horizontal
+                edges: contentGroupOptions.contains(.ignoreSafeAreaTop) ? [.horizontal, .top] : .horizontal
             )
             .scrollIndicators(.hidden)
             .refreshable {
@@ -100,6 +88,7 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         .navigationTitle(viewModel.provider.displayTitle)
         .backport
         .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
+        .toolbar(UIDevice.isTV && router.isRootOfPath ? .hidden : .automatic, for: .navigationBar)
         .onFirstAppear {
             viewModel.refresh()
         }
