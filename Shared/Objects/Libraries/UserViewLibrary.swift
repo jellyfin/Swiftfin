@@ -89,7 +89,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
             "heart.fill"
         case let .userView(item):
             if item.collectionType == .livetv {
-                "tv.fill"
+                "tv"
             } else {
                 "folder.fill"
             }
