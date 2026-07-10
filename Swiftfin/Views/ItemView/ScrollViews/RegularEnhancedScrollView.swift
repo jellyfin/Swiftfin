@@ -165,22 +165,21 @@ extension ItemView {
                     .colorScheme(.dark)
             }
             .backgroundParallaxHeader(
-                multiplier: 0.3,
-                backgroundColor: headerBottomColor
+                multiplier: 0.3
             ) {
                 AlternateLayoutView {
                     Color.clear
                         .aspectRatio(2, contentMode: .fit)
                 } content: {
                     ImageView(headerImageSource)
-                        .resolvedColor($resolvedBottomColor)
-                        .image { image in
-                            image
-                                .aspectRatio(1.77, contentMode: .fill)
-                        }
-                        .clipped()
-                        .id(headerImageSource.url?.hashValue)
-                        .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
+//                        .resolvedColor($resolvedBottomColor)
+                            .image { image in
+                                image
+                                    .aspectRatio(1.77, contentMode: .fill)
+                            }
+                            .clipped()
+                            .id(headerImageSource.url?.hashValue)
+                            .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
                 }
                 .bottomEdgeGradient(bottomColor: headerBottomColor)
             }

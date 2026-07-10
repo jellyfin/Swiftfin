@@ -182,14 +182,14 @@ extension ItemView {
                         .aspectRatio(2, contentMode: .fit)
                 } content: {
                     ImageView(headerImageSource)
-                        .resolvedColor($resolvedBottomColor)
-                        .image { image in
-                            image
-                                .aspectRatio(1.77, contentMode: .fill)
-                        }
-                        .clipped()
-                        .id(headerImageSource.url?.hashValue)
-                        .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
+//                        .resolvedColor($resolvedBottomColor)
+                            .image { image in
+                                image
+                                    .aspectRatio(1.77, contentMode: .fill)
+                            }
+                            .clipped()
+                            .id(headerImageSource.url?.hashValue)
+                            .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
                 }
                 .bottomEdgeGradient(bottomColor: headerBottomColor)
             }
@@ -202,9 +202,6 @@ extension ItemView {
                 \.frameForParentView,
                 frameForParentView.removingValue(for: .navigationStack)
             )
-            .onChange(of: headerImageSource.url) { _, _ in
-                resolvedBottomColor = nil
-            }
         }
 
         private var headerMaxY: CGFloat? {

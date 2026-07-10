@@ -20,18 +20,20 @@ extension ItemView {
         @ObservedObject
         var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
 
-        @State
-        private var resolvedBottomColor: Color?
-
         @StoredValue(.User.itemViewAttributes)
         private var attributes
+
+        @Router
+        private var router
+
+        private let headerAspectRatio = 1.6
 
         @ViewBuilder
         private var logo: some View {
             ImageView(
                 provider.item.imageSource(
                     .logo,
-                    environment: ImageSourceOptions(maxHeight: 100)
+                    environment: ImageSourceOptions(maxHeight: 70)
                 )
             )
             .placeholder { _ in
@@ -47,7 +49,7 @@ extension ItemView {
                     .foregroundStyle(.primary)
             }
             .aspectRatio(contentMode: .fit)
-            .frame(height: 100, alignment: .bottom)
+            .frame(height: 70, alignment: .bottom)
         }
 
         @ViewBuilder
@@ -55,7 +57,7 @@ extension ItemView {
             VStack(alignment: .center, spacing: 10) {
                 AlternateLayoutView(alignment: .bottom) {
                     Color.clear
-                        .aspectRatio(1.77, contentMode: .fit)
+                        .aspectRatio(headerAspectRatio, contentMode: .fit)
                 } content: {
                     logo
                 }
@@ -90,10 +92,26 @@ extension ItemView {
                     }
                     .frame(maxWidth: 300)
 
-                    ItemView.OverviewView(item: provider.item)
-                        .overviewLineLimit(3)
-                        .taglineLineLimit(2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack(alignment: .leading, spacing: 5) {
+                        if let firstTagline = provider.item.taglines?.first {
+                            Text(firstTagline)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(2)
+                        }
+
+                        if let itemOverview = provider.item.overview {
+                            Button {
+                                router.route(to: .itemOverview(item: provider.item))
+                            } label: {
+                                SeeMoreText(itemOverview)
+                                    .font(.footnote)
+                                    .lineLimit(3)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     ItemView.AttributesHStack(
                         attributes: attributes,
@@ -103,6 +121,7 @@ extension ItemView {
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .edgePadding(.bottom)
                 .background(
                     alignment: .bottom,
                     extendedBy: .init(
@@ -111,33 +130,30 @@ extension ItemView {
                     )
                 ) {
                     Rectangle()
-//                        .fill(Material.ultraThin)
-                            .fill(Color.clear)
-                            .mask {
-                                EasedGradient(
-                                    stops: [
-                                        .init(color: .clear, location: 0),
-                                        .init(color: .white.opacity(0.7), location: 0.1),
-                                        .init(color: .white, location: 0.2),
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom,
-                                    curve: .easeOut
-                                )
-                            }
+                        .fill(Material.ultraThin)
+                        .mask {
+                            EasedGradient(
+                                stops: [
+                                    .init(color: .clear, location: 0),
+                                    .init(color: .white.opacity(0.7), location: 0.1),
+                                    .init(color: .white, location: 0.2),
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom,
+                                curve: .easeOut
+                            )
+                        }
                 }
                 .zIndex(9)
             }
         }
 
-        private func resolveColor(from image: UIImage) {
+        private func resolveColor(from image: UIImage, binding: Binding<Color>) {
             Task.detached(priority: .utility) {
-                let color = image.interestingColor()
-
-                print("Resolved bottom color: \(color) from image: \(image)")
+                guard let color = image.interestingColor() else { return }
 
                 await MainActor.run {
-                    resolvedBottomColor = .blue
+                    binding.wrappedValue = color
                 }
             }
         }
@@ -148,33 +164,30 @@ extension ItemView {
                 .edgePadding(.horizontal)
                 .frame(maxWidth: .infinity)
                 .colorScheme(.dark)
-                .overlay {
-                    Rectangle()
-                        .fill(resolvedBottomColor ?? .clear)
-                }
                 .backgroundParallaxHeader(
-                    multiplier: 0.3,
-                    backgroundColor: .clear
+                    multiplier: 0.3
                 ) {
-                    AlternateLayoutView {
-                        Color.clear
-                    } content: {
-                        ImageView(provider.item.imageSource(
-                            .backdrop,
-                            environment: ImageSourceOptions(maxWidth: 1320)
-                        ))
-                        .image { (image: UIImage) in
-                            Image(uiImage: image)
-                                .resizable()
-                                .onAppear {
-                                    resolveColor(from: image)
-                                }
+                    StateAdapter(initialValue: Color.secondarySystemFill) { resolvedColor in
+                        AlternateLayoutView {
+                            Color.clear
+                        } content: {
+                            ImageView(provider.item.imageSource(
+                                .backdrop,
+                                environment: ImageSourceOptions(maxWidth: 1320)
+                            ))
+                            .image { (image: UIImage) in
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .onAppear {
+                                        resolveColor(from: image, binding: resolvedColor)
+                                    }
+                            }
                         }
+                        .aspectRatio(headerAspectRatio, contentMode: .fit)
+                        .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)
+                        .accessibilityHidden(true)
                     }
-                    .aspectRatio(1.77, contentMode: .fit)
-                    .bottomEdgeGradient(bottomColor: .red)
-//                    .bottomEdgeGradient(bottomColor: resolvedBottomColor ?? .clear)
-                    .accessibilityHidden(true)
                 }
                 .trackingFrame(
                     for: .scrollViewHeader,

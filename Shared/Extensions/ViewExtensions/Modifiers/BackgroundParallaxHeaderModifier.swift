@@ -12,13 +12,11 @@ extension View {
 
     func backgroundParallaxHeader(
         multiplier: CGFloat = 1,
-        backgroundColor: Color? = nil,
         @ViewBuilder header: @escaping () -> some View
     ) -> some View {
         modifier(
             BackgroundParallaxHeaderModifier(
                 multiplier: multiplier,
-                backgroundColor: backgroundColor,
                 header: header
             )
         )
@@ -33,17 +31,14 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
     @State
     private var headerSize: CGSize = .zero
 
-    private let backgroundColor: Color?
     private let background: Background
     private let multiplier: CGFloat
 
     init(
         multiplier: CGFloat = 1,
-        backgroundColor: Color? = nil,
         @ViewBuilder header: @escaping () -> Background
     ) {
         self.background = header()
-        self.backgroundColor = backgroundColor
         self.multiplier = multiplier
     }
 
@@ -96,7 +91,9 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        ZStack(alignment: .top) {
+//        ZStack(alignment: .top) {
+
+        content.background(alignment: .top) {
             MirrorExtensionView(edges: .top) {
                 background
             }
@@ -114,7 +111,7 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
             }
             .offset(y: offset)
 
-            content
+//            content
         }
     }
 }

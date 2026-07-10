@@ -20,11 +20,9 @@ struct ImageView<_Image: View, Placeholder: View, Failure: View>: View {
     @State
     private var sources: [ImageSource]
 
-//    private var image: (Image) -> _Image
     private var image: (UIImage) -> _Image
     private var pipeline: ImagePipeline
     private var placeholder: (ImageSource) -> Placeholder
-    private var resolvedColor: Binding<Color?>?
     private var failure: Failure
 
     var body: some View {
@@ -32,7 +30,6 @@ struct ImageView<_Image: View, Placeholder: View, Failure: View>: View {
             LazyImage(url: currentSource.url, transaction: .init(animation: .linear)) { state in
                 if state.isLoading {
                     placeholder(currentSource)
-                    //                } else if let stateImage = state.imageContainer?.image {
                 } else if let container = state.imageContainer {
                     if let data = container.data {
                         FastSVGView(data: data)
@@ -66,7 +63,6 @@ extension ImageView where _Image == Image, Placeholder == DefaultPlaceholderView
             image: { Image(uiImage: $0).resizable() },
             pipeline: .shared,
             placeholder: { DefaultPlaceholderView(blurHash: $0.blurHash) },
-            resolvedColor: nil,
             failure: EmptyView()
         )
     }
@@ -96,7 +92,6 @@ extension ImageView {
             image: content,
             pipeline: pipeline,
             placeholder: placeholder,
-            resolvedColor: resolvedColor,
             failure: failure
         )
     }
@@ -109,7 +104,6 @@ extension ImageView {
             image: { content(Image(uiImage: $0).resizable()) },
             pipeline: pipeline,
             placeholder: placeholder,
-            resolvedColor: resolvedColor,
             failure: failure
         )
     }
@@ -126,13 +120,8 @@ extension ImageView {
             image: image,
             pipeline: pipeline,
             placeholder: content,
-            resolvedColor: resolvedColor,
             failure: failure
         )
-    }
-
-    func resolvedColor(_ color: Binding<Color?>) -> Self {
-        copy(modifying: \.resolvedColor, with: color)
     }
 
     func failure<NewFailure: View>(
@@ -143,7 +132,6 @@ extension ImageView {
             image: image,
             pipeline: pipeline,
             placeholder: placeholder,
-            resolvedColor: resolvedColor,
             failure: content()
         )
     }

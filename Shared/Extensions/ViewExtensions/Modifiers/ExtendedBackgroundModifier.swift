@@ -37,12 +37,26 @@ extension View {
             )
         )
     }
+
+    func overlay(
+        alignment: Alignment = .center,
+        extendedBy insets: EdgeInsets,
+        @ViewBuilder overlay: () -> some View
+    ) -> some View {
+        modifier(
+            ExtendedOverlayModifier(
+                alignment: alignment,
+                insets: insets,
+                overlay: overlay
+            )
+        )
+    }
 }
 
 struct ExtendedBackgroundModifier<Background: View>: ViewModifier {
 
     @State
-    private var contentFrame: CGRect = .zero
+    private var contentSize: CGSize = .zero
 
     private let alignment: Alignment
     private let background: Background
@@ -60,12 +74,13 @@ struct ExtendedBackgroundModifier<Background: View>: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .trackingFrame($contentFrame)
+            .trackingSize($contentSize)
             .background(alignment: alignment) {
                 background
                     .frame(
-                        width: contentFrame.width + insets.leading + insets.trailing,
-                        height: contentFrame.height + insets.top + insets.bottom
+                        width: contentSize.width + insets.leading + insets.trailing,
+                        height: contentSize.height + insets.top + insets.bottom,
+                        alignment: alignment
                     )
             }
     }
@@ -74,7 +89,7 @@ struct ExtendedBackgroundModifier<Background: View>: ViewModifier {
 struct ExtendedMaskModifier<Mask: View>: ViewModifier {
 
     @State
-    private var contentFrame: CGRect = .zero
+    private var contentSize: CGSize = .zero
 
     private let alignment: Alignment
     private let insets: EdgeInsets
@@ -92,12 +107,46 @@ struct ExtendedMaskModifier<Mask: View>: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .trackingFrame($contentFrame)
+            .trackingSize($contentSize)
             .mask(alignment: alignment) {
                 mask
                     .frame(
-                        width: contentFrame.width + insets.leading + insets.trailing,
-                        height: contentFrame.height + insets.top + insets.bottom
+                        width: contentSize.width + insets.leading + insets.trailing,
+                        height: contentSize.height + insets.top + insets.bottom,
+                        alignment: alignment
+                    )
+            }
+    }
+}
+
+struct ExtendedOverlayModifier<Overlay: View>: ViewModifier {
+
+    @State
+    private var contentSize: CGSize = .zero
+
+    private let alignment: Alignment
+    private let insets: EdgeInsets
+    private let overlay: Overlay
+
+    init(
+        alignment: Alignment,
+        insets: EdgeInsets,
+        @ViewBuilder overlay: () -> Overlay
+    ) {
+        self.alignment = alignment
+        self.insets = insets
+        self.overlay = overlay()
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .trackingSize($contentSize)
+            .overlay(alignment: alignment) {
+                overlay
+                    .frame(
+                        width: contentSize.width + insets.leading + insets.trailing,
+                        height: contentSize.height + insets.top + insets.bottom,
+                        alignment: alignment
                     )
             }
     }
