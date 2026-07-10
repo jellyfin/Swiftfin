@@ -8,17 +8,14 @@
 
 struct RectangleCorner: OptionSet {
 
-    let rawValue: UInt
+    let rawValue: Int
 
-    static let topLeft = RectangleCorner(rawValue: 1 << 0)
-    static let topRight = RectangleCorner(rawValue: 1 << 1)
-    static let bottomLeft = RectangleCorner(rawValue: 1 << 2)
-    static let bottomRight = RectangleCorner(rawValue: 1 << 3)
+    static let topLeft = Self(rawValue: 1 << 0)
+    static let topRight = Self(rawValue: 1 << 1)
+    static let bottomLeft = Self(rawValue: 1 << 2)
+    static let bottomRight = Self(rawValue: 1 << 3)
 
-    static let allCorners: RectangleCorner = [
-        .topLeft,
-        .topRight,
-        .bottomLeft,
-        .bottomRight,
-    ]
+    static var all: Self {
+        [.topLeft, .topRight, .bottomLeft, .bottomRight]
+    }
 }

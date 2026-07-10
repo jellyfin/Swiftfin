@@ -10,10 +10,12 @@ struct PosterIndicator: OptionSet, Storable {
 
     let rawValue: Int
 
-    static let favorited = PosterIndicator(rawValue: 1 << 0)
-    static let played = PosterIndicator(rawValue: 1 << 1)
-    static let progress = PosterIndicator(rawValue: 1 << 2)
-    static let unplayed = PosterIndicator(rawValue: 1 << 3)
+    static let favorited = Self(rawValue: 1 << 0)
+    static let played = Self(rawValue: 1 << 1)
+    static let progress = Self(rawValue: 1 << 2)
+    static let unplayed = Self(rawValue: 1 << 3)
 
-    static let all: PosterIndicator = [.favorited, .played, .progress, .unplayed]
+    static var all: Self {
+        [.favorited, .played, .progress, .unplayed]
+    }
 }

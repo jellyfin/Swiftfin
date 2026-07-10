@@ -112,7 +112,7 @@ extension Defaults.Keys {
     enum Customization {
 
         static var itemViewType: Key<ItemViewType> {
-            UserKey("itemViewType", default: .compactLogo)
+            UserKey("mediaItemViewType", default: .enhanced)
         }
 
         static var showPosterLabels: Key<Bool> {

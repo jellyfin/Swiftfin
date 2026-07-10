@@ -31,10 +31,6 @@ struct CinematicSelectionContentGroup: ContentGroup {
 
     func body(with viewModel: CinematicSelectionContentGroupViewModel) -> some View {
         SelectionView(viewModel: viewModel)
-            .preference(
-                key: ContentGroupCustomizationKey.self,
-                value: .ignoreSafeAreaTop
-            )
     }
 
     private struct SelectionView: View {
@@ -42,29 +38,11 @@ struct CinematicSelectionContentGroup: ContentGroup {
         @Environment(\.frameForParentView)
         private var frameForParentView
 
-        @Router
-        private var router
-
         @ObservedObject
         var viewModel: CinematicSelectionContentGroupViewModel
 
-        var body: some View {
-            if viewModel.hasResumeItems {
-                CinematicItemSelector(
-                    items: viewModel.resumeViewModel.elements.elements,
-                    action: select
-                ) { item in
-                    topContent(for: item)
-                }
-            } else {
-                CinematicItemSelector(
-                    items: viewModel.recentlyAddedViewModel.elements.elements,
-                    action: select
-                ) { item in
-                    topContent(for: item)
-                }
-            }
-        }
+        @Router
+        private var router
 
         private var parentFrame: CGRect {
             frameForParentView[.scrollView, default: .zero].frame
@@ -93,27 +71,32 @@ struct CinematicSelectionContentGroup: ContentGroup {
             }
         }
 
-        private func titleView(for item: BaseItemDto) -> some View {
-            Text(item.displayTitle)
-                .font(.largeTitle)
-                .fontWeight(.semibold)
-        }
+        var body: some View {
+            let items = viewModel.hasResumeItems ? viewModel.resumeViewModel.elements.elements : viewModel.recentlyAddedViewModel.elements
+                .elements
 
-        private func topContent(for item: BaseItemDto) -> some View {
-            ImageView(itemSelectorImageSource(for: item))
-                .placeholder { _ in
-                    EmptyView()
-                }
-                .failure {
-                    titleView(for: item)
-                }
-                .edgePadding(.leading)
-                .aspectRatio(contentMode: .fit)
-                .frame(height: CinematicSelectionLayout.logoMaxHeight, alignment: .bottomLeading)
-        }
-
-        private func select(_ item: BaseItemDto) {
-            router.route(to: .item(item: item))
+            CinematicItemSelector(
+                items: items
+            ) { item in
+                router.route(to: .item(item: item))
+            } topContent: { item in
+                ImageView(itemSelectorImageSource(for: item))
+                    .placeholder { _ in
+                        EmptyView()
+                    }
+                    .failure {
+                        Text(item.displayTitle)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                    }
+                    .edgePadding(.leading)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: CinematicSelectionLayout.logoMaxHeight, alignment: .bottomLeading)
+            }
+            .preference(
+                key: ContentGroupCustomizationKey.self,
+                value: .ignoreSafeAreaTop
+            )
         }
     }
 }

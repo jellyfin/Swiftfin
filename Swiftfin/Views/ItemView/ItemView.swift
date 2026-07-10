@@ -48,12 +48,10 @@ struct ItemView: View {
         switch provider.item.type {
         case .movie, .series:
             switch itemViewType {
-            case .compactPoster:
-                return CompactPosterScrollView(provider: provider, content: content)
-            case .compactLogo:
-                return CompactLogoScrollView(provider: provider, content: content)
-            case .cinematic:
+            case .enhanced where provider.item.backdropImageTags?.isNotEmpty == true:
                 return CinematicScrollView(provider: provider, content: content)
+            case .enhanced, .simple:
+                return SimpleScrollView(provider: provider, content: content)
             }
         case .person, .musicArtist:
             return CompactPosterScrollView(provider: provider, content: content)

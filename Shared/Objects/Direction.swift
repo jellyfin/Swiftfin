@@ -10,16 +10,26 @@ struct Direction: OptionSet {
 
     let rawValue: Int
 
-    static let up = Direction(rawValue: 1 << 0)
-    static let down = Direction(rawValue: 1 << 1)
-    static let left = Direction(rawValue: 1 << 2)
-    static let right = Direction(rawValue: 1 << 3)
+    static let up = Self(rawValue: 1 << 0)
+    static let down = Self(rawValue: 1 << 1)
+    static let left = Self(rawValue: 1 << 2)
+    static let right = Self(rawValue: 1 << 3)
 
-    static let vertical: Direction = [.up, .down]
-    static let horizontal: Direction = [.left, .right]
-    static let all: Direction = [.up, .down, .left, .right]
+    static var vertical: Self {
+        [.up, .down]
+    }
 
-    static let allButDown: Direction = [.up, .left, .right]
+    static var horizontal: Self {
+        [.left, .right]
+    }
+
+    static var all: Self {
+        [.up, .down, .left, .right]
+    }
+
+    static var allButDown: Self {
+        [.up, .left, .right]
+    }
 
     var isHorizontal: Bool {
         contains(.left) || contains(.right)

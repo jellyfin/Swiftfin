@@ -22,6 +22,8 @@ extension CustomizeViewsSettings {
 
         @Default(.Customization.itemViewType)
         private var itemViewType
+        @Default(.Customization.CinematicItemViewType.usePrimaryImage)
+        private var cinematicItemViewTypeUsePrimaryImage
 
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers
@@ -42,7 +44,17 @@ extension CustomizeViewsSettings {
             Form {
                 if UIDevice.isPhone {
                     Section {
-                        Picker(L10n.items, selection: $itemViewType)
+                        Picker(L10n.type, selection: $itemViewType)
+
+                        if itemViewType == .enhanced {
+                            Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
+                        }
+                    } header: {
+                        Text(L10n.itemView)
+                    } footer: {
+                        if itemViewType == .enhanced {
+                            Text(L10n.usePrimaryImageDescription)
+                        }
                     }
                 }
 

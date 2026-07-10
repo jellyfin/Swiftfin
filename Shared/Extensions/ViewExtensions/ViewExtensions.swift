@@ -215,13 +215,13 @@ extension View {
     @ViewBuilder
     func cornerRadius(
         _ radius: CGFloat,
-        corners: RectangleCorner = .allCorners,
+        corners: RectangleCorner = .all,
         style: RoundedCornerStyle = .circular,
         container: Bool = false
     ) -> some View {
         // Note: UnevenRoundedRectangle with all equal radii has
         // been found to perform worse than RoundedRectangle
-        if corners == .allCorners {
+        if corners == .all {
             let shape = RoundedRectangle(cornerRadius: radius, style: style)
 
             clipShape(shape)
@@ -245,7 +245,7 @@ extension View {
     func cornerRadius(
         ratio: CGFloat,
         of side: KeyPath<CGSize, CGFloat>,
-        corners: RectangleCorner = .allCorners,
+        corners: RectangleCorner = .all,
         style: RoundedCornerStyle = .circular
     ) -> some View {
         modifier(

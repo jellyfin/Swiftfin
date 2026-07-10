@@ -88,9 +88,15 @@ struct MainTabView: View {
                 .tag(tab.item.id)
             }
         }
-        .onChange(of: userSessionManager.pendingDeepLink) { _ in
+        .backport
+        .onChange(of: userSessionManager.pendingDeepLink) {
             routePendingDeepLink(userSessionManager.consumePendingDeepLink())
         }
+        #if os(tvOS)
+        .background(alignment: .top) {
+            FocusedPosterCinematicBackgroundView()
+        }
+        #endif
     }
 }
 

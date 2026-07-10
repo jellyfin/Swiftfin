@@ -12,12 +12,16 @@ struct TrailerSelection: OptionSet, CaseIterable, Displayable, Hashable, Storabl
 
     let rawValue: Int
 
-    static let local = TrailerSelection(rawValue: 1 << 0)
-    static let external = TrailerSelection(rawValue: 1 << 1)
-    static let none = TrailerSelection(rawValue: 1 << 2)
-    static let all: TrailerSelection = [.local, .external]
+    static let local = Self(rawValue: 1 << 0)
+    static let external = Self(rawValue: 1 << 1)
+    static let none = Self(rawValue: 1 << 2)
+    static var all: Self {
+        [.local, .external]
+    }
 
-    static let allCases: [TrailerSelection] = [.none, .local, .external, .all]
+    static var allCases: [Self] {
+        [.none, .local, .external]
+    }
 
     var displayTitle: String {
         switch self {

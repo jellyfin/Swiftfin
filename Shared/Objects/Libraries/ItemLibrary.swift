@@ -253,14 +253,9 @@ private struct ItemLibraryBody<Content: View>: View {
 
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
-    #if os(tvOS)
-    @Default(.Customization.Library.cinematicBackground)
-    private var isCinematicBackgroundEnabled
 
-    @FocusedValue(\.focusedPoster)
-    private var focusedPoster
-
-    #endif
+    @Router
+    private var router
 
     @ObservedObject
     private var viewModel: PagingLibraryViewModel<ItemLibrary>
@@ -300,19 +295,8 @@ private struct ItemLibraryBody<Content: View>: View {
             }
         #if os(tvOS)
             .background(alignment: .top) {
-                if isCinematicBackgroundEnabled {
-                    FadeContentTransitionView(
-                        item: focusedPoster,
-                        debounce: 0.5
-                    ) { item in
-                        ImageView(item?.landscapeImageSources(environment: .default) ?? [])
-                            .failure {
-                                EmptyView()
-                            }
-                            .aspectRatio(contentMode: .fill)
-                    }
-                    .blurred()
-                    .ignoresSafeArea()
+                if !router.isRootOfPath {
+                    FocusedPosterCinematicBackgroundView()
                 }
             }
         #else

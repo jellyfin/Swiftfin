@@ -638,6 +638,8 @@ internal enum L10n {
   internal static let endTime = L10n.tr("Localizable", "endTime", fallback: "End time")
   /// Engineer
   internal static let engineer = L10n.tr("Localizable", "engineer", fallback: "Engineer")
+  /// Enhanced
+  internal static let enhanced = L10n.tr("Localizable", "enhanced", fallback: "Enhanced")
   /// Enter custom bitrate in Mbps
   internal static let enterCustomBitrate = L10n.tr("Localizable", "enterCustomBitrate", fallback: "Enter custom bitrate in Mbps")
   /// Enter custom failed logins limit
@@ -1506,6 +1508,8 @@ internal enum L10n {
   internal static let signoutClose = L10n.tr("Localizable", "signoutClose", fallback: "Sign out on close")
   /// Signs out the last user when Swiftfin has been force closed.
   internal static let signoutCloseFooter = L10n.tr("Localizable", "signoutCloseFooter", fallback: "Signs out the last user when Swiftfin has been force closed.")
+  /// Simple
+  internal static let simple = L10n.tr("Localizable", "simple", fallback: "Simple")
   /// Size
   internal static let size = L10n.tr("Localizable", "size", fallback: "Size")
   /// Slider
