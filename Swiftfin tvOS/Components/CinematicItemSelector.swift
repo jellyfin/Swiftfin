@@ -17,9 +17,6 @@ struct CinematicItemSelector<Item: Poster>: View {
     private var reduceMotion
 
     @FocusState
-    private var isSectionFocused
-
-    @FocusState
     private var isHeroFocused: Bool
 
     @State
@@ -28,15 +25,11 @@ struct CinematicItemSelector<Item: Poster>: View {
     @State
     private var slideStartedAt = Date.now
 
-    @State
-    private var pausesAutoAdvance = false
-
     @Default(.accentColor)
     private var accentColor
 
     private var topContent: (Item) -> any View
     private var itemContent: (Item) -> any View
-    private var trailingContent: () -> any View
     private let action: (Item) -> Void
 
     let items: [Item]
@@ -57,10 +50,7 @@ struct CinematicItemSelector<Item: Poster>: View {
     }
 
     private var shouldAutoAdvance: Bool {
-        heroItems.count > 1 &&
-            !reduceMotion &&
-            !pausesAutoAdvance &&
-            (isHeroFocused || !isSectionFocused)
+        heroItems.count > 1 && !reduceMotion
     }
 
     var body: some View {
@@ -71,7 +61,7 @@ struct CinematicItemSelector<Item: Poster>: View {
         }
         .frame(maxWidth: .infinity)
         .onAppear {
-            updateSelection(index: selectedIndex, resetsProgress: true)
+            updateSelection(index: selectedIndex)
         }
         .onReceive(Timer.publish(every: 0.25, on: .main, in: .common).autoconnect()) { date in
             guard shouldAutoAdvance,
@@ -85,19 +75,9 @@ struct CinematicItemSelector<Item: Poster>: View {
                 return
             }
 
-            updateSelection(index: min(selectedIndex, heroItems.count - 1), resetsProgress: true)
-        }
-        .onChange(of: isHeroFocused) { _, newValue in
-            if !newValue {
-                pausesAutoAdvance = false
-            }
-        }
-        .onChange(of: shouldAutoAdvance) { _, newValue in
-            guard newValue else { return }
-            slideStartedAt = .now
+            updateSelection(index: min(selectedIndex, heroItems.count - 1))
         }
         .focusSection()
-        .focused($isSectionFocused)
     }
 
     private func heroView(for item: Item) -> some View {
@@ -116,15 +96,9 @@ struct CinematicItemSelector<Item: Poster>: View {
                 .padding(.bottom, 100)
 
                 if heroItems.count > 1 {
-                    heroNavigationHints
                     heroPageIndicator
                         .padding(.bottom, 52)
                 }
-
-                trailingContent()
-                    .eraseToAnyView()
-                    .padding(.horizontal, 80)
-                    .padding(.bottom, 100)
             }
             .id(item.hashValue)
             .transition(reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.985)))
@@ -177,21 +151,6 @@ struct CinematicItemSelector<Item: Poster>: View {
                 )
             }
             .allowsHitTesting(false)
-    }
-
-    private var heroNavigationHints: some View {
-        HStack {
-            HeroNavigationHint(systemName: "chevron.left")
-
-            Spacer()
-
-            HeroNavigationHint(systemName: "chevron.right")
-        }
-        .padding(.horizontal, 44)
-        .frame(maxHeight: .infinity, alignment: .center)
-        .opacity(isHeroFocused ? 1 : 0.5)
-        .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: isHeroFocused)
-        .accessibilityHidden(true)
     }
 
     private func heroInformation(for item: Item) -> some View {
@@ -266,24 +225,19 @@ struct CinematicItemSelector<Item: Poster>: View {
 
     private func indicatorProgress(at date: Date) -> CGFloat {
         guard shouldAutoAdvance else { return 0 }
-        guard slideDuration > 0 else { return 1 }
         return min(max(date.timeIntervalSince(slideStartedAt) / slideDuration, 0), 1)
     }
 
     private func manuallyMoveSelection(by offset: Int) {
-        pausesAutoAdvance = true
         moveSelection(by: offset)
     }
 
     private func moveSelection(by offset: Int) {
         guard heroItems.count > 1 else { return }
-        updateSelection(
-            index: (normalizedSelectedIndex + offset + heroItems.count) % heroItems.count,
-            resetsProgress: true
-        )
+        updateSelection(index: (normalizedSelectedIndex + offset + heroItems.count) % heroItems.count)
     }
 
-    private func updateSelection(index: Int, resetsProgress: Bool) {
+    private func updateSelection(index: Int) {
         guard heroItems.isNotEmpty else { return }
 
         let nextIndex = min(max(index, 0), heroItems.count - 1)
@@ -294,26 +248,7 @@ struct CinematicItemSelector<Item: Poster>: View {
             }
         }
 
-        if resetsProgress {
-            slideStartedAt = .now
-        }
-    }
-}
-
-private struct HeroNavigationHint: View {
-
-    let systemName: String
-
-    var body: some View {
-        Image(systemName: systemName)
-            .font(.system(size: 26, weight: .semibold))
-            .foregroundStyle(.white.opacity(0.92))
-            .frame(width: 64, height: 64)
-            .background(.black.opacity(0.34), in: Circle())
-            .overlay {
-                Circle()
-                    .stroke(.white.opacity(0.12), lineWidth: 1)
-            }
+        slideStartedAt = .now
     }
 }
 
@@ -355,7 +290,6 @@ extension CinematicItemSelector {
         self.init(
             topContent: { _ in EmptyView() },
             itemContent: { _ in EmptyView() },
-            trailingContent: { EmptyView() },
             action: action,
             items: items
         )
@@ -370,9 +304,5 @@ extension CinematicItemSelector {
 
     func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
         copy(modifying: \.itemContent, with: content)
-    }
-
-    func trailingContent(@ViewBuilder _ content: @escaping () -> some View) -> Self {
-        copy(modifying: \.trailingContent, with: content)
     }
 }
