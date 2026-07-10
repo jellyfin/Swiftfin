@@ -26,22 +26,30 @@ struct HomeView: View {
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
+                if showRecentlyAdded, viewModel.recentlyAddedViewModel.elements.isNotEmpty {
+                    CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                }
 
                 if viewModel.resumeItems.isNotEmpty {
-                    CinematicResumeView(viewModel: viewModel)
-
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
-
-                    if showRecentlyAdded {
-                        RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                    PosterHStack(
+                        title: L10n.continue.localizedCapitalized,
+                        type: .landscape,
+                        items: viewModel.resumeItems.elements
+                    ) { item in
+                        router.route(to: .item(item: item))
                     }
-                } else {
-                    if showRecentlyAdded {
-                        CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                    .posterOverlay(for: BaseItemDto.self) { item in
+                        LandscapePosterProgressBar(
+                            title: item.progressLabel ?? L10n.continue,
+                            progress: (item.userData?.playedPercentage ?? 0) / 100
+                        )
                     }
+                }
 
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
-                        .safeAreaPadding(.top, 150)
+                NextUpView(viewModel: viewModel.nextUpViewModel)
+
+                if showRecentlyAdded {
+                    RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
                 }
 
                 ForEach(viewModel.libraries) { viewModel in

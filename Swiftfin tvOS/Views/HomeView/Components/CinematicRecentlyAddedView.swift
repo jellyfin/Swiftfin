@@ -49,9 +49,11 @@ extension HomeView {
                             .font(.largeTitle)
                             .fontWeight(.semibold)
                     }
-                    .edgePadding(.leading)
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 200, alignment: .bottomLeading)
+                    .frame(width: 520, height: 120, alignment: .bottomLeading)
+            }
+            .content { item in
+                Text(item.displayTitle)
             }
         }
     }
