@@ -44,6 +44,8 @@ final class HomeViewModel: ViewModel, Stateful {
     private(set) var libraries: [LatestInLibraryViewModel] = []
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
+    @Published
+    var spotlightItems: OrderedSet<BaseItemDto> = []
 
     @Published
     var backgroundStates: Set<BackgroundState> = []
@@ -89,13 +91,16 @@ final class HomeViewModel: ViewModel, Stateful {
                     self?.nextUpViewModel.send(.refresh)
                     self?.recentlyAddedViewModel.send(.refresh)
 
+                    async let spotlightItems = GuamaFlixSpotlightSuggestions.sampledItems(limit: 20)
                     let resumeItems = try await self?.getResumeItems() ?? []
+                    let resolvedSpotlightItems = await spotlightItems
 
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
                         guard let self else { return }
                         self.resumeItems.elements = resumeItems
+                        self.spotlightItems.elements = resolvedSpotlightItems
                         self.backgroundStates.remove(.refresh)
                     }
                 } catch is CancellationError {
@@ -160,15 +165,20 @@ final class HomeViewModel: ViewModel, Stateful {
         await nextUpViewModel.send(.refresh)
         await recentlyAddedViewModel.send(.refresh)
 
-        let resumeItems = try await getResumeItems()
+        async let resumeItems = getResumeItems()
+        async let spotlightItems = GuamaFlixSpotlightSuggestions.sampledItems(limit: 20)
         let libraries = try await getLibraries()
 
         for library in libraries {
             await library.send(.refresh)
         }
 
+        let resolvedResumeItems = try await resumeItems
+        let resolvedSpotlightItems = await spotlightItems
+
         await MainActor.run {
-            self.resumeItems.elements = resumeItems
+            self.resumeItems.elements = resolvedResumeItems
+            self.spotlightItems.elements = resolvedSpotlightItems
             self.libraries = libraries
         }
     }

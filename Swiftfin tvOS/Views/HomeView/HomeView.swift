@@ -13,11 +13,20 @@ import SwiftUI
 
 struct HomeView: View {
 
+    @Environment(\.accessibilityReduceMotion)
+    private var reduceMotion
+
+    @Environment(\.accessibilityReduceTransparency)
+    private var reduceTransparency
+
     @Router
     private var router
 
     @StateObject
     private var viewModel = HomeViewModel()
+
+    @State
+    private var selectedHeroItem: BaseItemDto?
 
     @Default(.Customization.Home.showRecentlyAdded)
     private var showRecentlyAdded
@@ -27,33 +36,112 @@ struct HomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
 
+                if viewModel.spotlightItems.isNotEmpty {
+                    CinematicRecommendedView(
+                        items: viewModel.spotlightItems.elements,
+                        selectionChanged: { selectedHeroItem = $0 }
+                    )
+                }
+
                 if viewModel.resumeItems.isNotEmpty {
-                    CinematicResumeView(viewModel: viewModel)
+                    ContinueWatchingView(viewModel: viewModel)
+                }
 
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
+                NextUpView(viewModel: viewModel.nextUpViewModel)
 
-                    if showRecentlyAdded {
-                        RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-                    }
-                } else {
-                    if showRecentlyAdded {
-                        CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-                    }
-
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
-                        .safeAreaPadding(.top, 150)
+                if showRecentlyAdded {
+                    RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
                 }
 
                 ForEach(viewModel.libraries) { viewModel in
                     LatestInLibraryView(viewModel: viewModel)
                 }
             }
+            .background {
+                scrollingBackdropBlur
+            }
+        }
+    }
+
+    private var scrollingBackdropBlur: some View {
+        ZStack {
+            if reduceTransparency {
+                Color.black.opacity(0.9)
+            } else {
+                BlurView(style: .dark)
+                    .opacity(0.72)
+                Color.black.opacity(0.18)
+            }
+        }
+        .mask {
+            VStack(spacing: 0) {
+                Color.clear
+                    .frame(height: 620)
+
+                LinearGradient(
+                    colors: [.clear, .white],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 160)
+
+                Color.white
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    @ViewBuilder
+    private var heroBackdrop: some View {
+        if let selectedHeroItem {
+            ZStack {
+                ImageView(
+                    selectedHeroItem.cinematicImageSources(maxWidth: 1920, quality: 90) +
+                        selectedHeroItem.landscapeImageSources(maxWidth: 1920, quality: 90)
+                )
+                .image(selectedHeroItem.transform)
+                .placeholder { _ in
+                    Color.black
+                }
+                .failure {
+                    Color.black
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+
+                Color.black.opacity(0.14)
+
+                LinearGradient(
+                    colors: [
+                        .black.opacity(0.72),
+                        .black.opacity(0.24),
+                        .clear,
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+
+                LinearGradient(
+                    colors: [
+                        .clear,
+                        .black.opacity(0.16),
+                        .black.opacity(0.94),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+            .id(selectedHeroItem.hashValue)
+            .transition(.opacity)
+            .allowsHitTesting(false)
         }
     }
 
     var body: some View {
         ZStack {
-            Color.clear
+            Color.black
+
+            heroBackdrop
 
             switch viewModel.state {
             case .content:
@@ -64,6 +152,7 @@ struct HomeView: View {
                 ProgressView()
             }
         }
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.35), value: selectedHeroItem?.id)
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .refreshable {
             viewModel.send(.refresh)

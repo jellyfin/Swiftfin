@@ -24,6 +24,7 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
     // last-focused cast member) by setting the bound value.
     private var focusedItem: FocusState<AnyHashable?>.Binding?
     private var titleFont: Font = .system(size: 32, weight: .semibold)
+    private var horizontalInset: CGFloat
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -37,7 +38,7 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
                         // sections. No-op over dark backgrounds elsewhere.
                         .posterLabelShadow()
                         .accessibility(addTraits: [.isHeader])
-                        .padding(.leading, 50)
+                        .padding(.leading, horizontalInset)
 
                     Spacer()
                 }
@@ -51,8 +52,8 @@ struct PosterHStack<Element: Poster, Data: Collection>: View where Data.Element 
             }
             .clipsToBounds(false)
             .dataPrefix(20)
-            .insets(horizontal: EdgeInsets.edgePadding, vertical: 10)
-            .itemSpacing(EdgeInsets.edgePadding - 20)
+            .insets(horizontal: horizontalInset, vertical: 10)
+            .itemSpacing(max(24, horizontalInset - 20))
             .scrollBehavior(.continuousLeadingEdge)
         }
         .focusSection()
@@ -87,6 +88,7 @@ extension PosterHStack {
         items: Data,
         focusedItem: FocusState<AnyHashable?>.Binding? = nil,
         titleFont: Font = .system(size: 32, weight: .semibold),
+        horizontalInset: CGFloat = EdgeInsets.edgePadding,
         action: @escaping (Element) -> Void,
         @ViewBuilder label: @escaping (Element) -> any View = { PosterButton<Element>.TitleSubtitleContentView(item: $0) }
     ) {
@@ -98,7 +100,8 @@ extension PosterHStack {
             trailingContent: { EmptyView() },
             action: action,
             focusedItem: focusedItem,
-            titleFont: titleFont
+            titleFont: titleFont,
+            horizontalInset: horizontalInset
         )
     }
 

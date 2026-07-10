@@ -24,13 +24,17 @@ extension VideoPlayer.PlaybackControls {
             let isSelect = press.type == .select || raw == 2040
 
             if isBack {
-                if press.phase == .began { SkipSegmentState.shared.dismiss() }
+                if press.phase == .began {
+                    SkipSegmentState.shared.dismiss()
+                }
                 press.resolve(.handled)
                 return
             }
 
             if isSelect {
-                if press.phase == .began { SkipSegmentState.shared.skip() }
+                if press.phase == .began {
+                    SkipSegmentState.shared.skip()
+                }
                 press.resolve(.handled)
                 return
             }

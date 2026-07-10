@@ -142,7 +142,9 @@ struct MainTabView: View {
                         let activeID = tabCoordinator.selectedTabID ?? tabCoordinator.tabs.first?.item.id
                         guard let tab = tabCoordinator.tabs.first(where: { $0.item.id == activeID }) else { return false }
                         // Home: intercept only to pop a pushed page; at the root let Menu exit to the OS.
-                        if tab.item.id == "home" { return tab.coordinator.path.isNotEmpty }
+                        if tab.item.id == "home" {
+                            return tab.coordinator.path.isNotEmpty
+                        }
                         // Every other tab: always intercept (Media/Requests pop a page when deep else go
                         // Home; the rest go straight Home).
                         return true
@@ -158,7 +160,9 @@ struct MainTabView: View {
                             }
                             // At the tab's root: Home is never intercepted here (canGoBack == false), so
                             // only Media/Requests reach this — fall through to Home below.
-                            if tab.item.id == "home" { return }
+                            if tab.item.id == "home" {
+                                return
+                            }
                         }
                         // Media/Requests at their root, and every other non-Home tab → select Home. Leaves
                         // every stack as-is and keeps focus on the tab bar (now on Home).

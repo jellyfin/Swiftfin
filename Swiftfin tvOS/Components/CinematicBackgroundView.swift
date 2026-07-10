@@ -22,6 +22,10 @@ struct CinematicBackgroundView: View {
 
     var body: some View {
         RotateContentView(proxy: proxy)
+            .onAppear {
+                guard viewModel.currentItem == nil, let initialItem else { return }
+                viewModel.select(item: initialItem)
+            }
             .onChange(of: viewModel.currentItem) { _, newItem in
                 proxy.update {
                     ImageView(newItem?.cinematicImageSources(maxWidth: nil) ?? [])
@@ -54,7 +58,7 @@ struct CinematicBackgroundView: View {
                 .store(in: &cancellables)
         }
 
-        func select(item: some Poster) {
+        func select(item: any Poster) {
             currentItemSubject.send(AnyPoster(item))
         }
     }

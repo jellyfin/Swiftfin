@@ -139,7 +139,9 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         case .audio:
 
             // Transcodes contain a single audio track and MUST rebuild.
-            if isTranscoding { return true }
+            if isTranscoding {
+                return true
+            }
 
             guard let newStream = audioStreams.first(where: { $0.index == newIndex }) else { return true }
 
@@ -155,7 +157,9 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
             let oldStream = oldIndex.flatMap { idx in subtitleStreams.first { $0.index == idx } }
 
             // Transitioning away from encoded subtitles always requires a rebuild so the server stops burning them into the video.
-            if oldStream?.deliveryMethod == .encode { return true }
+            if oldStream?.deliveryMethod == .encode {
+                return true
+            }
 
             // Catch if the new stream doesn't exist. If non-existent this will fallback to -1 and disable locally.
             guard let newStream = subtitleStreams.first(where: { $0.index == newIndex }) else { return false }

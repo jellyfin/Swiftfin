@@ -29,7 +29,11 @@ struct PlaybackSpeedPicker: View {
                 selection: selection
                     .map(
                         getter: { value -> Float in
-                            if case .custom = value { Float(0) } else { value.rawValue }
+                            if case .custom = value {
+                                Float(0)
+                            } else {
+                                value.rawValue
+                            }
                         },
                         setter: {
                             PlaybackSpeed(rawValue: $0)
@@ -54,7 +58,11 @@ struct PlaybackSpeedPicker: View {
                 selection: selection
                     .map(
                         getter: { value -> Float in
-                            if case .custom = value { Float(0) } else { value.rawValue }
+                            if case .custom = value {
+                                Float(0)
+                            } else {
+                                value.rawValue
+                            }
                         },
                         setter: {
                             PlaybackSpeed(rawValue: $0)

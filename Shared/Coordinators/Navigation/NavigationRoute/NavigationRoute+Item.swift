@@ -199,22 +199,28 @@ extension NavigationRoute {
     #if os(tvOS)
     /// A virtual collection page (Favorites / Watchlist): the cinematic collection-style detail, with
     /// rows grouped by type (Movies, TV Shows, Actors), filtered by `traits` (e.g. `.isFavorite` / `.likes`).
+    @MainActor
     static func mediaCollection(
         title: String,
         id: String,
         itemTypes: [BaseItemKind],
         traits: [ItemTrait]
     ) -> NavigationRoute {
-        NavigationRoute(
+        var filters = ItemFilterCollection.default
+        filters.itemTypes = itemTypes
+        filters.traits = traits
+
+        let viewModel = ItemLibraryViewModel(
+            title: title,
+            id: id,
+            filters: filters
+        )
+
+        return NavigationRoute(
             id: "mediaCollection-\(id)",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            GuamaFlixItemView(
-                virtualCollection: title,
-                id: id,
-                itemTypes: itemTypes,
-                traits: traits
-            )
+            NativePagingLibraryView(viewModel: viewModel)
         }
     }
     #endif

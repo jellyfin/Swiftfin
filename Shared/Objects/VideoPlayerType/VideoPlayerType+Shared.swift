@@ -11,6 +11,16 @@ import JellyfinAPI
 
 extension VideoPlayerType {
 
+    // MARK: - Hybrid Selection
+
+    static func hybrid(for mediaSource: MediaSourceInfo?) -> VideoPlayerType {
+        guard let videoStreams = mediaSource?.videoStreams else {
+            return .swiftfin
+        }
+
+        return videoStreams.hasHDRVideo ? .native : .swiftfin
+    }
+
     // MARK: - Codec Profiles
 
     @ArrayBuilder<CodecProfile>

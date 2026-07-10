@@ -43,8 +43,9 @@ extension ItemView {
             let bottomColor = viewModel.item.blurHash(for: imageType)?.averageLinearColor ?? Color.secondarySystemFill
 
             GeometryReader { proxy in
-                if proxy.size.height.isZero { EmptyView() }
-                else {
+                if proxy.size.height.isZero {
+                    EmptyView()
+                } else {
                     ImageView(viewModel.item.imageSource(
                         imageType,
                         maxWidth: usePrimaryImage ? proxy.size.width : 0,

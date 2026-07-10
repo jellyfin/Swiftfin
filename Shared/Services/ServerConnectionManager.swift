@@ -95,7 +95,9 @@ final class ServerConnectionManager {
         serverID: String
     ) async -> ServerConnection? {
         for connection in connections {
-            if Task.isCancelled { return nil }
+            if Task.isCancelled {
+                return nil
+            }
 
             do {
                 _ = try await test(

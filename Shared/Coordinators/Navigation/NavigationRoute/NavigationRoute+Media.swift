@@ -69,7 +69,9 @@ extension NavigationRoute {
                 // position (not this user's saved one), so we re-apply it here, AFTER the re-fetch.
                 modifyItem: startTimeTicks.map { ticks in
                     { (built: inout BaseItemDto) in
-                        if built.userData == nil { built.userData = UserItemDataDto() }
+                        if built.userData == nil {
+                            built.userData = UserItemDataDto()
+                        }
                         built.userData?.playbackPositionTicks = ticks
                     }
                 }

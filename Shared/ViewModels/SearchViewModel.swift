@@ -191,8 +191,7 @@ final class SearchViewModel: ViewModel {
         } else {
             parameters.nameStartsWith = filters.letter
                 .map(\.value)
-                .filter { $0 != "#" }
-                .first
+                .first(where: { $0 != "#" })
         }
 
         let request = Paths.getItems(parameters: parameters)

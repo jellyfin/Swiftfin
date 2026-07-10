@@ -11,13 +11,13 @@ import SwiftUI
 
 extension HomeView {
 
-    struct CinematicRecentlyAddedView: View {
+    struct CinematicRecommendedView: View {
 
         @Router
         private var router
 
-        @ObservedObject
-        var viewModel: RecentlyAddedLibraryViewModel
+        let items: [BaseItemDto]
+        let selectionChanged: (BaseItemDto?) -> Void
 
         private func itemSelectorImageSource(for item: BaseItemDto) -> ImageSource {
             if item.type == .episode {
@@ -36,9 +36,10 @@ extension HomeView {
         }
 
         var body: some View {
-            CinematicItemSelector(items: viewModel.elements.elements) { item in
+            CinematicItemSelector(items: items) { item in
                 router.route(to: .item(item: item))
             }
+            .sectionTitle(L10n.recommended.localizedCapitalized)
             .topContent { item in
                 ImageView(itemSelectorImageSource(for: item))
                     .placeholder { _ in
@@ -49,10 +50,10 @@ extension HomeView {
                             .font(.largeTitle)
                             .fontWeight(.semibold)
                     }
-                    .edgePadding(.leading)
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 200, alignment: .bottomLeading)
+                    .frame(width: 520, height: 120, alignment: .bottomLeading)
             }
+            .onSelectionChanged(selectionChanged)
         }
     }
 }

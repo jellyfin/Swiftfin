@@ -747,7 +747,9 @@ extension VideoPlayer {
                 // must NOT wake the transport — otherwise the touch that precedes a Select click reveals the
                 // controls first, and the click then hits the transport instead of skipping. Leaving the
                 // controls hidden lets the Select click reach `handleSelectEnded`'s skip intercept.
-                if SkipSegmentState.shared.isShowing { return }
+                if SkipSegmentState.shared.isShowing {
+                    return
+                }
                 containerState.isPresentingOverlay = true
             } else {
                 containerState.timer.poke()
@@ -819,7 +821,9 @@ extension VideoPlayer {
         /// Route a USER play/pause toggle through SyncPlay when in a Watch Together group (so the explicit
         /// press is broadcast to the group), otherwise change the local player directly as usual.
         private func setUserPlaybackStatus(playing: Bool) {
-            if containerState.onUserPlayPauseIntent?(playing) == true { return }
+            if containerState.onUserPlayPauseIntent?(playing) == true {
+                return
+            }
             manager.setPlaybackRequestStatus(status: playing ? .playing : .paused)
         }
 

@@ -56,7 +56,11 @@ struct PosterImage<Item: Poster>: View {
     var body: some View {
         ZStack {
             Rectangle()
+            #if os(tvOS)
+                .fill(Color(white: 0.08))
+            #else
                 .fill(.complexSecondary)
+            #endif
 
             AlternateLayoutView {
                 Color.clear

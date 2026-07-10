@@ -11,7 +11,7 @@ import SwiftUI
 
 extension HomeView {
 
-    struct CinematicResumeView: View {
+    struct ContinueWatchingView: View {
 
         @Router
         private var router
@@ -19,48 +19,14 @@ extension HomeView {
         @ObservedObject
         var viewModel: HomeViewModel
 
-        private func itemSelectorImageSource(for item: BaseItemDto) -> ImageSource {
-            if item.type == .episode {
-                item.seriesImageSource(
-                    .logo,
-                    maxWidth: UIScreen.main.bounds.width * 0.4,
-                    maxHeight: 200
-                )
-            } else {
-                item.imageSource(
-                    .logo,
-                    maxWidth: UIScreen.main.bounds.width * 0.4,
-                    maxHeight: 200
-                )
-            }
-        }
-
         var body: some View {
-            CinematicItemSelector(items: viewModel.resumeItems.elements) { item in
+            PosterHStack(
+                title: L10n.continue.localizedCapitalized,
+                type: .landscape,
+                items: viewModel.resumeItems.elements,
+                horizontalInset: 80
+            ) { item in
                 router.route(to: .item(item: item))
-            }
-            .topContent { item in
-                ImageView(itemSelectorImageSource(for: item))
-                    .placeholder { _ in
-                        EmptyView()
-                    }
-                    .failure {
-                        Text(item.displayTitle)
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
-                    }
-                    .edgePadding(.leading)
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 200, alignment: .bottomLeading)
-            }
-            .content { item in
-                // TODO: clean up
-                if item.type == .episode {
-                    PosterButton<BaseItemDto>.EpisodeContentSubtitleContent.Subtitle(item: item)
-                } else {
-                    // swiftlint:disable:next hard_coded_display_string
-                    Text(" ")
-                }
             }
             .posterOverlay(for: BaseItemDto.self) { item in
                 LandscapePosterProgressBar(

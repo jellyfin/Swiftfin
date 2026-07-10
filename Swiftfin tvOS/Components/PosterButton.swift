@@ -24,6 +24,9 @@ struct PosterButton<Item: Poster>: View {
     @State
     private var posterSize: CGSize = .zero
 
+    @FocusState
+    private var isFocused: Bool
+
     @Default(.Customization.Indicators.showProgress)
     private var showProgress
 
@@ -81,7 +84,7 @@ struct PosterButton<Item: Poster>: View {
     var body: some View {
         Button(action: action) {
             let overlay = posterOverlayRegistry?(item) ??
-                PosterButton.DefaultOverlay(item: item)
+                PosterButton.DefaultOverlay(item: item, isFocused: isFocused)
                 .eraseToAnyView()
 
             let cornerRadius = Self.cornerRadiusRatio(for: type) * posterSize.width
@@ -91,8 +94,8 @@ struct PosterButton<Item: Poster>: View {
                 // bar hangs below it, and also extends up behind the poster by `cornerRadius` so
                 // it fills the notches left by the poster's rounded bottom corners (no gap).
                 //
-                // Liquid Glass (`glassEffect`) is applied to the POSTER ONLY (and only while
-                // focused) — it adds no scale of its own, so it never touches or desyncs the label.
+                // Focus elevation is applied to the poster only, while the lockup scale below keeps
+                // the poster and its label moving together without adding a bright material plate.
                 poster(overlay: overlay)
                     .trackingSize($posterSize)
                     // A flush-top banner ("UPCOMING" / "REQUEST?") drawn OVER the poster's corner clip,
@@ -116,7 +119,7 @@ struct PosterButton<Item: Poster>: View {
                                 )
                         }
                     }
-                    .modifier(PosterFocusGlass(cornerRadius: cornerRadius))
+                    .modifier(PosterFocusLift(isFocused: isFocused))
                     .padding(.bottom, showsHangingProgressBar ? Self.progressBarHeight : 0)
                     .background(alignment: .bottom) {
                         if showsHangingProgressBar {
@@ -127,8 +130,6 @@ struct PosterButton<Item: Poster>: View {
                             .frame(height: Self.progressBarHeight + cornerRadius)
                         }
                     }
-                    .posterShadow()
-
                 label
                     .eraseToAnyView()
                     // One legibility treatment for EVERY poster label (home, search, collection/actor,
@@ -137,72 +138,45 @@ struct PosterButton<Item: Poster>: View {
                     .posterLabelShadow()
             }
         }
-        // A single custom scale grows the WHOLE lockup (poster + label) together on focus, so the
-        // label grows perfectly in sync with the poster, with no overlap and no glass/background on
-        // the label. The Liquid Glass focus visual lives on the poster only (see PosterFocusGlass).
-        .buttonStyle(PosterFocusScaleStyle())
+        .buttonStyle(ArtworkButtonStyle())
+        .focused($isFocused)
+        .scaleEffect(isFocused ? 1.07 : 1)
+        .animation(.easeOut(duration: 0.18), value: isFocused)
         .focusedValue(\.focusedPoster, AnyPoster(item))
         .accessibilityLabel(item.displayTitle)
         .matchedContextMenu(for: item) {
             EmptyView()
         }
+        .focusEffectDisabled()
     }
 }
 
-/// Scales the whole poster lockup (poster + label) up slightly on focus, so the label grows in
-/// perfect sync with the poster and the spacing between them is preserved (no overlap). No glass
-/// or shadow — just a cheap GPU transform; the focus glass lives on the poster (`PosterFocusGlass`).
-private struct PosterFocusScaleStyle: ButtonStyle {
+/// A button style for artwork-sized controls. The tvOS plain style still supplies a bright
+/// focus material, which becomes a screen-sized white plate when the button is a hero.
+struct ArtworkButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
-        Content(configuration: configuration)
-    }
-
-    private struct Content: View {
-
-        @Environment(\.isFocused)
-        private var isFocused
-
-        let configuration: ButtonStyleConfiguration
-
-        var body: some View {
-            configuration.label
-                .scaleEffect(isFocused ? 1.08 : 1)
-                .animation(.easeOut(duration: 0.2), value: isFocused)
-        }
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.985 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }
 
-/// A glass-style focus rim on the poster: a rounded-rect stroke with a top-down white sheen (like
-/// light catching a glass edge) that **fades in via opacity** on focus, shaped to the poster's
-/// corners. Adds no scale (the lockup scale handles growth) so it can't desync or touch the label.
-///
-/// Why not the system `glassEffect`: applying that effect only-while-focused *adds it to the view
-/// hierarchy* on focus, so SwiftUI plays its built-in "materialize" transition — a split-second
-/// scale/specular shimmer (the "flash"). An opacity fade has no such transition, so this is
-/// flash-free while still reading as glass.
-private struct PosterFocusGlass: ViewModifier {
+/// A restrained tvOS focus treatment: elevation and a small brightness lift, without a white
+/// stroke or material plate that can read as a large selection box on a television.
+private struct PosterFocusLift: ViewModifier {
 
-    let cornerRadius: CGFloat
-
-    @Environment(\.isFocused)
-    private var isFocused
+    let isFocused: Bool
 
     func body(content: Content) -> some View {
         content
-            .overlay {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [.white.opacity(0.85), .white.opacity(0.15)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        ),
-                        lineWidth: 3
-                    )
-                    .opacity(isFocused ? 1 : 0)
-            }
-            .animation(.easeOut(duration: 0.2), value: isFocused)
+            .brightness(isFocused ? 0.035 : 0)
+            .shadow(
+                color: .black.opacity(isFocused ? 0.5 : 0.3),
+                radius: isFocused ? 22 : 4,
+                y: isFocused ? 16 : 2
+            )
+            .animation(.easeOut(duration: 0.18), value: isFocused)
     }
 }
 
@@ -366,10 +340,13 @@ extension PosterButton {
         @Default(.Customization.Indicators.showFavorited)
         private var showFavorited
 
-        @Environment(\.isFocused)
-        private var isFocused
-
         let item: Item
+        let isFocused: Bool
+
+        init(item: Item, isFocused: Bool = false) {
+            self.item = item
+            self.isFocused = isFocused
+        }
 
         private var baseItem: BaseItemDto? {
             item as? BaseItemDto

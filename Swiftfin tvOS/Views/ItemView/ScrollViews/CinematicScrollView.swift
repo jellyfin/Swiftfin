@@ -19,6 +19,9 @@ extension ItemView {
         @StateObject
         private var focusGuide = FocusGuide()
 
+        @StateObject
+        private var itemFocusBridge = GuamaFlixItemFocusBridge()
+
         private let content: Content
 
         init(
@@ -96,6 +99,7 @@ extension ItemView {
                                 }
                         }
                         .environmentObject(focusGuide)
+                        .environmentObject(itemFocusBridge)
                     }
                 }
             }
