@@ -61,7 +61,7 @@ final class HomeViewModel: ViewModel, Stateful {
     private var refreshTask: AnyCancellable?
 
     var nextUpViewModel: NextUpLibraryViewModel = .init()
-    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
+    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init(excludingHomeDiscoveryLibraries: true)
 
     override init() {
         super.init()
@@ -214,6 +214,7 @@ final class HomeViewModel: ViewModel, Stateful {
                 ],
                 using: \.collectionType
             )
+            .filter { !GuamaFlixSpotlightSuggestions.isExcludedLibrary($0) }
             .subtracting(excludedLibraryIDs, using: \.id)
             .map { LatestInLibraryViewModel(parent: $0) }
     }

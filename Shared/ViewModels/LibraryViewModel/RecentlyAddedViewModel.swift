@@ -14,8 +14,14 @@ import JellyfinAPI
 //       *when* new episodes are added to a series?
 final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
+    private let excludesHomeDiscoveryLibraries: Bool
+
     // Necessary because this is paginated and also used on home view
-    init(customPageSize: Int? = nil) {
+    init(
+        customPageSize: Int? = nil,
+        excludingHomeDiscoveryLibraries: Bool = false
+    ) {
+        self.excludesHomeDiscoveryLibraries = excludingHomeDiscoveryLibraries
 
         // Why doesn't `super.init(title:id:pageSize)` init work?
         if let customPageSize {
@@ -27,11 +33,46 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     override func get(page: Int) async throws -> [BaseItemDto] {
 
+        if excludesHomeDiscoveryLibraries {
+            return try await getHomeItems(page: page)
+        }
+
         let parameters = try parameters(for: page, user: authenticatedUser)
         let request = Paths.getItems(parameters: parameters)
         let response = try await send(request)
 
         return response.value.items ?? []
+    }
+
+    private func getHomeItems(page: Int) async throws -> [BaseItemDto] {
+        let user = try authenticatedUser
+        let userViewsParameters = Paths.GetUserViewsParameters(userID: user.id)
+        let userViewsResponse = try await send(Paths.getUserViews(parameters: userViewsParameters))
+        let libraries = (userViewsResponse.value.items ?? [])
+            .filter(GuamaFlixSpotlightSuggestions.isEligibleSpotlightLibrary)
+
+        var libraryItems: [BaseItemDto] = []
+
+        for library in libraries {
+            guard let libraryID = library.id else { continue }
+
+            var parameters = parameters(for: page, user: user)
+            parameters.parentID = libraryID
+            parameters.startIndex = page * pageSize
+
+            let response = try await send(Paths.getItems(parameters: parameters))
+            libraryItems.append(contentsOf: response.value.items ?? [])
+        }
+
+        var seenItemIDs = Set<String>()
+        let sortedItems = libraryItems
+            .sorted { ($0.dateCreated ?? .distantPast) > ($1.dateCreated ?? .distantPast) }
+            .filter { item in
+                guard let id = item.id else { return true }
+                return seenItemIDs.insert(id).inserted
+            }
+
+        return Array(sortedItems.prefix(pageSize))
     }
 
     private func parameters(for page: Int, user: UserState) -> Paths.GetItemsParameters {
