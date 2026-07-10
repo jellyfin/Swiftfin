@@ -30,7 +30,6 @@ extension ItemView {
                             type: .portrait,
                             contentMode: .fit
                         )
-                        .withViewContext(.isOverComplexContent)
                         .frame(width: 130)
                         .accessibilityIgnoresInvertColors()
                         .posterShadow()
@@ -75,7 +74,7 @@ extension ItemView {
         }
 
         var body: some View {
-            BlurredNavigationBarScrollView(isEnabled: false) {
+            ScrollView {
                 VStack(alignment: .leading, spacing: EdgeInsets.edgePadding) {
                     header
 
@@ -83,6 +82,8 @@ extension ItemView {
                 }
                 .edgePadding(.bottom)
             }
+            .ignoresSafeArea(edges: .horizontal)
+            .scrollIndicators(.hidden)
         }
     }
 }

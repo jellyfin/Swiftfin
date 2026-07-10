@@ -253,7 +253,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                 @ViewBuilder header: @escaping () -> some View,
                 @ViewBuilder content: @escaping (Element) -> some View
             ) -> some View {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 15) {
                     Section {
                         CollectionHStack(
                             uniqueElements: elements,
@@ -409,7 +409,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                         Text(header)
                             .font(.headline)
                             .foregroundStyle(.primary)
-                            .lineLimit(2)
+                            .lineLimit(1)
 
                         SeeMoreText(content)
                             .font(.caption)

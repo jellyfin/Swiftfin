@@ -164,29 +164,29 @@ extension ItemView {
                 .edgePadding(.horizontal)
                 .frame(maxWidth: .infinity)
                 .colorScheme(.dark)
-                .backgroundParallaxHeader(
-                    multiplier: 0.3
-                ) {
+                .backgroundParallaxHeader(multiplier: 0.3) {
                     StateAdapter(initialValue: Color.secondarySystemFill) { resolvedColor in
-                        AlternateLayoutView {
-                            Color.clear
-                        } content: {
-                            ImageView(provider.item.imageSource(
-                                .backdrop,
-                                environment: ImageSourceOptions(maxWidth: 1320)
-                            ))
-                            .image { (image: UIImage) in
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .onAppear {
-                                        resolveColor(from: image, binding: resolvedColor)
-                                    }
+                        MirrorExtensionView(edges: .top) {
+                            AlternateLayoutView {
+                                Color.clear
+                            } content: {
+                                ImageView(provider.item.imageSource(
+                                    .backdrop,
+                                    environment: ImageSourceOptions(maxWidth: 1320)
+                                ))
+                                .image { (image: UIImage) in
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .onAppear {
+                                            resolveColor(from: image, binding: resolvedColor)
+                                        }
+                                }
                             }
+                            .aspectRatio(headerAspectRatio, contentMode: .fit)
+                            .accessibilityHidden(true)
                         }
-                        .aspectRatio(headerAspectRatio, contentMode: .fit)
                         .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)
-                        .accessibilityHidden(true)
                     }
                 }
                 .trackingFrame(

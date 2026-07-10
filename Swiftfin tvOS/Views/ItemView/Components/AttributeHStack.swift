@@ -46,11 +46,10 @@ extension ItemView {
         @ViewBuilder
         private func CriticRating() -> some View {
             if let criticRating = item.criticRating {
-                AttributeBadge(
-                    style: .outline,
+                Label {
                     // swiftlint:disable:next hard_coded_display_string
-                    title: Text("\(criticRating, specifier: "%.0f")")
-                ) {
+                    Text("\(criticRating, specifier: "%.0f")")
+                } icon: {
                     if criticRating >= 60 {
                         Image(.tomatoFresh)
                             .symbolRenderingMode(.hierarchical)
@@ -58,28 +57,28 @@ extension ItemView {
                         Image(.tomatoRotten)
                     }
                 }
+                .labelStyle(.attributeBadgeOutline)
             }
         }
 
         @ViewBuilder
         private func CommunityRating() -> some View {
             if let communityRating = item.communityRating {
-                AttributeBadge(
-                    style: .outline,
+                Label {
                     // swiftlint:disable:next hard_coded_display_string
-                    title: Text("\(communityRating, specifier: "%.01f")"),
-                    systemName: "star.fill"
-                )
+                    Text("\(communityRating, specifier: "%.01f")")
+                } icon: {
+                    Image(systemName: "star.fill")
+                }
+                .labelStyle(.attributeBadgeOutline)
             }
         }
 
         @ViewBuilder
         private func OfficialRating() -> some View {
             if let officialRating = item.officialRating {
-                AttributeBadge(
-                    style: .outline,
-                    title: officialRating
-                )
+                EmptyLabel(officialRating)
+                    .labelStyle(.attributeBadgeOutline)
             }
         }
 
@@ -87,27 +86,19 @@ extension ItemView {
         private func VideoQuality() -> some View {
             if let mediaStreams = selectedMediaSource?.mediaStreams {
                 if mediaStreams.has4KVideo {
-                    AttributeBadge(
-                        style: .fill,
-                        title: "4K"
-                    )
+                    EmptyLabel("4K")
+                        .labelStyle(.attributeBadgeFill)
                 } else if mediaStreams.hasHDVideo {
-                    AttributeBadge(
-                        style: .fill,
-                        title: "HD"
-                    )
+                    EmptyLabel("HD")
+                        .labelStyle(.attributeBadgeFill)
                 }
                 if mediaStreams.hasDolbyVision {
-                    AttributeBadge(
-                        style: .fill,
-                        title: "DV"
-                    )
+                    EmptyLabel("DV")
+                        .labelStyle(.attributeBadgeFill)
                 }
                 if mediaStreams.hasHDRVideo {
-                    AttributeBadge(
-                        style: .fill,
-                        title: "HDR"
-                    )
+                    EmptyLabel("HDR")
+                        .labelStyle(.attributeBadgeFill)
                 }
             }
         }
@@ -116,16 +107,12 @@ extension ItemView {
         private func AudioChannels() -> some View {
             if let mediaStreams = selectedMediaSource?.mediaStreams {
                 if mediaStreams.has51AudioChannelLayout {
-                    AttributeBadge(
-                        style: .fill,
-                        title: "5.1"
-                    )
+                    EmptyLabel("5.1")
+                        .labelStyle(.attributeBadgeFill)
                 }
                 if mediaStreams.has71AudioChannelLayout {
-                    AttributeBadge(
-                        style: .fill,
-                        title: "7.1"
-                    )
+                    EmptyLabel("7.1")
+                        .labelStyle(.attributeBadgeFill)
                 }
             }
         }
@@ -135,10 +122,8 @@ extension ItemView {
             if let mediaStreams = selectedMediaSource?.mediaStreams,
                mediaStreams.hasSubtitles
             {
-                AttributeBadge(
-                    style: .outline,
-                    title: "CC"
-                )
+                EmptyLabel("CC")
+                    .labelStyle(.attributeBadgeOutline)
             }
         }
     }

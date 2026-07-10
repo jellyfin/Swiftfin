@@ -91,27 +91,21 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-//        ZStack(alignment: .top) {
-
-        content.background(alignment: .top) {
-            MirrorExtensionView(edges: .top) {
+        content
+            .background(alignment: .top) {
                 background
+                    .trackingSize($headerSize)
+                    .scaleEffect(scaleEffect, anchor: .top)
+                    .background(alignment: .top) {
+                        Color.red
+                            .frame(height: maskHeight + scrollViewSafeAreaInsets.top)
+                    }
+                    .mask(alignment: .top) {
+                        Color.black
+                            .frame(height: maskHeight)
+                            .offset(y: -scrollViewSafeAreaInsets.top)
+                    }
+                    .offset(y: offset)
             }
-            .trackingSize($headerSize)
-//            .onFrameChanged { frame, _ in
-//                if headerFrame == .zero || headerFrame.height.isNaN {
-//                    headerFrame = frame
-//                }
-//            }
-            .scaleEffect(scaleEffect, anchor: .top)
-            .mask(alignment: .top) {
-                Color.black
-                    .frame(height: maskHeight)
-                    .offset(y: -scrollViewSafeAreaInsets.top)
-            }
-            .offset(y: offset)
-
-//            content
-        }
     }
 }

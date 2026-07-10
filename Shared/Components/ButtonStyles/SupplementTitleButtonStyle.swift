@@ -35,8 +35,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                 .labelStyle(
                     CapsuleLabelStyle(
                         insets: .init(vertical: 8, horizontal: 16),
-                        tint: isSelected ? .white : nil,
-                        isInteractive: isFocused
+                        tint: isSelected ? .white : nil
                     )
                 )
         }

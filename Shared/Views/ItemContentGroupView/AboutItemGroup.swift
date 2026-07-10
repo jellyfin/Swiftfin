@@ -177,7 +177,7 @@ struct AboutItemGroup: ContentGroup {
         private let cardAspectRatio: CGFloat = 1.77
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 15) {
                 Section {
                     ScrollView(.horizontal) {
                         HStack(spacing: PosterHStackMetrics.itemSpacing) {

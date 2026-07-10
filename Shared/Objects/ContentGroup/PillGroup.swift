@@ -59,38 +59,40 @@ struct PillGroup<Element: Displayable>: ContentGroup {
         }
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
-                if displayTitle.isNotEmpty {
-                    Text(displayTitle)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .accessibility(addTraits: [.isHeader])
-                        .edgePadding(.leading)
-                }
-
-                ScrollView(.horizontal) {
-                    HStack {
-                        ForEach(elements) { element in
-                            Button {
-                                action(router, element)
-                            } label: {
-                                label(for: element)
-                                    .font(.callout)
-                                    .fontWeight(.semibold)
-                                    .labelStyle(
-                                        CapsuleLabelStyle(
-                                            insets: .init(vertical: 5, horizontal: 10)
+            VStack(alignment: .leading, spacing: 15) {
+                Section {
+                    ScrollView(.horizontal) {
+                        HStack {
+                            ForEach(elements) { element in
+                                Button {
+                                    action(router, element)
+                                } label: {
+                                    label(for: element)
+                                        .font(.callout)
+                                        .fontWeight(.semibold)
+                                        .labelStyle(
+                                            CapsuleLabelStyle(
+                                                insets: .init(vertical: 5, horizontal: 10)
+                                            )
                                         )
-                                    )
+                                }
+                                .foregroundStyle(.primary, .secondary)
                             }
-                            .foregroundStyle(.primary, .secondary)
                         }
+                        .edgePadding(.horizontal)
                     }
-                    .edgePadding(.horizontal)
+                    .scrollIndicators(.hidden)
+                    .backport
+                    .scrollClipDisabled()
+                } header: {
+                    if displayTitle.isNotEmpty {
+                        Text(displayTitle)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .accessibility(addTraits: [.isHeader])
+                            .edgePadding(.horizontal)
+                    }
                 }
-                .scrollIndicators(.hidden)
-                .backport
-                .scrollClipDisabled()
             }
         }
     }

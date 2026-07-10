@@ -169,10 +169,12 @@ extension View {
         shadow(radius: 4, y: 2)
     }
 
+    @ViewBuilder
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
         modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
     }
 
+    @ViewBuilder
     func bottomEdgeGradient(bottomColor: Color) -> some View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }

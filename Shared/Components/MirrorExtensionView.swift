@@ -20,15 +20,10 @@ struct MirrorExtensionView<Content: View>: View {
 
     @ViewBuilder
     private var mirroredContent: some View {
-        ZStack {
-            content
+        content
 
-            content
-                .blur(radius: 5)
-
-//            content
-//                .blur(radius: 20)
-        }
+        content
+            .blur(radius: 5)
     }
 
     var body: some View {

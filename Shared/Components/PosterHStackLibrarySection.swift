@@ -57,7 +57,7 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
 
     var body: some View {
         if viewModel.elements.isNotEmpty {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 15) {
                 Section {
                     PosterHStack(
                         elements: viewModel.elements.elements,

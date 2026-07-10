@@ -225,9 +225,7 @@ extension ItemView {
                     .frame(maxWidth: .infinity)
                     .colorScheme(.dark)
             }
-            .backgroundParallaxHeader(
-                multiplier: 0.3
-            ) {
+            .backgroundParallaxHeader(multiplier: 0.3) {
                 StateAdapter(initialValue: Color.secondarySystemFill) { resolvedColor in
                     AlternateLayoutView {
                         Color.clear

@@ -162,7 +162,7 @@ extension ItemView {
         }
 
         var body: some View {
-            BlurredNavigationBarScrollView(isEnabled: false) {
+            ScrollView {
                 VStack(alignment: .leading, spacing: EdgeInsets.edgePadding) {
                     header
 
@@ -170,6 +170,8 @@ extension ItemView {
                 }
                 .edgePadding(.bottom)
             }
+            .ignoresSafeArea(edges: .horizontal)
+            .scrollIndicators(.hidden)
         }
     }
 }
