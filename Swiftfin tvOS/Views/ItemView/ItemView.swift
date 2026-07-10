@@ -34,7 +34,7 @@ struct ItemView: View {
         provider: ItemContentGroupProvider,
         content: @escaping () -> some View
     ) -> any ScrollContainerView {
-        CinematicScrollView(provider: provider, content: content)
+        RegularEnhancedScrollView(provider: provider, content: content)
     }
 
     @ViewBuilder

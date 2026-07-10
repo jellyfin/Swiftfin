@@ -17,6 +17,7 @@ struct PosterImage<Element: Poster>: View {
 
     private let contentMode: ContentMode
     private let element: Element
+    private var environment: Element.Environment?
     private var pipeline: ImagePipeline
     private let size: PosterDisplayType.Size
     private let displayType: PosterDisplayType
@@ -30,12 +31,13 @@ struct PosterImage<Element: Poster>: View {
         self.contentMode = contentMode
         self.displayType = type
         self.element = item
+        self.environment = nil
         self.pipeline = .shared
         self.size = size
     }
 
     private var imageSources: [ImageSource] {
-        var environment = Element.Environment.default
+        var environment = environment ?? .default
 
         if var environmentWithViewContext = environment as? WithViewContext {
             environmentWithViewContext.viewContext = viewContext
@@ -103,6 +105,10 @@ struct PosterImage<Element: Poster>: View {
 }
 
 extension PosterImage {
+
+    func posterEnvironment(_ environment: Element.Environment) -> Self {
+        copy(modifying: \.environment, with: environment)
+    }
 
     func pipeline(_ pipeline: ImagePipeline) -> Self {
         copy(modifying: \.pipeline, with: pipeline)

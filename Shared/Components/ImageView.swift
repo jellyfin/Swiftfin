@@ -20,37 +20,24 @@ struct ImageView<_Image: View, Placeholder: View, Failure: View>: View {
     @State
     private var sources: [ImageSource]
 
-    private var image: (Image) -> _Image
+//    private var image: (Image) -> _Image
+    private var image: (UIImage) -> _Image
     private var pipeline: ImagePipeline
     private var placeholder: (ImageSource) -> Placeholder
     private var resolvedColor: Binding<Color?>?
     private var failure: Failure
-
-    private func resolveColor(from imageContainer: ImageContainer?) {
-        guard let resolvedColor, let imageContainer else { return }
-
-        Task.detached(priority: .utility) {
-            let color = imageContainer.image.interestingColor()
-
-            await MainActor.run {
-                resolvedColor.wrappedValue = color
-            }
-        }
-    }
 
     var body: some View {
         if let currentSource = sources.first {
             LazyImage(url: currentSource.url, transaction: .init(animation: .linear)) { state in
                 if state.isLoading {
                     placeholder(currentSource)
-                } else if let _image = state.image {
-                    if let data = state.imageContainer?.data {
+                    //                } else if let stateImage = state.imageContainer?.image {
+                } else if let container = state.imageContainer {
+                    if let data = container.data {
                         FastSVGView(data: data)
                     } else {
-                        image(_image.resizable())
-                            .onAppear {
-                                resolveColor(from: state.imageContainer)
-                            }
+                        image(container.image)
                     }
                 } else if state.error != nil {
                     failure
@@ -76,7 +63,7 @@ extension ImageView where _Image == Image, Placeholder == DefaultPlaceholderView
     init(_ sources: [ImageSource]) {
         self.init(
             sources: sources.compacted(using: \.url),
-            image: { $0 },
+            image: { Image(uiImage: $0).resizable() },
             pipeline: .shared,
             placeholder: { DefaultPlaceholderView(blurHash: $0.blurHash) },
             resolvedColor: nil,
@@ -102,11 +89,24 @@ extension ImageView where _Image == Image, Placeholder == DefaultPlaceholderView
 extension ImageView {
 
     func image<NewImage: View>(
-        @ViewBuilder _ content: @escaping (Image) -> NewImage
+        @ViewBuilder _ content: @escaping (UIImage) -> NewImage
     ) -> ImageView<NewImage, Placeholder, Failure> {
         ImageView<NewImage, Placeholder, Failure>(
             sources: sources,
             image: content,
+            pipeline: pipeline,
+            placeholder: placeholder,
+            resolvedColor: resolvedColor,
+            failure: failure
+        )
+    }
+
+    func image<NewImage: View>(
+        @ViewBuilder _ content: @escaping (Image) -> NewImage
+    ) -> ImageView<NewImage, Placeholder, Failure> {
+        ImageView<NewImage, Placeholder, Failure>(
+            sources: sources,
+            image: { content(Image(uiImage: $0).resizable()) },
             pipeline: pipeline,
             placeholder: placeholder,
             resolvedColor: resolvedColor,
@@ -150,14 +150,6 @@ extension ImageView {
 }
 
 // MARK: Defaults
-
-struct DefaultFailureView: View {
-
-    var body: some View {
-        Color.secondarySystemFill
-            .opacity(0.75)
-    }
-}
 
 struct DefaultPlaceholderView: View {
 

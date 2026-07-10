@@ -97,7 +97,13 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                     }
                 }
                 #if os(iOS)
-                .labelStyle(.episodeSelector)
+                .labelStyle(
+                    CapsuleLabelStyle(
+                        insets: .init(vertical: 5, horizontal: 10),
+                        isIconTrailing: true
+                    )
+                )
+                .font(.headline)
                 #endif
             }
         }

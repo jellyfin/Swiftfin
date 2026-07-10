@@ -173,15 +173,6 @@ extension View {
         modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
     }
 
-    func backgroundParallaxHeader(
-        _ scrollViewOffset: Binding<CGFloat>,
-        height: CGFloat,
-        multiplier: CGFloat = 1,
-        @ViewBuilder header: @escaping () -> some View
-    ) -> some View {
-        modifier(BackgroundParallaxHeaderModifier(scrollViewOffset, height: height, multiplier: multiplier, header: header))
-    }
-
     func bottomEdgeGradient(bottomColor: Color) -> some View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }

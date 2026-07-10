@@ -61,6 +61,27 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     @ContentGroupBuilder
     private func _makeGroups(item: BaseItemDto, itemID: String) async throws -> [any ContentGroup] {
 
+        if let birthday = item.birthday?.formatted(date: .long, time: .omitted) {
+            LabeledContentGroup(
+                L10n.born,
+                value: birthday
+            )
+        }
+
+        if let deathday = item.deathday?.formatted(date: .long, time: .omitted) {
+            LabeledContentGroup(
+                L10n.died,
+                value: deathday
+            )
+        }
+
+        if let birthplace = item.birthplace {
+            LabeledContentGroup(
+                L10n.birthplace,
+                value: birthplace
+            )
+        }
+
         if item.type == .series {
             SeriesEpisodeContentGroup(
                 series: item,

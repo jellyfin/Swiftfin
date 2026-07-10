@@ -24,12 +24,11 @@ extension ItemView {
         private var taglineLineLimit: Int?
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 5) {
 
                 if let firstTagline = item.taglines?.first {
                     Text(firstTagline)
-                        .font(.body)
-                        .fontWeight(.semibold)
+                        .fontWeight(.bold)
                         .multilineTextAlignment(.leading)
                         .lineLimit(taglineLineLimit)
                 }
@@ -43,30 +42,8 @@ extension ItemView {
                     }
                     .buttonStyle(.plain)
                 }
-
-                if let birthday = item.birthday?.formatted(date: .long, time: .omitted) {
-                    LabeledContent(
-                        L10n.born,
-                        value: birthday
-                    )
-                }
-
-                if let deathday = item.deathday?.formatted(date: .long, time: .omitted) {
-                    LabeledContent(
-                        L10n.died,
-                        value: deathday
-                    )
-                }
-
-                if let birthplace = item.birthplace {
-                    LabeledContent(
-                        L10n.birthplace,
-                        value: birthplace
-                    )
-                }
             }
             .font(.footnote)
-            .labeledContentStyle(.itemAttribute)
         }
     }
 }

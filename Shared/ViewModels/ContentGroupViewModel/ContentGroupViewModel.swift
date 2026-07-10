@@ -80,6 +80,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         if StateTask.isBackground {
+            try await Task.sleep(for: .seconds(3))
             try await backgroundRefresh()
         } else {
             try await fullRefresh()

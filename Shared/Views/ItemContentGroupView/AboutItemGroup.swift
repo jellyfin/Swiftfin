@@ -179,7 +179,7 @@ struct AboutItemGroup: ContentGroup {
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
                 Section {
-                    ScrollView(.horizontal, showsIndicators: false) {
+                    ScrollView(.horizontal) {
                         HStack(spacing: UIDevice.isPhone ? EdgeInsets.edgePadding / 2 : 40) {
                             descriptionCard
 
@@ -198,6 +198,7 @@ struct AboutItemGroup: ContentGroup {
                         }
                         .edgePadding(.horizontal)
                     }
+                    .scrollIndicators(.hidden)
                     .backport
                     .scrollClipDisabled()
                     #if os(tvOS)

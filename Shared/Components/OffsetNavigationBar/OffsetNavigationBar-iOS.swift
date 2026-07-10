@@ -11,30 +11,20 @@ import SwiftUI
 
 struct OffsetNavigationBar<Content: View>: View {
 
-    @Environment(\.frameForParentView)
-    private var frameForParentView
-
     private let content: Content
-    private let headerMaxY: CGFloat?
-    private let start: CGFloat
+    private let isEnabled: Bool
 
     init(
-        headerMaxY: CGFloat?,
-        start: CGFloat = 25,
+        isEnabled: Bool,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.content = content()
-        self.headerMaxY = headerMaxY
-        self.start = start
+        self.isEnabled = isEnabled
     }
 
     var body: some View {
-        if let headerMaxY {
-            HeaderFrameNavigationBarOffsetView(
-                headerOffset: headerMaxY,
-                start: frameForParentView[.scrollView, default: .zero].safeAreaInsets.top + start,
-                end: frameForParentView[.scrollView, default: .zero].safeAreaInsets.top
-            ) {
+        if isEnabled {
+            NavigationBarTitleHiddenView {
                 content
             }
             .ignoresSafeArea()
@@ -44,75 +34,44 @@ struct OffsetNavigationBar<Content: View>: View {
     }
 }
 
-private struct HeaderFrameNavigationBarOffsetView<Content: View>: UIViewControllerRepresentable {
+private struct NavigationBarTitleHiddenView<Content: View>: UIViewControllerRepresentable {
 
     private let content: Content
-    private let headerOffset: CGFloat
-    private let start: CGFloat
-    private let end: CGFloat
 
     init(
-        headerOffset: CGFloat,
-        start: CGFloat,
-        end: CGFloat,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.content = content()
-        self.headerOffset = headerOffset
-        self.start = start
-        self.end = end
     }
 
-    func makeUIViewController(context: Context) -> HeaderFrameNavigationBarOffsetHostingController<Content> {
-        HeaderFrameNavigationBarOffsetHostingController<Content>(rootView: content)
+    func makeUIViewController(context: Context) -> NavigationBarTitleHiddenHostingController<Content> {
+        NavigationBarTitleHiddenHostingController<Content>(rootView: content)
     }
 
-    func updateUIViewController(_ uiViewController: HeaderFrameNavigationBarOffsetHostingController<Content>, context: Context) {
-        uiViewController.scrollViewDidScroll(
-            headerOffset,
-            start: start,
-            end: end
-        )
+    func updateUIViewController(_ uiViewController: NavigationBarTitleHiddenHostingController<Content>, context: Context) {
+        uiViewController.hideNavigationTitle()
     }
 }
 
-private class HeaderFrameNavigationBarOffsetHostingController<Content: View>: UIHostingController<Content> {
+private class NavigationBarTitleHiddenHostingController<Content: View>: UIHostingController<Content> {
 
-    private var lastAlpha: CGFloat = 0
     private var hasCalledWillDisappear = false
-
-    private lazy var blurView: UIVisualEffectView = {
-        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
-        blurView.translatesAutoresizingMaskIntoConstraints = false
-        return blurView
-    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = nil
-        view.addSubview(blurView)
-        blurView.alpha = 0
-
-        NSLayoutConstraint.activate([
-            blurView.topAnchor.constraint(equalTo: view.topAnchor),
-            blurView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            blurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            blurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
     }
 
-    func scrollViewDidScroll(_ offset: CGFloat, start: CGFloat, end: CGFloat) {
+    func hideNavigationTitle() {
         guard !hasCalledWillDisappear else { return }
 
-        let diff = end - start
-        let currentProgress = (offset - start) / diff
-        let alpha = clamp(currentProgress, min: 0, max: 1)
+        let hiddenTitleColor = UIColor.label.withAlphaComponent(0)
 
         navigationController?.navigationBar
-            .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(alpha)]
-        blurView.alpha = alpha
-        lastAlpha = alpha
+            .titleTextAttributes = [NSAttributedString.Key.foregroundColor: hiddenTitleColor]
+        navigationController?.navigationBar
+            .largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: hiddenTitleColor]
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -120,8 +79,7 @@ private class HeaderFrameNavigationBarOffsetHostingController<Content: View>: UI
 
         hasCalledWillDisappear = false
 
-        navigationController?.navigationBar
-            .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(lastAlpha)]
+        hideNavigationTitle()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
     }
@@ -132,6 +90,7 @@ private class HeaderFrameNavigationBarOffsetHostingController<Content: View>: UI
         hasCalledWillDisappear = true
 
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.shadowImage = nil
     }

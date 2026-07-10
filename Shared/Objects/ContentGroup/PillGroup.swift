@@ -11,9 +11,9 @@ import SwiftUI
 
 struct PillGroup<Element: Displayable>: ContentGroup {
 
-    let action: (Router.Wrapper, Element) -> Void
-    let displayTitle: String
-    let elements: [Element]
+    private let action: (Router.Wrapper, Element) -> Void
+    private let displayTitle: String
+    private let elements: [Element]
     let id: String
 
     var _shouldBeResolved: Bool {
@@ -54,7 +54,7 @@ struct PillGroup<Element: Displayable>: ContentGroup {
             if let imageable = element as? SystemImageable {
                 Label(element.displayTitle, systemImage: imageable.systemImage)
             } else {
-                Text(element.displayTitle)
+                EmptyLabel(element.displayTitle)
             }
         }
 
@@ -68,21 +68,21 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                         .edgePadding(.leading)
                 }
 
-                ScrollView(.horizontal, showsIndicators: false) {
+                ScrollView(.horizontal) {
                     HStack {
-                        ForEach(Array(elements.enumerated()), id: \.offset) { _, element in
+                        ForEach(elements) { element in
                             Button {
                                 action(router, element)
                             } label: {
                                 label(for: element)
-                                    .font(.callout)
+                                    .font(.body)
                                     .fontWeight(.semibold)
-                                    .foregroundStyle(.primary, .secondary)
-                                    .padding(8)
-                                    .background {
-                                        Color.systemFill
-                                            .cornerRadius(10)
-                                    }
+                                    .foregroundStyle(.white)
+                                    .labelStyle(
+                                        CapsuleLabelStyle(
+                                            insets: .init(vertical: 5, horizontal: 10)
+                                        )
+                                    )
                             }
                             .foregroundStyle(.primary, .secondary)
                         }
@@ -90,6 +90,8 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                     .edgePadding(.horizontal)
                 }
                 .scrollIndicators(.hidden)
+                .backport
+                .scrollClipDisabled()
             }
         }
     }

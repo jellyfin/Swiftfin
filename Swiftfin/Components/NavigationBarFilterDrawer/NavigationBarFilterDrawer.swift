@@ -21,7 +21,7 @@ struct NavigationBarFilterDrawer: View {
     let types: [ItemFilterType]
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        ScrollView(.horizontal) {
             HStack {
                 if viewModel.currentFilters.isNotEmpty {
                     Menu(L10n.reset, systemImage: "line.3.horizontal.decrease") {
@@ -42,11 +42,7 @@ struct NavigationBarFilterDrawer: View {
                             )
                         )
                     } label: {
-                        Label {
-                            Text(type.displayTitle)
-                        } icon: {
-                            EmptyView()
-                        }
+                        EmptyLabel(type.displayTitle)
                     }
                     .foregroundStyle(.primary, .secondary)
                     .isHighlighted(viewModel.isFilterSelected(type: type))
@@ -56,5 +52,8 @@ struct NavigationBarFilterDrawer: View {
             .padding(.bottom, 5)
             .labelStyle(NavigationDrawerLabelStyle())
         }
+        .scrollIndicators(.hidden)
+        .backport
+        .scrollClipDisabled()
     }
 }

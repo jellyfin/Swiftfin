@@ -16,11 +16,16 @@ struct BottomEdgeGradientModifier: ViewModifier {
         VStack(spacing: 0) {
             content
                 .overlay {
-                    bottomColor
-                        .maskLinearGradient {
-                            (location: 0.8, opacity: 0)
-                            (location: 0.95, opacity: 1)
-                        }
+                    LinearGradient(
+                        stops: [
+                            .init(color: .clear, location: 0.45),
+                            .init(color: bottomColor.opacity(0.35), location: 0.72),
+                            .init(color: bottomColor, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom,
+//                        curve: .smootherstep
+                    )
                 }
 
             bottomColor

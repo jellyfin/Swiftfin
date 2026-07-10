@@ -84,32 +84,6 @@ struct TrackingFrameModifier<Key: PreferenceKey>: ViewModifier where Key.Value =
     }
 }
 
-#if os(iOS)
-private struct ScrollViewHeaderOffsetOpacityModifier: ViewModifier {
-
-    @Environment(\.frameForParentView)
-    private var frameForParentView
-
-    let start: CGFloat
-    let end: CGFloat
-
-    private var opacity: CGFloat {
-        let end = frameForParentView[.scrollView, default: .zero].safeAreaInsets.top + end
-        let start = end + start
-        let offset = frameForParentView[.scrollViewHeader, default: .zero].frame.maxY
-
-        return clamp((offset - end) / (start - end), min: 0, max: 1)
-    }
-
-    func body(content: Content) -> some View {
-        content.overlay {
-            Color.systemBackground
-                .opacity(1 - opacity)
-        }
-    }
-}
-#endif
-
 extension View {
 
     @ViewBuilder
@@ -189,17 +163,5 @@ extension View {
             sizeBinding.wrappedValue = $0
             safeAreaInsetBinding.wrappedValue = $1
         }
-    }
-
-    @ViewBuilder
-    func scrollViewHeaderOffsetOpacity(
-        start: CGFloat = 100,
-        end: CGFloat = 25
-    ) -> some View {
-        #if os(iOS)
-        modifier(ScrollViewHeaderOffsetOpacityModifier(start: start, end: end))
-        #else
-        self
-        #endif
     }
 }

@@ -8,31 +8,31 @@
 
 import SwiftUI
 
-struct LabeledContentGroup<Style: LabeledContentStyle>: ContentGroup {
+struct LabeledContentGroup: ContentGroup {
 
     let displayTitle: String
     let id: String
-    let style: Style
     let value: String
 
     init(
         _ title: String,
-        value: String,
-        style: Style
+        value: String
     ) {
         self.displayTitle = title
         self.id = UUID().uuidString
-        self.style = style
         self.value = value
     }
 
     func body(with viewModel: Empty) -> some View {
-        LabeledContent {
-            Text(value)
-        } label: {
+        VStack(alignment: .leading, spacing: 8) {
             Text(displayTitle)
+                .font(.headline)
+                .foregroundStyle(.primary)
+
+            Text(value)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
         }
-        .labeledContentStyle(style)
         .edgePadding(.horizontal)
     }
 }

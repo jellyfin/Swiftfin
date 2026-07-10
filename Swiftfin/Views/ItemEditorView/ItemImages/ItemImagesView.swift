@@ -178,7 +178,13 @@ struct ItemImagesView: View {
                 selectedType.displayTitle,
                 systemImage: "chevron.down"
             )
-            .labelStyle(.episodeSelector)
+            .labelStyle(
+                CapsuleLabelStyle(
+                    insets: .init(vertical: 5, horizontal: 10),
+                    isIconTrailing: true
+                )
+            )
+            .font(.headline)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
