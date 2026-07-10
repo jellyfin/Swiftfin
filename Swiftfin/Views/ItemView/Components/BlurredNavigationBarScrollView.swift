@@ -16,18 +16,18 @@ extension ItemView {
         private var frameForParentView
 
         private let content: Content
-        private let usesOffsetNavigationBar: Bool
+        private let isEnabled: Bool
 
         init(
-            usesOffsetNavigationBar: Bool = true,
+            isEnabled: Bool = true,
             @ViewBuilder content: @escaping () -> Content
         ) {
             self.content = content()
-            self.usesOffsetNavigationBar = usesOffsetNavigationBar
+            self.isEnabled = isEnabled
         }
 
         var body: some View {
-            OffsetNavigationBar(isEnabled: usesOffsetNavigationBar) {
+            OffsetNavigationBar(isEnabled: isEnabled) {
                 _Body { content }
             }
             .trackingFrame(for: .scrollView)

@@ -34,15 +34,13 @@ struct NavigationBarFilterDrawer: View {
                 }
 
                 ForEach(types, id: \.self) { type in
-                    Button {
+                    Button(type.displayTitle, systemImage: "chevron.down") {
                         router.route(
                             to: .filter(
                                 type: type,
                                 viewModel: viewModel
                             )
                         )
-                    } label: {
-                        EmptyLabel(type.displayTitle)
                     }
                     .foregroundStyle(.primary, .secondary)
                     .isHighlighted(viewModel.isFilterSelected(type: type))

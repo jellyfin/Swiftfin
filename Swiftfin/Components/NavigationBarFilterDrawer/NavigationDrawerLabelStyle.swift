@@ -30,7 +30,7 @@ struct NavigationDrawerLabelStyle: LabelStyle {
             spacing: 2,
             tint: isHighlighted ? .accentColor : nil,
             isTitleVisible: !isIconOnly,
-            showsDisclosureIndicator: true
+            isIconTrailing: !isIconOnly
         )
         .makeBody(configuration: configuration)
         .font(.footnote)

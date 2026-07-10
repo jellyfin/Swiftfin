@@ -253,7 +253,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                 @ViewBuilder header: @escaping () -> some View,
                 @ViewBuilder content: @escaping (Element) -> some View
             ) -> some View {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 20) {
                     Section {
                         CollectionHStack(
                             uniqueElements: elements,

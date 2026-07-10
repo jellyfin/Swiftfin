@@ -17,27 +17,21 @@ struct CapsuleLabelStyle: LabelStyle {
     let insets: EdgeInsets
     let spacing: CGFloat
     let tint: Color?
-    let isInteractive: Bool
     let isTitleVisible: Bool
     let isIconTrailing: Bool
-    let showsDisclosureIndicator: Bool
 
     init(
         insets: EdgeInsets,
         spacing: CGFloat = 4,
         tint: Color? = nil,
-        isInteractive: Bool = false,
         isTitleVisible: Bool = true,
-        isIconTrailing: Bool = false,
-        showsDisclosureIndicator: Bool = false
+        isIconTrailing: Bool = false
     ) {
         self.insets = insets
         self.spacing = spacing
         self.tint = tint
-        self.isInteractive = isInteractive
         self.isTitleVisible = isTitleVisible
         self.isIconTrailing = isIconTrailing
-        self.showsDisclosureIndicator = showsDisclosureIndicator
     }
 
     func makeBody(configuration: Configuration) -> some View {
@@ -53,25 +47,12 @@ struct CapsuleLabelStyle: LabelStyle {
             if isIconTrailing {
                 configuration.icon
             }
-
-            if showsDisclosureIndicator {
-                ZStack {
-                    // Capture the title's font when the title is hidden.
-                    // swiftlint:disable:next hard_coded_display_string
-                    Text(" ")
-                        .hidden()
-
-                    Image(systemName: "chevron.down")
-                        .font(.caption)
-                }
-            }
         }
         .padding(insets)
         .modifier(
             CapsuleLabelAppearanceModifier(
                 isLiquidGlassEnabled: isLiquidGlassEnabled,
-                tint: tint,
-                isInteractive: isInteractive
+                tint: tint
             )
         )
     }
@@ -81,7 +62,6 @@ private struct CapsuleLabelAppearanceModifier: ViewModifier {
 
     let isLiquidGlassEnabled: Bool
     let tint: Color?
-    let isInteractive: Bool
 
     func body(content: Content) -> some View {
         #if os(tvOS)
@@ -130,7 +110,7 @@ private struct CapsuleLabelAppearanceModifier: ViewModifier {
             .glassEffect(
                 .regular
                     .tint(tint)
-                    .interactive(isInteractive),
+                    .interactive(),
                 in: Capsule()
             )
             .overlay {

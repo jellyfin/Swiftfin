@@ -77,7 +77,6 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                                 label(for: element)
                                     .font(.callout)
                                     .fontWeight(.semibold)
-                                    .foregroundStyle(.white)
                                     .labelStyle(
                                         CapsuleLabelStyle(
                                             insets: .init(vertical: 5, horizontal: 10)

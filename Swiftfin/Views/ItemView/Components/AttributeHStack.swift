@@ -37,7 +37,8 @@ extension ItemView {
                         }
                     }
                 }
-                .foregroundStyle(Color(UIColor.darkGray))
+                .foregroundStyle(.secondary)
+//                .foregroundStyle(Color(UIColor.darkGray))
                 .lineLimit(1)
             }
         }

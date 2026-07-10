@@ -46,13 +46,6 @@ extension ItemView {
             }
         }
 
-        private var headerImageSource: ImageSource {
-            headerImageItem.imageSource(
-                imageType,
-                environment: ImageSourceOptions(maxWidth: 1920)
-            )
-        }
-
         @ViewBuilder
         private var logo: some View {
             ImageView(
@@ -61,6 +54,13 @@ extension ItemView {
                     environment: ImageSourceOptions(maxHeight: 70)
                 )
             )
+            .image { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 70)
+//                    .frame(maxWidth: .infinity, maxHeight: 70, alignment: .bottomLeading)
+            }
             .placeholder { _ in
                 EmptyView()
             }
@@ -73,14 +73,53 @@ extension ItemView {
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(.primary)
             }
-            .aspectRatio(contentMode: .fit)
-            .frame(height: 70, alignment: .bottom)
+        }
+
+        @ViewBuilder
+        private func parentButton(_ title: String, id: String) -> some View {
+            Button {
+                router.route(to: .item(id: id))
+            } label: {
+                Label {
+                    Text(title)
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(1)
+                } icon: {
+                    Image(systemName: "chevron.forward")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .font(.callout)
+                .fontWeight(.semibold)
+            }
+            .foregroundStyle(.primary, .secondary)
+            .labelStyle(
+                CapsuleLabelStyle(
+                    insets: .init(vertical: 5, horizontal: 10),
+                    isIconTrailing: true
+                )
+            )
         }
 
         @ViewBuilder
         private var overlay: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                 VStack(alignment: .leading, spacing: 10) {
+
+                    switch provider.item.type {
+                    case .episode:
+                        if let parentID = provider.item.seriesID, let parentTitle = provider.item.parentTitle {
+                            parentButton(parentTitle, id: parentID)
+                        }
+                    case .liveTvProgram:
+                        if let channelID = provider.item.channelID, let channelName = provider.item.channelName {
+                            parentButton(channelName, id: channelID)
+                        }
+                    default:
+                        EmptyView()
+                    }
+
                     logo
 
                     VStack(alignment: .leading, spacing: 5) {
@@ -124,6 +163,10 @@ extension ItemView {
                             if let runtime = provider.item.runtime {
                                 Text(runtime, format: .hourMinuteAbbreviated)
                             }
+
+                            if let seasonEpisodeLabel = provider.item.seasonEpisodeLabel {
+                                Text(seasonEpisodeLabel)
+                            }
                         }
                         .font(.caption)
                         .fontWeight(.semibold)
@@ -152,14 +195,10 @@ extension ItemView {
                     .fill(Material.ultraThin)
                     .mask {
                         EasedGradient(
-                            stops: [
-                                .init(color: .clear, location: 0),
-                                .init(color: .white, location: 0.5),
-                                .init(color: .white, location: 1),
-                            ],
+                            colors: [.clear, .white],
                             startPoint: .top,
                             endPoint: .bottom,
-                            curve: .smootherstep
+                            curve: .easeOut
                         )
                     }
             }
@@ -193,23 +232,23 @@ extension ItemView {
                     AlternateLayoutView {
                         Color.clear
                     } content: {
-                        ImageView(headerImageSource)
-                            .image { (image: UIImage) in
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .aspectRatio(1.77, contentMode: .fill)
-                                    .onAppear {
-                                        resolveColor(from: image, binding: resolvedColor)
-                                    }
-                            }
-                            .clipped()
-                            .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
+                        ImageView(headerImageItem.imageSource(
+                            imageType,
+                            environment: ImageSourceOptions(maxWidth: 1920)
+                        ))
+                        .image { (image: UIImage) in
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(1.77, contentMode: .fill)
+                                .onAppear {
+                                    resolveColor(from: image, binding: resolvedColor)
+                                }
+                        }
                     }
                     .aspectRatio(headerAspectRatio, contentMode: .fit)
                     .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)
                     .accessibilityHidden(true)
                 }
-                .id(headerImageSource.url?.hashValue)
             }
             .trackingFrame(
                 for: .scrollViewHeader,

@@ -75,7 +75,7 @@ extension ItemView {
         }
 
         var body: some View {
-            BlurredNavigationBarScrollView(usesOffsetNavigationBar: false) {
+            BlurredNavigationBarScrollView(isEnabled: false) {
                 VStack(alignment: .leading, spacing: EdgeInsets.edgePadding) {
                     header
 

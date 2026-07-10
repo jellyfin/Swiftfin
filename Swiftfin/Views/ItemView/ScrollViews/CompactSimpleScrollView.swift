@@ -27,25 +27,28 @@ extension ItemView {
         @ViewBuilder
         private func parentButton(_ title: String, id: String) -> some View {
             Button {
-                router.route(
-                    to: .item(
-                        id: id
-                    )
-                )
+                router.route(to: .item(id: id))
             } label: {
-                HStack(spacing: 2) {
+                Label {
                     Text(title)
                         .font(.headline)
                         .multilineTextAlignment(.center)
-                        .lineLimit(2)
-
+                        .lineLimit(1)
+                } icon: {
                     Image(systemName: "chevron.forward")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
+                .font(.callout)
                 .fontWeight(.semibold)
             }
             .foregroundStyle(.primary, .secondary)
+            .labelStyle(
+                CapsuleLabelStyle(
+                    insets: .init(vertical: 5, horizontal: 10),
+                    isIconTrailing: true
+                )
+            )
         }
 
         @ViewBuilder
@@ -159,7 +162,7 @@ extension ItemView {
         }
 
         var body: some View {
-            BlurredNavigationBarScrollView(usesOffsetNavigationBar: false) {
+            BlurredNavigationBarScrollView(isEnabled: false) {
                 VStack(alignment: .leading, spacing: EdgeInsets.edgePadding) {
                     header
 

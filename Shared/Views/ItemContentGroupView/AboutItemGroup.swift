@@ -82,7 +82,7 @@ struct AboutItemGroup: ContentGroup {
 
         @ViewBuilder
         private var descriptionCard: some View {
-            let subtitle = item.taglines?.first
+            let subtitle = item.taglines?.first ?? item.parentTitle
 
             AboutCard(
                 title: item.displayTitle,
@@ -180,7 +180,7 @@ struct AboutItemGroup: ContentGroup {
             VStack(alignment: .leading, spacing: 10) {
                 Section {
                     ScrollView(.horizontal) {
-                        HStack(spacing: UIDevice.isPhone ? EdgeInsets.edgePadding / 2 : 40) {
+                        HStack(spacing: PosterHStackMetrics.itemSpacing) {
                             descriptionCard
 
                             if let mediaSources = item.mediaSources {
