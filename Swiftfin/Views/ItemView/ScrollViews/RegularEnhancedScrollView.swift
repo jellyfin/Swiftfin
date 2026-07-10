@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -13,19 +14,18 @@ extension ItemView {
 
     struct RegularEnhancedScrollView: View {
 
-        @Environment(\.frameForParentView)
-        private var frameForParentView
-
         @ObservedObject
         var provider: ItemContentGroupProvider
         @ObservedObject
         var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
 
-        @State
-        private var resolvedBottomColor: Color?
-
         @StoredValue(.User.itemViewAttributes)
         private var attributes
+
+        @Router
+        private var router
+
+        private let headerAspectRatio = 2.0
 
         private var imageType: ImageType {
             switch provider.item.type {
@@ -51,10 +51,6 @@ extension ItemView {
                 imageType,
                 environment: ImageSourceOptions(maxWidth: 1920)
             )
-        }
-
-        private var headerBottomColor: Color {
-            resolvedBottomColor ?? Color.secondarySystemFill
         }
 
         @ViewBuilder
@@ -87,10 +83,26 @@ extension ItemView {
                 VStack(alignment: .leading, spacing: 10) {
                     logo
 
-                    ItemView.OverviewView(item: provider.item)
-                        .overviewLineLimit(3)
-                        .taglineLineLimit(2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack(alignment: .leading, spacing: 5) {
+                        if let firstTagline = provider.item.taglines?.first {
+                            Text(firstTagline)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(2)
+                        }
+
+                        if let itemOverview = provider.item.overview {
+                            Button {
+                                router.route(to: .itemOverview(item: provider.item))
+                            } label: {
+                                SeeMoreText(itemOverview)
+                                    .font(.footnote)
+                                    .lineLimit(3)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     HStack(alignment: .top) {
                         ItemView.AttributesHStack(
@@ -153,11 +165,21 @@ extension ItemView {
             }
         }
 
+        private func resolveColor(from image: UIImage, binding: Binding<Color>) {
+            Task.detached(priority: .utility) {
+                guard let color = image.interestingColor() else { return }
+
+                await MainActor.run {
+                    binding.wrappedValue = color
+                }
+            }
+        }
+
         @ViewBuilder
         private var header: some View {
             AlternateLayoutView(alignment: .bottom) {
                 Color.clear
-                    .aspectRatio(2, contentMode: .fit)
+                    .aspectRatio(headerAspectRatio, contentMode: .fit)
             } content: {
                 overlay
                     .edgePadding(.horizontal)
@@ -167,39 +189,37 @@ extension ItemView {
             .backgroundParallaxHeader(
                 multiplier: 0.3
             ) {
-                AlternateLayoutView {
-                    Color.clear
-                        .aspectRatio(2, contentMode: .fit)
-                } content: {
-                    ImageView(headerImageSource)
-//                        .resolvedColor($resolvedBottomColor)
-                            .image { image in
-                                image
+                StateAdapter(initialValue: Color.secondarySystemFill) { resolvedColor in
+                    AlternateLayoutView {
+                        Color.clear
+                    } content: {
+                        ImageView(headerImageSource)
+                            .image { (image: UIImage) in
+                                Image(uiImage: image)
+                                    .resizable()
                                     .aspectRatio(1.77, contentMode: .fill)
+                                    .onAppear {
+                                        resolveColor(from: image, binding: resolvedColor)
+                                    }
                             }
                             .clipped()
-                            .id(headerImageSource.url?.hashValue)
                             .animation(.linear(duration: 0.1), value: headerImageSource.url?.hashValue)
+                    }
+                    .aspectRatio(headerAspectRatio, contentMode: .fit)
+                    .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)
+                    .accessibilityHidden(true)
                 }
-                .bottomEdgeGradient(bottomColor: headerBottomColor)
+                .id(headerImageSource.url?.hashValue)
             }
             .trackingFrame(
-                in: .local,
                 for: .scrollViewHeader,
                 key: ScrollViewHeaderFrameKey.self
             )
-            .environment(
-                \.frameForParentView,
-                frameForParentView.removingValue(for: .navigationStack)
-            )
-            .onChange(of: headerImageSource.url) { _ in
-                resolvedBottomColor = nil
-            }
         }
 
         var body: some View {
             BlurredNavigationBarScrollView {
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: EdgeInsets.edgePadding) {
                     header
 
                     ContentGroupVStack(groups: viewModel.groups)

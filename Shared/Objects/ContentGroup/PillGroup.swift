@@ -75,7 +75,8 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                                 action(router, element)
                             } label: {
                                 label(for: element)
-                                    .font(.headline)
+                                    .font(.callout)
+                                    .fontWeight(.semibold)
                                     .foregroundStyle(.white)
                                     .labelStyle(
                                         CapsuleLabelStyle(

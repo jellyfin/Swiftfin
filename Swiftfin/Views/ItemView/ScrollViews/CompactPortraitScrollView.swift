@@ -50,9 +50,25 @@ extension ItemView {
 
                 Divider()
 
-                ItemView.OverviewView(item: provider.item)
-                    .overviewLineLimit(3)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(alignment: .leading, spacing: 5) {
+                    if let firstTagline = provider.item.taglines?.first {
+                        Text(firstTagline)
+                            .fontWeight(.bold)
+                            .multilineTextAlignment(.leading)
+                    }
+
+                    if let itemOverview = provider.item.overview {
+                        Button {
+                            router.route(to: .itemOverview(item: provider.item))
+                        } label: {
+                            SeeMoreText(itemOverview)
+                                .font(.footnote)
+                                .lineLimit(3)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .edgePadding()
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -60,7 +76,7 @@ extension ItemView {
 
         var body: some View {
             BlurredNavigationBarScrollView(usesOffsetNavigationBar: false) {
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: EdgeInsets.edgePadding) {
                     header
 
                     ContentGroupVStack(groups: viewModel.groups)

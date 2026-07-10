@@ -13,10 +13,6 @@ import SwiftUI
 
 extension View {
 
-    func detectOrientation(_ orientation: Binding<UIDeviceOrientation>) -> some View {
-        modifier(DetectOrientation(orientation: orientation))
-    }
-
     /// - Important: This does nothing on iOS.
     func focusSection() -> some View {
         self

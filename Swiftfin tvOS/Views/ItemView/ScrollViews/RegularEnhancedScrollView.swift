@@ -19,6 +19,9 @@ extension ItemView {
         @StoredValue(.User.itemViewAttributes)
         private var attributes
 
+        @Router
+        private var router
+
         @ObservedObject
         private var provider: ItemContentGroupProvider
 
@@ -98,10 +101,26 @@ extension ItemView {
                 VStack(alignment: .leading, spacing: 10) {
                     logo
 
-                    ItemView.OverviewView(item: provider.item)
-                        .overviewLineLimit(3)
-                        .taglineLineLimit(2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack(alignment: .leading, spacing: 5) {
+                        if let firstTagline = provider.item.taglines?.first {
+                            Text(firstTagline)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(2)
+                        }
+
+                        if let itemOverview = provider.item.overview {
+                            Button {
+                                router.route(to: .itemOverview(item: provider.item))
+                            } label: {
+                                SeeMoreText(itemOverview)
+                                    .font(.footnote)
+                                    .lineLimit(3)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     HStack(alignment: .top) {
                         ItemView.AttributesHStack(
@@ -174,8 +193,7 @@ extension ItemView {
                     .colorScheme(.dark)
             }
             .backgroundParallaxHeader(
-                multiplier: 0.3,
-                backgroundColor: headerBottomColor
+                multiplier: 0.3
             ) {
                 AlternateLayoutView {
                     Color.clear
