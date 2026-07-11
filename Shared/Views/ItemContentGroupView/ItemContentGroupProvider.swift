@@ -304,9 +304,8 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
         var parameters = Paths.GetItemsParameters()
         parameters.fields = .MinimumFields
-        parameters.includeItemTypes = BaseItemKind.supportedCases
-            .appending(.episode)
-            .appending(.person)
+        parameters.includeItemTypes = [.movie, .series]
+        parameters.isRecursive = true
         parameters.limit = 1
         parameters.sortBy = [.random]
         parameters.userID = try authenticatedUser.id

@@ -18,5 +18,5 @@ struct ImageSourceOptions: WithImageSourceOptions {
 
     var maxWidth: CGFloat?
     var maxHeight: CGFloat?
-    var quality: Int?
+    var quality: Int? = 90
 }

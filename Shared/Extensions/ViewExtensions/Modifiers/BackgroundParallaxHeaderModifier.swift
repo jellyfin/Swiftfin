@@ -96,10 +96,6 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
                 background
                     .trackingSize($headerSize)
                     .scaleEffect(scaleEffect, anchor: .top)
-                    .background(alignment: .top) {
-                        Color.red
-                            .frame(height: maskHeight + scrollViewSafeAreaInsets.top)
-                    }
                     .mask(alignment: .top) {
                         Color.black
                             .frame(height: maskHeight)

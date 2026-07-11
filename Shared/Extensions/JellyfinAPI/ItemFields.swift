@@ -16,9 +16,7 @@ extension ItemFields {
     /// more fields and including user data may also be necessary.
     static let MinimumFields: [ItemFields] = [
         .mediaSources,
-        .overview,
         .parentID,
-        .taglines,
     ]
 }
 

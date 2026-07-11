@@ -59,7 +59,6 @@ extension ItemView {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 70)
-//                    .frame(maxWidth: .infinity, maxHeight: 70, alignment: .bottomLeading)
             }
             .placeholder { _ in
                 EmptyView()
@@ -176,6 +175,16 @@ extension ItemView {
                 .frame(maxWidth: .infinity)
 
                 VStack(alignment: .center, spacing: 5) {
+                    if provider.item.type == .person || provider.item.type == .musicArtist {
+                        ImageView(provider.item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 200)))
+                            .failure {
+                                SystemImageContentView(systemName: provider.item.systemImage)
+                            }
+                            .posterStyle(.portrait, contentMode: .fit)
+                            .frame(width: 200)
+                            .accessibilityIgnoresInvertColors()
+                    }
+
                     if provider.item.presentPlayButton {
                         ItemView.PlayButton(provider: provider)
                             .frame(height: 50)
@@ -230,18 +239,15 @@ extension ItemView {
                     AlternateLayoutView {
                         Color.clear
                     } content: {
-                        ImageView(headerImageItem.imageSource(
-                            imageType,
-                            environment: ImageSourceOptions(maxWidth: 1920)
-                        ))
-                        .image { (image: UIImage) in
-                            Image(uiImage: image)
-                                .resizable()
-                                .aspectRatio(1.77, contentMode: .fill)
-                                .onAppear {
-                                    resolveColor(from: image, binding: resolvedColor)
-                                }
-                        }
+                        ImageView(headerImageItem.landscapeImageSources(environment: .init(maxWidth: 1920)))
+                            .image { (image: UIImage) in
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(1.77, contentMode: .fill)
+                                    .onAppear {
+                                        resolveColor(from: image, binding: resolvedColor)
+                                    }
+                            }
                     }
                     .aspectRatio(headerAspectRatio, contentMode: .fit)
                     .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)
