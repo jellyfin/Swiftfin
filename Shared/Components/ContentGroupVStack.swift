@@ -12,13 +12,21 @@ struct ContentGroupVStack: View {
 
     let groups: [any ContentGroup]
 
+    private var spacing: CGFloat {
+        #if os(tvOS)
+        40
+        #else
+        20
+        #endif
+    }
+
     @ViewBuilder
     private func makeGroupBody(_ group: some ContentGroup) -> some View {
         group.body(with: group.viewModel)
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: spacing) {
             ForEach(groups, id: \.id) { group in
                 makeGroupBody(group)
                     .eraseToAnyView()

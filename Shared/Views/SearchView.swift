@@ -77,29 +77,29 @@ struct SearchView: View {
         .navigationTitle(L10n.search)
         .backport
         .toolbarTitleDisplayMode(.inline)
-        #if os(iOS)
-            .navigationBarFilterDrawer(
-                viewModel: viewModel.filterViewModel,
-                types: enabledDrawerFilters
-            )
-            .backport
-            .searchFocused($isSearchFocused)
-            .onReceive(tabItemSelected) { event in
-                if event.isRepeat, event.isRoot {
-                    isSearchFocused = true
-                }
+        .backport
+        .searchFocused($isSearchFocused)
+        .onReceive(tabItemSelected) { event in
+            if event.isRepeat, event.isRoot {
+                isSearchFocused = true
             }
+        }
+        .onFirstAppear {
+            viewModel.getSuggestions()
+        }
+        .backport
+        .onChange(of: searchQuery) { _, newValue in
+            viewModel.search(query: newValue)
+        }
+        .searchable(
+            text: $searchQuery,
+            prompt: L10n.search
+        )
+        #if os(iOS)
+        .navigationBarFilterDrawer(
+            viewModel: viewModel.filterViewModel,
+            types: enabledDrawerFilters
+        )
         #endif
-            .onFirstAppear {
-                    viewModel.getSuggestions()
-                }
-                .backport
-                .onChange(of: searchQuery) { _, newValue in
-                    viewModel.search(query: newValue)
-                }
-                .searchable(
-                    text: $searchQuery,
-                    prompt: L10n.search
-                )
     }
 }

@@ -12,11 +12,16 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
     where Library.Element: LibraryElement, Library.Element: Poster
 {
 
+    private enum FocusSection {
+        case header
+        case content
+    }
+
+    @FocusState
+    private var focusedSection: FocusSection?
+
     @ObservedObject
     var viewModel: PagingLibraryViewModel<Library>
-
-    @Namespace
-    private var namespace
 
     @Router
     private var router
@@ -29,13 +34,6 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
 
     @ViewBuilder
     private var header: some View {
-//        #if os(tvOS)
-//        Text(viewModel.library.parent.displayTitle)
-//            .font(.title3)
-//            .lineLimit(1)
-//            .accessibilityAddTraits(.isHeader)
-//            .edgePadding(.horizontal)
-//        #else
         Button(action: routeToLibrary) {
             HStack(spacing: 3) {
                 Text(viewModel.library.parent.displayTitle)
@@ -50,9 +48,8 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
         }
         .foregroundStyle(.primary, .secondary)
         .accessibilityAddTraits(.isHeader)
-//        .accessibilityAction(named: Text("Open library"), routeToLibrary)
+        .accessibilityAction(named: Text("Open library"), routeToLibrary) // swiftlint:disable:this hard_coded_display_string
         .edgePadding(.horizontal)
-//        #endif
     }
 
     var body: some View {
@@ -68,14 +65,20 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
                     }
                     .withViewContext(.isThumb)
                     .focusSection()
-//                .prefersDefaultFocus(in: namespace)
+                    .focused($focusedSection, equals: .content)
                 } header: {
                     header
-//                    .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .focusSection()
+                        .focused($focusedSection, equals: .header)
                 }
             }
-//            .focusScope(namespace)
-//            .debugBackground()
+            .focusSection()
+            .defaultFocus(
+                $focusedSection,
+                .content,
+                priority: .userInitiated
+            )
         }
     }
 }

@@ -7,7 +7,6 @@
 //
 
 import CollectionHStack
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -314,7 +313,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
         private struct EpisodeCard: View {
 
-            @Default(.Customization.Indicators.enabled)
+            @Environment(\.enabledPosterIndicators)
             private var indicators
 
             @Namespace
@@ -361,7 +360,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                     } label: {
                         ImageView(episode.landscapeImageSources(
                             environment: .init(
-                                maxWidth: UIDevice.isTV ? 500 : 250,
+                                maxWidth: 250,
                                 useParent: false
                             )
                         ))

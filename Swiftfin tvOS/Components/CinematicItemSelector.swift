@@ -41,31 +41,27 @@ struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
         frameForParentView[.scrollView, default: .zero].frame
     }
 
-    private var resolvedHeight: CGFloat {
-        max(parentFrame.height - CinematicItemSelectorLayout.backgroundHeightOffset, 0)
-    }
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        CinematicContentGroupContainer {
+            VStack(alignment: .leading, spacing: 10) {
 
-            if let selectedItem {
-                topContent(selectedItem)
-                    .id(selectedItem.hashValue)
-                    .transition(.opacity)
-            }
+                if let selectedItem {
+                    topContent(selectedItem)
+                        .id(selectedItem.hashValue)
+                        .transition(.opacity)
+                }
 
-            // TODO: fix intrinsic content sizing without frame
-            PosterHStack(
-                elements: items,
-                displayType: .landscape,
-                size: .medium
-            ) { item, _ in
-                action(item)
+                // TODO: fix intrinsic content sizing without frame
+                PosterHStack(
+                    elements: items,
+                    displayType: .landscape,
+                    size: .medium
+                ) { item, _ in
+                    action(item)
+                }
+                .frame(height: CinematicItemSelectorLayout.posterRowHeight)
             }
-            .frame(height: CinematicItemSelectorLayout.posterRowHeight)
         }
-        .frame(height: resolvedHeight, alignment: .bottomLeading)
-        .frame(maxWidth: .infinity)
         .background(alignment: .top) {
             FadeContentTransitionView(
                 item: resolvedSelectedPoster,
@@ -118,7 +114,6 @@ struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
 
 private enum CinematicItemSelectorLayout {
 
-    static let backgroundHeightOffset: CGFloat = 75
     static let posterRowHeight: CGFloat = 400
 }
 

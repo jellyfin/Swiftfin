@@ -21,7 +21,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     @Published
     private(set) var randomBackdropItem: BaseItemDto?
     @Published
-    private(set) var selectedMediaSource: MediaSourceInfo?
+    var selectedMediaSource: MediaSourceInfo?
 
     let id: String
 
@@ -199,9 +199,9 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         )
     }
 
-    func selectMediaSource(_ mediaSource: MediaSourceInfo) {
-        selectedMediaSource = mediaSource
-    }
+//    func selectMediaSource(_ mediaSource: MediaSourceInfo) {
+//        selectedMediaSource = mediaSource
+//    }
 
     func toggleIsFavorite() async {
         let beforeIsFavorite = item.userData?.isFavorite ?? false

@@ -45,7 +45,7 @@ struct FillAttributeBadgeLabelStyle: LabelStyle {
             .hidden()
             .background {
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(Color.secondary)
+                    .fill(.secondary)
                     .inverseMask {
                         content(configuration: configuration)
                             .padding(.init(vertical: 1, horizontal: 4))

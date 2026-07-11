@@ -37,6 +37,11 @@ private func anyPosterImageSources(
 
 struct AnyPoster: Poster {
 
+    struct ID: Hashable {
+        let posterType: ObjectIdentifier
+        let value: AnyHashable
+    }
+
     struct Environment: WithDefaultValue, WithImageSourceOptions {
 
         var maxWidth: CGFloat?
@@ -50,13 +55,18 @@ struct AnyPoster: Poster {
 
     let _poster: any Poster
 
+    private let _id: ID
     private let _withLandscapeImages: ((Environment) -> [ImageSource])?
 
-    init(
-        _ poster: any Poster,
+    init<P: Poster>(
+        _ poster: P,
         _withLandscapeImages: ((Environment) -> [ImageSource])? = nil
     ) {
         self._poster = poster
+        self._id = ID(
+            posterType: ObjectIdentifier(P.self),
+            value: AnyHashable(poster.id)
+        )
         self._withLandscapeImages = _withLandscapeImages
     }
 
@@ -76,12 +86,8 @@ struct AnyPoster: Poster {
         _poster.systemImage
     }
 
-    var id: Int {
-        AnyHashable(_poster).hashValue
-    }
-
-    var showTitle: Bool {
-        _poster.showTitle
+    var id: ID {
+        _id
     }
 
     var posterLabel: some View {
@@ -101,9 +107,6 @@ struct AnyPoster: Poster {
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-        hasher.combine(_poster.displayTitle)
-        hasher.combine(_poster.subtitle)
-        hasher.combine(_poster.systemImage)
     }
 
     func portraitImageSources(

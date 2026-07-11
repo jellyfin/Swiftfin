@@ -41,11 +41,8 @@ struct PosterButton<Item: Poster>: View {
         // TODO: determine if want to be used or just increase size
         let frameScale = 1.3
 
-        buttonLabel()
-            .frame(
-                width: posterSize.width * frameScale,
-                height: posterSize.height * frameScale
-            )
+        posterImage(overlay: EmptyView())
+            .frame(width: posterSize.width * frameScale)
             .padding(20)
             .background {
                 RoundedRectangle(cornerRadius: 10)
@@ -97,10 +94,12 @@ struct PosterButton<Item: Poster>: View {
         .foregroundStyle(.primary, .secondary)
         .buttonStyle(.borderless)
         .buttonBorderShape(.roundedRectangle)
-        .focusedValue(\.focusedPoster, AnyPoster(item))
-        .posterContextMenu(for: item) {
-            contextMenuPreview
-                .withViewContext(viewContext)
-        }
+        #if os(tvOS)
+            .focusedValue(\.focusedPoster, AnyPoster(item))
+        #endif
+            .posterContextMenu(for: item) {
+                contextMenuPreview
+                    .withViewContext(viewContext)
+            }
     }
 }

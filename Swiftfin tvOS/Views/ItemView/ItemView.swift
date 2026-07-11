@@ -37,10 +37,14 @@ struct ItemView: View {
         RegularEnhancedScrollView(provider: provider, content: content)
     }
 
+    private var contentGroups: [any ContentGroup] {
+        [HeaderContentGroup(provider: provider)] + viewModel.groups
+    }
+
     @ViewBuilder
     private var innerBody: some View {
         scrollContainerView(provider: provider) {
-            ContentGroupVStack(groups: viewModel.groups)
+            ContentGroupVStack(groups: contentGroups)
         }
         .eraseToAnyView()
     }

@@ -62,7 +62,7 @@ struct PillGroup<Element: Displayable>: ContentGroup {
             VStack(alignment: .leading, spacing: 15) {
                 Section {
                     ScrollView(.horizontal) {
-                        HStack {
+                        HStack(spacing: PosterHStackMetrics.itemSpacing) {
                             ForEach(elements) { element in
                                 Button {
                                     action(router, element)
@@ -72,11 +72,16 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                                         .fontWeight(.semibold)
                                         .labelStyle(
                                             CapsuleLabelStyle(
-                                                insets: .init(vertical: 5, horizontal: 10)
+                                                insets: .init(
+                                                    vertical: 5,
+                                                    horizontal: 10
+                                                )
                                             )
                                         )
                                 }
                                 .foregroundStyle(.primary, .secondary)
+                                .buttonBorderShape(.capsule)
+                                .buttonStyle(.card)
                             }
                         }
                         .edgePadding(.horizontal)

@@ -25,27 +25,27 @@ extension ItemView {
 
         // MARK: - Selected Media Source Binding
 
-        private var selectedMediaSource: Binding<MediaSourceInfo?> {
-            Binding(
-                get: { provider.selectedMediaSource },
-                set: { newSource in
-                    if let newSource {
-                        provider.selectMediaSource(newSource)
-                    }
-                }
-            )
-        }
+//        private var selectedMediaSource: Binding<MediaSourceInfo?> {
+//            Binding(
+//                get: { provider.selectedMediaSource },
+//                set: { newSource in
+//                    if let newSource {
+//                        provider.selectMediaSource(newSource)
+//                    }
+//                }
+//            )
+//        }
 
         // MARK: - Body
 
         var body: some View {
             Menu(L10n.version, systemImage: "list.dash") {
-                Picker(L10n.version, selection: selectedMediaSource) {
-                    ForEach(mediaSources, id: \.hashValue) { mediaSource in
-                        Text(mediaSource.displayTitle)
-                            .tag(mediaSource as MediaSourceInfo?)
-                    }
-                }
+//                Picker(L10n.version, selection: selectedMediaSource) {
+//                    ForEach(mediaSources, id: \.hashValue) { mediaSource in
+//                        Text(mediaSource.displayTitle)
+//                            .tag(mediaSource as MediaSourceInfo?)
+//                    }
+//                }
             }
             .labelStyle(.iconOnly)
             .buttonStyle(.material)

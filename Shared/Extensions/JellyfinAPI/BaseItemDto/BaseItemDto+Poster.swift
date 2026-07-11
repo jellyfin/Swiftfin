@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import FactoryKit
 import Foundation
 import Get
@@ -15,12 +14,12 @@ import SwiftUI
 
 extension BaseItemDto: Poster {
 
-    struct Environment: WithDefaultValue, WithImageSourceOptions, WithViewContext {
+    struct Environment: WithDefaultValue, WithImageSourceOptions, WithParentImageSourcePreference, WithViewContext {
 
         var maxWidth: CGFloat?
         var maxHeight: CGFloat?
         var quality: Int?
-        var useParent: Bool = Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop]
+        var useParent: Bool = true
         var viewContext: ViewContext = .init()
 
         static var `default`: Self {
@@ -42,15 +41,6 @@ extension BaseItemDto: Poster {
             extraType?.displayTitle
         default:
             nil
-        }
-    }
-
-    var showTitle: Bool {
-        switch type {
-        case .episode, .series, .movie, .boxSet, .collectionFolder:
-            Defaults[.Customization.showPosterLabels]
-        default:
-            true
         }
     }
 
@@ -92,7 +82,6 @@ extension BaseItemDto: Poster {
 
             PosterIndicatorsOverlay(
                 item: self,
-                indicators: Defaults[.Customization.Indicators.enabled],
                 posterDisplayType: displayType
             )
         }
@@ -312,14 +301,6 @@ private struct BaseItemDtoPosterContextMenu: View {
 
 private struct BaseItemDtoPosterLabel: View {
 
-    @Default(.Customization.showPosterLabels)
-    private var showPosterLabels
-
-    #if os(iOS)
-    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
-    private var useSeriesLandscapeBackdrop
-    #endif
-
     let item: BaseItemDto
 
     var body: some View {
@@ -335,13 +316,11 @@ private struct BaseItemDtoPosterLabel: View {
 
     private var titleSubtitleLabel: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if item.showTitle {
-                Text(item.displayTitle)
-                    .font(.footnote)
-                    .foregroundColor(.primary)
-                    .accessibilityLabel(item.displayTitle)
-                    .lineLimit(1, reservesSpace: true)
-            }
+            Text(item.displayTitle)
+                .font(.footnote)
+                .foregroundColor(.primary)
+                .accessibilityLabel(item.displayTitle)
+                .lineLimit(1, reservesSpace: true)
 
             Text(item.subtitle ?? " ")
                 .font(.caption)
@@ -353,7 +332,7 @@ private struct BaseItemDtoPosterLabel: View {
 
     private var episodeLabel: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if showPosterLabels, let seriesName = item.seriesName {
+            if let seriesName = item.seriesName {
                 Text(seriesName)
                     .font(.footnote.weight(.regular))
                     .foregroundColor(.primary)
@@ -363,24 +342,12 @@ private struct BaseItemDtoPosterLabel: View {
             DotHStack {
                 Text(item.seasonEpisodeLabel ?? .emptyDash)
 
-                if showsEpisodeTitle {
-                    Text(item.displayTitle)
-                } else if let seriesName = item.seriesName {
-                    Text(seriesName)
-                }
+                Text(item.displayTitle)
             }
             .font(.caption)
             .foregroundColor(.secondary)
             .lineLimit(1)
         }
-    }
-
-    private var showsEpisodeTitle: Bool {
-        #if os(iOS)
-        showPosterLabels || useSeriesLandscapeBackdrop
-        #else
-        showPosterLabels
-        #endif
     }
 
     private var programLabel: some View {

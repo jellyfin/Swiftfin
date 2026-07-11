@@ -12,6 +12,8 @@ import SwiftUI
 
 struct PosterImage<Element: Poster>: View {
 
+    @Environment(\.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
     @Environment(\.viewContext)
     private var viewContext
 
@@ -38,6 +40,13 @@ struct PosterImage<Element: Poster>: View {
 
     private var imageSources: [ImageSource] {
         var environment = environment ?? .default
+
+        if self.environment == nil,
+           var environmentWithParentPreference = environment as? WithParentImageSourcePreference
+        {
+            environmentWithParentPreference.useParent = useSeriesLandscapeBackdrop
+            environment = environmentWithParentPreference as! Element.Environment
+        }
 
         if var environmentWithViewContext = environment as? WithViewContext {
             environmentWithViewContext.viewContext = viewContext
@@ -71,28 +80,16 @@ struct PosterImage<Element: Poster>: View {
                                 size: .init(width: 8, height: 8)
                             )?
                                 .resizable()
-                        } else if element.showTitle {
-                            SystemImageContentView(
-                                systemName: element.systemImage
-                            )
                         } else {
                             SystemImageContentView(
-                                title: element.displayTitle,
                                 systemName: element.systemImage
                             )
                         }
                     }
                     .failure {
-                        if element.showTitle {
-                            SystemImageContentView(
-                                systemName: element.systemImage
-                            )
-                        } else {
-                            SystemImageContentView(
-                                title: element.displayTitle,
-                                systemName: element.systemImage
-                            )
-                        }
+                        SystemImageContentView(
+                            systemName: element.systemImage
+                        )
                     }
                     .accessibilityRemoveTraits(.isImage)
             }

@@ -12,9 +12,27 @@ import SwiftUI
 
 struct PosterIndicatorsOverlay: View {
 
+    @Environment(\.enabledPosterIndicators)
+    private var environmentIndicators
+
     let item: BaseItemDto
-    let indicators: PosterIndicator
     let posterDisplayType: PosterDisplayType
+
+    private let overrideIndicators: PosterIndicator?
+
+    private var indicators: PosterIndicator {
+        overrideIndicators ?? environmentIndicators
+    }
+
+    init(
+        item: BaseItemDto,
+        indicators: PosterIndicator? = nil,
+        posterDisplayType: PosterDisplayType
+    ) {
+        self.item = item
+        self.posterDisplayType = posterDisplayType
+        self.overrideIndicators = indicators
+    }
 
     private var indicatorSize: CGFloat {
         UIDevice.isTV ? 45 : 25

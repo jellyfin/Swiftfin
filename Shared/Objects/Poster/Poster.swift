@@ -25,9 +25,6 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
     /// Optional subtitle when used as a poster
     var subtitle: String? { get }
 
-    /// Show the title
-    var showTitle: Bool { get }
-
     @ImageSourceBuilder
     func portraitImageSources(
         environment: Environment
@@ -112,10 +109,6 @@ extension Poster {
 
     var subtitle: String? {
         nil
-    }
-
-    var showTitle: Bool {
-        true
     }
 
     func portraitImageSources(

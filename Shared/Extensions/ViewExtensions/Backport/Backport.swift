@@ -121,7 +121,6 @@ extension Backport where Content: View {
         }
     }
 
-    @available(tvOS, unavailable)
     @ViewBuilder
     func searchFocused(
         _ isSearchFocused: FocusState<Bool>.Binding

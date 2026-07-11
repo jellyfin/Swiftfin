@@ -115,10 +115,6 @@ extension Defaults.Keys {
             UserKey("mediaItemViewType", default: .enhanced)
         }
 
-        static var showPosterLabels: Key<Bool> {
-            UserKey("showPosterLabels", default: true)
-        }
-
         static var nextUpPosterType: Key<PosterDisplayType> {
             UserKey("nextUpPosterType", default: .portrait)
         }

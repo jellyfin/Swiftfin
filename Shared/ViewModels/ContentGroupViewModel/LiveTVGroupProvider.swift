@@ -7,6 +7,24 @@
 //
 
 struct LiveTVGroupProvider: ContentGroupProvider {
+    
+    private enum LiveTVPill: Displayable, SystemImageable {
+        case channels
+
+        var displayTitle: String {
+            switch self {
+            case .channels:
+                L10n.channels
+            }
+        }
+
+        var systemImage: String {
+            switch self {
+            case .channels:
+                "play.square.stack"
+            }
+        }
+    }
 
     let id: String = "live-tv"
     let displayTitle: String = L10n.liveTV
@@ -46,23 +64,5 @@ struct LiveTVGroupProvider: ContentGroupProvider {
                     posterSize: .small
                 )
             }
-    }
-}
-
-private enum LiveTVPill: Displayable, SystemImageable {
-    case channels
-
-    var displayTitle: String {
-        switch self {
-        case .channels:
-            L10n.channels
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .channels:
-            "play.square.stack"
-        }
     }
 }
