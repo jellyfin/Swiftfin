@@ -95,7 +95,6 @@ extension ItemView {
             .foregroundStyle(.primary, .secondary)
             .labelStyle(
                 CapsuleLabelStyle(
-                    insets: .init(vertical: 5, horizontal: 10),
                     isIconTrailing: true
                 )
             )
@@ -104,6 +103,29 @@ extension ItemView {
         @ViewBuilder
         private var overlay: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
+                VStack(alignment: .center, spacing: 5) {
+                    logo
+
+                    if provider.item.type == .person || provider.item.type == .musicArtist {
+                        ImageView(provider.item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 200)))
+                            .failure {
+                                SystemImageContentView(systemName: provider.item.systemImage)
+                            }
+                            .posterStyle(.portrait, contentMode: .fit)
+                            .frame(width: 200)
+                            .accessibilityIgnoresInvertColors()
+                    }
+
+                    if provider.item.presentPlayButton {
+                        ItemView.PlayButton(provider: provider)
+                            .frame(height: 50)
+                    }
+
+                    ItemView.ActionButtonHStack(provider: provider)
+                        .frame(height: 50)
+                }
+                .frame(maxWidth: 300)
+
                 VStack(alignment: .leading, spacing: 10) {
 
                     switch provider.item.type {
@@ -118,8 +140,6 @@ extension ItemView {
                     default:
                         EmptyView()
                     }
-
-                    logo
 
                     VStack(alignment: .leading, spacing: 5) {
                         if let firstTagline = provider.item.taglines?.first {
@@ -173,27 +193,6 @@ extension ItemView {
                     }
                 }
                 .frame(maxWidth: .infinity)
-
-                VStack(alignment: .center, spacing: 5) {
-                    if provider.item.type == .person || provider.item.type == .musicArtist {
-                        ImageView(provider.item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 200)))
-                            .failure {
-                                SystemImageContentView(systemName: provider.item.systemImage)
-                            }
-                            .posterStyle(.portrait, contentMode: .fit)
-                            .frame(width: 200)
-                            .accessibilityIgnoresInvertColors()
-                    }
-
-                    if provider.item.presentPlayButton {
-                        ItemView.PlayButton(provider: provider)
-                            .frame(height: 50)
-                    }
-
-                    ItemView.ActionButtonHStack(provider: provider)
-                        .frame(height: 50)
-                }
-                .frame(maxWidth: 300)
             }
             .edgePadding(.bottom)
             .background(

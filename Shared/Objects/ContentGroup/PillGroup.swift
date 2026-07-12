@@ -70,11 +70,7 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                                     label(for: element)
                                         .font(.callout)
                                         .fontWeight(.semibold)
-                                        .labelStyle(
-                                            CapsuleLabelStyle(
-                                                insets: .zero
-                                            )
-                                        )
+                                        .labelStyle(CapsuleLabelStyle())
                                 }
                                 .foregroundStyle(.primary, .secondary)
                                 .buttonBorderShape(.capsule)

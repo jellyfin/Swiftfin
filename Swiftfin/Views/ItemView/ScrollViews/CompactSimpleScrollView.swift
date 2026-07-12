@@ -45,7 +45,6 @@ extension ItemView {
             .foregroundStyle(.primary, .secondary)
             .labelStyle(
                 CapsuleLabelStyle(
-                    insets: .init(vertical: 5, horizontal: 10),
                     isIconTrailing: true
                 )
             )

@@ -14,13 +14,13 @@ struct CapsuleLabelStyle: LabelStyle {
     @Default(.isLiquidGlassEnabled)
     private var isLiquidGlassEnabled
 
-    private let _insets: EdgeInsets
+    private let insets: EdgeInsets?
     private let spacing: CGFloat
     private let tint: Color?
     private let isTitleVisible: Bool
     private let isIconTrailing: Bool
 
-    private var insets: EdgeInsets {
+    private var defaultInsets: EdgeInsets {
         #if os(tvOS)
         .init(vertical: 8, horizontal: 16)
         #else
@@ -29,13 +29,13 @@ struct CapsuleLabelStyle: LabelStyle {
     }
 
     init(
-        insets: EdgeInsets,
+        insets: EdgeInsets? = nil,
         spacing: CGFloat = 4,
         tint: Color? = nil,
         isTitleVisible: Bool = true,
         isIconTrailing: Bool = false
     ) {
-        self._insets = insets
+        self.insets = insets
         self.spacing = spacing
         self.tint = tint
         self.isTitleVisible = isTitleVisible
@@ -56,7 +56,7 @@ struct CapsuleLabelStyle: LabelStyle {
                 configuration.icon
             }
         }
-        .padding(insets)
+        .padding(insets ?? defaultInsets)
         .modifier(
             CapsuleLabelAppearanceModifier(
                 isLiquidGlassEnabled: isLiquidGlassEnabled,

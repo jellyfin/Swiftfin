@@ -34,7 +34,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                 .fontWeight(.semibold)
                 .labelStyle(
                     CapsuleLabelStyle(
-                        insets: .init(vertical: 8, horizontal: 16),
                         tint: isSelected ? .white : nil
                     )
                 )
@@ -69,7 +68,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                 .fontWeight(.semibold)
                 .labelStyle(
                     CapsuleLabelStyle(
-                        insets: .init(vertical: 5, horizontal: 10),
                         tint: isSelected ? .white : nil
                     )
                 )

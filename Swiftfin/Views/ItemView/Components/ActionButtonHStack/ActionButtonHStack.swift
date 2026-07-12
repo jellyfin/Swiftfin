@@ -97,7 +97,6 @@ extension ItemView {
             .font(.title3)
             .fontWeight(.semibold)
             .buttonStyle(.card)
-//            .buttonStyle(_BasicHoverButtonStyle())
             .labelStyle(.iconOnly)
         }
     }

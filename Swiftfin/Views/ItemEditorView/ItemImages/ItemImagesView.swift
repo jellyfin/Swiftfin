@@ -180,7 +180,6 @@ struct ItemImagesView: View {
             )
             .labelStyle(
                 CapsuleLabelStyle(
-                    insets: .init(vertical: 5, horizontal: 10),
                     isIconTrailing: true
                 )
             )

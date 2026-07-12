@@ -21,7 +21,7 @@ struct PlayButton: View {
 
     @Router
     private var router
-    
+
     private let playButtonFocus: FocusState<Bool>.Binding
 
     init(

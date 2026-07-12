@@ -110,7 +110,6 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                         .foregroundStyle(.black)
                         .labelStyle(
                             CapsuleLabelStyle(
-                                insets: .init(vertical: 8, horizontal: 16),
                                 tint: .white
                             )
                         )
@@ -220,7 +219,6 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                 }
                 .labelStyle(
                     CapsuleLabelStyle(
-                        insets: .init(vertical: 5, horizontal: 10),
                         isIconTrailing: true
                     )
                 )
@@ -647,9 +645,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                             .posterStyle(.landscape)
                             .posterShadow()
                     }
-                    #if os(tvOS)
                     .buttonStyle(.card)
-                    #endif
                     .focused($focusedElement, equals: .image)
 
                     EpisodeContent(

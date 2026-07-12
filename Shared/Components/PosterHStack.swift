@@ -80,6 +80,14 @@ struct PosterHStack<
         #endif
     }
 
+    private var horizontalInset: CGFloat {
+        #if os(tvOS)
+        60
+        #else
+        EdgeInsets.edgePadding
+        #endif
+    }
+
     var body: some View {
         CollectionHStack(
             uniqueElements: elements,
@@ -94,7 +102,7 @@ struct PosterHStack<
             }
         }
         .clipsToBounds(false)
-        .insets(horizontal: EdgeInsets.edgePadding)
+        .insets(horizontal: horizontalInset)
         .itemSpacing(PosterHStackMetrics.itemSpacing)
         .scrollBehavior(.continuousLeadingEdge)
         .withViewContext(.isThumb)

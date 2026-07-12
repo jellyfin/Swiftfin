@@ -22,6 +22,9 @@ extension ItemView {
 
         struct Body: View {
 
+            @FocusState
+            private var isPlayButtonFocused: Bool
+
             @ObservedObject
             var provider: ItemContentGroupProvider
 
@@ -30,9 +33,6 @@ extension ItemView {
 
             @StoredValue(.User.itemViewAttributes)
             private var attributes
-
-            @FocusState
-            private var isPlayButtonFocused: Bool
 
             private var canFocusPlayButton: Bool {
                 provider.item.presentPlayButton && provider.selectedMediaSource != nil
@@ -98,6 +98,30 @@ extension ItemView {
             @ViewBuilder
             private var overlay: some View {
                 HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
+                    VStack(alignment: .center, spacing: 5) {
+                        logo
+
+                        if provider.item.type == .person || provider.item.type == .musicArtist {
+                            ImageView(provider.item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 200)))
+                                .failure {
+                                    SystemImageContentView(systemName: provider.item.systemImage)
+                                }
+                                .posterStyle(.portrait, contentMode: .fit)
+                                .frame(width: 200)
+                                .accessibilityIgnoresInvertColors()
+                        }
+
+                        if provider.item.presentPlayButton {
+                            PlayButton(
+                                provider: provider,
+                                playButtonFocus: $isPlayButtonFocused
+                            )
+                        }
+
+                        ItemView.ActionButtonHStack(provider: provider)
+                    }
+                    .frame(width: 450)
+
                     VStack(alignment: .leading, spacing: 10) {
 
                         switch provider.item.type {
@@ -113,8 +137,6 @@ extension ItemView {
                             EmptyView()
                         }
 
-                        logo
-
                         VStack(alignment: .leading, spacing: 5) {
                             if let firstTagline = provider.item.taglines?.first {
                                 Text(firstTagline)
@@ -124,14 +146,9 @@ extension ItemView {
                             }
 
                             if let itemOverview = provider.item.overview {
-                                Button {
-                                    router.route(to: .itemOverview(item: provider.item))
-                                } label: {
-                                    SeeMoreText(itemOverview)
-                                        .font(.footnote)
-                                        .lineLimit(3)
-                                }
-                                .buttonStyle(.plain)
+                                Text(itemOverview)
+                                    .font(.footnote)
+                                    .lineLimit(3)
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -167,28 +184,6 @@ extension ItemView {
                         }
                     }
                     .frame(maxWidth: .infinity)
-
-                    VStack(alignment: .center, spacing: 5) {
-                        if provider.item.type == .person || provider.item.type == .musicArtist {
-                            ImageView(provider.item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 200)))
-                                .failure {
-                                    SystemImageContentView(systemName: provider.item.systemImage)
-                                }
-                                .posterStyle(.portrait, contentMode: .fit)
-                                .frame(width: 200)
-                                .accessibilityIgnoresInvertColors()
-                        }
-
-                        if provider.item.presentPlayButton {
-                            PlayButton(
-                                provider: provider,
-                                playButtonFocus: $isPlayButtonFocused
-                            )
-                        }
-
-                        ItemView.ActionButtonHStack(provider: provider)
-                    }
-                    .frame(width: 450)
                 }
                 .edgePadding(.bottom)
                 .focusSection()

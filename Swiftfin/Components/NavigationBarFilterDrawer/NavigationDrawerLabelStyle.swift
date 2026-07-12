@@ -26,7 +26,6 @@ struct NavigationDrawerLabelStyle: LabelStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         CapsuleLabelStyle(
-            insets: .init(vertical: 5, horizontal: 10),
             spacing: 2,
             tint: isHighlighted ? .accentColor : nil,
             isTitleVisible: !isIconOnly,
