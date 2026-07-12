@@ -10,13 +10,6 @@ import SwiftUI
 
 struct ItemView: View {
 
-    protocol ScrollContainerView: View {
-
-        associatedtype Content: View
-
-        init(provider: ItemContentGroupProvider, content: @escaping () -> Content)
-    }
-
     @StateObject
     private var provider: ItemContentGroupProvider
 
@@ -28,32 +21,18 @@ struct ItemView: View {
         self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
     }
 
-    // MARK: scrollContainerView
-
-    private func scrollContainerView(
-        provider: ItemContentGroupProvider,
-        content: @escaping () -> some View
-    ) -> any ScrollContainerView {
-        RegularEnhancedScrollView(provider: provider, content: content)
-    }
-
-    private var contentGroups: [any ContentGroup] {
+    private var groups: [any ContentGroup] {
         [HeaderContentGroup(provider: provider)] + viewModel.groups
-    }
-
-    @ViewBuilder
-    private var innerBody: some View {
-        scrollContainerView(provider: provider) {
-            ContentGroupVStack(groups: contentGroups)
-        }
-        .eraseToAnyView()
     }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
-                innerBody
+                RegularEnhancedScrollView(
+                    provider: provider,
+                    groups: groups
+                )
             case .error:
                 viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:

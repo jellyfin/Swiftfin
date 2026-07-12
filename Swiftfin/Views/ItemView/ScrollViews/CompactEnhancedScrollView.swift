@@ -50,6 +50,8 @@ extension ItemView {
             }
             .aspectRatio(contentMode: .fit)
             .frame(height: 70, alignment: .bottom)
+            .accessibilityLabel(provider.item.displayTitle)
+            .accessibilityRemoveTraits(.isImage)
         }
 
         @ViewBuilder
@@ -135,7 +137,6 @@ extension ItemView {
                             EasedGradient(
                                 stops: [
                                     .init(color: .clear, location: 0),
-                                    .init(color: .white.opacity(0.7), location: 0.1),
                                     .init(color: .white, location: 0.2),
                                 ],
                                 startPoint: .top,

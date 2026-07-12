@@ -37,8 +37,9 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
         Button(action: routeToLibrary) {
             HStack(spacing: 3) {
                 Text(viewModel.library.parent.displayTitle)
-                    .font(.title2)
-                    .lineLimit(1)
+//                    .font(.title2)
+                        .font(.title3)
+                        .lineLimit(1)
 
                 Image(systemName: "chevron.forward")
                     .font(.title3)
@@ -74,6 +75,7 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
                 }
             }
             .focusSection()
+            .backport
             .defaultFocus(
                 $focusedSection,
                 .content,

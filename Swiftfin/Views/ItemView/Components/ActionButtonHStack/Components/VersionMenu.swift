@@ -18,28 +18,28 @@ extension ItemView {
 
         let mediaSources: [MediaSourceInfo]
 
-        private var selectedMediaSourceBinding: Binding<MediaSourceInfo?> {
-            Binding(
-                get: { provider.selectedMediaSource },
-                set: { newSource in
-                    if let newSource {
-                        provider.selectMediaSource(newSource)
-                    }
-                }
-            )
-        }
+//        private var selectedMediaSourceBinding: Binding<MediaSourceInfo?> {
+//            Binding(
+//                get: { provider.selectedMediaSource },
+//                set: { newSource in
+//                    if let newSource {
+//                        provider.selectMediaSource(newSource)
+//                    }
+//                }
+//            )
+//        }
 
         // MARK: - Body
 
         var body: some View {
-            Menu(L10n.version, systemImage: "list.dash") {
-                Picker(L10n.version, selection: selectedMediaSourceBinding) {
-                    ForEach(mediaSources, id: \.hashValue) { mediaSource in
-                        Text(mediaSource.displayTitle)
-                            .tag(mediaSource as MediaSourceInfo?)
-                    }
-                }
-            }
+//            Menu(L10n.version, systemImage: "list.dash") {
+//                Picker(L10n.version, selection: selectedMediaSourceBinding) {
+//                    ForEach(mediaSources, id: \.hashValue) { mediaSource in
+//                        Text(mediaSource.displayTitle)
+//                            .tag(mediaSource as MediaSourceInfo?)
+//                    }
+//                }
+//            }
         }
     }
 }

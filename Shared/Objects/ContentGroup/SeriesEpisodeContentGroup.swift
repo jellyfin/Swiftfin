@@ -44,8 +44,20 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
     struct Body: View {
 
+        private enum FocusedSection: Hashable {
+            case seasons
+            case episodes
+        }
+
         @ObservedObject
         var viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
+
+        #if os(tvOS)
+        @FocusState
+        private var focusedSeason: PagingLibraryViewModel<EpisodeLibrary>.ID?
+        @FocusState
+        private var isSeasonPickerFocused: Bool
+        #endif
 
         let playButtonItem: BaseItemDto?
 
@@ -77,12 +89,123 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
             selectedSeasonViewModel.refresh()
         }
 
+        #if os(tvOS)
+        private struct SeasonButtonStyle: ButtonStyle {
+
+            @Environment(\.isFocused)
+            private var isFocused
+            @Environment(\.isSelected)
+            private var isSelected
+
+            let isPickerFocused: Bool
+
+            private var isHighlighted: Bool {
+                isFocused || (!isPickerFocused && isSelected)
+            }
+
+            @ViewBuilder
+            private func label(_ configuration: Configuration) -> some View {
+                if isHighlighted {
+                    configuration.label
+                        .foregroundStyle(.black)
+                        .labelStyle(
+                            CapsuleLabelStyle(
+                                insets: .init(vertical: 8, horizontal: 16),
+                                tint: .white
+                            )
+                        )
+                } else {
+                    configuration.label
+                        .foregroundStyle(.primary)
+                        .labelStyle(.titleOnly)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                }
+            }
+
+            func makeBody(configuration: Configuration) -> some View {
+                label(configuration)
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .scaleEffect(isFocused ? 1.06 : 1)
+                    .shadow(
+                        color: isFocused ? .black.opacity(0.5) : .clear,
+                        radius: isFocused ? 10 : 0
+                    )
+                    .animation(.easeInOut(duration: 0.1), value: isFocused)
+                    .animation(.easeInOut(duration: 0.1), value: isHighlighted)
+            }
+        }
+
+        @MainActor
+        private func selectSeasonAfterFocusDebounce(
+            _ seasonID: PagingLibraryViewModel<EpisodeLibrary>.ID?
+        ) async {
+            guard let seasonID, seasonID != selection else { return }
+
+            do {
+                try await Task.sleep(for: .milliseconds(350))
+            } catch {
+                return
+            }
+
+            guard seasonID == focusedSeason,
+                  seasonID != selection,
+                  viewModel.elements.contains(where: { $0.id == seasonID })
+            else { return }
+
+            selection = seasonID
+        }
+        #endif
+
         @ViewBuilder
         private var seasonSelectorView: some View {
+            #if os(tvOS)
+            if viewModel.elements.isEmpty {
+                Text(L10n.episodes)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .edgePadding(.horizontal)
+            } else {
+                ScrollView(.horizontal) {
+                    HStack(spacing: 20) {
+                        ForEach(viewModel.elements) { seasonViewModel in
+                            let isSelected = selection == seasonViewModel.id
+
+                            Button {
+                                selection = seasonViewModel.id
+                            } label: {
+                                EmptyLabel(seasonViewModel.library.parent.displayTitle)
+                            }
+                            .buttonStyle(SeasonButtonStyle(isPickerFocused: isSeasonPickerFocused))
+                            .isSelected(isSelected)
+                            .focused($focusedSeason, equals: seasonViewModel.id)
+                            .accessibilityAddTraits(isSelected ? .isSelected : [])
+                        }
+                    }
+                    .edgePadding(.horizontal)
+                }
+                .scrollIndicators(.hidden)
+                .backport
+                .scrollClipDisabled()
+                .focusSection()
+                .focused($isSeasonPickerFocused)
+                .backport
+                .defaultFocus(
+                    $focusedSeason,
+                    selection ?? preferredSeasonSelection(),
+                    priority: .userInitiated
+                )
+                .task(id: focusedSeason) {
+                    await selectSeasonAfterFocusDebounce(focusedSeason)
+                }
+            }
+            #else
             if viewModel.elements.count <= 1 {
                 Text(selectedSeasonViewModel?.library.parent.displayTitle ?? L10n.episodes)
                     .font(.title2)
                     .fontWeight(.semibold)
+                    .edgePadding(.horizontal)
             } else {
                 Menu(
                     selectedSeasonViewModel?.library.parent.displayTitle ?? L10n.episodes,
@@ -95,7 +218,6 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                         }
                     }
                 }
-                #if os(iOS)
                 .labelStyle(
                     CapsuleLabelStyle(
                         insets: .init(vertical: 5, horizontal: 10),
@@ -103,22 +225,24 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                     )
                 )
                 .font(.headline)
-                #endif
+                .edgePadding(.horizontal)
             }
+            #endif
         }
 
         @ViewBuilder
         var body: some View {
             Group {
                 if let selectedSeasonViewModel {
-                    _Body(seasonViewModel: selectedSeasonViewModel) {
+                    _Body(
+                        seasonViewModel: selectedSeasonViewModel,
+                        playButtonItem: playButtonItem
+                    ) {
                         seasonSelectorView
-                            .edgePadding(.horizontal)
                     }
                 } else {
                     LoadingEpisodesView {
                         seasonSelectorView
-                            .edgePadding(.horizontal)
                     }
                 }
             }
@@ -138,6 +262,11 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
         private struct LoadingEpisodesView<Header: View>: View {
 
+            @FocusState
+            private var focusedSection: FocusedSection?
+            @FocusState
+            private var focusedElement: String?
+
             let header: Header
 
             init(@ViewBuilder header: () -> Header) {
@@ -149,7 +278,12 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
             }
 
             var body: some View {
-                _Body<Header>.collection(elements: elements) {
+                _Body<Header>.collection(
+                    elements: elements,
+                    focusedSection: $focusedSection,
+                    focusedElement: $focusedElement,
+                    preferredElementID: elements.first?.id
+                ) {
                     header
                 } content: { _ in
                     EpisodeStateCard(
@@ -191,13 +325,21 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
             @ObservedObject
             var seasonViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
+            @FocusState
+            private var focusedSection: FocusedSection?
+            @FocusState
+            private var focusedElement: Element.ID?
+
             let header: Header
+            let playButtonItem: BaseItemDto?
 
             init(
                 seasonViewModel: PagingLibraryViewModel<EpisodeLibrary>,
+                playButtonItem: BaseItemDto?,
                 @ViewBuilder header: () -> Header
             ) {
                 self.seasonViewModel = seasonViewModel
+                self.playButtonItem = playButtonItem
                 self.header = header()
             }
 
@@ -214,6 +356,16 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                 case .initial, .refreshing:
                     (0 ..< 10).map(Element.loading)
                 }
+            }
+
+            private var preferredElementID: Element.ID? {
+                if let playButtonItemID = playButtonItem?.id,
+                   elements.contains(where: { $0.id == playButtonItemID })
+                {
+                    return playButtonItemID
+                }
+
+                return elements.first?.id
             }
 
             private static var layout: CollectionHStackLayout {
@@ -249,6 +401,9 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
             static func collection(
                 elements: [Element],
+                focusedSection: FocusState<FocusedSection?>.Binding,
+                focusedElement: FocusState<Element.ID?>.Binding,
+                preferredElementID: Element.ID?,
                 @ViewBuilder header: @escaping () -> some View,
                 @ViewBuilder content: @escaping (Element) -> some View
             ) -> some View {
@@ -259,19 +414,42 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                             layout: layout
                         ) { element in
                             content(element)
+                                .focused(focusedElement, equals: element.id)
                         }
                         .clipsToBounds(false)
                         .insets(horizontal: EdgeInsets.edgePadding)
                         .itemSpacing(itemSpacing)
                         .scrollBehavior(.continuousLeadingEdge)
+                        .focusSection()
+                        .focused(focusedSection, equals: .episodes)
+                        .backport
+                        .defaultFocus(
+                            focusedElement,
+                            preferredElementID,
+                            priority: .userInitiated
+                        )
                     } header: {
                         header()
+                            .focusSection()
+                            .focused(focusedSection, equals: .seasons)
                     }
                 }
+                .focusSection()
+                .backport
+                .defaultFocus(
+                    focusedSection,
+                    .episodes,
+                    priority: .userInitiated
+                )
             }
 
             var body: some View {
-                Self.collection(elements: elements) {
+                Self.collection(
+                    elements: elements,
+                    focusedSection: $focusedSection,
+                    focusedElement: $focusedElement,
+                    preferredElementID: preferredElementID
+                ) {
                     header
                 } content: { element in
                     switch element {
@@ -312,6 +490,14 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
         }
 
         private struct EpisodeCard: View {
+
+            private enum FocusedElement: Hashable {
+                case image
+                case content
+            }
+
+            @FocusState
+            private var focusedElement: FocusedElement?
 
             @Environment(\.enabledPosterIndicators)
             private var indicators
@@ -378,6 +564,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                         .matchedTransitionSource(id: "item", in: namespace)
                     }
                     .buttonStyle(.card)
+                    .focused($focusedElement, equals: .image)
 
                     EpisodeContent(
                         header: episode.displayTitle,
@@ -386,7 +573,15 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                     ) {
                         router.route(to: .item(item: episode), in: namespace)
                     }
+                    .focused($focusedElement, equals: .content)
                 }
+                .focusSection()
+                .backport
+                .defaultFocus(
+                    $focusedElement,
+                    .image,
+                    priority: .userInitiated
+                )
             }
         }
 
@@ -423,6 +618,14 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
         private struct EpisodeStateCard: View {
 
+            private enum FocusedElement: Hashable {
+                case image
+                case content
+            }
+
+            @FocusState
+            private var focusedElement: FocusedElement?
+
             let title: String
             let subHeader: String
             let content: String
@@ -447,6 +650,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                     #if os(tvOS)
                     .buttonStyle(.card)
                     #endif
+                    .focused($focusedElement, equals: .image)
 
                     EpisodeContent(
                         header: title,
@@ -454,7 +658,15 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                         content: content,
                         action: action
                     )
+                    .focused($focusedElement, equals: .content)
                 }
+                .focusSection()
+                .backport
+                .defaultFocus(
+                    $focusedElement,
+                    .image,
+                    priority: .userInitiated
+                )
             }
         }
     }

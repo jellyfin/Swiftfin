@@ -24,10 +24,6 @@ extension ItemView {
         @ObservedObject
         var provider: ItemContentGroupProvider
 
-        var equalSpacing: Bool = true
-
-        // MARK: - Has Trailers
-
         private var hasTrailers: Bool {
             if enabledTrailers.contains(.local), provider.localTrailers.isNotEmpty {
                 return true
@@ -39,8 +35,6 @@ extension ItemView {
 
             return false
         }
-
-        // MARK: - Body
 
         var body: some View {
             HStack(alignment: .center, spacing: 10) {
@@ -54,12 +48,10 @@ extension ItemView {
                     Button(L10n.played, systemImage: "checkmark") {
                         Task { await provider.toggleIsPlayed() }
                     }
-                    .buttonStyle(.tintedMaterial(tint: .jellyfinPurple, foregroundColor: .white))
+                    .foregroundStyle(.primary, .secondary)
+                    .labelStyle(.tintedMaterial(tint: .jellyfinPurple, foregroundColor: .white))
                     .isSelected(isCheckmarkSelected)
                     .frame(maxWidth: .infinity)
-                    .if(!equalSpacing) { view in
-                        view.aspectRatio(1, contentMode: .fit)
-                    }
                 }
 
                 // MARK: - Toggle Favorite
@@ -69,12 +61,10 @@ extension ItemView {
                 Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
                     Task { await provider.toggleIsFavorite() }
                 }
-                .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
+                .foregroundStyle(.primary, .secondary)
+                .labelStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
                 .isSelected(isHeartSelected)
                 .frame(maxWidth: .infinity)
-                .if(!equalSpacing) { view in
-                    view.aspectRatio(1, contentMode: .fit)
-                }
 
                 // MARK: - Select a Version
 
@@ -86,10 +76,9 @@ extension ItemView {
                         mediaSources: mediaSources
                     )
                     .menuStyle(.button)
+                    .foregroundStyle(.primary, .secondary)
+                    .labelStyle(.tintedMaterial(tint: .clear, foregroundColor: .primary))
                     .frame(maxWidth: .infinity)
-                    .if(!equalSpacing) { view in
-                        view.aspectRatio(1, contentMode: .fit)
-                    }
                 }
 
                 // MARK: - Watch a Trailer
@@ -100,15 +89,15 @@ extension ItemView {
                         externalTrailers: provider.item.remoteTrailers ?? []
                     )
                     .menuStyle(.button)
+                    .foregroundStyle(.primary, .secondary)
+                    .labelStyle(.tintedMaterial(tint: .clear, foregroundColor: .primary))
                     .frame(maxWidth: .infinity)
-                    .if(!equalSpacing) { view in
-                        view.aspectRatio(1, contentMode: .fit)
-                    }
                 }
             }
             .font(.title3)
             .fontWeight(.semibold)
-            .buttonStyle(.material)
+            .buttonStyle(.card)
+//            .buttonStyle(_BasicHoverButtonStyle())
             .labelStyle(.iconOnly)
         }
     }

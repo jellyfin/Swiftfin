@@ -86,12 +86,8 @@ extension ItemView {
                 .font(.callout)
                 .fontWeight(.semibold)
             }
-            .buttonStyle(
-                .tintedMaterial(
-                    tint: accentColor,
-                    foregroundColor: accentColor.overlayColor
-                )
-            )
+            .foregroundStyle(accentColor.overlayColor, accentColor)
+            .buttonStyle(.primary)
             .contextMenu {
                 if provider.playButtonItem?.userData?.playbackPositionTicks != 0 {
                     Button(L10n.playFromBeginning, systemImage: "gobackward") {

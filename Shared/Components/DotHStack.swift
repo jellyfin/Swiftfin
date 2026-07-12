@@ -8,13 +8,21 @@
 
 import SwiftUI
 
+#if os(tvOS)
+private let dotHStackDotSize: CGFloat = 5
+private let dotHStackPadding: CGFloat = 10
+#else
+private let dotHStackDotSize: CGFloat = 2
+private let dotHStackPadding: CGFloat = 5
+#endif
+
 func DotHStack(
-    padding: CGFloat = 5,
+    padding: CGFloat = dotHStackPadding,
     @ViewBuilder content: @escaping () -> some View
 ) -> some View {
     SeparatorHStack {
         Circle()
-            .frame(width: 2, height: 2)
+            .frame(width: dotHStackDotSize, height: dotHStackDotSize)
             .padding(.horizontal, padding)
     } content: {
         content()

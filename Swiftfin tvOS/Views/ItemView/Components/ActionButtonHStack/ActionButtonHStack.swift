@@ -50,7 +50,7 @@ extension ItemView {
                     Button(L10n.played, systemImage: "checkmark") {
                         Task { await provider.toggleIsPlayed() }
                     }
-                    .buttonStyle(.tintedMaterial(tint: Color.jellyfinPurple, foregroundColor: .primary))
+                    .labelStyle(.tintedMaterial(tint: Color.jellyfinPurple, foregroundColor: .primary))
                     .isSelected(isCheckmarkSelected)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
@@ -62,7 +62,7 @@ extension ItemView {
                 Button(L10n.favorited, systemImage: isHeartSelected ? "heart.fill" : "heart") {
                     Task { await provider.toggleIsFavorite() }
                 }
-                .buttonStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
+                .labelStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
                 .isSelected(isHeartSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
@@ -73,7 +73,7 @@ extension ItemView {
                         localTrailers: provider.localTrailers,
                         externalTrailers: provider.item.remoteTrailers ?? []
                     )
-                    .buttonStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
+                    .labelStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
 
@@ -86,12 +86,13 @@ extension ItemView {
                         Label(L10n.advanced, systemImage: "ellipsis")
                             .rotationEffect(.degrees(90))
                     }
-                    .buttonStyle(.material)
+                    .labelStyle(.tintedMaterial(tint: .clear, foregroundColor: .primary))
                     .frame(width: 60, height: 100)
                 }
             }
             .frame(height: 100)
             .labelStyle(.iconOnly)
+            .buttonStyle(_BasicHoverButtonStyle())
             .font(.title3)
             .fontWeight(.semibold)
         }

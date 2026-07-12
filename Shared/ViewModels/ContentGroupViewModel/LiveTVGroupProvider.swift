@@ -7,7 +7,7 @@
 //
 
 struct LiveTVGroupProvider: ContentGroupProvider {
-    
+
     private enum LiveTVPill: Displayable, SystemImageable {
         case channels
 

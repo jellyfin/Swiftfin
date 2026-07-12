@@ -17,12 +17,20 @@ struct PlayButton: View {
     private var accentColor
 
     @ObservedObject
-    var provider: ItemContentGroupProvider
+    private var provider: ItemContentGroupProvider
 
     @Router
     private var router
+    
+    private let playButtonFocus: FocusState<Bool>.Binding
 
-    private let logger = Logger.swiftfin()
+    init(
+        provider: ItemContentGroupProvider,
+        playButtonFocus: FocusState<Bool>.Binding
+    ) {
+        self.provider = provider
+        self.playButtonFocus = playButtonFocus
+    }
 
     private var mediaSource: String? {
         guard provider.item.mediaSources?.count ?? 0 > 1 else { return nil }
@@ -33,7 +41,7 @@ struct PlayButton: View {
         guard let playButtonItem = provider.playButtonItem,
               let selectedMediaSource = provider.selectedMediaSource
         else {
-            logger.error("Play selected with no item or media source")
+            provider.logger.error("Play selected with no item or media source")
             return
         }
 
@@ -73,16 +81,15 @@ struct PlayButton: View {
                     L10n.version,
                     sources: mediaSources,
                     selection: $provider.selectedMediaSource,
-//                    noneStyle: nil
                 )
             }
             .menuStyle(.button)
-//            .labelStyle(
-//                .tintedMaterial(
-//                    tint: .white,
-//                    foregroundColor: .black
-//                )
-//            )
+            .labelStyle(
+                .tintedMaterial(
+                    tint: .white,
+                    foregroundColor: .black
+                )
+            )
             .labelStyle(.iconOnly)
             .aspectRatio(1, contentMode: .fit)
         }
@@ -110,6 +117,7 @@ struct PlayButton: View {
         }
         .foregroundStyle(accentColor.overlayColor, accentColor)
         .buttonStyle(.primary)
+        .focused(playButtonFocus)
         .contextMenu {
             if provider.playButtonItem?.userData?.playbackPositionTicks != 0 {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {
@@ -237,12 +245,8 @@ struct PlayButton: View {
 //                }
 //                .padding(.horizontal, 20)
 //            }
-//            .buttonStyle(
-//                .tintedMaterial(
-//                    tint: .white,
-//                    foregroundColor: .black
-//                )
-//            )
+//            .foregroundStyle(.black, .white)
+//            .buttonStyle(.primary)
 //            .focused(playButtonFocus)
 //            .contextMenu {
 //                if provider.playButtonItem?.userData?.playbackPositionTicks != 0 {

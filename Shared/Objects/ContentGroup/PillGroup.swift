@@ -72,10 +72,7 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                                         .fontWeight(.semibold)
                                         .labelStyle(
                                             CapsuleLabelStyle(
-                                                insets: .init(
-                                                    vertical: 5,
-                                                    horizontal: 10
-                                                )
+                                                insets: .zero
                                             )
                                         )
                                 }
@@ -99,6 +96,8 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                     }
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .focusSection()
         }
     }
 }

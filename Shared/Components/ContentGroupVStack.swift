@@ -10,11 +10,20 @@ import SwiftUI
 
 struct ContentGroupVStack: View {
 
-    let groups: [any ContentGroup]
+    private let groups: [any ContentGroup]
+    private let focusedGroupID: FocusState<String?>.Binding?
+
+    init(
+        groups: [any ContentGroup],
+        focusedGroupID: FocusState<String?>.Binding? = nil
+    ) {
+        self.groups = groups
+        self.focusedGroupID = focusedGroupID
+    }
 
     private var spacing: CGFloat {
         #if os(tvOS)
-        40
+        60
         #else
         20
         #endif
@@ -30,6 +39,10 @@ struct ContentGroupVStack: View {
             ForEach(groups, id: \.id) { group in
                 makeGroupBody(group)
                     .eraseToAnyView()
+                    .ifLet(focusedGroupID) { view, binding in
+                        view
+                            .focused(binding, equals: group.id)
+                    }
             }
         }
         .frame(maxWidth: .infinity, alignment: .topLeading)
