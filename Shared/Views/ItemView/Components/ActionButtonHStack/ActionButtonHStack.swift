@@ -51,11 +51,17 @@ extension ItemView {
             tint: Color,
             foregroundColor: Color
         ) -> some View {
-            Label(title, systemImage: systemImage)
+            #if os(tvOS)
+            let shape = Rectangle()
+            #else
+            let shape = RoundedRectangle(cornerRadius: 10, style: .circular)
+            #endif
+
+            return Label(title, systemImage: systemImage)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .modifier(
                     MaterialShapeAppearanceModifier(
-                        shape: Rectangle(),
+                        shape: shape,
                         selectedTint: tint,
                         selectedForegroundColor: foregroundColor
                     )
@@ -80,6 +86,9 @@ extension ItemView {
                             foregroundColor: .primary
                         )
                     }
+                    #if !os(tvOS)
+                    .foregroundStyle(.primary, .secondary)
+                    #endif
                     .isSelected(isCheckmarkSelected)
                 }
 
@@ -97,7 +106,27 @@ extension ItemView {
                         foregroundColor: .primary
                     )
                 }
+                #if !os(tvOS)
+                .foregroundStyle(.primary, .secondary)
+                #endif
                 .isSelected(isHeartSelected)
+
+                #if !os(tvOS)
+
+                // MARK: Select a Version
+
+                if let mediaSources = provider.playButtonItem?.mediaSources,
+                   mediaSources.count > 1
+                {
+                    VersionMenu(
+                        provider: provider,
+                        mediaSources: mediaSources
+                    )
+                    .menuStyle(.button)
+                    .foregroundStyle(.primary, .secondary)
+                    .frame(maxWidth: .infinity)
+                }
+                #endif
 
                 // MARK: Watch a Trailer
 
@@ -113,7 +142,13 @@ extension ItemView {
                             foregroundColor: .primary
                         )
                     }
+                    #if !os(tvOS)
+                    .menuStyle(.button)
+                    .foregroundStyle(.primary, .secondary)
+                    #endif
                 }
+
+                #if os(tvOS)
 
                 // MARK: Advanced Options
 
@@ -131,6 +166,7 @@ extension ItemView {
                     }
                     .frame(width: 60, height: buttonHeight)
                 }
+                #endif
             }
             .frame(height: buttonHeight)
             .labelStyle(.iconOnly)

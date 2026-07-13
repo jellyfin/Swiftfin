@@ -66,7 +66,7 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
             }
             .fontWeight(.semibold)
             .padding(.horizontal, isHeaderFocused ? 16 : 0)
-            .padding(.vertical, isHeaderFocused ? 8 : 0)
+            .padding(.vertical, 8)
             .modifier(
                 MaterialShapeAppearanceModifier(
                     shape: Capsule(),
@@ -99,24 +99,22 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
 
     var body: some View {
         if viewModel.elements.isNotEmpty {
-            VStack(alignment: .leading, spacing: 30) {
-                Section {
-                    PosterHStack(
-                        elements: viewModel.elements.elements,
-                        displayType: group.posterDisplayType,
-                        size: group.posterSize
-                    ) { element, namespace in
-                        element.libraryDidSelectElement(router: router, in: namespace)
-                    }
-                    .withViewContext(.isThumb)
-                    .focusSection()
-                    .focused($focusedSection, equals: .content)
-                } header: {
-                    header
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .focusSection()
-                        .focused($focusedSection, equals: .header)
+            ContentGroupSection {
+                PosterHStack(
+                    elements: viewModel.elements.elements,
+                    displayType: group.posterDisplayType,
+                    size: group.posterSize
+                ) { element, namespace in
+                    element.libraryDidSelectElement(router: router, in: namespace)
                 }
+                .withViewContext(.isThumb)
+                .focusSection()
+                .focused($focusedSection, equals: .content)
+            } header: {
+                header
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .focusSection()
+                    .focused($focusedSection, equals: .header)
             }
             .focusSection()
             .backport

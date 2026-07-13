@@ -183,42 +183,40 @@ struct AboutItemGroup: ContentGroup {
         private let cardAspectRatio: CGFloat = 1.77
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 15) {
-                Section {
-                    ScrollView(.horizontal) {
-                        HStack(spacing: PosterHStackMetrics.itemSpacing) {
-                            descriptionCard
+            ContentGroupSection {
+                ScrollView(.horizontal) {
+                    HStack(spacing: PosterHStackMetrics.itemSpacing) {
+                        descriptionCard
 
-                            if let mediaSources = item.mediaSources {
-                                ForEach(mediaSources) { source in
-                                    mediaSourceCard(for: source, hasMultipleSources: mediaSources.count > 1)
-                                }
-                            }
-
-                            if item.criticRating != nil || item.communityRating != nil {
-                                ratingsCard(
-                                    criticRating: item.criticRating ?? -1,
-                                    communityRating: item.communityRating ?? -1
-                                )
+                        if let mediaSources = item.mediaSources {
+                            ForEach(mediaSources) { source in
+                                mediaSourceCard(for: source, hasMultipleSources: mediaSources.count > 1)
                             }
                         }
-                        .edgePadding(.horizontal)
+
+                        if item.criticRating != nil || item.communityRating != nil {
+                            ratingsCard(
+                                criticRating: item.criticRating ?? -1,
+                                communityRating: item.communityRating ?? -1
+                            )
+                        }
                     }
-                    .scrollIndicators(.hidden)
-                    .backport
-                    .scrollClipDisabled()
-                    #if os(tvOS)
-                        .withViewContext(.isOverComplexContent)
-                    #endif
-                        .frame(height: cardHeight)
-                        .frame(maxWidth: .infinity)
-                } header: {
-                    Text(L10n.about)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .accessibilityAddTraits(.isHeader)
-                        .edgePadding(.horizontal)
+                    .edgePadding(.horizontal)
                 }
+                .scrollIndicators(.hidden)
+                .backport
+                .scrollClipDisabled()
+                #if os(tvOS)
+                    .withViewContext(.isOverComplexContent)
+                #endif
+                    .frame(height: cardHeight)
+                    .frame(maxWidth: .infinity)
+            } header: {
+                Text(L10n.about)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .accessibilityAddTraits(.isHeader)
+                    .edgePadding(.horizontal)
             }
         }
     }

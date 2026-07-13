@@ -176,32 +176,30 @@ extension SeriesEpisodeContentGroup {
         }
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 15) {
-                Section {
-                    CollectionHStack(
-                        uniqueElements: elements,
-                        layout: Self.layout
-                    ) { element in
-                        content(element)
-                            .focused($focusedElement, equals: element.id)
-                    }
-                    .clipsToBounds(false)
-                    .insets(horizontal: EdgeInsets.edgePadding)
-                    .itemSpacing(Self.itemSpacing)
-                    .scrollBehavior(.continuousLeadingEdge)
-                    .focusSection()
-                    .focused($focusedSection, equals: .episodes)
-                    .backport
-                    .defaultFocus(
-                        $focusedElement,
-                        preferredElementID,
-                        priority: .userInitiated
-                    )
-                } header: {
-                    header
-                        .focusSection()
-                        .focused($focusedSection, equals: .seasons)
+            ContentGroupSection {
+                CollectionHStack(
+                    uniqueElements: elements,
+                    layout: Self.layout
+                ) { element in
+                    content(element)
+                        .focused($focusedElement, equals: element.id)
                 }
+                .clipsToBounds(false)
+                .insets(horizontal: EdgeInsets.edgePadding)
+                .itemSpacing(Self.itemSpacing)
+                .scrollBehavior(.continuousLeadingEdge)
+                .focusSection()
+                .focused($focusedSection, equals: .episodes)
+                .backport
+                .defaultFocus(
+                    $focusedElement,
+                    preferredElementID,
+                    priority: .userInitiated
+                )
+            } header: {
+                header
+                    .focusSection()
+                    .focused($focusedSection, equals: .seasons)
             }
             .focusSection()
             .backport
