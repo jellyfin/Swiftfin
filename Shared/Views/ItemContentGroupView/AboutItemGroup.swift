@@ -72,13 +72,17 @@ struct AboutItemGroup: ContentGroup {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                     .modifier(
                         MaterialShapeAppearanceModifier(
-                            shape: RoundedRectangle(cornerRadius: 10, style: .continuous),
+                            shape: RoundedRectangle(
+                                cornerRadius: 20,
+                                style: .continuous
+                            ),
                             tint: nil
                         )
                     )
                 }
                 .foregroundStyle(.primary, .secondary)
                 .buttonStyle(.card)
+                .buttonBorderShape(.roundedRectangle(radius: 20))
             }
         }
 

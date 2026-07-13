@@ -116,7 +116,7 @@ extension ItemView {
 
                 VStack(alignment: .center, spacing: 5) {
                     if provider.item.presentPlayButton {
-                        ItemView.PlayButton(provider: provider)
+                        PlayButton(provider: provider)
                             .frame(height: 50)
                     }
 

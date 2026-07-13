@@ -23,6 +23,14 @@ extension ItemView {
         @ObservedObject
         var provider: ItemContentGroupProvider
 
+        private var buttonHeight: CGFloat {
+            UIDevice.isTV ? 100 : 50
+        }
+
+        private var buttonSpacing: CGFloat {
+            UIDevice.isTV ? 30 : 10
+        }
+
         // MARK: - Has Trailers
 
         private var hasTrailers: Bool {
@@ -54,10 +62,8 @@ extension ItemView {
                 )
         }
 
-        // MARK: - Body
-
         var body: some View {
-            HStack(alignment: .center, spacing: 30) {
+            HStack(alignment: .center, spacing: buttonSpacing) {
 
                 // MARK: Toggle Played
 
@@ -75,7 +81,6 @@ extension ItemView {
                         )
                     }
                     .isSelected(isCheckmarkSelected)
-                    .frame(minWidth: 100, maxWidth: .infinity)
                 }
 
                 // MARK: Toggle Favorite
@@ -93,7 +98,6 @@ extension ItemView {
                     )
                 }
                 .isSelected(isHeartSelected)
-                .frame(minWidth: 100, maxWidth: .infinity)
 
                 // MARK: Watch a Trailer
 
@@ -109,7 +113,6 @@ extension ItemView {
                             foregroundColor: .primary
                         )
                     }
-                    .frame(minWidth: 100, maxWidth: .infinity)
                 }
 
                 // MARK: Advanced Options
@@ -126,12 +129,12 @@ extension ItemView {
                         )
                         .rotationEffect(.degrees(90))
                     }
-                    .frame(width: 60, height: 100)
+                    .frame(width: 60, height: buttonHeight)
                 }
             }
-            .frame(height: 100)
+            .frame(height: buttonHeight)
             .labelStyle(.iconOnly)
-            .buttonStyle(_BasicHoverButtonStyle())
+            .buttonStyle(.card)
             .font(.title3)
             .fontWeight(.semibold)
         }
