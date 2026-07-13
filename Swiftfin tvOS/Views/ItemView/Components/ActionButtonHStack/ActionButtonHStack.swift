@@ -37,6 +37,23 @@ extension ItemView {
             return false
         }
 
+        private func materialLabel(
+            _ title: String,
+            systemImage: String,
+            tint: Color,
+            foregroundColor: Color
+        ) -> some View {
+            Label(title, systemImage: systemImage)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .modifier(
+                    MaterialShapeAppearanceModifier(
+                        shape: Rectangle(),
+                        selectedTint: tint,
+                        selectedForegroundColor: foregroundColor
+                    )
+                )
+        }
+
         // MARK: - Body
 
         var body: some View {
@@ -47,10 +64,16 @@ extension ItemView {
                 if provider.item.canBePlayed {
                     let isCheckmarkSelected = provider.item.userData?.isPlayed == true
 
-                    Button(L10n.played, systemImage: "checkmark") {
+                    Button {
                         Task { await provider.toggleIsPlayed() }
+                    } label: {
+                        materialLabel(
+                            L10n.played,
+                            systemImage: "checkmark",
+                            tint: .jellyfinPurple,
+                            foregroundColor: .primary
+                        )
                     }
-                    .labelStyle(.tintedMaterial(tint: Color.jellyfinPurple, foregroundColor: .primary))
                     .isSelected(isCheckmarkSelected)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
@@ -59,10 +82,16 @@ extension ItemView {
 
                 let isHeartSelected = provider.item.userData?.isFavorite == true
 
-                Button(L10n.favorited, systemImage: isHeartSelected ? "heart.fill" : "heart") {
+                Button {
                     Task { await provider.toggleIsFavorite() }
+                } label: {
+                    materialLabel(
+                        L10n.favorited,
+                        systemImage: isHeartSelected ? "heart.fill" : "heart",
+                        tint: .pink,
+                        foregroundColor: .primary
+                    )
                 }
-                .labelStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
                 .isSelected(isHeartSelected)
                 .frame(minWidth: 100, maxWidth: .infinity)
 
@@ -72,8 +101,14 @@ extension ItemView {
                     TrailerMenu(
                         localTrailers: provider.localTrailers,
                         externalTrailers: provider.item.remoteTrailers ?? []
-                    )
-                    .labelStyle(.tintedMaterial(tint: .pink, foregroundColor: .primary))
+                    ) {
+                        materialLabel(
+                            L10n.trailers,
+                            systemImage: "movieclapper",
+                            tint: .pink,
+                            foregroundColor: .primary
+                        )
+                    }
                     .frame(minWidth: 100, maxWidth: .infinity)
                 }
 
@@ -83,10 +118,14 @@ extension ItemView {
                     Menu {
                         ItemEditorMenu(item: provider.item)
                     } label: {
-                        Label(L10n.advanced, systemImage: "ellipsis")
-                            .rotationEffect(.degrees(90))
+                        materialLabel(
+                            L10n.advanced,
+                            systemImage: "ellipsis",
+                            tint: .clear,
+                            foregroundColor: .primary
+                        )
+                        .rotationEffect(.degrees(90))
                     }
-                    .labelStyle(.tintedMaterial(tint: .clear, foregroundColor: .primary))
                     .frame(width: 60, height: 100)
                 }
             }

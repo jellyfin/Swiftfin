@@ -70,9 +70,11 @@ struct AboutItemGroup: ContentGroup {
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.complexSecondary)
+                    .modifier(
+                        MaterialShapeAppearanceModifier(
+                            shape: RoundedRectangle(cornerRadius: 10, style: .continuous),
+                            tint: nil
+                        )
                     )
                 }
                 .foregroundStyle(.primary, .secondary)

@@ -6,13 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct CapsuleLabelStyle: LabelStyle {
-
-    @Default(.isLiquidGlassEnabled)
-    private var isLiquidGlassEnabled
 
     private let insets: EdgeInsets?
     private let spacing: CGFloat
@@ -58,73 +54,10 @@ struct CapsuleLabelStyle: LabelStyle {
         }
         .padding(insets ?? defaultInsets)
         .modifier(
-            CapsuleLabelAppearanceModifier(
-                isLiquidGlassEnabled: isLiquidGlassEnabled,
+            MaterialShapeAppearanceModifier(
+                shape: Capsule(),
                 tint: tint
             )
         )
-    }
-}
-
-private struct CapsuleLabelAppearanceModifier: ViewModifier {
-
-    let isLiquidGlassEnabled: Bool
-    let tint: Color?
-
-    func body(content: Content) -> some View {
-        #if os(tvOS)
-        if #available(tvOS 26.0, *), isLiquidGlassEnabled {
-            glassBody(content)
-        } else {
-            legacyBody(content)
-        }
-        #else
-        if #available(iOS 26.0, *), isLiquidGlassEnabled {
-            glassBody(content)
-        } else {
-            legacyBody(content)
-        }
-        #endif
-    }
-
-    @ViewBuilder
-    private func legacyBody(_ content: Content) -> some View {
-        content
-            .background {
-                if let tint {
-                    Capsule()
-                        .fill(tint)
-                } else {
-                    #if os(tvOS)
-                    Capsule()
-                        .fill(Material.ultraThinMaterial.tinted(.white.opacity(0.2)))
-                    #else
-                    Capsule()
-                        .fill(.ultraThinMaterial)
-                    #endif
-                }
-            }
-            .overlay {
-                Capsule()
-                    .stroke(.white.opacity(0.1), lineWidth: 1)
-            }
-            .clipShape(.capsule)
-            .contentShape(.capsule)
-    }
-
-    @available(iOS 26.0, tvOS 26.0, *)
-    private func glassBody(_ content: Content) -> some View {
-        content
-            .glassEffect(
-                .regular
-                    .tint(tint)
-                    .interactive(),
-                in: Capsule()
-            )
-            .overlay {
-                Capsule()
-                    .stroke(.white.opacity(0.1), lineWidth: 1)
-            }
-            .contentShape(.capsule)
     }
 }

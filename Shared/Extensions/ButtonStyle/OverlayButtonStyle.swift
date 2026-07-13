@@ -73,7 +73,11 @@ extension VideoPlayer.PlaybackControls {
                             .fill(Color.white)
                     } else {
                         Circle()
-                            .fill(Material.thin.tinted(.white.opacity(0.2)))
+                            .fill(Material.thin)
+                            .background {
+                                Circle()
+                                    .fill(.white.opacity(0.2))
+                            }
                     }
                 }
                 .overlay {

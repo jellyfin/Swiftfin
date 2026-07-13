@@ -36,6 +36,22 @@ extension ItemView {
             return false
         }
 
+        private func materialLabel(
+            _ title: String,
+            systemImage: String,
+            tint: Color,
+            foregroundColor: Color
+        ) -> some View {
+            Label(title, systemImage: systemImage)
+                .modifier(
+                    MaterialShapeAppearanceModifier(
+                        shape: RoundedRectangle(cornerRadius: 10, style: .circular),
+                        selectedTint: tint,
+                        selectedForegroundColor: foregroundColor
+                    )
+                )
+        }
+
         var body: some View {
             HStack(alignment: .center, spacing: 10) {
 
@@ -45,11 +61,17 @@ extension ItemView {
 
                     let isCheckmarkSelected = provider.item.userData?.isPlayed == true
 
-                    Button(L10n.played, systemImage: "checkmark") {
+                    Button {
                         Task { await provider.toggleIsPlayed() }
+                    } label: {
+                        materialLabel(
+                            L10n.played,
+                            systemImage: "checkmark",
+                            tint: .jellyfinPurple,
+                            foregroundColor: .white
+                        )
                     }
                     .foregroundStyle(.primary, .secondary)
-                    .labelStyle(.tintedMaterial(tint: .jellyfinPurple, foregroundColor: .white))
                     .isSelected(isCheckmarkSelected)
                     .frame(maxWidth: .infinity)
                 }
@@ -58,11 +80,17 @@ extension ItemView {
 
                 let isHeartSelected = provider.item.userData?.isFavorite == true
 
-                Button(L10n.favorite, systemImage: isHeartSelected ? "heart.fill" : "heart") {
+                Button {
                     Task { await provider.toggleIsFavorite() }
+                } label: {
+                    materialLabel(
+                        L10n.favorite,
+                        systemImage: isHeartSelected ? "heart.fill" : "heart",
+                        tint: .red,
+                        foregroundColor: .white
+                    )
                 }
                 .foregroundStyle(.primary, .secondary)
-                .labelStyle(.tintedMaterial(tint: .red, foregroundColor: .white))
                 .isSelected(isHeartSelected)
                 .frame(maxWidth: .infinity)
 
@@ -77,7 +105,6 @@ extension ItemView {
                     )
                     .menuStyle(.button)
                     .foregroundStyle(.primary, .secondary)
-                    .labelStyle(.tintedMaterial(tint: .clear, foregroundColor: .primary))
                     .frame(maxWidth: .infinity)
                 }
 
@@ -87,10 +114,16 @@ extension ItemView {
                     TrailerMenu(
                         localTrailers: provider.localTrailers,
                         externalTrailers: provider.item.remoteTrailers ?? []
-                    )
+                    ) {
+                        materialLabel(
+                            L10n.trailers,
+                            systemImage: "movieclapper",
+                            tint: .clear,
+                            foregroundColor: .primary
+                        )
+                    }
                     .menuStyle(.button)
                     .foregroundStyle(.primary, .secondary)
-                    .labelStyle(.tintedMaterial(tint: .clear, foregroundColor: .primary))
                     .frame(maxWidth: .infinity)
                 }
             }

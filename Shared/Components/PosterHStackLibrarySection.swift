@@ -17,6 +17,18 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
         case content
     }
 
+    #if os(tvOS)
+    private struct HeaderButtonStyle: ButtonStyle {
+
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .scaleEffect(configuration.isPressed ? 0.97 : 1)
+                .opacity(configuration.isPressed ? 0.8 : 1)
+                .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+        }
+    }
+    #endif
+
     @FocusState
     private var focusedSection: FocusSection?
 
@@ -32,9 +44,38 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
         router.route(to: .library(library: viewModel.library))
     }
 
+    private var isHeaderFocused: Bool {
+        focusedSection == .header
+    }
+
     @ViewBuilder
     private var header: some View {
         Button(action: routeToLibrary) {
+            #if os(tvOS)
+            HStack(spacing: 3) {
+                Text(viewModel.library.parent.displayTitle)
+                    .font(.title3)
+                    .lineLimit(1)
+
+                if isHeaderFocused {
+                    Image(systemName: "chevron.forward")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                        .transition(.opacity)
+                }
+            }
+            .fontWeight(.semibold)
+            .padding(.horizontal, isHeaderFocused ? 16 : 0)
+            .padding(.vertical, isHeaderFocused ? 8 : 0)
+            .modifier(
+                MaterialShapeAppearanceModifier(
+                    shape: Capsule(),
+                    tint: nil,
+                    isVisible: isHeaderFocused
+                )
+            )
+            .animation(.easeInOut(duration: 0.15), value: isHeaderFocused)
+            #else
             HStack(spacing: 3) {
                 Text(viewModel.library.parent.displayTitle)
                     .font(.title3)
@@ -45,16 +86,20 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
                     .foregroundStyle(.secondary)
             }
             .fontWeight(.semibold)
+            #endif
         }
         .foregroundStyle(.primary, .secondary)
         .accessibilityAddTraits(.isHeader)
         .accessibilityAction(named: Text(L10n.openLibrary), routeToLibrary)
-        .edgePadding(.horizontal)
+        #if os(tvOS)
+            .buttonStyle(HeaderButtonStyle())
+        #endif
+            .edgePadding(.horizontal)
     }
 
     var body: some View {
         if viewModel.elements.isNotEmpty {
-            VStack(alignment: .leading, spacing: 15) {
+            VStack(alignment: .leading, spacing: 30) {
                 Section {
                     PosterHStack(
                         elements: viewModel.elements.elements,

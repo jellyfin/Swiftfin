@@ -13,7 +13,7 @@ import SwiftUI
 
 extension ItemView {
 
-    struct TrailerMenu: View {
+    struct TrailerMenu<LabelContent: View>: View {
 
         private let logger = Logger.swiftfin()
 
@@ -34,6 +34,17 @@ extension ItemView {
 
         let localTrailers: [BaseItemDto]
         let externalTrailers: [NamedURL]
+        private let label: LabelContent
+
+        init(
+            localTrailers: [BaseItemDto],
+            externalTrailers: [NamedURL],
+            @ViewBuilder label: () -> LabelContent
+        ) {
+            self.localTrailers = localTrailers
+            self.externalTrailers = externalTrailers
+            self.label = label()
+        }
 
         private var showLocalTrailers: Bool {
             enabledTrailers.contains(.local) && localTrailers.isNotEmpty
@@ -56,10 +67,7 @@ extension ItemView {
         }
 
         private var trailerButton: some View {
-            Button(
-                L10n.trailers,
-                systemImage: "movieclapper"
-            ) {
+            Button {
                 if showLocalTrailers, let firstTrailer = localTrailers.first {
                     playLocalTrailer(firstTrailer)
                 }
@@ -67,12 +75,14 @@ extension ItemView {
                 if showExternalTrailers, let firstTrailer = externalTrailers.first {
                     playExternalTrailer(firstTrailer)
                 }
+            } label: {
+                label
             }
         }
 
         @ViewBuilder
         private var trailerMenu: some View {
-            Menu(L10n.trailers, systemImage: "movieclapper") {
+            Menu {
 
                 if showLocalTrailers {
                     Section(L10n.local) {
@@ -99,6 +109,8 @@ extension ItemView {
                         }
                     }
                 }
+            } label: {
+                label
             }
         }
 

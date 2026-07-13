@@ -89,17 +89,34 @@ extension ItemView {
                 .foregroundStyle(.primary, .secondary)
                 .labelStyle(
                     CapsuleLabelStyle(
-                        insets: .init(vertical: 5, horizontal: 10),
                         isIconTrailing: true
                     )
                 )
+                .buttonBorderShape(.capsule)
+                .buttonStyle(.card)
             }
 
             @ViewBuilder
             private var overlay: some View {
                 HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                     VStack(alignment: .center, spacing: 5) {
-                        logo
+                        VStack(alignment: .leading) {
+                            switch provider.item.type {
+                            case .episode:
+                                if let parentID = provider.item.seriesID, let parentTitle = provider.item.parentTitle {
+                                    parentButton(parentTitle, id: parentID)
+                                }
+                            case .liveTvProgram:
+                                if let channelID = provider.item.channelID, let channelName = provider.item.channelName {
+                                    parentButton(channelName, id: channelID)
+                                }
+                            default:
+                                EmptyView()
+                            }
+
+                            logo
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                         if provider.item.type == .person || provider.item.type == .musicArtist {
                             ImageView(provider.item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 200)))
@@ -123,20 +140,6 @@ extension ItemView {
                     .frame(width: 450)
 
                     VStack(alignment: .leading, spacing: 10) {
-
-                        switch provider.item.type {
-                        case .episode:
-                            if let parentID = provider.item.seriesID, let parentTitle = provider.item.parentTitle {
-                                parentButton(parentTitle, id: parentID)
-                            }
-                        case .liveTvProgram:
-                            if let channelID = provider.item.channelID, let channelName = provider.item.channelName {
-                                parentButton(channelName, id: channelID)
-                            }
-                        default:
-                            EmptyView()
-                        }
-
                         VStack(alignment: .leading, spacing: 5) {
                             if let firstTagline = provider.item.taglines?.first {
                                 Text(firstTagline)

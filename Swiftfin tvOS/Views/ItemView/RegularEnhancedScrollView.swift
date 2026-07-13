@@ -22,7 +22,7 @@ extension ItemView {
         let groups: [any ContentGroup]
 
         private var isHeaderFocused: Bool {
-            focusedGroupID == "itemView-header"
+            focusedGroupID == "itemView-header" || focusedGroupID == nil
         }
 
         private var backgroundImageItem: BaseItemDto {
@@ -35,25 +35,21 @@ extension ItemView {
             }
         }
 
-        private var backgroundImageSources: [ImageSource] {
-            backgroundImageItem.landscapeImageSources(
-                environment: .init(
-                    maxWidth: 1920,
-                    useParent: false
-                )
-            )
-        }
-
         @ViewBuilder
         private var background: some View {
             AlternateLayoutView {
                 Color.clear
             } content: {
-                ImageView(backgroundImageSources)
-                    .failure {
-                        Color.black
-                    }
-                    .aspectRatio(contentMode: .fill)
+                ImageView(backgroundImageItem.landscapeImageSources(
+                    environment: .init(
+                        maxWidth: 1920,
+                        useParent: false
+                    )
+                ))
+                .failure {
+                    Color.black
+                }
+                .aspectRatio(contentMode: .fill)
             }
             .accessibilityHidden(true)
             .overlay {
