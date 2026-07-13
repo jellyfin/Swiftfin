@@ -12,24 +12,17 @@ extension ItemView {
 
     struct BlurredNavigationBarScrollView<Content: View>: View {
 
-        @Environment(\.frameForParentView)
-        private var frameForParentView
-
         private let content: Content
-        private let isEnabled: Bool
 
-        init(
-            isEnabled: Bool = true,
-            @ViewBuilder content: @escaping () -> Content
-        ) {
+        init(@ViewBuilder content: @escaping () -> Content) {
             self.content = content()
-            self.isEnabled = isEnabled
         }
 
         var body: some View {
-            OffsetNavigationBar(isEnabled: isEnabled) {
-                _Body { content }
+            WithBlurNavigationBar {
+                _Body(content: content)
             }
+            .ignoresSafeArea()
             .trackingFrame(for: .scrollView)
         }
     }
@@ -39,16 +32,7 @@ extension ItemView {
         @Environment(\.frameForParentView)
         private var frameForParentView
 
-        private let content: Content
-        private let usesOffsetNavigationBar: Bool
-
-        init(
-            usesOffsetNavigationBar: Bool = true,
-            @ViewBuilder content: @escaping () -> Content
-        ) {
-            self.content = content()
-            self.usesOffsetNavigationBar = usesOffsetNavigationBar
-        }
+        let content: Content
 
         var body: some View {
             ScrollView {
@@ -57,29 +41,23 @@ extension ItemView {
             .ignoresSafeArea(edges: .horizontal)
             .scrollIndicators(.hidden)
             .overlay(alignment: .top) {
-                if usesOffsetNavigationBar {
-                    Rectangle()
-                        .fill(Material.ultraThin)
-                        .mask {
-                            EasedGradient(
-                                colors: [.white, .clear],
-                                startPoint: .top,
-                                endPoint: .bottom,
-                                curve: .smootherstep
-                            )
-                        }
-                        .frame(
-                            height: frameForParentView[.scrollView, default: .zero]
-                                .safeAreaInsets.top + 20
-                        )
-                        .offset(
-                            y: -frameForParentView[.scrollView, default: .zero]
-                                .safeAreaInsets.top
-                        )
-                        .colorScheme(.dark)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
-                }
+                Rectangle()
+                    .fill(Material.ultraThin)
+                    .mask(gradient: .eased(.smootherstep)) {
+                        (location: 0, opacity: 1)
+                        (location: 1, opacity: 0)
+                    }
+                    .frame(
+                        height: frameForParentView[.scrollView, default: .zero]
+                            .safeAreaInsets.top + 20
+                    )
+                    .offset(
+                        y: -frameForParentView[.scrollView, default: .zero]
+                            .safeAreaInsets.top
+                    )
+                    .colorScheme(.dark)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
             }
         }
     }

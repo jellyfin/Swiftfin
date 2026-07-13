@@ -10,6 +10,7 @@ import SwiftUI
 
 extension View {
 
+    @ViewBuilder
     func backgroundParallaxHeader(
         multiplier: CGFloat = 1,
         @ViewBuilder header: @escaping () -> some View
@@ -19,6 +20,10 @@ extension View {
                 multiplier: multiplier,
                 header: header
             )
+        )
+        .trackingFrame(
+            for: .scrollViewHeader,
+            key: ScrollViewHeaderFrameKey.self
         )
     }
 }

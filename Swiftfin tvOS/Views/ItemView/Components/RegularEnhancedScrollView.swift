@@ -58,7 +58,7 @@ extension ItemView {
             .overlay {
                 Rectangle()
                     .fill(Material.regular)
-                    .maskLinearGradient {
+                    .mask(gradient: .linear) {
                         if isHeaderFocused {
                             (location: 0.3, opacity: 0)
                         } else {

@@ -6,54 +6,26 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-#if os(iOS)
 import SwiftUI
 
-struct OffsetNavigationBar<Content: View>: View {
-
-    private let content: Content
-    private let isEnabled: Bool
-
-    init(
-        isEnabled: Bool,
-        @ViewBuilder content: @escaping () -> Content
-    ) {
-        self.content = content()
-        self.isEnabled = isEnabled
-    }
-
-    var body: some View {
-        if isEnabled {
-            NavigationBarTitleHiddenView {
-                content
-            }
-            .ignoresSafeArea()
-        } else {
-            content
-        }
-    }
-}
-
-private struct NavigationBarTitleHiddenView<Content: View>: UIViewControllerRepresentable {
+struct WithBlurNavigationBar<Content: View>: UIViewControllerRepresentable {
 
     private let content: Content
 
-    init(
-        @ViewBuilder content: @escaping () -> Content
-    ) {
+    init(@ViewBuilder content: @escaping () -> Content) {
         self.content = content()
     }
 
-    func makeUIViewController(context: Context) -> NavigationBarTitleHiddenHostingController<Content> {
-        NavigationBarTitleHiddenHostingController<Content>(rootView: content)
+    func makeUIViewController(context: Context) -> _WithBlurNavigationBarViewController<Content> {
+        _WithBlurNavigationBarViewController<Content>(rootView: content)
     }
 
-    func updateUIViewController(_ uiViewController: NavigationBarTitleHiddenHostingController<Content>, context: Context) {
+    func updateUIViewController(_ uiViewController: _WithBlurNavigationBarViewController<Content>, context: Context) {
         uiViewController.hideNavigationTitle()
     }
 }
 
-private class NavigationBarTitleHiddenHostingController<Content: View>: UIHostingController<Content> {
+final class _WithBlurNavigationBarViewController<Content: View>: UIHostingController<Content> {
 
     private var hasCalledWillDisappear = false
 
@@ -95,4 +67,3 @@ private class NavigationBarTitleHiddenHostingController<Content: View>: UIHostin
         navigationController?.navigationBar.shadowImage = nil
     }
 }
-#endif

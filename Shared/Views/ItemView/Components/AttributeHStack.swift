@@ -20,16 +20,12 @@ extension ItemView {
         var alignment: HorizontalAlignment = .center
         var flowDirection: FlowLayout.Direction = .up
 
-        private var spacing: CGFloat {
-            UIDevice.isTV ? 20 : 8
-        }
-
         var body: some View {
             if attributes.isNotEmpty {
                 FlowLayout(
                     alignment: alignment,
                     direction: flowDirection,
-                    spacing: spacing
+                    spacing: UIDevice.isTV ? 20 : 8
                 ) {
                     ForEach(attributes, id: \.self) { attribute in
                         switch attribute {
@@ -42,7 +38,6 @@ extension ItemView {
                         }
                     }
                 }
-                .foregroundStyle(.secondary)
                 .lineLimit(1)
             }
         }

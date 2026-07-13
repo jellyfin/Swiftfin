@@ -13,14 +13,9 @@ struct CinematicContentGroupContainer<Content: View>: View {
     @Environment(\.frameForParentView)
     private var frameForParentView
 
-    private let alignment: Alignment
     private let content: Content
 
-    init(
-        alignment: Alignment = .bottomLeading,
-        @ViewBuilder content: () -> Content
-    ) {
-        self.alignment = alignment
+    init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
 
@@ -32,7 +27,7 @@ struct CinematicContentGroupContainer<Content: View>: View {
 
     var body: some View {
         content
-            .frame(height: resolvedHeight, alignment: alignment)
+            .frame(height: resolvedHeight, alignment: .bottomLeading)
             .frame(maxWidth: .infinity)
     }
 }

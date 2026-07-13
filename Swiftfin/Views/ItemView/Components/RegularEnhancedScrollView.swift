@@ -19,11 +19,11 @@ extension ItemView {
         @ObservedObject
         var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
 
-        @StoredValue(.User.itemViewAttributes)
-        private var attributes
-
         @Router
         private var router
+
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
 
         private let headerAspectRatio = 2.0
 
@@ -201,13 +201,9 @@ extension ItemView {
             ) {
                 Rectangle()
                     .fill(Material.ultraThin)
-                    .mask {
-                        EasedGradient(
-                            colors: [.clear, .white],
-                            startPoint: .top,
-                            endPoint: .bottom,
-                            curve: .easeOut
-                        )
+                    .mask(gradient: .eased(.easeOut)) {
+                        (location: 0, opacity: 0)
+                        (location: 1, opacity: 1)
                     }
             }
         }
@@ -253,10 +249,6 @@ extension ItemView {
                     .accessibilityHidden(true)
                 }
             }
-            .trackingFrame(
-                for: .scrollViewHeader,
-                key: ScrollViewHeaderFrameKey.self
-            )
         }
 
         var body: some View {

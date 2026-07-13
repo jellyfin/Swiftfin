@@ -12,24 +12,14 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
-        @StoredValue(.User.enabledTrailers)
-        private var enabledTrailers: TrailerSelection
+        @ObservedObject
+        var provider: ItemContentGroupProvider
 
         @Router
         private var router
 
-        @ObservedObject
-        var provider: ItemContentGroupProvider
-
-        private var buttonHeight: CGFloat {
-            UIDevice.isTV ? 100 : 44
-        }
-
-        private var buttonSpacing: CGFloat {
-            UIDevice.isTV ? 30 : 10
-        }
-
-        // MARK: - Has Trailers
+        @StoredValue(.User.enabledTrailers)
+        private var enabledTrailers: TrailerSelection
 
         private var hasTrailers: Bool {
             if enabledTrailers.contains(.local), provider.localTrailers.isNotEmpty {
@@ -69,9 +59,9 @@ extension ItemView {
         }
 
         var body: some View {
-            HStack(alignment: .center, spacing: buttonSpacing) {
+            HStack(alignment: .center, spacing: UIDevice.isTV ? 30 : 10) {
 
-                // MARK: Toggle Played
+                // MARK: Played
 
                 if provider.item.canBePlayed {
                     let isCheckmarkSelected = provider.item.userData?.isPlayed == true
@@ -92,7 +82,7 @@ extension ItemView {
                     .isSelected(isCheckmarkSelected)
                 }
 
-                // MARK: Toggle Favorite
+                // MARK: Favorite
 
                 let isHeartSelected = provider.item.userData?.isFavorite == true
 
@@ -111,24 +101,7 @@ extension ItemView {
                 #endif
                 .isSelected(isHeartSelected)
 
-//                #if !os(tvOS)
-//
-//                // MARK: Select a Version
-//
-//                if let mediaSources = provider.playButtonItem?.mediaSources,
-//                   mediaSources.count > 1
-//                {
-//                    VersionMenu(
-//                        provider: provider,
-//                        mediaSources: mediaSources
-//                    )
-//                    .menuStyle(.button)
-//                    .foregroundStyle(.primary, .secondary)
-//                    .frame(maxWidth: .infinity)
-//                }
-//                #endif
-
-                // MARK: Watch a Trailer
+                // MARK: Trailer
 
                 if hasTrailers {
                     TrailerMenu(
@@ -150,7 +123,7 @@ extension ItemView {
 
                 #if os(tvOS)
 
-                // MARK: Advanced Options
+                // MARK: Options
 
                 if provider.item.showEditorMenu {
                     Menu {
@@ -164,11 +137,11 @@ extension ItemView {
                         )
                         .rotationEffect(.degrees(90))
                     }
-                    .frame(width: 60, height: buttonHeight)
+                    .frame(width: 60)
                 }
                 #endif
             }
-            .frame(height: buttonHeight)
+            .frame(height: UIDevice.isTV ? 100 : 44)
             .labelStyle(.iconOnly)
             .buttonStyle(.card)
             .font(.title3)

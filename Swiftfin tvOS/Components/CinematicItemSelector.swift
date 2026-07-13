@@ -41,6 +41,19 @@ struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
         frameForParentView[.scrollView, default: .zero].frame
     }
 
+    private var resolvedSelectedPoster: AnyPoster? {
+        selectedPoster ?? items.first.map { AnyPoster($0) }
+    }
+
+    private var selectedItem: Item? {
+        resolvedSelectedPoster?._poster as? Item
+    }
+
+    private func updateSelectedPoster() {
+        guard isSectionFocused, let focusedPoster else { return }
+        selectedPoster = focusedPoster
+    }
+
     var body: some View {
         CinematicContentGroupContainer {
             VStack(alignment: .leading, spacing: 10) {
@@ -59,7 +72,7 @@ struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
                 ) { item, _ in
                     action(item)
                 }
-                .frame(height: CinematicItemSelectorLayout.posterRowHeight)
+                .frame(height: 400)
             }
         }
         .background(alignment: .top) {
@@ -75,14 +88,14 @@ struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
             }
             .overlay {
                 Color.black
-                    .maskLinearGradient {
+                    .mask(gradient: .linear) {
                         (location: 0.5, opacity: 0)
                         (location: 0.6, opacity: 0.4)
                         (location: 1, opacity: 1)
                     }
             }
             .frame(height: parentFrame.height)
-            .maskLinearGradient {
+            .mask(gradient: .linear) {
                 (location: 0.82, opacity: 1)
                 (location: 0.94, opacity: 0.55)
                 (location: 1, opacity: 0)
@@ -97,24 +110,6 @@ struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
         .focusSection()
         .focused($isSectionFocused)
     }
-
-    private var resolvedSelectedPoster: AnyPoster? {
-        selectedPoster ?? items.first.map { AnyPoster($0) }
-    }
-
-    private var selectedItem: Item? {
-        resolvedSelectedPoster?._poster as? Item
-    }
-
-    private func updateSelectedPoster() {
-        guard isSectionFocused, let focusedPoster else { return }
-        selectedPoster = focusedPoster
-    }
-}
-
-private enum CinematicItemSelectorLayout {
-
-    static let posterRowHeight: CGFloat = 400
 }
 
 extension CinematicItemSelector where TopContent == EmptyView {

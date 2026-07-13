@@ -73,7 +73,7 @@ extension VideoPlayer {
                         }
                         .background(alignment: .top) {
                             Color.black
-                                .maskLinearGradient {
+                                .mask(gradient: .linear) {
                                     (location: 0, opacity: 0)
                                     (location: 1, opacity: 0.5)
                                 }

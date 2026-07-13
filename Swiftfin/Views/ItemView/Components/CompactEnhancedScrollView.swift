@@ -132,16 +132,9 @@ extension ItemView {
                 ) {
                     Rectangle()
                         .fill(Material.ultraThin)
-                        .mask {
-                            EasedGradient(
-                                stops: [
-                                    .init(color: .clear, location: 0),
-                                    .init(color: .white, location: 0.2),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom,
-                                curve: .easeOut
-                            )
+                        .mask(gradient: .eased(.easeOut)) {
+                            (location: 0, opacity: 0)
+                            (location: 0.2, opacity: 1)
                         }
                 }
                 .zIndex(9)
@@ -189,10 +182,6 @@ extension ItemView {
                         .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)
                     }
                 }
-                .trackingFrame(
-                    for: .scrollViewHeader,
-                    key: ScrollViewHeaderFrameKey.self
-                )
         }
 
         var body: some View {

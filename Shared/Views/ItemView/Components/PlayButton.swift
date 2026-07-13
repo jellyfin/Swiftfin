@@ -77,6 +77,26 @@ struct PlayButton: View {
         )
     }
 
+    @ViewBuilder
+    private var versionMenu: some View {
+        if let mediaSources = provider.playButtonItem?.mediaSources,
+           mediaSources.count > 1
+        {
+            Menu(L10n.version, systemImage: "list.dash") {
+                Picker(
+                    L10n.version,
+                    sources: mediaSources,
+                    selection: $provider.selectedMediaSource
+//                    noneStyle: nil
+                )
+            }
+            .menuStyle(.button)
+            .labelStyle(.iconOnly)
+            .aspectRatio(1, contentMode: .fit)
+        }
+    }
+
+    @ViewBuilder
     private var playButton: some View {
         Button {
             play()
@@ -116,6 +136,8 @@ struct PlayButton: View {
     var body: some View {
         HStack {
             playButton
+
+            versionMenu
         }
         .frame(height: UIDevice.isTV ? 100 : 44)
     }

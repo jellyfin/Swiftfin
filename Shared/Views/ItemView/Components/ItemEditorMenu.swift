@@ -23,16 +23,6 @@ struct ItemEditorMenu: View {
     }
 
     @ViewBuilder
-    var body: some View {
-        contentView
-            .onNotification(.didDeleteItem) { _ in
-                UIDevice.feedback(.success)
-                router.dismiss()
-            }
-            .errorMessage($viewModel.error)
-    }
-
-    @ViewBuilder
     private var contentView: some View {
         if viewModel.item.canEditMetadata {
             #if os(iOS)
@@ -86,5 +76,14 @@ struct ItemEditorMenu: View {
              }
          }
          #endif */
+    }
+
+    var body: some View {
+        contentView
+            .onNotification(.didDeleteItem) { _ in
+                UIDevice.feedback(.success)
+                router.dismiss()
+            }
+            .errorMessage($viewModel.error)
     }
 }

@@ -45,7 +45,7 @@ struct ProgressIndicator: View {
         .background(extendedBy: .init(top: 5, leading: 0, bottom: 0, trailing: 0)) {
             Rectangle()
                 .fill(Color.black)
-                .maskLinearGradient {
+                .mask(gradient: .linear) {
                     (location: 0, opacity: 0)
                     (location: 0.5, opacity: 0.7)
                     (location: 1, opacity: 1)

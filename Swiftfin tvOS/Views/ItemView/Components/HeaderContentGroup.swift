@@ -188,7 +188,6 @@ extension ItemView {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .edgePadding(.bottom)
                 .focusSection()
                 .if(canFocusPlayButton) { view in
                     view
@@ -208,10 +207,6 @@ extension ItemView {
                         .frame(maxWidth: .infinity)
                         .colorScheme(.dark)
                 }
-                .preference(
-                    key: ContentGroupCustomizationKey.self,
-                    value: .ignoreSafeAreaTop
-                )
             }
         }
     }

@@ -63,7 +63,8 @@ extension SeriesEpisodeContentGroup {
                 },
                 contentAction: {
                     router.route(to: .item(item: episode), in: namespace)
-                }
+                },
+                contextMenuItem: episode
             ) {
                 ImageView(episode.landscapeImageSources(
                     environment: .init(
@@ -133,6 +134,7 @@ extension SeriesEpisodeContentGroup {
         let content: String
         let artworkAction: () -> Void
         let contentAction: () -> Void
+        let contextMenuItem: BaseItemDto?
         let artwork: Artwork
 
         init(
@@ -141,6 +143,7 @@ extension SeriesEpisodeContentGroup {
             content: String,
             artworkAction: @escaping () -> Void,
             contentAction: @escaping () -> Void,
+            contextMenuItem: BaseItemDto? = nil,
             @ViewBuilder artwork: () -> Artwork
         ) {
             self.header = header
@@ -148,16 +151,30 @@ extension SeriesEpisodeContentGroup {
             self.content = content
             self.artworkAction = artworkAction
             self.contentAction = contentAction
+            self.contextMenuItem = contextMenuItem
             self.artwork = artwork()
+        }
+
+        @ViewBuilder
+        private var artworkButton: some View {
+            let button = Button(action: artworkAction) {
+                artwork
+            }
+            .buttonStyle(.card)
+            .focused($focusedElement, equals: .artwork)
+
+            if let contextMenuItem {
+                button.posterContextMenu(for: contextMenuItem) {
+                    artwork
+                }
+            } else {
+                button
+            }
         }
 
         var body: some View {
             VStack(alignment: .leading) {
-                Button(action: artworkAction) {
-                    artwork
-                }
-                .buttonStyle(.card)
-                .focused($focusedElement, equals: .artwork)
+                artworkButton
 
                 Button(action: contentAction) {
                     EpisodeMetadataView(
