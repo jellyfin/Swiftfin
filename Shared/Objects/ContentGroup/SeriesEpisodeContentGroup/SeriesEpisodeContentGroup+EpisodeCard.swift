@@ -232,14 +232,11 @@ extension SeriesEpisodeContentGroup {
                     alignment: .topLeading
                 )
                 .frame(height: 200)
-                .modifier(
-                    MaterialShapeAppearanceModifier(
-                        shape: RoundedRectangle(
-                            cornerRadius: cornerRadius,
-                            style: .continuous
-                        ),
-                        tint: nil,
-                        isVisible: showsMaterial
+                .materialShapeAppearance(
+                    showsMaterial ? .regular : .identity,
+                    in: RoundedRectangle(
+                        cornerRadius: cornerRadius,
+                        style: .continuous
                     )
                 )
                 .scaleEffect(isFocused ? 1.05 : 1)

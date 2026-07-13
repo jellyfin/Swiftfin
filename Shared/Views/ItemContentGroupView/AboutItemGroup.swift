@@ -70,13 +70,10 @@ struct AboutItemGroup: ContentGroup {
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                    .modifier(
-                        MaterialShapeAppearanceModifier(
-                            shape: RoundedRectangle(
-                                cornerRadius: 20,
-                                style: .continuous
-                            ),
-                            tint: nil
+                    .materialShapeAppearance(
+                        in: RoundedRectangle(
+                            cornerRadius: 20,
+                            style: .continuous
                         )
                     )
                 }

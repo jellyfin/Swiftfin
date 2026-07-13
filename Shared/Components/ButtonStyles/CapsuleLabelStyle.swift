@@ -53,11 +53,9 @@ struct CapsuleLabelStyle: LabelStyle {
             }
         }
         .padding(insets ?? defaultInsets)
-        .modifier(
-            MaterialShapeAppearanceModifier(
-                shape: Capsule(),
-                tint: tint
-            )
+        .materialShapeAppearance(
+            .regular.tint(tint),
+            in: Capsule()
         )
     }
 }

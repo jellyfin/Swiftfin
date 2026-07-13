@@ -67,12 +67,9 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
             .fontWeight(.semibold)
             .padding(.horizontal, isHeaderFocused ? 16 : 0)
             .padding(.vertical, 8)
-            .modifier(
-                MaterialShapeAppearanceModifier(
-                    shape: Capsule(),
-                    tint: nil,
-                    isVisible: isHeaderFocused
-                )
+            .materialShapeAppearance(
+                isHeaderFocused ? .regular : .identity,
+                in: Capsule()
             )
             .animation(.easeInOut(duration: 0.15), value: isHeaderFocused)
             #else

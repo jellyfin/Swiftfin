@@ -59,12 +59,12 @@ extension ItemView {
 
             return Label(title, systemImage: systemImage)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .modifier(
-                    MaterialShapeAppearanceModifier(
-                        shape: shape,
-                        selectedTint: tint,
-                        selectedForegroundColor: foregroundColor
-                    )
+                .materialShapeAppearance(
+                    .regular.selection(
+                        tint: tint,
+                        foregroundColor: foregroundColor
+                    ),
+                    in: shape
                 )
         }
 
