@@ -59,32 +59,21 @@ extension VideoPlayer.PlaybackControls {
         #if os(tvOS)
         private func tvOSBody(_ configuration: Configuration) -> some View {
             configuration.label
-                .foregroundStyle(foregroundStyle)
                 .labelStyle(.iconOnly)
                 .font(.body)
                 .fontWeight(.semibold)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .frame(minHeight: 56)
-                .contentShape(Circle())
-                .background {
-                    if isFocused {
-                        Circle()
-                            .fill(Color.white)
-                    } else {
-                        Circle()
-                            .fill(Material.thin)
-                            .background {
-                                Circle()
-                                    .fill(.white.opacity(0.2))
-                            }
-                    }
-                }
-                .overlay {
-                    Circle()
-                        .stroke(.white.opacity(0.1), lineWidth: 1)
-                }
-                .clipShape(Circle())
+                .backport
+                .glassEffect(
+                    .regular.selection(
+                        tint: .white,
+                        foregroundColor: .black
+                    ),
+                    in: .circle
+                )
+                .isSelected(isFocused)
                 .scaleEffect(configuration.isPressed ? 0.90 : isFocused ? 1.1 : 1)
                 .shadow(color: isFocused ? .black.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
                 .animation(.linear(duration: 0.1), value: isFocused)
@@ -93,14 +82,6 @@ extension VideoPlayer.PlaybackControls {
                 .onChange(of: configuration.isPressed) { _, newValue in
                     onPressed(newValue)
                 }
-        }
-
-        private var foregroundStyle: AnyShapeStyle {
-            guard isEnabled else {
-                return AnyShapeStyle(Color.gray)
-            }
-
-            return AnyShapeStyle(isFocused ? Color.black : Color.white)
         }
         #endif
     }

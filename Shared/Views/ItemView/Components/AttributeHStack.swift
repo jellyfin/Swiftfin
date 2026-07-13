@@ -20,11 +20,16 @@ extension ItemView {
         var alignment: HorizontalAlignment = .center
         var flowDirection: FlowLayout.Direction = .up
 
+        private var spacing: CGFloat {
+            UIDevice.isTV ? 20 : 8
+        }
+
         var body: some View {
             if attributes.isNotEmpty {
                 FlowLayout(
                     alignment: alignment,
-                    direction: flowDirection
+                    direction: flowDirection,
+                    spacing: spacing
                 ) {
                     ForEach(attributes, id: \.self) { attribute in
                         switch attribute {

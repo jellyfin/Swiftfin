@@ -38,11 +38,8 @@ struct PosterButton<Item: Poster>: View {
 
     @ViewBuilder
     private var contextMenuPreview: some View {
-        // TODO: determine if want to be used or just increase size
-        let frameScale = 1.3
-
-        posterImage(overlay: EmptyView())
-            .frame(width: posterSize.width * frameScale)
+        buttonLabel()
+            .frame(width: posterSize.width)
             .padding(20)
             .background {
                 RoundedRectangle(cornerRadius: 10)

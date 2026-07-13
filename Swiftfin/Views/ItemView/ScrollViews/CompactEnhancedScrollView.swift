@@ -20,11 +20,11 @@ extension ItemView {
         @ObservedObject
         var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
 
-        @StoredValue(.User.itemViewAttributes)
-        private var attributes
-
         @Router
         private var router
+
+        @StoredValue(.User.itemViewAttributes)
+        private var attributes
 
         private let headerAspectRatio = 1.6
 
@@ -86,11 +86,9 @@ extension ItemView {
                     VStack(alignment: .center, spacing: 5) {
                         if provider.item.presentPlayButton {
                             PlayButton(provider: provider)
-                                .frame(height: 50)
                         }
 
                         ItemView.ActionButtonHStack(provider: provider)
-                            .frame(height: 50)
                     }
                     .frame(maxWidth: 300)
 
@@ -122,6 +120,7 @@ extension ItemView {
                         alignment: .leading
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(.secondary)
                 }
                 .edgePadding(.bottom)
                 .background(

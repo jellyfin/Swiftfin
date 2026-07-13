@@ -65,13 +65,15 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
                 }
             }
             .fontWeight(.semibold)
-            .padding(.horizontal, isHeaderFocused ? 16 : 0)
+            .padding(.horizontal, 16)
             .padding(.vertical, 8)
-            .materialShapeAppearance(
+            .backport
+            .glassEffect(
                 isHeaderFocused ? .regular : .identity,
-                in: Capsule()
+                in: .capsule
             )
             .animation(.easeInOut(duration: 0.15), value: isHeaderFocused)
+            .offset(x: -16)
             #else
             HStack(spacing: 3) {
                 Text(viewModel.library.parent.displayTitle)

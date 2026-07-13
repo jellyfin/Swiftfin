@@ -199,10 +199,6 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         )
     }
 
-    func selectMediaSource(_ mediaSource: MediaSourceInfo) {
-        selectedMediaSource = mediaSource
-    }
-
     func toggleIsFavorite() async {
         let beforeIsFavorite = item.userData?.isFavorite ?? false
 

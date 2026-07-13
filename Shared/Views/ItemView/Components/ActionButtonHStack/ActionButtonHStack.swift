@@ -15,8 +15,6 @@ extension ItemView {
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
-        // MARK: - Observed, State, & Environment Objects
-
         @Router
         private var router
 
@@ -24,7 +22,7 @@ extension ItemView {
         var provider: ItemContentGroupProvider
 
         private var buttonHeight: CGFloat {
-            UIDevice.isTV ? 100 : 50
+            UIDevice.isTV ? 100 : 44
         }
 
         private var buttonSpacing: CGFloat {
@@ -45,6 +43,7 @@ extension ItemView {
             return false
         }
 
+        @ViewBuilder
         private func materialLabel(
             _ title: String,
             systemImage: String,
@@ -52,14 +51,15 @@ extension ItemView {
             foregroundColor: Color
         ) -> some View {
             #if os(tvOS)
-            let shape = Rectangle()
+            let shape: Rectangle = .rect
             #else
-            let shape = RoundedRectangle(cornerRadius: 10, style: .circular)
+            let shape: RoundedRectangle = .rect(cornerRadius: 10, style: .circular)
             #endif
 
-            return Label(title, systemImage: systemImage)
+            Label(title, systemImage: systemImage)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .materialShapeAppearance(
+                .backport
+                .glassEffect(
                     .regular.selection(
                         tint: tint,
                         foregroundColor: foregroundColor
@@ -111,22 +111,22 @@ extension ItemView {
                 #endif
                 .isSelected(isHeartSelected)
 
-                #if !os(tvOS)
-
-                // MARK: Select a Version
-
-                if let mediaSources = provider.playButtonItem?.mediaSources,
-                   mediaSources.count > 1
-                {
-                    VersionMenu(
-                        provider: provider,
-                        mediaSources: mediaSources
-                    )
-                    .menuStyle(.button)
-                    .foregroundStyle(.primary, .secondary)
-                    .frame(maxWidth: .infinity)
-                }
-                #endif
+//                #if !os(tvOS)
+//
+//                // MARK: Select a Version
+//
+//                if let mediaSources = provider.playButtonItem?.mediaSources,
+//                   mediaSources.count > 1
+//                {
+//                    VersionMenu(
+//                        provider: provider,
+//                        mediaSources: mediaSources
+//                    )
+//                    .menuStyle(.button)
+//                    .foregroundStyle(.primary, .secondary)
+//                    .frame(maxWidth: .infinity)
+//                }
+//                #endif
 
                 // MARK: Watch a Trailer
 

@@ -45,7 +45,7 @@ struct FillAttributeBadgeLabelStyle: LabelStyle {
             .hidden()
             .background {
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(.secondary)
+                    .fill(.primary)
                     .inverseMask {
                         content(configuration: configuration)
                             .padding(.init(vertical: 1, horizontal: 4))
@@ -70,11 +70,11 @@ struct OutlineAttributeBadgeLabelStyle: LabelStyle {
 
             configuration.title
         }
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.primary)
         .padding(.init(vertical: 1, horizontal: 4))
         .overlay {
             RoundedRectangle(cornerRadius: 2)
-                .stroke(.secondary, lineWidth: 1)
+                .stroke(.primary, lineWidth: 1)
         }
         .font(usedFont)
     }

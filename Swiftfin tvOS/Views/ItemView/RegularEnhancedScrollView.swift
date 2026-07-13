@@ -19,10 +19,13 @@ extension ItemView {
         @FocusState
         private var focusedGroupID: String?
 
+        @State
+        private var lastFocusedGroupID: String?
+
         let groups: [any ContentGroup]
 
         private var isHeaderFocused: Bool {
-            focusedGroupID == "itemView-header" || focusedGroupID == nil
+            lastFocusedGroupID == "itemView-header"
         }
 
         private var backgroundImageItem: BaseItemDto {
@@ -83,6 +86,13 @@ extension ItemView {
                 .trackingFrame(for: .scrollView)
                 .ignoresSafeArea()
                 .scrollIndicators(.hidden)
+            }
+            .onChange(of: focusedGroupID) {
+                guard let focusedGroupID else { return }
+
+                if focusedGroupID != lastFocusedGroupID {
+                    lastFocusedGroupID = focusedGroupID
+                }
             }
         }
     }

@@ -12,7 +12,6 @@ struct ItemView: View {
 
     @StateObject
     private var provider: ItemContentGroupProvider
-
     @StateObject
     private var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
 
@@ -39,8 +38,8 @@ struct ItemView: View {
                 ProgressView()
             }
         }
-        .animation(.linear(duration: 0.1), value: viewModel.state)
-        .animation(.linear(duration: 0.1), value: viewModel.background.states)
+        .animation(.linear(duration: 0.2), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.background.states)
         .onFirstAppear {
             viewModel.refresh()
         }

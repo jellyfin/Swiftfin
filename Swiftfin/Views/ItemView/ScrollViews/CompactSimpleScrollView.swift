@@ -50,51 +50,6 @@ extension ItemView {
             )
         }
 
-        @ViewBuilder
-        private var titleAndAttributes: some View {
-            VStack(alignment: .center, spacing: 5) {
-                switch provider.item.type {
-                case .episode:
-                    if let parentID = provider.item.seriesID, let parentTitle = provider.item.parentTitle {
-                        parentButton(parentTitle, id: parentID)
-                    }
-                case .liveTvProgram:
-                    if let channelID = provider.item.channelID, let channelName = provider.item.channelName {
-                        parentButton(channelName, id: channelID)
-                    }
-                default:
-                    EmptyView()
-                }
-
-                Text(provider.item.displayTitle)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-
-                DotHStack {
-                    if let firstGenre = provider.item.genres?.first {
-                        Text(firstGenre)
-                    }
-
-                    if let premiereYear = provider.item.premiereDateYear {
-                        Text(premiereYear)
-                    }
-
-                    if let runtime = provider.item.runtime {
-                        Text(runtime, format: .hourMinuteAbbreviated)
-                    }
-
-                    if let seasonEpisodeLabel = provider.item.seasonEpisodeLabel {
-                        Text(seasonEpisodeLabel)
-                    }
-                }
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundStyle(.secondary)
-            }
-        }
-
         private var headerImageDisplayType: PosterDisplayType {
             provider.item.preferredPosterDisplayType == .portrait ? .landscape : provider.item.preferredPosterDisplayType
         }
@@ -112,16 +67,54 @@ extension ItemView {
                 .accessibilityIgnoresInvertColors()
                 .posterShadow()
 
-                titleAndAttributes
+                VStack(alignment: .center, spacing: 5) {
+                    switch provider.item.type {
+                    case .episode:
+                        if let parentID = provider.item.seriesID, let parentTitle = provider.item.parentTitle {
+                            parentButton(parentTitle, id: parentID)
+                        }
+                    case .liveTvProgram:
+                        if let channelID = provider.item.channelID, let channelName = provider.item.channelName {
+                            parentButton(channelName, id: channelID)
+                        }
+                    default:
+                        EmptyView()
+                    }
+
+                    Text(provider.item.displayTitle)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+
+                    DotHStack {
+                        if let firstGenre = provider.item.genres?.first {
+                            Text(firstGenre)
+                        }
+
+                        if let premiereYear = provider.item.premiereDateYear {
+                            Text(premiereYear)
+                        }
+
+                        if let runtime = provider.item.runtime {
+                            Text(runtime, format: .hourMinuteAbbreviated)
+                        }
+
+                        if let seasonEpisodeLabel = provider.item.seasonEpisodeLabel {
+                            Text(seasonEpisodeLabel)
+                        }
+                    }
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+                }
 
                 VStack(alignment: .center, spacing: 5) {
                     if provider.item.presentPlayButton {
                         PlayButton(provider: provider)
-                            .frame(height: 50)
                     }
 
                     ItemView.ActionButtonHStack(provider: provider)
-                        .frame(height: 50)
                 }
                 .frame(maxWidth: 300)
 
@@ -155,6 +148,7 @@ extension ItemView {
                     alignment: .leading
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundStyle(.secondary)
             }
             .edgePadding()
             .frame(maxWidth: .infinity)

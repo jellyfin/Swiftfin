@@ -99,7 +99,7 @@ extension ItemView {
             @ViewBuilder
             private var overlay: some View {
                 HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                    VStack(alignment: .center, spacing: 5) {
+                    VStack(alignment: .center, spacing: 30) {
                         VStack(alignment: .leading) {
                             switch provider.item.type {
                             case .episode:
@@ -183,8 +183,8 @@ extension ItemView {
                             }
                             .font(.caption)
                             .fontWeight(.semibold)
-                            .foregroundStyle(.secondary)
                         }
+                        .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity)
                 }

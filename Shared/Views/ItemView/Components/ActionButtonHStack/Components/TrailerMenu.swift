@@ -15,17 +15,13 @@ extension ItemView {
 
     struct TrailerMenu<LabelContent: View>: View {
 
-        // MARK: - Stored Value
+        private let logger = Logger.swiftfin()
 
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
-        // MARK: - Observed & Envirnoment Objects
-
         @Router
         private var router
-
-        // MARK: - Error State
 
         @State
         private var error: Error?
@@ -33,7 +29,6 @@ extension ItemView {
         let localTrailers: [BaseItemDto]
         let externalTrailers: [NamedURL]
         private let label: LabelContent
-        private let logger = Logger.swiftfin()
 
         init(
             localTrailers: [BaseItemDto],
@@ -53,8 +48,6 @@ extension ItemView {
             enabledTrailers.contains(.external) && externalTrailers.isNotEmpty
         }
 
-        // MARK: - Body
-
         var body: some View {
             Group {
                 switch localTrailers.count + externalTrailers.count {
@@ -67,9 +60,6 @@ extension ItemView {
             .errorMessage($error)
         }
 
-        // MARK: - Single Trailer Button
-
-        @ViewBuilder
         private var trailerButton: some View {
             Button {
                 if showLocalTrailers, let firstTrailer = localTrailers.first {
@@ -84,12 +74,9 @@ extension ItemView {
             }
         }
 
-        // MARK: - Multiple Trailers Menu Button
-
         @ViewBuilder
         private var trailerMenu: some View {
             Menu {
-
                 if showLocalTrailers {
                     Section(L10n.local) {
                         ForEach(localTrailers) { trailer in
@@ -120,29 +107,51 @@ extension ItemView {
             }
         }
 
-        // MARK: - Play: Local Trailer
-
         private func playLocalTrailer(_ trailer: BaseItemDto) {
-            if let mediaSource = trailer.mediaSources?.first {
-                router.route(to: .videoPlayer(item: trailer, mediaSource: mediaSource))
-            } else {
+            guard let selectedMediaSource = trailer.mediaSources?.first else {
                 logger.log(level: .error, "No media sources found")
                 error = ErrorMessage(L10n.unknownError)
+                return
             }
+
+            let manager = MediaPlayerManager(item: trailer) { item in
+                try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
+            }
+
+            router.route(to: .videoPlayer(manager: manager))
         }
 
-        // MARK: - Play: External Trailer
-
         private func playExternalTrailer(_ trailer: NamedURL) {
-            if let url = URL(string: trailer.url), UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url) { success in
-                    guard !success else { return }
+            #if os(tvOS)
+            guard let urlString = trailer.url,
+                  let externalURL = ExternalTrailerURL(string: urlString)
+            else {
+                error = ErrorMessage(L10n.unableToOpenTrailer)
+                return
+            }
 
+            guard externalURL.canBeOpened else {
+                error = ErrorMessage(L10n.unableToOpenTrailer)
+                return
+            }
+
+            UIApplication.shared.open(externalURL.deepLink) { success in
+                if !success {
+                    error = ErrorMessage(L10n.unableToOpenTrailerApp(externalURL.source.displayTitle))
+                }
+            }
+            #else
+            guard let url = URL(string: trailer.url), UIApplication.shared.canOpenURL(url) else {
+                error = ErrorMessage(L10n.unableToOpenTrailer)
+                return
+            }
+
+            UIApplication.shared.open(url) { success in
+                if !success {
                     error = ErrorMessage(L10n.unableToOpenTrailer)
                 }
-            } else {
-                error = ErrorMessage(L10n.unableToOpenTrailer)
             }
+            #endif
         }
     }
 }

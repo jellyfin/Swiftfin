@@ -53,9 +53,10 @@ struct CapsuleLabelStyle: LabelStyle {
             }
         }
         .padding(insets ?? defaultInsets)
-        .materialShapeAppearance(
+        .backport
+        .glassEffect(
             .regular.tint(tint),
-            in: Capsule()
+            in: .capsule
         )
     }
 }

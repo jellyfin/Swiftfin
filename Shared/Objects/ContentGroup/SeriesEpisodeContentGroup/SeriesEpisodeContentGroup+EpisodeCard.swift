@@ -232,9 +232,10 @@ extension SeriesEpisodeContentGroup {
                     alignment: .topLeading
                 )
                 .frame(height: 200)
-                .materialShapeAppearance(
+                .backport
+                .glassEffect(
                     showsMaterial ? .regular : .identity,
-                    in: RoundedRectangle(
+                    in: .rect(
                         cornerRadius: cornerRadius,
                         style: .continuous
                     )

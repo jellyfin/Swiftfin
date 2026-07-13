@@ -134,11 +134,9 @@ extension ItemView {
 
                     if provider.item.presentPlayButton {
                         PlayButton(provider: provider)
-                            .frame(height: 50)
                     }
 
                     ItemView.ActionButtonHStack(provider: provider)
-                        .frame(height: 50)
                 }
                 .frame(maxWidth: 300)
 
@@ -191,8 +189,8 @@ extension ItemView {
                         }
                         .font(.caption)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.secondary)
                     }
+                    .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
             }

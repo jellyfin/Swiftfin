@@ -26,10 +26,7 @@ struct ItemView: View {
 
     @ViewBuilder
     private var content: some View {
-        if UIDevice.isPad {
-            RegularEnhancedScrollView(provider: provider, viewModel: viewModel)
-        } else {
-
+        CompactOrRegularView(isCompact: !UIDevice.isPad) {
             switch provider.item.type {
             case .movie, .series:
                 switch itemViewType {
@@ -43,6 +40,8 @@ struct ItemView: View {
             default:
                 CompactSimpleScrollView(provider: provider, viewModel: viewModel)
             }
+        } regularView: {
+            RegularEnhancedScrollView(provider: provider, viewModel: viewModel)
         }
     }
 
@@ -58,8 +57,8 @@ struct ItemView: View {
                 ProgressView()
             }
         }
-        .animation(.linear(duration: 0.1), value: viewModel.state)
-        .animation(.linear(duration: 0.1), value: viewModel.background.states)
+        .animation(.linear(duration: 0.2), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.background.states)
         .backport
         .toolbarTitleDisplayMode(.inline)
         .refreshable {

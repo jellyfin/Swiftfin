@@ -9,18 +9,18 @@
 import Defaults
 import SwiftUI
 
-struct MaterialShapeAppearance {
+struct BackportGlass {
 
     fileprivate struct SelectionAppearance {
 
         let foregroundColor: Color
     }
 
-    /// The standard material appearance.
-    static let regular = MaterialShapeAppearance(isVisible: true)
+    /// The standard glass appearance.
+    static let regular = BackportGlass(isVisible: true)
 
-    /// An appearance that does not draw material or a border.
-    static let identity = MaterialShapeAppearance(isVisible: false)
+    /// An appearance that does not draw glass or a border.
+    static let identity = BackportGlass(isVisible: false)
 
     fileprivate var tint: Color?
     fileprivate var isVisible: Bool
@@ -39,7 +39,7 @@ struct MaterialShapeAppearance {
         return copy
     }
 
-    /// Resolves the tint and foreground color from the selected and enabled environment values.
+    /// Configures the tint and foreground color for the selected and enabled state.
     func selection(
         tint: Color,
         foregroundColor: Color
@@ -53,32 +53,17 @@ struct MaterialShapeAppearance {
     }
 }
 
-extension View {
-
-    /// Applies a material appearance in the given shape, using liquid glass when enabled and available.
-    func materialShapeAppearance(
-        _ appearance: MaterialShapeAppearance = .regular,
-        in shape: some Shape
-    ) -> some View {
-        modifier(
-            MaterialShapeAppearanceModifier(
-                appearance: appearance,
-                shape: shape
-            )
-        )
-    }
-}
-
-private struct MaterialShapeAppearanceModifier<BackgroundShape: Shape>: ViewModifier {
+struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
 
     @Default(.isLiquidGlassEnabled)
     private var isLiquidGlassEnabled
+
     @Environment(\.isEnabled)
     private var isEnabled
     @Environment(\.isSelected)
     private var isSelected
 
-    let appearance: MaterialShapeAppearance
+    let glass: BackportGlass
     let shape: BackgroundShape
 
     private var isPositiveSelectionState: Bool {
@@ -91,7 +76,7 @@ private struct MaterialShapeAppearanceModifier<BackgroundShape: Shape>: ViewModi
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if appearance.selectionAppearance != nil {
+        if glass.selectionAppearance != nil {
             appearanceBody(
                 content
                     .foregroundStyle(resolvedForegroundStyle)
@@ -128,40 +113,36 @@ private struct MaterialShapeAppearanceModifier<BackgroundShape: Shape>: ViewModi
     }
 
     private var resolvedTint: Color? {
-        guard appearance.selectionAppearance != nil else {
-            return appearance.tint
+        guard glass.selectionAppearance != nil else {
+            return glass.tint
         }
 
-        return isPositiveSelectionState ? appearance.tint : subduedColor
+        return isPositiveSelectionState ? glass.tint : subduedColor
     }
 
     private var resolvedForegroundStyle: AnyShapeStyle {
-        guard let selectionAppearance = appearance.selectionAppearance else {
+        guard isPositiveSelectionState,
+              let selectionAppearance = glass.selectionAppearance
+        else {
             return AnyShapeStyle(HierarchicalShapeStyle.primary)
         }
 
-        if isPositiveSelectionState {
-            return AnyShapeStyle(selectionAppearance.foregroundColor)
-        } else if isEnabled {
-            return AnyShapeStyle(HierarchicalShapeStyle.primary)
-        } else {
-            return AnyShapeStyle(HierarchicalShapeStyle.primary)
-        }
+        return AnyShapeStyle(selectionAppearance.foregroundColor)
     }
 
     @ViewBuilder
     private var legacyBackground: some View {
-        if appearance.isVisible {
+        if glass.isVisible {
             if let resolvedTint {
-                if appearance.selectionAppearance != nil {
-                    tintedLegacyMaterial(resolvedTint)
-                } else {
-                    shape
-                        .fill(resolvedTint)
-                }
+                shape
+                    .fill(resolvedTint)
             } else {
                 #if os(tvOS)
-                tintedLegacyMaterial(.white.opacity(0.2))
+                shape
+                    .fill(Material.ultraThinMaterial)
+                    .background {
+                        shape.fill(.white.opacity(0.2))
+                    }
                 #else
                 shape
                     .fill(.ultraThinMaterial)
@@ -172,19 +153,11 @@ private struct MaterialShapeAppearanceModifier<BackgroundShape: Shape>: ViewModi
 
     @ViewBuilder
     private var appearanceBorder: some View {
-        if appearance.isVisible {
+        if glass.isVisible {
             shape
                 .stroke(.white.opacity(0.1), lineWidth: 1)
                 .transition(.opacity)
         }
-    }
-
-    private func tintedLegacyMaterial(_ tint: Color) -> some View {
-        shape
-//            .fill(Material.ultraThinMaterial)
-                .background {
-                    shape.fill(tint)
-                }
     }
 
     private func legacyBody(_ content: some View) -> some View {
@@ -200,7 +173,7 @@ private struct MaterialShapeAppearanceModifier<BackgroundShape: Shape>: ViewModi
     private func glassBody(_ content: some View) -> some View {
         content
             .glassEffect(
-                appearance.isVisible ? .regular
+                glass.isVisible ? .regular
                     .tint(resolvedTint)
                     .interactive() : .identity,
                 in: shape

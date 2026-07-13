@@ -200,7 +200,7 @@ private struct BaseItemDtoPosterContextMenu: View {
 
     var body: some View {
         if let itemID = item.id {
-            Button(L10n.goToItem, systemImage: "arrow.forward.circle") {
+            Button(L10n.goToItem, systemImage: "info.circle") {
                 router.route(to: .item(id: itemID))
             }
         }

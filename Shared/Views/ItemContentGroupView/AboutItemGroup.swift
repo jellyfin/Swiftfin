@@ -70,8 +70,9 @@ struct AboutItemGroup: ContentGroup {
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                    .materialShapeAppearance(
-                        in: RoundedRectangle(
+                    .backport
+                    .glassEffect(
+                        in: .rect(
                             cornerRadius: 20,
                             style: .continuous
                         )
