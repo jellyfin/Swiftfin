@@ -37,7 +37,7 @@ jobs:
       IOS_SCHEME: "Swiftfin"
       TVOS_SCHEME: "Swiftfin tvOS"
       EVENT_NAME: ${{ github.event_name }}
-      PLATFORM_INPUT: ${{ github.event.client_payload.platform || github.event.inputs.platform }}
+      PLATFORM_INPUT: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.platform || inputs.platform || github.event.inputs.platform }}
     outputs:
       platform: ${{ steps.resolve.outputs.platform }}
       matrix: ${{ steps.resolve.outputs.matrix }}
@@ -95,9 +95,9 @@ jobs:
       FL_ISSUER_ID: ${{ github.event.client_payload.APP_STORE_ISSUER_ID || secrets.APP_STORE_ISSUER_ID }}
       FL_KEY_CONTENTS: ${{ github.event.client_payload.APP_STORE_KEY_CONTENTS || secrets.APP_STORE_KEY_CONTENTS }}
       FL_CODE_SIGN_BASE64: ${{ github.event.client_payload.CODE_SIGN_BASE64 || secrets.CODE_SIGN_BASE64 }}
-      PAYLOAD_XCODE_VERSION: ${{ github.event.client_payload.XCODE_VERSION || github.event.inputs.xcodeVersion }}
-      PAYLOAD_BUILD: ${{ github.event.client_payload.BUILD || github.event.inputs.build }}
-      PAYLOAD_VERSION: ${{ github.event.client_payload.VERSION || github.event.inputs.version }}
+      PAYLOAD_XCODE_VERSION: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.XCODE_VERSION || inputs.xcodeVersion || github.event.inputs.xcodeVersion }}
+      PAYLOAD_BUILD: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.BUILD || inputs.build || github.event.inputs.build }}
+      PAYLOAD_VERSION: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.VERSION || inputs.version || github.event.inputs.version }}
 
     steps:
       - name: Checkout
