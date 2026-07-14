@@ -49,15 +49,6 @@ struct PillGroup<Element: Displayable>: ContentGroup {
         let displayTitle: String
         let elements: [Element]
 
-        @ViewBuilder
-        private func label(for element: Element) -> some View {
-            if let imageable = element as? SystemImageable {
-                Label(element.displayTitle, systemImage: imageable.systemImage)
-            } else {
-                EmptyLabel(element.displayTitle)
-            }
-        }
-
         var body: some View {
             ContentGroupSection {
                 ScrollView(.horizontal) {
@@ -66,12 +57,16 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                             Button {
                                 action(router, element)
                             } label: {
-                                label(for: element)
-                                    .font(.callout)
-                                    .fontWeight(.semibold)
-                                    .labelStyle(CapsuleLabelStyle())
+                                if let imageable = element as? SystemImageable {
+                                    Label(element.displayTitle, systemImage: imageable.systemImage)
+                                } else {
+                                    EmptyLabel(element.displayTitle)
+                                }
                             }
                             .foregroundStyle(.primary, .secondary)
+                            .font(.callout)
+                            .fontWeight(.semibold)
+                            .labelStyle(CapsuleLabelStyle())
                             .buttonBorderShape(.capsule)
                             .buttonStyle(.card)
                         }

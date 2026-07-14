@@ -820,6 +820,8 @@ internal enum L10n {
   internal static let info = L10n.tr("Localizable", "info", fallback: "Info")
   /// Inker
   internal static let inker = L10n.tr("Localizable", "inker", fallback: "Inker")
+  /// In progress
+  internal static let inProgress = L10n.tr("Localizable", "inProgress", fallback: "In progress")
   /// Interlaced video is not supported
   internal static let interlacedVideoNotSupported = L10n.tr("Localizable", "interlacedVideoNotSupported", fallback: "Interlaced video is not supported")
   /// Interval
@@ -1234,6 +1236,8 @@ internal enum L10n {
   internal static let preferredLanguage = L10n.tr("Localizable", "preferredLanguage", fallback: "Preferred language")
   /// Premiere date
   internal static let premiereDate = L10n.tr("Localizable", "premiereDate", fallback: "Premiere date")
+  /// Preview
+  internal static let preview = L10n.tr("Localizable", "preview", fallback: "Preview")
   /// Preview image
   internal static let previewImage = L10n.tr("Localizable", "previewImage", fallback: "Preview image")
   /// Previous
@@ -1574,6 +1578,8 @@ internal enum L10n {
   internal static let studios = L10n.tr("Localizable", "studios", fallback: "Studios")
   /// Studio(s) involved in the creation of media.
   internal static let studiosDescription = L10n.tr("Localizable", "studiosDescription", fallback: "Studio(s) involved in the creation of media.")
+  /// Style
+  internal static let style = L10n.tr("Localizable", "style", fallback: "Style")
   /// Subtitle
   internal static let subtitle = L10n.tr("Localizable", "subtitle", fallback: "Subtitle")
   /// The subtitle codec is not supported
@@ -1778,6 +1784,8 @@ internal enum L10n {
   internal static let userViews = L10n.tr("Localizable", "userViews", fallback: "User views")
   /// Use series image for episodes
   internal static let useSeriesImageForEpisodes = L10n.tr("Localizable", "useSeriesImageForEpisodes", fallback: "Use series image for episodes")
+  /// Use series thumb
+  internal static let useSeriesThumb = L10n.tr("Localizable", "useSeriesThumb", fallback: "Use series thumb")
   /// Use splashscreen
   internal static let useSplashscreen = L10n.tr("Localizable", "useSplashscreen", fallback: "Use splashscreen")
   /// Version

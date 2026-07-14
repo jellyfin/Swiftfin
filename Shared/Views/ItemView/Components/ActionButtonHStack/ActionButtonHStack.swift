@@ -38,7 +38,8 @@ extension ItemView {
             _ title: String,
             systemImage: String,
             tint: Color,
-            foregroundColor: Color
+            foregroundColor: Color,
+            isRotated: Bool = false
         ) -> some View {
             #if os(tvOS)
             let shape: Rectangle = .rect
@@ -46,16 +47,21 @@ extension ItemView {
             let shape: RoundedRectangle = .rect(cornerRadius: 10, style: .circular)
             #endif
 
-            Label(title, systemImage: systemImage)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .backport
-                .glassEffect(
-                    .regular.selection(
-                        tint: tint,
-                        foregroundColor: foregroundColor
-                    ),
-                    in: shape
-                )
+            Label {
+                Text(title)
+            } icon: {
+                Image(systemName: systemImage)
+                    .rotationEffect(isRotated ? .degrees(90) : .degrees(0))
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .backport
+            .glassEffect(
+                .regular.selection(
+                    tint: tint,
+                    foregroundColor: foregroundColor
+                ),
+                in: shape
+            )
         }
 
         var body: some View {
@@ -115,35 +121,33 @@ extension ItemView {
                             foregroundColor: .primary
                         )
                     }
-                    #if !os(tvOS)
-                    .menuStyle(.button)
-                    .foregroundStyle(.primary, .secondary)
-                    #endif
                 }
 
                 #if os(tvOS)
 
                 // MARK: Options
 
-                if provider.item.showEditorMenu {
+                if provider.item.canEdit {
                     Menu {
-                        ItemEditorMenu(item: provider.item)
+                        EditItemMenuContent(item: provider.item)
                     } label: {
                         materialLabel(
                             L10n.advanced,
                             systemImage: "ellipsis",
                             tint: .clear,
-                            foregroundColor: .primary
+                            foregroundColor: .primary,
+                            isRotated: true
                         )
-                        .rotationEffect(.degrees(90))
                     }
                     .frame(width: 60)
+                    .menuStyle(.button)
+                    .foregroundStyle(.primary, .secondary)
                 }
                 #endif
             }
             .frame(height: UIDevice.isTV ? 100 : 44)
             .labelStyle(.iconOnly)
-            .buttonStyle(.card)
+            .buttonStyle(BasicHoverButtonStyle())
             .font(.title3)
             .fontWeight(.semibold)
         }

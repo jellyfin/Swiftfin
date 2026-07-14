@@ -144,13 +144,6 @@ extension Defaults.Keys {
             UserKey("searchPosterType", default: .portrait)
         }
 
-        enum CinematicItemViewType {
-
-            static var usePrimaryImage: Key<Bool> {
-                UserKey("cinematicItemViewTypeUsePrimaryImage", default: false)
-            }
-        }
-
         enum Episodes {
 
             static var useSeriesLandscapeBackdrop: Key<Bool> {

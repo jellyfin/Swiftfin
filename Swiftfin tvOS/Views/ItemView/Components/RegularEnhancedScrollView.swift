@@ -82,6 +82,12 @@ extension ItemView {
                         focusedGroupID: $focusedGroupID
                     )
                     .edgePadding(.bottom)
+                    .backport
+                    .defaultFocus(
+                        $focusedGroupID,
+                        "itemView-header",
+                        priority: .userInitiated
+                    )
                 }
                 .trackingFrame(for: .scrollView)
                 .ignoresSafeArea()

@@ -175,6 +175,6 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
 
 private enum CinematicSelectionLayout {
 
-    static let logoMaxHeight: CGFloat = 200
+    static let logoMaxHeight: CGFloat = 100
     static let logoMaxWidthPercentage: CGFloat = 0.4
 }

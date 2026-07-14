@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: have see more at bottom trailing of view frame, instead of text width
+
 struct SeeMoreText: View {
 
     @State

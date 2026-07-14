@@ -48,18 +48,7 @@ extension ItemView {
             enabledTrailers.contains(.external) && externalTrailers.isNotEmpty
         }
 
-        var body: some View {
-            Group {
-                switch localTrailers.count + externalTrailers.count {
-                case 1:
-                    trailerButton
-                default:
-                    trailerMenu
-                }
-            }
-            .errorMessage($error)
-        }
-
+        @ViewBuilder
         private var trailerButton: some View {
             Button {
                 if showLocalTrailers, let firstTrailer = localTrailers.first {
@@ -72,6 +61,7 @@ extension ItemView {
             } label: {
                 label
             }
+            .foregroundStyle(.primary, .secondary)
         }
 
         @ViewBuilder
@@ -105,6 +95,7 @@ extension ItemView {
             } label: {
                 label
             }
+            .foregroundStyle(.primary, .secondary)
         }
 
         private func playLocalTrailer(_ trailer: BaseItemDto) {
@@ -152,6 +143,20 @@ extension ItemView {
                 }
             }
             #endif
+        }
+
+        var body: some View {
+            Group {
+                switch localTrailers.count + externalTrailers.count {
+                case 1:
+                    trailerButton
+                default:
+                    trailerMenu
+                }
+            }
+            .errorMessage($error)
+            .menuStyle(.button)
+            .buttonStyle(BasicHoverButtonStyle())
         }
     }
 }

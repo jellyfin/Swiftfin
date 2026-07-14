@@ -53,11 +53,13 @@ struct _OptionalSourcesPickerContent<Element: Identifiable & Displayable & Hasha
 where Data.Element == Element {
 
     let sources: Data
-    let noneStyle: NoneStyle
+    let noneStyle: NoneStyle?
 
     var body: some View {
-        Text(noneStyle.displayTitle)
-            .tag(nil as Element?)
+        if let noneStyle {
+            Text(noneStyle.displayTitle)
+                .tag(nil as Element?)
+        }
 
         ForEach(sources) { element in
             Text(element.displayTitle)
@@ -101,7 +103,7 @@ extension Picker where Label == Text {
         _ title: String,
         sources: Data,
         selection: Binding<E?>,
-        noneStyle: NoneStyle = .text
+        noneStyle: NoneStyle? = .text
     ) where SelectionValue == E?, Content == _OptionalSourcesPickerContent<E, Data>, Data.Element == E {
         self.init(title, selection: selection) {
             _OptionalSourcesPickerContent(sources: sources, noneStyle: noneStyle)

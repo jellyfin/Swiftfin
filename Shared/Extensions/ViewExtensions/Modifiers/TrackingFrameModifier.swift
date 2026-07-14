@@ -8,15 +8,6 @@
 
 import SwiftUI
 
-struct ScrollViewHeaderFrameKey: PreferenceKey {
-
-    static let defaultValue: FrameAndSafeAreaInsets = .zero
-
-    static func reduce(value: inout Value, nextValue: () -> Value) {
-        value = nextValue()
-    }
-}
-
 private struct EmptyCGRectPreferenceKey: PreferenceKey {
 
     static let defaultValue: FrameAndSafeAreaInsets = .zero

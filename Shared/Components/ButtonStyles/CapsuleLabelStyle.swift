@@ -16,9 +16,9 @@ struct CapsuleLabelStyle: LabelStyle {
     private let isTitleVisible: Bool
     private let isIconTrailing: Bool
 
-    private var defaultInsets: EdgeInsets {
+    static var defaultInsets: EdgeInsets {
         #if os(tvOS)
-        .init(vertical: 8, horizontal: 16)
+        .init(vertical: 10, horizontal: 20)
         #else
         .init(vertical: 5, horizontal: 10)
         #endif
@@ -52,7 +52,7 @@ struct CapsuleLabelStyle: LabelStyle {
                 configuration.icon
             }
         }
-        .padding(insets ?? defaultInsets)
+        .padding(insets ?? Self.defaultInsets)
         .backport
         .glassEffect(
             .regular.tint(tint),

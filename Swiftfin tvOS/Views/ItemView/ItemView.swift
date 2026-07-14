@@ -6,9 +6,15 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
+// TODO: scrollTargetLayout and scrollTargetBehavior to scroll views
+
 struct ItemView: View {
+
+    @Default(.Customization.itemViewType)
+    private var itemViewType
 
     @StateObject
     private var provider: ItemContentGroupProvider
@@ -20,18 +26,34 @@ struct ItemView: View {
         self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
     }
 
-    private var groups: [any ContentGroup] {
-        [HeaderContentGroup(provider: provider)] + viewModel.groups
+    private func contentGroups(header: any ContentGroup) -> [any ContentGroup] {
+        [header] + viewModel.groups
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch itemViewType {
+        case .enhanced where provider.item.type != .person:
+            RegularEnhancedScrollView(
+                provider: provider,
+                groups: contentGroups(
+                    header: EnhancedRegularHeaderContentGroup(provider: provider)
+                )
+            )
+        case .enhanced, .simple:
+            ContentGroupScrollView(
+                groups: contentGroups(
+                    header: RegularSimpleHeaderContentGroup(provider: provider)
+                )
+            )
+        }
     }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
-                RegularEnhancedScrollView(
-                    provider: provider,
-                    groups: groups
-                )
+                content
             case .error:
                 viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:

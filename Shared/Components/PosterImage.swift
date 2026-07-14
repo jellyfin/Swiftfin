@@ -92,6 +92,7 @@ struct PosterImage<Element: Poster>: View {
                         )
                     }
                     .accessibilityRemoveTraits(.isImage)
+                    .accessibilityIgnoresInvertColors()
             }
         }
         .posterStyle(

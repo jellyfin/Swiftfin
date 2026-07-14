@@ -6,12 +6,13 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
 
-    struct HeaderContentGroup: ContentGroup {
+    struct RegularEnhancedHeaderContentGroup: ContentGroup {
 
         let id: String = "itemView-header"
         let provider: ItemContentGroupProvider
@@ -22,9 +23,6 @@ extension ItemView {
 
         struct Body: View {
 
-            @FocusState
-            private var isPlayButtonFocused: Bool
-
             @ObservedObject
             var provider: ItemContentGroupProvider
 
@@ -34,8 +32,21 @@ extension ItemView {
             @StoredValue(.User.itemViewAttributes)
             private var attributes
 
-            private var canFocusPlayButton: Bool {
-                provider.item.presentPlayButton && provider.selectedMediaSource != nil
+            private let headerAspectRatio = 2.0
+
+            private var hasDescription: Bool {
+                provider.item.taglines?.contains(where: \.isNotEmpty) == true ||
+                    provider.item.overview?.isNotEmpty == true
+            }
+
+            private var headerImageItem: BaseItemDto {
+                if provider.item.type == .person || provider.item.type == .musicArtist,
+                   let randomItem = provider.randomBackdropItem
+                {
+                    randomItem
+                } else {
+                    provider.item
+                }
             }
 
             @ViewBuilder
@@ -43,14 +54,14 @@ extension ItemView {
                 ImageView(
                     provider.item.imageSource(
                         .logo,
-                        environment: ImageSourceOptions(maxHeight: 100)
+                        environment: ImageSourceOptions(maxHeight: 70)
                     )
                 )
                 .image { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(height: 100)
+                        .frame(height: 70)
                 }
                 .placeholder { _ in
                     EmptyView()
@@ -64,8 +75,6 @@ extension ItemView {
                         .multilineTextAlignment(.leading)
                         .foregroundStyle(.primary)
                 }
-                .accessibilityLabel(provider.item.displayTitle)
-                .accessibilityRemoveTraits(.isImage)
             }
 
             @ViewBuilder
@@ -92,14 +101,12 @@ extension ItemView {
                         isIconTrailing: true
                     )
                 )
-                .buttonBorderShape(.capsule)
-                .buttonStyle(.card)
             }
 
             @ViewBuilder
             private var overlay: some View {
                 HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                    VStack(alignment: .center, spacing: 30) {
+                    VStack(alignment: .center, spacing: 5) {
                         VStack(alignment: .leading) {
                             switch provider.item.type {
                             case .episode:
@@ -129,32 +136,36 @@ extension ItemView {
                         }
 
                         if provider.item.presentPlayButton {
-                            PlayButton(
-                                provider: provider,
-                                playButtonFocus: $isPlayButtonFocused
-                            )
+                            PlayButton(provider: provider)
                         }
 
                         ItemView.ActionButtonHStack(provider: provider)
                     }
-                    .frame(width: 450)
+                    .frame(maxWidth: 300)
 
                     VStack(alignment: .leading, spacing: 10) {
-                        VStack(alignment: .leading, spacing: 5) {
-                            if let firstTagline = provider.item.taglines?.first {
-                                Text(firstTagline)
-                                    .fontWeight(.bold)
-                                    .multilineTextAlignment(.leading)
-                                    .lineLimit(2)
-                            }
+                        if hasDescription {
+                            VStack(alignment: .leading, spacing: 5) {
+                                if let firstTagline = provider.item.taglines?.first(where: \.isNotEmpty) {
+                                    Text(firstTagline)
+                                        .fontWeight(.bold)
+                                        .multilineTextAlignment(.leading)
+                                        .lineLimit(2)
+                                }
 
-                            if let itemOverview = provider.item.overview {
-                                Text(itemOverview)
-                                    .font(.footnote)
-                                    .lineLimit(3)
+                                if let itemOverview = provider.item.overview, itemOverview.isNotEmpty {
+                                    Button {
+                                        router.route(to: .itemOverview(item: provider.item))
+                                    } label: {
+                                        SeeMoreText(itemOverview)
+                                            .font(.footnote)
+                                            .lineLimit(3)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
 
                         HStack(alignment: .top) {
                             ItemView.AttributesHStack(
@@ -188,24 +199,59 @@ extension ItemView {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .focusSection()
-                .if(canFocusPlayButton) { view in
-                    view
-                        .backport
-                        .defaultFocus(
-                            $isPlayButtonFocused,
-                            true,
-                            priority: .userInitiated
-                        )
+                .edgePadding(.bottom)
+                .background(
+                    alignment: .bottom,
+                    extendedBy: .init(horizontal: EdgeInsets.edgePadding)
+                ) {
+                    Rectangle()
+                        .fill(Material.ultraThin)
+                        .mask(gradient: .eased(.easeOut)) {
+                            (location: 0, opacity: 0)
+                            (location: 1, opacity: 1)
+                        }
+                }
+            }
+
+            private func resolveColor(from image: UIImage, binding: Binding<Color>) {
+                Task.detached(priority: .utility) {
+                    guard let color = image.interestingColor() else { return }
+
+                    await MainActor.run {
+                        binding.wrappedValue = color
+                    }
                 }
             }
 
             var body: some View {
-                CinematicContentGroupContainer {
+                AlternateLayoutView(alignment: .bottom) {
+                    Color.clear
+                        .aspectRatio(headerAspectRatio, contentMode: .fit)
+                } content: {
                     overlay
                         .edgePadding(.horizontal)
                         .frame(maxWidth: .infinity)
                         .colorScheme(.dark)
+                }
+                .backgroundParallaxHeader(multiplier: 0.3) {
+                    StateAdapter(initialValue: Color.secondarySystemFill) { resolvedColor in
+                        AlternateLayoutView {
+                            Color.clear
+                        } content: {
+                            ImageView(headerImageItem.landscapeImageSources(environment: .init(maxWidth: 1920)))
+                                .image { (image: UIImage) in
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .aspectRatio(1.77, contentMode: .fill)
+                                        .onAppear {
+                                            resolveColor(from: image, binding: resolvedColor)
+                                        }
+                                }
+                        }
+                        .aspectRatio(headerAspectRatio, contentMode: .fit)
+                        .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)
+                        .accessibilityHidden(true)
+                    }
                 }
             }
         }

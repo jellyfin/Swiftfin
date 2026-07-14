@@ -10,33 +10,30 @@ import SwiftUI
 
 extension ItemView {
 
-    struct BlurredNavigationBarScrollView<Content: View>: View {
+    struct BlurredNavigationBarScrollView: View {
 
-        private let content: Content
-
-        init(@ViewBuilder content: @escaping () -> Content) {
-            self.content = content()
-        }
+        let groups: [any ContentGroup]
 
         var body: some View {
             WithBlurNavigationBar {
-                _Body(content: content)
+                _Body(groups: groups)
             }
             .ignoresSafeArea()
             .trackingFrame(for: .scrollView)
         }
     }
 
-    private struct _Body<Content: View>: View {
+    private struct _Body: View {
 
         @Environment(\.frameForParentView)
         private var frameForParentView
 
-        let content: Content
+        let groups: [any ContentGroup]
 
         var body: some View {
             ScrollView {
-                content
+                ContentGroupVStack(groups: groups)
+                    .edgePadding(.bottom)
             }
             .ignoresSafeArea(edges: .horizontal)
             .scrollIndicators(.hidden)

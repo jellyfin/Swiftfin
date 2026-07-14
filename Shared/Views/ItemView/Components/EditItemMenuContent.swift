@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct ItemEditorMenu: View {
+struct EditItemMenuContent: View {
 
     @Router
     private var router

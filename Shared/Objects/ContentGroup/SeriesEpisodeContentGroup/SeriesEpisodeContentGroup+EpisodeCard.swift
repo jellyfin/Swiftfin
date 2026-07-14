@@ -76,7 +76,7 @@ extension SeriesEpisodeContentGroup {
                     SystemImageContentView(systemName: episode.systemImage)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .overlay {
+                .overlay(alignment: .bottom) {
                     overlayView
                 }
                 .contentShape(.contextMenuPreview, Rectangle())
@@ -183,17 +183,16 @@ extension SeriesEpisodeContentGroup {
                         content: content
                     )
                 }
+                .foregroundStyle(.primary, .secondary)
                 #if os(tvOS)
-                .buttonStyle(
-                    EpisodeContentButtonStyle(
-                        showsMaterial: focusedElement != nil,
-                        isFocused: focusedElement == .content
+                    .buttonStyle(
+                        EpisodeContentButtonStyle(
+                            showsMaterial: focusedElement != nil,
+                            isFocused: focusedElement == .content
+                        )
                     )
-                )
-                #else
-                .buttonStyle(.plain)
                 #endif
-                .focused($focusedElement, equals: .content)
+                    .focused($focusedElement, equals: .content)
             }
             .focusSection()
             .backport
@@ -226,6 +225,7 @@ extension SeriesEpisodeContentGroup {
                 SeeMoreText(content)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
                     .lineLimit(3, reservesSpace: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -10,16 +10,8 @@ import SwiftUI
 
 struct ContentGroupVStack: View {
 
-    private let groups: [any ContentGroup]
-    private let focusedGroupID: FocusState<String?>.Binding?
-
-    init(
-        groups: [any ContentGroup],
-        focusedGroupID: FocusState<String?>.Binding? = nil
-    ) {
-        self.groups = groups
-        self.focusedGroupID = focusedGroupID
-    }
+    let groups: [any ContentGroup]
+    var focusedGroupID: FocusState<String?>.Binding?
 
     private var spacing: CGFloat {
         #if os(tvOS)

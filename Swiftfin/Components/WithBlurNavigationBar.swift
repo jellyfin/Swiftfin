@@ -21,6 +21,7 @@ struct WithBlurNavigationBar<Content: View>: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: _WithBlurNavigationBarViewController<Content>, context: Context) {
+        uiViewController.rootView = content
         uiViewController.hideNavigationTitle()
     }
 }

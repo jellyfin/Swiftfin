@@ -82,17 +82,49 @@ struct PlayButton: View {
         if let mediaSources = provider.playButtonItem?.mediaSources,
            mediaSources.count > 1
         {
-            Menu(L10n.version, systemImage: "list.dash") {
+            Menu {
                 Picker(
                     L10n.version,
                     sources: mediaSources,
-                    selection: $provider.selectedMediaSource
-//                    noneStyle: nil
+                    selection: $provider.selectedMediaSource,
+                    noneStyle: nil
+                )
+            } label: {
+                #if os(tvOS)
+                let shape: Rectangle = .rect
+                #else
+                let shape: RoundedRectangle = .rect(cornerRadius: 10, style: .circular)
+                #endif
+
+                Label {
+                    Text(L10n.version)
+                } icon: {
+                    Image(systemName: "ellipsis")
+                    #if os(tvOS)
+                        .rotationEffect(.degrees(90))
+                    #endif
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .backport
+                .glassEffect(
+                    .regular.selection(
+                        tint: .clear,
+                        foregroundColor: .primary
+                    ),
+                    in: shape
                 )
             }
+            .foregroundStyle(.primary, .secondary)
+            .font(.title3)
+            .fontWeight(.semibold)
             .menuStyle(.button)
             .labelStyle(.iconOnly)
-            .aspectRatio(1, contentMode: .fit)
+            .buttonStyle(BasicHoverButtonStyle())
+            #if !os(tvOS)
+                .aspectRatio(1, contentMode: .fit)
+            #else
+                .frame(width: 60)
+            #endif
         }
     }
 
@@ -134,7 +166,7 @@ struct PlayButton: View {
     }
 
     var body: some View {
-        HStack {
+        HStack(alignment: .center, spacing: UIDevice.isTV ? 30 : 10) {
             playButton
 
             versionMenu
@@ -142,3 +174,15 @@ struct PlayButton: View {
         .frame(height: UIDevice.isTV ? 100 : 44)
     }
 }
+
+#if os(tvOS)
+struct BasicHoverButtonStyle: ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .hoverEffect(.lift)
+    }
+}
+#else
+typealias BasicHoverButtonStyle = BorderlessButtonStyle
+#endif

@@ -12,6 +12,12 @@ import SwiftUI
 
 extension CustomizeViewsSettings {
 
+    #if os(tvOS)
+    typealias PlatformPicker = ListRowMenu
+    #else
+    typealias PlatformPicker = Picker
+    #endif
+
     struct ItemSection: View {
 
         @Injected(\.currentUserSession)
@@ -22,8 +28,6 @@ extension CustomizeViewsSettings {
 
         @Default(.Customization.itemViewType)
         private var itemViewType
-        @Default(.Customization.CinematicItemViewType.usePrimaryImage)
-        private var cinematicItemViewTypeUsePrimaryImage
 
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers
@@ -41,41 +45,27 @@ extension CustomizeViewsSettings {
         private var shouldShowMissingEpisodes
 
         var body: some View {
-            Form {
-                if UIDevice.isPhone {
-                    Section {
-                        Picker(L10n.type, selection: $itemViewType)
-
-                        if itemViewType == .enhanced {
-                            Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
-                        }
-                    } header: {
-                        Text(L10n.itemView)
-                    } footer: {
-                        if itemViewType == .enhanced {
-                            Text(L10n.usePrimaryImageDescription)
-                        }
-                    }
+            Form(systemImage: "gear") {
+                Section {
+                    PlatformPicker(L10n.style, selection: $itemViewType)
+                } header: {
+                    Text(L10n.itemView)
                 }
 
-                Picker(
-                    L10n.enabledTrailers,
-                    selection: $enabledTrailers
-                )
+                PlatformPicker(L10n.enabledTrailers, selection: $enabledTrailers)
 
                 Section(L10n.management) {
 
-                    /// Enabled Collection Management for collection managers
                     if userSession?.user.data.policy?.isAdministrator == true ||
                         userSession?.user.data.policy?.enableCollectionManagement == true
                     {
                         Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
                     }
-                    /// Enabled Media Management when there are media elements that can be managed
+
                     if userSession?.user.data.policy?.isAdministrator == true {
                         Toggle(L10n.editMedia, isOn: $enableItemEditing)
                     }
-                    /// Enabled Media Deletion for valid deletion users
+
                     if userSession?.user.data.policy?.isAdministrator == true ||
                         userSession?.user.data.policy?.enableContentDeletion == true ||
                         userSession?.user.data.policy?.enableContentDeletionFromFolders?.isNotEmpty == true

@@ -24,6 +24,10 @@ struct ItemView: View {
         self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
     }
 
+    private func contentGroups(header: any ContentGroup) -> [any ContentGroup] {
+        [header] + viewModel.groups
+    }
+
     @ViewBuilder
     private var content: some View {
         CompactOrRegularView(isCompact: !UIDevice.isPad) {
@@ -31,17 +35,46 @@ struct ItemView: View {
             case .movie, .series:
                 switch itemViewType {
                 case .enhanced where provider.item.backdropImageTags?.isNotEmpty == true:
-                    CompactEnhancedScrollView(provider: provider, viewModel: viewModel)
+                    BlurredNavigationBarScrollView(
+                        groups: contentGroups(
+                            header: CompactEnhancedHeaderContentGroup(provider: provider)
+                        )
+                    )
                 case .enhanced, .simple:
-                    CompactSimpleScrollView(provider: provider, viewModel: viewModel)
+                    ContentGroupScrollView(
+                        groups: contentGroups(
+                            header: CompactSimpleHeaderContentGroup(provider: provider)
+                        )
+                    )
                 }
             case .person, .musicArtist:
-                CompactPortraitScrollView(provider: provider, viewModel: viewModel)
+                ContentGroupScrollView(
+                    groups: contentGroups(
+                        header: CompactPortraitHeaderContentGroup(provider: provider)
+                    )
+                )
             default:
-                CompactSimpleScrollView(provider: provider, viewModel: viewModel)
+                ContentGroupScrollView(
+                    groups: contentGroups(
+                        header: CompactSimpleHeaderContentGroup(provider: provider)
+                    )
+                )
             }
         } regularView: {
-            RegularEnhancedScrollView(provider: provider, viewModel: viewModel)
+            switch itemViewType {
+            case .enhanced:
+                BlurredNavigationBarScrollView(
+                    groups: contentGroups(
+                        header: RegularEnhancedHeaderContentGroup(provider: provider)
+                    )
+                )
+            case .simple:
+                ContentGroupScrollView(
+                    groups: contentGroups(
+                        header: RegularSimpleHeaderContentGroup(provider: provider)
+                    )
+                )
+            }
         }
     }
 
@@ -69,9 +102,9 @@ struct ItemView: View {
         }
         .navigationBarMenuButton(
             isLoading: viewModel.background.is(.refreshing),
-            isHidden: !provider.item.showEditorMenu
+            isHidden: !provider.item.canEdit
         ) {
-            ItemEditorMenu(item: provider.item)
+            EditItemMenuContent(item: provider.item)
         }
     }
 }

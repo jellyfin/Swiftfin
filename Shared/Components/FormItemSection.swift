@@ -22,7 +22,6 @@ struct FormItemSection<Item: Poster>: PlatformView {
                     contentMode: .fit
                 )
                 .frame(width: 100)
-                .accessibilityIgnoresInvertColors()
 
                 VStack(alignment: .leading) {
                     if let baseItem = item as? BaseItemDto, let parent = baseItem.parentTitle {

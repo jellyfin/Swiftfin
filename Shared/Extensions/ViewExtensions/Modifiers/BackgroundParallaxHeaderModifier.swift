@@ -21,10 +21,6 @@ extension View {
                 header: header
             )
         )
-        .trackingFrame(
-            for: .scrollViewHeader,
-            key: ScrollViewHeaderFrameKey.self
-        )
     }
 }
 
@@ -33,6 +29,8 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
     @Environment(\.frameForParentView)
     private var frameForParentView
 
+    @State
+    private var contentFrame: CGRect = .zero
     @State
     private var headerSize: CGSize = .zero
 
@@ -47,12 +45,8 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
         self.multiplier = multiplier
     }
 
-    private var contentFrame: CGRect {
-        frameForParentView[.scrollViewHeader, default: .zero].frame
-    }
-
     private var scrollViewOffset: CGFloat {
-        -frameForParentView[.scrollViewHeader, default: .zero].frame.minY
+        -contentFrame.minY
     }
 
     private var scrollViewSafeAreaInsets: EdgeInsets {
@@ -84,6 +78,8 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
     }
 
     private var scaleEffect: CGFloat {
+        guard headerSize.height > 0 else { return 1 }
+
         var scale: CGFloat {
             if scrollViewOffset < 0, abs(scrollViewOffset) >= scrollViewSafeAreaInsets.top {
                 (adjustedHeaderHeight + abs(scrollViewOffset + scrollViewSafeAreaInsets.top)) / headerSize.height
@@ -97,6 +93,7 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+            .trackingFrame($contentFrame)
             .background(alignment: .top) {
                 background
                     .trackingSize($headerSize)

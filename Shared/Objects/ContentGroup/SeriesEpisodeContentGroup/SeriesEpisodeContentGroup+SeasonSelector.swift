@@ -11,7 +11,7 @@ import SwiftUI
 
 extension SeriesEpisodeContentGroup {
 
-    struct SeasonSelector: View {
+    struct SeasonSelector: PlatformView {
 
         let seasons: [PagingLibraryViewModel<EpisodeLibrary>]
 
@@ -20,20 +20,24 @@ extension SeriesEpisodeContentGroup {
 
         let preferredSelection: PagingLibraryViewModel<EpisodeLibrary>.ID?
 
-        #if os(tvOS)
         @FocusState
         private var focusedSeason: PagingLibraryViewModel<EpisodeLibrary>.ID?
         @FocusState
         private var isPickerFocused: Bool
-        #endif
 
         private var selectedSeason: PagingLibraryViewModel<EpisodeLibrary>? {
             seasons.first { $0.id == selection }
         }
 
-        #if os(tvOS)
         @ViewBuilder
-        private var tvOSBody: some View {
+        private func title(_ value: String) -> some View {
+            Text(value)
+                .font(.title2)
+                .fontWeight(.semibold)
+                .edgePadding(.horizontal)
+        }
+
+        var tvOSView: some View {
             if seasons.isEmpty {
                 title(L10n.episodes)
             } else {
@@ -119,14 +123,13 @@ extension SeriesEpisodeContentGroup {
                     configuration.label
                         .foregroundStyle(.primary)
                         .labelStyle(.titleOnly)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
+                        .padding(CapsuleLabelStyle.defaultInsets)
                 }
             }
 
             func makeBody(configuration: Configuration) -> some View {
                 label(configuration)
-                    .font(.body)
+                    .font(.callout)
                     .fontWeight(.semibold)
                     .scaleEffect(isFocused ? 1.06 : 1)
                     .shadow(
@@ -137,9 +140,8 @@ extension SeriesEpisodeContentGroup {
                     .animation(.easeInOut(duration: 0.1), value: isHighlighted)
             }
         }
-        #else
-        @ViewBuilder
-        private var iOSBody: some View {
+
+        var iOSView: some View {
             if seasons.count <= 1 {
                 title(selectedSeason?.library.parent.displayTitle ?? L10n.episodes)
             } else {
@@ -162,22 +164,6 @@ extension SeriesEpisodeContentGroup {
                 .font(.headline)
                 .edgePadding(.horizontal)
             }
-        }
-        #endif
-
-        private func title(_ value: String) -> some View {
-            Text(value)
-                .font(.title2)
-                .fontWeight(.semibold)
-                .edgePadding(.horizontal)
-        }
-
-        var body: some View {
-            #if os(tvOS)
-            tvOSBody
-            #else
-            iOSBody
-            #endif
         }
     }
 }

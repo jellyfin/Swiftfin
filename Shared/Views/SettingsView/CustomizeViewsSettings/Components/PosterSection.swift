@@ -22,7 +22,7 @@ extension CustomizeViewsSettings {
             var displayTitle: String {
                 switch self {
                 case .inProgress:
-                    "In progress"
+                    L10n.inProgress
                 case .played:
                     L10n.played
                 case .unplayed:
@@ -77,7 +77,7 @@ extension CustomizeViewsSettings {
                 .posterCornerRadius(type)
 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Example")
+                    Text(L10n.preview)
                         .font(.footnote)
                         .foregroundStyle(.primary)
 
@@ -91,9 +91,9 @@ extension CustomizeViewsSettings {
         }
 
         var body: some View {
-            Form {
+            Form(systemImage: "gear") {
                 #if os(iOS)
-                Section("Preview") {
+                Section(L10n.preview) {
                     ScrollView(.horizontal) {
                         HStack(alignment: .bottom) {
                             posterPreview(type: .portrait)
@@ -126,10 +126,9 @@ extension CustomizeViewsSettings {
                 }
 
                 Section {
-                    Toggle("Series backdrop", isOn: $useSeriesLandscapeBackdrop)
+                    Toggle(L10n.useSeriesThumb, isOn: $useSeriesLandscapeBackdrop)
                 } header: {
-                    // TODO: think of a better name
-                    Text("Episode landscape poster")
+                    Text(L10n.episode)
                 }
             }
             .navigationTitle(L10n.posters)

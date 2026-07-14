@@ -13,6 +13,12 @@ extension CustomizeViewsSettings {
 
     struct LibrarySection: View {
 
+        #if os(tvOS)
+        typealias PlatformPicker = ListRowMenu
+        #else
+        typealias PlatformPicker = Picker
+        #endif
+
         @Default(.Customization.Library.showFavorites)
         private var showFavorites
         @Default(.Customization.Library.enabledDrawerFilters)
@@ -33,13 +39,13 @@ extension CustomizeViewsSettings {
         private var router
 
         var body: some View {
-            Form {
+            Form(systemImage: "gear") {
 
                 Section {
                     Toggle(L10n.favorites, isOn: $showFavorites)
 
                     Toggle(L10n.randomImage, isOn: $libraryRandomImage)
-                } footer: {}
+                }
 
                 Section(L10n.filters) {
                     ChevronButton(L10n.filters) {
@@ -54,9 +60,9 @@ extension CustomizeViewsSettings {
                 }
 
                 Section(L10n.layout) {
-                    Picker(L10n.layout, selection: $libraryStyle.displayType)
+                    PlatformPicker(L10n.layout, selection: $libraryStyle.displayType)
 
-                    Picker(L10n.posters, selection: $libraryStyle.posterDisplayType)
+                    PlatformPicker(L10n.posters, selection: $libraryStyle.posterDisplayType)
 
                     if libraryStyle.displayType == .list, !UIDevice.isPhone {
                         Stepper(L10n.columns, value: $libraryStyle.listColumnCount, in: 1 ... 4, step: 1) {
@@ -70,7 +76,7 @@ extension CustomizeViewsSettings {
                 }
 
                 Section(L10n.letterPicker) {
-                    Picker(L10n.letterPicker, selection: $letterPickerOrientation)
+                    PlatformPicker(L10n.letterPicker, selection: $letterPickerOrientation)
                 }
             }
             .navigationTitle(L10n.libraries)
