@@ -288,8 +288,6 @@ internal enum L10n {
   internal static let chapters = L10n.tr("Localizable", "chapters", fallback: "Chapters")
   /// Chapter slider
   internal static let chapterSlider = L10n.tr("Localizable", "chapterSlider", fallback: "Chapter slider")
-  /// Cinematic
-  internal static let cinematic = L10n.tr("Localizable", "cinematic", fallback: "Cinematic")
   /// Cinematic background
   internal static let cinematicBackground = L10n.tr("Localizable", "cinematicBackground", fallback: "Cinematic background")
   /// Client
@@ -328,10 +326,6 @@ internal enum L10n {
   internal static let communityRatingDescription = L10n.tr("Localizable", "communityRatingDescription", fallback: "Community rating on a scale from 1 to 10.")
   /// Compact
   internal static let compact = L10n.tr("Localizable", "compact", fallback: "Compact")
-  /// Compact logo
-  internal static let compactLogo = L10n.tr("Localizable", "compactLogo", fallback: "Compact logo")
-  /// Compact poster
-  internal static let compactPoster = L10n.tr("Localizable", "compactPoster", fallback: "Compact poster")
   /// Compatibility
   internal static let compatibility = L10n.tr("Localizable", "compatibility", fallback: "Compatibility")
   /// Most compatible
@@ -388,8 +382,6 @@ internal enum L10n {
   internal static let controlSharedDevices = L10n.tr("Localizable", "controlSharedDevices", fallback: "Control shared devices")
   /// Corrupted frames
   internal static let corruptedFrames = L10n.tr("Localizable", "corruptedFrames", fallback: "Corrupted frames")
-  /// Count
-  internal static let count = L10n.tr("Localizable", "count", fallback: "Count")
   /// Country
   internal static let country = L10n.tr("Localizable", "country", fallback: "Country")
   /// Cover artist
@@ -812,8 +804,6 @@ internal enum L10n {
   internal static let increment = L10n.tr("Localizable", "increment", fallback: "Increment")
   /// Index number
   internal static let indexNumber = L10n.tr("Localizable", "indexNumber", fallback: "Index number")
-  /// Indicator
-  internal static let indicator = L10n.tr("Localizable", "indicator", fallback: "Indicator")
   /// Indicators
   internal static let indicators = L10n.tr("Localizable", "indicators", fallback: "Indicators")
   /// Info
@@ -1098,8 +1088,6 @@ internal enum L10n {
   internal static let `none` = L10n.tr("Localizable", "none", fallback: "None")
   /// No overview available
   internal static let noOverviewAvailable = L10n.tr("Localizable", "noOverviewAvailable", fallback: "No overview available")
-  /// No programs
-  internal static let noPrograms = L10n.tr("Localizable", "noPrograms", fallback: "No programs")
   /// No public users
   internal static let noPublicUsers = L10n.tr("Localizable", "noPublicUsers", fallback: "No public users")
   /// No results
@@ -1108,10 +1096,6 @@ internal enum L10n {
   internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
   /// No runtime limit
   internal static let noRuntimeLimit = L10n.tr("Localizable", "noRuntimeLimit", fallback: "No runtime limit")
-  /// Type: %@ not implemented yet :(
-  internal static func notImplementedYetWithType(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "notImplementedYetWithType", String(describing: p1), fallback: "Type: %@ not implemented yet :(")
-  }
   /// Official rating
   internal static let officialRating = L10n.tr("Localizable", "officialRating", fallback: "Official rating")
   /// OK
@@ -1440,8 +1424,6 @@ internal enum L10n {
   internal static let secondaryAudioNotSupported = L10n.tr("Localizable", "secondaryAudioNotSupported", fallback: "Secondary audio is not supported")
   /// Security
   internal static let security = L10n.tr("Localizable", "security", fallback: "Security")
-  /// See all
-  internal static let seeAll = L10n.tr("Localizable", "seeAll", fallback: "See all")
   /// Seek
   internal static let seek = L10n.tr("Localizable", "seek", fallback: "Seek")
   /// See more
@@ -1758,10 +1740,6 @@ internal enum L10n {
   internal static let use = L10n.tr("Localizable", "use", fallback: "Use")
   /// Use as transcoding profile
   internal static let useAsTranscodingProfile = L10n.tr("Localizable", "useAsTranscodingProfile", fallback: "Use as transcoding profile")
-  /// Use primary image
-  internal static let usePrimaryImage = L10n.tr("Localizable", "usePrimaryImage", fallback: "Use primary image")
-  /// Uses the primary image and hides the logo.
-  internal static let usePrimaryImageDescription = L10n.tr("Localizable", "usePrimaryImageDescription", fallback: "Uses the primary image and hides the logo.")
   /// User
   internal static let user = L10n.tr("Localizable", "user", fallback: "User")
   /// This user will require device authentication.
