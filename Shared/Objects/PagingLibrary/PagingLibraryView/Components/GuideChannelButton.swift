@@ -44,14 +44,18 @@ extension GuideChannelButton {
         let height: CGFloat
 
         var body: some View {
-            PosterImage(item: channel, type: .square, contentMode: .fill, maxWidth: 240)
-                .frame(width: height - 8, height: height - 8)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(accentColor, lineWidth: isFocused ? 4 : 0)
-                }
-                .frame(width: width, height: height)
+            PosterImage(
+                item: channel,
+                type: .square,
+                contentMode: .fill
+            )
+            .frame(width: height, height: height)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(accentColor, lineWidth: isFocused ? 4 : 0)
+            }
+            .frame(width: width, height: height)
         }
     }
 }
