@@ -150,6 +150,9 @@ extension TabItem {
             systemImage: "magnifyingglass"
         ) {
             SearchView()
+                .if(UIDevice.isTV) { view in
+                    view.toolbar(.hidden, for: .navigationBar)
+                }
         }
     }
 
