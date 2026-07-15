@@ -94,6 +94,10 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             imageSource(itemID: seasonID, .primary, environment: environment)
+
+            if environment.useParent {
+                imageSource(itemID: seriesID, .primary, environment: environment)
+            }
         case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
             imageSource(.primary, environment: environment)
         case .season:
