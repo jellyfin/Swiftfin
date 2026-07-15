@@ -82,11 +82,19 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             )
         }
 
-        if item.type == .series {
+        switch item.type {
+        case .series:
             SeriesEpisodeContentGroup(
                 series: item,
                 playButtonItem: playButtonItem
             )
+        case .season:
+            SeriesEpisodeContentGroup(
+                season: item,
+                playButtonItem: playButtonItem
+            )
+        default:
+            []
         }
 
         if let genres = item.itemGenres, genres.isNotEmpty {
@@ -227,19 +235,26 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     }
 
     private func playButtonItem(for item: BaseItemDto) async throws -> BaseItemDto? {
-        guard item.type == .series else {
+        switch item.type {
+        case .series:
+            if let nextUp = try await nextUpItem(for: item) {
+                return nextUp
+            }
+
+            if let resumeItem = try await resumeItem(for: item) {
+                return resumeItem
+            }
+
+            return try await firstAvailableItem(for: item)
+        case .season:
+            if let resumeItem = try await resumeItem(for: item) {
+                return resumeItem
+            }
+
+            return try await firstAvailableItem(for: item)
+        default:
             return item.isPlayable ? item : nil
         }
-
-        if let nextUp = try await nextUpItem(for: item) {
-            return nextUp
-        }
-
-        if let resumeItem = try await resumeItem(for: item) {
-            return resumeItem
-        }
-
-        return try await firstAvailableItem(for: item)
     }
 
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {

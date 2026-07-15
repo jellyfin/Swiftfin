@@ -52,7 +52,7 @@ extension BaseItemDto: Poster {
             "film.stack"
         case .channel, .tvChannel, .liveTvChannel, .program:
             "tv"
-        case .episode, .movie, .series, .video:
+        case .episode, .movie, .season, .series, .video:
             "film"
         case .collectionFolder, .folder, .userView:
             "folder.fill"
@@ -96,6 +96,12 @@ extension BaseItemDto: Poster {
             imageSource(itemID: seasonID, .primary, environment: environment)
         case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
             imageSource(.primary, environment: environment)
+        case .season:
+            imageSource(.primary, environment: environment)
+
+            if environment.useParent {
+                imageSource(itemID: seriesID, .primary, environment: environment)
+            }
         default:
             []
         }
@@ -106,7 +112,7 @@ extension BaseItemDto: Poster {
         environment: Environment
     ) -> [ImageSource] {
         switch type {
-        case .episode:
+        case .episode, .season:
             if environment.useParent {
                 if environment.viewContext.contains(.isThumb) {
                     imageSource(itemID: seriesID, .thumb, environment: environment)

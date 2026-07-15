@@ -483,7 +483,7 @@ extension BaseItemDto {
         switch type {
         case .audio:
             L10n.album
-        case .episode:
+        case .episode, .season:
             L10n.series
         case .musicAlbum:
             L10n.artist
@@ -496,7 +496,7 @@ extension BaseItemDto {
         switch type {
         case .audio:
             album
-        case .episode:
+        case .episode, .season:
             seriesName
         case .musicAlbum:
             albumArtist

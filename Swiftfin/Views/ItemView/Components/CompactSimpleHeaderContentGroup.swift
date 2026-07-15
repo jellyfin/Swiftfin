@@ -79,7 +79,7 @@ extension ItemView {
 
                     VStack(alignment: .center, spacing: 5) {
                         switch provider.item.type {
-                        case .episode:
+                        case .episode, .season:
                             if let parentID = provider.item.seriesID, let parentTitle = provider.item.parentTitle {
                                 parentButton(parentTitle, id: parentID)
                             }

@@ -33,7 +33,7 @@ struct ItemView: View {
     @ViewBuilder
     private var content: some View {
         switch itemViewType {
-        case .enhanced where provider.item.type != .person:
+        case .enhanced where provider.item.type != .person && provider.item.type != .season:
             RegularEnhancedScrollView(
                 provider: provider,
                 groups: contentGroups(

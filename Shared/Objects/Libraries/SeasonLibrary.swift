@@ -17,11 +17,19 @@ struct SeasonViewModelLibrary: PagingLibrary {
         self.parent = series
     }
 
+    init(season: BaseItemDto) {
+        self.parent = season
+    }
+
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
     ) async throws -> [PagingLibraryViewModel<EpisodeLibrary>] {
-        try await SeasonLibrary(series: parent)
+        if parent.type == .season {
+            return [PagingLibraryViewModel(library: EpisodeLibrary(season: parent))]
+        }
+
+        return try await SeasonLibrary(series: parent)
             .retrievePage(
                 environment: environment,
                 pageState: pageState

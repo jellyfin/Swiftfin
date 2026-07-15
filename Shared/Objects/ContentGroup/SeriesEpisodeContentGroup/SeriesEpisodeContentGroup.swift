@@ -13,7 +13,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
     let id: String
     let playButtonItem: BaseItemDto?
-    let series: BaseItemDto
+    let parent: BaseItemDto
     let viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
     var displayTitle: String {
@@ -30,8 +30,18 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
     ) {
         self.id = "\(series.id ?? "series")-episode-selector"
         self.playButtonItem = playButtonItem
-        self.series = series
+        self.parent = series
         self.viewModel = .init(library: SeasonViewModelLibrary(series: series), pageSize: 100)
+    }
+
+    init(
+        season: BaseItemDto,
+        playButtonItem: BaseItemDto? = nil
+    ) {
+        self.id = "\(season.id ?? "season")-episode-selector"
+        self.playButtonItem = playButtonItem
+        self.parent = season
+        self.viewModel = .init(library: SeasonViewModelLibrary(season: season), pageSize: 100)
     }
 
     func body(with viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>) -> Body {
