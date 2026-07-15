@@ -44,10 +44,24 @@ struct PlayButton: View {
     }
 
     private func play(fromBeginning: Bool = false) {
-        guard let playButtonItem = provider.playButtonItem,
-              let selectedMediaSource = provider.selectedMediaSource
-        else {
-            provider.logger.error("Play selected with no item or media source")
+        guard let playButtonItem = provider.playButtonItem else {
+            provider.logger.error("Play selected with no item")
+            return
+        }
+
+        guard let selectedMediaSource = provider.selectedMediaSource else {
+            guard playButtonItem.isAiring,
+                  let userSession = provider.userSession
+            else {
+                provider.logger.error("Play selected with no media source")
+                return
+            }
+
+            router.route(
+                to: .videoPlayer(
+                    provider: playButtonItem.getPlaybackItemProvider(userSession: userSession)
+                )
+            )
             return
         }
 
@@ -172,7 +186,7 @@ struct PlayButton: View {
                 }
             }
             .isSelected(true)
-            .disabled(provider.selectedMediaSource == nil)
+            .disabled(provider.selectedMediaSource == nil && provider.playButtonItem?.isAiring != true)
     }
 
     var body: some View {

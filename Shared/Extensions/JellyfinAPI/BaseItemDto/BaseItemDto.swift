@@ -289,18 +289,25 @@ extension BaseItemDto {
     }
 
     var progressLabel: String? {
-        guard let playbackPositionTicks = userData?.playbackPositionTicks,
-              let totalTicks = runTimeTicks,
-              playbackPositionTicks != 0,
-              totalTicks != 0 else { return nil }
+        let interval: TimeInterval
 
-        let remainingSeconds = (totalTicks - playbackPositionTicks) / 10_000_000
+        if let playbackPositionTicks = userData?.playbackPositionTicks,
+           let totalTicks = runTimeTicks,
+           playbackPositionTicks != 0,
+           totalTicks != 0
+        {
+            interval = TimeInterval((totalTicks - playbackPositionTicks) / 10_000_000)
+        } else if isAiring, let airingWindow {
+            interval = Date.now.timeIntervalSince(airingWindow.start)
+        } else {
+            return nil
+        }
 
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
         formatter.unitsStyle = .abbreviated
 
-        return formatter.string(from: .init(remainingSeconds))
+        return formatter.string(from: interval)
     }
 
     var programDuration: TimeInterval? {
@@ -317,6 +324,21 @@ extension BaseItemDto {
         return progress / length
     }
 
+    /// Unified playback progress for both regular content & programs
+    var progress: Double? {
+        if isAiring {
+            return programProgress.map {
+                min(max($0, 0), 1)
+            }
+        }
+
+        guard let playedPercentage = userData?.playedPercentage, playedPercentage > 0 else {
+            return nil
+        }
+
+        return playedPercentage / 100
+    }
+
     func programProgress(relativeTo other: Date) -> Double? {
         guard let startDate, let endDate else { return nil }
 
@@ -324,18 +346,6 @@ extension BaseItemDto {
         let progress = other.timeIntervalSince(startDate)
 
         return progress / length
-    }
-
-    var programLabel: String? {
-        guard let airingWindow else { return nil }
-
-        let position = Date.now.timeIntervalSince(airingWindow.start)
-
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.hour, .minute]
-        formatter.unitsStyle = .abbreviated
-
-        return formatter.string(from: position)
     }
 
     var subtitleStreams: [MediaStream] {
@@ -491,9 +501,9 @@ extension BaseItemDto {
     /// Can this `BaseItemDto` be mark as played
     var canBePlayed: Bool {
         switch type {
-        case .audio, .audioBook, .book, .boxSet, .channel, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder,
-             .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder,
-             .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
+        case .audio, .audioBook, .book, .boxSet, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder,
+             .movie, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder, .recording, .season,
+             .series, .trailer, .video:
             true
         default:
             false
@@ -544,10 +554,6 @@ extension BaseItemDto {
 
         if let progressLabel {
             return progressLabel
-        }
-
-        if let programLabel {
-            return programLabel
         }
 
         return L10n.play

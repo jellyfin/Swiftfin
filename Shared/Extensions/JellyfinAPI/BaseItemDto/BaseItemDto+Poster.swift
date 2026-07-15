@@ -138,6 +138,15 @@ extension BaseItemDto: Poster {
                 imageSource(itemID: seriesID, .thumb, environment: environment)
             }
             imageSource(itemID: seriesID, .backdrop, environment: environment)
+        case .channel, .liveTvChannel, .tvChannel:
+            if let programID = currentProgram?.id {
+                if environment.viewContext.contains(.isThumb) {
+                    imageSource(itemID: programID, .thumb, environment: environment)
+                }
+                imageSource(itemID: programID, .backdrop, environment: environment)
+                imageSource(itemID: programID, .primary, environment: environment)
+            }
+            imageSource(.primary, environment: environment)
         default:
             if environment.viewContext.contains(.isThumb) {
                 imageSource(.thumb, environment: environment)
@@ -176,12 +185,7 @@ extension BaseItemDto: Poster {
     @ViewBuilder
     func transform(image: Image, displayType: PosterDisplayType) -> some View {
         switch type {
-        case .channel, .tvChannel:
-            ContainerRelativeView(ratio: 0.95) {
-                image
-                    .aspectRatio(contentMode: .fit)
-            }
-        case .program:
+        case .channel, .liveTvChannel, .tvChannel, .program:
             if displayType == .square {
                 ContainerRelativeView(ratio: 0.95) {
                     image
