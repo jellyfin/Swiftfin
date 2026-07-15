@@ -35,10 +35,14 @@ extension CustomizeViewsSettings {
                 } label: {
                     LabeledContent {
                         if maxNextUp > 0 {
-                            let duration = Duration.seconds(TimeInterval(maxNextUp))
-                            Text(duration, format: .units(allowed: [.days], width: .abbreviated))
+                            Text(
+                                Duration.seconds(maxNextUp),
+                                format: .units(allowed: [.days], width: .abbreviated)
+                            )
+                            .foregroundStyle(.secondary)
                         } else {
                             Text(L10n.disabled)
+                                .foregroundStyle(.secondary)
                         }
                     } label: {
                         Text(L10n.nextUpDays)

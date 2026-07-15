@@ -136,14 +136,14 @@ extension ItemView {
                         contentMode: .fit
                     )
                     .posterEnvironment(BaseItemDto.Environment(useParent: false))
+                    .posterBorder()
+                    .posterCornerRadius(posterDisplayType)
+                    .posterShadow()
                     .frame(
                         maxWidth: .infinity,
                         maxHeight: .infinity,
                         alignment: .trailing
                     )
-                    .posterBorder()
-                    .posterCornerRadius(posterDisplayType)
-                    .posterShadow()
 
                     VStack(alignment: .leading, spacing: 10) {
                         title

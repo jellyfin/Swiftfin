@@ -34,7 +34,6 @@ struct LetterPickerBarModifier: ViewModifier {
                         .if(UIDevice.isTV) { view in
                             view
                                 .offset(x: edge == .leading ? -EdgeInsets.edgePadding / 1.5 : EdgeInsets.edgePadding / 1.5)
-                                .padding(edge == .leading ? .trailing : .leading, -EdgeInsets.edgePadding / 2)
                                 .focusSection()
                         }
                 }

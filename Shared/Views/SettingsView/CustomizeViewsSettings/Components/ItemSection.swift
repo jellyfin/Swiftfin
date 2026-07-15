@@ -44,6 +44,13 @@ extension CustomizeViewsSettings {
         @Default(.Customization.shouldShowMissingEpisodes)
         private var shouldShowMissingEpisodes
 
+        private var presentMangementSection: Bool {
+            userSession?.user.data.policy?.isAdministrator == true ||
+                userSession?.user.data.policy?.enableCollectionManagement == true ||
+                userSession?.user.data.policy?.enableContentDeletion == true ||
+                userSession?.user.data.policy?.enableContentDeletionFromFolders?.isNotEmpty == true
+        }
+
         var body: some View {
             Form(systemImage: "gear") {
                 Section {
@@ -54,23 +61,25 @@ extension CustomizeViewsSettings {
 
                 PlatformPicker(L10n.enabledTrailers, selection: $enabledTrailers)
 
-                Section(L10n.management) {
+                if presentMangementSection {
+                    Section(L10n.management) {
 
-                    if userSession?.user.data.policy?.isAdministrator == true ||
-                        userSession?.user.data.policy?.enableCollectionManagement == true
-                    {
-                        Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
-                    }
+                        if userSession?.user.data.policy?.isAdministrator == true ||
+                            userSession?.user.data.policy?.enableCollectionManagement == true
+                        {
+                            Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
+                        }
 
-                    if userSession?.user.data.policy?.isAdministrator == true {
-                        Toggle(L10n.editMedia, isOn: $enableItemEditing)
-                    }
+                        if userSession?.user.data.policy?.isAdministrator == true {
+                            Toggle(L10n.editMedia, isOn: $enableItemEditing)
+                        }
 
-                    if userSession?.user.data.policy?.isAdministrator == true ||
-                        userSession?.user.data.policy?.enableContentDeletion == true ||
-                        userSession?.user.data.policy?.enableContentDeletionFromFolders?.isNotEmpty == true
-                    {
-                        Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
+                        if userSession?.user.data.policy?.isAdministrator == true ||
+                            userSession?.user.data.policy?.enableContentDeletion == true ||
+                            userSession?.user.data.policy?.enableContentDeletionFromFolders?.isNotEmpty == true
+                        {
+                            Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
+                        }
                     }
                 }
 
