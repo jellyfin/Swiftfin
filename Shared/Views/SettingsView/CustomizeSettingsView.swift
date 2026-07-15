@@ -236,7 +236,7 @@ struct CustomizeSettingsView: View {
         Section(L10n.libraries) {
             PlatformPicker(L10n.posters, selection: $libraryStyle.posterDisplayType)
 
-            PlatformPicker(L10n.defaultLayout, selection: $libraryStyle.displayType)
+            PlatformPicker(L10n.defaultLayout, selection: $libraryStyle.displayType, onlySupported: true)
 
             if libraryStyle.displayType == .list, UIDevice.isPad || UIDevice.isTV {
                 Stepper(L10n.columns, value: $libraryStyle.listColumnCount, in: 1 ... 3, step: 1) {

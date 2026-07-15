@@ -60,7 +60,7 @@ extension CustomizeViewsSettings {
                 }
 
                 Section(L10n.layout) {
-                    PlatformPicker(L10n.layout, selection: $libraryStyle.displayType)
+                    PlatformPicker(L10n.layout, selection: $libraryStyle.displayType, onlySupported: true)
 
                     PlatformPicker(L10n.posters, selection: $libraryStyle.posterDisplayType)
 
