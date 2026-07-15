@@ -160,6 +160,7 @@ extension SeriesEpisodeContentGroup {
             let button = Button(action: artworkAction) {
                 artwork
             }
+            .foregroundStyle(.primary, .secondary)
             .buttonStyle(.card)
             .focused($focusedElement, equals: .artwork)
 
