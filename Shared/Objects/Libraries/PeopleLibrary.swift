@@ -18,7 +18,7 @@ struct PeopleLibrary: BaseItemKindLibrary {
         }
     }
 
-    let environment: Environment
+    let environment: Environment?
     let libraryItemTypes: [BaseItemKind] = [.person]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.people, id: "people")
 

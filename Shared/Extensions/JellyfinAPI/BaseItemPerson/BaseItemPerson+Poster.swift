@@ -36,6 +36,14 @@ extension BaseItemPerson: Poster {
         "person.fill"
     }
 
+    var posterLabel: some View {
+        BaseItemDto(person: self).posterLabel
+    }
+
+    var posterContextMenu: some View {
+        BaseItemDto(person: self).posterContextMenu
+    }
+
     func portraitImageSources(
         environment: Environment
     ) -> [ImageSource] {

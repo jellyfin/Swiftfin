@@ -240,8 +240,13 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         hasNextPage = true
-        elements.removeAll()
-        try await __actuallyGetNextPage()
+
+        if StateTask.isBackground {
+            try await replaceElements()
+        } else {
+            elements.removeAll()
+            try await __actuallyGetNextPage()
+        }
     }
 
     @Function(\Action.Cases.getNextPage)
@@ -254,15 +259,28 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
     private func __actuallyGetNextPage() async throws {
         guard hasNextPage else { return }
 
-        let nextPageElements = try await library.retrievePage(
-            environment: environment,
-            pageState: pageState(offset: elements.count, pageSize: pageSize)
-        )
+        let nextPageElements = try await retrievePage(offset: elements.count)
 
         guard !Task.isCancelled else { return }
 
         hasNextPage = !(nextPageElements.count < pageSize)
         elements.append(contentsOf: nextPageElements)
+    }
+
+    private func replaceElements() async throws {
+        let newElements = try await retrievePage(offset: 0)
+
+        guard !Task.isCancelled else { return }
+
+        hasNextPage = !(newElements.count < pageSize)
+        elements = IdentifiedArray(newElements, uniquingIDsWith: { existing, _ in existing })
+    }
+
+    private func retrievePage(offset: Int) async throws -> [Element] {
+        try await library.retrievePage(
+            environment: environment,
+            pageState: pageState(offset: offset, pageSize: pageSize)
+        )
     }
 
     @Function(\Action.Cases.search)

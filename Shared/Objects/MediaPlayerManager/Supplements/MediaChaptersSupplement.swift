@@ -186,8 +186,7 @@ extension MediaChaptersSupplement {
             var body: some View {
                 PosterImage(
                     item: chapter,
-                    type: .landscape,
-                    contentMode: .fill
+                    type: .landscape
                 )
                 .overlay {
                     if isSelected {
@@ -262,11 +261,11 @@ extension MediaChaptersSupplement {
             let action: () -> Void
 
             var body: some View {
-                SupplementPosterButton(
+                PosterButton(
                     item: chapter,
-                    action: action
-                ) {
-                    ChapterContent(chapter: chapter)
+                    displayType: .landscape
+                ) { _ in
+                    action()
                 }
                 .isSelected(chapter.id == supplement.activeChapterID)
             }

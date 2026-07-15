@@ -11,11 +11,11 @@ import SwiftUI
 
 // TODO: selected icon
 @MainActor
-struct TabItem: Identifiable, Hashable {
+struct TabItem: Displayable, @MainActor Identifiable, @MainActor Hashable {
 
     let content: AnyView
+    let displayTitle: String
     let id: String
-    let title: String
     let systemImage: String
     let labelStyle: any LabelStyle
 
@@ -23,12 +23,27 @@ struct TabItem: Identifiable, Hashable {
         id: String,
         title: String,
         systemImage: String,
-        labelStyle: some LabelStyle = .titleAndIcon,
+        @ViewBuilder content: () -> some View
+    ) {
+        self.init(
+            id: id,
+            title: title,
+            systemImage: systemImage,
+            labelStyle: .titleAndIcon,
+            content: content
+        )
+    }
+
+    init(
+        id: String,
+        title: String,
+        systemImage: String,
+        labelStyle: some LabelStyle,
         @ViewBuilder content: () -> some View
     ) {
         self.content = AnyView(content())
         self.id = id
-        self.title = title
+        self.displayTitle = title
         self.systemImage = systemImage
         self.labelStyle = labelStyle
     }
@@ -44,13 +59,42 @@ struct TabItem: Identifiable, Hashable {
 
 extension TabItem {
 
-    static var home: TabItem {
+    static var adminDashboard: TabItem {
         TabItem(
-            id: "home",
-            title: L10n.home,
-            systemImage: "house"
+            id: "admin-dashboard",
+            title: L10n.dashboard,
+            systemImage: "server.rack"
         ) {
-            HomeView()
+            #if os(iOS)
+            AdminDashboardView()
+            #else
+            EmptyView()
+            #endif
+        }
+    }
+
+    static func contentGroup(
+        provider: some ContentGroupProvider
+    ) -> TabItem {
+        TabItem(
+            id: provider.id,
+            title: provider.displayTitle,
+            systemImage: "house.fill"
+        ) {
+            ContentGroupView(provider: provider)
+        }
+    }
+
+    static func item(id: String, displayTitle: String) -> TabItem {
+        let item = BaseItemDto(id: id, name: displayTitle)
+        let provider = ItemContentGroupProvider(item: item)
+
+        return TabItem(
+            id: id,
+            title: displayTitle,
+            systemImage: item.systemImage
+        ) {
+            ItemView(provider: provider)
         }
     }
 
@@ -89,6 +133,16 @@ extension TabItem {
         }
     }
 
+    static var liveTV: TabItem {
+        TabItem(
+            id: "live-tv",
+            title: L10n.liveTV,
+            systemImage: "play.tv"
+        ) {
+            NavigationRoute.liveTV.destination
+        }
+    }
+
     static var search: TabItem {
         TabItem(
             id: "search",
@@ -96,6 +150,9 @@ extension TabItem {
             systemImage: "magnifyingglass"
         ) {
             SearchView()
+                .if(UIDevice.isTV) { view in
+                    view.toolbar(.hidden, for: .navigationBar)
+                }
         }
     }
 

@@ -75,7 +75,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
             .publisher
             .sink { userID in
                 Task {
-                    await self.send(.refreshUser(userID))
+                    self.send(.refreshUser(userID))
                 }
             }
             .store(in: &cancellables)

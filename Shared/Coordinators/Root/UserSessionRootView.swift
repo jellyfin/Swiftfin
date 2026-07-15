@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import FactoryKit
 import SwiftUI
 
@@ -27,7 +28,10 @@ struct UserSessionRootView: View {
                     SelectUserView()
                 }
             case .signedIn:
-                MainTabView()
+                PosterPreferencesEnvironment {
+                    MainTabView()
+                }
+                .id(userSessionManager.currentSession?.user.id)
             }
         }
         .animation(.linear(duration: 0.1), value: userSessionManager.state)
@@ -44,5 +48,25 @@ struct UserSessionRootView: View {
                 )
             }
         }
+    }
+}
+
+private struct PosterPreferencesEnvironment<Content: View>: View {
+
+    @Default(.Customization.Indicators.enabled)
+    private var enabledPosterIndicators
+    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
+
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        content
+            .environment(\.enabledPosterIndicators, enabledPosterIndicators)
+            .environment(\.useSeriesLandscapeBackdrop, useSeriesLandscapeBackdrop)
     }
 }

@@ -18,10 +18,11 @@ private let portraitMaxWidth: CGFloat = 500
 
 enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 
-    enum Size: Equatable {
+    enum Size: Equatable, Hashable, Storable {
 
         case extraSmall
         case small
+        case medium
         case custom(width: CGFloat)
 
         var quality: Int? {
@@ -44,6 +45,8 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
                 case .portrait, .square:
                     portraitMaxWidth
                 }
+            case .medium:
+                landscapeMaxWidth
             case let .custom(width):
                 width
             }

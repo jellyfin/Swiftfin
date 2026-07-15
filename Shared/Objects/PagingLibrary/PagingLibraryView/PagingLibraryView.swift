@@ -33,6 +33,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @StoredValue
     private var parentLibraryStyle: LibraryStyle
 
+    @TabItemSelected
+    private var tabItemSelected
+
     private var libraryStyleOptions: LibraryStyleOptions {
         viewModel.libraryStyleOptions
     }
@@ -70,7 +73,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             layout: Element.layout(for: libraryStyle, options: libraryStyleOptions)
         ) { element in
             element.makeBody(libraryStyle: libraryStyle)
-                .withViewContext(.isThumb)
         }
         .onReachedBottomEdge(offset: .offset(300)) {
             if viewModel.isSearchActive {
@@ -82,7 +84,13 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .proxy(gridProxy)
         .scrollIndicators(.hidden)
         .withViewContext(.isListRowSeparatorVisible)
+        .withViewContext(.isThumb)
         .ignoresSafeArea(edges: .vertical)
+        .onReceive(tabItemSelected) { event in
+            if event.isRepeat, event.isRoot {
+                gridProxy.scrollToTop(animated: true)
+            }
+        }
     }
 
     @ViewBuilder
@@ -130,48 +138,34 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .animation(.linear(duration: 0.2), value: viewModel.searchElements)
         .navigationTitle(viewModel.library.parent.displayTitle)
         .backport
-        .toolbarTitleDisplayMode(.inline)
+        .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
+        .backport
+        .onChange(of: viewModel.environment) {
+            viewModel.refreshForEnvironmentChange()
+        }
+        .backport
+        .onChange(of: libraryStyle) { oldStyle, newStyle in
+            if Element.layout(for: oldStyle, options: libraryStyleOptions) ==
+                Element.layout(for: newStyle, options: libraryStyleOptions)
+            {
+                gridProxy.layout()
+            }
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .gotRandomItem(element):
+                element.libraryDidSelectElement(router: router, in: namespace)
+            }
+        }
+        .onFirstAppear {
+            viewModel.refresh()
+        }
         #if os(iOS)
-            .navigationBarMenuButton(
-                isLoading: viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage)
-            ) {
-                menuContent
-            }
-        #else
-            .toolbar {
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    if viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage) {
-                        ProgressView()
-                    }
-
-                    #if os(iOS)
-                    Menu(L10n.options, systemImage: "ellipsis.circle") {
-                        menuContent
-                    }
-                    #endif
-                }
-            }
+        .navigationBarMenuButton(
+            isLoading: viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage)
+        ) {
+            menuContent
+        }
         #endif
-            .backport
-                .onChange(of: viewModel.environment) {
-                    viewModel.refreshForEnvironmentChange()
-                }
-                .backport
-                .onChange(of: libraryStyle) { oldStyle, newStyle in
-                    if Element.layout(for: oldStyle, options: libraryStyleOptions) ==
-                        Element.layout(for: newStyle, options: libraryStyleOptions)
-                    {
-                        gridProxy.layout()
-                    }
-                }
-                .onReceive(viewModel.events) { event in
-                    switch event {
-                    case let .gotRandomItem(element):
-                        element.libraryDidSelectElement(router: router, in: namespace)
-                    }
-                }
-                .onFirstAppear {
-                    viewModel.refresh()
-                }
     }
 }

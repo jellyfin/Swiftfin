@@ -21,12 +21,43 @@ extension Backport where Content: View {
     }
 
     @ViewBuilder
-    func toolbarTitleDisplayMode(_ mode: ToolbarTitleDisplayMode) -> some View {
+    func defaultFocus<V: Hashable>(
+        _ binding: FocusState<V>.Binding,
+        _ value: V,
+        priority: DefaultFocusEvaluationPriority = .automatic
+    )
+    -> some View {
         if #available(iOS 17, tvOS 17, *) {
-            content.toolbarTitleDisplayMode(mode.swiftUIValue)
+            content.defaultFocus(
+                binding,
+                value,
+                priority: priority
+            )
         } else {
-            content.navigationBarTitleDisplayMode(mode.navigationBarTitleDisplayMode)
+            content
         }
+    }
+
+    @ViewBuilder
+    func focusable(_ isFocusable: Bool = true) -> some View {
+        if #available(iOS 17, tvOS 17, *) {
+            content.focusable(isFocusable)
+        } else {
+            content
+        }
+    }
+
+    /// Applies glass in the given shape, using a material fallback when liquid glass is unavailable or disabled.
+    func glassEffect(
+        _ glass: BackportGlass = .regular,
+        in shape: some Shape
+    ) -> some View {
+        content.modifier(
+            BackportGlassEffectModifier(
+                glass: glass,
+                shape: shape
+            )
+        )
     }
 
     @ViewBuilder
@@ -93,36 +124,6 @@ extension Backport where Content: View {
     }
 
     @ViewBuilder
-    func defaultFocus<V: Hashable>(
-        _ binding: FocusState<V>.Binding,
-        _ value: V,
-        priority: DefaultFocusEvaluationPriority = .automatic
-    )
-    -> some View {
-        if #available(iOS 17, tvOS 17, *) {
-            content
-                .defaultFocus(
-                    binding,
-                    value,
-                    priority: priority
-                )
-        } else {
-            content
-        }
-    }
-
-    @ViewBuilder
-    func focusable(_ isFocusable: Bool = true) -> some View {
-        if #available(iOS 17, tvOS 17, *) {
-            content
-                .focusable(isFocusable)
-        } else {
-            content
-        }
-    }
-
-    @available(tvOS, unavailable)
-    @ViewBuilder
     func searchFocused(
         _ isSearchFocused: FocusState<Bool>.Binding
     ) -> some View {
@@ -132,9 +133,16 @@ extension Backport where Content: View {
             content
         }
     }
-}
 
-// MARK: ButtonBorderShape
+    @ViewBuilder
+    func toolbarTitleDisplayMode(_ mode: ToolbarTitleDisplayMode) -> some View {
+        if #available(iOS 17, tvOS 17, *) {
+            content.toolbarTitleDisplayMode(mode.swiftUIValue)
+        } else {
+            content.navigationBarTitleDisplayMode(mode.navigationBarTitleDisplayMode)
+        }
+    }
+}
 
 enum ButtonBorderShape {
     case automatic

@@ -1,0 +1,184 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+import JellyfinAPI
+import SwiftUI
+
+extension ItemView {
+
+    struct RegularSimpleHeaderContentGroup: ContentGroup {
+
+        let id: String = "itemView-header"
+        let provider: ItemContentGroupProvider
+
+        func body(with viewModel: Empty) -> Body {
+            Body(provider: provider)
+        }
+
+        struct Body: View {
+
+            @ObservedObject
+            var provider: ItemContentGroupProvider
+
+            @Router
+            private var router
+
+            @StoredValue(.User.itemViewAttributes)
+            private var attributes
+
+            private var posterDisplayType: PosterDisplayType {
+                provider.item.type == .person ? .portrait : .landscape
+            }
+
+            private var hasDescription: Bool {
+                provider.item.taglines?.contains(where: \.isNotEmpty) == true ||
+                    provider.item.overview?.isNotEmpty == true
+            }
+
+            @ViewBuilder
+            private func parentButton(_ title: String, id: String) -> some View {
+                Button {
+                    router.route(to: .item(id: id))
+                } label: {
+                    Label {
+                        Text(title)
+                            .font(.headline)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(1)
+                    } icon: {
+                        Image(systemName: "chevron.forward")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .font(.callout)
+                    .fontWeight(.semibold)
+                }
+                .foregroundStyle(.primary, .secondary)
+                .labelStyle(
+                    CapsuleLabelStyle(
+                        isIconTrailing: true
+                    )
+                )
+            }
+
+            @ViewBuilder
+            private var title: some View {
+                VStack(alignment: .leading, spacing: 5) {
+                    switch provider.item.type {
+                    case .episode:
+                        if let parentID = provider.item.seriesID, let parentTitle = provider.item.parentTitle {
+                            parentButton(parentTitle, id: parentID)
+                        }
+                    case .liveTvProgram:
+                        if let channelID = provider.item.channelID, let channelName = provider.item.channelName {
+                            parentButton(channelName, id: channelID)
+                        }
+                    default:
+                        EmptyView()
+                    }
+
+                    Text(provider.item.displayTitle)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(2)
+
+                    DotHStack {
+                        if let firstGenre = provider.item.genres?.first {
+                            Text(firstGenre)
+                        }
+
+                        if let premiereYear = provider.item.premiereDateYear {
+                            Text(premiereYear)
+                        }
+
+                        if let runtime = provider.item.runtime {
+                            Text(runtime, format: .hourMinuteAbbreviated)
+                        }
+
+                        if let seasonEpisodeLabel = provider.item.seasonEpisodeLabel {
+                            Text(seasonEpisodeLabel)
+                        }
+                    }
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+                }
+            }
+
+            var body: some View {
+                ImageContentColumnsLayout(
+                    idealContentWidth: 600,
+                    imageAspectRatio: posterDisplayType == .landscape ? 1.77 : 1,
+                    imageColumnFraction: posterDisplayType == .landscape ? 0.5 : 0.33,
+                    spacing: EdgeInsets.edgePadding
+                ) {
+                    PosterImage(
+                        item: provider.item,
+                        type: posterDisplayType,
+                        size: .small,
+                        contentMode: .fit
+                    )
+                    .posterEnvironment(BaseItemDto.Environment(useParent: false))
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity,
+                        alignment: .trailing
+                    )
+                    .posterShadow()
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        title
+
+                        if hasDescription {
+                            VStack(alignment: .leading, spacing: 5) {
+                                if let firstTagline = provider.item.taglines?.first(where: \.isNotEmpty) {
+                                    Text(firstTagline)
+                                        .fontWeight(.bold)
+                                        .multilineTextAlignment(.leading)
+                                        .lineLimit(2)
+                                }
+
+                                if let itemOverview = provider.item.overview, itemOverview.isNotEmpty {
+                                    Button {
+                                        router.route(to: .itemOverview(item: provider.item))
+                                    } label: {
+                                        SeeMoreText(itemOverview)
+                                            .font(.footnote)
+                                            .lineLimit(3)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+
+                        VStack(alignment: .leading, spacing: 5) {
+                            if provider.item.presentPlayButton {
+                                PlayButton(provider: provider)
+                            }
+
+                            ItemView.ActionButtonHStack(provider: provider)
+                        }
+                        .frame(maxWidth: 300, alignment: .leading)
+
+                        ItemView.AttributesHStack(
+                            attributes: attributes,
+                            item: provider.item,
+                            selectedMediaSource: provider.selectedMediaSource,
+                            alignment: .leading
+                        )
+                        .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .edgePadding()
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+            }
+        }
+    }
+}

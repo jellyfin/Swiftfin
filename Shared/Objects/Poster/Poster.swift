@@ -16,14 +16,14 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
 
     associatedtype Environment: WithDefaultValue = Empty
     associatedtype ImageBody: View = Image
+    associatedtype LabelBody: View = EmptyView
+    associatedtype ContextMenuBody: View = EmptyView
+    associatedtype OverlayBody: View = EmptyView
 
     var preferredPosterDisplayType: PosterDisplayType { get }
 
     /// Optional subtitle when used as a poster
     var subtitle: String? { get }
-
-    /// Show the title
-    var showTitle: Bool { get }
 
     @ImageSourceBuilder
     func portraitImageSources(
@@ -50,6 +50,18 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
     @MainActor
     @ViewBuilder
     func transform(image: Image, displayType: PosterDisplayType) -> ImageBody
+
+    @MainActor
+    @ViewBuilder
+    var posterLabel: LabelBody { get }
+
+    @MainActor
+    @ViewBuilder
+    var posterContextMenu: ContextMenuBody { get }
+
+    @MainActor
+    @ViewBuilder
+    func posterOverlay(for displayType: PosterDisplayType) -> OverlayBody
 }
 
 extension Poster where ImageBody == Image {
@@ -66,14 +78,37 @@ extension Poster where ImageBody == Image {
     }
 }
 
+extension Poster where LabelBody == EmptyView {
+
+    @MainActor
+    @ViewBuilder
+    var posterLabel: LabelBody {
+        EmptyView()
+    }
+}
+
+extension Poster where ContextMenuBody == EmptyView {
+
+    @MainActor
+    @ViewBuilder
+    var posterContextMenu: ContextMenuBody {
+        EmptyView()
+    }
+}
+
+extension Poster where OverlayBody == EmptyView {
+
+    @MainActor
+    @ViewBuilder
+    func posterOverlay(for displayType: PosterDisplayType) -> OverlayBody {
+        EmptyView()
+    }
+}
+
 extension Poster {
 
     var subtitle: String? {
         nil
-    }
-
-    var showTitle: Bool {
-        true
     }
 
     func portraitImageSources(
@@ -136,5 +171,25 @@ extension Poster {
 
     func _withLandscapeImages(_ imageSources: @escaping (AnyPoster.Environment) -> [ImageSource]) -> AnyPoster {
         .init(self, _withLandscapeImages: imageSources)
+    }
+}
+
+extension View {
+
+    @MainActor
+    @ViewBuilder
+    func posterContextMenu<Item: Poster>(
+        for item: Item,
+        @ViewBuilder preview: @escaping () -> some View
+    ) -> some View {
+        if Item.ContextMenuBody.self == EmptyView.self {
+            self
+        } else {
+            contextMenu {
+                item.posterContextMenu
+            } preview: {
+                preview()
+            }
+        }
     }
 }

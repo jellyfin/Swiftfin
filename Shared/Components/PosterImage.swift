@@ -12,30 +12,41 @@ import SwiftUI
 
 struct PosterImage<Element: Poster>: View {
 
+    @Environment(\.useSeriesLandscapeBackdrop)
+    private var useSeriesLandscapeBackdrop
     @Environment(\.viewContext)
     private var viewContext
 
     private let contentMode: ContentMode
     private let element: Element
+    private var environment: Element.Environment?
     private var pipeline: ImagePipeline
     private let size: PosterDisplayType.Size
-    private let type: PosterDisplayType
+    private let displayType: PosterDisplayType
 
     init(
         item: Element,
         type: PosterDisplayType,
-        contentMode: ContentMode = .fill,
-        size: PosterDisplayType.Size = .small
+        size: PosterDisplayType.Size = .small,
+        contentMode: ContentMode = .fill
     ) {
         self.contentMode = contentMode
+        self.displayType = type
         self.element = item
+        self.environment = nil
         self.pipeline = .shared
         self.size = size
-        self.type = type
     }
 
     private var imageSources: [ImageSource] {
-        var environment = Element.Environment.default
+        var environment = environment ?? .default
+
+        if self.environment == nil,
+           var environmentWithParentPreference = environment as? WithParentImageSourcePreference
+        {
+            environmentWithParentPreference.useParent = useSeriesLandscapeBackdrop
+            environment = environmentWithParentPreference as! Element.Environment
+        }
 
         if var environmentWithViewContext = environment as? WithViewContext {
             environmentWithViewContext.viewContext = viewContext
@@ -43,7 +54,7 @@ struct PosterImage<Element: Poster>: View {
         }
 
         return element.imageSources(
-            for: type,
+            for: displayType,
             size: size,
             environment: environment
         )
@@ -60,7 +71,7 @@ struct PosterImage<Element: Poster>: View {
                 ImageView(imageSources)
                     .pipeline(pipeline)
                     .image { image in
-                        element.transform(image: image, displayType: type)
+                        element.transform(image: image, displayType: displayType)
                     }
                     .placeholder { imageSource in
                         if let blurHash = imageSource.blurHash {
@@ -69,40 +80,33 @@ struct PosterImage<Element: Poster>: View {
                                 size: .init(width: 8, height: 8)
                             )?
                                 .resizable()
-                        } else if element.showTitle {
-                            SystemImageContentView(
-                                systemName: element.systemImage
-                            )
                         } else {
                             SystemImageContentView(
-                                title: element.displayTitle,
                                 systemName: element.systemImage
                             )
                         }
                     }
                     .failure {
-                        if element.showTitle {
-                            SystemImageContentView(
-                                systemName: element.systemImage
-                            )
-                        } else {
-                            SystemImageContentView(
-                                title: element.displayTitle,
-                                systemName: element.systemImage
-                            )
-                        }
+                        SystemImageContentView(
+                            systemName: element.systemImage
+                        )
                     }
                     .accessibilityRemoveTraits(.isImage)
+                    .accessibilityIgnoresInvertColors()
             }
         }
         .posterStyle(
-            type,
+            displayType,
             contentMode: contentMode
         )
     }
 }
 
 extension PosterImage {
+
+    func posterEnvironment(_ environment: Element.Environment) -> Self {
+        copy(modifying: \.environment, with: environment)
+    }
 
     func pipeline(_ pipeline: ImagePipeline) -> Self {
         copy(modifying: \.pipeline, with: pipeline)

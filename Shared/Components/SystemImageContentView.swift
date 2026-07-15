@@ -59,24 +59,8 @@ struct RelativeSystemImageView: View {
 
 struct SystemImageContentView: View {
 
-    @State
-    private var labelSize: CGSize = .zero
-
-    var title: String?
     let systemName: String?
     var ratio: CGFloat = 0.3
-
-    @ViewBuilder
-    private var label: some View {
-        if let title {
-            Text(title)
-                .lineLimit(2)
-                .multilineTextAlignment(.center)
-                .font(.footnote.weight(.regular))
-                .foregroundStyle(.secondary)
-                .trackingSize($labelSize)
-        }
-    }
 
     var body: some View {
         ContainerRelativeView(ratio: ratio) {
@@ -84,11 +68,6 @@ struct SystemImageContentView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(.secondary)
-        }
-        .overlay(alignment: .bottom) {
-            label
-                .padding(.horizontal, 4)
-                .offset(y: labelSize.height)
         }
     }
 }

@@ -6,19 +6,20 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
+import FactoryKit
 import Foundation
+import Get
 import JellyfinAPI
 import SwiftUI
 
 extension BaseItemDto: Poster {
 
-    struct Environment: WithDefaultValue, WithImageSourceOptions, WithViewContext {
+    struct Environment: WithDefaultValue, WithImageSourceOptions, WithParentImageSourcePreference, WithViewContext {
 
         var maxWidth: CGFloat?
         var maxHeight: CGFloat?
         var quality: Int?
-        var useParent: Bool = Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop]
+        var useParent: Bool = true
         var viewContext: ViewContext = .init()
 
         static var `default`: Self {
@@ -34,19 +35,12 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             seasonEpisodeLabel
+        case .person:
+            people?.first?.firstRole
         case .video:
             extraType?.displayTitle
         default:
             nil
-        }
-    }
-
-    var showTitle: Bool {
-        switch type {
-        case .episode, .series, .movie, .boxSet, .collectionFolder:
-            Defaults[.Customization.showPosterLabels]
-        default:
-            true
         }
     }
 
@@ -68,6 +62,28 @@ extension BaseItemDto: Poster {
             "person.fill"
         default:
             "circle"
+        }
+    }
+
+    @ViewBuilder
+    var posterLabel: some View {
+        BaseItemDtoPosterLabel(item: self)
+    }
+
+    @ViewBuilder
+    var posterContextMenu: some View {
+        BaseItemDtoPosterContextMenu(item: self)
+    }
+
+    @ViewBuilder
+    func posterOverlay(for displayType: PosterDisplayType) -> some View {
+        ZStack {
+            PosterSelectionOverlay()
+
+            PosterIndicatorsOverlay(
+                item: self,
+                posterDisplayType: displayType
+            )
         }
     }
 
@@ -158,6 +174,211 @@ extension BaseItemDto: Poster {
         default:
             image
                 .aspectRatio(contentMode: .fill)
+        }
+    }
+}
+
+private struct BaseItemDtoPosterContextMenu: View {
+
+    @Router
+    private var router
+
+    @State
+    private var item: BaseItemDto
+
+    init(item: BaseItemDto) {
+        self.item = item
+    }
+
+    private var isFavorite: Bool {
+        item.userData?.isFavorite == true
+    }
+
+    private var isPlayed: Bool {
+        item.userData?.isPlayed == true
+    }
+
+    var body: some View {
+        if let itemID = item.id {
+            Button(L10n.goToItem, systemImage: "info.circle") {
+                router.route(to: .item(id: itemID))
+            }
+        }
+
+        if item.type == .episode, let seriesID = item.seriesID {
+            Button(L10n.goToSeries, systemImage: "tv") {
+                router.route(to: .item(id: seriesID))
+            }
+        }
+
+        if item.canBePlayed {
+            Button(isPlayed ? L10n.markAsUnplayed : L10n.markAsPlayed, systemImage: isPlayed ? "circle" : "checkmark.circle") {
+                Task {
+                    await toggleIsPlayed()
+                }
+            }
+        }
+
+        if item.id != nil {
+            Button(isFavorite ? L10n.removeFromFavorites : L10n.addToFavorites, systemImage: isFavorite ? "heart.slash" : "heart") {
+                Task {
+                    await toggleIsFavorite()
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func toggleIsPlayed() async {
+        let beforeIsPlayed = item.userData?.isPlayed ?? false
+
+        item.userData?.isPlayed = !beforeIsPlayed
+        do {
+            try await setIsPlayed(!beforeIsPlayed)
+        } catch {
+            item.userData?.isPlayed = beforeIsPlayed
+        }
+    }
+
+    @MainActor
+    private func toggleIsFavorite() async {
+        let beforeIsFavorite = item.userData?.isFavorite ?? false
+
+        item.userData?.isFavorite = !beforeIsFavorite
+        do {
+            try await setIsFavorite(!beforeIsFavorite)
+        } catch {
+            item.userData?.isFavorite = beforeIsFavorite
+        }
+    }
+
+    private func setIsPlayed(_ isPlayed: Bool) async throws {
+        guard let itemID = item.id,
+              let userSession = Container.shared.currentUserSession()
+        else { return }
+
+        let request: Request<UserItemDataDto> = if isPlayed {
+            Paths.markPlayedItem(
+                itemID: itemID,
+                userID: userSession.user.id
+            )
+        } else {
+            Paths.markUnplayedItem(
+                itemID: itemID,
+                userID: userSession.user.id
+            )
+        }
+
+        let response = try await userSession.client.send(request)
+        item.userData = response.value
+        Notifications[.itemUserDataDidChange].post(response.value)
+        Notifications[.itemShouldRefreshMetadata].post(itemID)
+    }
+
+    private func setIsFavorite(_ isFavorite: Bool) async throws {
+        guard let itemID = item.id,
+              let userSession = Container.shared.currentUserSession()
+        else { return }
+
+        let request: Request<UserItemDataDto> = if isFavorite {
+            Paths.markFavoriteItem(
+                itemID: itemID,
+                userID: userSession.user.id
+            )
+        } else {
+            Paths.unmarkFavoriteItem(
+                itemID: itemID,
+                userID: userSession.user.id
+            )
+        }
+
+        let response = try await userSession.client.send(request)
+        item.userData = response.value
+        Notifications[.itemUserDataDidChange].post(response.value)
+        Notifications[.itemShouldRefreshMetadata].post(itemID)
+    }
+}
+
+private struct BaseItemDtoPosterLabel: View {
+
+    let item: BaseItemDto
+
+    var body: some View {
+        switch item.type {
+        case .program:
+            programLabel
+        case .episode:
+            episodeLabel
+        default:
+            titleSubtitleLabel
+        }
+    }
+
+    private var titleSubtitleLabel: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(item.displayTitle)
+                .font(.footnote)
+                .foregroundColor(.primary)
+                .accessibilityLabel(item.displayTitle)
+                .lineLimit(1, reservesSpace: true)
+
+            Text(item.subtitle ?? " ")
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(.secondary)
+                .lineLimit(1, reservesSpace: true)
+        }
+    }
+
+    private var episodeLabel: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if let seriesName = item.seriesName {
+                Text(seriesName)
+                    .font(.footnote.weight(.regular))
+                    .foregroundColor(.primary)
+                    .lineLimit(1, reservesSpace: true)
+            }
+
+            DotHStack {
+                Text(item.seasonEpisodeLabel ?? .emptyDash)
+
+                Text(item.displayTitle)
+            }
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .lineLimit(1)
+        }
+    }
+
+    private var programLabel: some View {
+        VStack(alignment: .leading) {
+            Text(item.channelName ?? .emptyDash)
+                .font(.footnote.weight(.semibold))
+                .foregroundColor(.primary)
+                .lineLimit(1, reservesSpace: true)
+
+            Text(item.displayTitle)
+                .font(.footnote.weight(.regular))
+                .foregroundColor(.primary)
+                .lineLimit(1, reservesSpace: true)
+
+            HStack(spacing: 2) {
+                if let startDate = item.startDate {
+                    Text(startDate, style: .time)
+                } else {
+                    Text(String.emptyDash)
+                }
+
+                Text(String.hyphen)
+
+                if let endDate = item.endDate {
+                    Text(endDate, style: .time)
+                } else {
+                    Text(String.emptyDash)
+                }
+            }
+            .font(.footnote)
+            .foregroundStyle(.secondary)
         }
     }
 }

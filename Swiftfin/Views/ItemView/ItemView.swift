@@ -7,125 +7,104 @@
 //
 
 import Defaults
-import JellyfinAPI
 import SwiftUI
 
 struct ItemView: View {
 
-    protocol ScrollContainerView: View {
-
-        associatedtype Content: View
-
-        init(viewModel: ItemViewModel, content: @escaping () -> Content)
-    }
-
     @Default(.Customization.itemViewType)
     private var itemViewType
 
-    @Router
-    private var router
-
     @StateObject
-    private var viewModel: ItemViewModel
+    private var provider: ItemContentGroupProvider
+    @StateObject
+    private var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
 
-    private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
-        switch item.type {
-        case .boxSet, .person, .musicArtist:
-            CollectionItemViewModel(item: item)
-        case .episode:
-            EpisodeItemViewModel(item: item)
-        case .movie:
-            MovieItemViewModel(item: item)
-        case .musicVideo, .video:
-            ItemViewModel(item: item)
-        case .series:
-            SeriesItemViewModel(item: item)
-        default:
-//            assertionFailure("Unsupported item")
-            MovieItemViewModel(item: item)
-        }
+    init(provider: ItemContentGroupProvider) {
+        self._provider = StateObject(wrappedValue: provider)
+        self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
     }
 
-    init(item: BaseItemDto) {
-        self._viewModel = StateObject(wrappedValue: Self.typeViewModel(for: item))
+    private func contentGroups(header: any ContentGroup) -> [any ContentGroup] {
+        [header] + viewModel.groups
     }
 
     @ViewBuilder
-    private var scrollContentView: some View {
-        switch viewModel.item.type {
-        case .boxSet, .person, .musicArtist:
-            CollectionItemContentView(viewModel: viewModel as! CollectionItemViewModel)
-        case .episode, .musicVideo, .video:
-            SimpleItemContentView(viewModel: viewModel)
-        case .movie:
-            MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)
-        case .series:
-            SeriesItemContentView(viewModel: viewModel as! SeriesItemViewModel)
-        default:
-            Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
-        }
-    }
-
-    // TODO: break out into pad vs phone views based on item type
-    private func scrollContainerView(
-        viewModel: ItemViewModel,
-        content: @escaping () -> some View
-    ) -> any ScrollContainerView {
-
-        if UIDevice.isPad {
-            return iPadOSCinematicScrollView(viewModel: viewModel, content: content)
-        }
-
-        switch viewModel.item.type {
-        case .movie, .series:
-            switch itemViewType {
-            case .compactPoster:
-                return CompactPosterScrollView(viewModel: viewModel, content: content)
-            case .compactLogo:
-                return CompactLogoScrollView(viewModel: viewModel, content: content)
-            case .cinematic:
-                return CinematicScrollView(viewModel: viewModel, content: content)
+    private var content: some View {
+        CompactOrRegularView(isCompact: !UIDevice.isPad) {
+            switch provider.item.type {
+            case .movie, .series:
+                switch itemViewType {
+                case .enhanced where provider.item.backdropImageTags?.isNotEmpty == true:
+                    BlurredNavigationBarScrollView(
+                        groups: contentGroups(
+                            header: CompactEnhancedHeaderContentGroup(provider: provider)
+                        )
+                    )
+                case .enhanced, .simple:
+                    ContentGroupScrollView(
+                        groups: contentGroups(
+                            header: CompactSimpleHeaderContentGroup(provider: provider)
+                        )
+                    )
+                }
+            case .person, .musicArtist:
+                ContentGroupScrollView(
+                    groups: contentGroups(
+                        header: CompactPortraitHeaderContentGroup(provider: provider)
+                    )
+                )
+            default:
+                ContentGroupScrollView(
+                    groups: contentGroups(
+                        header: CompactSimpleHeaderContentGroup(provider: provider)
+                    )
+                )
             }
-        case .person, .musicArtist:
-            return CompactPosterScrollView(viewModel: viewModel, content: content)
-        default:
-            return SimpleScrollView(viewModel: viewModel, content: content)
+        } regularView: {
+            switch itemViewType {
+            case .enhanced:
+                BlurredNavigationBarScrollView(
+                    groups: contentGroups(
+                        header: RegularEnhancedHeaderContentGroup(provider: provider)
+                    )
+                )
+            case .simple:
+                ContentGroupScrollView(
+                    groups: contentGroups(
+                        header: RegularSimpleHeaderContentGroup(provider: provider)
+                    )
+                )
+            }
         }
-    }
-
-    @ViewBuilder
-    private var innerBody: some View {
-        scrollContainerView(viewModel: viewModel) {
-            scrollContentView
-        }
-        .eraseToAnyView()
     }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
-                innerBody
-                    .navigationTitle(viewModel.item.displayTitle)
-            case let .error(error):
-                ErrorView(error: error)
+                content
+                    .navigationTitle(provider.item.displayTitle)
+            case .error:
+                viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
                 ProgressView()
             }
         }
-        .animation(.linear(duration: 0.1), value: viewModel.state)
-        .navigationBarTitleDisplayMode(.inline)
+        .animation(.linear(duration: 0.2), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.background.states)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .refreshable {
-            viewModel.send(.refresh)
+            viewModel.background.refresh()
         }
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
         .navigationBarMenuButton(
-            isLoading: viewModel.backgroundStates.contains(.refresh),
-            isHidden: !viewModel.item.showEditorMenu
+            isLoading: viewModel.background.is(.refreshing),
+            isHidden: !provider.item.canEdit
         ) {
-            ItemEditorMenu(item: viewModel.item)
+            EditItemMenuContent(item: provider.item)
         }
     }
 }

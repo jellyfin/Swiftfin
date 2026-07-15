@@ -89,7 +89,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
             "heart.fill"
         case let .userView(item):
             if item.collectionType == .livetv {
-                "tv.fill"
+                "tv"
             } else {
                 "folder.fill"
             }
@@ -102,11 +102,27 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
     ) {
         switch self {
         case .favorites:
-            let library = ItemLibrary(
-                parent: BaseItemDto(id: "favorites", name: L10n.favorites),
-                filters: .favorites
+            router.route(
+                to: .contentGroup(
+                    provider: ItemTypeContentGroupProvider(
+                        itemTypes: [
+                            BaseItemKind.movie,
+                            .series,
+                            .boxSet,
+                            .episode,
+                            .musicVideo,
+                            .video,
+                            .liveTvProgram,
+                            .tvChannel,
+                            .musicArtist,
+                            .person,
+                        ],
+                        parent: .init(name: L10n.favorites),
+                        environment: .init(filters: .favorites)
+                    )
+                ),
+                in: namespace
             )
-            router.route(to: .library(library: library), in: namespace)
         case let .userView(item):
             if item.collectionType == .livetv {
                 router.route(to: .liveTV, in: namespace)

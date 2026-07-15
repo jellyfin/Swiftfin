@@ -131,7 +131,7 @@ extension RemoteImageSearchView {
         private func imageButton(_ image: RemoteImageInfo) -> some View {
             PosterButton(
                 item: image,
-                type: posterType
+                displayType: posterType
             ) { namespace in
                 router.route(
                     to: .remoteImageDetail(
@@ -139,8 +139,6 @@ extension RemoteImageSearchView {
                         remoteImageInfo: image
                     ), in: namespace
                 )
-            } label: {
-                EmptyView()
             }
         }
 

@@ -14,9 +14,13 @@ protocol WithImageSourceOptions {
     var quality: Int? { get set }
 }
 
+protocol WithParentImageSourcePreference {
+    var useParent: Bool { get set }
+}
+
 struct ImageSourceOptions: WithImageSourceOptions {
 
     var maxWidth: CGFloat?
     var maxHeight: CGFloat?
-    var quality: Int?
+    var quality: Int? = 90
 }

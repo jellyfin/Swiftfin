@@ -24,6 +24,18 @@ extension NavigationRoute {
     }
 
     @MainActor
+    static func contentGroup(
+        provider: some ContentGroupProvider
+    ) -> NavigationRoute {
+        NavigationRoute(
+            id: "content-group-\(provider.id)",
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
+        ) {
+            ContentGroupView(provider: provider)
+        }
+    }
+
+    @MainActor
     static func library<Library: PagingLibrary>(
         library: Library
     ) -> NavigationRoute where Library.Element: LibraryElement {

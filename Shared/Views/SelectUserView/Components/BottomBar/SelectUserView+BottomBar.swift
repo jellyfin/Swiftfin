@@ -73,7 +73,7 @@ extension SelectUserView {
                         .menuOrder(.fixed)
                         .frame(width: buttonHeight, height: buttonHeight)
                 }
-                .buttonStyle(.material)
+                .buttonStyle(.primary)
                 .edgePadding([.bottom, .horizontal])
             }
         }
@@ -87,7 +87,7 @@ extension SelectUserView {
                     contentView
                 }
             }
-            .buttonStyle(.material)
+            .buttonStyle(.primary)
             .animation(.linear(duration: 0.1), value: selectedUsers.isNotEmpty)
             .frame(height: buttonHeight)
             .frame(maxWidth: .infinity)
@@ -123,8 +123,6 @@ extension SelectUserView {
                 Text(L10n.delete)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .buttonStyle(.tintedMaterial(tint: .red, foregroundColor: .primary))
-            .isSelected(true)
             .frame(minWidth: 100, maxWidth: 300)
             .disabled(selectedUsers.isEmpty)
         }

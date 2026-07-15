@@ -11,7 +11,16 @@ import SwiftUI
 extension EnvironmentValues {
 
     @Entry
+    var enabledPosterIndicators: PosterIndicator = .all
+
+    @Entry
+    var useSeriesLandscapeBackdrop: Bool = true
+
+    @Entry
     var audioOffset: Binding<Duration> = .constant(.zero)
+
+    @Entry
+    var frameForParentView: [CoordinateSpace: FrameAndSafeAreaInsets] = [:]
 
     @Entry
     var isEditing: Bool = false

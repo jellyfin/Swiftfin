@@ -16,9 +16,13 @@ struct ViewContext: OptionSet {
 
     let rawValue: Int
 
-    static let isListRowSeparatorVisible = ViewContext(rawValue: 1 << 0)
-    static let isInMenu = ViewContext(rawValue: 1 << 1)
-    static let isThumb = ViewContext(rawValue: 1 << 2)
+    static let isListRowSeparatorVisible = Self(rawValue: 1 << 0)
+    static let isInMenu = Self(rawValue: 1 << 1)
+    static let isThumb = Self(rawValue: 1 << 2)
+    static let isOverComplexContent = Self(rawValue: 1 << 3)
+    static let isInParent = Self(rawValue: 1 << 4)
+    static let isInResume = Self(rawValue: 1 << 5)
+    static let withConstrainedSize = Self(rawValue: 1 << 6)
 }
 
 extension EnvironmentValues {

@@ -59,7 +59,7 @@ extension BaseItemDto {
     }
 
     /// Indicates whether the Editor Menu should be shown for the item
-    var showEditorMenu: Bool {
+    var canEdit: Bool {
         canEditMetadata
             || canEditSubtitles
         // TODO: Enable with Lyrics and/or Downloads

@@ -112,11 +112,7 @@ extension Defaults.Keys {
     enum Customization {
 
         static var itemViewType: Key<ItemViewType> {
-            UserKey("itemViewType", default: .compactLogo)
-        }
-
-        static var showPosterLabels: Key<Bool> {
-            UserKey("showPosterLabels", default: true)
+            UserKey("mediaItemViewType", default: .enhanced)
         }
 
         static var nextUpPosterType: Key<PosterDisplayType> {
@@ -148,13 +144,6 @@ extension Defaults.Keys {
             UserKey("searchPosterType", default: .portrait)
         }
 
-        enum CinematicItemViewType {
-
-            static var usePrimaryImage: Key<Bool> {
-                UserKey("cinematicItemViewTypeUsePrimaryImage", default: false)
-            }
-        }
-
         enum Episodes {
 
             static var useSeriesLandscapeBackdrop: Key<Bool> {
@@ -164,20 +153,8 @@ extension Defaults.Keys {
 
         enum Indicators {
 
-            static var showFavorited: Key<Bool> {
-                UserKey("showFavoritedIndicator", default: true)
-            }
-
-            static var showProgress: Key<Bool> {
-                UserKey("showProgressIndicator", default: true)
-            }
-
-            static var showUnplayed: Key<UnplayedIndicatorType> {
-                UserKey("showUnplayedIndicator", default: .indicator)
-            }
-
-            static var showPlayed: Key<Bool> {
-                UserKey("showPlayedIndicator", default: true)
+            static var enabled: Key<PosterIndicator> {
+                UserKey("enabledPosterIndicators", default: .all)
             }
         }
 

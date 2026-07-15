@@ -27,12 +27,13 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static var liveTV: NavigationRoute {
         NavigationRoute(
             id: "liveTV",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            ProgramsView()
+            ContentGroupView(provider: LiveTVGroupProvider())
         }
     }
 
@@ -121,7 +122,7 @@ struct VideoPlayerViewShim: View {
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)
-        .onSizeChanged { _, safeArea in
+        .onFrameChanged { _, safeArea in
             self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
         }
     }
