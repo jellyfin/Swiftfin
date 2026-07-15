@@ -35,6 +35,14 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             seasonEpisodeLabel
+        case .channel, .liveTvChannel, .tvChannel:
+            number ?? channelNumber
+        case .program, .liveTvProgram, .tvProgram:
+            if let startDate {
+                startDate.formatted(.dateTime.month().day().hour().minute())
+            } else {
+                nil
+            }
         case .person:
             people?.first?.firstRole
         case .video:

@@ -50,6 +50,14 @@ final class FilterViewModel: ViewModel {
         self.currentFilters = currentFilters
 
         super.init()
+
+        if let parent {
+            let supported = Set(parent.supportedItemTypes.flatMap(\.supportedItemSortBy))
+
+            if supported.isNotEmpty {
+                allFilters.sortBy = ItemSortBy.supportedCases.filter(supported.contains)
+            }
+        }
     }
 
     func isFilterSelected(type: ItemFilterType) -> Bool {
@@ -69,6 +77,8 @@ final class FilterViewModel: ViewModel {
         }
 
         switch type {
+        case .category:
+            currentFilters.categories = ItemFilterCollection.default.categories
         case .genres:
             currentFilters.genres = ItemFilterCollection.default.genres
         case .letter:

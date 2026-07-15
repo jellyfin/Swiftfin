@@ -103,6 +103,14 @@ extension View {
         AnyView(self)
     }
 
+    func guideScrollSync(
+        _ proxy: GuideScrollProxy,
+        nowOffset: CGFloat?,
+        onReachedTrailingEdge: @escaping () -> Void = {}
+    ) -> some View {
+        modifier(GuideScrollSyncModifier(proxy: proxy, nowOffset: nowOffset, onReachedTrailingEdge: onReachedTrailingEdge))
+    }
+
     // TODO: rename `errorAlert`
 
     /// Error Message Alert

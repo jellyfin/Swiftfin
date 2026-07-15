@@ -100,6 +100,8 @@ extension LibraryElement {
                 itemSpacing: 0,
                 lineSpacing: 0
             )
+        case .guide:
+            return .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
         }
         #else
         switch libraryStyle.displayType {
@@ -127,6 +129,8 @@ extension LibraryElement {
                 itemSpacing: EdgeInsets.edgePadding,
                 lineSpacing: EdgeInsets.edgePadding
             )
+        case .guide:
+            return .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
         }
         #endif
     }

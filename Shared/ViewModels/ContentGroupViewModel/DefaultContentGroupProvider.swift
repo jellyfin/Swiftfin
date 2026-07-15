@@ -63,6 +63,13 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
             library: NextUpLibrary()
         )
 
+        PosterGroup(
+            id: "programs-recommended",
+            library: RecommendedProgramsLibrary(),
+            posterDisplayType: .landscape,
+            posterSize: .small
+        )
+
         if Defaults[.Customization.Home.showRecentlyAdded] {
             #if os(tvOS)
             CinematicRecentlyAddedContentGroup(

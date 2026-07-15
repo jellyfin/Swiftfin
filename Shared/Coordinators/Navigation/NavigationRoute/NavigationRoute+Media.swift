@@ -33,7 +33,7 @@ extension NavigationRoute {
             id: "liveTV",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            ContentGroupView(provider: LiveTVGroupProvider())
+            PagingLibraryView(library: LiveTVChannelLibrary())
         }
     }
 

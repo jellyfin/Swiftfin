@@ -147,6 +147,24 @@ extension BaseItemDto {
         channelType == .tv
     }
 
+    private var airingWindow: (start: Date, end: Date)? {
+        switch type {
+        case .program, .liveTvProgram, .tvProgram:
+            guard let startDate, let endDate else { return nil }
+            return (startDate, endDate)
+        case .channel, .liveTvChannel, .tvChannel:
+            guard let start = currentProgram?.startDate, let end = currentProgram?.endDate else { return nil }
+            return (start, end)
+        default:
+            return nil
+        }
+    }
+
+    var isAiring: Bool {
+        guard let airingWindow else { return false }
+        return (airingWindow.start ... airingWindow.end).contains(.now)
+    }
+
     /// Whether the item has independent playable content, similar
     /// to if an item can provide its own media sources.
     ///
@@ -308,6 +326,18 @@ extension BaseItemDto {
         return progress / length
     }
 
+    var programLabel: String? {
+        guard let airingWindow else { return nil }
+
+        let position = Date.now.timeIntervalSince(airingWindow.start)
+
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.unitsStyle = .abbreviated
+
+        return formatter.string(from: position)
+    }
+
     var subtitleStreams: [MediaStream] {
         mediaStreams?.filter { $0.type == .subtitle } ?? []
     }
@@ -327,11 +357,20 @@ extension BaseItemDto {
     }
 
     var isUnaired: Bool {
-        if let premierDate = premiereDate {
-            premierDate > Date()
-        } else {
-            false
+        if let airingWindow {
+            return Date.now < airingWindow.start
         }
+
+        if let premiereDate {
+            return premiereDate > Date.now
+        }
+
+        return false
+    }
+
+    var hasAired: Bool {
+        guard let airingWindow else { return false }
+        return Date.now > airingWindow.end
     }
 
     var airDateLabel: String? {
@@ -461,10 +500,42 @@ extension BaseItemDto {
         }
     }
 
+    /// Can this `BaseItemDto` be marked as favorite or liked
+    var canBeLiked: Bool {
+        switch type {
+        case .program, .liveTvProgram, .tvProgram:
+            false
+        default:
+            true
+        }
+    }
+
+    /// Can this `BaseItemDto` be recorded by the current user
+    var canBeRecorded: Bool {
+        let policy = Container.shared.currentUserSession()?.user.data.policy
+
+        guard policy?.enableLiveTvManagement == true || policy?.isAdministrator == true else {
+            return false
+        }
+
+        switch type {
+        case .program, .liveTvProgram, .tvProgram:
+            return true
+        case .channel, .liveTvChannel, .tvChannel:
+            return currentProgram != nil
+        default:
+            return false
+        }
+    }
+
     var playButtonLabel: String {
 
         if isUnaired {
             return L10n.unaired
+        }
+
+        if hasAired {
+            return L10n.ended
         }
 
         if isMissing {
@@ -473,6 +544,10 @@ extension BaseItemDto {
 
         if let progressLabel {
             return progressLabel
+        }
+
+        if let programLabel {
+            return programLabel
         }
 
         return L10n.play

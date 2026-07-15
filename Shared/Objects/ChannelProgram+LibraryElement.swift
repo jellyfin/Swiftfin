@@ -38,7 +38,7 @@ extension ChannelProgram: LibraryElement {
         action: (() -> Void)?
     ) -> some View {
         switch libraryStyle.displayType {
-        case .grid:
+        case .grid, .guide:
             ChannelProgramLibraryGridElement(
                 channelProgram: self,
                 libraryStyle: libraryStyle,

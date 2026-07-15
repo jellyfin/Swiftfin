@@ -752,6 +752,8 @@ internal enum L10n {
   internal static let grouping = L10n.tr("Localizable", "grouping", fallback: "Grouping")
   /// Guest star
   internal static let guestStar = L10n.tr("Localizable", "guestStar", fallback: "Guest star")
+  /// Guide
+  internal static let guide = L10n.tr("Localizable", "guide", fallback: "Guide")
   /// Half side-by-side
   internal static let halfSideBySide = L10n.tr("Localizable", "halfSideBySide", fallback: "Half side-by-side")
   /// Half top and bottom
@@ -1290,10 +1292,14 @@ internal enum L10n {
   internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently Added")
   /// Recommended
   internal static let recommended = L10n.tr("Localizable", "recommended", fallback: "Recommended")
+  /// Record
+  internal static let record = L10n.tr("Localizable", "record", fallback: "Record")
   /// Recording
   internal static let recording = L10n.tr("Localizable", "recording", fallback: "Recording")
   /// Recordings
   internal static let recordings = L10n.tr("Localizable", "recordings", fallback: "Recordings")
+  /// Record series
+  internal static let recordSeries = L10n.tr("Localizable", "recordSeries", fallback: "Record series")
   /// Red
   internal static let red = L10n.tr("Localizable", "red", fallback: "Red")
   /// The number of reference frames is not supported
