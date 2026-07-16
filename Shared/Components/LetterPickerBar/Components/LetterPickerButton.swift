@@ -31,7 +31,7 @@ extension LetterPickerBar {
             } else if isSelected {
                 accentColor.overlayColor
             } else {
-                UIDevice.isTV ? Color.primary : accentColor
+                Color.primary
             }
         }
 
@@ -53,22 +53,7 @@ extension LetterPickerBar {
                     viewModel.currentFilters.letter = [letter]
                 }
             } label: {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundStyle(backgroundStyle)
-                        .if(UIDevice.isTV && (isFocused || isSelected)) { background in
-                            background
-                                .posterShadow()
-                        }
-
-                    Text(letter.value)
-                        .font(LetterPickerBar.font)
-                        .foregroundStyle(foregroundStyle)
-                        .if(UIDevice.isTV && !isFocused && !isSelected) { character in
-                            character
-                                .posterShadow()
-                        }
-                }
+                label
             }
             .buttonStyle(.borderless)
             .if(UIDevice.isTV) { view in
@@ -76,6 +61,38 @@ extension LetterPickerBar {
                     .focused($isFocused)
                     .scaleEffect(isFocused ? 1.2 : 1)
                     .animation(.easeInOut(duration: 0.15), value: isFocused)
+            }
+        }
+
+        @ViewBuilder
+        private var label: some View {
+            if UIDevice.isTV {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 5)
+                        .foregroundStyle(backgroundStyle)
+                        .if(isFocused || isSelected) { background in
+                            background
+                                .posterShadow()
+                        }
+
+                    Text(letter.value)
+                        .font(LetterPickerBar.font)
+                        .foregroundStyle(foregroundStyle)
+                        .if(!isFocused && !isSelected) { character in
+                            character
+                                .posterShadow()
+                        }
+                }
+            } else {
+                Text(letter.value)
+                    .font(.footnote)
+                    .foregroundStyle(isSelected ? accentColor.overlayColor : accentColor.opacity(0.75))
+                    .frame(width: 16, height: 16)
+                    .backport
+                    .glassEffect(
+                        isSelected ? .regular.tint(accentColor) : .identity,
+                        in: .circle
+                    )
             }
         }
     }
