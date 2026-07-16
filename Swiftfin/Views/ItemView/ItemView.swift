@@ -62,13 +62,13 @@ struct ItemView: View {
             }
         } regularView: {
             switch itemViewType {
-            case .enhanced:
+            case .enhanced where provider.item.type != .season:
                 BlurredNavigationBarScrollView(
                     groups: contentGroups(
                         header: RegularEnhancedHeaderContentGroup(provider: provider)
                     )
                 )
-            case .simple:
+            case .enhanced, .simple:
                 ContentGroupScrollView(
                     groups: contentGroups(
                         header: RegularSimpleHeaderContentGroup(provider: provider)

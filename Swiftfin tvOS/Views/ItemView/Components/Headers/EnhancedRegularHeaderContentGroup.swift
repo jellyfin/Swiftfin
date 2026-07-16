@@ -28,19 +28,11 @@ extension ItemView {
             @ObservedObject
             var provider: ItemContentGroupProvider
 
-            @Router
-            private var router
-
             @StoredValue(.User.itemViewAttributes)
             private var attributes
 
             private var canFocusPlayButton: Bool {
                 provider.item.presentPlayButton && provider.selectedMediaSource != nil
-            }
-
-            private var hasDescription: Bool {
-                provider.item.taglines?.contains(where: \.isNotEmpty) == true ||
-                    provider.item.overview?.isNotEmpty == true
             }
 
             @ViewBuilder
@@ -74,49 +66,12 @@ extension ItemView {
             }
 
             @ViewBuilder
-            private func parentButton(_ title: String, id: String) -> some View {
-                Button {
-                    router.route(to: .item(id: id))
-                } label: {
-                    Label {
-                        Text(title)
-                            .font(.headline)
-                            .multilineTextAlignment(.center)
-                            .lineLimit(1)
-                    } icon: {
-                        Image(systemName: "chevron.forward")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .font(.callout)
-                    .fontWeight(.semibold)
-                }
-                .foregroundStyle(.primary, .secondary)
-                .labelStyle(
-                    CapsuleLabelStyle(
-                        isIconTrailing: true
-                    )
-                )
-                .buttonBorderShape(.capsule)
-                .buttonStyle(.card)
-            }
-
-            @ViewBuilder
             private var overlay: some View {
                 HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                     VStack(alignment: .center, spacing: 30) {
                         VStack(alignment: .leading) {
-                            switch provider.item.type {
-                            case .episode:
-                                if let parentID = provider.item.seriesID, let parentTitle = provider.item.parentTitle {
-                                    parentButton(parentTitle, id: parentID)
-                                }
-                            case .liveTvProgram:
-                                if let channelID = provider.item.channelID, let channelName = provider.item.channelName {
-                                    parentButton(channelName, id: channelID)
-                                }
-                            default:
-                                EmptyView()
+                            if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
+                                ParentButton(title: parentTitle, id: parentID)
                             }
 
                             logo
@@ -135,23 +90,7 @@ extension ItemView {
                     .frame(width: 450)
 
                     VStack(alignment: .leading, spacing: 10) {
-                        if hasDescription {
-                            VStack(alignment: .leading, spacing: 5) {
-                                if let firstTagline = provider.item.taglines?.first(where: \.isNotEmpty) {
-                                    Text(firstTagline)
-                                        .fontWeight(.bold)
-                                        .multilineTextAlignment(.leading)
-                                        .lineLimit(2)
-                                }
-
-                                if let itemOverview = provider.item.overview, itemOverview.isNotEmpty {
-                                    Text(itemOverview)
-                                        .font(.footnote)
-                                        .lineLimit(3)
-                                }
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        }
+                        ItemView.Description(item: provider.item)
 
                         HStack(alignment: .top) {
                             ItemView.AttributesHStack(
@@ -161,25 +100,7 @@ extension ItemView {
                                 alignment: .leading
                             )
 
-                            DotHStack {
-                                if let firstGenre = provider.item.genres?.first {
-                                    Text(firstGenre)
-                                }
-
-                                if let premiereYear = provider.item.premiereDateYear {
-                                    Text(premiereYear)
-                                }
-
-                                if let runtime = provider.item.runtime {
-                                    Text(runtime, format: .hourMinuteAbbreviated)
-                                }
-
-                                if let seasonEpisodeLabel = provider.item.seasonEpisodeLabel {
-                                    Text(seasonEpisodeLabel)
-                                }
-                            }
-                            .font(.caption)
-                            .fontWeight(.semibold)
+                            MetadataHStack(item: provider.item)
                         }
                         .foregroundStyle(.secondary)
                     }

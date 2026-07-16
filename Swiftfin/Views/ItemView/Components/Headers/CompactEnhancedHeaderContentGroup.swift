@@ -27,18 +27,10 @@ extension ItemView {
             @ObservedObject
             var provider: ItemContentGroupProvider
 
-            @Router
-            private var router
-
             @StoredValue(.User.itemViewAttributes)
             private var attributes
 
             private let headerAspectRatio = 1.6
-
-            private var hasDescription: Bool {
-                provider.item.taglines?.contains(where: \.isNotEmpty) == true ||
-                    provider.item.overview?.isNotEmpty == true
-            }
 
             @ViewBuilder
             private var logo: some View {
@@ -78,22 +70,7 @@ extension ItemView {
                     .zIndex(10)
 
                     VStack(alignment: .center, spacing: 10) {
-                        DotHStack {
-                            if let firstGenre = provider.item.genres?.first {
-                                Text(firstGenre)
-                            }
-
-                            if let premiereYear = provider.item.premiereDateYear {
-                                Text(premiereYear)
-                            }
-
-                            if let runtime = provider.item.runtime {
-                                Text(runtime, format: .hourMinuteAbbreviated)
-                            }
-                        }
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.secondary)
+                        MetadataHStack(item: provider.item)
 
                         VStack(alignment: .center, spacing: 5) {
                             if provider.item.presentPlayButton {
@@ -104,28 +81,7 @@ extension ItemView {
                         }
                         .frame(maxWidth: 300)
 
-                        if hasDescription {
-                            VStack(alignment: .leading, spacing: 5) {
-                                if let firstTagline = provider.item.taglines?.first(where: \.isNotEmpty) {
-                                    Text(firstTagline)
-                                        .fontWeight(.bold)
-                                        .multilineTextAlignment(.leading)
-                                        .lineLimit(2)
-                                }
-
-                                if let itemOverview = provider.item.overview, itemOverview.isNotEmpty {
-                                    Button {
-                                        router.route(to: .itemOverview(item: provider.item))
-                                    } label: {
-                                        SeeMoreText(itemOverview)
-                                            .font(.footnote)
-                                            .lineLimit(3)
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        }
+                        ItemView.Description(item: provider.item)
 
                         ItemView.AttributesHStack(
                             attributes: attributes,

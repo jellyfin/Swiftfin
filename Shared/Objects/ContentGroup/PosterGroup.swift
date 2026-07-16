@@ -10,14 +10,23 @@ import SwiftUI
 
 struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: LibraryElement, Library.Element: Poster {
 
+    struct Environment: WithDefaultValue, WithViewContext {
+
+        var isHeaderButtonEnabled: Bool = true
+        var viewContext: ViewContext = .init()
+
+        static var `default`: Self {
+            .init()
+        }
+    }
+
     let displayTitle: String
+    let environment: Environment
     let id: String
     let library: Library
     let posterDisplayType: PosterDisplayType
     let posterSize: PosterDisplayType.Size
     let viewModel: PagingLibraryViewModel<Library>
-
-    let _viewContext: ViewContext?
 
     var _shouldBeResolved: Bool {
         viewModel.elements.isNotEmpty
@@ -28,15 +37,31 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
         library: Library,
         posterDisplayType: PosterDisplayType = .portrait,
         posterSize: PosterDisplayType.Size = .small,
-        _viewContext: ViewContext? = nil
+        environment: Environment
     ) {
         self.displayTitle = library.parent.displayTitle
+        self.environment = environment
         self.id = id
         self.library = library
         self.posterDisplayType = posterDisplayType
         self.posterSize = posterSize
         self.viewModel = .init(library: library, pageSize: 20)
-        self._viewContext = _viewContext
+    }
+
+    init(
+        id: String = UUID().uuidString,
+        library: Library,
+        posterDisplayType: PosterDisplayType = .portrait,
+        posterSize: PosterDisplayType.Size = .small,
+        _viewContext: ViewContext? = nil
+    ) {
+        self.init(
+            id: id,
+            library: library,
+            posterDisplayType: posterDisplayType,
+            posterSize: posterSize,
+            environment: .init(viewContext: _viewContext ?? .init())
+        )
     }
 
     @ViewBuilder
@@ -45,6 +70,6 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
             viewModel: viewModel,
             group: self
         )
-        .withViewContext(_viewContext ?? .init())
+        .withViewContext(environment.viewContext)
     }
 }

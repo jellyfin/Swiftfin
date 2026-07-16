@@ -82,11 +82,14 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             )
         }
 
-        if item.type == .series {
+        switch item.type {
+        case .season, .series:
             SeriesEpisodeContentGroup(
-                series: item,
+                parent: item,
                 playButtonItem: playButtonItem
             )
+        default:
+            []
         }
 
         if let genres = item.itemGenres, genres.isNotEmpty {
@@ -162,7 +165,31 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 parent: item
             )
             .makeGroups(environment: .default)
+        case .series:
+            try await ItemTypeContentGroupProvider(
+                itemTypes: [.season],
+                parent: item
+            )
+            .makeGroups(environment: .default)
         default: []
+        }
+
+        if item.type == .episode {
+            PosterGroup(
+                library: StaticLibrary(
+                    title: L10n.season,
+                    id: "seasons",
+                    elements: [BaseItemDto(
+                        id: item.seasonID,
+                        name: item.seasonName,
+                        seriesID: item.seriesID,
+                        seriesName: item.seriesName,
+                        type: .season
+                    )]
+                ),
+                posterSize: .small,
+                environment: .init(isHeaderButtonEnabled: false)
+            )
         }
 
         if let castAndCrew = item.people, castAndCrew.isNotEmpty {
@@ -227,19 +254,26 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     }
 
     private func playButtonItem(for item: BaseItemDto) async throws -> BaseItemDto? {
-        guard item.type == .series else {
+        switch item.type {
+        case .series:
+            if let nextUp = try await nextUpItem(for: item) {
+                return nextUp
+            }
+
+            if let resumeItem = try await resumeItem(for: item) {
+                return resumeItem
+            }
+
+            return try await firstAvailableItem(for: item)
+        case .season:
+            if let resumeItem = try await resumeItem(for: item) {
+                return resumeItem
+            }
+
+            return try await firstAvailableItem(for: item)
+        default:
             return item.isPlayable ? item : nil
         }
-
-        if let nextUp = try await nextUpItem(for: item) {
-            return nextUp
-        }
-
-        if let resumeItem = try await resumeItem(for: item) {
-            return resumeItem
-        }
-
-        return try await firstAvailableItem(for: item)
     }
 
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {
@@ -273,6 +307,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         var parameters = Paths.GetItemsParameters()
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.episode]
+        parameters.isMissing = false
         parameters.isRecursive = true
         parameters.limit = 1
         parameters.parentID = item.id

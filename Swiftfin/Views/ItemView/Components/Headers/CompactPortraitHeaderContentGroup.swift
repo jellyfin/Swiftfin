@@ -24,14 +24,6 @@ extension ItemView {
             @ObservedObject
             var provider: ItemContentGroupProvider
 
-            @Router
-            private var router
-
-            private var hasDescription: Bool {
-                provider.item.taglines?.contains(where: \.isNotEmpty) == true ||
-                    provider.item.overview?.isNotEmpty == true
-            }
-
             var body: some View {
                 VStack(spacing: 10) {
                     VStack(spacing: 10) {
@@ -56,29 +48,9 @@ extension ItemView {
                     }
                     .frame(maxWidth: 300)
 
-                    if hasDescription {
-                        Divider()
+                    Divider()
 
-                        VStack(alignment: .leading, spacing: 5) {
-                            if let firstTagline = provider.item.taglines?.first(where: \.isNotEmpty) {
-                                Text(firstTagline)
-                                    .fontWeight(.bold)
-                                    .multilineTextAlignment(.leading)
-                            }
-
-                            if let itemOverview = provider.item.overview, itemOverview.isNotEmpty {
-                                Button {
-                                    router.route(to: .itemOverview(item: provider.item))
-                                } label: {
-                                    SeeMoreText(itemOverview)
-                                        .font(.footnote)
-                                        .lineLimit(3)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    }
+                    ItemView.Description(item: provider.item)
                 }
                 .edgePadding()
                 .frame(maxWidth: .infinity, alignment: .leading)

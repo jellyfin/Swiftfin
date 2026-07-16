@@ -30,74 +30,10 @@ struct CinematicSelectionContentGroup: ContentGroup {
     }
 
     func body(with viewModel: CinematicSelectionContentGroupViewModel) -> some View {
-        SelectionView(viewModel: viewModel)
-    }
-
-    private struct SelectionView: View {
-
-        @Environment(\.frameForParentView)
-        private var frameForParentView
-
-        @ObservedObject
-        var viewModel: CinematicSelectionContentGroupViewModel
-
-        @Router
-        private var router
-
-        private var parentFrame: CGRect {
-            frameForParentView[.scrollView, default: .zero].frame
-        }
-
-        private func itemSelectorImageSource(for item: BaseItemDto) -> ImageSource {
-            let maxWidth = max(parentFrame.width * CinematicSelectionLayout.logoMaxWidthPercentage, 1)
-
-            if item.type == .episode {
-                return item.imageSource(
-                    itemID: item.seriesID,
-                    .logo,
-                    environment: ImageSourceOptions(
-                        maxWidth: maxWidth,
-                        maxHeight: CinematicSelectionLayout.logoMaxHeight
-                    )
-                )
-            } else {
-                return item.imageSource(
-                    .logo,
-                    environment: ImageSourceOptions(
-                        maxWidth: maxWidth,
-                        maxHeight: CinematicSelectionLayout.logoMaxHeight
-                    )
-                )
-            }
-        }
-
-        var body: some View {
-            let items = viewModel.hasResumeItems ? viewModel.resumeViewModel.elements.elements : viewModel.recentlyAddedViewModel.elements
-                .elements
-
-            CinematicItemSelector(
-                items: items
-            ) { item in
-                router.route(to: .item(item: item))
-            } topContent: { item in
-                ImageView(itemSelectorImageSource(for: item))
-                    .placeholder { _ in
-                        EmptyView()
-                    }
-                    .failure {
-                        Text(item.displayTitle)
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
-                    }
-                    .edgePadding(.leading)
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: CinematicSelectionLayout.logoMaxHeight, alignment: .bottomLeading)
-            }
-            .preference(
-                key: ContentGroupCustomizationKey.self,
-                value: .ignoreSafeAreaTop
-            )
-        }
+        CinematicSelectionView(
+            viewModel: viewModel,
+            source: .preferred
+        )
     }
 }
 
@@ -111,9 +47,9 @@ struct CinematicRecentlyAddedContentGroup: ContentGroup {
     }
 
     func body(with viewModel: CinematicSelectionContentGroupViewModel) -> some View {
-        PosterHStackLibrarySection(
-            viewModel: viewModel.recentlyAddedViewModel,
-            group: viewModel.recentlyAddedGroup
+        CinematicSelectionView(
+            viewModel: viewModel,
+            source: .recentlyAdded
         )
     }
 }
@@ -122,12 +58,8 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
 
     typealias Background = CinematicSelectionContentGroupViewModel
 
-    let recentlyAddedGroup: PosterGroup<RecentlyAddedLibrary>
+    let recentlyAddedViewModel: PagingLibraryViewModel<RecentlyAddedLibrary>
     let resumeViewModel: PagingLibraryViewModel<ResumeItemsLibrary>
-
-    var recentlyAddedViewModel: PagingLibraryViewModel<RecentlyAddedLibrary> {
-        recentlyAddedGroup.viewModel
-    }
 
     var background: CinematicSelectionContentGroupViewModel {
         get { self }
@@ -147,7 +79,7 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
         recentlyAddedLibrary: RecentlyAddedLibrary
     ) {
         self.resumeViewModel = PagingLibraryViewModel(library: resumeLibrary, pageSize: 20)
-        self.recentlyAddedGroup = PosterGroup(library: recentlyAddedLibrary)
+        self.recentlyAddedViewModel = PagingLibraryViewModel(library: recentlyAddedLibrary, pageSize: 20)
 
         super.init()
 
@@ -173,8 +105,78 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
     }
 }
 
-private enum CinematicSelectionLayout {
+private struct CinematicSelectionView: View {
 
-    static let logoMaxHeight: CGFloat = 100
-    static let logoMaxWidthPercentage: CGFloat = 0.4
+    enum Source {
+        case preferred
+        case recentlyAdded
+    }
+
+    @Environment(\.frameForParentView)
+    private var frameForParentView
+
+    @ObservedObject
+    var viewModel: CinematicSelectionContentGroupViewModel
+
+    let source: Source
+
+    @Router
+    private var router
+
+    private var items: [BaseItemDto] {
+        switch source {
+        case .preferred:
+            viewModel.hasResumeItems ? viewModel.resumeViewModel.elements.elements : viewModel.recentlyAddedViewModel.elements.elements
+        case .recentlyAdded:
+            viewModel.recentlyAddedViewModel.elements.elements
+        }
+    }
+
+    private var parentFrame: CGRect {
+        frameForParentView[.scrollView, default: .zero].frame
+    }
+
+    private func itemSelectorImageSource(for item: BaseItemDto) -> ImageSource {
+        if item.type == .episode {
+            item.imageSource(
+                itemID: item.seriesID,
+                .logo,
+                environment: ImageSourceOptions(
+                    maxHeight: 100
+                )
+            )
+        } else {
+            item.imageSource(
+                .logo,
+                environment: ImageSourceOptions(
+                    maxHeight: 100
+                )
+            )
+        }
+    }
+
+    var body: some View {
+        CinematicItemSelector(
+            items: items
+        ) { item in
+            router.route(to: .item(item: item))
+        } topContent: { item in
+            ImageView(itemSelectorImageSource(for: item))
+                .placeholder { _ in
+                    EmptyView()
+                }
+                .failure {
+                    Text(item.displayTitle)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                }
+                .edgePadding(.leading)
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 100, alignment: .bottomLeading)
+        }
+        .preference(
+            key: ContentGroupCustomizationKey.self,
+            value: .ignoreSafeAreaTop
+        )
+    }
 }

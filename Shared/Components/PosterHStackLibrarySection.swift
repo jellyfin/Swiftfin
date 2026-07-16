@@ -48,52 +48,71 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
         focusedSection == .header
     }
 
+    private var headerTitle: some View {
+        Text(viewModel.library.parent.displayTitle)
+            .font(.title3)
+            .fontWeight(.semibold)
+            .lineLimit(1)
+    }
+
     @ViewBuilder
     private var header: some View {
-        Button(action: routeToLibrary) {
-            #if os(tvOS)
-            HStack(spacing: 3) {
-                Text(viewModel.library.parent.displayTitle)
-                    .font(.title3)
-                    .lineLimit(1)
+        if group.environment.isHeaderButtonEnabled {
+            Button(action: routeToLibrary) {
+                #if os(tvOS)
+                HStack(spacing: 3) {
+                    headerTitle
 
-                if isHeaderFocused {
+                    if isHeaderFocused {
+                        Image(systemName: "chevron.forward")
+                            .font(.title3)
+                            .foregroundStyle(.secondary)
+                            .transition(.opacity)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .backport
+                .glassEffect(
+                    isHeaderFocused ? .regular : .identity,
+                    in: .capsule
+                )
+                .animation(.easeInOut(duration: 0.15), value: isHeaderFocused)
+                .offset(x: -16)
+                #else
+                HStack(spacing: 3) {
+                    headerTitle
+
                     Image(systemName: "chevron.forward")
                         .font(.title3)
                         .foregroundStyle(.secondary)
-                        .transition(.opacity)
                 }
+                #endif
             }
-            .fontWeight(.semibold)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .backport
-            .glassEffect(
-                isHeaderFocused ? .regular : .identity,
-                in: .capsule
-            )
-            .animation(.easeInOut(duration: 0.15), value: isHeaderFocused)
-            .offset(x: -16)
-            #else
-            HStack(spacing: 3) {
-                Text(viewModel.library.parent.displayTitle)
-                    .font(.title3)
-                    .lineLimit(1)
-
-                Image(systemName: "chevron.forward")
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
-            }
-            .fontWeight(.semibold)
+            .foregroundStyle(.primary, .secondary)
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityAction(named: Text(L10n.openLibrary), routeToLibrary)
+            #if os(tvOS)
+                .buttonStyle(HeaderButtonStyle())
             #endif
+        } else {
+            headerTitle
+                .foregroundStyle(.primary)
+                .accessibilityAddTraits(.isHeader)
         }
-        .foregroundStyle(.primary, .secondary)
-        .accessibilityAddTraits(.isHeader)
-        .accessibilityAction(named: Text(L10n.openLibrary), routeToLibrary)
-        #if os(tvOS)
-            .buttonStyle(HeaderButtonStyle())
-        #endif
-            .edgePadding(.horizontal)
+    }
+
+    @ViewBuilder
+    private var sectionHeader: some View {
+        if group.environment.isHeaderButtonEnabled {
+            header
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .focusSection()
+                .focused($focusedSection, equals: .header)
+        } else {
+            header
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 
     var body: some View {
@@ -110,10 +129,8 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
                 .focusSection()
                 .focused($focusedSection, equals: .content)
             } header: {
-                header
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .focusSection()
-                    .focused($focusedSection, equals: .header)
+                sectionHeader
+                    .edgePadding(.horizontal)
             }
             .focusSection()
             .backport

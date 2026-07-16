@@ -16,6 +16,7 @@ extension BaseItemDto: LibraryParent {
         let id: String
 
         static let episodes = Grouping(displayTitle: L10n.episodes, id: "episodes")
+        static let seasons = Grouping(displayTitle: L10n.seasons, id: "seasons")
         static let series = Grouping(displayTitle: L10n.series, id: "series")
     }
 
@@ -26,7 +27,7 @@ extension BaseItemDto: LibraryParent {
     var groupings: (defaultSelection: Grouping, elements: [Grouping])? {
         switch collectionType {
         case .tvshows:
-            (.series, [.episodes, .series])
+            (.series, [.episodes, .seasons, .series])
         default:
             nil
         }
@@ -44,7 +45,14 @@ extension BaseItemDto: LibraryParent {
         case (.movies, _):
             [.movie]
         case (.tvshows, _):
-            grouping == .episodes ? [.episode] : [.series]
+            switch grouping {
+            case .episodes:
+                [.episode]
+            case .seasons:
+                [.season]
+            default:
+                [.series]
+            }
         case (.music, _):
             [.audio, .musicAlbum, .musicArtist]
         case (.boxsets, _):
@@ -61,7 +69,7 @@ extension BaseItemDto: LibraryParent {
     func isRecursiveCollection(for grouping: Grouping?) -> Bool {
         guard let collectionType, libraryType != .userView else { return true }
 
-        if grouping == .episodes {
+        if grouping == .episodes || grouping == .seasons {
             return true
         }
 

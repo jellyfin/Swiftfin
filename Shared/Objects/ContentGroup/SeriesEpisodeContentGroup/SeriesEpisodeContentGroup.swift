@@ -9,29 +9,26 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: when used for single seasons, have title as just "Episodes" or
+//       have functionality in PosterGroup
+
 struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
     let id: String
     let playButtonItem: BaseItemDto?
-    let series: BaseItemDto
     let viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
-
-    var displayTitle: String {
-        L10n.episodes
-    }
 
     var _shouldBeResolved: Bool {
         viewModel.elements.isNotEmpty
     }
 
     init(
-        series: BaseItemDto,
+        parent: BaseItemDto,
         playButtonItem: BaseItemDto? = nil
     ) {
-        self.id = "\(series.id ?? "series")-episode-selector"
+        self.id = "\(parent.id ?? "parent")-episode-selector"
         self.playButtonItem = playButtonItem
-        self.series = series
-        self.viewModel = .init(library: SeasonViewModelLibrary(series: series), pageSize: 100)
+        self.viewModel = .init(library: SeasonViewModelLibrary(parent: parent), pageSize: 100)
     }
 
     func body(with viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>) -> Body {

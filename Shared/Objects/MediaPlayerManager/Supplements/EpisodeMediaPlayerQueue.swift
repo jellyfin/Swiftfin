@@ -54,7 +54,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     init(episode: BaseItemDto) {
         self.seasonsViewModel = PagingLibraryViewModel(
             library: SeasonViewModelLibrary(
-                series: BaseItemDto(id: episode.seriesID, name: episode.seriesName)
+                parent: BaseItemDto(id: episode.seriesID, name: episode.seriesName)
             ),
             pageSize: 100
         )
