@@ -96,6 +96,18 @@ struct UserSignInView: View {
         return evaluatedPolicy
     }
 
+    @ViewBuilder
+    private func disclaimerText(_ disclaimer: String) -> some View {
+        if let attributedString = try? AttributedString(
+            markdown: disclaimer,
+            options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        ) {
+            Text(attributedString)
+        } else {
+            Text(disclaimer)
+        }
+    }
+
     // MARK: - Sign In Section
 
     @ViewBuilder
@@ -187,7 +199,7 @@ struct UserSignInView: View {
 
         if let disclaimer = viewModel.serverDisclaimer {
             Section(L10n.disclaimer) {
-                Text(disclaimer)
+                disclaimerText(disclaimer)
                     .font(.callout)
             }
         }
