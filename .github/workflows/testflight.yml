@@ -79,11 +79,11 @@ jobs:
   test_build:
     name: Build and upload to TestFlight
     needs: resolve_platform
-    runs-on: macos-15
+    runs-on: macos-26
     strategy:
       matrix: ${{ fromJSON(needs.resolve_platform.outputs.matrix) }}
     env:
-      XCODE_VERSION: "26.3"
+      XCODE_VERSION: "26.6"
       PLATFORM: ${{ matrix.platform }}
       SCHEME: ${{ matrix.scheme }}
       BUILD_CERTIFICATE_BASE64: ${{ github.event.client_payload.BUILD_CERTIFICATE_BASE64 || secrets.BUILD_CERTIFICATE_BASE64 }}
