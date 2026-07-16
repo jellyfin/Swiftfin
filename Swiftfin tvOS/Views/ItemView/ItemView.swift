@@ -30,23 +30,29 @@ struct ItemView: View {
         [header] + viewModel.groups
     }
 
-    @ViewBuilder
-    private var content: some View {
+    private var isEnhanced: Bool {
         switch itemViewType {
-        case .enhanced where provider.item.type != .person && provider.item.type != .season:
-            RegularEnhancedScrollView(
-                provider: provider,
-                groups: contentGroups(
-                    header: EnhancedRegularHeaderContentGroup(provider: provider)
-                )
-            )
-        case .enhanced, .simple:
-            ContentGroupScrollView(
-                groups: contentGroups(
-                    header: RegularSimpleHeaderContentGroup(provider: provider)
-                )
-            )
+        case .enhanced:
+            provider.item.type != .person && provider.item.type != .season
+        case .simple:
+            false
         }
+    }
+
+    private var header: any ContentGroup {
+        if isEnhanced {
+            return EnhancedRegularHeaderContentGroup(provider: provider)
+        }
+
+        return RegularSimpleHeaderContentGroup(provider: provider)
+    }
+
+    private var content: some View {
+        ContentGroupScrollView(
+            provider: provider,
+            groups: contentGroups(header: header),
+            isEnhanced: isEnhanced
+        )
     }
 
     var body: some View {

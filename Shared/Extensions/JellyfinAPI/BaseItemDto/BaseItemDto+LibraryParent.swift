@@ -45,11 +45,12 @@ extension BaseItemDto: LibraryParent {
         case (.movies, _):
             [.movie]
         case (.tvshows, _):
-            if grouping == .episodes {
+            switch grouping {
+            case .episodes:
                 [.episode]
-            } else if grouping == .seasons {
+            case .seasons:
                 [.season]
-            } else {
+            default:
                 [.series]
             }
         case (.music, _):

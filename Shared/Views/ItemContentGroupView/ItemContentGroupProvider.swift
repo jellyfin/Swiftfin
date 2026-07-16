@@ -83,14 +83,9 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         }
 
         switch item.type {
-        case .series:
+        case .season, .series:
             SeriesEpisodeContentGroup(
-                series: item,
-                playButtonItem: playButtonItem
-            )
-        case .season:
-            SeriesEpisodeContentGroup(
-                season: item,
+                parent: item,
                 playButtonItem: playButtonItem
             )
         default:
@@ -170,7 +165,31 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 parent: item
             )
             .makeGroups(environment: .default)
+        case .series:
+            try await ItemTypeContentGroupProvider(
+                itemTypes: [.season],
+                parent: item
+            )
+            .makeGroups(environment: .default)
         default: []
+        }
+
+        if item.type == .episode {
+            PosterGroup(
+                library: StaticLibrary(
+                    title: L10n.season,
+                    id: "seasons",
+                    elements: [BaseItemDto(
+                        id: item.seasonID,
+                        name: item.seasonName,
+                        seriesID: item.seriesID,
+                        seriesName: item.seriesName,
+                        type: .season
+                    )]
+                ),
+                posterSize: .small,
+                environment: .init(isHeaderButtonEnabled: false)
+            )
         }
 
         if let castAndCrew = item.people, castAndCrew.isNotEmpty {
@@ -288,6 +307,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         var parameters = Paths.GetItemsParameters()
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.episode]
+        parameters.isMissing = false
         parameters.isRecursive = true
         parameters.limit = 1
         parameters.parentID = item.id

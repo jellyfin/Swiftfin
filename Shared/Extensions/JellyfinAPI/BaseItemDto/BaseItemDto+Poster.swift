@@ -93,19 +93,16 @@ extension BaseItemDto: Poster {
     ) -> [ImageSource] {
         switch type {
         case .episode:
-            imageSource(itemID: seasonID, .primary, environment: environment)
-
             if environment.useParent {
                 imageSource(itemID: seriesID, .primary, environment: environment)
             }
+
+            imageSource(itemID: seasonID, .primary, environment: environment)
         case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
             imageSource(.primary, environment: environment)
         case .season:
             imageSource(.primary, environment: environment)
-
-            if environment.useParent {
-                imageSource(itemID: seriesID, .primary, environment: environment)
-            }
+            imageSource(itemID: seriesID, .primary, environment: environment)
         default:
             []
         }
@@ -116,7 +113,7 @@ extension BaseItemDto: Poster {
         environment: Environment
     ) -> [ImageSource] {
         switch type {
-        case .episode, .season:
+        case .episode:
             if environment.useParent {
                 if environment.viewContext.contains(.isThumb) {
                     imageSource(itemID: seriesID, .thumb, environment: environment)
@@ -128,6 +125,11 @@ extension BaseItemDto: Poster {
             }
         case .collectionFolder, .folder, .liveTvProgram, .musicVideo, .program, .userView, .video:
             imageSource(.primary, environment: environment)
+        case .season:
+            if environment.viewContext.contains(.isThumb) {
+                imageSource(itemID: seriesID, .thumb, environment: environment)
+            }
+            imageSource(itemID: seriesID, .backdrop, environment: environment)
         default:
             if environment.viewContext.contains(.isThumb) {
                 imageSource(.thumb, environment: environment)
@@ -319,57 +321,70 @@ private struct BaseItemDtoPosterLabel: View {
             programLabel
         case .episode:
             episodeLabel
+        case .season:
+            label(title: item.parentTitle ?? item.displayTitle, subtitle: item.displayTitle)
         default:
-            titleSubtitleLabel
+            label(title: item.displayTitle, subtitle: item.subtitle)
         }
     }
 
-    private var titleSubtitleLabel: some View {
+    // TODO: allow title to expand to 2 lines if subtitle is nil?
+    //       - verify layout
+
+    @ViewBuilder
+    private func label(title: String, subtitle: String?) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(item.displayTitle)
+            Text(title)
                 .font(.footnote)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
                 .accessibilityLabel(item.displayTitle)
                 .lineLimit(1, reservesSpace: true)
 
-            Text(item.subtitle ?? " ")
+            Text(subtitle ?? " ")
                 .font(.caption)
                 .fontWeight(.medium)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .lineLimit(1, reservesSpace: true)
         }
     }
 
+    @ViewBuilder
     private var episodeLabel: some View {
         VStack(alignment: .leading, spacing: 0) {
             if let seriesName = item.seriesName {
                 Text(seriesName)
-                    .font(.footnote.weight(.regular))
-                    .foregroundColor(.primary)
+                    .font(.footnote)
+                    .fontWeight(.regular)
+                    .foregroundStyle(.primary)
                     .lineLimit(1, reservesSpace: true)
             }
 
             DotHStack {
-                Text(item.seasonEpisodeLabel ?? .emptyDash)
+                if let indexLabel = item.seasonEpisodeLabel {
+                    Text(indexLabel)
+                }
 
                 Text(item.displayTitle)
             }
             .font(.caption)
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
             .lineLimit(1)
         }
     }
 
+    @ViewBuilder
     private var programLabel: some View {
         VStack(alignment: .leading) {
             Text(item.channelName ?? .emptyDash)
-                .font(.footnote.weight(.semibold))
-                .foregroundColor(.primary)
+                .font(.footnote)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
                 .lineLimit(1, reservesSpace: true)
 
             Text(item.displayTitle)
-                .font(.footnote.weight(.regular))
-                .foregroundColor(.primary)
+                .font(.footnote)
+                .fontWeight(.regular)
+                .foregroundStyle(.primary)
                 .lineLimit(1, reservesSpace: true)
 
             HStack(spacing: 2) {

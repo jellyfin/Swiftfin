@@ -500,8 +500,19 @@ extension BaseItemDto {
             seriesName
         case .musicAlbum:
             albumArtist
+        case .liveTvProgram, .program, .tvProgram:
+            channelName
         default:
             nil
+        }
+    }
+
+    var parentRootID: String? {
+        switch type {
+        case .episode:
+            seriesID
+        default:
+            parentID
         }
     }
 

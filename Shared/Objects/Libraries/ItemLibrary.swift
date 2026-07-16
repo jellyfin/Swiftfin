@@ -169,8 +169,6 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         guard let parentID = parent.id else { return parameters }
 
         switch parent.libraryType {
-        case .boxSet, .collectionFolder, .userView:
-            parameters.parentID = parentID
         case .folder:
             parameters.parentID = parentID
             parameters.isRecursive = nil
@@ -179,7 +177,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         case .studio:
             parameters.studioIDs = [parentID]
         default:
-            break
+            parameters.parentID = parentID
         }
 
         return parameters
