@@ -92,18 +92,15 @@ struct UserSignInView: View {
         return evaluatedPolicy
     }
 
-    private func disclaimerText(_ disclaimer: String) -> Text {
-        let options = AttributedString.MarkdownParsingOptions(
-            interpretedSyntax: .inlineOnlyPreservingWhitespace
-        )
-
+    @ViewBuilder
+    private func disclaimerText(_ disclaimer: String) -> some View {
         if let attributedString = try? AttributedString(
             markdown: disclaimer,
-            options: options
+            options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         ) {
-            return Text(attributedString)
+            Text(attributedString)
         } else {
-            return Text(disclaimer)
+            Text(disclaimer)
         }
     }
 
