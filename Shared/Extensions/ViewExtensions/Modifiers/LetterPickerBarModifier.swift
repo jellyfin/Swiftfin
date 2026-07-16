@@ -27,13 +27,13 @@ struct LetterPickerBarModifier: ViewModifier {
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     LetterPickerBar(viewModel: viewModel)
                 }
-                #if os(iOS)
+            #if os(iOS)
                 .overlayPreferenceValue(LetterPickerActiveLetterKey.self) { letter in
                     if let letter {
                         LetterPickerCallout(letter: letter)
                     }
                 }
-                #endif
+            #endif
         } else {
             content
                 .ignoresSafeArea(.all, edges: .horizontal)
