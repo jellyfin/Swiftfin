@@ -57,8 +57,15 @@ struct ItemSubtitleSearchView: View {
                 ProgressView()
             }
             #if os(iOS)
-            saveButton
-                .buttonStyle(.toolbarPill)
+            if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                Button(L10n.save, role: .confirm, action: save)
+                    .disabled(selectedSubtitles.isEmpty)
+            } else {
+                saveButton()
+                    .backport
+                    .buttonStyle(.glassProminent)
+                    .controlSize(.small)
+            }
             #endif
         }
         .backport
@@ -79,9 +86,14 @@ struct ItemSubtitleSearchView: View {
 
             #if os(tvOS)
             Section {
-                saveButton
-                    .buttonStyle(.primary)
+                saveButton(maxWidth: .infinity)
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    .tint(accentColor)
+                    .controlSize(.large)
                     .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
             }
             #endif
 
@@ -109,12 +121,15 @@ struct ItemSubtitleSearchView: View {
         }
     }
 
-    private var saveButton: some View {
-        Button(L10n.save) {
-            guard selectedSubtitles.isNotEmpty else { return }
-            viewModel.set(selectedSubtitles)
-        }
-        .foregroundStyle(accentColor.overlayColor, accentColor)
-        .disabled(selectedSubtitles.isEmpty)
+    private func save() {
+        guard selectedSubtitles.isNotEmpty else { return }
+        viewModel.set(selectedSubtitles)
+    }
+
+    private func saveButton(maxWidth: CGFloat? = nil) -> some View {
+        Button(L10n.save, action: save)
+            .frame(maxWidth: maxWidth)
+            .foregroundStyle(accentColor.overlayColor, accentColor)
+            .disabled(selectedSubtitles.isEmpty)
     }
 }

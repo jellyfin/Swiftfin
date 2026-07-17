@@ -40,7 +40,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 
     @ViewBuilder
     private var buttonView: some View {
-        if #available(tvOS 26.0, *) {
+        if #available(tvOS 26.0, *), isLiquidGlassEnabled {
             HStack {
                 title
                     .foregroundStyle(isFocused ? .black : .white)
@@ -61,16 +61,10 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             }
             .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .background(
-                ZStack {
-                    buttonShape(cornerRadius: 12.5)
-                        .fill(isFocused ? Color.white : Color.clear)
-                    if isFocused {
-                        buttonShape(cornerRadius: 12.5)
-                            .fill(Color.white.opacity(0.8))
-                            .scaleEffect(x: 1.0, y: isFocused ? 1.10 : 1.0, anchor: .center)
-                    }
-                }
+            .backport
+            .glassEffect(
+                .regular.tint(isFocused ? .white : nil),
+                in: .capsule
             )
             .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
             .animation(.easeInOut(duration: 0.125), value: isFocused)

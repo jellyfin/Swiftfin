@@ -76,21 +76,36 @@ struct QuickConnectAuthorizeView: View {
             }
 
             if viewModel.state == .authorizing {
-                Button(L10n.cancel, role: .cancel) {
+                Button(role: .cancel) {
                     viewModel.cancel()
                     isCodeFocused = true
+                } label: {
+                    Text(L10n.cancel)
+                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.primary)
+                .listRowInsets(.zero)
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .fontWeight(.semibold)
+                .backport
+                .buttonStyle(.glassProminent.shadow(false))
+                .controlSize(.large)
             } else {
-                Button(L10n.authorize) {
+                Button {
                     viewModel.authorize(code: code)
+                } label: {
+                    Text(L10n.authorize)
+                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.primary)
+                .listRowInsets(.zero)
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .fontWeight(.semibold)
+                .backport
+                .buttonStyle(.glassProminent.shadow(false))
+                .tint(accentColor)
+                .controlSize(.large)
                 .disabled(code.count != 6 || viewModel.state == .authorizing)
-                .foregroundStyle(
-                    accentColor.overlayColor,
-                    accentColor
-                )
             }
         }
         .interactiveDismissDisabled(viewModel.state == .authorizing)

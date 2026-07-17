@@ -8,19 +8,8 @@
 
 import SwiftUI
 
-struct EmptyLabel: View {
+enum NavigationTransition: Hashable {
 
-    private let title: Text
-
-    init(_ text: some WithText) {
-        self.title = text.textBody
-    }
-
-    var body: some View {
-        Label {
-            title
-        } icon: {
-            EmptyView()
-        }
-    }
+    case automatic
+    case zoom(sourceID: String, namespace: Namespace.ID)
 }

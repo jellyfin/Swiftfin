@@ -60,10 +60,20 @@ struct AddItemElementView<Editor: ItemComponentEditor>: View {
                 ProgressView()
             }
 
-            Button(L10n.save) {
+            let saveAction: () -> Void = {
                 viewModel.add([viewModel.editor.makeElement(input: input)])
             }
-            .buttonStyle(.toolbarPill)
+
+            Group {
+                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                    Button(L10n.save, role: .confirm, action: saveAction)
+                } else {
+                    Button(L10n.save, action: saveAction)
+                        .backport
+                        .buttonStyle(.glassProminent)
+                        .controlSize(.small)
+                }
+            }
             .enabled(isValid)
         }
         .onChange(of: input.name) { newName in

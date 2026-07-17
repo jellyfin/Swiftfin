@@ -35,14 +35,12 @@ extension LetterPickerBar {
             }
         }
 
-        private var backgroundStyle: Color {
-            if isFocused {
-                Color.primary
-            } else if isSelected {
-                accentColor
-            } else {
-                .clear
-            }
+        private var isGlassVisible: Bool {
+            isFocused || isSelected
+        }
+
+        private var glassTint: Color {
+            isFocused ? .primary : accentColor
         }
 
         var body: some View {
@@ -53,24 +51,26 @@ extension LetterPickerBar {
                     viewModel.currentFilters.letter = [letter]
                 }
             } label: {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundStyle(backgroundStyle)
-                        .if(UIDevice.isTV && (isFocused || isSelected)) { background in
-                            background
-                                .subtleShadow()
-                        }
-
-                    Text(letter.value)
-                        .font(LetterPickerBar.font)
-                        .foregroundStyle(foregroundStyle)
-                        .if(UIDevice.isTV && !isFocused && !isSelected) { character in
-                            character
-                                .subtleShadow()
-                        }
-                }
+                Text(letter.value)
+                    .font(LetterPickerBar.font)
+                    .foregroundStyle(foregroundStyle)
+                    .if(UIDevice.isTV && !isGlassVisible) { character in
+                        character.subtleShadow()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .backport
+                    .glassEffect(
+                        isGlassVisible ? .regular.selection(
+                            tint: glassTint,
+                            foregroundColor: glassTint.overlayColor
+                        ) : .identity,
+                        in: .rect(cornerRadius: 5)
+                    )
+                    .isSelected(isGlassVisible)
             }
             .buttonStyle(.borderless)
+            .backport
+            .buttonBorderShape(.roundedRectangle)
             .if(UIDevice.isTV) { view in
                 view
                     .focused($isFocused)

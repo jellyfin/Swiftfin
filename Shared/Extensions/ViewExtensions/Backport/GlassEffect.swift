@@ -23,11 +23,15 @@ struct BackportGlass {
     static let identity = BackportGlass(isVisible: false)
 
     fileprivate var tint: Color?
+    fileprivate var drawsLegacyShadow: Bool
+    fileprivate var isInteractive: Bool
     fileprivate var isVisible: Bool
     fileprivate var selectionAppearance: SelectionAppearance?
 
     private init(isVisible: Bool) {
         self.tint = nil
+        self.drawsLegacyShadow = true
+        self.isInteractive = isVisible
         self.isVisible = isVisible
         self.selectionAppearance = nil
     }
@@ -36,6 +40,21 @@ struct BackportGlass {
         var copy = self
         copy.tint = tint
         copy.selectionAppearance = nil
+        return copy
+    }
+
+    /// Controls whether the material-backed legacy appearance draws a shadow.
+    /// This has no effect when native Liquid Glass is used.
+    func shadow(_ isEnabled: Bool = true) -> Self {
+        var copy = self
+        copy.drawsLegacyShadow = isEnabled
+        return copy
+    }
+
+    /// Controls whether native glass responds to pointer and touch interaction.
+    func interactive(_ isInteractive: Bool = true) -> Self {
+        var copy = self
+        copy.isInteractive = isInteractive
         return copy
     }
 
@@ -60,14 +79,12 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
 
     @Environment(\.isEnabled)
     private var isEnabled
-    @Environment(\.isSelected)
-    private var isSelected
 
     let glass: BackportGlass
     let shape: BackgroundShape
 
     private var isPositiveSelectionState: Bool {
-        isEnabled && isSelected
+        isEnabled
     }
 
     private var subduedColor: Color {
@@ -157,7 +174,7 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
         }
     }
 
-    private func legacyBody(_ content: some View) -> some View {
+    private func legacyContent(_ content: some View) -> some View {
         content
             .background {
                 legacyBackground
@@ -167,17 +184,32 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
             .overlay {
                 appearanceBorder
             }
-            .subtleShadow()
+    }
+
+    @ViewBuilder
+    private func legacyBody(_ content: some View) -> some View {
+        if glass.isVisible, glass.drawsLegacyShadow {
+            legacyContent(content)
+                .subtleShadow()
+        } else {
+            legacyContent(content)
+        }
     }
 
     @available(iOS 26.0, tvOS 26.0, *)
+    @ViewBuilder
     private func glassBody(_ content: some View) -> some View {
-        content
-            .glassEffect(
-                glass.isVisible ? .regular
-                    .tint(resolvedTint)
-                    .interactive() : .identity,
-                in: shape
-            )
+        if glass.isVisible {
+            content
+                .glassEffect(
+                    .regular
+                        .tint(resolvedTint)
+                        .interactive(glass.isInteractive),
+                    in: shape
+                )
+        } else {
+            content
+                .glassEffect(.identity, in: shape)
+        }
     }
 }

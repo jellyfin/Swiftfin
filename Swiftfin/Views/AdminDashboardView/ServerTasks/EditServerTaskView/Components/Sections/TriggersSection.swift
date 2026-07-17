@@ -39,10 +39,11 @@ extension EditServerTaskView {
                                 .tint(.red)
                             }
                     }
-                } else {
-                    Button(L10n.add) {
-                        router.route(to: .addServerTaskTrigger(observer: observer))
-                    }
+                }
+
+                Button(L10n.add) {
+                    UIDevice.impact(.light)
+                    router.route(to: .addServerTaskTrigger(observer: observer))
                 }
             }
             .confirmationDialog(

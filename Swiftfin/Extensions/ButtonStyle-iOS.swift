@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 /// - Important: On iOS, this is a `BorderlessButtonStyle` instead.
@@ -14,38 +13,6 @@ import SwiftUI
 extension PrimitiveButtonStyle where Self == BorderlessButtonStyle {
     static var card: BorderlessButtonStyle {
         .init()
-    }
-}
-
-extension ButtonStyle where Self == ToolbarPillButtonStyle {
-
-    static var toolbarPill: ToolbarPillButtonStyle {
-        ToolbarPillButtonStyle(primary: Defaults[.accentColor], secondary: .secondary)
-    }
-
-    static func toolbarPill(_ primary: Color, _ secondary: Color = Color.secondary) -> ToolbarPillButtonStyle {
-        ToolbarPillButtonStyle(primary: primary, secondary: secondary)
-    }
-}
-
-// TODO: don't take `Color`, take generic `ShapeStyle`
-struct ToolbarPillButtonStyle: ButtonStyle {
-
-    @Environment(\.isEnabled)
-    private var isEnabled
-
-    let primary: Color
-    let secondary: Color
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .foregroundStyle(isEnabled ? primary.overlayColor : secondary)
-            .font(.headline)
-            .padding(.vertical, 5)
-            .padding(.horizontal, 10)
-            .background(isEnabled ? primary : secondary)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .opacity(isEnabled && !configuration.isPressed ? 1 : 0.5)
     }
 }
 

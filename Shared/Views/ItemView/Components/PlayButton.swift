@@ -148,9 +148,19 @@ struct PlayButton: View {
             }
             .font(.callout)
             .fontWeight(.semibold)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .backport
+            .glassEffect(
+                .regular.selection(
+                    tint: accentColor,
+                    foregroundColor: accentColor.overlayColor
+                ),
+                in: .capsule
+            )
         }
-        .foregroundStyle(accentColor.overlayColor, accentColor)
-        .buttonStyle(.primary)
+        .backport
+        .buttonBorderShape(.capsule)
+        .buttonStyle(BasicHoverButtonStyle())
         #if os(tvOS)
             .focused(playButtonFocus)
         #endif
@@ -174,15 +184,3 @@ struct PlayButton: View {
         .frame(height: UIDevice.isTV ? 100 : 44)
     }
 }
-
-#if os(tvOS)
-struct BasicHoverButtonStyle: ButtonStyle {
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .hoverEffect(.lift)
-    }
-}
-#else
-typealias BasicHoverButtonStyle = BorderlessButtonStyle
-#endif

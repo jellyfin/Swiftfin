@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 #if os(iOS)
 import UIKit
@@ -270,11 +271,23 @@ struct EditServerConnectionView: View {
             }
 
             if isExistingConnection {
-                Button(L10n.delete, role: .destructive) {
+                Button(role: .destructive) {
                     viewModel.deleteConnection(connection)
                     router.dismiss()
+                } label: {
+                    Text(L10n.delete)
+                        .frame(maxWidth: .infinity)
                 }
-                .disabled(viewModel.connections.count <= 1 || isCurrentConnection)
+                .listRowInsets(.zero)
+                .listRowBackground(Color.clear)
+                #if os(iOS)
+                    .listRowSeparator(.hidden)
+                #endif
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    .controlSize(.large)
+                    .disabled(viewModel.connections.count <= 1 || isCurrentConnection)
             }
         }
         .navigationTitle(L10n.connection)
@@ -282,13 +295,25 @@ struct EditServerConnectionView: View {
             router.dismiss()
         }
         .topBarTrailing {
-            Button(L10n.save) {
+            let saveAction: () -> Void = {
                 Task { try? await save() }
             }
+
+            Group {
+                #if os(iOS)
+                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                    Button(L10n.save, role: .confirm, action: saveAction)
+                } else {
+                    Button(L10n.save, action: saveAction)
+                        .backport
+                        .buttonStyle(.glassProminent)
+                        .controlSize(.small)
+                }
+                #else
+                Button(L10n.save, action: saveAction)
+                #endif
+            }
             .disabled(isSaveDisabled)
-            #if os(iOS)
-                .buttonStyle(.toolbarPill)
-            #endif
         }
         .animation(.linear(duration: 0.1), value: draft.interface)
         .animation(.linear(duration: 0.1), value: draft.useWifiName)

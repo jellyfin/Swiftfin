@@ -44,15 +44,20 @@ extension ConnectToServerView {
                     Text(L10n.duplicateServerConnectionFooter)
                 }
 
-                Button(
-                    L10n.add,
-                    action: action
-                )
-                .buttonStyle(.primary)
-                .foregroundStyle(
-                    Color.jellyfinPurple.overlayColor,
-                    Color.jellyfinPurple
-                )
+                Button(action: action) {
+                    Text(L10n.add)
+                        .frame(maxWidth: .infinity)
+                }
+                .listRowInsets(.zero)
+                .listRowBackground(Color.clear)
+                #if os(iOS)
+                    .listRowSeparator(.hidden)
+                #endif
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    .tint(.jellyfinPurple)
+                    .controlSize(.large)
             }
             .backport
             .toolbarTitleDisplayMode(.inline)

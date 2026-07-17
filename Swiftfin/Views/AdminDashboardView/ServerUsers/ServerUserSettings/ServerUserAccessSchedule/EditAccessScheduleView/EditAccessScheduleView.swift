@@ -6,14 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct EditAccessScheduleView: View {
-
-    @Default(.accentColor)
-    private var accentColor
 
     @ObservedObject
     var viewModel: ServerUserAdminViewModel
@@ -74,24 +70,26 @@ struct EditAccessScheduleView: View {
 
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
-                    Button(L10n.cancel) {
+                    Button(L10n.cancel, role: .cancel) {
                         isEditing.toggle()
                         selectedSchedules.removeAll()
                         UIDevice.impact(.light)
                     }
-                    .buttonStyle(.toolbarPill)
-                    .foregroundStyle(accentColor)
+                    .foregroundStyle(.primary, .secondary)
+                    .backport
+                    .buttonStyle(.glass)
+                    .controlSize(.small)
                 }
             }
 
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
-                    Button(L10n.delete) {
+                    Button(L10n.delete, role: .destructive) {
                         isPresentingDeleteConfirmation = true
                     }
-                    .buttonStyle(.toolbarPill(.red))
+                    .backport
+                    .buttonStyle(.glassProminent)
                     .disabled(selectedSchedules.isEmpty)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
         }
@@ -140,9 +138,11 @@ struct EditAccessScheduleView: View {
                 selectedSchedules = Set(viewModel.user.policy?.accessSchedules ?? [])
             }
         }
-        .buttonStyle(.toolbarPill)
+        .foregroundStyle(.primary, .secondary)
+        .backport
+        .buttonStyle(.glass)
+        .controlSize(.small)
         .disabled(!isEditing)
-        .foregroundStyle(accentColor)
     }
 
     @ViewBuilder

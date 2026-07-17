@@ -75,17 +75,11 @@ extension MediaInfoSupplement {
                 manager.setPlaybackRequestStatus(status: .playing)
                 containerState.select(supplement: nil)
             } label: {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 7)
-                        .foregroundStyle(.white)
-
-                    Label(L10n.fromBeginning, systemImage: "play.fill")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.black)
-                }
+                Label(L10n.fromBeginning, systemImage: "play.fill")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
             }
-            .buttonStyle(.card)
+            .buttonStyle(.supplementAction)
             #if os(tvOS)
                 .focused($isResetButtonFocused)
             #endif

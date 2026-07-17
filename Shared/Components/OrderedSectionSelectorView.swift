@@ -56,7 +56,9 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
             editMode?.wrappedValue = isReordering ? .inactive : .active
         }
         #if os(iOS)
-        .buttonStyle(.toolbarPill)
+        .backport
+        .buttonStyle(.glass)
+        .controlSize(.small)
         #endif
     }
 

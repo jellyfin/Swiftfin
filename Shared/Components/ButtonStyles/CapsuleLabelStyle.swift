@@ -38,8 +38,9 @@ struct CapsuleLabelStyle: LabelStyle {
         self.isIconTrailing = isIconTrailing
     }
 
+    @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: spacing) {
+        let content = HStack(spacing: spacing) {
             if !isIconTrailing {
                 configuration.icon
             }
@@ -53,10 +54,22 @@ struct CapsuleLabelStyle: LabelStyle {
             }
         }
         .padding(insets ?? Self.defaultInsets)
-        .backport
-        .glassEffect(
-            .regular.tint(tint),
-            in: .capsule
-        )
+
+        if let tint {
+            content
+                .backport
+                .glassEffect(
+                    .regular.selection(
+                        tint: tint,
+                        foregroundColor: tint.overlayColor
+                    ),
+                    in: .capsule
+                )
+                .isSelected(true)
+        } else {
+            content
+                .backport
+                .glassEffect(in: .capsule)
+        }
     }
 }

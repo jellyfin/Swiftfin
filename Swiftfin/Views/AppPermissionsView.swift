@@ -51,7 +51,8 @@ struct AppPermissionsView: View {
                                         .foregroundStyle(.blue)
                                         .padding(4)
                                         .padding(.horizontal, 4)
-                                        .background(Color.gray.opacity(0.2), in: .capsule)
+                                        .backport
+                                        .glassEffect(in: .capsule)
                                 }
                             } label: {
                                 Text(title)

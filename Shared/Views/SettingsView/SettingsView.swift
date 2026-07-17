@@ -87,15 +87,26 @@ struct SettingsView: View {
         }
 
         Section {
-            Button(L10n.switchUser) {
+            Button {
                 Task { @MainActor in
                     UIDevice.impact(.medium)
                     await userSessionManager.signOut(reason: .explicit)
                     router.dismiss()
                 }
+            } label: {
+                Text(L10n.switchUser)
+                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.primary)
-            .foregroundStyle(accentColor.overlayColor, accentColor)
+            .listRowInsets(.zero)
+            .listRowBackground(Color.clear)
+            #if os(iOS)
+                .listRowSeparator(.hidden)
+            #endif
+                .fontWeight(.semibold)
+                .backport
+                .buttonStyle(.glassProminent.shadow(false))
+                .tint(accentColor)
+                .controlSize(.large)
         }
     }
 

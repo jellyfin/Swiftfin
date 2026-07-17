@@ -99,8 +99,10 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
             viewModel.refreshIfPendingChanges()
         }
         .topBarTrailing {
-            if viewModel.background.is(.refreshing) {
-                ProgressView()
+            if #unavailable(iOS 26.0) {
+                if viewModel.background.is(.refreshing) {
+                    ProgressView()
+                }
             }
         }
     }

@@ -47,7 +47,6 @@ extension Backport where Content: View {
         }
     }
 
-    /// Applies glass in the given shape, using a material fallback when liquid glass is unavailable or disabled.
     func glassEffect(
         _ glass: BackportGlass = .regular,
         in shape: some Shape
@@ -124,6 +123,21 @@ extension Backport where Content: View {
     }
 
     @ViewBuilder
+    func scrollEdgeEffectStyle(
+        _ style: ScrollEdgeEffectStyle?,
+        for edges: Edge.Set
+    ) -> some View {
+        if #available(iOS 26.0, tvOS 26.0, *) {
+            content.scrollEdgeEffectStyle(
+                style?.swiftUIValue,
+                for: edges
+            )
+        } else {
+            content
+        }
+    }
+
+    @ViewBuilder
     func searchFocused(
         _ isSearchFocused: FocusState<Bool>.Binding
     ) -> some View {
@@ -142,30 +156,4 @@ extension Backport where Content: View {
             content.navigationBarTitleDisplayMode(mode.navigationBarTitleDisplayMode)
         }
     }
-}
-
-enum ButtonBorderShape {
-    case automatic
-    case capsule
-    case roundedRectangle
-    case circle
-
-    var swiftUIValue: SwiftUI.ButtonBorderShape {
-        switch self {
-        case .automatic: .automatic
-        case .capsule: .capsule
-        case .roundedRectangle: .roundedRectangle
-        case .circle:
-            if #available(iOS 17, *) {
-                .circle
-            } else {
-                .roundedRectangle
-            }
-        }
-    }
-}
-
-enum NavigationTransition: Hashable {
-    case automatic
-    case zoom(sourceID: String, namespace: Namespace.ID)
 }

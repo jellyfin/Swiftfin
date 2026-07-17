@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerView {
@@ -13,30 +14,74 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
     #if os(tvOS)
     struct SupplementTitleButtonStyle: ButtonStyle {
 
+        @Default(.isLiquidGlassEnabled)
+        private var isLiquidGlassEnabled
+
         @Environment(\.isFocused)
         private var isFocused
         @Environment(\.isSelected)
         private var isSelected
 
+        @ViewBuilder
         func makeBody(configuration: Configuration) -> some View {
-            baseLabel(configuration)
-                .foregroundStyle(isSelected ? .black : .white)
-                .opacity(inactiveSelectedOpacity)
-                .scaleEffect(isFocused ? 1.06 : 1)
-                .shadow(color: isFocused ? .black.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
-                .animation(.easeInOut(duration: 0.1), value: isFocused)
-                .animation(.easeInOut(duration: 0.1), value: isSelected)
+            if #available(tvOS 26.0, *), isLiquidGlassEnabled {
+                glassBody(configuration)
+            } else {
+                legacyBody(configuration)
+            }
         }
 
         private func baseLabel(_ configuration: Configuration) -> some View {
             configuration.label
                 .font(.body)
                 .fontWeight(.semibold)
-                .labelStyle(
-                    CapsuleLabelStyle(
-                        tint: isSelected ? .white : nil
-                    )
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .frame(minHeight: 56)
+        }
+
+        @available(tvOS 26.0, *)
+        private func glassBody(_ configuration: Configuration) -> some View {
+            baseLabel(configuration)
+                .foregroundStyle(isSelected ? .black : .white)
+                .glassEffect(
+                    .regular
+                        .tint(isSelected ? .white : nil)
+                        .interactive(isFocused),
+                    in: Capsule()
                 )
+                .opacity(inactiveSelectedOpacity)
+                .animation(.easeInOut(duration: 0.1), value: isFocused)
+                .animation(.easeInOut(duration: 0.1), value: isSelected)
+        }
+
+        private func legacyBody(_ configuration: Configuration) -> some View {
+            baseLabel(configuration)
+                .foregroundStyle(isSelected ? .black : .white)
+                .background {
+                    if isSelected {
+                        Capsule()
+                            .fill(Color.white)
+                    } else {
+                        Capsule()
+                            .fill(Material.ultraThinMaterial)
+                            .background {
+                                Capsule()
+                                    .fill(.white.opacity(0.2))
+                            }
+                    }
+                }
+                .overlay {
+                    Capsule()
+                        .stroke(.white.opacity(0.1), lineWidth: 1)
+                }
+                .clipShape(Capsule())
+                .subtleShadow()
+                .opacity(inactiveSelectedOpacity)
+                .scaleEffect(isFocused ? 1.06 : 1)
+                .shadow(color: isFocused ? .black.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
+                .animation(.easeInOut(duration: 0.1), value: isFocused)
+                .animation(.easeInOut(duration: 0.1), value: isSelected)
         }
 
         private var inactiveSelectedOpacity: Double {
@@ -46,6 +91,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
     #else
     struct SupplementTitleButtonStyle: PrimitiveButtonStyle {
 
+        @Default(.isLiquidGlassEnabled)
+        private var isLiquidGlassEnabled
+
         @Environment(\.isEnabled)
         private var isEnabled
         @Environment(\.isSelected)
@@ -54,23 +102,60 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
         @State
         private var isPressed = false
 
+        @ViewBuilder
         func makeBody(configuration: Configuration) -> some View {
-            pressableBody(
-                baseLabel(configuration)
-                    .foregroundStyle(isSelected ? .black : .white),
-                configuration: configuration
-            )
+            if #available(iOS 26.0, *), isLiquidGlassEnabled {
+                glassBody(configuration)
+            } else {
+                legacyBody(configuration)
+            }
         }
 
         private func baseLabel(_ configuration: Configuration) -> some View {
             configuration.label
                 .font(.body)
                 .fontWeight(.semibold)
-                .labelStyle(
-                    CapsuleLabelStyle(
-                        tint: isSelected ? .white : nil
-                    )
-                )
+                .padding(.horizontal, 10)
+                .padding(.vertical, 3)
+                .frame(minHeight: 36)
+        }
+
+        private func legacyBody(_ configuration: Configuration) -> some View {
+            pressableBody(
+                baseLabel(configuration)
+                    .foregroundStyle(isSelected ? .black : .white)
+                    .background {
+                        if isSelected {
+                            Capsule()
+                                .fill(Color.white)
+                        } else {
+                            Capsule()
+                                .fill(.ultraThinMaterial)
+                        }
+                    }
+                    .clipShape(Capsule())
+                    .overlay {
+                        Capsule()
+                            .stroke(.white.opacity(0.1), lineWidth: 1)
+                    }
+                    .subtleShadow(),
+                configuration: configuration
+            )
+        }
+
+        @available(iOS 26.0, *)
+        private func glassBody(_ configuration: Configuration) -> some View {
+            pressableBody(
+                baseLabel(configuration)
+                    .foregroundStyle(isSelected ? .black : .white)
+                    .glassEffect(
+                        .regular
+                            .tint(isSelected ? .white : nil)
+                            .interactive(),
+                        in: Capsule()
+                    ),
+                configuration: configuration
+            )
         }
 
         private func pressableBody(

@@ -80,7 +80,9 @@ struct APIKeysView: View {
                     showCreateAPIAlert = true
                     UIDevice.impact(.light)
                 }
-                .buttonStyle(.toolbarPill)
+                .backport
+                .buttonStyle(.glassProminent)
+                .controlSize(.small)
             }
         }
         .alert(

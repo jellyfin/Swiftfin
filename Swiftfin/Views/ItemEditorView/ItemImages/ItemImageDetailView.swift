@@ -76,9 +76,19 @@ struct ItemImageDetailView: View {
 
             StateAdapter(initialValue: false) { isPresented in
                 Section {
-                    Button(L10n.delete, role: .destructive) {
+                    Button(role: .destructive) {
                         isPresented.wrappedValue = true
+                    } label: {
+                        Text(L10n.delete)
+                            .frame(maxWidth: .infinity)
                     }
+                    .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    .controlSize(.large)
                     .disabled(viewModel.background.is(.deleting))
                 }
                 .confirmationDialog(

@@ -46,10 +46,8 @@ extension SeriesEpisodeContentGroup {
                         ForEach(seasons) { season in
                             let isSelected = selection == season.id
 
-                            Button {
+                            Button(season.library.parent.displayTitle) {
                                 selection = season.id
-                            } label: {
-                                EmptyLabel(season.library.parent.displayTitle)
                             }
                             .buttonStyle(SeasonButtonStyle(isPickerFocused: isPickerFocused))
                             .isSelected(isSelected)

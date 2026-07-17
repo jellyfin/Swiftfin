@@ -84,7 +84,7 @@ extension SelectUserView {
                     regularContentView
                 }
             }
-            .buttonStyle(.primary)
+            .buttonStyle(BasicHoverButtonStyle())
             .animation(.linear(duration: 0.1), value: selectedUsers.isNotEmpty)
             .frame(height: buttonHeight)
             .frame(maxWidth: .infinity)

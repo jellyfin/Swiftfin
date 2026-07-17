@@ -74,9 +74,21 @@ struct EditLocalServerView: View {
 
             if isDeletePresented {
                 Section {
-                    Button(L10n.delete, role: .destructive) {
+                    Button(role: .destructive) {
                         isPresentingConfirmDeletion = true
+                    } label: {
+                        Text(L10n.delete)
+                            .frame(maxWidth: .infinity)
                     }
+                    .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
+                    #if os(iOS)
+                        .listRowSeparator(.hidden)
+                    #endif
+                        .fontWeight(.semibold)
+                        .backport
+                        .buttonStyle(.glassProminent.shadow(false))
+                        .controlSize(.large)
                 }
             }
         }

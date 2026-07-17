@@ -73,26 +73,32 @@ struct ItemSubtitlesView: View {
                     Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
                         toggleAllSelection()
                     }
-                    .buttonStyle(.toolbarPill)
+                    .foregroundStyle(.primary, .secondary)
+                    .backport
+                    .buttonStyle(.glass)
+                    .controlSize(.small)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 if isEditing {
-                    Button(L10n.cancel) {
+                    Button(L10n.cancel, role: .cancel) {
                         isEditing = false
                         selectedSubtitles.removeAll()
                     }
-                    .buttonStyle(.toolbarPill)
+                    .foregroundStyle(.primary, .secondary)
+                    .backport
+                    .buttonStyle(.glass)
+                    .controlSize(.small)
                 }
             }
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
-                    Button(L10n.delete) {
+                    Button(L10n.delete, role: .destructive) {
                         isPresentingDeleteConfirmation = true
                     }
-                    .buttonStyle(.toolbarPill(.red))
+                    .backport
+                    .buttonStyle(.glassProminent)
                     .disabled(selectedSubtitles.isEmpty)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
         }

@@ -46,11 +46,20 @@ struct ItemSubtitleUploadView: View {
 
             Section {
                 StateAdapter(initialValue: false) { isPresentingFileUpload in
-                    Button(selectedFile == nil ? L10n.uploadFile : L10n.replaceSubtitle) {
+                    Button {
                         isPresentingFileUpload.wrappedValue = true
+                    } label: {
+                        Text(selectedFile == nil ? L10n.uploadFile : L10n.replaceSubtitle)
+                            .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.primary)
-                    .foregroundStyle(accentColor.overlayColor, accentColor)
+                    .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    .tint(accentColor)
+                    .controlSize(.large)
                     .fileImporter(
                         isPresented: isPresentingFileUpload,
                         allowedContentTypes: SubtitleFormat.allCases.filter(\.isText).compactMap(\.utType)
@@ -79,7 +88,7 @@ struct ItemSubtitleUploadView: View {
             if viewModel.background.is(.updating) {
                 ProgressView()
             } else {
-                Button(L10n.save) {
+                let saveAction: () -> Void = {
                     guard let selectedFile else { return }
                     viewModel.upload(
                         file: selectedFile,
@@ -87,7 +96,17 @@ struct ItemSubtitleUploadView: View {
                         isHearingImpaired: isHearingImpaired
                     )
                 }
-                .buttonStyle(.toolbarPill)
+
+                Group {
+                    if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                        Button(L10n.save, role: .confirm, action: saveAction)
+                    } else {
+                        Button(L10n.save, action: saveAction)
+                            .backport
+                            .buttonStyle(.glassProminent)
+                            .controlSize(.small)
+                    }
+                }
                 .disabled(selectedFile == nil)
             }
         }

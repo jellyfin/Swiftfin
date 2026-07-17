@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -106,12 +107,15 @@ struct AddServerUserAccessTagsView: View {
             }
 
             if viewModel.background.states.contains(.updating) {
-                Button(L10n.cancel) {
+                Button(L10n.cancel, role: .cancel) {
                     viewModel.cancel()
                 }
-                .buttonStyle(.toolbarPill(.red))
+                .foregroundStyle(.primary, .secondary)
+                .backport
+                .buttonStyle(.glass)
+                .controlSize(.small)
             } else {
-                Button(L10n.save) {
+                let saveAction: () -> Void = {
                     if access {
                         tempPolicy.allowedTags = tempPolicy.allowedTags
                             .appendedOrInit(input.name)
@@ -122,7 +126,17 @@ struct AddServerUserAccessTagsView: View {
 
                     viewModel.updatePolicy(tempPolicy)
                 }
-                .buttonStyle(.toolbarPill)
+
+                Group {
+                    if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                        Button(L10n.save, role: .confirm, action: saveAction)
+                    } else {
+                        Button(L10n.save, action: saveAction)
+                            .backport
+                            .buttonStyle(.glassProminent)
+                            .controlSize(.small)
+                    }
+                }
                 .disabled(!isValid)
             }
         }

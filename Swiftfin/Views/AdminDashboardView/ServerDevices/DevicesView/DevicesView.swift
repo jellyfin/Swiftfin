@@ -63,12 +63,12 @@ struct DevicesView: View {
             }
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
-                    Button(L10n.delete) {
+                    Button(L10n.delete, role: .destructive) {
                         isPresentingDeleteSelectionConfirmation = true
                     }
-                    .buttonStyle(.toolbarPill(.red))
+                    .backport
+                    .buttonStyle(.glassProminent)
                     .disabled(selectedDevices.isEmpty)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
         }
@@ -157,15 +157,24 @@ struct DevicesView: View {
     private var navigationBarEditView: some View {
         if viewModel.background.is(.refreshing) {
             ProgressView()
-        } else {
-            Button(isEditing ? L10n.cancel : L10n.edit) {
-                isEditing.toggle()
+        } else if isEditing {
+            Button(L10n.cancel, role: .cancel) {
+                isEditing = false
                 UIDevice.impact(.light)
-                if !isEditing {
-                    selectedDevices.removeAll()
-                }
+                selectedDevices.removeAll()
             }
-            .buttonStyle(.toolbarPill)
+            .foregroundStyle(.primary, .secondary)
+            .backport
+            .buttonStyle(.glass)
+            .controlSize(.small)
+        } else {
+            Button(L10n.edit) {
+                isEditing = true
+                UIDevice.impact(.light)
+            }
+            .backport
+            .buttonStyle(.glass)
+            .controlSize(.small)
         }
     }
 
@@ -182,7 +191,10 @@ struct DevicesView: View {
                 selectedDevices = Set(viewModel.devices.compactMap(\.id))
             }
         }
-        .buttonStyle(.toolbarPill)
+        .foregroundStyle(.primary, .secondary)
+        .backport
+        .buttonStyle(.glass)
+        .controlSize(.small)
         .disabled(!isEditing)
     }
 

@@ -56,10 +56,11 @@ extension ItemView {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .backport
             .glassEffect(
-                .regular.selection(
-                    tint: tint,
-                    foregroundColor: foregroundColor
-                ),
+                .regular,
+//                .regular.selection(
+//                    tint: tint,
+//                    foregroundColor: foregroundColor
+//                ),
                 in: shape
             )
         }
@@ -70,7 +71,7 @@ extension ItemView {
                 // MARK: Played
 
                 if provider.item.canBePlayed {
-                    let isCheckmarkSelected = provider.item.userData?.isPlayed == true
+                    let isPlayed = provider.item.userData?.isPlayed == true
 
                     Button {
                         Task { await provider.toggleIsPlayed() }
@@ -85,19 +86,18 @@ extension ItemView {
                     #if !os(tvOS)
                     .foregroundStyle(.primary, .secondary)
                     #endif
-                    .isSelected(isCheckmarkSelected)
                 }
 
                 // MARK: Favorite
 
-                let isHeartSelected = provider.item.userData?.isFavorite == true
+                let isFavorited = provider.item.userData?.isFavorite == true
 
                 Button {
                     Task { await provider.toggleIsFavorite() }
                 } label: {
                     materialLabel(
                         L10n.favorited,
-                        systemImage: isHeartSelected ? "heart.fill" : "heart",
+                        systemImage: isFavorited ? "heart.fill" : "heart",
                         tint: .pink,
                         foregroundColor: .primary
                     )
@@ -105,7 +105,7 @@ extension ItemView {
                 #if !os(tvOS)
                 .foregroundStyle(.primary, .secondary)
                 #endif
-                .isSelected(isHeartSelected)
+                .isSelected(isFavorited)
 
                 // MARK: Trailer
 

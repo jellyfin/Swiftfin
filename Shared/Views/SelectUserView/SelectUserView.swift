@@ -293,36 +293,46 @@ struct SelectUserView: View {
                             areAllUsersSelected ? L10n.removeAll : L10n.selectAll,
                             action: toggleAllUsersSelected
                         )
-                        .buttonStyle(.toolbarPill)
+                        .foregroundStyle(.primary, .secondary)
+                        .backport
+                        .buttonStyle(.glass)
+                        .controlSize(.small)
                     }
                 }
 
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     if isEditing {
-                        Button(L10n.cancel) {
+                        Button(L10n.cancel, role: .cancel) {
                             isEditing = false
                         }
-                        .buttonStyle(.toolbarPill)
+                        .foregroundStyle(.primary, .secondary)
+                        .backport
+                        .buttonStyle(.glass)
+                        .controlSize(.small)
                     } else {
-                        Menu {
+                        Menu(
+                            L10n.advanced,
+                            systemImage: "gearshape.fill"
+                        ) {
                             AdvancedMenuContent(
                                 hasUsers: userItems.isNotEmpty,
                                 isEditing: $isEditing
                             )
-                        } label: {
-                            Label(L10n.advanced, systemImage: "gearshape.fill")
                         }
+                        .backport
+                        .buttonStyle(.glass)
+                        .controlSize(.small)
                     }
                 }
 
                 ToolbarItem(placement: .bottomBar) {
                     if isEditing {
-                        Button(L10n.delete) {
+                        Button(L10n.delete, role: .destructive) {
                             isPresentingConfirmDeleteUsers = true
                         }
-                        .buttonStyle(.toolbarPill(.red))
+                        .backport
+                        .buttonStyle(.glassProminent)
                         .disabled(selectedUsers.isEmpty)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                 }
             }

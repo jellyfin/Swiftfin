@@ -54,20 +54,25 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                 ScrollView(.horizontal) {
                     HStack(spacing: PosterHStackMetrics.itemSpacing) {
                         ForEach(elements) { element in
-                            Button {
-                                action(router, element)
-                            } label: {
+                            Group {
                                 if let imageable = element as? SystemImageable {
-                                    Label(element.displayTitle, systemImage: imageable.systemImage)
+                                    Button(element.displayTitle, systemImage: imageable.systemImage) {
+                                        action(router, element)
+                                    }
                                 } else {
-                                    EmptyLabel(element.displayTitle)
+                                    Button(element.displayTitle) {
+                                        action(router, element)
+                                    }
                                 }
                             }
                             .foregroundStyle(.primary, .secondary)
                             .font(.callout)
                             .fontWeight(.semibold)
-                            .labelStyle(CapsuleLabelStyle())
-                            .buttonBorderShape(.capsule)
+                            .backport
+                            .buttonStyle(.glass)
+//                            .backport
+//                            .glassEffect(in: .capsule)
+//                            .buttonBorderShape(.capsule)
                             .buttonStyle(.card)
                         }
                     }
