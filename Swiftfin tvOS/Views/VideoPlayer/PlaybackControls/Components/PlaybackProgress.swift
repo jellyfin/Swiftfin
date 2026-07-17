@@ -57,7 +57,11 @@ extension VideoPlayer.PlaybackControls {
 
         private var scrubbedProgress: Double {
             guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
-            return scrubbedSecondsBox.value / runtime
+
+            let progress = scrubbedSecondsBox.value / runtime
+            guard progress.isFinite else { return 0 }
+
+            return clamp(progress, min: 0, max: 1)
         }
 
         private var currentProgress: Double? {
@@ -69,7 +73,10 @@ extension VideoPlayer.PlaybackControls {
             }
 
             let currentSeconds = containerState.scrubOriginSeconds ?? manager.seconds
-            return clamp((currentSeconds / runtime) * 100, min: 0, max: 100)
+            let progress = (currentSeconds / runtime) * 100
+            guard progress.isFinite else { return nil }
+
+            return clamp(progress, min: 0, max: 100)
         }
 
         private var videoSizeAspectRatio: CGFloat {
@@ -77,13 +84,27 @@ extension VideoPlayer.PlaybackControls {
                 return 1.77
             }
 
-            return clamp(videoPlayerProxy.videoSize.value.aspectRatio, min: 0.25, max: 4)
+            let videoSize = videoPlayerProxy.videoSize.value
+            guard videoSize.width.isFinite,
+                  videoSize.height.isFinite,
+                  videoSize.width > 0,
+                  videoSize.height > 0
+            else {
+                return 1.77
+            }
+
+            let aspectRatio = videoSize.aspectRatio
+            guard aspectRatio.isFinite else { return 1.77 }
+
+            return clamp(aspectRatio, min: 0.25, max: 4)
         }
 
         private var previewXOffset: CGFloat {
+            guard sliderSize.width.isFinite, sliderSize.width > 0 else { return 0 }
+
             let videoWidth = previewImageHeight * videoSizeAspectRatio
             let p = (sliderSize.width * scrubbedProgress) - (videoWidth / 2)
-            return clamp(p, min: 0, max: sliderSize.width - videoWidth)
+            return clamp(p, min: 0, max: max(0, sliderSize.width - videoWidth))
         }
 
         @ViewBuilder
@@ -106,9 +127,17 @@ extension VideoPlayer.PlaybackControls {
                 value: $scrubbedSecondsBox.value.map(
                     getter: {
                         guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
-                        return clamp(($0.seconds / runtime.seconds) * 100, min: 0, max: 100)
+
+                        let seconds = $0.seconds
+                        let runtimeSeconds = runtime.seconds
+                        guard seconds.isFinite, runtimeSeconds.isFinite, runtimeSeconds > 0 else { return 0 }
+
+                        return clamp((seconds / runtimeSeconds) * 100, min: 0, max: 100)
                     },
-                    setter: { (manager.item.runtime ?? .zero) * ($0 / 100) }
+                    setter: {
+                        guard $0.isFinite else { return .zero }
+                        return (manager.item.runtime ?? .zero) * (clamp($0, min: 0, max: 100) / 100)
+                    }
                 ),
                 currentProgress: currentProgress,
                 total: 100,
