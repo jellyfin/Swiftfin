@@ -43,7 +43,7 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
     }()
 
     private lazy var contentView: UIHostingController<Content> = {
-        let contentView = UIHostingController(rootView: content())
+        let contentView = UIHostingController(rootView: content)
         contentView.view.translatesAutoresizingMaskIntoConstraints = false
         contentView.view.backgroundColor = nil
         return contentView
@@ -63,7 +63,7 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         self.drawer = drawer
         self.content = content
 
-        super.init(rootView: content)
+        super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
