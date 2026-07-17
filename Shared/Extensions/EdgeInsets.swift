@@ -10,6 +10,15 @@ import SwiftUI
 
 extension EdgeInsets {
 
+    static func + (lhs: EdgeInsets, rhs: CGFloat) -> EdgeInsets {
+        .init(
+            top: lhs.top + rhs,
+            leading: lhs.leading + rhs,
+            bottom: lhs.bottom + rhs,
+            trailing: lhs.trailing + rhs
+        )
+    }
+
     // TODO: finalize tvOS
     /// The padding for Views against contextual edges,
     /// typically the edges of the View's scene

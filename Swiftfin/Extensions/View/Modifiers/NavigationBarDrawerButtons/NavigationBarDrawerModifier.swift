@@ -6,23 +6,46 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
-struct NavigationBarDrawerModifier<Drawer: View>: ViewModifier {
+struct NavigationBarFilterDrawerModifier: ViewModifier {
 
-    private let drawer: Drawer
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
 
-    init(@ViewBuilder drawer: @escaping () -> Drawer) {
-        self.drawer = drawer()
+    @ObservedObject
+    var viewModel: FilterViewModel
+
+    let types: [ItemFilterType]
+
+    @ViewBuilder
+    private var drawer: some View {
+        NavigationBarFilterDrawer(
+            viewModel: viewModel,
+            types: types
+        )
     }
 
     func body(content: Content) -> some View {
-        NavigationBarDrawerView {
-            drawer
-                .ignoresSafeArea()
-        } content: {
+        if types.isEmpty {
             content
+        } else {
+            if #available(iOS 26, *), isLiquidGlassEnabled {
+                content
+                    .safeAreaBar(edge: .top, spacing: 0) {
+                        drawer
+                    }
+                    .preference(key: IsSafeAreaBarApplied.self, value: true)
+            } else {
+                NavigationBarDrawerView {
+                    drawer
+                        .ignoresSafeArea()
+                } content: {
+                    content
+                }
+                .ignoresSafeArea()
+            }
         }
-        .ignoresSafeArea()
     }
 }

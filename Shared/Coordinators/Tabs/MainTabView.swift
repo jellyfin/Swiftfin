@@ -59,7 +59,8 @@ struct MainTabView: View {
         }
     }
 
-    var body: some View {
+    @ViewBuilder
+    private func legacyTabContent() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
                 NavigationInjectionView(
@@ -86,6 +87,50 @@ struct MainTabView: View {
                     .eraseToAnyView()
                 }
                 .tag(tab.item.id)
+            }
+        }
+    }
+
+    @available(iOS 18.0, tvOS 18.0, *)
+    @ViewBuilder
+    private func tabContent() -> some View {
+        TabView(selection: $tabCoordinator.selectedTabID) {
+            ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
+                Tab(
+                    value: tab.item.id,
+                    role: tab.item.id == TabItem.search.id ? .search : nil
+                ) {
+                    NavigationInjectionView(
+                        coordinator: tab.coordinator
+                    ) {
+                        tab.item.content
+                        #if os(iOS)
+                            .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
+                                view.topBarTrailing {
+                                    FirstTabSettingsBarButton()
+                                }
+                            }
+                        #endif
+                    }
+                    .environmentObject(tabCoordinator)
+                    .environment(\.tabItemSelected, tab.publisher)
+                } label: {
+                    Label(
+                        tab.item.displayTitle,
+                        systemImage: tab.item.systemImage
+                    )
+                    .symbolRenderingMode(.monochrome)
+                }
+            }
+        }
+    }
+
+    var body: some View {
+        Group {
+            if #available(iOS 18, tvOS 18.0, *) {
+                tabContent()
+            } else {
+                legacyTabContent()
             }
         }
         .backport

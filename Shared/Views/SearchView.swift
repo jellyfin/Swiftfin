@@ -49,6 +49,7 @@ struct SearchView: View {
             ContentGroupVStack(
                 groups: viewModel.itemContentGroupViewModel.groups
             )
+            .edgePadding(.vertical)
         }
         .scrollIndicators(.hidden)
     }
@@ -72,8 +73,9 @@ struct SearchView: View {
                 ProgressView()
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.linear(duration: 0.2), value: viewModel.state)
-        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .ignoresSafeArea(.keyboard)
         .navigationTitle(L10n.search)
         .backport
         .toolbarTitleDisplayMode(.inline)
