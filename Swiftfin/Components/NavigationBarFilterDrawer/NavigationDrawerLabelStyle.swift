@@ -25,38 +25,15 @@ struct NavigationDrawerLabelStyle: LabelStyle {
     }
 
     func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: 2) {
-            configuration.icon
-
-            if !isIconOnly {
-                configuration.title
-            }
-
-            ZStack {
-                // Capture text font if icon only
-                // swiftlint:disable:next hard_coded_display_string
-                Text(" ")
-                    .hidden()
-
-                Image(systemName: "chevron.down")
-                    .font(.caption)
-            }
-        }
+        CapsuleLabelStyle(
+            spacing: 2,
+            tint: isHighlighted ? .accentColor : nil,
+            isTitleVisible: !isIconOnly,
+            isIconTrailing: !isIconOnly
+        )
+        .makeBody(configuration: configuration)
         .font(.footnote)
         .fontWeight(.semibold)
         .foregroundStyle(.primary)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 5)
-        .background {
-            ContainerRelativeShape()
-                .fill(isHighlighted ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(ComplexSecondaryShapeStyle()))
-                .opacity(0.5)
-        }
-        .overlay {
-            ContainerRelativeShape()
-                .stroke(isHighlighted ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(ComplexSecondaryShapeStyle()), lineWidth: 2)
-        }
-        .clipShape(.capsule)
-        .containerShape(.capsule)
     }
 }

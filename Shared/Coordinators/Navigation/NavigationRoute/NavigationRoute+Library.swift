@@ -23,14 +23,27 @@ extension NavigationRoute {
         }
     }
 
-    static func library(
-        viewModel: PagingLibraryViewModel<some Poster>
+    @MainActor
+    static func contentGroup(
+        provider: some ContentGroupProvider
     ) -> NavigationRoute {
         NavigationRoute(
-            id: "library-(\(viewModel.parent?.id ?? "Unparented"))",
+            id: "content-group-\(provider.id)",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            PagingLibraryView(viewModel: viewModel)
+            ContentGroupView(provider: provider)
+        }
+    }
+
+    @MainActor
+    static func library<Library: PagingLibrary>(
+        library: Library
+    ) -> NavigationRoute where Library.Element: LibraryElement {
+        NavigationRoute(
+            id: "library-\(library.parent.pagingLibraryID)",
+            withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
+        ) {
+            PagingLibraryView(library: library)
         }
     }
 }

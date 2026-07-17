@@ -8,6 +8,7 @@
 
 import Combine
 import Defaults
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -276,52 +277,25 @@ class PlaybackInformationProvider: ViewModel, MediaPlayerObserver {
 
     weak var manager: MediaPlayerManager?
 
-    private let itemID: String
-    private let timer = PokeIntervalTimer()
-
-    private var currentSessionTask: AnyCancellable?
-
     init(itemID: String) {
-        self.itemID = itemID
         super.init()
 
-        timer.poke()
-        timer.sink { [weak self] in
-            self?.getCurrentSession()
-            self?.timer.poke()
-        }
-        .store(in: &cancellables)
-    }
-
-    private func getCurrentSession() {
-        currentSessionTask?.cancel()
-
-        currentSessionTask = Task {
-            do {
-                let parameters = try Paths.GetSessionsParameters(
-                    deviceID: authenticatedClient.configuration.deviceID
-                )
-                let request = Paths.getSessions(
-                    parameters: parameters
-                )
-
-                let response = try await send(request)
-                let sessions = response.value
-
-                // Match by device, falling back to nowPlayingItem ID
-                let matchingSession = sessions.first(where: {
-                    $0.nowPlayingItem?.id == itemID
-                }) ?? sessions.first
-
-                await MainActor.run {
-                    self.currentSession = matchingSession
-                }
-            } catch is CancellationError {
-                // expected when polling resets
-            } catch {
-                logger.error("Failed to get current session: \(error.localizedDescription)")
+        Container.shared.userSessionManager()
+            .$currentSession
+            .map { session -> AnyPublisher<[SessionInfoDto], Never> in
+                session?.serverSocketManager.sessions() ?? Combine.Empty<[SessionInfoDto], Never>().eraseToAnyPublisher()
             }
-        }
-        .asAnyCancellable()
+            .switchToLatest()
+            .sink { [weak self] sessions in
+                Task { @MainActor in
+                    guard let self else { return }
+
+                    let deviceID = self.userSession?.client.configuration.deviceID
+                    let deviceSessions = sessions.filter { $0.deviceID == deviceID }
+
+                    self.currentSession = deviceSessions.first(where: { $0.nowPlayingItem?.id == itemID }) ?? deviceSessions.first
+                }
+            }
+            .store(in: &cancellables)
     }
 }

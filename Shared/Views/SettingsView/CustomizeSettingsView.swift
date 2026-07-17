@@ -8,7 +8,7 @@
 
 import Defaults
 import Engine
-import Factory
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -38,21 +38,17 @@ struct CustomizeSettingsView: View {
 
     // MARK: - Library Defaults
 
-    @Default(.Customization.Library.displayType)
-    private var libraryDisplayType
-    @Default(.Customization.Library.posterType)
-    private var libraryPosterType
-    @Default(.Customization.Library.listColumnCount)
-    private var listColumnCount
+    @Default(.Customization.Library.style)
+    private var libraryStyle
     @Default(.Customization.Library.rememberLayout)
     private var rememberLibraryLayout
     @Default(.Customization.Library.rememberSort)
     private var rememberLibrarySort
+    @Default(.Customization.Library.cinematicBackground)
+    private var cinematicBackground
 
     // MARK: - Poster Defaults
 
-    @Default(.Customization.showPosterLabels)
-    private var showPosterLabels
     @Default(.Customization.nextUpPosterType)
     private var nextUpPosterType
     @Default(.Customization.recentlyAddedPosterType)
@@ -82,12 +78,6 @@ struct CustomizeSettingsView: View {
     @Default(.Customization.shouldShowMissingSeasons)
     private var shouldShowMissingSeasons
 
-    // MARK: - Item View Defaults
-
-    @Default(.Customization.itemViewType)
-    private var itemViewType
-    @Default(.Customization.CinematicItemViewType.usePrimaryImage)
-    private var cinematicItemViewTypeUsePrimaryImage
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
 
@@ -244,14 +234,14 @@ struct CustomizeSettingsView: View {
     @ViewBuilder
     private var librarySettings: some View {
         Section(L10n.libraries) {
-            PlatformPicker(L10n.posters, selection: $libraryPosterType)
+            PlatformPicker(L10n.posters, selection: $libraryStyle.posterDisplayType)
 
-            PlatformPicker(L10n.defaultLayout, selection: $libraryDisplayType)
+            PlatformPicker(L10n.defaultLayout, selection: $libraryStyle.displayType)
 
-            if libraryDisplayType == .list, UIDevice.isPad || UIDevice.isTV {
-                Stepper(L10n.columns, value: $listColumnCount, in: 1 ... 3, step: 1) {
+            if libraryStyle.displayType == .list, UIDevice.isPad || UIDevice.isTV {
+                Stepper(L10n.columns, value: $libraryStyle.listColumnCount, in: 1 ... 3, step: 1) {
                     LabeledContent(L10n.columns) {
-                        Text(listColumnCount.description)
+                        Text(libraryStyle.listColumnCount.description)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -261,6 +251,10 @@ struct CustomizeSettingsView: View {
             Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
 
             Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
+
+            #if os(tvOS)
+            Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
+            #endif
         }
     }
 
@@ -269,8 +263,6 @@ struct CustomizeSettingsView: View {
     @ViewBuilder
     private var posterSettings: some View {
         Section(L10n.posters) {
-            Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
-
             ChevronButton(L10n.indicators) {
                 router.route(to: .indicatorSettings)
             }
@@ -315,19 +307,9 @@ struct CustomizeSettingsView: View {
     private var itemViewSettings: some View {
         if UIDevice.isPhone {
             Section {
-                PlatformPicker(L10n.type, selection: $itemViewType)
-
-                if itemViewType == .cinematic {
-                    Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
-                }
-
                 Toggle(L10n.useSeriesImageForEpisodes, isOn: $useSeriesLandscapeBackdrop)
             } header: {
                 Text(L10n.itemView)
-            } footer: {
-                if itemViewType == .cinematic {
-                    Text(L10n.usePrimaryImageDescription)
-                }
             }
         }
     }

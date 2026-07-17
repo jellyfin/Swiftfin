@@ -17,6 +17,14 @@ extension MediaSourceInfo: Displayable {
 
 extension MediaSourceInfo {
 
+    var supportedBitrates: [PlaybackBitrate] {
+        guard let bitrate else { return PlaybackBitrate.allCases }
+
+        return PlaybackBitrate.allCases.filter {
+            $0 == .max || $0.rawValue <= bitrate
+        }
+    }
+
     var audioStreams: [MediaStream]? {
         mediaStreams?.filter { $0.type == .audio }
     }

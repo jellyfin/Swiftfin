@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import Factory
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -42,7 +42,7 @@ extension ServerUsersView {
 
         // MARK: - User Status Mapping
 
-        private var userActive: Bool {
+        private var isUserActive: Bool {
             if let isDisabled = user.policy?.isDisabled {
                 !isDisabled
             } else {
@@ -53,7 +53,7 @@ extension ServerUsersView {
         // MARK: - Label Styling
 
         private var labelForegroundStyle: some ShapeStyle {
-            guard isEditing else { return userActive ? .primary : .secondary }
+            guard isEditing else { return isUserActive ? .primary : .secondary }
 
             return isSelected ? .primary : .secondary
         }
@@ -70,7 +70,7 @@ extension ServerUsersView {
                         maxWidth: 60
                     )
                 )
-                .environment(\.isEnabled, userActive)
+                .environment(\.isEnabled, isUserActive)
                 .isEditing(isEditing)
                 .isSelected(isSelected)
             }
@@ -126,7 +126,6 @@ extension ServerUsersView {
             } action: {
                 action()
             }
-            .isSeparatorVisible(false)
             .swipeActions {
                 Button(
                     L10n.delete,

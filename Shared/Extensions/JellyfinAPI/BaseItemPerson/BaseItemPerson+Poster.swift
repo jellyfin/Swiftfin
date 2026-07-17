@@ -6,19 +6,26 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import SwiftUI
 
 extension BaseItemPerson: Poster {
 
-    var preferredPosterDisplayType: PosterDisplayType {
-        .portrait
+    struct Environment: WithDefaultValue, WithImageSourceOptions {
+
+        var maxWidth: CGFloat?
+        var maxHeight: CGFloat?
+        var quality: Int?
+
+        static var `default`: Self {
+            .init()
+        }
     }
 
-    var unwrappedIDHashOrZero: Int {
-        id?.hashValue ?? 0
+    var preferredPosterDisplayType: PosterDisplayType {
+        .portrait
     }
 
     var subtitle: String? {
@@ -29,36 +36,29 @@ extension BaseItemPerson: Poster {
         "person.fill"
     }
 
-    func portraitImageSources(maxWidth: CGFloat? = nil, quality: Int? = nil) -> [ImageSource] {
-
-        guard let client = Container.shared.currentUserSession()?.client else { return [] }
-
-        // TODO: figure out what to do about screen scaling with .main being deprecated
-        //       - maxWidth assume already scaled?
-        let scaleWidth: Int? = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
-
-        let imageRequestParameters = Paths.GetItemImageParameters(
-            maxWidth: scaleWidth ?? Int(maxWidth),
-            quality: quality,
-            tag: primaryImageTag
-        )
-
-        let imageRequest = Paths.getItemImage(
-            itemID: id ?? "",
-            imageType: ImageType.primary.rawValue,
-            parameters: imageRequestParameters
-        )
-
-        let url = client.url(with: imageRequest)
-        let blurHash: String? = imageBlurHashes?.primary?[primaryImageTag]
-
-        return [ImageSource(
-            url: url,
-            blurHash: blurHash
-        )]
+    var posterLabel: some View {
+        BaseItemDto(person: self).posterLabel
     }
 
-    func transform(image: Image) -> some View {
-        image
+    var posterContextMenu: some View {
+        BaseItemDto(person: self).posterContextMenu
+    }
+
+    func portraitImageSources(
+        environment: Environment
+    ) -> [ImageSource] {
+        BaseItemDto(person: self)
+            .portraitImageSources(
+                environment: baseItemDtoEnvironment(from: environment)
+            )
+    }
+
+    private func baseItemDtoEnvironment(from environment: Environment) -> BaseItemDto.Environment {
+        var itemEnvironment = BaseItemDto.Environment.default
+        itemEnvironment.maxWidth = environment.maxWidth
+        itemEnvironment.maxHeight = environment.maxHeight
+        itemEnvironment.quality = environment.quality
+
+        return itemEnvironment
     }
 }

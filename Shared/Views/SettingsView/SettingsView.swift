@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import Factory
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -23,6 +23,9 @@ struct SettingsView: View {
 
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
+
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
 
     @Router
     private var router
@@ -85,9 +88,11 @@ struct SettingsView: View {
 
         Section {
             Button(L10n.switchUser) {
-                UIDevice.impact(.medium)
-                viewModel.signOut()
-                router.dismiss()
+                Task { @MainActor in
+                    UIDevice.impact(.medium)
+                    await userSessionManager.signOut(reason: .explicit)
+                    router.dismiss()
+                }
             }
             .buttonStyle(.primary)
             .foregroundStyle(accentColor.overlayColor, accentColor)

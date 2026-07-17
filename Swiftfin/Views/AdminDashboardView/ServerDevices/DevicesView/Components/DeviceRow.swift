@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import Factory
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -112,7 +112,6 @@ extension DevicesView {
             } action: {
                 action()
             }
-            .isSeparatorVisible(false)
             .swipeActions {
                 if let onDelete {
                     Button(

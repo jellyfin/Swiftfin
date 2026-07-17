@@ -39,10 +39,6 @@ extension RemoteImageInfo: Poster {
         providerName ?? L10n.unknown
     }
 
-    var unwrappedIDHashOrZero: Int {
-        id
-    }
-
     var subtitle: String? {
         language
     }
@@ -52,22 +48,19 @@ extension RemoteImageInfo: Poster {
     }
 
     func portraitImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?
+        environment: Empty
     ) -> [ImageSource] {
         imageSources
     }
 
     func landscapeImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?
+        environment: Empty
     ) -> [ImageSource] {
         imageSources
     }
 
     func squareImageSources(
-        maxWidth: CGFloat?,
-        quality: Int?
+        environment: Empty
     ) -> [ImageSource] {
         imageSources
     }

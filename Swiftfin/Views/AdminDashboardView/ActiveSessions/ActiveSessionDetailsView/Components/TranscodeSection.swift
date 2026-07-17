@@ -1,0 +1,41 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+import JellyfinAPI
+import SwiftUI
+
+extension ActiveSessionDetailsView {
+
+    struct TranscodeSection: View {
+
+        let transcodeReasons: [TranscodeReason]
+
+        var body: some View {
+            VStack(alignment: .center) {
+
+                let transcodeIcons = Set(transcodeReasons.map(\.systemImage)).sorted()
+
+                HStack {
+                    ForEach(transcodeIcons, id: \.self) { icon in
+                        Image(systemName: icon)
+                            .foregroundStyle(.primary)
+                            .symbolRenderingMode(.monochrome)
+                    }
+                }
+
+                Divider()
+
+                ForEach(transcodeReasons, id: \.self) { reason in
+                    Text(reason.displayTitle)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                }
+            }
+        }
+    }
+}

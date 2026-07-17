@@ -11,35 +11,19 @@ import SwiftUI
 
 struct IndicatorSettingsView: View {
 
-    @Default(.Customization.Indicators.showUnplayed)
-    private var showUnplayed
-
-    @Default(.Customization.Indicators.showPlayed)
-    private var showPlayed
-    @Default(.Customization.Indicators.showFavorited)
-    private var showFavorited
-    @Default(.Customization.Indicators.showProgress)
-    private var showProgress
+    @Default(.Customization.Indicators.enabled)
+    private var indicators
 
     var body: some View {
         Form(systemImage: "checkmark.circle.fill") {
             Section(L10n.posters) {
+                Toggle(L10n.showWatched, isOn: $indicators.contains(.played))
 
-                #if os(tvOS)
-                ListRowMenu(L10n.showUnwatched, selection: $showUnplayed)
-                #else
-                Picker(L10n.showUnwatched, selection: $showUnplayed) {
-                    ForEach(UnplayedIndicatorType.allCases) { option in
-                        Text(option.displayTitle).tag(option)
-                    }
-                }
-                #endif
+                Toggle(L10n.showFavorited, isOn: $indicators.contains(.favorited))
 
-                Toggle(L10n.showWatched, isOn: $showPlayed)
+                Toggle(L10n.showProgress, isOn: $indicators.contains(.progress))
 
-                Toggle(L10n.showFavorited, isOn: $showFavorited)
-
-                Toggle(L10n.showProgress, isOn: $showProgress)
+                Toggle(L10n.showUnwatched, isOn: $indicators.contains(.unplayed))
             }
             .navigationTitle(L10n.indicators)
         }

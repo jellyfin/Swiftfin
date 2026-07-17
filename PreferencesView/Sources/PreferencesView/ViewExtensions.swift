@@ -50,18 +50,27 @@ public extension View {
 #if os(tvOS)
 public struct UIInterfaceOrientationMask: OptionSet {
 
-    public let rawValue: UInt
+    public let rawValue: Int
 
-    public init(rawValue: UInt) {
+    public init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
-    public static let portrait = UIInterfaceOrientationMask(rawValue: 1 << 1)
-    public static let landscapeLeft = UIInterfaceOrientationMask(rawValue: 1 << 4)
-    public static let landscapeRight = UIInterfaceOrientationMask(rawValue: 1 << 3)
-    public static let portraitUpsideDown = UIInterfaceOrientationMask(rawValue: 1 << 2)
-    public static let landscape: UIInterfaceOrientationMask = [.landscapeLeft, .landscapeRight]
-    public static let all: UIInterfaceOrientationMask = [.portrait, .landscapeLeft, .landscapeRight, .portraitUpsideDown]
-    public static let allButUpsideDown: UIInterfaceOrientationMask = [.portrait, .landscapeLeft, .landscapeRight]
+    public static let portrait = Self(rawValue: 1 << 1)
+    public static let landscapeLeft = Self(rawValue: 1 << 4)
+    public static let landscapeRight = Self(rawValue: 1 << 3)
+    public static let portraitUpsideDown = Self(rawValue: 1 << 2)
+
+    public static var landscape: Self {
+        [.landscapeLeft, .landscapeRight]
+    }
+
+    public static var all: Self {
+        [.portrait, .landscapeLeft, .landscapeRight, .portraitUpsideDown]
+    }
+
+    public static var allButUpsideDown: Self {
+        [.portrait, .landscapeLeft, .landscapeRight]
+    }
 }
 #endif

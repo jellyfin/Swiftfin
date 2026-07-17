@@ -8,7 +8,7 @@
 
 import Algorithms
 import AVKit
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import MediaPlayer
@@ -25,6 +25,7 @@ extension BaseItemDto {
             name: person.name,
             type: .person
         )
+        self.people = [person]
     }
 }
 
@@ -32,13 +33,6 @@ extension BaseItemDto: Displayable {
 
     var displayTitle: String {
         name ?? L10n.unknown
-    }
-}
-
-extension BaseItemDto: LibraryIdentifiable {
-
-    var unwrappedIDHashOrZero: Int {
-        id?.hashValue ?? 0
     }
 }
 
@@ -129,7 +123,7 @@ extension BaseItemDto {
 
     var birthplace: String? {
         guard type == .person else { return nil }
-        return productionLocations?.first
+        return productionLocations?.first { $0.isNotEmpty }
     }
 
     var deathday: Date? {
@@ -173,7 +167,11 @@ extension BaseItemDto {
     /// image used in the now playing system.
     @MainActor
     func getNowPlayingImage() async -> UIImage? {
-        let imageSources = thumbImageSources()
+        let imageSources = imageSources(
+            for: preferredPosterDisplayType,
+            size: .small,
+            environment: .init(useParent: true)
+        )
 
         guard let firstImage = await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageSources) else {
             let failedSystemContentView = SystemImageContentView(
@@ -191,7 +189,7 @@ extension BaseItemDto {
             Rectangle()
                 .fill(Color.secondarySystemFill)
 
-            transform(image: image)
+            transform(image: image, displayType: preferredPosterDisplayType)
         }
         .posterAspectRatio(preferredPosterDisplayType, contentMode: .fit)
         .frame(width: 400)
@@ -213,7 +211,7 @@ extension BaseItemDto {
                 else {
                     throw ErrorMessage(L10n.unknownError)
                 }
-                return try await MediaPlayerItem.build(for: program, mediaSource: mediaSource)
+                return try await MediaPlayerItem.build(for: channel, mediaSource: mediaSource)
             }
         default:
             MediaPlayerItemProvider(item: self) { item in
@@ -485,7 +483,7 @@ extension BaseItemDto {
         switch type {
         case .audio:
             L10n.album
-        case .episode:
+        case .episode, .season:
             L10n.series
         case .musicAlbum:
             L10n.artist
@@ -498,12 +496,23 @@ extension BaseItemDto {
         switch type {
         case .audio:
             album
-        case .episode:
+        case .episode, .season:
             seriesName
         case .musicAlbum:
             albumArtist
+        case .liveTvProgram, .program, .tvProgram:
+            channelName
         default:
             nil
+        }
+    }
+
+    var parentRootID: String? {
+        switch type {
+        case .episode:
+            seriesID
+        default:
+            parentID
         }
     }
 

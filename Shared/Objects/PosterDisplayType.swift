@@ -6,7 +6,52 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Foundation
+
+#if os(iOS)
+private let landscapeMaxWidth: CGFloat = 300
+private let portraitMaxWidth: CGFloat = 200
+#else
+private let landscapeMaxWidth: CGFloat = 500
+private let portraitMaxWidth: CGFloat = 500
+#endif
+
 enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
+
+    enum Size: Equatable, Hashable, Storable {
+
+        case extraSmall
+        case small
+        case medium
+        case custom(width: CGFloat)
+
+        var quality: Int? {
+            90
+        }
+
+        func width(for displayType: PosterDisplayType) -> CGFloat? {
+            switch self {
+            case .extraSmall:
+                switch displayType {
+                case .landscape:
+                    110
+                case .portrait, .square:
+                    60
+                }
+            case .small:
+                switch displayType {
+                case .landscape:
+                    landscapeMaxWidth
+                case .portrait, .square:
+                    portraitMaxWidth
+                }
+            case .medium:
+                landscapeMaxWidth
+            case let .custom(width):
+                width
+            }
+        }
+    }
 
     case landscape
     case portrait
@@ -32,13 +77,5 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
         case .square:
             "square.fill"
         }
-    }
-}
-
-// TODO: remove after library views support all types
-extension PosterDisplayType: SupportedCaseIterable {
-
-    static var supportedCases: [PosterDisplayType] {
-        [.landscape, .portrait]
     }
 }

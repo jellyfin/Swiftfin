@@ -69,7 +69,7 @@ extension NavigationRoute {
         NavigationRoute(
             id: "customizeSettingsView"
         ) {
-            CustomizeSettingsView()
+            CustomizeViewsSettings()
         }
     }
 
@@ -128,7 +128,7 @@ extension NavigationRoute {
         NavigationRoute(
             id: "serverConnections-\(viewModel.server.id)"
         ) {
-            ServerConnectionsView(viewModel: viewModel)
+            ServerConnectionView(viewModel: viewModel)
         }
     }
 
@@ -171,6 +171,24 @@ extension NavigationRoute {
         }
     }
     #endif
+
+    static let itemSettings = NavigationRoute(
+        id: "itemSettings"
+    ) {
+        CustomizeViewsSettings.ItemSection()
+    }
+
+    static let librarySettings = NavigationRoute(
+        id: "librarySettings"
+    ) {
+        CustomizeViewsSettings.LibrarySection()
+    }
+
+    static let posterSettings = NavigationRoute(
+        id: "posterSettings"
+    ) {
+        CustomizeViewsSettings.PosterSection()
+    }
 
     static var indicatorSettings: NavigationRoute {
         NavigationRoute(

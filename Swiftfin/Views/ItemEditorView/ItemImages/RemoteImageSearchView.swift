@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import BlurHashKit
 import CollectionVGrid
 import JellyfinAPI
 import SwiftUI
@@ -22,6 +21,10 @@ struct RemoteImageSearchView: View {
     @StateObject
     private var remoteImageInfoViewModel: RemoteImageInfoViewModel
 
+    private var imageType: ImageType {
+        remoteImageInfoViewModel.remoteImageLibrary.library.imageType
+    }
+
     private var layout: CollectionVGridLayout {
         guard UIDevice.isPhone else {
             return .minWidth(150)
@@ -31,83 +34,41 @@ struct RemoteImageSearchView: View {
     }
 
     private var posterType: PosterDisplayType {
-        remoteImageInfoViewModel.imageType.posterDisplayType(for: viewModel.item.type)
+        imageType.posterDisplayType(for: viewModel.item.type)
     }
 
     init(viewModel: ItemImageViewModel, imageType: ImageType) {
         self.viewModel = viewModel
         self._remoteImageInfoViewModel = StateObject(
-            wrappedValue: RemoteImageInfoViewModel(
-                imageType: imageType,
-                parent: viewModel.item
+            wrappedValue: .init(
+                itemID: viewModel.item.id ?? "unknown",
+                imageType: imageType
             )
         )
     }
 
     var body: some View {
-        ZStack {
-            switch remoteImageInfoViewModel.state {
-            case .initial, .refreshing:
-                ProgressView()
-            case .content:
-                contentView
-            case let .error(error):
-                ErrorView(error: error)
-            }
-        }
+        ImageElementsView(
+            viewModel: remoteImageInfoViewModel.remoteImageLibrary,
+            itemImageViewModel: viewModel,
+            layout: layout,
+            posterType: posterType
+        )
         .backport
         .toolbarTitleDisplayMode(.inline)
-        .navigationTitle(remoteImageInfoViewModel.imageType.displayTitle.localizedCapitalized)
-        .animation(.linear(duration: 0.1), value: remoteImageInfoViewModel.state)
+        .navigationTitle(imageType.displayTitle.localizedCapitalized)
         .navigationBarBackButtonHidden(viewModel.background.is(.updating))
         .navigationBarMenuButton(isLoading: viewModel.background.is(.updating)) {
-            Button {
-                remoteImageInfoViewModel.includeAllLanguages.toggle()
-            } label: {
-                if remoteImageInfoViewModel.includeAllLanguages {
-                    Label(L10n.allLanguages, systemImage: "checkmark")
-                } else {
-                    Text(L10n.allLanguages)
-                }
-            }
-
-            if remoteImageInfoViewModel.providers.isNotEmpty {
-                Menu {
-                    Button {
-                        remoteImageInfoViewModel.provider = nil
-                    } label: {
-                        if remoteImageInfoViewModel.provider == nil {
-                            Label(L10n.all, systemImage: "checkmark")
-                        } else {
-                            Text(L10n.all)
-                        }
-                    }
-
-                    ForEach(remoteImageInfoViewModel.providers, id: \.self) { provider in
-                        Button {
-                            remoteImageInfoViewModel.provider = provider
-                        } label: {
-                            if remoteImageInfoViewModel.provider == provider {
-                                Label(provider, systemImage: "checkmark")
-                            } else {
-                                Text(provider)
-                            }
-                        }
-                    }
-                } label: {
-                    Text(L10n.provider)
-                    Text(remoteImageInfoViewModel.provider ?? L10n.all)
-                }
-            }
+            ImageProvidersMenuContent(viewModel: remoteImageInfoViewModel)
         }
         .navigationBarCloseButton {
             router.dismiss()
         }
         .onFirstAppear {
-            remoteImageInfoViewModel.send(.refresh)
+            remoteImageInfoViewModel.refresh()
         }
         .refreshable {
-            remoteImageInfoViewModel.send(.refresh)
+            remoteImageInfoViewModel.refresh()
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -118,35 +79,122 @@ struct RemoteImageSearchView: View {
             }
         }
     }
+}
 
-    @ViewBuilder
-    private var contentView: some View {
-        if remoteImageInfoViewModel.elements.isEmpty {
-            ContentUnavailableView(
-                L10n.noResults.localizedCapitalized,
-                systemImage: "photo"
-            )
-        } else {
-            CollectionVGrid(
-                uniqueElements: remoteImageInfoViewModel.elements,
-                layout: layout
-            ) { image in
-                PosterButton(
-                    item: image,
-                    type: posterType
-                ) { namespace in
-                    router.route(
-                        to: .remoteImageDetail(
-                            viewModel: viewModel,
-                            remoteImageInfo: image
-                        ), in: namespace
-                    )
-                } label: {
-                    EmptyView()
+extension RemoteImageSearchView {
+
+    private struct ImageElementsView: View {
+
+        @ObservedObject
+        private var viewModel: PagingLibraryViewModel<RemoteImageLibrary>
+
+        @Router
+        private var router
+
+        private let itemImageViewModel: ItemImageViewModel
+        private let layout: CollectionVGridLayout
+        private let posterType: PosterDisplayType
+
+        init(
+            viewModel: PagingLibraryViewModel<RemoteImageLibrary>,
+            itemImageViewModel: ItemImageViewModel,
+            layout: CollectionVGridLayout,
+            posterType: PosterDisplayType
+        ) {
+            self.viewModel = viewModel
+            self.itemImageViewModel = itemImageViewModel
+            self.layout = layout
+            self.posterType = posterType
+        }
+
+        @ViewBuilder
+        private var gridView: some View {
+            if viewModel.elements.isEmpty {
+                ContentUnavailableView(
+                    L10n.noResults.localizedCapitalized,
+                    systemImage: "photo"
+                )
+            } else {
+                CollectionVGrid(
+                    uniqueElements: viewModel.elements,
+                    layout: layout
+                ) { image in
+                    imageButton(image)
+                }
+                .onReachedBottomEdge(offset: .offset(300)) {
+                    viewModel.getNextPage()
                 }
             }
-            .onReachedBottomEdge(offset: .offset(300)) {
-                remoteImageInfoViewModel.send(.getNextPage)
+        }
+
+        @ViewBuilder
+        private func imageButton(_ image: RemoteImageInfo) -> some View {
+            PosterButton(
+                item: image,
+                displayType: posterType
+            ) { namespace in
+                router.route(
+                    to: .remoteImageDetail(
+                        viewModel: itemImageViewModel,
+                        remoteImageInfo: image
+                    ), in: namespace
+                )
+            }
+        }
+
+        var body: some View {
+            ZStack {
+                switch viewModel.state {
+                case .content:
+                    gridView
+                case .initial, .refreshing:
+                    ProgressView()
+                case .error:
+                    viewModel.error.map(ErrorView.init)
+                }
+            }
+            .animation(.linear(duration: 0.1), value: viewModel.state)
+        }
+    }
+
+    private struct ImageProvidersMenuContent: View {
+
+        @ObservedObject
+        private var remoteImagesViewModel: PagingLibraryViewModel<RemoteImageLibrary>
+        @ObservedObject
+        private var providersViewModel: PagingLibraryViewModel<RemoteImageProvidersLibrary>
+
+        init(viewModel: RemoteImageInfoViewModel) {
+            self.remoteImagesViewModel = viewModel.remoteImageLibrary
+            self.providersViewModel = viewModel.remoteImageProvidersLibrary
+        }
+
+        var body: some View {
+            Group {
+                Toggle(
+                    L10n.allLanguages,
+                    isOn: $remoteImagesViewModel.environment.includeAllLanguages
+                )
+
+                if providersViewModel.elements.isNotEmpty {
+                    Picker(selection: $remoteImagesViewModel.environment.provider) {
+                        Text(L10n.all)
+                            .tag(nil as String?)
+
+                        ForEach(providersViewModel.elements) { provider in
+                            Text(provider.name ?? L10n.unknown)
+                                .tag(provider.name)
+                        }
+                    } label: {
+                        Text(L10n.provider)
+                        Text(remoteImagesViewModel.environment.provider ?? L10n.all)
+                    }
+                    .pickerStyle(.menu)
+                }
+            }
+            .backport
+            .onChange(of: remoteImagesViewModel.environment) {
+                remoteImagesViewModel.refresh()
             }
         }
     }

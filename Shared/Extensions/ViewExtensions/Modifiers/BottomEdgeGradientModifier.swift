@@ -13,17 +13,20 @@ struct BottomEdgeGradientModifier: ViewModifier {
     let bottomColor: Color
 
     func body(content: Content) -> some View {
-        VStack(spacing: 0) {
-            content
-                .overlay {
-                    bottomColor
-                        .maskLinearGradient {
-                            (location: 0.8, opacity: 0)
-                            (location: 0.95, opacity: 1)
-                        }
-                }
-
-            bottomColor
-        }
+        content
+            .overlay(
+                alignment: .bottom,
+                extendedBy: .init(top: 0, leading: 0, bottom: 10, trailing: 0)
+            ) {
+                EasedGradient(
+                    colors: [.clear, bottomColor],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 50)
+            }
+            .background(extendedBy: .init(top: 0, leading: 0, bottom: 1000, trailing: 0)) {
+                bottomColor
+            }
     }
 }

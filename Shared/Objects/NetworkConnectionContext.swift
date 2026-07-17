@@ -13,15 +13,15 @@ import Network
 import NetworkExtension
 #endif
 
-struct NetworkConnectionContext {
+struct NetworkConnectionContext: Equatable {
 
     let isSatisfied: Bool
-    let interface: ServerConnectionInterface
+    let interface: ServerConnection.Interface
     let wifiSSID: String?
 
     init(
         isSatisfied: Bool,
-        interface: ServerConnectionInterface,
+        interface: ServerConnection.Interface,
         wifiSSID: String?
     ) {
         self.isSatisfied = isSatisfied
@@ -29,15 +29,13 @@ struct NetworkConnectionContext {
         self.wifiSSID = wifiSSID?.nilIfBlank
     }
 
-    static func current(path: Network.NWPath) async -> NetworkConnectionContext {
+    init(path: Network.NWPath) async {
         let interface = Self.interface(for: path)
-        let wifiSSID = path.status == .satisfied && interface == .wifi ? await currentWifiSSID() : nil
+        let wifiSSID = path.status == .satisfied && interface == .wifi ? await Self.currentWifiSSID() : nil
 
-        return .init(
-            isSatisfied: path.status == .satisfied,
-            interface: interface,
-            wifiSSID: wifiSSID
-        )
+        self.isSatisfied = path.status == .satisfied
+        self.interface = interface
+        self.wifiSSID = wifiSSID
     }
 
     static func current() async -> NetworkConnectionContext {
@@ -51,7 +49,7 @@ struct NetworkConnectionContext {
                 monitor.cancel()
 
                 Task {
-                    let context = await Self.current(path: path)
+                    let context = await NetworkConnectionContext(path: path)
                     continuation.resume(returning: context)
                 }
             }
@@ -68,7 +66,7 @@ struct NetworkConnectionContext {
         )
     }
 
-    private static func interface(for path: Network.NWPath) -> ServerConnectionInterface {
+    private static func interface(for path: Network.NWPath) -> ServerConnection.Interface {
         if path.usesInterfaceType(.wifi) {
             .wifi
         } else if path.usesInterfaceType(.cellular) {

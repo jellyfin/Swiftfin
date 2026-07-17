@@ -6,12 +6,8 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Factory
 import Foundation
 import JellyfinAPI
-
-// TODO: move bitrate test to `MediaPlayerManager`
 
 enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
     case auto = 0
@@ -31,64 +27,37 @@ enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
     case kbps720 = 720_000
     case kbps420 = 420_000
 
+    // swiftlint:disable:next hard_coded_display_string
     var displayTitle: String {
         switch self {
         case .auto:
             L10n.auto
         case .max:
-            L10n.bitrateMax
-        case .mbps120:
-            L10n.bitrateMbps120
-        case .mbps80:
-            L10n.bitrateMbps80
-        case .mbps60:
-            L10n.bitrateMbps60
-        case .mbps40:
-            L10n.bitrateMbps40
-        case .mbps20:
-            L10n.bitrateMbps20
-        case .mbps15:
-            L10n.bitrateMbps15
-        case .mbps10:
-            L10n.bitrateMbps10
-        case .mbps8:
-            L10n.bitrateMbps8
-        case .mbps6:
-            L10n.bitrateMbps6
-        case .mbps4:
-            L10n.bitrateMbps4
-        case .mbps3:
-            L10n.bitrateMbps3
-        case .kbps1500:
-            L10n.bitrateKbps1500
-        case .kbps720:
-            L10n.bitrateKbps720
+            L10n.maximum
+        default:
+            if let resolution {
+                "\(resolution) - \(rawValue.formatted(.bitRate))"
+            } else {
+                rawValue.formatted(.bitRate)
+            }
+        }
+    }
+
+    // swiftlint:disable:next hard_coded_display_string
+    var resolution: String? {
+        switch self {
+        case .mbps120, .mbps80:
+            "4K"
+        case .mbps60, .mbps40, .mbps20, .mbps15, .mbps10:
+            "1080p"
+        case .mbps8, .mbps6, .mbps4:
+            "720p"
+        case .mbps3, .kbps1500, .kbps720:
+            "480p"
         case .kbps420:
-            L10n.bitrateKbps420
+            "360p"
+        default:
+            nil
         }
-    }
-
-    func getMaxBitrate() async throws -> Int {
-
-        guard self == .auto else { return rawValue }
-
-        let bitrateTestSize = Defaults[.VideoPlayer.appMaximumBitrateTest]
-        return try await testBitrate(with: bitrateTestSize.rawValue)
-    }
-
-    private func testBitrate(with testSize: Int) async throws -> Int {
-        precondition(testSize > 0, "testSize must be greater than zero")
-
-        guard let userSession = Container.shared.currentUserSession() else {
-            throw UserSessionError.missingCurrentSession
-        }
-
-        let testStartTime = Date()
-        let _ = try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
-        let testDuration = Date().timeIntervalSince(testStartTime)
-        let testSizeBits = Double(testSize * 8)
-        let testBitrate = testSizeBits / testDuration
-
-        return clamp(Int(testBitrate), min: 1_500_000, max: Int(Int32.max))
     }
 }

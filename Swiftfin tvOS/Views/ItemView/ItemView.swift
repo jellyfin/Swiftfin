@@ -6,95 +6,73 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
+import Defaults
 import SwiftUI
+
+// TODO: scrollTargetLayout and scrollTargetBehavior to scroll views
 
 struct ItemView: View {
 
-    protocol ScrollContainerView: View {
-
-        associatedtype Content: View
-
-        init(viewModel: ItemViewModel, content: @escaping () -> Content)
-    }
+    @Default(.Customization.itemViewType)
+    private var itemViewType
 
     @StateObject
-    private var viewModel: ItemViewModel
+    private var provider: ItemContentGroupProvider
+    @StateObject
+    private var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
 
-    // MARK: typeViewModel
+    init(provider: ItemContentGroupProvider) {
+        self._provider = StateObject(wrappedValue: provider)
+        self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
+    }
 
-    private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
-        switch item.type {
-        case .boxSet, .person, .musicArtist:
-            return CollectionItemViewModel(item: item)
-        case .episode:
-            return EpisodeItemViewModel(item: item)
-        case .movie:
-            return MovieItemViewModel(item: item)
-        case .musicVideo, .video:
-            return ItemViewModel(item: item)
-        case .series:
-            return SeriesItemViewModel(item: item)
-        default:
-            assertionFailure("Unsupported item")
-            return ItemViewModel(item: item)
+    private func contentGroups(header: any ContentGroup) -> [any ContentGroup] {
+        [header] + viewModel.groups
+    }
+
+    private var isEnhanced: Bool {
+        switch itemViewType {
+        case .enhanced:
+            provider.item.type != .person && provider.item.type != .season
+        case .simple:
+            false
         }
     }
 
-    init(item: BaseItemDto) {
-        self._viewModel = StateObject(wrappedValue: Self.typeViewModel(for: item))
-    }
-
-    @ViewBuilder
-    private var scrollContentView: some View {
-        switch viewModel.item.type {
-        case .boxSet, .person, .musicArtist:
-            CollectionItemContentView(viewModel: viewModel as! CollectionItemViewModel)
-        case .episode, .musicVideo, .video:
-            SimpleItemContentView(viewModel: viewModel)
-        case .movie:
-            MovieItemContentView(viewModel: viewModel as! MovieItemViewModel)
-        case .series:
-            SeriesItemContentView(viewModel: viewModel as! SeriesItemViewModel)
-        default:
-            Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
+    private var header: any ContentGroup {
+        if isEnhanced {
+            return EnhancedRegularHeaderContentGroup(provider: provider)
         }
+
+        return RegularSimpleHeaderContentGroup(provider: provider)
     }
 
-    // MARK: scrollContainerView
-
-    private func scrollContainerView(
-        viewModel: ItemViewModel,
-        content: @escaping () -> some View
-    ) -> any ScrollContainerView {
-        CinematicScrollView(viewModel: viewModel, content: content)
-    }
-
-    @ViewBuilder
-    private var innerBody: some View {
-        scrollContainerView(viewModel: viewModel) {
-            scrollContentView
-        }
-        .eraseToAnyView()
+    private var content: some View {
+        ContentGroupScrollView(
+            provider: provider,
+            groups: contentGroups(header: header),
+            isEnhanced: isEnhanced
+        )
     }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
-                innerBody
-            case let .error(error):
-                ErrorView(error: error)
+                content
+            case .error:
+                viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
                 ProgressView()
             }
         }
-        .animation(.linear(duration: 0.1), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.state)
+        .animation(.linear(duration: 0.2), value: viewModel.background.states)
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
         .refreshable {
-            viewModel.send(.refresh)
+            viewModel.refresh()
         }
     }
 }

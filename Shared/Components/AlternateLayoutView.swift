@@ -47,13 +47,11 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
     var body: some View {
         layout
             .hidden()
-            .trackingSize($layoutSize)
+            .if(passLayoutSize) { view in
+                view.trackingSize($layoutSize)
+            }
             .overlay(alignment: alignment) {
-                if passLayoutSize {
-                    content(layoutSize)
-                } else {
-                    content(.zero)
-                }
+                content(layoutSize)
             }
     }
 }

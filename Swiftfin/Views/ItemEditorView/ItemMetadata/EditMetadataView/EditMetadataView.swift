@@ -16,7 +16,7 @@ struct EditMetadataView: View {
     private var router
 
     @ObservedObject
-    private var viewModel: ItemEditorViewModel<BaseItemDto>
+    private var viewModel: ItemEditorViewModel
 
     @Binding
     private var item: BaseItemDto
@@ -26,7 +26,7 @@ struct EditMetadataView: View {
 
     private let itemType: BaseItemKind
 
-    init(viewModel: ItemEditorViewModel<BaseItemDto>) {
+    init(viewModel: ItemEditorViewModel) {
         self.viewModel = viewModel
         self._item = Binding(get: { viewModel.item }, set: { viewModel.item = $0 })
         self._tempItem = State(initialValue: viewModel.item)

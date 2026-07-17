@@ -7,7 +7,7 @@
 //
 
 import Defaults
-import Factory
+import FactoryKit
 import Foundation
 import JellyfinAPI
 
@@ -112,27 +112,11 @@ extension StoredValues.Keys {
             )
         }
 
-        static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
+        static func libraryStyle(id: String?) -> Key<LibraryStyle> {
             CurrentUserKey(
-                parentID,
-                field: "setting-libraryDisplayType",
-                default: Defaults[.Customization.Library.displayType]
-            )
-        }
-
-        static func libraryListColumnCount(parentID: String?) -> Key<Int> {
-            CurrentUserKey(
-                parentID,
-                field: "setting-libraryListColumnCount",
-                default: Defaults[.Customization.Library.listColumnCount]
-            )
-        }
-
-        static func libraryPosterType(parentID: String?) -> Key<PosterDisplayType> {
-            CurrentUserKey(
-                parentID,
-                field: "setting-libraryPosterType",
-                default: Defaults[.Customization.Library.posterType]
+                id,
+                field: "setting-libraryStyle",
+                default: .default
             )
         }
 

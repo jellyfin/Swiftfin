@@ -26,8 +26,6 @@ struct NavigationInjectionView: View {
 
     @StateObject
     private var coordinator: NavigationCoordinator
-    @EnvironmentObject
-    private var rootCoordinator: RootCoordinator
 
     @State
     private var isPresentationInteractive: Bool = true
@@ -49,11 +47,11 @@ struct NavigationInjectionView: View {
                     route.destination
                 }
         }
+        .trackingFrame(for: .navigationStack)
         .environment(
             \.router,
             .init(
-                navigationCoordinator: coordinator,
-                rootCoordinator: rootCoordinator
+                navigationCoordinator: coordinator
             )
         )
         #if os(tvOS)
@@ -70,7 +68,6 @@ struct NavigationInjectionView: View {
                 NavigationInjectionView(coordinator: newCoordinator) {
                     route.destination
                 }
-                .environmentObject(rootCoordinator)
                 .background(.regularMaterial)
             }
         #else // <- Start: Use this for both OS when fixed
@@ -84,7 +81,6 @@ struct NavigationInjectionView: View {
                 NavigationInjectionView(coordinator: newCoordinator) {
                     route.destination
                 }
-                .environmentObject(rootCoordinator)
             }
         #endif // <- End
         #if os(tvOS)
@@ -96,17 +92,18 @@ struct NavigationInjectionView: View {
             NavigationInjectionView(coordinator: newCoordinator) {
                 route.destination
             }
-            .environmentObject(rootCoordinator)
         }
         #else
         .presentation(
                 $coordinator.presentedFullScreen,
                 transition: .zoomIfAvailable(
-                    options: .init(
+                    .init(
                         dimmingVisualEffect: .systemThickMaterialDark,
-                        options: .init(
-                            isInteractive: isPresentationInteractive
-                        )
+                        prefersScalePresentingView: false
+                    ),
+                    options: .init(
+                        isInteractive: isPresentationInteractive,
+                        preferredPresentationSafeAreaInsets: .zero,
                     ),
                     otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
                 )
@@ -118,10 +115,8 @@ struct NavigationInjectionView: View {
                                 isPresentationInteractive = newValue
                             }
                     }
-                    .environmentObject(rootCoordinator)
                 }
 
-                // TODO: presentation options for customizing background color, dimming effect, etc.
                 vc.view.backgroundColor = .black
 
                 return vc

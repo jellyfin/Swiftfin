@@ -10,19 +10,19 @@ import SwiftUI
 
 struct NavigationBarDrawerView<Content: View, Drawer: View>: UIViewControllerRepresentable {
 
-    private let buttons: () -> Drawer
-    private let content: () -> Content
+    private let drawer: Drawer
+    private let content: Content
 
     init(
-        @ViewBuilder buttons: @escaping () -> Drawer,
+        @ViewBuilder drawer: @escaping () -> Drawer,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        self.buttons = buttons
-        self.content = content
+        self.drawer = drawer()
+        self.content = content()
     }
 
     func makeUIViewController(context: Context) -> UINavigationBarDrawerHostingController<Content, Drawer> {
-        UINavigationBarDrawerHostingController<Content, Drawer>(buttons: buttons, content: content)
+        UINavigationBarDrawerHostingController<Content, Drawer>(drawer: drawer, content: content)
     }
 
     func updateUIViewController(_ uiViewController: UINavigationBarDrawerHostingController<Content, Drawer>, context: Context) {}
@@ -30,8 +30,8 @@ struct NavigationBarDrawerView<Content: View, Drawer: View>: UIViewControllerRep
 
 class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIViewController {
 
-    private let drawer: () -> Drawer
-    private let content: () -> Content
+    private let drawer: Drawer
+    private let content: Content
 
     // TODO: see if we can get the height instead from the view passed in
     private let drawerHeight: CGFloat = 36
@@ -50,20 +50,20 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
     }()
 
     private lazy var drawerButtonsView: UIHostingController<Drawer> = {
-        let drawerButtonsView = UIHostingController(rootView: drawer())
+        let drawerButtonsView = UIHostingController(rootView: drawer)
         drawerButtonsView.view.translatesAutoresizingMaskIntoConstraints = false
         drawerButtonsView.view.backgroundColor = nil
         return drawerButtonsView
     }()
 
     init(
-        buttons: @escaping () -> Drawer,
-        content: @escaping () -> Content
+        drawer: Drawer,
+        content: Content
     ) {
-        self.drawer = buttons
+        self.drawer = drawer
         self.content = content
 
-        super.init(nibName: nil, bundle: nil)
+        super.init(rootView: content)
     }
 
     @available(*, unavailable)

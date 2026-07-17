@@ -7,14 +7,14 @@
 //
 
 import Engine
-import Factory
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
 struct ItemEditorView: View {
 
     @ObservedObject
-    var viewModel: ItemEditorViewModel<BaseItemDto>
+    var viewModel: ItemEditorViewModel
 
     @Router
     private var router

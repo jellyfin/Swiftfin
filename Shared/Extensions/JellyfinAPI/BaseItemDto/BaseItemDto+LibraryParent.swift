@@ -10,30 +10,68 @@ import JellyfinAPI
 
 extension BaseItemDto: LibraryParent {
 
+    struct Grouping: Codable, Displayable, Hashable, Identifiable, Storable {
+
+        let displayTitle: String
+        let id: String
+
+        static let episodes = Grouping(displayTitle: L10n.episodes, id: "episodes")
+        static let seasons = Grouping(displayTitle: L10n.seasons, id: "seasons")
+        static let series = Grouping(displayTitle: L10n.series, id: "series")
+    }
+
     var libraryType: BaseItemKind? {
         type
     }
 
-    var supportedItemTypes: [BaseItemKind] {
-        guard let collectionType else { return [] }
+    var groupings: (defaultSelection: Grouping, elements: [Grouping])? {
+        switch collectionType {
+        case .tvshows:
+            (.series, [.episodes, .seasons, .series])
+        default:
+            nil
+        }
+    }
 
+    var supportedItemTypes: [BaseItemKind] {
+        supportedItemTypes(for: nil)
+    }
+
+    func supportedItemTypes(for grouping: Grouping?) -> [BaseItemKind] {
         switch (collectionType, libraryType) {
         case (_, .folder):
-            return BaseItemKind.supportedCases
+            BaseItemKind.supportedCases
                 .appending([.folder, .collectionFolder])
         case (.movies, _):
-            return [.movie]
+            [.movie]
         case (.tvshows, _):
-            return [.series]
+            switch grouping {
+            case .episodes:
+                [.episode]
+            case .seasons:
+                [.season]
+            default:
+                [.series]
+            }
+        case (.music, _):
+            [.audio, .musicAlbum, .musicArtist]
         case (.boxsets, _):
-            return BaseItemKind.supportedCases
+            BaseItemKind.supportedCases
         default:
-            return BaseItemKind.supportedCases
+            BaseItemKind.supportedCases
         }
     }
 
     var isRecursiveCollection: Bool {
+        isRecursiveCollection(for: nil)
+    }
+
+    func isRecursiveCollection(for grouping: Grouping?) -> Bool {
         guard let collectionType, libraryType != .userView else { return true }
+
+        if grouping == .episodes || grouping == .seasons {
+            return true
+        }
 
         return ![.tvshows, .boxsets].contains(collectionType)
     }

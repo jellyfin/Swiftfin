@@ -38,10 +38,8 @@ extension ChapterInfo {
         let imageSource: ImageSource
         let preferredPosterDisplayType: PosterDisplayType = .landscape
         let systemImage: String = "film"
-        let unwrappedIDHashOrZero: Int
 
         var subtitle: String?
-        var showTitle: Bool = true
 
         init(
             chapterInfo: ChapterInfo,
@@ -51,14 +49,23 @@ extension ChapterInfo {
             self.displayTitle = chapterInfo.displayTitle
             self.id = chapterInfo.hashValue
             self.imageSource = imageSource
-            self.unwrappedIDHashOrZero = chapterInfo.hashValue
         }
 
-        func landscapeImageSources(maxWidth: CGFloat?, quality: Int?) -> [ImageSource] {
+        func landscapeImageSources(
+            environment: Empty
+        ) -> [ImageSource] {
             [imageSource]
         }
 
-        func transform(image: Image) -> some View {
+        var posterLabel: some View {
+            ChapterPosterLabel(chapter: self)
+        }
+
+        func posterOverlay(for displayType: PosterDisplayType) -> some View {
+            PosterSelectionOverlay()
+        }
+
+        func transform(image: Image, displayType: PosterDisplayType) -> some View {
             ZStack {
                 Color.black
 
@@ -66,5 +73,31 @@ extension ChapterInfo {
                     .aspectRatio(contentMode: .fit)
             }
         }
+    }
+}
+
+private struct ChapterPosterLabel: View {
+
+    let chapter: ChapterInfo.FullInfo
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(chapter.chapterInfo.displayTitle)
+                .font(.subheadline.weight(.semibold))
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+
+            Text(chapter.chapterInfo.startSeconds ?? .zero, format: .runtime)
+                .font(UIDevice.isTV ? .caption : .subheadline.weight(.semibold))
+                .foregroundStyle(Color(UIColor.systemBlue))
+                .padding(.horizontal, 4)
+                .background {
+                    Color(.darkGray)
+                        .opacity(0.2)
+                        .cornerRadius(4)
+                }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
