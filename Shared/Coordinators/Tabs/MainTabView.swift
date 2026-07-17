@@ -91,7 +91,7 @@ struct MainTabView: View {
         }
     }
 
-    @available(iOS 18.0, *)
+    @available(iOS 18.0, tvOS 18.0, *)
     @ViewBuilder
     private func tabContent() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
@@ -119,9 +119,7 @@ struct MainTabView: View {
                         tab.item.displayTitle,
                         systemImage: tab.item.systemImage
                     )
-                    .labelStyle(tab.item.labelStyle)
                     .symbolRenderingMode(.monochrome)
-                    .eraseToAnyView()
                 }
             }
         }
@@ -129,7 +127,7 @@ struct MainTabView: View {
 
     var body: some View {
         Group {
-            if #available(iOS 18, *) {
+            if #available(iOS 18, tvOS 18.0, *) {
                 tabContent()
             } else {
                 legacyTabContent()
