@@ -23,7 +23,7 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
         content.toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {
                 if #available(iOS 26, *), isLiquidGlassEnabled {
-                    Button(role: .cancel, action: action)
+                    Button(role: .close, action: action)
                         .disabled(disabled)
                 } else {
                     Button(action: action) {
