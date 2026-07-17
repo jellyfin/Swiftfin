@@ -39,7 +39,9 @@ for line in localizationLines {
     let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
     // Skip empty lines or comments
-    if trimmed.isEmpty || trimmed.hasPrefix("//") { continue }
+    if trimmed.isEmpty || trimmed.hasPrefix("//") {
+        continue
+    }
 
     // Match valid localization entries and add them to the dictionary
     if let match = line.firstMatch(of: localizationRegex) {
@@ -61,7 +63,9 @@ func scanDirectory(_ path: String) {
         let filePath = "\(path)/\(file)"
 
         // Skip the excluded file
-        if filePath == excludedFile { continue }
+        if filePath == excludedFile {
+            continue
+        }
 
         // Process only Swift files
         if file.hasSuffix(".swift") {
