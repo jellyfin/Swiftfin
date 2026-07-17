@@ -20,10 +20,6 @@ struct LetterPickerBar: PlatformView {
     @ObservedObject
     var viewModel: FilterViewModel
 
-    private var edge: HorizontalEdge {
-        orientation.edge ?? .trailing
-    }
-
     @FocusState
     private var focusedLetter: ItemLetter?
 
@@ -35,115 +31,162 @@ struct LetterPickerBar: PlatformView {
     private var activeLetter: ItemLetter?
 
     private let letters = ItemLetter.allCases
-    private let rowHeight: CGFloat = 16
 
-    private enum IndexEntry: Hashable {
+    enum Row: Hashable {
         case letter(ItemLetter)
         case dot
     }
 
-    static var font: Font {
-        UIDevice.isTV ? .system(size: 22, weight: .semibold) : .headline
+    private var edge: HorizontalEdge {
+        orientation.edge ?? .trailing
     }
 
-    // Largest letter +1p on either side
     private var dimension: CGFloat {
         max(letterSize.width, letterSize.height) + 2
     }
 
-    private var buttonSpacing: CGFloat {
-        UIDevice.isTV ? dimension * 0.1 : 0
+    private var rowHeight: CGFloat {
+        UIDevice.isTV ? dimension : letterSize.height + 2
     }
 
     private var selectedLetter: ItemLetter? {
         viewModel.currentFilters.letter.first
     }
 
+    // iOS scrubs, so abbreviate to landmark letters when the full alphabet
+    // can't fit; tvOS scrolls and always shows every letter.
+    private var rows: [Row] {
+        let isCompact = barHeight > 0
+            && letters.count > 21
+            && CGFloat(letters.count) * rowHeight > barHeight
+
+        guard isCompact else { return letters.map { .letter($0) } }
+
+        let selectedIndex = selectedLetter.flatMap { letters.firstIndex(of: $0) }
+        let landmarks = (0 ... 10).map { Int((Double($0) / 10 * Double(letters.count - 1)).rounded()) }
+
+        return landmarks.enumerated().flatMap { offset, index -> [Row] in
+            var entries: [Row] = [.letter(letters[index])]
+
+            if offset < landmarks.count - 1 {
+                let upper = landmarks[offset + 1]
+                if let selectedIndex, selectedIndex > index, selectedIndex < upper {
+                    entries.append(.letter(letters[selectedIndex]))
+                } else {
+                    entries.append(.dot)
+                }
+            }
+
+            return entries
+        }
+    }
+
     private func letter(atY y: CGFloat) -> ItemLetter? {
         guard barHeight > 0, !letters.isEmpty else { return nil }
-        let rows = displayEntries(forHeight: barHeight).count
-        let contentHeight = CGFloat(rows) * rowHeight
+        let contentHeight = min(CGFloat(rows.count) * rowHeight, barHeight)
         let inset = max(0, (barHeight - contentHeight) / 2)
         let clamped = min(max(y - inset, 0), contentHeight - 1)
         let index = Int(clamped / contentHeight * CGFloat(letters.count))
         return letters[min(max(index, 0), letters.count - 1)]
     }
 
-    private func displayEntries(forHeight height: CGFloat) -> [IndexEntry] {
-        guard height > 0, !letters.isEmpty else {
-            return letters.map { .letter($0) }
-        }
+    private func row(atY y: CGFloat) -> Row? {
+        guard barHeight > 0, rowHeight > 0 else { return nil }
+        let contentHeight = min(CGFloat(rows.count) * rowHeight, barHeight)
+        let inset = max(0, (barHeight - contentHeight) / 2)
+        let localY = y - inset
+        guard localY >= 0, localY < contentHeight else { return nil }
+        let index = Int(localY / rowHeight)
+        return rows.indices.contains(index) ? rows[index] : nil
+    }
 
-        let maxRows = max(1, Int(height / rowHeight))
-
-        guard letters.count > maxRows else {
-            return letters.map { .letter($0) }
-        }
-
-        let shownLetters = max(1, (maxRows + 1) / 2)
-        let rowCount = shownLetters * 2 - 1
-        let denominator = max(shownLetters - 1, 1)
-
-        return (0 ..< rowCount).map { row in
-            guard row.isMultiple(of: 2) else {
-                return .dot
+    private var letterBar: some View {
+        VStack(spacing: UIDevice.isTV ? dimension * 0.1 : 0) {
+            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                switch row {
+                case let .letter(letter):
+                    LetterPickerButton(letter: letter, viewModel: viewModel)
+                        .isSelected(selectedLetter == letter)
+                        .frame(width: dimension, height: rowHeight)
+                        .if(UIDevice.isTV) { view in
+                            view
+                                .focused($focusedLetter, equals: letter)
+                        }
+                        .if(!UIDevice.isTV) { view in
+                            view
+                                .allowsHitTesting(false)
+                        }
+                case .dot:
+                    Circle()
+                        .fill(accentColor.opacity(0.5))
+                        .frame(width: 3, height: 3)
+                        .frame(width: dimension, height: rowHeight)
+                }
             }
-
-            let progress = Double(row / 2) / Double(denominator)
-            let index = Int((progress * Double(letters.count - 1)).rounded())
-            return .letter(letters[min(max(index, 0), letters.count - 1)])
         }
+        .frame(width: dimension)
+        .background {
+            ZStack {
+                ForEach(ItemLetter.allCases, id: \.hashValue) { letter in
+                    Text(letter.value)
+                }
+            }
+            .hidden()
+            .allowsHitTesting(false)
+            .fixedSize()
+            .trackingSize($letterSize)
+        }
+        .font(UIDevice.isTV ? .system(size: 22, weight: .semibold) : .footnote)
     }
 
     var iOSView: some View {
         GeometryReader { proxy in
-            VStack(spacing: 0) {
-                ForEach(Array(displayEntries(forHeight: proxy.size.height).enumerated()), id: \.offset) { _, entry in
-                    Group {
-                        switch entry {
-                        case let .letter(letter):
-                            LetterPickerButton(letter: letter, viewModel: viewModel)
-                                .isSelected(selectedLetter == letter)
-                                .allowsHitTesting(false)
-                        case .dot:
-                            Circle()
-                                .fill(accentColor.opacity(0.5))
-                                .frame(width: 3, height: 3)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, minHeight: rowHeight, maxHeight: rowHeight)
+            letterBar
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay {
+                    #if os(iOS)
+                    GestureView()
+                        .environment(\.panGestureDirection, .vertical)
+                        .environment(\.panAction, PanAction { _, _, location, _, state in
+                            switch state {
+                            case .began, .changed:
+                                if let target = letter(atY: location.y), target != activeLetter {
+                                    activeLetter = target
+                                    UIDevice.impact(.light)
+                                }
+                            case .ended, .cancelled, .failed:
+                                if let target = letter(atY: location.y) {
+                                    viewModel.currentFilters.letter = [target]
+                                }
+                                activeLetter = nil
+                            default:
+                                break
+                            }
+                        })
+                        .environment(\.tapGestureAction, TapAction { location, _, _ in
+                            switch row(atY: location.y) {
+                            case let .letter(tapped)?:
+                                if selectedLetter == tapped {
+                                    viewModel.currentFilters.letter = []
+                                } else {
+                                    viewModel.currentFilters.letter = [tapped]
+                                }
+                            case .dot?:
+                                viewModel.currentFilters.letter = []
+                            case nil:
+                                break
+                            }
+                        })
+                    #endif
                 }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { value in
-                        guard let letter = letter(atY: value.location.y) else { return }
-                        if letter != activeLetter {
-                            activeLetter = letter
-                            UIDevice.impact(.light)
-                        }
-                    }
-                    .onEnded { value in
-                        let moved = abs(value.translation.height) > 4
-                        let target = letter(atY: value.location.y)
-                        if !moved, let target, selectedLetter == target {
-                            viewModel.currentFilters.letter = []
-                        } else if let target {
-                            viewModel.currentFilters.letter = [target]
-                        }
-                        activeLetter = nil
-                    }
-            )
-            .onAppear {
-                barHeight = proxy.size.height
-            }
-            .onChange(of: proxy.size.height) { newValue in
-                barHeight = newValue
-            }
+                .onAppear {
+                    barHeight = proxy.size.height
+                }
+                .onChange(of: proxy.size.height) { newValue in
+                    barHeight = newValue
+                }
         }
-        .frame(width: 18)
+        .frame(width: dimension)
         .padding(.horizontal, 2)
         .padding(.vertical, EdgeInsets.edgePadding / 2)
         .padding(edge == .leading ? .leading : .trailing, EdgeInsets.edgePadding / 2)
@@ -158,75 +201,27 @@ struct LetterPickerBar: PlatformView {
     }
 
     var tvOSView: some View {
-        VStack(alignment: .center, spacing: buttonSpacing) {
-            ForEach(ItemLetter.allCases, id: \.hashValue) { filterLetter in
-                LetterPickerButton(letter: filterLetter, viewModel: viewModel)
-                    .frame(width: dimension, height: dimension)
-                    .focused($focusedLetter, equals: filterLetter)
-                    .isSelected(viewModel.currentFilters.letter.contains(filterLetter))
-            }
-        }
-        .scrollIfLargerThanContainer()
-        .frame(width: dimension)
-        .focusSection()
-        .background {
-            ZStack {
-                ForEach(ItemLetter.allCases, id: \.hashValue) { letter in
-                    Text(letter.value)
-                        .font(LetterPickerBar.font)
-                }
-            }
-            .hidden()
-            .allowsHitTesting(false)
-            .fixedSize()
-            .trackingSize($letterSize)
-        }
-        .backport
-        .defaultFocus(
-            $focusedLetter,
-            viewModel.currentFilters.letter.first
-                ?? ItemLetter.allCases.first
-                ?? ItemLetter(stringLiteral: "#"),
-            priority: focusedLetter == nil ? .userInitiated : .automatic
-        )
-        .offset(x: edge == .leading ? -EdgeInsets.edgePadding / 1.5 : EdgeInsets.edgePadding / 1.5)
-        .focusSection()
-    }
-}
-
-struct LetterPickerActiveLetterKey: PreferenceKey {
-
-    static var defaultValue: ItemLetter?
-
-    static func reduce(value: inout ItemLetter?, nextValue: () -> ItemLetter?) {
-        value = nextValue() ?? value
-    }
-}
-
-struct LetterPickerCallout: View {
-
-    @Default(.accentColor)
-    private var accentColor
-
-    @State
-    private var letterSize: CGSize = .zero
-
-    let letter: ItemLetter
-
-    var body: some View {
-        Text(letter.value)
-            .font(.system(size: 64, weight: .bold, design: .rounded))
-            .foregroundStyle(accentColor)
-            .fixedSize()
-            .trackingSize($letterSize)
-            .frame(
-                width: max(letterSize.width, letterSize.height, 64) * 1.5,
-                height: max(letterSize.width, letterSize.height, 64) * 1.5
-            )
+        letterBar
+            .scrollIfLargerThanContainer()
+            .focusSection()
             .backport
-            .glassEffect(
-                .regular,
-                in: .circle
+            .defaultFocus(
+                $focusedLetter,
+                selectedLetter ?? letters.first ?? ItemLetter(stringLiteral: "#"),
+                priority: focusedLetter == nil ? .userInitiated : .automatic
+            )
+            .offset(x: edge == .leading ? -EdgeInsets.edgePadding / 1.5 : EdgeInsets.edgePadding / 1.5)
+            .focusSection()
+            .task(id: focusedLetter) {
+                activeLetter = focusedLetter
+                guard focusedLetter != nil else { return }
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                guard !Task.isCancelled else { return }
+                activeLetter = nil
+            }
+            .preference(
+                key: LetterPickerActiveLetterKey.self,
+                value: activeLetter
             )
     }
 }

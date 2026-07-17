@@ -31,17 +31,7 @@ extension LetterPickerBar {
             } else if isSelected {
                 accentColor.overlayColor
             } else {
-                Color.primary
-            }
-        }
-
-        private var backgroundStyle: Color {
-            if isFocused {
-                Color.primary
-            } else if isSelected {
-                accentColor
-            } else {
-                .clear
+                UIDevice.isTV ? Color.primary : accentColor
             }
         }
 
@@ -53,47 +43,17 @@ extension LetterPickerBar {
                     viewModel.currentFilters.letter = [letter]
                 }
             } label: {
-                label
-            }
-            .buttonStyle(.borderless)
-            .if(UIDevice.isTV) { view in
-                view
-                    .focused($isFocused)
-                    .scaleEffect(isFocused ? 1.2 : 1)
-                    .animation(.easeInOut(duration: 0.15), value: isFocused)
-            }
-        }
-
-        @ViewBuilder
-        private var label: some View {
-            if UIDevice.isTV {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundStyle(backgroundStyle)
-                        .if(isFocused || isSelected) { background in
-                            background
-                                .posterShadow()
-                        }
-
-                    Text(letter.value)
-                        .font(LetterPickerBar.font)
-                        .foregroundStyle(foregroundStyle)
-                        .if(!isFocused && !isSelected) { character in
-                            character
-                                .posterShadow()
-                        }
-                }
-            } else {
                 Text(letter.value)
-                    .font(.footnote)
-                    .foregroundStyle(isSelected ? accentColor.overlayColor : accentColor.opacity(0.75))
-                    .frame(width: 16, height: 16)
+                    .foregroundStyle(foregroundStyle)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .backport
                     .glassEffect(
-                        isSelected ? .regular.tint(accentColor) : .identity,
+                        isSelected || isFocused ? .regular.tint(accentColor) : .identity,
                         in: .circle
                     )
             }
+            .buttonStyle(.borderless)
+            .focused($isFocused)
         }
     }
 }
