@@ -74,7 +74,7 @@ extension ItemView {
                     .posterEnvironment(BaseItemDto.Environment(useParent: false))
                     .posterBorder()
                     .posterCornerRadius(posterDisplayType)
-                    .posterShadow()
+                    .subtleShadow()
                     .frame(
                         maxWidth: .infinity,
                         maxHeight: .infinity,

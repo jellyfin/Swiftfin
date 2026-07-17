@@ -23,7 +23,7 @@ extension SelectUserView {
                 .background(.thinMaterial)
                 .aspectRatio(1, contentMode: .fit)
                 .clipShape(.circle)
-                .posterShadow()
+                .subtleShadow()
         }
 
         @ViewBuilder

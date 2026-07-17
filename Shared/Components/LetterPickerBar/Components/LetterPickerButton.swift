@@ -58,7 +58,7 @@ extension LetterPickerBar {
                         .foregroundStyle(backgroundStyle)
                         .if(UIDevice.isTV && (isFocused || isSelected)) { background in
                             background
-                                .posterShadow()
+                                .subtleShadow()
                         }
 
                     Text(letter.value)
@@ -66,7 +66,7 @@ extension LetterPickerBar {
                         .foregroundStyle(foregroundStyle)
                         .if(UIDevice.isTV && !isFocused && !isSelected) { character in
                             character
-                                .posterShadow()
+                                .subtleShadow()
                         }
                 }
             }

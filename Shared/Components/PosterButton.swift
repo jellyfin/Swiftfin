@@ -59,7 +59,7 @@ struct PosterButton<Item: Poster>: View {
         .contentShape(.contextMenuPreview, Rectangle())
         .backport
         .matchedTransitionSource(id: "item", in: namespace)
-        .posterShadow()
+        .subtleShadow()
         .hoverEffect(.highlight)
     }
 

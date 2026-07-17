@@ -466,7 +466,7 @@ extension EpisodeMediaPlayerQueue {
                 }
             }
             .posterStyle(.landscape)
-            .posterShadow()
+            .subtleShadow()
             .hoverEffect(.highlight)
         }
     }

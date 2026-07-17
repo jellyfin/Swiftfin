@@ -89,9 +89,6 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
 
     private func appearanceBody(_ content: some View) -> some View {
         platformAppearanceBody(content)
-            .overlay {
-                appearanceBorder
-            }
             .contentShape(shape)
     }
 
@@ -167,6 +164,10 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
                     .transition(.opacity)
             }
             .clipShape(shape)
+            .overlay {
+                appearanceBorder
+            }
+            .subtleShadow()
     }
 
     @available(iOS 26.0, tvOS 26.0, *)

@@ -34,7 +34,7 @@ extension ItemView {
                                 contentMode: .fit
                             )
                             .frame(width: 130)
-                            .posterShadow()
+                            .subtleShadow()
 
                             Text(provider.item.displayTitle)
                                 .font(.title2)
