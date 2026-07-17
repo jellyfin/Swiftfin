@@ -41,7 +41,7 @@ extension ItemView {
                     )
                     .posterEnvironment(BaseItemDto.Environment(useParent: false))
                     .frame(maxWidth: headerImageDisplayType == .square ? 400 : .infinity)
-                    .posterShadow()
+                    .subtleShadow()
 
                     VStack(alignment: .center, spacing: 5) {
                         if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {

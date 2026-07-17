@@ -57,7 +57,7 @@ extension SelectUserView {
                                 ),
                                 pipeline: .Swiftfin.local
                             )
-                            .posterShadow()
+                            .subtleShadow()
                             .frame(width: UIDevice.isTV ? 120 : UIDevice.isPad ? 80 : 50)
 
                             VStack(alignment: .leading) {

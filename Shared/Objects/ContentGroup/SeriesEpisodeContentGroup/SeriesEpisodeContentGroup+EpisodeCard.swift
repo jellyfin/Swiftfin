@@ -81,7 +81,7 @@ extension SeriesEpisodeContentGroup {
                 }
                 .contentShape(.contextMenuPreview, Rectangle())
                 .posterStyle(.landscape)
-                .posterShadow()
+                .subtleShadow()
                 .backport
                 .matchedTransitionSource(id: "item", in: namespace)
             }
@@ -114,7 +114,7 @@ extension SeriesEpisodeContentGroup {
                         }
                     }
                     .posterStyle(.landscape)
-                    .posterShadow()
+                    .subtleShadow()
             }
         }
     }

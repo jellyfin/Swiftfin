@@ -38,7 +38,13 @@ extension SelectUserView {
                 Label(L10n.addUser, systemImage: "plus")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .fontWeight(.bold)
+                    .labelStyle(.iconOnly)
             }
+            .menuOrder(.fixed)
+            .backport
+            .buttonBorderShape(.circle)
+            .backport
+            .glassEffect(in: .circle)
         }
     }
 }

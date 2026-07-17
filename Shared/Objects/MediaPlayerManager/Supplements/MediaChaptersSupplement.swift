@@ -199,7 +199,7 @@ extension MediaChaptersSupplement {
                     }
                 }
                 .posterStyle(.landscape)
-                .posterShadow()
+                .subtleShadow()
                 .hoverEffect(.highlight)
             }
         }

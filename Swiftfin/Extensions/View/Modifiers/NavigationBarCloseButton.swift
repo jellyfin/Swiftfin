@@ -13,6 +13,8 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
 
     @Default(.accentColor)
     private var accentColor
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
 
     let disabled: Bool
     let action: () -> Void
@@ -20,16 +22,19 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {
-                Button {
-                    action()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .fontWeight(.bold)
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(accentColor.overlayColor, accentColor)
-                        .opacity(disabled ? 0.75 : 1)
+                if #available(iOS 26, *), isLiquidGlassEnabled {
+                    Button(role: .cancel, action: action)
+                        .disabled(disabled)
+                } else {
+                    Button(action: action) {
+                        Image(systemName: "xmark.circle.fill")
+                            .fontWeight(.bold)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(accentColor.overlayColor, accentColor)
+                            .opacity(disabled ? 0.75 : 1)
+                    }
+                    .disabled(disabled)
                 }
-                .disabled(disabled)
             }
         }
     }

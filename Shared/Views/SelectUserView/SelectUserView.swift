@@ -244,7 +244,7 @@ struct SelectUserView: View {
                 .ignoresSafeArea(.all, edges: .horizontal)
             }
 
-            BottomBar(
+            Toolbar(
                 servers: viewModel.servers.keys,
                 allUsers: userItems,
                 isEditing: $isEditing,
@@ -305,7 +305,7 @@ struct SelectUserView: View {
                         .buttonStyle(.toolbarPill)
                     } else {
                         Menu {
-                            AdvancedMenu(
+                            AdvancedMenuContent(
                                 hasUsers: userItems.isNotEmpty,
                                 isEditing: $isEditing
                             )

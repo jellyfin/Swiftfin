@@ -68,7 +68,7 @@ extension ItemView {
                         maxHeight: .infinity,
                         alignment: .trailing
                     )
-                    .posterShadow()
+                    .subtleShadow()
 
                     VStack(alignment: .leading, spacing: 10) {
                         title

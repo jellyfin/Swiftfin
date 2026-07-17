@@ -103,7 +103,7 @@ private struct BaseItemDtoLibraryListElement: View {
                 type: resolvedLibraryStyle.posterDisplayType,
                 size: .extraSmall
             )
-            .posterShadow()
+            .subtleShadow()
             .frame(width: resolvedLibraryStyle.posterDisplayType == .landscape ? baseItemListLandscapeWidth : baseItemListPortraitWidth)
         } content: {
             VStack(alignment: .leading, spacing: 5) {

@@ -40,7 +40,7 @@ extension ActiveSessionsView {
                 )
                 .frame(width: 60)
                 .frame(minHeight: 90)
-                .posterShadow()
+                .subtleShadow()
             } else {
                 ZStack {
                     session.device.clientColor
@@ -52,7 +52,7 @@ extension ActiveSessionsView {
                 }
                 .posterStyle(.square)
                 .frame(width: 60, height: 60)
-                .posterShadow()
+                .subtleShadow()
             }
         }
 

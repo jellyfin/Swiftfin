@@ -84,7 +84,7 @@ private struct ChannelProgramLibraryGridElement: View {
                     .posterStyle(resolvedLibraryStyle.posterDisplayType)
                     .backport
                     .matchedTransitionSource(id: "item", in: namespace)
-                    .posterShadow()
+                    .subtleShadow()
 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(channelProgram.displayTitle)
@@ -173,7 +173,7 @@ private struct ChannelProgramLibraryListElement: View {
                 .posterStyle(resolvedLibraryStyle.posterDisplayType)
                 .backport
                 .matchedTransitionSource(id: "item", in: namespace)
-                .posterShadow()
+                .subtleShadow()
 
 //            AlternateLayoutView {
 //                // swiftlint:disable:next hard_coded_display_string
