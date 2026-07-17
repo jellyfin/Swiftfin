@@ -181,6 +181,6 @@ struct PlayButton: View {
 
             versionMenu
         }
-        .frame(height: UIDevice.isTV ? 100 : 44)
+        .frame(height: UIDevice.isTV ? 75 : 44)
     }
 }

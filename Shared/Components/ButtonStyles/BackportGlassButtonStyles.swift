@@ -155,7 +155,7 @@ private struct BackportGlassButtonStyleBody: View {
         }
 
         #if os(tvOS)
-        button.buttonStyle(BasicHoverButtonStyle())
+        button
         #else
         button.buttonStyle(.borderless)
         #endif

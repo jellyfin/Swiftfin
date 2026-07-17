@@ -60,7 +60,7 @@ struct BackportGlass {
 
     /// Configures the tint and foreground color for the selected and enabled state.
     func selection(
-        tint: Color,
+        tint: Color?,
         foregroundColor: Color
     ) -> Self {
         var copy = self
@@ -82,10 +82,6 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
 
     let glass: BackportGlass
     let shape: BackgroundShape
-
-    private var isPositiveSelectionState: Bool {
-        isEnabled
-    }
 
     private var subduedColor: Color {
         Color.gray.opacity(0.3)
@@ -131,11 +127,11 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
             return glass.tint
         }
 
-        return isPositiveSelectionState ? glass.tint : subduedColor
+        return isEnabled ? glass.tint : subduedColor
     }
 
     private var resolvedForegroundStyle: AnyShapeStyle {
-        guard isPositiveSelectionState,
+        guard isEnabled,
               let selectionAppearance = glass.selectionAppearance
         else {
             return AnyShapeStyle(HierarchicalShapeStyle.primary)

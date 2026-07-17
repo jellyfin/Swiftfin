@@ -57,7 +57,9 @@ extension ConnectToServerView {
                     .backport
                     .buttonStyle(.glassProminent.shadow(false))
                     .tint(.jellyfinPurple)
+                #if os(iOS)
                     .controlSize(.large)
+                #endif
             }
             .backport
             .toolbarTitleDisplayMode(.inline)

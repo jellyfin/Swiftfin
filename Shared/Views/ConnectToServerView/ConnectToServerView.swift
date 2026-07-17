@@ -69,7 +69,9 @@ struct ConnectToServerView: View {
                 .fontWeight(.semibold)
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
+            #if os(iOS)
                 .controlSize(.large)
+            #endif
                 .frame(maxHeight: 75)
         } else {
             Button {
@@ -88,7 +90,9 @@ struct ConnectToServerView: View {
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
                 .tint(accentColor)
+            #if os(iOS)
                 .controlSize(.large)
+            #endif
                 .frame(maxHeight: 75)
                 .disabled(url.isEmpty)
         }

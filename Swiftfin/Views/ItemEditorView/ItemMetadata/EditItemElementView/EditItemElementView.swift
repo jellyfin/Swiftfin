@@ -44,8 +44,15 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
             selectedElements = isAllSelected ? [] : Set(elements)
         }
         .foregroundStyle(.primary, .secondary)
-        .backport
-        .buttonStyle(.glass)
+        .if(true) { view in
+            if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                view
+            } else {
+                view
+                    .backport
+                    .buttonStyle(.glass)
+            }
+        }
         .controlSize(.small)
         .disabled(!isEditing)
     }
@@ -125,8 +132,15 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                             selectedElements.removeAll()
                         }
                         .foregroundStyle(.primary, .secondary)
-                        .backport
-                        .buttonStyle(.glass)
+                        .if(true) { view in
+                            if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                                view
+                            } else {
+                                view
+                                    .backport
+                                    .buttonStyle(.glass)
+                            }
+                        }
                         .controlSize(.small)
                     }
                 }

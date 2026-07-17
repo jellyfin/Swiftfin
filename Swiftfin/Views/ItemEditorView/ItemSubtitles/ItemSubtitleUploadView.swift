@@ -59,13 +59,15 @@ struct ItemSubtitleUploadView: View {
                     .backport
                     .buttonStyle(.glassProminent.shadow(false))
                     .tint(accentColor)
-                    .controlSize(.large)
-                    .fileImporter(
-                        isPresented: isPresentingFileUpload,
-                        allowedContentTypes: SubtitleFormat.allCases.filter(\.isText).compactMap(\.utType)
-                    ) { result in
-                        selectedFile = try? result.get()
-                    }
+                    #if os(iOS)
+                        .controlSize(.large)
+                    #endif
+                        .fileImporter(
+                            isPresented: isPresentingFileUpload,
+                            allowedContentTypes: SubtitleFormat.allCases.filter(\.isText).compactMap(\.utType)
+                        ) { result in
+                            selectedFile = try? result.get()
+                        }
                 }
             }
         }

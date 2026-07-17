@@ -97,7 +97,9 @@ struct ItemRefreshView: View {
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
                 .tint(accentColor)
-                .controlSize(.large)
+                #if os(iOS)
+                    .controlSize(.large)
+                #endif
             }
             #endif
         }

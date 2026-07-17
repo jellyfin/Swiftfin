@@ -91,7 +91,9 @@ struct ItemSubtitleSearchView: View {
                     .backport
                     .buttonStyle(.glassProminent.shadow(false))
                     .tint(accentColor)
+                #if os(iOS)
                     .controlSize(.large)
+                #endif
                     .listRowInsets(.zero)
                     .listRowBackground(Color.clear)
             }

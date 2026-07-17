@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -74,8 +75,15 @@ struct ItemSubtitlesView: View {
                         toggleAllSelection()
                     }
                     .foregroundStyle(.primary, .secondary)
-                    .backport
-                    .buttonStyle(.glass)
+                    .if(true) { view in
+                        if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                            view
+                        } else {
+                            view
+                                .backport
+                                .buttonStyle(.glass)
+                        }
+                    }
                     .controlSize(.small)
                 }
             }
@@ -86,8 +94,15 @@ struct ItemSubtitlesView: View {
                         selectedSubtitles.removeAll()
                     }
                     .foregroundStyle(.primary, .secondary)
-                    .backport
-                    .buttonStyle(.glass)
+                    .if(true) { view in
+                        if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                            view
+                        } else {
+                            view
+                                .backport
+                                .buttonStyle(.glass)
+                        }
+                    }
                     .controlSize(.small)
                 }
             }

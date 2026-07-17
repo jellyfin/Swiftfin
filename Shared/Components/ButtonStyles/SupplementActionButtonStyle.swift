@@ -57,7 +57,6 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
                 )
         }
         .buttonBorderShape(.capsule)
-        .buttonStyle(BasicHoverButtonStyle())
     }
 
     @ViewBuilder

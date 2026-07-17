@@ -65,7 +65,6 @@ struct CapsuleLabelStyle: LabelStyle {
                     ),
                     in: .capsule
                 )
-                .isSelected(true)
         } else {
             content
                 .backport

@@ -106,7 +106,9 @@ struct SettingsView: View {
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
                 .tint(accentColor)
+            #if os(iOS)
                 .controlSize(.large)
+            #endif
         }
     }
 

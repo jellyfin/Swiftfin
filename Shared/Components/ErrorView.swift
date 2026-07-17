@@ -64,9 +64,11 @@ struct ErrorView<ErrorType: Error>: View {
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
                 .tint(accentColor)
-                .controlSize(.large)
-                .frame(height: buttonHeight)
-                .frame(maxWidth: buttonMaxSize)
+                #if os(iOS)
+                    .controlSize(.large)
+                #endif
+                    .frame(height: buttonHeight)
+                    .frame(maxWidth: buttonMaxSize)
             }
 
             if let localizedError = error as? LocalizedError,

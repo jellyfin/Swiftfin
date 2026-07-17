@@ -294,8 +294,15 @@ struct SelectUserView: View {
                             action: toggleAllUsersSelected
                         )
                         .foregroundStyle(.primary, .secondary)
-                        .backport
-                        .buttonStyle(.glass)
+                        .if(true) { view in
+                            if #available(iOS 26.0, tvOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                                view
+                            } else {
+                                view
+                                    .backport
+                                    .buttonStyle(.glass)
+                            }
+                        }
                         .controlSize(.small)
                     }
                 }
@@ -306,8 +313,15 @@ struct SelectUserView: View {
                             isEditing = false
                         }
                         .foregroundStyle(.primary, .secondary)
-                        .backport
-                        .buttonStyle(.glass)
+                        .if(true) { view in
+                            if #available(iOS 26.0, tvOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                                view
+                            } else {
+                                view
+                                    .backport
+                                    .buttonStyle(.glass)
+                            }
+                        }
                         .controlSize(.small)
                     } else {
                         Menu(

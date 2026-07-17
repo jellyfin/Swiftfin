@@ -37,6 +37,7 @@ extension ItemView {
         private func materialLabel(
             _ title: String,
             systemImage: String,
+            isHighlighted: Bool = false,
             tint: Color,
             foregroundColor: Color,
             isRotated: Bool = false
@@ -56,11 +57,10 @@ extension ItemView {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .backport
             .glassEffect(
-                .regular,
-//                .regular.selection(
-//                    tint: tint,
-//                    foregroundColor: foregroundColor
-//                ),
+                .regular.selection(
+                    tint: isHighlighted ? tint : .gray.opacity(0.3),
+                    foregroundColor: foregroundColor
+                ),
                 in: shape
             )
         }
@@ -79,6 +79,7 @@ extension ItemView {
                         materialLabel(
                             L10n.played,
                             systemImage: "checkmark",
+                            isHighlighted: isPlayed,
                             tint: .jellyfinPurple,
                             foregroundColor: .primary
                         )
@@ -98,6 +99,7 @@ extension ItemView {
                     materialLabel(
                         L10n.favorited,
                         systemImage: isFavorited ? "heart.fill" : "heart",
+                        isHighlighted: isFavorited,
                         tint: .pink,
                         foregroundColor: .primary
                     )
@@ -145,7 +147,7 @@ extension ItemView {
                 }
                 #endif
             }
-            .frame(height: UIDevice.isTV ? 100 : 44)
+            .frame(height: UIDevice.isTV ? 75 : 44)
             .labelStyle(.iconOnly)
             .buttonStyle(BasicHoverButtonStyle())
             .font(.title3)

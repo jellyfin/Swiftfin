@@ -63,7 +63,9 @@ struct ServerActivityFilterView: View {
                     .fontWeight(.semibold)
                     .backport
                     .buttonStyle(.glassProminent.shadow(false))
-                    .controlSize(.large)
+                    #if os(iOS)
+                        .controlSize(.large)
+                    #endif
                 } footer: {
                     Text(L10n.resetFilterFooter)
                 }

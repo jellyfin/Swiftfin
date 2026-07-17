@@ -7,6 +7,7 @@
 //
 
 import CollectionVGrid
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -72,8 +73,15 @@ struct ServerUsersView: View {
                         }
                     }
                     .foregroundStyle(.primary, .secondary)
-                    .backport
-                    .buttonStyle(.glass)
+                    .if(true) { view in
+                        if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                            view
+                        } else {
+                            view
+                                .backport
+                                .buttonStyle(.glass)
+                        }
+                    }
                     .controlSize(.small)
                 }
             }
@@ -213,8 +221,15 @@ struct ServerUsersView: View {
             }
         }
         .foregroundStyle(.primary, .secondary)
-        .backport
-        .buttonStyle(.glass)
+        .if(true) { view in
+            if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                view
+            } else {
+                view
+                    .backport
+                    .buttonStyle(.glass)
+            }
+        }
         .controlSize(.small)
         .disabled(!isEditing)
     }

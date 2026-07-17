@@ -89,7 +89,9 @@ struct QuickConnectAuthorizeView: View {
                 .fontWeight(.semibold)
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
-                .controlSize(.large)
+                #if os(iOS)
+                    .controlSize(.large)
+                #endif
             } else {
                 Button {
                     viewModel.authorize(code: code)
@@ -104,8 +106,10 @@ struct QuickConnectAuthorizeView: View {
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
                 .tint(accentColor)
-                .controlSize(.large)
-                .disabled(code.count != 6 || viewModel.state == .authorizing)
+                #if os(iOS)
+                    .controlSize(.large)
+                #endif
+                    .disabled(code.count != 6 || viewModel.state == .authorizing)
             }
         }
         .interactiveDismissDisabled(viewModel.state == .authorizing)
