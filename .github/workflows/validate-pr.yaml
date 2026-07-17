@@ -13,7 +13,7 @@ jobs:
   build:
     name: "Validate PR 🧹"
     if: github.event.pull_request.draft == false
-    runs-on: macos-14
+    runs-on: macos-26
 
     steps:
       - name: Checkout

@@ -29,7 +29,11 @@ struct JumpIntervalPicker: View {
                 selection: selection
                     .map(
                         getter: {
-                            if case .custom = $0 { .zero } else { $0.rawValue }
+                            if case .custom = $0 {
+                                .zero
+                            } else {
+                                $0.rawValue
+                            }
                         },
                         setter: {
                             MediaJumpInterval(rawValue: $0)
@@ -54,7 +58,11 @@ struct JumpIntervalPicker: View {
                 selection: selection
                     .map(
                         getter: {
-                            if case .custom = $0 { .zero } else { $0.rawValue }
+                            if case .custom = $0 {
+                                .zero
+                            } else {
+                                $0.rawValue
+                            }
                         },
                         setter: {
                             MediaJumpInterval(rawValue: $0)

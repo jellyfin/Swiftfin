@@ -63,7 +63,7 @@ struct FadeContentTransitionView<Item: Hashable, Content: View>: UIViewRepresent
     final class Coordinator {
 
         private var currentContentID: AnyHashable?
-        private var currentContent: HostedFadeContentTransitionContent<Content>?
+        private var currentContent: HostedFadeContentTransitionContent<HostingRootView<Content>>?
         private var updateGeneration = 0
         private var debounceUpdate: DispatchWorkItem?
 
@@ -121,13 +121,13 @@ struct FadeContentTransitionView<Item: Hashable, Content: View>: UIViewRepresent
             in view: UIFadeContentTransitionView
         ) {
             if currentContentID == id, let currentContent {
-                currentContent.hostingController.rootView = content
+                currentContent.hostingController.rootView.content = content
                 debounceUpdate = nil
                 return
             }
 
             let hostingController = HostingController(content: content)
-            hostingController.disablesSafeArea = true
+            hostingController.disableSafeArea = true
             hostingController.view.backgroundColor = .clear
 
             let transitionContent = HostedFadeContentTransitionContent(

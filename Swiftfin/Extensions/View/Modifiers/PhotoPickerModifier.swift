@@ -38,10 +38,12 @@ struct PhotoPickerModifier: ViewModifier {
             }
             .sheet(isPresented: Binding<Bool>(
                 get: { selectedImage != nil },
-                set: { if !$0 {
-                    selectedImage = nil
-                    selectedItem = nil
-                } }
+                set: {
+                    if !$0 {
+                        selectedImage = nil
+                        selectedItem = nil
+                    }
+                }
             )) {
                 if let image = selectedImage {
                     NavigationView {

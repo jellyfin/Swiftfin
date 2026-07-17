@@ -97,11 +97,13 @@ struct NavigationInjectionView: View {
         .presentation(
                 $coordinator.presentedFullScreen,
                 transition: .zoomIfAvailable(
-                    options: .init(
+                    .init(
                         dimmingVisualEffect: .systemThickMaterialDark,
-                        options: .init(
-                            isInteractive: isPresentationInteractive
-                        )
+                        prefersScalePresentingView: false
+                    ),
+                    options: .init(
+                        isInteractive: isPresentationInteractive,
+                        preferredPresentationSafeAreaInsets: .zero,
                     ),
                     otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
                 )
@@ -115,7 +117,6 @@ struct NavigationInjectionView: View {
                     }
                 }
 
-                // TODO: presentation options for customizing background color, dimming effect, etc.
                 vc.view.backgroundColor = .black
 
                 return vc

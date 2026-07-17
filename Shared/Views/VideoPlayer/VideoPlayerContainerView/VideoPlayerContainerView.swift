@@ -226,7 +226,7 @@ extension VideoPlayer {
                     .environmentObject(manager)
                     .eraseToAnyView()
             )
-            controller.disablesSafeArea = true
+            controller.disableSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
             controller.view.translatesAutoresizingMaskIntoConstraints = false
             return controller
@@ -239,7 +239,7 @@ extension VideoPlayer {
                     .environmentObject(manager)
                     .eraseToAnyView()
             )
-            controller.disablesSafeArea = true
+            controller.disableSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
             controller.view.translatesAutoresizingMaskIntoConstraints = false
             return controller
@@ -251,7 +251,7 @@ extension VideoPlayer {
                 .environmentObject(manager)
                 .eraseToAnyView()
             let controller = HostingController(content: content)
-            controller.disablesSafeArea = true
+            controller.disableSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true
             controller.view.translatesAutoresizingMaskIntoConstraints = false
             return controller

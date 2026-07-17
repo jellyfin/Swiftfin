@@ -71,7 +71,9 @@ fileprivate extension UserDefaults {
 
     @objc
     func _ds_object(forKey key: String) -> Any? {
-        if let resolved = SwizzleDefaults.resolve(key) { return resolved }
+        if let resolved = SwizzleDefaults.resolve(key) {
+            return resolved
+        }
         return _ds_object(forKey: key)
     }
 

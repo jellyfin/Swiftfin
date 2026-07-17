@@ -23,13 +23,17 @@ struct PlaybackProgressViewStyle: ProgressViewStyle {
 
     @ViewBuilder
     private func buildCapsule(for progress: Double) -> some View {
+        let width = contentSize.width.isFinite ? max(0, contentSize.width) : 0
+        let height = contentSize.height.isFinite ? max(0, contentSize.height) : 0
+        let normalizedProgress = progress.isFinite ? clamp(progress, min: 0, max: 1) : 0
+
         Rectangle()
             .cornerRadius(
-                cornerStyle == .round ? contentSize.height / 2 : 0,
+                cornerStyle == .round ? height / 2 : 0,
                 corners: [.topLeft, .bottomLeft]
             )
-            .frame(width: contentSize.width * clamp(progress, min: 0, max: 1) + contentSize.height)
-            .offset(x: -contentSize.height)
+            .frame(width: width * normalizedProgress + height)
+            .offset(x: -height)
     }
 
     func makeBody(configuration: Configuration) -> some View {

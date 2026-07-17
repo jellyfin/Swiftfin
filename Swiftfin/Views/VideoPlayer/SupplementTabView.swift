@@ -119,10 +119,10 @@ struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRep
 
             for item in items {
                 if let host = viewControllers[item.id] {
-                    host.rootView = content(item)
+                    host.content = content(item)
                 } else {
                     let host = HostingController(content: content(item))
-                    host.disablesSafeArea = true
+                    host.disableSafeArea = true
                     host.view.backgroundColor = .clear
                     viewControllers[item.id] = host
                 }
