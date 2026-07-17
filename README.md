@@ -3,7 +3,7 @@
 
   <h1>Swiftfin</h1>
   <img src="https://img.shields.io/badge/iOS-16+-red"/>
-  <img src="https://img.shields.io/badge/tvOS-17+-red"/>
+  <img src="https://img.shields.io/badge/tvOS-26+-red"/>
   <img src="https://img.shields.io/badge/Jellyfin-10.11-9962be"/>
   
   <a href="https://translate.jellyfin.org/engage/swiftfin/">
@@ -30,9 +30,6 @@
 ## 🛠️ TestFlight
 
 Use the TestFlight version to test new features and bug fixes before being published to the App Store. We are grateful for your time and resources for reporting new bugs.
-
-> [!NOTE]
-> Only iOS has a TestFlight version. See [this discussion](https://github.com/jellyfin/Swiftfin/discussions/1294) for tvOS updates.
 
 <a href="https://testflight.apple.com/join/SqNPfdxq">
   <img height=75 alt="Get the beta on TestFlight" src="./Resources/testflight.svg"/>
