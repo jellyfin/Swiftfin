@@ -198,7 +198,7 @@ struct SelectUserView: View {
                             action: { select(user: $0) },
                             onDelete: { delete(user: $0) }
                         )
-                    case .grid, .guide:
+                    case .grid:
                         GridView(
                             userItems: userItems,
                             isEditing: $isEditing,

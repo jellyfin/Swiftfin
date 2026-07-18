@@ -52,33 +52,7 @@ extension BaseItemDto: LibraryElement {
             BaseItemDtoLibraryGridElement(item: self, libraryStyle: libraryStyle)
         case .list:
             BaseItemDtoLibraryListElement(item: self, libraryStyle: libraryStyle)
-        case .guide:
-            BaseItemDtoLibraryGuideElement(item: self)
         }
-    }
-}
-
-private struct BaseItemDtoLibraryGuideElement: View {
-
-    @EnvironmentObject
-    private var guideViewModel: GuideViewModel
-
-    @Router
-    private var router
-
-    let item: BaseItemDto
-
-    var body: some View {
-        GuideChannelRow(
-            programsViewModel: guideViewModel.programsViewModel(for: item),
-            scrollProxy: guideViewModel.scrollProxy,
-            now: guideViewModel.now,
-            startDate: guideViewModel.startDate,
-            channel: item,
-            layout: .current,
-            channelAction: { router.route(to: .item(item: item)) },
-            programAction: { program in router.route(to: .item(item: program)) }
-        )
     }
 }
 

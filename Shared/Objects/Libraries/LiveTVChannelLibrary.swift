@@ -15,9 +15,13 @@ import SwiftUI
 struct LiveTVChannelLibrary: PagingLibrary, SearchablePagingLibrary {
 
     struct Environment: WithDefaultValue {
+        var grouping: BaseItemDto.Grouping?
         var filters: ItemFilterCollection
 
-        static let `default`: Self = .init(filters: .default)
+        static let `default`: Self = .init(
+            grouping: .channels,
+            filters: .default
+        )
     }
 
     let environment: Environment?
@@ -31,7 +35,10 @@ struct LiveTVChannelLibrary: PagingLibrary, SearchablePagingLibrary {
             name: L10n.liveTV
         )
 
-        var environment = Environment(filters: filters ?? .default)
+        var environment = Environment(
+            grouping: parent.groupings?.defaultSelection,
+            filters: filters ?? .default
+        )
 
         if let id = parent.id, Defaults[.Customization.Library.rememberSort] {
             let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
@@ -48,6 +55,32 @@ struct LiveTVChannelLibrary: PagingLibrary, SearchablePagingLibrary {
         self.parent = parent
     }
 
+    func makeMenuContent(environment: Binding<Environment>) -> AnyView {
+        Group {
+            if let groupings = parent.groupings, groupings.elements.isNotEmpty {
+                Picker(
+                    selection: environment.map(
+                        getter: { $0.grouping },
+                        setter: { .init(grouping: $0, filters: environment.wrappedValue.filters) }
+                    )
+                ) {
+                    ForEach(groupings.elements) { grouping in
+                        Text(grouping.displayTitle)
+                            .tag(grouping as BaseItemDto.Grouping?)
+                    }
+                } label: {
+                    Text(L10n.grouping)
+
+                    if let grouping = environment.wrappedValue.grouping {
+                        Text(grouping.displayTitle)
+                    }
+                }
+                .pickerStyle(.menu)
+            }
+        }
+        .eraseToAnyView()
+    }
+
     func makeLibraryBody(
         viewModel: PagingLibraryViewModel<Self>,
         @ViewBuilder content: @escaping () -> some View
@@ -61,15 +94,53 @@ struct LiveTVChannelLibrary: PagingLibrary, SearchablePagingLibrary {
     }
 
     func libraryStyleOptions(environment: Environment) -> LibraryStyleOptions {
-        BaseItemKind.libraryStyleOptions(for: [.liveTvChannel])
+        BaseItemKind.libraryStyleOptions(for: parent.supportedItemTypes(for: environment.grouping))
     }
 
     func retrievePage(
         environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
-        let filters = environment.filters
+        switch environment.grouping {
+        case .programs:
+            try await retrieveProgramsPage(filters: environment.filters, pageState: pageState)
+        default:
+            try await retrieveChannelsPage(filters: environment.filters, pageState: pageState)
+        }
+    }
 
+    func retrieveSearchPage(
+        query: String,
+        environment: Environment,
+        pageState: LibraryPageState
+    ) async throws -> [BaseItemDto] {
+        var parameters = Paths.GetItemsParameters()
+        parameters.enableUserData = true
+        parameters.fields = .MinimumFields
+        parameters.isRecursive = true
+        parameters.limit = pageState.pageSize
+        parameters.searchTerm = query
+        parameters.startIndex = pageState.pageOffset
+        parameters.userID = pageState.userSession.user.id
+
+        switch environment.grouping {
+        case .programs:
+            parameters.fields = .MinimumFields.appending(.channelInfo)
+            parameters.includeItemTypes = [.liveTvProgram]
+        default:
+            parameters.includeItemTypes = [.liveTvChannel]
+        }
+
+        let request = Paths.getItems(parameters: parameters)
+        let response = try await pageState.userSession.client.send(request)
+
+        return response.value.items ?? []
+    }
+
+    private func retrieveChannelsPage(
+        filters: ItemFilterCollection,
+        pageState: LibraryPageState
+    ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetLiveTvChannelsParameters()
         parameters.userID = pageState.userSession.user.id
         parameters.startIndex = pageState.pageOffset
@@ -93,22 +164,28 @@ struct LiveTVChannelLibrary: PagingLibrary, SearchablePagingLibrary {
         return response.value.items ?? []
     }
 
-    func retrieveSearchPage(
-        query: String,
-        environment: Environment,
+    private func retrieveProgramsPage(
+        filters: ItemFilterCollection,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
-        var parameters = Paths.GetItemsParameters()
-        parameters.enableUserData = true
-        parameters.fields = .MinimumFields
-        parameters.includeItemTypes = [.liveTvChannel]
-        parameters.isRecursive = true
-        parameters.limit = pageState.pageSize
-        parameters.searchTerm = query
-        parameters.startIndex = pageState.pageOffset
+        var parameters = Paths.GetLiveTvProgramsParameters()
         parameters.userID = pageState.userSession.user.id
+        parameters.startIndex = pageState.pageOffset
+        parameters.limit = pageState.pageSize
+        parameters.fields = .MinimumFields.appending(.channelInfo)
+        parameters.enableUserData = true
+        parameters.hasAired = false
+        parameters.sortBy = filters.sortBy
+        parameters.sortOrder = filters.sortOrder
+        parameters.genres = filters.genres.map(\.value)
 
-        let request = Paths.getItems(parameters: parameters)
+        parameters.isMovie = filters.categories.contains(.movies) ? true : nil
+        parameters.isSeries = filters.categories.contains(.series) ? true : nil
+        parameters.isNews = filters.categories.contains(.news) ? true : nil
+        parameters.isKids = filters.categories.contains(.kids) ? true : nil
+        parameters.isSports = filters.categories.contains(.sports) ? true : nil
+
+        let request = Paths.getLiveTvPrograms(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
         return response.value.items ?? []

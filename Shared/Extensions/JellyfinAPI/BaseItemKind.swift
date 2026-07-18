@@ -215,24 +215,8 @@ extension BaseItemKind {
         }
     }
 
-    var supportedLibraryDisplayTypes: [LibraryDisplayType] {
-        switch self {
-        case .channel, .liveTvChannel, .tvChannel:
-            LibraryDisplayType.allCases
-        default:
-            LibraryDisplayType.supportedCases
-        }
-    }
-
     static func libraryStyleOptions(for itemTypes: [BaseItemKind]) -> LibraryStyleOptions {
         guard itemTypes.isNotEmpty else { return .default }
-
-        let displayTypes = LibraryDisplayType.allCases
-            .filter { displayType in
-                itemTypes.contains { itemType in
-                    itemType.supportedLibraryDisplayTypes.contains(displayType)
-                }
-            }
 
         let posterDisplayTypes = PosterDisplayType.allCases
             .filter { posterDisplayType in
@@ -254,7 +238,6 @@ extension BaseItemKind {
         }
 
         return .init(
-            displayTypes: displayTypes,
             posterDisplayTypes: posterDisplayTypes,
             fallbackPosterDisplayType: fallbackPosterDisplayType
         )

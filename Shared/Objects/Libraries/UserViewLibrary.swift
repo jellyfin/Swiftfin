@@ -144,7 +144,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         action: (() -> Void)?
     ) -> some View {
         switch libraryStyle.displayType {
-        case .grid, .guide:
+        case .grid:
             UserViewLibraryGridElement(element: self)
         case .list:
             UserViewLibraryListElement(element: self)

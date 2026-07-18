@@ -592,6 +592,8 @@ extension BaseItemDto {
         switch type {
         case .episode:
             seriesID
+        case .program, .liveTvProgram, .tvProgram:
+            channelID
         default:
             parentID
         }

@@ -6,11 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-enum LibraryDisplayType: String, SupportedCaseIterable, CaseIterable, Displayable, Storable, SystemImageable {
+enum LibraryDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 
     case grid
     case list
-    case guide
 
     var displayTitle: String {
         switch self {
@@ -18,8 +17,6 @@ enum LibraryDisplayType: String, SupportedCaseIterable, CaseIterable, Displayabl
             L10n.grid
         case .list:
             L10n.list
-        case .guide:
-            L10n.guide
         }
     }
 
@@ -29,12 +26,6 @@ enum LibraryDisplayType: String, SupportedCaseIterable, CaseIterable, Displayabl
             "square.grid.2x2.fill"
         case .list:
             "square.fill.text.grid.1x2"
-        case .guide:
-            "tablecells"
         }
-    }
-
-    static var supportedCases: [LibraryDisplayType] {
-        [.grid, .list]
     }
 }

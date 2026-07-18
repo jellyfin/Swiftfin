@@ -15,7 +15,9 @@ extension BaseItemDto: LibraryParent {
         let displayTitle: String
         let id: String
 
+        static let channels = Grouping(displayTitle: L10n.channels, id: "channels")
         static let episodes = Grouping(displayTitle: L10n.episodes, id: "episodes")
+        static let programs = Grouping(displayTitle: L10n.programs, id: "programs")
         static let seasons = Grouping(displayTitle: L10n.seasons, id: "seasons")
         static let series = Grouping(displayTitle: L10n.series, id: "series")
     }
@@ -24,19 +26,10 @@ extension BaseItemDto: LibraryParent {
         type
     }
 
-    var supportsLetterPickerBar: Bool {
-        guard collectionType != .livetv else { return false }
-
-        switch libraryType {
-        case .channel, .liveTvChannel, .tvChannel, .program, .liveTvProgram, .tvProgram:
-            return false
-        default:
-            return true
-        }
-    }
-
     var groupings: (defaultSelection: Grouping, elements: [Grouping])? {
         switch collectionType {
+        case .livetv:
+            (.channels, [.channels, .programs])
         case .tvshows:
             (.series, [.episodes, .seasons, .series])
         default:
@@ -54,7 +47,12 @@ extension BaseItemDto: LibraryParent {
             BaseItemKind.supportedCases
                 .appending([.folder, .collectionFolder])
         case (.livetv, _):
-            [.liveTvChannel]
+            switch grouping {
+            case .programs:
+                [.program]
+            default:
+                [.liveTvChannel]
+            }
         case (.movies, _):
             [.movie]
         case (.tvshows, _):

@@ -168,25 +168,3 @@ extension ListRowMenu where Subtitle == Text, Content == AnyView {
         }
     }
 }
-
-// Initialize from a SupportedCaseIterable Enum
-extension ListRowMenu where Subtitle == Text, Content == AnyView {
-
-    init<ItemType>(
-        _ title: String,
-        selection: Binding<ItemType>,
-        onlySupported: Bool = false
-    ) where ItemType: SupportedCaseIterable & Displayable & Hashable {
-        let options = onlySupported ? Array(ItemType.supportedCases) : Array(ItemType.allCases)
-        self.title = Text(title)
-        self.subtitle = Text(selection.wrappedValue.displayTitle)
-        self.content = {
-            Picker(title, selection: selection) {
-                ForEach(options, id: \.self) { option in
-                    Text(option.displayTitle).tag(option)
-                }
-            }
-            .eraseToAnyView()
-        }
-    }
-}
