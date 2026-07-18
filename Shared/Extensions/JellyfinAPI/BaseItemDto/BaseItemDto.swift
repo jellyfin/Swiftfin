@@ -369,11 +369,20 @@ extension BaseItemDto {
     }
 
     var isUnaired: Bool {
-        if let premierDate = premiereDate {
-            premierDate > Date()
-        } else {
-            false
+        if let airingWindow {
+            return Date.now < airingWindow.start
         }
+
+        if let premiereDate {
+            return premiereDate > Date.now
+        }
+
+        return false
+    }
+
+    var hasAired: Bool {
+        guard let airingWindow else { return false }
+        return Date.now > airingWindow.end
     }
 
     var airDateLabel: String? {
@@ -517,6 +526,10 @@ extension BaseItemDto {
 
         if isUnaired {
             return L10n.unaired
+        }
+
+        if hasAired {
+            return L10n.ended
         }
 
         if isMissing {
