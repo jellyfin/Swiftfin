@@ -16,7 +16,7 @@ enum SelectorType {
 struct SelectorView<Element: Hashable, Label: View>: View {
 
     @StateObject
-    private var box: BindingBox<Set<Element>>
+    private var box: PublishedBox<Set<Element>>
 
     private let sources: [Element]
     private var label: (Element) -> Label
@@ -29,7 +29,7 @@ struct SelectorView<Element: Hashable, Label: View>: View {
         label: @escaping (Element) -> Label,
     ) {
         self._box = StateObject(
-            wrappedValue: BindingBox(
+            wrappedValue: PublishedBox(
                 source: selection.map(
                     getter: { Set($0) },
                     setter: { Array($0) }
@@ -47,7 +47,7 @@ struct SelectorView<Element: Hashable, Label: View>: View {
         label: @escaping (Element) -> Label,
     ) {
         self._box = StateObject(
-            wrappedValue: BindingBox(
+            wrappedValue: PublishedBox(
                 source: selection.map(
                     getter: { Set([$0]) },
                     setter: { $0.first! }

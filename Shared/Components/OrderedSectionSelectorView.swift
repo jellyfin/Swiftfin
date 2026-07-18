@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import SwiftUI
 
 struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
@@ -14,7 +15,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     private var editMode
 
     @StateObject
-    private var selection: BindingBox<[Element]>
+    private var selection: PublishedBox<[Element]>
 
     private let data: [Element]
     private let removable: [Element]
@@ -26,7 +27,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
         sources: [Element],
         removable: [Element]? = nil
     ) {
-        self._selection = StateObject(wrappedValue: BindingBox(source: selection))
+        self._selection = StateObject(wrappedValue: PublishedBox(source: selection))
         self.data = sources
         self.removable = removable ?? sources
         self.systemImage = systemImage
