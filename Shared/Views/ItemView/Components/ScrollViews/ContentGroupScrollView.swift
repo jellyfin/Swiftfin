@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: tvOS black background if not enhanced?
+
 extension ItemView {
 
     struct ContentGroupScrollView: View {
@@ -74,10 +76,12 @@ extension ItemView {
 
         var body: some View {
             ZStack {
+                #if os(tvOS)
                 if isEnhanced {
                     background
                         .ignoresSafeArea()
                 }
+                #endif
 
                 ScrollView {
                     ContentGroupVStack(
@@ -96,6 +100,7 @@ extension ItemView {
                 .ignoresSafeArea(edges: isEnhanced ? .all : .horizontal)
                 .scrollIndicators(.hidden)
             }
+            .backport
             .onChange(of: focusedGroupID) {
                 guard isEnhanced, let focusedGroupID else { return }
 

@@ -17,16 +17,16 @@ struct WithBlurNavigationBar<Content: View>: PlatformViewControllerRepresentable
     }
 
     func makeUIViewController(context: Context) -> _WithBlurNavigationBarViewController<Content> {
-        _WithBlurNavigationBarViewController<Content>(rootView: content)
+        _WithBlurNavigationBarViewController<Content>(content: content)
     }
 
     func updateUIViewController(_ uiViewController: _WithBlurNavigationBarViewController<Content>, context: Context) {
-        uiViewController.rootView = content
+        uiViewController.content = content
         uiViewController.hideNavigationTitle()
     }
 }
 
-final class _WithBlurNavigationBarViewController<Content: View>: UIHostingController<Content> {
+final class _WithBlurNavigationBarViewController<Content: View>: HostingController<Content> {
 
     private var hasCalledWillDisappear = false
 
@@ -43,8 +43,11 @@ final class _WithBlurNavigationBarViewController<Content: View>: UIHostingContro
 
         navigationController?.navigationBar
             .titleTextAttributes = [NSAttributedString.Key.foregroundColor: hiddenTitleColor]
+
+        #if os(iOS)
         navigationController?.navigationBar
             .largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: hiddenTitleColor]
+        #endif
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -63,7 +66,9 @@ final class _WithBlurNavigationBarViewController<Content: View>: UIHostingContro
         hasCalledWillDisappear = true
 
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
+        #if os(iOS)
         navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
+        #endif
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.shadowImage = nil
     }
