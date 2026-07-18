@@ -114,6 +114,8 @@ struct LiveTVChannelLibrary: PagingLibrary, SearchablePagingLibrary {
         environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
+        let filters = environment.filters
+
         var parameters = Paths.GetItemsParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
@@ -122,6 +124,16 @@ struct LiveTVChannelLibrary: PagingLibrary, SearchablePagingLibrary {
         parameters.searchTerm = query
         parameters.startIndex = pageState.pageOffset
         parameters.userID = pageState.userSession.user.id
+        parameters.sortBy = filters.sortBy
+        parameters.sortOrder = filters.sortOrder
+        parameters.genres = filters.genres.map(\.value)
+
+        parameters.isMovie = filters.categories.contains(.movies) ? true : nil
+        parameters.isSeries = filters.categories.contains(.series) ? true : nil
+        parameters.isNews = filters.categories.contains(.news) ? true : nil
+        parameters.isKids = filters.categories.contains(.kids) ? true : nil
+        parameters.isSports = filters.categories.contains(.sports) ? true : nil
+        parameters.isFavorite = filters.traits.contains(.isFavorite) ? true : nil
 
         switch environment.grouping {
         case .programs:
