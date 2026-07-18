@@ -154,7 +154,11 @@ struct PlayButton: View {
                     if let startDate = provider.playButtonItem?.startDate,
                        provider.playButtonItem?.isUnaired == true
                     {
-                        Text("\(L10n.airing) \(Text(startDate, style: .timer))")
+                        if startDate.timeIntervalSinceNow >= 86400 {
+                            Text("\(L10n.airing) \(Text(startDate, style: .relative))")
+                        } else {
+                            Text("\(L10n.airing) \(Text(startDate, style: .timer))")
+                        }
                     } else {
                         Text(provider.playButtonItem?.playButtonLabel ?? L10n.play)
                     }
