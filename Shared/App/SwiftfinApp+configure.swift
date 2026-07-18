@@ -18,7 +18,7 @@ extension SwiftfinApp {
 
     static func configure() {
 
-        #if DEBUG
+        #if DEBUG && !os(tvOS)
         SwizzleDefaults.set(Defaults[.isLiquidGlassEnabled], for: "com.apple.SwiftUI.IgnoreSolariumOptOut")
         #endif
 

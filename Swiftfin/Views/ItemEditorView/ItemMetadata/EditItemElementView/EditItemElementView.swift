@@ -15,9 +15,6 @@ import SwiftUI
 
 struct EditItemElementView<Editor: ItemComponentEditor>: View {
 
-    @Default(.accentColor)
-    private var accentColor
-
     @ObservedObject
     private var viewModel: ItemComponentEditorViewModel<Editor>
 
@@ -46,9 +43,18 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
             selectedElements = isAllSelected ? [] : Set(elements)
         }
-        .buttonStyle(.toolbarPill)
+        .foregroundStyle(.primary, .secondary)
+        .if(true) { view in
+            if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                view
+            } else {
+                view
+                    .backport
+                    .buttonStyle(.glass)
+            }
+        }
+        .controlSize(.small)
         .disabled(!isEditing)
-        .foregroundStyle(accentColor)
     }
 
     @ViewBuilder
@@ -112,7 +118,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
 
                 ToolbarItem(placement: .topBarTrailing) {
                     if isEditing || isReordering {
-                        Button(L10n.cancel) {
+                        Button(L10n.cancel, role: .cancel) {
                             if isEditing {
                                 isEditing.toggle()
                             }
@@ -125,27 +131,46 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                             UIDevice.impact(.light)
                             selectedElements.removeAll()
                         }
-                        .buttonStyle(.toolbarPill)
-                        .foregroundStyle(accentColor)
+                        .foregroundStyle(.primary, .secondary)
+                        .if(true) { view in
+                            if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                                view
+                            } else {
+                                view
+                                    .backport
+                                    .buttonStyle(.glass)
+                            }
+                        }
+                        .controlSize(.small)
                     }
                 }
 
                 ToolbarItem(placement: .bottomBar) {
                     if isEditing {
-                        Button(L10n.delete) {
+                        Button(L10n.delete, role: .destructive) {
                             isPresentingDeletionConfirmation = true
                         }
-                        .buttonStyle(.toolbarPill(.red))
+                        .backport
+                        .buttonStyle(.glassProminent)
                         .disabled(selectedElements.isEmpty)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
 
                     if isReordering {
-                        Button(L10n.save) {
+                        let saveAction: () -> Void = {
                             viewModel.reorder(elements)
                             isReordering = false
                         }
-                        .buttonStyle(.toolbarPill)
+
+                        Group {
+                            if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                                Button(L10n.save, role: .confirm, action: saveAction)
+                            } else {
+                                Button(L10n.save, action: saveAction)
+                                    .backport
+                                    .buttonStyle(.glassProminent)
+                                    .controlSize(.small)
+                            }
+                        }
                         .disabled(viewModel.editor.elements(in: viewModel.item) == elements)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                     }

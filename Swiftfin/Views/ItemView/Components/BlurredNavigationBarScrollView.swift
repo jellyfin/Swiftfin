@@ -37,6 +37,8 @@ extension ItemView {
             }
             .ignoresSafeArea(edges: .horizontal)
             .scrollIndicators(.hidden)
+            .backport
+            .scrollEdgeEffectStyle(.soft, for: .top)
             .overlay(alignment: .top) {
                 Rectangle()
                     .fill(Material.ultraThin)

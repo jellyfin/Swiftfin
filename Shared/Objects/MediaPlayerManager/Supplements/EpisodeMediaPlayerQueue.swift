@@ -394,19 +394,13 @@ extension EpisodeMediaPlayerQueue {
                 Button {
                     viewModel.refresh()
                 } label: {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 7)
-                            .foregroundStyle(.white)
-
-                        Label(L10n.retry, systemImage: "arrow.clockwise")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.black)
-                            .padding()
-                            .edgePadding(.horizontal)
-                    }
+                    Label(L10n.retry, systemImage: "arrow.clockwise")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .padding()
+                        .edgePadding(.horizontal)
                 }
-                .buttonStyle(.card)
+                .buttonStyle(.supplementAction)
                 .focused($isRetryButtonFocused)
                 .frame(height: UIDevice.isTV ? 80 : 50)
             }

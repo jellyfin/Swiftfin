@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -45,11 +46,21 @@ struct EditMetadataView: View {
                     ProgressView()
                 }
 
-                Button(L10n.save) {
+                let saveAction: () -> Void = {
                     item = tempItem
                     viewModel.update(tempItem)
                 }
-                .buttonStyle(.toolbarPill)
+
+                Group {
+                    if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                        Button(L10n.save, role: .confirm, action: saveAction)
+                    } else {
+                        Button(L10n.save, action: saveAction)
+                            .backport
+                            .buttonStyle(.glassProminent)
+                            .controlSize(.small)
+                    }
+                }
                 .disabled(viewModel.item == tempItem)
             }
             .navigationBarCloseButton {

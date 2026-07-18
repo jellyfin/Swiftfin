@@ -12,17 +12,11 @@ import SwiftUI
 
 struct EditServerTaskView: View {
 
-    @Router
-    private var router
-
     @CurrentDate
     private var currentDate: Date
 
     @ObservedObject
     var observer: ServerTaskObserver
-
-    @State
-    private var selectedTrigger: TaskTriggerInfo?
 
     var body: some View {
         List {
@@ -68,17 +62,8 @@ struct EditServerTaskView: View {
         .animation(.linear(duration: 0.1), value: observer.task.triggers)
         .navigationTitle(L10n.task)
         .topBarTrailing {
-
             if observer.background.states.contains(.observing) || observer.background.states.contains(.updating) {
                 ProgressView()
-            }
-
-            if let triggers = observer.task.triggers, triggers.isNotEmpty {
-                Button(L10n.add) {
-                    UIDevice.impact(.light)
-                    router.route(to: .addServerTaskTrigger(observer: observer))
-                }
-                .buttonStyle(.toolbarPill)
             }
         }
         .errorMessage($observer.error)

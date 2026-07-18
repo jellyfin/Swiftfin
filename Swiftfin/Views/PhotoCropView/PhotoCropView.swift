@@ -75,17 +75,29 @@ struct PhotoCropView: View {
             }
 
             if coordinator.hasChanges {
-                Button(L10n.reset) {
+                Button(L10n.reset, role: .destructive) {
                     coordinator.reset()
                 }
-                .buttonStyle(.toolbarPill(.red))
+                .backport
+                .buttonStyle(.glassProminent)
+                .controlSize(.small)
                 .disabled(isSaving)
             }
 
-            Button(L10n.save) {
+            let saveAction: () -> Void = {
                 coordinator.crop()
             }
-            .buttonStyle(.toolbarPill)
+
+            Group {
+                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                    Button(L10n.save, role: .confirm, action: saveAction)
+                } else {
+                    Button(L10n.save, action: saveAction)
+                        .backport
+                        .buttonStyle(.glassProminent)
+                        .controlSize(.small)
+                }
+            }
             .disabled(isSaving)
         }
         .toolbarBackground(.visible, for: .navigationBar)

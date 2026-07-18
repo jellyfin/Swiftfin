@@ -8,19 +8,18 @@
 
 import SwiftUI
 
-struct EmptyLabel: View {
+protocol WithText {
+    var textBody: Text { get }
+}
 
-    private let title: Text
-
-    init(_ text: some WithText) {
-        self.title = text.textBody
+extension Text: WithText {
+    var textBody: Text {
+        self
     }
+}
 
-    var body: some View {
-        Label {
-            title
-        } icon: {
-            EmptyView()
-        }
+extension String: WithText {
+    var textBody: Text {
+        Text(self)
     }
 }

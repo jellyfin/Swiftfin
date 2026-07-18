@@ -55,24 +55,46 @@ struct ConnectToServerView: View {
         }
 
         if viewModel.state == .connecting {
-            Button(L10n.cancel, role: .cancel) {
+            Button(role: .cancel) {
                 viewModel.cancel()
+            } label: {
+                Text(L10n.cancel)
+                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.primary)
-            .frame(maxHeight: 75)
+            .listRowInsets(.zero)
+            .listRowBackground(Color.clear)
+            #if os(iOS)
+                .listRowSeparator(.hidden)
+            #endif
+                .fontWeight(.semibold)
+                .backport
+                .buttonStyle(.glassProminent.shadow(false))
+            #if os(iOS)
+                .controlSize(.large)
+            #endif
+                .frame(maxHeight: 75)
         } else {
-            Button(L10n.connect) {
+            Button {
                 isURLFocused = false
                 viewModel.connect(url: url)
+            } label: {
+                Text(L10n.connect)
+                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.primary)
-            .frame(maxHeight: 75)
-            .disabled(url.isEmpty)
-            .foregroundStyle(
-                accentColor.overlayColor,
-                accentColor
-            )
-            .opacity(url.isEmpty ? 0.5 : 1)
+            .listRowInsets(.zero)
+            .listRowBackground(Color.clear)
+            #if os(iOS)
+                .listRowSeparator(.hidden)
+            #endif
+                .fontWeight(.semibold)
+                .backport
+                .buttonStyle(.glassProminent.shadow(false))
+                .tint(accentColor)
+            #if os(iOS)
+                .controlSize(.large)
+            #endif
+                .frame(maxHeight: 75)
+                .disabled(url.isEmpty)
         }
     }
 

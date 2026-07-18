@@ -8,19 +8,14 @@
 
 import SwiftUI
 
-struct EmptyLabel: View {
+#if os(tvOS)
+struct BasicHoverButtonStyle: ButtonStyle {
 
-    private let title: Text
-
-    init(_ text: some WithText) {
-        self.title = text.textBody
-    }
-
-    var body: some View {
-        Label {
-            title
-        } icon: {
-            EmptyView()
-        }
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .hoverEffect(.lift)
     }
 }
+#else
+typealias BasicHoverButtonStyle = BorderlessButtonStyle
+#endif

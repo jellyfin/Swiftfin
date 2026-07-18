@@ -99,7 +99,6 @@ struct ItemEditorView: View {
                     Button(L10n.delete, role: .destructive) {
                         isPresentingDeleteConfirmation.wrappedValue = true
                     }
-                    .buttonStyle(.primary)
                     .confirmationDialog(
                         L10n.deleteItemConfirmationMessage,
                         isPresented: isPresentingDeleteConfirmation,
