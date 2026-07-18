@@ -196,6 +196,20 @@ extension VideoPlayerType {
                 ) {
                     nativeHDRProfiles
                 }
+                ProfileCondition(
+                    condition: .equalsAny,
+                    isRequired: true,
+                    property: .videoCodecTag
+                ) {
+                    "hvc1"
+                    "dvh1"
+                }
+                ProfileCondition(
+                    condition: .lessThanEqual,
+                    isRequired: true,
+                    property: .videoFramerate,
+                    value: "60"
+                )
             }
         )
 
