@@ -32,7 +32,7 @@ struct LetterPickerBar: PlatformView {
 
     private let letters = ItemLetter.allCases
 
-    enum Row: Hashable {
+    private enum Row: Hashable {
         case letter(ItemLetter)
         case dot
     }
@@ -49,51 +49,52 @@ struct LetterPickerBar: PlatformView {
         viewModel.currentFilters.letter.first
     }
 
-    // iOS scrubs, so abbreviate to landmark letters when the full alphabet
-    // can't fit; tvOS scrolls and always shows every letter.
     private var rows: [Row] {
-        let isCompact = barHeight > 0
-            && letters.count > 21
-            && CGFloat(letters.count) * dimension > barHeight
-
-        guard isCompact else { return letters.map { .letter($0) } }
+        guard barHeight > 0,
+              letters.count > 21,
+              CGFloat(letters.count) * dimension > barHeight
+        else { return letters.map { .letter($0) } }
 
         let selectedIndex = selectedLetter.flatMap { letters.firstIndex(of: $0) }
         let landmarks = (0 ... 10).map { Int((Double($0) / 10 * Double(letters.count - 1)).rounded()) }
 
-        return landmarks.enumerated().flatMap { offset, index -> [Row] in
-            var entries: [Row] = [.letter(letters[index])]
-
-            if offset < landmarks.count - 1 {
-                let upper = landmarks[offset + 1]
-                if let selectedIndex, selectedIndex > index, selectedIndex < upper {
-                    entries.append(.letter(letters[selectedIndex]))
-                } else {
-                    entries.append(.dot)
-                }
+        return zip(landmarks, landmarks.dropFirst()).flatMap { lower, upper -> [Row] in
+            if let selectedIndex, selectedIndex > lower, selectedIndex < upper {
+                [.letter(letters[lower]), .letter(letters[selectedIndex])]
+            } else {
+                [.letter(letters[lower]), .dot]
             }
+        } + [.letter(letters[letters.count - 1])]
+    }
 
-            return entries
-        }
+    private var contentHeight: CGFloat {
+        min(CGFloat(rows.count) * dimension, barHeight)
+    }
+
+    private var contentInset: CGFloat {
+        max(0, (barHeight - contentHeight) / 2)
     }
 
     private func letter(atY y: CGFloat) -> ItemLetter? {
         guard barHeight > 0, !letters.isEmpty else { return nil }
-        let contentHeight = min(CGFloat(rows.count) * dimension, barHeight)
-        let inset = max(0, (barHeight - contentHeight) / 2)
-        let clamped = min(max(y - inset, 0), contentHeight - 1)
+        let clamped = min(max(y - contentInset, 0), contentHeight - 1)
         let index = Int(clamped / contentHeight * CGFloat(letters.count))
         return letters[min(max(index, 0), letters.count - 1)]
     }
 
     private func row(atY y: CGFloat) -> Row? {
-        guard barHeight > 0, dimension > 0 else { return nil }
-        let contentHeight = min(CGFloat(rows.count) * dimension, barHeight)
-        let inset = max(0, (barHeight - contentHeight) / 2)
-        let localY = y - inset
-        guard localY >= 0, localY < contentHeight else { return nil }
+        let localY = y - contentInset
+        guard barHeight > 0, localY >= 0, localY < contentHeight else { return nil }
         let index = Int(localY / dimension)
         return rows.indices.contains(index) ? rows[index] : nil
+    }
+
+    private func toggleLetter(_ letter: ItemLetter) {
+        if viewModel.currentFilters.letter.contains(letter) {
+            viewModel.currentFilters.letter = []
+        } else {
+            viewModel.currentFilters.letter = [letter]
+        }
     }
 
     private var letterBar: some View {
@@ -102,22 +103,12 @@ struct LetterPickerBar: PlatformView {
                 switch row {
                 case let .letter(letter):
                     LetterPickerButton(letter) {
-                        if viewModel.currentFilters.letter.contains(letter) {
-                            viewModel.currentFilters.letter = []
-                        } else {
-                            viewModel.currentFilters.letter = [letter]
-                        }
+                        toggleLetter(letter)
                     }
                     .isSelected(selectedLetter == letter)
                     .frame(width: dimension, height: dimension)
-                    .if(UIDevice.isTV) { view in
-                        view
-                            .focused($focusedLetter, equals: letter)
-                    }
-                    .if(!UIDevice.isTV) { view in
-                        view
-                            .allowsHitTesting(false)
-                    }
+                    .focused($focusedLetter, equals: letter)
+                    .allowsHitTesting(UIDevice.isTV)
                 case .dot:
                     Circle()
                         .fill(accentColor.opacity(0.5))
@@ -129,12 +120,11 @@ struct LetterPickerBar: PlatformView {
         .frame(width: dimension)
         .background {
             ZStack {
-                ForEach(ItemLetter.allCases, id: \.hashValue) { letter in
+                ForEach(letters, id: \.hashValue) { letter in
                     Text(letter.value)
                 }
             }
             .hidden()
-            .allowsHitTesting(false)
             .fixedSize()
             .trackingSize($letterSize)
         }
@@ -142,64 +132,48 @@ struct LetterPickerBar: PlatformView {
     }
 
     var iOSView: some View {
-        GeometryReader { proxy in
-            letterBar
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .overlay {
-                    #if os(iOS)
-                    GestureView()
-                        .environment(\.panGestureDirection, .vertical)
-                        .environment(\.panAction, PanAction { _, _, location, _, state in
-                            switch state {
-                            case .began, .changed:
-                                if let target = letter(atY: location.y), target != activeLetter {
-                                    activeLetter = target
-                                    UIDevice.impact(.light)
-                                }
-                            case .ended, .cancelled, .failed:
-                                if let target = letter(atY: location.y) {
-                                    viewModel.currentFilters.letter = [target]
-                                }
-                                activeLetter = nil
-                            default:
-                                break
+        letterBar
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay {
+                #if os(iOS)
+                GestureView()
+                    .environment(\.panGestureDirection, .vertical)
+                    .environment(\.panAction, PanAction { _, _, location, _, state in
+                        switch state {
+                        case .began, .changed:
+                            guard let target = letter(atY: location.y), target != activeLetter else { return }
+                            activeLetter = target
+                            UIDevice.impact(.light)
+                        case .ended, .cancelled, .failed:
+                            if let target = letter(atY: location.y) {
+                                viewModel.currentFilters.letter = [target]
                             }
-                        })
-                        .environment(\.tapGestureAction, TapAction { location, _, _ in
-                            switch row(atY: location.y) {
-                            case let .letter(tapped)?:
-                                if selectedLetter == tapped {
-                                    viewModel.currentFilters.letter = []
-                                } else {
-                                    viewModel.currentFilters.letter = [tapped]
-                                }
-                            case .dot?:
-                                viewModel.currentFilters.letter = []
-                            case nil:
-                                break
-                            }
-                        })
-                    #endif
-                }
-                .onAppear {
-                    barHeight = proxy.size.height
-                }
-                .onChange(of: proxy.size.height) { newValue in
-                    barHeight = newValue
-                }
-        }
-        .frame(width: dimension)
-        .padding(.horizontal, 2)
-        .padding(.vertical, EdgeInsets.edgePadding / 2)
-        .padding(edge == .leading ? .leading : .trailing, EdgeInsets.edgePadding / 2)
-        .preference(
-            key: PresentationControllerShouldDismissPreferenceKey.self,
-            value: activeLetter == nil
-        )
-        .preference(
-            key: LetterPickerActiveLetterKey.self,
-            value: activeLetter
-        )
+                            activeLetter = nil
+                        default:
+                            break
+                        }
+                    })
+                    .environment(\.tapGestureAction, TapAction { location, _, _ in
+                        switch row(atY: location.y) {
+                        case let .letter(letter)?:
+                            toggleLetter(letter)
+                        case .dot?:
+                            viewModel.currentFilters.letter = []
+                        case nil:
+                            break
+                        }
+                    })
+                #endif
+            }
+            .onSizeChanged { size, _ in
+                barHeight = size.height
+            }
+            .frame(width: dimension)
+            .padding(.horizontal, 2)
+            .padding(.vertical, EdgeInsets.edgePadding / 2)
+            .padding(edge == .leading ? .leading : .trailing, EdgeInsets.edgePadding / 2)
+            .preference(key: PresentationControllerShouldDismissPreferenceKey.self, value: activeLetter == nil)
+            .preference(key: LetterPickerActiveLetterKey.self, value: activeLetter)
     }
 
     var tvOSView: some View {
@@ -210,7 +184,7 @@ struct LetterPickerBar: PlatformView {
             .backport
             .defaultFocus(
                 $focusedLetter,
-                selectedLetter ?? letters.first ?? ItemLetter(stringLiteral: "#"),
+                selectedLetter ?? letters.first ?? "#",
                 priority: focusedLetter == nil ? .userInitiated : .automatic
             )
             .offset(x: edge == .leading ? -EdgeInsets.edgePadding / 1.5 : EdgeInsets.edgePadding / 1.5)
@@ -222,9 +196,6 @@ struct LetterPickerBar: PlatformView {
                 guard !Task.isCancelled else { return }
                 activeLetter = nil
             }
-            .preference(
-                key: LetterPickerActiveLetterKey.self,
-                value: activeLetter
-            )
+            .preference(key: LetterPickerActiveLetterKey.self, value: activeLetter)
     }
 }
