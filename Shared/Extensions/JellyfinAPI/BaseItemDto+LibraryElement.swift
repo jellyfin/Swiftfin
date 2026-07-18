@@ -114,9 +114,13 @@ private struct BaseItemDtoLibraryListElement: View {
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
 
-                accessoryView
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                if let program = item.currentProgram {
+                    currentProgramView(program)
+                } else {
+                    accessoryView
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         } action: {
@@ -127,6 +131,31 @@ private struct BaseItemDtoLibraryListElement: View {
         #if os(tvOS)
             .focusedValue(\.focusedPoster, AnyPoster(item))
         #endif
+    }
+
+    @ViewBuilder
+    private func currentProgramView(_ program: BaseItemDto) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(program.displayTitle)
+                .font(.subheadline)
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+
+            if let progress = program.progressPercentage {
+                ProgressBar(progress: progress)
+                    .frame(height: 4)
+                    .foregroundStyle(Color.accentColor)
+            }
+
+            if let start = program.startDate, let end = program.endDate {
+                DotHStack {
+                    Text(start, style: .time)
+                    Text(end, style: .time)
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+        }
     }
 
     @ViewBuilder

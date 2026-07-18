@@ -10,7 +10,7 @@ import JellyfinAPI
 
 struct LiveTVGroupProvider: ContentGroupProvider {
 
-    // TODO: Add Guides & Recordings 
+    // TODO: Add Guides & Recordings
     private enum LiveTVPill: Displayable, SystemImageable {
         case channels
 
