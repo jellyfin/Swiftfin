@@ -403,3 +403,19 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 }
+
+extension ItemContentGroupProvider: Recordable {
+
+    var recordableItem: BaseItemDto {
+        item
+    }
+
+    func setRecordingTimerID(_ timerID: String?) {
+        switch item.type {
+        case .channel, .liveTvChannel, .tvChannel:
+            item.currentProgram?.timerID = timerID
+        default:
+            item.timerID = timerID
+        }
+    }
+}

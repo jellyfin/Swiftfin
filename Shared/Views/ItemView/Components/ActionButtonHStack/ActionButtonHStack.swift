@@ -111,6 +111,28 @@ extension ItemView {
                     .isSelected(isFavorited)
                 }
 
+                // MARK: Record
+
+                if provider.item.canBeRecorded {
+                    let isRecording = provider.isRecording
+
+                    Button {
+                        Task { await provider.toggleRecording() }
+                    } label: {
+                        materialLabel(
+                            L10n.recording,
+                            systemImage: isRecording ? "record.circle.fill" : "record.circle",
+                            isHighlighted: isRecording,
+                            tint: .red,
+                            foregroundColor: .primary
+                        )
+                    }
+                    #if !os(tvOS)
+                    .foregroundStyle(.primary, .secondary)
+                    #endif
+                    .isSelected(isRecording)
+                }
+
                 // MARK: Trailer
 
                 if hasTrailers {
