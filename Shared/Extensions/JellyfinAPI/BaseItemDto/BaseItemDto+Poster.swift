@@ -38,7 +38,9 @@ extension BaseItemDto: Poster {
         case .channel, .liveTvChannel, .tvChannel:
             number ?? channelNumber
         case .program, .liveTvProgram, .tvProgram:
-            if let startDate {
+            if isAiring, let startDate, let endDate {
+                "\(startDate.formatted(date: .omitted, time: .shortened)) \(String.hyphen) \(endDate.formatted(date: .omitted, time: .shortened))"
+            } else if let startDate {
                 startDate.formatted(.dateTime.month().day().hour().minute())
             } else {
                 nil
@@ -400,16 +402,22 @@ private struct BaseItemDtoPosterLabel: View {
                 .lineLimit(1, reservesSpace: true)
 
             HStack(spacing: 2) {
-                if let startDate = item.startDate {
-                    Text(startDate, style: .time)
-                } else {
-                    Text(String.emptyDash)
-                }
+                if item.isAiring {
+                    if let startDate = item.startDate {
+                        Text(startDate, style: .time)
+                    } else {
+                        Text(String.emptyDash)
+                    }
 
-                Text(String.hyphen)
+                    Text(String.hyphen)
 
-                if let endDate = item.endDate {
-                    Text(endDate, style: .time)
+                    if let endDate = item.endDate {
+                        Text(endDate, style: .time)
+                    } else {
+                        Text(String.emptyDash)
+                    }
+                } else if let startDate = item.startDate {
+                    Text(startDate.formatted(.dateTime.month().day().hour().minute()))
                 } else {
                     Text(String.emptyDash)
                 }
