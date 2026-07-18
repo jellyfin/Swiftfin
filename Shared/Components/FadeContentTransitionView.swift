@@ -6,11 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Engine
 import SwiftUI
 import UIKit
 
-struct FadeContentTransitionView<Item: Hashable, Content: View>: UIViewRepresentable {
+struct FadeContentTransitionView<Item: Hashable, Content: View>: PlatformViewRepresentable {
 
     private let item: Item
     private let duration: TimeInterval

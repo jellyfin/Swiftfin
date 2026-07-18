@@ -6,12 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Engine
 import SwiftUI
 import UIKit
 
 /// `TabView` has an "overscroll" bug on some index selections, workaround with manual `UIPageViewController`
-struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRepresentable {
+struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControllerRepresentable {
 
     let items: [Item]
     let selection: Binding<Item.ID?>

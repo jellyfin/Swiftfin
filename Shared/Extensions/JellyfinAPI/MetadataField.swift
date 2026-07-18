@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-extension MetadataField: Displayable {
+extension JellyfinAPI.MetadataField: Displayable {
     var displayTitle: String {
         switch self {
         case .cast:

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Engine
 import SwiftUI
 
 // TODO: tvOS 26: `.background(ultraThinMaterial)` to `.glassEffect`

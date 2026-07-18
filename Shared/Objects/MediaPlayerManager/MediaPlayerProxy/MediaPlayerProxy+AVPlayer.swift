@@ -223,7 +223,7 @@ extension AVMediaPlayerProxy {
 
 extension AVMediaPlayerProxy {
 
-    struct AVPlayerView: UIViewRepresentable {
+    struct AVPlayerView: PlatformViewRepresentable {
 
         @EnvironmentObject
         private var proxy: AVMediaPlayerProxy

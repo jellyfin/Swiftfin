@@ -12,7 +12,7 @@ import SwiftUI
 // Note: SVGKit does not support the simulator and will appear blank.
 
 // This seemed necessary because using SwiftUI `Image(uiImage:)` would cause severe lag.
-struct FastSVGView: UIViewRepresentable {
+struct FastSVGView: PlatformViewRepresentable {
 
     let data: Data
 

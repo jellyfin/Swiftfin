@@ -45,7 +45,7 @@ struct HourMinutePicker: View {
 
 #if os(iOS)
 
-private struct _HourMinutePickerView: UIViewRepresentable {
+private struct _HourMinutePickerView: PlatformViewRepresentable {
 
     let interval: Binding<TimeInterval>
 
@@ -94,7 +94,7 @@ private struct _HourMinutePickerView: UIViewRepresentable {
 
 #if os(tvOS)
 
-private struct _HourMinutePickerView: UIViewRepresentable {
+private struct _HourMinutePickerView: PlatformViewRepresentable {
 
     let interval: Binding<TimeInterval>
 

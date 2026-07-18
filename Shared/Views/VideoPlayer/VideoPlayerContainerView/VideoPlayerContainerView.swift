@@ -8,7 +8,6 @@
 
 import Combine
 import Defaults
-import Engine
 import Logging
 import MediaPlayer
 import SwiftUI
@@ -36,7 +35,7 @@ import SwiftUI
 
 extension VideoPlayer {
 
-    struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: UIViewControllerRepresentable {
+    struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: PlatformViewControllerRepresentable {
 
         private let containerState: VideoPlayerContainerState
         private let manager: MediaPlayerManager
