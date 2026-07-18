@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: Relax `WithRefresh` requirement?
+
 typealias ContentGroupBuilder = ArrayBuilder<any ContentGroup>
 
 @MainActor

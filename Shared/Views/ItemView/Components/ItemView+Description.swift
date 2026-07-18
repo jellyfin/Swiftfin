@@ -34,14 +34,20 @@ extension ItemView {
                     }
 
                     if let itemOverview = item.overview, itemOverview.isNotEmpty {
-                        Button {
-                            router.route(to: .itemOverview(item: item))
-                        } label: {
-                            SeeMoreText(itemOverview)
+                        InlinePlatformView {
+                            Button {
+                                router.route(to: .itemOverview(item: item))
+                            } label: {
+                                SeeMoreText(itemOverview)
+                                    .font(.footnote)
+                                    .lineLimit(3)
+                            }
+                            .buttonStyle(.plain)
+                        } tvOSView: {
+                            Text(itemOverview)
                                 .font(.footnote)
                                 .lineLimit(3)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
