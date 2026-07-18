@@ -6,8 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
+
 struct LiveTVGroupProvider: ContentGroupProvider {
 
+    // TODO: Add Guides & Recordings 
     private enum LiveTVPill: Displayable, SystemImageable {
         case channels
 
