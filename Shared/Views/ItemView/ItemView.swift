@@ -124,14 +124,14 @@ struct ItemView: View {
             viewModel.refresh()
         }
         #if os(tvOS)
-            .toolbarVisibility(.hidden, for: .navigationBar)
+        .toolbarVisibility(.hidden, for: .navigationBar)
         #else
-            .navigationBarMenuButton(
-                isLoading: viewModel.background.is(.refreshing),
-                isHidden: !provider.item.canEdit
-            ) {
-                EditItemMenuContent(item: provider.item)
-            }
+        .navigationBarMenuButton(
+            isLoading: viewModel.background.is(.refreshing),
+            isHidden: !provider.item.canEdit
+        ) {
+            EditItemMenuContent(item: provider.item)
+        }
         #endif
     }
 }
