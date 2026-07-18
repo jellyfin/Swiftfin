@@ -16,12 +16,16 @@ extension BaseItemDto {
     /// Image source for this `BaseItemDto`
     func imageSource(
         _ type: ImageType,
+        tag: String? = nil,
         environment: some WithImageSourceOptions
     ) -> ImageSource {
-        makeImageSource(
+        let resolvedTag = tag ?? imageTag(for: type)
+
+        return makeImageSource(
             itemID: id,
             type: type,
-            blurHash: blurHash(for: type),
+            tag: resolvedTag,
+            blurHash: blurHash(for: type, tag: resolvedTag),
             environment: environment
         )
     }
@@ -30,11 +34,13 @@ extension BaseItemDto {
     func imageSource(
         itemID: String?,
         _ type: ImageType,
+        tag: String? = nil,
         environment: some WithImageSourceOptions
     ) -> ImageSource {
         makeImageSource(
             itemID: itemID,
             type: type,
+            tag: tag,
             blurHash: nil,
             environment: environment
         )
@@ -43,6 +49,7 @@ extension BaseItemDto {
     private func makeImageSource(
         itemID: String?,
         type: ImageType,
+        tag: String?,
         blurHash: String?,
         environment: some WithImageSourceOptions
     ) -> ImageSource {
@@ -51,6 +58,7 @@ extension BaseItemDto {
                 imageURL(
                     itemID: $0,
                     type,
+                    tag: tag,
                     environment: environment
                 )
             },
@@ -58,11 +66,11 @@ extension BaseItemDto {
         )
     }
 
-    private func blurHash(for type: ImageType) -> String? {
+    private func blurHash(for type: ImageType, tag: String?) -> String? {
         guard type != .logo,
               let blurHashes = imageBlurHashes?[type] else { return nil }
 
-        if let tag = imageTag(for: type), let taggedBlurHash = blurHashes[tag] {
+        if let tag, let taggedBlurHash = blurHashes[tag] {
             return taggedBlurHash
         }
 
@@ -84,6 +92,7 @@ extension BaseItemDto {
         itemID: String? = nil,
         _ type: ImageType,
         index: Int? = nil,
+        tag: String? = nil,
         environment: some WithImageSourceOptions
     ) -> URL? {
         guard let itemID else { return nil }
@@ -101,7 +110,7 @@ extension BaseItemDto {
             maxWidth: scaleWidth,
             maxHeight: scaleHeight,
             quality: validQuality,
-            tag: nil,
+            tag: tag,
             format: type == .logo ? .png : nil,
             imageIndex: index
         )

@@ -93,16 +93,29 @@ extension BaseItemDto: Poster {
     ) -> [ImageSource] {
         switch type {
         case .episode:
-            if environment.useParent {
-                imageSource(itemID: seriesID, .primary, environment: environment)
-            }
-
-            imageSource(itemID: seasonID, .primary, environment: environment)
+            imageSource(
+                itemID: seriesID,
+                .primary,
+                tag: seriesPrimaryImageTag,
+                environment: environment
+            )
         case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
-            imageSource(.primary, environment: environment)
+            imageSource(
+                .primary,
+                environment: environment
+            )
         case .season:
-            imageSource(.primary, environment: environment)
-            imageSource(itemID: seriesID, .primary, environment: environment)
+            imageSource(
+                .primary,
+                environment: environment
+            )
+
+            imageSource(
+                itemID: seriesID,
+                .primary,
+                tag: seriesPrimaryImageTag,
+                environment: environment
+            )
         default:
             []
         }
@@ -116,25 +129,58 @@ extension BaseItemDto: Poster {
         case .episode:
             if environment.useParent {
                 if environment.viewContext.contains(.isThumb) {
-                    imageSource(itemID: seriesID, .thumb, environment: environment)
+                    imageSource(
+                        itemID: seriesID,
+                        .thumb,
+                        tag: seriesThumbImageTag,
+                        environment: environment
+                    )
                 }
-                imageSource(itemID: seriesID, .backdrop, environment: environment)
-                imageSource(.primary, environment: environment)
+
+                imageSource(
+                    .primary,
+                    environment: environment
+                )
             } else {
-                imageSource(.primary, environment: environment)
+                imageSource(
+                    .primary,
+                    environment: environment
+                )
             }
         case .collectionFolder, .folder, .liveTvProgram, .musicVideo, .program, .userView, .video:
-            imageSource(.primary, environment: environment)
+            imageSource(
+                .primary,
+                environment: environment
+            )
         case .season:
             if environment.viewContext.contains(.isThumb) {
-                imageSource(itemID: seriesID, .thumb, environment: environment)
+                imageSource(
+                    itemID: seriesID,
+                    .thumb,
+                    tag: seriesThumbImageTag,
+                    environment: environment
+                )
             }
-            imageSource(itemID: seriesID, .backdrop, environment: environment)
+
+            imageSource(
+                itemID: seriesID,
+                .backdrop,
+                tag: parentBackdropImageTags?.first,
+                environment: environment
+            )
         default:
             if environment.viewContext.contains(.isThumb) {
-                imageSource(.thumb, environment: environment)
+                imageSource(
+                    .thumb,
+                    environment: environment
+                )
             }
-            imageSource(.backdrop, environment: environment)
+
+            imageSource(
+                .backdrop,
+                tag: backdropImageTags?.first,
+                environment: environment
+            )
         }
     }
 
@@ -144,19 +190,28 @@ extension BaseItemDto: Poster {
     ) -> [ImageSource] {
         switch type {
         case .audio:
-            imageSource(.primary, environment: environment)
             imageSource(
-                itemID: albumID,
                 .primary,
                 environment: environment
             )
+
+            imageSource(
+                itemID: albumID,
+                .primary,
+                tag: albumPrimaryImageTag,
+                environment: environment
+            )
         case .channel, .musicAlbum, .tvChannel:
-            imageSource(.primary, environment: environment)
+            imageSource(
+                .primary,
+                environment: environment
+            )
         case .program:
             if let channelID {
                 imageSource(
                     itemID: channelID,
                     .primary,
+                    tag: channelPrimaryImageTag,
                     environment: environment
                 )
             }
