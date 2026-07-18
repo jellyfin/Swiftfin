@@ -20,7 +20,7 @@ extension ImagePipeline {
         guard var components = url.components else { return nil }
 
         var maxWidthValue: String?
-        
+
         // TODO: maxHeight
         // TODO: cache reset
 

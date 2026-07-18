@@ -109,9 +109,16 @@ extension BaseItemDto: Poster {
                 environment: environment
             )
         case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
-            imageSource(.primary, environment: environment)
+            imageSource(
+                .primary,
+                environment: environment
+            )
         case .season:
-            imageSource(.primary, environment: environment)
+            imageSource(
+                .primary,
+                environment: environment
+            )
+
             imageSource(
                 itemID: seriesID,
                 .primary,
@@ -138,18 +145,29 @@ extension BaseItemDto: Poster {
                         environment: environment
                     )
                 }
+
                 imageSource(
                     itemID: seriesID,
                     .backdrop,
                     tag: parentBackdropImageTags?.first,
                     environment: environment
                 )
-                imageSource(.primary, environment: environment)
+
+                imageSource(
+                    .primary,
+                    environment: environment
+                )
             } else {
-                imageSource(.primary, environment: environment)
+                imageSource(
+                    .primary,
+                    environment: environment
+                )
             }
         case .collectionFolder, .folder, .liveTvProgram, .musicVideo, .program, .userView, .video:
-            imageSource(.primary, environment: environment)
+            imageSource(
+                .primary,
+                environment: environment
+            )
         case .season:
             if environment.viewContext.contains(.isThumb) {
                 imageSource(
@@ -159,6 +177,7 @@ extension BaseItemDto: Poster {
                     environment: environment
                 )
             }
+
             imageSource(
                 itemID: seriesID,
                 .backdrop,
@@ -167,9 +186,17 @@ extension BaseItemDto: Poster {
             )
         default:
             if environment.viewContext.contains(.isThumb) {
-                imageSource(.thumb, environment: environment)
+                imageSource(
+                    .thumb,
+                    environment: environment
+                )
             }
-            imageSource(.backdrop, environment: environment)
+
+            imageSource(
+                .backdrop,
+                tag: backdropImageTags?.first,
+                environment: environment
+            )
         }
     }
 
@@ -179,7 +206,11 @@ extension BaseItemDto: Poster {
     ) -> [ImageSource] {
         switch type {
         case .audio:
-            imageSource(.primary, environment: environment)
+            imageSource(
+                .primary,
+                environment: environment
+            )
+
             imageSource(
                 itemID: albumID,
                 .primary,
@@ -187,7 +218,10 @@ extension BaseItemDto: Poster {
                 environment: environment
             )
         case .channel, .musicAlbum, .tvChannel:
-            imageSource(.primary, environment: environment)
+            imageSource(
+                .primary,
+                environment: environment
+            )
         case .program:
             if let channelID {
                 imageSource(
