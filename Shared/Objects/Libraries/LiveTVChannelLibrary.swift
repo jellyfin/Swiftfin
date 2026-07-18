@@ -199,6 +199,7 @@ struct LiveTVChannelLibrary: PagingLibrary, SearchablePagingLibrary {
         parameters.limit = pageState.pageSize
         parameters.fields = .MinimumFields.appending(.channelInfo)
         parameters.enableUserData = true
+        parameters.hasAired = false
         parameters.sortBy = filters.sortBy
         parameters.sortOrder = filters.sortOrder
         parameters.genres = filters.genres.map(\.value)
