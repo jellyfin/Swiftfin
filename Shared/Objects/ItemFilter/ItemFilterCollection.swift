@@ -11,6 +11,7 @@ import JellyfinAPI
 /// A structure representing a collection of item filters
 struct ItemFilterCollection: Hashable, Storable {
 
+    var categories: [ChannelCategory] = []
     var genres: [ItemGenre] = []
     var itemTypes: [BaseItemKind] = []
     var letter: [ItemLetter] = []
@@ -38,6 +39,7 @@ struct ItemFilterCollection: Hashable, Storable {
     /// These may be altered when used to better represent all
     /// available values within the current context.
     static let all: ItemFilterCollection = .init(
+        categories: ChannelCategory.allCases,
         letter: ItemLetter.allCases,
         sortBy: ItemSortBy.supportedCases,
         sortOrder: ItemSortOrder.allCases,
@@ -49,7 +51,8 @@ struct ItemFilterCollection: Hashable, Storable {
     }
 
     var hasQueryableFilters: Bool {
-        genres.isNotEmpty ||
+        categories.isNotEmpty ||
+            genres.isNotEmpty ||
             itemTypes.isNotEmpty ||
             letter.isNotEmpty ||
             tags.isNotEmpty ||

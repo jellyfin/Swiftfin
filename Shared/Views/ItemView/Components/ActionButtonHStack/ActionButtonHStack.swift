@@ -66,6 +66,17 @@ extension ItemView {
         }
 
         var body: some View {
+            if (UIDevice.isTV && provider.item.canEdit) ||
+                provider.item.canBePlayed ||
+                provider.item.canBeLiked ||
+                hasTrailers
+            {
+                contentView
+            }
+        }
+
+        @ViewBuilder
+        private var contentView: some View {
             HStack(alignment: .center, spacing: UIDevice.isTV ? 30 : 10) {
 
                 // MARK: Played
@@ -91,23 +102,25 @@ extension ItemView {
 
                 // MARK: Favorite
 
-                let isFavorited = provider.item.userData?.isFavorite == true
+                if provider.item.canBeLiked {
+                    let isFavorited = provider.item.userData?.isFavorite == true
 
-                Button {
-                    Task { await provider.toggleIsFavorite() }
-                } label: {
-                    materialLabel(
-                        L10n.favorited,
-                        systemImage: isFavorited ? "heart.fill" : "heart",
-                        isHighlighted: isFavorited,
-                        tint: .pink,
-                        foregroundColor: .primary
-                    )
+                    Button {
+                        Task { await provider.toggleIsFavorite() }
+                    } label: {
+                        materialLabel(
+                            L10n.favorited,
+                            systemImage: isFavorited ? "heart.fill" : "heart",
+                            isHighlighted: isFavorited,
+                            tint: .pink,
+                            foregroundColor: .primary
+                        )
+                    }
+                    #if !os(tvOS)
+                    .foregroundStyle(.primary, .secondary)
+                    #endif
+                    .isSelected(isFavorited)
                 }
-                #if !os(tvOS)
-                .foregroundStyle(.primary, .secondary)
-                #endif
-                .isSelected(isFavorited)
 
                 // MARK: Trailer
 

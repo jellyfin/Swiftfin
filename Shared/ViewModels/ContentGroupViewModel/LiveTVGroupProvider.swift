@@ -38,7 +38,7 @@ struct LiveTVGroupProvider: ContentGroupProvider {
         ) { router, pill in
             switch pill {
             case .channels:
-                router.route(to: .library(library: ChannelProgramLibrary()))
+                router.route(to: .library(library: LiveTVChannelLibrary()))
             }
         }
 

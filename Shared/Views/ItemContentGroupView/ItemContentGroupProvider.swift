@@ -171,6 +171,13 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 parent: item
             )
             .makeGroups(environment: .default)
+        case .channel, .liveTvChannel, .tvChannel:
+            PosterGroup(
+                id: "channel-programs",
+                library: ChannelProgramLibrary(channel: item),
+                posterDisplayType: .landscape,
+                posterSize: .small
+            )
         default: []
         }
 

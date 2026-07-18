@@ -147,6 +147,24 @@ extension BaseItemDto {
         channelType == .tv
     }
 
+    private var airingWindow: (start: Date, end: Date)? {
+        switch type {
+        case .program, .liveTvProgram, .tvProgram:
+            guard let startDate, let endDate else { return nil }
+            return (startDate, endDate)
+        case .channel, .liveTvChannel, .tvChannel:
+            guard let start = currentProgram?.startDate, let end = currentProgram?.endDate else { return nil }
+            return (start, end)
+        default:
+            return nil
+        }
+    }
+
+    var isAiring: Bool {
+        guard let airingWindow else { return false }
+        return airingWindow.start <= .now && .now <= airingWindow.end
+    }
+
     /// Whether the item has independent playable content, similar
     /// to if an item can provide its own media sources.
     ///
@@ -271,18 +289,25 @@ extension BaseItemDto {
     }
 
     var progressLabel: String? {
-        guard let playbackPositionTicks = userData?.playbackPositionTicks,
-              let totalTicks = runTimeTicks,
-              playbackPositionTicks != 0,
-              totalTicks != 0 else { return nil }
+        let interval: TimeInterval
 
-        let remainingSeconds = (totalTicks - playbackPositionTicks) / 10_000_000
+        if let playbackPositionTicks = userData?.playbackPositionTicks,
+           let totalTicks = runTimeTicks,
+           playbackPositionTicks != 0,
+           totalTicks != 0
+        {
+            interval = TimeInterval((totalTicks - playbackPositionTicks) / 10_000_000)
+        } else if isAiring, let airingWindow {
+            interval = Date.now.timeIntervalSince(airingWindow.start)
+        } else {
+            return nil
+        }
 
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
         formatter.unitsStyle = .abbreviated
 
-        return formatter.string(from: .init(remainingSeconds))
+        return formatter.string(from: interval)
     }
 
     var programDuration: TimeInterval? {
@@ -306,6 +331,23 @@ extension BaseItemDto {
         let progress = other.timeIntervalSince(startDate)
 
         return progress / length
+    }
+
+    var progressPercentage: Double? {
+        if isAiring, let airingWindow {
+            let length = airingWindow.end.timeIntervalSince(airingWindow.start)
+            guard length > 0 else { return nil }
+
+            let elapsed = Date.now.timeIntervalSince(airingWindow.start) / length
+
+            return min(max(elapsed, 0), 1)
+        }
+
+        guard let playedPercentage = userData?.playedPercentage, playedPercentage > 0 else {
+            return nil
+        }
+
+        return playedPercentage / 100
     }
 
     var subtitleStreams: [MediaStream] {
@@ -449,12 +491,22 @@ extension BaseItemDto {
         }
     }
 
+    /// Can this `BaseItemDto` be marked as favorite or liked
+    var canBeLiked: Bool {
+        switch type {
+        case .program, .liveTvProgram, .tvProgram:
+            false
+        default:
+            true
+        }
+    }
+
     /// Can this `BaseItemDto` be mark as played
     var canBePlayed: Bool {
         switch type {
-        case .audio, .audioBook, .book, .boxSet, .channel, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder,
-             .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder,
-             .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
+        case .audio, .audioBook, .book, .boxSet, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder,
+             .movie, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder, .recording, .season,
+             .series, .trailer, .video:
             true
         default:
             false
