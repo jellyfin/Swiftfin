@@ -42,13 +42,13 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             }
 
             Image(systemName: "chevron.up.chevron.down")
-                .font(.body.weight(.regular))
+                .font(.body)
+                .fontWeight(.regular)
                 .foregroundStyle(isFocused ? .black : .secondary)
                 .brightness(isFocused ? 0.4 : 0)
         }
         .padding(.horizontal)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .backport
         .glassEffect(
             .regular.tint(isFocused ? .white : nil),
             in: .capsule
