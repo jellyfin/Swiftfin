@@ -102,11 +102,7 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
     @ViewBuilder
     private func platformAppearanceBody(_ content: some View) -> some View {
         #if os(tvOS)
-        if #available(tvOS 26.0, *), isLiquidGlassEnabled {
-            glassBody(content)
-        } else {
-            legacyBody(content)
-        }
+        glassBody(content)
         #else
         if #available(iOS 26.0, *), isLiquidGlassEnabled {
             glassBody(content)

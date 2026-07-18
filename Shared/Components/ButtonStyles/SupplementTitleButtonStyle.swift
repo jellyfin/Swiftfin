@@ -24,11 +24,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
 
         @ViewBuilder
         func makeBody(configuration: Configuration) -> some View {
-            if #available(tvOS 26.0, *), isLiquidGlassEnabled {
-                glassBody(configuration)
-            } else {
-                legacyBody(configuration)
-            }
+            glassBody(configuration)
         }
 
         private func baseLabel(_ configuration: Configuration) -> some View {
@@ -40,7 +36,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                 .frame(minHeight: 56)
         }
 
-        @available(tvOS 26.0, *)
         private func glassBody(_ configuration: Configuration) -> some View {
             baseLabel(configuration)
                 .foregroundStyle(isSelected ? .black : .white)
