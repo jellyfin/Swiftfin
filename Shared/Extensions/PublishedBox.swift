@@ -7,14 +7,40 @@
 //
 
 import Combine
+import SwiftUI
 
-/// A box for a `Published` value
-class PublishedBox<Value>: ObservableObject {
+// TODO: possibly replace with Engine.PublishedState/OrBinding
+
+/// Utility class to act as an intermediary for a `Binding` value or
+/// the source of a single value where `State` is not appropriate.
+///
+/// Useful when:
+/// - a view is passed a `Binding` that may not be able
+///   to respond to view updates from the source
+/// - the source of information that would typically be in a `State`
+///   variable, or other publishing source, cause view update issues
+class PublishedBox<Wrapped>: ObservableObject {
 
     @Published
-    var value: Value
+    var value: Wrapped
 
-    init(initialValue: Value) {
-        self.value = initialValue
+    private var source: Binding<Wrapped>?
+    private var valueObserver: AnyCancellable!
+
+    init(source: Binding<Wrapped>) {
+        self.source = source
+        self.value = source.wrappedValue
+        valueObserver = nil
+
+        valueObserver = $value
+            .sink { value in
+                source.wrappedValue = value
+            }
+    }
+
+    init(initialValue: Wrapped) {
+        source = nil
+        value = initialValue
+        valueObserver = nil
     }
 }

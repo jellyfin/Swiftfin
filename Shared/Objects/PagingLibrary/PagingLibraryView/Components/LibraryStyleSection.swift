@@ -6,32 +6,29 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import SwiftUI
 
 extension PagingLibraryView {
 
     struct LibraryStyleSection: View {
 
-        @StateObject
-        private var box: BindingBox<LibraryStyle>
+        @StateOrBinding
+        private var libraryStyle: LibraryStyle
 
         private let options: LibraryStyleOptions
-
-        private var libraryStyle: Binding<LibraryStyle> {
-            options.binding($box.value)
-        }
 
         init(
             libraryStyle: Binding<LibraryStyle>,
             options: LibraryStyleOptions
         ) {
-            self._box = StateObject(wrappedValue: BindingBox(source: libraryStyle))
+            self._libraryStyle = .init(libraryStyle)
             self.options = options
         }
 
         var body: some View {
             if options.displayTypes.count > 1 {
-                Picker(selection: libraryStyle.displayType) {
+                Picker(selection: $libraryStyle.displayType) {
                     ForEach(options.displayTypes, id: \.self) { displayType in
                         Label(
                             displayType.displayTitle,
@@ -42,26 +39,26 @@ extension PagingLibraryView {
                 } label: {
                     Text(L10n.layout)
 
-                    Text(libraryStyle.wrappedValue.displayType.displayTitle)
+                    Text(libraryStyle.displayType.displayTitle)
 
-                    Image(systemName: libraryStyle.wrappedValue.displayType.systemImage)
+                    Image(systemName: libraryStyle.displayType.systemImage)
                 }
                 .pickerStyle(.menu)
             }
 
-            if libraryStyle.wrappedValue.displayType == .list,
+            if libraryStyle.displayType == .list,
                UIDevice.isPad,
                options.displayTypes.contains(.list)
             {
                 Stepper(
-                    L10n.columnsWithCount(libraryStyle.wrappedValue.listColumnCount),
-                    value: libraryStyle.listColumnCount,
+                    L10n.columnsWithCount(libraryStyle.listColumnCount),
+                    value: $libraryStyle.listColumnCount,
                     in: 1 ... 3
                 )
             }
 
             if options.posterDisplayTypes.count > 1 {
-                Picker(selection: libraryStyle.posterDisplayType) {
+                Picker(selection: $libraryStyle.posterDisplayType) {
                     ForEach(options.posterDisplayTypes, id: \.self) { displayType in
                         Text(displayType.displayTitle)
                             .tag(displayType)
@@ -69,7 +66,7 @@ extension PagingLibraryView {
                 } label: {
                     Text(L10n.posters)
 
-                    Text(libraryStyle.wrappedValue.posterDisplayType.displayTitle)
+                    Text(libraryStyle.posterDisplayType.displayTitle)
                 }
                 .pickerStyle(.menu)
             }
