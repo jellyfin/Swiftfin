@@ -11,7 +11,7 @@ import SwiftUI
 
 extension ItemView {
 
-    struct EnhancedRegularHeaderContentGroup: ContentGroup {
+    struct RegularEnhancedHeaderContentGroup: ContentGroup {
 
         let id: String = "itemView-header"
         let provider: ItemContentGroupProvider
@@ -31,8 +31,22 @@ extension ItemView {
             @StoredValue(.User.itemViewAttributes)
             private var attributes
 
-            private var canFocusPlayButton: Bool {
-                provider.item.presentPlayButton && provider.selectedMediaSource != nil
+            private let headerAspectRatio = 2.0
+
+            #if !os(tvOS)
+            private var headerImageItem: BaseItemDto {
+                if provider.item.type == .person || provider.item.type == .musicArtist,
+                   let randomItem = provider.randomBackdropItem
+                {
+                    randomItem
+                } else {
+                    provider.item
+                }
+            }
+            #endif
+
+            private var logoHeight: CGFloat {
+                UIDevice.isTV ? 100 : 70
             }
 
             @ViewBuilder
@@ -40,14 +54,14 @@ extension ItemView {
                 ImageView(
                     provider.item.imageSource(
                         .logo,
-                        environment: ImageSourceOptions(maxHeight: 100)
+                        environment: ImageSourceOptions(maxHeight: logoHeight)
                     )
                 )
                 .image { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(height: 100)
+                        .frame(height: logoHeight)
                 }
                 .placeholder { _ in
                     EmptyView()
@@ -68,7 +82,7 @@ extension ItemView {
             @ViewBuilder
             private var overlay: some View {
                 HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
-                    VStack(alignment: .center, spacing: 30) {
+                    VStack(alignment: .center, spacing: UIDevice.isTV ? 30 : 5) {
                         VStack(alignment: .leading) {
                             if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
                                 ParentButton(title: parentTitle, id: parentID)
@@ -81,13 +95,13 @@ extension ItemView {
                         if provider.item.presentPlayButton {
                             PlayButton(
                                 provider: provider,
-                                playButtonFocus: $isPlayButtonFocused
+                                playButtonFocus: UIDevice.isTV ? $isPlayButtonFocused : nil
                             )
                         }
 
                         ItemView.ActionButtonHStack(provider: provider)
                     }
-                    .frame(width: 450)
+                    .frame(width: UIDevice.isTV ? 450 : 300)
 
                     VStack(alignment: .leading, spacing: 10) {
                         ItemView.Description(item: provider.item)
@@ -106,25 +120,81 @@ extension ItemView {
                     }
                     .frame(maxWidth: .infinity)
                 }
+                #if os(tvOS)
                 .focusSection()
-                .if(canFocusPlayButton) { view in
-                    view
-                        .backport
-                        .defaultFocus(
-                            $isPlayButtonFocused,
-                            true,
-                            priority: .userInitiated
-                        )
-                }
+                .backport
+                .defaultFocus(
+                    $isPlayButtonFocused,
+                    true,
+                    priority: .userInitiated
+                )
+                #else
+                .edgePadding(.bottom)
+                    .background(
+                        alignment: .bottom,
+                        extendedBy: .init(horizontal: EdgeInsets.edgePadding)
+                    ) {
+                        Rectangle()
+                            .fill(Material.ultraThin)
+                            .mask(gradient: .eased(.easeOut)) {
+                                (location: 0, opacity: 0)
+                                (location: 1, opacity: 1)
+                            }
+                    }
+                #endif
             }
 
+            #if !os(tvOS)
+            private func resolveColor(from image: UIImage, binding: Binding<Color>) {
+                Task.detached(priority: .utility) {
+                    guard let color = image.interestingColor() else { return }
+
+                    await MainActor.run {
+                        binding.wrappedValue = color
+                    }
+                }
+            }
+            #endif
+
             var body: some View {
+                #if os(tvOS)
                 CinematicContentGroupContainer {
                     overlay
                         .edgePadding(.horizontal)
                         .frame(maxWidth: .infinity)
                         .colorScheme(.dark)
                 }
+                #else
+                AlternateLayoutView(alignment: .bottom) {
+                    Color.clear
+                        .aspectRatio(headerAspectRatio, contentMode: .fit)
+                } content: {
+                    overlay
+                        .edgePadding(.horizontal)
+                        .frame(maxWidth: .infinity)
+                        .colorScheme(.dark)
+                }
+                .backgroundParallaxHeader(multiplier: 0.3) {
+                    StateAdapter(initialValue: Color.secondarySystemFill) { resolvedColor in
+                        AlternateLayoutView {
+                            Color.clear
+                        } content: {
+                            ImageView(headerImageItem.landscapeImageSources(environment: .init(maxWidth: 1920)))
+                                .image { (image: UIImage) in
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .aspectRatio(1.77, contentMode: .fill)
+                                        .onAppear {
+                                            resolveColor(from: image, binding: resolvedColor)
+                                        }
+                                }
+                        }
+                        .aspectRatio(headerAspectRatio, contentMode: .fit)
+                        .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)
+                        .accessibilityHidden(true)
+                    }
+                }
+                #endif
             }
         }
     }

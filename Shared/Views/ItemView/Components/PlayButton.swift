@@ -22,21 +22,15 @@ struct PlayButton: View {
     @Router
     private var router
 
-    #if os(tvOS)
-    private let playButtonFocus: FocusState<Bool>.Binding
+    private let playButtonFocus: FocusState<Bool>.Binding?
 
     init(
         provider: ItemContentGroupProvider,
-        playButtonFocus: FocusState<Bool>.Binding
+        playButtonFocus: FocusState<Bool>.Binding? = nil
     ) {
         self.provider = provider
         self.playButtonFocus = playButtonFocus
     }
-    #else
-    init(provider: ItemContentGroupProvider) {
-        self.provider = provider
-    }
-    #endif
 
     private var mediaSource: String? {
         guard provider.item.mediaSources?.count ?? 0 > 1 else { return nil }
@@ -175,18 +169,18 @@ struct PlayButton: View {
         .backport
         .buttonBorderShape(.capsule)
         .buttonStyle(BasicHoverButtonStyle())
-        #if os(tvOS)
-            .focused(playButtonFocus)
-        #endif
-            .contextMenu {
-                if provider.playButtonItem?.userData?.playbackPositionTicks != 0 {
-                    Button(L10n.playFromBeginning, systemImage: "gobackward") {
-                        play(fromBeginning: true)
-                    }
+        .ifLet(playButtonFocus) { view, playButtonFocus in
+            view.focused(playButtonFocus)
+        }
+        .contextMenu {
+            if provider.playButtonItem?.userData?.playbackPositionTicks != 0 {
+                Button(L10n.playFromBeginning, systemImage: "gobackward") {
+                    play(fromBeginning: true)
                 }
             }
-            .isSelected(true)
-            .disabled(provider.selectedMediaSource == nil && provider.playButtonItem?.isAiring != true)
+        }
+        .isSelected(true)
+        .disabled(provider.selectedMediaSource == nil && provider.playButtonItem?.isAiring != true)
     }
 
     var body: some View {
