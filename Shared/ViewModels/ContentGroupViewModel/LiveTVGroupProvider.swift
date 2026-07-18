@@ -38,7 +38,14 @@ struct LiveTVGroupProvider: ContentGroupProvider {
         ) { router, pill in
             switch pill {
             case .channels:
-                router.route(to: .library(library: LiveTVChannelLibrary()))
+                router.route(
+                    to: .library(
+                        library: ItemLibrary(
+                            parent: BaseItemDto(name: L10n.channels),
+                            filters: .init(itemTypes: [.liveTvChannel])
+                        )
+                    )
+                )
             }
         }
 
@@ -64,5 +71,12 @@ struct LiveTVGroupProvider: ContentGroupProvider {
                     posterSize: .small
                 )
             }
+
+        PosterGroup(
+            id: "recordings",
+            library: RecordingsLibrary(),
+            posterDisplayType: .landscape,
+            posterSize: .small
+        )
     }
 }

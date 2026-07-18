@@ -174,7 +174,13 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         case .channel, .liveTvChannel, .tvChannel:
             PosterGroup(
                 id: "channel-programs",
-                library: ChannelProgramLibrary(channel: item),
+                library: ItemLibrary(
+                    parent: item,
+                    filters: .init(
+                        sortBy: [.startDate],
+                        sortOrder: [.ascending]
+                    )
+                ),
                 posterDisplayType: .landscape,
                 posterSize: .small
             )
