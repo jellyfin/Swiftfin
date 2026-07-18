@@ -123,6 +123,9 @@ struct MainTabView: View {
                 }
             }
         }
+        #if os(tvOS)
+        .tabViewStyle(.sidebarAdaptable)
+        #endif
     }
 
     var body: some View {
