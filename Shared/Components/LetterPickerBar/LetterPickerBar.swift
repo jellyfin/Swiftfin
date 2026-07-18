@@ -169,9 +169,9 @@ struct LetterPickerBar: PlatformView {
                 barHeight = size.height
             }
             .frame(width: dimension)
-            .padding(.horizontal, 2)
             .padding(.vertical, EdgeInsets.edgePadding / 2)
-            .padding(edge == .leading ? .leading : .trailing, EdgeInsets.edgePadding / 2)
+            .padding(.horizontal, 0)
+            .offset(x: orientation == .leading ? EdgeInsets.edgePadding / 2 : -EdgeInsets.edgePadding / 2)
             .preference(key: PresentationControllerShouldDismissPreferenceKey.self, value: activeLetter == nil)
             .preference(key: LetterPickerActiveLetterKey.self, value: activeLetter)
     }
