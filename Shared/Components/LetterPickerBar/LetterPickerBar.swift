@@ -17,11 +17,11 @@ struct LetterPickerBar: PlatformView {
     @Default(.Customization.Library.letterPickerOrientation)
     private var orientation
 
-    @ObservedObject
-    var viewModel: FilterViewModel
-
     @FocusState
     private var focusedLetter: ItemLetter?
+
+    @ObservedObject
+    var viewModel: FilterViewModel
 
     @State
     private var letterSize: CGSize = .zero
@@ -99,10 +99,10 @@ struct LetterPickerBar: PlatformView {
 
     private var letterBar: some View {
         VStack(spacing: UIDevice.isTV ? dimension * 0.1 : 0) {
-            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+            ForEach(rows) { row in
                 switch row {
                 case let .letter(letter):
-                    LetterPickerButton(letter) {
+                    LetterPickerButton(letter: letter) {
                         toggleLetter(letter)
                     }
                     .isSelected(selectedLetter == letter)
@@ -192,7 +192,7 @@ struct LetterPickerBar: PlatformView {
             .task(id: focusedLetter) {
                 activeLetter = focusedLetter
                 guard focusedLetter != nil else { return }
-                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled else { return }
                 activeLetter = nil
             }

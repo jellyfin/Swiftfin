@@ -32,10 +32,8 @@ struct LetterPickerBarModifier: ViewModifier {
                         if let letter {
                             LetterPickerBar.LetterPickerCallout(letter: letter)
                                 .font(.system(size: UIDevice.isTV ? 128 : 64, design: .rounded).weight(.bold))
-                                .transition(.opacity.combined(with: .scale(scale: 0.9)))
                         }
                     }
-                    .animation(.easeInOut(duration: 0.25), value: letter)
                 }
         } else {
             content

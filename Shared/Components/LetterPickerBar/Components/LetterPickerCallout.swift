@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct LetterPickerActiveLetterKey: PreferenceKey {
@@ -22,38 +21,28 @@ extension LetterPickerBar {
 
     struct LetterPickerCallout: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
-        @State
-        private var letterSize: CGSize = .zero
-
         let letter: ItemLetter
 
-        private var buttonSize: CGFloat {
-            max(letterSize.width, letterSize.height) + 16
-        }
-
         var body: some View {
-            Text(letter.value)
-                .foregroundStyle(UIDevice.isTV ? Color.primary : accentColor)
-                .frame(width: buttonSize, height: buttonSize)
-                .backport
-                .glassEffect(
-                    .regular,
-                    in: .rect(cornerRadius: UIDevice.isTV ? 12 : 8)
-                )
-                .background {
-                    ZStack {
-                        ForEach(ItemLetter.allCases, id: \.value) { letter in
-                            Text(letter.value)
-                        }
+            AlternateLayoutView {
+                ZStack {
+                    ForEach(ItemLetter.allCases, id: \.value) { letter in
+                        Text(letter.value)
                     }
-                    .hidden()
-                    .allowsHitTesting(false)
-                    .fixedSize()
-                    .trackingSize($letterSize)
                 }
+                .hidden()
+                .allowsHitTesting(false)
+                .fixedSize()
+            } content: { size in
+                Text(letter.value)
+                    .frame(width: size.width, height: size.height)
+                    .padding(16)
+                    .backport
+                    .glassEffect(
+                        .regular,
+                        in: .rect(cornerRadius: UIDevice.isTV ? 12 : 8)
+                    )
+            }
         }
     }
 }

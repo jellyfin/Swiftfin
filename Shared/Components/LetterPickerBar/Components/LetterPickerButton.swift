@@ -22,13 +22,8 @@ extension LetterPickerBar {
         @FocusState
         private var isFocused: Bool
 
-        private let letter: ItemLetter
-        private let action: () -> Void
-
-        init(_ letter: ItemLetter, action: @escaping () -> Void) {
-            self.letter = letter
-            self.action = action
-        }
+        let letter: ItemLetter
+        let action: () -> Void
 
         private var foregroundStyle: Color {
             if isFocused {
@@ -66,12 +61,9 @@ extension LetterPickerBar {
             .buttonStyle(.borderless)
             .backport
             .buttonBorderShape(.roundedRectangle)
-            .if(UIDevice.isTV) { view in
-                view
-                    .focused($isFocused)
-                    .scaleEffect(isFocused ? 1.2 : 1)
-                    .animation(.easeInOut(duration: 0.15), value: isFocused)
-            }
+            .focused($isFocused)
+            .scaleEffect(isFocused ? 1.2 : 1)
+            .animation(.easeInOut(duration: 0.15), value: isFocused)
         }
     }
 }
