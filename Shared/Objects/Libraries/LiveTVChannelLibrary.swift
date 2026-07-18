@@ -61,7 +61,16 @@ struct LiveTVChannelLibrary: PagingLibrary, SearchablePagingLibrary {
                 Picker(
                     selection: environment.map(
                         getter: { $0.grouping },
-                        setter: { .init(grouping: $0, filters: environment.wrappedValue.filters) }
+                        setter: { grouping in
+                            var filters = environment.wrappedValue.filters
+
+                            if grouping != .programs, filters.letter.isNotEmpty {
+                                filters.letter = []
+                                filterViewModel.currentFilters.letter = []
+                            }
+
+                            return .init(grouping: grouping, filters: filters)
+                        }
                     )
                 ) {
                     ForEach(groupings.elements) { grouping in
@@ -180,6 +189,10 @@ struct LiveTVChannelLibrary: PagingLibrary, SearchablePagingLibrary {
         filters: ItemFilterCollection,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
+        guard filters.letter.isEmpty else {
+            return try await retrieveLetteredProgramsPage(filters: filters, pageState: pageState)
+        }
+
         var parameters = Paths.GetLiveTvProgramsParameters()
         parameters.userID = pageState.userSession.user.id
         parameters.startIndex = pageState.pageOffset
@@ -198,6 +211,43 @@ struct LiveTVChannelLibrary: PagingLibrary, SearchablePagingLibrary {
         parameters.isSports = filters.categories.contains(.sports) ? true : nil
 
         let request = Paths.getLiveTvPrograms(parameters: parameters)
+        let response = try await pageState.userSession.client.send(request)
+
+        return response.value.items ?? []
+    }
+
+    private func retrieveLetteredProgramsPage(
+        filters: ItemFilterCollection,
+        pageState: LibraryPageState
+    ) async throws -> [BaseItemDto] {
+        var parameters = Paths.GetItemsParameters()
+        parameters.userID = pageState.userSession.user.id
+        parameters.startIndex = pageState.pageOffset
+        parameters.limit = pageState.pageSize
+        parameters.fields = .MinimumFields.appending(.channelInfo)
+        parameters.enableUserData = true
+        parameters.isRecursive = true
+        parameters.includeItemTypes = [.liveTvProgram]
+        parameters.sortBy = filters.sortBy
+        parameters.sortOrder = filters.sortOrder
+        parameters.genres = filters.genres.map(\.value)
+
+        parameters.isMovie = filters.categories.contains(.movies) ? true : nil
+        parameters.isSeries = filters.categories.contains(.series) ? true : nil
+        parameters.isNews = filters.categories.contains(.news) ? true : nil
+        parameters.isKids = filters.categories.contains(.kids) ? true : nil
+        parameters.isSports = filters.categories.contains(.sports) ? true : nil
+
+        if filters.letter.first?.value == "#" {
+            parameters.nameLessThan = "A"
+        } else {
+            parameters.nameStartsWith = filters.letter
+                .map(\.value)
+                .filter { $0 != "#" }
+                .first
+        }
+
+        let request = Paths.getItems(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
         return response.value.items ?? []
@@ -230,6 +280,9 @@ private struct LiveTVChannelLibraryBody<Content: View>: View {
 
     var body: some View {
         content
+            .letterPickerBar(
+                filterViewModel: viewModel.environment.grouping == .programs ? filterViewModel : nil
+            )
             .onFirstAppear {
                 Task {
                     await filterViewModel.getQueryFilters()
@@ -248,7 +301,6 @@ private struct LiveTVChannelLibraryBody<Content: View>: View {
                 viewModel.environment.filters = filters
             }
         #if os(tvOS)
-            .ignoresSafeArea(.all, edges: .horizontal)
             .background(alignment: .top) {
                 if !router.isRootOfPath {
                     FocusedPosterCinematicBackgroundView()
