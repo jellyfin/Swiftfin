@@ -21,6 +21,9 @@ extension ImagePipeline {
 
         var maxWidthValue: String?
 
+        // TODO: maxHeight
+        // TODO: cache reset
+
         if let maxWidth = components.queryItems?.first(where: { $0.name == "maxWidth" }) {
             maxWidthValue = maxWidth.value
             components.queryItems = components.queryItems?.filter { $0.name != "maxWidth" }

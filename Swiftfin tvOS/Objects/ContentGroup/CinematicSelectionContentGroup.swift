@@ -55,6 +55,7 @@ struct CinematicSelectionContentGroup: ContentGroup {
                 return item.imageSource(
                     itemID: item.seriesID,
                     .logo,
+                    tag: item.parentLogoImageTag,
                     environment: ImageSourceOptions(
                         maxWidth: maxWidth,
                         maxHeight: CinematicSelectionLayout.logoMaxHeight
