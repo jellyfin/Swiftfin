@@ -71,7 +71,6 @@ extension ItemView {
                         size: .medium,
                         contentMode: .fit
                     )
-                    .posterEnvironment(BaseItemDto.Environment(useParent: false))
                     .posterBorder()
                     .posterCornerRadius(posterDisplayType)
                     .subtleShadow()

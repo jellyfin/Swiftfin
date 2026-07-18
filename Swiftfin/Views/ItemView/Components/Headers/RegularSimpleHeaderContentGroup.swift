@@ -62,7 +62,6 @@ extension ItemView {
                         size: .small,
                         contentMode: .fit
                     )
-                    .posterEnvironment(BaseItemDto.Environment(useParent: false))
                     .frame(
                         maxWidth: .infinity,
                         maxHeight: .infinity,

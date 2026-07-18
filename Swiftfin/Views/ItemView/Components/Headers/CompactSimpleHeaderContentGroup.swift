@@ -39,7 +39,6 @@ extension ItemView {
                         type: headerImageDisplayType,
                         contentMode: .fit
                     )
-                    .posterEnvironment(BaseItemDto.Environment(useParent: false))
                     .frame(maxWidth: headerImageDisplayType == .square ? 400 : .infinity)
                     .subtleShadow()
 
