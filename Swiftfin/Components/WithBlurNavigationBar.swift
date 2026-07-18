@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct WithBlurNavigationBar<Content: View>: UIViewControllerRepresentable {
+struct WithBlurNavigationBar<Content: View>: PlatformViewControllerRepresentable {
 
     private let content: Content
 

@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct NavigationBarDrawerView<Content: View, Drawer: View>: UIViewControllerRepresentable {
+struct NavigationBarDrawerView<Content: View, Drawer: View>: PlatformViewControllerRepresentable {
 
     private let drawer: Drawer
     private let content: Content

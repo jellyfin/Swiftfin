@@ -75,7 +75,7 @@ struct NativeVideoPlayer: View {
 
 extension NativeVideoPlayer {
 
-    private struct NativeVideoPlayerView: UIViewControllerRepresentable {
+    private struct NativeVideoPlayerView: PlatformViewControllerRepresentable {
 
         let proxy: AVMediaPlayerProxy
 

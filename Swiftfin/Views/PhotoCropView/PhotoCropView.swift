@@ -107,7 +107,7 @@ struct PhotoCropView: View {
 
 // MARK: - Controller View
 
-private struct _PhotoCropView: UIViewControllerRepresentable {
+private struct _PhotoCropView: PlatformViewControllerRepresentable {
 
     class Coordinator: ObservableObject, CropViewControllerDelegate {
 

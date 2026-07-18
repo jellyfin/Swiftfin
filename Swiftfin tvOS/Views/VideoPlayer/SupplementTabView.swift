@@ -6,12 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Engine
 import SwiftUI
 import UIKit
 
 /// `TabView` acts weird with horizontal stacks, workaround with manual supplement presentation
-struct SupplementTabView<Item: Identifiable, Content: View>: UIViewControllerRepresentable {
+struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControllerRepresentable {
 
     let items: [Item]
     let selection: Item.ID?
