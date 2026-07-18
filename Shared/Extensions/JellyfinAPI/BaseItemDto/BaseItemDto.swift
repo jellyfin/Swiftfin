@@ -541,16 +541,6 @@ extension BaseItemDto {
     var playButtonLabel: String {
 
         if isUnaired {
-            if let airingWindow {
-                let formatter = DateComponentsFormatter()
-                formatter.allowedUnits = [.day, .hour, .minute]
-                formatter.unitsStyle = .abbreviated
-
-                if let countdown = formatter.string(from: Date.now, to: airingWindow.start) {
-                    return L10n.airingWithCountdown(countdown)
-                }
-            }
-
             return L10n.unaired
         }
 

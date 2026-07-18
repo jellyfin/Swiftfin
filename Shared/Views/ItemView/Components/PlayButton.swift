@@ -151,7 +151,13 @@ struct PlayButton: View {
                 Image(systemName: "play.fill")
 
                 VStack(spacing: 2) {
-                    Text(provider.playButtonItem?.playButtonLabel ?? L10n.play)
+                    if let startDate = provider.playButtonItem?.startDate,
+                       provider.playButtonItem?.isUnaired == true
+                    {
+                        Text("\(L10n.airing) \(Text(startDate, style: .timer))")
+                    } else {
+                        Text(provider.playButtonItem?.playButtonLabel ?? L10n.play)
+                    }
 
                     if let mediaSource {
                         Marquee(mediaSource, speed: 40, delay: 3, fade: 5)
