@@ -74,6 +74,10 @@ internal enum L10n {
   internal static let aired = L10n.tr("Localizable", "aired", fallback: "Aired")
   /// Aired episode order
   internal static let airedEpisodeOrder = L10n.tr("Localizable", "airedEpisodeOrder", fallback: "Aired episode order")
+  /// Airing %@
+  internal static func airingWithCountdown(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "airingWithCountdown", String(describing: p1), fallback: "Airing %@")
+  }
   /// Air time
   internal static let airTime = L10n.tr("Localizable", "airTime", fallback: "Air time")
   /// Airs %s
