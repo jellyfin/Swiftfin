@@ -77,7 +77,7 @@ struct DeviceDetailsView: View {
             if viewModel.background.is(.updating) {
                 ProgressView()
             }
-            Button(L10n.save) {
+            let saveAction: () -> Void = {
                 if let id = device.id {
                     viewModel.update(
                         id: id,
@@ -87,7 +87,17 @@ struct DeviceDetailsView: View {
                     )
                 }
             }
-            .buttonStyle(.toolbarPill)
+
+            Group {
+                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                    Button(L10n.save, role: .confirm, action: saveAction)
+                } else {
+                    Button(L10n.save, action: saveAction)
+                        .backport
+                        .buttonStyle(.glassProminent)
+                        .controlSize(.small)
+                }
+            }
             .disabled(temporaryCustomName == device.customName)
         }
         .errorMessage($viewModel.error)

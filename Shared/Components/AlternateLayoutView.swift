@@ -12,10 +12,10 @@ import SwiftUI
 struct AlternateLayoutView<Content: View, Layout: View>: View {
 
     @State
-    private var layoutSize: CGSize = .zero
+    private var layoutSize: FrameAndSafeAreaInsets = .zero
 
     private let alignment: Alignment
-    private let content: (CGSize) -> Content
+    private let content: (FrameAndSafeAreaInsets) -> Content
     private let layout: Layout
 
     private let passLayoutSize: Bool
@@ -38,6 +38,18 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
         @ViewBuilder content: @escaping (CGSize) -> Content
     ) {
         self.alignment = alignment
+        self.content = { frame in content(frame.frame.size) }
+        self.layout = layout()
+
+        self.passLayoutSize = true
+    }
+
+    init(
+        alignment: Alignment = .center,
+        @ViewBuilder layout: @escaping () -> Layout,
+        @ViewBuilder content: @escaping (FrameAndSafeAreaInsets) -> Content
+    ) {
+        self.alignment = alignment
         self.content = content
         self.layout = layout()
 
@@ -48,7 +60,15 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
         layout
             .hidden()
             .if(passLayoutSize) { view in
-                view.trackingSize($layoutSize)
+                view.onSizeChanged {
+                    layoutSize = .init(
+                        frame: .init(
+                            origin: .zero,
+                            size: $0
+                        ),
+                        safeAreaInsets: $1
+                    )
+                }
             }
             .overlay(alignment: alignment) {
                 content(layoutSize)

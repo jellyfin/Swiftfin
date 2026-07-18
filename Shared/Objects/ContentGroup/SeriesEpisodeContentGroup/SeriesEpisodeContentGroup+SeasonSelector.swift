@@ -46,10 +46,8 @@ extension SeriesEpisodeContentGroup {
                         ForEach(seasons) { season in
                             let isSelected = selection == season.id
 
-                            Button {
+                            Button(season.library.parent.displayTitle) {
                                 selection = season.id
-                            } label: {
-                                EmptyLabel(season.library.parent.displayTitle)
                             }
                             .buttonStyle(SeasonButtonStyle(isPickerFocused: isPickerFocused))
                             .isSelected(isSelected)
@@ -109,35 +107,20 @@ extension SeriesEpisodeContentGroup {
                 isFocused || (!isPickerFocused && isSelected)
             }
 
-            @ViewBuilder
-            private func label(_ configuration: Configuration) -> some View {
-                if isHighlighted {
-                    configuration.label
-                        .foregroundStyle(.black)
-                        .labelStyle(
-                            CapsuleLabelStyle(
-                                tint: .white
-                            )
-                        )
-                } else {
-                    configuration.label
-                        .foregroundStyle(.primary)
-                        .labelStyle(.titleOnly)
-                        .padding(CapsuleLabelStyle.defaultInsets)
-                }
+            private var glass: BackportGlass {
+                isHighlighted ? .regular.selection(
+                    tint: .white,
+                    foregroundColor: .black
+                ) : .identity
             }
 
             func makeBody(configuration: Configuration) -> some View {
-                label(configuration)
+                configuration.label
                     .font(.callout)
                     .fontWeight(.semibold)
-                    .scaleEffect(isFocused ? 1.06 : 1)
-                    .shadow(
-                        color: isFocused ? .black.opacity(0.5) : .clear,
-                        radius: isFocused ? 10 : 0
-                    )
-                    .animation(.easeInOut(duration: 0.1), value: isFocused)
-                    .animation(.easeInOut(duration: 0.1), value: isHighlighted)
+                    .padding(CapsuleLabelStyle.defaultInsets)
+                    .backport
+                    .glassEffect(glass, in: .capsule)
             }
         }
 

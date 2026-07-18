@@ -22,9 +22,6 @@ extension ServerTasksView {
         @ObservedObject
         var observer: ServerTaskObserver
 
-        @State
-        private var isPresentingConfirmation = false
-
         // MARK: - Task Details Section
 
         @ViewBuilder
@@ -72,7 +69,7 @@ extension ServerTasksView {
         @ViewBuilder
         var body: some View {
             Button {
-                isPresentingConfirmation = true
+                router.route(to: .editServerTask(observer: observer))
             } label: {
                 HStack {
                     taskView
@@ -93,32 +90,6 @@ extension ServerTasksView {
             }
             .animation(.linear(duration: 0.1), value: observer.state)
             .foregroundStyle(.primary, .secondary)
-            .confirmationDialog(
-                observer.task.name ?? L10n.unknown,
-                isPresented: $isPresentingConfirmation,
-                titleVisibility: .visible
-            ) {
-                Group {
-                    if observer.state == .running {
-                        Button(L10n.stop) {
-                            observer.stop()
-                        }
-                    } else {
-                        Button(L10n.run) {
-                            observer.start()
-                        }
-                    }
-                }
-                .disabled(observer.task.state == .cancelling)
-
-                Button(L10n.edit) {
-                    router.route(to: .editServerTask(observer: observer))
-                }
-            } message: {
-                if let description = observer.task.description {
-                    Text(description)
-                }
-            }
         }
     }
 }

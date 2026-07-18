@@ -11,7 +11,7 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct BottomBar: View {
+    struct Toolbar: View {
 
         @Environment(\.horizontalSizeClass)
         private var horizontalSizeClass
@@ -63,43 +63,38 @@ extension SelectUserView {
         @ViewBuilder
         private var compactView: some View {
             if !isEditing {
-                HStack(spacing: EdgeInsets.edgePadding / 2) {
+                HStack(spacing: 16) {
                     ServerMenu(servers: servers)
                         .frame(height: buttonHeight)
                         .frame(maxWidth: 400)
 
                     AddUserMenu(servers: servers)
-                        .labelStyle(.iconOnly)
-                        .menuOrder(.fixed)
                         .frame(width: buttonHeight, height: buttonHeight)
                 }
-                .buttonStyle(.primary)
                 .edgePadding([.bottom, .horizontal])
             }
         }
 
         @ViewBuilder
         private var regularView: some View {
-            HStack(alignment: .top, spacing: UIDevice.isTV ? 30 : nil) {
+            HStack(alignment: .top, spacing: UIDevice.isTV ? 32 : nil) {
                 if isEditing {
                     editView
                 } else {
-                    contentView
+                    regularContentView
                 }
             }
-            .buttonStyle(.primary)
             .animation(.linear(duration: 0.1), value: selectedUsers.isNotEmpty)
             .frame(height: buttonHeight)
             .frame(maxWidth: .infinity)
             .focusSection()
             .edgePadding([.bottom, .horizontal])
-            #if os(tvOS)
-                .defaultFocus(
-                    $isCenterButtonFocused,
-                    true,
-                    priority: .userInitiated
-                )
-            #endif
+            .backport
+            .defaultFocus(
+                $isCenterButtonFocused,
+                true,
+                priority: .userInitiated
+            )
         }
 
         @ViewBuilder
@@ -128,9 +123,9 @@ extension SelectUserView {
         }
 
         @ViewBuilder
-        private var contentView: some View {
+        private var regularContentView: some View {
             Menu {
-                AdvancedMenu(
+                AdvancedMenuContent(
                     hasUsers: allUsers.isNotEmpty,
                     isEditing: $isEditing
                 )
@@ -139,8 +134,13 @@ extension SelectUserView {
                     .labelStyle(.iconOnly)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .foregroundStyle(.primary, .secondary)
             .menuOrder(.fixed)
             .frame(width: buttonHeight, height: buttonHeight)
+            .backport
+            .buttonBorderShape(.circle)
+            .backport
+            .glassEffect(in: .circle)
 
             ServerMenu(servers: servers)
                 .frame(maxWidth: UIDevice.isTV ? 600 : 400)
@@ -148,9 +148,6 @@ extension SelectUserView {
                 .focused($isCenterButtonFocused)
 
             AddUserMenu(servers: servers)
-                .labelStyle(.iconOnly)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .menuOrder(.fixed)
                 .frame(width: buttonHeight, height: buttonHeight)
                 .hidden(allUsers.isEmpty)
         }

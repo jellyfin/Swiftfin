@@ -114,7 +114,10 @@ private struct VideoPlayerSliderContent: SliderContentView {
     }
 
     private func progress(for value: Double) -> Double {
-        guard sliderState.total > 0 else {
+        guard sliderState.total.isFinite,
+              sliderState.total > 0,
+              value.isFinite
+        else {
             return 0
         }
 
@@ -123,13 +126,18 @@ private struct VideoPlayerSliderContent: SliderContentView {
 
     @ViewBuilder
     private func progressSegment(progress: Double, in size: CGSize) -> some View {
+        let width = size.width.isFinite ? max(0, size.width) : 0
+        let height = size.height.isFinite ? max(0, size.height) : 0
+        let segmentWidth = max(0, width * progress + height)
+
         Rectangle()
-            .frame(width: size.width * progress + size.height)
-            .offset(x: -size.height)
+            .frame(width: segmentWidth)
+            .offset(x: -height)
     }
 
     private func tickOffset(for progress: Double, in width: CGFloat) -> CGFloat {
-        clamp(width * progress - tickWidth / 2, min: 0, max: width - tickWidth)
+        guard progress.isFinite, width.isFinite, width > 0 else { return 0 }
+        return clamp(width * progress - tickWidth / 2, min: 0, max: max(0, width - tickWidth))
     }
 
     var body: some View {

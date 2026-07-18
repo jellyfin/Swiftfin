@@ -346,13 +346,13 @@ extension View {
     }
 
     @ViewBuilder
-    func posterShadow() -> some View {
+    func subtleShadow() -> some View {
         shadow(radius: 4, y: 2)
     }
 
     /// Applies the aspect ratio, corner radius, and border for the given `PosterType`
     ///
-    /// Note: will not apply `posterShadow`
+    /// Note: will not apply `subtleShadow`
     @ViewBuilder
     func posterStyle(
         _ type: PosterDisplayType,

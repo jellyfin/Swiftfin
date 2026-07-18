@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -119,14 +120,23 @@ struct AddTaskTriggerView: View {
             }
         }
         .topBarTrailing {
-            Button(L10n.save) {
-
+            let saveAction: () -> Void = {
                 UIDevice.impact(.light)
 
                 observer.addTrigger(taskTriggerInfo)
                 router.dismiss()
             }
-            .buttonStyle(.toolbarPill)
+
+            Group {
+                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                    Button(L10n.save, role: .confirm, action: saveAction)
+                } else {
+                    Button(L10n.save, action: saveAction)
+                        .backport
+                        .buttonStyle(.glassProminent)
+                        .controlSize(.small)
+                }
+            }
             .disabled(isDuplicate)
         }
         .alert(L10n.unsavedChangesMessage, isPresented: $isPresentingNotSaved) {

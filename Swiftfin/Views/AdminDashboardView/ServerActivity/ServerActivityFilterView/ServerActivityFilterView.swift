@@ -7,6 +7,7 @@
 //
 
 import CollectionVGrid
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -49,11 +50,22 @@ struct ServerActivityFilterView: View {
             /// Reset button to remove the filter
             if environment.wrappedValue.minDate != nil {
                 Section {
-                    Button(L10n.reset, role: .destructive) {
+                    Button(role: .destructive) {
                         environment.wrappedValue.minDate = nil
                         router.dismiss()
+                    } label: {
+                        Text(L10n.reset)
+                            .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.primary)
+                    .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    #if os(iOS)
+                        .controlSize(.large)
+                    #endif
                 } footer: {
                     Text(L10n.resetFilterFooter)
                 }
@@ -68,11 +80,21 @@ struct ServerActivityFilterView: View {
             let startOfDay = Calendar.current
                 .startOfDay(for: tempDate)
 
-            Button(L10n.save) {
+            let saveAction: () -> Void = {
                 environment.wrappedValue.minDate = startOfDay
                 router.dismiss()
             }
-            .buttonStyle(.toolbarPill)
+
+            Group {
+                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                    Button(L10n.save, role: .confirm, action: saveAction)
+                } else {
+                    Button(L10n.save, action: saveAction)
+                        .backport
+                        .buttonStyle(.glassProminent)
+                        .controlSize(.small)
+                }
+            }
             .disabled(environment.wrappedValue.minDate != nil && startOfDay == environment.wrappedValue.minDate)
         }
     }

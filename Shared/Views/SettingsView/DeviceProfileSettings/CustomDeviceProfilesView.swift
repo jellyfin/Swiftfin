@@ -52,7 +52,9 @@ struct CustomDeviceProfilesView: View {
             if customProfiles.isNotEmpty {
                 addButton
                 #if os(iOS)
-                .buttonStyle(.toolbarPill)
+                .backport
+                .buttonStyle(.glassProminent)
+                .controlSize(.small)
                 #endif
             }
         }

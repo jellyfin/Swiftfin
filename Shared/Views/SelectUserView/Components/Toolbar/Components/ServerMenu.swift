@@ -78,6 +78,9 @@ extension SelectUserView {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .menuOrder(.fixed)
+            .foregroundStyle(.primary, .secondary)
+            .backport
+            .glassEffect(in: .capsule)
         }
     }
 }

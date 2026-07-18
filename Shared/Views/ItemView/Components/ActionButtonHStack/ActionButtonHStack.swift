@@ -37,6 +37,7 @@ extension ItemView {
         private func materialLabel(
             _ title: String,
             systemImage: String,
+            isHighlighted: Bool = false,
             tint: Color,
             foregroundColor: Color,
             isRotated: Bool = false
@@ -57,7 +58,7 @@ extension ItemView {
             .backport
             .glassEffect(
                 .regular.selection(
-                    tint: tint,
+                    tint: isHighlighted ? tint : .gray.opacity(0.3),
                     foregroundColor: foregroundColor
                 ),
                 in: shape
@@ -70,7 +71,7 @@ extension ItemView {
                 // MARK: Played
 
                 if provider.item.canBePlayed {
-                    let isCheckmarkSelected = provider.item.userData?.isPlayed == true
+                    let isPlayed = provider.item.userData?.isPlayed == true
 
                     Button {
                         Task { await provider.toggleIsPlayed() }
@@ -78,6 +79,7 @@ extension ItemView {
                         materialLabel(
                             L10n.played,
                             systemImage: "checkmark",
+                            isHighlighted: isPlayed,
                             tint: .jellyfinPurple,
                             foregroundColor: .primary
                         )
@@ -85,19 +87,19 @@ extension ItemView {
                     #if !os(tvOS)
                     .foregroundStyle(.primary, .secondary)
                     #endif
-                    .isSelected(isCheckmarkSelected)
                 }
 
                 // MARK: Favorite
 
-                let isHeartSelected = provider.item.userData?.isFavorite == true
+                let isFavorited = provider.item.userData?.isFavorite == true
 
                 Button {
                     Task { await provider.toggleIsFavorite() }
                 } label: {
                     materialLabel(
                         L10n.favorited,
-                        systemImage: isHeartSelected ? "heart.fill" : "heart",
+                        systemImage: isFavorited ? "heart.fill" : "heart",
+                        isHighlighted: isFavorited,
                         tint: .pink,
                         foregroundColor: .primary
                     )
@@ -105,7 +107,7 @@ extension ItemView {
                 #if !os(tvOS)
                 .foregroundStyle(.primary, .secondary)
                 #endif
-                .isSelected(isHeartSelected)
+                .isSelected(isFavorited)
 
                 // MARK: Trailer
 
@@ -145,7 +147,7 @@ extension ItemView {
                 }
                 #endif
             }
-            .frame(height: UIDevice.isTV ? 100 : 44)
+            .frame(height: UIDevice.isTV ? 75 : 44)
             .labelStyle(.iconOnly)
             .buttonStyle(BasicHoverButtonStyle())
             .font(.title3)

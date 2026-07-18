@@ -229,7 +229,7 @@ struct ItemImagesView: View {
                     .pipeline(.Swiftfin.other)
                 }
                 .posterStyle(posterType)
-                .posterShadow()
+                .subtleShadow()
             }
             .buttonStyle(.plain)
         }
@@ -251,7 +251,7 @@ struct ItemImagesView: View {
                 }
             }
             .posterStyle(posterType)
-            .posterShadow()
+            .subtleShadow()
         }
         .buttonStyle(.plain)
     }

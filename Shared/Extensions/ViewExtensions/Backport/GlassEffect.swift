@@ -16,18 +16,20 @@ struct BackportGlass {
         let foregroundColor: Color
     }
 
-    /// The standard glass appearance.
     static let regular = BackportGlass(isVisible: true)
 
-    /// An appearance that does not draw glass or a border.
     static let identity = BackportGlass(isVisible: false)
 
     fileprivate var tint: Color?
+    fileprivate var drawsLegacyShadow: Bool
+    fileprivate var isInteractive: Bool
     fileprivate var isVisible: Bool
     fileprivate var selectionAppearance: SelectionAppearance?
 
     private init(isVisible: Bool) {
         self.tint = nil
+        self.drawsLegacyShadow = true
+        self.isInteractive = isVisible
         self.isVisible = isVisible
         self.selectionAppearance = nil
     }
@@ -39,9 +41,20 @@ struct BackportGlass {
         return copy
     }
 
-    /// Configures the tint and foreground color for the selected and enabled state.
+    func shadow(_ isEnabled: Bool = true) -> Self {
+        var copy = self
+        copy.drawsLegacyShadow = isEnabled
+        return copy
+    }
+
+    func interactive(_ isInteractive: Bool = true) -> Self {
+        var copy = self
+        copy.isInteractive = isInteractive
+        return copy
+    }
+
     func selection(
-        tint: Color,
+        tint: Color?,
         foregroundColor: Color
     ) -> Self {
         var copy = self
@@ -60,15 +73,9 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
 
     @Environment(\.isEnabled)
     private var isEnabled
-    @Environment(\.isSelected)
-    private var isSelected
 
     let glass: BackportGlass
     let shape: BackgroundShape
-
-    private var isPositiveSelectionState: Bool {
-        isEnabled && isSelected
-    }
 
     private var subduedColor: Color {
         Color.gray.opacity(0.3)
@@ -89,20 +96,13 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
 
     private func appearanceBody(_ content: some View) -> some View {
         platformAppearanceBody(content)
-            .overlay {
-                appearanceBorder
-            }
             .contentShape(shape)
     }
 
     @ViewBuilder
     private func platformAppearanceBody(_ content: some View) -> some View {
         #if os(tvOS)
-        if #available(tvOS 26.0, *), isLiquidGlassEnabled {
-            glassBody(content)
-        } else {
-            legacyBody(content)
-        }
+        glassBody(content)
         #else
         if #available(iOS 26.0, *), isLiquidGlassEnabled {
             glassBody(content)
@@ -117,11 +117,11 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
             return glass.tint
         }
 
-        return isPositiveSelectionState ? glass.tint : subduedColor
+        return isEnabled ? glass.tint : subduedColor
     }
 
     private var resolvedForegroundStyle: AnyShapeStyle {
-        guard isPositiveSelectionState,
+        guard isEnabled,
               let selectionAppearance = glass.selectionAppearance
         else {
             return AnyShapeStyle(HierarchicalShapeStyle.primary)
@@ -160,23 +160,42 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
         }
     }
 
-    private func legacyBody(_ content: some View) -> some View {
+    private func legacyContent(_ content: some View) -> some View {
         content
             .background {
                 legacyBackground
                     .transition(.opacity)
             }
             .clipShape(shape)
+            .overlay {
+                appearanceBorder
+            }
+    }
+
+    @ViewBuilder
+    private func legacyBody(_ content: some View) -> some View {
+        if glass.isVisible, glass.drawsLegacyShadow {
+            legacyContent(content)
+                .subtleShadow()
+        } else {
+            legacyContent(content)
+        }
     }
 
     @available(iOS 26.0, tvOS 26.0, *)
+    @ViewBuilder
     private func glassBody(_ content: some View) -> some View {
-        content
-            .glassEffect(
-                glass.isVisible ? .regular
-                    .tint(resolvedTint)
-                    .interactive() : .identity,
-                in: shape
-            )
+        if glass.isVisible {
+            content
+                .glassEffect(
+                    .regular
+                        .tint(resolvedTint)
+                        .interactive(glass.isInteractive),
+                    in: shape
+                )
+        } else {
+            content
+                .glassEffect(.identity, in: shape)
+        }
     }
 }

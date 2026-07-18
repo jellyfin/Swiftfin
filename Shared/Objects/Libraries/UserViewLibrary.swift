@@ -295,7 +295,7 @@ private struct UserViewLibraryListElement: View {
                 .id(imageSources.hashValue)
         }
         .posterStyle(.landscape)
-        .posterShadow()
+        .subtleShadow()
         .frame(width: userViewLibraryListImageWidth)
     }
 

@@ -48,12 +48,22 @@ struct ServerUserDeviceAccessView: View {
                 if viewModel.background.is(.updating) {
                     ProgressView()
                 }
-                Button(L10n.save) {
+                let saveAction: () -> Void = {
                     if tempPolicy != viewModel.user.policy {
                         viewModel.updatePolicy(tempPolicy)
                     }
                 }
-                .buttonStyle(.toolbarPill)
+
+                Group {
+                    if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                        Button(L10n.save, role: .confirm, action: saveAction)
+                    } else {
+                        Button(L10n.save, action: saveAction)
+                            .backport
+                            .buttonStyle(.glassProminent)
+                            .controlSize(.small)
+                    }
+                }
                 .disabled(viewModel.user.policy == tempPolicy)
             }
             .onReceive(viewModel.events) { event in
@@ -75,11 +85,16 @@ struct ServerUserDeviceAccessView: View {
     @ViewBuilder
     private var contentView: some View {
         List {
-            InsetGroupedListHeader {
+            ZStack {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.secondarySystemBackground)
+
                 Toggle(
                     L10n.enableAllDevices,
                     isOn: $tempPolicy.enableAllDevices.coalesce(false)
                 )
+                .padding(.init(vertical: 5, horizontal: 20))
+                .listRowInsets(.init(vertical: 10, horizontal: 20))
             }
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)

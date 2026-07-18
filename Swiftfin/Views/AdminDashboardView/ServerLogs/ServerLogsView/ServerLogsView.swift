@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -14,6 +15,9 @@ import SwiftUI
 //       - separate package
 
 struct ServerLogsView: View {
+
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
 
     @State
     private var filter: ServerLogType?
@@ -84,7 +88,10 @@ struct ServerLogsView: View {
             viewModel.refresh(filter: filter)
         }
         .topBarTrailing {
-            Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
+            Menu(
+                L10n.filters,
+                systemImage: isLiquidGlassEnabled ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle"
+            ) {
                 Picker(selection: $filter) {
                     Label(L10n.all, systemImage: "line.3.horizontal")
                         .tag(nil as ServerLogType?)

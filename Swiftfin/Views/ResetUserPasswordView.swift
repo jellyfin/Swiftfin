@@ -51,6 +51,10 @@ struct ResetUserPasswordView: View {
         self.requiresCurrentPassword = requiresCurrentPassword
     }
 
+    private var isValid: Bool {
+        newPassword == confirmNewPassword
+    }
+
     var body: some View {
         List {
             if requiresCurrentPassword {
@@ -105,30 +109,7 @@ struct ResetUserPasswordView: View {
                     Label(L10n.passwordsDoNotMatch, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 }
-            }
 
-            Section {
-                if viewModel.state == .resetting {
-                    Button(L10n.cancel, role: .destructive) {
-                        viewModel.send(.cancel)
-
-                        if requiresCurrentPassword {
-                            focusedField = .currentPassword
-                        } else {
-                            focusedField = .newPassword
-                        }
-                    }
-                    .buttonStyle(.primary)
-                } else {
-                    Button(L10n.save) {
-                        focusedField = nil
-                        viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
-                    }
-                    .buttonStyle(.primary)
-                    .disabled(newPassword != confirmNewPassword || viewModel.state == .resetting)
-                    .foregroundStyle(accentColor.overlayColor, accentColor)
-                }
-            } footer: {
                 Text(L10n.passwordChangeWarning)
             }
         }
@@ -159,6 +140,40 @@ struct ResetUserPasswordView: View {
         .topBarTrailing {
             if viewModel.state == .resetting {
                 ProgressView()
+
+                Button(L10n.cancel, role: .cancel) {
+                    viewModel.send(.cancel)
+
+                    if requiresCurrentPassword {
+                        focusedField = .currentPassword
+                    } else {
+                        focusedField = .newPassword
+                    }
+                }
+                .foregroundStyle(.primary, .secondary)
+                .backport
+                .buttonStyle(.glass)
+                .controlSize(.small)
+            } else {
+                let saveAction: () -> Void = {
+                    focusedField = nil
+                    viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
+                }
+
+                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                    Button(
+                        L10n.save,
+                        role: .confirm,
+                        action: saveAction
+                    )
+                    .enabled(isValid)
+                } else {
+                    Button(L10n.save, action: saveAction)
+                        .backport
+                        .buttonStyle(.glassProminent)
+                        .controlSize(.small)
+                        .enabled(isValid)
+                }
             }
         }
         .alert(

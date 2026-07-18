@@ -18,25 +18,17 @@ extension View {
         self
     }
 
-    func navigationBarDrawer(@ViewBuilder _ drawer: @escaping () -> some View) -> some View {
-        modifier(NavigationBarDrawerModifier(drawer: drawer))
-    }
-
     @ViewBuilder
     func navigationBarFilterDrawer(
         viewModel: FilterViewModel,
         types: [ItemFilterType]
     ) -> some View {
-        if types.isEmpty {
-            self
-        } else {
-            navigationBarDrawer {
-                NavigationBarFilterDrawer(
-                    viewModel: viewModel,
-                    types: types
-                )
-            }
-        }
+        modifier(
+            NavigationBarFilterDrawerModifier(
+                viewModel: viewModel,
+                types: types
+            )
+        )
     }
 
     @ViewBuilder

@@ -41,10 +41,8 @@ struct PosterButton<Item: Poster>: View {
         buttonLabel()
             .frame(width: posterSize.width)
             .padding(20)
-            .background {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.secondarySystemFill)
-            }
+            .backport
+            .glassEffect(in: .rect(cornerRadius: 10))
     }
 
     @ViewBuilder
@@ -59,7 +57,7 @@ struct PosterButton<Item: Poster>: View {
         .contentShape(.contextMenuPreview, Rectangle())
         .backport
         .matchedTransitionSource(id: "item", in: namespace)
-        .posterShadow()
+        .subtleShadow()
         .hoverEffect(.highlight)
     }
 

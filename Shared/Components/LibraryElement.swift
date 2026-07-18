@@ -34,7 +34,8 @@ protocol LibraryElement: Displayable, Hashable, Identifiable {
 
     static func layout(
         for libraryStyle: LibraryStyle,
-        options: LibraryStyleOptions
+        options: LibraryStyleOptions,
+        insets: EdgeInsets
     ) -> CollectionVGridLayout
 }
 
@@ -65,7 +66,8 @@ extension LibraryElement {
 
     static func layout(
         for libraryStyle: LibraryStyle,
-        options: LibraryStyleOptions
+        options: LibraryStyleOptions,
+        insets: EdgeInsets
     ) -> CollectionVGridLayout {
         let libraryStyle = options.normalized(libraryStyle)
 
@@ -73,18 +75,18 @@ extension LibraryElement {
         let gridLayout: CollectionVGridLayout = {
             switch libraryStyle.posterDisplayType {
             case .landscape:
-                .minWidth(220)
+                .minWidth(220, insets: insets)
             case .portrait, .square:
-                .minWidth(140)
+                .minWidth(140, insets: insets)
             }
         }()
 
         let phoneGridLayout: CollectionVGridLayout = {
             switch libraryStyle.posterDisplayType {
             case .landscape:
-                .columns(2)
+                .columns(2, insets: insets)
             case .portrait, .square:
-                .columns(3)
+                .columns(3, insets: insets)
             }
         }()
 
@@ -92,7 +94,12 @@ extension LibraryElement {
         case .grid:
             return UIDevice.isPhone ? phoneGridLayout : gridLayout
         case .list:
-            return .columns(libraryStyle.listColumnCount, insets: .zero, itemSpacing: 0, lineSpacing: 0)
+            return .columns(
+                libraryStyle.listColumnCount,
+                insets: .init(top: insets.top, leading: 0, bottom: insets.bottom, trailing: 0),
+                itemSpacing: 0,
+                lineSpacing: 0
+            )
         }
         #else
         switch libraryStyle.displayType {

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Engine
 import SwiftUI
 
@@ -111,18 +112,27 @@ struct LocalUserSecurityView: View {
         }
         .topBarTrailing {
             if let user = viewModel.userSession?.user {
-                Button(
-                    signInPolicy == .requirePin && signInPolicy == user.accessPolicy
-                        ? L10n.changePin
-                        : L10n.save
-                ) {
+                let isChangingPIN = signInPolicy == .requirePin && signInPolicy == user.accessPolicy
+                let saveAction: () -> Void = {
                     Task { @MainActor in
                         await performSaveSecurityPolicy()
                     }
                 }
-                #if os(iOS)
-                .buttonStyle(.toolbarPill)
-                #endif
+
+                Group {
+                    #if os(iOS)
+                    if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled], !isChangingPIN {
+                        Button(L10n.save, role: .confirm, action: saveAction)
+                    } else {
+                        Button(isChangingPIN ? L10n.changePin : L10n.save, action: saveAction)
+                            .backport
+                            .buttonStyle(.glassProminent)
+                            .controlSize(.small)
+                    }
+                    #else
+                    Button(isChangingPIN ? L10n.changePin : L10n.save, action: saveAction)
+                    #endif
+                }
             }
         }
         .errorMessage($error)

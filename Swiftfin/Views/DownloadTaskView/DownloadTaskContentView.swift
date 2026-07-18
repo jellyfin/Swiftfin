@@ -39,7 +39,7 @@ extension DownloadTaskView {
                         .aspectRatio(1.77, contentMode: .fill)
                         .cornerRadius(10)
                         .padding(.horizontal)
-                        .posterShadow()
+                        .subtleShadow()
 
                     ShelfView(downloadTask: downloadTask)
 

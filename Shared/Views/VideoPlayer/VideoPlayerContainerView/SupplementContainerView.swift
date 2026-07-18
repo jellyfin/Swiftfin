@@ -80,10 +80,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             } content: {
                 HStack(spacing: UIDevice.isTV ? 20 : 10) {
                     if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
-                        Button {
+                        Button(supplement.displayTitle) {
                             containerState.select(supplement: nil)
-                        } label: {
-                            EmptyLabel(supplement.displayTitle)
                         }
                         .isSelected(true)
                         .focused($focusedElement, equals: .supplementTab(supplement.id))
@@ -91,12 +89,10 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         ForEach(currentSupplements) { supplement in
                             let isSelected = containerState.selectedSupplement?.id == supplement.id
 
-                            Button {
+                            Button(supplement.displayTitle) {
                                 if !UIDevice.isTV {
                                     containerState.select(supplement: supplement.supplement)
                                 }
-                            } label: {
-                                EmptyLabel(supplement.displayTitle)
                             }
                             .isSelected(isSelected)
                             .focused($focusedElement, equals: .supplementTab(supplement.id))

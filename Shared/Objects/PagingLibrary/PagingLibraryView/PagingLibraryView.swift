@@ -18,12 +18,17 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     private var rememberIndividualLibraryStyle
     @Default(.Customization.Library.style)
     private var defaultLibraryStyle
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
 
     @Namespace
     private var namespace
 
     @Router
     private var router
+
+    @State
+    private var isSafeAreaBarApplied: Bool = false
 
     @StateObject
     private var gridProxy = CollectionVGridProxy()
@@ -68,24 +73,39 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     @ViewBuilder
     private var elementsView: some View {
-        CollectionVGrid(
-            uniqueElements: viewModel.displayedElements,
-            layout: Element.layout(for: libraryStyle, options: libraryStyleOptions)
-        ) { element in
-            element.makeBody(libraryStyle: libraryStyle)
-        }
-        .onReachedBottomEdge(offset: .offset(300)) {
-            if viewModel.isSearchActive {
-                viewModel.getNextSearchPage()
+        AlternateLayoutView {
+            Color.clear
+        } content: { frame in
+
+            let insets: EdgeInsets = if #available(iOS 26, *), isLiquidGlassEnabled, isSafeAreaBarApplied {
+                frame.safeAreaInsets + 10
             } else {
-                viewModel.getNextPage()
+                .zero + 10
             }
+
+            CollectionVGrid(
+                uniqueElements: viewModel.displayedElements,
+                layout: Element.layout(
+                    for: libraryStyle,
+                    options: libraryStyleOptions,
+                    insets: insets
+                )
+            ) { element in
+                element.makeBody(libraryStyle: libraryStyle)
+            }
+            .onReachedBottomEdge(offset: .offset(300)) {
+                if viewModel.isSearchActive {
+                    viewModel.getNextSearchPage()
+                } else {
+                    viewModel.getNextPage()
+                }
+            }
+            .proxy(gridProxy)
+            .ignoresSafeArea(edges: .vertical)
         }
-        .proxy(gridProxy)
         .scrollIndicators(.hidden)
         .withViewContext(.isListRowSeparatorVisible)
         .withViewContext(.isThumb)
-        .ignoresSafeArea(edges: .vertical)
         .onReceive(tabItemSelected) { event in
             if event.isRepeat, event.isRoot {
                 gridProxy.scrollToTop(animated: true)
@@ -137,6 +157,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .animation(.linear(duration: 0.2), value: viewModel.elements)
         .animation(.linear(duration: 0.2), value: viewModel.searchElements)
         .navigationTitle(viewModel.library.parent.displayTitle)
+        .onPreferenceChange(IsSafeAreaBarApplied.self) { newValue in
+            isSafeAreaBarApplied = newValue
+        }
         .backport
         .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
         .backport
@@ -145,8 +168,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         }
         .backport
         .onChange(of: libraryStyle) { oldStyle, newStyle in
-            if Element.layout(for: oldStyle, options: libraryStyleOptions) ==
-                Element.layout(for: newStyle, options: libraryStyleOptions)
+            if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero) ==
+                Element.layout(for: newStyle, options: libraryStyleOptions, insets: .zero)
             {
                 gridProxy.layout()
             }

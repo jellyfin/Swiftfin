@@ -12,12 +12,8 @@ struct EmptyLabel: View {
 
     private let title: Text
 
-    init(_ title: String) {
-        self.title = Text(title)
-    }
-
-    init(_ title: Text) {
-        self.title = title
+    init(_ text: some WithText) {
+        self.title = text.textBody
     }
 
     var body: some View {

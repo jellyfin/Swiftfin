@@ -19,12 +19,17 @@ extension VideoPlayer.PlaybackControls.PlaybackProgress {
         private var unitPoints: [Double] {
             chapters.map { chapter in
                 guard let startSeconds = chapter.chapterInfo.startSeconds,
+                      runtime > .zero,
+                      startSeconds >= .zero,
                       startSeconds < runtime
                 else {
                     return 0
                 }
 
-                return startSeconds / runtime
+                let unitPoint = startSeconds / runtime
+                guard unitPoint.isFinite else { return 0 }
+
+                return clamp(unitPoint, min: 0, max: 1)
             }
         }
 

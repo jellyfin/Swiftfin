@@ -11,7 +11,7 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct AdvancedMenu: View {
+    struct AdvancedMenuContent: View {
 
         @Default(.selectUserDisplayType)
         private var userListDisplayType

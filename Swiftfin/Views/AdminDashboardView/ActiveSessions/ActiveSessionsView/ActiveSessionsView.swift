@@ -13,6 +13,9 @@ import SwiftUI
 
 struct ActiveSessionsView: View {
 
+    @Default(.isLiquidGlassEnabled)
+    private var isLiquidGlassEnabled
+
     @Router
     private var router
 
@@ -130,7 +133,10 @@ struct ActiveSessionsView: View {
                 ProgressView()
             }
 
-            Menu(L10n.filters, systemImage: "line.3.horizontal.decrease.circle") {
+            Menu(
+                L10n.filters,
+                systemImage: isLiquidGlassEnabled ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle"
+            ) {
                 activeWithinFilterButton
                 showInactiveSessionsButton
             }

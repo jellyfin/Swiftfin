@@ -42,9 +42,31 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
     private let translationBinding: Binding<CGPoint>
     private let valueDamping: Double
 
+    private var gestureHeight: CGFloat {
+        guard contentSize.height.isFinite else { return 0 }
+
+        let height = contentSize.height + gesturePadding
+        guard height.isFinite else { return 0 }
+
+        return max(0, height)
+    }
+
+    private var resolvedValue: Value {
+        guard value.isFinite else { return 0 }
+        return clamp(value, min: 0, max: total)
+    }
+
     private var dragGesture: some Gesture {
         DragGesture(coordinateSpace: .global)
             .onChanged { newValue in
+                guard contentSize.width.isFinite,
+                      contentSize.width > 0,
+                      newValue.location.x.isFinite,
+                      newValue.location.y.isFinite
+                else {
+                    return
+                }
+
                 if needsToSetTranslationStartState {
                     translationStartLocation = newValue.location
                     needsToSetTranslationStartState = false
@@ -70,17 +92,26 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
                     y: currentValueDampingStartTranslation.y - newValue.location.y
                 )
 
+                guard newTranslation.x.isFinite,
+                      newTranslation.y.isFinite,
+                      currentValueDampingStartValue.isFinite
+                else {
+                    return
+                }
+
                 let newProgress = currentValueDampingStartValue - Value(newTranslation.x / contentSize.width) * total
+                guard newProgress.isFinite else { return }
+
                 value = clamp(newProgress, min: 0, max: total)
             }
     }
 
     var body: some View {
-        ProgressView(value: value, total: total)
+        ProgressView(value: resolvedValue, total: total)
             .progressViewStyle(.playback)
             .overlay {
                 Color.clear
-                    .frame(height: contentSize.height + gesturePadding)
+                    .frame(height: gestureHeight)
                     .contentShape(Rectangle())
                     .highPriorityGesture(dragGesture)
                     .onLongPressGesture(minimumDuration: 0.01, perform: {}) { isPressing in
@@ -135,9 +166,9 @@ extension CapsuleSlider {
         self._value = value
         self.gesturePadding = 0
         self.onEditingChanged = { _ in }
-        self.total = total
+        self.total = total.isFinite && total > 0 ? total : 1
         self.translationBinding = translation
-        self.valueDamping = clamp(valueDamping, min: 0.01, max: 2)
+        self.valueDamping = valueDamping.isFinite ? clamp(valueDamping, min: 0.01, max: 2) : 1
     }
 
     func onEditingChanged(perform action: @escaping (Bool) -> Void) -> Self {
@@ -145,6 +176,6 @@ extension CapsuleSlider {
     }
 
     func gesturePadding(_ padding: CGFloat) -> Self {
-        copy(modifying: \.gesturePadding, with: padding)
+        copy(modifying: \.gesturePadding, with: padding.isFinite ? max(0, padding) : 0)
     }
 }
