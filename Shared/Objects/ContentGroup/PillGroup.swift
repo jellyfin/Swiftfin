@@ -86,6 +86,8 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                 }
             }
             .focusSection()
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel(displayTitle)
         }
     }
 }
