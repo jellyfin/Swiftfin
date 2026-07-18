@@ -15,8 +15,6 @@ extension ItemView {
 
     struct TrailerMenu<LabelContent: View>: View {
 
-        private let logger = Logger.swiftfin()
-
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
@@ -29,6 +27,7 @@ extension ItemView {
         let localTrailers: [BaseItemDto]
         let externalTrailers: [NamedURL]
         private let label: LabelContent
+        private let logger = Logger.swiftfin()
 
         init(
             localTrailers: [BaseItemDto],

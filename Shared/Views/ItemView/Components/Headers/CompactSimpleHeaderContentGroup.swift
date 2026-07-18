@@ -32,29 +32,60 @@ extension ItemView {
                 provider.item.preferredPosterDisplayType == .portrait ? .landscape : provider.item.preferredPosterDisplayType
             }
 
-            var body: some View {
-                VStack(spacing: 10) {
+            @ViewBuilder
+            private var content: some View {
+                PosterImage(
+                    item: provider.item,
+                    type: headerImageDisplayType,
+                    contentMode: .fit
+                )
+                .posterEnvironment(BaseItemDto.Environment(useParent: false))
+                .frame(maxWidth: headerImageDisplayType == .square ? 400 : .infinity)
+                .subtleShadow()
+
+                VStack(alignment: .center, spacing: 5) {
+                    if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
+                        ParentButton(title: parentTitle, id: parentID)
+                    }
+
+                    Text(provider.item.displayTitle)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+
+                    MetadataHStack(item: provider.item)
+                }
+            }
+
+            @ViewBuilder
+            private var peopleContent: some View {
+                HStack(alignment: .bottom, spacing: 12) {
                     PosterImage(
                         item: provider.item,
-                        type: headerImageDisplayType,
+                        type: .portrait,
                         contentMode: .fit
                     )
-                    .posterEnvironment(BaseItemDto.Environment(useParent: false))
-                    .frame(maxWidth: headerImageDisplayType == .square ? 400 : .infinity)
+                    .frame(width: 130)
                     .subtleShadow()
 
-                    VStack(alignment: .center, spacing: 5) {
-                        if let parentID = provider.item.parentRootID, let parentTitle = provider.item.parentTitle {
-                            ParentButton(title: parentTitle, id: parentID)
-                        }
+                    Text(provider.item.displayTitle)
+                        .font(.title2)
+                        .lineLimit(4)
+                        .fontWeight(.semibold)
+                        .padding(.bottom, 4)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(maxWidth: 300)
+            }
 
-                        Text(provider.item.displayTitle)
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .multilineTextAlignment(.center)
-                            .lineLimit(2)
-
-                        MetadataHStack(item: provider.item)
+            var body: some View {
+                VStack(spacing: 10) {
+                    switch provider.item.type {
+                    case .person, .musicArtist:
+                        peopleContent
+                    default:
+                        content
                     }
 
                     VStack(alignment: .center, spacing: 5) {

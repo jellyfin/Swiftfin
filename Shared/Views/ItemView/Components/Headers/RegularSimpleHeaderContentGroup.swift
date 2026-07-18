@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: fix header focus not default
+// TODO: Fix the header's initial focus.
 
 extension ItemView {
 
@@ -32,10 +32,6 @@ extension ItemView {
 
             @StoredValue(.User.itemViewAttributes)
             private var attributes
-
-            private var canFocusPlayButton: Bool {
-                provider.item.presentPlayButton && provider.selectedMediaSource != nil
-            }
 
             private var posterDisplayType: PosterDisplayType {
                 provider.item.type == .person ? .portrait : .landscape
@@ -72,21 +68,23 @@ extension ItemView {
                         contentMode: .fit
                     )
                     .posterEnvironment(BaseItemDto.Environment(useParent: false))
-                    .posterBorder()
-                    .posterCornerRadius(posterDisplayType)
-                    .subtleShadow()
-                    .frame(
-                        maxWidth: .infinity,
-                        maxHeight: .infinity,
-                        alignment: .trailing
-                    )
+                    #if os(tvOS)
+                        .posterBorder()
+                        .posterCornerRadius(posterDisplayType)
+                        .subtleShadow()
+                    #endif
+                        .frame(
+                            maxWidth: .infinity,
+                            maxHeight: .infinity,
+                            alignment: .trailing
+                        )
 
                     VStack(alignment: .leading, spacing: 10) {
                         title
 
                         ItemView.Description(item: provider.item)
 
-                        VStack(alignment: .leading, spacing: 25) {
+                        VStack(alignment: .leading, spacing: UIDevice.isTV ? 25 : 5) {
                             if provider.item.presentPlayButton {
                                 PlayButton(
                                     provider: provider,
@@ -96,8 +94,7 @@ extension ItemView {
 
                             ItemView.ActionButtonHStack(provider: provider)
                         }
-                        .frame(maxWidth: 450, alignment: .leading)
-                        .padding(.bottom, 15)
+                        .frame(maxWidth: UIDevice.isTV ? 450 : 300, alignment: .leading)
 
                         ItemView.AttributesHStack(
                             attributes: attributes,
@@ -110,15 +107,12 @@ extension ItemView {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .focusSection()
-                .if(canFocusPlayButton) { view in
-                    view
-                        .backport
-                        .defaultFocus(
-                            $isPlayButtonFocused,
-                            true,
-                            priority: .userInitiated
-                        )
-                }
+                .backport
+                .defaultFocus(
+                    $isPlayButtonFocused,
+                    true,
+                    priority: .userInitiated
+                )
                 .edgePadding()
                 .frame(maxWidth: .infinity, alignment: .topLeading)
             }
