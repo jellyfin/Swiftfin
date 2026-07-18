@@ -20,6 +20,9 @@ extension ImagePipeline {
         guard var components = url.components else { return nil }
 
         var maxWidthValue: String?
+        
+        // TODO: maxHeight
+        // TODO: cache reset
 
         if let maxWidth = components.queryItems?.first(where: { $0.name == "maxWidth" }) {
             maxWidthValue = maxWidth.value
