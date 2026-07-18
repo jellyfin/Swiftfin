@@ -93,19 +93,10 @@ extension BaseItemDto: Poster {
     ) -> [ImageSource] {
         switch type {
         case .episode:
-            if environment.useParent {
-                imageSource(
-                    itemID: seriesID,
-                    .primary,
-                    tag: seriesPrimaryImageTag,
-                    environment: environment
-                )
-            }
-
             imageSource(
-                itemID: seasonID,
+                itemID: seriesID,
                 .primary,
-                tag: parentPrimaryImageTag,
+                tag: seriesPrimaryImageTag,
                 environment: environment
             )
         case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
@@ -145,13 +136,6 @@ extension BaseItemDto: Poster {
                         environment: environment
                     )
                 }
-
-                imageSource(
-                    itemID: seriesID,
-                    .backdrop,
-                    tag: parentBackdropImageTags?.first,
-                    environment: environment
-                )
 
                 imageSource(
                     .primary,
