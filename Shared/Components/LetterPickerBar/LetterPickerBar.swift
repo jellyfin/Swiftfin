@@ -45,10 +45,6 @@ struct LetterPickerBar: PlatformView {
         max(letterSize.width, letterSize.height) + 2
     }
 
-    private var rowHeight: CGFloat {
-        UIDevice.isTV ? dimension : letterSize.height + 2
-    }
-
     private var selectedLetter: ItemLetter? {
         viewModel.currentFilters.letter.first
     }
@@ -58,7 +54,7 @@ struct LetterPickerBar: PlatformView {
     private var rows: [Row] {
         let isCompact = barHeight > 0
             && letters.count > 21
-            && CGFloat(letters.count) * rowHeight > barHeight
+            && CGFloat(letters.count) * dimension > barHeight
 
         guard isCompact else { return letters.map { .letter($0) } }
 
@@ -83,7 +79,7 @@ struct LetterPickerBar: PlatformView {
 
     private func letter(atY y: CGFloat) -> ItemLetter? {
         guard barHeight > 0, !letters.isEmpty else { return nil }
-        let contentHeight = min(CGFloat(rows.count) * rowHeight, barHeight)
+        let contentHeight = min(CGFloat(rows.count) * dimension, barHeight)
         let inset = max(0, (barHeight - contentHeight) / 2)
         let clamped = min(max(y - inset, 0), contentHeight - 1)
         let index = Int(clamped / contentHeight * CGFloat(letters.count))
@@ -91,12 +87,12 @@ struct LetterPickerBar: PlatformView {
     }
 
     private func row(atY y: CGFloat) -> Row? {
-        guard barHeight > 0, rowHeight > 0 else { return nil }
-        let contentHeight = min(CGFloat(rows.count) * rowHeight, barHeight)
+        guard barHeight > 0, dimension > 0 else { return nil }
+        let contentHeight = min(CGFloat(rows.count) * dimension, barHeight)
         let inset = max(0, (barHeight - contentHeight) / 2)
         let localY = y - inset
         guard localY >= 0, localY < contentHeight else { return nil }
-        let index = Int(localY / rowHeight)
+        let index = Int(localY / dimension)
         return rows.indices.contains(index) ? rows[index] : nil
     }
 
@@ -105,22 +101,28 @@ struct LetterPickerBar: PlatformView {
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                 switch row {
                 case let .letter(letter):
-                    LetterPickerButton(letter: letter, viewModel: viewModel)
-                        .isSelected(selectedLetter == letter)
-                        .frame(width: dimension, height: rowHeight)
-                        .if(UIDevice.isTV) { view in
-                            view
-                                .focused($focusedLetter, equals: letter)
+                    LetterPickerButton(letter) {
+                        if viewModel.currentFilters.letter.contains(letter) {
+                            viewModel.currentFilters.letter = []
+                        } else {
+                            viewModel.currentFilters.letter = [letter]
                         }
-                        .if(!UIDevice.isTV) { view in
-                            view
-                                .allowsHitTesting(false)
-                        }
+                    }
+                    .isSelected(selectedLetter == letter)
+                    .frame(width: dimension, height: dimension)
+                    .if(UIDevice.isTV) { view in
+                        view
+                            .focused($focusedLetter, equals: letter)
+                    }
+                    .if(!UIDevice.isTV) { view in
+                        view
+                            .allowsHitTesting(false)
+                    }
                 case .dot:
                     Circle()
                         .fill(accentColor.opacity(0.5))
                         .frame(width: 3, height: 3)
-                        .frame(width: dimension, height: rowHeight)
+                        .frame(width: dimension, height: dimension)
                 }
             }
         }
@@ -203,6 +205,7 @@ struct LetterPickerBar: PlatformView {
     var tvOSView: some View {
         letterBar
             .scrollIfLargerThanContainer()
+            .frame(width: dimension)
             .focusSection()
             .backport
             .defaultFocus(

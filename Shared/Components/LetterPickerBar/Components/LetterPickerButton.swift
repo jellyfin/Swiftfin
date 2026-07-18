@@ -22,8 +22,13 @@ extension LetterPickerBar {
         @FocusState
         private var isFocused: Bool
 
-        let letter: ItemLetter
-        let viewModel: FilterViewModel
+        private let letter: ItemLetter
+        private let action: () -> Void
+
+        init(_ letter: ItemLetter, action: @escaping () -> Void) {
+            self.letter = letter
+            self.action = action
+        }
 
         private var foregroundStyle: Color {
             if isFocused {
@@ -35,25 +40,38 @@ extension LetterPickerBar {
             }
         }
 
+        private var isGlassVisible: Bool {
+            isFocused || isSelected
+        }
+
+        private var glassTint: Color {
+            isFocused ? .primary : accentColor
+        }
+
         var body: some View {
-            Button {
-                if viewModel.currentFilters.letter.contains(letter) {
-                    viewModel.currentFilters.letter = []
-                } else {
-                    viewModel.currentFilters.letter = [letter]
-                }
-            } label: {
+            Button(action: action) {
                 Text(letter.value)
                     .foregroundStyle(foregroundStyle)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .backport
                     .glassEffect(
-                        isSelected || isFocused ? .regular.tint(accentColor) : .identity,
-                        in: .circle
+                        isGlassVisible ? .regular.selection(
+                            tint: glassTint,
+                            foregroundColor: glassTint.overlayColor
+                        ) : .identity,
+                        in: .rect(cornerRadius: 5)
                     )
+                    .isSelected(isGlassVisible)
             }
             .buttonStyle(.borderless)
-            .focused($isFocused)
+            .backport
+            .buttonBorderShape(.roundedRectangle)
+            .if(UIDevice.isTV) { view in
+                view
+                    .focused($isFocused)
+                    .scaleEffect(isFocused ? 1.2 : 1)
+                    .animation(.easeInOut(duration: 0.15), value: isFocused)
+            }
         }
     }
 }

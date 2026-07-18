@@ -41,7 +41,7 @@ extension LetterPickerBar {
                 .backport
                 .glassEffect(
                     .regular,
-                    in: .circle
+                    in: .rect(cornerRadius: UIDevice.isTV ? 12 : 8)
                 )
                 .background {
                     ZStack {
