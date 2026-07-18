@@ -233,6 +233,18 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         )
     }
 
+    func refreshItem() async {
+        do {
+            let fullItem = try await item.getFullItem(userSession: requireUserSession())
+            let newPlayButtonItem = try await playButtonItem(for: fullItem)
+
+            item = fullItem
+            setPlayButtonItem(newPlayButtonItem)
+        } catch {
+            logger.error("Failed to refresh item: \(error.localizedDescription)")
+        }
+    }
+
     func toggleIsFavorite() async {
         let beforeIsFavorite = item.userData?.isFavorite ?? false
 

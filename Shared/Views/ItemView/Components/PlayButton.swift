@@ -206,5 +206,17 @@ struct PlayButton: View {
             versionMenu
         }
         .frame(height: UIDevice.isTV ? 75 : 44)
+        .task(id: provider.playButtonItem?.startDate) {
+            guard provider.playButtonItem?.isUnaired == true,
+                  let startDate = provider.playButtonItem?.startDate,
+                  startDate.timeIntervalSinceNow > 0
+            else { return }
+
+            try? await Task.sleep(for: .seconds(startDate.timeIntervalSinceNow + 1))
+
+            guard !Task.isCancelled else { return }
+
+            await provider.refreshItem()
+        }
     }
 }
