@@ -9,7 +9,6 @@
 import Engine
 import SwiftUI
 
-// TODO: tvOS 26: `.background(ultraThinMaterial)` to `.glassEffect`
 // TODO: onDismiss
 
 extension View {
@@ -90,12 +89,7 @@ private struct _Alert<_Content: View, Message: View>: ViewModifier {
                     }
                     .padding(.horizontal, 54)
                     .padding(.vertical, 46)
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 36, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 36, style: .continuous)
-                            .strokeBorder(.white.opacity(0.1), lineWidth: 1)
-                    )
-                    .shadow(color: .black.opacity(0.5), radius: 28, y: 16)
+                    .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 36, style: .continuous))
                     .padding(.horizontal, 180)
                 }
             }
