@@ -419,12 +419,7 @@ extension Defaults.Keys {
         Key(name, default: `default`, suite: .appSuite)
     }
 
-    #if os(tvOS)
-    static let isLiquidGlassEnabled: Key<Bool> = DebugKey("experimentalLiquidGlass", default: true)
-    #else
     static let isLiquidGlassEnabled: Key<Bool> = DebugKey("experimentalLiquidGlass", default: false)
-    #endif
-
     static let sendProgressReports: Key<Bool> = DebugKey("sendProgressReports", default: true)
 }
 #else

@@ -16,10 +16,8 @@ struct BackportGlass {
         let foregroundColor: Color
     }
 
-    /// The standard glass appearance.
     static let regular = BackportGlass(isVisible: true)
 
-    /// An appearance that does not draw glass or a border.
     static let identity = BackportGlass(isVisible: false)
 
     fileprivate var tint: Color?
@@ -43,22 +41,18 @@ struct BackportGlass {
         return copy
     }
 
-    /// Controls whether the material-backed legacy appearance draws a shadow.
-    /// This has no effect when native Liquid Glass is used.
     func shadow(_ isEnabled: Bool = true) -> Self {
         var copy = self
         copy.drawsLegacyShadow = isEnabled
         return copy
     }
 
-    /// Controls whether native glass responds to pointer and touch interaction.
     func interactive(_ isInteractive: Bool = true) -> Self {
         var copy = self
         copy.isInteractive = isInteractive
         return copy
     }
 
-    /// Configures the tint and foreground color for the selected and enabled state.
     func selection(
         tint: Color?,
         foregroundColor: Color

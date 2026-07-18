@@ -16,8 +16,6 @@ extension PrimitiveButtonStyle where Self == SupplementActionButtonStyle {
     }
 }
 
-/// Preserves the video-player supplement action appearance below OS 26 and
-/// adopts interactive glass when both the SDK feature and app default are active.
 struct SupplementActionButtonStyle: PrimitiveButtonStyle {
 
     @Default(.isLiquidGlassEnabled)

@@ -11,7 +11,6 @@ import SwiftUI
 
 extension BackportButtonStyle where Self == BackportGlassButtonStyle {
 
-    /// A button style that applies the standard glass appearance.
     static var glass: Self {
         BackportGlassButtonStyle()
     }
@@ -19,7 +18,6 @@ extension BackportButtonStyle where Self == BackportGlassButtonStyle {
 
 extension BackportButtonStyle where Self == BackportGlassProminentButtonStyle {
 
-    /// A button style that applies a prominent glass appearance.
     static var glassProminent: Self {
         BackportGlassProminentButtonStyle()
     }
@@ -29,8 +27,6 @@ struct BackportGlassButtonStyle: BackportButtonStyle {
 
     private var legacyGlass = BackportGlass.regular
 
-    /// Controls whether the material-backed legacy appearance draws a shadow.
-    /// This has no effect when native Liquid Glass is used.
     func shadow(_ isEnabled: Bool = true) -> Self {
         var copy = self
         copy.legacyGlass = legacyGlass.shadow(isEnabled)
@@ -50,8 +46,6 @@ struct BackportGlassProminentButtonStyle: BackportButtonStyle {
 
     private var legacyGlass = BackportGlass.regular
 
-    /// Controls whether the material-backed legacy appearance draws a shadow.
-    /// This has no effect when native Liquid Glass is used.
     func shadow(_ isEnabled: Bool = true) -> Self {
         var copy = self
         copy.legacyGlass = legacyGlass.shadow(isEnabled)

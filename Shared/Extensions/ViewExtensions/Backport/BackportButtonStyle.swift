@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-/// A button style that can provide a backported implementation of a newer
-/// SwiftUI button style.
 @MainActor
 protocol BackportButtonStyle {
 
@@ -21,19 +19,7 @@ protocol BackportButtonStyle {
     func makeBody(configuration: Configuration) -> Body
 }
 
-extension Backport where Content: View {
-
-    /// Sets the style for buttons in this view using a backported button style.
-    func buttonStyle(
-        _ style: some BackportButtonStyle
-    ) -> some View {
-        content.buttonStyle(
-            BackportPrimitiveButtonStyle(style: style)
-        )
-    }
-}
-
-private struct BackportPrimitiveButtonStyle<Style: BackportButtonStyle>: PrimitiveButtonStyle {
+struct BackportPrimitiveButtonStyle<Style: BackportButtonStyle>: PrimitiveButtonStyle {
 
     let style: Style
 

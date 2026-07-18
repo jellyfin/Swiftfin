@@ -21,6 +21,15 @@ extension Backport where Content: View {
     }
 
     @ViewBuilder
+    func buttonStyle(
+        _ style: some BackportButtonStyle
+    ) -> some View {
+        content.buttonStyle(
+            BackportPrimitiveButtonStyle(style: style)
+        )
+    }
+
+    @ViewBuilder
     func defaultFocus<V: Hashable>(
         _ binding: FocusState<V>.Binding,
         _ value: V,
@@ -47,6 +56,7 @@ extension Backport where Content: View {
         }
     }
 
+    @ViewBuilder
     func glassEffect(
         _ glass: BackportGlass = .regular,
         in shape: some Shape
