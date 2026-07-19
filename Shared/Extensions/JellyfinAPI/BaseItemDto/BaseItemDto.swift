@@ -147,22 +147,9 @@ extension BaseItemDto {
         channelType == .tv
     }
 
-    private var airingWindow: (start: Date, end: Date)? {
-        switch type {
-        case .program, .liveTvProgram, .tvProgram:
-            guard let startDate, let endDate else { return nil }
-            return (startDate, endDate)
-        case .channel, .liveTvChannel, .tvChannel:
-            guard let start = currentProgram?.startDate, let end = currentProgram?.endDate else { return nil }
-            return (start, end)
-        default:
-            return nil
-        }
-    }
-
     var isAiring: Bool {
-        guard let airingWindow else { return false }
-        return airingWindow.start <= .now && .now <= airingWindow.end
+        guard let startDate, let endDate else { return false }
+        return startDate <= .now && .now <= endDate
     }
 
     /// Whether the item has independent playable content, similar
@@ -297,8 +284,8 @@ extension BaseItemDto {
            totalTicks != 0
         {
             interval = TimeInterval((totalTicks - playbackPositionTicks) / 10_000_000)
-        } else if isAiring, let airingWindow {
-            interval = Date.now.timeIntervalSince(airingWindow.start)
+        } else if isAiring, let startDate {
+            interval = Date.now.timeIntervalSince(startDate)
         } else {
             return nil
         }
@@ -334,11 +321,11 @@ extension BaseItemDto {
     }
 
     var progressPercentage: Double? {
-        if isAiring, let airingWindow {
-            let length = airingWindow.end.timeIntervalSince(airingWindow.start)
+        if isAiring, let startDate, let endDate {
+            let length = endDate.timeIntervalSince(startDate)
             guard length > 0 else { return nil }
 
-            let elapsed = Date.now.timeIntervalSince(airingWindow.start) / length
+            let elapsed = Date.now.timeIntervalSince(startDate) / length
 
             return min(max(elapsed, 0), 1)
         }
@@ -369,8 +356,8 @@ extension BaseItemDto {
     }
 
     var isUnaired: Bool {
-        if let airingWindow {
-            return Date.now < airingWindow.start
+        if let startDate {
+            return startDate > Date.now
         }
 
         if let premiereDate {
@@ -381,8 +368,8 @@ extension BaseItemDto {
     }
 
     var hasAired: Bool {
-        guard let airingWindow else { return false }
-        return Date.now > airingWindow.end
+        guard let startDate, let endDate else { return false }
+        return startDate <= Date.now && endDate < Date.now
     }
 
     var airDateLabel: String? {
