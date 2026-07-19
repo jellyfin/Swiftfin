@@ -61,7 +61,5 @@ protocol MediaPlayerOffsetConfigurable {
 }
 
 protocol MediaPlayerSubtitleConfigurable {
-    func setSubtitleColor(_ color: Color)
-    func setSubtitleFontName(_ fontName: String)
-    func setSubtitleFontSize(_ fontSize: Int)
+    func setSubtitleConfiguration(_ configuration: SubtitleConfiguration)
 }
