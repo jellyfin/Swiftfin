@@ -151,6 +151,14 @@ extension BaseItemDto: Poster {
                     environment: environment
                 )
             } else {
+                if let backdropTag = backdropImageTags?.first {
+                    imageSource(
+                        .backdrop,
+                        tag: backdropTag,
+                        environment: environment
+                    )
+                }
+
                 imageSource(
                     .primary,
                     environment: environment
