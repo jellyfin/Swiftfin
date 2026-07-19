@@ -10,35 +10,51 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct GuideProgramButton: View {
+struct GuideProgramsMenu: View {
 
-    let program: BaseItemDto
+    let programs: [BaseItemDto]
     let width: CGFloat
     let height: CGFloat
     let now: Date
-    let action: () -> Void
+    let action: (BaseItemDto) -> Void
 
     private var isCurrent: Bool {
-        guard let start = program.startDate, let end = program.endDate else { return false }
-        return (start ... end).contains(now)
+        programs.contains { program in
+            guard let start = program.startDate, let end = program.endDate else { return false }
+            return (start ... end).contains(now)
+        }
     }
 
     var body: some View {
-        Button(action: action) {
+        Menu {
+            ForEach(programs, id: \.id) { program in
+                Button {
+                    action(program)
+                } label: {
+                    Text(menuLabel(for: program))
+                }
+            }
+        } label: {
             Content(
-                program: program,
+                count: programs.count,
+                start: programs.first?.startDate,
                 isCurrent: isCurrent
             )
             .frame(width: width, height: height)
         }
-        .buttonStyle(GuideButtonStyle())
         #if os(tvOS)
-            .focusEffectDisabled()
+        .menuStyle(.borderlessButton)
+        .focusEffectDisabled()
         #endif
+    }
+
+    private func menuLabel(for program: BaseItemDto) -> String {
+        guard let start = program.startDate else { return program.displayTitle }
+        return "\(start.formatted(date: .omitted, time: .shortened)) · \(program.displayTitle)"
     }
 }
 
-extension GuideProgramButton {
+extension GuideProgramsMenu {
 
     private struct Content: View {
 
@@ -48,7 +64,8 @@ extension GuideProgramButton {
         @Environment(\.isFocused)
         private var isFocused
 
-        let program: BaseItemDto
+        let count: Int
+        let start: Date?
         let isCurrent: Bool
 
         private var fill: Color {
@@ -65,25 +82,22 @@ extension GuideProgramButton {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 2) {
-                Text(program.displayTitle)
-                    .font(.footnote.weight(isCurrent ? .semibold : .regular))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
+                HStack(spacing: 4) {
+                    // swiftlint:disable:next hard_coded_display_string
+                    Text("\(count) \(L10n.programs)")
+                        .font(.footnote)
+                        .lineLimit(1)
 
-                DotHStack {
-                    if let startDate = program.startDate {
-                        Text(startDate, style: .time)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                    }
+                    Image(systemName: "chevron.down")
+                        .font(.caption2)
+                }
+                .foregroundStyle(Color.primary)
 
-                    if let endDate = program.endDate {
-                        Text(endDate, style: .time)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                    }
+                if let start {
+                    Text(start, style: .time)
+                        .font(.caption2)
+                        .foregroundStyle(Color.secondary)
+                        .lineLimit(1)
                 }
 
                 Spacer(minLength: 0)

@@ -10,162 +10,113 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class GuideViewModel: ViewModel, Stateful {
+@MainActor
+final class GuideViewModel: ViewModel {
 
-    enum Action: Equatable {
-        case error(ErrorMessage)
-        case refresh
-        case loadMore
-        case select(day: Date)
-    }
-
-    enum State: Hashable {
-        case content
-        case error(ErrorMessage)
-        case initial
-        case refreshing
-    }
-
-    private static let pageSize = 50
+    private static let pageSize = 20
+    private static let viewModelLimit = 200
     private static let dayCount = 7
 
-    @Published
-    private(set) var channels: [ChannelProgram] = []
-    @Published
-    private(set) var selectedDay: Date = Calendar.current.startOfDay(for: .now)
-    @Published
-    private(set) var isLoadingMore = false
-    @Published
-    var state: State = .initial
+    let scrollProxy = GuideScrollProxy()
 
-    let availableDays: [Date]
-
-    var dayStart: Date {
-        selectedDay
-    }
-
-    var dayEnd: Date {
-        Calendar.current.date(byAdding: .day, value: 1, to: selectedDay) ?? selectedDay
-    }
-
-    private var hasMore = true
-    private var refreshTask: AnyCancellable?
-    private var pageTask: AnyCancellable?
-
-    override init() {
+    let availableDates: [Date] = {
         let today = Calendar.current.startOfDay(for: .now)
 
-        self.availableDays = (0 ..< Self.dayCount).compactMap {
+        return (0 ..< GuideViewModel.dayCount).compactMap {
             Calendar.current.date(byAdding: .day, value: $0, to: today)
         }
+    }()
 
+    @Published
+    private(set) var startDate: Date = GuideViewModel.currentHalfHour()
+    @Published
+    private(set) var now: Date = .now
+    @Published
+    var selectedChannelID: String?
+
+    let hours: Int
+
+    var endDate: Date {
+        let calendar = Calendar.current
+        let spanEnd = startDate.addingTimeInterval(TimeInterval(hours) * 3600)
+
+        guard let nextDay = calendar.date(
+            byAdding: .day,
+            value: 1,
+            to: calendar.startOfDay(for: startDate)
+        ) else { return spanEnd }
+
+        return min(spanEnd, nextDay)
+    }
+
+    private var programsViewModels: [String: PagingLibraryViewModel<ChannelProgramsLibrary>] = [:]
+    private var accessOrder: [String] = []
+
+    init(hours: Int = 24) {
+        self.hours = hours
         super.init()
-    }
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case let .error(error):
-            return .error(error)
-        case let .select(day):
-            guard day != selectedDay else { return state }
-            selectedDay = Calendar.current.startOfDay(for: day)
-            return respond(to: .refresh)
-        case .refresh:
-            refreshTask?.cancel()
-            pageTask?.cancel()
-            hasMore = true
-            isLoadingMore = false
-
-            refreshTask = Task { [weak self] in
-                guard let self else { return }
-
-                do {
-                    let page = try await getChannelsPage(startIndex: 0)
-
-                    guard !Task.isCancelled else { return }
-
-                    await MainActor.run {
-                        self.channels = page
-                        self.hasMore = page.count >= Self.pageSize
-                        self.state = .content
-                    }
-                } catch {
-                    guard !Task.isCancelled else { return }
-
-                    await MainActor.run {
-                        self.send(.error(.init(error.localizedDescription)))
-                    }
+        Timer.publish(every: 300, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] date in
+                Task { @MainActor in
+                    self?.now = date
                 }
             }
-            .asAnyCancellable()
-
-            return .refreshing
-        case .loadMore:
-            guard state == .content, hasMore, !isLoadingMore else { return state }
-
-            isLoadingMore = true
-            let startIndex = channels.count
-
-            pageTask = Task { [weak self] in
-                guard let self else { return }
-
-                do {
-                    let page = try await getChannelsPage(startIndex: startIndex)
-
-                    guard !Task.isCancelled else { return }
-
-                    await MainActor.run {
-                        self.channels.append(contentsOf: page)
-                        self.hasMore = page.count >= Self.pageSize
-                        self.isLoadingMore = false
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.isLoadingMore = false
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-        }
+            .store(in: &cancellables)
     }
 
-    private func getChannelsPage(startIndex: Int) async throws -> [ChannelProgram] {
-        let userSession = try requireUserSession()
+    func select(date: Date) {
+        let calendar = Calendar.current
+        let newStartDate = calendar.isDate(date, inSameDayAs: .now)
+            ? Self.currentHalfHour()
+            : calendar.startOfDay(for: date)
 
-        var channelParameters = Paths.GetLiveTvChannelsParameters()
-        channelParameters.fields = .MinimumFields
-        channelParameters.limit = Self.pageSize
-        channelParameters.startIndex = startIndex
-        channelParameters.sortBy = [.sortName]
-        channelParameters.userID = userSession.user.id
+        guard newStartDate != startDate else { return }
 
-        let channelRequest = Paths.getLiveTvChannels(parameters: channelParameters)
-        let channelResponse = try await send(channelRequest)
+        startDate = newStartDate
+        programsViewModels.removeAll()
+        accessOrder.removeAll()
+        scrollProxy.reset()
+    }
 
-        let channels = channelResponse.value.items ?? []
+    func programsViewModel(for channel: BaseItemDto) -> PagingLibraryViewModel<ChannelProgramsLibrary> {
+        let key = channel.id ?? channel.displayTitle
 
-        guard channels.isNotEmpty else { return [] }
-
-        var programParameters = Paths.GetLiveTvProgramsParameters()
-        programParameters.channelIDs = channels.compactMap(\.id)
-        programParameters.fields = .MinimumFields.appending(.channelInfo)
-        programParameters.maxStartDate = dayEnd
-        programParameters.minEndDate = dayStart
-        programParameters.sortBy = [.startDate]
-        programParameters.userID = userSession.user.id
-
-        let programRequest = Paths.getLiveTvPrograms(parameters: programParameters)
-        let programResponse = try await send(programRequest)
-
-        let groupedPrograms = Dictionary(grouping: programResponse.value.items ?? []) { $0.channelID }
-
-        return channels.map { channel in
-            ChannelProgram(
-                channel: channel,
-                programs: (groupedPrograms[channel.id] ?? []).sorted(using: \.startDate)
-            )
+        if let existing = programsViewModels[key] {
+            markAccessed(key)
+            return existing
         }
+
+        let viewModel = PagingLibraryViewModel(
+            library: ChannelProgramsLibrary(channel: channel, startDate: startDate, endDate: endDate),
+            pageSize: Self.pageSize
+        )
+        programsViewModels[key] = viewModel
+        markAccessed(key)
+
+        if accessOrder.count > Self.viewModelLimit, let oldest = accessOrder.first {
+            accessOrder.removeFirst()
+            programsViewModels[oldest] = nil
+        }
+
+        return viewModel
+    }
+
+    private func markAccessed(_ key: String) {
+        if let index = accessOrder.firstIndex(of: key) {
+            accessOrder.remove(at: index)
+        }
+
+        accessOrder.append(key)
+    }
+
+    private static func currentHalfHour() -> Date {
+        let current = Date.now
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: current)
+        let minute = calendar.component(.minute, from: current)
+
+        return calendar.date(bySettingHour: hour, minute: minute - minute % 30, second: 0, of: current) ?? current
     }
 }

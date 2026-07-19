@@ -36,6 +36,7 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
     static var liveTV: NavigationRoute {
         NavigationRoute(
             id: "liveTV",

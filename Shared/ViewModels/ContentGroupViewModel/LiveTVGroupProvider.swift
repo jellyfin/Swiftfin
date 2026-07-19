@@ -13,11 +13,14 @@ struct LiveTVGroupProvider: ContentGroupProvider {
     // TODO: Add Guides & Recordings
     private enum LiveTVPill: Displayable, SystemImageable {
         case channels
+        case guide
 
         var displayTitle: String {
             switch self {
             case .channels:
                 L10n.channels
+            case .guide:
+                L10n.guide
             }
         }
 
@@ -25,6 +28,8 @@ struct LiveTVGroupProvider: ContentGroupProvider {
             switch self {
             case .channels:
                 "play.square.stack"
+            case .guide:
+                "tablecells"
             }
         }
     }
@@ -37,18 +42,13 @@ struct LiveTVGroupProvider: ContentGroupProvider {
         PillGroup(
             displayTitle: "",
             id: "live-tv-channels",
-            elements: [LiveTVPill.channels]
+            elements: [LiveTVPill.channels, .guide]
         ) { router, pill in
             switch pill {
             case .channels:
-                router.route(
-                    to: .library(
-                        library: ItemLibrary(
-                            parent: BaseItemDto(name: L10n.channels),
-                            filters: .init(itemTypes: [.liveTvChannel])
-                        )
-                    )
-                )
+                router.route(to: .library(library: ChannelProgramLibrary()))
+            case .guide:
+                router.route(to: .liveGuide)
             }
         }
 
