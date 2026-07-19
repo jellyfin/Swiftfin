@@ -14,17 +14,26 @@ import SwiftUI
 
 extension BaseItemDto: Poster {
 
-    struct Environment: WithDefaultValue, WithImageSourceOptions, WithParentImageSourcePreference, WithViewContext {
+    struct Environment: WithDefaultValue, WithImageSourceOptions, WithViewContext {
 
         var maxWidth: CGFloat?
         var maxHeight: CGFloat?
         var quality: Int?
-        var useParent: Bool = true
+        var useParent: Bool = false
         var viewContext: ViewContext = .init()
 
         static var `default`: Self {
             .init()
         }
+    }
+
+    func resolveEnvironment(_ environment: EnvironmentValues) -> Environment {
+        let viewContext = environment.viewContext
+
+        return .init(
+            useParent: viewContext.contains(.isThumb) && environment.useSeriesLandscapeBackdrop,
+            viewContext: viewContext
+        )
     }
 
     var preferredPosterDisplayType: PosterDisplayType {
