@@ -67,10 +67,7 @@ extension SeriesEpisodeContentGroup {
                 contextMenuItem: episode
             ) {
                 ImageView(episode.landscapeImageSources(
-                    environment: .init(
-                        maxWidth: 250,
-                        useParent: false
-                    )
+                    environment: .init(maxWidth: 250)
                 ))
                 .failure {
                     SystemImageContentView(systemName: episode.systemImage)
