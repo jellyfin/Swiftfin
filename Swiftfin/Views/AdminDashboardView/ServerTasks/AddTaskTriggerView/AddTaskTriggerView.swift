@@ -111,7 +111,8 @@ struct AddTaskTriggerView: View {
         .animation(.linear(duration: 0.2), value: taskTriggerInfo.type)
         .interactiveDismissDisabled(true)
         .navigationTitle(L10n.addTrigger.localizedCapitalized)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             if hasUnsavedChanges {
                 isPresentingNotSaved = true

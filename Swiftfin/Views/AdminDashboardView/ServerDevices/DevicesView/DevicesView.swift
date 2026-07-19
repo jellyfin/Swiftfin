@@ -45,7 +45,8 @@ struct DevicesView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.devices)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
         .refreshable {
             viewModel.refresh()

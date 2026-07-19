@@ -74,7 +74,8 @@ struct MediaSourceInfoView: PlatformView {
     var iOSView: some View {
         contentView
             .navigationTitle(source.displayTitle)
-            .navigationBarTitleDisplayMode(.inline)
+            .backport
+            .toolbarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismiss()
             }

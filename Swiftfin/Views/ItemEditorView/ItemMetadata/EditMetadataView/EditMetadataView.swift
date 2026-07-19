@@ -40,7 +40,8 @@ struct EditMetadataView: View {
     var body: some View {
         contentView
             .navigationTitle(L10n.metadata)
-            .navigationBarTitleDisplayMode(.inline)
+            .backport
+            .toolbarTitleDisplayMode(.inline)
             .topBarTrailing {
                 if viewModel.background.states.contains(.updating) {
                     ProgressView()

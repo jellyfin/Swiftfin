@@ -50,7 +50,8 @@ struct ServerUsersView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.users)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
         .refreshable {
             viewModel.send(.getUsers(isHidden: isHiddenFilterActive, isDisabled: isDisabledFilterActive))
