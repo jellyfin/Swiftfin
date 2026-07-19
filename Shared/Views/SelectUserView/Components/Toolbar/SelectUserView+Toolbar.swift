@@ -136,6 +136,7 @@ extension SelectUserView {
             }
             .foregroundStyle(.primary, .secondary)
             .menuOrder(.fixed)
+            .symbolRenderingMode(.monochrome)
             .frame(width: buttonHeight, height: buttonHeight)
             .backport
             .buttonBorderShape(.circle)
