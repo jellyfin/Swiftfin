@@ -125,14 +125,11 @@ extension ItemView {
                     }
                 }
 
+                // MARK: tvOS Options
+
                 #if os(tvOS)
-
-                // MARK: Options
-
-                if provider.item.canEdit {
-                    Menu {
-                        EditItemMenuContent(item: provider.item)
-                    } label: {
+                if provider.item.canEdit || provider.item.canDeleteItem {
+                    EditItemMenu(item: provider.item) {
                         materialLabel(
                             L10n.advanced,
                             systemImage: "ellipsis",
@@ -142,7 +139,6 @@ extension ItemView {
                         )
                     }
                     .frame(width: 60)
-                    .menuStyle(.button)
                     .foregroundStyle(.primary, .secondary)
                 }
                 #endif

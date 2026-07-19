@@ -156,6 +156,10 @@ extension Defaults.Keys {
             static var enabled: Key<PosterIndicator> {
                 UserKey("enabledPosterIndicators", default: .all)
             }
+
+            static var unplayedStyle: Key<UnplayedIndicatorType> {
+                UserKey("unplayedIndicatorStyle", default: .indicator)
+            }
         }
 
         enum Library {
