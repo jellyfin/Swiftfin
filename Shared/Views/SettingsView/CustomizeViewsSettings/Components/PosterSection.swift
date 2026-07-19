@@ -55,6 +55,7 @@ extension CustomizeViewsSettings {
 
             item.userData?.isPlayed = previewItemState == .played
             item.userData?.playbackPositionTicks = previewItemState == .inProgress ? Duration.seconds(600).ticks : 0
+            item.userData?.playedPercentage = previewItemState == .inProgress ? 100 / 3 : 0
 
             return item
         }
