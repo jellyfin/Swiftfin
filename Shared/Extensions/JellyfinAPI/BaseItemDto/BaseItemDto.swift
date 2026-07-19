@@ -148,6 +148,10 @@ extension BaseItemDto {
     }
 
     var isAiring: Bool {
+        if let currentProgram {
+            return currentProgram.isAiring
+        }
+
         guard let startDate, let endDate else { return false }
         return startDate <= .now && .now <= endDate
     }
@@ -276,6 +280,10 @@ extension BaseItemDto {
     }
 
     var progressLabel: String? {
+        if let currentProgram {
+            return currentProgram.progressLabel
+        }
+
         let interval: TimeInterval
 
         if let playbackPositionTicks = userData?.playbackPositionTicks,
@@ -321,6 +329,10 @@ extension BaseItemDto {
     }
 
     var progressPercentage: Double? {
+        if let currentProgram {
+            return currentProgram.progressPercentage
+        }
+
         if isAiring, let startDate, let endDate {
             let length = endDate.timeIntervalSince(startDate)
             guard length > 0 else { return nil }
