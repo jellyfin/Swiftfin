@@ -85,6 +85,8 @@ extension ItemView {
                         Button(L10n.delete, systemImage: "trash", role: .destructive) {
                             isPresentingDeleteConfirmation.wrappedValue = true
                         }
+                        .symbolRenderingMode(.monochrome)
+                        .foregroundStyle(.primary)
                     }
                 } label: {
                     label
