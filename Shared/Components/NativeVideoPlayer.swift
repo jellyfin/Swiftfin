@@ -52,7 +52,6 @@ struct NativeVideoPlayer: View {
         .prefersStatusBarHidden()
         .backport
         .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
-            Container.shared.mediaPlayerManager.reset()
             guard !isPresented else { return }
             manager.stop()
         }

@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LeoNatan/LNPopupController.git",
       "state" : {
-        "revision" : "e14712b8077f9d25c2b70d23241e922537673338",
-        "version" : "3.0.7"
+        "revision" : "c13a392bf6f058d80a35b93805a2eaf173e9956e",
+        "version" : "4.5.0"
       }
     },
     {
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LeoNatan/LNPopupUI/",
       "state" : {
-        "revision" : "aa9c813f2b47d055b648628b738e1b115c5e9fad",
-        "version" : "2.0.2"
+        "revision" : "619c5ccae6d844cfa02acf01a030b45cfa27ddfb",
+        "version" : "3.1.0"
       }
     },
     {

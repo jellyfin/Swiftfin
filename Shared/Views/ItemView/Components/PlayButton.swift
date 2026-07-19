@@ -37,22 +37,29 @@ struct PlayButton: View {
         return provider.selectedMediaSource?.displayTitle
     }
 
+    private func queue(for item: BaseItemDto) -> (any MediaPlayerQueue)? {
+        if item.type == .audio {
+            return MusicMediaPlayerQueue(
+                item: item,
+                parent: provider.item
+            )
+        }
+
+        if item.type == .episode {
+            return EpisodeMediaPlayerQueue(episode: item)
+        }
+
+        return nil
+    }
+
     private func play(fromBeginning: Bool = false) {
-        guard let playButtonItem = provider.playButtonItem,
-              let selectedMediaSource = provider.selectedMediaSource
-        else {
-            provider.logger.error("Play selected with no item or media source")
+        guard let playButtonItem = provider.playButtonItem else {
+            provider.logger.error("Play selected with no item")
             return
         }
 
-        let queue: (any MediaPlayerQueue)? = {
-            if playButtonItem.type == .episode {
-                return EpisodeMediaPlayerQueue(episode: playButtonItem)
-            }
-            return nil
-        }()
-
-        let provider = MediaPlayerItemProvider(item: playButtonItem) { item in
+        let selectedMediaSource = provider.selectedMediaSource
+        let playbackProvider = MediaPlayerItemProvider(item: playButtonItem) { item in
             try await MediaPlayerItem.build(
                 for: item,
                 mediaSource: selectedMediaSource
@@ -63,10 +70,18 @@ struct PlayButton: View {
             }
         }
 
+        if playButtonItem.type == .audio {
+            NavigationRoute.musicPlayer(
+                provider: playbackProvider,
+                queue: queue(for: playButtonItem)
+            )
+            return
+        }
+
         router.route(
             to: .videoPlayer(
-                provider: provider,
-                queue: queue
+                provider: playbackProvider,
+                queue: queue(for: playButtonItem)
             )
         )
     }

@@ -10,6 +10,7 @@ import JellyfinAPI
 
 struct LatestInLibrary: BaseItemKindLibrary {
 
+    let includedItemTypes: [BaseItemKind]?
     let libraryItemTypes: [BaseItemKind]
     let parent: TitledLibraryParent
 
@@ -18,6 +19,11 @@ struct LatestInLibrary: BaseItemKindLibrary {
             displayTitle: L10n.latestWithString(library.displayTitle),
             id: library.id
         )
+        #if os(iOS)
+        self.includedItemTypes = library.collectionType == .music ? [.musicAlbum] : nil
+        #else
+        self.includedItemTypes = nil
+        #endif
         self.libraryItemTypes = library.supportedItemTypes
     }
 
@@ -28,6 +34,7 @@ struct LatestInLibrary: BaseItemKindLibrary {
         var parameters = Paths.GetLatestMediaParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
+        parameters.includeItemTypes = includedItemTypes
         parameters.limit = pageState.pageSize
         parameters.parentID = parent.id
         parameters.userID = pageState.userSession.user.id

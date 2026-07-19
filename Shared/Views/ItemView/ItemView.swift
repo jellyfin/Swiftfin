@@ -37,7 +37,12 @@ struct ItemView: View {
     private var isEnhanced: Bool {
         switch itemViewType {
         case .enhanced:
-            guard provider.item.backdropImageTags?.isNotEmpty == true else {
+
+            if provider.item.type != .audio || provider.item.type != .musicAlbum {
+                return false
+            }
+
+            if provider.item.backdropImageTags?.isEmpty == true {
                 return false
             }
 

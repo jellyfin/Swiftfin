@@ -21,21 +21,27 @@ import Nuke
 class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
     private var defaultRegisteredCommands: [NowPlayableCommand] {
-        [
+        var commands: [NowPlayableCommand] = [
             .play,
             .pause,
             .togglePausePlay,
             .skipBackward,
             .skipForward,
             .changePlaybackPosition,
-            // TODO: only register next/previous if there is a queue
-//            .nextTrack,
-//            .previousTrack,
         ]
+
+        #if os(iOS)
+        commands.append(contentsOf: [.nextTrack, .previousTrack])
+        #endif
+
+        return commands
     }
 
     private var itemImageCancellable: AnyCancellable?
     private var playbackRequestStateBeforeInterruption: MediaPlayerManager.PlaybackRequestStatus = .playing
+    #if os(iOS)
+    private var queueCancellables: [AnyCancellable] = []
+    #endif
 
     weak var manager: MediaPlayerManager? {
         willSet {
@@ -53,6 +59,11 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
         cancellables = []
 
+        configureRemoteCommands(
+            defaultRegisteredCommands,
+            commandHandler: handleCommand
+        )
+
         manager.actions
             .sink { [weak self] newValue in self?.actionDidChange(newValue) }
             .store(in: &cancellables)
@@ -69,6 +80,12 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             .sink { [weak self] newValue in self?.secondsDidChange(newValue) }
             .store(in: &cancellables)
 
+        #if os(iOS)
+        manager.$queue
+            .sink { [weak self] queue in self?.observe(queue: queue) }
+            .store(in: &cancellables)
+        #endif
+
         Notifications[.avAudioSessionInterruption]
             .publisher
             .sink { i in
@@ -77,19 +94,13 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
                 }
             }
             .store(in: &cancellables)
-
-        Task { @MainActor in
-            configureRemoteCommands(
-                defaultRegisteredCommands,
-                commandHandler: handleCommand
-            )
-        }
     }
 
     private func playbackRequestStatusDidChange(_ newStatus: MediaPlayerManager.PlaybackRequestStatus) {
         handleNowPlayablePlaybackChange(
             playing: newStatus == .playing,
             metadata: .init(
+                rate: manager?.rate ?? 1,
                 position: manager?.seconds ?? .zero,
                 duration: manager?.item.runtime ?? .zero
             )
@@ -98,8 +109,9 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
     private func secondsDidChange(_ newSeconds: Duration) {
         handleNowPlayablePlaybackChange(
-            playing: true,
+            playing: manager?.playbackRequestStatus == .playing,
             metadata: .init(
+                rate: manager?.rate ?? 1,
                 position: newSeconds,
                 duration: manager?.item.runtime ?? .zero
             )
@@ -137,8 +149,9 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         .asAnyCancellable()
 
         handleNowPlayablePlaybackChange(
-            playing: true,
+            playing: manager?.playbackRequestStatus == .playing,
             metadata: .init(
+                rate: manager?.rate ?? 1,
                 position: manager?.seconds ?? .zero,
                 duration: manager?.item.runtime ?? .zero
             )
@@ -147,10 +160,16 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
     private func handleStopAction() {
         cancellables = []
+        #if os(iOS)
+        queueCancellables = []
+        #endif
 
         for command in defaultRegisteredCommands {
             command.removeHandler()
         }
+
+        MPNowPlayingInfoCenter.default().playbackState = .stopped
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
 
         Task(priority: .userInitiated) {
             // TODO: figure out way to not need delay
@@ -221,6 +240,14 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             guard let nextItem = manager?.queue?.nextItem else { return .commandFailed }
             manager?.playNewItem(provider: nextItem)
         case .previousTrack:
+            #if os(iOS)
+            if manager?.item.type == .audio, manager?.seconds.seconds ?? 0 > 3 {
+                manager?.seconds = .zero
+                manager?.proxy?.setSeconds(.zero)
+                return .success
+            }
+            #endif
+
             guard let previousItem = manager?.queue?.previousItem else { return .commandFailed }
             manager?.playNewItem(provider: previousItem)
         default: ()
@@ -233,9 +260,39 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         playing: Bool,
         metadata: NowPlayableDynamicMetadata
     ) {
-        setNowPlayingPlaybackInfo(metadata)
+        setNowPlayingPlaybackInfo(metadata, playing: playing)
         MPNowPlayingInfoCenter.default().playbackState = playing ? .playing : .paused
     }
+
+    #if os(iOS)
+    private func observe(queue: AnyMediaPlayerQueue?) {
+        queueCancellables = []
+
+        guard let queue, let manager else {
+            NowPlayableCommand.nextTrack.isEnabled(false)
+            NowPlayableCommand.previousTrack.isEnabled(false)
+            return
+        }
+
+        queue.$hasNextItem
+            .removeDuplicates()
+            .sink { NowPlayableCommand.nextTrack.isEnabled($0) }
+            .store(in: &queueCancellables)
+
+        Publishers.CombineLatest(
+            queue.$hasPreviousItem,
+            manager.secondsBox.$value
+        )
+        .map { [weak manager] hasPreviousItem, seconds in
+            guard let manager else { return false }
+            let canRestartCurrentItem = manager.item.type == .audio && seconds.seconds > 3
+            return hasPreviousItem || canRestartCurrentItem
+        }
+        .removeDuplicates()
+        .sink { NowPlayableCommand.previousTrack.isEnabled($0) }
+        .store(in: &queueCancellables)
+    }
+    #endif
 
     private func configureRemoteCommands(
         _ commands: [NowPlayableCommand],
@@ -245,7 +302,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
         for command in commands {
             command.addHandler(commandHandler)
-            command.isEnabled(true)
+            command.isEnabled(command != .nextTrack && command != .previousTrack)
         }
     }
 
@@ -265,14 +322,14 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
     }
 
-    private func setNowPlayingPlaybackInfo(_ metadata: NowPlayableDynamicMetadata) {
+    private func setNowPlayingPlaybackInfo(_ metadata: NowPlayableDynamicMetadata, playing: Bool) {
 
         let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default()
         var nowPlayingInfo: [String: Any] = nowPlayingInfoCenter.nowPlayingInfo ?? [:]
 
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = Float(metadata.duration.seconds)
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = Float(metadata.position.seconds)
-        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = metadata.rate
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = playing ? metadata.rate : 0
         nowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
         nowPlayingInfo[MPNowPlayingInfoPropertyCurrentLanguageOptions] = metadata.currentLanguageOptions
         nowPlayingInfo[MPNowPlayingInfoPropertyAvailableLanguageOptions] = metadata.availableLanguageOptionGroups

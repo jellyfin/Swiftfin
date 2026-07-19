@@ -91,7 +91,7 @@ struct MainTabView: View {
         }
     }
 
-    @available(iOS 18.0, tvOS 18.0, *)
+    @available(iOS 26.0, tvOS 26.0, *)
     @ViewBuilder
     private func tabContent() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
@@ -123,14 +123,15 @@ struct MainTabView: View {
                 }
             }
         }
+        .tabBarMinimizeBehavior(.onScrollDown)
         #if os(tvOS)
-        .tabViewStyle(.sidebarAdaptable)
+            .tabViewStyle(.sidebarAdaptable)
         #endif
     }
 
     var body: some View {
         Group {
-            if #available(iOS 18, tvOS 18.0, *) {
+            if #available(iOS 26, tvOS 26, *) {
                 tabContent()
             } else {
                 legacyTabContent()
@@ -140,6 +141,9 @@ struct MainTabView: View {
         .onChange(of: userSessionManager.pendingDeepLink) {
             routePendingDeepLink(userSessionManager.consumePendingDeepLink())
         }
+        #if os(iOS)
+        .musicPlayerPopup()
+        #endif
         #if os(tvOS)
         .background(alignment: .top) {
             FocusedPosterCinematicBackgroundView()

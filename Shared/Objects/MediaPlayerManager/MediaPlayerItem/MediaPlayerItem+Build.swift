@@ -65,11 +65,23 @@ extension MediaPlayerItem {
 
         let maxBitrate = try await MediaPlayerManager.getMaxBitrate(for: requestedBitrate)
 
+        #if os(iOS)
+        let deviceProfile = if item.mediaType == .audio || item.type == .audio {
+            DeviceProfile.audioPlayer(maxBitrate: maxBitrate)
+        } else {
+            DeviceProfile.build(
+                for: videoPlayerType,
+                compatibilityMode: compatibilityMode,
+                maxBitrate: maxBitrate
+            )
+        }
+        #else
         let deviceProfile = DeviceProfile.build(
             for: videoPlayerType,
             compatibilityMode: compatibilityMode,
             maxBitrate: maxBitrate
         )
+        #endif
 
         var playbackInfo = PlaybackInfoDto()
         playbackInfo.isAutoOpenLiveStream = true
@@ -227,6 +239,29 @@ extension MediaPlayerItem {
 
             return videoStreamURL
         }
+
+        #if os(iOS)
+        if item.mediaType == .audio || item.type == .audio {
+            logger.trace("Making audio stream URL for item \(itemID)")
+
+            let audioStreamParameters = Paths.GetAudioStreamParameters(
+                isStatic: true,
+                tag: mediaSource.eTag ?? item.etag,
+                playSessionID: playSessionID,
+                mediaSourceID: mediaSource.id ?? itemID
+            )
+
+            let audioStreamRequest = Paths.getAudioStream(
+                itemID: itemID,
+                parameters: audioStreamParameters
+            )
+
+            guard let audioStreamURL = userSession.client.url(with: audioStreamRequest)
+            else { throw ErrorMessage("Unable to make audio stream URL") }
+
+            return audioStreamURL
+        }
+        #endif
 
         logger.trace("Using media source path for item \(itemID)")
 

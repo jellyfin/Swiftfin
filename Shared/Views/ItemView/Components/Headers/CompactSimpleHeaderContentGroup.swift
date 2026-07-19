@@ -39,7 +39,7 @@ extension ItemView {
                     type: headerImageDisplayType,
                     contentMode: .fit
                 )
-                .frame(maxWidth: headerImageDisplayType == .square ? 400 : .infinity)
+                .frame(maxWidth: headerImageDisplayType == .square ? 300 : .infinity)
                 .subtleShadow()
 
                 VStack(alignment: .center, spacing: 5) {

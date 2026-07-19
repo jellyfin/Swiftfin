@@ -15,6 +15,27 @@ import Transmission
 
 extension NavigationRoute {
 
+    #if os(iOS)
+    @MainActor
+    static func musicPlayer(
+        provider: MediaPlayerItemProvider,
+        queue: (any MediaPlayerQueue)? = nil
+    ) {
+        let manager = MediaPlayerManager(
+            item: provider.item,
+            queue: queue,
+            mediaPlayerItemProvider: provider.function
+        )
+
+        Container.shared.mediaPlayerManager.register {
+            manager
+        }
+
+        Container.shared.mediaPlayerManagerPublisher()
+            .send(manager)
+    }
+    #endif
+
     @MainActor
     static var channels: NavigationRoute {
         NavigationRoute(

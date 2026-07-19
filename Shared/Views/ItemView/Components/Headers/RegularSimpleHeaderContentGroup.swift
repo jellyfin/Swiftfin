@@ -34,7 +34,14 @@ extension ItemView {
             private var attributes
 
             private var posterDisplayType: PosterDisplayType {
-                provider.item.type == .person ? .portrait : .landscape
+                switch provider.item.type {
+                case .audio, .musicAlbum:
+                    .square
+                case .person:
+                    .portrait
+                default:
+                    .landscape
+                }
             }
 
             @ViewBuilder
