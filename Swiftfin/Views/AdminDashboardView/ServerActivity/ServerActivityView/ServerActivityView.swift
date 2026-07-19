@@ -40,7 +40,8 @@ struct ServerActivityView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.activity)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .refreshable {
             await usersViewModel.refresh()
             await viewModel.refresh()

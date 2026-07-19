@@ -51,7 +51,8 @@ struct AddItemElementView<Editor: ItemComponentEditor>: View {
             )
         }
         .navigationTitle(viewModel.editor.displayTitle)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }

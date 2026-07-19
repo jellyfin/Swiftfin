@@ -107,7 +107,8 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
     var body: some View {
         contentView
             .navigationTitle(viewModel.editor.displayTitle)
-            .navigationBarTitleDisplayMode(.inline)
+            .backport
+            .toolbarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isEditing || isReordering)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
