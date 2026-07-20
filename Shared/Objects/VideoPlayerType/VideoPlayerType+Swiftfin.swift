@@ -123,7 +123,8 @@ extension VideoPlayerType {
             MediaContainer.mp4
         }
 
-        // Create a separate profile to allow VC1 to DirectStream to get around server-imposed HLS video restrictions in StreamBuilder _supportedHlsVideoCodecs
+        /// Create a separate profile to allow VC1 to DirectStream
+        /// Necessary to avoid server-imposed HLS video restrictions in StreamBuilder _supportedHlsVideoCodecs
         TranscodingProfile(
             isBreakOnNonKeyFrames: true,
             context: .streaming,
