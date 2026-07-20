@@ -118,8 +118,33 @@ extension VideoPlayerType {
             VideoCodec.mpeg1video
             VideoCodec.mpeg2video
             VideoCodec.mpeg4
-            VideoCodec.vc1
             VideoCodec.vp9
+        } containers: {
+            MediaContainer.mp4
+        }
+
+        // Create a separate profile to allow VC1 to DirectStream to get around server-imposed HLS video restrictions in StreamBuilder _supportedHlsVideoCodecs
+        TranscodingProfile(
+            isBreakOnNonKeyFrames: true,
+            context: .streaming,
+            maxAudioChannels: "8",
+            minSegments: 2,
+            protocol: MediaStreamProtocol.hls,
+            type: .video
+        ) {
+            AudioCodec.aac
+            AudioCodec.ac3
+            AudioCodec.alac
+            AudioCodec.dts
+            AudioCodec.eac3
+            AudioCodec.flac
+            AudioCodec.mp1
+            AudioCodec.mp2
+            AudioCodec.mp3
+            AudioCodec.opus
+            AudioCodec.vorbis
+        } videoCodecs: {
+            VideoCodec.vc1
         } containers: {
             MediaContainer.mp4
         }
