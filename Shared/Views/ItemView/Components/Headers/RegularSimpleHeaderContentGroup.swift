@@ -85,7 +85,7 @@ extension ItemView {
                         ItemView.Description(item: provider.item)
 
                         VStack(alignment: .leading, spacing: UIDevice.isTV ? 25 : 5) {
-                            if provider.item.presentPlayButton {
+                            if provider.item.presentPlayButton || provider.item.canShuffle {
                                 PlayButton(
                                     provider: provider,
                                     playButtonFocus: $isPlayButtonFocused

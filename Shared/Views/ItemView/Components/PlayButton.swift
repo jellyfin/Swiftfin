@@ -22,6 +22,9 @@ struct PlayButton: View {
     @Router
     private var router
 
+    @State
+    private var isShuffling = false
+
     private let playButtonFocus: FocusState<Bool>.Binding?
 
     init(
@@ -37,6 +40,12 @@ struct PlayButton: View {
         return provider.selectedMediaSource?.displayTitle
     }
 
+    /// When a shuffleable container (ie a boxset or collection) has no directly
+    /// playable item, the primary button shuffles its children instead of playing.
+    private var isShuffleOnly: Bool {
+        provider.playButtonItem == nil && provider.item.canShuffle
+    }
+
     private func play(fromBeginning: Bool = false) {
         guard let playButtonItem = provider.playButtonItem,
               let selectedMediaSource = provider.selectedMediaSource
@@ -45,6 +54,7 @@ struct PlayButton: View {
             return
         }
 
+        // TODO: continue through container playback instead of a single item
         let queue: (any MediaPlayerQueue)? = {
             if playButtonItem.type == .episode {
                 return EpisodeMediaPlayerQueue(episode: playButtonItem)
@@ -69,6 +79,40 @@ struct PlayButton: View {
                 queue: queue
             )
         )
+    }
+
+    private func shuffle() {
+        guard !isShuffling else { return }
+        isShuffling = true
+
+        Task {
+            defer { isShuffling = false }
+
+            do {
+                guard let (firstItem, queue) = try await ShuffleMediaPlayerQueue.build(for: provider.item) else {
+                    provider.logger.error("No items to shuffle")
+                    return
+                }
+
+                let itemProvider = MediaPlayerItemProvider(item: firstItem) { item in
+                    try await MediaPlayerItem.build(
+                        for: item,
+                        requestedBitrate: Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+                    ) {
+                        $0.userData?.playbackPositionTicks = 0
+                    }
+                }
+
+                router.route(
+                    to: .videoPlayer(
+                        provider: itemProvider,
+                        queue: queue
+                    )
+                )
+            } catch {
+                provider.logger.error("Error shuffling item: \(error.localizedDescription)")
+            }
+        }
     }
 
     @ViewBuilder
@@ -125,13 +169,17 @@ struct PlayButton: View {
     @ViewBuilder
     private var playButton: some View {
         Button {
-            play()
+            if isShuffleOnly {
+                shuffle()
+            } else {
+                play()
+            }
         } label: {
             HStack {
-                Image(systemName: "play.fill")
+                Image(systemName: isShuffleOnly ? "shuffle" : "play.fill")
 
                 VStack(spacing: 2) {
-                    Text(provider.playButtonItem?.playButtonLabel ?? L10n.play)
+                    Text(isShuffleOnly ? L10n.shuffle : (provider.playButtonItem?.playButtonLabel ?? L10n.play))
 
                     if let mediaSource {
                         Marquee(mediaSource, speed: 40, delay: 3, fade: 5)
@@ -164,9 +212,17 @@ struct PlayButton: View {
                     play(fromBeginning: true)
                 }
             }
+
+            // When the primary button already shuffles, don't duplicate the action.
+            if provider.item.canShuffle, !isShuffleOnly {
+                Button(L10n.shuffle, systemImage: "shuffle") {
+                    shuffle()
+                }
+                .disabled(isShuffling)
+            }
         }
         .isSelected(true)
-        .disabled(provider.selectedMediaSource == nil)
+        .disabled(isShuffleOnly ? isShuffling : provider.selectedMediaSource == nil)
     }
 
     var body: some View {

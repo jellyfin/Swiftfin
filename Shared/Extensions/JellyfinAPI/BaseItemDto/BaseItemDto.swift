@@ -461,6 +461,16 @@ extension BaseItemDto {
         }
     }
 
+    /// Can this `BaseItemDto` shuffle its playable children
+    var canShuffle: Bool {
+        switch type {
+        case .series, .season, .boxSet, .folder, .playlist:
+            true
+        default:
+            false
+        }
+    }
+
     var playButtonLabel: String {
 
         if isUnaired {
