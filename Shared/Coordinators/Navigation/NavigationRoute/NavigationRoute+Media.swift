@@ -92,38 +92,16 @@ extension NavigationRoute {
             id: "videoPlayer",
             style: .fullscreen
         ) {
-            VideoPlayerViewShim(manager: manager)
+            VideoPlayer()
         }
     }
-}
 
-// TODO: shim until native vs swiftfin player is replace with vlc vs av layers
-//       - when removed, ensure same behavior with safe area
-//       - may just need to make a VC wrapper to capture them
-
-struct VideoPlayerViewShim: View {
-
-    @State
-    private var safeAreaInsets: EdgeInsets = .init()
-
-    let manager: MediaPlayerManager
-
-    var body: some View {
-        Group {
-            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                VideoPlayer()
-            } else {
-                NativeVideoPlayer()
-            }
-        }
-        .colorScheme(.dark) // use over `preferredColorScheme(.dark)` to not have destination change
-        .environment(\.safeAreaInsets, safeAreaInsets)
-        .supportedOrientations(.allButUpsideDown)
-        .ignoresSafeArea()
-        .persistentSystemOverlays(.hidden)
-        .toolbar(.hidden, for: .navigationBar)
-        .onFrameChanged { _, safeArea in
-            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
+    static var remotePlayback: NavigationRoute {
+        NavigationRoute(
+            id: "remotePlayback",
+            style: .sheet
+        ) {
+            RemotePlaybackPickerView()
         }
     }
 }

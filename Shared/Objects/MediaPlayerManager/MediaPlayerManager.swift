@@ -140,6 +140,8 @@ final class MediaPlayerManager: ViewModel {
     @Published
     var supplements: [any MediaPlayerSupplement] = []
 
+    let remote = RemotePlaybackManager()
+
     // TODO: replace with graph dependency package
     private func setSupplements() {
         self.supplements = Defaults[.VideoPlayer.supplements].compactMap { kind -> (any MediaPlayerSupplement)? in
@@ -173,13 +175,37 @@ final class MediaPlayerManager: ViewModel {
         playbackItem?.requestedBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
     }
 
-    /// Holds a weak reference to the current media player proxy.
+    /// The local playback engine.
     weak var proxy: (any MediaPlayerProxy)? {
         didSet {
+            objectWillChange.send()
             if var proxy {
                 proxy.manager = self
             }
         }
+    }
+
+    /// The remote session, when casting.
+    @Published
+    var remoteProxy: (any RemoteSession)? {
+        didSet {
+            if var remoteProxy {
+                remoteProxy.manager = self
+            }
+        }
+    }
+
+    var activeProxy: (any MediaPlayerProxy)? {
+        remoteProxy ?? proxy
+    }
+
+    /// `nil` when playback is fully remote (a session, no local engine).
+    var videoPlayerType: VideoPlayerType? {
+        if remoteProxy is any RemotePlaybackSession {
+            return nil
+        }
+        return (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType
+            ?? Defaults[.VideoPlayer.videoPlayerType]
     }
 
     private var initialMediaPlayerItemProvider: MediaPlayerItemProvider?
@@ -208,6 +234,9 @@ final class MediaPlayerManager: ViewModel {
         )
         super.init()
 
+        seconds = item.startSeconds ?? .zero
+
+        setUpRemote()
         self.queue?.manager = self
     }
 
@@ -220,8 +249,17 @@ final class MediaPlayerManager: ViewModel {
         self.state = .playback
         super.init()
 
+        setUpRemote()
         self.queue?.manager = self
         self.playbackItem = playbackItem
+    }
+
+    private func setUpRemote() {
+        remote.manager = self
+        remote.refresh()
+        remote.objectWillChange
+            .sink { [weak self] in self?.objectWillChange.send() }
+            .store(in: &cancellables)
     }
 
     @Function(\Action.Cases.ended)
@@ -290,6 +328,11 @@ final class MediaPlayerManager: ViewModel {
     private func _setBitrate(_ requestedBitrate: PlaybackBitrate) async throws {
         guard let currentItem = playbackItem else { return }
 
+        if let session = remoteProxy as? any RemotePlaybackSession {
+            session.setBitrate(requestedBitrate)
+            return
+        }
+
         try await updateMediaPlayerItem(
             currentItem: currentItem,
             requestedBitrate: requestedBitrate
@@ -303,9 +346,9 @@ final class MediaPlayerManager: ViewModel {
 
             switch status {
             case .paused:
-                proxy?.pause()
+                activeProxy?.pause()
             case .playing:
-                proxy?.play()
+                activeProxy?.play()
             }
         }
     }
@@ -321,6 +364,11 @@ final class MediaPlayerManager: ViewModel {
     private func _setTrack(_ type: MediaStreamType, _ oldIndex: Int?, _ newIndex: Int?) async throws {
         guard let playbackItem else {
             logger.warning("MediaPlayerManager.SetTrack call with an invalid playbackItem")
+            return
+        }
+
+        if let session = remoteProxy as? any RemotePlaybackSession {
+            session.setTrack(type: type, index: newIndex)
             return
         }
 
@@ -374,6 +422,7 @@ final class MediaPlayerManager: ViewModel {
     private func _stop() async throws {
         await self.cancel()
 
+        remote.stop()
         proxy?.stop()
         Container.shared.mediaPlayerManagerPublisher().send(nil)
         Container.shared.mediaPlayerManager.reset()
@@ -439,6 +488,64 @@ final class MediaPlayerManager: ViewModel {
 
         self.playbackItem = newItem
         self.seconds = currentSeconds
+    }
+
+    func resumeLocal() async {
+        guard let item = playbackItem,
+              let type = (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType
+        else {
+            proxy?.play()
+            return
+        }
+
+        let positionTicks = seconds.ticks
+
+        do {
+            let resumed = try await MediaPlayerItem.build(
+                for: item.baseItem,
+                mediaSource: item.mediaSource,
+                videoPlayerType: type,
+                requestedBitrate: item.requestedBitrate
+            ) { base in
+                if base.userData == nil { base.userData = .init() }
+                base.userData?.playbackPositionTicks = positionTicks
+            }
+
+            playbackItem = resumed
+        } catch {
+            logger.error("Failed to resume local playback: \(error.localizedDescription)")
+        }
+    }
+}
+
+// MARK: - Picture in Picture
+
+extension MediaPlayerManager {
+
+    func startPictureInPicture() {
+        guard proxy is any MediaPlayerPictureInPictureCapable else { return }
+
+        Task { await startPiPWhenReady(attemptsLeft: 5) }
+    }
+
+    func stopPictureInPicture() {
+        (proxy as? MediaPlayerPictureInPictureCapable)?.stopPiP()
+    }
+
+    // Retries because the proxy swap is async and AVKit ignores an early start.
+    private func startPiPWhenReady(attemptsLeft: Int) async {
+        guard attemptsLeft > 0,
+              let capable = proxy as? MediaPlayerPictureInPictureCapable
+        else { return }
+
+        if capable.isPiPActive.value { return }
+
+        if capable.isPiPAvailable.value {
+            capable.startPiP()
+        }
+
+        try? await Task.sleep(for: .milliseconds(300))
+        await startPiPWhenReady(attemptsLeft: attemptsLeft - 1)
     }
 
     nonisolated static func getMaxBitrate(
