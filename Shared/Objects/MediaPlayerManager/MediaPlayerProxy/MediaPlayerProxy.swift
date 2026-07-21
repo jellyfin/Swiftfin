@@ -10,8 +10,6 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Chromecast proxy
-
 /// The proxy for top-down communication to an
 /// underlying media player
 protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
@@ -41,7 +39,6 @@ protocol VideoMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigura
 
     associatedtype VideoPlayerBody: View
 
-    var videoPlayerType: VideoPlayerType { get }
     var videoSize: PublishedBox<CGSize> { get }
     var droppedFrames: PublishedBox<Int> { get }
     var corruptedFrames: PublishedBox<Int> { get }

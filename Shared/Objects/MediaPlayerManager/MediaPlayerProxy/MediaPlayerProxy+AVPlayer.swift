@@ -18,9 +18,6 @@ class AVMediaPlayerProxy: NSObject,
     VideoMediaPlayerProxy,
     MediaPlayerPictureInPictureCapable
 {
-
-    let videoPlayerType: VideoPlayerType = .avPlayer
-
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)

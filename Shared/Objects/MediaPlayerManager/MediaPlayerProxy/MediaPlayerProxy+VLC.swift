@@ -17,9 +17,6 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     // MediaPlayerPictureInPictureCapable, <- TODO: Enable for VLCKit 4.0
     MediaPlayerSubtitleConfigurable
 {
-
-    let videoPlayerType: VideoPlayerType = .vlc
-
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)

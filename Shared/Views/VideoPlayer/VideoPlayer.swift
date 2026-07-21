@@ -42,9 +42,7 @@ struct VideoPlayer: View {
     @StateObject
     private var containerState: VideoPlayerContainerState = .init()
 
-    // Created per item since the strategy can resolve a different player each time.
     private func ensureProxy(for type: VideoPlayerType) {
-        guard videoProxy?.videoPlayerType != type else { return }
 
         let proxy: any VideoMediaPlayerProxy = switch type {
         case .avPlayer:
