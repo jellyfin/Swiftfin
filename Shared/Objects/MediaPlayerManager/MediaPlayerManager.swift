@@ -504,7 +504,9 @@ final class MediaPlayerManager: ViewModel {
                 videoPlayerType: Defaults[.VideoPlayer.videoPlayerType],
                 requestedBitrate: item.requestedBitrate
             ) { base in
-                if base.userData == nil { base.userData = .init() }
+                if base.userData == nil {
+                    base.userData = .init()
+                }
                 base.userData?.playbackPositionTicks = positionTicks
             }
 
@@ -535,7 +537,9 @@ extension MediaPlayerManager {
               let capable = proxy as? MediaPlayerPictureInPictureCapable
         else { return }
 
-        if capable.isPiPActive.value { return }
+        if capable.isPiPActive.value {
+            return
+        }
 
         if capable.isPiPAvailable.value {
             capable.startPiP()
