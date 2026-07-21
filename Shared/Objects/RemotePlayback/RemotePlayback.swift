@@ -41,3 +41,20 @@ enum RemotePlaybackRoute: Hashable, Identifiable, CaseIterable, SupportedCaseIte
     /// `RemotePlaybackType` supported by Swiftfin
     static var supportedCases: [RemotePlaybackRoute] = [.airPlay]
 }
+
+enum RemotePlaybackProviderKind {
+    case systemPicker
+    case deviceList
+}
+
+struct RemotePlaybackState {
+    var type: RemotePlaybackRoute
+    var deviceName: String?
+}
+
+struct RemotePlaybackTarget: Identifiable, Hashable {
+    let id: String
+    let title: String
+    let subtitle: String?
+    let systemImage: String?
+}
