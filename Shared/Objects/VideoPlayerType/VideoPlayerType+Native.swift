@@ -181,6 +181,12 @@ extension VideoPlayerType {
                     VideoRangeType.sdr
                     VideoRangeType.doviWithSDR
                 }
+                ProfileCondition(
+                    condition: .notEquals,
+                    isRequired: false,
+                    property: .isInterlaced,
+                    value: "true"
+                )
             }
         )
 
