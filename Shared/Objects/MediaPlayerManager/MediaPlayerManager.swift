@@ -204,8 +204,7 @@ final class MediaPlayerManager: ViewModel {
         if remoteProxy is any RemotePlaybackSession {
             return nil
         }
-        return (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType
-            ?? Defaults[.VideoPlayer.videoPlayerType]
+        return Defaults[.VideoPlayer.videoPlayerType]
     }
 
     private var initialMediaPlayerItemProvider: MediaPlayerItemProvider?
@@ -491,9 +490,7 @@ final class MediaPlayerManager: ViewModel {
     }
 
     func resumeLocal() async {
-        guard let item = playbackItem,
-              let type = (proxy as? any VideoMediaPlayerProxy)?.videoPlayerType
-        else {
+        guard let item = playbackItem else {
             proxy?.play()
             return
         }
@@ -504,7 +501,7 @@ final class MediaPlayerManager: ViewModel {
             let resumed = try await MediaPlayerItem.build(
                 for: item.baseItem,
                 mediaSource: item.mediaSource,
-                videoPlayerType: type,
+                videoPlayerType: Defaults[.VideoPlayer.videoPlayerType],
                 requestedBitrate: item.requestedBitrate
             ) { base in
                 if base.userData == nil { base.userData = .init() }

@@ -1204,10 +1204,6 @@ internal enum L10n {
   internal static let playerSwiftfinDescription = L10n.tr("Localizable", "playerSwiftfinDescription", fallback: "Provides compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.")
   /// Play From beginning
   internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From beginning")
-  /// Playing on %@
-  internal static func playingOnDevice(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "playingOnDevice", String(describing: p1), fallback: "Playing on %@")
-  }
   /// Playlist
   internal static let playlist = L10n.tr("Localizable", "playlist", fallback: "Playlist")
   /// Playlists

@@ -88,8 +88,6 @@ extension VideoPlayer {
 
             @EnvironmentObject
             private var containerState: VideoPlayerContainerState
-            @EnvironmentObject
-            private var manager: MediaPlayerManager
 
             let player: AnyView
 
@@ -106,23 +104,7 @@ extension VideoPlayer {
             }
 
             var body: some View {
-                ZStack {
-                    if let video = manager.proxy as? any VideoMediaPlayerProxy {
-                        video.videoPlayerBody
-                            .eraseToAnyView()
-                            .id(video.videoPlayerType)
-                    } else if let state = manager.remote.state {
-                        Color.black
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-                        ContentUnavailableView(
-                            L10n.playingOnDevice(state.deviceName ?? state.type.displayTitle),
-                            systemImage: state.type.systemImage
-                        )
-                    } else {
-                        player
-                    }
-                }
+                player
                 #if os(iOS)
                 .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
                 .animation(.linear(duration: 0.2), value: containerState.isPresentingPlaybackControls)

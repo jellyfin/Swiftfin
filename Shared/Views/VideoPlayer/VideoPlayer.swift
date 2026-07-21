@@ -19,8 +19,8 @@ struct VideoPlayer: View {
     @InjectedObject(\.mediaPlayerManager)
     private var manager: MediaPlayerManager
 
-    @State
-    private var videoProxy: (any VideoMediaPlayerProxy)?
+    @LazyState
+    private var proxy: any VideoMediaPlayerProxy
 
     @Router
     private var router
@@ -42,121 +42,107 @@ struct VideoPlayer: View {
     @StateObject
     private var containerState: VideoPlayerContainerState = .init()
 
-    private func ensureProxy(for type: VideoPlayerType) {
-
-        let proxy: any VideoMediaPlayerProxy = switch type {
+    init() {
+        switch Defaults[.VideoPlayer.videoPlayerType] {
         case .avPlayer:
-            AVMediaPlayerProxy()
+            self._proxy = .init(wrappedValue: AVMediaPlayerProxy())
         case .vlc:
-            VLCMediaPlayerProxy()
-        }
-
-        videoProxy = proxy
-        manager.proxy = proxy
-    }
-
-    @ViewBuilder
-    private var containerView: some View {
-        VideoPlayerContainerView(
-            containerState: containerState,
-            manager: manager
-        ) {
-            Color.clear
-        } playbackControls: {
-            PlaybackControls()
-        }
-        .onAppear {
-            manager.start()
-        }
-        .onReceive(manager.$playbackItem) { item in
-            guard let item else { return }
-            ensureProxy(for: Defaults[.VideoPlayer.videoPlayerType])
+            self._proxy = .init(wrappedValue: VLCMediaPlayerProxy())
         }
     }
 
     var body: some View {
-        containerView
-            .environment(\.safeAreaInsets, safeAreaInsets)
-            .prefersStatusBarHidden(!containerState.isPresentingOverlay)
-            .backport
-            .onChange(of: audioOffset) { _, newValue in
-                if let proxy = manager.proxy as? MediaPlayerOffsetConfigurable {
-                    proxy.setAudioOffset(newValue)
-                }
+        VideoPlayerContainerView(
+            containerState: containerState,
+            manager: manager
+        ) {
+            proxy.videoPlayerBody
+                .eraseToAnyView()
+        } playbackControls: {
+            PlaybackControls()
+        }
+        .onAppear {
+            manager.proxy = proxy
+            manager.start()
+        }
+        .prefersStatusBarHidden(!containerState.isPresentingOverlay)
+        .backport
+        .onChange(of: audioOffset) { _, newValue in
+            if let proxy = proxy as? MediaPlayerOffsetConfigurable {
+                proxy.setAudioOffset(newValue)
             }
-            .backport
-            .onChange(of: containerState.isAspectFilled) { _, newValue in
-                UIView.animate(withDuration: 0.2) {
-                    (manager.proxy as? any VideoMediaPlayerProxy)?.setAspectFill(newValue)
-                }
+        }
+        .backport
+        .onChange(of: containerState.isAspectFilled) { _, newValue in
+            UIView.animate(withDuration: 0.2) {
+                proxy.setAspectFill(newValue)
             }
-            .backport
-            .onChange(of: containerState.isScrubbing) { _, newValue in
-                if newValue { scrubbingStartTime = CACurrentMediaTime() }
-
-                guard let scrubbingStartTime else { return }
-                let scrubbingDelta = CACurrentMediaTime() - scrubbingStartTime
-                let secondsDelta = abs(manager.seconds - containerState.scrubbedSeconds.value)
-
-                guard secondsDelta >= .seconds(1), scrubbingDelta >= 0.1 else { return }
-
-                let scrubbedSeconds = containerState.scrubbedSeconds.value
-                manager.seconds = scrubbedSeconds
-                manager.proxy?.setSeconds(scrubbedSeconds)
-            }
-            .backport
-            .onChange(of: subtitleOffset) { _, newValue in
-                if let proxy = manager.proxy as? MediaPlayerOffsetConfigurable {
-                    proxy.setSubtitleOffset(newValue)
-                }
-            }
-            .preference(
-                key: PresentationControllerShouldDismissPreferenceKey.self,
-                value: containerState.presentationControllerShouldDismiss
-            )
-            .backport
-            .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
-                guard !isPresented else { return }
-                isBeingDismissedByTransition = true
-                manager.stop()
-            }
-            .onReceive(manager.$playbackItem) { newItem in
-                containerState.isAspectFilled = false
-                audioOffset = .zero
-                subtitleOffset = .zero
-
-                // TODO: move to container view
-                containerState.scrubbedSeconds.value = newItem?.baseItem.startSeconds ?? .zero
-            }
-            .onReceive(manager.$state) { newState in
-                if newState == .stopped, !isBeingDismissedByTransition {
-                    router.dismiss()
-                }
-            }
-            .onReceive(manager.secondsBox.$value) { newSeconds in
-                guard manager.remote.isRemotePlayback,
-                      !containerState.isScrubbing else { return }
-                containerState.scrubbedSeconds.value = newSeconds
+        }
+        .backport
+        .onChange(of: containerState.isScrubbing) { _, newValue in
+            if newValue {
+                scrubbingStartTime = CACurrentMediaTime()
             }
 
-            .alert(
-                L10n.error,
-                isPresented: .constant(manager.error != nil)
-            ) {
-                Button(L10n.close, role: .cancel) {
-                    Container.shared.mediaPlayerManager.reset()
-                    router.dismiss()
-                }
-            } message: {
-                Text(L10n.unableToLoadThisItem)
+            guard let scrubbingStartTime else { return }
+            let scrubbingDelta = CACurrentMediaTime() - scrubbingStartTime
+            let secondsDelta = abs(manager.seconds - containerState.scrubbedSeconds.value)
+
+            guard secondsDelta >= .seconds(1), scrubbingDelta >= 0.1 else { return }
+
+            let scrubbedSeconds = containerState.scrubbedSeconds.value
+            manager.seconds = scrubbedSeconds
+            proxy.setSeconds(scrubbedSeconds)
+        }
+        .backport
+        .onChange(of: subtitleOffset) { _, newValue in
+            if let proxy = proxy as? MediaPlayerOffsetConfigurable {
+                proxy.setSubtitleOffset(newValue)
             }
-            .colorScheme(.dark) // use over `preferredColorScheme(.dark)` to not have destination change
-            .supportedOrientations(.allButUpsideDown)
-            .ignoresSafeArea()
-            .persistentSystemOverlays(.hidden)
-            .toolbar(.hidden, for: .navigationBar)
-            .onSizeChanged { _, safeArea in
-                self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
+        }
+        .preference(
+            key: PresentationControllerShouldDismissPreferenceKey.self,
+            value: containerState.presentationControllerShouldDismiss
+        )
+        .backport
+        .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
+            guard !isPresented else { return }
+            isBeingDismissedByTransition = true
+            manager.stop()
+        }
+        .onReceive(manager.$playbackItem) { newItem in
+            containerState.isAspectFilled = false
+            audioOffset = .zero
+            subtitleOffset = .zero
+
+            // TODO: move to container view
+            containerState.scrubbedSeconds.value = newItem?.baseItem.startSeconds ?? .zero
+        }
+        .onReceive(manager.$state) { newState in
+            if newState == .stopped, !isBeingDismissedByTransition {
+                router.dismiss()
             }
+        }
+
+        .alert(
+            L10n.error,
+            isPresented: .constant(manager.error != nil)
+        ) {
+            Button(L10n.close, role: .cancel) {
+                Container.shared.mediaPlayerManager.reset()
+                router.dismiss()
+            }
+        } message: {
+            Text(L10n.unableToLoadThisItem)
+        }
+        .environment(\.safeAreaInsets, safeAreaInsets)
+        .colorScheme(.dark) // use over `preferredColorScheme(.dark)` to not have destination change
+        .supportedOrientations(.allButUpsideDown)
+        .ignoresSafeArea()
+        .persistentSystemOverlays(.hidden)
+        .toolbar(.hidden, for: .navigationBar)
+        .onSizeChanged { _, safeArea in
+            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
+        }
     }
 }
