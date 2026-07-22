@@ -12,6 +12,9 @@ import SwiftUI
 
 struct PosterIndicatorsOverlay: View {
 
+    @Default(.Customization.Indicators.unplayedStyle)
+    private var unplayedStyle
+
     @Environment(\.enabledPosterIndicators)
     private var environmentIndicators
 
@@ -56,9 +59,11 @@ struct PosterIndicatorsOverlay: View {
         VStack(spacing: 0) {
             ZStack {
                 if showsUnplayedIndicator {
-                    UnplayedIndicator()
-                        .frame(width: indicatorSize, height: indicatorSize)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    UnplayedIndicator(
+                        count: unplayedStyle == .count ? item.userData?.unplayedItemCount : nil
+                    )
+                    .frame(height: indicatorSize)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 }
 
                 HStack(spacing: 5) {

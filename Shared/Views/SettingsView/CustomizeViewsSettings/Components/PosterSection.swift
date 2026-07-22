@@ -33,9 +33,10 @@ extension CustomizeViewsSettings {
 
         @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
         private var useSeriesLandscapeBackdrop
-
         @Default(.Customization.Indicators.enabled)
         private var indicators
+        @Default(.Customization.Indicators.unplayedStyle)
+        private var unplayedStyle
 
         @State
         private var previewItemState: PreviewItemState = .unplayed
@@ -46,7 +47,8 @@ extension CustomizeViewsSettings {
             userData: .init(
                 isFavorite: true,
                 isPlayed: true,
-                playbackPositionTicks: Duration.seconds(600).ticks
+                playbackPositionTicks: Duration.seconds(600).ticks,
+                unplayedItemCount: 3
             )
         )
 
@@ -88,6 +90,7 @@ extension CustomizeViewsSettings {
                 }
             }
             .animation(.linear(duration: 0.1), value: indicators)
+            .animation(.linear(duration: 0.1), value: unplayedStyle)
             .animation(.linear(duration: 0.1), value: previewItemState)
         }
 
@@ -123,7 +126,20 @@ extension CustomizeViewsSettings {
 
                     Toggle(L10n.played, isOn: $indicators.contains(.played))
 
-                    Toggle(L10n.unplayed, isOn: $indicators.contains(.unplayed))
+                    PlatformPicker(
+                        L10n.unplayed,
+                        selection: Binding {
+                            indicators.contains(.unplayed) ? unplayedStyle : .none
+                        } set: { newValue in
+                            switch newValue {
+                            case .none:
+                                indicators.remove(.unplayed)
+                            case .indicator, .count:
+                                indicators.insert(.unplayed)
+                                unplayedStyle = newValue
+                            }
+                        }
+                    )
                 }
 
                 Section {
