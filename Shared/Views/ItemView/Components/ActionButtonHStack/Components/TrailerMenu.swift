@@ -98,17 +98,13 @@ extension ItemView {
         }
 
         private func playLocalTrailer(_ trailer: BaseItemDto) {
-            guard let selectedMediaSource = trailer.mediaSources?.first else {
-                logger.log(level: .error, "No media sources found")
+            guard let provider = trailer.getPlaybackItemProvider(userSession: nil) else {
+                logger.log(level: .error, "Unable to build provider")
                 error = ErrorMessage(L10n.unknownError)
                 return
             }
 
-            let manager = MediaPlayerManager(item: trailer) { item in
-                try await MediaPlayerItem.build(for: item, mediaSource: selectedMediaSource)
-            }
-
-            router.route(to: .videoPlayer(manager: manager))
+            router.route(to: .videoPlayer(provider: provider))
         }
 
         private func playExternalTrailer(_ trailer: NamedURL) {

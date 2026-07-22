@@ -17,11 +17,9 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     @Published
     private(set) var localTrailers: [BaseItemDto] = []
     @Published
-    private(set) var playButtonItem: BaseItemDto?
+    private(set) var mediaPlayerItemProvider: MediaPlayerItemProvider?
     @Published
     private(set) var randomBackdropItem: BaseItemDto?
-    @Published
-    var selectedMediaSource: MediaSourceInfo?
 
     let id: String
 
@@ -42,15 +40,19 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     }
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
-        let fullItem = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
-        let newPlayButtonItem = try await playButtonItem(for: fullItem)
+        let userSession = try requireUserSession()
+        let fullItem = try await item.getFullItem(userSession: userSession, sendNotification: true)
+        let newMediaPlayerItemProvider = try await resolveMediaPlayerItemProvider(
+            for: fullItem,
+            userSession: userSession
+        )
         let newLocalTrailers = try? await localTrailers(for: fullItem)
         let newRandomBackdropItem = try? await randomBackdropItem(for: fullItem)
 
         item = fullItem
         localTrailers = newLocalTrailers ?? []
+        mediaPlayerItemProvider = newMediaPlayerItemProvider
         randomBackdropItem = newRandomBackdropItem
-        setPlayButtonItem(newPlayButtonItem)
 
         return try await _makeGroups(
             item: fullItem,
@@ -86,7 +88,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         case .season, .series:
             SeriesEpisodeContentGroup(
                 parent: item,
-                playButtonItem: playButtonItem
+                playButtonItem: mediaPlayerItemProvider?.item
             )
         default:
             []
@@ -171,6 +173,13 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 parent: item
             )
             .makeGroups(environment: .default)
+        case .channel, .liveTvChannel, .tvChannel:
+            PosterGroup(
+                id: "channel-programs",
+                library: ChannelScheduleLibrary(channel: item),
+                posterDisplayType: .landscape,
+                posterSize: .small
+            )
         default: []
         }
 
@@ -248,32 +257,39 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         }
     }
 
-    private func setPlayButtonItem(_ item: BaseItemDto?) {
-        playButtonItem = item
-        selectedMediaSource = item?.mediaSources?.first
+    func selectMediaSource(_ mediaSource: MediaSourceInfo?) {
+        guard let mediaPlayerItemProvider, let userSession else { return }
+
+        self.mediaPlayerItemProvider = mediaPlayerItemProvider.item.getPlaybackItemProvider(
+            userSession: userSession,
+            mediaSource: mediaSource
+        )
     }
 
-    private func playButtonItem(for item: BaseItemDto) async throws -> BaseItemDto? {
-        switch item.type {
+    private func resolveMediaPlayerItemProvider(
+        for item: BaseItemDto,
+        userSession: UserSession
+    ) async throws -> MediaPlayerItemProvider? {
+        let playbackItem: BaseItemDto? = switch item.type {
         case .series:
             if let nextUp = try await nextUpItem(for: item) {
-                return nextUp
+                nextUp
+            } else if let resumeItem = try await resumeItem(for: item) {
+                resumeItem
+            } else {
+                try await firstAvailableItem(for: item)
             }
-
-            if let resumeItem = try await resumeItem(for: item) {
-                return resumeItem
-            }
-
-            return try await firstAvailableItem(for: item)
         case .season:
             if let resumeItem = try await resumeItem(for: item) {
-                return resumeItem
+                resumeItem
+            } else {
+                try await firstAvailableItem(for: item)
             }
-
-            return try await firstAvailableItem(for: item)
         default:
-            return item.isPlayable ? item : nil
+            item.isPlayable ? item : nil
         }
+
+        return playbackItem?.getPlaybackItemProvider(userSession: userSession)
     }
 
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {

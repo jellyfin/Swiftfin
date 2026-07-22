@@ -195,17 +195,13 @@ final class MediaPlayerManager: ViewModel {
 //    }
 
     init(
-        item: BaseItemDto,
-        queue: (any MediaPlayerQueue)? = nil,
-        mediaPlayerItemProvider: @escaping MediaPlayerItemProviderFunction
+        provider: MediaPlayerItemProvider,
+        queue: (any MediaPlayerQueue)? = nil
     ) {
-        self.item = item
+        self.item = provider.item
         self.queue = queue.map { AnyMediaPlayerQueue($0) }
         self.state = .loadingItem
-        self.initialMediaPlayerItemProvider = .init(
-            item: item,
-            function: mediaPlayerItemProvider
-        )
+        self.initialMediaPlayerItemProvider = provider
         super.init()
 
         self.queue?.manager = self

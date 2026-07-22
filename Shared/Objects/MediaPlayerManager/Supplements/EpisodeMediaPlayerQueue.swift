@@ -124,19 +124,21 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         var previousProvider: MediaPlayerItemProvider?
 
         if let nextItem {
-            nextProvider = MediaPlayerItemProvider(item: nextItem) { [weak self] item in
+            nextProvider = MediaPlayerItemProvider(item: nextItem) { [weak self] item, modifyItem in
                 let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
-                return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) {
-                    $0.userData?.playbackPositionTicks = .zero
+                return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
+                    item.userData?.playbackPositionTicks = .zero
+                    modifyItem?(&item)
                 }
             }
         }
 
         if let previousItem {
-            previousProvider = MediaPlayerItemProvider(item: previousItem) { [weak self] item in
+            previousProvider = MediaPlayerItemProvider(item: previousItem) { [weak self] item, modifyItem in
                 let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
-                return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) {
-                    $0.userData?.playbackPositionTicks = .zero
+                return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
+                    item.userData?.playbackPositionTicks = .zero
+                    modifyItem?(&item)
                 }
             }
         }
@@ -173,13 +175,14 @@ extension EpisodeMediaPlayerQueue {
         }
 
         private func select(episode: BaseItemDto) {
-            let provider = MediaPlayerItemProvider(item: episode) { [manager] item in
+            let provider = MediaPlayerItemProvider(item: episode) { [manager] item, modifyItem in
                 let mediaSource = item.mediaSources?.first
 
                 return try await MediaPlayerItem.build(
                     for: item,
                     mediaSource: mediaSource!,
-                    requestedBitrate: manager.playbackBitrate
+                    requestedBitrate: manager.playbackBitrate,
+                    modifyItem: modifyItem
                 )
             }
 

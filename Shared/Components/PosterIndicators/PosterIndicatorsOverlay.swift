@@ -90,7 +90,7 @@ struct PosterIndicatorsOverlay: View {
             if showsProgressIndicator {
                 ProgressIndicator(
                     title: item.progressLabel ?? "",
-                    progress: (item.userData?.playedPercentage ?? 0) / 100,
+                    progress: item.progressPercentage ?? 0,
                     posterDisplayType: posterDisplayType
                 )
                 .zIndex(5)
