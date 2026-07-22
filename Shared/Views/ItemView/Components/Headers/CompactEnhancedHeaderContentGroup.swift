@@ -85,7 +85,7 @@ extension ItemView {
                         ItemView.AttributesHStack(
                             attributes: attributes,
                             item: provider.item,
-                            selectedMediaSource: provider.selectedMediaSource,
+                            selectedMediaSource: provider.mediaPlayerItemProvider?.mediaSource,
                             alignment: .leading
                         )
                         .frame(maxWidth: .infinity, alignment: .leading)

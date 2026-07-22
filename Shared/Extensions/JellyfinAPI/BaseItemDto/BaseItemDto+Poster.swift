@@ -453,6 +453,11 @@ private struct BaseItemDtoPosterLabel: View {
 
             HStack(spacing: 2) {
                 if let startDate = item.startDate {
+                    if !Calendar.current.isDateInToday(startDate) {
+                        Text(startDate, format: .dateTime.weekday(.abbreviated))
+                            .padding(.trailing, 2)
+                    }
+
                     Text(startDate, style: .time)
                 } else {
                     Text(String.emptyDash)

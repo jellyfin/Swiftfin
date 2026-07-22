@@ -54,9 +54,13 @@ extension SeriesEpisodeContentGroup {
                 subHeader: episode.episodeLocator ?? .emptyDash,
                 content: episodeContent,
                 artworkAction: {
+                    guard let provider = episode.getPlaybackItemProvider(userSession: nil) else {
+                        return
+                    }
+
                     router.route(
                         to: .videoPlayer(
-                            item: episode,
+                            provider: provider,
                             queue: EpisodeMediaPlayerQueue(episode: episode)
                         )
                     )

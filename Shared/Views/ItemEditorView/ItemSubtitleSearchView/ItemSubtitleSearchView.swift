@@ -61,7 +61,9 @@ struct ItemSubtitleSearchView: View {
                 Button(L10n.save, role: .confirm, action: save)
                     .disabled(selectedSubtitles.isEmpty)
             } else {
-                saveButton()
+                Button(L10n.save, action: save)
+                    .foregroundStyle(accentColor.overlayColor, accentColor)
+                    .disabled(selectedSubtitles.isEmpty)
                     .backport
                     .buttonStyle(.glassProminent)
                     .controlSize(.small)
@@ -86,16 +88,17 @@ struct ItemSubtitleSearchView: View {
 
             #if os(tvOS)
             Section {
-                saveButton(maxWidth: .infinity)
-                    .fontWeight(.semibold)
-                    .backport
-                    .buttonStyle(.glassProminent.shadow(false))
-                    .tint(accentColor)
-                #if os(iOS)
-                    .controlSize(.large)
-                #endif
-                    .listRowInsets(.zero)
-                    .listRowBackground(Color.clear)
+                Button(action: save) {
+                    Text(L10n.save)
+                        .frame(maxWidth: .infinity)
+                }
+                .disabled(selectedSubtitles.isEmpty)
+                .listRowInsets(.zero)
+                .listRowBackground(Color.clear)
+                .fontWeight(.semibold)
+                .backport
+                .buttonStyle(.glassProminent.shadow(false))
+                .tint(accentColor)
             }
             #endif
 
@@ -126,12 +129,5 @@ struct ItemSubtitleSearchView: View {
     private func save() {
         guard selectedSubtitles.isNotEmpty else { return }
         viewModel.set(selectedSubtitles)
-    }
-
-    private func saveButton(maxWidth: CGFloat? = nil) -> some View {
-        Button(L10n.save, action: save)
-            .frame(maxWidth: maxWidth)
-            .foregroundStyle(accentColor.overlayColor, accentColor)
-            .disabled(selectedSubtitles.isEmpty)
     }
 }
