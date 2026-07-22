@@ -42,25 +42,12 @@ extension NavigationRoute {
 
     @MainActor
     static func videoPlayer(
-        item: BaseItemDto,
-        mediaSource: MediaSourceInfo? = nil,
-        queue: (any MediaPlayerQueue)? = nil
-    ) -> NavigationRoute {
-        let provider = MediaPlayerItemProvider(item: item) { item in
-            try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
-        }
-        return Self.videoPlayer(provider: provider, queue: queue)
-    }
-
-    @MainActor
-    static func videoPlayer(
         provider: MediaPlayerItemProvider,
         queue: (any MediaPlayerQueue)? = nil
     ) -> NavigationRoute {
         let manager = MediaPlayerManager(
-            item: provider.item,
-            queue: queue,
-            mediaPlayerItemProvider: provider.function
+            provider: provider,
+            queue: queue
         )
 
         return Self.videoPlayer(manager: manager)

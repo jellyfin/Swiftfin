@@ -207,27 +207,38 @@ extension BaseItemDto {
     }
 
     func getPlaybackItemProvider(
-        userSession: UserSession
-    ) -> MediaPlayerItemProvider {
+        userSession: UserSession?,
+        mediaSource: MediaSourceInfo? = nil
+    ) -> MediaPlayerItemProvider? {
         switch type {
         case .program:
-            MediaPlayerItemProvider(item: self) { program in
-                guard let channel = try? await self.getChannel(
+            guard isAiring, let userSession else { return nil }
+
+            return MediaPlayerItemProvider(item: self) { program, modifyItem in
+                guard let channel = try? await program.getChannel(
                     for: program,
                     userSession: userSession
-                ),
-                    let mediaSource = channel.mediaSources?.first
-                else {
+                ) else {
                     throw ErrorMessage(L10n.unknownError)
                 }
-                return try await MediaPlayerItem.build(for: channel, mediaSource: mediaSource)
+
+                return try await MediaPlayerItem.build(
+                    for: channel,
+                    modifyItem: modifyItem
+                )
             }
         default:
-            MediaPlayerItemProvider(item: self) { item in
-                guard let mediaSource = item.mediaSources?.first else {
-                    throw ErrorMessage(L10n.unknownError)
-                }
-                return try await MediaPlayerItem.build(for: item, mediaSource: mediaSource)
+            let selectedMediaSource = mediaSource ?? mediaSources?.first
+
+            return MediaPlayerItemProvider(
+                item: self,
+                mediaSource: selectedMediaSource
+            ) { item, modifyItem in
+                try await MediaPlayerItem.build(
+                    for: item,
+                    mediaSource: selectedMediaSource,
+                    modifyItem: modifyItem
+                )
             }
         }
     }
@@ -337,9 +348,11 @@ extension BaseItemDto {
             let length = endDate.timeIntervalSince(startDate)
             guard length > 0 else { return nil }
 
-            let elapsed = Date.now.timeIntervalSince(startDate) / length
-
-            return min(max(elapsed, 0), 1)
+            return clamp(
+                Date.now.timeIntervalSince(startDate) / length,
+                min: 0,
+                max: 1
+            )
         }
 
         guard let playedPercentage = userData?.playedPercentage, playedPercentage > 0 else {
@@ -499,8 +512,8 @@ extension BaseItemDto {
         }
     }
 
-    /// Can this `BaseItemDto` be marked as favorite or liked
-    var canBeLiked: Bool {
+    /// Can this `BaseItemDto` be favorited
+    var canBeFavorited: Bool {
         switch type {
         case .program, .liveTvProgram, .tvProgram:
             false

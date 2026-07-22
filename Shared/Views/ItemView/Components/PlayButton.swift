@@ -33,53 +33,37 @@ struct PlayButton: View {
     }
 
     private var mediaSource: String? {
-        guard provider.item.mediaSources?.count ?? 0 > 1 else { return nil }
-        return provider.selectedMediaSource?.displayTitle
+        guard provider.mediaPlayerItemProvider?.item.mediaSources?.count ?? 0 > 1 else { return nil }
+        return provider.mediaPlayerItemProvider?.mediaSource?.displayTitle
+    }
+
+    private var mediaSourceSelection: Binding<MediaSourceInfo?> {
+        Binding(
+            get: { provider.mediaPlayerItemProvider?.mediaSource },
+            set: provider.selectMediaSource
+        )
     }
 
     private func play(fromBeginning: Bool = false) {
-        guard let playButtonItem = provider.playButtonItem else {
-            provider.logger.error("Play selected with no item")
+        let mediaPlayerItemProvider = if fromBeginning {
+            provider.mediaPlayerItemProvider?.modifyingItem {
+                $0.userData?.playbackPositionTicks = 0
+            }
+        } else {
+            provider.mediaPlayerItemProvider
+        }
+
+        guard let mediaPlayerItemProvider else {
+            provider.logger.error("Play selected with no playback item provider")
             return
         }
 
-        guard let selectedMediaSource = provider.selectedMediaSource else {
-            guard playButtonItem.isAiring,
-                  let userSession = provider.userSession
-            else {
-                provider.logger.error("Play selected with no media source")
-                return
-            }
-
-            router.route(
-                to: .videoPlayer(
-                    provider: playButtonItem.getPlaybackItemProvider(userSession: userSession)
-                )
-            )
-            return
-        }
-
-        let queue: (any MediaPlayerQueue)? = {
-            if playButtonItem.type == .episode {
-                return EpisodeMediaPlayerQueue(episode: playButtonItem)
-            }
-            return nil
-        }()
-
-        let provider = MediaPlayerItemProvider(item: playButtonItem) { item in
-            try await MediaPlayerItem.build(
-                for: item,
-                mediaSource: selectedMediaSource
-            ) {
-                if fromBeginning {
-                    $0.userData?.playbackPositionTicks = 0
-                }
-            }
-        }
+        let queue: (any MediaPlayerQueue)? = mediaPlayerItemProvider.item.type == .episode ?
+            EpisodeMediaPlayerQueue(episode: mediaPlayerItemProvider.item) : nil
 
         router.route(
             to: .videoPlayer(
-                provider: provider,
+                provider: mediaPlayerItemProvider,
                 queue: queue
             )
         )
@@ -87,14 +71,14 @@ struct PlayButton: View {
 
     @ViewBuilder
     private var versionMenu: some View {
-        if let mediaSources = provider.playButtonItem?.mediaSources,
+        if let mediaSources = provider.mediaPlayerItemProvider?.item.mediaSources,
            mediaSources.count > 1
         {
             Menu {
                 Picker(
                     L10n.version,
                     sources: mediaSources,
-                    selection: $provider.selectedMediaSource,
+                    selection: mediaSourceSelection,
                     noneStyle: nil
                 )
             } label: {
@@ -145,7 +129,7 @@ struct PlayButton: View {
                 Image(systemName: "play.fill")
 
                 VStack(spacing: 2) {
-                    Text(provider.playButtonItem?.playButtonLabel ?? L10n.play)
+                    Text(provider.mediaPlayerItemProvider?.item.playButtonLabel ?? L10n.play)
 
                     if let mediaSource {
                         Marquee(mediaSource, speed: 40, delay: 3, fade: 5)
@@ -173,14 +157,14 @@ struct PlayButton: View {
             view.focused(playButtonFocus)
         }
         .contextMenu {
-            if provider.playButtonItem?.userData?.playbackPositionTicks != 0 {
+            if provider.mediaPlayerItemProvider?.item.userData?.playbackPositionTicks != 0 {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {
                     play(fromBeginning: true)
                 }
             }
         }
         .isSelected(true)
-        .disabled(provider.selectedMediaSource == nil && provider.playButtonItem?.isAiring != true)
+        .disabled(provider.mediaPlayerItemProvider == nil)
     }
 
     var body: some View {

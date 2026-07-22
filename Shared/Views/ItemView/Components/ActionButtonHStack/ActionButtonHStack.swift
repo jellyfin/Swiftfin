@@ -68,7 +68,7 @@ extension ItemView {
         var body: some View {
             if (UIDevice.isTV && provider.item.canEdit) ||
                 provider.item.canBePlayed ||
-                provider.item.canBeLiked ||
+                provider.item.canBeFavorited ||
                 hasTrailers
             {
                 contentView
@@ -102,7 +102,7 @@ extension ItemView {
 
                 // MARK: Favorite
 
-                if provider.item.canBeLiked {
+                if provider.item.canBeFavorited {
                     let isFavorited = provider.item.userData?.isFavorite == true
 
                     Button {
