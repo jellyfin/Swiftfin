@@ -21,5 +21,8 @@ extension CollectionType: SupportedCaseIterable {
             .tvshows,
             .livetv,
         ]
+        #if os(iOS)
+        .appending(.music)
+        #endif
     }
 }

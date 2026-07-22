@@ -11,6 +11,58 @@ import JellyfinAPI
 
 extension DeviceProfile {
 
+    #if os(iOS)
+    static func audioPlayer(maxBitrate: Int? = nil) -> DeviceProfile {
+        var deviceProfile = DeviceProfile()
+
+        deviceProfile.directPlayProfiles = [
+            DirectPlayProfile(
+                audioCodec: "aac",
+                container: "aac",
+                type: .audio
+            ),
+            DirectPlayProfile(
+                audioCodec: "flac",
+                container: "flac",
+                type: .audio
+            ),
+            DirectPlayProfile(
+                audioCodec: "aac,ac3,alac,eac3,mp3",
+                container: "m4a,m4b,mov,mp4",
+                type: .audio
+            ),
+            DirectPlayProfile(
+                audioCodec: "mp3",
+                container: "mp3",
+                type: .audio
+            ),
+            DirectPlayProfile(
+                audioCodec: "pcm_mulaw,pcm_s16be,pcm_s16le,pcm_s24be,pcm_s24le",
+                container: "wav",
+                type: .audio
+            ),
+        ]
+        deviceProfile.transcodingProfiles = [
+            TranscodingProfile(
+                protocol: .http,
+                audioCodec: "aac",
+                container: "aac",
+                context: .streaming,
+                maxAudioChannels: "2",
+                type: .audio
+            ),
+        ]
+
+        if let maxBitrate {
+            deviceProfile.maxStaticBitrate = maxBitrate
+            deviceProfile.maxStreamingBitrate = maxBitrate
+            deviceProfile.musicStreamingTranscodingBitrate = maxBitrate
+        }
+
+        return deviceProfile
+    }
+    #endif
+
     static func build(
         for videoPlayer: VideoPlayerType,
         compatibilityMode: PlaybackCompatibility,

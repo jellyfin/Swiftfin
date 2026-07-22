@@ -243,7 +243,14 @@ final class MediaPlayerManager: ViewModel {
             return
         }
 
-        if let nextItem = queue?.nextItem, try authenticatedUser.data.configuration?.enableNextEpisodeAutoPlay == true {
+        #if os(iOS)
+        let shouldAutomaticallyPlayNext = try item.type == .audio ||
+            (authenticatedUser.data.configuration?.enableNextEpisodeAutoPlay == true)
+        #else
+        let shouldAutomaticallyPlayNext = try authenticatedUser.data.configuration?.enableNextEpisodeAutoPlay == true
+        #endif
+
+        if let nextItem = queue?.nextItem, shouldAutomaticallyPlayNext {
             await self.playNewItem(provider: nextItem)
         } else {
             await self.stop()
@@ -274,15 +281,20 @@ final class MediaPlayerManager: ViewModel {
         }
 
         proxy?.stop()
-        Container.shared.mediaPlayerManagerPublisher().send(nil)
-        Container.shared.mediaPlayerManager.reset()
+        unregisterIfCurrent()
     }
 
     @Function(\Action.Cases.playNewItem)
     private func _playNewItem(_ provider: MediaPlayerItemProvider) async throws {
         item = provider.item
+        seconds = provider.item.startSeconds ?? .zero
         setSupplements()
         proxy?.stop()
+        #if os(iOS)
+        if provider.item.type == .audio {
+            playbackRequestStatus = .playing
+        }
+        #endif
         playbackItem = try await provider()
     }
 
@@ -375,7 +387,15 @@ final class MediaPlayerManager: ViewModel {
         await self.cancel()
 
         proxy?.stop()
+        unregisterIfCurrent()
+    }
+
+    private func unregisterIfCurrent() {
+        guard Container.shared.mediaPlayerManager() === self else { return }
+
         Container.shared.mediaPlayerManagerPublisher().send(nil)
+
+        guard Container.shared.mediaPlayerManager() === self else { return }
         Container.shared.mediaPlayerManager.reset()
     }
 

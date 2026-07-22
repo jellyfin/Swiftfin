@@ -25,6 +25,9 @@ extension BaseItemKind: SupportedCaseIterable {
             .series,
             .video,
         ]
+        #if os(iOS)
+        .appending(.musicAlbum)
+        #endif
     }
 }
 
@@ -193,7 +196,7 @@ extension BaseItemKind {
 
     var preferredPosterDisplayType: PosterDisplayType {
         switch self {
-        case .audio, .channel, .liveTvChannel, .musicAlbum, .musicArtist, .tvChannel:
+        case .audio, .channel, .liveTvChannel, .musicAlbum, .tvChannel:
             .square
         case .episode, .folder, .musicVideo, .program, .userView, .video:
             .landscape
@@ -204,9 +207,9 @@ extension BaseItemKind {
 
     var supportedPosterDisplayTypes: [PosterDisplayType] {
         switch self {
-        case .audio, .channel, .liveTvChannel, .musicAlbum, .musicArtist, .tvChannel:
+        case .audio, .channel, .liveTvChannel, .musicAlbum, .tvChannel:
             [.square]
-        case .person:
+        case .musicArtist, .person:
             [.portrait]
         case .userView:
             [.landscape]
@@ -410,6 +413,13 @@ extension BaseItemKind {
 
     /// Item types that can be identified on the server.
     static var itemIdentifiableCases: [BaseItemKind] {
-        [.boxSet, .movie, .person, .series]
+        [
+            .audio,
+            .boxSet,
+            .movie,
+            .musicAlbum,
+            .person,
+            .series
+        ]
     }
 }

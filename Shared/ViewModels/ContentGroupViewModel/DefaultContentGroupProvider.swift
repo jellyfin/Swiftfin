@@ -19,6 +19,14 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
     let displayTitle: String = L10n.home
     let id: String = "default-content-group-provider"
 
+    private var supportedLatestCollectionTypes: [CollectionType] {
+        #if os(iOS)
+        [.homevideos, .movies, .music, .musicvideos, .tvshows]
+        #else
+        [.homevideos, .movies, .musicvideos, .tvshows]
+        #endif
+    }
+
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
         guard let userSession else { return [] }
         let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
@@ -28,12 +36,7 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
 
         let resolvedUserViews = (userViews.value.items ?? []).subtracting(excludedLibraryIDs, using: \.id)
             .intersecting(
-                [
-                    .homevideos,
-                    .movies,
-                    .musicvideos,
-                    .tvshows,
-                ],
+                supportedLatestCollectionTypes,
                 using: \.collectionType
             )
 
@@ -82,13 +85,21 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
             #endif
         }
 
-        userViews
-            .map(LatestInLibrary.init)
-            .map {
-                PosterGroup(
-                    library: $0,
-                    posterDisplayType: .landscape
-                )
-            }
+        userViews.map { userView in
+            PosterGroup(
+                library: LatestInLibrary(library: userView),
+                posterDisplayType: latestPosterDisplayType(for: userView)
+            )
+        }
+    }
+
+    private func latestPosterDisplayType(for library: BaseItemDto) -> PosterDisplayType {
+        #if os(iOS)
+        if library.collectionType == .music {
+            return .square
+        }
+        #endif
+
+        return .landscape
     }
 }

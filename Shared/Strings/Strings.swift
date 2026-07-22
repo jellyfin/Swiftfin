@@ -1510,6 +1510,8 @@ internal enum L10n {
   internal static let smallest = L10n.tr("Localizable", "smallest", fallback: "Smallest")
   /// Smart
   internal static let smart = L10n.tr("Localizable", "smart", fallback: "Smart")
+  /// Songs
+  internal static let songs = L10n.tr("Localizable", "songs", fallback: "Songs")
   /// Sort
   internal static let sort = L10n.tr("Localizable", "sort", fallback: "Sort")
   /// Sort name

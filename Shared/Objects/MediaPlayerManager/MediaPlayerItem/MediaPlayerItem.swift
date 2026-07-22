@@ -101,7 +101,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         } ?? []
         self.videoStreams = mediaStreams?.filter { $0.type == .video } ?? []
 
-        let resolvedAudioStreamIndex = initialAudioStreamIndex
+        let resolvedAudioStreamIndex: Int = initialAudioStreamIndex
             ?? mediaSource.defaultAudioStreamIndex
             ?? mediaSource.mediaStreams?.first(where: { $0.type == .audio })?.index ?? 0
 

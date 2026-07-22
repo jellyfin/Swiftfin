@@ -42,6 +42,7 @@ extension BaseItemDto {
         let title: String
         var subtitle: String? = nil
         let description = overview
+        let artist = artists?.joined(separator: ", ") ?? albumArtist
 
         if type == .episode,
            let seriesName
@@ -54,6 +55,8 @@ extension BaseItemDto {
 
         return [
             AVMetadataIdentifier.commonIdentifierTitle: title,
+            .commonIdentifierArtist: artist,
+            .commonIdentifierAlbumName: album,
             .iTunesMetadataTrackSubTitle: subtitle,
             .commonIdentifierDescription: description,
         ]
@@ -86,14 +89,16 @@ extension BaseItemDto {
             }
         }()
 
-        let albumArtist: String? = {
+        let artist: String? = {
             switch type {
             case .audio:
-                artists?.joined(separator: ", ")
+                artists?.joined(separator: ", ") ?? albumArtist
             default:
-                nil
+                subtitle
             }
         }()
+
+        let resolvedAlbumArtist = type == .audio ? albumArtist : nil
 
         let albumTitle: String? = {
             switch type {
@@ -109,9 +114,9 @@ extension BaseItemDto {
             mediaType: mediaType,
             isLiveStream: isLiveStream,
             title: title,
-            artist: subtitle,
+            artist: artist,
             artwork: image.map { image in MPMediaItemArtwork(boundsSize: image.size) { _ in image }},
-            albumArtist: albumArtist,
+            albumArtist: resolvedAlbumArtist,
             albumTitle: albumTitle
         )
     }
