@@ -328,23 +328,24 @@ private extension UserViewLibraryElement {
             throw UserSessionError.missingCurrentSession
         }
 
-        if case let .userView(item) = self, item.collectionType == .livetv {
-            return []
-        }
-
         var parentID: String?
         var filters: [ItemTrait]?
+        var includeItemTypes: [BaseItemKind] = BaseItemKind.supportedCases
 
         switch self {
         case .favorites:
             filters = [.isFavorite]
         case let .userView(item):
-            parentID = item.id
+            if item.collectionType == .livetv {
+                includeItemTypes = [.tvProgram, .liveTvProgram]
+            } else {
+                parentID = item.id
+            }
         }
 
         var parameters = Paths.GetItemsParameters()
         parameters.filters = filters
-        parameters.includeItemTypes = BaseItemKind.supportedCases
+        parameters.includeItemTypes = includeItemTypes
         parameters.isRecursive = true
         parameters.limit = 3
         parameters.parentID = parentID
