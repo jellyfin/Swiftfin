@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -29,6 +30,9 @@ extension MediaInfoSupplement {
 
     private struct InfoOverlay: PlatformView {
 
+        @Injected(\.currentUserSession)
+        private var userSession
+
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
@@ -40,7 +44,12 @@ extension MediaInfoSupplement {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        let item: BaseItemDto
+        @State
+        private var item: BaseItemDto
+
+        init(item: BaseItemDto) {
+            self._item = State(initialValue: item)
+        }
 
         @ViewBuilder
         private var accessoryView: some View {
@@ -99,6 +108,15 @@ extension MediaInfoSupplement {
             }
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
+            .task(id: item.currentProgram?.endDate) {
+                guard let userSession, let endDate = item.currentProgram?.endDate else { return }
+
+                try? await Task.sleep(for: .seconds(max(endDate.timeIntervalSinceNow + 1, 1)))
+
+                guard let newItem = try? await item.getFullItem(userSession: userSession) else { return }
+
+                item = newItem
+            }
         }
 
         @ViewBuilder
