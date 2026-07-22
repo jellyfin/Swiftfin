@@ -88,7 +88,7 @@ extension ItemView {
                     }
 
                     VStack(alignment: .center, spacing: 5) {
-                        if provider.item.presentPlayButton {
+                        if provider.item.presentPlayButton || provider.item.canShuffle {
                             PlayButton(provider: provider)
                         }
 

@@ -1476,6 +1476,8 @@ internal enum L10n {
   internal static let showUnwatched = L10n.tr("Localizable", "showUnwatched", fallback: "Show unwatched")
   /// Show watched
   internal static let showWatched = L10n.tr("Localizable", "showWatched", fallback: "Show watched")
+  /// Shuffle
+  internal static let shuffle = L10n.tr("Localizable", "shuffle", fallback: "Shuffle")
   /// Shutdown server
   internal static let shutdownServer = L10n.tr("Localizable", "shutdownServer", fallback: "Shutdown server")
   /// Are you sure you want to shutdown the server?

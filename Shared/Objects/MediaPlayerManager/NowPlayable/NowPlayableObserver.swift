@@ -28,13 +28,13 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             .skipBackward,
             .skipForward,
             .changePlaybackPosition,
-            // TODO: only register next/previous if there is a queue
-//            .nextTrack,
-//            .previousTrack,
+            .nextTrack,
+            .previousTrack,
         ]
     }
 
     private var itemImageCancellable: AnyCancellable?
+    private var queueCancellables: Set<AnyCancellable> = []
     private var playbackRequestStateBeforeInterruption: MediaPlayerManager.PlaybackRequestStatus = .playing
 
     weak var manager: MediaPlayerManager? {
@@ -67,6 +67,10 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
         manager.secondsBox.$value
             .sink { [weak self] newValue in self?.secondsDidChange(newValue) }
+            .store(in: &cancellables)
+
+        manager.$queue
+            .sink { [weak self] newQueue in self?.queueDidChange(newQueue) }
             .store(in: &cancellables)
 
         Notifications[.avAudioSessionInterruption]
@@ -104,6 +108,25 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
                 duration: manager?.item.runtime ?? .zero
             )
         )
+    }
+
+    private func queueDidChange(_ newQueue: AnyMediaPlayerQueue?) {
+        // drop the previous queue's subscriptions
+        queueCancellables = []
+
+        guard let newQueue else {
+            NowPlayableCommand.nextTrack.isEnabled(false)
+            NowPlayableCommand.previousTrack.isEnabled(false)
+            return
+        }
+
+        newQueue.$hasNextItem
+            .sink { NowPlayableCommand.nextTrack.isEnabled($0) }
+            .store(in: &queueCancellables)
+
+        newQueue.$hasPreviousItem
+            .sink { NowPlayableCommand.previousTrack.isEnabled($0) }
+            .store(in: &queueCancellables)
     }
 
     private func actionDidChange(_ newAction: MediaPlayerManager._Action) {
@@ -147,6 +170,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
     private func handleStopAction() {
         cancellables = []
+        queueCancellables = []
 
         for command in defaultRegisteredCommands {
             command.removeHandler()
@@ -245,7 +269,14 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
         for command in commands {
             command.addHandler(commandHandler)
-            command.isEnabled(true)
+
+            // Next/previous availability is driven by the queue observer.
+            switch command {
+            case .nextTrack, .previousTrack:
+                break
+            default:
+                command.isEnabled(true)
+            }
         }
     }
 
