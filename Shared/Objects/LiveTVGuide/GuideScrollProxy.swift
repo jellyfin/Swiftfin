@@ -11,7 +11,7 @@ import UIKit
 final class GuideScrollProxy: ObservableObject {
 
     private static let windowQuantum: CGFloat = 300
-    private static let windowMargin: CGFloat = 600
+    private static let windowMargin: CGFloat = UIDevice.isTV ? 600 : 300
 
     @Published
     private(set) var visibleWindow: ClosedRange<CGFloat> = 0 ... CGFloat.greatestFiniteMagnitude
