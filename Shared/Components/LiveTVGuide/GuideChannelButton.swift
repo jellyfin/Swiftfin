@@ -100,7 +100,7 @@ extension GuideChannelButton {
                 }
             }
             .frame(width: width, height: height)
-            .animation(.easeOut(duration: 0.15), value: isFocused)
+            .animation(.easeOut(duration: 0.1), value: isFocused)
         }
     }
 }

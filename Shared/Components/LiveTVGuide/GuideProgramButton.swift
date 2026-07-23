@@ -132,7 +132,7 @@ extension GuideProgramButton {
                     )
             }
             .padding(cellPadding)
-            .animation(.easeOut(duration: 0.15), value: isFocused)
+            .animation(.easeOut(duration: 0.1), value: isFocused)
         }
     }
 }

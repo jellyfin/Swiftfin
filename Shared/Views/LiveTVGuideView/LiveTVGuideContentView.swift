@@ -150,8 +150,6 @@ struct LiveTVGuideContentView: View {
                 viewModel.scrollProxy.register(scrollView, nowOffset: nowOffset)
             }
         }
-        #if os(iOS)
         .ignoresSafeArea(edges: .bottom)
-        #endif
     }
 }
