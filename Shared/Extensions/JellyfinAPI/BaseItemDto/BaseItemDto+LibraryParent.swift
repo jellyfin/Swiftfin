@@ -42,6 +42,8 @@ extension BaseItemDto: LibraryParent {
         case (_, .folder):
             BaseItemKind.supportedCases
                 .appending([.folder, .collectionFolder])
+        case (_, .channel), (_, .liveTvChannel), (_, .tvChannel):
+            [.liveTvProgram]
         case (.movies, _):
             [.movie]
         case (.tvshows, _):

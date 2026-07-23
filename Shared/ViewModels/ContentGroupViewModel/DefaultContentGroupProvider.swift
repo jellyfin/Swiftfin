@@ -82,6 +82,13 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
             #endif
         }
 
+        PosterGroup(
+            id: "programs-recommended",
+            library: RecommendedProgramsLibrary(),
+            posterDisplayType: .landscape,
+            posterSize: .small
+        )
+
         userViews
             .map(LatestInLibrary.init)
             .map {

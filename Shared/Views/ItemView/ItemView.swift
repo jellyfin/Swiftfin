@@ -130,7 +130,7 @@ struct ItemView: View {
             isLoading: viewModel.background.is(.refreshing),
             isHidden: !provider.item.canEdit
         ) {
-            EditItemMenuContent(item: provider.item)
+            EditItemMenu(item: provider.item)
         }
         #endif
     }

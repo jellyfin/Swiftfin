@@ -6,8 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
+
 struct LiveTVGroupProvider: ContentGroupProvider {
 
+    // TODO: Add Guides & Recordings
     private enum LiveTVPill: Displayable, SystemImageable {
         case channels
 
@@ -38,7 +41,14 @@ struct LiveTVGroupProvider: ContentGroupProvider {
         ) { router, pill in
             switch pill {
             case .channels:
-                router.route(to: .library(library: ChannelProgramLibrary()))
+                router.route(
+                    to: .library(
+                        library: ItemLibrary(
+                            parent: BaseItemDto(name: L10n.channels),
+                            filters: .init(itemTypes: [.liveTvChannel])
+                        )
+                    )
+                )
             }
         }
 
@@ -64,5 +74,12 @@ struct LiveTVGroupProvider: ContentGroupProvider {
                     posterSize: .small
                 )
             }
+
+        PosterGroup(
+            id: "recordings",
+            library: RecordingsLibrary(),
+            posterDisplayType: .landscape,
+            posterSize: .small
+        )
     }
 }

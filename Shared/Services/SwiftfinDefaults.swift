@@ -156,6 +156,10 @@ extension Defaults.Keys {
             static var enabled: Key<PosterIndicator> {
                 UserKey("enabledPosterIndicators", default: .all)
             }
+
+            static var unplayedStyle: Key<UnplayedIndicatorType> {
+                UserKey("unplayedIndicatorStyle", default: .indicator)
+            }
         }
 
         enum Library {
@@ -362,19 +366,10 @@ extension Defaults.Keys {
             }
         }
 
-        // TODO: transition into a SubtitleConfiguration instead of multiple types
         enum Subtitle {
 
-            static var subtitleColor: Key<Color> {
-                UserKey("subtitleColor", default: .white)
-            }
-
-            static var subtitleFontName: Key<String> {
-                UserKey("subtitleFontName", default: UIFont.systemFont(ofSize: 14).fontName)
-            }
-
-            static var subtitleSize: Key<Int> {
-                UserKey("subtitleSize", default: 9)
+            static var configuration: Key<SubtitleConfiguration> {
+                UserKey("subtitleConfiguration", default: .default)
             }
         }
 

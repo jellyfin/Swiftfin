@@ -102,16 +102,10 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         vlcUIProxy.setSubtitleDelay(seconds)
     }
 
-    func setSubtitleColor(_ color: Color) {
-        vlcUIProxy.setSubtitleColor(.absolute(color.uiColor))
-    }
-
-    func setSubtitleFontName(_ fontName: String) {
-        vlcUIProxy.setSubtitleFont(fontName)
-    }
-
-    func setSubtitleFontSize(_ fontSize: Int) {
-        vlcUIProxy.setSubtitleSize(.absolute(fontSize))
+    func setSubtitleConfiguration(_ configuration: SubtitleConfiguration) {
+        vlcUIProxy.setSubtitleColor(.absolute(configuration.color.uiColor))
+        vlcUIProxy.setSubtitleFont(configuration.fontName)
+        vlcUIProxy.setSubtitleSize(.absolute(25 - configuration.size))
     }
 
     @ViewBuilder
@@ -125,12 +119,8 @@ extension VLCMediaPlayerProxy {
 
     struct VLCPlayerView: View {
 
-        @Default(.VideoPlayer.Subtitle.subtitleColor)
-        private var subtitleColor
-        @Default(.VideoPlayer.Subtitle.subtitleFontName)
-        private var subtitleFontName
-        @Default(.VideoPlayer.Subtitle.subtitleSize)
-        private var subtitleSize
+        @Default(.VideoPlayer.Subtitle.configuration)
+        private var subtitleConfiguration
 
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
@@ -167,10 +157,11 @@ extension VLCMediaPlayerProxy {
                 configuration.subtitleIndex = .absolute(subtitleIndex)
             }
 
-            configuration.subtitleSize = .absolute(25 - Defaults[.VideoPlayer.Subtitle.subtitleSize])
-            configuration.subtitleColor = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleColor].uiColor)
+            let subtitleConfiguration = Defaults[.VideoPlayer.Subtitle.configuration]
+            configuration.subtitleSize = .absolute(25 - subtitleConfiguration.size)
+            configuration.subtitleColor = .absolute(subtitleConfiguration.color.uiColor)
             configuration.rate = .absolute(Defaults[.VideoPlayer.Playback.playbackRate])
-            if let font = UIFont(name: Defaults[.VideoPlayer.Subtitle.subtitleFontName], size: 1) {
+            if let font = UIFont(name: subtitleConfiguration.fontName, size: 1) {
                 configuration.subtitleFont = .absolute(font)
             }
 
@@ -246,21 +237,9 @@ extension VLCMediaPlayerProxy {
                         proxy.setRate(.absolute(newValue))
                     }
                     .backport
-                    .onChange(of: subtitleColor) { _, newValue in
+                    .onChange(of: subtitleConfiguration) { _, newValue in
                         if let proxy = manager.proxy as? MediaPlayerSubtitleConfigurable {
-                            proxy.setSubtitleColor(newValue)
-                        }
-                    }
-                    .backport
-                    .onChange(of: subtitleFontName) { _, newValue in
-                        if let proxy = manager.proxy as? MediaPlayerSubtitleConfigurable {
-                            proxy.setSubtitleFontName(newValue)
-                        }
-                    }
-                    .backport
-                    .onChange(of: subtitleSize) { _, newValue in
-                        if let proxy = manager.proxy as? MediaPlayerSubtitleConfigurable {
-                            proxy.setSubtitleFontSize(25 - newValue)
+                            proxy.setSubtitleConfiguration(newValue)
                         }
                     }
             }

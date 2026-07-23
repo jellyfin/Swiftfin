@@ -20,7 +20,7 @@ struct TrailerSelection: OptionSet, CaseIterable, Displayable, Hashable, Storabl
     }
 
     static var allCases: [Self] {
-        [.none, .local, .external]
+        [.all, .local, .external, .none]
     }
 
     var displayTitle: String {
