@@ -36,22 +36,16 @@ extension LiveTVGuideSupplement {
         @StateObject
         private var viewModel = GuideViewModel(hours: 12, lookback: 0)
 
-        private func select(channel: BaseItemDto) {
-            defer { containerState.select(supplement: nil) }
+        private func select(item: BaseItemDto) {
+            defer {
+                containerState.select(supplement: nil)
+            }
 
-            guard channel.id != manager.item.id,
-                  let provider = channel.getPlaybackItemProvider(userSession: viewModel.userSession)
-            else { return }
-
-            manager.playNewItem(provider: provider)
-        }
-
-        private func select(program: BaseItemDto) {
-            defer { containerState.select(supplement: nil) }
-
-            guard program.channelID != manager.item.id,
-                  let provider = program.getPlaybackItemProvider(userSession: viewModel.userSession)
-            else { return }
+            guard item.id != manager.item.id && item.channelID != manager.item.id,
+                  let provider = item.getPlaybackItemProvider(userSession: viewModel.userSession)
+            else {
+                return
+            }
 
             manager.playNewItem(provider: provider)
         }
@@ -75,8 +69,8 @@ extension LiveTVGuideSupplement {
                             selectedChannelID: manager.item.id,
                             playsOnSelect: true,
                             onReachedBottomEdge: { channelsViewModel.getNextPage() },
-                            onSelectChannel: select(channel:),
-                            onSelectProgram: select(program:)
+                            onSelectChannel: select(item:),
+                            onSelectProgram: select(item:)
                         )
                     }
                 }
