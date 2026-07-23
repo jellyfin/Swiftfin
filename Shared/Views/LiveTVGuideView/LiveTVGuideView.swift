@@ -14,10 +14,17 @@ struct LiveTVGuideView: View {
     @Router
     private var router
 
+    @State
+    private var contentSize: CGSize = .zero
+
     @StateObject
     private var channelsViewModel = PagingLibraryViewModel(library: GuideChannelsLibrary())
     @StateObject
     private var viewModel = GuideViewModel()
+
+    private var isCompact: Bool {
+        contentSize.width < 600
+    }
 
     var body: some View {
         ZStack {
@@ -40,27 +47,38 @@ struct LiveTVGuideView: View {
                 channelsViewModel.refresh()
             }
         }
+        .trackingSize($contentSize)
         #if os(iOS)
-        .topBarTrailing {
-            GuideDateMenu(viewModel: viewModel)
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .ignoresSafeArea(edges: .bottom)
+            .topBarTrailing {
+                if isCompact {
+                    GuideDateMenu(viewModel: viewModel)
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .ignoresSafeArea(edges: .bottom)
         #else
-        .ignoresSafeArea(edges: [.horizontal, .bottom])
+            .ignoresSafeArea(edges: [.horizontal])
         #endif
     }
 
     @ViewBuilder
     private var contentView: some View {
-        LiveTVGuideContentView(
-            viewModel: viewModel,
-            channels: Array(channelsViewModel.displayedElements),
-            onReachedBottomEdge: { channelsViewModel.getNextPage() },
-            onSelectChannel: select,
-            onSelectProgram: select
-        )
+        VStack(spacing: 0) {
+            if !isCompact {
+                GuideDateBar(viewModel: viewModel)
+                    .frame(maxWidth: .infinity)
+                    .padding(.bottom, 8)
+            }
+
+            LiveTVGuideContentView(
+                viewModel: viewModel,
+                channels: Array(channelsViewModel.displayedElements),
+                onReachedBottomEdge: { channelsViewModel.getNextPage() },
+                onSelectChannel: select,
+                onSelectProgram: select
+            )
+        }
     }
 
     private func select(_ item: BaseItemDto) {

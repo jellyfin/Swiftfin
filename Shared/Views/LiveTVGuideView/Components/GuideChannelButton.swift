@@ -50,7 +50,8 @@ extension GuideChannelButton {
         let playsOnSelect: Bool
 
         private var posterSize: CGFloat {
-            UIDevice.isTV ? height - 8 : height
+            guard UIDevice.isTV else { return height }
+            return isFocused ? height : height - 8
         }
 
         private var borderWidth: CGFloat {
@@ -97,6 +98,7 @@ extension GuideChannelButton {
                 }
             }
             .frame(width: width, height: height)
+            .animation(.easeOut(duration: 0.15), value: isFocused)
         }
     }
 }

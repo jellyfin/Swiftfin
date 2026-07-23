@@ -72,6 +72,11 @@ extension GuideProgramsMenu {
         let start: Date?
         let isCurrent: Bool
 
+        private var cellPadding: CGFloat {
+            guard UIDevice.isTV else { return 2 }
+            return isFocused ? 0 : 4
+        }
+
         var body: some View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
@@ -109,7 +114,8 @@ extension GuideProgramsMenu {
                         lineWidth: isFocused ? 4 : 1
                     )
             }
-            .padding(UIDevice.isTV ? 4 : 2)
+            .padding(cellPadding)
+            .animation(.easeOut(duration: 0.15), value: isFocused)
         }
     }
 }

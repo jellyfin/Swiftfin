@@ -63,6 +63,11 @@ extension GuideProgramButton {
         let showsText: Bool
         let width: CGFloat
 
+        private var cellPadding: CGFloat {
+            guard UIDevice.isTV else { return 2 }
+            return isFocused ? 0 : 4
+        }
+
         @ViewBuilder
         private var textContent: some View {
             VStack(alignment: .leading, spacing: 2) {
@@ -124,7 +129,8 @@ extension GuideProgramButton {
                         lineWidth: isFocused ? 4 : 1
                     )
             }
-            .padding(UIDevice.isTV ? 4 : 2)
+            .padding(cellPadding)
+            .animation(.easeOut(duration: 0.15), value: isFocused)
         }
     }
 }
