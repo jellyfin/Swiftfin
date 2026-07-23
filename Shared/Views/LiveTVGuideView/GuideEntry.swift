@@ -63,7 +63,7 @@ enum GuideEntry: Identifiable {
                 program: program,
                 start: clampedStart,
                 end: clampedEnd,
-                isShort: end.timeIntervalSince(start) < shortThreshold
+                isShort: clampedEnd.timeIntervalSince(clampedStart) < shortThreshold
             )
         }
         .sorted { $0.start < $1.start }

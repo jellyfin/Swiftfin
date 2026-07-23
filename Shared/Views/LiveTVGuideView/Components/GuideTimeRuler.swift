@@ -60,6 +60,9 @@ struct GuideTimeRuler: View {
             )
         }
         .frame(height: layout.rulerHeight)
+        #if os(tvOS)
+            .focusSection()
+        #endif
     }
 
     @ViewBuilder
@@ -127,11 +130,14 @@ extension GuideTimeRuler {
                 .lineLimit(1)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Color.secondarySystemFill.opacity(0.5), in: Capsule())
-                .overlay {
-                    Capsule()
-                        .strokeBorder(accentColor, lineWidth: isFocused ? 2 : 0)
-                }
+                .backport
+                .glassEffect(
+                    .regular.selection(
+                        tint: isFocused ? accentColor : nil,
+                        foregroundColor: isFocused ? accentColor.overlayColor : .primary
+                    ),
+                    in: .capsule
+                )
         }
     }
 }

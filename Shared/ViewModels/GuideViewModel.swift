@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Algorithms
 import Combine
 import Foundation
 import JellyfinAPI
@@ -13,8 +14,7 @@ import JellyfinAPI
 @MainActor
 final class GuideViewModel: ViewModel {
 
-    private static let pageSize = 20
-    private static let viewModelLimit = 200
+    private static let batchSize = 50
     private static let dayCount = 7
 
     let scrollProxy = GuideScrollProxy()
@@ -28,35 +28,35 @@ final class GuideViewModel: ViewModel {
     }()
 
     @Published
-    private(set) var startDate: Date = GuideViewModel.currentHalfHour()
+    private(set) var startDate: Date = GuideViewModel.defaultStartDate()
     @Published
     private(set) var now: Date = .now
+    @Published
+    private(set) var programs: [String: [BaseItemDto]] = [:]
     @Published
     var selectedChannelID: String?
 
     let hours: Int
 
     var endDate: Date {
-        let calendar = Calendar.current
         let spanEnd = startDate.addingTimeInterval(TimeInterval(hours) * 3600)
 
-        guard let nextDay = calendar.date(
+        guard let nextDay = Calendar.current.date(
             byAdding: .day,
             value: 1,
-            to: calendar.startOfDay(for: startDate)
+            to: Calendar.current.startOfDay(for: startDate)
         ) else { return spanEnd }
 
-        return min(spanEnd, nextDay)
+        return max(spanEnd, nextDay)
     }
 
-    private var programsViewModels: [String: PagingLibraryViewModel<ChannelProgramsLibrary>] = [:]
-    private var accessOrder: [String] = []
+    private var fetchedChannelIDs: Set<String> = []
 
-    init(hours: Int = 24) {
+    init(hours: Int = 12) {
         self.hours = hours
         super.init()
 
-        Timer.publish(every: 300, on: .main, in: .common)
+        Timer.publish(every: 60, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] date in
                 Task { @MainActor in
@@ -69,54 +69,70 @@ final class GuideViewModel: ViewModel {
     func select(date: Date) {
         let calendar = Calendar.current
         let newStartDate = calendar.isDate(date, inSameDayAs: .now)
-            ? Self.currentHalfHour()
+            ? Self.defaultStartDate()
             : calendar.startOfDay(for: date)
 
         guard newStartDate != startDate else { return }
 
         startDate = newStartDate
-        programsViewModels.removeAll()
-        accessOrder.removeAll()
+        programs.removeAll()
+        fetchedChannelIDs.removeAll()
         scrollProxy.reset()
     }
 
-    func programsViewModel(for channel: BaseItemDto) -> PagingLibraryViewModel<ChannelProgramsLibrary> {
-        let key = channel.id ?? channel.displayTitle
+    func loadPrograms(for channels: [BaseItemDto]) {
+        let channelIDs = channels
+            .compactMap(\.id)
+            .filter { !fetchedChannelIDs.contains($0) }
 
-        if let existing = programsViewModels[key] {
-            markAccessed(key)
-            return existing
+        guard channelIDs.isNotEmpty else { return }
+
+        fetchedChannelIDs.formUnion(channelIDs)
+
+        for batch in channelIDs.chunks(ofCount: Self.batchSize) {
+            let requestStartDate = startDate
+
+            Task {
+                guard startDate == requestStartDate else { return }
+
+                do {
+                    let newPrograms = try await fetchPrograms(channelIDs: Array(batch))
+
+                    guard startDate == requestStartDate else { return }
+
+                    programs.merge(newPrograms) { _, new in new }
+                } catch {
+                    fetchedChannelIDs.subtract(batch)
+                }
+            }
         }
-
-        let viewModel = PagingLibraryViewModel(
-            library: ChannelProgramsLibrary(channel: channel, startDate: startDate, endDate: endDate),
-            pageSize: Self.pageSize
-        )
-        programsViewModels[key] = viewModel
-        markAccessed(key)
-
-        if accessOrder.count > Self.viewModelLimit, let oldest = accessOrder.first {
-            accessOrder.removeFirst()
-            programsViewModels[oldest] = nil
-        }
-
-        return viewModel
     }
 
-    private func markAccessed(_ key: String) {
-        if let index = accessOrder.firstIndex(of: key) {
-            accessOrder.remove(at: index)
-        }
+    private func fetchPrograms(channelIDs: [String]) async throws -> [String: [BaseItemDto]] {
+        var parameters = Paths.GetLiveTvProgramsParameters()
+        parameters.channelIDs = channelIDs
+        parameters.fields = .MinimumFields.appending(.channelInfo)
+        parameters.maxStartDate = endDate
+        parameters.minEndDate = startDate
+        parameters.sortBy = [.startDate]
+        parameters.userID = try authenticatedUser.id
 
-        accessOrder.append(key)
+        let request = Paths.getLiveTvPrograms(parameters: parameters)
+        let response = try await send(request)
+
+        let items = (response.value.items ?? [])
+            .filter { $0.channelID != nil }
+
+        return Dictionary(grouping: items) { $0.channelID ?? "" }
     }
 
-    private static func currentHalfHour() -> Date {
+    private static func defaultStartDate() -> Date {
         let current = Date.now
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: current)
         let minute = calendar.component(.minute, from: current)
+        let halfHour = calendar.date(bySettingHour: hour, minute: minute - minute % 30, second: 0, of: current) ?? current
 
-        return calendar.date(bySettingHour: hour, minute: minute - minute % 30, second: 0, of: current) ?? current
+        return halfHour.addingTimeInterval(-3600)
     }
 }

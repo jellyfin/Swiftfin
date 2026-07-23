@@ -8,30 +8,11 @@
 
 import UIKit
 
-final class GuideScrollProxy: NSObject, ObservableObject, UIScrollViewDelegate {
+final class GuideScrollProxy: NSObject, UIScrollViewDelegate {
 
-    private final class TrailingEdgeAction {
-
-        let action: () -> Void
-
-        init(_ action: @escaping () -> Void) {
-            self.action = action
-        }
-    }
-
-    private static let trailingEdgeThreshold: CGFloat = 600
     private static let interactiveJumpThreshold: CGFloat = 600
-    private static let windowQuantum: CGFloat = 300
-
-    @Published
-    private(set) var windowOrigin: CGFloat = 0
 
     private let scrollViews = NSHashTable<UIScrollView>.weakObjects()
-    private let onReachedEdgeStore = NSHashTable<UIScrollView>.weakObjects()
-    private let trailingEdgeActions = NSMapTable<UIScrollView, TrailingEdgeAction>(
-        keyOptions: .weakMemory,
-        valueOptions: .strongMemory
-    )
 
     private var offsetX: CGFloat = 0
     private var didInitialize = false
@@ -39,15 +20,8 @@ final class GuideScrollProxy: NSObject, ObservableObject, UIScrollViewDelegate {
 
     func register(
         _ scrollView: UIScrollView,
-        nowOffset: CGFloat?,
-        onReachedTrailingEdge: @escaping () -> Void
+        nowOffset: CGFloat?
     ) {
-        trailingEdgeActions
-            .setObject(
-                TrailingEdgeAction(onReachedTrailingEdge),
-                forKey: scrollView
-            )
-
         if !scrollViews.contains(scrollView) {
             scrollViews.add(scrollView)
             scrollView.delegate = self
@@ -73,8 +47,6 @@ final class GuideScrollProxy: NSObject, ObservableObject, UIScrollViewDelegate {
             scrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
             isSyncing = false
         }
-
-        handleReachedTrailingEdge(scrollView)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -92,17 +64,12 @@ final class GuideScrollProxy: NSObject, ObservableObject, UIScrollViewDelegate {
         #endif
 
         offsetX = scrollView.contentOffset.x
-        updateWindowOrigin()
         apply(except: scrollView)
-
-        for scrollView in scrollViews.allObjects {
-            handleReachedTrailingEdge(scrollView)
-        }
     }
 
     func reset() {
         offsetX = 0
-        updateWindowOrigin()
+        didInitialize = false
         apply()
     }
 
@@ -110,20 +77,7 @@ final class GuideScrollProxy: NSObject, ObservableObject, UIScrollViewDelegate {
         guard let reference = scrollViews.allObjects.first else { return }
 
         offsetX = max(0, x - reference.bounds.width / 2)
-        updateWindowOrigin()
         apply()
-
-        for scrollView in scrollViews.allObjects {
-            handleReachedTrailingEdge(scrollView)
-        }
-    }
-
-    private func updateWindowOrigin() {
-        let quantized = (offsetX / Self.windowQuantum).rounded(.down) * Self.windowQuantum
-
-        if quantized != windowOrigin {
-            windowOrigin = quantized
-        }
     }
 
     private func apply(except source: UIScrollView? = nil) {
@@ -134,28 +88,6 @@ final class GuideScrollProxy: NSObject, ObservableObject, UIScrollViewDelegate {
             if abs(scrollView.contentOffset.x - offsetX) > 0.5 {
                 scrollView.setContentOffset(CGPoint(x: offsetX, y: scrollView.contentOffset.y), animated: false)
             }
-        }
-    }
-
-    private func handleReachedTrailingEdge(_ scrollView: UIScrollView) {
-        let viewport = scrollView.bounds.width
-
-        guard viewport > 0, scrollView.contentSize.width > 0 else { return }
-
-        if offsetX + viewport >= scrollView.contentSize.width - Self.trailingEdgeThreshold {
-            guard !onReachedEdgeStore.contains(scrollView) else { return }
-            onReachedEdgeStore.add(scrollView)
-
-            guard let action = trailingEdgeActions
-                .object(forKey: scrollView)?
-                .action
-            else { return }
-
-            DispatchQueue.main.async {
-                action()
-            }
-        } else {
-            onReachedEdgeStore.remove(scrollView)
         }
     }
 }

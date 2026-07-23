@@ -16,6 +16,7 @@ struct GuideProgramButton: View {
     let width: CGFloat
     let height: CGFloat
     let now: Date
+    let playsOnSelect: Bool
     let action: () -> Void
 
     private var isCurrent: Bool {
@@ -23,12 +24,21 @@ struct GuideProgramButton: View {
         return (start ... end).contains(now)
     }
 
+    private var isSelectable: Bool {
+        !playsOnSelect || isCurrent
+    }
+
     var body: some View {
-        Button(action: action) {
+        Button {
+            guard isSelectable else { return }
+            action()
+        } label: {
             Content(
                 program: program,
-                isCurrent: isCurrent
+                isCurrent: isCurrent,
+                showsText: width >= 70
             )
+            .opacity(isSelectable ? 1 : 0.5)
             .frame(width: width, height: height)
         }
         .buttonStyle(GuideButtonStyle())
@@ -50,6 +60,7 @@ extension GuideProgramButton {
 
         let program: BaseItemDto
         let isCurrent: Bool
+        let showsText: Bool
 
         private var fill: Color {
             if isCurrent {
@@ -65,24 +76,26 @@ extension GuideProgramButton {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 2) {
-                Text(program.displayTitle)
-                    .font(.footnote.weight(isCurrent ? .semibold : .regular))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
+                if showsText {
+                    Text(program.displayTitle)
+                        .font(.footnote.weight(isCurrent ? .semibold : .regular))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
 
-                DotHStack {
-                    if let startDate = program.startDate {
-                        Text(startDate, style: .time)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                    }
+                    DotHStack {
+                        if let startDate = program.startDate {
+                            Text(startDate, style: .time)
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
 
-                    if let endDate = program.endDate {
-                        Text(endDate, style: .time)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
+                        if let endDate = program.endDate {
+                            Text(endDate, style: .time)
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
                     }
                 }
 

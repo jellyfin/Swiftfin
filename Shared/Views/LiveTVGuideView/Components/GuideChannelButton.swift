@@ -16,6 +16,7 @@ struct GuideChannelButton: View {
     let width: CGFloat
     let height: CGFloat
     let isSelected: Bool
+    let playsOnSelect: Bool
     let action: () -> Void
 
     var body: some View {
@@ -24,7 +25,8 @@ struct GuideChannelButton: View {
                 channel: channel,
                 width: width,
                 height: height,
-                isSelected: isSelected
+                isSelected: isSelected,
+                playsOnSelect: playsOnSelect
             )
         }
         .buttonStyle(GuideButtonStyle())
@@ -45,10 +47,11 @@ extension GuideChannelButton {
         let width: CGFloat
         let height: CGFloat
         let isSelected: Bool
+        let playsOnSelect: Bool
 
         private var borderWidth: CGFloat {
             if isFocused {
-                4
+                5
             } else if isSelected {
                 2
             } else {
@@ -63,6 +66,18 @@ extension GuideChannelButton {
                 contentMode: .fill
             )
             .frame(width: height, height: height)
+            .overlay {
+                if isFocused, playsOnSelect {
+                    ZStack {
+                        Color.black
+                            .opacity(0.5)
+
+                        Image(systemName: "play.fill")
+                            .font(.title3)
+                            .foregroundStyle(.white)
+                    }
+                }
+            }
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .overlay {
                 RoundedRectangle(cornerRadius: 8)
@@ -71,8 +86,9 @@ extension GuideChannelButton {
             .overlay(alignment: .bottomTrailing) {
                 if isSelected {
                     Image(systemName: "play.circle.fill")
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.white, accentColor)
+                        .subtleShadow()
                         .padding(4)
                 }
             }

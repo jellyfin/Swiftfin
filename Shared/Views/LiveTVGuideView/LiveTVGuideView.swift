@@ -46,9 +46,9 @@ struct LiveTVGuideView: View {
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.visible, for: .navigationBar)
+        .ignoresSafeArea(edges: .bottom)
         #else
-        .padding(.leading, EdgeInsets.edgePadding * 2)
-        .ignoresSafeArea(edges: .leading)
+        .ignoresSafeArea(edges: [.horizontal, .bottom])
         #endif
     }
 
@@ -58,13 +58,12 @@ struct LiveTVGuideView: View {
             viewModel: viewModel,
             channels: Array(channelsViewModel.displayedElements),
             onReachedBottomEdge: { channelsViewModel.getNextPage() },
-            onSelectChannel: play,
-            onSelectProgram: play
+            onSelectChannel: select,
+            onSelectProgram: select
         )
     }
 
-    private func play(_ item: BaseItemDto) {
-        guard let provider = item.getPlaybackItemProvider(userSession: viewModel.userSession) else { return }
-        router.route(to: .videoPlayer(provider: provider))
+    private func select(_ item: BaseItemDto) {
+        router.route(to: .item(item: item))
     }
 }

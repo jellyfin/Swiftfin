@@ -13,6 +13,10 @@ struct GuideDateMenu: View {
     @ObservedObject
     var viewModel: GuideViewModel
 
+    private var selectedDate: Date {
+        max(viewModel.startDate, Calendar.current.startOfDay(for: .now))
+    }
+
     private func label(for date: Date) -> String {
         date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())
     }
@@ -23,7 +27,7 @@ struct GuideDateMenu: View {
                 Button {
                     viewModel.select(date: date)
                 } label: {
-                    if Calendar.current.isDate(date, inSameDayAs: viewModel.startDate) {
+                    if Calendar.current.isDate(date, inSameDayAs: selectedDate) {
                         Label(label(for: date), systemImage: "checkmark")
                     } else {
                         Text(label(for: date))
@@ -31,7 +35,7 @@ struct GuideDateMenu: View {
                 }
             }
         } label: {
-            Label(label(for: viewModel.startDate), systemImage: "calendar")
+            Label(label(for: selectedDate), systemImage: "calendar")
         }
     }
 }

@@ -69,6 +69,7 @@ extension LiveTVGuideSupplement {
                             viewModel: viewModel,
                             channels: Array(channelsViewModel.displayedElements),
                             selectedChannelID: manager.item.id,
+                            playsOnSelect: true,
                             onReachedBottomEdge: { channelsViewModel.getNextPage() },
                             onSelectChannel: select(channel:),
                             onSelectProgram: select(program:)

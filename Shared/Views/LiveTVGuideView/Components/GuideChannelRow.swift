@@ -17,19 +17,21 @@ struct GuideChannelRow: View {
 
     let channel: BaseItemDto
     let layout: GuideLayout
+    let playsOnSelect: Bool
     let channelAction: () -> Void
     let programAction: (BaseItemDto) -> Void
 
     var body: some View {
         RowContent(
-            programsViewModel: guideViewModel.programsViewModel(for: channel),
             scrollProxy: guideViewModel.scrollProxy,
+            programs: guideViewModel.programs[channel.id ?? ""] ?? [],
             now: guideViewModel.now,
             startDate: guideViewModel.startDate,
             endDate: guideViewModel.endDate,
             channel: channel,
             layout: layout,
             isSelected: channel.id != nil && channel.id == guideViewModel.selectedChannelID,
+            playsOnSelect: playsOnSelect,
             channelAction: channelAction,
             programAction: programAction
         )
@@ -43,28 +45,23 @@ extension GuideChannelRow {
         @Default(.accentColor)
         private var accentColor
 
-        @ObservedObject
-        var programsViewModel: PagingLibraryViewModel<ChannelProgramsLibrary>
-
-        @ObservedObject
-        var scrollProxy: GuideScrollProxy
-
         @State
         private var positionedEntries: [PositionedEntry] = []
 
+        let scrollProxy: GuideScrollProxy
+        let programs: [BaseItemDto]
         let now: Date
         let startDate: Date
         let endDate: Date
         let channel: BaseItemDto
         let layout: GuideLayout
         let isSelected: Bool
+        let playsOnSelect: Bool
         let channelAction: () -> Void
         let programAction: (BaseItemDto) -> Void
 
         private static let shortThreshold: TimeInterval = 15 * 60
         private static let minProgramWidth: CGFloat = 50
-        private static let windowLeadMargin: CGFloat = 2000
-        private static let windowTrailMargin: CGFloat = 4000
 
         private struct PositionedEntry: Identifiable {
             let entry: GuideEntry
@@ -82,7 +79,7 @@ extension GuideChannelRow {
 
         private func updatePositionedEntries() {
             let entries = GuideEntry.entries(
-                from: Array(programsViewModel.displayedElements),
+                from: programs,
                 startDate: startDate,
                 endDate: endDate,
                 shortThreshold: Self.shortThreshold
@@ -110,6 +107,7 @@ extension GuideChannelRow {
                     width: layout.channelColumnWidth,
                     height: layout.rowHeight,
                     isSelected: isSelected,
+                    playsOnSelect: playsOnSelect,
                     action: channelAction
                 )
 
@@ -119,10 +117,7 @@ extension GuideChannelRow {
                 .guideScrollSync(
                     scrollProxy,
                     nowOffset: width(from: startDate, to: now)
-                ) {
-                    guard !programsViewModel.background.is(.gettingNextPage) else { return }
-                    programsViewModel.getNextPage()
-                }
+                )
             }
             .frame(
                 maxWidth: .infinity,
@@ -133,39 +128,26 @@ extension GuideChannelRow {
             .fixedSize(horizontal: false, vertical: true)
             .onAppear {
                 updatePositionedEntries()
-
-                if programsViewModel.state == .initial {
-                    programsViewModel.refresh()
-                }
             }
             .backport
-            .onChange(of: programsViewModel.displayedElements) {
+            .onChange(of: programs) {
                 updatePositionedEntries()
             }
             .backport
             .onChange(of: startDate) {
                 updatePositionedEntries()
-
-                if programsViewModel.state == .initial {
-                    programsViewModel.refresh()
-                }
             }
         }
 
         @ViewBuilder
         private var programsView: some View {
             let contentWidth = positionedEntries.last.map { $0.x + $0.width } ?? 0
-            let minX = scrollProxy.windowOrigin - Self.windowLeadMargin
-            let maxX = scrollProxy.windowOrigin + Self.windowTrailMargin
-            let visible = positionedEntries.filter {
-                $0.x < maxX && $0.x + $0.width > minX
-            }
 
             ZStack(alignment: .leading) {
                 Color.clear
-                    .frame(width: contentWidth, height: layout.rowHeight)
+                    .frame(width: max(contentWidth, 1), height: layout.rowHeight)
 
-                ForEach(visible) { item in
+                ForEach(positionedEntries) { item in
                     entryView(item.entry, width: item.width)
                         .offset(x: item.x)
                 }
@@ -189,6 +171,7 @@ extension GuideChannelRow {
                     width: entryWidth,
                     height: layout.rowHeight,
                     now: now,
+                    playsOnSelect: playsOnSelect,
                     action: { programAction(program) }
                 )
             case let .group(programs, _, _):
@@ -197,6 +180,7 @@ extension GuideChannelRow {
                     width: entryWidth,
                     height: layout.rowHeight,
                     now: now,
+                    playsOnSelect: playsOnSelect,
                     action: programAction
                 )
             }

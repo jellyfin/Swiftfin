@@ -16,13 +16,16 @@ struct GuideProgramsMenu: View {
     let width: CGFloat
     let height: CGFloat
     let now: Date
+    let playsOnSelect: Bool
     let action: (BaseItemDto) -> Void
 
     private var isCurrent: Bool {
-        programs.contains { program in
-            guard let start = program.startDate, let end = program.endDate else { return false }
-            return (start ... end).contains(now)
-        }
+        programs.contains(where: isCurrent)
+    }
+
+    private func isCurrent(_ program: BaseItemDto) -> Bool {
+        guard let start = program.startDate, let end = program.endDate else { return false }
+        return (start ... end).contains(now)
     }
 
     var body: some View {
@@ -33,6 +36,7 @@ struct GuideProgramsMenu: View {
                 } label: {
                     Text(menuLabel(for: program))
                 }
+                .disabled(playsOnSelect && !isCurrent(program))
             }
         } label: {
             Content(
@@ -40,6 +44,7 @@ struct GuideProgramsMenu: View {
                 start: programs.first?.startDate,
                 isCurrent: isCurrent
             )
+            .opacity(playsOnSelect && !isCurrent ? 0.5 : 1)
             .frame(width: width, height: height)
         }
         #if os(tvOS)

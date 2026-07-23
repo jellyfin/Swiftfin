@@ -13,7 +13,6 @@ struct GuideScrollSyncModifier: ViewModifier {
 
     let proxy: GuideScrollProxy
     let nowOffset: CGFloat?
-    let onReachedTrailingEdge: () -> Void
 
     func body(content: Content) -> some View {
         content.introspect(
@@ -27,8 +26,7 @@ struct GuideScrollSyncModifier: ViewModifier {
 
             proxy.register(
                 scrollView,
-                nowOffset: nowOffset,
-                onReachedTrailingEdge: onReachedTrailingEdge
+                nowOffset: nowOffset
             )
         }
     }

@@ -18,6 +18,7 @@ struct LiveTVGuideContentView: View {
 
     private let channels: [BaseItemDto]
     private let selectedChannelID: String?
+    private let playsOnSelect: Bool
     private let onReachedBottomEdge: () -> Void
     private let onSelectChannel: (BaseItemDto) -> Void
     private let onSelectProgram: (BaseItemDto) -> Void
@@ -26,6 +27,7 @@ struct LiveTVGuideContentView: View {
         viewModel: GuideViewModel,
         channels: [BaseItemDto],
         selectedChannelID: String? = nil,
+        playsOnSelect: Bool = false,
         onReachedBottomEdge: @escaping () -> Void,
         onSelectChannel: @escaping (BaseItemDto) -> Void,
         onSelectProgram: @escaping (BaseItemDto) -> Void
@@ -33,6 +35,7 @@ struct LiveTVGuideContentView: View {
         self.viewModel = viewModel
         self.channels = channels
         self.selectedChannelID = selectedChannelID
+        self.playsOnSelect = playsOnSelect
         self.onReachedBottomEdge = onReachedBottomEdge
         self.onSelectChannel = onSelectChannel
         self.onSelectProgram = onSelectProgram
@@ -58,9 +61,13 @@ struct LiveTVGuideContentView: View {
                     guideViewModel: viewModel,
                     channel: channel,
                     layout: .current,
+                    playsOnSelect: playsOnSelect,
                     channelAction: { onSelectChannel(channel) },
                     programAction: onSelectProgram
                 )
+                #if os(tvOS)
+                .ignoresSafeArea()
+                #endif
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 onReachedBottomEdge()
@@ -74,10 +81,19 @@ struct LiveTVGuideContentView: View {
         }
         .onFirstAppear {
             viewModel.selectedChannelID = selectedChannelID
+            viewModel.loadPrograms(for: channels)
         }
         .backport
         .onChange(of: selectedChannelID) {
             viewModel.selectedChannelID = selectedChannelID
+        }
+        .backport
+        .onChange(of: channels) {
+            viewModel.loadPrograms(for: channels)
+        }
+        .backport
+        .onChange(of: viewModel.startDate) {
+            viewModel.loadPrograms(for: channels)
         }
     }
 }
