@@ -11,11 +11,11 @@ import SwiftUI
 
 struct LiveTVGuideView: View {
 
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass
-
     @Router
     private var router
+
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
 
     @StateObject
     private var channelsViewModel = PagingLibraryViewModel(library: GuideChannelsLibrary())
@@ -28,17 +28,23 @@ struct LiveTVGuideView: View {
 
     var body: some View {
         ZStack {
-            switch channelsViewModel.state {
-            case .initial, .refreshing:
+            switch (channelsViewModel.state, viewModel.state) {
+            case (.initial, _), (.refreshing, _), (_, .initial), (_, .refreshing):
                 ProgressView()
-            case .content:
+            case (.error, _):
+                channelsViewModel.error.map {
+                    ErrorView(error: $0)
+                }
+            case (_, .error):
+                viewModel.error.map {
+                    ErrorView(error: $0)
+                }
+            case (.content, _):
                 if channelsViewModel.displayedElements.isEmpty {
                     ContentUnavailableView(L10n.noPrograms.localizedCapitalized, systemImage: "tv")
                 } else {
                     contentView
                 }
-            case .error:
-                channelsViewModel.error.map(ErrorView.init)
             }
         }
         .navigationTitle(L10n.guide)
@@ -46,6 +52,11 @@ struct LiveTVGuideView: View {
             if channelsViewModel.state == .initial {
                 channelsViewModel.refresh()
             }
+        }
+        .backport
+        .onChange(of: Array(channelsViewModel.displayedElements)) { _, channels in
+            guard viewModel.state == .initial else { return }
+            viewModel.refresh(channels: channels)
         }
         #if os(iOS)
         .topBarTrailing {

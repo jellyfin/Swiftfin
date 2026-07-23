@@ -57,7 +57,6 @@ struct LiveTVGuideContentView: View {
         }
         .onFirstAppear {
             viewModel.selectedChannelID = selectedChannelID
-            viewModel.refresh(channels: channels)
         }
         .backport
         .onChange(of: selectedChannelID) {
@@ -65,11 +64,7 @@ struct LiveTVGuideContentView: View {
         }
         .backport
         .onChange(of: channels) {
-            viewModel.refresh(channels: channels)
-        }
-        .backport
-        .onChange(of: viewModel.startDate) {
-            viewModel.refresh(channels: channels)
+            viewModel.getNextPage(channels: channels)
         }
     }
 

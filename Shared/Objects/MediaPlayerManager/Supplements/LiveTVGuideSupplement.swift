@@ -58,10 +58,14 @@ extension LiveTVGuideSupplement {
 
         private var content: some View {
             ZStack {
-                switch channelsViewModel.state {
-                case .initial, .refreshing:
+                switch (channelsViewModel.state, viewModel.state) {
+                case (.initial, _), (.refreshing, _), (_, .initial), (_, .refreshing):
                     ProgressView()
-                case .content:
+                case (.error, _):
+                    channelsViewModel.error.map(ErrorView.init)
+                case (_, .error):
+                    viewModel.error.map(ErrorView.init)
+                case (.content, _):
                     if channelsViewModel.displayedElements.isEmpty {
                         ContentUnavailableView(L10n.noPrograms.localizedCapitalized, systemImage: "tv")
                     } else {
@@ -75,14 +79,17 @@ extension LiveTVGuideSupplement {
                             onSelectProgram: select(program:)
                         )
                     }
-                case .error:
-                    channelsViewModel.error.map(ErrorView.init)
                 }
             }
             .onFirstAppear {
                 if channelsViewModel.state == .initial {
                     channelsViewModel.refresh()
                 }
+            }
+            .backport
+            .onChange(of: Array(channelsViewModel.displayedElements)) { _, channels in
+                guard viewModel.state == .initial else { return }
+                viewModel.refresh(channels: channels)
             }
         }
 

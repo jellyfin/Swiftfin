@@ -17,13 +17,16 @@ final class GuideViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+        case getNextPage(channels: [BaseItemDto])
         case refresh(channels: [BaseItemDto])
         case setDate(date: Date)
 
         var transition: Transition {
             switch self {
-            case .refresh:
+            case .getNextPage:
                 .background(.refreshing)
+            case .refresh:
+                .to(.refreshing, then: .content)
             case .setDate:
                 .none
             }
@@ -31,6 +34,13 @@ final class GuideViewModel: ViewModel {
     }
 
     enum BackgroundState {
+        case refreshing
+    }
+
+    enum State {
+        case content
+        case error
+        case initial
         case refreshing
     }
 
@@ -50,6 +60,7 @@ final class GuideViewModel: ViewModel {
 
     private let batchSize = 50
     private let lookback: TimeInterval
+    private var channels: [BaseItemDto] = []
     private var fetchedChannelIDs: Set<String> = []
 
     init(
@@ -79,8 +90,19 @@ final class GuideViewModel: ViewModel {
             .store(in: &cancellables)
     }
 
+    @Function(\Action.Cases.getNextPage)
+    private func _getNextPage(_ channels: [BaseItemDto]) async throws {
+        try await updatePrograms(with: channels)
+    }
+
     @Function(\Action.Cases.refresh)
     private func _refresh(_ channels: [BaseItemDto]) async throws {
+        try await updatePrograms(with: channels)
+    }
+
+    private func updatePrograms(with channels: [BaseItemDto]) async throws {
+        self.channels = channels
+
         let channelIDs = channels
             .compactMap(\.id)
             .filter { !fetchedChannelIDs.contains($0) }
@@ -131,6 +153,7 @@ final class GuideViewModel: ViewModel {
         entries.removeAll()
         fetchedChannelIDs.removeAll()
         scrollProxy.reset()
+        refresh(channels: channels)
     }
 
     private func defaultStartDate() -> Date {
