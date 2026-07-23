@@ -24,7 +24,7 @@ struct GuideDateMenu: View {
 
     var body: some View {
         #if os(tvOS)
-        HStack(spacing: 8) {
+        HStack(spacing: 16) {
             ForEach(viewModel.availableDates, id: \.self) { date in
                 DatePill(
                     title: date.formatted(.dateTime.weekday(.abbreviated).day()),
@@ -103,10 +103,9 @@ extension GuideDateMenu {
 
         var body: some View {
             Text(title)
-                .font(.caption2.weight(.semibold))
+                .font(.footnote.weight(.semibold))
                 .lineLimit(1)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .frame(width: 150, height: 44)
                 .backport
                 .glassEffect(
                     .regular.selection(
