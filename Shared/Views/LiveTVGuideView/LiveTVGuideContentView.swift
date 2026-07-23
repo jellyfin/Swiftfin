@@ -81,7 +81,7 @@ struct LiveTVGuideContentView: View {
         }
         .onFirstAppear {
             viewModel.selectedChannelID = selectedChannelID
-            viewModel.loadPrograms(for: channels)
+            viewModel.loadPrograms(channels: channels)
         }
         .backport
         .onChange(of: selectedChannelID) {
@@ -89,11 +89,11 @@ struct LiveTVGuideContentView: View {
         }
         .backport
         .onChange(of: channels) {
-            viewModel.loadPrograms(for: channels)
+            viewModel.loadPrograms(channels: channels)
         }
         .backport
         .onChange(of: viewModel.startDate) {
-            viewModel.loadPrograms(for: channels)
+            viewModel.loadPrograms(channels: channels)
         }
     }
 }

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -17,6 +16,7 @@ struct GuideProgramButton: View {
     let height: CGFloat
     let now: Date
     let playsOnSelect: Bool
+    let accentColor: Color
     let action: () -> Void
 
     private var isCurrent: Bool {
@@ -37,7 +37,8 @@ struct GuideProgramButton: View {
                 program: program,
                 isCurrent: isCurrent,
                 showsText: width >= 70,
-                width: width
+                width: width,
+                accentColor: accentColor
             )
             .frame(width: width, height: height)
         }
@@ -52,9 +53,6 @@ extension GuideProgramButton {
 
     private struct Content: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
         @Environment(\.isFocused)
         private var isFocused
 
@@ -62,6 +60,7 @@ extension GuideProgramButton {
         let isCurrent: Bool
         let showsText: Bool
         let width: CGFloat
+        let accentColor: Color
 
         private var cellPadding: CGFloat {
             guard UIDevice.isTV else { return 2 }
@@ -97,7 +96,7 @@ extension GuideProgramButton {
         var body: some View {
             VStack(alignment: .leading, spacing: 2) {
                 if showsText {
-                    if #available(iOS 17, tvOS 17, *) {
+                    if #available(iOS 17, tvOS 17, *), width >= 200 {
                         let maxShift = max(0, width - 76)
 
                         textContent

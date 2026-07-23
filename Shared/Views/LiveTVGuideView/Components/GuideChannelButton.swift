@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -17,6 +16,7 @@ struct GuideChannelButton: View {
     let height: CGFloat
     let isSelected: Bool
     let playsOnSelect: Bool
+    let accentColor: Color
     let action: () -> Void
 
     var body: some View {
@@ -26,7 +26,8 @@ struct GuideChannelButton: View {
                 width: width,
                 height: height,
                 isSelected: isSelected,
-                playsOnSelect: playsOnSelect
+                playsOnSelect: playsOnSelect,
+                accentColor: accentColor
             )
         }
         .buttonStyle(GuideButtonStyle())
@@ -37,9 +38,6 @@ extension GuideChannelButton {
 
     private struct Content: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
         @Environment(\.isFocused)
         private var isFocused
 
@@ -48,6 +46,7 @@ extension GuideChannelButton {
         let height: CGFloat
         let isSelected: Bool
         let playsOnSelect: Bool
+        let accentColor: Color
 
         private var posterSize: CGFloat {
             guard UIDevice.isTV else { return height }

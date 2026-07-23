@@ -24,7 +24,7 @@ struct GuideChannelRow: View {
     var body: some View {
         RowContent(
             scrollProxy: guideViewModel.scrollProxy,
-            programs: guideViewModel.programs[channel.id ?? ""] ?? [],
+            entries: guideViewModel.entries[channel.id ?? ""] ?? [],
             now: guideViewModel.now,
             startDate: guideViewModel.startDate,
             endDate: guideViewModel.endDate,
@@ -45,11 +45,8 @@ extension GuideChannelRow {
         @Default(.accentColor)
         private var accentColor
 
-        @State
-        private var positionedEntries: [PositionedEntry] = []
-
         let scrollProxy: GuideScrollProxy
-        let programs: [BaseItemDto]
+        let entries: [GuideEntry.Positioned]
         let now: Date
         let startDate: Date
         let endDate: Date
@@ -60,44 +57,8 @@ extension GuideChannelRow {
         let channelAction: () -> Void
         let programAction: (BaseItemDto) -> Void
 
-        private static let shortThreshold: TimeInterval = 15 * 60
-        private static let minProgramWidth: CGFloat = 50
-
-        private struct PositionedEntry: Identifiable {
-            let entry: GuideEntry
-            let x: CGFloat
-            let width: CGFloat
-
-            var id: String {
-                entry.id
-            }
-        }
-
         private func width(from start: Date, to end: Date) -> CGFloat {
             max(0, CGFloat(start.distance(to: end) / 60) * layout.pointsPerMinute)
-        }
-
-        private func updatePositionedEntries() {
-            let entries = GuideEntry.entries(
-                from: programs,
-                startDate: startDate,
-                endDate: endDate,
-                shortThreshold: Self.shortThreshold
-            )
-
-            var result: [PositionedEntry] = []
-            var runningX: CGFloat = 0
-
-            for entry in entries {
-                let x = max(width(from: startDate, to: entry.start), runningX)
-                let endX = width(from: startDate, to: entry.end)
-                let entryWidth = max(endX - x, Self.minProgramWidth)
-
-                result.append(PositionedEntry(entry: entry, x: x, width: entryWidth))
-                runningX = x + entryWidth
-            }
-
-            positionedEntries = result
         }
 
         var body: some View {
@@ -108,6 +69,7 @@ extension GuideChannelRow {
                     height: layout.rowHeight,
                     isSelected: isSelected,
                     playsOnSelect: playsOnSelect,
+                    accentColor: accentColor,
                     action: channelAction
                 )
 
@@ -126,28 +88,18 @@ extension GuideChannelRow {
                 alignment: .leading
             )
             .fixedSize(horizontal: false, vertical: true)
-            .onAppear {
-                updatePositionedEntries()
-            }
-            .backport
-            .onChange(of: programs) {
-                updatePositionedEntries()
-            }
-            .backport
-            .onChange(of: startDate) {
-                updatePositionedEntries()
-            }
         }
 
         @ViewBuilder
         private var programsView: some View {
-            let contentWidth = positionedEntries.last.map { $0.x + $0.width } ?? 0
+            let entriesWidth = entries.last.map { $0.x + $0.width } ?? 0
+            let contentWidth = max(width(from: startDate, to: endDate), entriesWidth)
 
             ZStack(alignment: .leading) {
                 Color.clear
                     .frame(width: max(contentWidth, 1), height: layout.rowHeight)
 
-                ForEach(positionedEntries) { item in
+                ForEach(entries) { item in
                     entryView(item.entry, width: item.width)
                         .offset(x: item.x)
                 }
@@ -172,6 +124,7 @@ extension GuideChannelRow {
                     height: layout.rowHeight,
                     now: now,
                     playsOnSelect: playsOnSelect,
+                    accentColor: accentColor,
                     action: { programAction(program) }
                 )
             case let .group(programs, _, _):
@@ -181,6 +134,7 @@ extension GuideChannelRow {
                     height: layout.rowHeight,
                     now: now,
                     playsOnSelect: playsOnSelect,
+                    accentColor: accentColor,
                     action: programAction
                 )
             }

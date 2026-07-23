@@ -12,7 +12,27 @@ import Foundation
 import JellyfinAPI
 
 @MainActor
+@Stateful
 final class GuideViewModel: ViewModel {
+
+    @CasePathable
+    enum Action {
+        case select(date: Date)
+        case loadPrograms(channels: [BaseItemDto])
+
+        var transition: Transition {
+            switch self {
+            case .select:
+                .none
+            case .loadPrograms:
+                .background(.loadingPrograms)
+            }
+        }
+    }
+
+    enum BackgroundState {
+        case loadingPrograms
+    }
 
     private static let batchSize = 50
     private static let dayCount = 7
@@ -32,7 +52,7 @@ final class GuideViewModel: ViewModel {
     @Published
     private(set) var now: Date = .now
     @Published
-    private(set) var programs: [String: [BaseItemDto]] = [:]
+    private(set) var entries: [String: [GuideEntry.Positioned]] = [:]
     @Published
     var selectedChannelID: String?
 
@@ -66,7 +86,8 @@ final class GuideViewModel: ViewModel {
             .store(in: &cancellables)
     }
 
-    func select(date: Date) {
+    @Function(\Action.Cases.select)
+    private func _select(_ date: Date) {
         let calendar = Calendar.current
         let newStartDate = calendar.isDate(date, inSameDayAs: .now)
             ? Self.defaultStartDate()
@@ -75,12 +96,13 @@ final class GuideViewModel: ViewModel {
         guard newStartDate != startDate else { return }
 
         startDate = newStartDate
-        programs.removeAll()
+        entries.removeAll()
         fetchedChannelIDs.removeAll()
         scrollProxy.reset()
     }
 
-    func loadPrograms(for channels: [BaseItemDto]) {
+    @Function(\Action.Cases.loadPrograms)
+    private func _loadPrograms(_ channels: [BaseItemDto]) async {
         let channelIDs = channels
             .compactMap(\.id)
             .filter { !fetchedChannelIDs.contains($0) }
@@ -89,29 +111,46 @@ final class GuideViewModel: ViewModel {
 
         fetchedChannelIDs.formUnion(channelIDs)
 
-        for batch in channelIDs.chunks(ofCount: Self.batchSize) {
-            let requestStartDate = startDate
+        let requestStartDate = startDate
+        let requestEndDate = endDate
 
-            Task {
-                guard startDate == requestStartDate else { return }
+        await withTaskGroup(of: Void.self) { group in
+            for batch in channelIDs.chunks(ofCount: Self.batchSize) {
+                group.addTask { @MainActor in
+                    do {
+                        let newPrograms = try await self.fetchPrograms(
+                            channelIDs: Array(batch),
+                            startDate: requestStartDate,
+                            endDate: requestEndDate
+                        )
 
-                do {
-                    let newPrograms = try await fetchPrograms(channelIDs: Array(batch))
+                        guard self.startDate == requestStartDate else { return }
 
-                    guard startDate == requestStartDate else { return }
+                        let newEntries = newPrograms.mapValues { programs in
+                            GuideEntry.positioned(
+                                from: programs,
+                                startDate: requestStartDate,
+                                endDate: requestEndDate,
+                                pointsPerMinute: GuideLayout.current.pointsPerMinute
+                            )
+                        }
 
-                    programs.merge(newPrograms) { _, new in new }
-                } catch {
-                    fetchedChannelIDs.subtract(batch)
+                        self.entries.merge(newEntries) { _, new in new }
+                    } catch {
+                        self.fetchedChannelIDs.subtract(batch)
+                    }
                 }
             }
         }
     }
 
-    private func fetchPrograms(channelIDs: [String]) async throws -> [String: [BaseItemDto]] {
+    private func fetchPrograms(
+        channelIDs: [String],
+        startDate: Date,
+        endDate: Date
+    ) async throws -> [String: [BaseItemDto]] {
         var parameters = Paths.GetLiveTvProgramsParameters()
         parameters.channelIDs = channelIDs
-        parameters.fields = .MinimumFields.appending(.channelInfo)
         parameters.maxStartDate = endDate
         parameters.minEndDate = startDate
         parameters.sortBy = [.startDate]

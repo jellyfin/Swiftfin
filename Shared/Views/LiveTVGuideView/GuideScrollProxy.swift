@@ -8,11 +8,31 @@
 
 import UIKit
 
-final class GuideScrollProxy: NSObject, UIScrollViewDelegate {
+final class GuideScrollProxy: ObservableObject {
+
+    private final class Observations {
+
+        let contentOffset: NSKeyValueObservation
+        let contentSize: NSKeyValueObservation
+
+        init(contentOffset: NSKeyValueObservation, contentSize: NSKeyValueObservation) {
+            self.contentOffset = contentOffset
+            self.contentSize = contentSize
+        }
+    }
 
     private static let interactiveJumpThreshold: CGFloat = 600
+    private static let windowQuantum: CGFloat = 300
+    private static let windowMargin: CGFloat = 600
+
+    @Published
+    private(set) var visibleWindow: ClosedRange<CGFloat> = 0 ... CGFloat.greatestFiniteMagnitude
 
     private let scrollViews = NSHashTable<UIScrollView>.weakObjects()
+    private let observations = NSMapTable<UIScrollView, Observations>(
+        keyOptions: .weakMemory,
+        valueOptions: .strongMemory
+    )
 
     private var offsetX: CGFloat = 0
     private var didInitialize = false
@@ -24,53 +44,50 @@ final class GuideScrollProxy: NSObject, UIScrollViewDelegate {
     ) {
         if !scrollViews.contains(scrollView) {
             scrollViews.add(scrollView)
-            scrollView.delegate = self
+
+            let contentOffset = scrollView.observe(\.contentOffset) { [weak self] scrollView, _ in
+                self?.contentOffsetDidChange(scrollView)
+            }
+
+            let contentSize = scrollView.observe(\.contentSize) { [weak self] scrollView, _ in
+                self?.apply(to: scrollView)
+            }
+
+            observations.setObject(
+                Observations(contentOffset: contentOffset, contentSize: contentSize),
+                forKey: scrollView
+            )
         }
 
         if !didInitialize {
             let viewport = scrollView.bounds.width
 
-            guard viewport > 0 else { return }
+            if viewport > 0, scrollView.contentSize.width > viewport {
+                if let nowOffset {
+                    let maxOffset = max(0, scrollView.contentSize.width - viewport)
+                    offsetX = min(max(0, nowOffset - viewport / 2), maxOffset)
+                } else {
+                    offsetX = 0
+                }
 
-            if let nowOffset {
-                let maxOffset = max(0, scrollView.contentSize.width - viewport)
-                offsetX = min(max(0, nowOffset - viewport / 2), maxOffset)
-            } else {
-                offsetX = 0
+                didInitialize = true
+                updateVisibleWindow()
             }
-
-            didInitialize = true
         }
 
-        if abs(scrollView.contentOffset.x - offsetX) > 0.5 {
-            isSyncing = true
-            scrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
-            isSyncing = false
+        apply(to: scrollView)
+
+        DispatchQueue.main.async { [weak self, weak scrollView] in
+            guard let self, let scrollView else { return }
+            self.apply(to: scrollView)
         }
-    }
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard !isSyncing, scrollViews.contains(scrollView) else { return }
-
-        #if os(iOS)
-        guard scrollView.isDragging || scrollView.isDecelerating else { return }
-        #else
-        guard abs(scrollView.contentOffset.x - offsetX) < Self.interactiveJumpThreshold else {
-            isSyncing = true
-            scrollView.setContentOffset(CGPoint(x: offsetX, y: scrollView.contentOffset.y), animated: false)
-            isSyncing = false
-            return
-        }
-        #endif
-
-        offsetX = scrollView.contentOffset.x
-        apply(except: scrollView)
     }
 
     func reset() {
         offsetX = 0
         didInitialize = false
         apply()
+        updateVisibleWindow()
     }
 
     func scrollTo(centering x: CGFloat) {
@@ -78,16 +95,47 @@ final class GuideScrollProxy: NSObject, UIScrollViewDelegate {
 
         offsetX = max(0, x - reference.bounds.width / 2)
         apply()
+        updateVisibleWindow()
+    }
+
+    private func contentOffsetDidChange(_ scrollView: UIScrollView) {
+        guard !isSyncing, scrollViews.contains(scrollView) else { return }
+
+        #if os(iOS)
+        guard scrollView.isTracking || scrollView.isDragging || scrollView.isDecelerating else {
+            snap(scrollView)
+            return
+        }
+        #else
+        guard abs(scrollView.contentOffset.x - offsetX) < Self.interactiveJumpThreshold else {
+            snap(scrollView)
+            return
+        }
+        #endif
+
+        guard abs(scrollView.contentOffset.x - offsetX) > 0.5 else { return }
+
+        offsetX = scrollView.contentOffset.x
+        apply(except: scrollView)
+    }
+
+    private func snap(_ scrollView: UIScrollView) {
+        guard abs(scrollView.contentOffset.x - offsetX) > 0.5 else { return }
+
+        isSyncing = true
+        scrollView.setContentOffset(CGPoint(x: offsetX, y: scrollView.contentOffset.y), animated: false)
+        isSyncing = false
+    }
+
+    private func apply(to scrollView: UIScrollView) {
+        guard !scrollView.isTracking, !scrollView.isDragging, !scrollView.isDecelerating else { return }
+
+        snap(scrollView)
     }
 
     private func apply(except source: UIScrollView? = nil) {
-        isSyncing = true
-        defer { isSyncing = false }
-
         for scrollView in scrollViews.allObjects where scrollView !== source {
-            if abs(scrollView.contentOffset.x - offsetX) > 0.5 {
-                scrollView.setContentOffset(CGPoint(x: offsetX, y: scrollView.contentOffset.y), animated: false)
-            }
+            snap(scrollView)
         }
     }
 }

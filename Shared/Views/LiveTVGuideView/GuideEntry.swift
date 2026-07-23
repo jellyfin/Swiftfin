@@ -11,6 +11,9 @@ import JellyfinAPI
 
 enum GuideEntry: Identifiable {
 
+    private static let shortThreshold: TimeInterval = 15 * 60
+    private static let minEntryWidth: CGFloat = 50
+
     case single(BaseItemDto, start: Date, end: Date)
     case group([BaseItemDto], start: Date, end: Date)
 
@@ -89,6 +92,52 @@ enum GuideEntry: Identifiable {
             }
         }
         flush()
+
+        return result
+    }
+}
+
+extension GuideEntry {
+
+    struct Positioned: Identifiable {
+
+        let entry: GuideEntry
+        let x: CGFloat
+        let width: CGFloat
+
+        var id: String {
+            entry.id
+        }
+    }
+
+    static func positioned(
+        from programs: [BaseItemDto],
+        startDate: Date,
+        endDate: Date,
+        pointsPerMinute: CGFloat
+    ) -> [Positioned] {
+        let entries = entries(
+            from: programs,
+            startDate: startDate,
+            endDate: endDate,
+            shortThreshold: shortThreshold
+        )
+
+        var result: [Positioned] = []
+        var runningX: CGFloat = 0
+
+        func width(from start: Date, to end: Date) -> CGFloat {
+            max(0, CGFloat(start.distance(to: end) / 60) * pointsPerMinute)
+        }
+
+        for entry in entries {
+            let x = max(width(from: startDate, to: entry.start), runningX)
+            let endX = width(from: startDate, to: entry.end)
+            let entryWidth = max(endX - x, Self.minEntryWidth)
+
+            result.append(Positioned(entry: entry, x: x, width: entryWidth))
+            runningX = x + entryWidth
+        }
 
         return result
     }

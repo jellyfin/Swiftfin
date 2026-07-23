@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -17,6 +16,7 @@ struct GuideProgramsMenu: View {
     let height: CGFloat
     let now: Date
     let playsOnSelect: Bool
+    let accentColor: Color
     let action: (BaseItemDto) -> Void
 
     private var isCurrent: Bool {
@@ -42,7 +42,8 @@ struct GuideProgramsMenu: View {
             Content(
                 count: programs.count,
                 start: programs.first?.startDate,
-                isCurrent: isCurrent
+                isCurrent: isCurrent,
+                accentColor: accentColor
             )
             .frame(width: width, height: height)
         }
@@ -62,15 +63,13 @@ extension GuideProgramsMenu {
 
     private struct Content: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
         @Environment(\.isFocused)
         private var isFocused
 
         let count: Int
         let start: Date?
         let isCurrent: Bool
+        let accentColor: Color
 
         private var cellPadding: CGFloat {
             guard UIDevice.isTV else { return 2 }
