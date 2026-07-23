@@ -14,17 +14,10 @@ struct LiveTVGuideView: View {
     @Router
     private var router
 
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass
-
     @StateObject
     private var channelsViewModel = PagingLibraryViewModel(library: GuideChannelsLibrary())
     @StateObject
     private var viewModel = GuideViewModel()
-
-    private var isCompact: Bool {
-        horizontalSizeClass == .compact
-    }
 
     var body: some View {
         ZStack {
@@ -60,9 +53,7 @@ struct LiveTVGuideView: View {
         }
         #if os(iOS)
         .topBarTrailing {
-            if isCompact {
-                GuideDateMenu(viewModel: viewModel)
-            }
+            GuideDateMenu(viewModel: viewModel)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.visible, for: .navigationBar)
@@ -74,11 +65,11 @@ struct LiveTVGuideView: View {
     @ViewBuilder
     private var contentView: some View {
         VStack(spacing: 0) {
-            if !isCompact {
-                GuideDateBar(viewModel: viewModel)
-                    .frame(maxWidth: .infinity)
-                    .padding(.bottom, 8)
-            }
+            #if os(tvOS)
+            GuideDateBar(viewModel: viewModel)
+                .frame(maxWidth: .infinity)
+                .padding(.bottom, 8)
+            #endif
 
             LiveTVGuideContentView(
                 viewModel: viewModel,

@@ -86,10 +86,7 @@ extension GuideDateBar {
             Text(title)
                 .font(.footnote.weight(.semibold))
                 .lineLimit(1)
-                .frame(
-                    width: UIDevice.isTV ? 150 : 110,
-                    height: UIDevice.isTV ? 44 : 36
-                )
+                .frame(width: 150, height: 44)
                 .backport
                 .glassEffect(
                     .regular.selection(
