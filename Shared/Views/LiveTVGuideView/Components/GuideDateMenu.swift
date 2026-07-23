@@ -37,5 +37,8 @@ struct GuideDateMenu: View {
         } label: {
             Label(label(for: selectedDate), systemImage: "calendar")
         }
+        #if os(tvOS)
+        .menuStyle(.borderlessButton)
+        #endif
     }
 }

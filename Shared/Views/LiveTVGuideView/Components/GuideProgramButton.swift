@@ -36,7 +36,8 @@ struct GuideProgramButton: View {
             Content(
                 program: program,
                 isCurrent: isCurrent,
-                showsText: width >= 70
+                showsText: width >= 70,
+                width: width
             )
             .opacity(isSelectable ? 1 : 0.5)
             .frame(width: width, height: height)
@@ -61,6 +62,7 @@ extension GuideProgramButton {
         let program: BaseItemDto
         let isCurrent: Bool
         let showsText: Bool
+        let width: CGFloat
 
         private var fill: Color {
             if isCurrent {
@@ -74,28 +76,46 @@ extension GuideProgramButton {
             #endif
         }
 
+        @ViewBuilder
+        private var textContent: some View {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(program.displayTitle)
+                    .font(.footnote.weight(isCurrent ? .semibold : .regular))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+
+                DotHStack {
+                    if let startDate = program.startDate {
+                        Text(startDate, style: .time)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+
+                    if let endDate = program.endDate {
+                        Text(endDate, style: .time)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+            }
+        }
+
         var body: some View {
             VStack(alignment: .leading, spacing: 2) {
                 if showsText {
-                    Text(program.displayTitle)
-                        .font(.footnote.weight(isCurrent ? .semibold : .regular))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
+                    if #available(iOS 17, tvOS 17, *) {
+                        let maxShift = max(0, width - 76)
 
-                    DotHStack {
-                        if let startDate = program.startDate {
-                            Text(startDate, style: .time)
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        }
-
-                        if let endDate = program.endDate {
-                            Text(endDate, style: .time)
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        }
+                        textContent
+                            .visualEffect { content, proxy in
+                                content.offset(
+                                    x: clamp(8 - proxy.frame(in: .scrollView(axis: .horizontal)).minX, min: 0, max: maxShift)
+                                )
+                            }
+                    } else {
+                        textContent
                     }
                 }
 
