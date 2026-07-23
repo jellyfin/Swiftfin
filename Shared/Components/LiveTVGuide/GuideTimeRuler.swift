@@ -10,9 +10,16 @@ import SwiftUI
 
 struct GuideTimeRuler: View {
 
-    let startDate: Date
-    let endDate: Date
-    let layout: GuideLayout
+    @ObservedObject
+    var viewModel: GuideViewModel
+
+    private var startDate: Date {
+        viewModel.startDate
+    }
+
+    private var endDate: Date {
+        viewModel.endDate
+    }
 
     private static let intervalMinutes = 30
 
@@ -26,7 +33,7 @@ struct GuideTimeRuler: View {
                 let date = startDate.addingTimeInterval(Double(index * Self.intervalMinutes * 60))
 
                 label(for: date)
-                    .frame(width: CGFloat(Self.intervalMinutes) * layout.pointsPerMinute, alignment: .leading)
+                    .frame(width: CGFloat(Self.intervalMinutes) * GuideLayout.current.pointsPerMinute, alignment: .leading)
                     .overlay(alignment: .leading) {
                         Rectangle()
                             .fill(Color.secondarySystemFill)
@@ -34,7 +41,7 @@ struct GuideTimeRuler: View {
                     }
             }
         }
-        .frame(height: layout.rulerHeight)
+        .frame(height: GuideLayout.current.rulerHeight)
     }
 
     @ViewBuilder

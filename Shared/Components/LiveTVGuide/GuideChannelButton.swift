@@ -12,22 +12,16 @@ import SwiftUI
 struct GuideChannelButton: View {
 
     let channel: BaseItemDto
-    let width: CGFloat
-    let height: CGFloat
     let isSelected: Bool
     let playsOnSelect: Bool
-    let accentColor: Color
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             Content(
                 channel: channel,
-                width: width,
-                height: height,
                 isSelected: isSelected,
-                playsOnSelect: playsOnSelect,
-                accentColor: accentColor
+                playsOnSelect: playsOnSelect
             )
         }
         .buttonStyle(GuideButtonStyle())
@@ -45,13 +39,11 @@ extension GuideChannelButton {
         private var isFocused
 
         let channel: BaseItemDto
-        let width: CGFloat
-        let height: CGFloat
         let isSelected: Bool
         let playsOnSelect: Bool
-        let accentColor: Color
 
         private var posterSize: CGFloat {
+            let height = GuideLayout.current.rowHeight
             guard UIDevice.isTV else { return height }
             return isFocused ? height : height - 8
         }
@@ -88,18 +80,18 @@ extension GuideChannelButton {
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .overlay {
                 RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(accentColor, lineWidth: borderWidth)
+                    .strokeBorder(.foreground, lineWidth: borderWidth)
             }
             .overlay(alignment: .bottomTrailing) {
                 if isSelected {
                     Image(systemName: "play.circle.fill")
                         .font(.subheadline)
-                        .foregroundStyle(.white, accentColor)
+                        .foregroundStyle(.white, .foreground)
                         .subtleShadow()
                         .padding(4)
                 }
             }
-            .frame(width: width, height: height)
+            .frame(width: GuideLayout.current.channelColumnWidth, height: GuideLayout.current.rowHeight)
             .animation(.easeOut(duration: 0.1), value: isFocused)
         }
     }

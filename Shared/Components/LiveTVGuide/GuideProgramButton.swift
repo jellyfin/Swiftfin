@@ -13,10 +13,8 @@ struct GuideProgramButton: View {
 
     let program: BaseItemDto
     let width: CGFloat
-    let height: CGFloat
     let now: Date
     let playsOnSelect: Bool
-    let accentColor: Color
     let action: () -> Void
 
     private var isCurrent: Bool {
@@ -37,10 +35,9 @@ struct GuideProgramButton: View {
                 program: program,
                 isCurrent: isCurrent,
                 showsText: width >= 70,
-                width: width,
-                accentColor: accentColor
+                width: width
             )
-            .frame(width: width, height: height)
+            .frame(width: width, height: GuideLayout.current.rowHeight)
         }
         .buttonStyle(GuideButtonStyle())
         #if os(tvOS)
@@ -60,7 +57,6 @@ extension GuideProgramButton {
         let isCurrent: Bool
         let showsText: Bool
         let width: CGFloat
-        let accentColor: Color
 
         private var cellPadding: CGFloat {
             guard UIDevice.isTV else { return 2 }
@@ -116,18 +112,23 @@ extension GuideProgramButton {
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .background {
+                if isCurrent {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(.foreground)
+                        .opacity(0.5)
+                }
+            }
             .backport
             .glassEffect(
-                .regular
-                    .tint(isCurrent ? accentColor.opacity(0.5) : nil)
-                    .interactive(false),
+                .regular.interactive(false),
                 in: .rect(cornerRadius: 6)
             )
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .overlay {
                 RoundedRectangle(cornerRadius: 6)
                     .strokeBorder(
-                        isFocused ? accentColor : Color.secondarySystemFill.opacity(0.5),
+                        isFocused ? AnyShapeStyle(.foreground) : AnyShapeStyle(Color.secondarySystemFill.opacity(0.5)),
                         lineWidth: isFocused ? 4 : 1
                     )
             }

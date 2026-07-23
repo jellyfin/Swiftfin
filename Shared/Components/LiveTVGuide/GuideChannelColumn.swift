@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
@@ -19,14 +20,13 @@ struct GuideChannelColumn: View {
     @ObservedObject
     var guideViewModel: GuideViewModel
 
-    let channels: [BaseItemDto]
-    let layout: GuideLayout
+    let channels: IdentifiedArrayOf<BaseItemDto>
     let playsOnSelect: Bool
     let bottomInset: CGFloat
     let onSelectChannel: (BaseItemDto) -> Void
 
     private func width(from start: Date, to end: Date) -> CGFloat {
-        max(0, CGFloat(start.distance(to: end) / 60) * layout.pointsPerMinute)
+        max(0, CGFloat(start.distance(to: end) / 60) * GuideLayout.current.pointsPerMinute)
     }
 
     var body: some View {
@@ -40,7 +40,7 @@ struct GuideChannelColumn: View {
                     }
                 }
             }
-            .frame(width: layout.channelColumnWidth, height: layout.rulerHeight)
+            .frame(width: GuideLayout.current.channelColumnWidth, height: GuideLayout.current.rulerHeight)
 
             Divider()
 
@@ -49,15 +49,13 @@ struct GuideChannelColumn: View {
                     ForEach(channels, id: \.id) { channel in
                         GuideChannelButton(
                             channel: channel,
-                            width: layout.channelColumnWidth,
-                            height: layout.rowHeight,
                             isSelected: channel.id != nil && channel.id == guideViewModel.selectedChannelID,
                             playsOnSelect: playsOnSelect,
-                            accentColor: accentColor,
                             action: { onSelectChannel(channel) }
                         )
                     }
                 }
+                .foregroundStyle(accentColor)
                 .padding(.bottom, bottomInset)
             }
             .scrollIndicators(.hidden)
@@ -69,7 +67,7 @@ struct GuideChannelColumn: View {
                 guideViewModel.verticalSync.register(scrollView)
             }
         }
-        .frame(width: layout.channelColumnWidth)
+        .frame(width: GuideLayout.current.channelColumnWidth)
         #if os(tvOS)
             .focusSection()
         #endif

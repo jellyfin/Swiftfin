@@ -13,10 +13,8 @@ struct GuideProgramsMenu: View {
 
     let programs: [BaseItemDto]
     let width: CGFloat
-    let height: CGFloat
     let now: Date
     let playsOnSelect: Bool
-    let accentColor: Color
     let action: (BaseItemDto) -> Void
 
     private var isCurrent: Bool {
@@ -42,10 +40,9 @@ struct GuideProgramsMenu: View {
             Content(
                 count: programs.count,
                 start: programs.first?.startDate,
-                isCurrent: isCurrent,
-                accentColor: accentColor
+                isCurrent: isCurrent
             )
-            .frame(width: width, height: height)
+            .frame(width: width, height: GuideLayout.current.rowHeight)
         }
         #if os(tvOS)
         .menuStyle(.borderlessButton)
@@ -69,7 +66,6 @@ extension GuideProgramsMenu {
         let count: Int
         let start: Date?
         let isCurrent: Bool
-        let accentColor: Color
 
         private var cellPadding: CGFloat {
             guard UIDevice.isTV else { return 2 }
@@ -101,17 +97,22 @@ extension GuideProgramsMenu {
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .background {
+                if isCurrent {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(.foreground)
+                        .opacity(0.5)
+                }
+            }
             .backport
             .glassEffect(
-                .regular
-                    .tint(isCurrent ? accentColor.opacity(0.5) : nil)
-                    .interactive(false),
+                .regular.interactive(false),
                 in: .rect(cornerRadius: 6)
             )
             .overlay {
                 RoundedRectangle(cornerRadius: 6)
                     .strokeBorder(
-                        isFocused ? accentColor : Color.secondarySystemFill.opacity(0.5),
+                        isFocused ? AnyShapeStyle(.foreground) : AnyShapeStyle(Color.secondarySystemFill.opacity(0.5)),
                         lineWidth: isFocused ? 4 : 1
                     )
             }

@@ -47,7 +47,7 @@ struct LiveTVGuideView: View {
             }
         }
         .backport
-        .onChange(of: Array(channelsViewModel.displayedElements)) { _, channels in
+        .onChange(of: channelsViewModel.displayedElements) { _, channels in
             guard viewModel.state == .initial else { return }
             viewModel.refresh(channels: channels)
         }
@@ -73,17 +73,10 @@ struct LiveTVGuideView: View {
 
             LiveTVGuideContentView(
                 viewModel: viewModel,
-                channels: Array(channelsViewModel.displayedElements),
-                onReachedBottomEdge: {
-                    channelsViewModel.getNextPage()
-                },
-                onSelectChannel: {
-                    router.route(to: .item(item: $0))
-                },
-                onSelectProgram: {
-                    router.route(to: .item(item: $0))
-                }
-            )
+                channelsViewModel: channelsViewModel
+            ) {
+                router.route(to: .item(item: $0))
+            }
         }
     }
 }

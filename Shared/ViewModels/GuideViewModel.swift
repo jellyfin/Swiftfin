@@ -9,6 +9,7 @@
 import Algorithms
 import Combine
 import Foundation
+import IdentifiedCollections
 import JellyfinAPI
 
 @MainActor
@@ -17,8 +18,8 @@ final class GuideViewModel: ViewModel {
 
     @CasePathable
     enum Action {
-        case getNextPage(channels: [BaseItemDto])
-        case refresh(channels: [BaseItemDto])
+        case getNextPage(channels: IdentifiedArrayOf<BaseItemDto>)
+        case refresh(channels: IdentifiedArrayOf<BaseItemDto>)
         case setDate(date: Date)
 
         var transition: Transition {
@@ -60,7 +61,7 @@ final class GuideViewModel: ViewModel {
 
     private let batchSize = 50
     private let lookback: TimeInterval
-    private var channels: [BaseItemDto] = []
+    private var channels: IdentifiedArrayOf<BaseItemDto> = []
     private var fetchedChannelIDs: Set<String> = []
 
     init(
@@ -91,16 +92,16 @@ final class GuideViewModel: ViewModel {
     }
 
     @Function(\Action.Cases.getNextPage)
-    private func _getNextPage(_ channels: [BaseItemDto]) async throws {
+    private func _getNextPage(_ channels: IdentifiedArrayOf<BaseItemDto>) async throws {
         try await updatePrograms(with: channels)
     }
 
     @Function(\Action.Cases.refresh)
-    private func _refresh(_ channels: [BaseItemDto]) async throws {
+    private func _refresh(_ channels: IdentifiedArrayOf<BaseItemDto>) async throws {
         try await updatePrograms(with: channels)
     }
 
-    private func updatePrograms(with channels: [BaseItemDto]) async throws {
+    private func updatePrograms(with channels: IdentifiedArrayOf<BaseItemDto>) async throws {
         self.channels = channels
 
         let channelIDs = channels

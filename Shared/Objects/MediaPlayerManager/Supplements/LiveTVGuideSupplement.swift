@@ -36,20 +36,6 @@ extension LiveTVGuideSupplement {
         @StateObject
         private var viewModel = GuideViewModel(hours: 12, lookback: 0)
 
-        private func select(item: BaseItemDto) {
-            defer {
-                containerState.select(supplement: nil)
-            }
-
-            guard item.id != manager.item.id && item.channelID != manager.item.id,
-                  let provider = item.getPlaybackItemProvider(userSession: viewModel.userSession)
-            else {
-                return
-            }
-
-            manager.playNewItem(provider: provider)
-        }
-
         private var content: some View {
             ZStack {
                 switch (channelsViewModel.state, viewModel.state) {
@@ -65,13 +51,21 @@ extension LiveTVGuideSupplement {
                     } else {
                         LiveTVGuideContentView(
                             viewModel: viewModel,
-                            channels: Array(channelsViewModel.displayedElements),
-                            selectedChannelID: manager.item.id,
-                            playsOnSelect: true,
-                            onReachedBottomEdge: { channelsViewModel.getNextPage() },
-                            onSelectChannel: select(item:),
-                            onSelectProgram: select(item:)
-                        )
+                            channelsViewModel: channelsViewModel,
+                            playing: manager.item.id
+                        ) { item in
+                            defer {
+                                containerState.select(supplement: nil)
+                            }
+
+                            guard item.id != manager.item.id && item.channelID != manager.item.id,
+                                  let provider = item.getPlaybackItemProvider(userSession: viewModel.userSession)
+                            else {
+                                return
+                            }
+
+                            manager.playNewItem(provider: provider)
+                        }
                     }
                 }
             }
@@ -81,7 +75,7 @@ extension LiveTVGuideSupplement {
                 }
             }
             .backport
-            .onChange(of: Array(channelsViewModel.displayedElements)) { _, channels in
+            .onChange(of: channelsViewModel.displayedElements) { _, channels in
                 guard viewModel.state == .initial else { return }
                 viewModel.refresh(channels: channels)
             }

@@ -16,7 +16,6 @@ struct GuideChannelRow: View {
     var guideViewModel: GuideViewModel
 
     let channel: BaseItemDto
-    let layout: GuideLayout
     let playsOnSelect: Bool
     let programAction: (BaseItemDto) -> Void
 
@@ -27,7 +26,6 @@ struct GuideChannelRow: View {
             now: guideViewModel.now,
             startDate: guideViewModel.startDate,
             endDate: guideViewModel.endDate,
-            layout: layout,
             playsOnSelect: playsOnSelect,
             programAction: programAction
         )
@@ -48,12 +46,11 @@ extension GuideChannelRow {
         let now: Date
         let startDate: Date
         let endDate: Date
-        let layout: GuideLayout
         let playsOnSelect: Bool
         let programAction: (BaseItemDto) -> Void
 
         private func width(from start: Date, to end: Date) -> CGFloat {
-            max(0, CGFloat(start.distance(to: end) / 60) * layout.pointsPerMinute)
+            max(0, CGFloat(start.distance(to: end) / 60) * GuideLayout.current.pointsPerMinute)
         }
 
         var body: some View {
@@ -65,7 +62,7 @@ extension GuideChannelRow {
 
             ZStack(alignment: .leading) {
                 Color.clear
-                    .frame(width: contentWidth, height: layout.rowHeight)
+                    .frame(width: contentWidth, height: GuideLayout.current.rowHeight)
 
                 ForEach(visibleEntries) { item in
                     entryView(item)
@@ -74,11 +71,12 @@ extension GuideChannelRow {
             }
             .frame(
                 maxWidth: .infinity,
-                minHeight: layout.rowHeight,
-                maxHeight: layout.rowHeight,
+                minHeight: GuideLayout.current.rowHeight,
+                maxHeight: GuideLayout.current.rowHeight,
                 alignment: .leading
             )
             .fixedSize(horizontal: false, vertical: true)
+            .foregroundStyle(accentColor)
         }
 
         @ViewBuilder
@@ -88,20 +86,16 @@ extension GuideChannelRow {
                 GuideProgramButton(
                     program: program,
                     width: item.width,
-                    height: layout.rowHeight,
                     now: now,
                     playsOnSelect: playsOnSelect,
-                    accentColor: accentColor,
                     action: { programAction(program) }
                 )
             case let .group(programs, _, _):
                 GuideProgramsMenu(
                     programs: programs,
                     width: item.width,
-                    height: layout.rowHeight,
                     now: now,
                     playsOnSelect: playsOnSelect,
-                    accentColor: accentColor,
                     action: programAction
                 )
             }

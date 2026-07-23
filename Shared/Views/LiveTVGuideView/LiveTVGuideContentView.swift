@@ -8,6 +8,7 @@
 
 import CollectionVGrid
 import Defaults
+import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
@@ -19,31 +20,12 @@ struct LiveTVGuideContentView: View {
 
     @ObservedObject
     private var viewModel: GuideViewModel
+    @ObservedObject
+    private var channelsViewModel: PagingLibraryViewModel<GuideChannelsLibrary>
 
-    private let channels: [BaseItemDto]
     private let selectedChannelID: String?
     private let playsOnSelect: Bool
-    private let onReachedBottomEdge: () -> Void
-    private let onSelectChannel: (BaseItemDto) -> Void
-    private let onSelectProgram: (BaseItemDto) -> Void
-
-    init(
-        viewModel: GuideViewModel,
-        channels: [BaseItemDto],
-        selectedChannelID: String? = nil,
-        playsOnSelect: Bool = false,
-        onReachedBottomEdge: @escaping () -> Void,
-        onSelectChannel: @escaping (BaseItemDto) -> Void,
-        onSelectProgram: @escaping (BaseItemDto) -> Void
-    ) {
-        self.viewModel = viewModel
-        self.channels = channels
-        self.selectedChannelID = selectedChannelID
-        self.playsOnSelect = playsOnSelect
-        self.onReachedBottomEdge = onReachedBottomEdge
-        self.onSelectChannel = onSelectChannel
-        self.onSelectProgram = onSelectProgram
-    }
+    private let action: (BaseItemDto) -> Void
 
     private func width(from start: Date, to end: Date) -> CGFloat {
         max(0, CGFloat(start.distance(to: end) / 60) * GuideLayout.current.pointsPerMinute)
@@ -53,7 +35,82 @@ struct LiveTVGuideContentView: View {
         AlternateLayoutView {
             Color.clear
         } content: { frame in
-            contentBody(bottomInset: frame.safeAreaInsets.bottom)
+            let contentWidth = max(1, width(from: viewModel.startDate, to: viewModel.endDate))
+            let nowOffset = width(from: viewModel.startDate, to: viewModel.now)
+
+            HStack(spacing: 0) {
+                GuideChannelColumn(
+                    guideViewModel: viewModel,
+                    channels: channelsViewModel.displayedElements,
+                    playsOnSelect: playsOnSelect,
+                    bottomInset: frame.safeAreaInsets.bottom
+                ) { item in
+                    action(item)
+                }
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        GuideTimeRuler(viewModel: viewModel)
+
+                        Divider()
+
+                        CollectionVGrid(
+                            uniqueElements: channelsViewModel.displayedElements,
+                            layout: .columns(
+                                1,
+                                insets: .init(
+                                    top: 0,
+                                    leading: 0,
+                                    bottom: frame.safeAreaInsets.bottom,
+                                    trailing: 0
+                                ),
+                                itemSpacing: 0,
+                                lineSpacing: 0
+                            )
+                        ) { channel in
+                            GuideChannelRow(
+                                guideViewModel: viewModel,
+                                channel: channel,
+                                playsOnSelect: playsOnSelect
+                            ) { item in
+                                action(item)
+                            }
+                            #if os(tvOS)
+                            .ignoresSafeArea(edges: .horizontal)
+                            #endif
+                        }
+                        .onReachedBottomEdge(offset: .offset(300)) {
+                            channelsViewModel.getNextPage()
+                        }
+                        .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
+                            #if os(tvOS)
+                            scrollView.contentInsetAdjustmentBehavior = .never
+                            #endif
+
+                            viewModel.verticalSync.register(scrollView)
+                        }
+                    }
+                    .frame(width: contentWidth)
+                    .overlay(alignment: .topLeading) {
+                        if viewModel.now >= viewModel.startDate {
+                            Rectangle()
+                                .fill(accentColor)
+                                .frame(width: 2)
+                                .frame(maxHeight: .infinity)
+                                .offset(x: nowOffset)
+                                .allowsHitTesting(false)
+                        }
+                    }
+                }
+                .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
+                    #if os(tvOS)
+                    scrollView.contentInsetAdjustmentBehavior = .never
+                    #endif
+
+                    viewModel.scrollProxy.register(scrollView, nowOffset: nowOffset)
+                }
+            }
+            .ignoresSafeArea(edges: .bottom)
         }
         .onFirstAppear {
             viewModel.selectedChannelID = selectedChannelID
@@ -63,88 +120,44 @@ struct LiveTVGuideContentView: View {
             viewModel.selectedChannelID = selectedChannelID
         }
         .backport
-        .onChange(of: channels) {
-            viewModel.getNextPage(channels: channels)
+        .onChange(of: channelsViewModel.displayedElements) {
+            viewModel.getNextPage(channels: channelsViewModel.displayedElements)
         }
     }
+}
 
-    @ViewBuilder
-    private func contentBody(bottomInset: CGFloat) -> some View {
-        let layout = GuideLayout.current
-        let contentWidth = max(1, width(from: viewModel.startDate, to: viewModel.endDate))
-        let nowOffset = width(from: viewModel.startDate, to: viewModel.now)
+// MARK: - Initializers
 
-        HStack(spacing: 0) {
-            GuideChannelColumn(
-                guideViewModel: viewModel,
-                channels: channels,
-                layout: layout,
-                playsOnSelect: playsOnSelect,
-                bottomInset: bottomInset,
-                onSelectChannel: onSelectChannel
-            )
+extension LiveTVGuideContentView {
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                VStack(spacing: 0) {
-                    GuideTimeRuler(
-                        startDate: viewModel.startDate,
-                        endDate: viewModel.endDate,
-                        layout: layout
-                    )
+    /// Guide called from View.
+    init(
+        viewModel: GuideViewModel,
+        channelsViewModel: PagingLibraryViewModel<GuideChannelsLibrary>,
+        action: @escaping (BaseItemDto) -> Void
+    ) {
+        self.init(
+            viewModel: viewModel,
+            channelsViewModel: channelsViewModel,
+            selectedChannelID: nil,
+            playsOnSelect: false,
+            action: action
+        )
+    }
 
-                    Divider()
-
-                    CollectionVGrid(
-                        uniqueElements: channels,
-                        layout: .columns(
-                            1,
-                            insets: .init(top: 0, leading: 0, bottom: bottomInset, trailing: 0),
-                            itemSpacing: 0,
-                            lineSpacing: 0
-                        )
-                    ) { channel in
-                        GuideChannelRow(
-                            guideViewModel: viewModel,
-                            channel: channel,
-                            layout: layout,
-                            playsOnSelect: playsOnSelect,
-                            programAction: onSelectProgram
-                        )
-                        #if os(tvOS)
-                        .ignoresSafeArea(edges: .horizontal)
-                        #endif
-                    }
-                    .onReachedBottomEdge(offset: .offset(300)) {
-                        onReachedBottomEdge()
-                    }
-                    .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
-                        #if os(tvOS)
-                        scrollView.contentInsetAdjustmentBehavior = .never
-                        #endif
-
-                        viewModel.verticalSync.register(scrollView)
-                    }
-                }
-                .frame(width: contentWidth)
-                .overlay(alignment: .topLeading) {
-                    if viewModel.now >= viewModel.startDate {
-                        Rectangle()
-                            .fill(accentColor)
-                            .frame(width: 2)
-                            .frame(maxHeight: .infinity)
-                            .offset(x: nowOffset)
-                            .allowsHitTesting(false)
-                    }
-                }
-            }
-            .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
-                #if os(tvOS)
-                scrollView.contentInsetAdjustmentBehavior = .never
-                #endif
-
-                viewModel.scrollProxy.register(scrollView, nowOffset: nowOffset)
-            }
-        }
-        .ignoresSafeArea(edges: .bottom)
+    /// Guide called from Supplement.
+    init(
+        viewModel: GuideViewModel,
+        channelsViewModel: PagingLibraryViewModel<GuideChannelsLibrary>,
+        playing channelID: String?,
+        action: @escaping (BaseItemDto) -> Void
+    ) {
+        self.init(
+            viewModel: viewModel,
+            channelsViewModel: channelsViewModel,
+            selectedChannelID: channelID,
+            playsOnSelect: true,
+            action: action
+        )
     }
 }
