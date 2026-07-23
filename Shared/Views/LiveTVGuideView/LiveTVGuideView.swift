@@ -64,7 +64,7 @@ struct LiveTVGuideView: View {
     }
 
     private func play(_ item: BaseItemDto) {
-        guard let userSession = viewModel.userSession else { return }
-        router.route(to: .videoPlayer(provider: item.getPlaybackItemProvider(userSession: userSession)))
+        guard let provider = item.getPlaybackItemProvider(userSession: viewModel.userSession) else { return }
+        router.route(to: .videoPlayer(provider: provider))
     }
 }

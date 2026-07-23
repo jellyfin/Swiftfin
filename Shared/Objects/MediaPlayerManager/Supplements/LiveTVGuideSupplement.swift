@@ -40,22 +40,20 @@ extension LiveTVGuideSupplement {
             defer { containerState.select(supplement: nil) }
 
             guard channel.id != manager.item.id,
-                  let userSession = viewModel.userSession else { return }
+                  let provider = channel.getPlaybackItemProvider(userSession: viewModel.userSession)
+            else { return }
 
-            manager.playNewItem(
-                provider: channel.getPlaybackItemProvider(userSession: userSession)
-            )
+            manager.playNewItem(provider: provider)
         }
 
         private func select(program: BaseItemDto) {
             defer { containerState.select(supplement: nil) }
 
             guard program.channelID != manager.item.id,
-                  let userSession = viewModel.userSession else { return }
+                  let provider = program.getPlaybackItemProvider(userSession: viewModel.userSession)
+            else { return }
 
-            manager.playNewItem(
-                provider: program.getPlaybackItemProvider(userSession: userSession)
-            )
+            manager.playNewItem(provider: provider)
         }
 
         private var content: some View {

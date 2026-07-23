@@ -10,7 +10,7 @@ import JellyfinAPI
 
 struct LiveTVGroupProvider: ContentGroupProvider {
 
-    // TODO: Add Guides & Recordings
+    // TODO: Add Recordings
     private enum LiveTVPill: Displayable, SystemImageable {
         case channels
         case guide
@@ -46,7 +46,14 @@ struct LiveTVGroupProvider: ContentGroupProvider {
         ) { router, pill in
             switch pill {
             case .channels:
-                router.route(to: .library(library: ChannelProgramLibrary()))
+                router.route(
+                    to: .library(
+                        library: ItemLibrary(
+                            parent: BaseItemDto(name: L10n.channels),
+                            filters: .init(itemTypes: [.liveTvChannel])
+                        )
+                    )
+                )
             case .guide:
                 router.route(to: .liveGuide)
             }

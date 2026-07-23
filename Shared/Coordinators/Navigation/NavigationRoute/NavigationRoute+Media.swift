@@ -16,18 +16,6 @@ import Transmission
 extension NavigationRoute {
 
     @MainActor
-    static var channels: NavigationRoute {
-        NavigationRoute(
-            id: "channels"
-        ) {
-            PagingLibraryView(library: ChannelLibrary())
-                .if(UIDevice.isTV) { view in
-                    view.toolbar(.hidden, for: .navigationBar)
-                }
-        }
-    }
-
-    @MainActor
     static var liveGuide: NavigationRoute {
         NavigationRoute(
             id: "liveGuide"
