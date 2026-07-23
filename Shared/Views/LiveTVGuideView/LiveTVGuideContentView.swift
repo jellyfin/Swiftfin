@@ -43,13 +43,23 @@ struct LiveTVGuideContentView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            GuideTimeRuler(
-                scrollProxy: viewModel.scrollProxy,
-                startDate: viewModel.startDate,
-                endDate: viewModel.endDate,
-                now: viewModel.now,
-                layout: .current
-            )
+            HStack(spacing: 0) {
+                GuideTimeRuler(
+                    scrollProxy: viewModel.scrollProxy,
+                    startDate: viewModel.startDate,
+                    endDate: viewModel.endDate,
+                    now: viewModel.now,
+                    layout: .current
+                )
+
+                #if os(tvOS)
+                GuideDateMenu(viewModel: viewModel)
+                    .padding(.horizontal, EdgeInsets.edgePadding / 2)
+                #endif
+            }
+            #if os(tvOS)
+            .focusSection()
+            #endif
 
             Divider()
 
@@ -66,7 +76,7 @@ struct LiveTVGuideContentView: View {
                     programAction: onSelectProgram
                 )
                 #if os(tvOS)
-                .ignoresSafeArea()
+                .ignoresSafeArea(edges: .horizontal)
                 #endif
             }
             .onReachedBottomEdge(offset: .offset(300)) {

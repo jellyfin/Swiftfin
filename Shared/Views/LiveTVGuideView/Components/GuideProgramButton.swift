@@ -39,7 +39,6 @@ struct GuideProgramButton: View {
                 showsText: width >= 70,
                 width: width
             )
-            .opacity(isSelectable ? 1 : 0.5)
             .frame(width: width, height: height)
         }
         .buttonStyle(GuideButtonStyle())
@@ -63,18 +62,6 @@ extension GuideProgramButton {
         let isCurrent: Bool
         let showsText: Bool
         let width: CGFloat
-
-        private var fill: Color {
-            if isCurrent {
-                return accentColor.opacity(0.5)
-            }
-
-            #if os(tvOS)
-            return Color(white: 0.22)
-            #else
-            return Color.systemFill
-            #endif
-        }
 
         @ViewBuilder
         private var textContent: some View {
@@ -124,7 +111,11 @@ extension GuideProgramButton {
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .background(fill)
+            .backport
+            .glassEffect(
+                .regular.tint(isCurrent ? accentColor.opacity(0.5) : nil),
+                in: .rect(cornerRadius: 6)
+            )
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .overlay {
                 RoundedRectangle(cornerRadius: 6)
@@ -133,7 +124,7 @@ extension GuideProgramButton {
                         lineWidth: isFocused ? 4 : 1
                     )
             }
-            .padding(2)
+            .padding(UIDevice.isTV ? 4 : 2)
         }
     }
 }

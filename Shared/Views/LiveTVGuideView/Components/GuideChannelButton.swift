@@ -49,6 +49,10 @@ extension GuideChannelButton {
         let isSelected: Bool
         let playsOnSelect: Bool
 
+        private var posterSize: CGFloat {
+            UIDevice.isTV ? height - 8 : height
+        }
+
         private var borderWidth: CGFloat {
             if isFocused {
                 5
@@ -65,7 +69,7 @@ extension GuideChannelButton {
                 type: .square,
                 contentMode: .fill
             )
-            .frame(width: height, height: height)
+            .frame(width: posterSize, height: posterSize)
             .overlay {
                 if isFocused, playsOnSelect {
                     ZStack {

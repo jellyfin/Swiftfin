@@ -35,15 +35,15 @@ struct LiveTVGuideView: View {
             }
         }
         .navigationTitle(L10n.guide)
-        .topBarTrailing {
-            GuideDateMenu(viewModel: viewModel)
-        }
         .onFirstAppear {
             if channelsViewModel.state == .initial {
                 channelsViewModel.refresh()
             }
         }
         #if os(iOS)
+        .topBarTrailing {
+            GuideDateMenu(viewModel: viewModel)
+        }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.visible, for: .navigationBar)
         .ignoresSafeArea(edges: .bottom)

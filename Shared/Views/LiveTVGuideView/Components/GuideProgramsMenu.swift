@@ -44,7 +44,6 @@ struct GuideProgramsMenu: View {
                 start: programs.first?.startDate,
                 isCurrent: isCurrent
             )
-            .opacity(playsOnSelect && !isCurrent ? 0.5 : 1)
             .frame(width: width, height: height)
         }
         #if os(tvOS)
@@ -73,18 +72,6 @@ extension GuideProgramsMenu {
         let start: Date?
         let isCurrent: Bool
 
-        private var fill: Color {
-            if isCurrent {
-                return accentColor.opacity(0.5)
-            }
-
-            #if os(tvOS)
-            return Color(white: 0.22)
-            #else
-            return Color.systemFill
-            #endif
-        }
-
         var body: some View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
@@ -110,8 +97,11 @@ extension GuideProgramsMenu {
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .background(fill)
-            .clipShape(RoundedRectangle(cornerRadius: 6))
+            .backport
+            .glassEffect(
+                .regular.tint(isCurrent ? accentColor.opacity(0.5) : nil),
+                in: .rect(cornerRadius: 6)
+            )
             .overlay {
                 RoundedRectangle(cornerRadius: 6)
                     .strokeBorder(
@@ -119,7 +109,7 @@ extension GuideProgramsMenu {
                         lineWidth: isFocused ? 4 : 1
                     )
             }
-            .padding(2)
+            .padding(UIDevice.isTV ? 4 : 2)
         }
     }
 }
