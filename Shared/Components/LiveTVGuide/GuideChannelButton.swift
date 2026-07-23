@@ -31,6 +31,9 @@ struct GuideChannelButton: View {
             )
         }
         .buttonStyle(GuideButtonStyle())
+        #if os(tvOS)
+            .focusEffectDisabled()
+        #endif
     }
 }
 

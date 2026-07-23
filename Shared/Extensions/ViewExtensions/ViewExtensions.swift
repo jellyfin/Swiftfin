@@ -103,13 +103,6 @@ extension View {
         AnyView(self)
     }
 
-    func guideScrollSync(
-        _ proxy: GuideScrollProxy,
-        nowOffset: CGFloat?
-    ) -> some View {
-        modifier(GuideScrollSyncModifier(proxy: proxy, nowOffset: nowOffset))
-    }
-
     // TODO: rename `errorAlert`
 
     /// Error Message Alert

@@ -18,7 +18,6 @@ struct GuideChannelRow: View {
     let channel: BaseItemDto
     let layout: GuideLayout
     let playsOnSelect: Bool
-    let channelAction: () -> Void
     let programAction: (BaseItemDto) -> Void
 
     var body: some View {
@@ -28,11 +27,8 @@ struct GuideChannelRow: View {
             now: guideViewModel.now,
             startDate: guideViewModel.startDate,
             endDate: guideViewModel.endDate,
-            channel: channel,
             layout: layout,
-            isSelected: channel.id != nil && channel.id == guideViewModel.selectedChannelID,
             playsOnSelect: playsOnSelect,
-            channelAction: channelAction,
             programAction: programAction
         )
     }
@@ -45,16 +41,15 @@ extension GuideChannelRow {
         @Default(.accentColor)
         private var accentColor
 
-        let scrollProxy: GuideScrollProxy
+        @ObservedObject
+        var scrollProxy: GuideScrollProxy
+
         let entries: [GuideEntry.Positioned]
         let now: Date
         let startDate: Date
         let endDate: Date
-        let channel: BaseItemDto
         let layout: GuideLayout
-        let isSelected: Bool
         let playsOnSelect: Bool
-        let channelAction: () -> Void
         let programAction: (BaseItemDto) -> Void
 
         private func width(from start: Date, to end: Date) -> CGFloat {
@@ -62,24 +57,20 @@ extension GuideChannelRow {
         }
 
         var body: some View {
-            HStack(spacing: 0) {
-                GuideChannelButton(
-                    channel: channel,
-                    width: layout.channelColumnWidth,
-                    height: layout.rowHeight,
-                    isSelected: isSelected,
-                    playsOnSelect: playsOnSelect,
-                    accentColor: accentColor,
-                    action: channelAction
-                )
+            let contentWidth = max(width(from: startDate, to: endDate), 1)
+            let window = scrollProxy.visibleWindow
+            let visibleEntries = entries.filter {
+                $0.x < window.upperBound && $0.x + $0.width > window.lowerBound
+            }
 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    programsView
+            ZStack(alignment: .leading) {
+                Color.clear
+                    .frame(width: contentWidth, height: layout.rowHeight)
+
+                ForEach(visibleEntries) { item in
+                    entryView(item)
+                        .offset(x: item.x)
                 }
-                .guideScrollSync(
-                    scrollProxy,
-                    nowOffset: width(from: startDate, to: now)
-                )
             }
             .frame(
                 maxWidth: .infinity,
@@ -91,36 +82,12 @@ extension GuideChannelRow {
         }
 
         @ViewBuilder
-        private var programsView: some View {
-            let entriesWidth = entries.last.map { $0.x + $0.width } ?? 0
-            let contentWidth = max(width(from: startDate, to: endDate), entriesWidth)
-
-            ZStack(alignment: .leading) {
-                Color.clear
-                    .frame(width: max(contentWidth, 1), height: layout.rowHeight)
-
-                ForEach(entries) { item in
-                    entryView(item.entry, width: item.width)
-                        .offset(x: item.x)
-                }
-
-                if now >= startDate {
-                    Rectangle()
-                        .fill(accentColor)
-                        .frame(width: 2, height: layout.rowHeight)
-                        .offset(x: width(from: startDate, to: now))
-                        .allowsHitTesting(false)
-                }
-            }
-        }
-
-        @ViewBuilder
-        private func entryView(_ entry: GuideEntry, width entryWidth: CGFloat) -> some View {
-            switch entry {
+        private func entryView(_ item: GuideEntry.Positioned) -> some View {
+            switch item.entry {
             case let .single(program, _, _):
                 GuideProgramButton(
                     program: program,
-                    width: entryWidth,
+                    width: item.width,
                     height: layout.rowHeight,
                     now: now,
                     playsOnSelect: playsOnSelect,
@@ -130,7 +97,7 @@ extension GuideChannelRow {
             case let .group(programs, _, _):
                 GuideProgramsMenu(
                     programs: programs,
-                    width: entryWidth,
+                    width: item.width,
                     height: layout.rowHeight,
                     now: now,
                     playsOnSelect: playsOnSelect,

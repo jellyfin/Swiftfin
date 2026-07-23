@@ -97,12 +97,13 @@ extension GuideProgramButton {
             VStack(alignment: .leading, spacing: 2) {
                 if showsText {
                     if #available(iOS 17, tvOS 17, *), width >= 200 {
+                        let leadingEdge = GuideLayout.current.channelColumnWidth
                         let maxShift = max(0, width - 76)
 
                         textContent
                             .visualEffect { content, proxy in
                                 content.offset(
-                                    x: clamp(8 - proxy.frame(in: .scrollView(axis: .horizontal)).minX, min: 0, max: maxShift)
+                                    x: clamp(leadingEdge + 8 - proxy.frame(in: .global).minX, min: 0, max: maxShift)
                                 )
                             }
                     } else {
@@ -117,7 +118,9 @@ extension GuideProgramButton {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .backport
             .glassEffect(
-                .regular.tint(isCurrent ? accentColor.opacity(0.5) : nil),
+                .regular
+                    .tint(isCurrent ? accentColor.opacity(0.5) : nil)
+                    .interactive(false),
                 in: .rect(cornerRadius: 6)
             )
             .clipShape(RoundedRectangle(cornerRadius: 6))

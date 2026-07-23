@@ -44,11 +44,10 @@ enum GuideEntry: Identifiable {
         }
     }
 
-    static func entries(
+    private static func entries(
         from programs: [BaseItemDto],
         startDate: Date,
-        endDate: Date,
-        shortThreshold: TimeInterval
+        endDate: Date
     ) -> [GuideEntry] {
         struct Block {
             let program: BaseItemDto
@@ -66,7 +65,7 @@ enum GuideEntry: Identifiable {
                 program: program,
                 start: clampedStart,
                 end: clampedEnd,
-                isShort: clampedEnd.timeIntervalSince(clampedStart) < shortThreshold
+                isShort: clampedEnd.timeIntervalSince(clampedStart) < Self.shortThreshold
             )
         }
         .sorted { $0.start < $1.start }
@@ -119,8 +118,7 @@ extension GuideEntry {
         let entries = entries(
             from: programs,
             startDate: startDate,
-            endDate: endDate,
-            shortThreshold: shortThreshold
+            endDate: endDate
         )
 
         var result: [Positioned] = []

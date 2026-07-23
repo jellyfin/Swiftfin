@@ -7,11 +7,15 @@
 //
 
 import CollectionVGrid
+import Defaults
 import JellyfinAPI
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct LiveTVGuideContentView: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     @ObservedObject
     private var viewModel: GuideViewModel
@@ -41,47 +45,19 @@ struct LiveTVGuideContentView: View {
         self.onSelectProgram = onSelectProgram
     }
 
+    private func width(from start: Date, to end: Date) -> CGFloat {
+        max(0, CGFloat(start.distance(to: end) / 60) * GuideLayout.current.pointsPerMinute)
+    }
+
     var body: some View {
-        VStack(spacing: 0) {
-            GuideTimeRuler(
-                scrollProxy: viewModel.scrollProxy,
-                startDate: viewModel.startDate,
-                endDate: viewModel.endDate,
-                now: viewModel.now,
-                layout: .current
-            )
-
-            Divider()
-
-            CollectionVGrid(
-                uniqueElements: channels,
-                layout: .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
-            ) { channel in
-                GuideChannelRow(
-                    guideViewModel: viewModel,
-                    channel: channel,
-                    layout: .current,
-                    playsOnSelect: playsOnSelect,
-                    channelAction: { onSelectChannel(channel) },
-                    programAction: onSelectProgram
-                )
-                #if os(tvOS)
-                .ignoresSafeArea(edges: .horizontal)
-                #endif
-            }
-            .onReachedBottomEdge(offset: .offset(300)) {
-                onReachedBottomEdge()
-            }
-            .scrollIndicators(.hidden)
-            #if os(tvOS)
-                .introspect(.scrollView, on: .tvOS(.v15...)) { scrollView in
-                    scrollView.contentInsetAdjustmentBehavior = .never
-                }
-            #endif
+        AlternateLayoutView {
+            Color.clear
+        } content: { frame in
+            contentBody(bottomInset: frame.safeAreaInsets.bottom)
         }
         .onFirstAppear {
             viewModel.selectedChannelID = selectedChannelID
-            viewModel.loadPrograms(channels: channels)
+            viewModel.refresh(channels: channels)
         }
         .backport
         .onChange(of: selectedChannelID) {
@@ -89,11 +65,93 @@ struct LiveTVGuideContentView: View {
         }
         .backport
         .onChange(of: channels) {
-            viewModel.loadPrograms(channels: channels)
+            viewModel.refresh(channels: channels)
         }
         .backport
         .onChange(of: viewModel.startDate) {
-            viewModel.loadPrograms(channels: channels)
+            viewModel.refresh(channels: channels)
         }
+    }
+
+    @ViewBuilder
+    private func contentBody(bottomInset: CGFloat) -> some View {
+        let layout = GuideLayout.current
+        let contentWidth = max(1, width(from: viewModel.startDate, to: viewModel.endDate))
+        let nowOffset = width(from: viewModel.startDate, to: viewModel.now)
+
+        HStack(spacing: 0) {
+            GuideChannelColumn(
+                guideViewModel: viewModel,
+                channels: channels,
+                layout: layout,
+                playsOnSelect: playsOnSelect,
+                bottomInset: bottomInset,
+                onSelectChannel: onSelectChannel
+            )
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                VStack(spacing: 0) {
+                    GuideTimeRuler(
+                        startDate: viewModel.startDate,
+                        endDate: viewModel.endDate,
+                        layout: layout
+                    )
+
+                    Divider()
+
+                    CollectionVGrid(
+                        uniqueElements: channels,
+                        layout: .columns(
+                            1,
+                            insets: .init(top: 0, leading: 0, bottom: bottomInset, trailing: 0),
+                            itemSpacing: 0,
+                            lineSpacing: 0
+                        )
+                    ) { channel in
+                        GuideChannelRow(
+                            guideViewModel: viewModel,
+                            channel: channel,
+                            layout: layout,
+                            playsOnSelect: playsOnSelect,
+                            programAction: onSelectProgram
+                        )
+                        #if os(tvOS)
+                        .ignoresSafeArea(edges: .horizontal)
+                        #endif
+                    }
+                    .onReachedBottomEdge(offset: .offset(300)) {
+                        onReachedBottomEdge()
+                    }
+                    .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
+                        #if os(tvOS)
+                        scrollView.contentInsetAdjustmentBehavior = .never
+                        #endif
+
+                        viewModel.verticalSync.register(scrollView)
+                    }
+                }
+                .frame(width: contentWidth)
+                .overlay(alignment: .topLeading) {
+                    if viewModel.now >= viewModel.startDate {
+                        Rectangle()
+                            .fill(accentColor)
+                            .frame(width: 2)
+                            .frame(maxHeight: .infinity)
+                            .offset(x: nowOffset)
+                            .allowsHitTesting(false)
+                    }
+                }
+            }
+            .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
+                #if os(tvOS)
+                scrollView.contentInsetAdjustmentBehavior = .never
+                #endif
+
+                viewModel.scrollProxy.register(scrollView, nowOffset: nowOffset)
+            }
+        }
+        #if os(iOS)
+        .ignoresSafeArea(edges: .bottom)
+        #endif
     }
 }

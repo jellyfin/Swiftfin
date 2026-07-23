@@ -34,7 +34,7 @@ extension LiveTVGuideSupplement {
         @StateObject
         private var channelsViewModel = PagingLibraryViewModel(library: GuideChannelsLibrary())
         @StateObject
-        private var viewModel = GuideViewModel(hours: 12)
+        private var viewModel = GuideViewModel(hours: 12, lookback: 0)
 
         private func select(channel: BaseItemDto) {
             defer { containerState.select(supplement: nil) }

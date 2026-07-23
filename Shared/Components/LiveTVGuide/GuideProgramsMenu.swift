@@ -103,7 +103,9 @@ extension GuideProgramsMenu {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .backport
             .glassEffect(
-                .regular.tint(isCurrent ? accentColor.opacity(0.5) : nil),
+                .regular
+                    .tint(isCurrent ? accentColor.opacity(0.5) : nil)
+                    .interactive(false),
                 in: .rect(cornerRadius: 6)
             )
             .overlay {

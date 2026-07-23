@@ -25,7 +25,7 @@ struct GuideDateMenu: View {
         Menu {
             ForEach(viewModel.availableDates, id: \.self) { date in
                 Button {
-                    viewModel.select(date: date)
+                    viewModel.setDate(date: date)
                 } label: {
                     if Calendar.current.isDate(date, inSameDayAs: selectedDate) {
                         Label(label(for: date), systemImage: "checkmark")

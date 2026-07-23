@@ -11,11 +11,11 @@ import SwiftUI
 
 struct LiveTVGuideView: View {
 
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
+
     @Router
     private var router
-
-    @State
-    private var contentSize: CGSize = .zero
 
     @StateObject
     private var channelsViewModel = PagingLibraryViewModel(library: GuideChannelsLibrary())
@@ -23,7 +23,7 @@ struct LiveTVGuideView: View {
     private var viewModel = GuideViewModel()
 
     private var isCompact: Bool {
-        contentSize.width < 600
+        horizontalSizeClass == .compact
     }
 
     var body: some View {
@@ -47,18 +47,16 @@ struct LiveTVGuideView: View {
                 channelsViewModel.refresh()
             }
         }
-        .trackingSize($contentSize)
         #if os(iOS)
-            .topBarTrailing {
-                if isCompact {
-                    GuideDateMenu(viewModel: viewModel)
-                }
+        .topBarTrailing {
+            if isCompact {
+                GuideDateMenu(viewModel: viewModel)
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .ignoresSafeArea(edges: .bottom)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.visible, for: .navigationBar)
         #else
-            .ignoresSafeArea(edges: [.horizontal])
+        .ignoresSafeArea(edges: [.horizontal])
         #endif
     }
 
@@ -74,14 +72,16 @@ struct LiveTVGuideView: View {
             LiveTVGuideContentView(
                 viewModel: viewModel,
                 channels: Array(channelsViewModel.displayedElements),
-                onReachedBottomEdge: { channelsViewModel.getNextPage() },
-                onSelectChannel: select,
-                onSelectProgram: select
+                onReachedBottomEdge: {
+                    channelsViewModel.getNextPage()
+                },
+                onSelectChannel: {
+                    router.route(to: .item(item: $0))
+                },
+                onSelectProgram: {
+                    router.route(to: .item(item: $0))
+                }
             )
         }
-    }
-
-    private func select(_ item: BaseItemDto) {
-        router.route(to: .item(item: item))
     }
 }

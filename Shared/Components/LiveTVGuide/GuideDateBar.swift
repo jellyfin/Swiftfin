@@ -29,7 +29,7 @@ struct GuideDateBar: View {
                     title: date.formatted(.dateTime.weekday(.abbreviated).day()),
                     isSelected: isSelected(date)
                 ) {
-                    viewModel.select(date: date)
+                    viewModel.setDate(date: date)
                 }
             }
         }
@@ -95,7 +95,8 @@ extension GuideDateBar {
                     .regular.selection(
                         tint: tint,
                         foregroundColor: isFocused ? accentColor.overlayColor : .primary
-                    ),
+                    )
+                    .interactive(false),
                     in: .capsule
                 )
         }
