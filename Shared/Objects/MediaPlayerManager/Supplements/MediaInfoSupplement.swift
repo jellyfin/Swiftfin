@@ -6,11 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
 // TODO: scroll if description too long
+// TODO: move currentProgram tracking to a MediaPlayerObserver
 
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
@@ -29,9 +29,6 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
 extension MediaInfoSupplement {
 
     private struct InfoOverlay: PlatformView {
-
-        @Injected(\.currentUserSession)
-        private var userSession
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
@@ -109,13 +106,7 @@ extension MediaInfoSupplement {
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
             .task(id: item.currentProgram?.endDate) {
-                guard let userSession, let endDate = item.currentProgram?.endDate else { return }
-
-                try? await Task.sleep(for: .seconds(max(endDate.timeIntervalSinceNow + 1, 1)))
-
-                guard let newItem = try? await item.getFullItem(userSession: userSession) else { return }
-
-                item = newItem
+                await updateCurrentProgram()
             }
         }
 
@@ -171,13 +162,15 @@ extension MediaInfoSupplement {
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)
-                        .font(.callout.weight(.semibold))
+                        .font(.callout)
+                        .fontWeight(.semibold)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
                     if let currentProgram = item.currentProgram {
                         Text(currentProgram.displayTitle)
-                            .font(.callout.weight(.semibold))
+                            .font(.callout)
+                            .fontWeight(.semibold)
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
                             .foregroundStyle(.secondary)
@@ -229,6 +222,21 @@ extension MediaInfoSupplement {
                     true,
                     priority: .userInitiated
                 )
+                .task(id: item.currentProgram?.endDate) {
+                    await updateCurrentProgram()
+                }
+        }
+
+        private func updateCurrentProgram() async {
+            guard let userSession = manager.userSession,
+                  let endDate = item.currentProgram?.endDate
+            else { return }
+
+            try? await Task.sleep(for: .seconds(max(endDate.timeIntervalSinceNow + 1, 1)))
+
+            guard let newItem = try? await item.getFullItem(userSession: userSession) else { return }
+
+            item = newItem
         }
     }
 }
