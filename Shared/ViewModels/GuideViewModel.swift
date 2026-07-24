@@ -46,24 +46,33 @@ final class GuideViewModel: ViewModel {
     }
 
     @Published
-    private(set) var entries: [String: [LiveTVGuideProgram.Positioned]] = [:]
-    @Published
     private(set) var now: Date = .now
     @Published
-    var selectedChannelID: String?
+    private(set) var programs: [String: [ProgramBlock]] = [:]
     @Published
     private(set) var startDate: Date
-
-    private let layout = LiveTVGuideLayout()
 
     let availableDates: [Date]
     let hours: Int
     let proxy = LiveTVGuideProxy()
 
-    private let batchSize = 50
+    private let layout = LiveTVGuideLayout()
     private let lookback: TimeInterval
+
     private var channels: IdentifiedArrayOf<BaseItemDto> = []
     private var fetchedChannelIDs: Set<String> = []
+
+    var endDate: Date {
+        let spanEnd = startDate.addingTimeInterval(TimeInterval(hours) * 3600)
+
+        guard let nextDay = Calendar.current.date(
+            byAdding: .day,
+            value: 1,
+            to: Calendar.current.startOfDay(for: startDate)
+        ) else { return spanEnd }
+
+        return max(spanEnd, nextDay)
+    }
 
     init(
         hours: Int = 12,
@@ -117,7 +126,7 @@ final class GuideViewModel: ViewModel {
         let requestEndDate = endDate
 
         do {
-            let programs = try await getPrograms(
+            let fetchedPrograms = try await getPrograms(
                 channelIDs: channelIDs,
                 startDate: requestStartDate,
                 endDate: requestEndDate
@@ -125,59 +134,20 @@ final class GuideViewModel: ViewModel {
 
             guard startDate == requestStartDate else { return }
 
-            let newEntries = Dictionary(grouping: programs.filter { $0.channelID != nil }) { $0.channelID ?? "" }
-                .mapValues { programs in
-                    LiveTVGuideProgram.positioned(
-                        from: programs,
+            let newPrograms = Dictionary(grouping: fetchedPrograms.filter { $0.channelID != nil }) { $0.channelID ?? "" }
+                .mapValues { channelPrograms in
+                    channelPrograms.programBlocks(
                         startDate: requestStartDate,
                         endDate: requestEndDate,
                         layout: layout
                     )
                 }
 
-            entries.merge(newEntries) { _, new in new }
+            programs.merge(newPrograms) { _, new in new }
         } catch {
             fetchedChannelIDs.subtract(channelIDs)
             throw error
         }
-    }
-
-    @Function(\Action.Cases.setDate)
-    private func _setDate(_ date: Date) {
-        let calendar = Calendar.current
-        let newStartDate = calendar.isDateInToday(date)
-            ? defaultStartDate()
-            : calendar.startOfDay(for: date)
-
-        guard newStartDate != startDate else { return }
-
-        startDate = newStartDate
-        entries.removeAll()
-        fetchedChannelIDs.removeAll()
-        proxy.reset()
-        refresh(channels: channels)
-    }
-
-    private func defaultStartDate() -> Date {
-        let current = Date.now
-        let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: current)
-        let minute = calendar.component(.minute, from: current)
-        let halfHour = calendar.date(bySettingHour: hour, minute: minute - minute % 30, second: 0, of: current) ?? current
-
-        return halfHour.addingTimeInterval(-lookback)
-    }
-
-    var endDate: Date {
-        let spanEnd = startDate.addingTimeInterval(TimeInterval(hours) * 3600)
-
-        guard let nextDay = Calendar.current.date(
-            byAdding: .day,
-            value: 1,
-            to: Calendar.current.startOfDay(for: startDate)
-        ) else { return spanEnd }
-
-        return max(spanEnd, nextDay)
     }
 
     private func getPrograms(
@@ -188,7 +158,7 @@ final class GuideViewModel: ViewModel {
         let userID = try authenticatedUser.id
 
         return try await withThrowingTaskGroup(of: [BaseItemDto].self) { group in
-            for batch in channelIDs.chunks(ofCount: batchSize) {
+            for batch in channelIDs.chunks(ofCount: 50) {
                 group.addTask {
                     var parameters = Paths.GetLiveTvProgramsParameters()
                     parameters.channelIDs = Array(batch)
@@ -208,5 +178,31 @@ final class GuideViewModel: ViewModel {
                 $0.append(contentsOf: $1)
             }
         }
+    }
+
+    @Function(\Action.Cases.setDate)
+    private func _setDate(_ date: Date) {
+        let calendar = Calendar.current
+        let newStartDate = calendar.isDateInToday(date)
+            ? defaultStartDate()
+            : calendar.startOfDay(for: date)
+
+        guard newStartDate != startDate else { return }
+
+        startDate = newStartDate
+        programs.removeAll()
+        fetchedChannelIDs.removeAll()
+        proxy.reset()
+        refresh(channels: channels)
+    }
+
+    private func defaultStartDate() -> Date {
+        let current = Date.now
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: current)
+        let minute = calendar.component(.minute, from: current)
+        let halfHour = calendar.date(bySettingHour: hour, minute: minute - minute % 30, second: 0, of: current) ?? current
+
+        return halfHour.addingTimeInterval(-lookback)
     }
 }

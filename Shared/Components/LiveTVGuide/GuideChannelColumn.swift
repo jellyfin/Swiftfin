@@ -23,6 +23,7 @@ struct GuideChannelColumn: View {
     var viewModel: GuideViewModel
 
     let channels: IdentifiedArrayOf<BaseItemDto>
+    let selectedChannelID: String?
     let bottomInset: CGFloat
     let onSelect: (BaseItemDto) -> Void
 
@@ -48,7 +49,7 @@ struct GuideChannelColumn: View {
                             channel: channel,
                             action: { onSelect(channel) }
                         )
-                        .isSelected(channel.id != nil && channel.id == viewModel.selectedChannelID)
+                        .isSelected(channel.id != nil && channel.id == selectedChannelID)
                     }
                 }
                 .tint(accentColor)

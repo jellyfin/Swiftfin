@@ -39,6 +39,7 @@ struct LiveTVGuideContentView: View {
                 GuideChannelColumn(
                     viewModel: viewModel,
                     channels: channelsViewModel.displayedElements,
+                    selectedChannelID: selectedChannelID,
                     bottomInset: frame.safeAreaInsets.bottom
                 ) { item in
                     action(item)
@@ -106,13 +107,6 @@ struct LiveTVGuideContentView: View {
                 }
             }
             .ignoresSafeArea(edges: .bottom)
-        }
-        .onFirstAppear {
-            viewModel.selectedChannelID = selectedChannelID
-        }
-        .backport
-        .onChange(of: selectedChannelID) {
-            viewModel.selectedChannelID = selectedChannelID
         }
         .backport
         .onChange(of: channelsViewModel.displayedElements) {

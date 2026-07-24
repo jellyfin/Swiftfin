@@ -10,26 +10,26 @@ import UIKit
 
 final class LiveTVGuideProxy: ObservableObject {
 
-    private static let windowQuantum: CGFloat = 300
-    private static let windowMargin: CGFloat = UIDevice.isTV ? 600 : 300
+    private let windowQuantum: CGFloat = 300
+    private let windowMargin: CGFloat = UIDevice.isTV ? 600 : 300
 
     @Published
     private(set) var visibleWindow: ClosedRange<CGFloat> = 0 ... .greatestFiniteMagnitude
 
     private weak var horizontalScrollView: UIScrollView?
-
     private var horizontalObservation: NSKeyValueObservation?
+
+    private var isSyncingVertically = false
     private var didCenter = false
 
     private let verticalObservations = NSMapTable<UIScrollView, NSKeyValueObservation>(
         keyOptions: .weakMemory,
         valueOptions: .strongMemory
     )
-    private var isSyncingVertically = false
 
     // MARK: horizontal
 
-    func register(_ scrollView: UIScrollView, centeringOn x: CGFloat?) {
+    func register(_ scrollView: UIScrollView, centeringOn target: CGFloat?) {
         if horizontalScrollView !== scrollView {
             horizontalScrollView = scrollView
 
@@ -38,7 +38,7 @@ final class LiveTVGuideProxy: ObservableObject {
             }
         }
 
-        if !didCenter, let x, let offset = offset(centering: x) {
+        if !didCenter, let target, let offset = offset(centering: target) {
             scrollView.setContentOffset(CGPoint(x: offset, y: 0), animated: false)
             didCenter = true
         }
@@ -51,8 +51,8 @@ final class LiveTVGuideProxy: ObservableObject {
         horizontalScrollView?.setContentOffset(.zero, animated: false)
     }
 
-    func scrollTo(centering x: CGFloat) {
-        guard let horizontalScrollView, let offset = offset(centering: x) else { return }
+    func scrollTo(centering target: CGFloat) {
+        guard let horizontalScrollView, let offset = offset(centering: target) else { return }
 
         horizontalScrollView.setContentOffset(
             CGPoint(x: offset, y: horizontalScrollView.contentOffset.y),
@@ -60,7 +60,7 @@ final class LiveTVGuideProxy: ObservableObject {
         )
     }
 
-    private func offset(centering x: CGFloat) -> CGFloat? {
+    private func offset(centering target: CGFloat) -> CGFloat? {
         guard let horizontalScrollView else { return nil }
 
         let viewport = horizontalScrollView.bounds.width
@@ -68,7 +68,7 @@ final class LiveTVGuideProxy: ObservableObject {
         guard viewport > 0, horizontalScrollView.contentSize.width > viewport else { return nil }
 
         return clamp(
-            x - viewport / 2,
+            target - viewport / 2,
             min: 0,
             max: horizontalScrollView.contentSize.width - viewport
         )
@@ -77,9 +77,9 @@ final class LiveTVGuideProxy: ObservableObject {
     private func updateVisibleWindow() {
         guard let horizontalScrollView, horizontalScrollView.bounds.width > 0 else { return }
 
-        let quantized = (horizontalScrollView.contentOffset.x / Self.windowQuantum).rounded(.down) * Self.windowQuantum
-        let lower = quantized - Self.windowMargin
-        let upper = quantized + horizontalScrollView.bounds.width + Self.windowQuantum + Self.windowMargin
+        let quantized = (horizontalScrollView.contentOffset.x / windowQuantum).rounded(.down) * windowQuantum
+        let lower = quantized - windowMargin
+        let upper = quantized + horizontalScrollView.bounds.width + windowQuantum + windowMargin
 
         guard lower ... upper != visibleWindow else { return }
 

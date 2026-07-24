@@ -21,7 +21,7 @@ struct GuideChannelRow: View {
     var body: some View {
         RowContent(
             proxy: viewModel.proxy,
-            entries: viewModel.entries[channel.id ?? ""] ?? [],
+            programs: viewModel.programs[channel.id ?? ""] ?? [],
             now: viewModel.now,
             startDate: viewModel.startDate,
             endDate: viewModel.endDate,
@@ -42,7 +42,7 @@ extension GuideChannelRow {
         @ObservedObject
         var proxy: LiveTVGuideProxy
 
-        let entries: [LiveTVGuideProgram.Positioned]
+        let programs: [ProgramBlock]
         let now: Date
         let startDate: Date
         let endDate: Date
@@ -51,17 +51,21 @@ extension GuideChannelRow {
         var body: some View {
             let contentWidth = max(layout.width(from: startDate, to: endDate), 1)
             let window = proxy.visibleWindow
-            let visibleEntries = entries.filter {
-                $0.x < window.upperBound && $0.x + $0.width > window.lowerBound
+            let visiblePrograms = programs.filter {
+                $0.leadingOffset < window.upperBound && $0.leadingOffset + $0.width > window.lowerBound
             }
 
             ZStack(alignment: .leading) {
                 Color.clear
                     .frame(width: contentWidth, height: layout.rowHeight)
 
-                ForEach(visibleEntries) { positioned in
-                    cell(positioned)
-                        .offset(x: positioned.x)
+                ForEach(visiblePrograms) { block in
+                    GuideProgramCell(
+                        block: block,
+                        now: now,
+                        onSelect: onSelect
+                    )
+                    .offset(x: block.leadingOffset)
                 }
             }
             .frame(
@@ -72,16 +76,6 @@ extension GuideChannelRow {
             )
             .fixedSize(horizontal: false, vertical: true)
             .tint(accentColor)
-        }
-
-        @ViewBuilder
-        private func cell(_ positioned: LiveTVGuideProgram.Positioned) -> some View {
-            GuideProgramCell(
-                entry: positioned.entry,
-                width: positioned.width,
-                now: now,
-                onSelect: onSelect
-            )
         }
     }
 }

@@ -13,17 +13,16 @@ struct GuideProgramCell: View {
 
     private let layout = LiveTVGuideLayout()
 
-    let entry: LiveTVGuideProgram
-    let width: CGFloat
+    let block: ProgramBlock
     let now: Date
     let onSelect: (BaseItemDto) -> Void
 
     private var programs: [BaseItemDto] {
-        entry.programs
+        block.programs
     }
 
     private var isCurrent: Bool {
-        entry.isAiring(at: now)
+        block.isAiring(at: now)
     }
 
     private func menuLabel(for program: BaseItemDto) -> String {
@@ -32,9 +31,9 @@ struct GuideProgramCell: View {
     }
 
     var body: some View {
-        ConditionalMenu(isMenu: entry.isGroup) {
-            guard let program = programs.first else { return }
-            onSelect(program)
+        ConditionalMenu(isMenu: block.isGroup) {
+            guard let first = programs.first else { return }
+            onSelect(first)
         } menuContent: {
             ForEach(programs, id: \.id) { program in
                 Button {
@@ -45,12 +44,10 @@ struct GuideProgramCell: View {
             }
         } label: {
             Content(
-                entry: entry,
-                isCurrent: isCurrent,
-                showsText: width >= 70,
-                width: width
+                block: block,
+                isCurrent: isCurrent
             )
-            .frame(width: width, height: layout.rowHeight)
+            .frame(width: block.width, height: layout.rowHeight)
         }
         .buttonStyle(GuideButtonStyle())
         #if os(tvOS)
@@ -67,10 +64,12 @@ extension GuideProgramCell {
         @Environment(\.isFocused)
         private var isFocused
 
-        let entry: LiveTVGuideProgram
+        let block: ProgramBlock
         let isCurrent: Bool
-        let showsText: Bool
-        let width: CGFloat
+
+        private var showsText: Bool {
+            block.width >= 70
+        }
 
         private var cellPadding: CGFloat {
             guard UIDevice.isTV else { return 2 }
@@ -114,30 +113,30 @@ extension GuideProgramCell {
 
         @ViewBuilder
         private var label: some View {
-            if entry.isGroup {
-                groupLabel(count: entry.programs.count, start: entry.start)
-            } else if let program = entry.programs.first {
-                singleLabel(program)
+            if block.isGroup {
+                groupLabel(count: block.programs.count, start: block.start)
+            } else if let first = block.programs.first {
+                singleLabel(first)
             }
         }
 
         @ViewBuilder
-        private func singleLabel(_ program: BaseItemDto) -> some View {
+        private func singleLabel(_ item: BaseItemDto) -> some View {
             let text = VStack(alignment: .leading, spacing: 2) {
-                Text(program.displayTitle)
+                Text(item.displayTitle)
                     .font(.footnote.weight(isCurrent ? .semibold : .regular))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
                 DotHStack {
-                    if let startDate = program.startDate {
+                    if let startDate = item.startDate {
                         Text(startDate, style: .time)
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                     }
 
-                    if let endDate = program.endDate {
+                    if let endDate = item.endDate {
                         Text(endDate, style: .time)
                             .font(.caption2)
                             .foregroundStyle(.secondary)
@@ -146,9 +145,9 @@ extension GuideProgramCell {
                 }
             }
 
-            if #available(iOS 17, tvOS 17, *), width >= 200 {
+            if #available(iOS 17, tvOS 17, *), block.width >= 200 {
                 let leadingEdge = layout.channelColumnWidth
-                let maxShift = max(0, width - 76)
+                let maxShift = max(0, block.width - 76)
 
                 text
                     .visualEffect { text, proxy in
