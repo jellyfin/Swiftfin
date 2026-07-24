@@ -23,7 +23,7 @@ struct ProgramBlock: Identifiable {
 
     var id: String {
         guard let firstID = programs.first?.id else {
-            return "\(start.timeIntervalSince1970)"
+            return start.timeIntervalSince1970.description
         }
 
         return isGroup ? "group-\(firstID)-\(programs.count)" : firstID

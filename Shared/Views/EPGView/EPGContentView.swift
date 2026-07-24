@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
@@ -14,8 +13,8 @@ import SwiftUI
 
 struct EPGContentView: View {
 
-    @Default(.accentColor)
-    private var accentColor
+    @State
+    private var selectedGroup: ProgramBlock?
 
     @ObservedObject
     private var viewModel: EPGViewModel
@@ -25,15 +24,10 @@ struct EPGContentView: View {
     private let selectedChannelID: String?
     private let action: (BaseItemDto) -> Void
 
-    private let layout = EPGLayout()
-
     var body: some View {
         AlternateLayoutView {
             Color.clear
         } content: { frame in
-            let contentWidth = max(1, layout.width(from: viewModel.startDate, to: viewModel.endDate))
-            let nowOffset = layout.width(from: viewModel.startDate, to: viewModel.now)
-
             HStack(spacing: 0) {
                 EPGChannelColumn(
                     viewModel: viewModel,
@@ -44,38 +38,31 @@ struct EPGContentView: View {
                     action(item)
                 }
 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    VStack(spacing: 0) {
+                VStack(spacing: 0) {
+                    ScrollView(.horizontal, showsIndicators: false) {
                         EPGTimeRuler(viewModel: viewModel)
-
-                        Divider()
-
-                        EPGCollectionView(
-                            viewModel: viewModel,
-                            channels: channelsViewModel.displayedElements,
-                            bottomInset: frame.safeAreaInsets.bottom,
-                            onReachedBottom: { channelsViewModel.getNextPage() },
-                            onSelect: { action($0) }
-                        )
                     }
-                    .frame(width: contentWidth)
-                    .overlay(alignment: .topLeading) {
-                        if viewModel.now >= viewModel.startDate {
-                            Rectangle()
-                                .fill(accentColor)
-                                .frame(width: 2)
-                                .frame(maxHeight: .infinity)
-                                .offset(x: nowOffset)
-                                .allowsHitTesting(false)
+                    .scrollDisabled(true)
+                    .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
+                        viewModel.proxy.registerHorizontal(scrollView)
+                    }
+
+                    Divider()
+
+                    EPGCollectionView(
+                        viewModel: viewModel,
+                        channels: channelsViewModel.displayedElements,
+                        bottomInset: frame.safeAreaInsets.bottom,
+                        onReachedBottom: {
+                            channelsViewModel.getNextPage()
+                        },
+                        onSelect: {
+                            action($0)
+                        },
+                        onSelectGroup: {
+                            selectedGroup = $0
                         }
-                    }
-                }
-                .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
-                    #if os(tvOS)
-                    scrollView.contentInsetAdjustmentBehavior = .never
-                    #endif
-
-                    viewModel.proxy.register(scrollView, centeringOn: nowOffset)
+                    )
                 }
             }
             .ignoresSafeArea(edges: .bottom)
@@ -84,6 +71,34 @@ struct EPGContentView: View {
         .onChange(of: channelsViewModel.displayedElements) {
             viewModel.getNextPage(channels: channelsViewModel.displayedElements)
         }
+        .confirmationDialog(
+            L10n.programs,
+            isPresented: isPresentingGroup,
+            titleVisibility: .hidden,
+            presenting: selectedGroup
+        ) { block in
+            ForEach(block.programs, id: \.id) { program in
+                Button(programTitle(for: program)) {
+                    action(program)
+                }
+            }
+        }
+    }
+
+    private var isPresentingGroup: Binding<Bool> {
+        Binding(
+            get: { selectedGroup != nil },
+            set: { isPresented in
+                if !isPresented {
+                    selectedGroup = nil
+                }
+            }
+        )
+    }
+
+    private func programTitle(for program: BaseItemDto) -> String {
+        guard let start = program.startDate else { return program.displayTitle }
+        return "\(start.formatted(date: .omitted, time: .shortened)) · \(program.displayTitle)"
     }
 }
 

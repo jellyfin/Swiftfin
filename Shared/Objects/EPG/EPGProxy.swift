@@ -10,83 +10,44 @@ import UIKit
 
 final class EPGProxy: ObservableObject {
 
-    private let windowQuantum: CGFloat = 300
-    private let windowMargin: CGFloat = UIDevice.isTV ? 600 : 300
+    private weak var contentScrollView: UIScrollView?
 
-    @Published
-    private(set) var visibleWindow: ClosedRange<CGFloat> = 0 ... .greatestFiniteMagnitude
-
-    private weak var horizontalScrollView: UIScrollView?
-    private var horizontalObservation: NSKeyValueObservation?
-
-    private var isSyncingVertically = false
     private var didCenter = false
+    private var isSyncingHorizontally = false
+    private var isSyncingVertically = false
 
+    private let horizontalObservations = NSMapTable<UIScrollView, NSKeyValueObservation>(
+        keyOptions: .weakMemory,
+        valueOptions: .strongMemory
+    )
     private let verticalObservations = NSMapTable<UIScrollView, NSKeyValueObservation>(
         keyOptions: .weakMemory,
         valueOptions: .strongMemory
     )
 
-    // MARK: horizontal
+    func registerContent(_ scrollView: UIScrollView, centeringOn target: CGFloat?) {
+        contentScrollView = scrollView
 
-    func register(_ scrollView: UIScrollView, centeringOn target: CGFloat?) {
-        if horizontalScrollView !== scrollView {
-            horizontalScrollView = scrollView
-
-            horizontalObservation = scrollView.observe(\.contentOffset) { [weak self] _, _ in
-                self?.updateVisibleWindow()
-            }
-        }
+        registerHorizontal(scrollView)
 
         if !didCenter, let target, let offset = offset(centering: target) {
-            scrollView.setContentOffset(CGPoint(x: offset, y: 0), animated: false)
+            scrollView.setContentOffset(
+                CGPoint(x: offset, y: scrollView.contentOffset.y),
+                animated: false
+            )
             didCenter = true
         }
-
-        updateVisibleWindow()
     }
 
-    func reset() {
-        didCenter = false
-        horizontalScrollView?.setContentOffset(.zero, animated: false)
+    func registerHorizontal(_ scrollView: UIScrollView) {
+        guard horizontalObservations.object(forKey: scrollView) == nil else { return }
+
+        let observation = scrollView.observe(\.contentOffset) { [weak self] scrollView, _ in
+            self?.horizontalOffsetDidChange(scrollView)
+        }
+
+        horizontalObservations.setObject(observation, forKey: scrollView)
     }
-
-    func scrollTo(centering target: CGFloat) {
-        guard let horizontalScrollView, let offset = offset(centering: target) else { return }
-
-        horizontalScrollView.setContentOffset(
-            CGPoint(x: offset, y: horizontalScrollView.contentOffset.y),
-            animated: true
-        )
-    }
-
-    private func offset(centering target: CGFloat) -> CGFloat? {
-        guard let horizontalScrollView else { return nil }
-
-        let viewport = horizontalScrollView.bounds.width
-
-        guard viewport > 0, horizontalScrollView.contentSize.width > viewport else { return nil }
-
-        return clamp(
-            target - viewport / 2,
-            min: 0,
-            max: horizontalScrollView.contentSize.width - viewport
-        )
-    }
-
-    private func updateVisibleWindow() {
-        guard let horizontalScrollView, horizontalScrollView.bounds.width > 0 else { return }
-
-        let quantized = (horizontalScrollView.contentOffset.x / windowQuantum).rounded(.down) * windowQuantum
-        let lower = quantized - windowMargin
-        let upper = quantized + horizontalScrollView.bounds.width + windowQuantum + windowMargin
-
-        guard lower ... upper != visibleWindow else { return }
-
-        visibleWindow = lower ... upper
-    }
-
-    // MARK: vertical
 
     func registerVertical(_ scrollView: UIScrollView) {
         guard verticalObservations.object(forKey: scrollView) == nil else { return }
@@ -96,6 +57,59 @@ final class EPGProxy: ObservableObject {
         }
 
         verticalObservations.setObject(observation, forKey: scrollView)
+    }
+
+    func reset() {
+        guard let contentScrollView else { return }
+
+        didCenter = false
+        contentScrollView.setContentOffset(
+            CGPoint(x: 0, y: contentScrollView.contentOffset.y),
+            animated: false
+        )
+    }
+
+    func scrollTo(centering target: CGFloat) {
+        guard let contentScrollView, let offset = offset(centering: target) else { return }
+
+        contentScrollView.setContentOffset(
+            CGPoint(x: offset, y: contentScrollView.contentOffset.y),
+            animated: true
+        )
+    }
+
+    private func offset(centering target: CGFloat) -> CGFloat? {
+        guard let contentScrollView else { return nil }
+
+        let viewport = contentScrollView.bounds.width
+
+        guard viewport > 0, contentScrollView.contentSize.width > viewport else { return nil }
+
+        return clamp(
+            target - viewport / 2,
+            min: 0,
+            max: contentScrollView.contentSize.width - viewport
+        )
+    }
+
+    private func horizontalOffsetDidChange(_ source: UIScrollView) {
+        guard !isSyncingHorizontally else { return }
+
+        isSyncingHorizontally = true
+        defer { isSyncingHorizontally = false }
+
+        let scrollViews = horizontalObservations.keyEnumerator().allObjects as? [UIScrollView] ?? []
+
+        for scrollView in scrollViews {
+            guard scrollView !== source,
+                  abs(scrollView.contentOffset.x - source.contentOffset.x) > 0.5
+            else { continue }
+
+            scrollView.setContentOffset(
+                CGPoint(x: source.contentOffset.x, y: scrollView.contentOffset.y),
+                animated: false
+            )
+        }
     }
 
     private func verticalOffsetDidChange(_ source: UIScrollView) {

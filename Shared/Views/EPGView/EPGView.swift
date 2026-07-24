@@ -40,7 +40,6 @@ struct EPGView: View {
                 }
             }
         }
-        .navigationTitle(L10n.guide)
         .onFirstAppear {
             if channelsViewModel.state == .initial {
                 channelsViewModel.refresh()
@@ -57,6 +56,7 @@ struct EPGView: View {
 
             EPGDateMenu(viewModel: viewModel)
         }
+        .navigationTitle(L10n.guide)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.visible, for: .navigationBar)
         #else
