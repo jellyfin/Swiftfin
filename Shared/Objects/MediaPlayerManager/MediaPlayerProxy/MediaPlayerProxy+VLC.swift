@@ -14,9 +14,9 @@ import VLCUI
 
 class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     MediaPlayerOffsetConfigurable,
+    // MediaPlayerPictureInPictureCapable, <- TODO: Enable for VLCKit 4.0
     MediaPlayerSubtitleConfigurable
 {
-
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
@@ -70,8 +70,11 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         vlcUIProxy.setRate(.absolute(rate))
     }
 
-    func setSeconds(_ seconds: Duration) {
+    /// - Note: VLCKit does not provide a seek completion callback.
+    ///   The completion fires synchronously and always reports success.
+    func setSeconds(_ seconds: Duration, completion: ((Bool) -> Void)? = nil) {
         vlcUIProxy.setSeconds(seconds)
+        completion?(true)
     }
 
     func setAudioStream(_ stream: MediaStream) {
@@ -85,6 +88,11 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     func setAspectFill(_ aspectFill: Bool) {
         vlcUIProxy.aspectFill(aspectFill ? 1 : 0)
     }
+
+    // TODO: Implement in VLCKit 4.0
+    // VLCKit 3.7.0 does not support PiP
+    // func startPiP() {}
+    // func stopPiP() {}
 
     func setAudioOffset(_ seconds: Duration) {
         vlcUIProxy.setAudioDelay(seconds)
@@ -203,12 +211,17 @@ extension VLCMediaPlayerProxy {
                             manager.error(ErrorMessage("VLC player is unable to perform playback"))
                         case .playing:
                             manager.proxy?.isBuffering.value = false
-                            manager.setPlaybackRequestStatus(status: .playing)
+
+                            if manager.remoteProxy == nil {
+                                manager.setPlaybackRequestStatus(status: .playing)
+                            }
 
                             let tracks = info.subtitleTracks.map { (index: $0.index, title: $0.title) }
                             manager.playbackItem?.getSubtitleIndexes(subtitleTracks: tracks)
                         case .paused:
-                            manager.setPlaybackRequestStatus(status: .paused)
+                            if manager.remoteProxy == nil {
+                                manager.setPlaybackRequestStatus(status: .paused)
+                            }
                         }
 
                         if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
@@ -225,7 +238,7 @@ extension VLCMediaPlayerProxy {
                     }
                     .backport
                     .onChange(of: subtitleConfiguration) { _, newValue in
-                        if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
+                        if let proxy = manager.proxy as? MediaPlayerSubtitleConfigurable {
                             proxy.setSubtitleConfiguration(newValue)
                         }
                     }
