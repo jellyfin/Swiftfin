@@ -142,7 +142,7 @@ final class MediaPlayerManager: ViewModel {
 
     // TODO: replace with graph dependency package
     private func setSupplements() {
-        self.supplements = Defaults[.VideoPlayer.supplements].compactMap { kind -> (any MediaPlayerSupplement)? in
+        var newSupplements = Defaults[.VideoPlayer.supplements].compactMap { kind -> (any MediaPlayerSupplement)? in
             switch kind {
             case .info:
                 return MediaInfoSupplement(item: item)
@@ -159,6 +159,12 @@ final class MediaPlayerManager: ViewModel {
                 return PlaybackInformationSupplement(itemID: itemID)
             }
         }
+
+        if item.isLiveStream {
+            newSupplements.append(LiveTVGuideSupplement())
+        }
+
+        self.supplements = newSupplements
     }
 
     /// The current seconds media playback is set to.

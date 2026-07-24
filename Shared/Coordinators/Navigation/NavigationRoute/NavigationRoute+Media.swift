@@ -16,6 +16,15 @@ import Transmission
 extension NavigationRoute {
 
     @MainActor
+    static var liveGuide: NavigationRoute {
+        NavigationRoute(
+            id: "liveGuide"
+        ) {
+            LiveTVGuideView()
+        }
+    }
+
+    @MainActor
     static var liveTV: NavigationRoute {
         NavigationRoute(
             id: "liveTV",
