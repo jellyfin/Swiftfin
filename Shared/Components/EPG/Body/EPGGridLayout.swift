@@ -99,10 +99,6 @@ final class EPGGridLayout: UICollectionViewLayout {
     ) -> UICollectionViewLayoutAttributes? {
         nowLineAttributes
     }
-
-    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        false
-    }
 }
 
 private final class EPGNowLineAttributes: UICollectionViewLayoutAttributes {

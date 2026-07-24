@@ -39,7 +39,6 @@ final class EPGProgramCell: UICollectionViewCell {
         #endif
 
         contentView.layer.cornerRadius = 6
-        contentView.layer.borderWidth = 1
         contentView.clipsToBounds = true
 
         titleLabel.textColor = .label
@@ -71,7 +70,7 @@ final class EPGProgramCell: UICollectionViewCell {
         if isCurrent {
             baseColor = self.accentColor.withAlphaComponent(0.5)
         } else if let typeColor {
-            baseColor = typeColor.withAlphaComponent(0.35)
+            baseColor = typeColor.withAlphaComponent(0.5)
         } else {
             baseColor = UIColor(Color.secondarySystemFill).withAlphaComponent(0.5)
         }
@@ -87,7 +86,6 @@ final class EPGProgramCell: UICollectionViewCell {
             // swiftlint:disable:next hard_coded_display_string
             titleLabel.text = "\(block.programs.count) \(L10n.programs)"
             timeLabel.text = block.start.formatted(date: .omitted, time: .shortened)
-            chevronView.isHidden = false
         } else if let program = block.programs.first {
             titleLabel.text = program.displayTitle
             timeLabel.text = [
@@ -96,7 +94,6 @@ final class EPGProgramCell: UICollectionViewCell {
             ]
                 .compactMap(\.self)
                 .joined(separator: " \(String.bullet) ")
-            chevronView.isHidden = true
         }
 
         applyStyle()
@@ -105,9 +102,6 @@ final class EPGProgramCell: UICollectionViewCell {
 
     private func applyStyle() {
         contentView.backgroundColor = baseColor
-        titleLabel.textColor = .label
-        timeLabel.textColor = .secondaryLabel
-        chevronView.tintColor = .label
 
         if isFocused {
             contentView.layer.borderWidth = 4

@@ -54,16 +54,16 @@ extension EPGSupplement {
                             channelsViewModel: channelsViewModel,
                             playing: manager.item.id
                         ) { item in
-                            defer {
+                            if item.id == manager.item.id || item.channelID == manager.item.id {
                                 containerState.select(supplement: nil)
-                            }
-
-                            guard item.id != manager.item.id && item.channelID != manager.item.id,
-                                  let provider = item.getPlaybackItemProvider(userSession: viewModel.userSession)
-                            else {
                                 return
                             }
 
+                            guard let provider = item.getPlaybackItemProvider(userSession: viewModel.userSession) else {
+                                return
+                            }
+
+                            containerState.select(supplement: nil)
                             manager.playNewItem(provider: provider)
                         }
                     }

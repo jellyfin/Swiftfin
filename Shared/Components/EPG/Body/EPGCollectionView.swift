@@ -32,7 +32,6 @@ struct EPGCollectionView: UIViewRepresentable {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.selfSizingInvalidation = .disabled
-        collectionView.remembersLastFocusedIndexPath = true
         collectionView.delegate = context.coordinator
 
         context.coordinator.representable = self
