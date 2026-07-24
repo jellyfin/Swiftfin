@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class LiveTVGuideProxy: ObservableObject {
+final class EPGProxy: ObservableObject {
 
     private let windowQuantum: CGFloat = 300
     private let windowMargin: CGFloat = UIDevice.isTV ? 600 : 300

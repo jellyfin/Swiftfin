@@ -8,25 +8,28 @@
 
 import SwiftUI
 
-struct GuideTimeRuler: View {
+struct EPGTimeRuler: View {
 
     @ObservedObject
-    var viewModel: GuideViewModel
+    var viewModel: EPGViewModel
 
-    private let layout = LiveTVGuideLayout()
-    private let intervalMinutes = 30
+    private let layout = EPGLayout()
 
+    // Count of timestamps needed for the period (30m increments)
     private var labelCount: Int {
-        max(0, Int(viewModel.startDate.distance(to: viewModel.endDate) / (Double(intervalMinutes) * 60)))
+        max(0, Int(viewModel.startDate.distance(to: viewModel.endDate) / (Double(30) * 60)))
     }
 
     var body: some View {
         LazyHStack(spacing: 0) {
             ForEach(0 ..< labelCount, id: \.self) { index in
-                let date = viewModel.startDate.addingTimeInterval(Double(index * intervalMinutes * 60))
+                let date = viewModel.startDate.addingTimeInterval(Double(index * 30 * 60))
 
-                label(for: date)
-                    .frame(width: CGFloat(intervalMinutes) * layout.pointsPerMinute, alignment: .leading)
+                timestamp(for: date)
+                    .frame(
+                        width: 30 * layout.pointsPerMinute,
+                        alignment: .leading
+                    )
                     .overlay(alignment: .leading) {
                         Rectangle()
                             .fill(Color.secondarySystemFill)
@@ -38,7 +41,7 @@ struct GuideTimeRuler: View {
     }
 
     @ViewBuilder
-    private func label(for date: Date) -> some View {
+    private func timestamp(for date: Date) -> some View {
         let components = Calendar.current.dateComponents([.hour, .minute], from: date)
         let isDayStart = components.hour == 0 && components.minute == 0
 

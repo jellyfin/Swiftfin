@@ -6,27 +6,26 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionVGrid
 import Defaults
 import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
-struct LiveTVGuideContentView: View {
+struct EPGContentView: View {
 
     @Default(.accentColor)
     private var accentColor
 
     @ObservedObject
-    private var viewModel: GuideViewModel
+    private var viewModel: EPGViewModel
     @ObservedObject
-    private var channelsViewModel: PagingLibraryViewModel<GuideChannelsLibrary>
+    private var channelsViewModel: PagingLibraryViewModel<EPGChannelsLibrary>
 
     private let selectedChannelID: String?
     private let action: (BaseItemDto) -> Void
 
-    private let layout = LiveTVGuideLayout()
+    private let layout = EPGLayout()
 
     var body: some View {
         AlternateLayoutView {
@@ -36,7 +35,7 @@ struct LiveTVGuideContentView: View {
             let nowOffset = layout.width(from: viewModel.startDate, to: viewModel.now)
 
             HStack(spacing: 0) {
-                GuideChannelColumn(
+                EPGChannelColumn(
                     viewModel: viewModel,
                     channels: channelsViewModel.displayedElements,
                     selectedChannelID: selectedChannelID,
@@ -47,44 +46,17 @@ struct LiveTVGuideContentView: View {
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     VStack(spacing: 0) {
-                        GuideTimeRuler(viewModel: viewModel)
+                        EPGTimeRuler(viewModel: viewModel)
 
                         Divider()
 
-                        CollectionVGrid(
-                            uniqueElements: channelsViewModel.displayedElements,
-                            layout: .columns(
-                                1,
-                                insets: .init(
-                                    top: 0,
-                                    leading: 0,
-                                    bottom: frame.safeAreaInsets.bottom,
-                                    trailing: 0
-                                ),
-                                itemSpacing: 0,
-                                lineSpacing: 0
-                            )
-                        ) { channel in
-                            GuideChannelRow(
-                                viewModel: viewModel,
-                                channel: channel
-                            ) { item in
-                                action(item)
-                            }
-                            #if os(tvOS)
-                            .ignoresSafeArea(edges: .horizontal)
-                            #endif
-                        }
-                        .onReachedBottomEdge(offset: .offset(300)) {
-                            channelsViewModel.getNextPage()
-                        }
-                        .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
-                            #if os(tvOS)
-                            scrollView.contentInsetAdjustmentBehavior = .never
-                            #endif
-
-                            viewModel.proxy.registerVertical(scrollView)
-                        }
+                        EPGCollectionView(
+                            viewModel: viewModel,
+                            channels: channelsViewModel.displayedElements,
+                            bottomInset: frame.safeAreaInsets.bottom,
+                            onReachedBottom: { channelsViewModel.getNextPage() },
+                            onSelect: { action($0) }
+                        )
                     }
                     .frame(width: contentWidth)
                     .overlay(alignment: .topLeading) {
@@ -117,12 +89,12 @@ struct LiveTVGuideContentView: View {
 
 // MARK: - Initializers
 
-extension LiveTVGuideContentView {
+extension EPGContentView {
 
     /// Guide called from View.
     init(
-        viewModel: GuideViewModel,
-        channelsViewModel: PagingLibraryViewModel<GuideChannelsLibrary>,
+        viewModel: EPGViewModel,
+        channelsViewModel: PagingLibraryViewModel<EPGChannelsLibrary>,
         action: @escaping (BaseItemDto) -> Void
     ) {
         self.init(
@@ -135,8 +107,8 @@ extension LiveTVGuideContentView {
 
     /// Guide called from Supplement.
     init(
-        viewModel: GuideViewModel,
-        channelsViewModel: PagingLibraryViewModel<GuideChannelsLibrary>,
+        viewModel: EPGViewModel,
+        channelsViewModel: PagingLibraryViewModel<EPGChannelsLibrary>,
         playing channelID: String?,
         action: @escaping (BaseItemDto) -> Void
     ) {

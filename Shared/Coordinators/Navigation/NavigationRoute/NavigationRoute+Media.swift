@@ -20,7 +20,7 @@ extension NavigationRoute {
         NavigationRoute(
             id: "liveGuide"
         ) {
-            LiveTVGuideView()
+            EPGView()
         }
     }
 

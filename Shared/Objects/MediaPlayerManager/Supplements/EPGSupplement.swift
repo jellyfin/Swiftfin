@@ -9,12 +9,12 @@
 import JellyfinAPI
 import SwiftUI
 
-struct LiveTVGuideSupplement: MediaPlayerSupplement {
+struct EPGSupplement: MediaPlayerSupplement {
 
     let displayTitle: String = L10n.guide
 
     var id: String {
-        "LiveTVGuide"
+        "EPG"
     }
 
     var videoPlayerBody: some PlatformView {
@@ -22,7 +22,7 @@ struct LiveTVGuideSupplement: MediaPlayerSupplement {
     }
 }
 
-extension LiveTVGuideSupplement {
+extension EPGSupplement {
 
     private struct GuideOverlay: PlatformView {
 
@@ -32,9 +32,9 @@ extension LiveTVGuideSupplement {
         private var manager: MediaPlayerManager
 
         @StateObject
-        private var channelsViewModel = PagingLibraryViewModel(library: GuideChannelsLibrary())
+        private var channelsViewModel = PagingLibraryViewModel(library: EPGChannelsLibrary())
         @StateObject
-        private var viewModel = GuideViewModel(hours: 12, lookback: 0)
+        private var viewModel = EPGViewModel()
 
         private var content: some View {
             ZStack {
@@ -49,7 +49,7 @@ extension LiveTVGuideSupplement {
                     if channelsViewModel.displayedElements.isEmpty {
                         ContentUnavailableView(L10n.noPrograms.localizedCapitalized, systemImage: "tv")
                     } else {
-                        LiveTVGuideContentView(
+                        EPGContentView(
                             viewModel: viewModel,
                             channelsViewModel: channelsViewModel,
                             playing: manager.item.id

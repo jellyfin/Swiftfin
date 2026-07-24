@@ -29,41 +29,31 @@ extension Collection {
     }
 }
 
-// MARK: - Live TV Guide
+// MARK: - EPG
 
 extension Collection<BaseItemDto> {
 
     func programBlocks(
         startDate: Date,
         endDate: Date,
-        layout: LiveTVGuideLayout
+        layout: EPGLayout
     ) -> [ProgramBlock] {
         let chunks = compactMap { ClampedProgram($0, clampedTo: startDate ... endDate) }
             .sorted(using: \.start)
             .chunked { $0.isShort && $1.isShort }
 
-        var result: [ProgramBlock] = []
-        var occupiedWidth: CGFloat = 0
-
-        for chunk in chunks {
+        return chunks.map { chunk in
             let start = chunk.first!.start
             let end = chunk.last!.end
-            let leadingOffset = Swift.max(layout.width(from: startDate, to: start), occupiedWidth)
-            let trailingOffset = layout.width(from: startDate, to: end)
-            let width = Swift.max(trailingOffset - leadingOffset, layout.minimumCellWidth)
+            let leadingOffset = layout.width(from: startDate, to: start)
 
-            result.append(
-                ProgramBlock(
-                    programs: chunk.map(\.program),
-                    start: start,
-                    end: end,
-                    leadingOffset: leadingOffset,
-                    width: width
-                )
+            return ProgramBlock(
+                programs: chunk.map(\.program),
+                start: start,
+                end: end,
+                leadingOffset: leadingOffset,
+                width: layout.width(from: startDate, to: end) - leadingOffset
             )
-            occupiedWidth = leadingOffset + width
         }
-
-        return result
     }
 }

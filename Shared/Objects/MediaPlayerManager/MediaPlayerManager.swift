@@ -161,7 +161,7 @@ final class MediaPlayerManager: ViewModel {
         }
 
         if item.isLiveStream {
-            newSupplements.append(LiveTVGuideSupplement())
+            newSupplements.append(EPGSupplement())
         }
 
         self.supplements = newSupplements

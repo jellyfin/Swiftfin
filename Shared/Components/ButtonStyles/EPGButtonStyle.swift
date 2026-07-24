@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-// Custom style required: suppresses the tvOS system focus background.
-struct GuideButtonStyle: ButtonStyle {
+/// Suppresses the tvOS system focus background.
+struct EPGButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label

@@ -12,9 +12,11 @@ import Foundation
 import IdentifiedCollections
 import JellyfinAPI
 
+/// https://en.wikipedia.org/wiki/Electronic_program_guide
+
 @MainActor
 @Stateful
-final class GuideViewModel: ViewModel {
+final class EPGViewModel: ViewModel {
 
     @CasePathable
     enum Action {
@@ -53,33 +55,30 @@ final class GuideViewModel: ViewModel {
     private(set) var startDate: Date
 
     let availableDates: [Date]
-    let hours: Int
-    let proxy = LiveTVGuideProxy()
+    let proxy = EPGProxy()
 
-    private let layout = LiveTVGuideLayout()
-    private let lookback: TimeInterval
+    private let layout = EPGLayout()
+    private let minimumDuration: Duration
 
     private var channels: IdentifiedArrayOf<BaseItemDto> = []
     private var fetchedChannelIDs: Set<String> = []
 
     var endDate: Date {
-        let spanEnd = startDate.addingTimeInterval(TimeInterval(hours) * 3600)
+        let spanEnd = startDate.addingTimeInterval(minimumDuration.seconds)
 
         guard let nextDay = Calendar.current.date(
             byAdding: .day,
             value: 1,
             to: Calendar.current.startOfDay(for: startDate)
-        ) else { return spanEnd }
+        ) else {
+            return spanEnd
+        }
 
         return max(spanEnd, nextDay)
     }
 
-    init(
-        hours: Int = 12,
-        lookback: TimeInterval = 3600
-    ) {
-        self.hours = hours
-        self.lookback = lookback
+    init(minimumDuration: Duration = .hours(12)) {
+        self.minimumDuration = minimumDuration
 
         let today = Calendar.current.startOfDay(for: .now)
         self.availableDates = (0 ..< 7).compactMap {
@@ -201,8 +200,7 @@ final class GuideViewModel: ViewModel {
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: current)
         let minute = calendar.component(.minute, from: current)
-        let halfHour = calendar.date(bySettingHour: hour, minute: minute - minute % 30, second: 0, of: current) ?? current
 
-        return halfHour.addingTimeInterval(-lookback)
+        return calendar.date(bySettingHour: hour, minute: minute - minute % 30, second: 0, of: current) ?? current
     }
 }

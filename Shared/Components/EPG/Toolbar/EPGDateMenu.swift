@@ -8,10 +8,10 @@
 
 import SwiftUI
 
-struct GuideDateMenu: View {
+struct EPGDateMenu: View {
 
     @ObservedObject
-    var viewModel: GuideViewModel
+    var viewModel: EPGViewModel
 
     private var selection: Binding<Date> {
         Binding(

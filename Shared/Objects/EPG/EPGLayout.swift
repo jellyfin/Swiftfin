@@ -8,10 +8,9 @@
 
 import UIKit
 
-struct LiveTVGuideLayout: Equatable {
+struct EPGLayout: Equatable {
 
     let channelColumnWidth: CGFloat
-    let minimumCellWidth: CGFloat
     let rowHeight: CGFloat
     let rulerHeight: CGFloat
     let pointsPerMinute: CGFloat
@@ -23,7 +22,6 @@ struct LiveTVGuideLayout: Equatable {
         pointsPerMinute: CGFloat = UIDevice.isTV ? 10 : UIDevice.isPad ? 7 : 5
     ) {
         self.channelColumnWidth = channelColumnWidth
-        self.minimumCellWidth = pointsPerMinute * 15
         self.rowHeight = rowHeight
         self.rulerHeight = rulerHeight
         self.pointsPerMinute = pointsPerMinute

@@ -9,51 +9,35 @@
 import JellyfinAPI
 import SwiftUI
 
-struct GuideChannelButton: View {
+struct EPGChannelButton: View {
+
+    @Environment(\.isSelected)
+    private var isSelected
+
+    @FocusState
+    private var isFocused: Bool
+
+    private let layout = EPGLayout()
 
     let channel: BaseItemDto
     let action: () -> Void
 
+    private var posterSize: CGFloat {
+        UIDevice.isTV && !isFocused ? layout.rowHeight - 8 : layout.rowHeight
+    }
+
+    private var borderWidth: CGFloat {
+        if isFocused {
+            5
+        } else if isSelected {
+            2
+        } else {
+            0
+        }
+    }
+
     var body: some View {
         Button(action: action) {
-            Content(channel: channel)
-        }
-        .buttonStyle(GuideButtonStyle())
-        #if os(tvOS)
-            .focusEffectDisabled()
-        #endif
-    }
-}
-
-extension GuideChannelButton {
-
-    private struct Content: View {
-
-        private let layout = LiveTVGuideLayout()
-        @Environment(\.isFocused)
-        private var isFocused
-        @Environment(\.isSelected)
-        private var isSelected
-
-        let channel: BaseItemDto
-
-        private var posterSize: CGFloat {
-            let height = layout.rowHeight
-            guard UIDevice.isTV else { return height }
-            return isFocused ? height : height - 8
-        }
-
-        private var borderWidth: CGFloat {
-            if isFocused {
-                5
-            } else if isSelected {
-                2
-            } else {
-                0
-            }
-        }
-
-        var body: some View {
             PosterImage(
                 item: channel,
                 type: .square,
@@ -77,5 +61,7 @@ extension GuideChannelButton {
             .frame(width: layout.channelColumnWidth, height: layout.rowHeight)
             .animation(.easeOut(duration: 0.1), value: isFocused)
         }
+        .buttonStyle(EPGButtonStyle())
+        .focused($isFocused)
     }
 }

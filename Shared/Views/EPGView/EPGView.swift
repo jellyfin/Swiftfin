@@ -9,15 +9,15 @@
 import JellyfinAPI
 import SwiftUI
 
-struct LiveTVGuideView: View {
+struct EPGView: View {
 
     @Router
     private var router
 
     @StateObject
-    private var channelsViewModel = PagingLibraryViewModel(library: GuideChannelsLibrary())
+    private var channelsViewModel = PagingLibraryViewModel(library: EPGChannelsLibrary())
     @StateObject
-    private var viewModel = GuideViewModel()
+    private var viewModel = EPGViewModel()
 
     var body: some View {
         ZStack {
@@ -53,7 +53,9 @@ struct LiveTVGuideView: View {
         }
         #if os(iOS)
         .topBarTrailing {
-            GuideDateMenu(viewModel: viewModel)
+            EPGTypeMenu()
+
+            EPGDateMenu(viewModel: viewModel)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.visible, for: .navigationBar)
@@ -66,12 +68,13 @@ struct LiveTVGuideView: View {
     private var contentView: some View {
         VStack(spacing: 0) {
             #if os(tvOS)
-            GuideDateBar(viewModel: viewModel)
+            EPGDateBar(viewModel: viewModel)
                 .frame(maxWidth: .infinity)
+                .focusSection()
                 .padding(.bottom, 8)
             #endif
 
-            LiveTVGuideContentView(
+            EPGContentView(
                 viewModel: viewModel,
                 channelsViewModel: channelsViewModel
             ) {

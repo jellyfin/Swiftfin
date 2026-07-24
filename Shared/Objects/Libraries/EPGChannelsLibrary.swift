@@ -8,7 +8,7 @@
 
 import JellyfinAPI
 
-struct GuideChannelsLibrary: BaseItemKindLibrary {
+struct EPGChannelsLibrary: BaseItemKindLibrary {
 
     let libraryItemTypes: [BaseItemKind] = [.tvChannel]
 

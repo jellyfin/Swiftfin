@@ -12,15 +12,15 @@ import JellyfinAPI
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
-struct GuideChannelColumn: View {
+struct EPGChannelColumn: View {
 
-    private let layout = LiveTVGuideLayout()
+    private let layout = EPGLayout()
 
     @Default(.accentColor)
     private var accentColor
 
     @ObservedObject
-    var viewModel: GuideViewModel
+    var viewModel: EPGViewModel
 
     let channels: IdentifiedArrayOf<BaseItemDto>
     let selectedChannelID: String?
@@ -30,13 +30,28 @@ struct GuideChannelColumn: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
+                #if os(iOS)
+                // On Now Button
                 if viewModel.now >= viewModel.startDate {
-                    OnNowButton {
+                    Button {
                         viewModel.proxy.scrollTo(
                             centering: layout.width(from: viewModel.startDate, to: viewModel.now)
                         )
+                    } label: {
+                        Text(L10n.onNow)
+                            .font(.caption2.weight(.semibold))
+                            .lineLimit(1)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .backport
+                            .glassEffect(
+                                .regular.interactive(false),
+                                in: .capsule
+                            )
                     }
+                    .buttonStyle(EPGButtonStyle())
                 }
+                #endif
             }
             .frame(width: layout.channelColumnWidth, height: layout.rulerHeight)
 
@@ -45,7 +60,7 @@ struct GuideChannelColumn: View {
             ScrollView(.vertical) {
                 LazyVStack(spacing: 0) {
                     ForEach(channels, id: \.id) { channel in
-                        GuideChannelButton(
+                        EPGChannelButton(
                             channel: channel,
                             action: { onSelect(channel) }
                         )
@@ -65,52 +80,6 @@ struct GuideChannelColumn: View {
             }
         }
         .frame(width: layout.channelColumnWidth)
-        #if os(tvOS)
-            .focusSection()
-        #endif
-    }
-}
-
-extension GuideChannelColumn {
-
-    private struct OnNowButton: View {
-
-        let action: () -> Void
-
-        var body: some View {
-            Button(action: action) {
-                Content()
-            }
-            .buttonStyle(GuideButtonStyle())
-            #if os(tvOS)
-                .focusEffectDisabled()
-            #endif
-        }
-    }
-
-    private struct Content: View {
-
-        @Default(.accentColor)
-        private var accentColor
-
-        @Environment(\.isFocused)
-        private var isFocused
-
-        var body: some View {
-            Text(L10n.onNow)
-                .font(.caption2.weight(.semibold))
-                .lineLimit(1)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .backport
-                .glassEffect(
-                    .regular.selection(
-                        tint: isFocused ? accentColor : nil,
-                        foregroundColor: isFocused ? accentColor.overlayColor : .primary
-                    )
-                    .interactive(false),
-                    in: .capsule
-                )
-        }
+        .focusSection()
     }
 }
