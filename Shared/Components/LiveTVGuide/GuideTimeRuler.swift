@@ -10,6 +10,8 @@ import SwiftUI
 
 struct GuideTimeRuler: View {
 
+    private let layout = LiveTVGuideLayout()
+
     @ObservedObject
     var viewModel: GuideViewModel
 
@@ -33,7 +35,7 @@ struct GuideTimeRuler: View {
                 let date = startDate.addingTimeInterval(Double(index * Self.intervalMinutes * 60))
 
                 label(for: date)
-                    .frame(width: CGFloat(Self.intervalMinutes) * GuideLayout.current.pointsPerMinute, alignment: .leading)
+                    .frame(width: CGFloat(Self.intervalMinutes) * layout.pointsPerMinute, alignment: .leading)
                     .overlay(alignment: .leading) {
                         Rectangle()
                             .fill(Color.secondarySystemFill)
@@ -41,7 +43,7 @@ struct GuideTimeRuler: View {
                     }
             }
         }
-        .frame(height: GuideLayout.current.rulerHeight)
+        .frame(height: layout.rulerHeight)
     }
 
     @ViewBuilder

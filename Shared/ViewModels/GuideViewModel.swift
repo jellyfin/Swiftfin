@@ -46,7 +46,7 @@ final class GuideViewModel: ViewModel {
     }
 
     @Published
-    private(set) var entries: [String: [GuideEntry.Positioned]] = [:]
+    private(set) var entries: [String: [LiveTVGuideProgram.Positioned]] = [:]
     @Published
     private(set) var now: Date = .now
     @Published
@@ -54,10 +54,11 @@ final class GuideViewModel: ViewModel {
     @Published
     private(set) var startDate: Date
 
+    private let layout = LiveTVGuideLayout()
+
     let availableDates: [Date]
     let hours: Int
-    let scrollProxy = GuideScrollProxy()
-    let verticalSync = GuideVerticalScrollSync()
+    let proxy = LiveTVGuideProxy()
 
     private let batchSize = 50
     private let lookback: TimeInterval
@@ -126,11 +127,11 @@ final class GuideViewModel: ViewModel {
 
             let newEntries = Dictionary(grouping: programs.filter { $0.channelID != nil }) { $0.channelID ?? "" }
                 .mapValues { programs in
-                    GuideEntry.positioned(
+                    LiveTVGuideProgram.positioned(
                         from: programs,
                         startDate: requestStartDate,
                         endDate: requestEndDate,
-                        pointsPerMinute: GuideLayout.current.pointsPerMinute
+                        layout: layout
                     )
                 }
 
@@ -153,7 +154,7 @@ final class GuideViewModel: ViewModel {
         startDate = newStartDate
         entries.removeAll()
         fetchedChannelIDs.removeAll()
-        scrollProxy.reset()
+        proxy.reset()
         refresh(channels: channels)
     }
 

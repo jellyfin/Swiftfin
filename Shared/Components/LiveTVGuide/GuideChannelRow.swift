@@ -16,17 +16,15 @@ struct GuideChannelRow: View {
     var guideViewModel: GuideViewModel
 
     let channel: BaseItemDto
-    let playsOnSelect: Bool
     let programAction: (BaseItemDto) -> Void
 
     var body: some View {
         RowContent(
-            scrollProxy: guideViewModel.scrollProxy,
+            proxy: guideViewModel.proxy,
             entries: guideViewModel.entries[channel.id ?? ""] ?? [],
             now: guideViewModel.now,
             startDate: guideViewModel.startDate,
             endDate: guideViewModel.endDate,
-            playsOnSelect: playsOnSelect,
             programAction: programAction
         )
     }
@@ -39,30 +37,27 @@ extension GuideChannelRow {
         @Default(.accentColor)
         private var accentColor
 
-        @ObservedObject
-        var scrollProxy: GuideScrollProxy
+        private let layout = LiveTVGuideLayout()
 
-        let entries: [GuideEntry.Positioned]
+        @ObservedObject
+        var proxy: LiveTVGuideProxy
+
+        let entries: [LiveTVGuideProgram.Positioned]
         let now: Date
         let startDate: Date
         let endDate: Date
-        let playsOnSelect: Bool
         let programAction: (BaseItemDto) -> Void
 
-        private func width(from start: Date, to end: Date) -> CGFloat {
-            max(0, CGFloat(start.distance(to: end) / 60) * GuideLayout.current.pointsPerMinute)
-        }
-
         var body: some View {
-            let contentWidth = max(width(from: startDate, to: endDate), 1)
-            let window = scrollProxy.visibleWindow
+            let contentWidth = max(layout.width(from: startDate, to: endDate), 1)
+            let window = proxy.visibleWindow
             let visibleEntries = entries.filter {
                 $0.x < window.upperBound && $0.x + $0.width > window.lowerBound
             }
 
             ZStack(alignment: .leading) {
                 Color.clear
-                    .frame(width: contentWidth, height: GuideLayout.current.rowHeight)
+                    .frame(width: contentWidth, height: layout.rowHeight)
 
                 ForEach(visibleEntries) { item in
                     entryView(item)
@@ -71,34 +66,22 @@ extension GuideChannelRow {
             }
             .frame(
                 maxWidth: .infinity,
-                minHeight: GuideLayout.current.rowHeight,
-                maxHeight: GuideLayout.current.rowHeight,
+                minHeight: layout.rowHeight,
+                maxHeight: layout.rowHeight,
                 alignment: .leading
             )
             .fixedSize(horizontal: false, vertical: true)
-            .foregroundStyle(accentColor)
+            .tint(accentColor)
         }
 
         @ViewBuilder
-        private func entryView(_ item: GuideEntry.Positioned) -> some View {
-            switch item.entry {
-            case let .single(program, _, _):
-                GuideProgramButton(
-                    program: program,
-                    width: item.width,
-                    now: now,
-                    playsOnSelect: playsOnSelect,
-                    action: { programAction(program) }
-                )
-            case let .group(programs, _, _):
-                GuideProgramsMenu(
-                    programs: programs,
-                    width: item.width,
-                    now: now,
-                    playsOnSelect: playsOnSelect,
-                    action: programAction
-                )
-            }
+        private func entryView(_ item: LiveTVGuideProgram.Positioned) -> some View {
+            GuideProgramCell(
+                entry: item.entry,
+                width: item.width,
+                now: now,
+                action: programAction
+            )
         }
     }
 }

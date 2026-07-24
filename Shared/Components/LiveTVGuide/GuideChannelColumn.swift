@@ -14,6 +14,8 @@ import SwiftUI
 
 struct GuideChannelColumn: View {
 
+    private let layout = LiveTVGuideLayout()
+
     @Default(.accentColor)
     private var accentColor
 
@@ -21,26 +23,21 @@ struct GuideChannelColumn: View {
     var guideViewModel: GuideViewModel
 
     let channels: IdentifiedArrayOf<BaseItemDto>
-    let playsOnSelect: Bool
     let bottomInset: CGFloat
     let onSelectChannel: (BaseItemDto) -> Void
-
-    private func width(from start: Date, to end: Date) -> CGFloat {
-        max(0, CGFloat(start.distance(to: end) / 60) * GuideLayout.current.pointsPerMinute)
-    }
 
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
                 if guideViewModel.now >= guideViewModel.startDate {
                     OnNowButton {
-                        guideViewModel.scrollProxy.scrollTo(
-                            centering: width(from: guideViewModel.startDate, to: guideViewModel.now)
+                        guideViewModel.proxy.scrollTo(
+                            centering: layout.width(from: guideViewModel.startDate, to: guideViewModel.now)
                         )
                     }
                 }
             }
-            .frame(width: GuideLayout.current.channelColumnWidth, height: GuideLayout.current.rulerHeight)
+            .frame(width: layout.channelColumnWidth, height: layout.rulerHeight)
 
             Divider()
 
@@ -49,13 +46,12 @@ struct GuideChannelColumn: View {
                     ForEach(channels, id: \.id) { channel in
                         GuideChannelButton(
                             channel: channel,
-                            isSelected: channel.id != nil && channel.id == guideViewModel.selectedChannelID,
-                            playsOnSelect: playsOnSelect,
                             action: { onSelectChannel(channel) }
                         )
+                        .isSelected(channel.id != nil && channel.id == guideViewModel.selectedChannelID)
                     }
                 }
-                .foregroundStyle(accentColor)
+                .tint(accentColor)
                 .padding(.bottom, bottomInset)
             }
             .scrollIndicators(.hidden)
@@ -64,10 +60,10 @@ struct GuideChannelColumn: View {
                 scrollView.contentInsetAdjustmentBehavior = .never
                 #endif
 
-                guideViewModel.verticalSync.register(scrollView)
+                guideViewModel.proxy.registerVertical(scrollView)
             }
         }
-        .frame(width: GuideLayout.current.channelColumnWidth)
+        .frame(width: layout.channelColumnWidth)
         #if os(tvOS)
             .focusSection()
         #endif

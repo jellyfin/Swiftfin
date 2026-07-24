@@ -24,25 +24,21 @@ struct LiveTVGuideContentView: View {
     private var channelsViewModel: PagingLibraryViewModel<GuideChannelsLibrary>
 
     private let selectedChannelID: String?
-    private let playsOnSelect: Bool
     private let action: (BaseItemDto) -> Void
 
-    private func width(from start: Date, to end: Date) -> CGFloat {
-        max(0, CGFloat(start.distance(to: end) / 60) * GuideLayout.current.pointsPerMinute)
-    }
+    private let layout = LiveTVGuideLayout()
 
     var body: some View {
         AlternateLayoutView {
             Color.clear
         } content: { frame in
-            let contentWidth = max(1, width(from: viewModel.startDate, to: viewModel.endDate))
-            let nowOffset = width(from: viewModel.startDate, to: viewModel.now)
+            let contentWidth = max(1, layout.width(from: viewModel.startDate, to: viewModel.endDate))
+            let nowOffset = layout.width(from: viewModel.startDate, to: viewModel.now)
 
             HStack(spacing: 0) {
                 GuideChannelColumn(
                     guideViewModel: viewModel,
                     channels: channelsViewModel.displayedElements,
-                    playsOnSelect: playsOnSelect,
                     bottomInset: frame.safeAreaInsets.bottom
                 ) { item in
                     action(item)
@@ -70,8 +66,7 @@ struct LiveTVGuideContentView: View {
                         ) { channel in
                             GuideChannelRow(
                                 guideViewModel: viewModel,
-                                channel: channel,
-                                playsOnSelect: playsOnSelect
+                                channel: channel
                             ) { item in
                                 action(item)
                             }
@@ -87,7 +82,7 @@ struct LiveTVGuideContentView: View {
                             scrollView.contentInsetAdjustmentBehavior = .never
                             #endif
 
-                            viewModel.verticalSync.register(scrollView)
+                            viewModel.proxy.registerVertical(scrollView)
                         }
                     }
                     .frame(width: contentWidth)
@@ -107,7 +102,7 @@ struct LiveTVGuideContentView: View {
                     scrollView.contentInsetAdjustmentBehavior = .never
                     #endif
 
-                    viewModel.scrollProxy.register(scrollView, nowOffset: nowOffset)
+                    viewModel.proxy.register(scrollView, centeringOn: nowOffset)
                 }
             }
             .ignoresSafeArea(edges: .bottom)
@@ -140,7 +135,6 @@ extension LiveTVGuideContentView {
             viewModel: viewModel,
             channelsViewModel: channelsViewModel,
             selectedChannelID: nil,
-            playsOnSelect: false,
             action: action
         )
     }
@@ -156,7 +150,6 @@ extension LiveTVGuideContentView {
             viewModel: viewModel,
             channelsViewModel: channelsViewModel,
             selectedChannelID: channelID,
-            playsOnSelect: true,
             action: action
         )
     }
