@@ -70,7 +70,6 @@ struct EPGView: View {
             #if os(tvOS)
             EPGDateBar(viewModel: viewModel)
                 .frame(maxWidth: .infinity)
-                .focusSection()
                 .padding(.bottom, 8)
             #endif
 

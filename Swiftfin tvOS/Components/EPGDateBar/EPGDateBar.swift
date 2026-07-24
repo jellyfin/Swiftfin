@@ -51,6 +51,7 @@ struct EPGDateBar: View {
                 EPGTypeMenu()
                     .frame(width: size.height, height: size.height)
             }
+            .focusSection()
             .buttonStyle(EPGButtonStyle())
             .labelStyle(.iconOnly)
             .backport
