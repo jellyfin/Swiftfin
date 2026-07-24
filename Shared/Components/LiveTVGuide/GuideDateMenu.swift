@@ -13,29 +13,28 @@ struct GuideDateMenu: View {
     @ObservedObject
     var viewModel: GuideViewModel
 
-    private var selectedDate: Date {
-        max(viewModel.startDate, Calendar.current.startOfDay(for: .now))
-    }
-
-    private func label(for date: Date) -> String {
-        date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())
+    private var selection: Binding<Date> {
+        Binding(
+            get: {
+                max(
+                    Calendar.current.startOfDay(for: viewModel.startDate),
+                    Calendar.current.startOfDay(for: .now)
+                )
+            },
+            set: {
+                viewModel.setDate(date: $0)
+            }
+        )
     }
 
     var body: some View {
-        Menu {
-            ForEach(viewModel.availableDates, id: \.self) { date in
-                Button {
-                    viewModel.setDate(date: date)
-                } label: {
-                    if Calendar.current.isDate(date, inSameDayAs: selectedDate) {
-                        Label(label(for: date), systemImage: "checkmark")
-                    } else {
-                        Text(label(for: date))
-                    }
+        Menu(L10n.date, systemImage: "calendar") {
+            Picker(L10n.date, selection: selection) {
+                ForEach(viewModel.availableDates, id: \.self) { date in
+                    Text(date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()))
+                        .tag(date)
                 }
             }
-        } label: {
-            Label(label(for: selectedDate), systemImage: "calendar")
         }
     }
 }

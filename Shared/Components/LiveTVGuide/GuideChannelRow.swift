@@ -13,19 +13,19 @@ import SwiftUI
 struct GuideChannelRow: View {
 
     @ObservedObject
-    var guideViewModel: GuideViewModel
+    var viewModel: GuideViewModel
 
     let channel: BaseItemDto
-    let programAction: (BaseItemDto) -> Void
+    let onSelect: (BaseItemDto) -> Void
 
     var body: some View {
         RowContent(
-            proxy: guideViewModel.proxy,
-            entries: guideViewModel.entries[channel.id ?? ""] ?? [],
-            now: guideViewModel.now,
-            startDate: guideViewModel.startDate,
-            endDate: guideViewModel.endDate,
-            programAction: programAction
+            proxy: viewModel.proxy,
+            entries: viewModel.entries[channel.id ?? ""] ?? [],
+            now: viewModel.now,
+            startDate: viewModel.startDate,
+            endDate: viewModel.endDate,
+            onSelect: onSelect
         )
     }
 }
@@ -46,7 +46,7 @@ extension GuideChannelRow {
         let now: Date
         let startDate: Date
         let endDate: Date
-        let programAction: (BaseItemDto) -> Void
+        let onSelect: (BaseItemDto) -> Void
 
         var body: some View {
             let contentWidth = max(layout.width(from: startDate, to: endDate), 1)
@@ -59,9 +59,9 @@ extension GuideChannelRow {
                 Color.clear
                     .frame(width: contentWidth, height: layout.rowHeight)
 
-                ForEach(visibleEntries) { item in
-                    entryView(item)
-                        .offset(x: item.x)
+                ForEach(visibleEntries) { positioned in
+                    cell(positioned)
+                        .offset(x: positioned.x)
                 }
             }
             .frame(
@@ -75,12 +75,12 @@ extension GuideChannelRow {
         }
 
         @ViewBuilder
-        private func entryView(_ item: LiveTVGuideProgram.Positioned) -> some View {
+        private func cell(_ positioned: LiveTVGuideProgram.Positioned) -> some View {
             GuideProgramCell(
-                entry: item.entry,
-                width: item.width,
+                entry: positioned.entry,
+                width: positioned.width,
                 now: now,
-                action: programAction
+                onSelect: onSelect
             )
         }
     }

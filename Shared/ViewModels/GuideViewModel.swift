@@ -145,7 +145,7 @@ final class GuideViewModel: ViewModel {
     @Function(\Action.Cases.setDate)
     private func _setDate(_ date: Date) {
         let calendar = Calendar.current
-        let newStartDate = calendar.isDate(date, inSameDayAs: .now)
+        let newStartDate = calendar.isDateInToday(date)
             ? defaultStartDate()
             : calendar.startOfDay(for: date)
 

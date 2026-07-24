@@ -20,19 +20,19 @@ struct GuideChannelColumn: View {
     private var accentColor
 
     @ObservedObject
-    var guideViewModel: GuideViewModel
+    var viewModel: GuideViewModel
 
     let channels: IdentifiedArrayOf<BaseItemDto>
     let bottomInset: CGFloat
-    let onSelectChannel: (BaseItemDto) -> Void
+    let onSelect: (BaseItemDto) -> Void
 
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
-                if guideViewModel.now >= guideViewModel.startDate {
+                if viewModel.now >= viewModel.startDate {
                     OnNowButton {
-                        guideViewModel.proxy.scrollTo(
-                            centering: layout.width(from: guideViewModel.startDate, to: guideViewModel.now)
+                        viewModel.proxy.scrollTo(
+                            centering: layout.width(from: viewModel.startDate, to: viewModel.now)
                         )
                     }
                 }
@@ -46,9 +46,9 @@ struct GuideChannelColumn: View {
                     ForEach(channels, id: \.id) { channel in
                         GuideChannelButton(
                             channel: channel,
-                            action: { onSelectChannel(channel) }
+                            action: { onSelect(channel) }
                         )
-                        .isSelected(channel.id != nil && channel.id == guideViewModel.selectedChannelID)
+                        .isSelected(channel.id != nil && channel.id == viewModel.selectedChannelID)
                     }
                 }
                 .tint(accentColor)
@@ -60,7 +60,7 @@ struct GuideChannelColumn: View {
                 scrollView.contentInsetAdjustmentBehavior = .never
                 #endif
 
-                guideViewModel.proxy.registerVertical(scrollView)
+                viewModel.proxy.registerVertical(scrollView)
             }
         }
         .frame(width: layout.channelColumnWidth)

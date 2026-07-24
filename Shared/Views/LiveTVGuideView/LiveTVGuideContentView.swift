@@ -37,7 +37,7 @@ struct LiveTVGuideContentView: View {
 
             HStack(spacing: 0) {
                 GuideChannelColumn(
-                    guideViewModel: viewModel,
+                    viewModel: viewModel,
                     channels: channelsViewModel.displayedElements,
                     bottomInset: frame.safeAreaInsets.bottom
                 ) { item in
@@ -65,7 +65,7 @@ struct LiveTVGuideContentView: View {
                             )
                         ) { channel in
                             GuideChannelRow(
-                                guideViewModel: viewModel,
+                                viewModel: viewModel,
                                 channel: channel
                             ) { item in
                                 action(item)

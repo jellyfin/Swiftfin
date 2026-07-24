@@ -10,32 +10,23 @@ import SwiftUI
 
 struct GuideTimeRuler: View {
 
-    private let layout = LiveTVGuideLayout()
-
     @ObservedObject
     var viewModel: GuideViewModel
 
-    private var startDate: Date {
-        viewModel.startDate
-    }
-
-    private var endDate: Date {
-        viewModel.endDate
-    }
-
-    private static let intervalMinutes = 30
+    private let layout = LiveTVGuideLayout()
+    private let intervalMinutes = 30
 
     private var labelCount: Int {
-        max(0, Int(startDate.distance(to: endDate) / (Double(Self.intervalMinutes) * 60)))
+        max(0, Int(viewModel.startDate.distance(to: viewModel.endDate) / (Double(intervalMinutes) * 60)))
     }
 
     var body: some View {
         LazyHStack(spacing: 0) {
             ForEach(0 ..< labelCount, id: \.self) { index in
-                let date = startDate.addingTimeInterval(Double(index * Self.intervalMinutes * 60))
+                let date = viewModel.startDate.addingTimeInterval(Double(index * intervalMinutes * 60))
 
                 label(for: date)
-                    .frame(width: CGFloat(Self.intervalMinutes) * layout.pointsPerMinute, alignment: .leading)
+                    .frame(width: CGFloat(intervalMinutes) * layout.pointsPerMinute, alignment: .leading)
                     .overlay(alignment: .leading) {
                         Rectangle()
                             .fill(Color.secondarySystemFill)

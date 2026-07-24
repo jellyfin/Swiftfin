@@ -16,7 +16,7 @@ struct GuideProgramCell: View {
     let entry: LiveTVGuideProgram
     let width: CGFloat
     let now: Date
-    let action: (BaseItemDto) -> Void
+    let onSelect: (BaseItemDto) -> Void
 
     private var programs: [BaseItemDto] {
         entry.programs
@@ -34,11 +34,11 @@ struct GuideProgramCell: View {
     var body: some View {
         ConditionalMenu(isMenu: entry.isGroup) {
             guard let program = programs.first else { return }
-            action(program)
+            onSelect(program)
         } menuContent: {
             ForEach(programs, id: \.id) { program in
                 Button {
-                    action(program)
+                    onSelect(program)
                 } label: {
                     Text(menuLabel(for: program))
                 }
@@ -123,7 +123,7 @@ extension GuideProgramCell {
 
         @ViewBuilder
         private func singleLabel(_ program: BaseItemDto) -> some View {
-            let content = VStack(alignment: .leading, spacing: 2) {
+            let text = VStack(alignment: .leading, spacing: 2) {
                 Text(program.displayTitle)
                     .font(.footnote.weight(isCurrent ? .semibold : .regular))
                     .foregroundStyle(.primary)
@@ -150,14 +150,14 @@ extension GuideProgramCell {
                 let leadingEdge = layout.channelColumnWidth
                 let maxShift = max(0, width - 76)
 
-                content
-                    .visualEffect { content, proxy in
-                        content.offset(
+                text
+                    .visualEffect { text, proxy in
+                        text.offset(
                             x: clamp(leadingEdge + 8 - proxy.frame(in: .global).minX, min: 0, max: maxShift)
                         )
                     }
             } else {
-                content
+                text
             }
         }
 
