@@ -116,6 +116,8 @@ private struct BaseItemDtoLibraryListElement: View {
 
                 if let program = item.currentProgram {
                     currentProgramView(program)
+                } else if item.type == .program {
+                    currentProgramView(item)
                 } else {
                     accessoryView
                         .font(.caption)
@@ -136,10 +138,12 @@ private struct BaseItemDtoLibraryListElement: View {
     @ViewBuilder
     private func currentProgramView(_ program: BaseItemDto) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(program.displayTitle)
-                .font(.subheadline)
-                .foregroundStyle(.primary)
-                .lineLimit(1)
+            if program.id != item.id {
+                Text(program.displayTitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+            }
 
             if let progress = program.progressPercentage {
                 ProgressBar(progress: progress)
@@ -149,8 +153,17 @@ private struct BaseItemDtoLibraryListElement: View {
 
             if let start = program.startDate, let end = program.endDate {
                 DotHStack {
+                    if !Calendar.current.isDateInToday(start) {
+                        Text(start, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
+                    }
+
                     Text(start, style: .time)
                     Text(end, style: .time)
+
+                    if program.isRecording && program.isAiring {
+                        Text(L10n.recording)
+                            .foregroundStyle(.red)
+                    }
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)

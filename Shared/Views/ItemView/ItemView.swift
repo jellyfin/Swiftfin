@@ -17,15 +17,23 @@ struct ItemView: View {
     @Default(.Customization.itemViewType)
     private var itemViewType
 
+    @Router
+    private var router
+
     @State
     private var contentSize: CGSize = .zero
+    @State
+    private var isPresentingDeleteConfirmation = false
 
+    @StateObject
+    private var editorViewModel: ItemEditorViewModel
     @StateObject
     private var provider: ItemContentGroupProvider
     @StateObject
     private var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
 
     init(provider: ItemContentGroupProvider) {
+        self._editorViewModel = StateObject(wrappedValue: ItemEditorViewModel(item: provider.item))
         self._provider = StateObject(wrappedValue: provider)
         self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
     }
@@ -128,10 +136,37 @@ struct ItemView: View {
         #else
         .navigationBarMenuButton(
             isLoading: viewModel.background.is(.refreshing),
-            isHidden: !provider.item.canEdit
+            isHidden: !provider.item.canEdit && !provider.item.canDeleteItem
         ) {
             EditItemMenu(item: provider.item)
+
+            if provider.item.canDeleteItem {
+                Divider()
+
+                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                    isPresentingDeleteConfirmation = true
+                }
+                .foregroundStyle(.red)
+            }
         }
+        .confirmationDialog(
+            L10n.deleteItemConfirmationMessage,
+            isPresented: $isPresentingDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button(
+                L10n.confirm,
+                role: .destructive,
+                action: editorViewModel.delete
+            )
+
+            Button(L10n.cancel, role: .cancel) {}
+        }
+        .onNotification(.didDeleteItem) { _ in
+            UIDevice.feedback(.success)
+            router.dismiss()
+        }
+        .errorMessage($editorViewModel.error)
         #endif
     }
 }
