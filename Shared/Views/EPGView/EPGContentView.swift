@@ -98,7 +98,7 @@ struct EPGContentView: View {
 
     private func programTitle(for program: BaseItemDto) -> String {
         guard let start = program.startDate else { return program.displayTitle }
-        return "\(start.formatted(date: .omitted, time: .shortened)) · \(program.displayTitle)"
+        return "\(start.formatted(date: .omitted, time: .shortened)) \(String.bullet) \(program.displayTitle)"
     }
 }
 
