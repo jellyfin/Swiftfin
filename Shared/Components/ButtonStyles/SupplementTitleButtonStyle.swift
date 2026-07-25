@@ -136,6 +136,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                     .subtleShadow(),
                 configuration: configuration
             )
+            .scaleEffect(isPressed ? 0.9 : 1)
+            .animation(.bouncy(duration: 0.4), value: isPressed)
         }
 
         @available(iOS 26.0, *)
@@ -145,8 +147,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                     .foregroundStyle(isSelected ? .black : .white)
                     .glassEffect(
                         .regular
-                            .tint(isSelected ? .white : nil)
-                            .interactive(),
+                            .tint(isSelected ? .white : nil),
                         in: Capsule()
                     ),
                 configuration: configuration
@@ -169,8 +170,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
 
                     isPressed = newValue
                 }
-                .scaleEffect(isPressed ? 0.9 : 1)
-                .animation(.bouncy(duration: 0.4), value: isPressed)
                 .opacity(isPressed ? 0.6 : 1)
                 .animation(.easeInOut(duration: 0.1), value: isSelected)
         }

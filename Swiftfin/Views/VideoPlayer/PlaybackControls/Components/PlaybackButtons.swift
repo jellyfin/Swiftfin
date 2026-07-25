@@ -113,7 +113,7 @@ extension VideoPlayer.PlaybackControls {
                     jumpForwardButton
                 }
             }
-            .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
+            .modifier(OverlayButtonStyleModifier(onPressed: onPressed))
             .padding(.horizontal, 50)
             .offset(y: centerOffsetBox.value / 2)
         }

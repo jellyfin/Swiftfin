@@ -64,6 +64,39 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             resolvedActionButtons(rawMenuActionButtons)
         }
 
+        private var usesLiquidGlass: Bool {
+            if #available(iOS 26.0, tvOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                true
+            } else {
+                false
+            }
+        }
+
+        private var menuSystemImage: String {
+            if UIDevice.isTV || usesLiquidGlass {
+                "ellipsis"
+            } else {
+                "ellipsis.circle"
+            }
+        }
+
+        private var buttonSize: CGFloat {
+            VideoPlayer.PlaybackControls.Toolbar.buttonSize
+        }
+
+        private var menuLabel: some View {
+            Label(L10n.menu, systemImage: menuSystemImage)
+        }
+
+        private func isMenuButton(_ button: VideoPlayerActionButton) -> Bool {
+            switch button {
+            case .audio, .playbackSpeed, .playbackSettings, .subtitles:
+                true
+            default:
+                false
+            }
+        }
+
         @ViewBuilder
         private func view(for button: VideoPlayerActionButton) -> some View {
             switch button {
@@ -92,10 +125,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
 
         @ViewBuilder
         private var compactView: some View {
-            Menu(
-                L10n.menu,
-                systemImage: "ellipsis.circle"
-            ) {
+            Menu {
                 ForEach(
                     barActionButtons,
                     content: view(for:)
@@ -107,29 +137,52 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                     menuActionButtons,
                     content: view(for:)
                 )
+            } label: {
+                menuLabel
             }
+            .frame(width: buttonSize, height: buttonSize)
+            .if(usesLiquidGlass) { menu in
+                menu
+                    .backport
+                    .glassEffect(in: .circle)
+            }
+            .symbolRenderingMode(.monochrome)
+            .foregroundStyle(.primary, .secondary)
             .withViewContext(.isInMenu)
         }
 
         @ViewBuilder
         private var regularView: some View {
-            HStack(spacing: UIDevice.isTV ? 16 : 0) {
+            HStack(spacing: VideoPlayer.PlaybackControls.Toolbar.buttonSpacing) {
                 ForEach(barActionButtons) { button in
                     view(for: button)
+                        .frame(width: buttonSize, height: buttonSize)
+                        .if(usesLiquidGlass && isMenuButton(button)) { menu in
+                            menu
+                                .backport
+                                .glassEffect(in: .circle)
+                        }
                         .focused($focusedButton, equals: button.rawValue)
                 }
 
                 if menuActionButtons.isNotEmpty {
-                    Menu(
-                        L10n.menu,
-                        systemImage: UIDevice.isTV ? "ellipsis" : "ellipsis.circle"
-                    ) {
+                    Menu {
                         ForEach(
                             menuActionButtons,
                             content: view(for:)
                         )
                         .withViewContext(.isInMenu)
+                    } label: {
+                        menuLabel
                     }
+                    .frame(width: buttonSize, height: buttonSize)
+                    .if(usesLiquidGlass) { menu in
+                        menu
+                            .backport
+                            .glassEffect(in: .circle)
+                    }
+                    .symbolRenderingMode(.monochrome)
+                    .foregroundStyle(.primary, .secondary)
                     .focused($focusedButton, equals: "menu")
                 }
             }
