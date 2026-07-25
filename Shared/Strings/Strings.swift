@@ -586,8 +586,6 @@ internal enum L10n {
   internal static let displayOrder = L10n.tr("Localizable", "displayOrder", fallback: "Display order")
   /// Done
   internal static let done = L10n.tr("Localizable", "done", fallback: "Done")
-  /// Don't record episodes that are already in my library
-  internal static let dontRecordEpisodesInLibrary = L10n.tr("Localizable", "dontRecordEpisodesInLibrary", fallback: "Don't record episodes that are already in my library")
   /// Double touch
   internal static let doubleTouch = L10n.tr("Localizable", "doubleTouch", fallback: "Double touch")
   /// Download
@@ -874,8 +872,6 @@ internal enum L10n {
   internal static let jumpForward = L10n.tr("Localizable", "jumpForward", fallback: "Jump forward")
   /// Jump forward length
   internal static let jumpForwardLength = L10n.tr("Localizable", "jumpForwardLength", fallback: "Jump forward length")
-  /// Keep up to
-  internal static let keepUpTo = L10n.tr("Localizable", "keepUpTo", fallback: "Keep up to")
   /// Kids
   internal static let kids = L10n.tr("Localizable", "kids", fallback: "Kids")
   /// kbps
@@ -1582,8 +1578,6 @@ internal enum L10n {
   internal static let startDate = L10n.tr("Localizable", "startDate", fallback: "Start date")
   /// Start time
   internal static let startTime = L10n.tr("Localizable", "startTime", fallback: "Start time")
-  /// Start when possible
-  internal static let startWhenPossible = L10n.tr("Localizable", "startWhenPossible", fallback: "Start when possible")
   /// Status
   internal static let status = L10n.tr("Localizable", "status", fallback: "Status")
   /// Stop
@@ -1592,8 +1586,6 @@ internal enum L10n {
   internal static let stopPlaybackWarning = L10n.tr("Localizable", "stopPlaybackWarning", fallback: "Are you sure you want to stop this user's playback?")
   /// Stop Recording
   internal static let stopRecording = L10n.tr("Localizable", "stopRecording", fallback: "Stop Recording")
-  /// Stop when possible
-  internal static let stopWhenPossible = L10n.tr("Localizable", "stopWhenPossible", fallback: "Stop when possible")
   /// Story arc
   internal static let storyArc = L10n.tr("Localizable", "storyArc", fallback: "Story arc")
   /// The stream count exceeds the allowed limit

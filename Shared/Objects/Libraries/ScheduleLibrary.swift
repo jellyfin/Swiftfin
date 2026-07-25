@@ -6,8 +6,8 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Foundation
 import JellyfinAPI
-import SwiftUI
 
 struct ScheduleLibrary: BaseItemKindLibrary {
 
