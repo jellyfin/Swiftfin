@@ -464,9 +464,17 @@ extension BaseItemDto {
                     .client
                     .url(with: request)
 
+                var imageSource = ImageSource(url: imageURL)
+
+                if isDownloaded, let imageURL,
+                   let localURL = downloadedImageURL(for: imageURL, index: i)
+                {
+                    imageSource = ImageSource(url: localURL)
+                }
+
                 return .init(
                     chapterInfo: chapter,
-                    imageSource: .init(url: imageURL)
+                    imageSource: imageSource
                 )
             }
     }

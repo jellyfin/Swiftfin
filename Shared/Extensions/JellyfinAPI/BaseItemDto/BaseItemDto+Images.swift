@@ -73,9 +73,14 @@ extension BaseItemDto {
         pathKey.sha1
     }
 
-    private func downloadedImageURL(for serverURL: URL) -> URL? {
+    static func downloadedImagePathKey(for serverURL: URL, index: Int? = nil) -> String {
+        guard let index else { return serverURL.path }
+        return "\(serverURL.path)/\(index)"
+    }
+
+    func downloadedImageURL(for serverURL: URL, index: Int? = nil) -> URL? {
         guard let imagesFolder = downloadImagesFolder,
-              let filename = Self.downloadedImageFilename(for: serverURL.path)
+              let filename = Self.downloadedImageFilename(for: Self.downloadedImagePathKey(for: serverURL, index: index))
         else { return nil }
 
         let localURL = imagesFolder.appendingPathComponent(filename)

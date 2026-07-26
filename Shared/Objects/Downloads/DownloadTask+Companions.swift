@@ -34,6 +34,17 @@ extension DownloadTask {
                 await downloadImage(from: url, pathKey: pathKey)
             }
         }
+
+        if parameters.isChaptersEnabled {
+            for (index, chapter) in (item.fullChapterInfo ?? []).enumerated() {
+                guard let url = chapter.imageSource.url else { continue }
+
+                await downloadImage(
+                    from: url,
+                    pathKey: BaseItemDto.downloadedImagePathKey(for: url, index: index)
+                )
+            }
+        }
     }
 
     private func downloadImage(from sourceURL: URL, pathKey: String) async {

@@ -151,7 +151,7 @@ extension DownloadManager {
     // MARK: - Server fetches
 
     private static let queueFields: [ItemFields] = .MinimumFields
-        .appending([.people, .overview, .genres, .tags, .trickplay])
+        .appending([.people, .overview, .genres, .tags, .trickplay, .chapters])
 
     private func getSeasons(seriesID: String) async throws -> [BaseItemDto] {
         guard let userSession else { throw UserSessionError.missingCurrentSession }

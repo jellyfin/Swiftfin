@@ -22,6 +22,7 @@ struct DownloadParameters: Codable, Hashable, Storable {
     let method: DownloadMethod
     var maxBitrate: PlaybackBitrate?
 
+    let isChaptersEnabled: Bool
     let isLyricsEnabled: Bool
     let isSubtitlesEnabled: Bool
     let isTrickplayEnabled: Bool
@@ -35,6 +36,7 @@ extension DownloadParameters {
             profileType: .video,
             method: .direct,
             maxBitrate: nil,
+            isChaptersEnabled: Defaults[.Downloads.isChaptersEnabled],
             isLyricsEnabled: false,
             isSubtitlesEnabled: Defaults[.Downloads.isSubtitlesEnabled],
             isTrickplayEnabled: Defaults[.Downloads.isTrickplayEnabled]
@@ -47,6 +49,7 @@ extension DownloadParameters {
             profileType: .audio,
             method: .direct,
             maxBitrate: nil,
+            isChaptersEnabled: false,
             isLyricsEnabled: Defaults[.Downloads.isLyricsEnabled],
             isSubtitlesEnabled: false,
             isTrickplayEnabled: false

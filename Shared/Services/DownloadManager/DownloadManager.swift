@@ -179,6 +179,20 @@ final class DownloadManager: NSObject, ObservableObject {
         advanceQueue()
     }
 
+    func clearAll() {
+        active?.urlTask.cancel()
+        active = nil
+        runningContainers.removeAll()
+
+        tasks = []
+        persistTasks()
+
+        Task.detached(priority: .utility) {
+            try? FileManager.default.removeItem(at: URL.swiftfinDownloads)
+            try? FileManager.default.createDirectory(at: URL.swiftfinDownloads, withIntermediateDirectories: true)
+        }
+    }
+
     private func pruneEmptyContainers() {
         while true {
             let empty = tasks.filter { $0.isContainer && $0.isCompleted && children(of: $0.id).isEmpty }
