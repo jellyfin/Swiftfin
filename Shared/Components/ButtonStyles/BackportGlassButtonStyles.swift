@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension BackportButtonStyle where Self == BackportGlassButtonStyle {
@@ -68,9 +67,6 @@ private struct BackportGlassButtonStyleBody: View {
         case prominent
     }
 
-    @Default(.isLiquidGlassEnabled)
-    private var isLiquidGlassEnabled
-
     @Environment(\.controlSize)
     private var controlSize
 
@@ -86,7 +82,7 @@ private struct BackportGlassButtonStyleBody: View {
         #if os(tvOS)
         nativeBody
         #else
-        if #available(iOS 26.0, *), isLiquidGlassEnabled {
+        if #available(iOS 26.0, *) {
             nativeBody
         } else {
             fallbackBody

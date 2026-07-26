@@ -295,7 +295,7 @@ struct SelectUserView: View {
                         )
                         .foregroundStyle(.primary, .secondary)
                         .if(true) { view in
-                            if #available(iOS 26.0, tvOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                            if #available(iOS 26.0, *) {
                                 view
                             } else {
                                 view
@@ -314,7 +314,7 @@ struct SelectUserView: View {
                         }
                         .foregroundStyle(.primary, .secondary)
                         .if(true) { view in
-                            if #available(iOS 26.0, tvOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                            if #available(iOS 26.0, *) {
                                 view
                             } else {
                                 view

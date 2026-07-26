@@ -7,7 +7,6 @@
 //
 
 import Combine
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -45,7 +44,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
         }
         .foregroundStyle(.primary, .secondary)
         .if(true) { view in
-            if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+            if #available(iOS 26.0, *) {
                 view
             } else {
                 view
@@ -134,7 +133,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                         }
                         .foregroundStyle(.primary, .secondary)
                         .if(true) { view in
-                            if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                            if #available(iOS 26.0, *) {
                                 view
                             } else {
                                 view
@@ -163,7 +162,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                         }
 
                         Group {
-                            if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                            if #available(iOS 26, *) {
                                 Button(L10n.save, role: .confirm, action: saveAction)
                             } else {
                                 Button(L10n.save, action: saveAction)

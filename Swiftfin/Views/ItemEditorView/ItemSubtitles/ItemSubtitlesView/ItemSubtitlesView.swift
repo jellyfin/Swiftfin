@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -76,7 +75,7 @@ struct ItemSubtitlesView: View {
                     }
                     .foregroundStyle(.primary, .secondary)
                     .if(true) { view in
-                        if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                        if #available(iOS 26.0, *) {
                             view
                         } else {
                             view
@@ -95,7 +94,7 @@ struct ItemSubtitlesView: View {
                     }
                     .foregroundStyle(.primary, .secondary)
                     .if(true) { view in
-                        if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                        if #available(iOS 26.0, *) {
                             view
                         } else {
                             view

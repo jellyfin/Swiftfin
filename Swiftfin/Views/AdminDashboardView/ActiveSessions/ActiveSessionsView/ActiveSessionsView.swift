@@ -7,14 +7,10 @@
 //
 
 import CollectionVGrid
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct ActiveSessionsView: View {
-
-    @Default(.isLiquidGlassEnabled)
-    private var isLiquidGlassEnabled
 
     @Router
     private var router
@@ -133,9 +129,15 @@ struct ActiveSessionsView: View {
                 ProgressView()
             }
 
+            let systemImage = if #available(iOS 26, *) {
+                "line.3.horizontal.decrease"
+            } else {
+                "line.3.horizontal.decrease.circle"
+            }
+
             Menu(
                 L10n.filters,
-                systemImage: isLiquidGlassEnabled ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle"
+                systemImage: systemImage
             ) {
                 activeWithinFilterButton
                 showInactiveSessionsButton
