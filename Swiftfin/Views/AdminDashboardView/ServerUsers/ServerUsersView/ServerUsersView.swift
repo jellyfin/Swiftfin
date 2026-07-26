@@ -7,7 +7,6 @@
 //
 
 import CollectionVGrid
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -75,7 +74,7 @@ struct ServerUsersView: View {
                     }
                     .foregroundStyle(.primary, .secondary)
                     .if(true) { view in
-                        if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                        if #available(iOS 26.0, *) {
                             view
                         } else {
                             view
@@ -223,7 +222,7 @@ struct ServerUsersView: View {
         }
         .foregroundStyle(.primary, .secondary)
         .if(true) { view in
-            if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+            if #available(iOS 26.0, *) {
                 view
             } else {
                 view

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct BackportGlass {
@@ -68,9 +67,6 @@ struct BackportGlass {
 
 struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
 
-    @Default(.isLiquidGlassEnabled)
-    private var isLiquidGlassEnabled
-
     @Environment(\.isEnabled)
     private var isEnabled
 
@@ -104,7 +100,7 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
         #if os(tvOS)
         glassBody(content)
         #else
-        if #available(iOS 26.0, *), isLiquidGlassEnabled {
+        if #available(iOS 26.0, *) {
             glassBody(content)
         } else {
             legacyBody(content)

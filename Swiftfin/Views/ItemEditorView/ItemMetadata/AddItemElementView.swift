@@ -7,7 +7,6 @@
 //
 
 import Combine
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -66,7 +65,7 @@ struct AddItemElementView<Editor: ItemComponentEditor>: View {
             }
 
             Group {
-                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                if #available(iOS 26, *) {
                     Button(L10n.save, role: .confirm, action: saveAction)
                 } else {
                     Button(L10n.save, action: saveAction)

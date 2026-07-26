@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -93,7 +92,7 @@ struct RemoteImageDetailView: View {
             }
 
             Group {
-                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                if #available(iOS 26, *) {
                     Button(L10n.save, role: .confirm, action: saveAction)
                 } else {
                     Button(L10n.save, action: saveAction)

@@ -20,25 +20,24 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             nonmutating set { containerState.isAspectFilled = newValue }
         }
 
-        private var systemImage: String {
-            if isAspectFilled {
-                VideoPlayerActionButton.aspectFill.secondarySystemImage
-            } else {
-                VideoPlayerActionButton.aspectFill.systemImage
-            }
-        }
-
         var body: some View {
-            Button(
-                L10n.aspectFill,
-                systemImage: systemImage
-            ) {
+            Button {
                 isAspectFilled.toggle()
-            }
-            .videoPlayerActionButtonTransition()
-            .if(!UIDevice.isTV) { button in
-                button
-                    .id(isAspectFilled)
+            } label: {
+                Group {
+                    if isAspectFilled {
+                        Label(
+                            L10n.aspectFill,
+                            systemImage: VideoPlayerActionButton.aspectFill.secondarySystemImage
+                        )
+                    } else {
+                        Label(
+                            L10n.aspectFill,
+                            systemImage: VideoPlayerActionButton.aspectFill.systemImage
+                        )
+                    }
+                }
+                .videoPlayerActionButtonTransition()
             }
         }
     }

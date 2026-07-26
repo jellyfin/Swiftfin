@@ -52,10 +52,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     }
                 }()
 
-                Menu(
-                    menuTitle,
-                    systemImage: VideoPlayerActionButton.playbackSettings.systemImage
-                ) {
+                Menu {
                     if hasVersionSection {
                         Picker(
                             selection: Binding(
@@ -105,7 +102,14 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             picker.pickerStyle(.menu)
                         }
                     }
+                } label: {
+                    Label(
+                        menuTitle,
+                        systemImage: VideoPlayerActionButton.playbackSettings.systemImage
+                    )
                 }
+                .symbolRenderingMode(.monochrome)
+                .foregroundStyle(.primary, .secondary)
             }
         }
     }
