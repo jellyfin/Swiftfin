@@ -183,6 +183,22 @@ extension L10n {
         "Casting to \(destination)"
     }
 
+    // MARK: - Layout Experimental
+
+    static let addGroup = "Add Group"
+    static let addTab = "Add Tab"
+    static let addView = "Add View"
+    static let advancedLayoutDescription = "Arrange tabs and views. Turn off to use the default layout without deleting your changes."
+    static let destination = "Destination"
+    static let groups = "Groups"
+    static let groupsDescription = "Drag groups into the order they should appear. Empty rows hide automatically."
+    static let icon = "Icon"
+    static let previewDescription = "Preview uses live data. Navigation is disabled."
+    static let resetConfirmation = "Restore the standard tabs? Your saved views will be kept."
+    static let tabLimit = "You can have up to 5 tabs."
+    static let tabs = "Tabs"
+    static let tabsAndViews = "Tabs & Views"
+
     // MARK: - TODO
 
     static let _droppedFrames = L10n.droppedFrames

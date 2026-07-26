@@ -6,7 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-enum ProgramSection: String, CaseIterable, Displayable {
+enum ProgramSection: String, CaseIterable, Codable, Displayable {
 
     case kids
     case movies

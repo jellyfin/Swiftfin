@@ -91,6 +91,14 @@ extension NavigationRoute {
         }
     }
 
+    #if os(iOS)
+    static var layoutSettings: NavigationRoute {
+        NavigationRoute(id: "layoutSettings") {
+            LayoutSettingsView()
+        }
+    }
+    #endif
+
     static var customizeSettingsView: NavigationRoute {
         NavigationRoute(
             id: "customizeSettingsView"

@@ -20,8 +20,25 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
     let displayTitle: String = L10n.home
     let id: String = "default-content-group-provider"
 
-    var refreshRequests: AnyPublisher<Void, Never> {
-        userSession?.userLibraryChanges ?? Combine.Empty().eraseToAnyPublisher()
+    var refreshRequests: AnyPublisher<ContentGroupRefreshRequest, Never> {
+        let defaultsChanges = Defaults.publisher(
+            keys: [
+                .Customization.Home.showRecentlyAdded,
+                .Customization.Home.showRecentlyPlayed,
+                .Customization.Home.resumeNextUp,
+                .Customization.Home.maxNextUp,
+            ],
+            options: []
+        )
+        .receive(on: RunLoop.main)
+        .map { _ in ContentGroupRefreshRequest() }
+
+        let libraryChanges = (userSession?.userLibraryChanges ?? Combine.Empty().eraseToAnyPublisher())
+            .map { ContentGroupRefreshRequest() }
+
+        return defaultsChanges
+            .merge(with: libraryChanges)
+            .eraseToAnyPublisher()
     }
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
@@ -49,33 +66,17 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
 
     @ContentGroupBuilder
     private func _makeGroups(userViews: [BaseItemDto]) -> [any ContentGroup] {
-        #if os(tvOS)
-        let cinematicSelectionContentGroup = CinematicSelectionContentGroup(
-            resumeLibrary: ResumeItemsLibrary(mediaTypes: [.video]),
-            recentlyAddedLibrary: RecentlyAddedLibrary()
-        )
-
-        cinematicSelectionContentGroup
-        #else
-        PosterGroup(
+        HomePosterGroup.resume.makeGroup(
             library: ResumeItemsLibrary(mediaTypes: [.video]),
-            posterDisplayType: .landscape,
-            posterSize: .medium,
-            _viewContext: .isInResume
+            viewContext: .isInResume
         )
-        #endif
 
-        PosterGroup(
+        HomePosterGroup.nextUp.makeGroup(
             library: NextUpLibrary()
         )
 
         if Defaults[.Customization.Home.showRecentlyAdded] {
-            #if os(tvOS)
-            CinematicRecentlyAddedContentGroup(
-                viewModel: cinematicSelectionContentGroup.viewModel
-            )
-            #else
-            PosterGroup(
+            HomePosterGroup.recentlyAdded.makeGroup(
                 library: ItemLibrary(
                     parent: BaseItemDto(name: L10n.recentlyAdded.localizedCapitalized),
                     filters: .init(
@@ -85,11 +86,10 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
                     )
                 )
             )
-            #endif
         }
 
         if Defaults[.Customization.Home.showRecentlyPlayed] {
-            PosterGroup(
+            HomePosterGroup.recentlyPlayed.makeGroup(
                 library: ItemLibrary(
                     parent: BaseItemDto(name: L10n.recentlyPlayed.localizedCapitalized),
                     filters: .init(
@@ -102,19 +102,16 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
             )
         }
 
-        PosterGroup(
-            id: "programs-recommended",
-            library: RecommendedProgramsLibrary(),
-            posterDisplayType: .landscape,
-            posterSize: .small
+        HomePosterGroup.recommended.makeGroup(
+            library: RecommendedProgramsLibrary()
         )
 
         userViews
             .map(LatestInLibrary.init)
             .map {
-                PosterGroup(
+                HomePosterGroup.latestInLibrary.makeGroup(
                     library: $0,
-                    posterDisplayType: .landscape
+                    id: "\(HomePosterGroup.latestInLibrary.id)-\($0.parent.pagingLibraryID)"
                 )
             }
     }

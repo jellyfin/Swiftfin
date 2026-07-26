@@ -389,11 +389,8 @@ extension View {
 
     @ContentBuilder
     func topBarTrailing(@ContentBuilder content: @escaping () -> some View) -> some View {
-        toolbar {
-            ToolbarItemGroup(
-                placement: .topBarTrailing,
-                content: content
-            )
+        coordinatedToolbar {
+            CoordinatedToolbarItem(content: content)
         }
     }
 
