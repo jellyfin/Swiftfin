@@ -68,6 +68,10 @@ extension [BaseItemDto] {
         }
 
         if let primarySort = filters.sortBy.first {
+            if primarySort == .random {
+                return items.shuffled()
+            }
+
             let ascending = filters.sortOrder.first == .ascending
             items.sort { lhs, rhs in
                 let comparison = lhs.compare(to: rhs, by: primarySort)
@@ -91,6 +95,12 @@ private extension BaseItemDto {
             (productionYear ?? 0) < (other.productionYear ?? 0)
         case .dateCreated:
             (dateCreated ?? .distantPast) < (other.dateCreated ?? .distantPast)
+        case .datePlayed:
+            (userData?.lastPlayedDate ?? .distantPast) < (other.userData?.lastPlayedDate ?? .distantPast)
+        case .indexNumber:
+            (parentIndexNumber ?? .max, indexNumber ?? .max) < (other.parentIndexNumber ?? .max, other.indexNumber ?? .max)
+        case .playCount:
+            (userData?.playCount ?? 0) < (other.userData?.playCount ?? 0)
         case .runtime:
             (runTimeTicks ?? 0) < (other.runTimeTicks ?? 0)
         case .communityRating:

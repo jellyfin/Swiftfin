@@ -19,13 +19,25 @@ extension DownloadManager {
 
         return MediaPlayerItemProvider(
             item: task.item.mutating(\.mediaSources, with: downloadedSource.map { [$0] }),
-            mediaSource: downloadedSource
+            mediaSource: downloadedVersionMediaSource(for: task.id) ?? downloadedSource
         ) { _, modifyItem in
             try await MediaPlayerItem.buildDownloaded(
                 for: task,
                 modifyItem: modifyItem
             )
         }
+    }
+
+    func downloadedVersionMediaSource(for id: String) -> MediaSourceInfo? {
+        guard let task = task(id: id),
+              task.isCompleted,
+              task.mediaURL != nil,
+              var source = task.item.mediaSources?.first
+        else { return nil }
+
+        source.setDownloaded(true)
+
+        return source
     }
 
     func downloadedEpisodes(under id: String) -> [DownloadTask] {
@@ -70,8 +82,18 @@ extension MediaPlayerItem {
             modifyItem(&item)
         }
 
-        guard let mediaSource = item.mediaSources?.first else {
+        guard var mediaSource = item.mediaSources?.first else {
             throw ErrorMessage("Missing media source for downloaded item")
+        }
+
+        mediaSource.mediaStreams = mediaSource.mediaStreams?.map { stream in
+            guard stream.type == .subtitle,
+                  stream.isExternal == true,
+                  let localURL = task.localSubtitleURL(for: stream),
+                  FileManager.default.fileExists(atPath: localURL.path)
+            else { return stream }
+
+            return stream.mutating(\.deliveryURL, with: localURL.absoluteString)
         }
 
         item.runTimeTicks = mediaSource.runTimeTicks ?? item.runTimeTicks

@@ -17,6 +17,15 @@ extension MediaSourceInfo: Displayable {
 
 extension MediaSourceInfo {
 
+    mutating func setDownloaded(_ isDownloaded: Bool = true) {
+        id = isDownloaded ? "Download" : id
+        name = isDownloaded ? L10n.download : name
+    }
+
+    var isDownloaded: Bool {
+        id == "Download"
+    }
+
     var supportedBitrates: [PlaybackBitrate] {
         guard let bitrate else { return PlaybackBitrate.allCases }
 

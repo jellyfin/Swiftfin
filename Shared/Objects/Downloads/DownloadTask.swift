@@ -49,7 +49,7 @@ struct DownloadTask: Codable, Hashable, Identifiable, Storable {
     var item: BaseItemDto
     let kind: DownloadKind
     let parameters: DownloadParameters
-    let parentIDs: [String]
+    var parentIDs: [String]
 
     var state: DownloadState
     var bytesDownloaded: Int64
@@ -69,6 +69,15 @@ struct DownloadTask: Codable, Hashable, Identifiable, Storable {
 
     var imagesFolder: URL {
         item.downloadImagesFolder ?? downloadFolder.appendingPathComponent("Images", isDirectory: true)
+    }
+
+    var subtitlesFolder: URL {
+        downloadFolder.appendingPathComponent("Subtitles", isDirectory: true)
+    }
+
+    func localSubtitleURL(for stream: MediaStream) -> URL? {
+        guard stream.type == .subtitle, let index = stream.index else { return nil }
+        return subtitlesFolder.appendingPathComponent("\(index).\(stream.codec?.lowercased() ?? "srt")")
     }
 
     var isContainer: Bool {

@@ -15,17 +15,16 @@ enum DownloadError: Codable, Hashable, Displayable, Error {
     case fileSystemError
     case unknown(String)
 
-    // swiftlint:disable:next hard_coded_display_string
     var displayTitle: String {
         switch self {
         case .networkFailure:
-            "Network connection failed"
+            L10n.networkConnectionFailed
         case .insufficientStorage:
-            "Not enough storage space"
+            L10n.notEnoughStorage
         case .fileSystemError:
-            "File system error"
+            L10n.fileSystemError
         case let .unknown(message):
-            message.isEmpty ? "Unknown error" : "Unknown error: \(message)"
+            message.isEmpty ? L10n.unknownError : message
         }
     }
 }

@@ -311,7 +311,9 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             item.isPlayable ? item : nil
         }
 
-        return playbackItem?.getPlaybackItemProvider(userSession: userSession)
+        return playbackItem
+            .map { injectingDownloadedVersion(into: $0) }?
+            .getPlaybackItemProvider(userSession: userSession)
     }
 
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {

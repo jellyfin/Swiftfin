@@ -235,6 +235,21 @@ extension BaseItemDto {
         default:
             let selectedMediaSource = mediaSource ?? mediaSources?.first
 
+            if selectedMediaSource?.isDownloaded == true,
+               let localProvider = Container.shared.downloadManager().mediaPlayerItemProvider(for: self)
+            {
+                return MediaPlayerItemProvider(
+                    item: self,
+                    mediaSource: selectedMediaSource
+                ) { _, modifyItem in
+                    if let modifyItem {
+                        return try await localProvider.modifyingItem(modifyItem)()
+                    }
+
+                    return try await localProvider()
+                }
+            }
+
             return MediaPlayerItemProvider(
                 item: self,
                 mediaSource: selectedMediaSource

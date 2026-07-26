@@ -6,10 +6,21 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
 extension ItemContentGroupProvider {
+
+    func injectingDownloadedVersion(into item: BaseItemDto) -> BaseItemDto {
+        guard !item.isDownloaded, let id = item.id else { return item }
+
+        guard let localSource = Container.shared.downloadManager().downloadedVersionMediaSource(for: id) else {
+            return item
+        }
+
+        return item.mutating(\.mediaSources, with: (item.mediaSources ?? []).appending(localSource))
+    }
 
     @ContentGroupBuilder
     func makeDownloadedGroups(item: BaseItemDto) async throws -> [any ContentGroup] {

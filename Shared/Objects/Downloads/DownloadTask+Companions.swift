@@ -69,27 +69,20 @@ extension DownloadTask {
 
         guard externalSubtitles.isNotEmpty else { return }
 
-        let folder = downloadFolder.appendingPathComponent("Subtitles", isDirectory: true)
-        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        try? FileManager.default.createDirectory(at: subtitlesFolder, withIntermediateDirectories: true)
 
         for stream in externalSubtitles {
-            await downloadSubtitle(stream: stream, into: folder, userSession: userSession)
+            await downloadSubtitle(stream: stream, userSession: userSession)
         }
     }
 
-    private func downloadSubtitle(stream: MediaStream, into folder: URL, userSession: UserSession) async {
+    private func downloadSubtitle(stream: MediaStream, userSession: UserSession) async {
         guard let deliveryURL = stream.deliveryURL else { return }
         guard let url = userSession.client.url(path: deliveryURL) else { return }
+        guard let destination = localSubtitleURL(for: stream) else { return }
 
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            let ext = stream.codec?.lowercased()
-                ?? response.mimeSubtype
-                ?? (url.pathExtension.isEmpty ? "srt" : url.pathExtension)
-            let language = stream.language ?? "und"
-            let index = stream.index ?? 0
-            let filename = "\(language).\(index).\(ext)"
-            let destination = folder.appendingPathComponent(filename)
+            let (data, _) = try await URLSession.shared.data(from: url)
             try? FileManager.default.removeItem(at: destination)
             try data.write(to: destination)
         } catch {

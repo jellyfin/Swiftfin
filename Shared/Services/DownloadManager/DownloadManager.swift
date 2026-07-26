@@ -112,6 +112,22 @@ final class DownloadManager: NSObject, ObservableObject {
         }
     }
 
+    func displayProgress(for id: String) -> Double {
+        guard let task = task(id: id) else { return 0 }
+
+        if task.isContainer {
+            let media = descendants(of: id)
+                .compactMap { self.task(id: $0) }
+                .filter { !$0.isContainer }
+
+            guard media.isNotEmpty else { return task.isCompleted ? 1 : 0 }
+
+            return Double(media.filter(\.isCompleted).count) / Double(media.count)
+        }
+
+        return task.progress
+    }
+
     func taskPublisher(for id: String) -> AnyPublisher<DownloadTask?, Never> {
         $tasks
             .map { $0.first(where: { $0.id == id }) }
@@ -170,13 +186,25 @@ final class DownloadManager: NSObject, ObservableObject {
     }
 
     func delete(id: String) {
-        let ids = [id] + descendants(of: id)
-        for taskID in ids {
-            deleteOne(id: taskID)
-        }
+        cascadeDelete(id: id)
         pruneEmptyContainers()
         refreshContainerUnplayedCounts()
         advanceQueue()
+    }
+
+    private func cascadeDelete(id: String) {
+        guard task(id: id) != nil else { return }
+
+        let childTasks = children(of: id)
+        deleteOne(id: id)
+
+        for child in childTasks {
+            let hasSurvivingParent = child.parentIDs.contains { $0 != id && task(id: $0) != nil }
+
+            if !hasSurvivingParent {
+                cascadeDelete(id: child.id)
+            }
+        }
     }
 
     func clearAll() {

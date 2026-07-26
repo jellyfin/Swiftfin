@@ -98,7 +98,11 @@ extension DownloadManager {
 
     private func createMediaTask(_ item: BaseItemDto, parameters: DownloadParameters, parentIDs: [String]) throws {
         guard let id = item.id else { return }
-        if task(id: id) != nil { return }
+
+        if task(id: id) != nil {
+            linkParents(parentIDs, to: id)
+            return
+        }
 
         let newTask = try DownloadTask(item: item, kind: .media, parameters: parameters, parentIDs: parentIDs)
         tasks.append(newTask)
@@ -107,12 +111,27 @@ extension DownloadManager {
 
     private func createContainerTask(_ item: BaseItemDto, parameters: DownloadParameters, parentIDs: [String]) {
         guard let id = item.id else { return }
-        if task(id: id) != nil { return }
+
+        if task(id: id) != nil {
+            linkParents(parentIDs, to: id)
+            return
+        }
 
         guard let newTask = try? DownloadTask(item: item, kind: .container, parameters: parameters, parentIDs: parentIDs)
         else { return }
         tasks.append(newTask)
         persistTasks()
+    }
+
+    private func linkParents(_ newParents: [String], to id: String) {
+        guard let existing = task(id: id) else { return }
+
+        let additions = newParents.filter { !existing.parentIDs.contains($0) }
+        guard additions.isNotEmpty else { return }
+
+        update(id: id) { task in
+            task.parentIDs.append(contentsOf: additions)
+        }
     }
 
     // MARK: - Ancestor resolution

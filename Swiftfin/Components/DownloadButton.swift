@@ -52,8 +52,7 @@ struct DownloadButton: View {
                 }
                 Button(L10n.cancel, role: .cancel) {}
             } message: {
-                // swiftlint:disable:next hard_coded_display_string
-                Text("This will remove the downloaded file from your device.")
+                Text(L10n.deleteDownloadMessage)
             }
         }
         // Reading directly from .state locks the menus when an item is queued
@@ -134,24 +133,42 @@ struct DownloadButton: View {
     }
 
     @ViewBuilder
+    private var completedImage: some View {
+        Image(systemName: "arrow.down.circle.fill")
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(.white, .green)
+    }
+
+    @ViewBuilder
     private var labelView: some View {
         Group {
             if let task {
-                switch task.state {
-                case .downloading, .queued:
-                    TimelineView(.periodic(from: .now, by: 0.1)) { _ in
-                        ProgressView(value: downloadManager.task(id: task.id)?.progress ?? 0)
-                            .progressViewStyle(.download)
+                if task.isContainer {
+                    TimelineView(.periodic(from: .now, by: 0.5)) { _ in
+                        if let containerTask = downloadManager.task(id: task.id),
+                           downloadManager.isFullyCompleted(containerTask)
+                        {
+                            completedImage
+                        } else {
+                            ProgressView(value: downloadManager.displayProgress(for: task.id))
+                                .progressViewStyle(.download)
+                        }
                     }
-                case .paused:
-                    Image(systemName: "arrow.down.circle.badge.pause")
-                case .error:
-                    Image(systemName: "arrow.down.circle.badge.xmark")
-                        .foregroundStyle(.red)
-                case .completed:
-                    Image(systemName: "arrow.down.circle.fill")
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, .green)
+                } else {
+                    switch task.state {
+                    case .downloading, .queued:
+                        TimelineView(.periodic(from: .now, by: 0.1)) { _ in
+                            ProgressView(value: downloadManager.displayProgress(for: task.id))
+                                .progressViewStyle(.download)
+                        }
+                    case .paused:
+                        Image(systemName: "arrow.down.circle.badge.pause")
+                    case .error:
+                        Image(systemName: "arrow.down.circle.badge.xmark")
+                            .foregroundStyle(.red)
+                    case .completed:
+                        completedImage
+                    }
                 }
             } else {
                 Image(systemName: "arrow.down.circle")

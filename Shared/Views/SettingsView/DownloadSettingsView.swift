@@ -49,12 +49,12 @@ struct DownloadSettingsView: View {
                 // CaseIterablePicker(L10n.maximumBitrate, selection: $audioMaxBitrate)
             }
 
-            Section {
+            // TODO: Make a DownloadQueueView and move this button there
+            Section(L10n.reset) {
                 Button(role: .destructive) {
                     isPresentingClearConfirmation = true
                 } label: {
-                    // swiftlint:disable:next hard_coded_display_string
-                    Text("Clear Downloads")
+                    Text(L10n.clearDownloads)
                         .frame(maxWidth: .infinity)
                 }
                 .listRowInsets(.zero)
@@ -73,19 +73,16 @@ struct DownloadSettingsView: View {
         }
         .navigationTitle(L10n.downloads)
         .confirmationDialog(
-            // swiftlint:disable:next hard_coded_display_string
-            "Clear Downloads",
+            L10n.clearDownloads,
             isPresented: $isPresentingClearConfirmation,
             titleVisibility: .visible
         ) {
-            // swiftlint:disable:next hard_coded_display_string
-            Button("Clear Downloads", role: .destructive) {
+            Button(L10n.clearDownloads, role: .destructive) {
                 downloadManager.clearAll()
             }
             Button(L10n.cancel, role: .cancel) {}
         } message: {
-            // swiftlint:disable:next hard_coded_display_string
-            Text("This will remove all downloaded files from your device.")
+            Text(L10n.clearDownloadsMessage)
         }
     }
 }

@@ -290,6 +290,10 @@ internal enum L10n {
   internal static let chapterSlider = L10n.tr("Localizable", "chapterSlider", fallback: "Chapter slider")
   /// Cinematic background
   internal static let cinematicBackground = L10n.tr("Localizable", "cinematicBackground", fallback: "Cinematic background")
+  /// Clear Downloads
+  internal static let clearDownloads = L10n.tr("Localizable", "clearDownloads", fallback: "Clear Downloads")
+  /// This will remove all downloaded files from your device.
+  internal static let clearDownloadsMessage = L10n.tr("Localizable", "clearDownloadsMessage", fallback: "This will remove all downloaded files from your device.")
   /// Client
   internal static let client = L10n.tr("Localizable", "client", fallback: "Client")
   /// Clip
@@ -486,6 +490,8 @@ internal enum L10n {
   }
   /// Are you sure you wish to delete this device? This session will be logged out.
   internal static let deleteDeviceWarning = L10n.tr("Localizable", "deleteDeviceWarning", fallback: "Are you sure you wish to delete this device? This session will be logged out.")
+  /// This will remove the downloaded file from your device.
+  internal static let deleteDownloadMessage = L10n.tr("Localizable", "deleteDownloadMessage", fallback: "This will remove the downloaded file from your device.")
   /// Deleted Scene
   internal static let deletedScene = L10n.tr("Localizable", "deletedScene", fallback: "Deleted Scene")
   /// Are you sure you want to delete this item?
@@ -700,6 +706,8 @@ internal enum L10n {
   internal static let featurette = L10n.tr("Localizable", "featurette", fallback: "Featurette")
   /// File
   internal static let file = L10n.tr("Localizable", "file", fallback: "File")
+  /// File system error
+  internal static let fileSystemError = L10n.tr("Localizable", "fileSystemError", fallback: "File system error")
   /// Filters
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
   /// Folder
@@ -1052,6 +1060,8 @@ internal enum L10n {
   internal static let native = L10n.tr("Localizable", "native", fallback: "Native")
   /// Network
   internal static let network = L10n.tr("Localizable", "network", fallback: "Network")
+  /// Network connection failed
+  internal static let networkConnectionFailed = L10n.tr("Localizable", "networkConnectionFailed", fallback: "Network connection failed")
   /// Network timed out
   internal static let networkTimedOut = L10n.tr("Localizable", "networkTimedOut", fallback: "Network timed out")
   /// Never
@@ -1100,6 +1110,8 @@ internal enum L10n {
   internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
   /// No runtime limit
   internal static let noRuntimeLimit = L10n.tr("Localizable", "noRuntimeLimit", fallback: "No runtime limit")
+  /// Not enough storage space
+  internal static let notEnoughStorage = L10n.tr("Localizable", "notEnoughStorage", fallback: "Not enough storage space")
   /// Official rating
   internal static let officialRating = L10n.tr("Localizable", "officialRating", fallback: "Official rating")
   /// OK
