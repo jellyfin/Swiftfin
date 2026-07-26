@@ -30,11 +30,23 @@ extension ItemContentGroupProvider {
                 id: "genres",
                 elements: genres
             ) { router, element in
+                var genreParent = BaseItemDto(
+                    id: DownloadManager.libraryID,
+                    name: element.displayTitle
+                )
+                genreParent.setDownloaded()
+
                 router.route(
-                    to: .library(
-                        library: DownloadLibrary(
-                            displayTitle: element.displayTitle,
-                            filters: .init(genres: [element])
+                    to: .contentGroup(
+                        provider: ItemTypeContentGroupProvider(
+                            itemTypes: [
+                                BaseItemKind.movie,
+                                .series,
+                                .episode,
+                                .boxSet,
+                            ],
+                            parent: genreParent,
+                            environment: .init(filters: .init(genres: [element]))
                         )
                     )
                 )
@@ -42,7 +54,7 @@ extension ItemContentGroupProvider {
         }
 
         switch item.type {
-        case .boxSet:
+        case .boxSet, .person:
             try await ItemTypeContentGroupProvider(
                 itemTypes: BaseItemKind.supportedCases.appending(.episode),
                 parent: item

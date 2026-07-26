@@ -51,12 +51,9 @@ struct UserViewLibrary: PagingLibrary {
             }
             .map(UserViewLibraryElement.userView)
 
-        var result = elements
+        return elements
+            .prepending(.downloads, if: Defaults[.Experimental.downloads])
             .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
-
-        result = result.appending(.downloads, if: Defaults[.Experimental.downloads])
-
-        return result
     }
 }
 
@@ -113,7 +110,27 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
     ) {
         switch self {
         case .downloads:
-            router.route(to: .library(library: DownloadLibrary()), in: namespace)
+            var downloadsParent = BaseItemDto(
+                id: DownloadManager.libraryID,
+                name: L10n.downloads
+            )
+            downloadsParent.setDownloaded()
+
+            router.route(
+                to: .contentGroup(
+                    provider: ItemTypeContentGroupProvider(
+                        itemTypes: [
+                            BaseItemKind.movie,
+                            .series,
+                            .episode,
+                            .boxSet,
+                            .person,
+                        ],
+                        parent: downloadsParent
+                    )
+                ),
+                in: namespace
+            )
         case .favorites:
             router.route(
                 to: .contentGroup(

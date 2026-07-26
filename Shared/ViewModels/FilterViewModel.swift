@@ -40,13 +40,15 @@ final class FilterViewModel: ViewModel {
     @Published
     var currentFilters: ItemFilterCollection
 
+    typealias LocalQueryFilters = @MainActor () -> QueryFiltersLegacy
+
     private let parent: (any LibraryParent)?
-    private let localQueryFilters: (@MainActor () -> QueryFiltersLegacy)?
+    private let localQueryFilters: LocalQueryFilters?
 
     init(
         parent: (any LibraryParent)? = nil,
         currentFilters: ItemFilterCollection = .default,
-        localQueryFilters: (@MainActor () -> QueryFiltersLegacy)? = nil
+        localQueryFilters: LocalQueryFilters? = nil
     ) {
         self.parent = parent
         self.currentFilters = currentFilters

@@ -19,7 +19,7 @@ extension BaseItemDto {
         else { return false }
 
         switch type {
-        case .boxSet, .season, .series:
+        case .boxSet, .person, .season, .series:
             return true
         default:
             return canDownload == true

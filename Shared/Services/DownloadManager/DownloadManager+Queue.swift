@@ -48,6 +48,13 @@ extension DownloadManager {
                     await queueAsync(child, parameters: parameters, parentID: id)
                 }
 
+            case .person:
+                createContainerTask(item, parameters: parameters, parentIDs: parentIDs)
+                let media = try await getPersonMedia(personID: id)
+                for child in media {
+                    await queueAsync(child, parameters: parameters, parentID: id)
+                }
+
             default:
                 return
             }
@@ -64,15 +71,21 @@ extension DownloadManager {
         switch item.type {
         case .movie, .episode:
             return 1
-        case .series, .season, .boxSet:
+        case .series, .season, .boxSet, .person:
             guard let userSession else { throw UserSessionError.missingCurrentSession }
             var parameters = Paths.GetItemsParameters()
             parameters.userID = userSession.user.id
-            parameters.parentID = id
             parameters.isRecursive = true
             parameters.includeItemTypes = [.movie, .episode]
             parameters.limit = 1
             parameters.enableTotalRecordCount = true
+
+            if item.type == .person {
+                parameters.personIDs = [id]
+            } else {
+                parameters.parentID = id
+            }
+
             let request = Paths.getItems(parameters: parameters)
             let response = try await userSession.client.send(request)
             return response.value.totalRecordCount ?? 0
@@ -156,6 +169,19 @@ extension DownloadManager {
         parameters.userID = userSession.user.id
         parameters.parentID = parentID
         parameters.includeItemTypes = [.movie, .series, .episode]
+        parameters.fields = Self.queueFields
+        let request = Paths.getItems(parameters: parameters)
+        let response = try await userSession.client.send(request)
+        return response.value.items ?? []
+    }
+
+    private func getPersonMedia(personID: String) async throws -> [BaseItemDto] {
+        guard let userSession else { throw UserSessionError.missingCurrentSession }
+        var parameters = Paths.GetItemsParameters()
+        parameters.userID = userSession.user.id
+        parameters.personIDs = [personID]
+        parameters.isRecursive = true
+        parameters.includeItemTypes = [.movie, .series]
         parameters.fields = Self.queueFields
         let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)

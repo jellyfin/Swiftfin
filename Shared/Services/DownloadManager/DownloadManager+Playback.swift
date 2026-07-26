@@ -45,7 +45,7 @@ extension DownloadManager {
         case .movie, .episode:
             guard let task = task(id: id), task.isCompleted else { return nil }
             return task
-        case .series, .season, .boxSet:
+        case .series, .season, .boxSet, .person:
             let episodes = downloadedEpisodes(under: id)
             return episodes.first { $0.item.userData?.isPlayed != true } ?? episodes.first
         default:
@@ -72,6 +72,15 @@ extension MediaPlayerItem {
 
         guard let mediaSource = item.mediaSources?.first else {
             throw ErrorMessage("Missing media source for downloaded item")
+        }
+
+        item.runTimeTicks = mediaSource.runTimeTicks ?? item.runTimeTicks
+
+        if let runtime = item.runTimeTicks, runtime > 0,
+           let position = item.userData?.playbackPositionTicks,
+           Double(position) / Double(runtime) >= 0.9
+        {
+            item.userData?.playbackPositionTicks = 0
         }
 
         let maxBitrate = try await MediaPlayerManager.getMaxBitrate(for: .max)

@@ -45,10 +45,19 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
             environment.filters.sortOrder = storedFilters.sortOrder
         }
 
+        var localQueryFilters: FilterViewModel.LocalQueryFilters?
+
+        if parent.isDownloaded {
+            localQueryFilters = {
+                Container.shared.downloadManager().localQueryFilters()
+            }
+        }
+
         self.environment = environment
         self.filterViewModel = .init(
             parent: parent,
-            currentFilters: environment.filters
+            currentFilters: environment.filters,
+            localQueryFilters: localQueryFilters
         )
         self.parent = parent
     }
@@ -175,18 +184,21 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
     private func downloadedItems(environment: Environment) -> [BaseItemDto] {
         guard let parentID = parent.id else { return [] }
 
+        let manager = Container.shared.downloadManager()
+        let isRoot = parentID == DownloadManager.libraryID
+
         var filters = environment.filters
         let isDefaultSort = filters.sortBy == ItemFilterCollection.default.sortBy
             && filters.sortOrder == ItemFilterCollection.default.sortOrder
 
-        // Preserve local index ordering unless a sort was explicitly chosen
-        if isDefaultSort {
+        // Preserve local index ordering in containers unless a sort was explicitly chosen
+        if !isRoot, isDefaultSort {
             filters.sortBy = []
         }
 
-        return Container.shared.downloadManager()
-            .childItems(of: parentID)
-            .filtered(using: filters)
+        let source = isRoot ? manager.allItems() : manager.childItems(of: parentID)
+
+        return source.filtered(using: filters)
     }
 
     private func page(of items: [BaseItemDto], pageState: LibraryPageState) -> [BaseItemDto] {

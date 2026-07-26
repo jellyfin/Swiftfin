@@ -60,10 +60,30 @@ final class DownloadManager: NSObject, ObservableObject {
         }
     }
 
+    static let libraryID = "downloads"
+
     // MARK: - Lookup
 
     func task(id: String) -> DownloadTask? {
         tasks.first { $0.id == id }
+    }
+
+    func allItems() -> [BaseItemDto] {
+        tasks.map(\.item)
+    }
+
+    func localQueryFilters() -> QueryFiltersLegacy {
+        let completed = tasks.filter(\.isCompleted)
+
+        let genres = Set(completed.compactMap(\.item.genres).flatMap(\.self))
+        let tags = Set(completed.compactMap(\.item.tags).flatMap(\.self))
+        let years = Set(completed.compactMap(\.item.productionYear))
+
+        return QueryFiltersLegacy(
+            genres: genres.sorted(),
+            tags: tags.sorted(),
+            years: years.sorted()
+        )
     }
 
     func children(of id: String) -> [DownloadTask] {
@@ -425,9 +445,14 @@ final class DownloadManager: NSObject, ObservableObject {
 
     // MARK: - Playback session
 
+    private func playbackRuntime(for id: String) -> Int? {
+        guard let item = task(id: id)?.item else { return nil }
+        return item.runTimeTicks ?? item.mediaSources?.first?.runTimeTicks
+    }
+
     func reportPlaybackProgress(for id: String, seconds: Duration?) {
         guard let ticks = seconds?.ticks else { return }
-        let runtime = task(id: id)?.item.runTimeTicks
+        let runtime = playbackRuntime(for: id)
 
         setUserData(for: id, notify: false) { userData in
             userData.playbackPositionTicks = ticks
@@ -440,7 +465,7 @@ final class DownloadManager: NSObject, ObservableObject {
 
     func reportPlaybackStopped(for id: String, seconds: Duration?) {
         guard let ticks = seconds?.ticks else { return }
-        let runtime = task(id: id)?.item.runTimeTicks
+        let runtime = playbackRuntime(for: id)
 
         setUserData(for: id) { userData in
             if let runtime, runtime > 0, Double(ticks) / Double(runtime) >= 0.9 {
