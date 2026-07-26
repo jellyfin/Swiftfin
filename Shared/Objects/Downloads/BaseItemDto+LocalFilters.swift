@@ -12,78 +12,110 @@ import JellyfinAPI
 extension [BaseItemDto] {
 
     func filtered(using filters: ItemFilterCollection) -> [BaseItemDto] {
+        filtered(itemTypes: filters.itemTypes)
+            .filtered(genres: filters.genres)
+            .filtered(tags: filters.tags)
+            .filtered(years: filters.years)
+            .filtered(letters: filters.letter)
+            .filtered(traits: filters.traits)
+            .sorted(by: filters.sortBy.first, order: filters.sortOrder.first)
+    }
+
+    private func filtered(itemTypes: [BaseItemKind]) -> [BaseItemDto] {
+        guard itemTypes.isNotEmpty else { return self }
+
+        return filter { item in
+            guard let type = item.type else { return false }
+            return itemTypes.contains(type)
+        }
+    }
+
+    private func filtered(genres: [ItemGenre]) -> [BaseItemDto] {
+        guard genres.isNotEmpty else { return self }
+
+        let allowed = Set(genres.map(\.value))
+
+        return filter { item in
+            guard let genres = item.genres else { return false }
+            return !allowed.isDisjoint(with: genres)
+        }
+    }
+
+    private func filtered(tags: [ItemTag]) -> [BaseItemDto] {
+        guard tags.isNotEmpty else { return self }
+
+        let allowed = Set(tags.map(\.value))
+
+        return filter { item in
+            guard let tags = item.tags else { return false }
+            return !allowed.isDisjoint(with: tags)
+        }
+    }
+
+    private func filtered(years: [ItemYear]) -> [BaseItemDto] {
+        guard years.isNotEmpty else { return self }
+
+        let allowed = Set(years.compactMap { Int($0.value) })
+
+        return filter { item in
+            guard let year = item.productionYear else { return false }
+            return allowed.contains(year)
+        }
+    }
+
+    private func filtered(letters: [ItemLetter]) -> [BaseItemDto] {
+        guard letters.isNotEmpty else { return self }
+
+        let allowed = Set(letters.map(\.value))
+
+        return filter { $0.matches(letters: allowed) }
+    }
+
+    private func filtered(traits: [ItemTrait]) -> [BaseItemDto] {
         var items = self
 
-        if filters.itemTypes.isNotEmpty {
-            items = items.filter {
-                guard let type = $0.type else { return false }
-                return filters.itemTypes.contains(type)
-            }
-        }
-
-        if filters.genres.isNotEmpty {
-            let allowed = Set(filters.genres.map(\.value))
-            items = items.filter {
-                guard let genres = $0.genres else { return false }
-                return !allowed.isDisjoint(with: genres)
-            }
-        }
-
-        if filters.tags.isNotEmpty {
-            let allowed = Set(filters.tags.map(\.value))
-            items = items.filter {
-                guard let tags = $0.tags else { return false }
-                return !allowed.isDisjoint(with: tags)
-            }
-        }
-
-        if filters.years.isNotEmpty {
-            let allowed = Set(filters.years.compactMap { Int($0.value) })
-            items = items.filter {
-                guard let year = $0.productionYear else { return false }
-                return allowed.contains(year)
-            }
-        }
-
-        if filters.letter.isNotEmpty {
-            let allowed = Set(filters.letter.map(\.value))
-            items = items.filter {
-                let sortName = $0.sortName ?? $0.displayTitle
-                guard let first = sortName.first else { return false }
-                if first.isLetter {
-                    return allowed.contains(String(first).uppercased())
-                }
-                return allowed.contains("#")
-            }
-        }
-
-        if filters.traits.contains(.isFavorite) {
+        if traits.contains(.isFavorite) {
             items = items.filter { $0.userData?.isFavorite == true }
         }
-        if filters.traits.contains(.isPlayed) {
+
+        if traits.contains(.isPlayed) {
             items = items.filter { $0.userData?.isPlayed == true }
         }
-        if filters.traits.contains(.isUnplayed) {
+
+        if traits.contains(.isUnplayed) {
             items = items.filter { $0.userData?.isPlayed != true }
-        }
-
-        if let primarySort = filters.sortBy.first {
-            if primarySort == .random {
-                return items.shuffled()
-            }
-
-            let ascending = filters.sortOrder.first == .ascending
-            items.sort { lhs, rhs in
-                let comparison = lhs.compare(to: rhs, by: primarySort)
-                return ascending ? comparison : !comparison
-            }
         }
 
         return items
     }
+
+    private func sorted(by sortBy: ItemSortBy?, order: ItemSortOrder?) -> [BaseItemDto] {
+        guard let sortBy else { return self }
+
+        if sortBy == .random {
+            return shuffled()
+        }
+
+        let ascending = order == .ascending
+
+        return sorted { lhs, rhs in
+            let comparison = lhs.compare(to: rhs, by: sortBy)
+            return ascending ? comparison : !comparison
+        }
+    }
 }
 
 private extension BaseItemDto {
+
+    func matches(letters: Set<String>) -> Bool {
+        guard let first = (sortName ?? displayTitle).first else { return false }
+
+        if first.isLetter {
+            return letters.contains(String(first).uppercased())
+        }
+
+        return letters.contains("#")
+    }
 
     func compare(to other: BaseItemDto, by sort: ItemSortBy) -> Bool {
         switch sort {

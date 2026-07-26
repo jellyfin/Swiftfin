@@ -12,6 +12,7 @@ import Logging
 
 extension DownloadTask {
 
+    // TODO: person images
     func downloadImages(item: BaseItemDto) async {
         var sourceLists: [[ImageSource]] = [
             item.imageSources(for: .portrait, size: .custom(width: 600)),

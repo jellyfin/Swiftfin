@@ -169,6 +169,8 @@ extension DownloadManager {
 
     // MARK: - Server fetches
 
+    // TODO: refresh stored metadata for existing downloads
+
     private static let queueFields: [ItemFields] = .MinimumFields
         .appending([.people, .overview, .genres, .tags, .trickplay, .chapters])
 

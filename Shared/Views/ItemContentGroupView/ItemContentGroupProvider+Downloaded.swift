@@ -10,6 +10,8 @@ import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
+// TODO: live refresh when a download completes while visible
+
 extension ItemContentGroupProvider {
 
     func injectingDownloadedVersion(into item: BaseItemDto) -> BaseItemDto {

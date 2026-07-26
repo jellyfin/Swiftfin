@@ -7,8 +7,12 @@
 //
 
 import Defaults
+import Engine
 import FactoryKit
 import SwiftUI
+
+// TODO: wifi/cellular downloading
+// TODO: retention of downloads
 
 struct DownloadSettingsView: View {
 
@@ -23,9 +27,6 @@ struct DownloadSettingsView: View {
 
     @Injected(\.downloadManager)
     private var downloadManager
-
-    @State
-    private var isPresentingClearConfirmation = false
 
     var body: some View {
         Form(systemImage: "arrow.down.circle") {
@@ -51,38 +52,36 @@ struct DownloadSettingsView: View {
 
             // TODO: Make a DownloadQueueView and move this button there
             Section(L10n.reset) {
-                Button(role: .destructive) {
-                    isPresentingClearConfirmation = true
-                } label: {
-                    Text(L10n.clearDownloads)
-                        .frame(maxWidth: .infinity)
-                }
-                .listRowInsets(.zero)
-                .listRowBackground(Color.clear)
-                #if os(iOS)
+                StateAdapter(initialValue: false) { isPresentingClearConfirmation in
+                    Button(role: .destructive) {
+                        isPresentingClearConfirmation.wrappedValue = true
+                    } label: {
+                        Text(L10n.clearDownloads)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
-                #endif
                     .fontWeight(.semibold)
                     .backport
                     .buttonStyle(.glassProminent.shadow(false))
                     .tint(.red)
-                #if os(iOS)
                     .controlSize(.large)
-                #endif
+                    .confirmationDialog(
+                        L10n.clearDownloads,
+                        isPresented: isPresentingClearConfirmation,
+                        titleVisibility: .visible
+                    ) {
+                        Button(L10n.clearDownloads, role: .destructive) {
+                            downloadManager.clearAll()
+                        }
+                        Button(L10n.cancel, role: .cancel) {}
+                    } message: {
+                        Text(L10n.clearDownloadsMessage)
+                    }
+                }
             }
         }
         .navigationTitle(L10n.downloads)
-        .confirmationDialog(
-            L10n.clearDownloads,
-            isPresented: $isPresentingClearConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(L10n.clearDownloads, role: .destructive) {
-                downloadManager.clearAll()
-            }
-            Button(L10n.cancel, role: .cancel) {}
-        } message: {
-            Text(L10n.clearDownloadsMessage)
-        }
     }
 }

@@ -10,6 +10,9 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
+// TODO: transcoded downloads
+//       - build transcode URL from maxBitrate + DeviceProfile
+//       - bitrate menu in DownloadButton, default bitrate settings
 enum DownloadMethod: String, Codable, Hashable {
 
     case direct
@@ -43,6 +46,7 @@ extension DownloadParameters {
         )
     }
 
+    // TODO: enable with audio downloads
     @MainActor
     static var audio: DownloadParameters {
         .init(

@@ -39,7 +39,7 @@ struct CustomizeViewsSettings: View {
                 router.route(to: .librarySettings)
             }
 
-            if experimentalDownloads {
+            if !UIDevice.isTV && experimentalDownloads {
                 ChevronButton(L10n.downloads) {
                     router.route(to: .downloadSettings)
                 }
