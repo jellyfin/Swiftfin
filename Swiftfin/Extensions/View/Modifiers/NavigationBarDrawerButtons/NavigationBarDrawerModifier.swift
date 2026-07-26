@@ -6,13 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct NavigationBarFilterDrawerModifier: ViewModifier {
-
-    @Default(.isLiquidGlassEnabled)
-    private var isLiquidGlassEnabled
 
     @ObservedObject
     var viewModel: FilterViewModel
@@ -31,7 +27,7 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
         if types.isEmpty {
             content
         } else {
-            if #available(iOS 26, *), isLiquidGlassEnabled {
+            if #available(iOS 26, *) {
                 content
                     .safeAreaBar(edge: .top, spacing: 0) {
                         drawer

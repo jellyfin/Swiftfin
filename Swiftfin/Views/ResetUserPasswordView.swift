@@ -161,7 +161,7 @@ struct ResetUserPasswordView: View {
                     viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
                 }
 
-                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                if #available(iOS 26, *) {
                     Button(
                         L10n.save,
                         role: .confirm,

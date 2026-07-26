@@ -425,11 +425,6 @@ extension Defaults.Keys {
         Key(name, default: `default`, suite: .appSuite)
     }
 
-    static let isLiquidGlassEnabled: Key<Bool> = DebugKey("experimentalLiquidGlass", default: false)
     static let sendProgressReports: Key<Bool> = DebugKey("sendProgressReports", default: true)
-}
-#else
-extension Defaults.Keys {
-    static let isLiquidGlassEnabled: Key<Bool> = AppKey("experimentalLiquidGlass", default: false)
 }
 #endif

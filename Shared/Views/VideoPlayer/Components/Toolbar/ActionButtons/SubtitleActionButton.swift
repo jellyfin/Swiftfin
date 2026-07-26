@@ -41,10 +41,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         var body: some View {
             if let playbackItem = manager.playbackItem {
-                Menu(
-                    L10n.subtitles,
-                    systemImage: systemImage
-                ) {
+                Menu {
                     if isInMenu {
                         content(playbackItem: playbackItem)
                     } else {
@@ -52,7 +49,11 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             content(playbackItem: playbackItem)
                         }
                     }
+                } label: {
+                    Label(L10n.subtitles, systemImage: systemImage)
                 }
+                .symbolRenderingMode(.monochrome)
+                .foregroundStyle(.primary, .secondary)
                 .videoPlayerActionButtonTransition()
                 .assign(playbackItem.$selectedSubtitleStreamIndex, to: $selectedSubtitleStreamIndex)
                 .backport

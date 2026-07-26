@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct AddServerUserView: View {
@@ -128,7 +127,7 @@ struct AddServerUserView: View {
                     viewModel.add(username: username, password: password)
                 }
 
-                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                if #available(iOS 26, *) {
                     Button(
                         L10n.save,
                         role: .confirm,

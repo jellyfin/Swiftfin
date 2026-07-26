@@ -13,6 +13,17 @@ extension VideoPlayer.PlaybackControls {
 
     struct Toolbar: View {
 
+        static let buttonSize: CGFloat = UIDevice.isTV ? 56 : 44
+        static let supplementButtonSpacing: CGFloat = UIDevice.isTV ? 20 : 10
+
+        static var buttonSpacing: CGFloat {
+            if #available(iOS 26.0, *) {
+                supplementButtonSpacing
+            } else {
+                UIDevice.isTV ? 16 : 0
+            }
+        }
+
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
@@ -22,7 +33,7 @@ extension VideoPlayer.PlaybackControls {
         private var router
 
         private var fontSize: CGFloat {
-            UIDevice.isTV ? 34 : 24
+            UIDevice.isTV ? 30 : 24
         }
 
         private func onPressed(isPressed: Bool) {
@@ -60,17 +71,19 @@ extension VideoPlayer.PlaybackControls {
 
                 if !UIDevice.isTV {
                     closeButton
+                        .frame(width: Self.buttonSize, height: Self.buttonSize)
                 }
 
                 TitleView(item: manager.item)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 ActionButtons()
-                    .frame(height: fontSize)
-                    .padding()
+                    .frame(height: Self.buttonSize)
+                    .padding(.horizontal)
             }
             .font(.system(size: fontSize, weight: .semibold))
-            .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
+            .labelStyle(.iconOnly)
+            .modifier(OverlayButtonStyleModifier(onPressed: onPressed))
             #if os(iOS)
                 .background {
                     EmptyHitTestView()
