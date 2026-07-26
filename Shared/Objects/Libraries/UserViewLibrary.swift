@@ -51,13 +51,20 @@ struct UserViewLibrary: PagingLibrary {
             }
             .map(UserViewLibraryElement.userView)
 
-        return elements
+        var result = elements
             .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
+
+        #if os(iOS)
+        result = result.appending(.downloads, if: Defaults[.Experimental.downloads])
+        #endif
+
+        return result
     }
 }
 
 enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement, SystemImageable {
 
+    case downloads
     case favorites
     case userView(BaseItemDto)
 
@@ -67,6 +74,8 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
 
     var displayTitle: String {
         switch self {
+        case .downloads:
+            L10n.downloads
         case .favorites:
             L10n.favorites
         case let .userView(item):
@@ -76,6 +85,8 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
 
     var id: String {
         switch self {
+        case .downloads:
+            "downloads"
         case .favorites:
             "favorites"
         case let .userView(item):
@@ -85,6 +96,8 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
 
     var systemImage: String {
         switch self {
+        case .downloads:
+            "arrow.down.circle.fill"
         case .favorites:
             "heart.fill"
         case let .userView(item):
@@ -101,6 +114,10 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         in namespace: Namespace.ID
     ) {
         switch self {
+        case .downloads:
+            #if os(iOS)
+            router.route(to: .library(library: DownloadLibrary()), in: namespace)
+            #endif
         case .favorites:
             router.route(
                 to: .contentGroup(
@@ -167,7 +184,7 @@ private struct UserViewLibraryGridElement: View {
 
     private var isTitleLabelVisible: Bool {
         switch element {
-        case .favorites:
+        case .downloads, .favorites:
             true
         case .userView:
             useRandomImage
@@ -315,7 +332,7 @@ private extension UserViewLibraryElement {
         }
 
         switch self {
-        case .favorites:
+        case .downloads, .favorites:
             return []
         case let .userView(item):
             return [item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 500))]
@@ -333,6 +350,8 @@ private extension UserViewLibraryElement {
         var includeItemTypes: [BaseItemKind] = BaseItemKind.supportedCases
 
         switch self {
+        case .downloads:
+            return []
         case .favorites:
             filters = [.isFavorite]
         case let .userView(item):

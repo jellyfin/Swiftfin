@@ -13,6 +13,9 @@ import UIKit
 @main
 struct SwiftfinApp: App {
 
+    @UIApplicationDelegateAdaptor(AppDelegate.self)
+    private var appDelegate
+
     init() {
         Self.configure()
 

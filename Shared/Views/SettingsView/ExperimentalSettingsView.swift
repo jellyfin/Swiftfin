@@ -19,6 +19,9 @@ struct ExperimentalSettingsView: View {
     static let isEnabled = true
     #endif
 
+    @Default(.Experimental.downloads)
+    private var experimentalDownloads
+
     @Default(.Experimental.serverConnectionAutoSwitch)
     private var isServerConnectionAutoSwitchEnabled
 
@@ -27,6 +30,15 @@ struct ExperimentalSettingsView: View {
 
     var body: some View {
         Form(systemImage: "flask") {
+            #if os(iOS)
+            Section {
+                Toggle(L10n.downloads, isOn: $experimentalDownloads)
+            } footer: {
+                // swiftlint:disable:next hard_coded_display_string
+                Text("Enables local downloads for offline browsing. Playback of downloaded files is not yet supported.")
+            }
+            #endif
+
             // swiftlint:disable hard_coded_display_string
             Toggle("Auto switch connection", isOn: $isServerConnectionAutoSwitchEnabled)
 
