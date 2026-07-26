@@ -7,7 +7,6 @@
 //
 
 import CoreStore
-import Defaults
 import FactoryKit
 import Logging
 import Nuke
@@ -17,10 +16,6 @@ import UIKit
 extension SwiftfinApp {
 
     static func configure() {
-
-        #if DEBUG && !os(tvOS)
-        SwizzleDefaults.set(Defaults[.isLiquidGlassEnabled], for: "com.apple.SwiftUI.IgnoreSolariumOptOut")
-        #endif
 
         // Logging
         LoggingSystem.bootstrap { label in

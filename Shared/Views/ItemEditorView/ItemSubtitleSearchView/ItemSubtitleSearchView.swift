@@ -57,7 +57,7 @@ struct ItemSubtitleSearchView: View {
                 ProgressView()
             }
             #if os(iOS)
-            if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+            if #available(iOS 26, *) {
                 Button(L10n.save, role: .confirm, action: save)
                     .disabled(selectedSubtitles.isEmpty)
             } else {

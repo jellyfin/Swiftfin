@@ -18,8 +18,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     private var rememberIndividualLibraryStyle
     @Default(.Customization.Library.style)
     private var defaultLibraryStyle
-    @Default(.isLiquidGlassEnabled)
-    private var isLiquidGlassEnabled
 
     @Namespace
     private var namespace
@@ -77,7 +75,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             Color.clear
         } content: { frame in
 
-            let insets: EdgeInsets = if #available(iOS 26, *), isLiquidGlassEnabled, isSafeAreaBarApplied {
+            let insets: EdgeInsets = if #available(iOS 26, *), isSafeAreaBarApplied {
                 frame.safeAreaInsets + 10
             } else {
                 .zero + 10

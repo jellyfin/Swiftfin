@@ -6,21 +6,17 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
     struct OverlayButtonStyleModifier: ViewModifier {
 
-        @Default(.isLiquidGlassEnabled)
-        private var isLiquidGlassEnabled
-
         let onPressed: (Bool) -> Void
 
         @ViewBuilder
         func body(content: Content) -> some View {
-            if #available(iOS 26.0, tvOS 26.0, *), isLiquidGlassEnabled {
+            if #available(iOS 26.0, *) {
                 content
                     .buttonStyle(OverlayGlassButtonStyle(onPressed: onPressed))
                     .backport

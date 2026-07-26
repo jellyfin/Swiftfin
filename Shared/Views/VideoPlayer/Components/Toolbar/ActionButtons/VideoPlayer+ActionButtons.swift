@@ -65,7 +65,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         }
 
         private var usesLiquidGlass: Bool {
-            if #available(iOS 26.0, tvOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+            if #available(iOS 26.0, *) {
                 true
             } else {
                 false

@@ -6,8 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-
 // TODO: add audio/subtitle offset
 
 enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable {
@@ -79,7 +77,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     }
     #else
     var systemImage: String {
-        let usesLiquidGlassSymbols = if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+        let usesLiquidGlassSymbols = if #available(iOS 26.0, *) {
             true
         } else {
             false
@@ -103,7 +101,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .aspectFill: "arrow.down.right.and.arrow.up.left"
         case .audio: "speaker.wave.2"
         case .autoPlay:
-            if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+            if #available(iOS 26.0, *) {
                 "stop"
             } else {
                 "stop.circle"

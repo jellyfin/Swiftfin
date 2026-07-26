@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -18,7 +17,7 @@ extension VideoPlayer.PlaybackControls {
         static let supplementButtonSpacing: CGFloat = UIDevice.isTV ? 20 : 10
 
         static var buttonSpacing: CGFloat {
-            if #available(iOS 26.0, tvOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+            if #available(iOS 26.0, *) {
                 supplementButtonSpacing
             } else {
                 UIDevice.isTV ? 16 : 0
