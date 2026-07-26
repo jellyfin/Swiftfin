@@ -8,6 +8,7 @@
 
 import Combine
 import Defaults
+import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -102,6 +103,10 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
+        if parent.isDownloaded {
+            return page(of: downloadedItems(environment: environment), pageState: pageState)
+        }
+
         var parameters = attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(environment: environment),
@@ -121,6 +126,10 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         environment: Environment,
         pageState: LibraryPageState
     ) async throws -> BaseItemDto? {
+        if parent.isDownloaded {
+            return downloadedItems(environment: environment).randomElement()
+        }
+
         var parameters = attachFilters(
             to: makeBaseItemParameters(environment: environment),
             using: environment.filters
@@ -140,6 +149,12 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         environment: Environment,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
+        if parent.isDownloaded {
+            let matching = downloadedItems(environment: environment)
+                .filter { $0.displayTitle.localizedCaseInsensitiveContains(query) }
+            return page(of: matching, pageState: pageState)
+        }
+
         var parameters = attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(environment: environment),
@@ -155,6 +170,29 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         let response = try await pageState.userSession.client.send(request)
 
         return normalize(response.value.items ?? [])
+    }
+
+    private func downloadedItems(environment: Environment) -> [BaseItemDto] {
+        guard let parentID = parent.id else { return [] }
+
+        var filters = environment.filters
+        let isDefaultSort = filters.sortBy == ItemFilterCollection.default.sortBy
+            && filters.sortOrder == ItemFilterCollection.default.sortOrder
+
+        // Preserve local index ordering unless a sort was explicitly chosen
+        if isDefaultSort {
+            filters.sortBy = []
+        }
+
+        return Container.shared.downloadManager()
+            .childItems(of: parentID)
+            .filtered(using: filters)
+    }
+
+    private func page(of items: [BaseItemDto], pageState: LibraryPageState) -> [BaseItemDto] {
+        guard pageState.pageOffset < items.count else { return [] }
+        let endIndex = min(pageState.pageOffset + pageState.pageSize, items.count)
+        return Array(items[pageState.pageOffset ..< endIndex])
     }
 
     private func makeBaseItemParameters(environment: Environment) -> Paths.GetItemsParameters {

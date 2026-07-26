@@ -16,7 +16,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {
-        DownloadManager.backgroundCompletionHandlers[identifier] = completionHandler
-        _ = Container.shared.downloadManager()
+        MainActor.assumeIsolated {
+            Container.shared.downloadManager().backgroundCompletionHandlers[identifier] = completionHandler
+        }
     }
 }

@@ -10,7 +10,6 @@ import Foundation
 
 enum DownloadError: Codable, Hashable, Displayable, Error {
 
-    case cancelled
     case networkFailure
     case insufficientStorage
     case fileSystemError
@@ -19,8 +18,6 @@ enum DownloadError: Codable, Hashable, Displayable, Error {
     // swiftlint:disable:next hard_coded_display_string
     var displayTitle: String {
         switch self {
-        case .cancelled:
-            "Download cancelled"
         case .networkFailure:
             "Network connection failed"
         case .insufficientStorage:

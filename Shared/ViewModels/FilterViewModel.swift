@@ -41,13 +41,16 @@ final class FilterViewModel: ViewModel {
     var currentFilters: ItemFilterCollection
 
     private let parent: (any LibraryParent)?
+    private let localQueryFilters: (@MainActor () -> QueryFiltersLegacy)?
 
     init(
         parent: (any LibraryParent)? = nil,
-        currentFilters: ItemFilterCollection = .default
+        currentFilters: ItemFilterCollection = .default,
+        localQueryFilters: (@MainActor () -> QueryFiltersLegacy)? = nil
     ) {
         self.parent = parent
         self.currentFilters = currentFilters
+        self.localQueryFilters = localQueryFilters
 
         super.init()
     }
@@ -90,22 +93,28 @@ final class FilterViewModel: ViewModel {
     @Function(\Action.Cases.getQueryFilters)
     private func _getQueryFilters() async throws {
 
-        let parameters = try Paths.GetQueryFiltersLegacyParameters(
-            userID: authenticatedUser.id,
-            parentID: parent?.id
-        )
+        let queryFilters: QueryFiltersLegacy
 
-        let request = Paths.getQueryFiltersLegacy(parameters: parameters)
-        let response = try await send(request)
+        if let localQueryFilters {
+            queryFilters = localQueryFilters()
+        } else {
+            let parameters = try Paths.GetQueryFiltersLegacyParameters(
+                userID: authenticatedUser.id,
+                parentID: parent?.id
+            )
 
-        let genres: [ItemGenre] = (response.value.genres ?? [])
+            let request = Paths.getQueryFiltersLegacy(parameters: parameters)
+            queryFilters = try await send(request).value
+        }
+
+        let genres: [ItemGenre] = (queryFilters.genres ?? [])
             .map(ItemGenre.init)
 
-        let tags = (response.value.tags ?? [])
+        let tags = (queryFilters.tags ?? [])
             .map(ItemTag.init)
 
         // Manually sort so that most recent years are "first"
-        let years = (response.value.years ?? [])
+        let years = (queryFilters.years ?? [])
             .sorted(by: >)
             .map(ItemYear.init)
 

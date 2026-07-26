@@ -12,18 +12,18 @@ import JellyfinAPI
 extension DownloadTask {
 
     func makeURLSessionTask(in urlSession: URLSession, userSession: UserSession) throws -> URLSessionDownloadTask {
-        guard case let .media(type) = kind else {
+        guard kind == .media else {
             throw ErrorMessage("Container download has no URL session task")
         }
 
         let downloadTask: URLSessionDownloadTask = if let resumeData {
             urlSession.downloadTask(withResumeData: resumeData)
         } else {
-            switch type {
+            switch parameters.method {
             case .direct:
                 try makeDirectURLSessionTask(in: urlSession, userSession: userSession)
             case .transcode:
-                // TODO: build transcoded download URL
+                // TODO: build transcoded download URL using parameters.maxBitrate and a DeviceProfile
                 throw ErrorMessage("Transcoded downloads are not yet implemented")
             }
         }

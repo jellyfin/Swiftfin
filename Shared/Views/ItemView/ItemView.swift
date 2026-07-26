@@ -134,11 +134,9 @@ struct ItemView: View {
         ) {
             EditItemMenu(item: provider.item)
         }
-        .toolbar {
+        .topBarTrailing {
             if experimentalDownloads, provider.item.canBeDownloaded {
-                ToolbarItem(placement: .topBarTrailing) {
-                    DownloadButton(item: provider.item)
-                }
+                DownloadButton(item: provider.item)
             }
         }
         #endif

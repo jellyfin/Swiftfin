@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct DownloadProgressStyle: ProgressViewStyle {
+struct DownloadProgressViewStyle: ProgressViewStyle {
 
     @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {

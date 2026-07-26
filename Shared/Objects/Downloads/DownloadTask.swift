@@ -15,7 +15,7 @@ enum DownloadState: Codable, Hashable, Comparable {
     case downloading
     case paused
     case error(DownloadError)
-    case completed(completedAt: Date, mediaRelativePath: String?, images: [DownloadImage])
+    case completed(mediaRelativePath: String?)
 
     private var rank: Int {
         switch self {
@@ -37,30 +37,18 @@ enum DownloadState: Codable, Hashable, Comparable {
     }
 }
 
-enum DownloadType: Hashable, Codable {
+enum DownloadKind: String, Codable, Hashable {
 
-    case direct
-    case transcode(PlaybackBitrate)
-}
-
-enum DownloadKind: Hashable, Codable {
-
-    case media(DownloadType)
+    case media
     case container
-}
-
-struct DownloadImage: Codable, Hashable {
-
-    let pathKey: String
-    let relativePath: String
-    let aspectRatio: CGFloat?
 }
 
 struct DownloadTask: Codable, Hashable, Identifiable, Storable {
 
     let id: String
-    let item: BaseItemDto
+    var item: BaseItemDto
     let kind: DownloadKind
+    let parameters: DownloadParameters
     let parentIDs: [String]
 
     var state: DownloadState
@@ -69,11 +57,10 @@ struct DownloadTask: Codable, Hashable, Identifiable, Storable {
     var resumeData: Data?
 
     let createdAt: Date
-    var updatedAt: Date
 
     var progress: Double {
         guard bytesTotal > 0 else { return 0 }
-        return min(1, Double(bytesDownloaded) / Double(bytesTotal))
+        return (Double(bytesDownloaded) / Double(bytesTotal)).clamped(to: 0 ... 1)
     }
 
     var downloadFolder: URL {
@@ -81,7 +68,7 @@ struct DownloadTask: Codable, Hashable, Identifiable, Storable {
     }
 
     var imagesFolder: URL {
-        downloadFolder.appendingPathComponent("Images", isDirectory: true)
+        item.downloadImagesFolder ?? downloadFolder.appendingPathComponent("Images", isDirectory: true)
     }
 
     var isContainer: Bool {
@@ -94,29 +81,14 @@ struct DownloadTask: Codable, Hashable, Identifiable, Storable {
         return false
     }
 
-    var completedAt: Date? {
-        if case let .completed(date, _, _) = state { return date }
-        return nil
-    }
-
     var mediaRelativePath: String? {
-        if case let .completed(_, path, _) = state { return path }
+        if case let .completed(path) = state { return path }
         return nil
-    }
-
-    var images: [DownloadImage] {
-        if case let .completed(_, _, images) = state { return images }
-        return []
     }
 
     var mediaURL: URL? {
         guard let mediaRelativePath else { return nil }
         return downloadFolder.appendingPathComponent(mediaRelativePath)
-    }
-
-    func localFileURL(for serverURL: URL) -> URL? {
-        guard let match = images.first(where: { $0.pathKey == serverURL.path }) else { return nil }
-        return imagesFolder.appendingPathComponent(match.relativePath)
     }
 }
 
@@ -124,35 +96,35 @@ extension DownloadTask {
 
     init(
         item: BaseItemDto,
-        kind: DownloadKind = .media(.direct),
+        kind: DownloadKind = .media,
+        parameters: DownloadParameters,
         parentIDs: [String] = []
     ) throws {
         guard let id = item.id else {
             throw ErrorMessage("Item has no id")
         }
-        let now = Date()
+
+        var item = item
+        item.setDownloaded()
+
         self.init(
             id: id,
             item: item,
             kind: kind,
+            parameters: parameters,
             parentIDs: parentIDs,
             state: .queued,
             bytesDownloaded: 0,
             bytesTotal: 0,
             resumeData: nil,
-            createdAt: now,
-            updatedAt: now
+            createdAt: Date()
         )
     }
 }
 
-extension DownloadTask: Displayable, SystemImageable {
+extension DownloadTask: Displayable {
 
     var displayTitle: String {
         item.displayTitle
-    }
-
-    var systemImage: String {
-        item.systemImage
     }
 }

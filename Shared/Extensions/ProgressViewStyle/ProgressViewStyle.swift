@@ -34,9 +34,9 @@ extension ProgressViewStyle where Self == PlaybackProgressViewStyle {
     }
 }
 
-extension ProgressViewStyle where Self == DownloadProgressStyle {
+extension ProgressViewStyle where Self == DownloadProgressViewStyle {
 
-    static var download: DownloadProgressStyle {
-        DownloadProgressStyle()
+    static var download: Self {
+        .init()
     }
 }

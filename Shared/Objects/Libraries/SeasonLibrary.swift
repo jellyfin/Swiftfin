@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import FactoryKit
 import JellyfinAPI
 
 struct SeasonViewModelLibrary: PagingLibrary {
@@ -42,6 +43,12 @@ struct SeasonLibrary: BaseItemKindLibrary {
     ) async throws -> [BaseItemDto] {
         guard let seriesID = parent.id else {
             throw ErrorMessage(L10n.unknownError)
+        }
+
+        if parent.isDownloaded {
+            return Container.shared.downloadManager()
+                .childItems(of: seriesID)
+                .filter { $0.type == .season }
         }
 
         var parameters = Paths.GetSeasonsParameters()

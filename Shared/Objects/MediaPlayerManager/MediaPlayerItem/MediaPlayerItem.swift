@@ -119,7 +119,11 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
             ?? mediaSource.defaultSubtitleStreamIndex
             ?? -1
 
-        observers.append(MediaProgressObserver(item: self))
+        if baseItem.isDownloaded {
+            observers.append(DownloadProgressObserver(item: self))
+        } else {
+            observers.append(MediaProgressObserver(item: self))
+        }
     }
 
     /// Decides whether a track change can be performed by the player in place, or whether the server must produce a new stream.

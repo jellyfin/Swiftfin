@@ -27,7 +27,7 @@ final class DownloadManager: NSObject, ObservableObject {
         let urlTask: URLSessionDownloadTask
     }
 
-    nonisolated(unsafe) static var backgroundCompletionHandlers: [String: () -> Void] = [:]
+    var backgroundCompletionHandlers: [String: () -> Void] = [:]
 
     let logger = Logger.swiftfin()
 
@@ -56,7 +56,6 @@ final class DownloadManager: NSObject, ObservableObject {
     override init() {
         super.init()
         load()
-        cleanStaging()
         _ = urlSession
         Task { @MainActor in
             self.advanceQueue()
@@ -71,6 +70,14 @@ final class DownloadManager: NSObject, ObservableObject {
 
     func children(of id: String) -> [DownloadTask] {
         tasks.filter { $0.parentIDs.contains(id) }
+    }
+
+    func childItems(of id: String) -> [BaseItemDto] {
+        children(of: id)
+            .sorted { lhs, rhs in
+                (lhs.item.indexNumber ?? .max, lhs.displayTitle) < (rhs.item.indexNumber ?? .max, rhs.displayTitle)
+            }
+            .map(\.item)
     }
 
     func topLevel() -> [DownloadTask] {
@@ -144,20 +151,25 @@ final class DownloadManager: NSObject, ObservableObject {
         advanceQueue()
     }
 
-    func cancel(id: String) {
-        delete(id: id)
-    }
-
-    func retry(id: String) {
-        resume(id: id)
-    }
-
     func delete(id: String) {
         let ids = [id] + descendants(of: id)
         for taskID in ids {
             deleteOne(id: taskID)
         }
+        pruneEmptyContainers()
+        refreshContainerUnplayedCounts()
         advanceQueue()
+    }
+
+    private func pruneEmptyContainers() {
+        while true {
+            let empty = tasks.filter { $0.isContainer && $0.isCompleted && children(of: $0.id).isEmpty }
+            guard empty.isNotEmpty else { break }
+
+            for task in empty {
+                deleteOne(id: task.id)
+            }
+        }
     }
 
     private func deleteOne(id: String) {
@@ -218,10 +230,8 @@ final class DownloadManager: NSObject, ObservableObject {
         guard let userSession else { return }
 
         if let shortage = spaceShortage(for: task) {
-            let formatter = ByteCountFormatter()
-            formatter.countStyle = .file
-            let need = formatter.string(fromByteCount: shortage.needed)
-            let have = formatter.string(fromByteCount: shortage.available)
+            let need = shortage.needed.formatted(.byteCount(style: .file))
+            let have = shortage.available.formatted(.byteCount(style: .file))
             logger.warning("Refusing to start \(id): need \(need) free, only \(have) available.")
             update(id: id) { task in
                 task.state = .error(.insufficientStorage)
@@ -258,17 +268,17 @@ final class DownloadManager: NSObject, ObservableObject {
 
         let snapshot = task
         Task {
-            let images = await snapshot.downloadImages(item: snapshot.item)
+            await snapshot.downloadImages(item: snapshot.item)
             await MainActor.run {
                 self.runningContainers.remove(id)
-                self.complete(id: id, mediaRelativePath: nil, images: images)
+                self.complete(id: id, mediaRelativePath: nil)
             }
         }
     }
 
     // MARK: - Disk budget
 
-    func canDownload(_ item: BaseItemDto) -> Bool {
+    func hasSpace(for item: BaseItemDto) -> Bool {
         guard let sourceSize = item.mediaSources?.first?.size, sourceSize > 0 else { return true }
         let needed = Int64(Double(sourceSize) * 1.05)
         return spaceShortage(needed: needed) == nil
@@ -307,17 +317,16 @@ final class DownloadManager: NSObject, ObservableObject {
 
         let resurrected = stored.map { task -> DownloadTask in
             guard task.state == .downloading else { return task }
-            var mutable = task
-            // Containers have no resume data — restart from queued.
-            // Media tasks may have URLSession resume data — sit in paused until user resumes.
-            mutable.state = task.isContainer ? .queued : .paused
-            return mutable
+            // Media tasks may hold resume data, so pause instead of requeueing
+            return task.mutating(\.state, with: task.isContainer ? .queued : .paused)
         }
 
         tasks = resurrected
         if resurrected != stored {
             persistTasks()
         }
+
+        refreshContainerUnplayedCounts()
     }
 
     func persistTasks() {
@@ -329,7 +338,6 @@ final class DownloadManager: NSObject, ObservableObject {
         guard let index = tasks.firstIndex(where: { $0.id == id }) else { return }
         var task = tasks[index]
         mutator(&task)
-        task.updatedAt = Date()
         tasks[index] = task
 
         let now = Date()
@@ -344,26 +352,123 @@ final class DownloadManager: NSObject, ObservableObject {
         }
     }
 
-    // MARK: - Completion
+    // MARK: - User data
 
-    func complete(id: String, mediaRelativePath: String?, images: [DownloadImage]) {
-        update(id: id) { task in
-            task.state = .completed(
-                completedAt: Date(),
-                mediaRelativePath: mediaRelativePath,
-                images: images
-            )
-            task.resumeData = nil
+    func setIsPlayed(_ isPlayed: Bool, for id: String) -> UserItemDataDto? {
+        guard let task = task(id: id) else { return nil }
+
+        if task.isContainer {
+            for media in downloadedEpisodes(under: id) {
+                setUserData(for: media.id) { userData in
+                    userData.isPlayed = isPlayed
+                    userData.playbackPositionTicks = 0
+                    userData.playedPercentage = nil
+                }
+            }
         }
-        advanceQueue()
+
+        let result = setUserData(for: id) { userData in
+            userData.isPlayed = isPlayed
+
+            if isPlayed {
+                userData.playbackPositionTicks = 0
+                userData.playedPercentage = nil
+            }
+        }
+
+        refreshContainerUnplayedCounts()
+
+        return result
     }
 
-    // MARK: - On-disk helpers
+    func setIsFavorite(_ isFavorite: Bool, for id: String) -> UserItemDataDto? {
+        setUserData(for: id) { $0.isFavorite = isFavorite }
+    }
 
-    func cleanStaging() {
-        let staging = URL.swiftfinDownloads.appendingPathComponent(".staging", isDirectory: true)
-        Task.detached(priority: .utility) {
-            try? FileManager.default.removeItem(at: staging)
+    @discardableResult
+    private func setUserData(
+        for id: String,
+        notify: Bool = true,
+        _ mutator: (inout UserItemDataDto) -> Void
+    ) -> UserItemDataDto? {
+        guard task(id: id) != nil else { return nil }
+
+        update(id: id) { task in
+            var userData = task.item.userData ?? UserItemDataDto()
+            userData.itemID = id
+            mutator(&userData)
+            task.item.userData = userData
         }
+
+        guard let userData = task(id: id)?.item.userData else { return nil }
+
+        if notify {
+            Notifications[.itemUserDataDidChange].post(userData)
+        }
+
+        return userData
+    }
+
+    func refreshContainerUnplayedCounts() {
+        for container in tasks.filter(\.isContainer) {
+            let media = downloadedEpisodes(under: container.id)
+            let unplayedCount = media.count(where: { $0.item.userData?.isPlayed != true })
+            let isPlayed = media.isNotEmpty && unplayedCount == 0
+
+            let current = container.item.userData
+            guard current?.unplayedItemCount != unplayedCount || (current?.isPlayed ?? false) != isPlayed else { continue }
+
+            setUserData(for: container.id) { userData in
+                userData.unplayedItemCount = unplayedCount
+                userData.isPlayed = isPlayed
+            }
+        }
+    }
+
+    // MARK: - Playback session
+
+    func reportPlaybackProgress(for id: String, seconds: Duration?) {
+        guard let ticks = seconds?.ticks else { return }
+        let runtime = task(id: id)?.item.runTimeTicks
+
+        setUserData(for: id, notify: false) { userData in
+            userData.playbackPositionTicks = ticks
+
+            if let runtime, runtime > 0 {
+                userData.playedPercentage = Double(ticks) / Double(runtime) * 100
+            }
+        }
+    }
+
+    func reportPlaybackStopped(for id: String, seconds: Duration?) {
+        guard let ticks = seconds?.ticks else { return }
+        let runtime = task(id: id)?.item.runTimeTicks
+
+        setUserData(for: id) { userData in
+            if let runtime, runtime > 0, Double(ticks) / Double(runtime) >= 0.9 {
+                userData.isPlayed = true
+                userData.playbackPositionTicks = 0
+                userData.playedPercentage = nil
+            } else {
+                userData.playbackPositionTicks = ticks
+
+                if let runtime, runtime > 0 {
+                    userData.playedPercentage = Double(ticks) / Double(runtime) * 100
+                }
+            }
+        }
+
+        refreshContainerUnplayedCounts()
+    }
+
+    // MARK: - Completion
+
+    func complete(id: String, mediaRelativePath: String?) {
+        update(id: id) { task in
+            task.state = .completed(mediaRelativePath: mediaRelativePath)
+            task.resumeData = nil
+        }
+        refreshContainerUnplayedCounts()
+        advanceQueue()
     }
 }

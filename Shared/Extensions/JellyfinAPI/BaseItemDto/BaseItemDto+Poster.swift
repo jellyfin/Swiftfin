@@ -308,6 +308,13 @@ private struct BaseItemDtoPosterContextMenu: View {
     private func toggleIsPlayed() async {
         let beforeIsPlayed = item.userData?.isPlayed ?? false
 
+        if item.isDownloaded, let itemID = item.id,
+           let userData = Container.shared.downloadManager().setIsPlayed(!beforeIsPlayed, for: itemID)
+        {
+            item.userData = userData
+            return
+        }
+
         item.userData?.isPlayed = !beforeIsPlayed
         do {
             try await setIsPlayed(!beforeIsPlayed)
@@ -319,6 +326,13 @@ private struct BaseItemDtoPosterContextMenu: View {
     @MainActor
     private func toggleIsFavorite() async {
         let beforeIsFavorite = item.userData?.isFavorite ?? false
+
+        if item.isDownloaded, let itemID = item.id,
+           let userData = Container.shared.downloadManager().setIsFavorite(!beforeIsFavorite, for: itemID)
+        {
+            item.userData = userData
+            return
+        }
 
         item.userData?.isFavorite = !beforeIsFavorite
         do {

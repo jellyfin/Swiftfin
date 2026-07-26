@@ -15,7 +15,7 @@ extension DownloadManager: URLSessionDownloadDelegate {
         let identifier = session.configuration.identifier
         MainActor.assumeIsolated {
             guard let identifier else { return }
-            if let handler = Self.backgroundCompletionHandlers.removeValue(forKey: identifier) {
+            if let handler = self.backgroundCompletionHandlers.removeValue(forKey: identifier) {
                 handler()
             }
         }
@@ -58,10 +58,18 @@ extension DownloadManager: URLSessionDownloadDelegate {
 
                 Task {
                     let item = task.item
-                    let images = await task.downloadImages(item: item)
-                    await task.downloadSubtitles(item: item, userSession: userSession)
+                    await task.downloadImages(item: item)
+
+                    if task.parameters.isSubtitlesEnabled {
+                        await task.downloadSubtitles(item: item, userSession: userSession)
+                    }
+
+                    if task.parameters.isTrickplayEnabled {
+                        await task.downloadTrickplay(item: item, userSession: userSession)
+                    }
+
                     await MainActor.run {
-                        self.complete(id: taskID, mediaRelativePath: filename, images: images)
+                        self.complete(id: taskID, mediaRelativePath: filename)
                     }
                 }
             } catch {

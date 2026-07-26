@@ -14,12 +14,22 @@ import SwiftUI
 
 struct DownloadButton: View {
 
+    @Injected(\.downloadManager)
+    private var downloadManager
+
+    @State
+    private var childCount: Int?
     @State
     private var task: DownloadTask?
 
-    private let downloadManager = Container.shared.downloadManager()
-
     private let item: BaseItemDto
+
+    private var downloadTitle: String {
+        if let childCount, childCount > 1 {
+            return "\(L10n.download) (\(childCount))"
+        }
+        return L10n.download
+    }
 
     init(item: BaseItemDto) {
         self.item = item
@@ -50,6 +60,11 @@ struct DownloadButton: View {
         .onReceive(taskPublisher) { newTask in
             task = newTask
         }
+        .onFirstAppear {
+            Task {
+                childCount = try? await downloadManager.downloadableItemCount(for: item)
+            }
+        }
     }
 
     private var taskPublisher: AnyPublisher<DownloadTask?, Never> {
@@ -66,30 +81,30 @@ struct DownloadButton: View {
                 switch task.state {
                 case .queued:
                     Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                        downloadManager.cancel(id: id)
+                        downloadManager.delete(id: id)
                     }
                 case .downloading:
                     Button(L10n.pause, systemImage: "pause") {
                         downloadManager.pause(id: id)
                     }
                     Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                        downloadManager.cancel(id: id)
+                        downloadManager.delete(id: id)
                     }
                 case .paused:
                     Button(L10n.resume, systemImage: "play") {
                         downloadManager.resume(id: id)
                     }
                     Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                        downloadManager.cancel(id: id)
+                        downloadManager.delete(id: id)
                     }
                 case let .error(reason):
                     Button(reason.displayTitle, systemImage: "exclamationmark.triangle") {}
                         .disabled(true)
                     Button(L10n.retry, systemImage: "arrow.clockwise") {
-                        downloadManager.retry(id: id)
+                        downloadManager.resume(id: id)
                     }
                     Button(L10n.cancel, systemImage: "trash", role: .destructive) {
-                        downloadManager.cancel(id: id)
+                        downloadManager.delete(id: id)
                     }
                 case .completed:
                     Button(L10n.delete, systemImage: "trash", role: .destructive) {
@@ -97,10 +112,19 @@ struct DownloadButton: View {
                     }
                 }
             } else {
-                if downloadManager.canDownload(item) {
-                    Button(L10n.download, systemImage: "arrow.down") {
-                        downloadManager.queue(item)
+                if downloadManager.hasSpace(for: item) {
+                    Section(L10n.direct) {
+                        Button(downloadTitle, systemImage: "arrow.down") {
+                            downloadManager.queue(item)
+                        }
                     }
+
+                    // TODO: Transcoded downloading
+                    /* Section(L10n.transcode) {
+                         ForEach(PlaybackBitrate) {
+                             etc etc etc
+                         }
+                     }*/
                 } else {
                     Button(DownloadError.insufficientStorage.displayTitle, systemImage: "externaldrive.badge.exclamationmark") {}
                         .disabled(true)
@@ -131,7 +155,7 @@ struct DownloadButton: View {
                 }
             } else {
                 Image(systemName: "arrow.down.circle")
-                    .foregroundStyle(downloadManager.canDownload(item) ? .primary : .secondary)
+                    .foregroundStyle(downloadManager.hasSpace(for: item) ? .primary : .secondary)
             }
         }
         .id(task?.state)

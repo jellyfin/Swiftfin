@@ -54,9 +54,7 @@ struct UserViewLibrary: PagingLibrary {
         var result = elements
             .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
 
-        #if os(iOS)
         result = result.appending(.downloads, if: Defaults[.Experimental.downloads])
-        #endif
 
         return result
     }
@@ -115,9 +113,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
     ) {
         switch self {
         case .downloads:
-            #if os(iOS)
             router.route(to: .library(library: DownloadLibrary()), in: namespace)
-            #endif
         case .favorites:
             router.route(
                 to: .contentGroup(
@@ -341,6 +337,15 @@ private extension UserViewLibraryElement {
 
     @MainActor
     func randomItemImageSources() async throws -> [ImageSource] {
+        if case .downloads = self {
+            return Container.shared.downloadManager().tasks
+                .filter(\.isCompleted)
+                .map(\.item)
+                .shuffled()
+                .prefix(3)
+                .flatMap { $0.imageSources(for: .landscape, size: .custom(width: 200)) }
+        }
+
         guard let userSession = Container.shared.currentUserSession() else {
             throw UserSessionError.missingCurrentSession
         }

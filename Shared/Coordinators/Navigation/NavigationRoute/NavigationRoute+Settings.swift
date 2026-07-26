@@ -178,6 +178,12 @@ extension NavigationRoute {
         CustomizeViewsSettings.ItemSection()
     }
 
+    static let downloadSettings = NavigationRoute(
+        id: "downloadSettings"
+    ) {
+        DownloadSettingsView()
+    }
+
     static let librarySettings = NavigationRoute(
         id: "librarySettings"
     ) {

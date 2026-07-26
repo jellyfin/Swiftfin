@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import FactoryKit
 import JellyfinAPI
 
 struct EpisodeLibrary: BaseItemKindLibrary {
@@ -25,6 +26,12 @@ struct EpisodeLibrary: BaseItemKindLibrary {
     ) async throws -> [BaseItemDto] {
         guard let seasonID = parent.id else {
             throw ErrorMessage(L10n.unknownError)
+        }
+
+        if parent.isDownloaded {
+            return Container.shared.downloadManager()
+                .childItems(of: seasonID)
+                .filter { $0.type == .episode }
         }
 
         var parameters = Paths.GetEpisodesParameters()

@@ -6,15 +6,13 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import CryptoKit
 import Foundation
 import JellyfinAPI
 import Logging
-import UIKit
 
 extension DownloadTask {
 
-    func downloadImages(item: BaseItemDto) async -> [DownloadImage] {
+    func downloadImages(item: BaseItemDto) async {
         var sourceLists: [[ImageSource]] = [
             item.imageSources(for: .portrait, size: .custom(width: 600)),
             item.imageSources(for: .landscape, size: .custom(width: 800)),
@@ -26,7 +24,6 @@ extension DownloadTask {
         }
 
         var seen: Set<String> = []
-        var images: [DownloadImage] = []
 
         for sources in sourceLists {
             for source in sources {
@@ -34,47 +31,24 @@ extension DownloadTask {
                 let pathKey = url.path
                 guard seen.insert(pathKey).inserted else { continue }
 
-                if let image = await downloadImage(from: url, pathKey: pathKey) {
-                    images.append(image)
-                }
+                await downloadImage(from: url, pathKey: pathKey)
             }
         }
-
-        return images
     }
 
-    private func downloadImage(from sourceURL: URL, pathKey: String) async -> DownloadImage? {
+    private func downloadImage(from sourceURL: URL, pathKey: String) async {
+        guard let filename = BaseItemDto.downloadedImageFilename(for: pathKey) else { return }
+
         do {
             try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)
-            let (data, response) = try await URLSession.shared.data(from: sourceURL)
+            let (data, _) = try await URLSession.shared.data(from: sourceURL)
 
-            let ext: String = response.mimeSubtype ?? "jpg"
-            let filename = "\(Self.filenameHash(pathKey)).\(ext)"
             let destination = imagesFolder.appendingPathComponent(filename)
             try? FileManager.default.removeItem(at: destination)
             try data.write(to: destination)
-
-            let aspectRatio: CGFloat? = {
-                guard let image = UIImage(data: data) else { return nil }
-                let pixelHeight = image.size.height * image.scale
-                guard pixelHeight > 0 else { return nil }
-                return (image.size.width * image.scale) / pixelHeight
-            }()
-
-            return DownloadImage(
-                pathKey: pathKey,
-                relativePath: filename,
-                aspectRatio: aspectRatio
-            )
         } catch {
             Logger.swiftfin().warning("Failed to download image \(pathKey): \(error.localizedDescription)")
-            return nil
         }
-    }
-
-    private static func filenameHash(_ pathKey: String) -> String {
-        let digest = SHA256.hash(data: Data(pathKey.utf8))
-        return digest.prefix(8).map { String(format: "%02x", $0) }.joined()
     }
 
     func downloadSubtitles(item: BaseItemDto, userSession: UserSession) async {

@@ -10,6 +10,7 @@ import CollectionHStack
 import CollectionVGrid
 import Combine
 import Defaults
+import FactoryKit
 import Foundation
 import IdentifiedCollections
 import JellyfinAPI
@@ -52,10 +53,14 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     private let seasonsViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
     init(episode: BaseItemDto) {
+        var seriesParent = BaseItemDto(id: episode.seriesID, name: episode.seriesName)
+
+        if episode.isDownloaded {
+            seriesParent.setDownloaded()
+        }
+
         self.seasonsViewModel = PagingLibraryViewModel(
-            library: SeasonViewModelLibrary(
-                parent: BaseItemDto(id: episode.seriesID, name: episode.seriesName)
-            ),
+            library: SeasonViewModelLibrary(parent: seriesParent),
             pageSize: 100
         )
         super.init()
@@ -84,6 +89,11 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     private func getAdjacentEpisodes(for item: BaseItemDto?) async throws {
         guard let item else { return }
         guard let seriesID = item.seriesID, item.type == .episode else { return }
+
+        if item.isDownloaded {
+            getDownloadedAdjacentEpisodes(for: item, seriesID: seriesID)
+            return
+        }
 
         let parameters = try Paths.GetEpisodesParameters(
             userID: authenticatedUser.id,
@@ -151,6 +161,26 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
             self.hasNextItem = nextProvider != nil
             self.hasPreviousItem = previousProvider != nil
         }
+    }
+
+    private func getDownloadedAdjacentEpisodes(for item: BaseItemDto, seriesID: String) {
+        let manager = Container.shared.downloadManager()
+        let episodes = manager.downloadedEpisodes(under: seriesID).map(\.item)
+
+        guard let index = episodes.firstIndex(where: { $0.id == item.id }) else { return }
+
+        let resetPosition: @Sendable (inout BaseItemDto) -> Void = { item in
+            item.userData?.playbackPositionTicks = .zero
+        }
+
+        nextItem = episodes[safe: index + 1].flatMap {
+            manager.mediaPlayerItemProvider(for: $0)?.modifyingItem(resetPosition)
+        }
+        previousItem = episodes[safe: index - 1].flatMap {
+            manager.mediaPlayerItemProvider(for: $0)?.modifyingItem(resetPosition)
+        }
+        hasNextItem = nextItem != nil
+        hasPreviousItem = previousItem != nil
     }
 }
 

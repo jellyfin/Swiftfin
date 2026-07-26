@@ -55,6 +55,10 @@ extension PlaybackInformationSupplement {
             manager.playbackItem?.mediaSource
         }
 
+        private var isDownloadedPlayback: Bool {
+            manager.playbackItem?.baseItem.isDownloaded == true
+        }
+
         private var videoStream: MediaStream? {
             manager.playbackItem?.videoStreams.first
         }
@@ -76,16 +80,20 @@ extension PlaybackInformationSupplement {
 
             LabeledContent(L10n.videoPlayer, value: Defaults[.VideoPlayer.videoPlayerType].displayTitle)
 
-            if let playMethod = viewModel.currentSession?.playMethodDisplayTitle {
-                LabeledContent(L10n.method, value: playMethod)
-            }
+            if isDownloadedPlayback {
+                LabeledContent(L10n.source, value: L10n.download.localizedUppercase)
+            } else {
+                if let playMethod = viewModel.currentSession?.playMethodDisplayTitle {
+                    LabeledContent(L10n.method, value: playMethod)
+                }
 
-            if let deliveryProtocol = mediaSource?.protocol {
-                LabeledContent(L10n.source, value: deliveryProtocol.rawValue.uppercased())
-            }
+                if let deliveryProtocol = mediaSource?.protocol {
+                    LabeledContent(L10n.source, value: deliveryProtocol.rawValue.uppercased())
+                }
 
-            if let transcodingSubProtocol = mediaSource?.transcodingSubProtocol {
-                LabeledContent(L10n.protocol, value: transcodingSubProtocol.rawValue.uppercased())
+                if let transcodingSubProtocol = mediaSource?.transcodingSubProtocol {
+                    LabeledContent(L10n.protocol, value: transcodingSubProtocol.rawValue.uppercased())
+                }
             }
         }
 
@@ -110,7 +118,7 @@ extension PlaybackInformationSupplement {
 
         @ViewBuilder
         private var streamingInfoSection: some View {
-            if let transcodingInfo = viewModel.currentSession?.transcodingInfo {
+            if !isDownloadedPlayback, let transcodingInfo = viewModel.currentSession?.transcodingInfo {
                 Text(viewModel.currentSession?.playMethodDisplayTitle.map { L10n.streamInfoWithMethod($0) } ?? L10n.streamInfo)
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -197,7 +205,10 @@ extension PlaybackInformationSupplement {
 
         @ViewBuilder
         private var transcodeReasonsSection: some View {
-            if let transcodeReasons = viewModel.currentSession?.transcodingInfo?.transcodeReasons, transcodeReasons.isNotEmpty {
+            if !isDownloadedPlayback,
+               let transcodeReasons = viewModel.currentSession?.transcodingInfo?.transcodeReasons,
+               transcodeReasons.isNotEmpty
+            {
                 Text(L10n.transcodeReasons)
                     .font(.subheadline)
                     .fontWeight(.semibold)

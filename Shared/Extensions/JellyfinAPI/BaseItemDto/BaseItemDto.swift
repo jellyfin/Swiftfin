@@ -206,10 +206,15 @@ extension BaseItemDto {
         return ImageRenderer(content: transformedImage).uiImage
     }
 
+    @MainActor
     func getPlaybackItemProvider(
         userSession: UserSession?,
         mediaSource: MediaSourceInfo? = nil
     ) -> MediaPlayerItemProvider? {
+        if isDownloaded, let provider = Container.shared.downloadManager().mediaPlayerItemProvider(for: self) {
+            return provider
+        }
+
         switch type {
         case .program:
             guard isAiring, let userSession else { return nil }
@@ -466,6 +471,14 @@ extension BaseItemDto {
             }
     }
 
+    mutating func setDownloaded(_ isDownloaded: Bool = true) {
+        sourceType = isDownloaded ? "Download" : nil
+    }
+
+    var isDownloaded: Bool {
+        sourceType == "Download"
+    }
+
     var downloadFolder: URL? {
         guard let type, let id else { return nil }
 
@@ -493,6 +506,10 @@ extension BaseItemDto {
         }
 
         return path
+    }
+
+    var downloadImagesFolder: URL? {
+        downloadFolder?.appendingPathComponent("Images", isDirectory: true)
     }
 
     /// Returns `originalTitle` if it is not the same as `displayTitle`
