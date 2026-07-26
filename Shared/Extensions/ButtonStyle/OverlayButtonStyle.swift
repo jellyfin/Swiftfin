@@ -6,15 +6,47 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
-    struct OverlayButtonStyle: ButtonStyle {
+    struct OverlayButtonStyleModifier: ViewModifier {
 
-        @Default(.isLiquidGlassEnabled)
-        private var isLiquidGlassEnabled
+        let onPressed: (Bool) -> Void
+
+        @ViewBuilder
+        func body(content: Content) -> some View {
+            if #available(iOS 26.0, *) {
+                content
+                    .buttonStyle(OverlayGlassButtonStyle(onPressed: onPressed))
+                    .backport
+                    .buttonBorderShape(.circle)
+            } else {
+                content
+                    .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
+            }
+        }
+    }
+
+    @available(iOS 26.0, tvOS 26.0, *)
+    struct OverlayGlassButtonStyle: PrimitiveButtonStyle {
+
+        let onPressed: (Bool) -> Void
+
+        func makeBody(configuration: Configuration) -> some View {
+            Button(role: configuration.role) {
+                configuration.trigger()
+            } label: {
+                configuration.label
+            }
+            .buttonStyle(.glass)
+            .onLongPressGesture(minimumDuration: .infinity) {} onPressingChanged: { isPressed in
+                onPressed(isPressed)
+            }
+        }
+    }
+
+    struct OverlayButtonStyle: ButtonStyle {
 
         @Environment(\.isEnabled)
         private var isEnabled
@@ -33,16 +65,7 @@ extension VideoPlayer.PlaybackControls {
         }
 
         #if os(iOS)
-        @ViewBuilder
         private func iOSBody(_ configuration: Configuration) -> some View {
-            if #available(iOS 26.0, *), isLiquidGlassEnabled {
-                iOSGlassBody(configuration)
-            } else {
-                iOSLegacyBody(configuration)
-            }
-        }
-
-        private func iOSBaseLabel(_ configuration: Configuration) -> some View {
             configuration.label
                 .foregroundStyle(isEnabled ? isFocused ? AnyShapeStyle(Color.black) : AnyShapeStyle(HierarchicalShapeStyle.primary) :
                     AnyShapeStyle(Color.gray)
@@ -55,21 +78,6 @@ extension VideoPlayer.PlaybackControls {
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.25), value: configuration.isPressed)
                 .padding(UIDevice.isTV ? 12 : 4)
                 .animation(nil, value: configuration.isPressed)
-        }
-
-        @available(iOS 26.0, *)
-        private func iOSGlassBody(_ configuration: Configuration) -> some View {
-            iOSBaseLabel(configuration)
-                .padding(4)
-                .glassEffect(.regular.interactive(), in: Circle())
-                .backport
-                .onChange(of: configuration.isPressed) { _, newValue in
-                    onPressed(newValue)
-                }
-        }
-
-        private func iOSLegacyBody(_ configuration: Configuration) -> some View {
-            iOSBaseLabel(configuration)
                 .background {
                     Circle()
                         .foregroundStyle(Color.white.opacity(configuration.isPressed ? 0.25 : isFocused ? 1 : 0))

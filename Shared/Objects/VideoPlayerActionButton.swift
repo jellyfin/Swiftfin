@@ -66,7 +66,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .autoPlay: "play.fill"
         case .pictureInPicture: "pip.enter"
         case .playbackSpeed: "speedometer"
-        case .playbackSettings: "tv.circle.fill"
+        case .playbackSettings: "tv"
         case .playNextItem: "forward.end.fill"
         case .playPreviousItem: "backward.end.fill"
         case .remotePlayback: "airplayvideo"
@@ -87,16 +87,22 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     }
     #else
     var systemImage: String {
-        switch self {
+        let usesLiquidGlassSymbols = if #available(iOS 26.0, *) {
+            true
+        } else {
+            false
+        }
+
+        return switch self {
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2.fill"
-        case .autoPlay: "play.circle.fill"
-        case .gestureLock: "lock.circle.fill"
+        case .autoPlay: usesLiquidGlassSymbols ? "play.fill" : "play.circle.fill"
+        case .gestureLock: usesLiquidGlassSymbols ? "lock.fill" : "lock.circle.fill"
         case .pictureInPicture: "pip.enter"
         case .playbackSpeed: "speedometer"
-        case .playbackSettings: "tv.circle.fill"
-        case .playNextItem: "forward.end.circle.fill"
-        case .playPreviousItem: "backward.end.circle.fill"
+        case .playbackSettings: usesLiquidGlassSymbols ? "tv" : "tv.circle.fill"
+        case .playNextItem: usesLiquidGlassSymbols ? "forward.end.fill" : "forward.end.circle.fill"
+        case .playPreviousItem: usesLiquidGlassSymbols ? "backward.end.fill" : "backward.end.circle.fill"
         case .remotePlayback: "airplayvideo"
         case .subtitles: "captions.bubble.fill"
         }
@@ -106,7 +112,12 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         switch self {
         case .aspectFill: "arrow.down.right.and.arrow.up.left"
         case .audio: "speaker.wave.2"
-        case .autoPlay: "stop.circle"
+        case .autoPlay:
+            if #available(iOS 26.0, *) {
+                "stop"
+            } else {
+                "stop.circle"
+            }
         case .gestureLock: "lock.open.fill"
         case .pictureInPicture: "pip.exit"
         case .subtitles: "captions.bubble"
