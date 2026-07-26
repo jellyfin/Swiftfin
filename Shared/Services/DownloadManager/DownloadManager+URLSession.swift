@@ -11,16 +11,6 @@ import JellyfinAPI
 
 extension DownloadManager: URLSessionDownloadDelegate {
 
-    nonisolated func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        let identifier = session.configuration.identifier
-        MainActor.assumeIsolated {
-            guard let identifier else { return }
-            if let handler = self.backgroundCompletionHandlers.removeValue(forKey: identifier) {
-                handler()
-            }
-        }
-    }
-
     nonisolated func urlSession(
         _ session: URLSession,
         downloadTask: URLSessionDownloadTask,

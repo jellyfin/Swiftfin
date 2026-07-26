@@ -27,8 +27,6 @@ final class DownloadManager: NSObject, ObservableObject {
         let urlTask: URLSessionDownloadTask
     }
 
-    var backgroundCompletionHandlers: [String: () -> Void] = [:]
-
     let logger = Logger.swiftfin()
 
     @Published
@@ -41,7 +39,7 @@ final class DownloadManager: NSObject, ObservableObject {
     lazy var urlSession: URLSession = {
         let config = URLSessionConfiguration.background(withIdentifier: "org.jellyfin.swiftfin.downloads")
         config.isDiscretionary = false
-        config.sessionSendsLaunchEvents = true
+        config.sessionSendsLaunchEvents = false
         return URLSession(configuration: config, delegate: self, delegateQueue: .main)
     }()
 
