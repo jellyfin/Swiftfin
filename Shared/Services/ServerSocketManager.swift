@@ -56,6 +56,10 @@ final class ServerSocketManager {
     }
 
     private func start() {
+
+        // Remove any existing sockets first
+        stop()
+
         tasks = [
             Task { [weak self] in await self?.runConnection() },
             Task { [weak self] in await self?.observeServerConnectionChange() },
