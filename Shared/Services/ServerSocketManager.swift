@@ -14,9 +14,16 @@ import os
 
 final class ServerSocketManager {
 
+    private struct Claim {
+        let subscription: JellyfinSocket.Subscription
+        let delay: Duration
+        let interval: Duration
+        var token: JellyfinSocket.Session.SubscriptionToken?
+    }
+
     private struct State {
         var session: JellyfinSocket.Session?
-        var subscriptions: [JellyfinSocket.Subscription: (delay: Duration, interval: Duration, count: Int)] = [:]
+        var claims: [UUID: Claim] = [:]
         var reconnectRequested = false
     }
 
@@ -24,7 +31,7 @@ final class ServerSocketManager {
 
     var events: AnyPublisher<JellyfinSocket.Session.Event, Never> {
         allEvents
-            .filter { !$0.isSubscription }
+            .filter { $0.subscription == nil }
             .eraseToAnyPublisher()
     }
 
@@ -74,35 +81,25 @@ final class ServerSocketManager {
         delay: Duration,
         interval: Duration
     ) -> AnyCancellable {
-        let (session, effectiveDelay, effectiveInterval) = state.withLock { state -> (JellyfinSocket.Session?, Duration, Duration) in
-            let existing = state.subscriptions[subscription]
-            let effectiveDelay = min(existing?.delay ?? delay, delay)
-            let effectiveInterval = min(existing?.interval ?? interval, interval)
-            let count = (existing?.count ?? 0) + 1
+        let id = UUID()
 
-            state.subscriptions[subscription] = (effectiveDelay, effectiveInterval, count)
-            return (state.session, effectiveDelay, effectiveInterval)
+        let session = state.withLock { state -> JellyfinSocket.Session? in
+            state.claims[id] = Claim(subscription: subscription, delay: delay, interval: interval)
+            return state.session
         }
 
         if let session {
-            session.subscribe(subscription, delay: effectiveDelay, interval: effectiveInterval)
+            let token = session.subscribe(subscription, delay: delay, interval: interval)
+            state.withLock { $0.claims[id]?.token = token }
         } else {
             wake.yield()
         }
 
         return AnyCancellable { [weak self] in
-            let session = self?.state.withLock { state -> JellyfinSocket.Session? in
-                guard let existing = state.subscriptions[subscription] else { return nil }
+            guard let self else { return }
 
-                if existing.count <= 1 {
-                    state.subscriptions[subscription] = nil
-                    return state.session
-                }
-
-                state.subscriptions[subscription] = (existing.delay, existing.interval, existing.count - 1)
-                return nil
-            }
-            session?.unsubscribe(subscription)
+            let token = state.withLock { $0.claims.removeValue(forKey: id)?.token }
+            token?.cancel()
         }
     }
 
@@ -121,25 +118,28 @@ final class ServerSocketManager {
                 supportedCommands: [.displayMessage],
                 playableMediaTypes: [.video]
             )
-            .connect(
-                reconnectAttempts: 5,
-                reconnectDelay: .seconds(2),
-                responseTimeout: .seconds(10)
-            )
+            .connect(responseTimeout: .seconds(10))
 
-            let subscriptions = state.withLock { state in
+            let claims = state.withLock { state in
                 state.session = session
-                return state.subscriptions
+                return state.claims
             }
-            for subscription in subscriptions {
-                session.subscribe(
-                    subscription.key,
-                    delay: subscription.value.delay,
-                    interval: subscription.value.interval
+
+            for (id, claim) in claims {
+                let token = session.subscribe(
+                    claim.subscription,
+                    delay: claim.delay,
+                    interval: claim.interval
                 )
+
+                state.withLock { $0.claims[id]?.token = token }
             }
 
             logger.debug("Connecting the socket")
+
+            // The session reconnects on its own, so the stream only ends on an explicit
+            // disconnect or a refusal there is no point retrying.
+            var wasRefused = false
 
             do {
                 for try await event in session.events {
@@ -149,28 +149,37 @@ final class ServerSocketManager {
                     case let .connected(url):
                         logger.info("Socket connected", metadata: ["url": .stringConvertible(url)])
                         isConnected.send(true)
+                    case .disconnected:
+                        logger.info("Socket disconnected")
+                        isConnected.send(false)
                     case let .message(message):
                         logger.debug("Socket message", metadata: ["message": .string("\(message)")])
                     }
                     allEvents.send(event)
                 }
             } catch {
+                if let socketError = error as? JellyfinSocket.Session.SocketError,
+                   case .unauthorized = socketError
+                {
+                    wasRefused = true
+                }
+
                 logger.debug("Socket error: \(error.localizedDescription)")
             }
 
-            let (hasSubscriptions, explicit) = state.withLock { state -> (Bool, Bool) in
+            let (hasClaims, explicit) = state.withLock { state -> (Bool, Bool) in
                 state.session = nil
                 defer { state.reconnectRequested = false }
-                return (state.subscriptions.isNotEmpty, state.reconnectRequested)
+                return (state.claims.isNotEmpty, state.reconnectRequested)
             }
 
             isConnected.send(false)
-            logger.info("Socket disconnected")
+            logger.info("Socket session ended")
 
             if explicit {
                 logger.debug("Socket reconnecting")
                 _ = await wakeIterator.next()
-            } else if hasSubscriptions {
+            } else if hasClaims, !wasRefused {
                 logger.debug("Socket lost, reconnecting after backoff")
                 try? await Task.sleep(for: .seconds(2))
             } else {
@@ -251,7 +260,7 @@ extension ServerSocketManager {
             let token = self.subscribe(subscription, delay: delay, interval: interval)
 
             return self.allEvents
-                .filter(\.isSubscription)
+                .filter { $0.subscription == subscription }
                 .compactMap(extract)
                 .handleEvents(receiveCancel: token.cancel)
                 .eraseToAnyPublisher()
