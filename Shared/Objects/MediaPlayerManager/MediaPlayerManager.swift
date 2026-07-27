@@ -161,8 +161,6 @@ final class MediaPlayerManager: ViewModel {
         }
     }
 
-    let displayMessages = PassthroughSubject<String, Never>()
-
     /// The current seconds media playback is set to.
     let secondsBox: PublishedBox<Duration> = .init(initialValue: .zero)
 
@@ -207,7 +205,6 @@ final class MediaPlayerManager: ViewModel {
         super.init()
 
         self.queue?.manager = self
-        observeSocketCommands()
     }
 
     init(
@@ -221,7 +218,6 @@ final class MediaPlayerManager: ViewModel {
 
         self.queue?.manager = self
         self.playbackItem = playbackItem
-        observeSocketCommands()
     }
 
     @Function(\Action.Cases.ended)

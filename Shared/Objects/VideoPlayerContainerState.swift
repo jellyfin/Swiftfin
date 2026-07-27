@@ -8,7 +8,6 @@
 
 import Combine
 import Foundation
-import JellyfinAPI
 import SwiftUI
 
 // TODO: turned into spaghetti to get out, clean up with a better state system
@@ -133,18 +132,7 @@ class VideoPlayerContainerState: ObservableObject {
     let toastProxy: ToastProxy = .init()
 
     weak var containerView: VideoPlayer.UIVideoPlayerContainerViewController?
-    weak var manager: MediaPlayerManager? {
-        didSet {
-            displayMessageCancellable = manager?.displayMessages
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] message in
-                    self?.toastProxy.present(
-                        message,
-                        systemName: GeneralCommandType.displayMessage.systemImage
-                    )
-                }
-        }
-    }
+    weak var manager: MediaPlayerManager?
 
     #if os(iOS)
     var panHandlingAction: (any _PanHandlingAction)?
@@ -179,7 +167,6 @@ class VideoPlayerContainerState: ObservableObject {
     }
     #endif
 
-    private var displayMessageCancellable: AnyCancellable?
     private var jumpProgressCancellable: AnyCancellable?
     private var timerCancellable: AnyCancellable?
 

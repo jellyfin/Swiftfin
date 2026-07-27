@@ -119,7 +119,7 @@ final class ServerSocketManager {
             let session = userSession.client.socket(
                 supportsMediaControl: true,
                 supportedCommands: [
-                    .displayMessage,
+                    .play,
                     .playState,
                     .setAudioStreamIndex,
                     .setMaxStreamingBitrate,
@@ -216,6 +216,13 @@ extension ServerSocketManager {
     var generalCommands: AnyPublisher<GeneralCommand, Never> {
         commands { event in
             guard case let .message(.generalCommandMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var playCommands: AnyPublisher<PlayRequest, Never> {
+        commands { event in
+            guard case let .message(.playMessage(message)) = event else { return nil }
             return message.data
         }
     }
