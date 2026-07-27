@@ -119,8 +119,11 @@ final class ServerSocketManager {
             let session = userSession.client.socket(
                 supportsMediaControl: true,
                 supportedCommands: [
+                    .displayContent,
                     .play,
+                    .playMediaSource,
                     .playState,
+                    .playTrailers,
                     .setAudioStreamIndex,
                     .setMaxStreamingBitrate,
                     .setSubtitleStreamIndex,
