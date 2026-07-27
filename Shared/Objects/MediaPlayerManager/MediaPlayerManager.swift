@@ -205,6 +205,7 @@ final class MediaPlayerManager: ViewModel {
         super.init()
 
         self.queue?.manager = self
+        observeSocketCommands()
     }
 
     init(
@@ -218,6 +219,7 @@ final class MediaPlayerManager: ViewModel {
 
         self.queue?.manager = self
         self.playbackItem = playbackItem
+        observeSocketCommands()
     }
 
     @Function(\Action.Cases.ended)

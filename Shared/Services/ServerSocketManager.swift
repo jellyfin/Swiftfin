@@ -110,20 +110,30 @@ final class ServerSocketManager {
         state.withLock { $0.session }?.disconnect()
     }
 
+    private static let minimumReconnectDelay: Duration = .seconds(2)
+    private static let maximumReconnectDelay: Duration = .seconds(30)
+
     private func runConnection() async {
         var wakeIterator = wakeStream.makeAsyncIterator()
+        var reconnectDelay = Self.minimumReconnectDelay
 
         while !Task.isCancelled {
             guard let userSession else { break }
 
             let session = userSession.client.socket(
-                supportsMediaControl: false,
-                supportedCommands: [.displayMessage],
+                supportsMediaControl: true,
+                supportedCommands: [
+                    .displayMessage,
+                    .playState,
+                    .setAudioStreamIndex,
+                    .setMaxStreamingBitrate,
+                    .setSubtitleStreamIndex,
+                ],
                 playableMediaTypes: [.video]
             )
             .connect(
-                reconnectAttempts: 5,
-                reconnectDelay: .seconds(2),
+                reconnectAttempts: 1,
+                reconnectDelay: .seconds(1),
                 responseTimeout: .seconds(10)
             )
 
@@ -148,6 +158,7 @@ final class ServerSocketManager {
                         logger.debug("Socket retrying...")
                     case let .connected(url):
                         logger.info("Socket connected", metadata: ["url": .stringConvertible(url)])
+                        reconnectDelay = Self.minimumReconnectDelay
                         isConnected.send(true)
                     case let .message(message):
                         logger.debug("Socket message", metadata: ["message": .string("\(message)")])
@@ -158,10 +169,10 @@ final class ServerSocketManager {
                 logger.debug("Socket error: \(error.localizedDescription)")
             }
 
-            let (hasSubscriptions, explicit) = state.withLock { state -> (Bool, Bool) in
+            let explicit = state.withLock { state -> Bool in
                 state.session = nil
                 defer { state.reconnectRequested = false }
-                return (state.subscriptions.isNotEmpty, state.reconnectRequested)
+                return state.reconnectRequested
             }
 
             isConnected.send(false)
@@ -169,13 +180,12 @@ final class ServerSocketManager {
 
             if explicit {
                 logger.debug("Socket reconnecting")
+                reconnectDelay = Self.minimumReconnectDelay
                 _ = await wakeIterator.next()
-            } else if hasSubscriptions {
-                logger.debug("Socket lost, reconnecting after backoff")
-                try? await Task.sleep(for: .seconds(2))
             } else {
-                logger.debug("Socket waiting for signal")
-                _ = await wakeIterator.next()
+                logger.debug("Socket lost, reconnecting in \(reconnectDelay)")
+                try? await Task.sleep(for: reconnectDelay)
+                reconnectDelay = min(reconnectDelay * 2, Self.maximumReconnectDelay)
             }
         }
     }
@@ -200,6 +210,34 @@ extension ServerSocketManager: UserSessionService {
 
     func willStop(userSession: UserSession) {
         stop()
+    }
+}
+
+// MARK: - Playback Commands
+
+extension ServerSocketManager {
+
+    var generalCommands: AnyPublisher<GeneralCommand, Never> {
+        commands { event in
+            guard case let .message(.generalCommandMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var playstateCommands: AnyPublisher<PlaystateRequest, Never> {
+        commands { event in
+            guard case let .message(.playstateMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    private func commands<Command>(
+        extract: @escaping (JellyfinSocket.Session.Event) -> Command?
+    ) -> AnyPublisher<Command, Never> {
+        events
+            .compactMap(extract)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
 }
 
