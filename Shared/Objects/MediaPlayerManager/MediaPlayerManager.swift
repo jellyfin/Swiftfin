@@ -161,6 +161,8 @@ final class MediaPlayerManager: ViewModel {
         }
     }
 
+    let displayMessages = PassthroughSubject<String, Never>()
+
     /// The current seconds media playback is set to.
     let secondsBox: PublishedBox<Duration> = .init(initialValue: .zero)
 

@@ -64,6 +64,9 @@ extension MediaPlayerManager {
 
     private func onReceive(generalCommand: GeneralCommand) {
         switch generalCommand.name {
+        case .displayMessage:
+            guard let message = generalCommand.arguments?["Text"] ?? generalCommand.arguments?["Header"] else { return }
+            displayMessages.send(message)
         case .setAudioStreamIndex:
             guard let index = generalCommand.arguments?["Index"], let index = Int(index) else { return }
             playbackItem?.selectedAudioStreamIndex = index
