@@ -54,6 +54,7 @@ struct NavigationInjectionView: View {
                 navigationCoordinator: coordinator
             )
         )
+        .environmentObject(coordinator)
         #if os(tvOS)
         // TODO: Workaround for sheet presentation issue on tvOS
         // https://developer.apple.com/documentation/tvos-release-notes/tvos-26_1-release-notes

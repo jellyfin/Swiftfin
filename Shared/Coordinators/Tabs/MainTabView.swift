@@ -151,6 +151,9 @@ struct MainTabView: View {
 #if os(iOS)
 private struct FirstTabSettingsBarButton: View {
 
+    @EnvironmentObject
+    private var coordinator: NavigationCoordinator
+
     @Injected(\.currentUserSession)
     private var userSession
 
@@ -158,7 +161,7 @@ private struct FirstTabSettingsBarButton: View {
     private var router
 
     var body: some View {
-        if router.isRootOfPath,
+        if coordinator.path.isEmpty,
            let userSession
         {
             SettingsBarButton(

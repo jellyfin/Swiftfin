@@ -25,6 +25,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @Router
     private var router
 
+    @EnvironmentObject
+    private var coordinator: NavigationCoordinator
+
     @State
     private var isSafeAreaBarApplied: Bool = false
 
@@ -159,7 +162,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             isSafeAreaBarApplied = newValue
         }
         .backport
-        .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
+        .toolbarTitleDisplayMode(coordinator.path.isEmpty ? .inlineLarge : .inline)
         .backport
         .onChange(of: viewModel.environment) {
             viewModel.refreshForEnvironmentChange()

@@ -258,8 +258,8 @@ private struct ItemLibraryBody<Content: View>: View {
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
 
-    @Router
-    private var router
+    @EnvironmentObject
+    private var coordinator: NavigationCoordinator
 
     @ObservedObject
     private var viewModel: PagingLibraryViewModel<ItemLibrary>
@@ -299,7 +299,7 @@ private struct ItemLibraryBody<Content: View>: View {
             }
         #if os(tvOS)
             .background(alignment: .top) {
-                if !router.isRootOfPath {
+                if !coordinator.path.isEmpty {
                     FocusedPosterCinematicBackgroundView()
                 }
             }

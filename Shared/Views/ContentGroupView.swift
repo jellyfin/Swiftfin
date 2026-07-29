@@ -14,8 +14,8 @@ import SwiftUI
 
 struct ContentGroupView<Provider: ContentGroupProvider>: View {
 
-    @Router
-    private var router
+    @EnvironmentObject
+    private var coordinator: NavigationCoordinator
 
     @State
     private var contentGroupOptions: ContentGroupParentOption = .init()
@@ -28,6 +28,10 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
 
     init(provider: Provider) {
         _viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
+    }
+
+    private var isRootOfPath: Bool {
+        coordinator.path.isEmpty
     }
 
     @ViewBuilder
@@ -87,8 +91,8 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
         .navigationTitle(viewModel.provider.displayTitle)
         .backport
-        .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
-        .toolbar(UIDevice.isTV && router.isRootOfPath ? .hidden : .automatic, for: .navigationBar)
+        .toolbarTitleDisplayMode(isRootOfPath ? .inlineLarge : .inline)
+        .toolbar(UIDevice.isTV && isRootOfPath ? .hidden : .automatic, for: .navigationBar)
         .onFirstAppear {
             viewModel.refresh()
         }
