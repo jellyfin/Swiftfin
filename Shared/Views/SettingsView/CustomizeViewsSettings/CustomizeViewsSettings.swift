@@ -13,6 +13,8 @@ struct CustomizeViewsSettings: View {
 
     @Default(.Customization.Search.enabledDrawerFilters)
     private var searchEnabledDrawerFilters
+    @Default(.Experimental.downloads)
+    private var experimentalDownloads
 
     @Router
     private var router
@@ -35,6 +37,12 @@ struct CustomizeViewsSettings: View {
 
             ChevronButton(L10n.libraries) {
                 router.route(to: .librarySettings)
+            }
+
+            if !UIDevice.isTV && experimentalDownloads {
+                ChevronButton(L10n.downloads) {
+                    router.route(to: .downloadSettings)
+                }
             }
 
             ChevronButton(L10n.posters) {

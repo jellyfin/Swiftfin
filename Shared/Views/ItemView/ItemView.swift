@@ -16,6 +16,8 @@ struct ItemView: View {
 
     @Default(.Customization.itemViewType)
     private var itemViewType
+    @Default(.Experimental.downloads)
+    private var experimentalDownloads
 
     @State
     private var contentSize: CGSize = .zero
@@ -134,6 +136,11 @@ struct ItemView: View {
             isHidden: !provider.item.canEdit
         ) {
             EditItemMenu(item: provider.item)
+        }
+        .topBarTrailing {
+            if experimentalDownloads, provider.item.canBeDownloaded {
+                DownloadButton(item: provider.item)
+            }
         }
         #endif
     }

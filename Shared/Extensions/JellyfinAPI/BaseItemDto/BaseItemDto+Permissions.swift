@@ -14,12 +14,21 @@ extension BaseItemDto {
 
     /// Indicates whether the item can be downloaded by the current user
     var canBeDownloaded: Bool {
-        guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
-        return userPolicy.enableContentDownloading == true && canDownload == true
+        guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy,
+              userPolicy.enableContentDownloading == true
+        else { return false }
+
+        switch type {
+        case .boxSet, .person, .season, .series:
+            return true
+        default:
+            return canDownload == true
+        }
     }
 
     /// Indicates whether the item's metadata can be edited by the current user
     var canEditMetadata: Bool {
+        guard !isDownloaded else { return false }
         guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
 
         switch type {
@@ -36,6 +45,7 @@ extension BaseItemDto {
 
     /// Indicates whether the item's lyrics can be edited by the current user
     var canEditLyrics: Bool {
+        guard !isDownloaded else { return false }
         guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
 
         switch type {
@@ -48,6 +58,7 @@ extension BaseItemDto {
 
     /// Indicates whether the item's subtitles can be edited by the current user
     var canEditSubtitles: Bool {
+        guard !isDownloaded else { return false }
         guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
 
         switch type {
@@ -60,11 +71,13 @@ extension BaseItemDto {
 
     /// Indicates whether the item can be deleted by the current user
     var canDeleteItem: Bool {
+        guard !isDownloaded else { return false }
+
         switch type {
         case .boxSet:
-            StoredValues[.User.enableCollectionManagement] && canDelete == true
+            return StoredValues[.User.enableCollectionManagement] && canDelete == true
         default:
-            StoredValues[.User.enableItemDeletion] && canDelete == true
+            return StoredValues[.User.enableItemDeletion] && canDelete == true
         }
     }
 
@@ -72,8 +85,7 @@ extension BaseItemDto {
     var canEdit: Bool {
         canEditMetadata
             || canEditSubtitles
-        // TODO: Enable with Lyrics and/or Downloads
+        // TODO: Enable with Lyrics
         // || canEditLyrics
-        // || (!UIDevice.isTV && canBeDownloaded)
     }
 }

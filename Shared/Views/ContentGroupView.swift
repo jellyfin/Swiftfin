@@ -69,11 +69,10 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
             switch viewModel.state {
             case .content:
                 if viewModel.groups.isEmpty {
-                    // TODO: non-error like empty view
-                    ErrorView(error: ErrorMessage(L10n.noResults))
-                        .refreshable {
-                            viewModel.refresh()
-                        }
+                    ContentUnavailableView(
+                        L10n.noItems.localizedCapitalized,
+                        systemImage: "rectangle.on.rectangle.slash"
+                    )
                 } else {
                     contentView
                 }

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import FactoryKit
 import Get
 import JellyfinAPI
 import SwiftUI
@@ -40,6 +41,13 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     }
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
+        if item.isDownloaded {
+            mediaPlayerItemProvider = Container.shared.downloadManager()
+                .mediaPlayerItemProvider(for: item)
+
+            return try await makeDownloadedGroups(item: item)
+        }
+
         let userSession = try requireUserSession()
         let fullItem = try await item.getFullItem(userSession: userSession, sendNotification: true)
         let newMediaPlayerItemProvider = try await resolveMediaPlayerItemProvider(
@@ -238,6 +246,13 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     func toggleIsFavorite() async {
         let beforeIsFavorite = item.userData?.isFavorite ?? false
 
+        if item.isDownloaded, let itemID = item.id,
+           let userData = Container.shared.downloadManager().setIsFavorite(!beforeIsFavorite, for: itemID)
+        {
+            item.userData = userData
+            return
+        }
+
         item.userData?.isFavorite = !beforeIsFavorite
         do {
             try await setIsFavorite(!beforeIsFavorite)
@@ -248,6 +263,13 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     func toggleIsPlayed() async {
         let beforeIsPlayed = item.userData?.isPlayed ?? false
+
+        if item.isDownloaded, let itemID = item.id,
+           let userData = Container.shared.downloadManager().setIsPlayed(!beforeIsPlayed, for: itemID)
+        {
+            item.userData = userData
+            return
+        }
 
         item.userData?.isPlayed = !beforeIsPlayed
         do {
@@ -289,7 +311,9 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             item.isPlayable ? item : nil
         }
 
-        return playbackItem?.getPlaybackItemProvider(userSession: userSession)
+        return playbackItem
+            .map { injectingDownloadedVersion(into: $0) }?
+            .getPlaybackItemProvider(userSession: userSession)
     }
 
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {

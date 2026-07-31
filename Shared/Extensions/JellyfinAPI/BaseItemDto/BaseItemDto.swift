@@ -206,10 +206,15 @@ extension BaseItemDto {
         return ImageRenderer(content: transformedImage).uiImage
     }
 
+    @MainActor
     func getPlaybackItemProvider(
         userSession: UserSession?,
         mediaSource: MediaSourceInfo? = nil
     ) -> MediaPlayerItemProvider? {
+        if isDownloaded, let provider = Container.shared.downloadManager().mediaPlayerItemProvider(for: self) {
+            return provider
+        }
+
         switch type {
         case .program:
             guard isAiring, let userSession else { return nil }
@@ -229,6 +234,21 @@ extension BaseItemDto {
             }
         default:
             let selectedMediaSource = mediaSource ?? mediaSources?.first
+
+            if selectedMediaSource?.isDownloaded == true,
+               let localProvider = Container.shared.downloadManager().mediaPlayerItemProvider(for: self)
+            {
+                return MediaPlayerItemProvider(
+                    item: self,
+                    mediaSource: selectedMediaSource
+                ) { _, modifyItem in
+                    if let modifyItem {
+                        return try await localProvider.modifyingItem(modifyItem)()
+                    }
+
+                    return try await localProvider()
+                }
+            }
 
             return MediaPlayerItemProvider(
                 item: self,
@@ -459,38 +479,60 @@ extension BaseItemDto {
                     .client
                     .url(with: request)
 
+                var imageSource = ImageSource(url: imageURL)
+
+                if isDownloaded, let imageURL,
+                   let localURL = downloadedImageURL(for: imageURL, index: i)
+                {
+                    imageSource = ImageSource(url: localURL)
+                }
+
                 return .init(
                     chapterInfo: chapter,
-                    imageSource: .init(url: imageURL)
+                    imageSource: imageSource
                 )
             }
     }
 
-    // TODO: series-season-episode hierarchy for episodes
-    // TODO: user hierarchy for downloads
+    mutating func setDownloaded(_ isDownloaded: Bool = true) {
+        sourceType = isDownloaded ? "Download" : nil
+    }
+
+    var isDownloaded: Bool {
+        sourceType == "Download"
+    }
+
     var downloadFolder: URL? {
         guard let type, let id else { return nil }
 
-        let root = URL.downloadsDirectory
-//            .appendingPathComponent(userSession.user.id)
+        var path = URL.swiftfinDownloads
 
-        switch type {
-        case .movie, .episode:
-            return root
-                .appendingPathComponent(id)
-//        case .episode:
-//            guard let seasonID = seasonID,
-//                  let seriesID = seriesID
-//            else {
-//                return nil
-//            }
-//            return root
-//                .appendingPathComponent(seriesID)
-//                .appendingPathComponent(seasonID)
-//                .appendingPathComponent(id)
+        let segments: [String] = switch type {
+        case .season:
+            [seriesID, id].compactMap(\.self)
+        case .episode:
+            [seriesID, seasonID, id].compactMap(\.self)
+        case .musicAlbum:
+            [albumArtists?.first?.id, id].compactMap(\.self)
+        case .audio, .audioBook, .musicVideo:
+            [albumArtists?.first?.id, albumID, id].compactMap(\.self)
+        case .book:
+            [artists?.first, id].compactMap(\.self)
+        case .photo:
+            [parentID, id].compactMap(\.self)
         default:
-            return nil
+            [id]
         }
+
+        for segment in segments {
+            path.appendPathComponent(segment, isDirectory: true)
+        }
+
+        return path
+    }
+
+    var downloadImagesFolder: URL? {
+        downloadFolder?.appendingPathComponent("Images", isDirectory: true)
     }
 
     /// Returns `originalTitle` if it is not the same as `displayTitle`

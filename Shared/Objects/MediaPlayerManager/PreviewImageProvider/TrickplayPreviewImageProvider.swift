@@ -34,10 +34,13 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
         }
     }
 
+    typealias TileImageData = @Sendable (Int) async -> Data?
+
     private let info: TrickplayInfoDto
     private let itemID: String
     private let mediaSourceID: String
     private let runtime: Duration
+    private let tileImageData: TileImageData?
 
     @MainActor
     private var imageTasks: [Int: Task<TrickplayImage?, Never>] = [:]
@@ -46,12 +49,14 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
         info: TrickplayInfoDto,
         itemID: String,
         mediaSourceID: String,
-        runtime: Duration
+        runtime: Duration,
+        tileImageData: TileImageData? = nil
     ) {
         self.info = info
         self.itemID = itemID
         self.mediaSourceID = mediaSourceID
         self.runtime = runtime
+        self.tileImageData = tileImageData
     }
 
     func imageIndex(for seconds: Duration) -> Int? {
@@ -124,14 +129,21 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
             guard let tileWidth = self?.info.width else { return nil }
             guard let itemID = self?.itemID else { return nil }
 
-            guard let client = Container.shared.currentUserSession()?.client else { return nil }
-            let request = Paths.getTrickplayTileImage(
-                itemID: itemID,
-                width: tileWidth,
-                index: imageIndex
-            )
-            guard let response = try? await client.send(request) else { return nil }
-            guard let image = UIImage(data: response.value) else { return nil }
+            let imageData: Data?
+
+            if let tileImageData = self?.tileImageData {
+                imageData = await tileImageData(imageIndex)
+            } else {
+                guard let client = Container.shared.currentUserSession()?.client else { return nil }
+                let request = Paths.getTrickplayTileImage(
+                    itemID: itemID,
+                    width: tileWidth,
+                    index: imageIndex
+                )
+                imageData = try? await client.send(request).value
+            }
+
+            guard let imageData, let image = UIImage(data: imageData) else { return nil }
 
             let secondsRangeStart = tileImageDuration * Double(imageIndex)
             let secondsRangeEnd = secondsRangeStart + tileImageDuration

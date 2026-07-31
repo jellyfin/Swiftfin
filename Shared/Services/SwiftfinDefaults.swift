@@ -380,6 +380,25 @@ extension Defaults.Keys {
         }
     }
 
+    enum Downloads {
+
+        static var isChaptersEnabled: Key<Bool> {
+            UserKey("downloadsIsChaptersEnabled", default: true)
+        }
+
+        static var isLyricsEnabled: Key<Bool> {
+            UserKey("downloadsIsLyricsEnabled", default: false)
+        }
+
+        static var isSubtitlesEnabled: Key<Bool> {
+            UserKey("downloadsIsSubtitlesEnabled", default: true)
+        }
+
+        static var isTrickplayEnabled: Key<Bool> {
+            UserKey("downloadsIsTrickplayEnabled", default: true)
+        }
+    }
+
     // Experimental settings
     enum Experimental {
 

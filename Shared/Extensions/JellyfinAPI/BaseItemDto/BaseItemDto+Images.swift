@@ -53,17 +53,41 @@ extension BaseItemDto {
         blurHash: String?,
         environment: some WithImageSourceOptions
     ) -> ImageSource {
-        ImageSource(
-            url: itemID.flatMap {
-                imageURL(
-                    itemID: $0,
-                    type,
-                    tag: tag,
-                    environment: environment
-                )
-            },
-            blurHash: blurHash
-        )
+        let serverURL = itemID.flatMap {
+            imageURL(
+                itemID: $0,
+                type,
+                tag: tag,
+                environment: environment
+            )
+        }
+
+        if isDownloaded, let serverURL, let localURL = downloadedImageURL(for: serverURL) {
+            return ImageSource(url: localURL, blurHash: blurHash)
+        }
+
+        return ImageSource(url: serverURL, blurHash: blurHash)
+    }
+
+    static func downloadedImageFilename(for pathKey: String) -> String? {
+        pathKey.sha1
+    }
+
+    static func downloadedImagePathKey(for serverURL: URL, index: Int? = nil) -> String {
+        guard let index else { return serverURL.path }
+        return "\(serverURL.path)/\(index)"
+    }
+
+    func downloadedImageURL(for serverURL: URL, index: Int? = nil) -> URL? {
+        guard let imagesFolder = downloadImagesFolder,
+              let filename = Self.downloadedImageFilename(for: Self.downloadedImagePathKey(for: serverURL, index: index))
+        else { return nil }
+
+        let localURL = imagesFolder.appendingPathComponent(filename)
+
+        guard FileManager.default.fileExists(atPath: localURL.path) else { return nil }
+
+        return localURL
     }
 
     private func blurHash(for type: ImageType, tag: String?) -> String? {

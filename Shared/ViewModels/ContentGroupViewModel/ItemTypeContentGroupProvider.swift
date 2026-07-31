@@ -48,12 +48,18 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
             var filters = environment.filters
             filters.itemTypes = itemTypes
 
+            var libraryParent = BaseItemDto(
+                id: parent?.id,
+                name: itemType.pluralDisplayTitle,
+                type: parent?.type
+            )
+
+            if parent?.isDownloaded == true {
+                libraryParent.setDownloaded()
+            }
+
             let library = ItemLibrary(
-                parent: BaseItemDto(
-                    id: parent?.id,
-                    name: itemType.pluralDisplayTitle,
-                    type: parent?.type
-                ),
+                parent: libraryParent,
                 filters: filters
             )
 
