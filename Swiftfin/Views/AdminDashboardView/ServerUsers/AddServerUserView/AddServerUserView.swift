@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct AddServerUserView: View {
@@ -96,7 +95,8 @@ struct AddServerUserView: View {
         .animation(.linear(duration: 0.1), value: isValid)
         .interactiveDismissDisabled(viewModel.state == .addingUser)
         .navigationTitle(L10n.newUser.localizedCapitalized)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state != .initial) {
             router.dismiss()
         }
@@ -127,7 +127,7 @@ struct AddServerUserView: View {
                     viewModel.add(username: username, password: password)
                 }
 
-                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                if #available(iOS 26, *) {
                     Button(
                         L10n.save,
                         role: .confirm,

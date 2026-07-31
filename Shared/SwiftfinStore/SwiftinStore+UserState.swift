@@ -152,17 +152,18 @@ extension UserState {
         StoredValues[.User.data(id: currentUser.id)] = userData
     }
 
-    // we will always crop to a square, so just use width
     func profileImageSource(
         client: JellyfinClient
     ) -> ImageSource {
-        let parameters = Paths.GetUserImageParameters(
-            userID: id
+        ImageSource(
+            url: client.url(
+                with: Paths.getUserImage(
+                    parameters: Paths.GetUserImageParameters(
+                        userID: id,
+                        tag: data.primaryImageTag
+                    )
+                )
+            )
         )
-        let request = Paths.getUserImage(parameters: parameters)
-
-        let profileImageURL = client.url(with: request)
-
-        return ImageSource(url: profileImageURL)
     }
 }

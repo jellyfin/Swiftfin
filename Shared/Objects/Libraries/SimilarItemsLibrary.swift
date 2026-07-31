@@ -18,7 +18,9 @@ struct SimilarItemsLibrary: PagingLibrary {
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetSimilarItemsParameters()
+        parameters.fields = .MinimumFields.appending(.channelInfo)
         parameters.limit = pageState.pageSize
+        parameters.userID = pageState.userSession.user.id
 
         let request = Paths.getSimilarItems(
             itemID: itemID,

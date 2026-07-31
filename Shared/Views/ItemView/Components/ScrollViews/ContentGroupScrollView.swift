@@ -47,10 +47,7 @@ extension ItemView {
                 Color.clear
             } content: {
                 ImageView(backgroundImageItem.landscapeImageSources(
-                    environment: .init(
-                        maxWidth: 1920,
-                        useParent: false
-                    )
+                    environment: .init(maxWidth: 1920)
                 ))
                 .failure {
                     Color.black

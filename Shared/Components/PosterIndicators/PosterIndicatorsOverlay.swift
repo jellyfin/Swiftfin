@@ -12,6 +12,9 @@ import SwiftUI
 
 struct PosterIndicatorsOverlay: View {
 
+    @Default(.Customization.Indicators.unplayedStyle)
+    private var unplayedStyle
+
     @Environment(\.enabledPosterIndicators)
     private var environmentIndicators
 
@@ -56,9 +59,11 @@ struct PosterIndicatorsOverlay: View {
         VStack(spacing: 0) {
             ZStack {
                 if showsUnplayedIndicator {
-                    UnplayedIndicator()
-                        .frame(width: indicatorSize, height: indicatorSize)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    UnplayedIndicator(
+                        count: unplayedStyle == .count ? item.userData?.unplayedItemCount : nil
+                    )
+                    .frame(height: indicatorSize)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 }
 
                 HStack(spacing: 5) {
@@ -85,7 +90,7 @@ struct PosterIndicatorsOverlay: View {
             if showsProgressIndicator {
                 ProgressIndicator(
                     title: item.progressLabel ?? "",
-                    progress: (item.userData?.playedPercentage ?? 0) / 100,
+                    progress: item.progressPercentage ?? 0,
                     posterDisplayType: posterDisplayType
                 )
                 .zIndex(5)

@@ -49,12 +49,8 @@ struct VideoPlayerSettingsView: View {
 
     // MARK: - Subtitle Defaults
 
-    @Default(.VideoPlayer.Subtitle.subtitleFontName)
-    private var subtitleFontName
-    @Default(.VideoPlayer.Subtitle.subtitleSize)
-    private var subtitleSize
-    @Default(.VideoPlayer.Subtitle.subtitleColor)
-    private var subtitleColor
+    @Default(.VideoPlayer.Subtitle.configuration)
+    private var subtitleConfiguration
 
     // MARK: - Timestamp Defaults
 
@@ -315,18 +311,18 @@ struct VideoPlayerSettingsView: View {
         }
 
         Section {
-            ChevronButton(L10n.subtitleFont, content: subtitleFontName) {
-                router.route(to: .fontPicker(selection: $subtitleFontName))
+            ChevronButton(L10n.subtitleFont, content: subtitleConfiguration.fontName) {
+                router.route(to: .fontPicker(selection: $subtitleConfiguration.fontName))
             }
 
-            Stepper(L10n.subtitleSize, value: $subtitleSize, in: 1 ... 20, step: 1) {
+            Stepper(L10n.subtitleSize, value: $subtitleConfiguration.size, in: 1 ... 20, step: 1) {
                 LabeledContent(L10n.subtitleSize) {
-                    Text(subtitleSize.description)
+                    Text(subtitleConfiguration.size.description)
                         .foregroundStyle(.secondary)
                 }
             }
 
-            ColorPicker(L10n.subtitleColor, selection: $subtitleColor, supportsOpacity: false)
+            ColorPicker(L10n.subtitleColor, selection: $subtitleConfiguration.color, supportsOpacity: false)
         } footer: {
             // TODO: better wording
             Text(L10n.subtitlesDisclaimer)

@@ -6,20 +6,44 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-@preconcurrency import JellyfinAPI
+import JellyfinAPI
 
-typealias MediaPlayerItemProviderFunction = @Sendable (BaseItemDto) async throws -> MediaPlayerItem
+typealias MediaPlayerItemProviderResolver = @Sendable (BaseItemDto, (@Sendable (inout BaseItemDto) -> Void)?) async throws
+    -> MediaPlayerItem
 
-struct MediaPlayerItemProvider: Equatable {
+struct MediaPlayerItemProvider {
 
     let item: BaseItemDto
-    let function: MediaPlayerItemProviderFunction
+    let mediaSource: MediaSourceInfo?
+    private var modifyItem: (@Sendable (inout BaseItemDto) -> Void)?
+    private let resolver: MediaPlayerItemProviderResolver
 
-    static func == (lhs: MediaPlayerItemProvider, rhs: MediaPlayerItemProvider) -> Bool {
-        false
+    init(
+        item: BaseItemDto,
+        mediaSource: MediaSourceInfo? = nil,
+        resolver: @escaping MediaPlayerItemProviderResolver
+    ) {
+        self.item = item
+        self.mediaSource = mediaSource
+        self.modifyItem = nil
+        self.resolver = resolver
+    }
+
+    func modifyingItem(
+        _ modifier: @escaping @Sendable (inout BaseItemDto) -> Void
+    ) -> Self {
+        var copy = self
+        let currentModifier = modifyItem
+
+        copy.modifyItem = { item in
+            currentModifier?(&item)
+            modifier(&item)
+        }
+
+        return copy
     }
 
     func callAsFunction() async throws -> MediaPlayerItem {
-        try await function(item)
+        try await resolver(item, modifyItem)
     }
 }

@@ -55,6 +55,7 @@ struct AdminDashboardView: View {
             }
         }
         .navigationTitle(L10n.dashboard)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
     }
 }

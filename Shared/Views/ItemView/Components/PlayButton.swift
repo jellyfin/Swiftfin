@@ -36,46 +36,43 @@ struct PlayButton: View {
     }
 
     private var mediaSource: String? {
-        guard provider.item.mediaSources?.count ?? 0 > 1 else { return nil }
-        return provider.selectedMediaSource?.displayTitle
+        guard provider.mediaPlayerItemProvider?.item.mediaSources?.count ?? 0 > 1 else { return nil }
+        return provider.mediaPlayerItemProvider?.mediaSource?.displayTitle
+    }
+
+    private var mediaSourceSelection: Binding<MediaSourceInfo?> {
+        Binding(
+            get: { provider.mediaPlayerItemProvider?.mediaSource },
+            set: provider.selectMediaSource
+        )
     }
 
     /// When a shuffleable container (ie a boxset or collection) has no directly
     /// playable item, the primary button shuffles its children instead of playing.
     private var isShuffleOnly: Bool {
-        provider.playButtonItem == nil && provider.item.canShuffle
+        provider.mediaPlayerItemProvider == nil && provider.item.canShuffle
     }
 
     private func play(fromBeginning: Bool = false) {
-        guard let playButtonItem = provider.playButtonItem,
-              let selectedMediaSource = provider.selectedMediaSource
-        else {
-            provider.logger.error("Play selected with no item or media source")
+        let mediaPlayerItemProvider = if fromBeginning {
+            provider.mediaPlayerItemProvider?.modifyingItem {
+                $0.userData?.playbackPositionTicks = 0
+            }
+        } else {
+            provider.mediaPlayerItemProvider
+        }
+
+        guard let mediaPlayerItemProvider else {
+            provider.logger.error("Play selected with no playback item provider")
             return
         }
 
-        // TODO: continue through container playback instead of a single item
-        let queue: (any MediaPlayerQueue)? = {
-            if playButtonItem.type == .episode {
-                return EpisodeMediaPlayerQueue(episode: playButtonItem)
-            }
-            return nil
-        }()
-
-        let provider = MediaPlayerItemProvider(item: playButtonItem) { item in
-            try await MediaPlayerItem.build(
-                for: item,
-                mediaSource: selectedMediaSource
-            ) {
-                if fromBeginning {
-                    $0.userData?.playbackPositionTicks = 0
-                }
-            }
-        }
+        let queue: (any MediaPlayerQueue)? = mediaPlayerItemProvider.item.type == .episode ?
+            EpisodeMediaPlayerQueue(episode: mediaPlayerItemProvider.item) : nil
 
         router.route(
             to: .videoPlayer(
-                provider: provider,
+                provider: mediaPlayerItemProvider,
                 queue: queue
             )
         )
@@ -94,12 +91,13 @@ struct PlayButton: View {
                     return
                 }
 
-                let itemProvider = MediaPlayerItemProvider(item: firstItem) { item in
+                let itemProvider = MediaPlayerItemProvider(item: firstItem) { item, modifyItem in
                     try await MediaPlayerItem.build(
                         for: item,
                         requestedBitrate: Defaults[.VideoPlayer.Playback.appMaximumBitrate]
-                    ) {
-                        $0.userData?.playbackPositionTicks = 0
+                    ) { item in
+                        item.userData?.playbackPositionTicks = 0
+                        modifyItem?(&item)
                     }
                 }
 
@@ -117,14 +115,14 @@ struct PlayButton: View {
 
     @ViewBuilder
     private var versionMenu: some View {
-        if let mediaSources = provider.playButtonItem?.mediaSources,
+        if let mediaSources = provider.mediaPlayerItemProvider?.item.mediaSources,
            mediaSources.count > 1
         {
             Menu {
                 Picker(
                     L10n.version,
                     sources: mediaSources,
-                    selection: $provider.selectedMediaSource,
+                    selection: mediaSourceSelection,
                     noneStyle: nil
                 )
             } label: {
@@ -179,7 +177,7 @@ struct PlayButton: View {
                 Image(systemName: isShuffleOnly ? "shuffle" : "play.fill")
 
                 VStack(spacing: 2) {
-                    Text(isShuffleOnly ? L10n.shuffle : (provider.playButtonItem?.playButtonLabel ?? L10n.play))
+                    Text(isShuffleOnly ? L10n.shuffle : (provider.mediaPlayerItemProvider?.item.playButtonLabel ?? L10n.play))
 
                     if let mediaSource {
                         Marquee(mediaSource, speed: 40, delay: 3, fade: 5)
@@ -207,7 +205,7 @@ struct PlayButton: View {
             view.focused(playButtonFocus)
         }
         .contextMenu {
-            if provider.playButtonItem?.userData?.playbackPositionTicks != 0 {
+            if provider.mediaPlayerItemProvider?.item.userData?.playbackPositionTicks != 0 {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {
                     play(fromBeginning: true)
                 }
@@ -222,7 +220,7 @@ struct PlayButton: View {
             }
         }
         .isSelected(true)
-        .disabled(isShuffleOnly ? isShuffling : provider.selectedMediaSource == nil)
+        .disabled(isShuffleOnly ? isShuffling : provider.mediaPlayerItemProvider == nil)
     }
 
     var body: some View {

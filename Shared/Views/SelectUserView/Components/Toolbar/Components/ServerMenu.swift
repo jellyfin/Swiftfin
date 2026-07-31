@@ -77,8 +77,9 @@ extension SelectUserView {
                 .fontWeight(.semibold)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .menuOrder(.fixed)
             .foregroundStyle(.primary, .secondary)
+            .menuOrder(.fixed)
+            .symbolRenderingMode(.monochrome)
             .backport
             .glassEffect(in: .capsule)
         }

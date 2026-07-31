@@ -25,6 +25,8 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
     /// Optional subtitle when used as a poster
     var subtitle: String? { get }
 
+    func resolveEnvironment(_ environment: EnvironmentValues) -> Environment
+
     @ImageSourceBuilder
     func portraitImageSources(
         environment: Environment
@@ -109,6 +111,10 @@ extension Poster {
 
     var subtitle: String? {
         nil
+    }
+
+    func resolveEnvironment(_: EnvironmentValues) -> Environment {
+        .default
     }
 
     func portraitImageSources(

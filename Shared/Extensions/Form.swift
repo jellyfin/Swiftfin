@@ -69,7 +69,8 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
         Form {
             content
         }
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
     }
 
     var tvOSView: some View {

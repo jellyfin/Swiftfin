@@ -85,7 +85,8 @@ struct LocalUserAccessPolicyView: View {
         }
         .animation(.linear, value: accessPolicy)
         .navigationTitle(L10n.security)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }

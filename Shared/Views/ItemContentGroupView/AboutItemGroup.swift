@@ -216,6 +216,8 @@ struct AboutItemGroup: ContentGroup {
                     .accessibilityAddTraits(.isHeader)
                     .edgePadding(.horizontal)
             }
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel(L10n.about)
         }
     }
 }

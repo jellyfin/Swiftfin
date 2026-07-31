@@ -7,7 +7,6 @@
 //
 
 import CollectionVGrid
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -72,7 +71,8 @@ struct ServerActivityFilterView: View {
             }
         }
         .navigationTitle(L10n.startDate.localizedCapitalized)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }
@@ -86,7 +86,7 @@ struct ServerActivityFilterView: View {
             }
 
             Group {
-                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                if #available(iOS 26, *) {
                     Button(L10n.save, role: .confirm, action: saveAction)
                 } else {
                     Button(L10n.save, action: saveAction)

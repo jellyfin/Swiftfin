@@ -6,16 +6,12 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerView {
 
     #if os(tvOS)
     struct SupplementTitleButtonStyle: ButtonStyle {
-
-        @Default(.isLiquidGlassEnabled)
-        private var isLiquidGlassEnabled
 
         @Environment(\.isFocused)
         private var isFocused
@@ -86,9 +82,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
     #else
     struct SupplementTitleButtonStyle: PrimitiveButtonStyle {
 
-        @Default(.isLiquidGlassEnabled)
-        private var isLiquidGlassEnabled
-
         @Environment(\.isEnabled)
         private var isEnabled
         @Environment(\.isSelected)
@@ -99,7 +92,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
 
         @ViewBuilder
         func makeBody(configuration: Configuration) -> some View {
-            if #available(iOS 26.0, *), isLiquidGlassEnabled {
+            if #available(iOS 26.0, *) {
                 glassBody(configuration)
             } else {
                 legacyBody(configuration)
@@ -136,6 +129,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                     .subtleShadow(),
                 configuration: configuration
             )
+            .scaleEffect(isPressed ? 0.9 : 1)
+            .animation(.bouncy(duration: 0.4), value: isPressed)
         }
 
         @available(iOS 26.0, *)
@@ -145,8 +140,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                     .foregroundStyle(isSelected ? .black : .white)
                     .glassEffect(
                         .regular
-                            .tint(isSelected ? .white : nil)
-                            .interactive(),
+                            .tint(isSelected ? .white : nil),
                         in: Capsule()
                     ),
                 configuration: configuration
@@ -169,8 +163,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
 
                     isPressed = newValue
                 }
-                .scaleEffect(isPressed ? 0.9 : 1)
-                .animation(.bouncy(duration: 0.4), value: isPressed)
                 .opacity(isPressed ? 0.6 : 1)
                 .animation(.easeInOut(duration: 0.1), value: isSelected)
         }

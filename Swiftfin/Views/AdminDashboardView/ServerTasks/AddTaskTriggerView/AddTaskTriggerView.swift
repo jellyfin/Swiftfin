@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -111,7 +110,8 @@ struct AddTaskTriggerView: View {
         .animation(.linear(duration: 0.2), value: taskTriggerInfo.type)
         .interactiveDismissDisabled(true)
         .navigationTitle(L10n.addTrigger.localizedCapitalized)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             if hasUnsavedChanges {
                 isPresentingNotSaved = true
@@ -128,7 +128,7 @@ struct AddTaskTriggerView: View {
             }
 
             Group {
-                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                if #available(iOS 26, *) {
                     Button(L10n.save, role: .confirm, action: saveAction)
                 } else {
                     Button(L10n.save, action: saveAction)

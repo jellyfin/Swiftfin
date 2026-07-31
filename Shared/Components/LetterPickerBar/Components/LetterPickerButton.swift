@@ -23,7 +23,7 @@ extension LetterPickerBar {
         private var isFocused: Bool
 
         let letter: ItemLetter
-        let viewModel: FilterViewModel
+        let action: () -> Void
 
         private var foregroundStyle: Color {
             if isFocused {
@@ -44,19 +44,9 @@ extension LetterPickerBar {
         }
 
         var body: some View {
-            Button {
-                if viewModel.currentFilters.letter.contains(letter) {
-                    viewModel.currentFilters.letter = []
-                } else {
-                    viewModel.currentFilters.letter = [letter]
-                }
-            } label: {
+            Button(action: action) {
                 Text(letter.value)
-                    .font(LetterPickerBar.font)
                     .foregroundStyle(foregroundStyle)
-                    .if(UIDevice.isTV && !isGlassVisible) { character in
-                        character.subtleShadow()
-                    }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .backport
                     .glassEffect(
@@ -71,12 +61,9 @@ extension LetterPickerBar {
             .buttonStyle(.borderless)
             .backport
             .buttonBorderShape(.roundedRectangle)
-            .if(UIDevice.isTV) { view in
-                view
-                    .focused($isFocused)
-                    .scaleEffect(isFocused ? 1.2 : 1)
-                    .animation(.easeInOut(duration: 0.15), value: isFocused)
-            }
+            .focused($isFocused)
+            .scaleEffect(isFocused ? 1.2 : 1)
+            .animation(.easeInOut(duration: 0.15), value: isFocused)
         }
     }
 }

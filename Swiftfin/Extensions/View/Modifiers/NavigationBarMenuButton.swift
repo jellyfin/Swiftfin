@@ -14,9 +14,6 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
     @Default(.accentColor)
     private var accentColor
 
-    @Default(.isLiquidGlassEnabled)
-    private var isLiquidGlassEnabled
-
     @State
     private var collectedMenuGroups: [MenuContentGroup] = []
 
@@ -46,7 +43,11 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
 //                    if !isHidden, collectedMenuGroups.isNotEmpty {
                     if !isHidden {
 
-                        let systemImage = isLiquidGlassEnabled ? "ellipsis" : "ellipsis.circle"
+                        let systemImage = if #available(iOS 26, *) {
+                            "ellipsis"
+                        } else {
+                            "ellipsis.circle"
+                        }
 
                         Menu(L10n.options, systemImage: systemImage) {
                             menuContent

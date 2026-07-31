@@ -116,7 +116,8 @@ struct ResetUserPasswordView: View {
         .interactiveDismissDisabled(viewModel.state == .resetting)
         .navigationBarBackButtonHidden(viewModel.state == .resetting)
         .navigationTitle(L10n.password)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }
@@ -160,7 +161,7 @@ struct ResetUserPasswordView: View {
                     viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
                 }
 
-                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                if #available(iOS 26, *) {
                     Button(
                         L10n.save,
                         role: .confirm,

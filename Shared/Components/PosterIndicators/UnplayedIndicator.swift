@@ -14,9 +14,29 @@ struct UnplayedIndicator: View {
     @Default(.accentColor)
     private var accentColor
 
+    let count: Int?
+
     var body: some View {
-        Q3RightTriangle()
-            .fill(accentColor)
+        AlternateLayoutView(alignment: .topTrailing) {
+            Color.clear
+                .aspectRatio(1, contentMode: .fit)
+        } content: { (size: CGSize) in
+            if let count, count > 0 {
+                Text(count.description)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(accentColor.overlayColor)
+                    .padding(.horizontal, UIDevice.isTV ? 8 : 4)
+                    .fixedSize()
+                    .frame(minWidth: size.width, minHeight: size.height)
+                    .background {
+                        UnevenRoundedRectangle(bottomLeadingRadius: UIDevice.isTV ? 18 : 6)
+                            .fill(accentColor)
+                    }
+            } else {
+                Q3RightTriangle()
+                    .fill(accentColor)
+            }
+        }
     }
 }
 

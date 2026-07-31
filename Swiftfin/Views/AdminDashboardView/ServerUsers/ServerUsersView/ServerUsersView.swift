@@ -7,7 +7,6 @@
 //
 
 import CollectionVGrid
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -50,7 +49,8 @@ struct ServerUsersView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.users)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
         .refreshable {
             viewModel.send(.getUsers(isHidden: isHiddenFilterActive, isDisabled: isDisabledFilterActive))
@@ -74,7 +74,7 @@ struct ServerUsersView: View {
                     }
                     .foregroundStyle(.primary, .secondary)
                     .if(true) { view in
-                        if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+                        if #available(iOS 26.0, *) {
                             view
                         } else {
                             view
@@ -222,7 +222,7 @@ struct ServerUsersView: View {
         }
         .foregroundStyle(.primary, .secondary)
         .if(true) { view in
-            if #available(iOS 26.0, *), Defaults[.isLiquidGlassEnabled] {
+            if #available(iOS 26.0, *) {
                 view
             } else {
                 view

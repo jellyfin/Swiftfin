@@ -58,6 +58,16 @@ extension BaseItemDto {
         }
     }
 
+    /// Indicates whether the item can be deleted by the current user
+    var canDeleteItem: Bool {
+        switch type {
+        case .boxSet:
+            StoredValues[.User.enableCollectionManagement] && canDelete == true
+        default:
+            StoredValues[.User.enableItemDeletion] && canDelete == true
+        }
+    }
+
     /// Indicates whether the Editor Menu should be shown for the item
     var canEdit: Bool {
         canEditMetadata

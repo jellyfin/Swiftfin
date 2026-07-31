@@ -208,6 +208,8 @@ extension SeriesEpisodeContentGroup {
                 .episodes,
                 priority: .userInitiated
             )
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel(L10n.seasons)
         }
     }
 

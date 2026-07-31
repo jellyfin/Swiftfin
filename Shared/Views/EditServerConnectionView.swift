@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 #if os(iOS)
 import UIKit
@@ -289,7 +288,7 @@ struct EditServerConnectionView: View {
 
             Group {
                 #if os(iOS)
-                if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled] {
+                if #available(iOS 26, *) {
                     Button(L10n.save, role: .confirm, action: saveAction)
                 } else {
                     Button(L10n.save, action: saveAction)

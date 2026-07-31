@@ -90,7 +90,6 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
                 #endif
             }
             .foregroundStyle(.primary, .secondary)
-            .accessibilityAddTraits(.isHeader)
             .accessibilityAction(named: Text(L10n.openLibrary), routeToLibrary)
             #if os(tvOS)
                 .buttonStyle(HeaderButtonStyle())
@@ -98,7 +97,6 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
         } else {
             headerTitle
                 .foregroundStyle(.primary)
-                .accessibilityAddTraits(.isHeader)
         }
     }
 
@@ -131,6 +129,7 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
             } header: {
                 sectionHeader
                     .edgePadding(.horizontal)
+                    .accessibilityAddTraits(.isHeader)
             }
             .focusSection()
             .backport
@@ -139,6 +138,8 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
                 .content,
                 priority: .userInitiated
             )
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel(viewModel.library.parent.displayTitle)
         }
     }
 }

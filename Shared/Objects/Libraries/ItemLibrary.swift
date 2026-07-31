@@ -160,7 +160,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
     private func makeBaseItemParameters(environment: Environment) -> Paths.GetItemsParameters {
         var parameters = Paths.GetItemsParameters()
         parameters.enableUserData = true
-        parameters.fields = .MinimumFields
+        parameters.fields = .MinimumFields.appending(.channelInfo)
         parameters.includeItemTypes = parent.supportedItemTypes(for: environment.grouping)
         parameters.isRecursive = parent.isRecursiveCollection(for: environment.grouping)
         parameters.sortBy = [.name]
@@ -213,6 +213,12 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         parameters.sortOrder = filters.sortOrder
         parameters.tags = filters.tags.map(\.value)
         parameters.years = filters.years.compactMap { Int($0.value) }
+
+        parameters.isMovie = filters.categories.contains(.movies) ? true : nil
+        parameters.isSeries = filters.categories.contains(.series) ? true : nil
+        parameters.isNews = filters.categories.contains(.news) ? true : nil
+        parameters.isKids = filters.categories.contains(.kids) ? true : nil
+        parameters.isSports = filters.categories.contains(.sports) ? true : nil
 
         if let query = filters.query {
             parameters.searchTerm = query

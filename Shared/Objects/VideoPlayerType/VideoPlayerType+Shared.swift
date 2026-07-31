@@ -49,12 +49,6 @@ extension VideoPlayerType {
             property: .videoLevel,
             value: "80"
         )
-        ProfileCondition(
-            condition: .notEquals,
-            isRequired: false,
-            property: .isInterlaced,
-            value: "true"
-        )
     }
 
     @ArrayBuilder<ProfileCondition>

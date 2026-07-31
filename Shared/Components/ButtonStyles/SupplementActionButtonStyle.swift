@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 extension PrimitiveButtonStyle where Self == SupplementActionButtonStyle {
@@ -17,9 +16,6 @@ extension PrimitiveButtonStyle where Self == SupplementActionButtonStyle {
 }
 
 struct SupplementActionButtonStyle: PrimitiveButtonStyle {
-
-    @Default(.isLiquidGlassEnabled)
-    private var isLiquidGlassEnabled
 
     private func baseLabel(_ configuration: Configuration) -> some View {
         configuration.label
@@ -62,7 +58,7 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
         #if os(tvOS)
         glassButton(configuration)
         #else
-        if #available(iOS 26.0, *), isLiquidGlassEnabled {
+        if #available(iOS 26.0, *) {
             glassButton(configuration)
         } else {
             legacyButton(configuration)

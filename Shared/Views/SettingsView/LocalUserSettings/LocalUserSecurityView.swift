@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 // TODO: present toast when authentication successfully changed
@@ -120,7 +119,7 @@ struct LocalUserSecurityView: View {
 
                 Group {
                     #if os(iOS)
-                    if #available(iOS 26, *), Defaults[.isLiquidGlassEnabled], !isChangingPIN {
+                    if #available(iOS 26, *), !isChangingPIN {
                         Button(L10n.save, role: .confirm, action: saveAction)
                     } else {
                         Button(isChangingPIN ? L10n.changePin : L10n.save, action: saveAction)

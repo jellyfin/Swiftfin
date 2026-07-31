@@ -20,7 +20,8 @@ struct DownloadListView: View {
             }
         }
         .navigationTitle(L10n.downloads)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
     }
 }
 

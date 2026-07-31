@@ -42,7 +42,10 @@ struct ItemView: View {
             }
 
             if isCompact {
-                return provider.item.type == .movie || provider.item.type == .series
+                return provider.item.type == .movie
+                    || provider.item.type == .series
+                    || provider.item.type == .program
+                    || provider.item.type == .liveTvProgram
             }
 
             return provider.item.type != .person && provider.item.type != .season
@@ -130,7 +133,7 @@ struct ItemView: View {
             isLoading: viewModel.background.is(.refreshing),
             isHidden: !provider.item.canEdit
         ) {
-            EditItemMenuContent(item: provider.item)
+            EditItemMenu(item: provider.item)
         }
         #endif
     }

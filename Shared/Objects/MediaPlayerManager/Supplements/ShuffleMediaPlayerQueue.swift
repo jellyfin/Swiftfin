@@ -162,10 +162,11 @@ class ShuffleMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     }
 
     private func makeProvider(for item: BaseItemDto) -> MediaPlayerItemProvider {
-        MediaPlayerItemProvider(item: item) { [weak self] item in
+        MediaPlayerItemProvider(item: item) { [weak self] item, modifyItem in
             let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
-            return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) {
-                $0.userData?.playbackPositionTicks = .zero
+            return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
+                item.userData?.playbackPositionTicks = .zero
+                modifyItem?(&item)
             }
         }
     }
@@ -188,9 +189,10 @@ extension ShuffleMediaPlayerQueue {
         var queue: ShuffleMediaPlayerQueue
 
         private func select(item: BaseItemDto) {
-            let provider = MediaPlayerItemProvider(item: item) { [manager] item in
-                try await MediaPlayerItem.build(for: item, requestedBitrate: manager.playbackBitrate) {
-                    $0.userData?.playbackPositionTicks = .zero
+            let provider = MediaPlayerItemProvider(item: item) { [manager] item, modifyItem in
+                try await MediaPlayerItem.build(for: item, requestedBitrate: manager.playbackBitrate) { item in
+                    item.userData?.playbackPositionTicks = .zero
+                    modifyItem?(&item)
                 }
             }
 

@@ -14,17 +14,26 @@ import SwiftUI
 
 extension BaseItemDto: Poster {
 
-    struct Environment: WithDefaultValue, WithImageSourceOptions, WithParentImageSourcePreference, WithViewContext {
+    struct Environment: WithDefaultValue, WithImageSourceOptions, WithViewContext {
 
         var maxWidth: CGFloat?
         var maxHeight: CGFloat?
         var quality: Int?
-        var useParent: Bool = true
+        var useParent: Bool = false
         var viewContext: ViewContext = .init()
 
         static var `default`: Self {
             .init()
         }
+    }
+
+    func resolveEnvironment(_ environment: EnvironmentValues) -> Environment {
+        let viewContext = environment.viewContext
+
+        return .init(
+            useParent: viewContext.contains(.isThumb) && environment.useSeriesLandscapeBackdrop,
+            viewContext: viewContext
+        )
     }
 
     var preferredPosterDisplayType: PosterDisplayType {
@@ -99,7 +108,7 @@ extension BaseItemDto: Poster {
                 tag: seriesPrimaryImageTag,
                 environment: environment
             )
-        case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
+        case .boxSet, .channel, .liveTvChannel, .liveTvProgram, .movie, .musicArtist, .person, .program, .series, .tvChannel:
             imageSource(
                 .primary,
                 environment: environment
@@ -147,7 +156,7 @@ extension BaseItemDto: Poster {
                     environment: environment
                 )
             }
-        case .collectionFolder, .folder, .liveTvProgram, .musicVideo, .program, .userView, .video:
+        case .collectionFolder, .folder, .musicVideo, .userView, .video:
             imageSource(
                 .primary,
                 environment: environment
@@ -444,6 +453,11 @@ private struct BaseItemDtoPosterLabel: View {
 
             HStack(spacing: 2) {
                 if let startDate = item.startDate {
+                    if !Calendar.current.isDateInToday(startDate) {
+                        Text(startDate, format: .dateTime.weekday(.abbreviated))
+                            .padding(.trailing, 2)
+                    }
+
                     Text(startDate, style: .time)
                 } else {
                     Text(String.emptyDash)

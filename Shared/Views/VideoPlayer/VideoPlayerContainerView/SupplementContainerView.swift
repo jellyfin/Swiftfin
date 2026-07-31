@@ -78,7 +78,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     .frame(maxWidth: .infinity)
                     .disabled(true)
             } content: {
-                HStack(spacing: UIDevice.isTV ? 20 : 10) {
+                HStack(spacing: VideoPlayer.PlaybackControls.Toolbar.supplementButtonSpacing) {
                     if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
                         Button(supplement.displayTitle) {
                             containerState.select(supplement: nil)

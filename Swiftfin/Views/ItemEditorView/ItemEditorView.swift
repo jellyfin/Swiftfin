@@ -30,7 +30,8 @@ struct ItemEditorView: View {
             }
         }
         .navigationTitle(L10n.metadata)
-        .navigationBarTitleDisplayMode(.inline)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }

@@ -67,17 +67,16 @@ extension ItemView {
                         size: .medium,
                         contentMode: .fit
                     )
-                    .posterEnvironment(BaseItemDto.Environment(useParent: false))
                     #if os(tvOS)
-                        .posterBorder()
-                        .posterCornerRadius(posterDisplayType)
-                        .subtleShadow()
+                    .posterBorder()
+                    .posterCornerRadius(posterDisplayType)
+                    .subtleShadow()
                     #endif
-                        .frame(
-                            maxWidth: .infinity,
-                            maxHeight: .infinity,
-                            alignment: .trailing
-                        )
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity,
+                        alignment: .trailing
+                    )
 
                     VStack(alignment: .leading, spacing: 10) {
                         title
@@ -99,7 +98,7 @@ extension ItemView {
                         ItemView.AttributesHStack(
                             attributes: attributes,
                             item: provider.item,
-                            selectedMediaSource: provider.selectedMediaSource,
+                            selectedMediaSource: provider.mediaPlayerItemProvider?.mediaSource,
                             alignment: .leading
                         )
                         .foregroundStyle(.secondary)

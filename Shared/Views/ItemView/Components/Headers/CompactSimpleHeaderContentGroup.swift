@@ -39,7 +39,6 @@ extension ItemView {
                     type: headerImageDisplayType,
                     contentMode: .fit
                 )
-                .posterEnvironment(BaseItemDto.Environment(useParent: false))
                 .frame(maxWidth: headerImageDisplayType == .square ? 400 : .infinity)
                 .subtleShadow()
 
@@ -104,7 +103,7 @@ extension ItemView {
                     ItemView.AttributesHStack(
                         attributes: attributes,
                         item: provider.item,
-                        selectedMediaSource: provider.selectedMediaSource,
+                        selectedMediaSource: provider.mediaPlayerItemProvider?.mediaSource,
                         alignment: .leading
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)

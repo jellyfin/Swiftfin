@@ -69,6 +69,8 @@ final class FilterViewModel: ViewModel {
         }
 
         switch type {
+        case .category:
+            currentFilters.categories = ItemFilterCollection.default.categories
         case .genres:
             currentFilters.genres = ItemFilterCollection.default.genres
         case .letter:
