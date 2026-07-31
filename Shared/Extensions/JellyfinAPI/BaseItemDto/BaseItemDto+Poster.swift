@@ -108,7 +108,7 @@ extension BaseItemDto: Poster {
                 tag: seriesPrimaryImageTag,
                 environment: environment
             )
-        case .boxSet, .channel, .liveTvChannel, .movie, .musicArtist, .person, .series, .tvChannel:
+        case .boxSet, .channel, .liveTvChannel, .liveTvProgram, .movie, .musicArtist, .person, .program, .series, .tvChannel:
             imageSource(
                 .primary,
                 environment: environment
@@ -156,7 +156,7 @@ extension BaseItemDto: Poster {
                     environment: environment
                 )
             }
-        case .collectionFolder, .folder, .liveTvProgram, .musicVideo, .program, .userView, .video:
+        case .collectionFolder, .folder, .musicVideo, .userView, .video:
             imageSource(
                 .primary,
                 environment: environment
