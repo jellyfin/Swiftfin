@@ -12,6 +12,9 @@ extension ItemView {
 
     struct ParentButton: View {
 
+        @Environment(\.itemViewFocusedGroupID)
+        private var itemViewFocusedGroupID
+
         @Router
         private var router
 
@@ -43,6 +46,9 @@ extension ItemView {
             )
             .buttonBorderShape(.capsule)
             .buttonStyle(.card)
+            .ifLet(itemViewFocusedGroupID) { view, focusedGroupID in
+                view.focused(focusedGroupID, equals: ItemViewFocusID.header)
+            }
         }
     }
 }

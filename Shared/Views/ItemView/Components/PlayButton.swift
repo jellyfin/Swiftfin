@@ -16,6 +16,9 @@ struct PlayButton: View {
     @Default(.accentColor)
     private var accentColor
 
+    @Environment(\.itemViewFocusedGroupID)
+    private var itemViewFocusedGroupID
+
     @ObservedObject
     private var provider: ItemContentGroupProvider
 
@@ -155,6 +158,9 @@ struct PlayButton: View {
         .buttonStyle(BasicHoverButtonStyle())
         .ifLet(playButtonFocus) { view, playButtonFocus in
             view.focused(playButtonFocus)
+        }
+        .ifLet(itemViewFocusedGroupID) { view, focusedGroupID in
+            view.focused(focusedGroupID, equals: ItemViewFocusID.play)
         }
         .contextMenu {
             if provider.mediaPlayerItemProvider?.item.userData?.playbackPositionTicks != 0 {

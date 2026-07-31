@@ -32,8 +32,13 @@ struct ContentGroupVStack: View {
                 makeGroupBody(group)
                     .eraseToAnyView()
                     .ifLet(focusedGroupID) { view, binding in
-                        view
-                            .focused(binding, equals: group.id)
+                        // Header focus is owned by Play/Parent controls so
+                        // defaultFocus can target the focusable Play button.
+                        if group.id == ItemViewFocusID.header {
+                            view
+                        } else {
+                            view.focused(binding, equals: group.id)
+                        }
                     }
             }
         }

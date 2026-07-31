@@ -28,7 +28,8 @@ extension ItemView {
         let isEnhanced: Bool
 
         private var isHeaderFocused: Bool {
-            lastFocusedGroupID == "itemView-header"
+            lastFocusedGroupID == ItemViewFocusID.header
+                || lastFocusedGroupID == ItemViewFocusID.play
         }
 
         private var backgroundImageItem: BaseItemDto {
@@ -85,23 +86,29 @@ extension ItemView {
                         groups: groups,
                         focusedGroupID: $focusedGroupID
                     )
+                    .environment(\.itemViewFocusedGroupID, $focusedGroupID)
                     .edgePadding(.bottom)
                     .backport
                     .defaultFocus(
                         $focusedGroupID,
-                        "itemView-header",
+                        ItemViewFocusID.play,
                         priority: .userInitiated
                     )
                 }
                 .trackingFrame(for: .scrollView)
                 .ignoresSafeArea(edges: isEnhanced ? .all : .horizontal)
                 .scrollIndicators(.hidden)
+                .onAppear {
+                    // Ensure Play wins if poster rows become focusable in the
+                    // same appearance pass as the header.
+                    focusedGroupID = ItemViewFocusID.play
+                }
             }
             .backport
             .onChange(of: focusedGroupID) {
-                guard isEnhanced, let focusedGroupID else { return }
+                guard let focusedGroupID else { return }
 
-                if focusedGroupID != lastFocusedGroupID {
+                if isEnhanced, focusedGroupID != lastFocusedGroupID {
                     lastFocusedGroupID = focusedGroupID
                 }
             }

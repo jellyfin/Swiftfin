@@ -13,7 +13,7 @@ extension ItemView {
 
     struct RegularEnhancedHeaderContentGroup: ContentGroup {
 
-        let id: String = "itemView-header"
+        let id: String = ItemViewFocusID.header
         let provider: ItemContentGroupProvider
 
         func body(with viewModel: Empty) -> Body {
@@ -21,9 +21,6 @@ extension ItemView {
         }
 
         struct Body: View {
-
-            @FocusState
-            private var isPlayButtonFocused: Bool
 
             @ObservedObject
             var provider: ItemContentGroupProvider
@@ -93,10 +90,7 @@ extension ItemView {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                         if provider.item.presentPlayButton {
-                            PlayButton(
-                                provider: provider,
-                                playButtonFocus: UIDevice.isTV ? $isPlayButtonFocused : nil
-                            )
+                            PlayButton(provider: provider)
                         }
 
                         ItemView.ActionButtonHStack(provider: provider)
@@ -122,25 +116,19 @@ extension ItemView {
                 }
                 #if os(tvOS)
                 .focusSection()
-                .backport
-                .defaultFocus(
-                    $isPlayButtonFocused,
-                    true,
-                    priority: .userInitiated
-                )
                 #else
                 .edgePadding(.bottom)
-                    .background(
-                        alignment: .bottom,
-                        extendedBy: .init(horizontal: EdgeInsets.edgePadding)
-                    ) {
-                        Rectangle()
-                            .fill(Material.ultraThin)
-                            .mask(gradient: .eased(.easeOut)) {
-                                (location: 0, opacity: 0)
-                                (location: 1, opacity: 1)
-                            }
-                    }
+                .background(
+                    alignment: .bottom,
+                    extendedBy: .init(horizontal: EdgeInsets.edgePadding)
+                ) {
+                    Rectangle()
+                        .fill(Material.ultraThin)
+                        .mask(gradient: .eased(.easeOut)) {
+                            (location: 0, opacity: 0)
+                            (location: 1, opacity: 1)
+                        }
+                }
                 #endif
             }
 

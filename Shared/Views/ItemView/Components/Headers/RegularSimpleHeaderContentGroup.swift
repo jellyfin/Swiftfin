@@ -9,13 +9,11 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Fix the header's initial focus.
-
 extension ItemView {
 
     struct RegularSimpleHeaderContentGroup: ContentGroup {
 
-        let id: String = "itemView-header"
+        let id: String = ItemViewFocusID.header
         let provider: ItemContentGroupProvider
 
         func body(with viewModel: Empty) -> Body {
@@ -23,9 +21,6 @@ extension ItemView {
         }
 
         struct Body: View {
-
-            @FocusState
-            private var isPlayButtonFocused: Bool
 
             @ObservedObject
             var provider: ItemContentGroupProvider
@@ -85,10 +80,7 @@ extension ItemView {
 
                         VStack(alignment: .leading, spacing: UIDevice.isTV ? 25 : 5) {
                             if provider.item.presentPlayButton {
-                                PlayButton(
-                                    provider: provider,
-                                    playButtonFocus: $isPlayButtonFocused
-                                )
+                                PlayButton(provider: provider)
                             }
 
                             ItemView.ActionButtonHStack(provider: provider)
@@ -106,12 +98,6 @@ extension ItemView {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .focusSection()
-                .backport
-                .defaultFocus(
-                    $isPlayButtonFocused,
-                    true,
-                    priority: .userInitiated
-                )
                 .edgePadding()
                 .frame(maxWidth: .infinity, alignment: .topLeading)
             }
