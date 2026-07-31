@@ -19,5 +19,6 @@ enum ItemViewFocusID {
 
 extension EnvironmentValues {
 
-    @Entry var itemViewFocusedGroupID: FocusState<String?>.Binding?
+    @Entry
+    var itemViewFocusedGroupID: FocusState<String?>.Binding?
 }
