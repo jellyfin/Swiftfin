@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 
 #if os(iOS)
@@ -24,6 +25,10 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
         case small
         case medium
         case custom(width: CGFloat)
+
+        var quality: Int? {
+            Defaults[.Customization.imageQuality].rawValue
+        }
 
         func width(for displayType: PosterDisplayType) -> CGFloat? {
             switch self {

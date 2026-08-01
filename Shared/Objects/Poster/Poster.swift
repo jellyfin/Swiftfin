@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 import SwiftUI
 
@@ -145,7 +144,7 @@ extension Poster {
 
         if var imageSourceEnvironment = environment as? WithImageSourceOptions {
             imageSourceEnvironment.maxWidth = size.width(for: displayType)
-            imageSourceEnvironment.quality = Defaults[.Customization.imageQuality].rawValue
+            imageSourceEnvironment.quality = size.quality
             environment = imageSourceEnvironment as! Environment
         }
 
