@@ -160,7 +160,6 @@ extension VideoPlayerType {
             SubtitleFormat.cc_dec
             SubtitleFormat.dvbsub
             SubtitleFormat.dvdsub
-            SubtitleFormat.jacosub
             SubtitleFormat.libzvbi_teletextdec
             SubtitleFormat.mov_text
             SubtitleFormat.mpl2
@@ -175,12 +174,14 @@ extension VideoPlayerType {
             SubtitleFormat.text
             SubtitleFormat.ttml
             SubtitleFormat.vplayer
+            SubtitleFormat.vtt
             SubtitleFormat.xsub
         }
 
+        /// - Note: Unmatched text subtitles (ex: VTT) are converted to the first option (subrip)
         SubtitleProfile.build(method: .external) {
+            SubtitleFormat.subrip
             SubtitleFormat.ass
-            SubtitleFormat.jacosub
             SubtitleFormat.libzvbi_teletextdec
             SubtitleFormat.mpl2
             SubtitleFormat.pjs
