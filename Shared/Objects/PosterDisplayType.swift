@@ -25,10 +25,6 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
         case medium
         case custom(width: CGFloat)
 
-        var quality: Int? {
-            90
-        }
-
         func width(for displayType: PosterDisplayType) -> CGFloat? {
             switch self {
             case .extraSmall:

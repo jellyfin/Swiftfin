@@ -794,6 +794,12 @@ internal enum L10n {
   internal static let illustrator = L10n.tr("Localizable", "illustrator", fallback: "Illustrator")
   /// Images
   internal static let image = L10n.tr("Localizable", "image", fallback: "Images")
+  /// Image quality
+  internal static let imageQuality = L10n.tr("Localizable", "imageQuality", fallback: "Image quality")
+  /// Preserves system resources by requesting smaller images from your server.
+  internal static let imageQualityPerformanceDescription = L10n.tr("Localizable", "imageQualityPerformanceDescription", fallback: "Preserves system resources by requesting smaller images from your server.")
+  /// Utilizes the highest fidelity images at the expense of consuming more bandwidth and memory.
+  internal static let imageQualityQualityDescription = L10n.tr("Localizable", "imageQualityQualityDescription", fallback: "Utilizes the highest fidelity images at the expense of consuming more bandwidth and memory.")
   /// Images
   internal static let images = L10n.tr("Localizable", "images", fallback: "Images")
   /// Manage and customize the images associated with this media item. Select an image type to view, add, or replace images.
@@ -1160,6 +1166,8 @@ internal enum L10n {
   internal static let peopleDescription = L10n.tr("Localizable", "peopleDescription", fallback: "People who helped create or perform specific media.")
   /// Perfect match
   internal static let perfectMatch = L10n.tr("Localizable", "perfectMatch", fallback: "Perfect match")
+  /// Performance
+  internal static let performance = L10n.tr("Localizable", "performance", fallback: "Performance")
   /// Error requesting %@ permission: %@
   internal static func permissionRequestError(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "permissionRequestError", String(describing: p1), String(describing: p2), fallback: "Error requesting %@ permission: %@")
@@ -1270,6 +1278,8 @@ internal enum L10n {
   internal static let provider = L10n.tr("Localizable", "provider", fallback: "Provider")
   /// Public users
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public users")
+  /// Quality
+  internal static let quality = L10n.tr("Localizable", "quality", fallback: "Quality")
   /// Quick Connect
   internal static let quickConnect = L10n.tr("Localizable", "quickConnect", fallback: "Quick Connect")
   /// Quick Connect code

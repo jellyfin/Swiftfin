@@ -111,6 +111,10 @@ extension Defaults.Keys {
 
     enum Customization {
 
+        static var imageQuality: Key<ImageQuality> {
+            UserKey("imageQuality", default: .performance)
+        }
+
         static var itemViewType: Key<ItemViewType> {
             UserKey("mediaItemViewType", default: .enhanced)
         }

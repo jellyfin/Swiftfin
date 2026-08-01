@@ -31,6 +31,8 @@ extension CustomizeViewsSettings {
             }
         }
 
+        @Default(.Customization.imageQuality)
+        private var imageQuality
         @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
         private var useSeriesLandscapeBackdrop
         @Default(.Customization.Indicators.enabled)
@@ -142,10 +144,23 @@ extension CustomizeViewsSettings {
                     )
                 }
 
-                Section {
+                Section(L10n.images) {
+
                     Toggle(L10n.useSeriesThumb, isOn: $useSeriesLandscapeBackdrop)
-                } header: {
-                    Text(L10n.episode)
+
+                    PlatformPicker(L10n.imageQuality, selection: $imageQuality)
+                } footer: {
+                    Text(L10n.viewsMayRequireRestart)
+                } learnMore: {
+                    LabeledContent(
+                        ImageQuality.quality.displayTitle,
+                        value: L10n.imageQualityQualityDescription
+                    )
+
+                    LabeledContent(
+                        ImageQuality.performance.displayTitle,
+                        value: L10n.imageQualityPerformanceDescription
+                    )
                 }
             }
             .navigationTitle(L10n.posters)

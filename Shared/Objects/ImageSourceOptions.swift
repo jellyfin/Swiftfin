@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 
 protocol WithImageSourceOptions {
@@ -18,5 +19,5 @@ struct ImageSourceOptions: WithImageSourceOptions {
 
     var maxWidth: CGFloat?
     var maxHeight: CGFloat?
-    var quality: Int? = 90
+    var quality: Int? = Defaults[.Customization.imageQuality].rawValue
 }

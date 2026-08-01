@@ -8,6 +8,7 @@
 
 import Algorithms
 import AVKit
+import Defaults
 import FactoryKit
 import Foundation
 import JellyfinAPI
@@ -445,7 +446,7 @@ extension BaseItemDto {
 
                 let parameters = Paths.GetItemImageParameters(
                     maxWidth: 500,
-                    quality: 90,
+                    quality: Defaults[.Customization.imageQuality].rawValue,
                     imageIndex: i
                 )
 

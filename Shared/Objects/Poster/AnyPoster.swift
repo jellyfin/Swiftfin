@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import SwiftUI
 
@@ -160,7 +161,7 @@ struct AnyPoster: Poster {
     ) -> Environment {
         var environment = environment
         environment.maxWidth = size.width(for: displayType)
-        environment.quality = size.quality
+        environment.quality = Defaults[.Customization.imageQuality].rawValue
 
         return environment
     }
