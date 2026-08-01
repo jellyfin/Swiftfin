@@ -798,8 +798,8 @@ internal enum L10n {
   internal static let imageQuality = L10n.tr("Localizable", "imageQuality", fallback: "Image quality")
   /// Preserves system resources by requesting smaller images from your server.
   internal static let imageQualityPerformanceDescription = L10n.tr("Localizable", "imageQualityPerformanceDescription", fallback: "Preserves system resources by requesting smaller images from your server.")
-  /// Utilizes the highest fidelity images at the expense of consuming more bandwidth and memory.
-  internal static let imageQualityQualityDescription = L10n.tr("Localizable", "imageQualityQualityDescription", fallback: "Utilizes the highest fidelity images at the expense of consuming more bandwidth and memory.")
+  /// Utilizes the highest fidelity images at the expense of consuming more bandwidth and memory. This will only be noticable on larger screens.
+  internal static let imageQualityQualityDescription = L10n.tr("Localizable", "imageQualityQualityDescription", fallback: "Utilizes the highest fidelity images at the expense of consuming more bandwidth and memory. This will only be noticable on larger screens.")
   /// Images
   internal static let images = L10n.tr("Localizable", "images", fallback: "Images")
   /// Manage and customize the images associated with this media item. Select an image type to view, add, or replace images.
