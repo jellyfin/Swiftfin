@@ -51,6 +51,8 @@ struct VideoPlayerSettingsView: View {
 
     @Default(.VideoPlayer.Subtitle.configuration)
     private var subtitleConfiguration
+    @StoredValue(.User.forceSubtitleBurnIn)
+    private var forceSubtitleBurnIn
 
     // MARK: - Timestamp Defaults
 
@@ -283,6 +285,13 @@ struct VideoPlayerSettingsView: View {
                     updateConfiguration { $0.isRememberSubtitleSelections = newValue }
                 }
             ))
+
+            Toggle(
+                L10n.forceSubtitleBurnIn,
+                isOn: $forceSubtitleBurnIn
+            )
+        } footer: {
+            Text(L10n.forceSubtitleBurnInMessage)
         } learnMore: {
             LabeledContent(
                 SubtitlePlaybackMode.default.displayTitle,
