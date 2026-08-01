@@ -188,7 +188,6 @@ extension VideoPlayerType {
             SubtitleFormat.realtext
             SubtitleFormat.sami
             SubtitleFormat.ssa
-            SubtitleFormat.subrip
             SubtitleFormat.subviewer
             SubtitleFormat.subviewer1
             SubtitleFormat.text
