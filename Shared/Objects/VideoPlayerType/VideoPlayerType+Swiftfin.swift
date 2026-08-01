@@ -175,7 +175,6 @@ extension VideoPlayerType {
             SubtitleFormat.text
             SubtitleFormat.ttml
             SubtitleFormat.vplayer
-            SubtitleFormat.vtt
             SubtitleFormat.xsub
         }
 
@@ -194,13 +193,13 @@ extension VideoPlayerType {
             SubtitleFormat.text
             SubtitleFormat.ttml
             SubtitleFormat.vplayer
-            SubtitleFormat.vtt
         }
 
         SubtitleProfile.build(method: .encode) {
             SubtitleFormat.dvbsub
             SubtitleFormat.dvdsub
             SubtitleFormat.pgssub
+            SubtitleFormat.vtt
             SubtitleFormat.xsub
         }
     }
