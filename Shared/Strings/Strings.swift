@@ -1064,6 +1064,8 @@ internal enum L10n {
   internal static let neverRun = L10n.tr("Localizable", "neverRun", fallback: "Never run")
   /// New password
   internal static let newPassword = L10n.tr("Localizable", "newPassword", fallback: "New password")
+  /// New playlist
+  internal static let newPlaylist = L10n.tr("Localizable", "newPlaylist", fallback: "New playlist")
   /// News
   internal static let news = L10n.tr("Localizable", "news", fallback: "News")
   /// New user

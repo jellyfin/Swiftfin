@@ -30,6 +30,12 @@ extension ItemView {
         @ViewBuilder
         private var menuContent: some View {
             Group {
+                if viewModel.item.canBeInPlaylist {
+                    Button(L10n.playlists, systemImage: "list.bullet") {
+                        router.route(to: .itemPlaylists(item: viewModel.item))
+                    }
+                }
+
                 if viewModel.item.canEditMetadata {
                     #if os(iOS)
                     Button(L10n.edit, systemImage: "pencil") {

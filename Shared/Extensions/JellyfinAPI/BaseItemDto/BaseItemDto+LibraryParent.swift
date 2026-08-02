@@ -57,6 +57,8 @@ extension BaseItemDto: LibraryParent {
             }
         case (.music, _):
             [.audio, .musicAlbum, .musicArtist]
+        case (.playlists, _):
+            [.playlist]
         case (.boxsets, _):
             BaseItemKind.supportedCases
         default:
