@@ -45,8 +45,11 @@ final class ItemPlaylistViewModel: ViewModel {
         case error
     }
 
+    /// All playlists
     @Published
     private(set) var playlists: [BaseItemDto] = []
+
+    /// Playlists that this item is contained in.
     @Published
     private(set) var containingPlaylists: Set<String> = []
 
