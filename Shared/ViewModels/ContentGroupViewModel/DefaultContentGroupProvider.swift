@@ -97,5 +97,12 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
                     posterDisplayType: .landscape
                 )
             }
+
+        if Defaults[.Customization.Home.showRecentlyPlayed] {
+            PosterGroup(
+                id: "recently-played",
+                library: RecentlyPlayedLibrary()
+            )
+        }
     }
 }

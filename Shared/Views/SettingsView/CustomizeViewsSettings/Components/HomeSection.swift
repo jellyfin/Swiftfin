@@ -19,9 +19,15 @@ extension CustomizeViewsSettings {
         private var maxNextUp
         @Default(.Customization.Home.resumeNextUp)
         private var resumeNextUp
+        @Default(.Customization.Home.showRecentlyPlayed)
+        private var showRecentlyPlayed
+        @Default(.Customization.Home.maxRecentlyPlayed)
+        private var maxRecentlyPlayed
 
         @State
         private var isNextUpDaysPresented = false
+        @State
+        private var isRecentlyPlayedDaysPresented = false
 
         var body: some View {
             Section(L10n.home) {
@@ -60,6 +66,42 @@ extension CustomizeViewsSettings {
                     .keyboardType(.numberPad)
                 } message: {
                     Text(L10n.nextUpDaysDescription)
+                }
+
+                Toggle(L10n.recentlyPlayed, isOn: $showRecentlyPlayed)
+
+                if showRecentlyPlayed {
+                    ChevronButton {
+                        isRecentlyPlayedDaysPresented = true
+                    } label: {
+                        LabeledContent {
+                            if maxRecentlyPlayed > 0 {
+                                Text(
+                                    Duration.seconds(maxRecentlyPlayed),
+                                    format: .units(allowed: [.days], width: .abbreviated)
+                                )
+                                .foregroundStyle(.secondary)
+                            } else {
+                                Text(L10n.disabled)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } label: {
+                            Text(L10n.recentlyPlayedDays)
+                        }
+                    }
+                    .alert(
+                        L10n.recentlyPlayedDays,
+                        isPresented: $isRecentlyPlayedDaysPresented
+                    ) {
+                        TextField(
+                            L10n.days,
+                            value: $maxRecentlyPlayed,
+                            format: .dayInterval(range: 0 ... 1000)
+                        )
+                        .keyboardType(.numberPad)
+                    } message: {
+                        Text(L10n.recentlyPlayedDaysDescription)
+                    }
                 }
             }
         }

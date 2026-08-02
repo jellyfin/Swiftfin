@@ -1296,6 +1296,12 @@ internal enum L10n {
   internal static let ratings = L10n.tr("Localizable", "ratings", fallback: "Ratings")
   /// Recently Added
   internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently Added")
+  /// Recently Played
+  internal static let recentlyPlayed = L10n.tr("Localizable", "recentlyPlayed", fallback: "Recently Played")
+  /// Days in Recently Played
+  internal static let recentlyPlayedDays = L10n.tr("Localizable", "recentlyPlayedDays", fallback: "Days in Recently Played")
+  /// Set the maximum amount of days an item should stay in the 'Recently Played' list after being played.
+  internal static let recentlyPlayedDaysDescription = L10n.tr("Localizable", "recentlyPlayedDaysDescription", fallback: "Set the maximum amount of days an item should stay in the 'Recently Played' list after being played.")
   /// Recommended
   internal static let recommended = L10n.tr("Localizable", "recommended", fallback: "Recommended")
   /// Recording
