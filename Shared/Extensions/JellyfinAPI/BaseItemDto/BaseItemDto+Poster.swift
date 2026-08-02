@@ -287,6 +287,12 @@ private struct BaseItemDtoPosterContextMenu: View {
             }
         }
 
+        if item.canShuffle {
+            Button(L10n.shuffle, systemImage: "shuffle") {
+                router.shuffle(item: item)
+            }
+        }
+
         if item.canBePlayed {
             Button(isPlayed ? L10n.markAsUnplayed : L10n.markAsPlayed, systemImage: isPlayed ? "circle" : "checkmark.circle") {
                 Task {

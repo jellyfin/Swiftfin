@@ -72,7 +72,7 @@ extension ItemView {
                         MetadataHStack(item: provider.item)
 
                         VStack(alignment: .center, spacing: 5) {
-                            if provider.item.presentPlayButton || provider.item.canShuffle {
+                            if provider.item.presentPlayButton {
                                 PlayButton(provider: provider)
                             }
 

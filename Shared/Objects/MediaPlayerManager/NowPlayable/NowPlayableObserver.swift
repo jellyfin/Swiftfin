@@ -53,6 +53,14 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
         cancellables = []
 
+        // Register command handlers before subscribing to the queue: the `$queue`
+        // subscription below fires synchronously with the current queue and can enable
+        // next/previous, which must already have a handler attached.
+        configureRemoteCommands(
+            defaultRegisteredCommands,
+            commandHandler: handleCommand
+        )
+
         manager.actions
             .sink { [weak self] newValue in self?.actionDidChange(newValue) }
             .store(in: &cancellables)
@@ -75,19 +83,12 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
         Notifications[.avAudioSessionInterruption]
             .publisher
-            .sink { i in
+            .sink { [weak self] i in
                 Task { @MainActor in
-                    self.handleInterruption(type: i.0, options: i.1)
+                    self?.handleInterruption(type: i.0, options: i.1)
                 }
             }
             .store(in: &cancellables)
-
-        Task { @MainActor in
-            configureRemoteCommands(
-                defaultRegisteredCommands,
-                commandHandler: handleCommand
-            )
-        }
     }
 
     private func playbackRequestStatusDidChange(_ newStatus: MediaPlayerManager.PlaybackRequestStatus) {

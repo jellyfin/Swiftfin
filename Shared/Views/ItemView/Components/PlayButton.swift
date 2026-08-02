@@ -79,38 +79,7 @@ struct PlayButton: View {
     }
 
     private func shuffle() {
-        guard !isShuffling else { return }
-        isShuffling = true
-
-        Task {
-            defer { isShuffling = false }
-
-            do {
-                guard let (firstItem, queue) = try await ShuffleMediaPlayerQueue.build(for: provider.item) else {
-                    provider.logger.error("No items to shuffle")
-                    return
-                }
-
-                let itemProvider = MediaPlayerItemProvider(item: firstItem) { item, modifyItem in
-                    try await MediaPlayerItem.build(
-                        for: item,
-                        requestedBitrate: Defaults[.VideoPlayer.Playback.appMaximumBitrate]
-                    ) { item in
-                        item.userData?.playbackPositionTicks = 0
-                        modifyItem?(&item)
-                    }
-                }
-
-                router.route(
-                    to: .videoPlayer(
-                        provider: itemProvider,
-                        queue: queue
-                    )
-                )
-            } catch {
-                provider.logger.error("Error shuffling item: \(error.localizedDescription)")
-            }
-        }
+        router.shuffle(item: provider.item, isShuffling: $isShuffling)
     }
 
     @ViewBuilder
@@ -205,7 +174,7 @@ struct PlayButton: View {
             view.focused(playButtonFocus)
         }
         .contextMenu {
-            if provider.mediaPlayerItemProvider?.item.userData?.playbackPositionTicks != 0 {
+            if let ticks = provider.mediaPlayerItemProvider?.item.userData?.playbackPositionTicks, ticks != 0 {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {
                     play(fromBeginning: true)
                 }

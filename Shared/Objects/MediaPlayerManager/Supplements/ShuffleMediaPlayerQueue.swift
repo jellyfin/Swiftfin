@@ -32,6 +32,10 @@ class ShuffleMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     let displayTitle: String = L10n.shuffle
     let id: String = "ShuffleMediaPlayerQueue"
 
+    /// Shuffle always advances; the next-episode auto-play setting only
+    /// governs sequential episode playback.
+    let autoPlayNextItem: Bool = true
+
     @Published
     var nextItem: MediaPlayerItemProvider? = nil
     @Published
@@ -52,89 +56,191 @@ class ShuffleMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
     private var currentIndex: Int = 0
     private var playbackItemObserver: AnyCancellable?
+    private var fillTask: AnyCancellable?
+
+    /// IDs already seen, excluded from the fill request so the server's
+    /// re-randomized query doesn't return duplicates.
+    private let excludeIDs: [String]
+    private let parentID: String?
+    private let filters: ItemFilterCollection?
 
     /// The playable item types a container can shuffle across.
-    private static let itemTypes: [BaseItemKind] = [.episode, .movie, .video, .musicVideo, .trailer]
+    private static let shuffleableItemTypes: [BaseItemKind] = [.episode, .movie, .video, .musicVideo, .trailer]
 
-    /// Items fetched per request while filling the queue.
+    /// Items fetched per request while hunting for the first playable item.
     private static let pageSize = 20
 
     /// Upper bound on the shuffled queue's size. The server has no stable random
     /// seed, so instead of paging (which re-randomizes every request) the queue is
-    /// filled once up to this cap using `excludeItemIDs` to avoid duplicates.
+    /// topped up once to this cap using `excludeItemIDs` to avoid duplicates.
     private static let targetQueueSize = 100
 
-    /// Fetches a capped, de-duplicated set of random children for a parent and returns
-    /// the initial item to play alongside a queue seeded with the full set.
-    ///
-    /// The parent's playable descendants are sorted randomly by the server rather than
-    /// shuffled locally.
-    static func build(for parent: BaseItemDto) async throws -> (firstItem: BaseItemDto, queue: ShuffleMediaPlayerQueue)? {
+    /// Bounds the IDs accumulated while hunting for the first playable item,
+    /// keeping the request URL's `excludeItemIDs` list within proxy limits.
+    private static let maxExcludeIDs = targetQueueSize
+
+    private static let maxFillAttempts = 3
+
+    /// Fetches random children until one is playable (a page can filter down to
+    /// nothing, e.g. all missing episodes) and returns the initial item to play
+    /// alongside a queue that lazily fills the rest in the background.
+    static func build(
+        for parent: BaseItemDto,
+        filters: ItemFilterCollection? = nil
+    ) async throws -> (firstItem: BaseItemDto, queue: ShuffleMediaPlayerQueue)? {
         guard let userSession = Container.shared.currentUserSession() else {
             throw ErrorMessage(L10n.unknownError)
         }
 
-        let items = try await fetchShuffledItems(parentID: parent.id, userSession: userSession)
+        var elements: [BaseItemDto] = []
+        var excludeIDs: [String] = []
+        var serverExhausted = false
 
-        guard let firstItem = items.first else { return nil }
+        while elements.isEmpty, !serverExhausted, excludeIDs.count < maxExcludeIDs {
+            let (page, returnedIDs) = try await fetchPage(
+                parentID: parent.id,
+                filters: filters,
+                excludeIDs: excludeIDs,
+                limit: pageSize,
+                userSession: userSession
+            )
 
-        let queue = ShuffleMediaPlayerQueue(elements: items)
+            elements = page
+            excludeIDs.append(contentsOf: returnedIDs)
+            serverExhausted = returnedIDs.count < pageSize
+        }
+
+        guard let firstItem = elements.first else { return nil }
+
+        let queue = ShuffleMediaPlayerQueue(
+            elements: elements,
+            excludeIDs: excludeIDs,
+            parentID: parent.id,
+            filters: filters,
+            serverExhausted: serverExhausted
+        )
         return (firstItem, queue)
     }
 
-    private init(elements: [BaseItemDto]) {
+    private init(
+        elements: [BaseItemDto],
+        excludeIDs: [String],
+        parentID: String?,
+        filters: ItemFilterCollection?,
+        serverExhausted: Bool
+    ) {
         self.elements = elements
+        self.excludeIDs = excludeIDs
+        self.parentID = parentID
+        self.filters = filters
         super.init()
 
         updateAdjacentItems()
+
+        if !serverExhausted {
+            fillRemainingItems()
+        }
     }
 
     var videoPlayerBody: some PlatformView {
         ShuffleOverlay(queue: self)
     }
 
-    /// Repeatedly requests random items, excluding those already collected, until the
-    /// server runs out of new items or the queue cap is reached. Excluding collected IDs
-    /// is what keeps the set duplicate-free despite the server re-randomizing each request.
-    private static func fetchShuffledItems(
-        parentID: String?,
-        userSession: UserSession
-    ) async throws -> [BaseItemDto] {
-        var items: [BaseItemDto] = []
-        var excludeIDs: [String] = []
+    /// Tops the queue up to `targetQueueSize` with a single follow-up request while
+    /// the first item is already playing. `self` is only touched after the network
+    /// work: the task must not keep a dismissed player's queue alive, since the
+    /// queue's deinit is what cancels `fillTask`.
+    private func fillRemainingItems() {
+        guard let userSession else { return }
 
-        while items.count < targetQueueSize {
-            var parameters = Paths.GetItemsParameters()
-            parameters.enableUserData = true
-            parameters.fields = .MinimumFields
-            parameters.isRecursive = true
-            parameters.parentID = parentID
-            parameters.includeItemTypes = itemTypes
-            parameters.sortBy = [.random]
-            let requestedLimit = min(pageSize, targetQueueSize - items.count)
-            parameters.limit = requestedLimit
-            parameters.userID = userSession.user.id
+        let limit = Self.targetQueueSize - elements.count
 
-            if excludeIDs.isNotEmpty {
-                parameters.excludeItemIDs = excludeIDs
-            }
+        fillTask = Task { [weak self, parentID, filters, excludeIDs] in
+            for attempt in 1 ... Self.maxFillAttempts {
+                guard !Task.isCancelled else { return }
 
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
+                do {
+                    let (page, _) = try await Self.fetchPage(
+                        parentID: parentID,
+                        filters: filters,
+                        excludeIDs: excludeIDs,
+                        limit: limit,
+                        userSession: userSession
+                    )
 
-            let returned = response.value.items ?? []
-            let page = returned.filter(\.isPlayable)
+                    guard !Task.isCancelled else { return }
+                    self?.append(contentsOf: page)
+                    return
+                } catch {
+                    guard !Task.isCancelled, !(error is CancellationError) else { return }
 
-            items.append(contentsOf: page)
-            excludeIDs.append(contentsOf: returned.compactMap(\.id))
+                    guard attempt < Self.maxFillAttempts else {
+                        self?.logger.error("Error filling shuffle queue: \(error.localizedDescription)")
+                        return
+                    }
 
-            // fewer than requested means the server is exhausted
-            if returned.count < requestedLimit {
-                break
+                    try? await Task.sleep(for: .seconds(2))
+                }
             }
         }
+        .asAnyCancellable()
+    }
 
-        return items
+    private func append(contentsOf newElements: [BaseItemDto]) {
+        guard newElements.isNotEmpty else { return }
+
+        elements.append(contentsOf: newElements)
+        updateAdjacentItems()
+    }
+
+    /// Requests up to `limit` random children, excluding the given IDs. Returns the
+    /// playable items alongside all returned IDs, so the caller can exclude every
+    /// seen item and guarantee forward progress across requests.
+    private static func fetchPage(
+        parentID: String?,
+        filters: ItemFilterCollection?,
+        excludeIDs: [String],
+        limit: Int,
+        userSession: UserSession
+    ) async throws -> (items: [BaseItemDto], returnedIDs: [String]) {
+        var parameters = Paths.GetItemsParameters()
+
+        if let filters {
+            parameters = filters.apply(to: parameters)
+        }
+
+        // filter item types narrow the shuffleable set, never widen it
+        let itemTypes: [BaseItemKind] = if let filterTypes = filters?.itemTypes, filterTypes.isNotEmpty {
+            filterTypes.filter { shuffleableItemTypes.contains($0) }
+        } else {
+            shuffleableItemTypes
+        }
+
+        // an empty list would be sent as "no type filter"
+        guard itemTypes.isNotEmpty else { return ([], []) }
+
+        parameters.enableUserData = true
+        parameters.fields = .MinimumFields
+        parameters.isRecursive = true
+        parameters.parentID = parentID
+        parameters.includeItemTypes = itemTypes
+
+        // shuffle overrides any sort the filters applied
+        parameters.sortBy = [.random]
+        parameters.sortOrder = nil
+
+        parameters.limit = limit
+        parameters.userID = userSession.user.id
+
+        if excludeIDs.isNotEmpty {
+            parameters.excludeItemIDs = excludeIDs
+        }
+
+        let request = Paths.getItems(parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        let returned = response.value.items ?? []
+        return (returned.filter(\.isPlayable), returned.compactMap(\.id))
     }
 
     private func didReceive(newItem: MediaPlayerItem?) {
@@ -161,7 +267,9 @@ class ShuffleMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         hasPreviousItem = previous != nil
     }
 
-    private func makeProvider(for item: BaseItemDto) -> MediaPlayerItemProvider {
+    /// Builds a provider that plays the item from the beginning, resolving the
+    /// requested bitrate lazily when the item is built.
+    func makeProvider(for item: BaseItemDto) -> MediaPlayerItemProvider {
         MediaPlayerItemProvider(item: item) { [weak self] item, modifyItem in
             let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
             return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
@@ -189,14 +297,7 @@ extension ShuffleMediaPlayerQueue {
         var queue: ShuffleMediaPlayerQueue
 
         private func select(item: BaseItemDto) {
-            let provider = MediaPlayerItemProvider(item: item) { [manager] item, modifyItem in
-                try await MediaPlayerItem.build(for: item, requestedBitrate: manager.playbackBitrate) { item in
-                    item.userData?.playbackPositionTicks = .zero
-                    modifyItem?(&item)
-                }
-            }
-
-            manager.playNewItem(provider: provider)
+            manager.playNewItem(provider: queue.makeProvider(for: item))
         }
 
         var iOSView: some View {

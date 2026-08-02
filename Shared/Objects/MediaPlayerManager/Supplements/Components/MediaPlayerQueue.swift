@@ -21,6 +21,10 @@ protocol MediaPlayerQueue: ObservableObject, MediaPlayerObserver, MediaPlayerSup
     var hasPreviousItemPublisher: Published<Bool>.Publisher { get set }
     var nextItemPublisher: Published<MediaPlayerItemProvider?>.Publisher { get set }
     var previousItemPublisher: Published<MediaPlayerItemProvider?>.Publisher { get set }
+
+    /// Whether reaching the end of the current item should automatically
+    /// advance to `nextItem`.
+    var autoPlayNextItem: Bool { get }
 }
 
 extension MediaPlayerQueue {
@@ -59,6 +63,10 @@ class AnyMediaPlayerQueue: MediaPlayerQueue {
 
     var id: String {
         wrapped.id
+    }
+
+    var autoPlayNextItem: Bool {
+        wrapped.autoPlayNextItem
     }
 
     weak var manager: MediaPlayerManager? {

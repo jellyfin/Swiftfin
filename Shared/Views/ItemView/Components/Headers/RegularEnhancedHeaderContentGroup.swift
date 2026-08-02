@@ -92,7 +92,7 @@ extension ItemView {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                        if provider.item.presentPlayButton || provider.item.canShuffle {
+                        if provider.item.presentPlayButton {
                             PlayButton(
                                 provider: provider,
                                 playButtonFocus: UIDevice.isTV ? $isPlayButtonFocused : nil

@@ -60,4 +60,45 @@ struct ItemFilterCollection: Hashable, Storable {
             years.isNotEmpty ||
             !query.isNilOrEmpty
     }
+
+    /// Applies this collection to the given item request parameters.
+    func apply(
+        to parameters: Paths.GetItemsParameters,
+        isLetterFilterIncluded: Bool = true
+    ) -> Paths.GetItemsParameters {
+        var parameters = parameters
+        parameters.filters = traits
+        parameters.genres = genres.map(\.value)
+        parameters.sortBy = sortBy
+        parameters.sortOrder = sortOrder
+        parameters.tags = tags.map(\.value)
+        parameters.years = years.compactMap { Int($0.value) }
+
+        parameters.isMovie = categories.contains(.movies) ? true : nil
+        parameters.isSeries = categories.contains(.series) ? true : nil
+        parameters.isNews = categories.contains(.news) ? true : nil
+        parameters.isKids = categories.contains(.kids) ? true : nil
+        parameters.isSports = categories.contains(.sports) ? true : nil
+
+        if let query {
+            parameters.searchTerm = query
+        }
+
+        if itemTypes.isNotEmpty {
+            parameters.includeItemTypes = itemTypes
+        }
+
+        guard isLetterFilterIncluded else { return parameters }
+
+        if letter.first?.value == "#" {
+            parameters.nameLessThan = "A"
+        } else {
+            parameters.nameStartsWith = letter
+                .map(\.value)
+                .filter { $0 != "#" }
+                .first
+        }
+
+        return parameters
+    }
 }

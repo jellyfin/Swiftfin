@@ -206,40 +206,10 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         using filters: ItemFilterCollection,
         isLetterFilterIncluded: Bool = true
     ) -> Paths.GetItemsParameters {
-        var parameters = parameters
-        parameters.filters = filters.traits
-        parameters.genres = filters.genres.map(\.value)
-        parameters.sortBy = filters.sortBy
-        parameters.sortOrder = filters.sortOrder
-        parameters.tags = filters.tags.map(\.value)
-        parameters.years = filters.years.compactMap { Int($0.value) }
-
-        parameters.isMovie = filters.categories.contains(.movies) ? true : nil
-        parameters.isSeries = filters.categories.contains(.series) ? true : nil
-        parameters.isNews = filters.categories.contains(.news) ? true : nil
-        parameters.isKids = filters.categories.contains(.kids) ? true : nil
-        parameters.isSports = filters.categories.contains(.sports) ? true : nil
-
-        if let query = filters.query {
-            parameters.searchTerm = query
-        }
-
-        if filters.itemTypes.isNotEmpty {
-            parameters.includeItemTypes = filters.itemTypes
-        }
-
-        guard isLetterFilterIncluded else { return parameters }
-
-        if filters.letter.first?.value == "#" {
-            parameters.nameLessThan = "A"
-        } else {
-            parameters.nameStartsWith = filters.letter
-                .map(\.value)
-                .filter { $0 != "#" }
-                .first
-        }
-
-        return parameters
+        filters.apply(
+            to: parameters,
+            isLetterFilterIncluded: isLetterFilterIncluded
+        )
     }
 
     private func attachPage(

@@ -8,6 +8,7 @@
 
 import CollectionVGrid
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: LibraryElement {
@@ -27,6 +28,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     @State
     private var isSafeAreaBarApplied: Bool = false
+
+    @State
+    private var isShuffling: Bool = false
 
     @StateObject
     private var gridProxy = CollectionVGridProxy()
@@ -62,6 +66,15 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     private var storedLibraryStyleBinding: Binding<LibraryStyle> {
         rememberIndividualLibraryStyle ? $parentLibraryStyle : $defaultLibraryStyle
+    }
+
+    /// The library root as a shuffleable container, if its items are directly playable.
+    private var shuffleableParent: BaseItemDto? {
+        guard let parent = viewModel.library.parent as? BaseItemDto,
+              parent.canShuffleLibrary
+        else { return nil }
+
+        return parent
     }
 
     init(library: Library) {
@@ -124,6 +137,18 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
         Button(L10n.random, systemImage: "dice.fill") {
             viewModel.getRandomItem()
+        }
+
+        if let shuffleableParent {
+            Button(L10n.shuffle, systemImage: "shuffle") {
+                // filterViewModel has the live filters; environment lags it by a debounce
+                router.shuffle(
+                    item: shuffleableParent,
+                    filters: (viewModel.library as? ItemLibrary)?.filterViewModel.currentFilters,
+                    isShuffling: $isShuffling
+                )
+            }
+            .disabled(isShuffling)
         }
     }
 
