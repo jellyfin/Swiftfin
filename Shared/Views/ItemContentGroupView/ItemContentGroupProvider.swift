@@ -343,7 +343,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         var parameters = Paths.GetItemsParameters()
         parameters.fields = .MinimumFields
 
-        if item.type == .season || item.type == .season {
+        if item.type == .series || item.type == .season {
             parameters.includeItemTypes = [.episode]
         }
 
