@@ -47,10 +47,10 @@ struct PlayButton: View {
         )
     }
 
-    /// When a shuffleable container (ie a boxset or collection) has no directly
-    /// playable item, the primary button shuffles its children instead of playing.
+    /// Shuffleable containers (boxset/collection) have no directly
+    /// playable item, so the primary button shuffles instead of playing.
     private var isShuffleOnly: Bool {
-        provider.mediaPlayerItemProvider == nil && provider.item.canShuffle
+        provider.mediaPlayerItemProvider == nil && provider.item.isShuffleOnlyContainer
     }
 
     private func play(fromBeginning: Bool = false) {

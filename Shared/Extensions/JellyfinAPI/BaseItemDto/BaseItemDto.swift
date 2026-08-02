@@ -513,8 +513,8 @@ extension BaseItemDto {
 
         switch type {
         case .audio, .audioBook, .book, .channel, .channelFolderItem, .episode,
-             .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist,
-             .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
+             .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo,
+             .program, .recording, .trailer, .tvChannel, .tvProgram, .video:
             return true
         default:
             return false
@@ -546,6 +546,17 @@ extension BaseItemDto {
     /// Can this `BaseItemDto` shuffle its playable children
     var canShuffle: Bool {
         isMediaPlaybackEnabled && isShuffleableType
+    }
+
+    /// Whether shuffle is this item's only direct playback action;
+    /// unlike series and seasons, which resolve an episode to play
+    var isShuffleOnlyContainer: Bool {
+        switch type {
+        case .series, .season:
+            false
+        default:
+            canShuffle
+        }
     }
 
     /// Whether this item is a container type whose playable children can be shuffled
