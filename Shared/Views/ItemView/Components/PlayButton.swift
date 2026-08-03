@@ -17,20 +17,10 @@ struct PlayButton: View {
     private var accentColor
 
     @ObservedObject
-    private var provider: ItemContentGroupProvider
+    var provider: ItemContentGroupProvider
 
     @Router
     private var router
-
-    private let playButtonFocus: FocusState<Bool>.Binding?
-
-    init(
-        provider: ItemContentGroupProvider,
-        playButtonFocus: FocusState<Bool>.Binding? = nil
-    ) {
-        self.provider = provider
-        self.playButtonFocus = playButtonFocus
-    }
 
     private var mediaSource: String? {
         guard provider.mediaPlayerItemProvider?.item.mediaSources?.count ?? 0 > 1 else { return nil }
@@ -153,9 +143,7 @@ struct PlayButton: View {
         .backport
         .buttonBorderShape(.capsule)
         .buttonStyle(BasicHoverButtonStyle())
-        .ifLet(playButtonFocus) { view, playButtonFocus in
-            view.focused(playButtonFocus)
-        }
+        .coordinatedFocus(ItemView.Component.play)
         .contextMenu {
             if provider.mediaPlayerItemProvider?.item.userData?.playbackPositionTicks != 0 {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {
@@ -163,7 +151,6 @@ struct PlayButton: View {
                 }
             }
         }
-        .isSelected(true)
         .disabled(provider.mediaPlayerItemProvider == nil)
     }
 
