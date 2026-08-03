@@ -226,13 +226,6 @@ extension Defaults.Keys {
             static var showRecentlyPlayed: Key<Bool> {
                 UserKey("showRecentlyPlayed", default: false)
             }
-
-            static var maxRecentlyPlayed: Key<TimeInterval> {
-                UserKey(
-                    "homeMaxRecentlyPlayed",
-                    default: 30 * 86400
-                )
-            }
         }
 
         enum Search {

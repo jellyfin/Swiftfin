@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Engine
 import SwiftUI
 
 extension CustomizeViewsSettings {
@@ -15,69 +16,28 @@ extension CustomizeViewsSettings {
 
         @Default(.Customization.Home.showRecentlyAdded)
         private var showRecentlyAdded
+        @Default(.Customization.Home.showRecentlyPlayed)
+        private var showRecentlyPlayed
         @Default(.Customization.Home.maxNextUp)
         private var maxNextUp
         @Default(.Customization.Home.resumeNextUp)
         private var resumeNextUp
-        @Default(.Customization.Home.showRecentlyPlayed)
-        private var showRecentlyPlayed
-        @Default(.Customization.Home.maxRecentlyPlayed)
-        private var maxRecentlyPlayed
-
-        @State
-        private var isNextUpDaysPresented = false
-        @State
-        private var isRecentlyPlayedDaysPresented = false
 
         var body: some View {
             Section(L10n.home) {
 
                 Toggle(L10n.recentlyAdded, isOn: $showRecentlyAdded)
-
+                Toggle(L10n.recentlyPlayed, isOn: $showRecentlyPlayed)
                 Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
 
-                ChevronButton {
-                    isNextUpDaysPresented = true
-                } label: {
-                    LabeledContent {
-                        if maxNextUp > 0 {
-                            Text(
-                                Duration.seconds(maxNextUp),
-                                format: .units(allowed: [.days], width: .abbreviated)
-                            )
-                            .foregroundStyle(.secondary)
-                        } else {
-                            Text(L10n.disabled)
-                                .foregroundStyle(.secondary)
-                        }
-                    } label: {
-                        Text(L10n.nextUpDays)
-                    }
-                }
-                .alert(
-                    L10n.nextUpDays,
-                    isPresented: $isNextUpDaysPresented
-                ) {
-                    TextField(
-                        L10n.days,
-                        value: $maxNextUp,
-                        format: .dayInterval(range: 0 ... 1000)
-                    )
-                    .keyboardType(.numberPad)
-                } message: {
-                    Text(L10n.nextUpDaysDescription)
-                }
-
-                Toggle(L10n.recentlyPlayed, isOn: $showRecentlyPlayed)
-
-                if showRecentlyPlayed {
+                StateAdapter(initialValue: false) { isNextUpDaysPresented in
                     ChevronButton {
-                        isRecentlyPlayedDaysPresented = true
+                        isNextUpDaysPresented.wrappedValue = true
                     } label: {
                         LabeledContent {
-                            if maxRecentlyPlayed > 0 {
+                            if maxNextUp > 0 {
                                 Text(
-                                    Duration.seconds(maxRecentlyPlayed),
+                                    Duration.seconds(maxNextUp),
                                     format: .units(allowed: [.days], width: .abbreviated)
                                 )
                                 .foregroundStyle(.secondary)
@@ -86,21 +46,21 @@ extension CustomizeViewsSettings {
                                     .foregroundStyle(.secondary)
                             }
                         } label: {
-                            Text(L10n.recentlyPlayedDays)
+                            Text(L10n.nextUpDays)
                         }
                     }
                     .alert(
-                        L10n.recentlyPlayedDays,
-                        isPresented: $isRecentlyPlayedDaysPresented
+                        L10n.nextUpDays,
+                        isPresented: isNextUpDaysPresented
                     ) {
                         TextField(
                             L10n.days,
-                            value: $maxRecentlyPlayed,
+                            value: $maxNextUp,
                             format: .dayInterval(range: 0 ... 1000)
                         )
                         .keyboardType(.numberPad)
                     } message: {
-                        Text(L10n.recentlyPlayedDaysDescription)
+                        Text(L10n.nextUpDaysDescription)
                     }
                 }
             }
