@@ -14,7 +14,6 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
     case cc_dec
     case dvdsub
     case dvbsub
-    case jacosub
     case libzvbi_teletextdec
     case mov_text
     case mpl2
@@ -52,8 +51,6 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
             L10n.dvdSubtitle
         case .dvbsub:
             L10n.dvbSubtitle
-        case .jacosub:
-            L10n.jacosub
         case .libzvbi_teletextdec:
             L10n.dvbTeletext
         case .mov_text:
@@ -100,8 +97,6 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
             "sub"
         case .dvbsub:
             "dvbsub"
-        case .jacosub:
-            "jss"
         case .libzvbi_teletextdec:
             "txt"
         case .mov_text:
@@ -150,7 +145,7 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Storable {
     /// Whether this format is a text-based subtitle
     var isText: Bool {
         switch self {
-        case .ass, .cc_dec, .jacosub, .libzvbi_teletextdec, .mov_text,
+        case .ass, .cc_dec, .libzvbi_teletextdec, .mov_text,
              .mpl2, .pjs, .realtext, .sami, .ssa, .subrip, .subviewer,
              .subviewer1, .text, .ttml, .vplayer, .vtt:
             true
