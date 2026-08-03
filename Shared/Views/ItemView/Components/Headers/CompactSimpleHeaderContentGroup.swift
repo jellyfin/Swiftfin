@@ -13,7 +13,7 @@ extension ItemView {
 
     struct CompactSimpleHeaderContentGroup: ContentGroup {
 
-        let id: String = ItemViewFocusID.header
+        let id: String = ItemView.Component.header
         let provider: ItemContentGroupProvider
 
         func body(with viewModel: Empty) -> Body {

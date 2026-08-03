@@ -15,21 +15,17 @@ extension ItemView {
 
     struct ContentGroupScrollView: View {
 
+        @EnvironmentObject
+        private var focusCoordinator: FocusCoordinator
+
         @ObservedObject
         var provider: ItemContentGroupProvider
-
-        @FocusState
-        private var focusedGroupID: String?
-
-        @State
-        private var lastFocusedGroupID: String?
 
         let groups: [any ContentGroup]
         let isEnhanced: Bool
 
         private var isHeaderFocused: Bool {
-            lastFocusedGroupID == ItemViewFocusID.header
-                || lastFocusedGroupID == ItemViewFocusID.play
+            focusCoordinator.lastFocusedIDs.contains(Component.header)
         }
 
         private var backgroundImageItem: BaseItemDto {
@@ -82,35 +78,12 @@ extension ItemView {
                 #endif
 
                 ScrollView {
-                    ContentGroupVStack(
-                        groups: groups,
-                        focusedGroupID: $focusedGroupID
-                    )
-                    .environment(\.itemViewFocusedGroupID, $focusedGroupID)
-                    .edgePadding(.bottom)
-                    .backport
-                    .defaultFocus(
-                        $focusedGroupID,
-                        ItemViewFocusID.play,
-                        priority: .userInitiated
-                    )
+                    ContentGroupVStack(groups: groups)
+                        .edgePadding(.bottom)
                 }
                 .trackingFrame(for: .scrollView)
                 .ignoresSafeArea(edges: isEnhanced ? .all : .horizontal)
                 .scrollIndicators(.hidden)
-                .onAppear {
-                    // Ensure Play wins if poster rows become focusable in the
-                    // same appearance pass as the header.
-                    focusedGroupID = ItemViewFocusID.play
-                }
-            }
-            .backport
-            .onChange(of: focusedGroupID) {
-                guard let focusedGroupID else { return }
-
-                if isEnhanced, focusedGroupID != lastFocusedGroupID {
-                    lastFocusedGroupID = focusedGroupID
-                }
             }
         }
     }
