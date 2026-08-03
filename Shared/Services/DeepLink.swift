@@ -23,7 +23,7 @@ struct DeepLink: Equatable {
 
     init?(_ url: URL) {
         guard let match = url.absoluteString.wholeMatch(
-            of: /^swiftfin:\/\/(?<serverID>[A-Za-z0-9]+)\/(?<userID>[A-Za-z0-9]+)\/(?<destinationType>item|library)\/(?<destinationID>[A-Za-z0-9]+)\/?$/
+            of: /^swiftfin:\/\/(?<serverID>[A-Za-z0-9-]+)\/(?<userID>[A-Za-z0-9-]+)\/(?<destinationType>item|library)\/(?<destinationID>[A-Za-z0-9-]+)\/?$/
         ) else { return nil }
 
         self.serverID = String(match.output.serverID)

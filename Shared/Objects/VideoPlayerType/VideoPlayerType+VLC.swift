@@ -160,7 +160,6 @@ extension VideoPlayerType {
             SubtitleFormat.cc_dec
             SubtitleFormat.dvbsub
             SubtitleFormat.dvdsub
-            SubtitleFormat.jacosub
             SubtitleFormat.libzvbi_teletextdec
             SubtitleFormat.mov_text
             SubtitleFormat.mpl2
@@ -179,28 +178,28 @@ extension VideoPlayerType {
             SubtitleFormat.xsub
         }
 
+        /// - Note: Unmatched text subtitles (ex: VTT) are converted to the first option (subrip)
         SubtitleProfile.build(method: .external) {
+            SubtitleFormat.subrip
             SubtitleFormat.ass
-            SubtitleFormat.jacosub
             SubtitleFormat.libzvbi_teletextdec
             SubtitleFormat.mpl2
             SubtitleFormat.pjs
             SubtitleFormat.realtext
             SubtitleFormat.sami
             SubtitleFormat.ssa
-            SubtitleFormat.subrip
             SubtitleFormat.subviewer
             SubtitleFormat.subviewer1
             SubtitleFormat.text
             SubtitleFormat.ttml
             SubtitleFormat.vplayer
-            SubtitleFormat.vtt
         }
 
         SubtitleProfile.build(method: .encode) {
             SubtitleFormat.dvbsub
             SubtitleFormat.dvdsub
             SubtitleFormat.pgssub
+            SubtitleFormat.vtt
             SubtitleFormat.xsub
         }
     }
