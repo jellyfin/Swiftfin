@@ -15,20 +15,17 @@ extension ItemView {
 
     struct ContentGroupScrollView: View {
 
+        @EnvironmentObject
+        private var focusCoordinator: FocusCoordinator
+
         @ObservedObject
         var provider: ItemContentGroupProvider
-
-        @FocusState
-        private var focusedGroupID: String?
-
-        @State
-        private var lastFocusedGroupID: String?
 
         let groups: [any ContentGroup]
         let isEnhanced: Bool
 
         private var isHeaderFocused: Bool {
-            lastFocusedGroupID == "itemView-header"
+            focusCoordinator.lastFocusedIDs.contains(Component.header)
         }
 
         private var backgroundImageItem: BaseItemDto {
@@ -81,29 +78,12 @@ extension ItemView {
                 #endif
 
                 ScrollView {
-                    ContentGroupVStack(
-                        groups: groups,
-                        focusedGroupID: $focusedGroupID
-                    )
-                    .edgePadding(.bottom)
-                    .backport
-                    .defaultFocus(
-                        $focusedGroupID,
-                        "itemView-header",
-                        priority: .userInitiated
-                    )
+                    ContentGroupVStack(groups: groups)
+                        .edgePadding(.bottom)
                 }
                 .trackingFrame(for: .scrollView)
                 .ignoresSafeArea(edges: isEnhanced ? .all : .horizontal)
                 .scrollIndicators(.hidden)
-            }
-            .backport
-            .onChange(of: focusedGroupID) {
-                guard isEnhanced, let focusedGroupID else { return }
-
-                if focusedGroupID != lastFocusedGroupID {
-                    lastFocusedGroupID = focusedGroupID
-                }
             }
         }
     }
