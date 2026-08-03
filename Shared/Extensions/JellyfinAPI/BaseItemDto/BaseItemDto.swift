@@ -260,7 +260,7 @@ extension BaseItemDto {
     }
 
     var runtime: Duration? {
-        guard let ticks = runTimeTicks else { return nil }
+        guard let ticks = runTimeTicks, ticks > 0 else { return nil }
         return Duration.ticks(ticks)
     }
 
