@@ -14,12 +14,19 @@ import SwiftUI
 
 struct ItemView: View {
 
+    enum Component {
+        static let header = "itemView-header"
+        static let play = "itemView-play"
+    }
+
     @Default(.Customization.itemViewType)
     private var itemViewType
 
     @State
     private var contentSize: CGSize = .zero
 
+    @StateObject
+    private var focusCoordinator = FocusCoordinator(initial: Component.play)
     @StateObject
     private var provider: ItemContentGroupProvider
     @StateObject
@@ -126,15 +133,16 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
+        .environmentObject(focusCoordinator)
         #if os(tvOS)
-        .toolbarVisibility(.hidden, for: .navigationBar)
+            .toolbarVisibility(.hidden, for: .navigationBar)
         #else
-        .navigationBarMenuButton(
-            isLoading: viewModel.background.is(.refreshing),
-            isHidden: !provider.item.canEdit
-        ) {
-            EditItemMenu(item: provider.item)
-        }
+            .navigationBarMenuButton(
+                isLoading: viewModel.background.is(.refreshing),
+                isHidden: !provider.item.canEdit
+            ) {
+                EditItemMenu(item: provider.item)
+            }
         #endif
     }
 }
