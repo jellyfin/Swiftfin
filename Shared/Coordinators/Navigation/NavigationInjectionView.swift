@@ -56,23 +56,23 @@ struct NavigationInjectionView: View {
         )
         .environmentObject(coordinator)
         #if os(tvOS)
-        // TODO: Workaround for sheet presentation issue on tvOS
-        // https://developer.apple.com/documentation/tvos-release-notes/tvos-26_1-release-notes
-        // Remove this tvOS section when resolved
-        .fullScreenCover(
-                item: $coordinator.presentedSheet
-            ) {
-                coordinator.presentedSheet = nil
-            } content: { route in
-                let newCoordinator = NavigationCoordinator()
+            // TODO: Workaround for sheet presentation issue on tvOS
+            // https://developer.apple.com/documentation/tvos-release-notes/tvos-26_1-release-notes
+            // Remove this tvOS section when resolved
+                .fullScreenCover(
+                    item: $coordinator.presentedSheet
+                ) {
+                    coordinator.presentedSheet = nil
+                } content: { route in
+                    let newCoordinator = NavigationCoordinator()
 
-                NavigationInjectionView(coordinator: newCoordinator) {
-                    route.destination
+                    NavigationInjectionView(coordinator: newCoordinator) {
+                        route.destination
+                    }
+                    .background(.regularMaterial)
                 }
-                .background(.regularMaterial)
-            }
         #else // <- Start: Use this for both OS when fixed
-            .sheet(
+                .sheet(
                 item: $coordinator.presentedSheet
             ) {
                 coordinator.presentedSheet = nil
