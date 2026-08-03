@@ -14,6 +14,11 @@ import SwiftUI
 
 struct ItemView: View {
 
+    enum Component {
+        static let header = "itemView-header"
+        static let play = "itemView-play"
+    }
+
     @Default(.Customization.itemViewType)
     private var itemViewType
 
@@ -27,6 +32,8 @@ struct ItemView: View {
 
     @StateObject
     private var editorViewModel: ItemEditorViewModel
+    @StateObject
+    private var focusCoordinator = FocusCoordinator(initial: Component.play)
     @StateObject
     private var provider: ItemContentGroupProvider
     @StateObject
@@ -134,42 +141,17 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
+        .environmentObject(focusCoordinator)
         #if os(tvOS)
-        .toolbarVisibility(.hidden, for: .navigationBar)
+            .toolbarVisibility(.hidden, for: .navigationBar)
         #else
+        .errorMessage($editorViewModel.error)
         .navigationBarMenuButton(
             isLoading: viewModel.background.is(.refreshing),
-            isHidden: !provider.item.canEdit && !provider.item.canDeleteItem
+            isHidden: !provider.item.canEdit
         ) {
             EditItemMenu(item: provider.item)
-
-            if provider.item.canDeleteItem {
-                Divider()
-
-                Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                    isPresentingDeleteConfirmation = true
-                }
-                .foregroundStyle(.red)
-            }
         }
-        .confirmationDialog(
-            L10n.deleteItemConfirmationMessage,
-            isPresented: $isPresentingDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(
-                L10n.confirm,
-                role: .destructive,
-                action: editorViewModel.delete
-            )
-
-            Button(L10n.cancel, role: .cancel) {}
-        }
-        .onNotification(.didDeleteItem) { _ in
-            UIDevice.feedback(.success)
-            router.dismiss()
-        }
-        .errorMessage($editorViewModel.error)
         #endif
     }
 }

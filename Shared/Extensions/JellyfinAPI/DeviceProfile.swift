@@ -22,7 +22,14 @@ extension DeviceProfile {
         // MARK: - Video Player Specific Logic
 
         deviceProfile.codecProfiles = videoPlayer.codecProfiles
-        deviceProfile.subtitleProfiles = videoPlayer.subtitleProfiles
+
+        if StoredValues[.User.forceSubtitleBurnIn] {
+            deviceProfile.subtitleProfiles = SubtitleProfile.build(method: .encode) {
+                SubtitleFormat.allCases
+            }
+        } else {
+            deviceProfile.subtitleProfiles = videoPlayer.subtitleProfiles
+        }
 
         // MARK: - DirectPlay & Transcoding Profiles
 
