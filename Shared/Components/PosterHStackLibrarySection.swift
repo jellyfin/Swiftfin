@@ -136,7 +136,7 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
             .defaultFocus(
                 $focusedSection,
                 .content,
-                priority: .automatic
+                priority: .userInitiated
             )
             .accessibilityElement(children: .contain)
             .accessibilityLabel(viewModel.library.parent.displayTitle)
