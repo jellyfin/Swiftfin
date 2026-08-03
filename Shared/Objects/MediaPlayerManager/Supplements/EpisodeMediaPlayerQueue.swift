@@ -48,6 +48,10 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     lazy var nextItemPublisher: Published<MediaPlayerItemProvider?>.Publisher = $nextItem
     lazy var previousItemPublisher: Published<MediaPlayerItemProvider?>.Publisher = $previousItem
 
+    var autoPlayNextItem: Bool {
+        (try? authenticatedUser)?.data.configuration?.enableNextEpisodeAutoPlay == true
+    }
+
     private var currentAdjacentEpisodesTask: AnyCancellable?
     private let seasonsViewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 

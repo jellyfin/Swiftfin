@@ -165,7 +165,7 @@ extension BaseItemDto {
         guard !isMissing else { return false }
 
         return switch type {
-        case .series:
+        case .series, .season, .boxSet, .folder, .playlist:
             false
         default:
             true
@@ -498,14 +498,23 @@ extension BaseItemDto {
         originalTitle != displayTitle ? originalTitle : nil
     }
 
-    /// Can this `BaseItemDto` be played
+    /// Whether the current user's policy permits media playback
+    private var isMediaPlaybackEnabled: Bool {
+        Container.shared.currentUserSession()?.user.data.policy?.enableMediaPlayback == true
+    }
+
+    /// Whether this item can present a play button, for direct playback or shuffle
     var presentPlayButton: Bool {
-        guard Container.shared.currentUserSession()?.user.data.policy?.enableMediaPlayback == true else { return false }
+        guard isMediaPlaybackEnabled else { return false }
+
+        if isShuffleableType {
+            return true
+        }
 
         switch type {
         case .audio, .audioBook, .book, .channel, .channelFolderItem, .episode,
-             .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist,
-             .program, .recording, .season, .series, .trailer, .tvChannel, .tvProgram, .video:
+             .movie, .liveTvChannel, .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo,
+             .program, .recording, .trailer, .tvChannel, .tvProgram, .video:
             return true
         default:
             return false
@@ -531,6 +540,56 @@ extension BaseItemDto {
             true
         default:
             false
+        }
+    }
+
+    /// Can this `BaseItemDto` shuffle its playable children
+    var canShuffle: Bool {
+        isMediaPlaybackEnabled && isShuffleableType
+    }
+
+    /// Whether shuffle is this item's only direct playback action;
+    /// unlike series and seasons, which resolve an episode to play
+    var isShuffleOnlyContainer: Bool {
+        switch type {
+        case .series, .season:
+            false
+        default:
+            canShuffle
+        }
+    }
+
+    /// Whether this item is a container type whose playable children can be shuffled
+    private var isShuffleableType: Bool {
+        switch type {
+        case .series, .season, .boxSet, .folder:
+            true
+        case .playlist:
+            // audio playlists have no shuffleable (video) children
+            mediaType != .audio
+        default:
+            false
+        }
+    }
+
+    /// Whether this item, used as a library root, can shuffle its items directly.
+    ///
+    /// Conservatively limited to roots whose items are directly playable media;
+    /// grouped roots like a TV Shows or box sets library are excluded pending
+    /// verification that recursively shuffling them behaves well across servers.
+    var canShuffleLibrary: Bool {
+        guard isMediaPlaybackEnabled else { return false }
+
+        switch collectionType {
+        case .homevideos, .musicvideos, .folders:
+            // library roots whose items are directly playable media
+            return true
+        case .some:
+            // grouped/aggregating roots (tvshows, boxsets, movies, music, livetv, …)
+            return false
+        case .none:
+            // a generic in-library folder with no collection type
+            return libraryType == .folder
         }
     }
 

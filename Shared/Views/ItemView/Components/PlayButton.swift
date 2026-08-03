@@ -22,6 +22,9 @@ struct PlayButton: View {
     @Router
     private var router
 
+    @State
+    private var isShuffling = false
+
     private let playButtonFocus: FocusState<Bool>.Binding?
 
     init(
@@ -42,6 +45,12 @@ struct PlayButton: View {
             get: { provider.mediaPlayerItemProvider?.mediaSource },
             set: provider.selectMediaSource
         )
+    }
+
+    /// Shuffleable containers (boxset/collection) have no directly
+    /// playable item, so the primary button shuffles instead of playing.
+    private var isShuffleOnly: Bool {
+        provider.mediaPlayerItemProvider == nil && provider.item.isShuffleOnlyContainer
     }
 
     private func play(fromBeginning: Bool = false) {
@@ -67,6 +76,10 @@ struct PlayButton: View {
                 queue: queue
             )
         )
+    }
+
+    private func shuffle() {
+        router.shuffle(item: provider.item, isShuffling: $isShuffling)
     }
 
     @ViewBuilder
@@ -123,13 +136,17 @@ struct PlayButton: View {
     @ViewBuilder
     private var playButton: some View {
         Button {
-            play()
+            if isShuffleOnly {
+                shuffle()
+            } else {
+                play()
+            }
         } label: {
             HStack {
-                Image(systemName: "play.fill")
+                Image(systemName: isShuffleOnly ? "shuffle" : "play.fill")
 
                 VStack(spacing: 2) {
-                    Text(provider.mediaPlayerItemProvider?.item.playButtonLabel ?? L10n.play)
+                    Text(isShuffleOnly ? L10n.shuffle : (provider.mediaPlayerItemProvider?.item.playButtonLabel ?? L10n.play))
 
                     if let mediaSource {
                         Marquee(mediaSource, speed: 40, delay: 3, fade: 5)
@@ -157,14 +174,22 @@ struct PlayButton: View {
             view.focused(playButtonFocus)
         }
         .contextMenu {
-            if provider.mediaPlayerItemProvider?.item.userData?.playbackPositionTicks != 0 {
+            if let ticks = provider.mediaPlayerItemProvider?.item.userData?.playbackPositionTicks, ticks != 0 {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {
                     play(fromBeginning: true)
                 }
             }
+
+            // When the primary button already shuffles, don't duplicate the action.
+            if provider.item.canShuffle, !isShuffleOnly {
+                Button(L10n.shuffle, systemImage: "shuffle") {
+                    shuffle()
+                }
+                .disabled(isShuffling)
+            }
         }
         .isSelected(true)
-        .disabled(provider.mediaPlayerItemProvider == nil)
+        .disabled(isShuffleOnly ? isShuffling : provider.mediaPlayerItemProvider == nil)
     }
 
     var body: some View {
