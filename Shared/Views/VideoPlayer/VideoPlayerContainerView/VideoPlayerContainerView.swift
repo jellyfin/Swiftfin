@@ -74,7 +74,9 @@ extension VideoPlayer {
         func updateUIViewController(
             _ uiViewController: UIVideoPlayerContainerViewController,
             context: Context
-        ) {}
+        ) {
+            uiViewController.refreshPlayerContent()
+        }
     }
 
     // MARK: - UIVideoPlayerContainerViewController
@@ -218,12 +220,30 @@ extension VideoPlayer {
             return view
         }()
 
+        private func makePlayerContent() -> AnyView {
+            PlayerContainerView(player: player)
+                .environmentObject(containerState)
+                .environmentObject(manager)
+                .eraseToAnyView()
+        }
+
+        /// Re-hosts the player content.
+        ///
+        /// The hosted view is created once, so its only route to a new playback
+        /// item is the `@EnvironmentObject` subscription baked in at creation.
+        /// That subscription does not survive every geometry pass — notably
+        /// when the window is allowed to rotate — and once it is lost the view
+        /// is frozen on stale state with no way to recover: the manager reaches
+        /// `.playback` with an item ready and the player is never built.
+        /// Pushing fresh content gives it an input path that does not depend on
+        /// observation.
+        func refreshPlayerContent() {
+            playerViewController.content = makePlayerContent()
+        }
+
         private lazy var playerViewController: HostingController<AnyView> = {
             let controller = HostingController(
-                content: PlayerContainerView(player: player)
-                    .environmentObject(containerState)
-                    .environmentObject(manager)
-                    .eraseToAnyView()
+                content: makePlayerContent()
             )
             controller.disableSafeArea = true
             controller.automaticallyAllowUIKitAnimationsForNextUpdate = true

@@ -23,16 +23,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         supportedInterfaceOrientationsFor window: UIWindow?
     ) -> UIInterfaceOrientationMask {
 
-        guard UIDevice.isPhone else {
-            return .allButUpsideDown
-        }
-
-        if let presentedViewController = window?.rootViewController?.presentedViewController,
-           let preferencesHostingController = presentedViewController as? UIPreferencesHostingController
-        {
-            return preferencesHostingController.supportedInterfaceOrientations
-        }
-
-        return .portrait
+        // UIKit intersects this window-level mask with the top view
+        // controller's own `supportedInterfaceOrientations`, which
+        // `PreferencesView` already resolves per screen. Reporting a narrower
+        // mask here clamped that intersection and locked the video player to
+        // portrait on iPhone.
+        .allButUpsideDown
     }
 }
