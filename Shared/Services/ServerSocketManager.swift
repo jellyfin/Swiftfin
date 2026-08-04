@@ -118,8 +118,17 @@ final class ServerSocketManager {
             guard let userSession else { break }
 
             let session = userSession.client.socket(
-                supportsMediaControl: false,
-                supportedCommands: [.displayMessage],
+                supportsMediaControl: true,
+                supportedCommands: [
+                    .displayContent,
+                    .play,
+                    .playMediaSource,
+                    .playState,
+                    .playTrailers,
+                    .setAudioStreamIndex,
+                    .setMaxStreamingBitrate,
+                    .setSubtitleStreamIndex,
+                ],
                 playableMediaTypes: [.video]
             )
             .connect(responseTimeout: .seconds(10))
@@ -213,6 +222,41 @@ extension ServerSocketManager: UserSessionService {
 
     func willStop(userSession: UserSession) {
         stop()
+    }
+}
+
+// MARK: - Playback Commands
+
+extension ServerSocketManager {
+
+    var generalCommands: AnyPublisher<GeneralCommand, Never> {
+        commands { event in
+            guard case let .message(.generalCommandMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var playCommands: AnyPublisher<PlayRequest, Never> {
+        commands { event in
+            guard case let .message(.playMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var playstateCommands: AnyPublisher<PlaystateRequest, Never> {
+        commands { event in
+            guard case let .message(.playstateMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    private func commands<Command>(
+        extract: @escaping (JellyfinSocket.Session.Event) -> Command?
+    ) -> AnyPublisher<Command, Never> {
+        events
+            .compactMap(extract)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
 }
 

@@ -716,6 +716,10 @@ internal enum L10n {
   internal static let forceHDRTranscode = L10n.tr("Localizable", "forceHDRTranscode", fallback: "Force HDR to transcode")
   /// Force remote media transcoding
   internal static let forceRemoteTranscoding = L10n.tr("Localizable", "forceRemoteTranscoding", fallback: "Force remote media transcoding")
+  /// Force subtitle burn-in
+  internal static let forceSubtitleBurnIn = L10n.tr("Localizable", "forceSubtitleBurnIn", fallback: "Force subtitle burn-in")
+  /// Forces subtitles to be burned into the video by the server instead of being rendered by the player. This requires transcoding whenever subtitles are enabled.
+  internal static let forceSubtitleBurnInMessage = L10n.tr("Localizable", "forceSubtitleBurnInMessage", fallback: "Forces subtitles to be burned into the video by the server instead of being rendered by the player. This requires transcoding whenever subtitles are enabled.")
   /// Format
   internal static let format = L10n.tr("Localizable", "format", fallback: "Format")
   /// 3D format
@@ -1290,8 +1294,10 @@ internal enum L10n {
   internal static let rating = L10n.tr("Localizable", "rating", fallback: "Rating")
   /// Ratings
   internal static let ratings = L10n.tr("Localizable", "ratings", fallback: "Ratings")
-  /// Recently Added
-  internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently Added")
+  /// Recently added
+  internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently added")
+  /// Recently played
+  internal static let recentlyPlayed = L10n.tr("Localizable", "recentlyPlayed", fallback: "Recently played")
   /// Recommended
   internal static let recommended = L10n.tr("Localizable", "recommended", fallback: "Recommended")
   /// Recording

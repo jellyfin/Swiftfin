@@ -140,6 +140,11 @@ struct MainTabView: View {
         .onChange(of: userSessionManager.pendingDeepLink) {
             routePendingDeepLink(userSessionManager.consumePendingDeepLink())
         }
+        .onReceive(userSessionManager.routePublisher) { route in
+            Task { @MainActor in
+                await tabCoordinator.route(to: route)
+            }
+        }
         #if os(tvOS)
         .background(alignment: .top) {
             FocusedPosterCinematicBackgroundView()

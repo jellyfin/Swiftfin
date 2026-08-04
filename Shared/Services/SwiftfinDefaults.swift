@@ -222,6 +222,10 @@ extension Defaults.Keys {
                     default: 366 * 86400
                 )
             }
+
+            static var showRecentlyPlayed: Key<Bool> {
+                UserKey("showRecentlyPlayed", default: false)
+            }
         }
 
         enum Search {

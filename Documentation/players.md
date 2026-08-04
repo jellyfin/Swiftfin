@@ -139,7 +139,6 @@ Swiftfin offers two player options: **Swiftfin** (VLCKit) and **Native** (AVPlay
 | [CC_DEC](https://en.wikipedia.org/wiki/Closed_captioning)                       | ✅                | ✅                |
 | [DVBSub](https://en.wikipedia.org/wiki/DVB_subtitles)                           | ✅ [1]            | 🔶 [2]            |
 | [DVDSub](https://en.wikipedia.org/wiki/VobSub)                                  | ✅ [1]            | 🔶 [2]            |
-| [JacoSub](https://en.wikipedia.org/wiki/JACOsub)                                | ✅                | ❌                |
 | [MOV_Text](https://en.wikipedia.org/wiki/MPEG-4_Part_17)                        | ✅                | ❌                |
 | [MPL2](https://en.wikipedia.org/wiki/MPL2)                                      | ✅                | ❌                |
 | [PGSSub](https://en.wikipedia.org/wiki/Presentation_Graphic_Stream)             | ✅ [1]            | 🔶 [2]            |
