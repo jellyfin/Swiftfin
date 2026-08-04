@@ -87,7 +87,12 @@ struct NavigationInjectionView: View {
         #if os(tvOS)
         .fullScreenCover(
             item: $coordinator.presentedFullScreen
-        ) { route in
+        ) {
+            if let pending = coordinator.pendingFullScreen {
+                coordinator.pendingFullScreen = nil
+                coordinator.presentedFullScreen = pending
+            }
+        } content: { route in
             let newCoordinator = NavigationCoordinator()
 
             NavigationInjectionView(coordinator: newCoordinator) {
