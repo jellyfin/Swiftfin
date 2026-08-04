@@ -32,6 +32,11 @@ extension CustomizeViewsSettings {
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers
 
+        @Default(.Customization.itemBarActionButtons)
+        private var barActionButtons
+        @Default(.Customization.itemMenuActionButtons)
+        private var menuActionButtons
+
         @StoredValue(.User.enableItemEditing)
         private var enableItemEditing
         @StoredValue(.User.enableItemDeletion)
@@ -60,6 +65,20 @@ extension CustomizeViewsSettings {
                 }
 
                 PlatformPicker(L10n.enabledTrailers, selection: $enabledTrailers)
+
+                Section(L10n.buttons) {
+                    ChevronButton(L10n.barButtons) {
+                        router.route(to: .itemActionBarButtonSelector(
+                            selectedButtonsBinding: $barActionButtons
+                        ))
+                    }
+
+                    ChevronButton(L10n.menuButtons) {
+                        router.route(to: .itemActionMenuButtonSelector(
+                            selectedButtonsBinding: $menuActionButtons
+                        ))
+                    }
+                }
 
                 if presentMangementSection {
                     Section(L10n.management) {

@@ -258,11 +258,63 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     }
 
     func selectMediaSource(_ mediaSource: MediaSourceInfo?) {
+        guard let current = mediaPlayerItemProvider else { return }
+
+        rebuildMediaPlayerItemProvider(
+            mediaSource: mediaSource,
+            audioStreamIndex: nil,
+            subtitleStreamIndex: nil,
+            requestedBitrate: current.requestedBitrate
+        )
+    }
+
+    func selectAudioStreamIndex(_ index: Int?) {
+        guard let current = mediaPlayerItemProvider else { return }
+
+        rebuildMediaPlayerItemProvider(
+            mediaSource: current.mediaSource,
+            audioStreamIndex: index,
+            subtitleStreamIndex: current.subtitleStreamIndex,
+            requestedBitrate: current.requestedBitrate
+        )
+    }
+
+    func selectSubtitleStreamIndex(_ index: Int?) {
+        guard let current = mediaPlayerItemProvider else { return }
+
+        rebuildMediaPlayerItemProvider(
+            mediaSource: current.mediaSource,
+            audioStreamIndex: current.audioStreamIndex,
+            subtitleStreamIndex: index,
+            requestedBitrate: current.requestedBitrate
+        )
+    }
+
+    func selectBitrate(_ bitrate: PlaybackBitrate) {
+        guard let current = mediaPlayerItemProvider else { return }
+
+        rebuildMediaPlayerItemProvider(
+            mediaSource: current.mediaSource,
+            audioStreamIndex: current.audioStreamIndex,
+            subtitleStreamIndex: current.subtitleStreamIndex,
+            requestedBitrate: bitrate
+        )
+    }
+
+    private func rebuildMediaPlayerItemProvider(
+        mediaSource: MediaSourceInfo?,
+        audioStreamIndex: Int?,
+        subtitleStreamIndex: Int?,
+        requestedBitrate: PlaybackBitrate
+    ) {
         guard let mediaPlayerItemProvider, let userSession else { return }
 
         self.mediaPlayerItemProvider = mediaPlayerItemProvider.item.getPlaybackItemProvider(
             userSession: userSession,
-            mediaSource: mediaSource
+            mediaSource: mediaSource,
+            audioStreamIndex: audioStreamIndex,
+            subtitleStreamIndex: subtitleStreamIndex,
+            requestedBitrate: requestedBitrate
         )
     }
 

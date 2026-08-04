@@ -16,6 +16,7 @@ struct ItemView: View {
 
     enum Component {
         static let header = "itemView-header"
+        static let menu = "itemView-menu"
         static let play = "itemView-play"
     }
 
@@ -136,13 +137,6 @@ struct ItemView: View {
         .environmentObject(focusCoordinator)
         #if os(tvOS)
             .toolbarVisibility(.hidden, for: .navigationBar)
-        #else
-            .navigationBarMenuButton(
-                isLoading: viewModel.background.is(.refreshing),
-                isHidden: !provider.item.canEdit
-            ) {
-                EditItemMenu(item: provider.item)
-            }
         #endif
     }
 }

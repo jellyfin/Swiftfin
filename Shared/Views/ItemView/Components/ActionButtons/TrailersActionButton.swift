@@ -6,17 +6,22 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import FactoryKit
 import JellyfinAPI
 import Logging
 import SwiftUI
 
-extension ItemView {
+extension ItemView.ActionButtons {
 
-    struct TrailerMenu<LabelContent: View>: View {
+    struct Trailers: View {
+
+        @EnvironmentObject
+        private var provider: ItemContentGroupProvider
 
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
+
+        @ViewContextContains(.isInMenu)
+        private var isInMenu
 
         @Router
         private var router
@@ -24,19 +29,14 @@ extension ItemView {
         @State
         private var error: Error?
 
-        let localTrailers: [BaseItemDto]
-        let externalTrailers: [NamedURL]
-        private let label: LabelContent
         private let logger = Logger.swiftfin()
 
-        init(
-            localTrailers: [BaseItemDto],
-            externalTrailers: [NamedURL],
-            @ViewBuilder label: () -> LabelContent
-        ) {
-            self.localTrailers = localTrailers
-            self.externalTrailers = externalTrailers
-            self.label = label()
+        private var localTrailers: [BaseItemDto] {
+            provider.localTrailers
+        }
+
+        private var externalTrailers: [NamedURL] {
+            provider.item.remoteTrailers ?? []
         }
 
         private var showLocalTrailers: Bool {
@@ -45,6 +45,10 @@ extension ItemView {
 
         private var showExternalTrailers: Bool {
             enabledTrailers.contains(.external) && externalTrailers.isNotEmpty
+        }
+
+        private var label: ItemView.ActionButtonLabel {
+            ItemView.ActionButtonLabel(.trailers)
         }
 
         @ViewBuilder
@@ -60,12 +64,11 @@ extension ItemView {
             } label: {
                 label
             }
-            .foregroundStyle(.primary, .secondary)
         }
 
         @ViewBuilder
-        private var trailerMenu: some View {
-            Menu {
+        private var menuContent: some View {
+            Group {
                 if showLocalTrailers {
                     Section(L10n.local) {
                         ForEach(localTrailers) { trailer in
@@ -91,10 +94,21 @@ extension ItemView {
                         }
                     }
                 }
+            }
+            .symbolRenderingMode(.monochrome)
+            .foregroundStyle(.primary)
+        }
+
+        @ViewBuilder
+        private var trailerMenu: some View {
+            Menu {
+                menuContent
             } label: {
                 label
             }
-            .foregroundStyle(.primary, .secondary)
+            .if(!isInMenu && UIDevice.isTV) { menu in
+                menu.menuStyle(.button)
+            }
         }
 
         private func playLocalTrailer(_ trailer: BaseItemDto) {
@@ -150,8 +164,8 @@ extension ItemView {
                 }
             }
             .errorMessage($error)
-            .menuStyle(.button)
-            .buttonStyle(BasicHoverButtonStyle())
+            .symbolRenderingMode(.monochrome)
+            .foregroundStyle(.primary, .secondary)
         }
     }
 }

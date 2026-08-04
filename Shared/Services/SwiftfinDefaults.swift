@@ -115,6 +115,20 @@ extension Defaults.Keys {
             UserKey("mediaItemViewType", default: .enhanced)
         }
 
+        static var itemBarActionButtons: Key<[ContentGroupActionButton]> {
+            UserKey(
+                "itemBarActionButtons",
+                default: ContentGroupActionButton.defaultBarActionButtons
+            )
+        }
+
+        static var itemMenuActionButtons: Key<[ContentGroupActionButton]> {
+            UserKey(
+                "itemMenuActionButtons",
+                default: ContentGroupActionButton.defaultMenuActionButtons
+            )
+        }
+
         static var nextUpPosterType: Key<PosterDisplayType> {
             UserKey("nextUpPosterType", default: .portrait)
         }
