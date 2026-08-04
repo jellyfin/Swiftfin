@@ -56,9 +56,13 @@ final class UserSessionManager: ObservableObject {
     @Published
     private(set) var pendingDeepLink: DeepLink?
 
-    private var cancellables = Set<AnyCancellable>()
-    private let logger = Logger.swiftfin()
-    private var mediaPlayerManager: MediaPlayerManager?
+    let routePublisher = PassthroughSubject<NavigationRoute, Never>()
+
+    var cancellables = Set<AnyCancellable>()
+
+    let logger = Logger.swiftfin()
+
+    private(set) var mediaPlayerManager: MediaPlayerManager?
 
     @MainActor
     var hasActivePlayback: Bool {
@@ -291,6 +295,8 @@ final class UserSessionManager: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+
+        observeSocketCommands()
     }
 
     @MainActor
