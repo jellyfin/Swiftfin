@@ -13,6 +13,9 @@ extension ItemView {
 
     struct ActionButtons: View {
 
+        static let maximumButtons = 4
+        static let maximumToolbarButtons = 3
+
         @ObservedObject
         var provider: ItemContentGroupProvider
 
@@ -90,6 +93,38 @@ extension ItemView {
             }
         }
 
+        static func toolbarButtons(
+            bar: [ContentGroupActionButton],
+            for provider: ItemContentGroupProvider,
+            enabledTrailers: TrailerSelection
+        ) -> [ContentGroupActionButton] {
+            guard !UIDevice.isTV else { return [] }
+
+            return Array(
+                availableButtons(bar, for: provider, enabledTrailers: enabledTrailers)
+                    .dropFirst(maximumButtons)
+            )
+        }
+
+        static func toolbarVisibleButtons(
+            overflow: [ContentGroupActionButton],
+            menu: [ContentGroupActionButton]
+        ) -> [ContentGroupActionButton] {
+            guard menu.isNotEmpty || overflow.count > maximumToolbarButtons else {
+                return overflow
+            }
+
+            return Array(overflow.prefix(max(0, maximumToolbarButtons - 1)))
+        }
+
+        static func toolbarMenuButtons(
+            overflow: [ContentGroupActionButton],
+            menu: [ContentGroupActionButton]
+        ) -> [ContentGroupActionButton] {
+            let visible = toolbarVisibleButtons(overflow: overflow, menu: menu)
+            return Array(overflow.dropFirst(visible.count)) + menu
+        }
+
         private var availableBarButtons: [ContentGroupActionButton] {
             Self.availableButtons(barActionButtons, for: provider, enabledTrailers: enabledTrailers)
         }
@@ -98,32 +133,31 @@ extension ItemView {
             Self.availableButtons(menuActionButtons, for: provider, enabledTrailers: enabledTrailers)
         }
 
-        private func maximumVisibleButtons(from buttons: [ContentGroupActionButton]) -> Int {
-            guard containerWidth > 0 else { return buttons.count }
+        private var maximumVisibleButtons: Int {
+            guard UIDevice.isTV, containerWidth > 0 else { return Self.maximumButtons }
 
             let fittingButtons = Int((containerWidth + spacing) / (minimumButtonWidth + spacing))
 
-            return max(1, fittingButtons)
+            return max(1, min(Self.maximumButtons, fittingButtons))
         }
 
         private func visibleButtons(
             bar: [ContentGroupActionButton],
             menu: [ContentGroupActionButton]
         ) -> [ContentGroupActionButton] {
-            let maximum = maximumVisibleButtons(from: bar)
-
-            guard menu.isNotEmpty || bar.count > maximum else {
-                return Array(bar.prefix(maximum))
+            guard UIDevice.isTV, menu.isNotEmpty || bar.count > maximumVisibleButtons else {
+                return Array(bar.prefix(maximumVisibleButtons))
             }
 
-            return Array(bar.prefix(max(0, maximum - 1)))
+            return Array(bar.prefix(max(0, maximumVisibleButtons - 1)))
         }
 
         private func overflowButtons(
             bar: [ContentGroupActionButton],
             menu: [ContentGroupActionButton]
         ) -> [ContentGroupActionButton] {
-            Array(bar.dropFirst(visibleButtons(bar: bar, menu: menu).count)) + menu
+            guard UIDevice.isTV else { return [] }
+            return Array(bar.dropFirst(visibleButtons(bar: bar, menu: menu).count)) + menu
         }
 
         @ViewBuilder
@@ -175,7 +209,7 @@ extension ItemView {
 
         var body: some View {
             let bar = availableBarButtons
-            let menu = availableMenuButtons
+            let menu = UIDevice.isTV ? availableMenuButtons : []
 
             if bar.isNotEmpty || menu.isNotEmpty {
                 let visible = visibleButtons(bar: bar, menu: menu)
@@ -199,10 +233,12 @@ extension ItemView {
                 .buttonStyle(BasicHoverButtonStyle())
                 .font(.title3)
                 .fontWeight(.semibold)
-                .onGeometryChange(for: CGFloat.self) { proxy in
-                    proxy.size.width
-                } action: { newValue in
-                    containerWidth = newValue
+                .if(UIDevice.isTV) { view in
+                    view.onGeometryChange(for: CGFloat.self) { proxy in
+                        proxy.size.width
+                    } action: { newValue in
+                        containerWidth = newValue
+                    }
                 }
             }
         }

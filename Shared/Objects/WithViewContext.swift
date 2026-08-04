@@ -23,6 +23,7 @@ struct ViewContext: OptionSet {
     static let isInParent = Self(rawValue: 1 << 4)
     static let isInResume = Self(rawValue: 1 << 5)
     static let withConstrainedSize = Self(rawValue: 1 << 6)
+    static let isInToolbar = Self(rawValue: 1 << 7)
 }
 
 extension EnvironmentValues {

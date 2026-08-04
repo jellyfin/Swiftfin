@@ -20,8 +20,19 @@ struct ItemView: View {
         static let play = "itemView-play"
     }
 
+    @Default(.accentColor)
+    private var accentColor
+
     @Default(.Customization.itemViewType)
     private var itemViewType
+
+    @StoredValue(.User.enabledTrailers)
+    private var enabledTrailers: TrailerSelection
+
+    @Default(.Customization.itemBarActionButtons)
+    private var barActionButtons: [ContentGroupActionButton]
+    @Default(.Customization.itemMenuActionButtons)
+    private var menuActionButtons: [ContentGroupActionButton]
 
     @State
     private var contentSize: CGSize = .zero
@@ -40,6 +51,38 @@ struct ItemView: View {
 
     private var isCompact: Bool {
         contentSize.width < 600
+    }
+
+    private var barOverflowButtons: [ContentGroupActionButton] {
+        ActionButtons.toolbarButtons(
+            bar: barActionButtons,
+            for: provider,
+            enabledTrailers: enabledTrailers
+        )
+    }
+
+    private var availableMenuButtons: [ContentGroupActionButton] {
+        guard !UIDevice.isTV else { return [] }
+
+        return ActionButtons.availableButtons(
+            menuActionButtons,
+            for: provider,
+            enabledTrailers: enabledTrailers
+        )
+    }
+
+    private var toolbarVisibleButtons: [ContentGroupActionButton] {
+        ActionButtons.toolbarVisibleButtons(
+            overflow: barOverflowButtons,
+            menu: availableMenuButtons
+        )
+    }
+
+    private var toolbarMenuButtons: [ContentGroupActionButton] {
+        ActionButtons.toolbarMenuButtons(
+            overflow: barOverflowButtons,
+            menu: availableMenuButtons
+        )
     }
 
     private var isEnhanced: Bool {
@@ -93,6 +136,27 @@ struct ItemView: View {
         BlurredNavigationBarScrollView(groups: contentGroups)
     }
 
+    #if !os(tvOS)
+    @ViewBuilder
+    private var toolbarOverflowMenu: some View {
+        let systemImage = if #available(iOS 26, *) {
+            "ellipsis"
+        } else {
+            "ellipsis.circle"
+        }
+
+        Menu(L10n.options, systemImage: systemImage) {
+            ActionButtons.MenuContent(
+                provider: provider,
+                buttons: toolbarMenuButtons
+            )
+        }
+        .labelStyle(.iconOnly)
+        .fontWeight(.semibold)
+        .foregroundStyle(accentColor)
+    }
+    #endif
+
     @ViewBuilder
     private var content: some View {
         Group {
@@ -137,6 +201,25 @@ struct ItemView: View {
         .environmentObject(focusCoordinator)
         #if os(tvOS)
             .toolbarVisibility(.hidden, for: .navigationBar)
+        #else
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    if viewModel.background.is(.refreshing) {
+                        ProgressView()
+                    }
+
+                    ForEach(toolbarVisibleButtons) { button in
+                        ActionButtons.view(for: button)
+                            .environmentObject(provider)
+                            .withViewContext(.isInToolbar)
+                            .labelStyle(.iconOnly)
+                    }
+
+                    if toolbarMenuButtons.isNotEmpty {
+                        toolbarOverflowMenu
+                    }
+                }
+            }
         #endif
     }
 }

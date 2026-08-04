@@ -6,14 +6,20 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension ItemView {
 
     struct ActionButtonLabel: View {
 
+        @Default(.accentColor)
+        private var accentColor
+
         @ViewContextContains(.isInMenu)
         private var isInMenu
+        @ViewContextContains(.isInToolbar)
+        private var isInToolbar
 
         private let title: String
         private let systemImage: String
@@ -58,7 +64,10 @@ extension ItemView {
         }
 
         var body: some View {
-            if isInMenu {
+            if isInToolbar {
+                Label(title, systemImage: systemImage)
+                    .foregroundStyle(accentColor)
+            } else if isInMenu {
                 Label(title, systemImage: systemImage)
             } else {
                 Label {
