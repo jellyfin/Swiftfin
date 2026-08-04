@@ -20,9 +20,6 @@ struct ItemView: View {
         static let play = "itemView-play"
     }
 
-    @Default(.accentColor)
-    private var accentColor
-
     @Default(.Customization.itemViewType)
     private var itemViewType
 
@@ -53,7 +50,7 @@ struct ItemView: View {
         contentSize.width < 600
     }
 
-    private var barOverflowButtons: [ContentGroupActionButton] {
+    private var toolbarButtons: [ContentGroupActionButton] {
         ActionButtons.toolbarButtons(
             bar: barActionButtons,
             for: provider,
@@ -61,27 +58,13 @@ struct ItemView: View {
         )
     }
 
-    private var availableMenuButtons: [ContentGroupActionButton] {
+    private var toolbarMenuButtons: [ContentGroupActionButton] {
         guard !UIDevice.isTV else { return [] }
 
         return ActionButtons.availableButtons(
             menuActionButtons,
             for: provider,
             enabledTrailers: enabledTrailers
-        )
-    }
-
-    private var toolbarVisibleButtons: [ContentGroupActionButton] {
-        ActionButtons.toolbarVisibleButtons(
-            overflow: barOverflowButtons,
-            menu: availableMenuButtons
-        )
-    }
-
-    private var toolbarMenuButtons: [ContentGroupActionButton] {
-        ActionButtons.toolbarMenuButtons(
-            overflow: barOverflowButtons,
-            menu: availableMenuButtons
         )
     }
 
@@ -136,27 +119,6 @@ struct ItemView: View {
         BlurredNavigationBarScrollView(groups: contentGroups)
     }
 
-    #if !os(tvOS)
-    @ViewBuilder
-    private var toolbarOverflowMenu: some View {
-        let systemImage = if #available(iOS 26, *) {
-            "ellipsis"
-        } else {
-            "ellipsis.circle"
-        }
-
-        Menu(L10n.options, systemImage: systemImage) {
-            ActionButtons.MenuContent(
-                provider: provider,
-                buttons: toolbarMenuButtons
-            )
-        }
-        .labelStyle(.iconOnly)
-        .fontWeight(.semibold)
-        .foregroundStyle(accentColor)
-    }
-    #endif
-
     @ViewBuilder
     private var content: some View {
         Group {
@@ -202,23 +164,15 @@ struct ItemView: View {
         #if os(tvOS)
             .toolbarVisibility(.hidden, for: .navigationBar)
         #else
-            .toolbar {
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    if viewModel.background.is(.refreshing) {
-                        ProgressView()
-                    }
-
-                    ForEach(toolbarVisibleButtons) { button in
-                        ActionButtons.view(for: button)
-                            .environmentObject(provider)
-                            .withViewContext(.isInToolbar)
-                            .labelStyle(.iconOnly)
-                    }
-
-                    if toolbarMenuButtons.isNotEmpty {
-                        toolbarOverflowMenu
-                    }
-                }
+            .navigationBarMenuButton(
+                isLoading: viewModel.background.is(.refreshing),
+                isHidden: toolbarButtons.isEmpty && toolbarMenuButtons.isEmpty
+            ) {
+                ActionButtons.MenuContent(
+                    provider: provider,
+                    buttons: toolbarButtons,
+                    menuButtons: toolbarMenuButtons
+                )
             }
         #endif
     }

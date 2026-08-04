@@ -14,7 +14,6 @@ extension ItemView {
     struct ActionButtons: View {
 
         static let maximumButtons = 4
-        static let maximumToolbarButtons = 3
 
         @ObservedObject
         var provider: ItemContentGroupProvider
@@ -106,25 +105,6 @@ extension ItemView {
             )
         }
 
-        static func toolbarVisibleButtons(
-            overflow: [ContentGroupActionButton],
-            menu: [ContentGroupActionButton]
-        ) -> [ContentGroupActionButton] {
-            guard menu.isNotEmpty || overflow.count > maximumToolbarButtons else {
-                return overflow
-            }
-
-            return Array(overflow.prefix(max(0, maximumToolbarButtons - 1)))
-        }
-
-        static func toolbarMenuButtons(
-            overflow: [ContentGroupActionButton],
-            menu: [ContentGroupActionButton]
-        ) -> [ContentGroupActionButton] {
-            let visible = toolbarVisibleButtons(overflow: overflow, menu: menu)
-            return Array(overflow.dropFirst(visible.count)) + menu
-        }
-
         private var availableBarButtons: [ContentGroupActionButton] {
             Self.availableButtons(barActionButtons, for: provider, enabledTrailers: enabledTrailers)
         }
@@ -157,7 +137,7 @@ extension ItemView {
             menu: [ContentGroupActionButton]
         ) -> [ContentGroupActionButton] {
             guard UIDevice.isTV else { return [] }
-            return Array(bar.dropFirst(visibleButtons(bar: bar, menu: menu).count)) + menu
+            return Array(bar.dropFirst(visibleButtons(bar: bar, menu: menu).count))
         }
 
         @ViewBuilder
@@ -193,11 +173,15 @@ extension ItemView {
         }
 
         @ViewBuilder
-        private func overflowMenu(buttons: [ContentGroupActionButton]) -> some View {
+        private func overflowMenu(
+            buttons: [ContentGroupActionButton],
+            menuButtons: [ContentGroupActionButton]
+        ) -> some View {
             Menu {
                 MenuContent(
                     provider: provider,
-                    buttons: buttons
+                    buttons: buttons,
+                    menuButtons: menuButtons
                 )
             } label: {
                 menuLabel
@@ -221,8 +205,8 @@ extension ItemView {
                             .focused(focusedButton, equals: button.id)
                     }
 
-                    if overflow.isNotEmpty {
-                        overflowMenu(buttons: overflow)
+                    if overflow.isNotEmpty || menu.isNotEmpty {
+                        overflowMenu(buttons: overflow, menuButtons: menu)
                             .focused(focusedButton, equals: ItemView.Component.menu)
                     }
                 }

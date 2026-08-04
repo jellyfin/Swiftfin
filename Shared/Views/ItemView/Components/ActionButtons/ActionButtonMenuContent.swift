@@ -16,12 +16,24 @@ extension ItemView.ActionButtons {
         var provider: ItemContentGroupProvider
 
         let buttons: [ContentGroupActionButton]
+        let menuButtons: [ContentGroupActionButton]
 
         var body: some View {
-            ForEach(
-                buttons,
-                content: ItemView.ActionButtons.view(for:)
-            )
+            Group {
+                ForEach(
+                    buttons,
+                    content: ItemView.ActionButtons.view(for:)
+                )
+
+                if buttons.isNotEmpty, menuButtons.isNotEmpty {
+                    Divider()
+                }
+
+                ForEach(
+                    menuButtons,
+                    content: ItemView.ActionButtons.view(for:)
+                )
+            }
             .environmentObject(provider)
             .withViewContext(.isInMenu)
             .symbolRenderingMode(.monochrome)
