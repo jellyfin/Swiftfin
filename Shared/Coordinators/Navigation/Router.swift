@@ -36,12 +36,20 @@ struct Router: DynamicProperty {
         let router: NavigationCoordinator.Router
         let dismiss: DismissAction
 
+        private let isRootBox: PublishedBox<Bool?> = .init(initialValue: nil)
+
         var isRootOfPath: Bool {
+            if let boxValue = isRootBox.value {
+                return boxValue
+            }
+
             guard let router = router.navigationCoordinator else {
                 return false
             }
 
-            return router.path.isEmpty
+            let value = router.path.isEmpty
+            isRootBox.value = value
+            return value
         }
 
         func route(
@@ -84,11 +92,19 @@ struct Router: DynamicProperty {
     @Environment(\.self)
     private var environment
 
+    private let wrapperBox: PublishedBox<Wrapper?> = .init(initialValue: nil)
+
     var wrappedValue: Wrapper {
-        .init(
+        if let wrapper = wrapperBox.value {
+            return wrapper
+        }
+
+        let value = Wrapper(
             router: environment.router,
             dismiss: environment.dismiss
         )
+        wrapperBox.value = value
+        return value
     }
 }
 

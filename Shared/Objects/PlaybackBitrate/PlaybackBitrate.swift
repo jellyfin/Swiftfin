@@ -23,11 +23,18 @@ enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
     case mbps6 = 6_000_000
     case mbps4 = 4_000_000
     case mbps3 = 3_000_000
+    case mbps2 = 2_000_000
     case kbps1500 = 1_500_000
+    case mbps1 = 1_000_000
     case kbps720 = 720_000
     case kbps420 = 420_000
+    case kbps320 = 320_000
+    case kbps256 = 256_000
+    case kbps192 = 192_000
+    case kbps128 = 128_000
+    case kbps96 = 96000
+    case kbps64 = 64000
 
-    // swiftlint:disable:next hard_coded_display_string
     var displayTitle: String {
         switch self {
         case .auto:
@@ -35,29 +42,55 @@ enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
         case .max:
             L10n.maximum
         default:
-            if let resolution {
-                "\(resolution) - \(rawValue.formatted(.bitRate))"
-            } else {
-                rawValue.formatted(.bitRate)
-            }
+            rawValue.formatted(.bitRate)
         }
     }
 
-    // swiftlint:disable:next hard_coded_display_string
-    var resolution: String? {
-        switch self {
-        case .mbps120, .mbps80:
-            "4K"
-        case .mbps60, .mbps40, .mbps20, .mbps15, .mbps10:
-            "1080p"
-        case .mbps8, .mbps6, .mbps4:
-            "720p"
-        case .mbps3, .kbps1500, .kbps720:
-            "480p"
-        case .kbps420:
-            "360p"
-        default:
-            nil
-        }
+    /// Bitrates for audio files
+    static let audioBitrates: [PlaybackBitrate] = [
+        .auto,
+        .mbps2,
+        .kbps1500,
+        .mbps1,
+        .kbps320,
+        .kbps256,
+        .kbps192,
+        .kbps128,
+        .kbps96,
+        .kbps64,
+    ]
+
+    /// Bitrates for video files
+    static let videoBitrates: [PlaybackBitrate] = [
+        .auto,
+        .max,
+        .mbps120,
+        .mbps80,
+        .mbps60,
+        .mbps40,
+        .mbps20,
+        .mbps15,
+        .mbps10,
+        .mbps8,
+        .mbps6,
+        .mbps4,
+        .mbps3,
+        .kbps1500,
+        .kbps720,
+        .kbps420,
+    ]
+}
+
+extension PlaybackBitrate {
+
+    /// Find the closest bitrate for an unknown input bitrate int
+    init(for bitrate: Int, in bitrates: [PlaybackBitrate] = PlaybackBitrate.allCases) {
+        let selectable = bitrates.filter { $0 != .auto }
+
+        self = selectable
+            .filter { $0.rawValue <= bitrate }
+            .max(by: { $0.rawValue < $1.rawValue })
+            ?? selectable.min(by: { $0.rawValue < $1.rawValue })
+            ?? .auto
     }
 }
