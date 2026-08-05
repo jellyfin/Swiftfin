@@ -17,7 +17,7 @@ final class ItemPlaylistViewModel: ViewModel {
     @CasePathable
     enum Action {
         /// The playlists the item should belong to on update.
-        case update(playlistIDs: Set<String>)
+        case update(playlistIDs: Set<String>, index: Int?)
         case create(name: String)
         case refresh
 
@@ -97,7 +97,7 @@ final class ItemPlaylistViewModel: ViewModel {
     }
 
     @Function(\Action.Cases.update)
-    private func _update(_ playlistIDs: Set<String>) async throws {
+    private func _update(_ playlistIDs: Set<String>, _ index: Int? = nil) async throws {
         let newPlaylists = playlistIDs.subtracting(containingPlaylists)
         let removedPlaylists = containingPlaylists.subtracting(playlistIDs)
 
@@ -106,7 +106,7 @@ final class ItemPlaylistViewModel: ViewModel {
         try await withThrowingTaskGroup(of: Void.self) { group in
             for playlistID in newPlaylists {
                 group.addTask {
-                    try await self.addItem(to: playlistID)
+                    try await self.addItem(to: playlistID, at: index)
                 }
             }
 
@@ -165,11 +165,18 @@ final class ItemPlaylistViewModel: ViewModel {
             .compactMap(\.playlistItemID)
     }
 
-    private func addItem(to playlistID: String) async throws {
+    private func addItem(to playlistID: String, at index: Int? = nil) async throws {
         guard let itemID = item.id else { return }
 
-        let parameters = Paths.AddItemToPlaylistParameters(ids: [itemID])
-        let request = Paths.addItemToPlaylist(playlistID: playlistID, parameters: parameters)
+        let parameters = Paths.AddItemToPlaylistParameters(
+            ids: [itemID],
+            position: index
+        )
+
+        let request = Paths.addItemToPlaylist(
+            playlistID: playlistID,
+            parameters: parameters
+        )
 
         _ = try await send(request)
 

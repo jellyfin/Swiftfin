@@ -19,6 +19,8 @@ struct ItemPlaylistView: View {
     private var viewModel: ItemPlaylistViewModel
 
     @State
+    private var addToBeginning = false
+    @State
     private var selectedPlaylistIDs: Set<String> = []
 
     init(item: BaseItemDto) {
@@ -47,6 +49,16 @@ struct ItemPlaylistView: View {
 
                         Button(L10n.cancel, role: .cancel) {}
                     }
+                }
+            }
+
+            // TODO: Remove for 13.X.
+            // Position flag is ignored for pre-12.0 so this flag is hidden on 10.X to prevent confusion
+            if viewModel.userSession?.server.isVersionCompatible == true {
+                Section {
+                    Toggle(L10n.addToBeginning, isOn: $addToBeginning)
+                } footer: {
+                    Text(L10n.addToBeginningDescription)
                 }
             }
 
@@ -107,11 +119,17 @@ struct ItemPlaylistView: View {
             Group {
                 if #available(iOS 26, *) {
                     Button(L10n.save, role: .confirm) {
-                        viewModel.update(playlistIDs: selectedPlaylistIDs)
+                        viewModel.update(
+                            playlistIDs: selectedPlaylistIDs,
+                            index: addToBeginning ? 0 : nil
+                        )
                     }
                 } else {
                     Button(L10n.save) {
-                        viewModel.update(playlistIDs: selectedPlaylistIDs)
+                        viewModel.update(
+                            playlistIDs: selectedPlaylistIDs,
+                            index: addToBeginning ? 0 : nil
+                        )
                     }
                     .backport
                     .buttonStyle(.glassProminent)

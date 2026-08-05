@@ -52,6 +52,10 @@ internal enum L10n {
   internal static let additionalSecurityAccessDescription = L10n.tr("Localizable", "additionalSecurityAccessDescription", fallback: "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.")
   /// Add server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add server")
+  /// Add to beginning
+  internal static let addToBeginning = L10n.tr("Localizable", "addToBeginning", fallback: "Add to beginning")
+  /// Add this item at the beginning of the playlist instead of the end.
+  internal static let addToBeginningDescription = L10n.tr("Localizable", "addToBeginningDescription", fallback: "Add this item at the beginning of the playlist instead of the end.")
   /// Add to favorites
   internal static let addToFavorites = L10n.tr("Localizable", "addToFavorites", fallback: "Add to favorites")
   /// Add trigger

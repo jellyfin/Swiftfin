@@ -166,7 +166,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                     .appending(.person),
                 parent: item
             )
-            .makeGroups(environment: .default)
+            .makeGroups(environment: item.type == .boxSet ? .orderedFolder : .default)
         case .series:
             try await ItemTypeContentGroupProvider(
                 itemTypes: [.season],

@@ -110,7 +110,7 @@ extension BaseItemDto: Poster {
                 tag: seriesPrimaryImageTag,
                 environment: environment
             )
-        case .boxSet, .channel, .liveTvChannel, .liveTvProgram, .movie, .musicArtist, .person, .playlist, .program, .series,
+        case .boxSet, .channel, .liveTvChannel, .liveTvProgram, .movie, .musicArtist, .person, .program, .series,
              .tvChannel:
             imageSource(
                 .primary,
@@ -159,7 +159,7 @@ extension BaseItemDto: Poster {
                     environment: environment
                 )
             }
-        case .collectionFolder, .folder, .musicVideo, .playlist, .userView, .video:
+        case .collectionFolder, .folder, .musicVideo, .userView, .video:
             imageSource(
                 .primary,
                 environment: environment
@@ -213,7 +213,7 @@ extension BaseItemDto: Poster {
                 tag: albumPrimaryImageTag,
                 environment: environment
             )
-        case .channel, .musicAlbum, .tvChannel:
+        case .channel, .musicAlbum, .tvChannel, .playlist:
             imageSource(
                 .primary,
                 environment: environment
