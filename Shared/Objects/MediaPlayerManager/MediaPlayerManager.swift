@@ -466,7 +466,7 @@ final class MediaPlayerManager: ViewModel {
             requestedBitrate: requestedBitrate ?? currentItem.requestedBitrate,
             modifyItem: { item in
                 if item.userData == nil {
-                    item.userData = UserItemDataDto()
+                    item.userData = UserItemDataDto(key: "")
                 }
                 item.userData?.playbackPositionTicks = currentSeconds.ticks
             }
