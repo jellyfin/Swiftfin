@@ -1,5 +1,5 @@
 {
-  "originHash" : "b0e768da91f7b2d5e2b06b52d714f14a0fc58e3369ab020ceceb8ceb5ef009a2",
+  "originHash" : "a2ea4831b4277f95b52f845ae611d252f3fc45f831a06467bc6463b283cac2e0",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -103,9 +103,10 @@
     {
       "identity" : "jellyfin-sdk-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JPKribs/jellyfin-sdk-swift.git",
+      "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "16eafd724c28a65c7c776cc9154f3d5d5bd19430"
+        "revision" : "37a2f5028bd24689b772effb559f72ec5388f021",
+        "version" : "3.0.0"
       }
     },
     {
