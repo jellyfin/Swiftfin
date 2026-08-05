@@ -11,7 +11,7 @@ import JellyfinAPI
 struct RecentlyAddedLibrary: BaseItemKindLibrary {
 
     let libraryItemTypes: [BaseItemKind] = [.movie, .series]
-    let parent: TitledLibraryParent = .init(displayTitle: L10n.recentlyAdded, id: "recently-added")
+    let parent: TitledLibraryParent = .init(displayTitle: L10n.recentlyAdded.localizedCapitalized, id: "recently-added")
 
     func retrievePage(
         environment: Empty,
