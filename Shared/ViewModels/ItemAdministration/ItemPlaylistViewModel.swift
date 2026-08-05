@@ -168,11 +168,8 @@ final class ItemPlaylistViewModel: ViewModel {
     private func addItem(to playlistID: String) async throws {
         guard let itemID = item.id else { return }
 
-        let request = try Paths.addItemToPlaylist(
-            playlistID: playlistID,
-            ids: [itemID],
-            userID: authenticatedUser.id
-        )
+        let parameters = Paths.AddItemToPlaylistParameters(ids: [itemID])
+        let request = Paths.addItemToPlaylist(playlistID: playlistID, parameters: parameters)
 
         _ = try await send(request)
 
