@@ -56,10 +56,7 @@ final class ServerSocketManager {
     }
 
     private func start() {
-
-        // Remove any existing sockets first
         stop()
-
         tasks = [
             Task { [weak self] in await self?.runConnection() },
             Task { [weak self] in await self?.observeServerConnectionChange() },
@@ -150,8 +147,6 @@ final class ServerSocketManager {
 
             logger.debug("Connecting the socket")
 
-            // The session reconnects on its own, so the stream only ends on an explicit
-            // disconnect or a refusal there is no point retrying.
             var wasRefused = false
 
             do {
