@@ -1054,8 +1054,6 @@ internal enum L10n {
   internal static let name = L10n.tr("Localizable", "name", fallback: "Name")
   /// Narrator
   internal static let narrator = L10n.tr("Localizable", "narrator", fallback: "Narrator")
-  /// Native
-  internal static let native = L10n.tr("Localizable", "native", fallback: "Native")
   /// Network
   internal static let network = L10n.tr("Localizable", "network", fallback: "Network")
   /// Network timed out

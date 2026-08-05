@@ -501,7 +501,7 @@ final class MediaPlayerManager: ViewModel {
                 requestedBitrate: item.requestedBitrate
             ) { base in
                 if base.userData == nil {
-                    base.userData = .init()
+                    base.userData = .init(key: "")
                 }
                 base.userData?.playbackPositionTicks = positionTicks
             }
