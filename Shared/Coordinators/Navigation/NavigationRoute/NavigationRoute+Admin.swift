@@ -53,17 +53,6 @@ extension NavigationRoute {
         }
     }
 
-    // MARK: - Server Tasks
-
-    static func addServerTaskTrigger(observer: ServerTaskObserver) -> NavigationRoute {
-        NavigationRoute(
-            id: "addServerTaskTrigger",
-            style: .sheet
-        ) {
-            AddTaskTriggerView(observer: observer)
-        }
-    }
-
     // MARK: - Users
 
     static func addServerUser() -> NavigationRoute {
@@ -101,14 +90,6 @@ extension NavigationRoute {
         }
     }
 
-    // MARK: - Server Tasks
-
-    static func editServerTask(observer: ServerTaskObserver) -> NavigationRoute {
-        NavigationRoute(id: "editServerTask") {
-            EditServerTaskView(observer: observer)
-        }
-    }
-
     // MARK: - Users
 
     static func quickConnectAuthorize(user: UserDto) -> NavigationRoute {
@@ -138,11 +119,26 @@ extension NavigationRoute {
 
     // MARK: - Server Tasks
 
-    static var tasks: NavigationRoute {
+    static var serverTasks: NavigationRoute {
         NavigationRoute(
-            id: "tasks"
+            id: "serverTasks"
         ) {
             ServerTasksView()
+        }
+    }
+
+    static func serverTaskDetails(viewModel: TaskViewModel) -> NavigationRoute {
+        NavigationRoute(id: "serverTaskDetails") {
+            ServerTaskDetailsView(viewModel: viewModel)
+        }
+    }
+
+    static func serverTaskTrigger(viewModel: TaskViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "serverTaskTrigger",
+            style: .sheet
+        ) {
+            ServerTaskTriggerView(viewModel: viewModel)
         }
     }
 

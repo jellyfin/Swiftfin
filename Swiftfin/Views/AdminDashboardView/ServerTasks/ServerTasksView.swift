@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -14,13 +15,46 @@ import SwiftUI
 
 struct ServerTasksView: View {
 
-    @Router
-    private var router
-
     @StateObject
     private var viewModel = ServerTasksViewModel()
 
-    // MARK: - Server Function Buttons
+    @ViewBuilder
+    private var contentView: some View {
+        List {
+            ListTitleSection(
+                L10n.tasks,
+                description: L10n.tasksDescription
+            ) {
+                UIApplication.shared.open(.jellyfinDocsTasks)
+            }
+
+            Section(L10n.server) {
+                destructiveServerTask(
+                    title: L10n.restartServer,
+                    systemName: "arrow.clockwise",
+                    message: L10n.restartWarning
+                ) {
+                    viewModel.restartApplication()
+                }
+
+                destructiveServerTask(
+                    title: L10n.shutdownServer,
+                    systemName: "power",
+                    message: L10n.shutdownWarning
+                ) {
+                    viewModel.shutdownApplication()
+                }
+            }
+
+            ForEach(viewModel.tasks.keys, id: \.self) { category in
+                Section(category) {
+                    ForEach(viewModel.tasks[category] ?? []) { task in
+                        ServerTaskRow(viewModel: task)
+                    }
+                }
+            }
+        }
+    }
 
     @ViewBuilder
     private func destructiveServerTask(
@@ -55,49 +89,6 @@ struct ServerTasksView: View {
         }
     }
 
-    // MARK: - Content View
-
-    @ViewBuilder
-    private var contentView: some View {
-        List {
-
-            ListTitleSection(
-                L10n.tasks,
-                description: L10n.tasksDescription
-            ) {
-                UIApplication.shared.open(.jellyfinDocsTasks)
-            }
-
-            Section(L10n.server) {
-                destructiveServerTask(
-                    title: L10n.restartServer,
-                    systemName: "arrow.clockwise",
-                    message: L10n.restartWarning
-                ) {
-                    viewModel.restartApplication()
-                }
-
-                destructiveServerTask(
-                    title: L10n.shutdownServer,
-                    systemName: "power",
-                    message: L10n.shutdownWarning
-                ) {
-                    viewModel.shutdownApplication()
-                }
-            }
-
-            ForEach(viewModel.tasks.keys, id: \.self) { category in
-                Section(category) {
-                    ForEach(viewModel.tasks[category] ?? []) { task in
-                        ServerTaskRow(observer: task)
-                    }
-                }
-            }
-        }
-    }
-
-    // MARK: - Body
-
     var body: some View {
         ZStack {
             switch viewModel.state {
@@ -119,83 +110,5 @@ struct ServerTasksView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
-    }
-}
-
-// MARK: - Server Task Row
-
-private struct ServerTaskRow: View {
-
-    @CurrentDate
-    private var currentDate: Date
-
-    @Router
-    private var router
-
-    @ObservedObject
-    var observer: ServerTaskObserver
-
-    private var isRunning: Bool {
-        observer.task.state == .running
-    }
-
-    @ViewBuilder
-    private var taskResultView: some View {
-        if isRunning {
-            Text(L10n.running)
-        } else if observer.task.state == .cancelling {
-            Text(L10n.cancelling)
-        } else {
-            if let taskEndTime = observer.task.lastExecutionResult?.endTimeUtc {
-                Text(L10n.lastRunTime(Date.RelativeFormatStyle(presentation: .numeric, unitsStyle: .narrow).format(taskEndTime)))
-                    .id(currentDate)
-                    .monospacedDigit()
-            } else {
-                Text(L10n.neverRun)
-            }
-
-            if let status = observer.task.lastExecutionResult?.status, status != .completed {
-                Label(
-                    status.displayTitle,
-                    systemImage: "exclamationmark.circle.fill"
-                )
-                .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                .foregroundStyle(.orange)
-                .fontWeight(.semibold)
-            }
-        }
-    }
-
-    var body: some View {
-        Button {
-            router.route(to: .editServerTask(observer: observer))
-        } label: {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-
-                    Text(observer.task.name ?? L10n.unknown)
-                        .fontWeight(.semibold)
-
-                    taskResultView
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-
-                if isRunning {
-                    ProgressView(value: (observer.task.currentProgressPercentage ?? 0) / 100)
-                        .progressViewStyle(.gauge)
-                        .transition(.opacity.combined(with: .scale).animation(.bouncy))
-                        .frame(width: 25, height: 25)
-                }
-
-                Image(systemName: "chevron.right")
-                    .font(.body.weight(.regular))
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .animation(.linear(duration: 0.1), value: isRunning)
-        .foregroundStyle(.primary, .secondary)
     }
 }

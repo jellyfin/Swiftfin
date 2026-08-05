@@ -11,12 +11,9 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-// TODO: for trigger updating, could temp set new triggers
-//       and set back on failure
-
 @MainActor
 @Stateful
-final class ServerTaskObserver: ViewModel, Identifiable {
+final class TaskViewModel: ViewModel, Identifiable {
 
     @CasePathable
     enum Action {
@@ -88,9 +85,16 @@ final class ServerTaskObserver: ViewModel, Identifiable {
 
     private func updateTriggers(_ updatedTriggers: [TaskTriggerInfo]) async throws {
         guard let id = task.id else { return }
-        let updateRequest = Paths.updateTask(taskID: id, updatedTriggers)
-        try await send(updateRequest)
 
+        let previousTriggers = task.triggers
         task.triggers = updatedTriggers
+
+        do {
+            let updateRequest = Paths.updateTask(taskID: id, updatedTriggers)
+            try await send(updateRequest)
+        } catch {
+            task.triggers = previousTriggers
+            throw error
+        }
     }
 }

@@ -48,7 +48,7 @@ final class ServerTasksViewModel: ViewModel {
     }
 
     @Published
-    var tasks: OrderedDictionary<String, [ServerTaskObserver]> = [:]
+    var tasks: OrderedDictionary<String, [TaskViewModel]> = [:]
 
     override init() {
         super.init()
@@ -66,12 +66,12 @@ final class ServerTasksViewModel: ViewModel {
     }
 
     private func updateTasks(_ updatedTasks: [TaskInfo]) {
-        for observer in tasks.values.flattened() {
-            guard let updatedTask = updatedTasks.first(where: { $0.id == observer.task.id }) else {
+        for taskViewModel in tasks.values.flattened() {
+            guard let updatedTask = updatedTasks.first(where: { $0.id == taskViewModel.task.id }) else {
                 continue
             }
 
-            observer.task = updatedTask
+            taskViewModel.task = updatedTask
         }
     }
 
@@ -87,8 +87,8 @@ final class ServerTasksViewModel: ViewModel {
         let removedTaskIDs = existingTaskIDs.filtering { allTaskIDs.contains($0) }
 
         for category in tasks.keys {
-            tasks[category]?.removeAll { observer in
-                guard let id = observer.task.id else { return false }
+            tasks[category]?.removeAll { taskViewModel in
+                guard let id = taskViewModel.task.id else { return false }
                 return removedTaskIDs.contains(id)
             }
             if tasks[category]?.isEmpty == true {
@@ -103,23 +103,23 @@ final class ServerTasksViewModel: ViewModel {
         }
 
         for id in existingIDs {
-            if let observer = tasks.values
+            if let taskViewModel = tasks.values
                 .flattened()
                 .first(where: { $0.task.id == id }),
                 let updatedTask = allTasks.first(where: { $0.id == id })
             {
-                observer.task = updatedTask
+                taskViewModel.task = updatedTask
             }
         }
 
         for newTask in newTasks {
-            let observer = ServerTaskObserver(task: newTask)
+            let taskViewModel = TaskViewModel(task: newTask)
             let category = newTask.category ?? ""
 
             if tasks[category] != nil {
-                tasks[category]?.append(observer)
+                tasks[category]?.append(taskViewModel)
             } else {
-                tasks[category] = [observer]
+                tasks[category] = [taskViewModel]
             }
         }
 

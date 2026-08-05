@@ -1544,6 +1544,8 @@ internal enum L10n {
   internal static let sports = L10n.tr("Localizable", "sports", fallback: "Sports")
   /// Square
   internal static let square = L10n.tr("Localizable", "square", fallback: "Square")
+  /// Start
+  internal static let start = L10n.tr("Localizable", "start", fallback: "Start")
   /// Start date
   internal static let startDate = L10n.tr("Localizable", "startDate", fallback: "Start date")
   /// Start time

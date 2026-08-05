@@ -50,7 +50,7 @@ struct AdminDashboardView: View {
                 }
 
                 ChevronButton(L10n.tasks) {
-                    router.route(to: .tasks)
+                    router.route(to: .serverTasks)
                 }
             }
         }
