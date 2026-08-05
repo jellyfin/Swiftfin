@@ -1054,6 +1054,8 @@ internal enum L10n {
   internal static let mvc = L10n.tr("Localizable", "mvc", fallback: "MVC")
   /// Name
   internal static let name = L10n.tr("Localizable", "name", fallback: "Name")
+  /// Narrator
+  internal static let narrator = L10n.tr("Localizable", "narrator", fallback: "Narrator")
   /// Native
   internal static let native = L10n.tr("Localizable", "native", fallback: "Native")
   /// Network
@@ -1816,6 +1818,8 @@ internal enum L10n {
   internal static let videoResolution = L10n.tr("Localizable", "videoResolution", fallback: "Video resolution")
   /// The video resolution is not supported
   internal static let videoResolutionNotSupported = L10n.tr("Localizable", "videoResolutionNotSupported", fallback: "The video resolution is not supported")
+  /// The video rotation is not supported
+  internal static let videoRotationNotSupported = L10n.tr("Localizable", "videoRotationNotSupported", fallback: "The video rotation is not supported")
   /// Videos
   internal static let videos = L10n.tr("Localizable", "videos", fallback: "Videos")
   /// Video transcoding

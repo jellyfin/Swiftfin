@@ -175,7 +175,7 @@ extension UserSessionManager {
                 if let startPositionTicks {
                     provider = provider.modifyingItem { item in
                         if item.userData == nil {
-                            item.userData = UserItemDataDto()
+                            item.userData = UserItemDataDto(key: "")
                         }
                         item.userData?.playbackPositionTicks = startPositionTicks
                     }
