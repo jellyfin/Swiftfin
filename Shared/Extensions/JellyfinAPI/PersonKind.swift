@@ -62,6 +62,8 @@ extension PersonKind: Displayable, SupportedCaseIterable {
             L10n.editor
         case .translator:
             L10n.translator
+        case .narrator:
+            L10n.narrator
         }
     }
 
