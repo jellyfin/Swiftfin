@@ -13,14 +13,6 @@ extension ItemView {
 
     struct ActionBar: View {
 
-        static var buttonHeight: CGFloat {
-            UIDevice.isTV ? 75 : 44
-        }
-
-        static var spacing: CGFloat {
-            UIDevice.isTV ? 24 : 8
-        }
-
         @FocusState
         private var focusedButton: String?
 
@@ -40,7 +32,7 @@ extension ItemView {
                 return ItemView.Component.play
             }
 
-            return ActionButtons.availableButtons(
+            return ContentGroupActionButtons.availableButtons(
                 barActionButtons,
                 for: provider,
                 enabledTrailers: enabledTrailers
@@ -57,13 +49,13 @@ extension ItemView {
         }
 
         var body: some View {
-            VStack(alignment: alignment, spacing: Self.spacing) {
+            VStack(alignment: alignment, spacing: ContentGroupActionButtons.spacing) {
                 if provider.item.presentPlayButton {
                     PlayButton(provider: provider)
                         .coordinatedFocus(ItemView.Component.play, selection: $focusedButton)
                 }
 
-                ActionButtons(
+                ContentGroupActionButtons(
                     provider: provider,
                     focusedButton: $focusedButton
                 )

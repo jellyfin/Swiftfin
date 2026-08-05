@@ -51,7 +51,7 @@ struct ItemView: View {
     }
 
     private var toolbarButtons: [ContentGroupActionButton] {
-        ActionButtons.toolbarButtons(
+        ContentGroupActionButtons.toolbarButtons(
             bar: barActionButtons,
             for: provider,
             enabledTrailers: enabledTrailers
@@ -61,7 +61,7 @@ struct ItemView: View {
     private var toolbarMenuButtons: [ContentGroupActionButton] {
         guard !UIDevice.isTV else { return [] }
 
-        return ActionButtons.availableButtons(
+        return ContentGroupActionButtons.availableButtons(
             menuActionButtons,
             for: provider,
             enabledTrailers: enabledTrailers
@@ -168,7 +168,7 @@ struct ItemView: View {
                 isLoading: viewModel.background.is(.refreshing),
                 isHidden: toolbarButtons.isEmpty && toolbarMenuButtons.isEmpty
             ) {
-                ActionButtons.MenuContent(
+                ContentGroupActionButtons.MenuContent(
                     provider: provider,
                     buttons: toolbarButtons,
                     menuButtons: toolbarMenuButtons

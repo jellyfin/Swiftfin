@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension ItemView.ActionButtons {
+extension ContentGroupActionButtons {
 
     struct MenuContent: View {
 
@@ -22,7 +22,7 @@ extension ItemView.ActionButtons {
             Group {
                 ForEach(
                     buttons,
-                    content: ItemView.ActionButtons.view(for:)
+                    content: ContentGroupActionButtons.view(for:)
                 )
 
                 if buttons.isNotEmpty, menuButtons.isNotEmpty {
@@ -31,7 +31,7 @@ extension ItemView.ActionButtons {
 
                 ForEach(
                     menuButtons,
-                    content: ItemView.ActionButtons.view(for:)
+                    content: ContentGroupActionButtons.view(for:)
                 )
             }
             .environmentObject(provider)

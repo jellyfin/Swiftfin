@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension ItemView.ActionButtons {
+extension ContentGroupActionButtons {
 
     struct Favorited: View {
 
@@ -31,7 +31,7 @@ extension ItemView.ActionButtons {
             Button {
                 Task { await provider.toggleIsFavorite() }
             } label: {
-                ItemView.ActionButtonLabel(
+                ContentGroupActionButtonLabel(
                     .favorited,
                     systemImage: systemImage,
                     isActive: isFavorited
@@ -39,7 +39,6 @@ extension ItemView.ActionButtons {
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)
-            .isSelected(isFavorited)
         }
     }
 }

@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension ItemView.ActionButtons {
+extension ContentGroupActionButtons {
 
     struct Playback: View {
 
@@ -187,7 +187,7 @@ extension ItemView.ActionButtons {
                     qualityPicker
                 }
             } label: {
-                ItemView.ActionButtonLabel(.playback)
+                ContentGroupActionButtonLabel(.playback)
             }
             .if(!isInMenu && UIDevice.isTV) { menu in
                 menu.menuStyle(.button)

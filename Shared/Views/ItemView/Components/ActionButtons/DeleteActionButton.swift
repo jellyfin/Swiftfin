@@ -10,7 +10,7 @@ import Engine
 import JellyfinAPI
 import SwiftUI
 
-extension ItemView.ActionButtons {
+extension ContentGroupActionButtons {
 
     struct Delete: View {
 
@@ -38,7 +38,7 @@ extension ItemView.ActionButtons {
                     Button(role: .destructive) {
                         isPresentingConfirmation.wrappedValue = true
                     } label: {
-                        ItemView.ActionButtonLabel(.delete)
+                        ContentGroupActionButtonLabel(.delete)
                     }
                     .symbolRenderingMode(.monochrome)
                     .foregroundStyle(.primary, .secondary)
