@@ -7,6 +7,7 @@
 //
 
 import Combine
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -48,6 +49,31 @@ final class ServerTasksViewModel: ViewModel {
 
     @Published
     var tasks: OrderedDictionary<String, [ServerTaskObserver]> = [:]
+
+    override init() {
+        super.init()
+
+        Container.shared.userSessionManager()
+            .$currentSession
+            .compactMap { $0?.serverSocketManager.scheduledTasks(interval: .seconds(2)) }
+            .switchToLatest()
+            .sink { [weak self] tasks in
+                Task { @MainActor in
+                    self?.updateTasks(tasks)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func updateTasks(_ updatedTasks: [TaskInfo]) {
+        for observer in tasks.values.flattened() {
+            guard let updatedTask = updatedTasks.first(where: { $0.id == observer.task.id }) else {
+                continue
+            }
+
+            observer.task = updatedTask
+        }
+    }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
@@ -97,20 +123,11 @@ final class ServerTasksViewModel: ViewModel {
             }
         }
 
-        for runningTask in allTasks where runningTask.state == .running {
-            if let observer = tasks.values
-                .flattened()
-                .first(where: { $0.task.id == runningTask.id })
-            {
-                Task {
-                    await observer.start()
-                }
-            }
-        }
-
         for category in tasks.keys {
             tasks[category]?.sort { ($0.task.name ?? "") < ($1.task.name ?? "") }
         }
+
+        tasks.sort()
     }
 
     @Function(\Action.Cases.restartApplication)

@@ -11,7 +11,6 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-// TODO: refactor with socket implementation
 // TODO: for trigger updating, could temp set new triggers
 //       and set back on failure
 
@@ -27,27 +26,17 @@ final class ServerTaskObserver: ViewModel, Identifiable {
         case removeTrigger(TaskTriggerInfo)
 
         var transition: Transition {
-            switch self {
-            case .start:
-                .to(.running, then: .initial)
-                    .whenBackground(.observing)
-            case .stop:
-                .to(.initial)
-            case .addTrigger, .removeTrigger:
-                .background(.updating)
-            }
+            .background(.updating)
         }
     }
 
     enum BackgroundState {
         case updating
-        case observing
     }
 
     enum State {
         case error
         case initial
-        case running
     }
 
     @Published
@@ -65,20 +54,20 @@ final class ServerTaskObserver: ViewModel, Identifiable {
     private func _start() async throws {
         guard let id = task.id else { return }
 
+        task.state = .running
+
         let request = Paths.startTask(taskID: id)
         try await send(request)
-
-        try await pollTaskProgress(id: id)
     }
 
     @Function(\Action.Cases.stop)
     private func _stop() async throws {
         guard let id = task.id else { return }
 
+        task.state = .cancelling
+
         let request = Paths.stopTask(taskID: id)
         try await send(request)
-
-        try await pollTaskProgress(id: id)
     }
 
     @Function(\Action.Cases.addTrigger)
@@ -95,21 +84,6 @@ final class ServerTaskObserver: ViewModel, Identifiable {
             .filtering { $0 == trigger }
 
         try await updateTriggers(updatedTriggers)
-    }
-
-    private func pollTaskProgress(id: String) async throws {
-        while true {
-            let request = Paths.getTask(taskID: id)
-            let response = try await send(request)
-
-            task = response.value
-
-            guard response.value.state == .running || response.value.state == .cancelling else {
-                break
-            }
-
-            try await Task.sleep(for: .seconds(2))
-        }
     }
 
     private func updateTriggers(_ updatedTriggers: [TaskTriggerInfo]) async throws {
