@@ -80,7 +80,6 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
     private func endPlaybackSession() {
         guard let item else { return }
         sendStopReport(for: item, seconds: manager?.seconds)
-        stopEncoding(for: item)
     }
 
     private func playbackItemDidChange(_ newItem: MediaPlayerItem?) {
@@ -152,20 +151,6 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             info.sessionID = item.playSessionID
 
             let request = Paths.reportPlaybackStopped(info)
-            try await send(request)
-        }
-    }
-
-    private func stopEncoding(for item: MediaPlayerItem) {
-        guard item.mediaSource.transcodingURL != nil,
-              let deviceID = userSession?.client.configuration.deviceID
-        else { return }
-
-        Task {
-            let request = Paths.stopEncodingProcess(
-                deviceID: deviceID,
-                playSessionID: item.playSessionID
-            )
             try await send(request)
         }
     }
