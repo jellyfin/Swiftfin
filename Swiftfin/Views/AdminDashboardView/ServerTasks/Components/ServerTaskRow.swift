@@ -58,6 +58,7 @@ extension ServerTasksView {
                         }
                     default:
                         Text(viewModel.task.state?.displayTitle)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .font(.subheadline)
