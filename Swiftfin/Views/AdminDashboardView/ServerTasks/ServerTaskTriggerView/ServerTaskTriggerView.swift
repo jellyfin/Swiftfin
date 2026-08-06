@@ -53,80 +53,25 @@ struct ServerTaskTriggerView: View {
 
     @ViewBuilder
     private var intervalPicker: some View {
-        StateAdapter(initialValue: false) { isIntervalPresented in
-            ChevronButton {
-                isIntervalPresented.wrappedValue = true
-            } label: {
-                LabeledContent {
-                    if let intervalTicks = taskTriggerInfo.intervalTicks, intervalTicks > 0 {
-                        Text(Duration.ticks(intervalTicks), format: .hourMinuteAbbreviated)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text(L10n.none)
-                            .foregroundStyle(.secondary)
-                    }
-                } label: {
-                    Text(L10n.every)
-                }
-            }
-            .alert(
-                L10n.every,
-                isPresented: isIntervalPresented
-            ) {
-                TextField(
-                    L10n.minutes,
-                    value: $taskTriggerInfo.intervalTicks.ticksAsSeconds(),
-                    format: .minuteInterval(range: 0 ... 1440)
-                )
-                .keyboardType(.numberPad)
-            } message: {
-                Text(L10n.taskTriggerInterval)
-            }
-        }
-    }
-
-    private var timeLimitPicker: some View {
-        StateAdapter(initialValue: false) { isTimeLimitPresented in
-            ChevronButton {
-                isTimeLimitPresented.wrappedValue = true
-            } label: {
-                LabeledContent {
-                    if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks, maxRuntimeTicks > 0 {
-                        Text(Duration.ticks(maxRuntimeTicks), format: .hourMinuteAbbreviated)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text(L10n.none)
-                            .foregroundStyle(.secondary)
-                    }
-                } label: {
-                    Text(L10n.timeLimit.localizedCapitalized)
-                }
-            }
-            .alert(
-                L10n.timeLimit.localizedCapitalized,
-                isPresented: isTimeLimitPresented
-            ) {
-                TextField(
-                    L10n.hours,
-                    value: $taskTriggerInfo.maxRuntimeTicks.ticksAsSeconds(),
-                    format: .hourInterval(range: 0 ... 24)
-                )
-                .keyboardType(.numberPad)
-            } message: {
-                Text(L10n.taskTriggerTimeLimit)
-            }
-        }
+        HourMinutePicker(
+            title: L10n.every,
+            interval: $taskTriggerInfo.intervalTicks.map(
+                getter: { Duration.ticks($0 ?? 0).seconds },
+                setter: { $0 == 0 ? nil : Duration.seconds($0).ticks }
+            ),
+            maximumHours: 168,
+            noneStyle: .dash(1)
+        )
     }
 
     @ViewBuilder
     private var contentView: some View {
         Form {
-
             Section {
 
                 Picker(
                     L10n.type,
-                    selection: $taskTriggerInfo.type,
+                    selection: $taskTriggerInfo.type.coalesce(.startupTrigger)
                 )
                 .onChange(of: taskTriggerInfo.type) { _ in
                     taskTriggerInfo.reset()
@@ -151,7 +96,15 @@ struct ServerTaskTriggerView: View {
             }
 
             Section {
-                timeLimitPicker
+                HourMinutePicker(
+                    title: L10n.timeLimit.localizedCapitalized,
+                    interval: $taskTriggerInfo.maxRuntimeTicks.map(
+                        getter: { Duration.ticks($0 ?? 0).seconds },
+                        setter: { $0 == 0 ? nil : Duration.seconds($0).ticks }
+                    ),
+                    maximumHours: 168,
+                    noneStyle: .text
+                )
             }
         }
     }
