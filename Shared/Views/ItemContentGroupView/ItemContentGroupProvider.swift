@@ -21,6 +21,9 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     @Published
     private(set) var randomBackdropItem: BaseItemDto?
 
+    @Published
+    var isPresentingDeleteConfirmation = false
+
     let id: String
 
     var displayTitle: String {

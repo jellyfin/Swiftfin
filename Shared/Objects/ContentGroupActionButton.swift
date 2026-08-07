@@ -16,9 +16,8 @@ enum ContentGroupActionButton: String, CaseIterable, Displayable, Equatable, Ide
     case playback
     case subtitles
     case refresh
-    #if os(tvOS)
     case delete
-    #else
+    #if os(iOS)
     case editMetadata
     #endif
 
@@ -36,10 +35,9 @@ enum ContentGroupActionButton: String, CaseIterable, Displayable, Equatable, Ide
             L10n.refreshMetadata
         case .subtitles:
             L10n.subtitles
-        #if os(tvOS)
         case .delete:
             L10n.delete
-        #else
+        #if os(iOS)
         case .editMetadata:
             L10n.edit
         #endif
@@ -64,10 +62,9 @@ enum ContentGroupActionButton: String, CaseIterable, Displayable, Equatable, Ide
             "arrow.clockwise"
         case .subtitles:
             "captions.bubble"
-        #if os(tvOS)
         case .delete:
             "trash"
-        #else
+        #if os(iOS)
         case .editMetadata:
             "pencil"
         #endif
@@ -102,12 +99,11 @@ enum ContentGroupActionButton: String, CaseIterable, Displayable, Equatable, Ide
     ]
 
     static let defaultMenuActionButtons: [ContentGroupActionButton] = [
-        .subtitles,
         .refresh,
+        .subtitles,
+        .delete
     ]
-    #if os(tvOS)
-    .appending(.delete)
-    #else
-    .appending(.editMetadata)
+    #if os(iOS)
+    .prepending(.editMetadata)
     #endif
 }

@@ -80,15 +80,6 @@ struct CustomizeSettingsView: View {
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
 
-    // MARK: - Item Management Defaults
-
-    @StoredValue(.User.enableCollectionManagement)
-    private var enableCollectionManagement
-    @StoredValue(.User.enableItemEditing)
-    private var enableItemEditing
-    @StoredValue(.User.enableItemDeletion)
-    private var enableItemDeletion
-
     // MARK: - User Permissions
 
     @Injected(\.currentUserSession)
@@ -131,8 +122,6 @@ struct CustomizeSettingsView: View {
             itemSettings
 
             itemViewSettings
-
-            itemManagementSettings
         }
         .onFirstAppear {
             viewModel.refresh()
@@ -309,40 +298,6 @@ struct CustomizeSettingsView: View {
                 Toggle(L10n.useSeriesImageForEpisodes, isOn: $useSeriesLandscapeBackdrop)
             } header: {
                 Text(L10n.itemView)
-            }
-        }
-    }
-
-    // MARK: - Item Management Settings
-
-    @ViewBuilder
-    private var itemManagementSettings: some View {
-        if userPolicy?.isAdministrator == true ||
-            userPolicy?.enableCollectionManagement == true ||
-            userPolicy?.enableContentDeletion == true ||
-            userPolicy?.enableContentDeletionFromFolders?.isNotEmpty == true
-        {
-            Section(L10n.itemManagement) {
-
-                if userPolicy?.isAdministrator == true ||
-                    userPolicy?.enableCollectionManagement == true
-                {
-                    Toggle(L10n.editCollections, isOn: $enableCollectionManagement)
-                }
-
-                // Does NOT include subtitle / lyric editing
-                if userPolicy?.isAdministrator == true {
-                    Toggle(L10n.editMedia, isOn: $enableItemEditing)
-                }
-
-                if userPolicy?.enableContentDeletion == true ||
-                    userPolicy?.enableContentDeletionFromFolders?.isNotEmpty == true
-                {
-                    // TODO: Enable when tvOS Deletion is available
-                    if !UIDevice.isTV {
-                        Toggle(L10n.deleteMedia, isOn: $enableItemDeletion)
-                    }
-                }
             }
         }
     }

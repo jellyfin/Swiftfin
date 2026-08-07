@@ -6,8 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Engine
-import JellyfinAPI
 import SwiftUI
 
 extension ContentGroupActionButtons {
@@ -18,50 +16,13 @@ extension ContentGroupActionButtons {
         private var provider: ItemContentGroupProvider
 
         var body: some View {
-            Content(item: provider.item)
-        }
-
-        private struct Content: View {
-
-            @StateObject
-            private var viewModel: ItemEditorViewModel
-
-            @Router
-            private var router
-
-            init(item: BaseItemDto) {
-                self._viewModel = StateObject(wrappedValue: ItemEditorViewModel(item: item))
+            Button(role: .destructive) {
+                provider.isPresentingDeleteConfirmation = true
+            } label: {
+                ContentGroupActionButtonLabel(.delete)
             }
-
-            var body: some View {
-                StateAdapter(initialValue: false) { isPresentingConfirmation in
-                    Button(role: .destructive) {
-                        isPresentingConfirmation.wrappedValue = true
-                    } label: {
-                        ContentGroupActionButtonLabel(.delete)
-                    }
-                    .symbolRenderingMode(.monochrome)
-                    .foregroundStyle(.primary, .secondary)
-                    .confirmationDialog(
-                        L10n.deleteItemConfirmationMessage,
-                        isPresented: isPresentingConfirmation,
-                        titleVisibility: .visible
-                    ) {
-                        Button(
-                            L10n.confirm,
-                            role: .destructive,
-                            action: viewModel.delete
-                        )
-
-                        Button(L10n.cancel, role: .cancel) {}
-                    }
-                    .onNotification(.didDeleteItem) { _ in
-                        UIDevice.feedback(.success)
-                        router.dismiss()
-                    }
-                    .errorMessage($viewModel.error)
-                }
-            }
+            .symbolRenderingMode(.monochrome)
+            .foregroundStyle(.primary, .secondary)
         }
     }
 }

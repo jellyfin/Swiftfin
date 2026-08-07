@@ -26,6 +26,9 @@ struct ContentGroupActionButtons: View {
 
     let focusedButton: FocusState<String?>.Binding
 
+    @Router
+    private var router
+
     @StoredValue(.User.enabledTrailers)
     private var enabledTrailers: TrailerSelection
 
@@ -34,8 +37,20 @@ struct ContentGroupActionButtons: View {
     @Default(.Customization.itemMenuActionButtons)
     private var menuActionButtons: [ContentGroupActionButton]
 
+    @StateObject
+    private var deleteViewModel: ItemEditorViewModel
+
     @State
     private var containerWidth: CGFloat = 0
+
+    init(
+        provider: ItemContentGroupProvider,
+        focusedButton: FocusState<String?>.Binding
+    ) {
+        self.provider = provider
+        self.focusedButton = focusedButton
+        self._deleteViewModel = StateObject(wrappedValue: ItemEditorViewModel(item: provider.item))
+    }
 
     private var spacing: CGFloat {
         Self.spacing
@@ -78,10 +93,9 @@ struct ContentGroupActionButtons: View {
             provider.item.canEditMetadata
         case .subtitles:
             provider.item.canEditSubtitles
-        #if os(tvOS)
         case .delete:
-            provider.item.canDeleteItem
-        #else
+            provider.item.canDelete == true
+        #if os(iOS)
         case .editMetadata:
             provider.item.canEditMetadata
         #endif
@@ -161,10 +175,9 @@ struct ContentGroupActionButtons: View {
             Refresh()
         case .subtitles:
             Subtitles()
-        #if os(tvOS)
         case .delete:
             Delete()
-        #else
+        #if os(iOS)
         case .editMetadata:
             Edit()
         #endif
@@ -230,6 +243,24 @@ struct ContentGroupActionButtons: View {
                     containerWidth = newValue
                 }
             }
+            .confirmationDialog(
+                L10n.deleteItemConfirmationMessage,
+                isPresented: $provider.isPresentingDeleteConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button(
+                    L10n.confirm,
+                    role: .destructive,
+                    action: deleteViewModel.delete
+                )
+
+                Button(L10n.cancel, role: .cancel) {}
+            }
+            .onNotification(.didDeleteItem) { _ in
+                UIDevice.feedback(.success)
+                router.dismiss()
+            }
+            .errorMessage($deleteViewModel.error)
         }
     }
 }
