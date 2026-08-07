@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CoreTransferable
 import FactoryKit
 import Foundation
 import JellyfinAPI
@@ -204,6 +205,123 @@ extension MediaStream {
         if let value = path {
             (label: "Path", value: value)
         }
+    }
+}
+
+extension MediaStream: @retroactive Transferable, TextTransferable {
+
+    @ArrayBuilder<Property>
+    var transferProperties: [Property] {
+        if let value = displayTitle {
+            (label: "Title", value: value)
+        }
+
+        if let value = language {
+            (label: "Language", value: value)
+        }
+
+        if let value = codec {
+            (label: "Codec", value: value.uppercased())
+        }
+
+        if let value = isAVC {
+            (label: "AVC", value: value ? L10n.yes : L10n.no)
+        }
+
+        if let value = profile {
+            (label: "Profile", value: value)
+        }
+
+        if let value = level {
+            (label: "Level", value: value.formatted())
+        }
+
+        if let width = width?.description,
+           let height = height?.description
+        {
+            (label: "Resolution", value: width.multiply(by: height))
+        }
+
+        if let value = aspectRatio {
+            (label: "Aspect ratio", value: value)
+        }
+
+        if let value = isAnamorphic {
+            (label: "Anamorphic", value: value ? L10n.yes : L10n.no)
+        }
+
+        if let value = isInterlaced {
+            (label: "Interlaced", value: value ? L10n.yes : L10n.no)
+        }
+
+        if let value = realFrameRate ?? averageFrameRate {
+            (label: "Framerate", value: value.description)
+        }
+
+        if let value = channelLayout {
+            (label: "Layout", value: value)
+        }
+
+        if let value = channels {
+            (label: "Channels", value: "\(value) ch")
+        }
+
+        if let value = bitRate {
+            (label: "Bitrate", value: value.formatted(.bitRate))
+        }
+
+        if let value = sampleRate {
+            (label: "Sample rate", value: "\(value) Hz")
+        }
+
+        if let value = bitDepth {
+            (label: "Bit depth", value: value.formatted(.bitRate))
+        }
+
+        if let value = videoRange {
+            (label: "Video range", value: value.rawValue)
+        }
+
+        if let value = videoRangeType {
+            (label: "Video range type", value: value.rawValue)
+        }
+
+        if let value = pixelFormat {
+            (label: "Pixel format", value: value)
+        }
+
+        if let value = refFrames {
+            (label: "Ref frames", value: value.description)
+        }
+
+        if type != .video {
+            if let value = isDefault {
+                (label: "Default", value: value ? L10n.yes : L10n.no)
+            }
+
+            if let value = isForced {
+                (label: "Forced", value: value ? L10n.yes : L10n.no)
+            }
+
+            if let value = isExternal {
+                (label: "External", value: value ? L10n.yes : L10n.no)
+            }
+        }
+    }
+
+    public var transferTitle: String {
+        displayTitle ?? type?.displayTitle ?? .emptyDash
+    }
+
+    public var transferBody: String {
+        let properties = transferProperties
+            .map {
+                "\($0.label): \($0.value)"
+            }
+            .joined(separator: "\n")
+
+        return [type?.displayTitle ?? L10n.media, properties]
+            .joined(separator: "\n\n")
     }
 }
 
