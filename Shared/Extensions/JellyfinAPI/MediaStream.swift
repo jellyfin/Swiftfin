@@ -235,10 +235,8 @@ extension MediaStream: @retroactive Transferable, TextTransferable {
 
     @ArrayBuilder<Property>
     private var resolutionTransferProperties: [Property] {
-        if let width = width?.description,
-           let height = height?.description
-        {
-            (label: "Resolution", value: width.multiply(by: height))
+        if let width, let height, width > 0, height > 0 {
+            (label: "Resolution", value: width.description.multiply(by: height.description))
         }
     }
 
@@ -301,6 +299,10 @@ extension MediaStream: @retroactive Transferable, TextTransferable {
 
         if let value = refFrames {
             (label: "Ref frames", value: value.description)
+        }
+
+        if let value = nalLengthSize {
+            (label: "NAL", value: value)
         }
     }
 
