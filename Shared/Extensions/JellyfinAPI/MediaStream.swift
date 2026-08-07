@@ -211,7 +211,7 @@ extension MediaStream {
 extension MediaStream: @retroactive Transferable, TextTransferable {
 
     @ArrayBuilder<Property>
-    var transferProperties: [Property] {
+    private var sharedTransferProperties: [Property] {
         if let value = displayTitle {
             (label: "Title", value: value)
         }
@@ -231,15 +231,36 @@ extension MediaStream: @retroactive Transferable, TextTransferable {
         if let value = profile {
             (label: "Profile", value: value)
         }
+    }
 
-        if let value = level {
-            (label: "Level", value: value.formatted())
-        }
-
+    @ArrayBuilder<Property>
+    private var resolutionTransferProperties: [Property] {
         if let width = width?.description,
            let height = height?.description
         {
             (label: "Resolution", value: width.multiply(by: height))
+        }
+    }
+
+    @ArrayBuilder<Property>
+    private var flagTransferProperties: [Property] {
+        if let value = isDefault {
+            (label: "Default", value: value ? L10n.yes : L10n.no)
+        }
+
+        if let value = isForced {
+            (label: "Forced", value: value ? L10n.yes : L10n.no)
+        }
+
+        if let value = isExternal {
+            (label: "External", value: value ? L10n.yes : L10n.no)
+        }
+    }
+
+    @ArrayBuilder<Property>
+    private var videoTransferProperties: [Property] {
+        if let value = level {
+            (label: "Level", value: value.formatted())
         }
 
         if let value = aspectRatio {
@@ -258,24 +279,12 @@ extension MediaStream: @retroactive Transferable, TextTransferable {
             (label: "Framerate", value: value.description)
         }
 
-        if let value = channelLayout {
-            (label: "Layout", value: value)
-        }
-
-        if let value = channels {
-            (label: "Channels", value: "\(value) ch")
-        }
-
         if let value = bitRate {
             (label: "Bitrate", value: value.formatted(.bitRate))
         }
 
-        if let value = sampleRate {
-            (label: "Sample rate", value: "\(value) Hz")
-        }
-
         if let value = bitDepth {
-            (label: "Bit depth", value: value.formatted(.bitRate))
+            (label: "Bit depth", value: "\(value) bit")
         }
 
         if let value = videoRange {
@@ -293,19 +302,44 @@ extension MediaStream: @retroactive Transferable, TextTransferable {
         if let value = refFrames {
             (label: "Ref frames", value: value.description)
         }
+    }
 
-        if type != .video {
-            if let value = isDefault {
-                (label: "Default", value: value ? L10n.yes : L10n.no)
-            }
+    @ArrayBuilder<Property>
+    private var audioTransferProperties: [Property] {
+        if let value = channelLayout {
+            (label: "Layout", value: value)
+        }
 
-            if let value = isForced {
-                (label: "Forced", value: value ? L10n.yes : L10n.no)
-            }
+        if let value = channels {
+            (label: "Channels", value: "\(value) ch")
+        }
 
-            if let value = isExternal {
-                (label: "External", value: value ? L10n.yes : L10n.no)
-            }
+        if let value = bitRate {
+            (label: "Bitrate", value: value.formatted(.bitRate))
+        }
+
+        if let value = sampleRate {
+            (label: "Sample rate", value: "\(value) Hz")
+        }
+    }
+
+    @ArrayBuilder<Property>
+    var transferProperties: [Property] {
+
+        sharedTransferProperties
+
+        switch type {
+        case .video:
+            resolutionTransferProperties
+            videoTransferProperties
+        case .audio:
+            audioTransferProperties
+            flagTransferProperties
+        case .subtitle:
+            resolutionTransferProperties
+            flagTransferProperties
+        default:
+            []
         }
     }
 

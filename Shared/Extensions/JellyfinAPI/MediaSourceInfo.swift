@@ -53,12 +53,12 @@ extension MediaSourceInfo: @retroactive Transferable, TextTransferable {
 
     @ArrayBuilder<Property>
     var transferProperties: [Property] {
-        if let value = container {
-            (label: "Container", value: value)
-        }
-
         if let value = path {
             (label: "Path", value: value)
+        }
+
+        if let value = container {
+            (label: "Container", value: value)
         }
 
         if let value = size {
