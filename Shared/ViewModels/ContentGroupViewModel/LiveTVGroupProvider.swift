@@ -14,6 +14,7 @@ struct LiveTVGroupProvider: ContentGroupProvider {
     private enum LiveTVPill: Displayable, SystemImageable {
         case channels
         case recordings
+        case schedule
 
         var displayTitle: String {
             switch self {
@@ -21,6 +22,8 @@ struct LiveTVGroupProvider: ContentGroupProvider {
                 L10n.channels
             case .recordings:
                 L10n.recordings
+            case .schedule:
+                L10n.schedule
             }
         }
 
@@ -30,6 +33,8 @@ struct LiveTVGroupProvider: ContentGroupProvider {
                 "play.square.stack"
             case .recordings:
                 "record.circle"
+            case .schedule:
+                "calendar.badge.clock"
             }
         }
     }
@@ -42,7 +47,7 @@ struct LiveTVGroupProvider: ContentGroupProvider {
         PillGroup(
             displayTitle: "",
             id: "live-tv-channels",
-            elements: [LiveTVPill.channels, .recordings]
+            elements: [LiveTVPill.channels, .recordings, .schedule]
         ) { router, pill in
             switch pill {
             case .channels:
@@ -57,6 +62,10 @@ struct LiveTVGroupProvider: ContentGroupProvider {
             case .recordings:
                 router.route(
                     to: .library(library: RecordingsLibrary())
+                )
+            case .schedule:
+                router.route(
+                    to: .library(library: ScheduleLibrary())
                 )
             }
         }
