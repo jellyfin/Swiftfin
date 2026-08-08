@@ -51,9 +51,7 @@ A [known VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and
 
 ### Gesture Lock
 
-To leave `Gesture Lock`, hold a single point on the screen until the `Gesture Lock` indicator appears to show that it has unlocked:
-
-https://github.com/user-attachments/assets/6aa9229d-afd3-4494-8fd7-77b05c555b6f
+To leave `Gesture Lock`, hold a single point on the screen until the `Gestures unlocked` notification appears at the top of the view to show that it has been unlocked.
 
 ---
 
@@ -61,36 +59,43 @@ https://github.com/user-attachments/assets/6aa9229d-afd3-4494-8fd7-77b05c555b6f
 
 ### No Local Servers Found
 
-Automatic discovery uses UDP broadcast on port `7359`, which Apple restricts on physical devices. **Please enter your server address manually.** Also confirm **Local Network** permission is enabled in iOS Settings > Swiftfin — iOS sometimes never prompts for it, and it defaults off.
+Automatic discovery uses UDP broadcast on port `7359` and this port cannot be changed. Start by ensuring that this port is accessible from your server and Swiftfin is on the same network as your device. mDNS and UDP broadcast must be available from your router. These are network configurations and outside the scope of Swiftfin. [Jellyfin forum or chat rooms](https://jellyfin.org/contact/) would be the best place for troubleshooting assistance for these types of issues.
 
 ### "The Internet Connection Appears to Be Offline"
 
 Swiftfin can't reach the server but a browser on the same device can. Two causes:
 
 - **Local Network permission is off.** Enable it in iOS Settings > Swiftfin.
-- **Stale iOS network cache**, usually after changing networks or during server maintenance. Restarting the device is the only reliable fix we've found.
+- **Reverse Proxy or Custom Headers**, which Swiftfin does not currently support. See [Reverse Proxies](#reverse-proxies).
+- **Stale iOS network cache**, usually after changing networks or during server maintenance. Restarting your device should be your first step in resolving this issue.
+
+If the issue persists, please reach out with an issue and include your 
 
 ### "The Data Couldn't Be Read Because It Isn't in the Correct Format"
 
-A generic decoding error — it means Jellyfin sent us something we couldn't parse. It's a symptom, not a cause. The usual culprits:
+This is a generic error that means that Jellyfin sent information to Swiftfin in a format that was not expected. The usual culprits:
 
 - A **`baseurl`** set on your server that isn't included in the address you entered, so we receive HTML instead of JSON.
 - **Server plugins** that change API responses away from what the SDK expects.
-- A **server version mismatch** — see [Server Compatibility](#server-compatibility).
+- A **server version mismatch**. See [Server Compatibility](#server-compatibility).
 
-*Settings > Advanced > Logs* will show which request failed. That tells you which of these applies.
+*Settings > Advanced > Logs* will show which request failed. This should be included in any issues created to assist in troubleshooting.
 
 ### Reverse Proxies
 
-Most connection problems that reach us are proxy configuration rather than Swiftfin. Please start from a configuration Jellyfin has tested:
+Most connection problems that reach us are proxy configuration rather than Swiftfin. Please start from a configuration Jellyfin has vetted as Swiftfin should be comparable with standard configurations:
 
-[Caddy](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/caddy) *(recommended by Jellyfin)* · [Nginx](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/nginx) · [Apache](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/apache) · [Traefik](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/traefik) · [HAProxy](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/haproxy)
+- [Caddy](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/caddy)
+- [Nginx](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/nginx)
+- [Apache](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/apache)
+- [Traefik](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/traefik)
+- [HAProxy](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/haproxy)
 
-Beyond a working Jellyfin proxy, Swiftfin needs **TLS 1.2 available**, a certificate from a **trusted CA** *(self signed certificates are rejected)*, and no filtering middleware in the request path — ModSecurity has been confirmed to block us with a `403` while leaving browsers alone.
+Beyond a working Jellyfin proxy, Swiftfin needs **TLS 1.2 available**, a certificate from a **trusted CA** at the OS level, and no filtering middleware in the request path. ModSecurity has been confirmed to block requests with a `403` while leaving browsers intact.
 
-**We're not able to troubleshoot custom or heavily modified proxy setups.** This isn't a brush off. A proxy has far more failure modes than the client does, and we can't reproduce what we can't see. If your configuration differs from the documented ones, please reproduce the problem on a documented config or a direct `IP:port` connection before reporting. If it only happens on your setup, the [Jellyfin forum or chat rooms](https://jellyfin.org/contact/) have much broader proxy experience than we do.
+**The Swiftfin team is not able to troubleshoot custom or heavily modified proxy setups.** The Jellyfin team working on Swiftfin are not expected on networking on proxies for these issues are best handled by the Jellyfin forum or chat rooms](https://jellyfin.org/contact/). If your configuration differs from the documented ones, please reproduce the problem on a documented config or a direct `IP:port` connection before reporting.
 
-When you do investigate, please read your **proxy's** logs. Jellyfin never sees a request the proxy rejected first.
+When you do investigate, please read your **proxy's** logs as Jellyfin does not see requests that the proxy has rejected.
 
 ---
 
@@ -98,7 +103,7 @@ When you do investigate, please read your **proxy's** logs. Jellyfin never sees 
 
 ### No Media After Signing In
 
-Swiftfin filters by library **collection type**, not by the items inside. A library with a blank or unsupported type disappears entirely — even if it's full of movies. Please set the correct type in Jellyfin.
+Swiftfin filters by library **collection type**, not by the items inside. A library with a blank or unsupported type disappears entirely. Please set the correct type in Jellyfin.
 
 See the [Libraries Documentation](libraries.md) for what is currently support.
 
@@ -110,34 +115,27 @@ On tvOS, the top level **Movies** and **Shows** sections group by *media type* a
 
 ## Server Compatibility
 
-Swiftfin is build against the latest OpenAPI specification produced by the Jellyfin Server Team. **Support is only guaranteed for the current stable Jellyfin release.** Running server pre-releases or legacy versions may result in issues.
+Swiftfin is built against the latest OpenAPI specification produced by the Jellyfin Server Team. **Support is only guaranteed for the current stable Jellyfin release.** Running server pre-releases or legacy versions may result in issues. The compatible version can be found on the project [README](https://github.com/jellyfin/Swiftfin).
 
 ---
 
 ## Known Limitations
 
-These come up constantly and aren't things we can fix on our end.
-
 | Limitation | Notes |
 |------------|-------|
 | No TLS 1.3 on the Swiftfin player | ❌ VLCKit limitation. Keep TLS 1.2 enabled. |
-| No subtitles on Native | ❌ Tracked in [#1892](https://github.com/jellyfin/Swiftfin/issues/1892). |
-| No Picture in Picture on Swiftfin player | ❌ VLCKit limitation. Use Native. |
-| AirPlay speaker audio delay | ❌ [VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544). ([#937](https://github.com/jellyfin/Swiftfin/issues/937)) |
-| No bitstream audio passthrough | ❌ Apple doesn't expose the API. ([#1563](https://github.com/jellyfin/Swiftfin/issues/1563)) |
-| Server discovery on physical devices | 🟡 Apple entitlement restrictions. Enter the address manually. |
-| Self signed certificates | ❌ Please use a trusted CA. |
-| Offline downloads | 🟡 Long requested, in progress. ([#57](https://github.com/jellyfin/Swiftfin/issues/57)) |
-| macOS client | ❌ Out of scope. ([#215](https://github.com/jellyfin/Swiftfin/issues/215)) |
-| Chromecast | ❌ We target AirPlay. ([#271](https://github.com/jellyfin/Swiftfin/issues/271)) |
+| No subtitles on Native | ❌ This is being worked on and can be followed from [#1853](https://github.com/jellyfin/Swiftfin/issues/1853). |
+| No Picture in Picture on Swiftfin player | ❌ VLCKit limitation. Use Native for PiP support. |
+| AirPlay speaker audio delay | ❌ [VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544). This can be followed from [#937](https://github.com/jellyfin/Swiftfin/issues/937) |
+| Offline downloads | 🟡 Currently unavailable and can be followed from [#57](https://github.com/jellyfin/Swiftfin/issues/57) |
+| macOS client | 🟡 Available as `Built for iPad` but can be followed from [#215](https://github.com/jellyfin/Swiftfin/issues/215) |
+| Chromecast | ❌ Currently unavailable and can be followed from [#271](https://github.com/jellyfin/Swiftfin/issues/271) |
 
 ---
 
 ## Still Having Trouble?
 
-For **configuration help** — proxies, certificates, transcoding, networking — please start at the [Jellyfin forum or chat rooms](https://jellyfin.org/contact/). Most of these are server side, and there are far more volunteers there than here.
-
-If it **also happens in Jellyfin Web** or another client, it isn't a Swiftfin issue.
+For **configuration help** such as proxies, certificates, transcoding, networking, etc, please start at the [Jellyfin forum or chat rooms](https://jellyfin.org/contact/).
 
 If you've found a reproducible bug in Swiftfin, please open an issue and include:
 
