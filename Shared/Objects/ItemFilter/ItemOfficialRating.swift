@@ -8,16 +8,12 @@
 
 import Foundation
 
-struct ItemYear: Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
+struct ItemOfficialRating: Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
 
     let value: String
 
     var displayTitle: String {
         value
-    }
-
-    var intValue: Int {
-        Int(value)!
     }
 
     init(stringLiteral value: String) {
