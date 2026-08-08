@@ -79,6 +79,11 @@ struct MediaSourceInfoView: PlatformView {
             .navigationBarCloseButton {
                 router.dismiss()
             }
+        #if os(iOS)
+            .topBarTrailing {
+                source.shareLink
+            }
+        #endif
     }
 
     var tvOSView: some View {
