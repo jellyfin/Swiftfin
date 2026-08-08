@@ -69,15 +69,21 @@ final class FilterViewModel: ViewModel {
         }
 
         switch type {
+        case .audioLanguage:
+            currentFilters.audioLanguages = ItemFilterCollection.default.audioLanguages
         case .category:
             currentFilters.categories = ItemFilterCollection.default.categories
         case .genres:
             currentFilters.genres = ItemFilterCollection.default.genres
         case .letter:
             currentFilters.letter = ItemFilterCollection.default.letter
+        case .officialRatings:
+            currentFilters.officialRatings = ItemFilterCollection.default.officialRatings
         case .sortBy:
             currentFilters.sortBy = ItemFilterCollection.default.sortBy
             currentFilters.sortOrder = ItemFilterCollection.default.sortOrder
+        case .subtitleLanguage:
+            currentFilters.subtitleLanguages = ItemFilterCollection.default.subtitleLanguages
         case .tags:
             currentFilters.tags = ItemFilterCollection.default.tags
         case .traits:
@@ -90,27 +96,63 @@ final class FilterViewModel: ViewModel {
     @Function(\Action.Cases.getQueryFilters)
     private func _getQueryFilters() async throws {
 
+        try await getFilters()
+        try await getFiltersLegacy()
+    }
+
+    private func getFiltersLegacy() async throws {
+
         let parameters = try Paths.GetQueryFiltersLegacyParameters(
             userID: authenticatedUser.id,
-            parentID: parent?.id
+            parentID: parent?.id,
+            includeItemTypes: parent?.supportedItemTypes ?? BaseItemKind.supportedCases
         )
 
         let request = Paths.getQueryFiltersLegacy(parameters: parameters)
         let response = try await send(request)
 
-        let genres: [ItemGenre] = (response.value.genres ?? [])
-            .map(ItemGenre.init)
-
-        let tags = (response.value.tags ?? [])
-            .map(ItemTag.init)
+        let officialRatings = (response.value.officialRatings ?? [])
+            .map(ItemOfficialRating.init)
 
         // Manually sort so that most recent years are "first"
         let years = (response.value.years ?? [])
             .sorted(by: >)
             .map(ItemYear.init)
 
-        allFilters.genres = genres
-        allFilters.tags = tags
+        allFilters.officialRatings = officialRatings
         allFilters.years = years
+    }
+
+    private func getFilters() async throws {
+
+        let parameters = try Paths.GetQueryFiltersParameters(
+            userID: authenticatedUser.id,
+            parentID: parent?.id,
+            includeItemTypes: parent?.supportedItemTypes ?? BaseItemKind.supportedCases,
+            isRecursive: true
+        )
+
+        let request = Paths.getQueryFilters(parameters: parameters)
+        let response = try await send(request)
+
+        let audioLanguages: [ItemLanguage] = (response.value.audioLanguages ?? [])
+            .compactMap(ItemLanguage.init)
+            .sorted(using: \.displayTitle)
+
+        let genres: [ItemGenre] = (response.value.genres ?? [])
+            .compactMap(\.name)
+            .map(ItemGenre.init)
+
+        let subtitleLanguages: [ItemLanguage] = (response.value.subtitleLanguages ?? [])
+            .compactMap(ItemLanguage.init)
+            .sorted(using: \.displayTitle)
+
+        let tags = (response.value.tags ?? [])
+            .map(ItemTag.init)
+
+        allFilters.audioLanguages = audioLanguages
+        allFilters.genres = genres
+        allFilters.subtitleLanguages = subtitleLanguages
+        allFilters.tags = tags
     }
 }
