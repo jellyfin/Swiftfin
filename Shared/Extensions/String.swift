@@ -161,6 +161,10 @@ extension String {
     /// x
     static let multiply = "\u{00D7}"
 
+    func multiply(by value: String) -> String {
+        "\(self) \(Self.multiply) \(value)"
+    }
+
     var shortFileName: String {
         (split(separator: "/").last?.description ?? self)
             .replacingOccurrences(of: ".swift", with: "")
