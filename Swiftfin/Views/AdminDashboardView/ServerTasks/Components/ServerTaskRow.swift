@@ -76,7 +76,7 @@ extension ServerTasksView {
 
         var body: some View {
             ChevronButton {
-                router.route(to: .serverTaskDetails(viewModel: viewModel))
+                router.route(to: .taskDetails(viewModel: viewModel))
             } label: {
                 contentView
             }

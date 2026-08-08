@@ -119,23 +119,23 @@ extension NavigationRoute {
 
     // MARK: - Server Tasks
 
-    static var serverTasks: NavigationRoute {
+    static var tasks: NavigationRoute {
         NavigationRoute(
-            id: "serverTasks"
+            id: "tasks"
         ) {
             ServerTasksView()
         }
     }
 
-    static func serverTaskDetails(viewModel: TaskViewModel) -> NavigationRoute {
-        NavigationRoute(id: "serverTaskDetails") {
+    static func taskDetails(viewModel: TaskViewModel) -> NavigationRoute {
+        NavigationRoute(id: "taskDetails") {
             ServerTaskDetailsView(viewModel: viewModel)
         }
     }
 
-    static func serverTaskTrigger(viewModel: TaskViewModel) -> NavigationRoute {
+    static func taskTrigger(viewModel: TaskViewModel) -> NavigationRoute {
         NavigationRoute(
-            id: "serverTaskTrigger",
+            id: "taskTrigger",
             style: .sheet
         ) {
             ServerTaskTriggerView(viewModel: viewModel)

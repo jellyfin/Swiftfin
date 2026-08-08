@@ -90,7 +90,7 @@ struct ServerTaskDetailsView: View {
 
                 Button(L10n.add) {
                     UIDevice.impact(.light)
-                    router.route(to: .serverTaskTrigger(viewModel: viewModel))
+                    router.route(to: .taskTrigger(viewModel: viewModel))
                 }
             }
         }
