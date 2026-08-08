@@ -597,7 +597,7 @@ extension BaseItemDto {
     var hasComponents: Bool {
         switch type {
         case .audio, .audioBook, .book, .boxSet, .channelFolderItem, .collectionFolder, .episode, .manualPlaylistsFolder, .movie,
-             .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .playlist, .playlistsFolder, .program, .recording, .season,
+             .liveTvProgram, .musicAlbum, .musicArtist, .musicVideo, .program, .recording, .season,
              .series, .trailer, .tvProgram, .video:
             true
         default:

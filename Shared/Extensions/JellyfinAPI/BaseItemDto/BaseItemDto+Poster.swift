@@ -69,6 +69,8 @@ extension BaseItemDto: Poster {
             "music.note.tv.fill"
         case .person:
             "person.fill"
+        case .playlist:
+            "list.bullet"
         default:
             "circle"
         }
@@ -108,7 +110,8 @@ extension BaseItemDto: Poster {
                 tag: seriesPrimaryImageTag,
                 environment: environment
             )
-        case .boxSet, .channel, .liveTvChannel, .liveTvProgram, .movie, .musicArtist, .person, .program, .series, .tvChannel:
+        case .boxSet, .channel, .liveTvChannel, .liveTvProgram, .movie, .musicArtist, .person, .program, .series,
+             .tvChannel:
             imageSource(
                 .primary,
                 environment: environment
@@ -210,7 +213,7 @@ extension BaseItemDto: Poster {
                 tag: albumPrimaryImageTag,
                 environment: environment
             )
-        case .channel, .musicAlbum, .tvChannel:
+        case .channel, .musicAlbum, .tvChannel, .playlist:
             imageSource(
                 .primary,
                 environment: environment

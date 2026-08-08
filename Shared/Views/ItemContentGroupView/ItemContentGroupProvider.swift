@@ -166,7 +166,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                     .appending(.person),
                 parent: item
             )
-            .makeGroups(environment: .default)
+            .makeGroups(environment: item.type == .boxSet ? .orderedFolder : .default)
         case .series:
             try await ItemTypeContentGroupProvider(
                 itemTypes: [.season],
@@ -177,6 +177,13 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             PosterGroup(
                 id: "channel-programs",
                 library: ChannelScheduleLibrary(channel: item),
+                posterDisplayType: .landscape,
+                posterSize: .small
+            )
+        case .playlist:
+            PosterGroup(
+                id: "playlist-items",
+                library: PlaylistItemsLibrary(playlist: item),
                 posterDisplayType: .landscape,
                 posterSize: .small
             )
@@ -285,6 +292,12 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             } else {
                 try await firstAvailableItem(for: item)
             }
+        case .playlist:
+            if let resumeItem = try await resumeItem(for: item) {
+                resumeItem
+            } else {
+                try await firstAvailableItem(for: item)
+            }
         default:
             item.isPlayable ? item : nil
         }
@@ -295,7 +308,14 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetNextUpParameters()
         parameters.fields = .MinimumFields
-        parameters.seriesID = item.id
+
+        if item.type == .series {
+            parameters.seriesID = item.id
+        } else if item.type == .season {
+            parameters.seriesID = item.parentID
+        } else {
+            parameters.parentID = item.id
+        }
 
         let request = Paths.getNextUp(parameters: parameters)
         let response = try await send(request)
@@ -322,7 +342,11 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     private func firstAvailableItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetItemsParameters()
         parameters.fields = .MinimumFields
-        parameters.includeItemTypes = [.episode]
+
+        if item.type == .series || item.type == .season {
+            parameters.includeItemTypes = [.episode]
+        }
+
         parameters.isMissing = false
         parameters.isRecursive = true
         parameters.limit = 1
