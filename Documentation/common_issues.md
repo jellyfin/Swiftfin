@@ -49,6 +49,14 @@ Please see the notes in the [Players Documentation](players.md) before reporting
 
 A [known VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and tracked on Swiftfin [here](https://github.com/jellyfin/Swiftfin/issues/937). This item cannot be resolved by Swiftfin and requires either a patch from VLC or a change to another provider. As a workaround, please use the Native player for this output. 
 
+### Unnecessary Transcoding or Remuxing
+
+Swiftfin uses **Device Profiles** that can be manually adjusted based on your device and media. These settings can be found in **Settings > Playback Quality** where you can change to a different pre-made **Device Profile** or you can select **Custom** to build your own. 
+
+You can add a new profile to the existing ones that would keep all else the same but enable a specific format through as a **Direct Play**, or you can fully replace them all with custom profiles.
+
+These settings exist to enable newer, unverified configurations work on your device. If you experience any issues when using **Custom Profiles**, please turn them off and use a pre-made configuration before creating an issue.
+
 ### Gesture Lock
 
 To leave `Gesture Lock`, hold a single point on the screen until the `Gestures unlocked` notification appears at the top of the view to show that it has been unlocked.
@@ -96,6 +104,15 @@ Beyond a working Jellyfin proxy, Swiftfin needs **TLS 1.2 available**, a certifi
 **The Swiftfin team is not able to troubleshoot custom or heavily modified proxy setups.** The Jellyfin team working on Swiftfin are not expected on networking on proxies for these issues are best handled by the Jellyfin forum or chat rooms](https://jellyfin.org/contact/). If your configuration differs from the documented ones, please reproduce the problem on a documented config or a direct `IP:port` connection before reporting.
 
 When you do investigate, please read your **proxy's** logs as Jellyfin does not see requests that the proxy has rejected.
+
+### 401 Error
+
+This error means your authentication to your Jellyfin server is not valid. The most common reasons for this are:
+
+- **Your password has changed**
+- **Your device was removed from the Admin Dashboard**
+
+To resolve this issue, go to *Settings > Sign Out* then use the Add button to re-add your same account back to Swiftfin. On enter, Swiftfin will provide you the option to **Replace** the existing login. Performing this action will swap out your authentication token while preserving your Swiftfin settings.
 
 ---
 
