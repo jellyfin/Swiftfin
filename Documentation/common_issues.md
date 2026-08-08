@@ -49,6 +49,12 @@ Please see the notes in the [Players Documentation](players.md) before reporting
 
 A [known VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and tracked on Swiftfin [here](https://github.com/jellyfin/Swiftfin/issues/937). This item cannot be resolved by Swiftfin and requires either a patch from VLC or a change to another provider. As a workaround, please use the Native player for this output. 
 
+### Gesture Lock
+
+To leave `Gesture Lock`, hold a single point on the screen until the `Gesture Lock` indicator appears to show that it has unlocked:
+
+https://github.com/user-attachments/assets/6aa9229d-afd3-4494-8fd7-77b05c555b6f
+
 ---
 
 ## Connection
@@ -94,19 +100,9 @@ When you do investigate, please read your **proxy's** logs. Jellyfin never sees 
 
 Swiftfin filters by library **collection type**, not by the items inside. A library with a blank or unsupported type disappears entirely — even if it's full of movies. Please set the correct type in Jellyfin.
 
-See [libraries.md](libraries.md) for what we currently support.
+See the [Libraries Documentation](libraries.md) for what is currently support.
 
-### Live TV Missing or Won't Play
-
-Live TV appears only when a **tuner is configured on your server** and the experimental toggle is enabled. Please restart Swiftfin after changing either.
-
-If Live TV works on your LAN but not remotely, that's a known gap — non-transcoded live streams fall back to a direct path that isn't reachable off network. ([#1948](https://github.com/jellyfin/Swiftfin/issues/1948))
-
-### Extras and Special Features Missing
-
-A folder named **`shorts`** breaks extras entirely. The SDK can't decode that extra type, and one such folder suppresses *all* special features for the item — including ones in correctly named folders. Rename it to `extras`.
-
-### tvOS Shows the Wrong Items Under "Movies"
+### tvOS Contains the Wrong Items Under "Movies"
 
 On tvOS, the top level **Movies** and **Shows** sections group by *media type* across your whole server, not by your library named "Movies". Use **Media** to browse by library. This is working as intended, though we recognize it's confusing.
 
@@ -114,18 +110,7 @@ On tvOS, the top level **Movies** and **Shows** sections group by *media type* a
 
 ## Server Compatibility
 
-Swiftfin is built against a specific Jellyfin SDK generation. A mismatch gives you confusing partial failures — some views work, others return errors — rather than anything clear.
-
-| Swiftfin | Targets Jellyfin |
-|----------|------------------|
-| 1.5 | 10.11 |
-| 1.4 | 10.11 |
-| 1.3 | 10.10 |
-| 1.0.1 *(tvOS)* | pre-10.9 — **superseded** |
-
-**We only guarantee support for the current stable Jellyfin release.** Running server pre-releases will surface API changes we haven't adopted yet.
-
-> **On tvOS 1.0.1:** that build shipped in March 2023 and was the App Store tvOS version for over two years. It predates our current device profiles, SDK, and player, and it remains our single largest source of reports — failed transcodes, choppy scrolling, missing extras, crashes. **tvOS 1.5 supersedes it.** If you're on 1.0.1, please update before reporting anything.
+Swiftfin is build against the latest OpenAPI specification produced by the Jellyfin Server Team. **Support is only guaranteed for the current stable Jellyfin release.** Running server pre-releases or legacy versions may result in issues.
 
 ---
 
