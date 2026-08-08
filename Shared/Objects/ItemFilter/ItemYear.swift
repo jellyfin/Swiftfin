@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ItemYear: Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
+struct ItemYear: Codable, ExpressibleByIntegerLiteral, Hashable, ItemFilter {
 
     let value: String
 
@@ -20,8 +20,8 @@ struct ItemYear: Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
         Int(value)!
     }
 
-    init(stringLiteral value: String) {
-        self.value = value
+    init(integerLiteral value: IntegerLiteralType) {
+        self.value = "\(value)"
     }
 
     init(from anyFilter: AnyItemFilter) {

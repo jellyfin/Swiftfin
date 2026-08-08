@@ -98,7 +98,6 @@ final class FilterViewModel: ViewModel {
 
         try await getFilters()
         try await getFiltersLegacy()
-        try await getYears()
     }
 
     private func getFiltersLegacy() async throws {
@@ -112,8 +111,16 @@ final class FilterViewModel: ViewModel {
         let request = Paths.getQueryFiltersLegacy(parameters: parameters)
         let response = try await send(request)
 
-        allFilters.officialRatings = (response.value.officialRatings ?? [])
+        let officialRatings = (response.value.officialRatings ?? [])
             .map(ItemOfficialRating.init)
+
+        // Manually sort so that most recent years are "first"
+        let years = (response.value.years ?? [])
+            .sorted(by: >)
+            .map(ItemYear.init)
+
+        allFilters.officialRatings = officialRatings
+        allFilters.years = years
     }
 
     private func getFilters() async throws {
@@ -147,27 +154,5 @@ final class FilterViewModel: ViewModel {
         allFilters.genres = genres
         allFilters.subtitleLanguages = subtitleLanguages
         allFilters.tags = tags
-    }
-
-    private func getYears() async throws {
-
-        let parameters = try Paths.GetYearsParameters(
-            sortOrder: [SortOrder.descending],
-            parentID: parent?.id,
-            sortBy: [ItemSortBy.sortName],
-            enableUserData: false,
-            userID: authenticatedUser.id,
-            isRecursive: true,
-            enableImages: false
-        )
-
-        let request = Paths.getYears(parameters: parameters)
-        let response = try await send(request)
-
-        let years = (response.value.items ?? [])
-            .compactMap(\.name)
-            .map(ItemYear.init)
-
-        allFilters.years = years
     }
 }
