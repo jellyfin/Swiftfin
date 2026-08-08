@@ -1,0 +1,134 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+import Engine
+import FactoryKit
+import JellyfinAPI
+import SwiftUI
+
+struct ServerBackupDetailsView: View {
+
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
+
+    @ObservedObject
+    private var viewModel: ServerBackupViewModel
+
+    private let backup: BackupManifestDto
+
+    init(viewModel: ServerBackupViewModel, backup: BackupManifestDto) {
+        self.viewModel = viewModel
+        self.backup = backup
+    }
+
+    private var backupServerVersion: JellyfinClient.Version {
+        JellyfinClient.Version(backupVersion: backup.serverVersion)
+    }
+
+    private var isVersionMismatched: Bool {
+        guard let serverVersion = viewModel.userSession?.client.version else { return false }
+        return serverVersion > backupServerVersion
+    }
+
+    private var contentView: some View {
+        List {
+            Section {
+                LabeledContent(L10n.file) {
+                    Text(URL(fileURLWithPath: backup.path).lastPathComponent)
+                }
+
+                LabeledContent(L10n.dateCreated) {
+                    Text(backup.dateCreated, format: .dateTime)
+                }
+                .monospacedDigit()
+
+                LabeledContent(L10n.server) {
+                    Text(backupServerVersion.description)
+                }
+                .monospacedDigit()
+            } header: {
+                Text(L10n.details)
+            } footer: {
+                if isVersionMismatched {
+                    Label(L10n.backupVersionWarning, systemImage: "exclamationmark.circle.fill")
+                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                }
+            }
+
+            Section(L10n.location) {
+                Text(backup.path)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section(L10n.components) {
+                LabeledContent(L10n.database, value: backup.options.isDatabase == true ? L10n.yes : L10n.no)
+                LabeledContent(L10n.metadata, value: backup.options.isMetadata == true ? L10n.yes : L10n.no)
+                LabeledContent(L10n.subtitles, value: backup.options.isSubtitles == true ? L10n.yes : L10n.no)
+                LabeledContent(L10n.trickplay, value: backup.options.isTrickplay == true ? L10n.yes : L10n.no)
+            }
+        }
+    }
+
+    var body: some View {
+        StateAdapter(initialValue: (isPresentingConfirmation: false, isPresentingAlert: false)) { state in
+            contentView
+                .navigationTitle(L10n.backup)
+                .backport
+                .toolbarTitleDisplayMode(.inline)
+                .topBarTrailing {
+                    if viewModel.background.is(.restoring) {
+                        ProgressView()
+                    }
+
+                    Button(L10n.restore, role: .destructive) {
+                        state.isPresentingConfirmation.wrappedValue = true
+                    }
+                    .backport
+                    .buttonStyle(.glassProminent)
+                    .controlSize(.small)
+                    .disabled(viewModel.background.is(.restoring) || isVersionMismatched)
+                    .confirmationDialog(
+                        L10n.restoreBackup,
+                        isPresented: state.isPresentingConfirmation,
+                        titleVisibility: .visible
+                    ) {
+                        Button(L10n.restore, role: .destructive) {
+                            viewModel.restore(backup: backup)
+                        }
+
+                        Button(L10n.cancel, role: .cancel) {}
+                    } message: {
+                        Text(L10n.restoreWarning)
+                    }
+                }
+                .onReceive(viewModel.events) { event in
+                    switch event {
+                    case .created:
+                        break
+                    case .restored:
+                        UIDevice.feedback(.success)
+
+                        state.isPresentingAlert.wrappedValue = true
+                    }
+                }
+                .alert(
+                    L10n.restoring,
+                    isPresented: state.isPresentingAlert
+                ) {
+                    Button(L10n.ok) {
+                        Task { @MainActor in
+                            await userSessionManager.signOut(reason: .explicit)
+                        }
+                    }
+                } message: {
+                    Text(L10n.restoringMessage)
+                }
+                .errorMessage($viewModel.error)
+        }
+    }
+}
