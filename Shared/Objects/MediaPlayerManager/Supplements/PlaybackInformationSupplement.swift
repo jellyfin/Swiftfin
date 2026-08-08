@@ -74,7 +74,11 @@ extension PlaybackInformationSupplement {
                 .fontWeight(.semibold)
                 .padding(.vertical, 4)
 
-            LabeledContent(L10n.videoPlayer, value: Defaults[.VideoPlayer.videoPlayerType].displayTitle)
+            if let videoPlayerType = manager.videoPlayerType {
+                LabeledContent(L10n.videoPlayer, value: videoPlayerType.displayTitle)
+            } else if let route = manager.remote.state?.type {
+                LabeledContent(L10n.videoPlayer, value: route.displayTitle)
+            }
 
             if let playMethod = viewModel.currentSession?.playMethodDisplayTitle {
                 LabeledContent(L10n.method, value: playMethod)

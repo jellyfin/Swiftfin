@@ -53,6 +53,10 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 filteredButtons.removeAll { $0 == .subtitles }
             }
 
+            if let session = manager.remoteProxy {
+                filteredButtons.removeAll { !session.supports($0) }
+            }
+
             return filteredButtons
         }
 
@@ -106,10 +110,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 Audio()
             case .autoPlay:
                 AutoPlay()
-            #if os(iOS)
-            case .gestureLock:
-                GestureLock()
-            #endif
+            case .pictureInPicture:
+                PictureInPicture()
             case .playbackSpeed:
                 PlaybackRateMenu()
             case .playbackSettings:
@@ -118,8 +120,14 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 PlayNextItem()
             case .playPreviousItem:
                 PlayPreviousItem()
+            case .remotePlayback:
+                RemotePlayback()
             case .subtitles:
                 Subtitles()
+            #if os(iOS)
+            case .gestureLock:
+                GestureLock()
+            #endif
             }
         }
 
@@ -134,7 +142,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 Divider()
 
                 ForEach(
-                    menuActionButtons,
+                    menuActionButtons.filter { VideoPlayerActionButton.allCases.contains($0) },
                     content: view(for:)
                 )
             } label: {
@@ -168,7 +176,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 if menuActionButtons.isNotEmpty {
                     Menu {
                         ForEach(
-                            menuActionButtons,
+                            menuActionButtons.filter { VideoPlayerActionButton.allCases.contains($0) },
                             content: view(for:)
                         )
                         .withViewContext(.isInMenu)

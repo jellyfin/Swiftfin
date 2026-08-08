@@ -285,7 +285,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         let audioSession = AVAudioSession.sharedInstance()
 
         do {
-            try audioSession.setCategory(.playback, mode: .default)
+            try audioSession.setCategory(.playback, mode: manager?.item.type?.audioMode ?? .default)
             try audioSession.setActive(true)
             logger.trace("Started AVAudioSession")
         } catch {

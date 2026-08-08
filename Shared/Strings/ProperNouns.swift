@@ -127,6 +127,9 @@ extension L10n {
 
     // MARK: - Brands
 
+    static let airPlay = "AirPlay"
+    static let bluetooth = "Bluetooth"
+    static let chromecast = "Chromecast"
     static let swiftfin = "Swiftfin"
     static let jellyfin = "Jellyfin"
 
@@ -158,4 +161,9 @@ extension L10n {
     static let webOS = "WebOS"
     static let windows = "Windows"
     static let xbox = "Xbox"
+
+    // MARK: - Video Players
+
+    static let avPlayer = "AVPlayer"
+    static let vlc = "VLC"
 }

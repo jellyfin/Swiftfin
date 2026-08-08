@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import AVFAudio
 import JellyfinAPI
 
 extension BaseItemKind: SupportedCaseIterable {
@@ -411,5 +412,15 @@ extension BaseItemKind {
     /// Item types that can be identified on the server.
     static var itemIdentifiableCases: [BaseItemKind] {
         [.boxSet, .movie, .person, .series]
+    }
+
+    /// Which `AVAudioSession.Mode` should be used for this type.
+    var audioMode: AVAudioSession.Mode {
+        switch self {
+        case .channel, .channelFolderItem, .episode, .movie, .musicVideo, .recording, .trailer, .video:
+            .moviePlayback
+        default:
+            .default
+        }
     }
 }

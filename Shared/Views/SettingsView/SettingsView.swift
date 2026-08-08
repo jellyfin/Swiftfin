@@ -132,11 +132,11 @@ struct SettingsView: View {
             }
         } learnMore: {
             LabeledContent(
-                L10n.swiftfin,
+                L10n.vlc,
                 value: L10n.playerSwiftfinDescription
             )
             LabeledContent(
-                L10n.native,
+                L10n.avPlayer,
                 value: L10n.playerNativeDescription
             )
         }
