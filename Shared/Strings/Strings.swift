@@ -120,10 +120,6 @@ internal enum L10n {
   internal static let anytime = L10n.tr("Localizable", "anytime", fallback: "Anytime")
   /// Any Wi-Fi Network
   internal static let anyWifiNetwork = L10n.tr("Localizable", "anyWifiNetwork", fallback: "Any Wi-Fi Network")
-  /// API key copied
-  internal static let apiKeyCopied = L10n.tr("Localizable", "apiKeyCopied", fallback: "API key copied")
-  /// Your API key was copied to your clipboard!
-  internal static let apiKeyCopiedMessage = L10n.tr("Localizable", "apiKeyCopiedMessage", fallback: "Your API key was copied to your clipboard!")
   /// API keys
   internal static let apiKeys = L10n.tr("Localizable", "apiKeys", fallback: "API keys")
   /// API Keys
