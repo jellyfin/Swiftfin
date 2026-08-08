@@ -45,29 +45,9 @@ Start by performing the tone mapping from Jellyfin Server and see if this resolv
 
 Please see the notes in the [Players Documentation](players.md) before reporting, and include your file's media info from Jellyfin Web.
 
-### Wrong Audio Track, or No Audio
-
-We play the track Jellyfin marks as **Default**. Your Jellyfin Web playback preferences are web client settings and don't reach us through the API, so they won't apply here.
-
-- Set the correct default track on the file itself.
-- While transcoding, only one audio track is available. Switch *Settings > Playback Quality > Compatibility* to **Direct** to see them all.
-- **Surround collapsing to front left/right** on the Swiftfin player is a libVLC channel mapping bug. Use Native for multichannel. ([#723](https://github.com/jellyfin/Swiftfin/issues/723))
-
 ### Audio Out of Sync over AirPlay Speakers or HomePods
 
-A [known VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and one of our longest running reports. Use the **Native** player, or route audio over **HDMI** instead. We cannot fix this on our end — it needs a patch from VLC. ([#937](https://github.com/jellyfin/Swiftfin/issues/937))
-
-### Subtitles Don't Appear
-
-The **Native** player has no subtitle support in Swiftfin. If you need subtitles, use the Swiftfin player. This is also why Native isn't a general workaround for the TLS 1.3 issue above — you'd be trading one problem for another.
-
-Bringing subtitles to Native is tracked in [#1892](https://github.com/jellyfin/Swiftfin/issues/1892).
-
-### Video Player Stuck in Portrait
-
-Returning from background or Picture in Picture while playing in landscape could lock the player to portrait. We've fixed this more than once — most recently in [#2148](https://github.com/jellyfin/Swiftfin/pull/2148) with follow up work in [#2169](https://github.com/jellyfin/Swiftfin/pull/2169). Please update before reporting, and if it persists on a current build, open a new issue rather than commenting on the closed ones.
-
-Picture in Picture is **Native player only**. If it stops working there, an AVPlayer session was likely left hanging — closing PiP with its own **X** rather than exiting through Swiftfin does it. Starting playback again through Swiftfin clears it.
+A [known VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and tracked on Swiftfin [here](https://github.com/jellyfin/Swiftfin/issues/937). This item cannot be resolved by Swiftfin and requires either a patch from VLC or a change to another provider. As a workaround, please use the Native player for this output. 
 
 ---
 
@@ -183,5 +163,3 @@ If you've found a reproducible bug in Swiftfin, please open an issue and include
 - Whether it happens on a **direct `IP:port`** connection
 - Logs from *Settings > Advanced > Logs* — please redact your domain, IPs, and API keys
 - For playback, the file's media info and whether the server reports Direct Play, Remux, or Transcode
-
-If you used an AI tool to help write your report or a patch, please disclose it.
