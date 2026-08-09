@@ -984,6 +984,8 @@ internal enum L10n {
   internal static let maximumFailedLoginPolicyReenable = L10n.tr("Localizable", "maximumFailedLoginPolicyReenable", fallback: "Locked users must be re-enabled by an Administrator.")
   /// Maximum remote bitrate
   internal static let maximumRemoteBitrate = L10n.tr("Localizable", "maximumRemoteBitrate", fallback: "Maximum remote bitrate")
+  /// Maximum resolution
+  internal static let maximumResolution = L10n.tr("Localizable", "maximumResolution", fallback: "Maximum resolution")
   /// Maximum sessions
   internal static let maximumSessions = L10n.tr("Localizable", "maximumSessions", fallback: "Maximum sessions")
   /// Maximum sessions policy
@@ -1366,6 +1368,10 @@ internal enum L10n {
   internal static let resetSettingsDescription = L10n.tr("Localizable", "resetSettingsDescription", fallback: "Reset Swiftfin user settings.")
   /// Are you sure you want to reset all user settings?
   internal static let resetSettingsMessage = L10n.tr("Localizable", "resetSettingsMessage", fallback: "Are you sure you want to reset all user settings?")
+  /// Default resolution
+  internal static let resolutionDefault = L10n.tr("Localizable", "resolutionDefault", fallback: "Default resolution")
+  /// Content above this resolution will be transcoded and resized to fit.
+  internal static let resolutionDefaultDescription = L10n.tr("Localizable", "resolutionDefaultDescription", fallback: "Content above this resolution will be transcoded and resized to fit.")
   /// Restart server
   internal static let restartServer = L10n.tr("Localizable", "restartServer", fallback: "Restart server")
   /// Are you sure you want to restart the server?
