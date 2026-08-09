@@ -24,7 +24,7 @@ enum PlaybackResolution: Int, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .max:
-            return L10n.maximum
+            return L10n.original
         default:
             guard rawValue > 0 else { return L10n.unknown }
             return "\(rawValue.description)p"
