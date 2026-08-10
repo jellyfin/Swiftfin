@@ -90,8 +90,8 @@ struct CinematicSelectionContentGroup: ContentGroup {
                     }
                     .edgePadding(.leading)
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: CinematicSelectionLayout.logoMaxHeight)
-                    .frame(maxWidth: CinematicSelectionLayout.logoMaxWidth, alignment: .bottomLeading)
+                    .frame(height: CinematicSelectionLayout.logoMaxHeight, alignment: .bottomLeading)
+                    .frame(maxWidth: CinematicSelectionLayout.logoMaxWidth)
             }
             .preference(
                 key: ContentGroupCustomizationKey.self,
