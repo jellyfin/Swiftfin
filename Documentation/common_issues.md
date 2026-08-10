@@ -49,6 +49,10 @@ Please see the notes in the [Players Documentation](players.md) before reporting
 
 A [known VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and tracked on Swiftfin [here](https://github.com/jellyfin/Swiftfin/issues/937). This item cannot be resolved by Swiftfin and requires either a patch from VLC or a change to another provider. As a workaround, please use the Native player for this output. 
 
+### Native player cannot select subtitles or change audio tracks
+
+The Native player is built on top of AVPlayer but has not yet been connected to the unified video player interface. Track selection is a known issue and is actively being worked on. In the meantime, please use the Swiftfin player for this support.
+
 ### Unnecessary Transcoding or Remuxing
 
 Swiftfin uses **Device Profiles** that can be manually adjusted based on your device and media. These settings can be found in **Settings > Playback Quality** where you can change to a different pre-made **Device Profile** or you can select **Custom** to build your own. 
@@ -77,7 +81,7 @@ Swiftfin can't reach the server but a browser on the same device can. Two causes
 - **Reverse Proxy or Custom Headers**, which Swiftfin does not currently support. See [Reverse Proxies](#reverse-proxies).
 - **Stale iOS network cache**, usually after changing networks or during server maintenance. Restarting your device should be your first step in resolving this issue.
 
-If the issue persists, please reach out with an issue and include your 
+If the issue persists, please reach out with an issue and include your logs from Swiftfin found at *Settings > Logs*. If you are unable to login, these logs can be found at *Settings > Advanced > Logs*.
 
 ### "The Data Couldn't Be Read Because It Isn't in the Correct Format"
 
@@ -101,7 +105,7 @@ Most connection problems that reach us are proxy configuration rather than Swift
 
 Beyond a working Jellyfin proxy, Swiftfin needs **TLS 1.2 available**, a certificate from a **trusted CA** at the OS level, and no filtering middleware in the request path. ModSecurity has been confirmed to block requests with a `403` while leaving browsers intact.
 
-**The Swiftfin team is not able to troubleshoot custom or heavily modified proxy setups.** The Jellyfin team working on Swiftfin are not expected on networking on proxies for these issues are best handled by the Jellyfin forum or chat rooms](https://jellyfin.org/contact/). If your configuration differs from the documented ones, please reproduce the problem on a documented config or a direct `IP:port` connection before reporting.
+**The Swiftfin team is not able to troubleshoot custom or heavily modified proxy setups.** The Jellyfin team working on Swiftfin are not expected on networking on proxies for these issues are best handled by the [Jellyfin forum or chat rooms](https://jellyfin.org/contact/). If your configuration differs from the documented ones, please reproduce the problem on a documented config or a direct `IP:port` connection before reporting.
 
 When you do investigate, please read your **proxy's** logs as Jellyfin does not see requests that the proxy has rejected.
 
@@ -136,30 +140,8 @@ Swiftfin is built against the latest OpenAPI specification produced by the Jelly
 
 ---
 
-## Known Limitations
-
-| Limitation | Notes |
-|------------|-------|
-| No TLS 1.3 on the Swiftfin player | ❌ VLCKit limitation. Keep TLS 1.2 enabled. |
-| No subtitles on Native | ❌ This is being worked on and can be followed from [#1853](https://github.com/jellyfin/Swiftfin/issues/1853). |
-| No Picture in Picture on Swiftfin player | ❌ VLCKit limitation. Use Native for PiP support. |
-| AirPlay speaker audio delay | ❌ [VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544). This can be followed from [#937](https://github.com/jellyfin/Swiftfin/issues/937) |
-| Offline downloads | 🟡 Currently unavailable and can be followed from [#57](https://github.com/jellyfin/Swiftfin/issues/57) |
-| macOS client | 🟡 Available as `Built for iPad` but can be followed from [#215](https://github.com/jellyfin/Swiftfin/issues/215) |
-| Chromecast | ❌ Currently unavailable and can be followed from [#271](https://github.com/jellyfin/Swiftfin/issues/271) |
-
----
-
 ## Still Having Trouble?
 
 For **configuration help** such as proxies, certificates, transcoding, networking, etc, please start at the [Jellyfin forum or chat rooms](https://jellyfin.org/contact/).
 
-If you've found a reproducible bug in Swiftfin, please open an issue and include:
-
-- Swiftfin version and where you installed it from
-- Device and OS version
-- Jellyfin server version
-- Whether it happens on **both players**
-- Whether it happens on a **direct `IP:port`** connection
-- Logs from *Settings > Advanced > Logs* — please redact your domain, IPs, and API keys
-- For playback, the file's media info and whether the server reports Direct Play, Remux, or Transcode
+If you've found a reproducible bug in Swiftfin, please open and issue for a bug!
