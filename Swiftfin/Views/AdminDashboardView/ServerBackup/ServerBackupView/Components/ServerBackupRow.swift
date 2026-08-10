@@ -17,9 +17,7 @@ extension ServerBackupView {
         let action: () -> Void
 
         var body: some View {
-            ChevronButton {
-                action()
-            } label: {
+            ChevronButton(action: action) {
                 VStack(alignment: .leading, spacing: 4) {
 
                     Text(URL(fileURLWithPath: backup.path).lastPathComponent)

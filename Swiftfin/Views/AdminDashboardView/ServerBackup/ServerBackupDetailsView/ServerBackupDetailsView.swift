@@ -17,14 +17,14 @@ struct ServerBackupDetailsView: View {
     private var userSessionManager: UserSessionManager
 
     @ObservedObject
-    private var viewModel: ServerBackupViewModel
+    var viewModel: ServerBackupViewModel
 
-    private let backup: BackupManifestDto
+    @State
+    private var isPresentingConfirm: Bool = false
+    @State
+    private var isPresentingRestoreComplete: Bool = false
 
-    init(viewModel: ServerBackupViewModel, backup: BackupManifestDto) {
-        self.viewModel = viewModel
-        self.backup = backup
-    }
+    let backup: BackupManifestDto
 
     private var backupServerVersion: JellyfinClient.Version {
         JellyfinClient.Version(backupVersion: backup.serverVersion)
@@ -35,7 +35,7 @@ struct ServerBackupDetailsView: View {
         return serverVersion > backupServerVersion
     }
 
-    private var contentView: some View {
+    var body: some View {
         List {
             Section {
                 LabeledContent(L10n.file) {
@@ -72,63 +72,56 @@ struct ServerBackupDetailsView: View {
                 LabeledContent(L10n.trickplay, value: backup.options.isTrickplay == true ? L10n.yes : L10n.no)
             }
         }
-    }
+        .navigationTitle(L10n.backup)
+        .backport
+        .toolbarTitleDisplayMode(.inline)
+        .topBarTrailing {
+            if viewModel.background.is(.restoring) {
+                ProgressView()
+            }
 
-    var body: some View {
-        StateAdapter(initialValue: (isPresentingConfirmation: false, isPresentingAlert: false)) { state in
-            contentView
-                .navigationTitle(L10n.backup)
-                .backport
-                .toolbarTitleDisplayMode(.inline)
-                .topBarTrailing {
-                    if viewModel.background.is(.restoring) {
-                        ProgressView()
-                    }
-
-                    Button(L10n.restore, role: .destructive) {
-                        state.isPresentingConfirmation.wrappedValue = true
-                    }
-                    .backport
-                    .buttonStyle(.glassProminent)
-                    .controlSize(.small)
-                    .disabled(viewModel.background.is(.restoring) || isVersionMismatched)
-                    .confirmationDialog(
-                        L10n.restoreBackup,
-                        isPresented: state.isPresentingConfirmation,
-                        titleVisibility: .visible
-                    ) {
-                        Button(L10n.restore, role: .destructive) {
-                            viewModel.restore(backup: backup)
-                        }
-
-                        Button(L10n.cancel, role: .cancel) {}
-                    } message: {
-                        Text(L10n.restoreWarning)
-                    }
+            Button(L10n.restore, role: .destructive) {
+                isPresentingConfirm = true
+            }
+            .backport
+            .buttonStyle(.glassProminent)
+            .controlSize(.small)
+            .disabled(viewModel.background.is(.restoring) || isVersionMismatched)
+            .confirmationDialog(
+                L10n.restoreBackup,
+                isPresented: $isPresentingConfirm,
+                titleVisibility: .visible
+            ) {
+                Button(L10n.restore, role: .destructive) {
+                    viewModel.restore(backup: backup)
                 }
-                .onReceive(viewModel.events) { event in
-                    switch event {
-                    case .created:
-                        break
-                    case .restored:
-                        UIDevice.feedback(.success)
 
-                        state.isPresentingAlert.wrappedValue = true
-                    }
-                }
-                .alert(
-                    L10n.restoring,
-                    isPresented: state.isPresentingAlert
-                ) {
-                    Button(L10n.ok) {
-                        Task { @MainActor in
-                            await userSessionManager.signOut(reason: .explicit)
-                        }
-                    }
-                } message: {
-                    Text(L10n.restoringMessage)
-                }
-                .errorMessage($viewModel.error)
+                Button(L10n.cancel, role: .cancel) {}
+            } message: {
+                Text(L10n.restoreWarning)
+            }
         }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .created:
+                break
+            case .restored:
+                UIDevice.feedback(.success)
+                isPresentingRestoreComplete = true
+            }
+        }
+        .alert(
+            L10n.restoring,
+            isPresented: $isPresentingRestoreComplete
+        ) {
+            Button(L10n.ok) {
+                Task { @MainActor in
+                    await userSessionManager.signOut(reason: .explicit)
+                }
+            }
+        } message: {
+            Text(L10n.restoringMessage)
+        }
+        .errorMessage($viewModel.error)
     }
 }

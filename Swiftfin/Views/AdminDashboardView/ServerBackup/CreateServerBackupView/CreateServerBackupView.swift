@@ -11,11 +11,11 @@ import SwiftUI
 
 struct CreateServerBackupView: View {
 
-    @Router
-    private var router
-
     @ObservedObject
     var viewModel: ServerBackupViewModel
+
+    @Router
+    private var router
 
     @State
     private var backupOptions = BackupOptionsDto()
@@ -69,7 +69,7 @@ struct CreateServerBackupView: View {
                         .controlSize(.small)
                 }
             }
-            .disabled(!isValid)
+            .enabled(isValid)
         }
     }
 }
