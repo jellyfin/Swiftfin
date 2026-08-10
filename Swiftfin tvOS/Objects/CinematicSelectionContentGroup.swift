@@ -48,10 +48,6 @@ struct CinematicSelectionContentGroup: ContentGroup {
             frameForParentView[.scrollView, default: .zero].frame
         }
 
-        private var logoMaxWidth: CGFloat {
-            max(parentFrame.width * CinematicSelectionLayout.logoMaxWidthPercentage, 1)
-        }
-
         private func itemSelectorImageSource(for item: BaseItemDto) -> ImageSource {
             if item.type == .episode {
                 item.imageSource(
@@ -59,7 +55,7 @@ struct CinematicSelectionContentGroup: ContentGroup {
                     .logo,
                     tag: item.parentLogoImageTag,
                     environment: ImageSourceOptions(
-                        maxWidth: logoMaxWidth,
+                        maxWidth: CinematicSelectionLayout.logoMaxWidth,
                         maxHeight: CinematicSelectionLayout.logoMaxHeight
                     )
                 )
@@ -67,7 +63,7 @@ struct CinematicSelectionContentGroup: ContentGroup {
                 item.imageSource(
                     .logo,
                     environment: ImageSourceOptions(
-                        maxWidth: logoMaxWidth,
+                        maxWidth: CinematicSelectionLayout.logoMaxWidth,
                         maxHeight: CinematicSelectionLayout.logoMaxHeight
                     )
                 )
@@ -95,7 +91,7 @@ struct CinematicSelectionContentGroup: ContentGroup {
                     .edgePadding(.leading)
                     .aspectRatio(contentMode: .fit)
                     .frame(height: CinematicSelectionLayout.logoMaxHeight)
-                    .frame(maxWidth: logoMaxWidth, alignment: .bottomLeading)
+                    .frame(maxWidth: CinematicSelectionLayout.logoMaxWidth, alignment: .bottomLeading)
             }
             .preference(
                 key: ContentGroupCustomizationKey.self,
@@ -180,5 +176,5 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
 private enum CinematicSelectionLayout {
 
     static let logoMaxHeight: CGFloat = 100
-    static let logoMaxWidthPercentage: CGFloat = 0.4
+    static let logoMaxWidth: CGFloat = 450
 }
