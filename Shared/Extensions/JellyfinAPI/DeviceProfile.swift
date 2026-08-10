@@ -14,7 +14,8 @@ extension DeviceProfile {
     static func build(
         for videoPlayer: VideoPlayerType,
         compatibilityMode: PlaybackCompatibility,
-        maxBitrate: Int? = nil
+        maxBitrate: Int? = nil,
+        maxResolution: PlaybackResolution = Defaults[.VideoPlayer.Playback.appMaximumResolution]
     ) -> DeviceProfile {
 
         var deviceProfile: DeviceProfile = .init()
@@ -29,6 +30,10 @@ extension DeviceProfile {
             }
         } else {
             deviceProfile.subtitleProfiles = videoPlayer.subtitleProfiles
+        }
+
+        if let resolutionCodecProfile = maxResolution.codecProfile {
+            deviceProfile.codecProfiles?.append(resolutionCodecProfile)
         }
 
         // MARK: - DirectPlay & Transcoding Profiles
