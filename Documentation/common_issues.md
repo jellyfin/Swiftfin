@@ -144,4 +144,4 @@ Swiftfin is built against the latest OpenAPI specification produced by the Jelly
 
 For **configuration help** such as proxies, certificates, transcoding, networking, etc, please start at the [Jellyfin forum or chat rooms](https://jellyfin.org/contact/).
 
-If you've found a reproducible bug in Swiftfin, please open and issue for a bug!
+If you've found a reproducible bug in Swiftfin, please [open an issue](https://github.com/jellyfin/Swiftfin/issues/new/choose).
