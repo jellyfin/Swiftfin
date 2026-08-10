@@ -19,7 +19,7 @@ body:
           required: true
         - label: This issue is **not** already reported on [GitHub](https://github.com/jellyfin/Swiftfin/issues?q=is%3Aopen+is%3Aissue).
           required: true
-        - label: I have read the [Common Issues](https://github.com/JPKribs/Swiftfin/blob/commonIssues/Documentation/common_issues.md) documentation and this issue was not mentioned there.
+        - label: I have read the [Common Issues](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/common_issues.md) documentation and this issue was not mentioned there.
           required: true
         - label: I'm using an up to date version of Swiftfin; We generally do not support previous older versions. If possible, please update to the latest version before opening an issue.
           required: true
