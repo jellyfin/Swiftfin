@@ -192,8 +192,6 @@ internal enum L10n {
   internal static let backups = L10n.tr("Localizable", "backups", fallback: "Backups")
   /// Create a snapshot of your server which can include the database, metadata, subtitles and trickplay.
   internal static let backupsDescription = L10n.tr("Localizable", "backupsDescription", fallback: "Create a snapshot of your server which can include the database, metadata, subtitles and trickplay.")
-  /// This backup was created on an older version of Jellyfin and will not restore correctly without first downgrading to that version.
-  internal static let backupVersionWarning = L10n.tr("Localizable", "backupVersionWarning", fallback: "This backup was created on an older version of Jellyfin and will not restore correctly without first downgrading to that version.")
   /// Banner
   internal static let banner = L10n.tr("Localizable", "banner", fallback: "Banner")
   /// A wide horizontal image displayed when browsing the library in banner mode. Only applicable to video content.
