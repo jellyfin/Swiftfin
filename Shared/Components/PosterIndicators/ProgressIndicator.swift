@@ -47,7 +47,7 @@ struct ProgressIndicator: View {
 
             ProgressView(value: progress)
                 .progressViewStyle(.playback)
-                .foregroundStyle(.white)
+                .foregroundStyle(accentColor)
                 .frame(height: 6)
         }
         .padding(.bottom, 5)

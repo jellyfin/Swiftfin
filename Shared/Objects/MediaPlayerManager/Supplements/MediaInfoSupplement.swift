@@ -33,9 +33,6 @@ extension MediaInfoSupplement {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
-        @FocusState
-        private var isResetButtonFocused: Bool
-
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
@@ -141,10 +138,7 @@ extension MediaInfoSupplement {
                     .fontWeight(.semibold)
             }
             .buttonStyle(.supplementAction)
-            #if os(tvOS)
-                .focused($isResetButtonFocused)
-            #endif
-                .frame(height: UIDevice.isTV ? 80 : 40)
+            .frame(height: UIDevice.isTV ? 80 : 40)
         }
 
         // TODO: may need to be a layout for correct overview frame
@@ -277,12 +271,6 @@ extension MediaInfoSupplement {
                 .edgePadding()
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 .focusSection()
-                .backport
-                .defaultFocus(
-                    $isResetButtonFocused,
-                    true,
-                    priority: .userInitiated
-                )
                 .task(id: item.currentProgram?.endDate) {
                     await updateCurrentProgram()
                 }

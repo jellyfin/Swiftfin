@@ -18,7 +18,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
     func checkGestureLock() -> Bool {
         if containerState.isGestureLocked {
             containerState.toastProxy.present(
-                L10n.gesturesLocked,
+                L10n.pressAndHoldToUnlock,
                 systemName: VideoPlayerActionButton.gestureLock.systemImage
             )
             return false
@@ -200,30 +200,32 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         unitPoint: UnitPoint,
         state: UILongPressGestureRecognizer.State
     ) {
+        guard !containerState.isGestureLocked else {
+            guard state == .began else { return }
+
+            containerState.isGestureLocked = false
+
+            containerState.toastProxy.present(
+                L10n.gesturesUnlocked,
+                systemName: VideoPlayerActionButton.gestureLock.secondarySystemImage
+            )
+            return
+        }
+
         let action = Defaults[.VideoPlayer.Gesture.longPressAction]
 
         switch action {
         case .none: ()
         case .gestureLock:
-            guard state != .ended else { return }
+            guard state == .began else { return }
 
-            if containerState.isGestureLocked {
-                containerState.isGestureLocked = false
+            containerState.isGestureLocked = true
 
-                containerState.toastProxy.present(
-                    L10n.gesturesUnlocked,
-                    systemName: VideoPlayerActionButton.gestureLock.secondarySystemImage
-                )
-            } else {
-                containerState.isGestureLocked = true
-
-                containerState.toastProxy.present(
-                    L10n.gesturesLocked,
-                    systemName: VideoPlayerActionButton.gestureLock.systemImage
-                )
-            }
+            containerState.toastProxy.present(
+                L10n.gesturesLocked,
+                systemName: VideoPlayerActionButton.gestureLock.systemImage
+            )
         case .playbackSpeed:
-            guard checkGestureLock() else { return }
             guard containerState.manager?.item.isLiveStream == false else { return }
 
             switch state {
