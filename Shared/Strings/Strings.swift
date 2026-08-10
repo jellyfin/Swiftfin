@@ -210,10 +210,6 @@ internal enum L10n {
   internal static let birthYear = L10n.tr("Localizable", "birthYear", fallback: "Birth year")
   /// Bitrate
   internal static let bitrate = L10n.tr("Localizable", "bitrate", fallback: "Bitrate")
-  /// Default bitrate
-  internal static let bitrateDefault = L10n.tr("Localizable", "bitrateDefault", fallback: "Default bitrate")
-  /// Limits the internet bandwidth used during playback.
-  internal static let bitrateDefaultDescription = L10n.tr("Localizable", "bitrateDefaultDescription", fallback: "Limits the internet bandwidth used during playback.")
   /// Maximizes bandwidth usage, up to %@, for each playback stream to ensure the highest quality.
   internal static func bitrateMaxDescription(_ p1: Any) -> String {
     return L10n.tr("Localizable", "bitrateMaxDescription", String(describing: p1), fallback: "Maximizes bandwidth usage, up to %@, for each playback stream to ensure the highest quality.")
@@ -984,8 +980,6 @@ internal enum L10n {
   internal static let maximumFailedLoginPolicyReenable = L10n.tr("Localizable", "maximumFailedLoginPolicyReenable", fallback: "Locked users must be re-enabled by an Administrator.")
   /// Maximum remote bitrate
   internal static let maximumRemoteBitrate = L10n.tr("Localizable", "maximumRemoteBitrate", fallback: "Maximum remote bitrate")
-  /// Maximum resolution
-  internal static let maximumResolution = L10n.tr("Localizable", "maximumResolution", fallback: "Maximum resolution")
   /// Maximum sessions
   internal static let maximumSessions = L10n.tr("Localizable", "maximumSessions", fallback: "Maximum sessions")
   /// Maximum sessions policy
@@ -1122,8 +1116,6 @@ internal enum L10n {
   internal static let orange = L10n.tr("Localizable", "orange", fallback: "Orange")
   /// Order
   internal static let order = L10n.tr("Localizable", "order", fallback: "Order")
-  /// Original
-  internal static let original = L10n.tr("Localizable", "original", fallback: "Original")
   /// Original air date
   internal static let originalAirDate = L10n.tr("Localizable", "originalAirDate", fallback: "Original air date")
   /// Original aspect ratio
@@ -1192,6 +1184,8 @@ internal enum L10n {
   internal static let playback = L10n.tr("Localizable", "playback", fallback: "Playback")
   /// Playback quality
   internal static let playbackQuality = L10n.tr("Localizable", "playbackQuality", fallback: "Playback quality")
+  /// Force media from the server to transcode if it exceeds the selected resolution or bitrate.
+  internal static let playbackQualityDescription = L10n.tr("Localizable", "playbackQualityDescription", fallback: "Force media from the server to transcode if it exceeds the selected resolution or bitrate.")
   /// Playback speed
   internal static let playbackSpeed = L10n.tr("Localizable", "playbackSpeed", fallback: "Playback speed")
   /// Play count
@@ -1274,6 +1268,8 @@ internal enum L10n {
   internal static let provider = L10n.tr("Localizable", "provider", fallback: "Provider")
   /// Public users
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public users")
+  /// Quality
+  internal static let quality = L10n.tr("Localizable", "quality", fallback: "Quality")
   /// Quick Connect
   internal static let quickConnect = L10n.tr("Localizable", "quickConnect", fallback: "Quick Connect")
   /// Quick Connect code
@@ -1372,10 +1368,8 @@ internal enum L10n {
   internal static let resetSettingsDescription = L10n.tr("Localizable", "resetSettingsDescription", fallback: "Reset Swiftfin user settings.")
   /// Are you sure you want to reset all user settings?
   internal static let resetSettingsMessage = L10n.tr("Localizable", "resetSettingsMessage", fallback: "Are you sure you want to reset all user settings?")
-  /// Default resolution
-  internal static let resolutionDefault = L10n.tr("Localizable", "resolutionDefault", fallback: "Default resolution")
-  /// Content above this resolution will be transcoded and resized to fit.
-  internal static let resolutionDefaultDescription = L10n.tr("Localizable", "resolutionDefaultDescription", fallback: "Content above this resolution will be transcoded and resized to fit.")
+  /// Resolution
+  internal static let resolution = L10n.tr("Localizable", "resolution", fallback: "Resolution")
   /// Restart server
   internal static let restartServer = L10n.tr("Localizable", "restartServer", fallback: "Restart server")
   /// Are you sure you want to restart the server?

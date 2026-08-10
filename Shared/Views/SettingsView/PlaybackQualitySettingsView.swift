@@ -37,28 +37,18 @@ struct PlaybackQualitySettingsView: View {
 
     var body: some View {
         Form(systemImage: "play.rectangle.on.rectangle") {
-            Section {
+            Section(L10n.quality) {
                 PlatformPicker(
-                    L10n.maximumResolution,
+                    L10n.resolution,
                     selection: $appMaximumResolution
                 )
-            } header: {
-                Text(L10n.resolutionDefault)
-            } footer: {
-                VStack(alignment: .leading) {
-                    Text(L10n.resolutionDefaultDescription)
-                }
-            }
 
-            Section(L10n.bitrateDefault) {
                 PlatformPicker(
-                    L10n.maximumBitrate,
+                    L10n.bitrate,
                     selection: $appMaximumBitrate
                 )
             } footer: {
-                VStack(alignment: .leading) {
-                    Text(L10n.bitrateDefaultDescription)
-                }
+                Text(L10n.playbackQualityDescription)
             } learnMore: {
                 LabeledContent(
                     L10n.auto,
@@ -80,9 +70,7 @@ struct PlaybackQualitySettingsView: View {
                 } header: {
                     Text(L10n.bitrateTest)
                 } footer: {
-                    VStack(alignment: .leading) {
-                        Text(L10n.bitrateTestDisclaimer)
-                    }
+                    Text(L10n.bitrateTestDisclaimer)
                 }
             }
 
@@ -98,9 +86,7 @@ struct PlaybackQualitySettingsView: View {
                     }
                 }
             } footer: {
-                VStack(alignment: .leading) {
-                    Text(L10n.deviceProfileDescription)
-                }
+                Text(L10n.deviceProfileDescription)
             } learnMore: {
                 LabeledContent(
                     L10n.auto,
