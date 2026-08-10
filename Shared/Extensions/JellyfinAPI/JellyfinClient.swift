@@ -11,21 +11,6 @@ import Get
 import JellyfinAPI
 import UIKit
 
-extension JellyfinClient.Version {
-
-    init(backupVersion: String) {
-        let components = backupVersion
-            .split(separator: ".")
-            .compactMap { Int($0) }
-
-        self.init(
-            major: components[0],
-            minor: components[1],
-            patch: components[2]
-        )
-    }
-}
-
 extension JellyfinClient.Configuration {
 
     static func swiftfinConfiguration(

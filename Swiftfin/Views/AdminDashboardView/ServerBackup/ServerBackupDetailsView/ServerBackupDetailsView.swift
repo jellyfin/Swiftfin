@@ -26,18 +26,9 @@ struct ServerBackupDetailsView: View {
 
     let backup: BackupManifestDto
 
-    private var backupServerVersion: JellyfinClient.Version {
-        JellyfinClient.Version(backupVersion: backup.serverVersion)
-    }
-
-    private var isVersionMismatched: Bool {
-        guard let serverVersion = viewModel.userSession?.client.version else { return false }
-        return serverVersion > backupServerVersion
-    }
-
     var body: some View {
         List {
-            Section {
+            Section(L10n.details) {
                 LabeledContent(L10n.file) {
                     Text(URL(fileURLWithPath: backup.path).lastPathComponent)
                 }
@@ -48,16 +39,9 @@ struct ServerBackupDetailsView: View {
                 .monospacedDigit()
 
                 LabeledContent(L10n.server) {
-                    Text(backupServerVersion.description)
+                    Text(backup.serverVersion)
                 }
                 .monospacedDigit()
-            } header: {
-                Text(L10n.details)
-            } footer: {
-                if isVersionMismatched {
-                    Label(L10n.backupVersionWarning, systemImage: "exclamationmark.circle.fill")
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                }
             }
 
             Section(L10n.location) {
@@ -86,7 +70,7 @@ struct ServerBackupDetailsView: View {
             .backport
             .buttonStyle(.glassProminent)
             .controlSize(.small)
-            .disabled(viewModel.background.is(.restoring) || isVersionMismatched)
+            .disabled(viewModel.background.is(.restoring))
             .confirmationDialog(
                 L10n.restoreBackup,
                 isPresented: $isPresentingConfirm,

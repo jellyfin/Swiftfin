@@ -31,7 +31,7 @@ extension ServerBackupView {
                     .monospacedDigit()
 
                     LabeledContent(L10n.version) {
-                        Text(JellyfinClient.Version(backupVersion: backup.serverVersion).description)
+                        Text(backup.serverVersion)
                     }
                     .monospacedDigit()
                 }
