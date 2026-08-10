@@ -25,7 +25,7 @@ These four steps resolve many common issues or help narrow down unique issues fr
 
 Your library, posters, and metadata all load. Pressing play gives a black screen or a spinner. This issue is commonly caused by one of the following:
 
-**Your reverse proxy is TLS 1.3 only.** VLCKit only supports TLS **1.1 and 1.2**, so media playback fails while everything else works. NGINX has included 1.3 by default since 1.23.4, so this can appear after a update. Enable 1.2 alongside 1.3 (having both is fine), VLCKit will fall back to using the supported version. This is a VLC limitation and is documented in the [Players Documentation](players.md).
+**Your reverse proxy is TLS 1.3 only.** VLCKit only supports TLS **1.1 and 1.2**, so media playback fails while everything else works. NGINX has included 1.3 by default since 1.23.4, so this can appear after an update. Enable 1.2, alongside 1.3, (having both is fine), VLCKit will fall back to using the supported version. This is a VLC limitation and is documented in the [Players Documentation](players.md).
 
 **You entered `http` for an `https` server.** You can sign in and browse everything, but nothing plays. Swiftfin attempts to resolve this at login, but HSTS can often mask the issue. HSTS and redirects hide this, since some requests follow the redirect but media requests do not. Re-add the server with the correct scheme.
 
@@ -47,7 +47,7 @@ Please see the notes in the [Players Documentation](players.md) before reporting
 
 ### Audio Out of Sync over AirPlay Speakers or HomePods
 
-A [known VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and tracked on Swiftfin [here](https://github.com/jellyfin/Swiftfin/issues/937). This item cannot be resolved by Swiftfin and requires either a patch from VLC or a change to another provider. As a workaround, please use the Native player for this output. 
+This is a [known VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and tracked on Swiftfin [here](https://github.com/jellyfin/Swiftfin/issues/937). This item cannot be resolved by Swiftfin and requires either a patch from VLC. As a workaround, please use the Native player for this output. 
 
 ### Native player cannot select subtitles or change audio tracks
 
@@ -57,9 +57,9 @@ The Native player is built on top of AVPlayer but has not yet been connected to 
 
 Swiftfin uses **Device Profiles** that can be manually adjusted based on your device and media. These settings can be found in **Settings > Playback Quality** where you can change to a different pre-made **Device Profile** or you can select **Custom** to build your own. 
 
-You can add a new profile to the existing ones that would keep all else the same but enable a specific format through as a **Direct Play**, or you can fully replace them all with custom profiles.
+You can add a new profile to the existing ones that would keep all else the same but allows a specific format to **Direct Play**, or you can fully replace them all with **Custom** profiles.
 
-These settings exist to enable newer, unverified configurations work on your device. If you experience any issues when using **Custom Profiles**, please turn them off and use a pre-made configuration before creating an issue.
+These settings exist to enable newer, unverified configurations to work on your device. If you experience any issues when using **Custom Profiles**, please turn them off and use a pre-made configuration before creating an issue.
 
 ### Gesture Lock
 
@@ -95,7 +95,7 @@ This is a generic error that means that Jellyfin sent information to Swiftfin in
 
 ### Reverse Proxies
 
-Most connection problems that reach us are proxy configuration rather than Swiftfin. Please start from a configuration Jellyfin has vetted as Swiftfin should be comparable with standard configurations:
+Most connection problems that reach us are proxy configuration rather than Swiftfin. Please start from a configuration Jellyfin has vetted as Swiftfin should be compatible with standard configurations:
 
 - [Caddy](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/caddy)
 - [Nginx](https://jellyfin.org/docs/general/post-install/networking/reverse-proxy/nginx)
@@ -105,7 +105,7 @@ Most connection problems that reach us are proxy configuration rather than Swift
 
 Beyond a working Jellyfin proxy, Swiftfin needs **TLS 1.2 available**, a certificate from a **trusted CA** at the OS level, and no filtering middleware in the request path. ModSecurity has been confirmed to block requests with a `403` while leaving browsers intact.
 
-**The Swiftfin team is not able to troubleshoot custom or heavily modified proxy setups.** The Jellyfin team working on Swiftfin are not expected on networking on proxies for these issues are best handled by the [Jellyfin forum or chat rooms](https://jellyfin.org/contact/). If your configuration differs from the documented ones, please reproduce the problem on a documented config or a direct `IP:port` connection before reporting.
+**The Swiftfin team is not able to troubleshoot custom or heavily modified proxy setups.** The Jellyfin team that works on Swiftfin are not experts on networking or proxies. These issues are best handled by the [Jellyfin forum or chat rooms](https://jellyfin.org/contact/). If your configuration differs from the documented ones, please reproduce the problem on a documented config or a direct `IP:port` connection before reporting.
 
 When you do investigate, please read your **proxy's** logs as Jellyfin does not see requests that the proxy has rejected.
 
@@ -126,7 +126,7 @@ To resolve this issue, go to *Settings > Sign Out* then use the Add button to re
 
 Swiftfin filters by library **collection type**, not by the items inside. A library with a blank or unsupported type disappears entirely. Please set the correct type in Jellyfin.
 
-See the [Libraries Documentation](libraries.md) for what is currently support.
+See the [Libraries Documentation](libraries.md) for what is currently supported.
 
 ### tvOS Contains the Wrong Items Under "Movies"
 
