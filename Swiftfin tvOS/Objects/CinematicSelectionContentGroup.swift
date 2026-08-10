@@ -49,23 +49,21 @@ struct CinematicSelectionContentGroup: ContentGroup {
         }
 
         private func itemSelectorImageSource(for item: BaseItemDto) -> ImageSource {
-            let maxWidth = max(parentFrame.width * CinematicSelectionLayout.logoMaxWidthPercentage, 1)
-
             if item.type == .episode {
-                return item.imageSource(
+                item.imageSource(
                     itemID: item.seriesID,
                     .logo,
                     tag: item.parentLogoImageTag,
                     environment: ImageSourceOptions(
-                        maxWidth: maxWidth,
+                        maxWidth: CinematicSelectionLayout.logoMaxWidth,
                         maxHeight: CinematicSelectionLayout.logoMaxHeight
                     )
                 )
             } else {
-                return item.imageSource(
+                item.imageSource(
                     .logo,
                     environment: ImageSourceOptions(
-                        maxWidth: maxWidth,
+                        maxWidth: CinematicSelectionLayout.logoMaxWidth,
                         maxHeight: CinematicSelectionLayout.logoMaxHeight
                     )
                 )
@@ -93,6 +91,7 @@ struct CinematicSelectionContentGroup: ContentGroup {
                     .edgePadding(.leading)
                     .aspectRatio(contentMode: .fit)
                     .frame(height: CinematicSelectionLayout.logoMaxHeight, alignment: .bottomLeading)
+                    .frame(maxWidth: CinematicSelectionLayout.logoMaxWidth)
             }
             .preference(
                 key: ContentGroupCustomizationKey.self,
@@ -177,5 +176,5 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
 private enum CinematicSelectionLayout {
 
     static let logoMaxHeight: CGFloat = 100
-    static let logoMaxWidthPercentage: CGFloat = 0.4
+    static let logoMaxWidth: CGFloat = 450
 }

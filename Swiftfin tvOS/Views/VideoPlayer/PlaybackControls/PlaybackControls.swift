@@ -57,6 +57,7 @@ extension VideoPlayer {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             .edgePadding(.horizontal)
+            .focusSection()
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: containerState.isScrubbing)
@@ -68,10 +69,6 @@ extension VideoPlayer {
                 }
             } message: {
                 Text(L10n.closePlayerWarning)
-            }
-            .onFirstAppear {
-                containerState.isPresentingOverlay = true
-                isPlaybackProgressFocused = true
             }
             .onChange(of: containerState.isPresentingOverlay) { _, _ in
                 isPlaybackProgressFocused = true

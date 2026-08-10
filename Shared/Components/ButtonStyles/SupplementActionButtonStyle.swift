@@ -51,6 +51,9 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
                 )
         }
         .buttonBorderShape(.capsule)
+        #if os(tvOS)
+            .buttonStyle(.card)
+        #endif
     }
 
     @ViewBuilder
