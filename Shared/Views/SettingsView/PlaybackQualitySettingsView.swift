@@ -12,6 +12,14 @@ import SwiftUI
 
 struct PlaybackQualitySettingsView: View {
 
+    #if os(tvOS)
+    typealias PlatformPicker = ListRowMenu
+    #else
+    typealias PlatformPicker = Picker
+    #endif
+
+    @Default(.VideoPlayer.Playback.appMaximumResolution)
+    private var appMaximumResolution
     @Default(.VideoPlayer.Playback.appMaximumBitrate)
     private var appMaximumBitrate
     @Default(.VideoPlayer.Playback.appMaximumBitrateTest)
@@ -29,22 +37,18 @@ struct PlaybackQualitySettingsView: View {
 
     var body: some View {
         Form(systemImage: "play.rectangle.on.rectangle") {
-            Section(L10n.bitrateDefault) {
-                #if os(iOS)
-                Picker(
-                    L10n.maximumBitrate,
+            Section(L10n.quality) {
+                PlatformPicker(
+                    L10n.resolution,
+                    selection: $appMaximumResolution
+                )
+
+                PlatformPicker(
+                    L10n.bitrate,
                     selection: $appMaximumBitrate
                 )
-                #else
-                ListRowMenu(
-                    L10n.maximumBitrate,
-                    selection: $appMaximumBitrate
-                )
-                #endif
             } footer: {
-                VStack(alignment: .leading) {
-                    Text(L10n.bitrateDefaultDescription)
-                }
+                Text(L10n.playbackQualityDescription)
             } learnMore: {
                 LabeledContent(
                     L10n.auto,
@@ -59,38 +63,22 @@ struct PlaybackQualitySettingsView: View {
 
             if appMaximumBitrate == .auto {
                 Section {
-                    #if os(iOS)
-                    Picker(
+                    PlatformPicker(
                         L10n.testSize,
                         selection: $appMaximumBitrateTest
                     )
-                    #else
-                    ListRowMenu(
-                        L10n.testSize,
-                        selection: $appMaximumBitrateTest
-                    )
-                    #endif
                 } header: {
                     Text(L10n.bitrateTest)
                 } footer: {
-                    VStack(alignment: .leading) {
-                        Text(L10n.bitrateTestDisclaimer)
-                    }
+                    Text(L10n.bitrateTestDisclaimer)
                 }
             }
 
             Section(L10n.deviceProfile) {
-                #if os(iOS)
-                Picker(
+                PlatformPicker(
                     L10n.compatibility,
                     selection: $compatibilityMode
                 )
-                #else
-                ListRowMenu(
-                    L10n.compatibility,
-                    selection: $compatibilityMode
-                )
-                #endif
 
                 if compatibilityMode == .custom {
                     ChevronButton(L10n.profiles) {
@@ -98,9 +86,7 @@ struct PlaybackQualitySettingsView: View {
                     }
                 }
             } footer: {
-                VStack(alignment: .leading) {
-                    Text(L10n.deviceProfileDescription)
-                }
+                Text(L10n.deviceProfileDescription)
             } learnMore: {
                 LabeledContent(
                     L10n.auto,
@@ -130,7 +116,6 @@ struct PlaybackQualitySettingsView: View {
                     isOn: $forceHDRTranscode
                 )
             } header: {
-                /// Proper nouns. Do not localize.
                 Text(L10n.hdr)
             } footer: {
                 VStack(alignment: .leading) {
