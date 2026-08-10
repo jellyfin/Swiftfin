@@ -15,7 +15,7 @@ These four steps resolve many common issues or help narrow down unique issues fr
 | **1. Update Swiftfin** | We are only able to support the current release which may already have a code fix for the issue you are experiencing. If you see a closed issue for your problem, but it's still not resolved on the latest release, please try using our [TestFlight](https://testflight.apple.com/join/SqNPfdxq) before reporting a new issue. |
 | **2. Switch the player** <br>*Settings > Video Player > Video Player Type* | Each player is based on a different playback engine. Confirming which player(s) has an issue helps narrow the troubleshooting steps. |
 | **3. Connect by direct `IP:port`** | If this works and your domain doesn't, the problem is your reverse proxy or network. |
-| **4. Check the logs** <br>*Login Issues: Settings (Gear Icon) > Advanced > Logs* <br>*Other Issues: Settings > Logs* | These logs show network traffic and logs for Swiftfin. Identifying the failing decodes or packets that exist can help resolve network/proxy issues. |
+| **4. Check the logs** <br>*Login Issues: Settings > Advanced > Logs* <br>*Other Issues: Settings > Logs* | These logs show network traffic and logs for Swiftfin. Identifying the failing decodes or packets that exist can help resolve network/proxy issues. |
 
 ---
 
@@ -25,9 +25,9 @@ These four steps resolve many common issues or help narrow down unique issues fr
 
 Your library, posters, and metadata all load. Pressing play gives a black screen or a spinner. This issue is commonly caused by one of the following:
 
-**Your reverse proxy is TLS 1.3 only.** VLCKit only supports TLS **1.1 and 1.2**, so media playback fails while everything else works. NGINX has included 1.3 by default since 1.23.4, so this can appear after an update. Enable 1.2, alongside 1.3, (having both is fine), VLCKit will fall back to using the supported version. This is a VLC limitation and is documented in the [Players Documentation](players.md).
+**Your reverse proxy is TLS 1.3 only.** VLCKit only supports TLS **1.1 and 1.2**, so media playback fails while everything else works. NGINX has included 1.3 by default since 1.23.4, so this can appear after an update. Enable 1.2 alongside 1.3 (having both is fine) and VLCKit will fall back to using the supported version. This is a VLC limitation and is documented in the [Players Documentation](players.md).
 
-**You entered `http` for an `https` server.** You can sign in and browse everything, but nothing plays. Swiftfin attempts to resolve this at login, but HSTS can often mask the issue. HSTS and redirects hide this, since some requests follow the redirect but media requests do not. Re-add the server with the correct scheme.
+**You entered `http` for an `https` server.** You can sign in and browse everything, but nothing plays. Swiftfin attempts to resolve this at login, but HSTS and redirects can mask the issue since some requests follow the redirect but media requests do not. Re-add the server with the correct scheme.
 
 If neither applies, please test on a direct `IP:port` connection before reporting.
 
@@ -38,7 +38,7 @@ Purple casts, washed out color, or no tone mapping at all. Both players handle H
 - **Swiftfin (VLCKit)** tone maps, but colorspace accuracy varies with content and device.
 - **Native (AVPlayer)** needs Direct Play compatible MP4, and often Dolby Vision Profile 5 or 8.
 
-Start by performing the tone mapping from Jellyfin Server and see if this resolves your issue. These settings can be enabled from:
+Start by forcing the server to tone map instead of Swiftfin and see if this resolves your issue. These settings can be enabled from:
 
 *Settings > Video Player > Playback Quality > HDR > Force Dolby Vision to Transcode*
 *Settings > Video Player > Playback Quality > HDR > Force HDR to Transcode*
@@ -47,15 +47,15 @@ Please see the notes in the [Players Documentation](players.md) before reporting
 
 ### Audio Out of Sync over AirPlay Speakers or HomePods
 
-This is a [known VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and tracked on Swiftfin [here](https://github.com/jellyfin/Swiftfin/issues/937). This item cannot be resolved by Swiftfin and requires either a patch from VLC. As a workaround, please use the Native player for this output. 
+This is a [known VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and tracked on Swiftfin [here](https://github.com/jellyfin/Swiftfin/issues/937). This item cannot be resolved by Swiftfin and requires a patch from VLC. As a workaround, please use the Native player for this output.
 
-### Native player cannot select subtitles or change audio tracks
+### Native Player Cannot Select Subtitles or Change Audio Tracks
 
 The Native player is built on top of AVPlayer but has not yet been connected to the unified video player interface. Track selection is a known issue and is actively being worked on. In the meantime, please use the Swiftfin player for this support.
 
 ### Unnecessary Transcoding or Remuxing
 
-Swiftfin uses **Device Profiles** that can be manually adjusted based on your device and media. These settings can be found in **Settings > Playback Quality** where you can change to a different pre-made **Device Profile** or you can select **Custom** to build your own. 
+Swiftfin uses **Device Profiles** that can be manually adjusted based on your device and media. These settings can be found in **Settings > Video Player > Playback Quality** where you can change to a different pre-made **Device Profile** or you can select **Custom** to build your own.
 
 You can add a new profile to the existing ones that would keep all else the same but allows a specific format to **Direct Play**, or you can fully replace them all with **Custom** profiles.
 
@@ -71,11 +71,11 @@ To leave `Gesture Lock`, hold a single point on the screen until the `Gestures u
 
 ### No Local Servers Found
 
-Automatic discovery uses UDP broadcast on port `7359` and this port cannot be changed. Start by ensuring that this port is accessible from your server and Swiftfin is on the same network as your device. mDNS and UDP broadcast must be available from your router. These are network configurations and outside the scope of Swiftfin. [Jellyfin forum or chat rooms](https://jellyfin.org/contact/) would be the best place for troubleshooting assistance for these types of issues.
+Automatic discovery uses UDP broadcast on port `7359` and this port cannot be changed. Start by ensuring that this port is accessible from your server and that your server and device are on the same network. mDNS and UDP broadcast must be available from your router. These are network configurations and outside the scope of Swiftfin. [Jellyfin forum or chat rooms](https://jellyfin.org/contact/) would be the best place for troubleshooting assistance for these types of issues.
 
 ### "The Internet Connection Appears to Be Offline"
 
-Swiftfin can't reach the server but a browser on the same device can. Two causes:
+Swiftfin can't reach the server but a browser on the same device can. Common causes:
 
 - **Local Network permission is off.** Enable it in iOS Settings > Swiftfin.
 - **Reverse Proxy or Custom Headers**, which Swiftfin does not currently support. See [Reverse Proxies](#reverse-proxies).
