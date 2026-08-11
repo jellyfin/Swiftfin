@@ -27,23 +27,29 @@ extension ItemView {
 
         @Default(.Customization.itemBarActionButtons)
         private var barActionButtons: [ItemActionButton]
+        @Default(.Customization.itemMenuActionButtons)
+        private var menuActionButtons: [ItemActionButton]
 
         @StateObject
         private var deleteViewModel: ItemEditorViewModel
 
         let alignment: HorizontalAlignment
 
+        private var resolvedButtons: (visible: [ItemActionButton], overflow: [ItemActionButton], menu: [ItemActionButton]) {
+            ItemActionButtons.resolvedButtons(
+                bar: barActionButtons,
+                menu: menuActionButtons,
+                for: provider,
+                enabledTrailers: enabledTrailers
+            )
+        }
+
         private var defaultFocusedButton: String {
             guard !provider.item.presentPlayButton else {
                 return ItemView.Component.play
             }
 
-            return ItemActionButtons.availableButtons(
-                barActionButtons,
-                for: provider,
-                enabledTrailers: enabledTrailers
-            )
-            .first?.id ?? ItemView.Component.menu
+            return resolvedButtons.visible.first?.id ?? ItemView.Component.menu
         }
 
         init(
@@ -92,6 +98,17 @@ extension ItemView {
                 router.dismiss()
             }
             .errorMessage($deleteViewModel.error)
+            #if os(iOS)
+                .navigationBarMenuButton(
+                    isHidden: resolvedButtons.overflow.isEmpty && resolvedButtons.menu.isEmpty
+                ) {
+                    ItemActionButtons.MenuContent(
+                        provider: provider,
+                        buttons: resolvedButtons.overflow,
+                        menuButtons: resolvedButtons.menu
+                    )
+                }
+            #endif
         }
     }
 }

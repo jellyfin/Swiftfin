@@ -112,7 +112,7 @@ struct ItemActionButtons: View {
         }
     }
 
-    static func availableButtons(
+    private static func availableButtons(
         _ buttons: [ItemActionButton],
         for provider: ItemContentGroupProvider,
         enabledTrailers: TrailerSelection
@@ -122,12 +122,23 @@ struct ItemActionButtons: View {
         }
     }
 
-    private var availableBarButtons: [ItemActionButton] {
-        Self.availableButtons(barActionButtons, for: provider, enabledTrailers: enabledTrailers)
-    }
+    static func resolvedButtons(
+        bar: [ItemActionButton],
+        menu: [ItemActionButton],
+        for provider: ItemContentGroupProvider,
+        enabledTrailers: TrailerSelection
+    ) -> (visible: [ItemActionButton], overflow: [ItemActionButton], menu: [ItemActionButton]) {
+        let bar = availableButtons(bar, for: provider, enabledTrailers: enabledTrailers)
+        let menu = availableButtons(menu, for: provider, enabledTrailers: enabledTrailers)
 
-    private var availableMenuButtons: [ItemActionButton] {
-        Self.availableButtons(menuActionButtons, for: provider, enabledTrailers: enabledTrailers)
+        let hasBarMenu = UIDevice.isTV && (menu.isNotEmpty || bar.count > maximumButtons)
+        let visible = Array(bar.prefix(hasBarMenu ? maximumButtons - 1 : maximumButtons))
+
+        return (
+            visible: visible,
+            overflow: Array(bar.dropFirst(visible.count)),
+            menu: menu
+        )
     }
 
     @ViewBuilder
@@ -155,13 +166,16 @@ struct ItemActionButtons: View {
     }
 
     var body: some View {
-        let bar = availableBarButtons
-        let menu = availableMenuButtons
-        let hasOverflowMenu = menu.isNotEmpty || bar.count > Self.maximumButtons
-        let visible = Array(bar.prefix(hasOverflowMenu ? Self.maximumButtons - 1 : Self.maximumButtons))
-        let overflow = Array(bar.dropFirst(visible.count))
+        let (visible, overflow, menu) = Self.resolvedButtons(
+            bar: barActionButtons,
+            menu: menuActionButtons,
+            for: provider,
+            enabledTrailers: enabledTrailers
+        )
 
-        if bar.isNotEmpty || menu.isNotEmpty {
+        let hasBarMenu = UIDevice.isTV && (overflow.isNotEmpty || menu.isNotEmpty)
+
+        if visible.isNotEmpty || hasBarMenu {
             HStack(alignment: .center, spacing: Self.spacing) {
                 ForEach(visible) { button in
                     Self.view(for: button)
@@ -169,26 +183,13 @@ struct ItemActionButtons: View {
                         .focused(focusedButton, equals: button.id)
                 }
 
-                if hasOverflowMenu {
+                if hasBarMenu {
                     Menu {
-                        Group {
-                            ForEach(
-                                overflow,
-                                content: Self.view(for:)
-                            )
-
-                            if overflow.isNotEmpty, menu.isNotEmpty {
-                                Divider()
-                            }
-
-                            ForEach(
-                                menu,
-                                content: Self.view(for:)
-                            )
-                        }
-                        .withViewContext(.isInMenu)
-                        .symbolRenderingMode(.monochrome)
-                        .foregroundStyle(.primary)
+                        MenuContent(
+                            provider: provider,
+                            buttons: overflow,
+                            menuButtons: menu
+                        )
                     } label: {
                         Label(L10n.menu, systemImage: "ellipsis")
                     }
@@ -206,6 +207,40 @@ struct ItemActionButtons: View {
             .buttonStyle(BasicHoverButtonStyle())
             .font(.title3)
             .fontWeight(.semibold)
+        }
+    }
+}
+
+extension ItemActionButtons {
+
+    struct MenuContent: View {
+
+        @ObservedObject
+        var provider: ItemContentGroupProvider
+
+        let buttons: [ItemActionButton]
+        let menuButtons: [ItemActionButton]
+
+        var body: some View {
+            Group {
+                ForEach(
+                    buttons,
+                    content: ItemActionButtons.view(for:)
+                )
+
+                if buttons.isNotEmpty, menuButtons.isNotEmpty {
+                    Divider()
+                }
+
+                ForEach(
+                    menuButtons,
+                    content: ItemActionButtons.view(for:)
+                )
+            }
+            .environmentObject(provider)
+            .withViewContext(.isInMenu)
+            .symbolRenderingMode(.monochrome)
+            .foregroundStyle(.primary)
         }
     }
 }
