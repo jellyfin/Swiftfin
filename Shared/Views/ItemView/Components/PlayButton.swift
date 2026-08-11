@@ -84,6 +84,7 @@ struct PlayButton: View {
         .backport
         .buttonBorderShape(.capsule)
         .buttonStyle(BasicHoverButtonStyle())
+        .coordinatedFocus(ItemView.Component.play)
         .contextMenu {
             if provider.mediaPlayerItemProvider?.item.userData?.playbackPositionTicks != 0 {
                 Button(L10n.playFromBeginning, systemImage: "gobackward") {
