@@ -29,7 +29,7 @@ extension ItemActionButtons {
 
         var body: some View {
             Button(
-                ItemActionButton.favorited.displayTitle,
+                isFavorited ? L10n.removeFromFavorites : L10n.addToFavorites,
                 systemImage: systemImage
             ) {
                 Task { await provider.toggleIsFavorite() }
