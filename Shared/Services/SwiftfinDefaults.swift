@@ -115,17 +115,17 @@ extension Defaults.Keys {
             UserKey("mediaItemViewType", default: .enhanced)
         }
 
-        static var itemBarActionButtons: Key<[ContentGroupActionButton]> {
+        static var itemBarActionButtons: Key<[ItemActionButton]> {
             UserKey(
                 "itemBarActionButtons",
-                default: ContentGroupActionButton.defaultBarActionButtons
+                default: ItemActionButton.defaultBarActionButtons
             )
         }
 
-        static var itemMenuActionButtons: Key<[ContentGroupActionButton]> {
+        static var itemMenuActionButtons: Key<[ItemActionButton]> {
             UserKey(
                 "itemMenuActionButtons",
-                default: ContentGroupActionButton.defaultMenuActionButtons
+                default: ItemActionButton.defaultMenuActionButtons
             )
         }
 

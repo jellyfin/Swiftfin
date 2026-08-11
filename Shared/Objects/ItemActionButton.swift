@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-enum ContentGroupActionButton: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable {
+enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable {
 
     case played
     case favorited
@@ -91,14 +91,14 @@ enum ContentGroupActionButton: String, CaseIterable, Displayable, Equatable, Ide
         }
     }
 
-    static let defaultBarActionButtons: [ContentGroupActionButton] = [
+    static let defaultBarActionButtons: [ItemActionButton] = [
         .played,
         .favorited,
         .trailers,
         .playback
     ]
 
-    static let defaultMenuActionButtons: [ContentGroupActionButton] = [
+    static let defaultMenuActionButtons: [ItemActionButton] = [
         .refresh,
         .subtitles,
         .delete

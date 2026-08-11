@@ -26,16 +26,16 @@ extension NavigationRoute {
         }
     }
 
-    static func itemActionBarButtonSelector(selectedButtonsBinding: Binding<[ContentGroupActionButton]>) -> NavigationRoute {
+    static func itemActionBarButtonSelector(selectedButtonsBinding: Binding<[ItemActionButton]>) -> NavigationRoute {
         NavigationRoute(id: "itemActionBarButtonSelector") {
-            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: ContentGroupActionButton.allCases)
+            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: ItemActionButton.allCases)
                 .navigationTitle(L10n.barButtons.localizedCapitalized)
         }
     }
 
-    static func itemActionMenuButtonSelector(selectedButtonsBinding: Binding<[ContentGroupActionButton]>) -> NavigationRoute {
+    static func itemActionMenuButtonSelector(selectedButtonsBinding: Binding<[ItemActionButton]>) -> NavigationRoute {
         NavigationRoute(id: "itemActionMenuButtonSelector") {
-            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: ContentGroupActionButton.allCases)
+            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: ItemActionButton.allCases)
                 .navigationTitle(L10n.menuButtons.localizedCapitalized)
         }
     }

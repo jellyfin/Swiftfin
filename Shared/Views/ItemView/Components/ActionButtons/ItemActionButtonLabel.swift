@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct ContentGroupActionButtonLabel: View {
+struct ItemActionButtonLabel: View {
 
     @ViewContextContains(.isInMenu)
     private var isInMenu
@@ -31,7 +31,7 @@ struct ContentGroupActionButtonLabel: View {
     }
 
     init(
-        _ button: ContentGroupActionButton,
+        _ button: ItemActionButton,
         systemImage: String? = nil,
         isActive: Bool = false
     ) {

@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension ContentGroupActionButtons {
+extension ItemActionButtons {
 
     struct Favorited: View {
 
@@ -21,9 +21,9 @@ extension ContentGroupActionButtons {
 
         private var systemImage: String {
             if isFavorited {
-                ContentGroupActionButton.favorited.systemImage
+                ItemActionButton.favorited.systemImage
             } else {
-                ContentGroupActionButton.favorited.secondarySystemImage
+                ItemActionButton.favorited.secondarySystemImage
             }
         }
 
@@ -31,7 +31,7 @@ extension ContentGroupActionButtons {
             Button {
                 Task { await provider.toggleIsFavorite() }
             } label: {
-                ContentGroupActionButtonLabel(
+                ItemActionButtonLabel(
                     .favorited,
                     systemImage: systemImage,
                     isActive: isFavorited

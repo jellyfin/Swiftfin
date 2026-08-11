@@ -26,10 +26,8 @@ struct ItemView: View {
     @StoredValue(.User.enabledTrailers)
     private var enabledTrailers: TrailerSelection
 
-    @Default(.Customization.itemBarActionButtons)
-    private var barActionButtons: [ContentGroupActionButton]
     @Default(.Customization.itemMenuActionButtons)
-    private var menuActionButtons: [ContentGroupActionButton]
+    private var menuActionButtons: [ItemActionButton]
 
     @State
     private var contentSize: CGSize = .zero
@@ -50,18 +48,8 @@ struct ItemView: View {
         contentSize.width < 600
     }
 
-    private var toolbarButtons: [ContentGroupActionButton] {
-        ContentGroupActionButtons.toolbarButtons(
-            bar: barActionButtons,
-            for: provider,
-            enabledTrailers: enabledTrailers
-        )
-    }
-
-    private var toolbarMenuButtons: [ContentGroupActionButton] {
-        guard !UIDevice.isTV else { return [] }
-
-        return ContentGroupActionButtons.availableButtons(
+    private var toolbarMenuButtons: [ItemActionButton] {
+        ItemActionButtons.availableButtons(
             menuActionButtons,
             for: provider,
             enabledTrailers: enabledTrailers
@@ -166,12 +154,11 @@ struct ItemView: View {
         #else
             .navigationBarMenuButton(
                 isLoading: viewModel.background.is(.refreshing),
-                isHidden: toolbarButtons.isEmpty && toolbarMenuButtons.isEmpty
+                isHidden: toolbarMenuButtons.isEmpty
             ) {
-                ContentGroupActionButtons.MenuContent(
+                ItemActionButtons.MenuContent(
                     provider: provider,
-                    buttons: toolbarButtons,
-                    menuButtons: toolbarMenuButtons
+                    buttons: toolbarMenuButtons
                 )
             }
         #endif

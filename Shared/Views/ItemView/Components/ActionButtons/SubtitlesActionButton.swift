@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension ContentGroupActionButtons {
+extension ItemActionButtons {
 
     struct Subtitles: View {
 
@@ -26,7 +26,7 @@ extension ContentGroupActionButtons {
                 router.route(to: .searchSubtitle(viewModel: .init(item: provider.item)))
                 #endif
             } label: {
-                ContentGroupActionButtonLabel(.subtitles)
+                ItemActionButtonLabel(.subtitles)
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)

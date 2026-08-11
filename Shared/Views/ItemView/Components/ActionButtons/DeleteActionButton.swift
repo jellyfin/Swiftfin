@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension ContentGroupActionButtons {
+extension ItemActionButtons {
 
     struct Delete: View {
 
@@ -19,7 +19,7 @@ extension ContentGroupActionButtons {
             Button(role: .destructive) {
                 provider.isPresentingDeleteConfirmation = true
             } label: {
-                ContentGroupActionButtonLabel(.delete)
+                ItemActionButtonLabel(.delete)
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)

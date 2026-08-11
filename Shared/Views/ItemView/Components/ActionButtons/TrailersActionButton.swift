@@ -10,7 +10,7 @@ import JellyfinAPI
 import Logging
 import SwiftUI
 
-extension ContentGroupActionButtons {
+extension ItemActionButtons {
 
     struct Trailers: View {
 
@@ -47,8 +47,8 @@ extension ContentGroupActionButtons {
             enabledTrailers.contains(.external) && externalTrailers.isNotEmpty
         }
 
-        private var label: ContentGroupActionButtonLabel {
-            ContentGroupActionButtonLabel(.trailers)
+        private var label: ItemActionButtonLabel {
+            ItemActionButtonLabel(.trailers)
         }
 
         @ViewBuilder

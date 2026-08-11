@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension ContentGroupActionButtons {
+extension ItemActionButtons {
 
     struct Refresh: View {
 
@@ -22,7 +22,7 @@ extension ContentGroupActionButtons {
             Button {
                 router.route(to: .itemMetadataRefresh(viewModel: .init(item: provider.item)))
             } label: {
-                ContentGroupActionButtonLabel(.refresh)
+                ItemActionButtonLabel(.refresh)
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)

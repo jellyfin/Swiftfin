@@ -10,7 +10,29 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension ContentGroupActionButtons {
+extension MediaPlayerItemProvider {
+
+    var audioStreams: [MediaStream] {
+        mediaSource?.audioStreams?.filter { $0.isExternal != true } ?? []
+    }
+
+    var subtitleStreams: [MediaStream] {
+        mediaSource?.subtitleStreams ?? []
+    }
+
+    var supportedBitrates: [PlaybackBitrate] {
+        mediaSource?.supportedBitrates ?? []
+    }
+
+    var hasPlaybackOptions: Bool {
+        (item.mediaSources?.count ?? 0) > 1
+            || audioStreams.count > 1
+            || subtitleStreams.isNotEmpty
+            || supportedBitrates.count > 1
+    }
+}
+
+extension ItemActionButtons {
 
     struct Playback: View {
 
@@ -23,86 +45,63 @@ extension ContentGroupActionButtons {
         @EnvironmentObject
         private var provider: ItemContentGroupProvider
 
-        static func hasOptions(for provider: ItemContentGroupProvider) -> Bool {
-            mediaSources(for: provider).count > 1
-                || audioStreams(for: provider).count > 1
-                || subtitleStreams(for: provider).isNotEmpty
-                || supportedBitrates(for: provider).count > 1
-        }
-
-        private static func mediaSources(for provider: ItemContentGroupProvider) -> [MediaSourceInfo] {
-            provider.mediaPlayerItemProvider?.item.mediaSources ?? []
-        }
-
-        private static func audioStreams(for provider: ItemContentGroupProvider) -> [MediaStream] {
-            selectedMediaSource(for: provider)?.audioStreams?.filter { $0.isExternal != true } ?? []
-        }
-
-        private static func subtitleStreams(for provider: ItemContentGroupProvider) -> [MediaStream] {
-            selectedMediaSource(for: provider)?.subtitleStreams ?? []
-        }
-
-        private static func supportedBitrates(for provider: ItemContentGroupProvider) -> [PlaybackBitrate] {
-            selectedMediaSource(for: provider)?.supportedBitrates ?? []
-        }
-
-        private static func selectedMediaSource(for provider: ItemContentGroupProvider) -> MediaSourceInfo? {
-            provider.mediaPlayerItemProvider?.mediaSource
+        private var itemProvider: MediaPlayerItemProvider? {
+            provider.mediaPlayerItemProvider
         }
 
         private var mediaSources: [MediaSourceInfo] {
-            Self.mediaSources(for: provider)
+            itemProvider?.item.mediaSources ?? []
         }
 
         private var audioStreams: [MediaStream] {
-            Self.audioStreams(for: provider)
+            itemProvider?.audioStreams ?? []
         }
 
         private var subtitleStreams: [MediaStream] {
-            Self.subtitleStreams(for: provider)
+            itemProvider?.subtitleStreams ?? []
         }
 
         private var supportedBitrates: [PlaybackBitrate] {
-            Self.supportedBitrates(for: provider)
+            itemProvider?.supportedBitrates ?? []
         }
 
         private var selectedMediaSource: MediaSourceInfo? {
-            Self.selectedMediaSource(for: provider)
+            itemProvider?.mediaSource
         }
 
         private var mediaSourceSelection: Binding<MediaSourceInfo?> {
             Binding(
                 get: { selectedMediaSource },
-                set: provider.selectMediaSource
+                set: { provider.select(.mediaSource($0)) }
             )
         }
 
         private var audioStreamSelection: Binding<Int?> {
             Binding(
                 get: {
-                    provider.mediaPlayerItemProvider?.audioStreamIndex
+                    itemProvider?.audioStreamIndex
                         ?? selectedMediaSource?.defaultAudioStreamIndex
                         ?? audioStreams.first?.index
                 },
-                set: provider.selectAudioStreamIndex
+                set: { provider.select(.audioStreamIndex($0)) }
             )
         }
 
         private var subtitleStreamSelection: Binding<Int?> {
             Binding(
                 get: {
-                    provider.mediaPlayerItemProvider?.subtitleStreamIndex
+                    itemProvider?.subtitleStreamIndex
                         ?? selectedMediaSource?.defaultSubtitleStreamIndex
                         ?? -1
                 },
-                set: provider.selectSubtitleStreamIndex
+                set: { provider.select(.subtitleStreamIndex($0)) }
             )
         }
 
         private var bitrateSelection: Binding<PlaybackBitrate> {
             Binding(
-                get: { provider.mediaPlayerItemProvider?.requestedBitrate ?? appMaximumBitrate },
-                set: provider.selectBitrate
+                get: { itemProvider?.requestedBitrate ?? appMaximumBitrate },
+                set: { provider.select(.bitrate($0)) }
             )
         }
 
@@ -187,7 +186,7 @@ extension ContentGroupActionButtons {
                     qualityPicker
                 }
             } label: {
-                ContentGroupActionButtonLabel(.playback)
+                ItemActionButtonLabel(.playback)
             }
             .if(!isInMenu && UIDevice.isTV) { menu in
                 menu.menuStyle(.button)

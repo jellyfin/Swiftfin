@@ -260,59 +260,35 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         }
     }
 
-    func selectMediaSource(_ mediaSource: MediaSourceInfo?) {
-        guard let current = mediaPlayerItemProvider else { return }
-
-        rebuildMediaPlayerItemProvider(
-            mediaSource: mediaSource,
-            audioStreamIndex: nil,
-            subtitleStreamIndex: nil,
-            requestedBitrate: current.requestedBitrate
-        )
+    enum PlaybackSelection {
+        case mediaSource(MediaSourceInfo?)
+        case audioStreamIndex(Int?)
+        case subtitleStreamIndex(Int?)
+        case bitrate(PlaybackBitrate)
     }
 
-    func selectAudioStreamIndex(_ index: Int?) {
-        guard let current = mediaPlayerItemProvider else { return }
+    func select(_ selection: PlaybackSelection) {
+        guard let current = mediaPlayerItemProvider, let userSession else { return }
 
-        rebuildMediaPlayerItemProvider(
-            mediaSource: current.mediaSource,
-            audioStreamIndex: index,
-            subtitleStreamIndex: current.subtitleStreamIndex,
-            requestedBitrate: current.requestedBitrate
-        )
-    }
+        var mediaSource = current.mediaSource
+        var audioStreamIndex = current.audioStreamIndex
+        var subtitleStreamIndex = current.subtitleStreamIndex
+        var requestedBitrate = current.requestedBitrate
 
-    func selectSubtitleStreamIndex(_ index: Int?) {
-        guard let current = mediaPlayerItemProvider else { return }
+        switch selection {
+        case let .mediaSource(source):
+            mediaSource = source
+            audioStreamIndex = nil
+            subtitleStreamIndex = nil
+        case let .audioStreamIndex(index):
+            audioStreamIndex = index
+        case let .subtitleStreamIndex(index):
+            subtitleStreamIndex = index
+        case let .bitrate(bitrate):
+            requestedBitrate = bitrate
+        }
 
-        rebuildMediaPlayerItemProvider(
-            mediaSource: current.mediaSource,
-            audioStreamIndex: current.audioStreamIndex,
-            subtitleStreamIndex: index,
-            requestedBitrate: current.requestedBitrate
-        )
-    }
-
-    func selectBitrate(_ bitrate: PlaybackBitrate) {
-        guard let current = mediaPlayerItemProvider else { return }
-
-        rebuildMediaPlayerItemProvider(
-            mediaSource: current.mediaSource,
-            audioStreamIndex: current.audioStreamIndex,
-            subtitleStreamIndex: current.subtitleStreamIndex,
-            requestedBitrate: bitrate
-        )
-    }
-
-    private func rebuildMediaPlayerItemProvider(
-        mediaSource: MediaSourceInfo?,
-        audioStreamIndex: Int?,
-        subtitleStreamIndex: Int?,
-        requestedBitrate: PlaybackBitrate
-    ) {
-        guard let mediaPlayerItemProvider, let userSession else { return }
-
-        self.mediaPlayerItemProvider = mediaPlayerItemProvider.item.getPlaybackItemProvider(
+        mediaPlayerItemProvider = current.item.getPlaybackItemProvider(
             userSession: userSession,
             mediaSource: mediaSource,
             audioStreamIndex: audioStreamIndex,

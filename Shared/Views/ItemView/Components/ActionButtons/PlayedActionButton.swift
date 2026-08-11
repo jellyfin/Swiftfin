@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension ContentGroupActionButtons {
+extension ItemActionButtons {
 
     struct Played: View {
 
@@ -23,7 +23,7 @@ extension ContentGroupActionButtons {
             Button {
                 Task { await provider.toggleIsPlayed() }
             } label: {
-                ContentGroupActionButtonLabel(
+                ItemActionButtonLabel(
                     .played,
                     isActive: isPlayed
                 )

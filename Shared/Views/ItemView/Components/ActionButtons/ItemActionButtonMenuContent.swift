@@ -8,32 +8,20 @@
 
 import SwiftUI
 
-extension ContentGroupActionButtons {
+extension ItemActionButtons {
 
     struct MenuContent: View {
 
         @ObservedObject
         var provider: ItemContentGroupProvider
 
-        let buttons: [ContentGroupActionButton]
-        let menuButtons: [ContentGroupActionButton]
+        let buttons: [ItemActionButton]
 
         var body: some View {
-            Group {
-                ForEach(
-                    buttons,
-                    content: ContentGroupActionButtons.view(for:)
-                )
-
-                if buttons.isNotEmpty, menuButtons.isNotEmpty {
-                    Divider()
-                }
-
-                ForEach(
-                    menuButtons,
-                    content: ContentGroupActionButtons.view(for:)
-                )
-            }
+            ForEach(
+                buttons,
+                content: ItemActionButtons.view(for:)
+            )
             .environmentObject(provider)
             .withViewContext(.isInMenu)
             .symbolRenderingMode(.monochrome)

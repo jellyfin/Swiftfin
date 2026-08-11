@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension ContentGroupActionButtons {
+extension ItemActionButtons {
 
     struct Edit: View {
 
@@ -22,7 +22,7 @@ extension ContentGroupActionButtons {
             Button {
                 router.route(to: .itemEditor(viewModel: .init(item: provider.item)))
             } label: {
-                ContentGroupActionButtonLabel(.editMetadata)
+                ItemActionButtonLabel(.editMetadata)
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)

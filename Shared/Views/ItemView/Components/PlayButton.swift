@@ -81,7 +81,7 @@ struct PlayButton: View {
                 in: .capsule
             )
         }
-        .frame(height: ContentGroupActionButtons.buttonHeight)
+        .frame(height: ItemActionButtons.buttonHeight)
         .backport
         .buttonBorderShape(.capsule)
         .buttonStyle(BasicHoverButtonStyle())
