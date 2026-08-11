@@ -138,11 +138,9 @@ struct ItemView: View {
         #if os(tvOS)
             .toolbarVisibility(.hidden, for: .navigationBar)
         #else
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if viewModel.background.is(.refreshing) {
-                        ProgressView()
-                    }
+            .topBarTrailing {
+                if viewModel.background.is(.refreshing) {
+                    ProgressView()
                 }
             }
         #endif

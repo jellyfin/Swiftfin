@@ -47,7 +47,7 @@ private struct ItemActionButtonLabelStyle: LabelStyle {
 
 struct ItemActionButtons: View {
 
-    static let maximumButtons = UIDevice.isTV ? 5 : 4
+    static let maximumButtons = 4
 
     @ObservedObject
     var provider: ItemContentGroupProvider
