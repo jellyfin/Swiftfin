@@ -16,13 +16,12 @@ extension ItemActionButtons {
         private var provider: ItemContentGroupProvider
 
         var body: some View {
-            Button(role: .destructive) {
+            Button(
+                ItemActionButton.delete.displayTitle,
+                systemImage: ItemActionButton.delete.systemImage,
+                role: .destructive
+            ) {
                 provider.isPresentingDeleteConfirmation = true
-            } label: {
-                Label(
-                    ItemActionButton.delete.displayTitle,
-                    systemImage: ItemActionButton.delete.systemImage
-                )
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)

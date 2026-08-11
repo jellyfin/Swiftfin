@@ -10,31 +10,12 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension MediaPlayerItemProvider {
-
-    var audioStreams: [MediaStream] {
-        mediaSource?.audioStreams?.filter { $0.isExternal != true } ?? []
-    }
-
-    var subtitleStreams: [MediaStream] {
-        mediaSource?.subtitleStreams ?? []
-    }
-
-    var supportedBitrates: [PlaybackBitrate] {
-        mediaSource?.supportedBitrates ?? []
-    }
-
-    var hasPlaybackOptions: Bool {
-        (item.mediaSources?.count ?? 0) > 1
-            || audioStreams.count > 1
-            || subtitleStreams.isNotEmpty
-            || supportedBitrates.count > 1
-    }
-}
-
 extension ItemActionButtons {
 
     struct Playback: View {
+
+        @EnvironmentObject
+        private var provider: ItemContentGroupProvider
 
         @Default(.VideoPlayer.Playback.appMaximumBitrate)
         private var appMaximumBitrate
@@ -42,45 +23,28 @@ extension ItemActionButtons {
         @ViewContextContains(.isInMenu)
         private var isInMenu
 
-        @EnvironmentObject
-        private var provider: ItemContentGroupProvider
-
-        private var itemProvider: MediaPlayerItemProvider? {
-            provider.mediaPlayerItemProvider
-        }
-
         private var mediaSources: [MediaSourceInfo] {
-            itemProvider?.item.mediaSources ?? []
+            provider.mediaPlayerItemProvider?.item.mediaSources ?? []
         }
 
+        // TODO: Fix External Audio Tracks & Re-Enable
         private var audioStreams: [MediaStream] {
-            itemProvider?.audioStreams ?? []
+            provider.mediaPlayerItemProvider?.mediaSource?.audioStreams?.filter { $0.isExternal != true } ?? []
         }
 
         private var subtitleStreams: [MediaStream] {
-            itemProvider?.subtitleStreams ?? []
+            provider.mediaPlayerItemProvider?.mediaSource?.subtitleStreams ?? []
         }
 
         private var supportedBitrates: [PlaybackBitrate] {
-            itemProvider?.supportedBitrates ?? []
-        }
-
-        private var selectedMediaSource: MediaSourceInfo? {
-            itemProvider?.mediaSource
-        }
-
-        private var mediaSourceSelection: Binding<MediaSourceInfo?> {
-            Binding(
-                get: { selectedMediaSource },
-                set: { provider.select(.mediaSource($0)) }
-            )
+            provider.mediaPlayerItemProvider?.mediaSource?.supportedBitrates ?? []
         }
 
         private var audioStreamSelection: Binding<Int?> {
             Binding(
                 get: {
-                    itemProvider?.audioStreamIndex
-                        ?? selectedMediaSource?.defaultAudioStreamIndex
+                    provider.mediaPlayerItemProvider?.audioStreamIndex
+                        ?? provider.mediaPlayerItemProvider?.mediaSource?.defaultAudioStreamIndex
                         ?? audioStreams.first?.index
                 },
                 set: { provider.select(.audioStreamIndex($0)) }
@@ -90,63 +54,33 @@ extension ItemActionButtons {
         private var subtitleStreamSelection: Binding<Int?> {
             Binding(
                 get: {
-                    itemProvider?.subtitleStreamIndex
-                        ?? selectedMediaSource?.defaultSubtitleStreamIndex
+                    provider.mediaPlayerItemProvider?.subtitleStreamIndex
+                        ?? provider.mediaPlayerItemProvider?.mediaSource?.defaultSubtitleStreamIndex
                         ?? -1
                 },
                 set: { provider.select(.subtitleStreamIndex($0)) }
             )
         }
 
-        private var bitrateSelection: Binding<PlaybackBitrate> {
-            Binding(
-                get: { itemProvider?.requestedBitrate ?? appMaximumBitrate },
-                set: { provider.select(.bitrate($0)) }
-            )
-        }
-
         @ViewBuilder
         private var versionPicker: some View {
             Picker(
-                L10n.version,
-                sources: mediaSources,
-                selection: mediaSourceSelection,
-                noneStyle: nil
-            )
-            .pickerStyle(.menu)
-        }
-
-        @ViewBuilder
-        private var audioPicker: some View {
-            Picker(selection: audioStreamSelection) {
-                ForEach(audioStreams, id: \.index) { stream in
-                    Text(stream.displayTitle ?? L10n.unknown)
-                        .tag(stream.index as Int?)
+                selection: Binding(
+                    get: { provider.mediaPlayerItemProvider?.mediaSource },
+                    set: { provider.select(.mediaSource($0)) }
+                )
+            ) {
+                ForEach(mediaSources) { mediaSource in
+                    Text(mediaSource.displayTitle)
+                        .tag(mediaSource as MediaSourceInfo)
                 }
             } label: {
-                Text(L10n.audio)
+                Text(L10n.version)
 
-                if let selectedAudioStream = audioStreams.first(where: { $0.index == audioStreamSelection.wrappedValue }) {
-                    Text(selectedAudioStream.displayTitle ?? L10n.unknown)
-                }
-            }
-            .pickerStyle(.menu)
-        }
-
-        @ViewBuilder
-        private var subtitlePicker: some View {
-            Picker(selection: subtitleStreamSelection) {
-                ForEach(subtitleStreams.prepending(.none), id: \.index) { stream in
-                    Text(stream.displayTitle ?? L10n.unknown)
-                        .tag(stream.index as Int?)
-                }
-            } label: {
-                Text(L10n.subtitles)
-
-                if let selectedSubtitleStream = subtitleStreams
-                    .first(where: { $0.index == subtitleStreamSelection.wrappedValue })
+                if let selectedMediaSource = mediaSources
+                    .first(where: { $0.id == provider.mediaPlayerItemProvider?.mediaSource?.id })
                 {
-                    Text(selectedSubtitleStream.displayTitle ?? L10n.unknown)
+                    Text(selectedMediaSource.displayTitle)
                 } else {
                     Text(L10n.none)
                 }
@@ -156,40 +90,75 @@ extension ItemActionButtons {
 
         @ViewBuilder
         private var qualityPicker: some View {
-            Picker(selection: bitrateSelection) {
+            Picker(
+                selection: Binding(
+                    get: { provider.mediaPlayerItemProvider?.requestedBitrate ?? appMaximumBitrate },
+                    set: { provider.select(.bitrate($0)) }
+                )
+            ) {
                 ForEach(supportedBitrates, id: \.rawValue) { bitrate in
                     Text(bitrate.displayTitle)
                         .tag(bitrate)
                 }
             } label: {
                 Text(L10n.playbackQuality)
-                Text(bitrateSelection.wrappedValue.displayTitle)
+                Text(provider.mediaPlayerItemProvider?.requestedBitrate.displayTitle)
+            }
+            .pickerStyle(.menu)
+        }
+
+        @ViewBuilder
+        private func trackPicker(
+            _ title: String,
+            streams: [MediaStream],
+            selection: Binding<Int?>
+        ) -> some View {
+            Picker(selection: selection) {
+                ForEach(streams, id: \.index) { stream in
+                    Text(stream.displayTitle ?? L10n.unknown)
+                        .tag(stream.index as Int?)
+                }
+            } label: {
+                Text(title)
+
+                if let selectedStream = streams.first(where: { $0.index == selection.wrappedValue }) {
+                    Text(selectedStream.displayTitle ?? L10n.unknown)
+                }
             }
             .pickerStyle(.menu)
         }
 
         var body: some View {
-            Menu {
-                if mediaSources.count > 1 {
-                    versionPicker
-                }
-
-                if audioStreams.count > 1 {
-                    audioPicker
-                }
-
-                if subtitleStreams.isNotEmpty {
-                    subtitlePicker
-                }
-
-                if supportedBitrates.count > 1 {
+            Menu(
+                ItemActionButton.playback.displayTitle,
+                systemImage: ItemActionButton.playback.systemImage
+            ) {
+                Section(L10n.source) {
+                    if mediaSources.count > 1 {
+                        versionPicker
+                    }
                     qualityPicker
                 }
-            } label: {
-                Label(
-                    ItemActionButton.playback.displayTitle,
-                    systemImage: ItemActionButton.playback.systemImage
-                )
+
+                if audioStreams.isNotEmpty || subtitleStreams.isNotEmpty {
+                    Section(L10n.tracks) {
+                        if audioStreams.isNotEmpty {
+                            trackPicker(
+                                L10n.audio,
+                                streams: audioStreams,
+                                selection: audioStreamSelection
+                            )
+                        }
+
+                        if subtitleStreams.isNotEmpty {
+                            trackPicker(
+                                L10n.subtitles,
+                                streams: subtitleStreams.prepending(.none),
+                                selection: subtitleStreamSelection
+                            )
+                        }
+                    }
+                }
             }
             .if(!isInMenu && UIDevice.isTV) { menu in
                 menu.menuStyle(.button)

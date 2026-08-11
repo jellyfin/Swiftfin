@@ -19,13 +19,11 @@ extension ItemActionButtons {
         private var router
 
         var body: some View {
-            Button {
+            Button(
+                ItemActionButton.editMetadata.displayTitle,
+                systemImage: ItemActionButton.editMetadata.systemImage
+            ) {
                 router.route(to: .itemEditor(viewModel: .init(item: provider.item)))
-            } label: {
-                Label(
-                    ItemActionButton.editMetadata.displayTitle,
-                    systemImage: ItemActionButton.editMetadata.systemImage
-                )
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)

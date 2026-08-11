@@ -15,22 +15,16 @@ extension ItemActionButtons {
         @EnvironmentObject
         private var provider: ItemContentGroupProvider
 
-        private var isPlayed: Bool {
-            provider.item.userData?.isPlayed == true
-        }
-
         var body: some View {
-            Button {
+            Button(
+                ItemActionButton.played.displayTitle,
+                systemImage: ItemActionButton.played.systemImage
+            ) {
                 Task { await provider.toggleIsPlayed() }
-            } label: {
-                Label(
-                    ItemActionButton.played.displayTitle,
-                    systemImage: ItemActionButton.played.systemImage
-                )
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)
-            .isSelected(isPlayed)
+            .isSelected(provider.item.userData?.isPlayed == true)
         }
     }
 }

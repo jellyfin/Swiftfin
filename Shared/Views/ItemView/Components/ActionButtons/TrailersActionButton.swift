@@ -31,87 +31,16 @@ extension ItemActionButtons {
 
         private let logger = Logger.swiftfin()
 
-        private var localTrailers: [BaseItemDto] {
-            provider.localTrailers
-        }
-
         private var externalTrailers: [NamedURL] {
             provider.item.remoteTrailers ?? []
         }
 
         private var showLocalTrailers: Bool {
-            enabledTrailers.contains(.local) && localTrailers.isNotEmpty
+            enabledTrailers.contains(.local) && provider.localTrailers.isNotEmpty
         }
 
         private var showExternalTrailers: Bool {
             enabledTrailers.contains(.external) && externalTrailers.isNotEmpty
-        }
-
-        private var label: some View {
-            Label(
-                ItemActionButton.trailers.displayTitle,
-                systemImage: ItemActionButton.trailers.systemImage
-            )
-        }
-
-        @ViewBuilder
-        private var trailerButton: some View {
-            Button {
-                if showLocalTrailers, let firstTrailer = localTrailers.first {
-                    playLocalTrailer(firstTrailer)
-                }
-
-                if showExternalTrailers, let firstTrailer = externalTrailers.first {
-                    playExternalTrailer(firstTrailer)
-                }
-            } label: {
-                label
-            }
-        }
-
-        @ViewBuilder
-        private var menuContent: some View {
-            Group {
-                if showLocalTrailers {
-                    Section(L10n.local) {
-                        ForEach(localTrailers) { trailer in
-                            Button(
-                                trailer.name ?? L10n.trailer,
-                                systemImage: "play.fill"
-                            ) {
-                                playLocalTrailer(trailer)
-                            }
-                        }
-                    }
-                }
-
-                if showExternalTrailers {
-                    Section(L10n.external) {
-                        ForEach(externalTrailers, id: \.self) { mediaURL in
-                            Button(
-                                mediaURL.name ?? L10n.trailer,
-                                systemImage: "arrow.up.forward"
-                            ) {
-                                playExternalTrailer(mediaURL)
-                            }
-                        }
-                    }
-                }
-            }
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary)
-        }
-
-        @ViewBuilder
-        private var trailerMenu: some View {
-            Menu {
-                menuContent
-            } label: {
-                label
-            }
-            .if(!isInMenu && UIDevice.isTV) { menu in
-                menu.menuStyle(.button)
-            }
         }
 
         private func playLocalTrailer(_ trailer: BaseItemDto) {
@@ -158,13 +87,42 @@ extension ItemActionButtons {
         }
 
         var body: some View {
-            Group {
-                switch localTrailers.count + externalTrailers.count {
-                case 1:
-                    trailerButton
-                default:
-                    trailerMenu
+            Menu(
+                ItemActionButton.trailers.displayTitle,
+                systemImage: ItemActionButton.trailers.systemImage
+            ) {
+                Group {
+                    if showLocalTrailers {
+                        Section(L10n.local) {
+                            ForEach(provider.localTrailers) { trailer in
+                                Button(
+                                    trailer.name ?? L10n.trailer,
+                                    systemImage: "play.fill"
+                                ) {
+                                    playLocalTrailer(trailer)
+                                }
+                            }
+                        }
+                    }
+
+                    if showExternalTrailers {
+                        Section(L10n.external) {
+                            ForEach(externalTrailers, id: \.self) { mediaURL in
+                                Button(
+                                    mediaURL.name ?? L10n.trailer,
+                                    systemImage: "arrow.up.forward"
+                                ) {
+                                    playExternalTrailer(mediaURL)
+                                }
+                            }
+                        }
+                    }
                 }
+                .symbolRenderingMode(.monochrome)
+                .foregroundStyle(.primary)
+            }
+            .if(!isInMenu && UIDevice.isTV) { menu in
+                menu.menuStyle(.button)
             }
             .errorMessage($error)
             .symbolRenderingMode(.monochrome)

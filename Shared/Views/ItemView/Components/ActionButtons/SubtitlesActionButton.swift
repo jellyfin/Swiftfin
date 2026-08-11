@@ -18,19 +18,20 @@ extension ItemActionButtons {
         @Router
         private var router
 
+        private func action() {
+            #if os(iOS)
+            router.route(to: .editSubtitles(item: provider.item))
+            #else
+            router.route(to: .searchSubtitle(viewModel: .init(item: provider.item)))
+            #endif
+        }
+
         var body: some View {
-            Button {
-                #if os(iOS)
-                router.route(to: .editSubtitles(item: provider.item))
-                #else
-                router.route(to: .searchSubtitle(viewModel: .init(item: provider.item)))
-                #endif
-            } label: {
-                Label(
-                    ItemActionButton.subtitles.displayTitle,
-                    systemImage: ItemActionButton.subtitles.systemImage
-                )
-            }
+            Button(
+                ItemActionButton.subtitles.displayTitle,
+                systemImage: ItemActionButton.subtitles.systemImage,
+                action: action
+            )
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)
         }

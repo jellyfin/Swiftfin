@@ -93,6 +93,7 @@ extension ItemView {
 
                 Button(L10n.cancel, role: .cancel) {}
             }
+            .multilineTextAlignment(.center)
             .onNotification(.didDeleteItem) { _ in
                 UIDevice.feedback(.success)
                 router.dismiss()

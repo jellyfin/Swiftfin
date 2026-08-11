@@ -60,8 +60,6 @@ struct ItemActionButtons: View {
     @ObservedObject
     var provider: ItemContentGroupProvider
 
-    let focusedButton: FocusState<String?>.Binding
-
     @StoredValue(.User.enabledTrailers)
     private var enabledTrailers: TrailerSelection
 
@@ -69,6 +67,8 @@ struct ItemActionButtons: View {
     private var barActionButtons: [ItemActionButton]
     @Default(.Customization.itemMenuActionButtons)
     private var menuActionButtons: [ItemActionButton]
+
+    let focusedButton: FocusState<String?>.Binding
 
     private static func hasTrailers(
         for provider: ItemContentGroupProvider,
@@ -98,7 +98,7 @@ struct ItemActionButtons: View {
         case .trailers:
             hasTrailers(for: provider, enabledTrailers: enabledTrailers)
         case .playback:
-            provider.item.presentPlayButton && provider.mediaPlayerItemProvider?.hasPlaybackOptions == true
+            provider.item.presentPlayButton
         case .refresh:
             provider.item.canEditMetadata
         case .subtitles:

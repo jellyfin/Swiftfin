@@ -28,13 +28,11 @@ extension ItemActionButtons {
         }
 
         var body: some View {
-            Button {
+            Button(
+                ItemActionButton.favorited.displayTitle,
+                systemImage: systemImage
+            ) {
                 Task { await provider.toggleIsFavorite() }
-            } label: {
-                Label(
-                    ItemActionButton.favorited.displayTitle,
-                    systemImage: systemImage
-                )
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)
