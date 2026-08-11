@@ -19,7 +19,10 @@ extension ItemActionButtons {
             Button(role: .destructive) {
                 provider.isPresentingDeleteConfirmation = true
             } label: {
-                ItemActionButtonLabel(.delete)
+                Label(
+                    ItemActionButton.delete.displayTitle,
+                    systemImage: ItemActionButton.delete.systemImage
+                )
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)

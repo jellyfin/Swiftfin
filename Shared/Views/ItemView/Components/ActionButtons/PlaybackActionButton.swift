@@ -186,7 +186,10 @@ extension ItemActionButtons {
                     qualityPicker
                 }
             } label: {
-                ItemActionButtonLabel(.playback)
+                Label(
+                    ItemActionButton.playback.displayTitle,
+                    systemImage: ItemActionButton.playback.systemImage
+                )
             }
             .if(!isInMenu && UIDevice.isTV) { menu in
                 menu.menuStyle(.button)

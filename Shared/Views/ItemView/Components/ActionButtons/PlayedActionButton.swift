@@ -23,13 +23,14 @@ extension ItemActionButtons {
             Button {
                 Task { await provider.toggleIsPlayed() }
             } label: {
-                ItemActionButtonLabel(
-                    .played,
-                    isActive: isPlayed
+                Label(
+                    ItemActionButton.played.displayTitle,
+                    systemImage: ItemActionButton.played.systemImage
                 )
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)
+            .isSelected(isPlayed)
         }
     }
 }

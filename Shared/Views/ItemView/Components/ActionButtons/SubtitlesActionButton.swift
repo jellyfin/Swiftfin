@@ -26,7 +26,10 @@ extension ItemActionButtons {
                 router.route(to: .searchSubtitle(viewModel: .init(item: provider.item)))
                 #endif
             } label: {
-                ItemActionButtonLabel(.subtitles)
+                Label(
+                    ItemActionButton.subtitles.displayTitle,
+                    systemImage: ItemActionButton.subtitles.systemImage
+                )
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)

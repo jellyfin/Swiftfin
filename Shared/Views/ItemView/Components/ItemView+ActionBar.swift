@@ -33,7 +33,7 @@ extension ItemView {
 
         let alignment: HorizontalAlignment
 
-        private var defaultFocusedButton: String? {
+        private var defaultFocusedButton: String {
             guard !provider.item.presentPlayButton else {
                 return ItemView.Component.play
             }
@@ -43,7 +43,7 @@ extension ItemView {
                 for: provider,
                 enabledTrailers: enabledTrailers
             )
-            .first?.id
+            .first?.id ?? ItemView.Component.menu
         }
 
         init(
@@ -72,7 +72,7 @@ extension ItemView {
             .defaultFocus(
                 $focusedButton,
                 defaultFocusedButton,
-                priority: focusedButton == nil ? .userInitiated : .automatic
+                priority: .userInitiated
             )
             .confirmationDialog(
                 L10n.deleteItemConfirmationMessage,

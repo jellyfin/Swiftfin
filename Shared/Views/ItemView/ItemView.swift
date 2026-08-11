@@ -23,12 +23,6 @@ struct ItemView: View {
     @Default(.Customization.itemViewType)
     private var itemViewType
 
-    @StoredValue(.User.enabledTrailers)
-    private var enabledTrailers: TrailerSelection
-
-    @Default(.Customization.itemMenuActionButtons)
-    private var menuActionButtons: [ItemActionButton]
-
     @State
     private var contentSize: CGSize = .zero
 
@@ -46,14 +40,6 @@ struct ItemView: View {
 
     private var isCompact: Bool {
         contentSize.width < 600
-    }
-
-    private var toolbarMenuButtons: [ItemActionButton] {
-        ItemActionButtons.availableButtons(
-            menuActionButtons,
-            for: provider,
-            enabledTrailers: enabledTrailers
-        )
     }
 
     private var isEnhanced: Bool {
@@ -152,14 +138,12 @@ struct ItemView: View {
         #if os(tvOS)
             .toolbarVisibility(.hidden, for: .navigationBar)
         #else
-            .navigationBarMenuButton(
-                isLoading: viewModel.background.is(.refreshing),
-                isHidden: toolbarMenuButtons.isEmpty
-            ) {
-                ItemActionButtons.MenuContent(
-                    provider: provider,
-                    buttons: toolbarMenuButtons
-                )
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    if viewModel.background.is(.refreshing) {
+                        ProgressView()
+                    }
+                }
             }
         #endif
     }

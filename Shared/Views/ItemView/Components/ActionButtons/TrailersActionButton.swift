@@ -47,8 +47,11 @@ extension ItemActionButtons {
             enabledTrailers.contains(.external) && externalTrailers.isNotEmpty
         }
 
-        private var label: ItemActionButtonLabel {
-            ItemActionButtonLabel(.trailers)
+        private var label: some View {
+            Label(
+                ItemActionButton.trailers.displayTitle,
+                systemImage: ItemActionButton.trailers.systemImage
+            )
         }
 
         @ViewBuilder

@@ -9,7 +9,45 @@
 import Defaults
 import SwiftUI
 
+private struct ItemActionButtonLabelStyle: LabelStyle {
+
+    @Environment(\.isSelected)
+    private var isSelected
+
+    var activeColor: Color?
+
+    private var iconSize: CGFloat {
+        UIDevice.isTV ? 40 : 24
+    }
+
+    private var tint: Color {
+        guard isSelected, let activeColor else {
+            return .gray.opacity(0.15)
+        }
+
+        return activeColor
+    }
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.icon
+            .font(UIDevice.isTV ? .system(size: 30) : .title3)
+            .frame(width: iconSize, height: iconSize)
+            .padding(UIDevice.isTV ? 16 : 8)
+            .frame(minWidth: 0, maxWidth: .infinity, maxHeight: .infinity)
+            .backport
+            .glassEffect(
+                .regular.selection(
+                    tint: tint,
+                    foregroundColor: .primary
+                ),
+                in: .capsule
+            )
+    }
+}
+
 struct ItemActionButtons: View {
+
+    static let maximumButtons = 4
 
     static var buttonHeight: CGFloat {
         UIDevice.isTV ? 75 : 44
@@ -118,28 +156,44 @@ struct ItemActionButtons: View {
 
     var body: some View {
         let bar = availableBarButtons
-        let menu = UIDevice.isTV ? availableMenuButtons : []
+        let menu = availableMenuButtons
+        let hasOverflowMenu = menu.isNotEmpty || bar.count > Self.maximumButtons
+        let visible = Array(bar.prefix(hasOverflowMenu ? Self.maximumButtons - 1 : Self.maximumButtons))
+        let overflow = Array(bar.dropFirst(visible.count))
 
         if bar.isNotEmpty || menu.isNotEmpty {
             HStack(alignment: .center, spacing: Self.spacing) {
-                ForEach(bar) { button in
+                ForEach(visible) { button in
                     Self.view(for: button)
+                        .labelStyle(ItemActionButtonLabelStyle(activeColor: button.activeColor))
                         .focused(focusedButton, equals: button.id)
                 }
 
-                if menu.isNotEmpty {
+                if hasOverflowMenu {
                     Menu {
-                        MenuContent(
-                            provider: provider,
-                            buttons: menu
-                        )
+                        Group {
+                            ForEach(
+                                overflow,
+                                content: Self.view(for:)
+                            )
+
+                            if overflow.isNotEmpty, menu.isNotEmpty {
+                                Divider()
+                            }
+
+                            ForEach(
+                                menu,
+                                content: Self.view(for:)
+                            )
+                        }
+                        .withViewContext(.isInMenu)
+                        .symbolRenderingMode(.monochrome)
+                        .foregroundStyle(.primary)
                     } label: {
-                        ItemActionButtonLabel(
-                            title: L10n.menu,
-                            systemImage: "ellipsis"
-                        )
+                        Label(L10n.menu, systemImage: "ellipsis")
                     }
                     .menuStyle(.button)
+                    .labelStyle(ItemActionButtonLabelStyle())
                     .symbolRenderingMode(.monochrome)
                     .foregroundStyle(.primary, .secondary)
                     .focused(focusedButton, equals: ItemView.Component.menu)

@@ -268,12 +268,12 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     }
 
     func select(_ selection: PlaybackSelection) {
-        guard let current = mediaPlayerItemProvider, let userSession else { return }
+        guard let provider = mediaPlayerItemProvider, let userSession else { return }
 
-        var mediaSource = current.mediaSource
-        var audioStreamIndex = current.audioStreamIndex
-        var subtitleStreamIndex = current.subtitleStreamIndex
-        var requestedBitrate = current.requestedBitrate
+        var mediaSource = provider.mediaSource
+        var audioStreamIndex = provider.audioStreamIndex
+        var subtitleStreamIndex = provider.subtitleStreamIndex
+        var requestedBitrate = provider.requestedBitrate
 
         switch selection {
         case let .mediaSource(source):
@@ -288,7 +288,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             requestedBitrate = bitrate
         }
 
-        mediaPlayerItemProvider = current.item.getPlaybackItemProvider(
+        mediaPlayerItemProvider = provider.item.getPlaybackItemProvider(
             userSession: userSession,
             mediaSource: mediaSource,
             audioStreamIndex: audioStreamIndex,

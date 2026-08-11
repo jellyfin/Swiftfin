@@ -22,7 +22,10 @@ extension ItemActionButtons {
             Button {
                 router.route(to: .itemMetadataRefresh(viewModel: .init(item: provider.item)))
             } label: {
-                ItemActionButtonLabel(.refresh)
+                Label(
+                    ItemActionButton.refresh.displayTitle,
+                    systemImage: ItemActionButton.refresh.systemImage
+                )
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)

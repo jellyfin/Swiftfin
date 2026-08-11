@@ -31,14 +31,14 @@ extension ItemActionButtons {
             Button {
                 Task { await provider.toggleIsFavorite() }
             } label: {
-                ItemActionButtonLabel(
-                    .favorited,
-                    systemImage: systemImage,
-                    isActive: isFavorited
+                Label(
+                    ItemActionButton.favorited.displayTitle,
+                    systemImage: systemImage
                 )
             }
             .symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary, .secondary)
+            .isSelected(isFavorited)
         }
     }
 }
