@@ -43,6 +43,9 @@ struct MediaStreamInfoView: View {
                 .navigationTitle(mediaStream.displayTitle ?? L10n.media)
                 .backport
                 .toolbarTitleDisplayMode(.inline)
+                .topBarTrailing {
+                    mediaStream.shareLink
+                }
         #endif
     }
 }

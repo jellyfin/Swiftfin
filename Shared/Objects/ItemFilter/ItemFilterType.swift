@@ -17,9 +17,12 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
         selectorType: SelectorType
     )
 
+    case audioLanguage
     case genres
     case letter
+    case officialRatings
     case sortBy
+    case subtitleLanguage
     case tags
     case traits
     case years
@@ -27,14 +30,20 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
 
     var displayTitle: String {
         switch self {
+        case .audioLanguage:
+            L10n.audio
         case .category:
             L10n.category
         case .genres:
             L10n.genres
         case .letter:
             L10n.letter
+        case .officialRatings:
+            L10n.rating
         case .sortBy:
             L10n.sort
+        case .subtitleLanguage:
+            L10n.subtitles
         case .tags:
             L10n.tags
         case .traits:
@@ -47,6 +56,13 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
     @ArrayBuilder<Group>
     var group: [Group] {
         switch self {
+        case .audioLanguage:
+            (
+                displayTitle: displayTitle,
+                keyPath: \ItemFilterCollection.audioLanguages.asAnyItemFilter,
+                setter: { $1.currentFilters.audioLanguages = $0.map(ItemLanguage.init) },
+                selectorType: .multi
+            )
         case .category:
             (
                 displayTitle: displayTitle,
@@ -68,6 +84,13 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
                 setter: { $1.currentFilters.letter = $0.map(ItemLetter.init) },
                 selectorType: .single
             )
+        case .officialRatings:
+            (
+                displayTitle: displayTitle,
+                keyPath: \ItemFilterCollection.officialRatings.asAnyItemFilter,
+                setter: { $1.currentFilters.officialRatings = $0.map(ItemOfficialRating.init) },
+                selectorType: .multi
+            )
         case .sortBy:
             (
                 displayTitle: L10n.order,
@@ -80,6 +103,13 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
                 keyPath: \ItemFilterCollection.sortBy.asAnyItemFilter,
                 setter: { $1.currentFilters.sortBy = $0.map(ItemSortBy.init) },
                 selectorType: .single
+            )
+        case .subtitleLanguage:
+            (
+                displayTitle: displayTitle,
+                keyPath: \ItemFilterCollection.subtitleLanguages.asAnyItemFilter,
+                setter: { $1.currentFilters.subtitleLanguages = $0.map(ItemLanguage.init) },
+                selectorType: .multi
             )
         case .tags:
             (
@@ -111,14 +141,20 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
 
     var systemImage: String {
         switch self {
+        case .audioLanguage:
+            "speaker.wave.2"
         case .category:
             "tv"
         case .genres:
             "theatermasks"
         case .letter:
             "character.textbox"
+        case .officialRatings:
+            "person.badge.shield.checkmark"
         case .sortBy:
             "line.3.horizontal.decrease"
+        case .subtitleLanguage:
+            "captions.bubble"
         case .tags:
             "tag"
         case .traits:

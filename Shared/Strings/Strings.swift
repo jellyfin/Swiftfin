@@ -114,10 +114,6 @@ internal enum L10n {
   internal static let any = L10n.tr("Localizable", "any", fallback: "Any")
   /// Any Wi-Fi Network
   internal static let anyWifiNetwork = L10n.tr("Localizable", "anyWifiNetwork", fallback: "Any Wi-Fi Network")
-  /// API key copied
-  internal static let apiKeyCopied = L10n.tr("Localizable", "apiKeyCopied", fallback: "API key copied")
-  /// Your API key was copied to your clipboard!
-  internal static let apiKeyCopiedMessage = L10n.tr("Localizable", "apiKeyCopiedMessage", fallback: "Your API key was copied to your clipboard!")
   /// API keys
   internal static let apiKeys = L10n.tr("Localizable", "apiKeys", fallback: "API keys")
   /// API Keys
@@ -214,10 +210,6 @@ internal enum L10n {
   internal static let birthYear = L10n.tr("Localizable", "birthYear", fallback: "Birth year")
   /// Bitrate
   internal static let bitrate = L10n.tr("Localizable", "bitrate", fallback: "Bitrate")
-  /// Default bitrate
-  internal static let bitrateDefault = L10n.tr("Localizable", "bitrateDefault", fallback: "Default bitrate")
-  /// Limits the internet bandwidth used during playback.
-  internal static let bitrateDefaultDescription = L10n.tr("Localizable", "bitrateDefaultDescription", fallback: "Limits the internet bandwidth used during playback.")
   /// Maximizes bandwidth usage, up to %@, for each playback stream to ensure the highest quality.
   internal static func bitrateMaxDescription(_ p1: Any) -> String {
     return L10n.tr("Localizable", "bitrateMaxDescription", String(describing: p1), fallback: "Maximizes bandwidth usage, up to %@, for each playback stream to ensure the highest quality.")
@@ -1052,6 +1044,8 @@ internal enum L10n {
   internal static let mvc = L10n.tr("Localizable", "mvc", fallback: "MVC")
   /// Name
   internal static let name = L10n.tr("Localizable", "name", fallback: "Name")
+  /// Narrator
+  internal static let narrator = L10n.tr("Localizable", "narrator", fallback: "Narrator")
   /// Native
   internal static let native = L10n.tr("Localizable", "native", fallback: "Native")
   /// Network
@@ -1190,6 +1184,8 @@ internal enum L10n {
   internal static let playback = L10n.tr("Localizable", "playback", fallback: "Playback")
   /// Playback quality
   internal static let playbackQuality = L10n.tr("Localizable", "playbackQuality", fallback: "Playback quality")
+  /// Force media from the server to transcode if it exceeds the selected resolution or bitrate.
+  internal static let playbackQualityDescription = L10n.tr("Localizable", "playbackQualityDescription", fallback: "Force media from the server to transcode if it exceeds the selected resolution or bitrate.")
   /// Playback speed
   internal static let playbackSpeed = L10n.tr("Localizable", "playbackSpeed", fallback: "Playback speed")
   /// Play count
@@ -1228,6 +1224,8 @@ internal enum L10n {
   internal static let preferredLanguage = L10n.tr("Localizable", "preferredLanguage", fallback: "Preferred language")
   /// Premiere date
   internal static let premiereDate = L10n.tr("Localizable", "premiereDate", fallback: "Premiere date")
+  /// Press and hold to unlock
+  internal static let pressAndHoldToUnlock = L10n.tr("Localizable", "pressAndHoldToUnlock", fallback: "Press and hold to unlock")
   /// Preview
   internal static let preview = L10n.tr("Localizable", "preview", fallback: "Preview")
   /// Preview image
@@ -1270,6 +1268,8 @@ internal enum L10n {
   internal static let provider = L10n.tr("Localizable", "provider", fallback: "Provider")
   /// Public users
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public users")
+  /// Quality
+  internal static let quality = L10n.tr("Localizable", "quality", fallback: "Quality")
   /// Quick Connect
   internal static let quickConnect = L10n.tr("Localizable", "quickConnect", fallback: "Quick Connect")
   /// Quick Connect code
@@ -1294,8 +1294,10 @@ internal enum L10n {
   internal static let rating = L10n.tr("Localizable", "rating", fallback: "Rating")
   /// Ratings
   internal static let ratings = L10n.tr("Localizable", "ratings", fallback: "Ratings")
-  /// Recently Added
-  internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently Added")
+  /// Recently added
+  internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently added")
+  /// Recently played
+  internal static let recentlyPlayed = L10n.tr("Localizable", "recentlyPlayed", fallback: "Recently played")
   /// Recommended
   internal static let recommended = L10n.tr("Localizable", "recommended", fallback: "Recommended")
   /// Recording
@@ -1366,6 +1368,8 @@ internal enum L10n {
   internal static let resetSettingsDescription = L10n.tr("Localizable", "resetSettingsDescription", fallback: "Reset Swiftfin user settings.")
   /// Are you sure you want to reset all user settings?
   internal static let resetSettingsMessage = L10n.tr("Localizable", "resetSettingsMessage", fallback: "Are you sure you want to reset all user settings?")
+  /// Resolution
+  internal static let resolution = L10n.tr("Localizable", "resolution", fallback: "Resolution")
   /// Restart server
   internal static let restartServer = L10n.tr("Localizable", "restartServer", fallback: "Restart server")
   /// Are you sure you want to restart the server?
@@ -1810,6 +1814,8 @@ internal enum L10n {
   internal static let videoResolution = L10n.tr("Localizable", "videoResolution", fallback: "Video resolution")
   /// The video resolution is not supported
   internal static let videoResolutionNotSupported = L10n.tr("Localizable", "videoResolutionNotSupported", fallback: "The video resolution is not supported")
+  /// The video rotation is not supported
+  internal static let videoRotationNotSupported = L10n.tr("Localizable", "videoRotationNotSupported", fallback: "The video rotation is not supported")
   /// Videos
   internal static let videos = L10n.tr("Localizable", "videos", fallback: "Videos")
   /// Video transcoding
