@@ -47,15 +47,7 @@ private struct ItemActionButtonLabelStyle: LabelStyle {
 
 struct ItemActionButtons: View {
 
-    static let maximumButtons = 4
-
-    static var buttonHeight: CGFloat {
-        UIDevice.isTV ? 75 : 44
-    }
-
-    static var spacing: CGFloat {
-        UIDevice.isTV ? 24 : 8
-    }
+    static let maximumButtons = UIDevice.isTV ? 5 : 4
 
     @ObservedObject
     var provider: ItemContentGroupProvider
@@ -176,7 +168,7 @@ struct ItemActionButtons: View {
         let hasBarMenu = UIDevice.isTV && (overflow.isNotEmpty || menu.isNotEmpty)
 
         if visible.isNotEmpty || hasBarMenu {
-            HStack(alignment: .center, spacing: Self.spacing) {
+            HStack(alignment: .center, spacing: UIDevice.isTV ? 24 : 8) {
                 ForEach(visible) { button in
                     Self.view(for: button)
                         .labelStyle(ItemActionButtonLabelStyle(activeColor: button.activeColor))
@@ -200,8 +192,8 @@ struct ItemActionButtons: View {
                     .focused(focusedButton, equals: ItemView.Component.menu)
                 }
             }
+            .frame(maxHeight: .infinity)
             .environmentObject(provider)
-            .frame(height: Self.buttonHeight)
             .backport
             .buttonBorderShape(.capsule)
             .buttonStyle(BasicHoverButtonStyle())

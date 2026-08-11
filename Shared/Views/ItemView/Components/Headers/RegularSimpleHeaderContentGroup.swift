@@ -83,6 +83,10 @@ extension ItemView {
                             alignment: .leading
                         )
                         .frame(maxWidth: UIDevice.isTV ? 450 : 300, alignment: .leading)
+                        .if(UIDevice.isTV) { buttons in
+                            buttons
+                                .padding(.vertical)
+                        }
 
                         ItemView.AttributesHStack(
                             attributes: attributes,
