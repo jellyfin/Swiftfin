@@ -72,7 +72,7 @@ extension ConnectToServerView {
         }
 
         var tvOSView: some View {
-            EqualWidthVStack {
+            VStack(spacing: 8) {
                 Text(L10n.connection)
                     .font(.title3)
                     .edgePadding(.bottom)
@@ -80,6 +80,7 @@ extension ConnectToServerView {
                 Text(L10n.duplicateServerConnectionMessage(server.name))
                     .font(.callout)
                     .multilineTextAlignment(.center)
+                    .edgePadding(.bottom)
 
                 VStack {
                     LabeledContent(
