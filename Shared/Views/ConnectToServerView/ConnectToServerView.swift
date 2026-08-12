@@ -168,20 +168,6 @@ struct ConnectToServerView: View {
                     ProgressView()
                 }
             }
-        #if os(tvOS)
-            ._alert(
-                L10n.connection,
-                isPresented: $duplicateServer.isNotNil()
-            ) {
-                if let server = duplicateServer {
-                    DuplicateServerConnectionView(server: server) {
-                        viewModel.addConnection(serverState: server)
-                        duplicateServer = nil
-                        router.dismiss()
-                    }
-                }
-            }
-        #else
             .sheet(item: $duplicateServer) { server in
                 NavigationStack {
                     DuplicateServerConnectionView(server: server) {
@@ -191,7 +177,6 @@ struct ConnectToServerView: View {
                     }
                 }
             }
-        #endif
             .errorMessage($viewModel.error)
     }
 }
