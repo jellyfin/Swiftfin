@@ -186,6 +186,12 @@ internal enum L10n {
   internal static let backdrop = L10n.tr("Localizable", "backdrop", fallback: "Backdrop")
   /// A wide background image displayed behind the item details on its media page. Multiple backdrops can be added and will cycle or be selected randomly.
   internal static let backdropImageDescription = L10n.tr("Localizable", "backdropImageDescription", fallback: "A wide background image displayed behind the item details on its media page. Multiple backdrops can be added and will cycle or be selected randomly.")
+  /// Backup
+  internal static let backup = L10n.tr("Localizable", "backup", fallback: "Backup")
+  /// Backups
+  internal static let backups = L10n.tr("Localizable", "backups", fallback: "Backups")
+  /// Create a snapshot of your server which can include the database, metadata, subtitles and trickplay.
+  internal static let backupsDescription = L10n.tr("Localizable", "backupsDescription", fallback: "Create a snapshot of your server which can include the database, metadata, subtitles and trickplay.")
   /// Banner
   internal static let banner = L10n.tr("Localizable", "banner", fallback: "Banner")
   /// A wide horizontal image displayed when browsing the library in banner mode. Only applicable to video content.
@@ -324,6 +330,8 @@ internal enum L10n {
   internal static let compatible = L10n.tr("Localizable", "compatible", fallback: "Most compatible")
   /// Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.
   internal static let compatibleDescription = L10n.tr("Localizable", "compatibleDescription", fallback: "Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.")
+  /// At least one component must be selected.
+  internal static let componentMustBeSelected = L10n.tr("Localizable", "componentMustBeSelected", fallback: "At least one component must be selected.")
   /// Components
   internal static let components = L10n.tr("Localizable", "components", fallback: "Components")
   /// Composer
@@ -386,6 +394,8 @@ internal enum L10n {
   internal static let createAPIKeyCapitalized = L10n.tr("Localizable", "createAPIKeyCapitalized", fallback: "Create API Key")
   /// Enter the application name for the new API key.
   internal static let createAPIKeyMessage = L10n.tr("Localizable", "createAPIKeyMessage", fallback: "Enter the application name for the new API key.")
+  /// Create backup
+  internal static let createBackup = L10n.tr("Localizable", "createBackup", fallback: "Create backup")
   /// Create a pin to sign in to %@ on this device
   internal static func createPinForUser(_ p1: Any) -> String {
     return L10n.tr("Localizable", "createPinForUser", String(describing: p1), fallback: "Create a pin to sign in to %@ on this device")
@@ -440,6 +450,8 @@ internal enum L10n {
   internal static let dashboard = L10n.tr("Localizable", "dashboard", fallback: "Dashboard")
   /// Perform administrative tasks for your Jellyfin server.
   internal static let dashboardDescription = L10n.tr("Localizable", "dashboardDescription", fallback: "Perform administrative tasks for your Jellyfin server.")
+  /// Database
+  internal static let database = L10n.tr("Localizable", "database", fallback: "Database")
   /// Date
   internal static let date = L10n.tr("Localizable", "date", fallback: "Date")
   /// Date added
@@ -1378,6 +1390,16 @@ internal enum L10n {
   internal static let restartServer = L10n.tr("Localizable", "restartServer", fallback: "Restart server")
   /// Are you sure you want to restart the server?
   internal static let restartWarning = L10n.tr("Localizable", "restartWarning", fallback: "Are you sure you want to restart the server?")
+  /// Restore
+  internal static let restore = L10n.tr("Localizable", "restore", fallback: "Restore")
+  /// Restore backup
+  internal static let restoreBackup = L10n.tr("Localizable", "restoreBackup", fallback: "Restore backup")
+  /// The server will restart and all current data will be replaced with the contents of this backup.
+  internal static let restoreWarning = L10n.tr("Localizable", "restoreWarning", fallback: "The server will restart and all current data will be replaced with the contents of this backup.")
+  /// Restoring
+  internal static let restoring = L10n.tr("Localizable", "restoring", fallback: "Restoring")
+  /// The server is restarting to restore from this backup. You may need to log back in when the restore completes.
+  internal static let restoringMessage = L10n.tr("Localizable", "restoringMessage", fallback: "The server is restarting to restore from this backup. You may need to log back in when the restore completes.")
   /// Resume
   internal static let resume = L10n.tr("Localizable", "resume", fallback: "Resume")
   /// Resume offset
@@ -1688,6 +1710,8 @@ internal enum L10n {
   internal static let transcodeReasons = L10n.tr("Localizable", "transcodeReasons", fallback: "Transcode reason(s)")
   /// Translator
   internal static let translator = L10n.tr("Localizable", "translator", fallback: "Translator")
+  /// Trickplay
+  internal static let trickplay = L10n.tr("Localizable", "trickplay", fallback: "Trickplay")
   /// Trickplays
   internal static let trickplays = L10n.tr("Localizable", "trickplays", fallback: "Trickplays")
   /// Trigger already exists
