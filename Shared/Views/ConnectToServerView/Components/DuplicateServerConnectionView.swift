@@ -70,48 +70,50 @@ extension ConnectToServerView {
         }
 
         var tvOSView: some View {
-            VStack {
+            VStack(spacing: 24) {
+
                 Text(L10n.duplicateServerConnectionMessage(server.name))
-                    .font(.callout)
+                    .font(.body)
                     .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer()
 
                 VStack {
                     LabeledContent(
                         L10n.server,
                         value: server.name
                     )
-
                     LabeledContent(
                         L10n.url,
                         value: server.currentURL.absoluteString
                     )
                 }
 
-                HStack {
+                Spacer()
+
+                HStack(spacing: 24) {
                     Button {
                         dismiss()
                     } label: {
-                        AlternateLayoutView {
-                            Color.clear
-                                .aspectRatio(3.5, contentMode: .fit)
-                                .frame(height: 40)
-                        } content: {
-                            Text(L10n.close)
-                        }
+                        Text(L10n.close)
+                            .frame(maxWidth: .infinity)
                     }
 
-                    Button(action: action) {
-                        AlternateLayoutView {
-                            Color.clear
-                                .aspectRatio(3.5, contentMode: .fit)
-                                .frame(height: 40)
-                        } content: {
-                            Text(L10n.add)
-                        }
+                    Button(role: .confirm, action: action) {
+                        Text(L10n.add)
+                            .frame(maxWidth: .infinity)
                     }
+                    .tint(.jellyfinPurple)
                 }
+                .fontWeight(.semibold)
+                .backport
+                .buttonStyle(.glassProminent.shadow(false))
+                .frame(maxHeight: 75)
                 .focusSection()
             }
+            .navigationTitle(L10n.connection)
+            .edgePadding()
         }
     }
 }
