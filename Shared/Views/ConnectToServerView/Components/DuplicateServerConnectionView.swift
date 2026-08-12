@@ -109,7 +109,7 @@ extension ConnectToServerView {
                 .fontWeight(.semibold)
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
-                .frame(maxHeight: 75)
+                .frame(maxHeight: 44)
                 .focusSection()
             }
             .navigationTitle(L10n.connection)
