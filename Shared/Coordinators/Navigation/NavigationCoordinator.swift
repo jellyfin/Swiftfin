@@ -11,28 +11,62 @@ import SwiftUI
 @MainActor
 final class NavigationCoordinator: ObservableObject {
 
+    struct PresentedRoute: Identifiable {
+
+        let route: NavigationRoute
+        let coordinator: NavigationCoordinator
+
+        var id: String {
+            route.id
+        }
+    }
+
     @Published
     var path: [NavigationRoute] = []
 
     @Published
-    var presentedSheet: NavigationRoute?
+    var presentedSheet: PresentedRoute?
     @Published
-    var presentedFullScreen: NavigationRoute?
+    var presentedFullScreen: PresentedRoute?
 
     func push(
         _ route: NavigationRoute
     ) {
-        let style = route.transitionStyle
+        #if os(tvOS)
+        if let presentedCoordinator = presentedFullScreen?.coordinator ?? presentedSheet?.coordinator {
+            presentedCoordinator.push(route)
+            return
+        }
 
-        switch style {
+        switch route.transitionStyle {
+        case .push, .sheet:
+            presentedSheet = .init(
+                route: route,
+                coordinator: .init()
+            )
+        case .fullscreen:
+            presentedFullScreen = .init(
+                route: route,
+                coordinator: .init()
+            )
+        }
+        #else
+        switch route.transitionStyle {
         case .push:
             path.append(route)
         case .sheet:
-            presentedSheet = route
+            presentedSheet = .init(
+                route: route,
+                coordinator: .init()
+            )
         case .fullscreen:
             withAnimation {
-                presentedFullScreen = route
+                presentedFullScreen = .init(
+                    route: route,
+                    coordinator: .init()
+                )
             }
         }
+        #endif
     }
 }

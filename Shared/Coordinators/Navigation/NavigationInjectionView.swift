@@ -55,29 +55,35 @@ struct NavigationInjectionView: View {
             )
         )
         .environmentObject(coordinator)
-        .sheet(
-            item: $coordinator.presentedSheet
-        ) {
-            coordinator.presentedSheet = nil
-        } content: { route in
-            let newCoordinator = NavigationCoordinator()
-
-            NavigationInjectionView(coordinator: newCoordinator) {
-                route.destination
-            }
-        }
         #if os(tvOS)
-        .fullScreenCover(
-            item: $coordinator.presentedFullScreen
-        ) { route in
-            let newCoordinator = NavigationCoordinator()
-
-            NavigationInjectionView(coordinator: newCoordinator) {
-                route.destination
+            .fullScreenCover(
+                item: $coordinator.presentedSheet
+            ) {
+                coordinator.presentedSheet = nil
+            } content: { presentedRoute in
+                NavigationInjectionView(coordinator: presentedRoute.coordinator) {
+                    presentedRoute.route.destination
+                }
+                .background(.regularMaterial)
             }
-        }
+            .fullScreenCover(
+                item: $coordinator.presentedFullScreen
+            ) { presentedRoute in
+                NavigationInjectionView(coordinator: presentedRoute.coordinator) {
+                    presentedRoute.route.destination
+                }
+            }
         #else
-        .presentation(
+            .sheet(
+                item: $coordinator.presentedSheet
+            ) {
+                coordinator.presentedSheet = nil
+            } content: { presentedRoute in
+                NavigationInjectionView(coordinator: presentedRoute.coordinator) {
+                    presentedRoute.route.destination
+                }
+            }
+            .presentation(
                 $coordinator.presentedFullScreen,
                 transition: .zoomIfAvailable(
                     .init(
@@ -90,10 +96,10 @@ struct NavigationInjectionView: View {
                     ),
                     otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
                 )
-            ) { routeBinding, _ in
+            ) { presentedRouteBinding, _ in
                 let vc = UIPreferencesHostingController {
-                    NavigationInjectionView(coordinator: .init()) {
-                        routeBinding.wrappedValue.destination
+                    NavigationInjectionView(coordinator: presentedRouteBinding.wrappedValue.coordinator) {
+                        presentedRouteBinding.wrappedValue.route.destination
                             .onPreferenceChange(PresentationControllerShouldDismissPreferenceKey.self) { newValue in
                                 isPresentationInteractive = newValue
                             }
