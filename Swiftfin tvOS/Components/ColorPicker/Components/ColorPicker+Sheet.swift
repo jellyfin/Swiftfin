@@ -41,7 +41,7 @@ extension ColorPicker {
         }
 
         var body: some View {
-            EqualWidthVStack {
+            VStack(spacing: 8) {
                 Text(title.localizedCapitalized)
                     .font(.title3)
                     .edgePadding(.bottom)
@@ -60,7 +60,7 @@ extension ColorPicker {
 
                         gradientSection(for: \.blue, title: L10n.blue)
 
-                        if !supportsOpacity {
+                        if supportsOpacity {
                             gradientSection(for: \.alpha, title: L10n.opacity)
                         }
 
