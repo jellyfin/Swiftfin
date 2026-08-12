@@ -453,28 +453,36 @@ private struct BaseItemDtoPosterLabel: View {
                 .foregroundStyle(.primary)
                 .lineLimit(1, reservesSpace: true)
 
-            HStack(spacing: 2) {
+            Group {
                 if let startDate = item.startDate {
-                    if !Calendar.current.isDateInToday(startDate) {
-                        Text(startDate, format: .dateTime.weekday(.abbreviated))
-                            .padding(.trailing, 2)
+                    ViewThatFits {
+                        SeparatorHStack {
+                            Text(String.hyphen)
+                        } content: {
+                            if !Calendar.current.isDateInToday(startDate) {
+                                Text(startDate, format: .dateTime.weekday(.abbreviated).hour().minute())
+                            } else {
+                                Text(startDate, style: .time)
+                            }
+
+                            if let endDate = item.endDate {
+                                Text(endDate, style: .time)
+                            }
+                        }
+
+                        if !Calendar.current.isDateInToday(startDate) {
+                            Text(startDate, format: .dateTime.weekday(.abbreviated).hour().minute())
+                        } else {
+                            Text(startDate, style: .time)
+                        }
                     }
-
-                    Text(startDate, style: .time)
                 } else {
-                    Text(String.emptyDash)
-                }
-
-                Text(String.hyphen)
-
-                if let endDate = item.endDate {
-                    Text(endDate, style: .time)
-                } else {
-                    Text(String.emptyDash)
+                    Text(String.emptyRuntime)
                 }
             }
             .font(.footnote)
             .foregroundStyle(.secondary)
+            .lineLimit(1, reservesSpace: true)
         }
     }
 
