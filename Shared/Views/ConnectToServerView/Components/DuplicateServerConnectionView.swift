@@ -22,97 +22,104 @@ extension ConnectToServerView {
         let action: () -> Void
 
         var iOSView: some View {
-            Form {
-                Section {
-                    Text(L10n.duplicateServerConnectionMessage(server.name))
-                        .font(.callout)
-                }
+            NavigationStack {
+                Form {
+                    Section {
+                        Text(L10n.duplicateServerConnectionMessage(server.name))
+                            .font(.callout)
+                    }
 
-                Section {
-                    LabeledContent(
-                        L10n.server,
-                        value: server.name
-                    )
+                    Section {
+                        LabeledContent(
+                            L10n.server,
+                            value: server.name
+                        )
 
-                    LabeledContent(
-                        L10n.url,
-                        value: server.currentURL.absoluteString
-                    )
-                } header: {
-                    Text(L10n.connection)
-                } footer: {
-                    Text(L10n.duplicateServerConnectionFooter)
-                }
+                        LabeledContent(
+                            L10n.url,
+                            value: server.currentURL.absoluteString
+                        )
+                    } header: {
+                        Text(L10n.connection)
+                    } footer: {
+                        Text(L10n.duplicateServerConnectionFooter)
+                    }
 
-                Button(action: action) {
-                    Text(L10n.add)
-                        .frame(maxWidth: .infinity)
+                    Button(action: action) {
+                        Text(L10n.add)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
+                    #if os(iOS)
+                        .listRowSeparator(.hidden)
+                    #endif
+                        .fontWeight(.semibold)
+                        .backport
+                        .buttonStyle(.glassProminent.shadow(false))
+                        .tint(.jellyfinPurple)
+                    #if os(iOS)
+                        .controlSize(.large)
+                    #endif
                 }
-                .listRowInsets(.zero)
-                .listRowBackground(Color.clear)
-                #if os(iOS)
-                    .listRowSeparator(.hidden)
-                #endif
-                    .fontWeight(.semibold)
-                    .backport
-                    .buttonStyle(.glassProminent.shadow(false))
-                    .tint(.jellyfinPurple)
-                #if os(iOS)
-                    .controlSize(.large)
-                #endif
-            }
-            .backport
-            .toolbarTitleDisplayMode(.inline)
-            .navigationTitle(L10n.connection)
-            .navigationBarCloseButton {
-                dismiss()
+                .backport
+                .toolbarTitleDisplayMode(.inline)
+                .navigationTitle(L10n.connection)
+                .navigationBarCloseButton {
+                    dismiss()
+                }
             }
         }
 
         var tvOSView: some View {
-            VStack(spacing: 24) {
+            EqualWidthVStack {
+                Text(L10n.connection)
+                    .font(.title3)
+                    .edgePadding(.bottom)
 
                 Text(L10n.duplicateServerConnectionMessage(server.name))
-                    .font(.body)
+                    .font(.callout)
                     .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Spacer()
 
                 VStack {
                     LabeledContent(
                         L10n.server,
                         value: server.name
                     )
+
                     LabeledContent(
                         L10n.url,
                         value: server.currentURL.absoluteString
                     )
                 }
 
-                Spacer()
-
-                HStack(spacing: 24) {
+                HStack {
                     Button {
                         dismiss()
                     } label: {
-                        Text(L10n.close)
-                            .frame(maxWidth: .infinity)
+                        AlternateLayoutView {
+                            Color.clear
+                                .aspectRatio(3.5, contentMode: .fit)
+                                .frame(height: 40)
+                        } content: {
+                            Text(L10n.close)
+                        }
                     }
 
-                    Button(role: .confirm, action: action) {
-                        Text(L10n.add)
-                            .frame(maxWidth: .infinity)
+                    Button(action: action) {
+                        AlternateLayoutView {
+                            Color.clear
+                                .aspectRatio(3.5, contentMode: .fit)
+                                .frame(height: 40)
+                        } content: {
+                            Text(L10n.add)
+                        }
                     }
-                    .tint(.jellyfinPurple)
                 }
-                .fontWeight(.semibold)
-                .backport
-                .buttonStyle(.glassProminent.shadow(false))
-                .frame(maxHeight: 44)
                 .focusSection()
+                .edgePadding(.top)
             }
-            .navigationTitle(L10n.connection)
+            .frame(width: 500)
             .edgePadding()
         }
     }

@@ -26,7 +26,7 @@ extension ColorPicker {
                     color: value,
                     component: component
                 )
-                .frame(height: 36)
+                .frame(height: 40)
             } header: {
                 HStack {
                     Text(title)
@@ -41,65 +41,85 @@ extension ColorPicker {
         }
 
         var body: some View {
-            VStack(spacing: 8) {
-                HStack(spacing: 24) {
+            EqualWidthVStack {
+                Text(title.localizedCapitalized)
+                    .font(.title3)
+                    .edgePadding(.bottom)
+
+                HStack {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(value.wrappedValue)
                         .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 200)
 
-                    StateAdapter(initialValue: value.wrappedValue.hexString) { hexString in
-                        TextField(L10n.hexColor, text: hexString)
-                            .onSubmit {
-                                value.wrappedValue = Color(hex: String(hexString.wrappedValue.prefix(6)))
-                            }
-                            .monospaced()
-                    }
-                    .id(value.wrappedValue)
+                    VStack {
 
-                    Menu {
-                        ForEach(ColorPickerDefaults.allCases, id: \.hashValue) { color in
-                            Button {
-                                value.wrappedValue = color.color
-                            } label: {
-                                Text(color.displayTitle)
-                                Image(systemName: "circle.fill")
-                            }
-                            .foregroundStyle(color.color, .primary, .secondary)
+                        gradientSection(for: \.red, title: L10n.red)
+
+                        gradientSection(for: \.green, title: L10n.green)
+
+                        gradientSection(for: \.blue, title: L10n.blue)
+
+                        if !supportsOpacity {
+                            gradientSection(for: \.alpha, title: L10n.opacity)
                         }
-                    } label: {
-                        Image(systemName: "paintpalette.fill")
-                            .frame(width: 30, height: 30)
+
+                        HStack {
+                            Text(L10n.hexColor)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+
+                            StateAdapter(initialValue: value.wrappedValue.hexString) { hexString in
+                                TextField(L10n.hexColor, text: hexString)
+                                    .onSubmit {
+                                        value.wrappedValue = Color(hex: String(hexString.wrappedValue.prefix(6)))
+                                    }
+                                    .monospaced()
+                            }
+                            .id(value.wrappedValue)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 10)
+                        .focusSection()
+
+                        HStack {
+                            Text(L10n.color)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+
+                            Menu {
+                                ForEach(ColorPickerDefaults.allCases, id: \.hashValue) { color in
+                                    Button {
+                                        value.wrappedValue = color.color
+                                    } label: {
+                                        Text(color.displayTitle)
+                                        Image(systemName: "circle.fill")
+                                    }
+                                    .foregroundStyle(color.color, .primary, .secondary)
+                                }
+                            } label: {
+                                Image(systemName: "paintpalette.fill")
+                                    .frame(width: 30, height: 30)
+                            }
+                        }
+                        .padding(.top, 10)
+                        .focusSection()
                     }
+                    .frame(width: 600)
                 }
-                .frame(height: 75)
-                .focusSection()
-
-                gradientSection(for: \.red, title: L10n.red)
-
-                gradientSection(for: \.green, title: L10n.green)
-
-                gradientSection(for: \.blue, title: L10n.blue)
-
-                if supportsOpacity {
-                    gradientSection(for: \.alpha, title: L10n.opacity)
-                }
-
-                Spacer(minLength: 0)
 
                 Button {
                     dismiss()
                 } label: {
-                    Text(L10n.close)
-                        .frame(maxWidth: .infinity)
+                    AlternateLayoutView {
+                        Color.clear
+                            .aspectRatio(3.5, contentMode: .fit)
+                            .frame(height: 40)
+                    } content: {
+                        Text(L10n.close)
+                    }
                 }
-                .fontWeight(.semibold)
-                .backport
-                .buttonStyle(.glassProminent.shadow(false))
-                .frame(maxHeight: 44)
-                .focusSection()
+                .edgePadding(.top)
             }
-            .navigationTitle(title)
-            .edgePadding([.bottom, .horizontal])
+            .edgePadding()
         }
     }
 }

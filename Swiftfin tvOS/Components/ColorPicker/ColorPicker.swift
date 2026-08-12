@@ -35,16 +35,14 @@ struct ColorPicker: View {
             }
         }
         .sheet(isPresented: $isPresented) {
-            NavigationStack {
-                StateAdapter(initialValue: selection.wrappedValue) { color in
-                    Self.Sheet(
-                        title: title,
-                        value: color,
-                        supportsOpacity: supportsOpacity
-                    )
-                    .onDisappear {
-                        selection.wrappedValue = color.wrappedValue
-                    }
+            StateAdapter(initialValue: selection.wrappedValue) { color in
+                Self.Sheet(
+                    title: title,
+                    value: color,
+                    supportsOpacity: supportsOpacity
+                )
+                .onDisappear {
+                    selection.wrappedValue = color.wrappedValue
                 }
             }
         }
