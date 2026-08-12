@@ -387,6 +387,8 @@ private struct BaseItemDtoPosterLabel: View {
             episodeLabel
         case .season:
             label(title: item.parentTitle ?? item.displayTitle, subtitle: item.displayTitle)
+        case .video where item.extraType != nil:
+            extrasLabel
         default:
             label(title: item.displayTitle, subtitle: item.subtitle)
         }
@@ -473,6 +475,33 @@ private struct BaseItemDtoPosterLabel: View {
             }
             .font(.footnote)
             .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var extrasLabel: some View {
+        VStack(alignment: .leading) {
+            Text(item.displayTitle)
+                .font(.footnote)
+                .foregroundStyle(.primary)
+                .accessibilityLabel(item.displayTitle)
+                .lineLimit(1, reservesSpace: true)
+
+            if let extraType = item.extraType, extraType != .unknown {
+                Text(extraType.displayTitle)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1, reservesSpace: true)
+            }
+
+            if let runtime = item.runtime {
+                Text(runtime, format: .runtime)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1, reservesSpace: true)
+            }
         }
     }
 }
