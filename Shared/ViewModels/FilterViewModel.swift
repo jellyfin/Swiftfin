@@ -40,7 +40,7 @@ final class FilterViewModel: ViewModel {
     @Published
     var currentFilters: ItemFilterCollection
 
-    typealias LocalQueryFilters = @MainActor () -> QueryFiltersLegacy
+    typealias LocalQueryFilters = @MainActor () -> (QueryFilters, QueryFiltersLegacy)
 
     private let parent: (any LibraryParent)?
     private let localQueryFilters: LocalQueryFilters?
@@ -74,15 +74,21 @@ final class FilterViewModel: ViewModel {
         }
 
         switch type {
+        case .audioLanguage:
+            currentFilters.audioLanguages = ItemFilterCollection.default.audioLanguages
         case .category:
             currentFilters.categories = ItemFilterCollection.default.categories
         case .genres:
             currentFilters.genres = ItemFilterCollection.default.genres
         case .letter:
             currentFilters.letter = ItemFilterCollection.default.letter
+        case .officialRatings:
+            currentFilters.officialRatings = ItemFilterCollection.default.officialRatings
         case .sortBy:
             currentFilters.sortBy = ItemFilterCollection.default.sortBy
             currentFilters.sortOrder = ItemFilterCollection.default.sortOrder
+        case .subtitleLanguage:
+            currentFilters.subtitleLanguages = ItemFilterCollection.default.subtitleLanguages
         case .tags:
             currentFilters.tags = ItemFilterCollection.default.tags
         case .traits:
@@ -95,33 +101,94 @@ final class FilterViewModel: ViewModel {
     @Function(\Action.Cases.getQueryFilters)
     private func _getQueryFilters() async throws {
 
-        let queryFilters: QueryFiltersLegacy
-
         if let localQueryFilters {
-            queryFilters = localQueryFilters()
+            let (queryFilters, legacyQueryFilters) = localQueryFilters()
+            getLocalFilters(queryFilters, legacyQueryFilters)
         } else {
-            let parameters = try Paths.GetQueryFiltersLegacyParameters(
-                userID: authenticatedUser.id,
-                parentID: parent?.id
-            )
-
-            let request = Paths.getQueryFiltersLegacy(parameters: parameters)
-            queryFilters = try await send(request).value
+            try await getFilters()
+            try await getFiltersLegacy()
         }
+    }
 
-        let genres: [ItemGenre] = (queryFilters.genres ?? [])
+    private func getLocalFilters(_ queryFilters: QueryFilters, _ legacyQueryFilters: QueryFiltersLegacy) {
+
+        allFilters.audioLanguages = (queryFilters.audioLanguages ?? [])
+            .compactMap(ItemLanguage.init)
+            .sorted(using: \.displayTitle)
+
+        allFilters.genres = (queryFilters.genres ?? [])
+            .compactMap(\.name)
             .map(ItemGenre.init)
 
-        let tags = (queryFilters.tags ?? [])
+        allFilters.officialRatings = (legacyQueryFilters.officialRatings ?? [])
+            .map(ItemOfficialRating.init)
+
+        allFilters.subtitleLanguages = (queryFilters.subtitleLanguages ?? [])
+            .compactMap(ItemLanguage.init)
+            .sorted(using: \.displayTitle)
+
+        allFilters.tags = (queryFilters.tags ?? [])
             .map(ItemTag.init)
 
         // Manually sort so that most recent years are "first"
-        let years = (queryFilters.years ?? [])
+        allFilters.years = (legacyQueryFilters.years ?? [])
+            .sorted(by: >)
+            .map(ItemYear.init)
+    }
+
+    private func getFiltersLegacy() async throws {
+
+        let parameters = try Paths.GetQueryFiltersLegacyParameters(
+            userID: authenticatedUser.id,
+            parentID: parent?.id,
+            includeItemTypes: parent?.supportedItemTypes ?? BaseItemKind.supportedCases
+        )
+
+        let request = Paths.getQueryFiltersLegacy(parameters: parameters)
+        let response = try await send(request)
+
+        let officialRatings = (response.value.officialRatings ?? [])
+            .map(ItemOfficialRating.init)
+
+        // Manually sort so that most recent years are "first"
+        let years = (response.value.years ?? [])
             .sorted(by: >)
             .map(ItemYear.init)
 
-        allFilters.genres = genres
-        allFilters.tags = tags
+        allFilters.officialRatings = officialRatings
         allFilters.years = years
+    }
+
+    private func getFilters() async throws {
+
+        let parameters = try Paths.GetQueryFiltersParameters(
+            userID: authenticatedUser.id,
+            parentID: parent?.id,
+            includeItemTypes: parent?.supportedItemTypes ?? BaseItemKind.supportedCases,
+            isRecursive: true
+        )
+
+        let request = Paths.getQueryFilters(parameters: parameters)
+        let response = try await send(request)
+
+        let audioLanguages: [ItemLanguage] = (response.value.audioLanguages ?? [])
+            .compactMap(ItemLanguage.init)
+            .sorted(using: \.displayTitle)
+
+        let genres: [ItemGenre] = (response.value.genres ?? [])
+            .compactMap(\.name)
+            .map(ItemGenre.init)
+
+        let subtitleLanguages: [ItemLanguage] = (response.value.subtitleLanguages ?? [])
+            .compactMap(ItemLanguage.init)
+            .sorted(using: \.displayTitle)
+
+        let tags = (response.value.tags ?? [])
+            .map(ItemTag.init)
+
+        allFilters.audioLanguages = audioLanguages
+        allFilters.genres = genres
+        allFilters.subtitleLanguages = subtitleLanguages
+        allFilters.tags = tags
     }
 }

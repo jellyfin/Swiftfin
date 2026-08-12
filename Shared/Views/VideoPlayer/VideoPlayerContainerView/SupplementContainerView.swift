@@ -102,13 +102,13 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .scrollIfLargerThanContainer(axes: .horizontal, alignment: .leading)
             }
             .edgePadding(.horizontal)
-            .focusSection()
             .backport
             .defaultFocus(
                 $focusedElement,
                 defaultTabFocus,
                 priority: .userInitiated
             )
+            .focusSection()
             .if(!UIDevice.isTV) { view in
                 view
                     .padding(.leading, safeAreaInsets.leading)

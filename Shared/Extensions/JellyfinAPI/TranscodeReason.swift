@@ -68,6 +68,8 @@ extension TranscodeReason: Displayable, SystemImageable {
             L10n.videoCodecTagNotSupported
         case .streamCountExceedsLimit:
             L10n.streamCountExceedsLimit
+        case .videoRotationNotSupported:
+            L10n.videoRotationNotSupported
         }
     }
 
@@ -99,7 +101,8 @@ extension TranscodeReason: Displayable, SystemImageable {
              .videoBitrateNotSupported,
              .unknownVideoStreamInfo,
              .videoCodecTagNotSupported,
-             .videoRangeTypeNotSupported:
+             .videoRangeTypeNotSupported,
+             .videoRotationNotSupported:
             "photo.tv"
         case .subtitleCodecNotSupported:
             "captions.bubble"

@@ -222,6 +222,10 @@ extension Defaults.Keys {
                     default: 366 * 86400
                 )
             }
+
+            static var showRecentlyPlayed: Key<Bool> {
+                UserKey("showRecentlyPlayed", default: false)
+            }
         }
 
         enum Search {
@@ -341,6 +345,10 @@ extension Defaults.Keys {
         }
 
         enum Playback {
+            static var appMaximumResolution: Key<PlaybackResolution> {
+                UserKey("appMaximumResolution", default: .max)
+            }
+
             static var appMaximumBitrate: Key<PlaybackBitrate> {
                 UserKey("appMaximumBitrate", default: .auto)
             }

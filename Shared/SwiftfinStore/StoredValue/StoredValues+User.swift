@@ -201,5 +201,12 @@ extension StoredValues.Keys {
                 default: false
             )
         }
+
+        static var forceSubtitleBurnIn: Key<Bool> {
+            CurrentUserKey(
+                field: "forceSubtitleBurnIn",
+                default: false
+            )
+        }
     }
 }

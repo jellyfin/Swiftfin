@@ -21,6 +21,8 @@ extension URL {
 
     static let swiftfinGithubIssues: URL = URL(string: "https://github.com/jellyfin/Swiftfin/issues")!
 
+    static let jellyfinDocsBackup: URL = URL(string: "https://jellyfin.org/docs/general/administration/backup-and-restore/")!
+
     static let jellyfinDocsDevices: URL = URL(string: "https://jellyfin.org/docs/general/server/devices")!
 
     static let jellyfinDocsTasks: URL = URL(string: "https://jellyfin.org/docs/general/server/tasks")!

@@ -54,47 +54,36 @@ struct NavigationInjectionView: View {
                 navigationCoordinator: coordinator
             )
         )
+        .environmentObject(coordinator)
         #if os(tvOS)
-        // TODO: Workaround for sheet presentation issue on tvOS
-        // https://developer.apple.com/documentation/tvos-release-notes/tvos-26_1-release-notes
-        // Remove this tvOS section when resolved
-        .fullScreenCover(
+            .fullScreenCover(
                 item: $coordinator.presentedSheet
             ) {
                 coordinator.presentedSheet = nil
-            } content: { route in
-                let newCoordinator = NavigationCoordinator()
-
-                NavigationInjectionView(coordinator: newCoordinator) {
-                    route.destination
+            } content: { presentedRoute in
+                NavigationInjectionView(coordinator: presentedRoute.coordinator) {
+                    presentedRoute.route.destination
                 }
                 .background(.regularMaterial)
             }
-        #else // <- Start: Use this for both OS when fixed
+            .fullScreenCover(
+                item: $coordinator.presentedFullScreen
+            ) { presentedRoute in
+                NavigationInjectionView(coordinator: presentedRoute.coordinator) {
+                    presentedRoute.route.destination
+                }
+            }
+        #else
             .sheet(
                 item: $coordinator.presentedSheet
             ) {
                 coordinator.presentedSheet = nil
-            } content: { route in
-                let newCoordinator = NavigationCoordinator()
-
-                NavigationInjectionView(coordinator: newCoordinator) {
-                    route.destination
+            } content: { presentedRoute in
+                NavigationInjectionView(coordinator: presentedRoute.coordinator) {
+                    presentedRoute.route.destination
                 }
             }
-        #endif // <- End
-        #if os(tvOS)
-        .fullScreenCover(
-            item: $coordinator.presentedFullScreen
-        ) { route in
-            let newCoordinator = NavigationCoordinator()
-
-            NavigationInjectionView(coordinator: newCoordinator) {
-                route.destination
-            }
-        }
-        #else
-        .presentation(
+            .presentation(
                 $coordinator.presentedFullScreen,
                 transition: .zoomIfAvailable(
                     .init(
@@ -107,10 +96,10 @@ struct NavigationInjectionView: View {
                     ),
                     otherwise: .slide(.init(edge: .bottom), options: .init(isInteractive: isPresentationInteractive))
                 )
-            ) { routeBinding, _ in
+            ) { presentedRouteBinding, _ in
                 let vc = UIPreferencesHostingController {
-                    NavigationInjectionView(coordinator: .init()) {
-                        routeBinding.wrappedValue.destination
+                    NavigationInjectionView(coordinator: presentedRouteBinding.wrappedValue.coordinator) {
+                        presentedRouteBinding.wrappedValue.route.destination
                             .onPreferenceChange(PresentationControllerShouldDismissPreferenceKey.self) { newValue in
                                 isPresentationInteractive = newValue
                             }
