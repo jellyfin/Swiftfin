@@ -85,6 +85,33 @@ extension NavigationRoute {
         }
     }
 
+    // MARK: - Backups
+
+    static var backups: NavigationRoute {
+        NavigationRoute(
+            id: "backups"
+        ) {
+            ServerBackupView()
+        }
+    }
+
+    static func backupDetails(viewModel: ServerBackupViewModel, backup: BackupManifestDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "backupDetails"
+        ) {
+            ServerBackupDetailsView(viewModel: viewModel, backup: backup)
+        }
+    }
+
+    static func createBackup(viewModel: ServerBackupViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "createBackup",
+            style: .sheet
+        ) {
+            CreateServerBackupView(viewModel: viewModel)
+        }
+    }
+
     // MARK: - Devices
 
     static func deviceDetails(device: DeviceInfoDto, viewModel: DevicesViewModel) -> NavigationRoute {
