@@ -47,6 +47,7 @@ extension CustomizeViewsSettings {
             userData: .init(
                 isFavorite: true,
                 isPlayed: true,
+                key: "",
                 playbackPositionTicks: Duration.seconds(600).ticks,
                 unplayedItemCount: 3
             )
@@ -89,34 +90,30 @@ extension CustomizeViewsSettings {
                         .foregroundStyle(.secondary)
                 }
             }
+            .frame(width: (UIDevice.isTV ? 225 : 150) * (type == .landscape ? 1.77 : 1))
             .animation(.linear(duration: 0.1), value: indicators)
             .animation(.linear(duration: 0.1), value: unplayedStyle)
             .animation(.linear(duration: 0.1), value: previewItemState)
         }
 
         var body: some View {
-            Form(systemImage: "gear") {
-                #if os(iOS)
+            Form {
                 Section(L10n.preview) {
+                    #if os(iOS)
                     ScrollView(.horizontal) {
                         HStack(alignment: .bottom) {
-                            posterPreview(type: .portrait)
-                                .frame(width: 150)
-
-                            posterPreview(type: .landscape)
-                                .frame(width: 200)
-
-                            posterPreview(type: .square)
-                                .frame(width: 150)
+                            ForEach([PosterDisplayType.portrait, .landscape, .square]) { type in
+                                posterPreview(type: type)
+                            }
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical)
                     }
                     .scrollIndicators(.hidden)
+                    #endif
 
-                    Picker(L10n.status, selection: $previewItemState)
+                    PlatformPicker(L10n.status, selection: $previewItemState)
                 }
-                #endif
 
                 Section(L10n.indicators) {
 
@@ -146,6 +143,16 @@ extension CustomizeViewsSettings {
                     Toggle(L10n.useSeriesThumb, isOn: $useSeriesLandscapeBackdrop)
                 } header: {
                     Text(L10n.episode)
+                }
+            } image: {
+                CenteredLazyVGrid(
+                    data: [.portrait, .square, .landscape],
+                    id: \.self,
+                    columns: 2,
+                    spacing: EdgeInsets.edgePadding
+                ) { type in
+                    posterPreview(type: type)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                 }
             }
             .navigationTitle(L10n.posters)

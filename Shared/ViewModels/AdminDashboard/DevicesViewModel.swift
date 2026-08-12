@@ -89,22 +89,11 @@ final class DevicesViewModel: ViewModel {
         let currentDeviceID = try authenticatedClient.configuration.deviceID
         let deviceIdsToDelete = ids.filter { $0 != currentDeviceID }
 
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            for deviceId in deviceIdsToDelete {
-                group.addTask {
-                    try await self.deleteDevice(id: deviceId)
-                }
-            }
+        guard deviceIdsToDelete.isNotEmpty else { return }
 
-            try await group.waitForAll()
-        }
+        let request = Paths.deleteDevice(id: Array(deviceIdsToDelete))
+        try await send(request)
 
         devices = devices.subtracting(deviceIdsToDelete, using: \.id)
-    }
-
-    // TODO: Replace when/if Jellyfin API supports deleting in batch
-    private func deleteDevice(id: String) async throws {
-        let request = Paths.deleteDevice(id: id)
-        try await send(request)
     }
 }
