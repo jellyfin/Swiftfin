@@ -388,11 +388,7 @@ private struct BaseItemDtoPosterLabel: View {
         case .season:
             label(title: item.parentTitle ?? item.displayTitle, subtitle: item.displayTitle)
         case .video where item.extraType != nil:
-            label(
-                title: item.displayTitle,
-                subtitle: item.subtitle,
-                runtime: item.runtime
-            )
+            extrasLabel
         default:
             label(title: item.displayTitle, subtitle: item.subtitle)
         }
@@ -402,7 +398,7 @@ private struct BaseItemDtoPosterLabel: View {
     //       - verify layout
 
     @ViewBuilder
-    private func label(title: String, subtitle: String?, runtime: Duration? = nil) -> some View {
+    private func label(title: String, subtitle: String?) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
                 .font(.footnote)
@@ -410,23 +406,11 @@ private struct BaseItemDtoPosterLabel: View {
                 .accessibilityLabel(item.displayTitle)
                 .lineLimit(1, reservesSpace: true)
 
-            Group {
-                if let subtitle {
-                    Text(subtitle)
-                }
-
-                if let runtime {
-                    Text(runtime, format: .runtime)
-                }
-
-                if subtitle == nil, runtime == nil {
-                    Text(verbatim: " ")
-                }
-            }
-            .font(.caption)
-            .fontWeight(.medium)
-            .foregroundStyle(.secondary)
-            .lineLimit(1, reservesSpace: true)
+            Text(subtitle ?? " ")
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundStyle(.secondary)
+                .lineLimit(1, reservesSpace: true)
         }
     }
 
@@ -491,6 +475,33 @@ private struct BaseItemDtoPosterLabel: View {
             }
             .font(.footnote)
             .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var extrasLabel: some View {
+        VStack(alignment: .leading) {
+            Text(item.displayTitle)
+                .font(.footnote)
+                .foregroundStyle(.primary)
+                .accessibilityLabel(item.displayTitle)
+                .lineLimit(1, reservesSpace: true)
+
+            if let extraType = item.extraType, extraType != .unknown {
+                Text(extraType.displayTitle)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1, reservesSpace: true)
+            }
+
+            if let runtime = item.runtime {
+                Text(runtime, format: .runtime)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1, reservesSpace: true)
+            }
         }
     }
 }
