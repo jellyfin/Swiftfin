@@ -95,10 +95,7 @@ extension MediaInfoSupplement {
                     .fontWeight(.semibold)
                 }
                 .buttonStyle(.supplementAction)
-                #if os(tvOS)
-                    .focused($isResetButtonFocused)
-                #endif
-                    .frame(height: UIDevice.isTV ? 80 : 40)
+                .frame(height: UIDevice.isTV ? 80 : 40)
 
                 if timerViewModel.program.isSeries == true {
                     Button(role: timerViewModel.seriesTimer != nil ? .destructive : nil) {
