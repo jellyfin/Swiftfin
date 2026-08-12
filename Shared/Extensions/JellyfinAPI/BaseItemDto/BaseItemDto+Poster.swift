@@ -510,6 +510,14 @@ private struct BaseItemDtoPosterLabel: View {
                     .foregroundStyle(.secondary)
                     .lineLimit(1, reservesSpace: true)
             }
+
+            if item.extraType == .unknown {
+                Text(verbatim: " ")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .lineLimit(1, reservesSpace: true)
+                    .accessibilityHidden(true)
+            }
         }
     }
 }
