@@ -41,7 +41,7 @@ extension ColorPicker {
         }
 
         var body: some View {
-            VStack(spacing: 8) {
+            EqualWidthVStack(spacing: 8) {
                 Text(title.localizedCapitalized)
                     .font(.title3)
                     .edgePadding(.bottom)
