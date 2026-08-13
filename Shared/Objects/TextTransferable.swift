@@ -20,10 +20,12 @@ public protocol TextTransferable: Transferable {
 public extension TextTransferable {
 
     static var transferRepresentation: some TransferRepresentation {
-        DataRepresentation(exportedContentType: .plainText) { (item: Self) in
-            Data(item.transferBody.utf8)
+        FileRepresentation(exportedContentType: .plainText) { (item: Self) in
+            let url = URL.temporaryDirectory.appending(path: item.transferTitle.appending(".txt"))
+            try item.transferBody.write(to: url, atomically: true, encoding: .utf8)
+
+            return SentTransferredFile(url)
         }
-        .suggestedFileName { $0.transferTitle.appending(".txt") }
     }
 
     #if os(iOS)
