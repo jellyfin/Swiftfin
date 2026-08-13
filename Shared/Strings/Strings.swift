@@ -264,6 +264,8 @@ internal enum L10n {
   internal static let capabilities = L10n.tr("Localizable", "capabilities", fallback: "Capabilities")
   /// Cast & crew
   internal static let castAndCrew = L10n.tr("Localizable", "castAndCrew", fallback: "Cast & crew")
+  /// Cast to Device
+  internal static let castToDevice = L10n.tr("Localizable", "castToDevice", fallback: "Cast to Device")
   /// Category
   internal static let category = L10n.tr("Localizable", "category", fallback: "Category")
   /// Cellular
@@ -1358,6 +1360,10 @@ internal enum L10n {
   internal static let replaceAllMetadata = L10n.tr("Localizable", "replaceAllMetadata", fallback: "Replace all metadata")
   /// Are you sure you want to replace this item?
   internal static let replaceItemConfirmation = L10n.tr("Localizable", "replaceItemConfirmation", fallback: "Are you sure you want to replace this item?")
+  /// %1$@ is currently playing. Replace it with %2$@?
+  internal static func replaceQueueWarning(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "replaceQueueWarning", String(describing: p1), String(describing: p2), fallback: "%1$@ is currently playing. Replace it with %2$@?")
+  }
   /// Replace subtitle
   internal static let replaceSubtitle = L10n.tr("Localizable", "replaceSubtitle", fallback: "Replace subtitle")
   /// Required

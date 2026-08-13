@@ -41,6 +41,27 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
+    static func castRemote(
+        provider: MediaPlayerItemProvider,
+        target: SessionViewModel
+    ) -> NavigationRoute {
+        NavigationRoute(id: "castRemote") {
+            CastView(
+                provider: provider,
+                target: target
+            )
+        }
+    }
+
+    static func castToJellyfin(provider: MediaPlayerItemProvider) -> NavigationRoute {
+        NavigationRoute(
+            id: "castToJellyfin",
+            style: .sheet
+        ) {
+            CastView.SessionsView(provider: provider)
+        }
+    }
+
     @MainActor
     static func editGenres(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editGenres") {
