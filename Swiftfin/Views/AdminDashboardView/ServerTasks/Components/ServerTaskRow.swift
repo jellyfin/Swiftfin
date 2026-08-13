@@ -37,10 +37,17 @@ extension ServerTasksView {
                     case .idle:
                         Group {
                             if let taskEndTime = viewModel.task.lastExecutionResult?.endTimeUtc {
-                                Text(L10n
-                                    .lastRunTime(Date.RelativeFormatStyle(presentation: .numeric, unitsStyle: .narrow).format(taskEndTime)))
-                                    .id(currentDate)
-                                    .monospacedDigit()
+                                Text(
+                                    L10n.lastRunTime(
+                                        Date.RelativeFormatStyle(
+                                            presentation: .numeric,
+                                            unitsStyle: .narrow
+                                        )
+                                        .format(taskEndTime)
+                                    )
+                                )
+                                .id(currentDate)
+                                .monospacedDigit()
                             } else {
                                 Text(L10n.neverRun)
                             }
