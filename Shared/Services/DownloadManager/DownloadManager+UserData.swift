@@ -69,7 +69,7 @@ extension DownloadManager {
         guard task(id: id) != nil else { return nil }
 
         update(id: id) { task in
-            var userData = task.item.userData ?? UserItemDataDto()
+            var userData = task.item.userData ?? UserItemDataDto(key: "")
             userData.itemID = id
             mutator(&userData)
             task.item.userData = userData

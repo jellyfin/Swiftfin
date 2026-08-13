@@ -13,7 +13,10 @@ extension [BaseItemDto] {
 
     func filtered(using filters: ItemFilterCollection) -> [BaseItemDto] {
         filtered(itemTypes: filters.itemTypes)
+            .filtered(audioLanguages: filters.audioLanguages)
             .filtered(genres: filters.genres)
+            .filtered(officialRatings: filters.officialRatings)
+            .filtered(subtitleLanguages: filters.subtitleLanguages)
             .filtered(tags: filters.tags)
             .filtered(years: filters.years)
             .filtered(letters: filters.letter)
@@ -30,6 +33,30 @@ extension [BaseItemDto] {
         }
     }
 
+    private func filtered(audioLanguages: [ItemLanguage]) -> [BaseItemDto] {
+        guard audioLanguages.isNotEmpty else { return self }
+
+        let allowed = Set(audioLanguages.map(\.value))
+
+        return filter { item in
+            item.audioStreams
+                .compactMap(\.language)
+                .contains { allowed.contains($0) }
+        }
+    }
+
+    private func filtered(subtitleLanguages: [ItemLanguage]) -> [BaseItemDto] {
+        guard subtitleLanguages.isNotEmpty else { return self }
+
+        let allowed = Set(subtitleLanguages.map(\.value))
+
+        return filter { item in
+            item.subtitleStreams
+                .compactMap(\.language)
+                .contains { allowed.contains($0) }
+        }
+    }
+
     private func filtered(genres: [ItemGenre]) -> [BaseItemDto] {
         guard genres.isNotEmpty else { return self }
 
@@ -38,6 +65,17 @@ extension [BaseItemDto] {
         return filter { item in
             guard let genres = item.genres else { return false }
             return !allowed.isDisjoint(with: genres)
+        }
+    }
+
+    private func filtered(officialRatings: [ItemOfficialRating]) -> [BaseItemDto] {
+        guard officialRatings.isNotEmpty else { return self }
+
+        let allowed = Set(officialRatings.map(\.value))
+
+        return filter { item in
+            guard let rating = item.officialRating else { return false }
+            return allowed.contains(rating)
         }
     }
 

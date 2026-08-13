@@ -71,17 +71,37 @@ final class DownloadManager: NSObject, ObservableObject {
         tasks.map(\.item)
     }
 
-    func localQueryFilters() -> QueryFiltersLegacy {
-        let completed = tasks.filter(\.isCompleted)
+    func localQueryFilters() -> (QueryFilters, QueryFiltersLegacy) {
+        let items = tasks.filter(\.isCompleted).map(\.item)
 
-        let genres = Set(completed.compactMap(\.item.genres).flatMap(\.self))
-        let tags = Set(completed.compactMap(\.item.tags).flatMap(\.self))
-        let years = Set(completed.compactMap(\.item.productionYear))
+        let audioLanguages = Set(items.flatMap(\.audioStreams).compactMap(\.language))
+        let genres = Set(items.compactMap(\.genres).flatMap(\.self))
+        let officialRatings = Set(items.compactMap(\.officialRating))
+        let subtitleLanguages = Set(items.flatMap(\.subtitleStreams).compactMap(\.language))
+        let tags = Set(items.compactMap(\.tags).flatMap(\.self))
+        let years = Set(items.compactMap(\.productionYear))
 
-        return QueryFiltersLegacy(
+        let queryFilters = QueryFilters(
+            audioLanguages: audioLanguages.map(languagePair),
+            genres: genres.sorted().map { NameIDPair(name: $0) },
+            subtitleLanguages: subtitleLanguages.map(languagePair),
+            tags: tags.sorted()
+        )
+
+        let legacyQueryFilters = QueryFiltersLegacy(
             genres: genres.sorted(),
+            officialRatings: officialRatings.sorted(),
             tags: tags.sorted(),
             years: years.sorted()
+        )
+
+        return (queryFilters, legacyQueryFilters)
+    }
+
+    private func languagePair(_ code: String) -> NameValuePair {
+        NameValuePair(
+            name: Locale.current.localizedString(forLanguageCode: code) ?? code,
+            value: code
         )
     }
 
