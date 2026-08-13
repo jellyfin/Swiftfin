@@ -19,7 +19,6 @@ extension VideoPlayer.PlaybackControls {
             if #available(iOS 26.0, *) {
                 content
                     .buttonStyle(OverlayGlassButtonStyle(onPressed: onPressed))
-                    .backport
                     .buttonBorderShape(.circle)
             } else {
                 content
@@ -85,7 +84,6 @@ extension VideoPlayer.PlaybackControls {
                 }
                 .animation(.linear(duration: 0.1).delay(configuration.isPressed ? 0.2 : 0), value: configuration.isPressed)
                 .padding(4)
-                .backport
                 .onChange(of: configuration.isPressed) { _, newValue in
                     onPressed(newValue)
                 }
@@ -114,7 +112,6 @@ extension VideoPlayer.PlaybackControls {
                 .shadow(color: isFocused ? .black.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
                 .animation(.linear(duration: 0.1), value: isFocused)
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.25), value: configuration.isPressed)
-                .backport
                 .onChange(of: configuration.isPressed) { _, newValue in
                     onPressed(newValue)
                 }

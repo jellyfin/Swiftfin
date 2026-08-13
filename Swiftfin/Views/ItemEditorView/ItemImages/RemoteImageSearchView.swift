@@ -54,7 +54,6 @@ struct RemoteImageSearchView: View {
             layout: layout,
             posterType: posterType
         )
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(imageType.displayTitle.localizedCapitalized)
         .navigationBarBackButtonHidden(viewModel.background.is(.updating))
@@ -192,7 +191,6 @@ extension RemoteImageSearchView {
                     .pickerStyle(.menu)
                 }
             }
-            .backport
             .onChange(of: remoteImagesViewModel.environment) {
                 remoteImagesViewModel.refresh()
             }

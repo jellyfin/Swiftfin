@@ -56,7 +56,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 .foregroundStyle(.primary, .secondary)
                 .videoPlayerActionButtonTransition()
                 .assign(playbackItem.$selectedSubtitleStreamIndex, to: $selectedSubtitleStreamIndex)
-                .backport
                 .onChange(of: selectedSubtitleStreamIndex) { _, newValue in
                     playbackItem.selectedSubtitleStreamIndex = newValue
                 }

@@ -93,7 +93,6 @@ struct Marquee<Content: View>: View {
 
                     initializeAnimation(proxy: proxy)
                 }
-                .backport
                 .onChange(of: proxy.size.width) {
                     guard !isAppear, proxy.size.width != .zero else {
                         return
@@ -101,15 +100,12 @@ struct Marquee<Content: View>: View {
 
                     initializeAnimation(proxy: proxy)
                 }
-                .backport
                 .onChange(of: isFocused) { _, newFocused in
                     resetAnimation(proxy: proxy, isFocused: newFocused)
                 }
-                .backport
                 .onChange(of: speed) { _, newSpeed in
                     resetAnimation(proxy: proxy, speed: newSpeed)
                 }
-                .backport
                 .onChange(of: delay) { _, newDelay in
                     resetAnimation(proxy: proxy, delay: newDelay)
                 }
@@ -166,7 +162,6 @@ struct Marquee<Content: View>: View {
 
                     initializeAnimation(proxy: proxy)
                 }
-                .backport
                 .onChange(of: proxy.size.height) {
                     guard !isAppear, proxy.size.height != .zero else {
                         return
@@ -177,7 +172,6 @@ struct Marquee<Content: View>: View {
                 .onDisappear {
                     self.isAppear = false
                 }
-                .backport
                 .onChange(of: isFocused) { _, newValue in
                     resetAnimation(proxy: proxy, isFocused: newValue)
                 }

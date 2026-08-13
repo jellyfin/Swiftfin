@@ -158,13 +158,14 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .onPreferenceChange(IsSafeAreaBarApplied.self) { newValue in
             isSafeAreaBarApplied = newValue
         }
-        .backport
+        #if os(iOS)
         .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
-        .backport
+        #else
+        .toolbarTitleDisplayMode(router.isRootOfPath ? .automatic : .inline)
+        #endif
         .onChange(of: viewModel.environment) {
             viewModel.refreshForEnvironmentChange()
         }
-        .backport
         .onChange(of: libraryStyle) { oldStyle, newStyle in
             if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero) ==
                 Element.layout(for: newStyle, options: libraryStyleOptions, insets: .zero)

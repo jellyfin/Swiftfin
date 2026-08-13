@@ -91,7 +91,6 @@ struct AddServerUserAccessTagsView: View {
                 existsOnServer: existsOnServer
             )
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.addAccessTag.localizedCapitalized)
         .navigationBarCloseButton {
@@ -139,7 +138,7 @@ struct AddServerUserAccessTagsView: View {
                 .disabled(!isValid)
             }
         }
-        .onChange(of: input.name) { newTag in
+        .onChange(of: input.name) { _, newTag in
             tagViewModel.search(newTag)
         }
         .onReceive(viewModel.events) { event in

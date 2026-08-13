@@ -56,7 +56,6 @@ struct EditAccessScheduleView: View {
                 }
             }
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.accessSchedules.localizedCapitalized)
         .navigationBarBackButtonHidden(isEditing)

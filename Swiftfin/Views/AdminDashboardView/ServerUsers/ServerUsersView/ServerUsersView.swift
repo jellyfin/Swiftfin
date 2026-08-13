@@ -49,7 +49,6 @@ struct ServerUsersView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.users)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
         .refreshable {
@@ -118,13 +117,13 @@ struct ServerUsersView: View {
             }
         }
 
-        .onChange(of: isDisabledFilterActive) { newValue in
+        .onChange(of: isDisabledFilterActive) { _, newValue in
             viewModel.send(.getUsers(
                 isHidden: isHiddenFilterActive,
                 isDisabled: newValue
             ))
         }
-        .onChange(of: isHiddenFilterActive) { newValue in
+        .onChange(of: isHiddenFilterActive) { _, newValue in
             viewModel.send(.getUsers(
                 isHidden: newValue,
                 isDisabled: isDisabledFilterActive

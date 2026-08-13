@@ -61,7 +61,6 @@ extension ConnectToServerView {
                     .controlSize(.large)
                 #endif
             }
-            .backport
             .toolbarTitleDisplayMode(.inline)
             .navigationTitle(L10n.connection)
             .navigationBarCloseButton {

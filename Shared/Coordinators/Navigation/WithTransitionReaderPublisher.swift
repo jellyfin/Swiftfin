@@ -29,7 +29,7 @@ struct WithTransitionReaderPublisher<Content: View>: View {
             .background {
                 TransitionReader { proxy in
                     Color.clear
-                        .onChange(of: proxy) { newValue in
+                        .onChange(of: proxy) { _, newValue in
                             publishedBox.value.send(newValue)
                         }
                 }

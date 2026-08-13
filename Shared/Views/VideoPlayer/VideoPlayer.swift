@@ -58,19 +58,16 @@ struct VideoPlayer: View {
             manager.start()
         }
         .prefersStatusBarHidden(!containerState.isPresentingOverlay)
-        .backport
         .onChange(of: audioOffset) { _, newValue in
             if let proxy = proxy as? MediaPlayerOffsetConfigurable {
                 proxy.setAudioOffset(newValue)
             }
         }
-        .backport
         .onChange(of: containerState.isAspectFilled) { _, newValue in
             UIView.animate(withDuration: 0.2) {
                 proxy.setAspectFill(newValue)
             }
         }
-        .backport
         .onChange(of: containerState.isScrubbing) { _, newValue in
             if newValue {
                 scrubbingStartTime = CACurrentMediaTime()
@@ -86,7 +83,6 @@ struct VideoPlayer: View {
             manager.seconds = scrubbedSeconds
             proxy.setSeconds(scrubbedSeconds)
         }
-        .backport
         .onChange(of: subtitleOffset) { _, newValue in
             if let proxy = proxy as? MediaPlayerOffsetConfigurable {
                 proxy.setSubtitleOffset(newValue)
@@ -96,7 +92,6 @@ struct VideoPlayer: View {
             key: PresentationControllerShouldDismissPreferenceKey.self,
             value: containerState.presentationControllerShouldDismiss
         )
-        .backport
         .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
             guard !isPresented else { return }
             isBeingDismissedByTransition = true

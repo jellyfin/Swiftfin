@@ -26,7 +26,7 @@ extension AddTaskTriggerView {
                         .tag(type as TaskTriggerInfoType?)
                 }
             }
-            .onChange(of: taskTriggerInfo.type) { newType in
+            .onChange(of: taskTriggerInfo.type) { _, newType in
                 resetValuesForNewType(newType: newType)
             }
         }

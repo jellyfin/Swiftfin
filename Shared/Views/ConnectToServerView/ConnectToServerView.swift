@@ -127,7 +127,6 @@ struct ConnectToServerView: View {
 
             localServersSection
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .connecting) {
             router.dismiss()

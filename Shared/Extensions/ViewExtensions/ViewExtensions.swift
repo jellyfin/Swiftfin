@@ -123,7 +123,6 @@ extension View {
         } message: { error in
             Text(error.localizedDescription)
         }
-        .backport
         .onChange(of: error.wrappedValue != nil) { _, hasError in
             guard hasError else { return }
             UIDevice.feedback(.error)

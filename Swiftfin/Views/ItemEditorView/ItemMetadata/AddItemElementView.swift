@@ -50,7 +50,6 @@ struct AddItemElementView<Editor: ItemComponentEditor>: View {
             )
         }
         .navigationTitle(viewModel.editor.displayTitle)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
@@ -76,7 +75,7 @@ struct AddItemElementView<Editor: ItemComponentEditor>: View {
             }
             .enabled(isValid)
         }
-        .onChange(of: input.name) { newName in
+        .onChange(of: input.name) { _, newName in
             viewModel.search(newName)
         }
         .onReceive(viewModel.events) { event in

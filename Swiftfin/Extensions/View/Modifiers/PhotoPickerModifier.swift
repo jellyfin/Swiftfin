@@ -32,7 +32,6 @@ struct PhotoPickerModifier: ViewModifier {
                 selection: $selectedItem,
                 matching: .images
             )
-            .backport
             .onChange(of: selectedItem) { _, newValue in
                 loadImage(from: newValue)
             }

@@ -64,11 +64,9 @@ private struct CoordinatedFocusModifier: ViewModifier {
                 apply(coordinator.request)
                 coordinator.update(id, isFocused: isFocused)
             }
-            .backport
             .onChange(of: isFocused) { _, isFocused in
                 coordinator.update(id, isFocused: isFocused)
             }
-            .backport
             .onChange(of: coordinator.request) { _, request in
                 apply(request)
             }
@@ -101,11 +99,9 @@ private struct CoordinatedFocusSelectionModifier: ViewModifier {
                 apply(coordinator.request)
                 coordinator.update(id, isFocused: selection.wrappedValue == id)
             }
-            .backport
             .onChange(of: selection.wrappedValue) { _, selection in
                 coordinator.update(id, isFocused: selection == id)
             }
-            .backport
             .onChange(of: coordinator.request) { _, request in
                 apply(request)
             }

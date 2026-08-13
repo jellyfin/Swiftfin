@@ -288,7 +288,6 @@ private struct ItemLibraryBody<Content: View>: View {
                     await filterViewModel.getQueryFilters()
                 }
             }
-            .backport
             .onChange(of: filterViewModel.currentFilters) { _, newFilters in
                 rememberSort(from: newFilters)
             }

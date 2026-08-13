@@ -88,7 +88,6 @@ struct SeeMoreText: View {
                     .trackingSize($fullTextSize)
                     .hidden()
             }
-            .backport
             .onChange(of: isTruncated) { _, newValue in
                 isTruncatedBinding.wrappedValue = newValue
             }

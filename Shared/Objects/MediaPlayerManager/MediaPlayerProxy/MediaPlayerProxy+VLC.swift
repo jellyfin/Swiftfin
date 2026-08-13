@@ -219,11 +219,9 @@ extension VLCMediaPlayerProxy {
                         guard let playbackItem else { return }
                         proxy.playNewMedia(vlcConfiguration(for: playbackItem))
                     }
-                    .backport
                     .onChange(of: manager.rate) { _, newValue in
                         proxy.setRate(.absolute(newValue))
                     }
-                    .backport
                     .onChange(of: subtitleConfiguration) { _, newValue in
                         if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
                             proxy.setSubtitleConfiguration(newValue)
