@@ -64,8 +64,12 @@ struct Stepper<
         } label: {
             label()
         }
-        ._alert(title, isPresented: $isPresented) {
-            VStack {
+        .sheet(isPresented: $isPresented) {
+            VStack(spacing: 8) {
+                Text(title.localizedCapitalized)
+                    .font(.title3)
+                    .edgePadding(.bottom)
+
                 HStack(spacing: 24) {
                     Button(L10n.decrement, systemImage: "minus") {
                         value = min(range.upperBound, value.advanced(by: -step))
@@ -110,10 +114,12 @@ struct Stepper<
                         Text(L10n.close)
                     }
                 }
+                .edgePadding(.top)
             }
             .onAppear {
                 value = min(max(value, range.lowerBound), range.upperBound)
             }
+            .edgePadding()
         }
     }
 }
