@@ -306,6 +306,11 @@ final class UserSessionManager: ObservableObject {
         previousSession?.willStop()
         await newSession?.willStart()
 
+        // foregrounding rebuilds the session, the remote target should survive it
+        if previousSession?.server.id == newSession?.server.id, previousSession?.user.id == newSession?.user.id {
+            newSession?.castDeviceID = previousSession?.castDeviceID
+        }
+
         currentSession = newSession
         Container.shared.currentUserSession.reset()
 

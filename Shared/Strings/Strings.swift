@@ -1094,6 +1094,8 @@ internal enum L10n {
   internal static let noActivity = L10n.tr("Localizable", "noActivity", fallback: "No activity")
   /// No profiles defined. Playback issues may occur.
   internal static let noDeviceProfileWarning = L10n.tr("Localizable", "noDeviceProfileWarning", fallback: "No profiles defined. Playback issues may occur.")
+  /// No devices found
+  internal static let noDevicesFound = L10n.tr("Localizable", "noDevicesFound", fallback: "No devices found")
   /// No episodes available
   internal static let noEpisodesAvailable = L10n.tr("Localizable", "noEpisodesAvailable", fallback: "No episodes available")
   /// No items
@@ -1112,6 +1114,8 @@ internal enum L10n {
   internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
   /// No runtime limit
   internal static let noRuntimeLimit = L10n.tr("Localizable", "noRuntimeLimit", fallback: "No runtime limit")
+  /// Nothing playing
+  internal static let nothingPlaying = L10n.tr("Localizable", "nothingPlaying", fallback: "Nothing playing")
   /// Official rating
   internal static let officialRating = L10n.tr("Localizable", "officialRating", fallback: "Official rating")
   /// OK
@@ -1470,6 +1474,8 @@ internal enum L10n {
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See more")
   /// Select all
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select all")
+  /// Select device
+  internal static let selectDevice = L10n.tr("Localizable", "selectDevice", fallback: "Select device")
   /// Select image
   internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select image")
   /// Select server
@@ -1478,6 +1484,8 @@ internal enum L10n {
   internal static let send = L10n.tr("Localizable", "send", fallback: "Send")
   /// Send progress reports
   internal static let sendProgressReports = L10n.tr("Localizable", "sendProgressReports", fallback: "Send progress reports")
+  /// Send text
+  internal static let sendText = L10n.tr("Localizable", "sendText", fallback: "Send text")
   /// Series
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Series date played

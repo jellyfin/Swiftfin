@@ -20,14 +20,12 @@ final class ActiveSessionsViewModel: ViewModel {
         var activeWithinSeconds: Int?
         var showSessionType: ActiveSessionFilter
         var isPaused: Bool
-        var userID: String?
 
         static var `default`: Self {
             .init(
                 activeWithinSeconds: 900,
                 showSessionType: .all,
-                isPaused: false,
-                userID: nil
+                isPaused: false
             )
         }
     }
@@ -68,17 +66,12 @@ final class ActiveSessionsViewModel: ViewModel {
     @Published
     private(set) var sessions: OrderedDictionary<String, SessionViewModel> = [:]
 
-    init(environment: Environment = .default) {
+    override init() {
         super.init()
 
-        self.environment = environment
-
-        Container.shared.userSessionManager()
-            .$currentSession
-            .map { session -> AnyPublisher<[SessionInfoDto], Never> in
-                session?.serverSocketManager.sessions() ?? Combine.Empty<[SessionInfoDto], Never>().eraseToAnyPublisher()
-            }
-            .switchToLatest()
+        userSession?
+            .serverSocketManager
+            .sessions()
             .sink { [weak self] sessions in
                 Task { @MainActor in
                     self?.updateSessions(sessions)
@@ -89,10 +82,7 @@ final class ActiveSessionsViewModel: ViewModel {
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        let parameters = Paths.GetSessionsParameters(
-            controllableByUserID: environment.userID,
-            activeWithinSeconds: environment.activeWithinSeconds
-        )
+        let parameters = Paths.GetSessionsParameters(activeWithinSeconds: environment.activeWithinSeconds)
         let request = Paths.getSessions(parameters: parameters)
         let response = try await send(request)
 
@@ -109,13 +99,7 @@ final class ActiveSessionsViewModel: ViewModel {
         // Reuse existing observers so ActiveSessionDetailsViews keep receiving updates
         var updatedSessions: OrderedDictionary<String, SessionViewModel> = [:]
 
-        let deviceID = userSession?.client.configuration.deviceID
-
         let filteredSessions = incomingSessions
-            .filter { session in
-                guard let userID = environment.userID else { return true }
-                return session.userID == userID && session.deviceID != deviceID
-            }
             .filter { session in
                 guard let seconds = environment.activeWithinSeconds else { return true }
                 guard let date = session.lastActivityDate else { return true }

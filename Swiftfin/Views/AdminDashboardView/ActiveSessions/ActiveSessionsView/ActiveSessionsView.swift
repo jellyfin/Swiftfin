@@ -16,21 +16,7 @@ struct ActiveSessionsView: View {
     private var router
 
     @StateObject
-    private var viewModel: ActiveSessionsViewModel
-
-    private let castProvider: MediaPlayerItemProvider?
-
-    init(
-        userID: String? = nil,
-        castProvider: MediaPlayerItemProvider? = nil
-    ) {
-        self.castProvider = castProvider
-
-        var environment = ActiveSessionsViewModel.Environment.default
-        environment.userID = userID
-
-        self._viewModel = StateObject(wrappedValue: ActiveSessionsViewModel(environment: environment))
-    }
+    private var viewModel = ActiveSessionsViewModel()
 
     @ViewBuilder
     private var activeWithinFilterButton: some View {
@@ -107,15 +93,9 @@ struct ActiveSessionsView: View {
                 layout: .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
             ) { id in
                 ActiveSessionRow(viewModel: viewModel.sessions[id]!) {
-                    if let castProvider {
-                        router.route(
-                            to: .castRemote(provider: castProvider, target: viewModel.sessions[id]!)
-                        )
-                    } else {
-                        router.route(
-                            to: .activeSessionDetails(viewModel: viewModel.sessions[id]!)
-                        )
-                    }
+                    router.route(
+                        to: .activeSessionDetails(viewModel: viewModel.sessions[id]!)
+                    )
                 }
             }
         }

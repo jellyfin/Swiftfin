@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
@@ -16,35 +15,20 @@ struct CastActionButton<Label: View>: View {
     private var router
 
     @StateObject
-    private var viewModel: ActiveSessionsViewModel
+    private var viewModel = CastViewModel()
 
-    private let provider: MediaPlayerItemProvider
-    private let label: (Bool) -> Label
-
-    init(
-        provider: MediaPlayerItemProvider,
-        @ViewBuilder label: @escaping (Bool) -> Label
-    ) {
-        self.provider = provider
-        self.label = label
-
-        var environment = ActiveSessionsViewModel.Environment.default
-        environment.userID = Container.shared.currentUserSession()?.user.id
-
-        self._viewModel = StateObject(wrappedValue: ActiveSessionsViewModel(environment: environment))
-    }
-
-    private var isItemPlaying: Bool {
-        viewModel.sessions.values.contains { target in
-            CastMediaPlayerProxy.isPlaying(item: provider.item, in: target.session)
-        }
-    }
+    let provider: MediaPlayerItemProvider
+    @ViewBuilder
+    let label: (Bool) -> Label
 
     var body: some View {
         Button {
             router.route(to: .castToJellyfin(provider: provider))
         } label: {
-            label(isItemPlaying)
+            label(viewModel.isPlaying(item: provider.item))
+        }
+        .onFirstAppear {
+            viewModel.refresh()
         }
     }
 }
