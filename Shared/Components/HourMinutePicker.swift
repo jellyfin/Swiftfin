@@ -28,8 +28,16 @@ struct HourMinutePicker: View {
             isPresented.toggle()
         }
         #if os(tvOS)
-        ._alert(title, isPresented: $isPresented) {
-            _HourMinutePickerView(interval: interval)
+        .sheet(isPresented: $isPresented) {
+            VStack(spacing: 8) {
+                Text(title.localizedCapitalized)
+                    .font(.title3)
+                    .edgePadding(.bottom)
+
+                _HourMinutePickerView(interval: interval)
+                    .frame(width: 500, height: 400)
+            }
+            .edgePadding()
         }
         #endif
 
