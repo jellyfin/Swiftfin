@@ -8,16 +8,16 @@
 
 import SwiftUI
 
-// TODO: opacity
-
 extension ColorPicker {
 
-    struct _Alert: View {
+    struct Sheet: View {
 
         @Environment(\.dismiss)
         private var dismiss
 
+        let title: String
         let value: Binding<Color>
+        let supportsOpacity: Bool
 
         @ViewBuilder
         private func gradientSection(for component: WritableKeyPath<Color.RGBA, CGFloat>, title: String) -> some View {
@@ -26,7 +26,7 @@ extension ColorPicker {
                     color: value,
                     component: component
                 )
-                .frame(height: 70)
+                .frame(height: 40)
             } header: {
                 HStack {
                     Text(title)
@@ -41,7 +41,11 @@ extension ColorPicker {
         }
 
         var body: some View {
-            EqualWidthVStack {
+            EqualWidthVStack(spacing: 8) {
+                Text(title.localizedCapitalized)
+                    .font(.title3)
+                    .edgePadding(.bottom)
+
                 HStack {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(value.wrappedValue)
@@ -55,6 +59,10 @@ extension ColorPicker {
                         gradientSection(for: \.green, title: L10n.green)
 
                         gradientSection(for: \.blue, title: L10n.blue)
+
+                        if supportsOpacity {
+                            gradientSection(for: \.alpha, title: L10n.opacity)
+                        }
 
                         HStack {
                             Text(L10n.hexColor)
@@ -109,7 +117,9 @@ extension ColorPicker {
                         Text(L10n.close)
                     }
                 }
+                .edgePadding(.top)
             }
+            .edgePadding()
         }
     }
 }
