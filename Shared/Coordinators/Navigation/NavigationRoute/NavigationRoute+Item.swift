@@ -41,12 +41,12 @@ extension NavigationRoute {
     }
 
     #if os(iOS)
-    static func castToJellyfin(provider: MediaPlayerItemProvider? = nil) -> NavigationRoute {
+    static func remoteControl(provider: MediaPlayerItemProvider? = nil) -> NavigationRoute {
         NavigationRoute(
-            id: "castToJellyfin",
+            id: "remoteControl",
             style: .sheet
         ) {
-            CastView(provider: provider)
+            RemoteView(provider: provider)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
         }

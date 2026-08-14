@@ -38,15 +38,12 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
 
     weak var manager: MediaPlayerManager?
 
-    // suspended while a menu is open so its contents don't
-    // change underneath, bounded so sync can't be lost
     var isSyncSuspended: Bool = false {
         didSet {
             syncSuspendedSince = isSyncSuspended ? .now : nil
         }
     }
 
-    /// The item to cast, or `nil` when controlling whatever the session plays
     let item: BaseItemDto?
     let session: SessionViewModel
 
@@ -60,13 +57,17 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
     private var syncSuspendedSince: Date?
     private var tickerTask: Task<Void, Never>?
 
-    private var runtime: Duration? {
-        nowPlayingItem?.runtime ?? item?.runtime
+    var displayedItem: BaseItemDto? {
+        nowPlayingItem ?? (hasStarted ? nil : item)
     }
 
     private var isSuspended: Bool {
         guard let syncSuspendedSince else { return false }
         return Date.now.timeIntervalSince(syncSuspendedSince) < 15
+    }
+
+    private var runtime: Duration? {
+        nowPlayingItem?.runtime ?? item?.runtime
     }
 
     static func isPlaying(item: BaseItemDto, in session: SessionInfoDto) -> Bool {
@@ -112,6 +113,8 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         fetchFullNowPlayingItem()
     }
 
+    // MARK: - MediaPlayerProxy
+
     func play() {
         isPaused = false
         markLocalCommand()
@@ -129,7 +132,6 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         isStopping = true
         idleSince = .now
 
-        // the session is only accurate once the command has landed
         Task {
             await session.sendPlaystateCommand(command: .stop, seekPositionTicks: nil)
         }
@@ -145,80 +147,18 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
 
     func setRate(_ rate: Float) {}
 
-    func nextItem() {
-        markLocalCommand()
-        session.sendPlaystateCommand(command: .nextTrack, seekPositionTicks: nil)
-    }
-
-    func previousItem() {
-        markLocalCommand()
-        session.sendPlaystateCommand(command: .previousTrack, seekPositionTicks: nil)
-    }
-
-    // there is no jump-to-index command, so the queue is replayed
-    // from the selected item to keep the remaining queue intact
-    func playQueueItem(_ item: BaseItemDto) {
-        guard let index = queueItemIDs.firstIndex(of: item.id ?? "") else { return }
-
-        markLocalCommand()
-
-        // the chosen item is known, don't wait on the session to confirm it
-        previousItemID = nowPlayingItem?.id
-        itemChangedAt = .now
-        nowPlayingItem = item
-        seconds = .zero
-        fetchFullNowPlayingItem()
-
-        startRemoteSession(
-            itemIDs: queueItemIDs,
-            startPositionTicks: nil,
-            mediaSourceID: nil,
-            startIndex: index
-        )
-    }
-
-    func setMediaSource(_ mediaSource: MediaSourceInfo) {
-        guard let itemID = nowPlayingItem?.id else { return }
-
-        // without a known queue position the queue cannot be
-        // replayed without starting from a different item
-        let canReplayQueue = queueItemIDs.isNotEmpty && queueIndex != nil
-
-        markLocalCommand()
-        startRemoteSession(
-            itemIDs: canReplayQueue ? queueItemIDs : [itemID],
-            startPositionTicks: seconds.ticks,
-            mediaSourceID: mediaSource.id,
-            startIndex: canReplayQueue ? queueIndex : nil
-        )
-    }
-
-    // the session still reports the previous item until the command lands
-    private func startRemoteSession(
-        itemIDs: [String],
-        startPositionTicks: Int?,
-        mediaSourceID: String?,
-        startIndex: Int?
-    ) {
-        Task {
-            await session.remotePlaybackSession(
-                command: .playNow,
-                itemIDs: itemIDs,
-                startPositionTicks: startPositionTicks,
-                mediaSourceID: mediaSourceID,
-                audioStreamIndex: nil,
-                subtitleStreamIndex: nil,
-                startIndex: startIndex
-            )
-
-            await session.refresh()
+    func setSeconds(_ seconds: Duration) {
+        var newSeconds = max(.zero, seconds)
+        if let runtime {
+            newSeconds = min(newSeconds, runtime)
         }
-    }
 
-    func toggleMute() {
-        isMuted.toggle()
+        self.seconds = newSeconds
         markLocalCommand()
-        session.sendGeneralCommand(.toggleMute)
+        session.sendPlaystateCommand(
+            command: .seek,
+            seekPositionTicks: newSeconds.ticks
+        )
     }
 
     func setAudioStream(_ stream: MediaStream) {
@@ -247,18 +187,80 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         )
     }
 
-    func setSeconds(_ seconds: Duration) {
-        var newSeconds = max(.zero, seconds)
-        if let runtime {
-            newSeconds = min(newSeconds, runtime)
-        }
+    // MARK: - Session Commands
 
-        self.seconds = newSeconds
+    func toggleMute() {
+        isMuted.toggle()
         markLocalCommand()
-        session.sendPlaystateCommand(
-            command: .seek,
-            seekPositionTicks: newSeconds.ticks
+        session.sendGeneralCommand(.toggleMute)
+    }
+
+    func nextItem() {
+        markLocalCommand()
+        session.sendPlaystateCommand(command: .nextTrack, seekPositionTicks: nil)
+    }
+
+    func previousItem() {
+        markLocalCommand()
+        session.sendPlaystateCommand(command: .previousTrack, seekPositionTicks: nil)
+    }
+
+    // there is no jump-to-index command, so the queue is replayed
+    // from the selected item to keep the remaining queue intact
+    func playQueueItem(_ item: BaseItemDto) {
+        guard let index = queueItemIDs.firstIndex(of: item.id ?? "") else { return }
+
+        markLocalCommand()
+
+        previousItemID = nowPlayingItem?.id
+        itemChangedAt = .now
+        nowPlayingItem = item
+        seconds = .zero
+        fetchFullNowPlayingItem()
+
+        startRemoteSession(
+            itemIDs: queueItemIDs,
+            startPositionTicks: nil,
+            mediaSourceID: nil,
+            startIndex: index
         )
+    }
+
+    func setMediaSource(_ mediaSource: MediaSourceInfo) {
+        guard let itemID = nowPlayingItem?.id else { return }
+
+        let canReplayQueue = queueItemIDs.isNotEmpty && queueIndex != nil
+
+        markLocalCommand()
+        startRemoteSession(
+            itemIDs: canReplayQueue ? queueItemIDs : [itemID],
+            startPositionTicks: seconds.ticks,
+            mediaSourceID: mediaSource.id,
+            startIndex: canReplayQueue ? queueIndex : nil
+        )
+    }
+
+    // MARK: - Session Sync
+
+    private func startRemoteSession(
+        itemIDs: [String],
+        startPositionTicks: Int?,
+        mediaSourceID: String?,
+        startIndex: Int?
+    ) {
+        Task {
+            await session.remotePlaybackSession(
+                command: .playNow,
+                itemIDs: itemIDs,
+                startPositionTicks: startPositionTicks,
+                mediaSourceID: mediaSourceID,
+                audioStreamIndex: nil,
+                subtitleStreamIndex: nil,
+                startIndex: startIndex
+            )
+
+            await session.refresh()
+        }
     }
 
     private func isStillPlaying(_ session: SessionInfoDto) -> Bool {
@@ -272,7 +274,6 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
     private func handle(_ session: SessionInfoDto) {
         guard !isSuspended else { return }
 
-        // frames can still report the stopped item until the server catches up
         if isStopping {
             guard session.nowPlayingItem == nil else { return }
             isStopping = false
@@ -294,7 +295,6 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         updateNowPlayingItem(session.nowPlayingItem)
         updateQueueCount(session)
 
-        // Socket updates can lag behind. Don't let stale state revert them.
         guard Date.now >= suppressSyncUntil, let playState = session.playState else { return }
 
         isPaused = playState.isPaused ?? false
@@ -314,12 +314,10 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
     private func updateNowPlayingItem(_ incoming: BaseItemDto?) {
         guard let incoming, let incomingID = incoming.id else { return }
 
-        // the session reports a slimmer item than the fetched one
         if incomingID == nowPlayingItem?.id {
             return
         }
 
-        // transitions bounce back to the item just left for a frame or two
         if incomingID == previousItemID, Date.now.timeIntervalSince(itemChangedAt) < 5 {
             return
         }
@@ -331,7 +329,6 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         nowPlayingItem = incoming
 
         if isReplacing {
-            // the previous item's position is meaningless for the new one
             seconds = .zero
             suppressSyncUntil = .distantPast
         }
@@ -352,7 +349,6 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         seconds = .zero
     }
 
-    // sessions report items without media sources
     private func fetchFullNowPlayingItem() {
         Task {
             guard let userSession = session.userSession,
@@ -417,13 +413,8 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
     }
 
     private func tick() {
-        // publishing here would dismiss an open menu
         guard !isSuspended else { return }
 
-        // the session can stop reporting entirely, so idle is timed
-        // here instead of waiting on another frame to arrive.
-        // queue changeovers can idle the session while the next
-        // item's playback spins up, only act after a sustained gap
         if let idleSince {
             if Date.now.timeIntervalSince(idleSince) >= 5 {
                 clearNowPlaying()

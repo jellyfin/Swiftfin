@@ -168,7 +168,7 @@ private struct FirstTabSettingsBarButton: View {
         {
             if userSession.serverSocketManager.isConnected.value {
                 Button(L10n.remoteControl, systemImage: "appletvremote.gen4") {
-                    router.route(to: .castToJellyfin())
+                    router.route(to: .remoteControl())
                 }
                 .labelStyle(.iconOnly)
             }

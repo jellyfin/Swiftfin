@@ -36,8 +36,11 @@ final class CastViewModel: ViewModel {
         case initial
     }
 
-    // suspended while a menu is open so its contents don't
-    // change underneath, bounded so sync can't be lost
+    @Published
+    private(set) var selectedTarget: SessionViewModel?
+    @Published
+    private(set) var targets: OrderedDictionary<String, SessionViewModel> = [:]
+
     var isPaused: Bool = false {
         didSet {
             pausedSince = isPaused ? .now : nil
@@ -45,11 +48,6 @@ final class CastViewModel: ViewModel {
     }
 
     private var pausedSince: Date?
-
-    @Published
-    private(set) var selectedTarget: SessionViewModel?
-    @Published
-    private(set) var targets: OrderedDictionary<String, SessionViewModel> = [:]
 
     override init() {
         super.init()
