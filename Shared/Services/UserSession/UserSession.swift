@@ -15,10 +15,6 @@ final class UserSession {
     let server: ServerState
     let user: UserState
 
-    /// The device id of the remote control target for this session
-    @MainActor
-    var castDeviceID: String?
-
     lazy var client: JellyfinClient = JellyfinClient(
         configuration: .swiftfinConfiguration(
             url: server.effectiveServerURL,

@@ -8,7 +8,6 @@
 
 import Defaults
 import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 struct CastView: View {
@@ -27,16 +26,6 @@ struct CastView: View {
 
     private var selectedTarget: SessionViewModel? {
         viewModel.selectedTarget
-    }
-
-    private func attach(to target: SessionViewModel?) {
-        proxy = target.map { CastMediaPlayerProxy(item: nil, session: $0) }
-    }
-
-    // selecting only takes control, casting is always explicit
-    private func select(target newTarget: SessionViewModel?) {
-        viewModel.select(newTarget)
-        attach(to: newTarget)
     }
 
     private func cast(to target: SessionViewModel) {
@@ -78,7 +67,7 @@ struct CastView: View {
     private var targetPicker: some View {
         Menu {
             Button {
-                select(target: nil)
+                viewModel.select(nil)
             } label: {
                 if selectedTarget == nil {
                     Label(L10n.none, systemImage: "checkmark")
@@ -91,7 +80,7 @@ struct CastView: View {
 
             ForEach(viewModel.targets.values.elements, id: \.id) { session in
                 Button {
-                    select(target: session)
+                    viewModel.select(session)
                 } label: {
                     if session.id == selectedTarget?.id {
                         Label(session.session.deviceName ?? L10n.unknown, systemImage: "checkmark")
@@ -243,8 +232,9 @@ struct CastView: View {
         .onChange(of: selectedTarget?.id) { _, newValue in
             isCastPending = false
 
+            // selecting only takes control, casting is always explicit
             guard newValue != proxy?.session.id else { return }
-            attach(to: selectedTarget)
+            proxy = selectedTarget.map { CastMediaPlayerProxy(item: nil, session: $0) }
         }
         .onChange(of: selectedTarget?.session.nowPlayingItem?.id) { _, _ in
             isCastPending = false
@@ -702,11 +692,7 @@ extension CastView {
                 titleVisibility: .visible
             ) {
                 Button(L10n.stop, role: .destructive) {
-                    proxy.stop()
-
-                    Task {
-                        await viewModel.background.refresh()
-                    }
+                    perform(proxy.stop)
                 }
 
                 Button(L10n.cancel, role: .cancel) {}

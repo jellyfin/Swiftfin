@@ -82,7 +82,7 @@ final class CastViewModel: ViewModel {
 
     func select(_ target: SessionViewModel?) {
         selectedTarget = target
-        userSession?.castDeviceID = target?.session.deviceID
+        Container.shared.userSessionManager().castDeviceID = target?.session.deviceID
     }
 
     func isPlaying(item: BaseItemDto) -> Bool {
@@ -129,7 +129,7 @@ final class CastViewModel: ViewModel {
             self.selectedTarget = nil
         }
 
-        if selectedTarget == nil, let lastDeviceID = userSession.castDeviceID {
+        if selectedTarget == nil, let lastDeviceID = Container.shared.userSessionManager().castDeviceID {
             selectedTarget = updatedTargets.values.first { $0.session.deviceID == lastDeviceID }
         }
     }

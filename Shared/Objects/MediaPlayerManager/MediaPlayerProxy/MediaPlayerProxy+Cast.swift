@@ -18,8 +18,6 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
     @Published
     private(set) var hasStarted: Bool = false
     @Published
-    private(set) var isEnded: Bool = false
-    @Published
     private(set) var isMuted: Bool = false
     @Published
     private(set) var isPaused: Bool = false
@@ -58,7 +56,6 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
     private var itemChangedAt: Date = .distantPast
     private var previousItemID: String?
     private var queueItemIDs: [String] = []
-    private var startTimeoutTask: Task<Void, Never>?
     private var suppressSyncUntil: Date = .distantPast
     private var syncSuspendedSince: Date?
     private var tickerTask: Task<Void, Never>?
@@ -101,10 +98,8 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
             selectedSubtitleStreamIndex = playState.subtitleStreamIndex ?? -1
             updateQueueCount(session.session)
         } else if let item {
-            isBuffering.value = true
             seconds = item.startSeconds ?? .zero
             suppressSyncUntil = Date.now.addingTimeInterval(3)
-            startStartTimeout()
         }
 
         session.$session
@@ -293,8 +288,6 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
 
         if !hasStarted {
             hasStarted = true
-            isBuffering.value = false
-            startTimeoutTask?.cancel()
         }
 
         idleSince = nil
@@ -407,14 +400,6 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         }
     }
 
-    private func end() {
-        isEnded = true
-        startTimeoutTask?.cancel()
-        startTimeoutTask = nil
-        tickerTask?.cancel()
-        tickerTask = nil
-    }
-
     private func markLocalCommand() {
         suppressSyncUntil = Date.now.addingTimeInterval(8)
     }
@@ -436,25 +421,18 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         guard !isSuspended else { return }
 
         // the session can stop reporting entirely, so idle is timed
-        // here instead of waiting on another frame to arrive
+        // here instead of waiting on another frame to arrive.
+        // queue changeovers can idle the session while the next
+        // item's playback spins up, only act after a sustained gap
         if let idleSince {
-            let idleSeconds = Date.now.timeIntervalSince(idleSince)
-
-            // queue changeovers can idle the session while the next
-            // item's playback spins up, only act after a sustained gap
-            if idleSeconds >= 5 {
+            if Date.now.timeIntervalSince(idleSince) >= 5 {
                 clearNowPlaying()
-            }
-
-            // a remote without an item has nothing to end
-            if idleSeconds >= 30, hasStarted, item != nil {
-                end()
             }
 
             return
         }
 
-        guard hasStarted, !isPaused, !isEnded else { return }
+        guard hasStarted, !isPaused else { return }
 
         var newSeconds = seconds + .seconds(1)
         if let runtime {
@@ -462,15 +440,5 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         }
 
         seconds = newSeconds
-    }
-
-    private func startStartTimeout() {
-        startTimeoutTask?.cancel()
-        startTimeoutTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(30))
-
-            guard !Task.isCancelled, let self, !self.hasStarted else { return }
-            self.end()
-        }
     }
 }
