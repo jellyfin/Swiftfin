@@ -21,14 +21,11 @@ struct SettingsView: View {
     @Default(.userAccentColor)
     private var accentColor
 
-    @Injected(\.userSessionManager)
+    @InjectedObject(\.userSessionManager)
     private var userSessionManager: UserSessionManager
 
     @Router
     private var router
-
-    @StateObject
-    private var viewModel = SettingsViewModel()
 
     // MARK: - Body
 
@@ -50,7 +47,7 @@ struct SettingsView: View {
 
     @ViewBuilder
     private var serverSection: some View {
-        if let userSession = viewModel.userSession {
+        if let userSession = userSessionManager.currentSession {
             Section {
                 UserProfileRow(user: userSession.user.data) {
                     router.route(to: .localUserSettings(user: userSession.user.data))
