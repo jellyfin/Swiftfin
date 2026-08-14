@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Engine
 import JellyfinAPI
 import SwiftUI
 
@@ -17,8 +18,6 @@ struct RemoteView: View {
     @State
     private var isCastPending = false
     @State
-    private var isPresentingReplaceConfirmation = false
-    @State
     private var proxy: CastMediaPlayerProxy?
 
     let provider: MediaPlayerItemProvider?
@@ -27,14 +26,14 @@ struct RemoteView: View {
         viewModel.selectedTarget
     }
 
-    private func cast(to target: SessionViewModel) {
+    private func cast(to target: SessionViewModel, replaceConfirmation: Binding<Bool>) {
         guard let provider else { return }
 
         if CastMediaPlayerProxy.isPlaying(item: provider.item, in: target.session) {
             proxy = CastMediaPlayerProxy(item: provider.item, session: target)
         } else if let nowPlayingItem = target.session.nowPlayingItem {
             proxy = CastMediaPlayerProxy(item: nowPlayingItem, session: target)
-            isPresentingReplaceConfirmation = true
+            replaceConfirmation.wrappedValue = true
         } else {
             castReplacing()
         }
@@ -64,52 +63,34 @@ struct RemoteView: View {
 
     @ViewBuilder
     private var targetPicker: some View {
-        Menu {
-            Button {
-                viewModel.select(nil)
-            } label: {
-                if selectedTarget == nil {
-                    Label(L10n.none, systemImage: "checkmark")
-                } else {
+        Menu(selectedTarget?.session.deviceName ?? L10n.selectDevice) {
+            Picker(
+                L10n.selectDevice,
+                selection: Binding(
+                    get: { selectedTarget?.id },
+                    set: { newID in
+                        viewModel.select(viewModel.targets.values.first { $0.id == newID })
+                    }
+                )
+            ) {
+                Section {
                     Text(L10n.none)
+                        .tag(nil as String?)
                 }
-            }
 
-            Divider()
-
-            ForEach(viewModel.targets.values.elements, id: \.id) { session in
-                Button {
-                    viewModel.select(session)
-                } label: {
-                    if session.id == selectedTarget?.id {
-                        Label(session.session.deviceName ?? L10n.unknown, systemImage: "checkmark")
-                    } else {
+                Section {
+                    ForEach(viewModel.targets.values.elements, id: \.id) { session in
                         Text(session.session.deviceName ?? L10n.unknown)
+                            .tag(session.id)
                     }
                 }
             }
-        } label: {
-            HStack(spacing: 4) {
-                Text(selectedTarget?.session.deviceName ?? L10n.selectDevice)
-                    .font(.headline)
-                    .lineLimit(1)
-
-                Image(systemName: "chevron.down")
-                    .font(.caption2)
-                    .fontWeight(.semibold)
-            }
-            .foregroundStyle(.primary)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 7)
-            .backport
-            .glassEffect(
-                .regular.selection(
-                    tint: .secondarySystemBackground,
-                    foregroundColor: .primary
-                ),
-                in: .capsule
-            )
         }
+        .labelStyle(
+            CapsuleLabelStyle(
+                isIconTrailing: true
+            )
+        )
         .menuStyle(.button)
         .buttonStyle(.isPressed { isPressed in
             viewModel.isPaused = isPressed
@@ -122,36 +103,70 @@ struct RemoteView: View {
         if let provider, let selectedTarget,
            !CastMediaPlayerProxy.isPlaying(item: provider.item, in: selectedTarget.session)
         {
-            Button {
-                isCastPending = true
-                cast(to: selectedTarget)
-            } label: {
-                Group {
-                    if isCastPending {
-                        ProgressView()
-                    } else {
-                        Label(
-                            L10n.castToDevice,
-                            systemImage: "tv.badge.wifi"
-                        )
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .backport
-                .glassEffect(
-                    .regular.selection(
-                        tint: .blue,
-                        foregroundColor: Color.blue.overlayColor
-                    ),
-                    in: .capsule
+            StateAdapter(initialValue: false) { isPresentingReplaceConfirmation in
+                castButtonContent(
+                    provider: provider,
+                    target: selectedTarget,
+                    replaceConfirmation: isPresentingReplaceConfirmation
                 )
             }
-            .buttonStyle(BasicHoverButtonStyle())
-            .disabled(isCastPending)
-            .edgePadding(.horizontal)
+        }
+    }
+
+    @ViewBuilder
+    private func castButtonContent(
+        provider: MediaPlayerItemProvider,
+        target: SessionViewModel,
+        replaceConfirmation: Binding<Bool>
+    ) -> some View {
+        Button {
+            isCastPending = true
+            cast(to: target, replaceConfirmation: replaceConfirmation)
+        } label: {
+            Group {
+                if isCastPending {
+                    ProgressView()
+                } else {
+                    Label(
+                        L10n.castToDevice,
+                        systemImage: "tv.badge.wifi"
+                    )
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .backport
+            .glassEffect(
+                .regular.selection(
+                    tint: .blue,
+                    foregroundColor: Color.blue.overlayColor
+                ),
+                in: .capsule
+            )
+        }
+        .buttonStyle(BasicHoverButtonStyle())
+        .disabled(isCastPending)
+        .edgePadding(.horizontal)
+        .alert(
+            L10n.replace,
+            isPresented: replaceConfirmation
+        ) {
+            Button(L10n.replace, role: .destructive) {
+                castReplacing()
+            }
+
+            Button(L10n.cancel, role: .cancel) {
+                isCastPending = false
+            }
+        } message: {
+            Text(
+                L10n.replaceQueueWarning(
+                    target.session.nowPlayingItem?.displayTitle ?? L10n.unknown,
+                    provider.item.displayTitle
+                )
+            )
         }
     }
 
@@ -166,7 +181,7 @@ struct RemoteView: View {
                     .foregroundStyle(.secondary)
             }
 
-            RemoteTouchpad { _ in }
+            Touchpad { _ in }
 
             HStack(spacing: 24) {
                 RemoteButton(systemImage: "chevron.backward") {}
@@ -177,14 +192,14 @@ struct RemoteView: View {
             }
         }
         .foregroundStyle(.secondary)
-        .edgePadding([.horizontal, .bottom])
+        .edgePadding(.horizontal)
         .disabled(true)
     }
 
     var body: some View {
         VStack(spacing: 20) {
             if let proxy, let selectedTarget {
-                RemoteControlsView(
+                ControlsView(
                     proxy: proxy,
                     target: selectedTarget,
                     viewModel: viewModel
@@ -195,7 +210,8 @@ struct RemoteView: View {
 
             castButton
         }
-        .edgePadding(.top)
+        .edgePadding(.bottom)
+        .presentationDragIndicator(.visible)
         .animation(.linear(duration: 0.2), value: selectedTarget?.id)
         .backport
         .toolbarTitleDisplayMode(.inline)
@@ -205,25 +221,6 @@ struct RemoteView: View {
             }
         }
         .errorMessage($viewModel.error)
-        .alert(
-            L10n.replace,
-            isPresented: $isPresentingReplaceConfirmation
-        ) {
-            Button(L10n.replace, role: .destructive) {
-                castReplacing()
-            }
-
-            Button(L10n.cancel, role: .cancel) {
-                isCastPending = false
-            }
-        } message: {
-            Text(
-                L10n.replaceQueueWarning(
-                    selectedTarget?.session.nowPlayingItem?.displayTitle ?? L10n.unknown,
-                    provider?.item.displayTitle ?? L10n.unknown
-                )
-            )
-        }
         .onFirstAppear {
             viewModel.refresh()
         }

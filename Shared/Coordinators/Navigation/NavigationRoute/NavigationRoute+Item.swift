@@ -47,8 +47,6 @@ extension NavigationRoute {
             style: .sheet
         ) {
             RemoteView(provider: provider)
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
         }
     }
 

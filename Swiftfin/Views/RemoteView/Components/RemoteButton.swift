@@ -8,30 +8,33 @@
 
 import SwiftUI
 
-struct RemoteButton: View {
+extension RemoteView {
 
-    @Environment(\.isEnabled)
-    private var isEnabled
+    struct RemoteButton: View {
 
-    let systemImage: String
-    var size: CGFloat = 60
-    let action: () -> Void
+        @Environment(\.isEnabled)
+        private var isEnabled
 
-    var body: some View {
-        Button(action: action) {
-            Image(systemName: systemImage)
-                .font(size > 60 ? .title : .title2)
-                .frame(width: size, height: size)
-                .backport
-                .glassEffect(
-                    .regular.selection(
-                        tint: .secondarySystemBackground,
-                        foregroundColor: .primary
-                    ),
-                    in: .circle
-                )
+        let systemImage: String
+        var size: CGFloat = 60
+        let action: () -> Void
+
+        var body: some View {
+            Button(action: action) {
+                Image(systemName: systemImage)
+                    .font(size > 60 ? .title : .title2)
+                    .frame(width: size, height: size)
+                    .backport
+                    .glassEffect(
+                        .regular.selection(
+                            tint: .secondarySystemBackground,
+                            foregroundColor: .primary
+                        ),
+                        in: .circle
+                    )
+            }
+            .buttonStyle(BasicHoverButtonStyle())
+            .opacity(isEnabled ? 1 : 0.5)
         }
-        .buttonStyle(BasicHoverButtonStyle())
-        .opacity(isEnabled ? 1 : 0.5)
     }
 }

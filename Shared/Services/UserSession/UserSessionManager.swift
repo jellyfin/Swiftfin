@@ -56,7 +56,7 @@ final class UserSessionManager: ObservableObject {
     @Published
     private(set) var pendingDeepLink: DeepLink?
 
-    /// The device id of the current user's remote control target
+    /// The device id of the current remote control target
     var castDeviceID: String?
 
     let routePublisher = PassthroughSubject<NavigationRoute, Never>()
