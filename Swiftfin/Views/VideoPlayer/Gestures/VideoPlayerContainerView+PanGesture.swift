@@ -245,8 +245,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             }
         ) { startState, handlingState, containerState in
             if handlingState.gestureState == .ended ||
-               handlingState.gestureState == .cancelled ||
-               handlingState.gestureState == .failed
+                handlingState.gestureState == .cancelled ||
+                handlingState.gestureState == .failed
             {
                 containerState.isScrubbing = false
 
