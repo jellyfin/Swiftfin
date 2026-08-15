@@ -77,9 +77,13 @@ extension SessionInfoDto {
     }
 }
 
-extension Collection<SessionInfoDto> {
+extension [SessionInfoDto] {
 
     func playing(item: BaseItemDto) -> [SessionInfoDto] {
         filter { $0.isPlaying(item: item) }
+    }
+
+    func isPlaying(item: BaseItemDto) -> Bool {
+        playing(item: item).isNotEmpty
     }
 }

@@ -86,8 +86,7 @@ final class CastViewModel: ViewModel {
     func isPlaying(item: BaseItemDto) -> Bool {
         targets.values
             .map(\.session)
-            .playing(item: item)
-            .isNotEmpty
+            .isPlaying(item: item)
     }
 
     private func updateTargets(_ incomingSessions: [SessionInfoDto]) {
