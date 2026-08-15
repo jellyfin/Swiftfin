@@ -39,7 +39,6 @@ struct EditMetadataView: View {
     var body: some View {
         contentView
             .navigationTitle(L10n.metadata)
-            .backport
             .toolbarTitleDisplayMode(.inline)
             .topBarTrailing {
                 if viewModel.background.states.contains(.updating) {

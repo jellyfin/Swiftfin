@@ -71,7 +71,6 @@ struct ItemSubtitleUploadView: View {
             }
         }
         .navigationTitle(L10n.subtitle)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .onReceive(viewModel.events) { event in
             switch event {

@@ -202,7 +202,7 @@ extension VideoPlayer.PlaybackControls {
                         .transition(.opacity.animation(.linear(duration: 0.1)))
                 }
             }
-            .onChange(of: isSlowScrubbing) { _ in
+            .onChange(of: isSlowScrubbing) {
                 guard isScrubbing else { return }
                 UIDevice.impact(.soft)
             }

@@ -51,7 +51,6 @@ struct NavigationBarFilterDrawer: View {
             .labelStyle(NavigationDrawerLabelStyle())
         }
         .scrollIndicators(.hidden)
-        .backport
         .scrollClipDisabled()
     }
 }

@@ -181,7 +181,6 @@ struct LetterPickerBar: PlatformView {
             .scrollIfLargerThanContainer()
             .frame(width: dimension)
             .focusSection()
-            .backport
             .defaultFocus(
                 $focusedLetter,
                 selectedLetter ?? letters.first ?? "#",
