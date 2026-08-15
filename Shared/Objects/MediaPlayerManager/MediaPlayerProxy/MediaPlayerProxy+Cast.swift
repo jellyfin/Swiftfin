@@ -35,6 +35,8 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
     @Published
     private(set) var queueItems: [BaseItemDto] = []
     @Published
+    private(set) var repeatMode: RepeatMode = .repeatNone
+    @Published
     private(set) var seconds: Duration = .zero
     @Published
     private(set) var selectedAudioStreamIndex: Int = -1
@@ -92,6 +94,7 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
             selectedAudioStreamIndex = playState.audioStreamIndex ?? -1
             selectedSubtitleStreamIndex = playState.subtitleStreamIndex ?? -1
             volumeLevel = playState.volumeLevel ?? 100
+            repeatMode = playState.repeatMode ?? .repeatNone
             updateQueue(from: session.session)
         } else if let item {
             seconds = item.startSeconds ?? .zero
@@ -210,6 +213,27 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
         )
     }
 
+    func setRepeatMode(_ mode: RepeatMode) {
+        repeatMode = mode
+        markLocalCommand()
+        session.sendFullGeneralCommand(
+            GeneralCommand(
+                arguments: ["RepeatMode": mode.rawValue],
+                name: .setRepeatMode
+            )
+        )
+    }
+
+    func shuffleQueue() {
+        markLocalCommand()
+        session.sendFullGeneralCommand(
+            GeneralCommand(
+                arguments: ["ShuffleMode": "Shuffle"],
+                name: .setShuffleQueue
+            )
+        )
+    }
+
     func nextItem() {
         markLocalCommand()
         session.sendPlaystateCommand(command: .nextTrack, seekPositionTicks: nil)
@@ -236,6 +260,27 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
         startRemoteSession(
             itemIDs: queueItemIDs,
             startPositionTicks: nil,
+            mediaSourceID: nil,
+            startIndex: index
+        )
+    }
+
+    func reorderQueue(_ items: [BaseItemDto]) {
+        let ids = items.compactMap(\.id)
+        guard ids != queueItemIDs,
+              let currentID = nowPlayingItem?.id,
+              let index = ids.firstIndex(of: currentID)
+        else { return }
+
+        markLocalCommand()
+
+        queueItems = items
+        queueItemIDs = ids
+        queueIndex = index
+
+        startRemoteSession(
+            itemIDs: ids,
+            startPositionTicks: seconds.ticks,
             mediaSourceID: nil,
             startIndex: index
         )
@@ -340,6 +385,7 @@ private extension CastMediaPlayerProxy {
         selectedAudioStreamIndex = playState.audioStreamIndex ?? selectedAudioStreamIndex
         selectedSubtitleStreamIndex = playState.subtitleStreamIndex ?? selectedSubtitleStreamIndex
         volumeLevel = playState.volumeLevel ?? volumeLevel
+        repeatMode = playState.repeatMode ?? repeatMode
 
         if let remotePosition = playState.position {
             let drift = abs(remotePosition.seconds - seconds.seconds)

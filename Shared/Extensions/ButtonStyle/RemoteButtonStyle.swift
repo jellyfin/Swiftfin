@@ -15,14 +15,8 @@ extension ButtonStyle where Self == RemoteButtonStyle {
         RemoteButtonStyle(size: .medium)
     }
 
-    static func remoteControl(
-        size: RemoteButtonStyle.Size = .medium,
-        onPressed: ((Bool) -> Void)? = nil
-    ) -> RemoteButtonStyle {
-        RemoteButtonStyle(
-            size: size,
-            onPressed: onPressed
-        )
+    static func remoteControl(size: RemoteButtonStyle.Size) -> RemoteButtonStyle {
+        RemoteButtonStyle(size: size)
     }
 }
 
@@ -64,7 +58,6 @@ struct RemoteButtonStyle: ButtonStyle {
     private var isSelected
 
     let size: Size
-    var onPressed: ((Bool) -> Void)?
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -81,8 +74,5 @@ struct RemoteButtonStyle: ButtonStyle {
             .labelStyle(.iconOnly)
             .opacity(configuration.isPressed ? 0.6 : 1)
             .opacity(isEnabled ? 1 : 0.5)
-            .onChange(of: configuration.isPressed) { _, newValue in
-                onPressed?(newValue)
-            }
     }
 }

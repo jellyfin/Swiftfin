@@ -1290,6 +1290,8 @@ internal enum L10n {
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public users")
   /// Quality
   internal static let quality = L10n.tr("Localizable", "quality", fallback: "Quality")
+  /// Queue
+  internal static let queue = L10n.tr("Localizable", "queue", fallback: "Queue")
   /// Quick Connect
   internal static let quickConnect = L10n.tr("Localizable", "quickConnect", fallback: "Quick Connect")
   /// Quick Connect code
@@ -1360,6 +1362,12 @@ internal enum L10n {
   internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
   /// Reorder
   internal static let reorder = L10n.tr("Localizable", "reorder", fallback: "Reorder")
+  /// Repeat All
+  internal static let repeatAll = L10n.tr("Localizable", "repeatAll", fallback: "Repeat All")
+  /// Repeat Off
+  internal static let repeatOff = L10n.tr("Localizable", "repeatOff", fallback: "Repeat Off")
+  /// Repeat One
+  internal static let repeatOne = L10n.tr("Localizable", "repeatOne", fallback: "Repeat One")
   /// Replace
   internal static let replace = L10n.tr("Localizable", "replace", fallback: "Replace")
   /// Replace all metadata
@@ -1526,6 +1534,8 @@ internal enum L10n {
   internal static let showUnwatched = L10n.tr("Localizable", "showUnwatched", fallback: "Show unwatched")
   /// Show watched
   internal static let showWatched = L10n.tr("Localizable", "showWatched", fallback: "Show watched")
+  /// Shuffle
+  internal static let shuffle = L10n.tr("Localizable", "shuffle", fallback: "Shuffle")
   /// Shutdown server
   internal static let shutdownServer = L10n.tr("Localizable", "shutdownServer", fallback: "Shutdown server")
   /// Are you sure you want to shutdown the server?

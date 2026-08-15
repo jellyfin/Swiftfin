@@ -19,6 +19,9 @@ extension RemoteView {
         @ObservedObject
         private var target: SessionViewModel
 
+        @Router
+        private var router
+
         private let viewModel: CastViewModel
 
         init(proxy: CastMediaPlayerProxy, viewModel: CastViewModel) {
@@ -144,27 +147,10 @@ extension RemoteView {
                         }
 
                         if proxy.queueItems.isNotEmpty {
-                            Menu {
-                                ForEach(proxy.queueItems, id: \.id) { queueItem in
-                                    Button {
-                                        perform { proxy.playQueueItem(queueItem) }
-                                    } label: {
-                                        if queueItem.id == proxy.activeItem?.id {
-                                            Label(queueItem.displayTitle, systemImage: "play.fill")
-                                        } else {
-                                            Text(queueItem.displayTitle)
-                                        }
-
-                                        if let subtitle = queueItem.subtitle {
-                                            Text(subtitle)
-                                        }
-                                    }
-                                }
-                            } label: {
-                                Image(systemName: "list.bullet")
+                            Button(L10n.queue, systemImage: "list.bullet") {
+                                router.route(to: .remoteQueue(proxy: proxy))
                             }
-                            .menuStyle(.button)
-                            .buttonStyle(.remoteControl(size: .small, onPressed: setMenuPressed))
+                            .buttonStyle(.remoteControl(size: .small))
                         }
                     }
                 }

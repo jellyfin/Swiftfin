@@ -50,6 +50,15 @@ extension NavigationRoute {
         }
     }
 
+    static func remoteQueue(proxy: CastMediaPlayerProxy) -> NavigationRoute {
+        NavigationRoute(
+            id: "remoteQueue",
+            style: .sheet
+        ) {
+            RemoteView.QueueView(proxy: proxy)
+        }
+    }
+
     @MainActor
     static func editGenres(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editGenres") {
