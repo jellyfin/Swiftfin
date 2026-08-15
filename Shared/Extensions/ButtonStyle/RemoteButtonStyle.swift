@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension ButtonStyle where Self == RemoteButtonStyle {
@@ -16,14 +17,10 @@ extension ButtonStyle where Self == RemoteButtonStyle {
 
     static func remoteControl(
         size: RemoteButtonStyle.Size = .medium,
-        tint: Color = .secondarySystemBackground,
-        foregroundColor: Color = .primary,
         onPressed: ((Bool) -> Void)? = nil
     ) -> RemoteButtonStyle {
         RemoteButtonStyle(
             size: size,
-            tint: tint,
-            foregroundColor: foregroundColor,
             onPressed: onPressed
         )
     }
@@ -58,12 +55,15 @@ struct RemoteButtonStyle: ButtonStyle {
         }
     }
 
+    @Default(.accentColor)
+    private var accentColor
+
     @Environment(\.isEnabled)
     private var isEnabled
+    @Environment(\.isSelected)
+    private var isSelected
 
     let size: Size
-    var tint: Color = .secondarySystemBackground
-    var foregroundColor: Color = .primary
     var onPressed: ((Bool) -> Void)?
 
     func makeBody(configuration: Configuration) -> some View {
@@ -73,10 +73,9 @@ struct RemoteButtonStyle: ButtonStyle {
             .frame(width: size.length, height: size.length)
             .backport
             .glassEffect(
-                .regular.selection(
-                    tint: tint,
-                    foregroundColor: foregroundColor
-                ),
+                isSelected
+                    ? .regular.selection(tint: accentColor, foregroundColor: accentColor.overlayColor)
+                    : .regular.tint(.secondarySystemBackground),
                 in: .circle
             )
             .labelStyle(.iconOnly)
