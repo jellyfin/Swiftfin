@@ -12,7 +12,7 @@ import SwiftUI
 
 extension RemoteView {
 
-    struct PlaybackControls: View {
+    struct PlaybackControls<Proxy: RemoteMediaPlayerProxy & MediaPlayerQueueConfigurable>: View {
 
         @Default(.VideoPlayer.jumpBackwardInterval)
         private var jumpBackwardInterval
@@ -20,15 +20,27 @@ extension RemoteView {
         private var jumpForwardInterval
 
         @ObservedObject
-        var proxy: CastMediaPlayerProxy
+        private var proxy: Proxy
+
+        private let onChannelDown: (() -> Void)?
+        private let onChannelUp: (() -> Void)?
+
+        init(
+            proxy: Proxy,
+            onChannelUp: (() -> Void)? = nil,
+            onChannelDown: (() -> Void)? = nil
+        ) {
+            self.proxy = proxy
+            self.onChannelUp = onChannelUp
+            self.onChannelDown = onChannelDown
+        }
 
         private var hasQueue: Bool {
             proxy.queueCount > 1
         }
 
-        private func send(_ command: GeneralCommandType) {
-            guard proxy.session.supportedCommands.contains(command) else { return }
-            proxy.session.sendGeneralCommand(command)
+        private var isLive: Bool {
+            proxy.activeItem?.isLiveContent == true
         }
 
         var body: some View {
@@ -41,18 +53,17 @@ extension RemoteView {
                     .disabled(proxy.queueItems.startIndex == proxy.queueIndex)
                 }
 
-                if proxy.activeItem?.isLiveContent != true {
+                if !isLive {
                     Button(L10n.jumpBackward, systemImage: jumpBackwardInterval.secondarySystemImage) {
                         proxy.jumpBackward(jumpBackwardInterval.rawValue)
                     }
                     .buttonStyle(.remoteControl)
-                } else if proxy.session.supportedCommands.contains(.channelDown) {
+                } else if let onChannelDown {
                     Button(
                         GeneralCommandType.channelDown.displayTitle,
-                        systemImage: GeneralCommandType.channelDown.systemImage
-                    ) {
-                        send(.channelDown)
-                    }
+                        systemImage: GeneralCommandType.channelDown.systemImage,
+                        action: onChannelDown
+                    )
                     .buttonStyle(.remoteControl)
                 }
 
@@ -68,18 +79,17 @@ extension RemoteView {
                 }
                 .buttonStyle(.remoteControl(size: .large))
 
-                if proxy.activeItem?.isLiveContent != true {
+                if !isLive {
                     Button(L10n.jumpForward, systemImage: jumpForwardInterval.systemImage) {
                         proxy.jumpForward(jumpForwardInterval.rawValue)
                     }
                     .buttonStyle(.remoteControl)
-                } else if proxy.session.supportedCommands.contains(.channelUp) {
+                } else if let onChannelUp {
                     Button(
                         GeneralCommandType.channelUp.displayTitle,
-                        systemImage: GeneralCommandType.channelUp.systemImage
-                    ) {
-                        send(.channelUp)
-                    }
+                        systemImage: GeneralCommandType.channelUp.systemImage,
+                        action: onChannelUp
+                    )
                     .buttonStyle(.remoteControl)
                 }
 

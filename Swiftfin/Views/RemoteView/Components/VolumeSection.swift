@@ -12,16 +12,25 @@ import SwiftUI
 
 extension RemoteView {
 
-    struct VolumeSection: View {
+    struct VolumeSection<Proxy: MediaPlayerVolumeConfigurable & ObservableObject>: View {
 
         @Default(.accentColor)
         private var accentColor
 
         @ObservedObject
-        var proxy: CastMediaPlayerProxy
+        private var proxy: Proxy
 
-        private var supportedCommands: [GeneralCommandType] {
-            proxy.session.supportedCommands
+        private let isMuteSupported: Bool
+        private let isVolumeSupported: Bool
+
+        init(
+            proxy: Proxy,
+            isMuteSupported: Bool,
+            isVolumeSupported: Bool
+        ) {
+            self.proxy = proxy
+            self.isMuteSupported = isMuteSupported
+            self.isVolumeSupported = isVolumeSupported
         }
 
         @State
@@ -73,11 +82,11 @@ extension RemoteView {
 
         var body: some View {
             HStack(spacing: 16) {
-                if supportedCommands.contains(.toggleMute) {
+                if isMuteSupported {
                     muteButton
                 }
 
-                if supportedCommands.contains(.setVolume) {
+                if isVolumeSupported {
                     volumeSlider
                 }
             }

@@ -29,7 +29,7 @@ struct RemoteView: View {
     private func cast(to target: SessionViewModel, replaceConfirmation: Binding<Bool>) {
         guard let provider else { return }
 
-        if CastMediaPlayerProxy.isPlaying(item: provider.item, in: target.session) {
+        if target.session.isPlaying(item: provider.item) {
             proxy = CastMediaPlayerProxy(item: provider.item, session: target)
         } else if let nowPlayingItem = target.session.nowPlayingItem {
             proxy = CastMediaPlayerProxy(item: nowPlayingItem, session: target)
@@ -106,7 +106,7 @@ struct RemoteView: View {
     @ViewBuilder
     private var castButton: some View {
         if let provider, let selectedTarget,
-           !CastMediaPlayerProxy.isPlaying(item: provider.item, in: selectedTarget.session)
+           !selectedTarget.session.isPlaying(item: provider.item)
         {
             StateAdapter(initialValue: false) { isPresentingReplaceConfirmation in
                 castButtonContent(

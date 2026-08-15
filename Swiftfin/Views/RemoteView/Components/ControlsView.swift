@@ -194,7 +194,11 @@ extension RemoteView {
                         item: activeItem
                     )
 
-                    PlaybackControls(proxy: proxy)
+                    PlaybackControls(
+                        proxy: proxy,
+                        onChannelUp: supportedCommands.contains(.channelUp) ? { send(.channelUp) } : nil,
+                        onChannelDown: supportedCommands.contains(.channelDown) ? { send(.channelDown) } : nil
+                    )
                 } else {
                     if hasDirectionalControls {
                         Touchpad(send: send)
@@ -213,7 +217,11 @@ extension RemoteView {
                 if hasAudioControls || proxy.queueItems.isNotEmpty {
                     HStack(spacing: 16) {
                         if hasAudioControls {
-                            VolumeSection(proxy: proxy)
+                            VolumeSection(
+                                proxy: proxy,
+                                isMuteSupported: supportedCommands.contains(.toggleMute),
+                                isVolumeSupported: supportedCommands.contains(.setVolume)
+                            )
                         }
 
                         if proxy.queueItems.isNotEmpty {

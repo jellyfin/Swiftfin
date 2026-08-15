@@ -11,7 +11,12 @@ import Foundation
 import JellyfinAPI
 
 @MainActor
-class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable, MediaPlayerSubtitleTrackConfigurable {
+class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
+    MediaPlayerAudioTrackConfigurable,
+    MediaPlayerSubtitleTrackConfigurable,
+    MediaPlayerQueueConfigurable,
+    MediaPlayerVolumeConfigurable
+{
 
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
 
@@ -72,24 +77,11 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         nowPlayingItem?.runtime ?? item?.runtime
     }
 
-    static func isPlaying(item: BaseItemDto, in session: SessionInfoDto) -> Bool {
-        guard let nowPlayingItem = session.nowPlayingItem else { return false }
-
-        if nowPlayingItem.id == item.id { return true }
-
-        let itemChannelID = item.channelID ?? (item.isLiveStream ? item.id : nil)
-        let nowPlayingChannelID = nowPlayingItem.channelID ?? (nowPlayingItem.isLiveStream ? nowPlayingItem.id : nil)
-
-        guard let itemChannelID, let nowPlayingChannelID else { return false }
-
-        return itemChannelID == nowPlayingChannelID
-    }
-
     init(item: BaseItemDto?, session: SessionViewModel) {
         self.item = item
         self.session = session
 
-        let isAttaching = item.map { Self.isPlaying(item: $0, in: session.session) } ?? true
+        let isAttaching = item.map { session.session.isPlaying(item: $0) } ?? true
 
         if isAttaching, let playState = session.session.playState, session.session.nowPlayingItem != nil {
             hasStarted = true
@@ -100,7 +92,7 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
             selectedAudioStreamIndex = playState.audioStreamIndex ?? -1
             selectedSubtitleStreamIndex = playState.subtitleStreamIndex ?? -1
             volumeLevel = playState.volumeLevel ?? 100
-            updateQueueCount(session.session)
+            updateQueue(from: session.session)
         } else if let item {
             seconds = item.startSeconds ?? .zero
             suppressSyncUntil = Date.now.addingTimeInterval(3)
@@ -263,9 +255,32 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         )
     }
 
-    // MARK: - Session Sync
+    func refreshNowPlayingItem() async {
+        guard let userSession = session.userSession,
+              let item = nowPlayingItem,
+              let fullItem = try? await item.getFullItem(userSession: userSession),
+              fullItem.id == nowPlayingItem?.id
+        else {
+            return
+        }
 
-    private func startRemoteSession(
+        nowPlayingItem = fullItem
+    }
+}
+
+// MARK: - Session Sync
+
+// The target session takes the place of a local player, with
+// its socket frames standing in for player events. Commands are
+// applied optimistically and stale frames suppressed until the
+// session reports the result.
+private extension CastMediaPlayerProxy {
+
+    func markLocalCommand() {
+        suppressSyncUntil = Date.now.addingTimeInterval(8)
+    }
+
+    func startRemoteSession(
         itemIDs: [String],
         startPositionTicks: Int?,
         mediaSourceID: String?,
@@ -286,15 +301,15 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         }
     }
 
-    private func isStillPlaying(_ session: SessionInfoDto) -> Bool {
+    func isStillPlaying(_ session: SessionInfoDto) -> Bool {
         guard let item, !hasStarted else {
             return session.nowPlayingItem != nil
         }
 
-        return Self.isPlaying(item: item, in: session)
+        return session.isPlaying(item: item)
     }
 
-    private func handle(_ session: SessionInfoDto) {
+    func handle(_ session: SessionInfoDto) {
         guard !isSuspended else { return }
 
         if isStopping {
@@ -316,7 +331,7 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
 
         idleSince = nil
         updateNowPlayingItem(session.nowPlayingItem)
-        updateQueueCount(session)
+        updateQueue(from: session)
 
         guard Date.now >= suppressSyncUntil, let playState = session.playState else { return }
 
@@ -335,7 +350,7 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         }
     }
 
-    private func updateNowPlayingItem(_ incoming: BaseItemDto?) {
+    func updateNowPlayingItem(_ incoming: BaseItemDto?) {
         guard let incoming, let incomingID = incoming.id else { return }
 
         if incomingID == nowPlayingItem?.id {
@@ -360,39 +375,7 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         fetchFullNowPlayingItem()
     }
 
-    private func clearNowPlaying() {
-        guard nowPlayingItem != nil else { return }
-
-        isPaused = true
-        previousItemID = nil
-        nowPlayingItem = nil
-        queueCount = 0
-        queueIndex = nil
-        queueItemIDs = []
-        queueItems = []
-        seconds = .zero
-    }
-
-    func refreshNowPlayingItem() async {
-        guard let userSession = session.userSession,
-              let item = nowPlayingItem,
-              let fullItem = try? await item.getFullItem(userSession: userSession),
-              fullItem.id == nowPlayingItem?.id
-        else {
-            return
-        }
-
-        nowPlayingItem = fullItem
-    }
-
-    private func fetchFullNowPlayingItem() {
-        Task {
-            guard nowPlayingItem?.mediaSources == nil else { return }
-            await refreshNowPlayingItem()
-        }
-    }
-
-    private func updateQueueCount(_ session: SessionInfoDto) {
+    func updateQueue(from session: SessionInfoDto) {
         guard let queue = session.nowPlayingQueue, queue.isNotEmpty else { return }
 
         queueCount = queue.count
@@ -406,7 +389,27 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         fetchQueueItems(ids: ids)
     }
 
-    private func fetchQueueItems(ids: [String]) {
+    func clearNowPlaying() {
+        guard nowPlayingItem != nil else { return }
+
+        isPaused = true
+        previousItemID = nil
+        nowPlayingItem = nil
+        queueCount = 0
+        queueIndex = nil
+        queueItemIDs = []
+        queueItems = []
+        seconds = .zero
+    }
+
+    func fetchFullNowPlayingItem() {
+        Task {
+            guard nowPlayingItem?.mediaSources == nil else { return }
+            await refreshNowPlayingItem()
+        }
+    }
+
+    func fetchQueueItems(ids: [String]) {
         Task {
             guard let userID = session.userSession?.user.id else { return }
 
@@ -424,11 +427,7 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         }
     }
 
-    private func markLocalCommand() {
-        suppressSyncUntil = Date.now.addingTimeInterval(8)
-    }
-
-    private func startTicker() {
+    func startTicker() {
         tickerTask?.cancel()
         tickerTask = Task { [weak self] in
             while !Task.isCancelled {
@@ -440,7 +439,7 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         }
     }
 
-    private func tick() {
+    func tick() {
         guard !isSuspended else { return }
 
         if let idleSince {

@@ -84,9 +84,10 @@ final class CastViewModel: ViewModel {
     }
 
     func isPlaying(item: BaseItemDto) -> Bool {
-        targets.values.contains { target in
-            CastMediaPlayerProxy.isPlaying(item: item, in: target.session)
-        }
+        targets.values
+            .map(\.session)
+            .playing(item: item)
+            .isNotEmpty
     }
 
     private func updateTargets(_ incomingSessions: [SessionInfoDto]) {

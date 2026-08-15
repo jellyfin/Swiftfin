@@ -141,16 +141,19 @@ extension BaseItemDto {
         return genres.map(ItemGenre.init)
     }
 
-    /// Differs from `isLive` to indicate an item
-    /// would be streaming from a live source.
+    /// Is the source of this item a live stream?
     var isLiveStream: Bool {
         channelType == .tv
     }
 
-    /// Whether the item is a live source itself or belongs
-    /// to a live channel, like a program.
+    /// ID of this channel or its parent channel
+    var liveChannelID: String? {
+        channelID ?? (isLiveStream ? id : nil)
+    }
+
+    /// Is this a Live TV Channel or Program?
     var isLiveContent: Bool {
-        isLiveStream || channelID != nil
+        liveChannelID != nil
     }
 
     var isAiring: Bool {
