@@ -31,14 +31,6 @@ extension RemoteView {
             target.supportedCommands
         }
 
-        private var hasDirectionalControls: Bool {
-            supportedCommands.contains(.moveUp) || supportedCommands.contains(.select)
-        }
-
-        private var hasInputControls: Bool {
-            supportedCommands.contains(.goToSearch) || supportedCommands.contains(.sendString)
-        }
-
         private var hasAudioControls: Bool {
             supportedCommands.contains(.toggleMute) || supportedCommands.contains(.setVolume)
         }
@@ -59,133 +51,6 @@ extension RemoteView {
             proxy.isSyncSuspended = isPressed
         }
 
-        @ViewBuilder
-        private var navigationControlsSection: some View {
-            HStack(spacing: 24) {
-                Button(L10n.back, systemImage: "chevron.backward") {
-                    perform { send(.back) }
-                }
-                .buttonStyle(.remoteControl)
-                .disabled(!supportedCommands.contains(.back))
-
-                Button(L10n.play, systemImage: "play.fill") {
-                    perform(proxy.play)
-                }
-                .buttonStyle(.remoteControl(size: .large))
-                .disabled(proxy.activeItem == nil)
-
-                Button(L10n.home, systemImage: "house.fill") {
-                    perform { send(.goHome) }
-                }
-                .buttonStyle(.remoteControl)
-                .disabled(!supportedCommands.contains(.goHome))
-            }
-        }
-
-        @ViewBuilder
-        private var inputSection: some View {
-            HStack(spacing: 24) {
-                if supportedCommands.contains(.goToSearch) {
-                    Button(L10n.search, systemImage: GeneralCommandType.goToSearch.systemImage) {
-                        perform { send(.goToSearch) }
-                    }
-                    .buttonStyle(.remoteControl(size: .small))
-                }
-
-                if supportedCommands.contains(.sendString) {
-                    sendTextButton
-                }
-            }
-        }
-
-        @ViewBuilder
-        private var sendTextButton: some View {
-            StateAdapter(initialValue: false) { isPresentingTextEntry in
-                StateAdapter(initialValue: "") { textEntry in
-                    Button(L10n.sendText, systemImage: "keyboard") {
-                        isPresentingTextEntry.wrappedValue = true
-                    }
-                    .buttonStyle(.remoteControl(size: .small))
-                    .alert(L10n.sendText, isPresented: isPresentingTextEntry) {
-                        TextField(L10n.sendText, text: textEntry)
-
-                        Button(L10n.send) {
-                            target.sendFullGeneralCommand(
-                                GeneralCommand(
-                                    arguments: ["String": textEntry.wrappedValue],
-                                    name: .sendString
-                                )
-                            )
-
-                            textEntry.wrappedValue = ""
-                        }
-
-                        Button(L10n.cancel, role: .cancel) {
-                            textEntry.wrappedValue = ""
-                        }
-                    }
-                }
-            }
-        }
-
-        @ViewBuilder
-        private var queueMenu: some View {
-            Menu {
-                ForEach(proxy.queueItems, id: \.id) { queueItem in
-                    Button {
-                        perform { proxy.playQueueItem(queueItem) }
-                    } label: {
-                        if queueItem.id == proxy.activeItem?.id {
-                            Label(queueItem.displayTitle, systemImage: "play.fill")
-                        } else {
-                            Text(queueItem.displayTitle)
-                        }
-                    }
-                }
-            } label: {
-                Image(systemName: "list.bullet")
-                    .frame(width: 44, height: 44)
-                    .backport
-                    .glassEffect(
-                        .regular.selection(
-                            tint: .secondarySystemBackground,
-                            foregroundColor: .primary
-                        ),
-                        in: .circle
-                    )
-            }
-            .menuStyle(.button)
-            .buttonStyle(.isPressed(setMenuPressed))
-        }
-
-        @ViewBuilder
-        private var stopButton: some View {
-            if proxy.activeItem != nil {
-                StateAdapter(initialValue: false) { isPresentingStopConfirmation in
-                    Button(L10n.stop, systemImage: "stop.fill", role: .destructive) {
-                        isPresentingStopConfirmation.wrappedValue = true
-                    }
-                    .labelStyle(.iconOnly)
-                    .fontWeight(.semibold)
-                    .tint(.red)
-                    .foregroundStyle(.red)
-                    .confirmationDialog(
-                        L10n.stop,
-                        isPresented: isPresentingStopConfirmation,
-                        titleVisibility: .visible
-                    ) {
-                        Button(L10n.stop, role: .destructive) {
-                            perform(proxy.stop)
-                        }
-
-                        Button(L10n.cancel, role: .cancel) {}
-                    } message: {
-                        Text(L10n.stopPlaybackWarning)
-                    }
-                }
-            }
-        }
-
         var body: some View {
             VStack(spacing: 20) {
                 if let activeItem = proxy.activeItem {
@@ -200,17 +65,71 @@ extension RemoteView {
                         onChannelDown: supportedCommands.contains(.channelDown) ? { send(.channelDown) } : nil
                     )
                 } else {
-                    if hasDirectionalControls {
+                    if supportedCommands.contains(.moveUp) || supportedCommands.contains(.select) {
                         Touchpad(send: send)
                     } else {
                         ContentUnavailableView(L10n.nothingPlaying, systemImage: "play.slash")
                             .frame(maxHeight: .infinity)
                     }
 
-                    navigationControlsSection
+                    HStack(spacing: 24) {
+                        Button(L10n.back, systemImage: "chevron.backward") {
+                            perform { send(.back) }
+                        }
+                        .buttonStyle(.remoteControl)
+                        .disabled(!supportedCommands.contains(.back))
 
-                    if hasInputControls {
-                        inputSection
+                        Button(L10n.play, systemImage: "play.fill") {
+                            perform(proxy.play)
+                        }
+                        .buttonStyle(.remoteControl(size: .large))
+                        .disabled(proxy.activeItem == nil)
+
+                        Button(L10n.home, systemImage: "house.fill") {
+                            perform { send(.goHome) }
+                        }
+                        .buttonStyle(.remoteControl)
+                        .disabled(!supportedCommands.contains(.goHome))
+                    }
+
+                    if supportedCommands.contains(.goToSearch) || supportedCommands.contains(.sendString) {
+                        HStack(spacing: 24) {
+                            if supportedCommands.contains(.goToSearch) {
+                                Button(L10n.search, systemImage: GeneralCommandType.goToSearch.systemImage) {
+                                    perform { send(.goToSearch) }
+                                }
+                                .buttonStyle(.remoteControl(size: .small))
+                            }
+
+                            if supportedCommands.contains(.sendString) {
+                                StateAdapter(initialValue: false) { isPresentingTextEntry in
+                                    StateAdapter(initialValue: "") { textEntry in
+                                        Button(L10n.sendText, systemImage: "keyboard") {
+                                            isPresentingTextEntry.wrappedValue = true
+                                        }
+                                        .buttonStyle(.remoteControl(size: .small))
+                                        .alert(L10n.sendText, isPresented: isPresentingTextEntry) {
+                                            TextField(L10n.sendText, text: textEntry)
+
+                                            Button(L10n.send) {
+                                                target.sendFullGeneralCommand(
+                                                    GeneralCommand(
+                                                        arguments: ["String": textEntry.wrappedValue],
+                                                        name: .sendString
+                                                    )
+                                                )
+
+                                                textEntry.wrappedValue = ""
+                                            }
+
+                                            Button(L10n.cancel, role: .cancel) {
+                                                textEntry.wrappedValue = ""
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -225,7 +144,32 @@ extension RemoteView {
                         }
 
                         if proxy.queueItems.isNotEmpty {
-                            queueMenu
+                            Menu {
+                                ForEach(proxy.queueItems, id: \.id) { queueItem in
+                                    Button {
+                                        perform { proxy.playQueueItem(queueItem) }
+                                    } label: {
+                                        if queueItem.id == proxy.activeItem?.id {
+                                            Label(queueItem.displayTitle, systemImage: "play.fill")
+                                        } else {
+                                            Text(queueItem.displayTitle)
+                                        }
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: "list.bullet")
+                                    .frame(width: 44, height: 44)
+                                    .backport
+                                    .glassEffect(
+                                        .regular.selection(
+                                            tint: .secondarySystemBackground,
+                                            foregroundColor: .primary
+                                        ),
+                                        in: .circle
+                                    )
+                            }
+                            .menuStyle(.button)
+                            .buttonStyle(.isPressed(setMenuPressed))
                         }
                     }
                 }
@@ -243,7 +187,30 @@ extension RemoteView {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    stopButton
+                    if proxy.activeItem != nil {
+                        StateAdapter(initialValue: false) { isPresentingStopConfirmation in
+                            Button(L10n.stop, systemImage: "stop.fill", role: .destructive) {
+                                isPresentingStopConfirmation.wrappedValue = true
+                            }
+                            .labelStyle(.iconOnly)
+                            .fontWeight(.semibold)
+                            .tint(.red)
+                            .foregroundStyle(.red)
+                            .confirmationDialog(
+                                L10n.stop,
+                                isPresented: isPresentingStopConfirmation,
+                                titleVisibility: .visible
+                            ) {
+                                Button(L10n.stop, role: .destructive) {
+                                    perform(proxy.stop)
+                                }
+
+                                Button(L10n.cancel, role: .cancel) {}
+                            } message: {
+                                Text(L10n.stopPlaybackWarning)
+                            }
+                        }
+                    }
                 }
             }
             .errorMessage($target.error)

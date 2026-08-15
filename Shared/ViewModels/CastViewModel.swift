@@ -36,6 +36,9 @@ final class CastViewModel: ViewModel {
         case initial
     }
 
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
+
     @Published
     private(set) var selectedTarget: SessionViewModel?
     @Published
@@ -52,7 +55,7 @@ final class CastViewModel: ViewModel {
     override init() {
         super.init()
 
-        Container.shared.userSessionManager()
+        userSessionManager
             .$currentSession
             .map { session -> AnyPublisher<[SessionInfoDto], Never> in
                 session?.serverSocketManager.sessions() ?? Combine.Empty<[SessionInfoDto], Never>().eraseToAnyPublisher()
@@ -80,7 +83,7 @@ final class CastViewModel: ViewModel {
 
     func select(_ target: SessionViewModel?) {
         selectedTarget = target
-        Container.shared.userSessionManager().castDeviceID = target?.session.deviceID
+        userSessionManager.castDeviceID = target?.session.deviceID
     }
 
     func isPlaying(item: BaseItemDto) -> Bool {
@@ -127,7 +130,7 @@ final class CastViewModel: ViewModel {
             self.selectedTarget = nil
         }
 
-        if selectedTarget == nil, let lastDeviceID = Container.shared.userSessionManager().castDeviceID {
+        if selectedTarget == nil, let lastDeviceID = userSessionManager.castDeviceID {
             selectedTarget = updatedTargets.values.first { $0.session.deviceID == lastDeviceID }
         }
     }

@@ -108,7 +108,9 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
         fetchFullNowPlayingItem()
     }
 
-    // MARK: - MediaPlayerProxy
+    deinit {
+        tickerTask?.cancel()
+    }
 
     func play() {
         isPaused = false
@@ -181,8 +183,6 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
             )
         )
     }
-
-    // MARK: - Session Commands
 
     func toggleMute() {
         isMuted.toggle()
@@ -370,6 +370,10 @@ private extension CastMediaPlayerProxy {
         if isReplacing {
             seconds = .zero
             suppressSyncUntil = .distantPast
+
+            if !queueItemIDs.contains(incomingID) {
+                clearQueue()
+            }
         }
 
         fetchFullNowPlayingItem()
@@ -395,11 +399,15 @@ private extension CastMediaPlayerProxy {
         isPaused = true
         previousItemID = nil
         nowPlayingItem = nil
+        seconds = .zero
+        clearQueue()
+    }
+
+    func clearQueue() {
         queueCount = 0
         queueIndex = nil
         queueItemIDs = []
         queueItems = []
-        seconds = .zero
     }
 
     func fetchFullNowPlayingItem() {

@@ -18,76 +18,54 @@ extension RemoteView {
         private var accentColor
 
         @ObservedObject
-        private var proxy: Proxy
-
-        private let isMuteSupported: Bool
-        private let isVolumeSupported: Bool
-
-        init(
-            proxy: Proxy,
-            isMuteSupported: Bool,
-            isVolumeSupported: Bool
-        ) {
-            self.proxy = proxy
-            self.isMuteSupported = isMuteSupported
-            self.isVolumeSupported = isVolumeSupported
-        }
+        var proxy: Proxy
 
         @State
         private var isAdjustingVolume = false
         @State
         private var volume: Double = 100
 
-        @ViewBuilder
-        private var muteButton: some View {
-            let isMuted = proxy.isMuted
-
-            Button {
-                proxy.toggleMute()
-            } label: {
-                Image(systemName: isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                    .frame(width: 44, height: 44)
-                    .backport
-                    .glassEffect(
-                        .regular.selection(
-                            tint: isMuted ? .secondarySystemBackground : accentColor,
-                            foregroundColor: isMuted ? .primary : accentColor.overlayColor
-                        ),
-                        in: .circle
-                    )
-            }
-            .buttonStyle(BasicHoverButtonStyle())
-        }
-
-        @ViewBuilder
-        private var volumeSlider: some View {
-            CapsuleSlider(value: $volume, total: 100)
-                .onEditingChanged { isEditing in
-                    isAdjustingVolume = isEditing
-
-                    if !isEditing {
-                        proxy.setVolume(Int(volume))
-                    }
-                }
-                .gesturePadding(20)
-                .frame(height: isAdjustingVolume ? 15 : 10)
-                .foregroundStyle(accentColor)
-                .frame(height: 15)
-                .animation(.linear(duration: 0.1), value: isAdjustingVolume)
-                .onChange(of: proxy.volumeLevel) { _, newValue in
-                    guard !isAdjustingVolume else { return }
-                    volume = Double(newValue)
-                }
-        }
+        let isMuteSupported: Bool
+        let isVolumeSupported: Bool
 
         var body: some View {
             HStack(spacing: 16) {
                 if isMuteSupported {
-                    muteButton
+                    Button {
+                        proxy.toggleMute()
+                    } label: {
+                        Image(systemName: proxy.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                            .frame(width: 44, height: 44)
+                            .backport
+                            .glassEffect(
+                                .regular.selection(
+                                    tint: proxy.isMuted ? .secondarySystemBackground : accentColor,
+                                    foregroundColor: proxy.isMuted ? .primary : accentColor.overlayColor
+                                ),
+                                in: .circle
+                            )
+                    }
+                    .buttonStyle(BasicHoverButtonStyle())
                 }
 
                 if isVolumeSupported {
-                    volumeSlider
+                    CapsuleSlider(value: $volume, total: 100)
+                        .onEditingChanged { isEditing in
+                            isAdjustingVolume = isEditing
+
+                            if !isEditing {
+                                proxy.setVolume(Int(volume))
+                            }
+                        }
+                        .gesturePadding(20)
+                        .frame(height: isAdjustingVolume ? 15 : 10)
+                        .foregroundStyle(accentColor)
+                        .frame(height: 15)
+                        .animation(.linear(duration: 0.1), value: isAdjustingVolume)
+                        .onChange(of: proxy.volumeLevel) { _, newValue in
+                            guard !isAdjustingVolume else { return }
+                            volume = Double(newValue)
+                        }
                 }
             }
             .onAppear {

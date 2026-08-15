@@ -50,7 +50,7 @@ extension RemoteView {
                         proxy.previousItem()
                     }
                     .buttonStyle(.remoteControl(size: .small))
-                    .disabled(proxy.queueItems.startIndex == proxy.queueIndex)
+                    .disabled(proxy.queueIndex == 0)
                 }
 
                 if !isLive {

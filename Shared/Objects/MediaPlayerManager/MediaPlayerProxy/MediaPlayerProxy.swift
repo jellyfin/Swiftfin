@@ -55,7 +55,7 @@ protocol MediaPlayerSubtitleTrackConfigurable {
     func setSubtitleStream(_ stream: MediaStream)
 }
 
-/// A proxy for a media player not owned by a `MediaPlayerManager`,
+/// A proxy for a media player not owned by a `MediaPlayerManager`.
 @MainActor
 protocol RemoteMediaPlayerProxy: MediaPlayerProxy {
 
