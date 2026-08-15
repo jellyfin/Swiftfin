@@ -84,8 +84,8 @@ extension VideoPlayer.PlaybackControls {
                 }
                 .animation(.linear(duration: 0.1).delay(configuration.isPressed ? 0.2 : 0), value: configuration.isPressed)
                 .padding(4)
-                .onChange(of: configuration.isPressed) { _, newValue in
-                    onPressed(newValue)
+                .onChange(of: configuration.isPressed) {
+                    onPressed(configuration.isPressed)
                 }
         }
         #endif
@@ -112,8 +112,8 @@ extension VideoPlayer.PlaybackControls {
                 .shadow(color: isFocused ? .black.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
                 .animation(.linear(duration: 0.1), value: isFocused)
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.25), value: configuration.isPressed)
-                .onChange(of: configuration.isPressed) { _, newValue in
-                    onPressed(newValue)
+                .onChange(of: configuration.isPressed) {
+                    onPressed(configuration.isPressed)
                 }
         }
         #endif

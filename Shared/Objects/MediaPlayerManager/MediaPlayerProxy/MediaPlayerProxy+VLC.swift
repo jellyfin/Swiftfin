@@ -219,12 +219,12 @@ extension VLCMediaPlayerProxy {
                         guard let playbackItem else { return }
                         proxy.playNewMedia(vlcConfiguration(for: playbackItem))
                     }
-                    .onChange(of: manager.rate) { _, newValue in
-                        proxy.setRate(.absolute(newValue))
+                    .onChange(of: manager.rate) {
+                        proxy.setRate(.absolute(manager.rate))
                     }
-                    .onChange(of: subtitleConfiguration) { _, newValue in
+                    .onChange(of: subtitleConfiguration) {
                         if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
-                            proxy.setSubtitleConfiguration(newValue)
+                            proxy.setSubtitleConfiguration(subtitleConfiguration)
                         }
                     }
             }

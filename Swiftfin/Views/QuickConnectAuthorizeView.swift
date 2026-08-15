@@ -118,8 +118,8 @@ struct QuickConnectAuthorizeView: View {
         .onFirstAppear {
             isCodeFocused = true
         }
-        .onChange(of: code) { _, newValue in
-            code = String(newValue.prefix(6))
+        .onChange(of: code) {
+            code = String(code.prefix(6))
         }
         .onReceive(viewModel.$error) { error in
             guard error != nil else { return }

@@ -69,8 +69,8 @@ struct ItemSubtitleSearchView: View {
             }
             #endif
         }
-        .onChange(of: isPerfectMatch) { _, newValue in
-            viewModel.search(isPerfectMatch: newValue)
+        .onChange(of: isPerfectMatch) {
+            viewModel.search(isPerfectMatch: isPerfectMatch)
         }
     }
 

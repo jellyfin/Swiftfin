@@ -114,8 +114,8 @@ struct WithUserAuthentication<Content: View>: View {
                     Text(reason)
                 }
             }
-            .onChange(of: isPresentingLocalPin) { _, newValue in
-                guard !newValue else { return }
+            .onChange(of: isPresentingLocalPin) {
+                guard !isPresentingLocalPin else { return }
                 pinContinuation = nil
                 pin = ""
             }

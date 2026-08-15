@@ -160,8 +160,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         }
         #if os(iOS)
         .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
-        #else
-        .toolbarTitleDisplayMode(router.isRootOfPath ? .automatic : .inline)
         #endif
         .onChange(of: viewModel.environment) {
             viewModel.refreshForEnvironmentChange()

@@ -117,15 +117,15 @@ struct ServerUsersView: View {
             }
         }
 
-        .onChange(of: isDisabledFilterActive) { _, newValue in
+        .onChange(of: isDisabledFilterActive) {
             viewModel.send(.getUsers(
                 isHidden: isHiddenFilterActive,
-                isDisabled: newValue
+                isDisabled: isDisabledFilterActive
             ))
         }
-        .onChange(of: isHiddenFilterActive) { _, newValue in
+        .onChange(of: isHiddenFilterActive) {
             viewModel.send(.getUsers(
-                isHidden: newValue,
+                isHidden: isHiddenFilterActive,
                 isDisabled: isDisabledFilterActive
             ))
         }

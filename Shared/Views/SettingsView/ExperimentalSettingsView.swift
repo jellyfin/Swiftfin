@@ -32,8 +32,8 @@ struct ExperimentalSettingsView: View {
 
             // swiftlint:enable hard_coded_display_string
         }
-        .onChange(of: isServerConnectionAutoSwitchEnabled) { _, newValue in
-            if newValue {
+        .onChange(of: isServerConnectionAutoSwitchEnabled) {
+            if isServerConnectionAutoSwitchEnabled {
                 userSessionManager.scheduleServerConnectionResolution()
             }
         }

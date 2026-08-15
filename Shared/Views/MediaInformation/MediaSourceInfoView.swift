@@ -28,9 +28,9 @@ struct MediaSourceInfoView: PlatformView {
             router.route(to: .mediaStreamInfo(mediaStream: stream))
         }
         .focused($focusedStream, equals: stream)
-        .onChange(of: focusedStream) { _, newValue in
-            if let newValue {
-                selectedStream = newValue
+        .onChange(of: focusedStream) {
+            if let focusedStream {
+                selectedStream = focusedStream
             }
         }
     }

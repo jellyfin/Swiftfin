@@ -58,18 +58,18 @@ struct VideoPlayer: View {
             manager.start()
         }
         .prefersStatusBarHidden(!containerState.isPresentingOverlay)
-        .onChange(of: audioOffset) { _, newValue in
+        .onChange(of: audioOffset) {
             if let proxy = proxy as? MediaPlayerOffsetConfigurable {
-                proxy.setAudioOffset(newValue)
+                proxy.setAudioOffset(audioOffset)
             }
         }
-        .onChange(of: containerState.isAspectFilled) { _, newValue in
+        .onChange(of: containerState.isAspectFilled) {
             UIView.animate(withDuration: 0.2) {
-                proxy.setAspectFill(newValue)
+                proxy.setAspectFill(containerState.isAspectFilled)
             }
         }
-        .onChange(of: containerState.isScrubbing) { _, newValue in
-            if newValue {
+        .onChange(of: containerState.isScrubbing) {
+            if containerState.isScrubbing {
                 scrubbingStartTime = CACurrentMediaTime()
             }
 
@@ -83,17 +83,17 @@ struct VideoPlayer: View {
             manager.seconds = scrubbedSeconds
             proxy.setSeconds(scrubbedSeconds)
         }
-        .onChange(of: subtitleOffset) { _, newValue in
+        .onChange(of: subtitleOffset) {
             if let proxy = proxy as? MediaPlayerOffsetConfigurable {
-                proxy.setSubtitleOffset(newValue)
+                proxy.setSubtitleOffset(subtitleOffset)
             }
         }
         .preference(
             key: PresentationControllerShouldDismissPreferenceKey.self,
             value: containerState.presentationControllerShouldDismiss
         )
-        .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
-            guard !isPresented else { return }
+        .onChange(of: presentationCoordinator.isPresented) {
+            guard !presentationCoordinator.isPresented else { return }
             isBeingDismissedByTransition = true
             manager.stop()
         }

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Engine
 import SwiftUI
 
 // TODO: Generic StorablePicker?
@@ -16,6 +15,8 @@ struct PlaybackSpeedPicker: View {
 
     @State
     private var customSpeed: Float = 1.0
+    @State
+    private var isPresentingCustomSpeed: Bool = false
 
     let title: String
     let selection: Binding<PlaybackSpeed>
@@ -64,30 +65,28 @@ struct PlaybackSpeedPicker: View {
     }
 
     var body: some View {
-        StateAdapter(initialValue: false) { isPresentingCustomSpeed in
-            content
-                .onChange(of: selection.wrappedValue) { oldValue, newValue in
-                    if case let .custom(value) = newValue {
-                        if value == .zero {
-                            customSpeed = oldValue.rawValue
-                            isPresentingCustomSpeed.wrappedValue = true
-                        } else {
-                            if let matchingStatic = PlaybackSpeed.allCases.first(where: { $0.rawValue == value }) {
-                                selection.wrappedValue = matchingStatic
-                            }
+        content
+            .onChange(of: selection.wrappedValue) { oldValue, newValue in
+                if case let .custom(value) = newValue {
+                    if value == .zero {
+                        customSpeed = oldValue.rawValue
+                        isPresentingCustomSpeed = true
+                    } else {
+                        if let matchingStatic = PlaybackSpeed.allCases.first(where: { $0.rawValue == value }) {
+                            selection.wrappedValue = matchingStatic
                         }
                     }
                 }
-                .alert(L10n.playbackSpeed, isPresented: isPresentingCustomSpeed) {
-                    TextField(L10n.playbackSpeed, value: $customSpeed.clamp(min: 0.1, max: 10.0), format: .number)
-                        .keyboardType(.decimalPad)
+            }
+            .alert(L10n.playbackSpeed, isPresented: $isPresentingCustomSpeed) {
+                TextField(L10n.playbackSpeed, value: $customSpeed.clamp(min: 0.1, max: 10.0), format: .number)
+                    .keyboardType(.decimalPad)
 
-                    Button(L10n.ok) {
-                        selection.wrappedValue = .custom(customSpeed)
-                    }
-                } message: {
-                    Text(L10n.customPlaybackSpeedDescription)
+                Button(L10n.ok) {
+                    selection.wrappedValue = .custom(customSpeed)
                 }
-        }
+            } message: {
+                Text(L10n.customPlaybackSpeedDescription)
+            }
     }
 }

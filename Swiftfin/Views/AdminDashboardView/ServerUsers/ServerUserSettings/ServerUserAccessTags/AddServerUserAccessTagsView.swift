@@ -138,8 +138,8 @@ struct AddServerUserAccessTagsView: View {
                 .disabled(!isValid)
             }
         }
-        .onChange(of: input.name) { _, newTag in
-            tagViewModel.search(newTag)
+        .onChange(of: input.name) {
+            tagViewModel.search(input.name)
         }
         .onReceive(viewModel.events) { event in
             switch event {

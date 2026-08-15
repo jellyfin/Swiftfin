@@ -75,8 +75,8 @@ struct AddItemElementView<Editor: ItemComponentEditor>: View {
             }
             .enabled(isValid)
         }
-        .onChange(of: input.name) { _, newName in
-            viewModel.search(newName)
+        .onChange(of: input.name) {
+            viewModel.search(input.name)
         }
         .onReceive(viewModel.events) { event in
             switch event {

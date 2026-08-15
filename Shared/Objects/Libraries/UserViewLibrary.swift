@@ -203,7 +203,7 @@ private struct UserViewLibraryGridElement: View {
                 .matchedTransitionSource(id: "item", in: namespace)
         }
         .onFirstAppear(perform: setImageSources)
-        .onChange(of: useRandomImage) { _, _ in
+        .onChange(of: useRandomImage) {
             setImageSources()
         }
         .buttonStyle(.card)
@@ -270,7 +270,7 @@ private struct UserViewLibraryListElement: View {
         }
         .matchedTransitionSource(id: "item", in: namespace)
         .onFirstAppear(perform: setImageSources)
-        .onChange(of: useRandomImage) { _, _ in
+        .onChange(of: useRandomImage) {
             setImageSources()
         }
     }

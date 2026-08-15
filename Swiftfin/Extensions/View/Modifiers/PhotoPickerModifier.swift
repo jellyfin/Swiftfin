@@ -32,8 +32,8 @@ struct PhotoPickerModifier: ViewModifier {
                 selection: $selectedItem,
                 matching: .images
             )
-            .onChange(of: selectedItem) { _, newValue in
-                loadImage(from: newValue)
+            .onChange(of: selectedItem) {
+                loadImage(from: selectedItem)
             }
             .sheet(isPresented: Binding<Bool>(
                 get: { selectedImage != nil },

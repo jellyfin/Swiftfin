@@ -90,10 +90,9 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         .navigationTitle(viewModel.provider.displayTitle)
         #if os(iOS)
             .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
-        #else
-            .toolbarTitleDisplayMode(router.isRootOfPath ? .automatic : .inline)
+        #elseif os(tvOS)
+            .toolbar(router.isRootOfPath ? .hidden : .automatic, for: .navigationBar)
         #endif
-            .toolbar(UIDevice.isTV && router.isRootOfPath ? .hidden : .automatic, for: .navigationBar)
             .onFirstAppear {
                 viewModel.refresh()
             }

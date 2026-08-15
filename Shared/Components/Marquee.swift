@@ -100,14 +100,14 @@ struct Marquee<Content: View>: View {
 
                     initializeAnimation(proxy: proxy)
                 }
-                .onChange(of: isFocused) { _, newFocused in
-                    resetAnimation(proxy: proxy, isFocused: newFocused)
+                .onChange(of: isFocused) {
+                    resetAnimation(proxy: proxy, isFocused: isFocused)
                 }
-                .onChange(of: speed) { _, newSpeed in
-                    resetAnimation(proxy: proxy, speed: newSpeed)
+                .onChange(of: speed) {
+                    resetAnimation(proxy: proxy, speed: speed)
                 }
-                .onChange(of: delay) { _, newDelay in
-                    resetAnimation(proxy: proxy, delay: newDelay)
+                .onChange(of: delay) {
+                    resetAnimation(proxy: proxy, delay: delay)
                 }
                 .onDisappear {
                     self.isAppear = false
@@ -172,8 +172,8 @@ struct Marquee<Content: View>: View {
                 .onDisappear {
                     self.isAppear = false
                 }
-                .onChange(of: isFocused) { _, newValue in
-                    resetAnimation(proxy: proxy, isFocused: newValue)
+                .onChange(of: isFocused) {
+                    resetAnimation(proxy: proxy, isFocused: isFocused)
                 }
             }
             .padding(.top, fade)

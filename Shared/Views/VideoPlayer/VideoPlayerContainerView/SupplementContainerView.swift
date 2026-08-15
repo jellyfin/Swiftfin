@@ -186,8 +186,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 )
                 currentSupplements = newSupplements
             }
-            .onChange(of: focusedElement) { _, newValue in
-                switch newValue {
+            .onChange(of: focusedElement) {
+                switch focusedElement {
                 case let .supplementTab(id):
                     if containerState.selectedSupplement?.id != id,
                        let supplement = currentSupplements[id: id]
@@ -202,8 +202,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     break
                 }
             }
-            .onChange(of: containerState.isProgressBarFocused) { _, focused in
-                if focused, containerState.isPresentingSupplement {
+            .onChange(of: containerState.isProgressBarFocused) {
+                if containerState.isProgressBarFocused, containerState.isPresentingSupplement {
                     containerState.select(supplement: nil)
                 }
             }

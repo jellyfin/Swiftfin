@@ -151,12 +151,12 @@ struct VideoPlayerSettingsView: View {
                 ))
             }
         }
-        .onChange(of: barActionButtons) { _, newValue in
-            let enabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
+        .onChange(of: barActionButtons) {
+            let enabled = barActionButtons.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
             updateConfiguration { $0.enableNextEpisodeAutoPlay = enabled }
         }
-        .onChange(of: menuActionButtons) { _, newValue in
-            let enabled = newValue.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
+        .onChange(of: menuActionButtons) {
+            let enabled = menuActionButtons.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
             updateConfiguration { $0.enableNextEpisodeAutoPlay = enabled }
         }
     }

@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Engine
 import SwiftUI
 
 // TODO: Generic StorablePicker?
@@ -16,6 +15,8 @@ struct JumpIntervalPicker: View {
 
     @State
     private var customSeconds: Int = 0
+    @State
+    private var isPresentingCustomInterval: Bool = false
 
     let title: String
     let selection: Binding<MediaJumpInterval>
@@ -64,31 +65,29 @@ struct JumpIntervalPicker: View {
     }
 
     var body: some View {
-        StateAdapter(initialValue: false) { isPresentingCustomInterval in
-            content
-                .onChange(of: selection.wrappedValue) { oldValue, newValue in
-                    if case let .custom(interval) = newValue {
-                        if interval == .zero {
-                            customSeconds = Int(oldValue.rawValue.seconds)
-                            selection.wrappedValue = .init(rawValue: .seconds(customSeconds))
-                            isPresentingCustomInterval.wrappedValue = true
-                        } else {
-                            if let matchingStatic = MediaJumpInterval.allCases.first(where: { $0.rawValue == interval }) {
-                                selection.wrappedValue = matchingStatic
-                            }
+        content
+            .onChange(of: selection.wrappedValue) { oldValue, newValue in
+                if case let .custom(interval) = newValue {
+                    if interval == .zero {
+                        customSeconds = Int(oldValue.rawValue.seconds)
+                        selection.wrappedValue = .init(rawValue: .seconds(customSeconds))
+                        isPresentingCustomInterval = true
+                    } else {
+                        if let matchingStatic = MediaJumpInterval.allCases.first(where: { $0.rawValue == interval }) {
+                            selection.wrappedValue = matchingStatic
                         }
                     }
                 }
-                .alert(L10n.jump, isPresented: isPresentingCustomInterval) {
-                    TextField(L10n.duration, value: $customSeconds.clamp(min: 1, max: 600), format: .number)
-                        .keyboardType(.numberPad)
+            }
+            .alert(L10n.jump, isPresented: $isPresentingCustomInterval) {
+                TextField(L10n.duration, value: $customSeconds.clamp(min: 1, max: 600), format: .number)
+                    .keyboardType(.numberPad)
 
-                    Button(L10n.ok) {
-                        selection.wrappedValue = .custom(interval: Duration.seconds(customSeconds))
-                    }
-                } message: {
-                    Text(L10n.customJumpIntervalDescription)
+                Button(L10n.ok) {
+                    selection.wrappedValue = .custom(interval: Duration.seconds(customSeconds))
                 }
-        }
+            } message: {
+                Text(L10n.customJumpIntervalDescription)
+            }
     }
 }

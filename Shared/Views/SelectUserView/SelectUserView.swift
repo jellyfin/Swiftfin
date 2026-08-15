@@ -363,7 +363,8 @@ struct SelectUserView: View {
             guard !isEditing, !isPresentingConfirmDeleteUsers else { return }
             selectedUsers.removeAll()
         }
-        .onChange(of: viewModel.servers.keys) { _, newValue in
+        .onChange(of: viewModel.servers.keys) {
+            let newValue = viewModel.servers.keys
             if case let SelectUserServerSelection.server(id: id) = serverSelection,
                !newValue.contains(where: { $0.id == id })
             {

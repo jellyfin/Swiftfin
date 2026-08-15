@@ -123,8 +123,8 @@ extension View {
         } message: { error in
             Text(error.localizedDescription)
         }
-        .onChange(of: error.wrappedValue != nil) { _, hasError in
-            guard hasError else { return }
+        .onChange(of: error.wrappedValue != nil) {
+            guard error.wrappedValue != nil else { return }
             UIDevice.feedback(.error)
         }
     }

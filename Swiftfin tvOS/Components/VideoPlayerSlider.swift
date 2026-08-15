@@ -165,8 +165,8 @@ private struct VideoPlayerSliderContent: SliderContentView {
             }
             .clipShape(Capsule())
         }
-        .onChange(of: sliderState.isFocused) { _, focused in
-            if !focused {
+        .onChange(of: sliderState.isFocused) {
+            if !sliderState.isFocused {
                 containerState.cancelScrub()
             }
         }

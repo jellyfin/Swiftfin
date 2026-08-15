@@ -50,9 +50,9 @@ struct NativeVideoPlayer: View {
             manager.start()
         }
         .prefersStatusBarHidden()
-        .onChange(of: presentationCoordinator.isPresented) { _, isPresented in
+        .onChange(of: presentationCoordinator.isPresented) {
             Container.shared.mediaPlayerManager.reset()
-            guard !isPresented else { return }
+            guard !presentationCoordinator.isPresented else { return }
             manager.stop()
         }
         .alert(

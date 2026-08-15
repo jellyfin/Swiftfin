@@ -101,8 +101,8 @@ struct IdentifyItemView: View {
                 router.dismiss()
             }
         }
-        .onChange(of: query) { _, newValue in
-            viewModel.search(query: newValue)
+        .onChange(of: query) {
+            viewModel.search(query: query)
         }
         .errorMessage($viewModel.error)
     }
