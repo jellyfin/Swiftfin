@@ -17,25 +17,21 @@ extension RemoteView {
         private var isEnabled
 
         @State
-        private var didLongPress = false
-        @State
-        private var didSwipe = false
-        @State
         private var pressedCommand: GeneralCommandType?
         @State
         private var swipeAnchor: CGSize = .zero
 
-        let send: (GeneralCommandType) -> Void
+        private let cornerRadius: CGFloat = 32
+        private let swipeStep: CGFloat = 60
 
-        private static let cornerRadius: CGFloat = 32
-        private static let swipeStep: CGFloat = 60
+        let send: (GeneralCommandType) -> Void
 
         private func command(at point: CGPoint, in size: CGSize) -> GeneralCommandType {
             let x = point.x - size.width / 2
             let y = point.y - size.height / 2
             let radius = min(size.width, size.height) / 2
 
-            if (x * x + y * y).squareRoot() < radius * 0.4 {
+            if hypot(x, y) < radius * 0.4 {
                 return .select
             }
 
@@ -46,34 +42,75 @@ extension RemoteView {
             return y > 0 ? .moveDown : .moveUp
         }
 
-        private func emitSwipes(for translation: CGSize) {
-            let horizontal = translation.width - swipeAnchor.width
-            let vertical = translation.height - swipeAnchor.height
+        private func tap(at location: CGPoint, in size: CGSize) {
+            let command = command(at: location, in: size)
 
-            if abs(horizontal) > abs(vertical) {
-                guard abs(horizontal) >= Self.swipeStep else { return }
+            pressedCommand = command
+            send(command)
+            UIDevice.impact(.light)
 
-                didSwipe = true
+            Task {
+                try? await Task.sleep(for: .milliseconds(150))
                 pressedCommand = nil
-                send(horizontal > 0 ? .moveRight : .moveLeft)
-                swipeAnchor.width += horizontal > 0 ? Self.swipeStep : -Self.swipeStep
-            } else {
-                guard abs(vertical) >= Self.swipeStep else { return }
-
-                didSwipe = true
-                pressedCommand = nil
-                send(vertical > 0 ? .moveDown : .moveUp)
-                swipeAnchor.height += vertical > 0 ? Self.swipeStep : -Self.swipeStep
             }
         }
 
+        private func pan(translation: CGPoint, state: UIGestureRecognizer.State) {
+            guard state == .began || state == .changed else {
+                pressedCommand = nil
+                swipeAnchor = .zero
+                return
+            }
+
+            let horizontal = translation.x - swipeAnchor.width
+            let vertical = translation.y - swipeAnchor.height
+            let isHorizontal = abs(horizontal) > abs(vertical)
+            let distance = isHorizontal ? horizontal : vertical
+
+            guard abs(distance) >= swipeStep else { return }
+
+            let command: GeneralCommandType = switch (isHorizontal, distance > 0) {
+            case (true, true):
+                .moveRight
+            case (true, false):
+                .moveLeft
+            case (false, true):
+                .moveDown
+            case (false, false):
+                .moveUp
+            }
+
+            if isHorizontal {
+                swipeAnchor.width += distance > 0 ? swipeStep : -swipeStep
+            } else {
+                swipeAnchor.height += distance > 0 ? swipeStep : -swipeStep
+            }
+
+            pressedCommand = command
+            send(command)
+        }
+
+        private func longPress(state: UIGestureRecognizer.State) {
+            guard state == .began else { return }
+
+            send(.toggleContextMenu)
+            UIDevice.impact(.medium)
+        }
+
         @ViewBuilder
-        private func directionalKey(
-            _ command: GeneralCommandType,
-            systemImage: String,
-            alignment: Alignment
-        ) -> some View {
-            Image(systemName: systemImage)
+        private func directionalKey(_ command: GeneralCommandType) -> some View {
+            let alignment: Alignment = switch command {
+            case .moveUp:
+                .top
+            case .moveDown:
+                .bottom
+            case .moveLeft:
+                .leading
+            default:
+                .trailing
+            }
+
+            Image(systemName: command.systemImage)
                 .font(.title3)
                 .fontWeight(.semibold)
                 .foregroundStyle(pressedCommand == command ? Color.primary : Color.secondary)
@@ -83,52 +120,39 @@ extension RemoteView {
 
         var body: some View {
             ZStack {
-                RoundedRectangle(cornerRadius: Self.cornerRadius)
+                RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(Color.secondarySystemBackground)
 
-                directionalKey(.moveUp, systemImage: "chevron.up", alignment: .top)
-                directionalKey(.moveDown, systemImage: "chevron.down", alignment: .bottom)
-                directionalKey(.moveLeft, systemImage: "chevron.left", alignment: .leading)
-                directionalKey(.moveRight, systemImage: "chevron.right", alignment: .trailing)
+                directionalKey(.moveUp)
+                directionalKey(.moveDown)
+                directionalKey(.moveLeft)
+                directionalKey(.moveRight)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .opacity(isEnabled ? 1 : 0.5)
             .animation(.linear(duration: 0.1), value: pressedCommand)
             .overlay {
                 GeometryReader { proxy in
-                    Color.clear
-                        .contentShape(RoundedRectangle(cornerRadius: Self.cornerRadius))
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { value in
-                                    if !didSwipe {
-                                        pressedCommand = command(at: value.startLocation, in: proxy.size)
-                                    }
-
-                                    emitSwipes(for: value.translation)
-                                }
-                                .onEnded { _ in
-                                    if !didSwipe, !didLongPress, let pressedCommand {
-                                        send(pressedCommand)
-                                        UIDevice.impact(.light)
-                                    }
-
-                                    didLongPress = false
-                                    didSwipe = false
-                                    pressedCommand = nil
-                                    swipeAnchor = .zero
-                                }
+                    GestureView()
+                        .environment(
+                            \.tapGestureAction,
+                            TapAction { location, _, _ in
+                                tap(at: location, in: proxy.size)
+                            }
                         )
-                        .simultaneousGesture(
-                            LongPressGesture(minimumDuration: 0.5)
-                                .onEnded { _ in
-                                    guard !didSwipe else { return }
-
-                                    didLongPress = true
-                                    send(.toggleContextMenu)
-                                    UIDevice.impact(.medium)
-                                }
+                        .environment(
+                            \.panAction,
+                            PanAction { translation, _, _, _, state in
+                                pan(translation: translation, state: state)
+                            }
                         )
+                        .environment(
+                            \.longPressAction,
+                            LongPressAction { _, _, state in
+                                longPress(state: state)
+                            }
+                        )
+                        .allowsHitTesting(isEnabled)
                 }
             }
             .padding(8)
