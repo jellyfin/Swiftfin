@@ -182,6 +182,8 @@ internal enum L10n {
   internal static let autoSwitch = L10n.tr("Localizable", "autoSwitch", fallback: "Auto switch")
   /// Connections will automatically switch based on Wi-Fi or cellular connectivity and the ordering of the connections below.
   internal static let autoSwitchDescription = L10n.tr("Localizable", "autoSwitchDescription", fallback: "Connections will automatically switch based on Wi-Fi or cellular connectivity and the ordering of the connections below.")
+  /// Back
+  internal static let back = L10n.tr("Localizable", "back", fallback: "Back")
   /// Backdrop
   internal static let backdrop = L10n.tr("Localizable", "backdrop", fallback: "Backdrop")
   /// A wide background image displayed behind the item details on its media page. Multiple backdrops can be added and will cycle or be selected randomly.

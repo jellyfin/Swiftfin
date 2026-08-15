@@ -55,6 +55,10 @@ final class SessionViewModel: ViewModel, @preconcurrency Identifiable {
         session.id
     }
 
+    var supportedCommands: [GeneralCommandType] {
+        session.supportedCommands ?? session.capabilities?.supportedCommands ?? []
+    }
+
     init(session: SessionInfoDto) {
         self.session = session
         super.init()

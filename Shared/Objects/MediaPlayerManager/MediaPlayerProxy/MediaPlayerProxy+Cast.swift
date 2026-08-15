@@ -35,6 +35,8 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
     private(set) var selectedAudioStreamIndex: Int = -1
     @Published
     private(set) var selectedSubtitleStreamIndex: Int = -1
+    @Published
+    private(set) var volumeLevel: Int = 100
 
     weak var manager: MediaPlayerManager?
 
@@ -57,7 +59,7 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
     private var syncSuspendedSince: Date?
     private var tickerTask: Task<Void, Never>?
 
-    var displayedItem: BaseItemDto? {
+    var activeItem: BaseItemDto? {
         nowPlayingItem ?? (hasStarted ? nil : item)
     }
 
@@ -97,6 +99,7 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
             isMuted = playState.isMuted ?? false
             selectedAudioStreamIndex = playState.audioStreamIndex ?? -1
             selectedSubtitleStreamIndex = playState.subtitleStreamIndex ?? -1
+            volumeLevel = playState.volumeLevel ?? 100
             updateQueueCount(session.session)
         } else if let item {
             seconds = item.startSeconds ?? .zero
@@ -193,6 +196,26 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         isMuted.toggle()
         markLocalCommand()
         session.sendGeneralCommand(.toggleMute)
+    }
+
+    func setMaxBitrate(_ bitrate: PlaybackBitrate) {
+        session.sendFullGeneralCommand(
+            GeneralCommand(
+                arguments: ["Bitrate": "\(bitrate.rawValue)"],
+                name: .setMaxStreamingBitrate
+            )
+        )
+    }
+
+    func setVolume(_ level: Int) {
+        volumeLevel = level
+        markLocalCommand()
+        session.sendFullGeneralCommand(
+            GeneralCommand(
+                arguments: ["Volume": "\(level)"],
+                name: .setVolume
+            )
+        )
     }
 
     func nextItem() {
@@ -301,6 +324,7 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         isMuted = playState.isMuted ?? false
         selectedAudioStreamIndex = playState.audioStreamIndex ?? selectedAudioStreamIndex
         selectedSubtitleStreamIndex = playState.subtitleStreamIndex ?? selectedSubtitleStreamIndex
+        volumeLevel = playState.volumeLevel ?? volumeLevel
 
         if let remotePosition = playState.position {
             let drift = abs(remotePosition.seconds - seconds.seconds)
@@ -349,18 +373,22 @@ class CastMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable,
         seconds = .zero
     }
 
+    func refreshNowPlayingItem() async {
+        guard let userSession = session.userSession,
+              let item = nowPlayingItem,
+              let fullItem = try? await item.getFullItem(userSession: userSession),
+              fullItem.id == nowPlayingItem?.id
+        else {
+            return
+        }
+
+        nowPlayingItem = fullItem
+    }
+
     private func fetchFullNowPlayingItem() {
         Task {
-            guard let userSession = session.userSession,
-                  let item = nowPlayingItem,
-                  item.mediaSources == nil,
-                  let fullItem = try? await item.getFullItem(userSession: userSession),
-                  fullItem.id == nowPlayingItem?.id
-            else {
-                return
-            }
-
-            nowPlayingItem = fullItem
+            guard nowPlayingItem?.mediaSources == nil else { return }
+            await refreshNowPlayingItem()
         }
     }
 

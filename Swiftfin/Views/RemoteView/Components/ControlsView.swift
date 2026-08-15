@@ -15,19 +15,20 @@ extension RemoteView {
     struct ControlsView: View {
 
         @ObservedObject
-        var proxy: CastMediaPlayerProxy
+        private var proxy: CastMediaPlayerProxy
         @ObservedObject
-        var target: SessionViewModel
+        private var target: SessionViewModel
 
-        let viewModel: CastViewModel
+        private let viewModel: CastViewModel
 
-        private var isLiveContent: Bool {
-            guard let displayedItem = proxy.displayedItem else { return false }
-            return displayedItem.isLiveStream || displayedItem.channelID != nil
+        init(proxy: CastMediaPlayerProxy, viewModel: CastViewModel) {
+            self.proxy = proxy
+            self.target = proxy.session
+            self.viewModel = viewModel
         }
 
         private var supportedCommands: [GeneralCommandType] {
-            target.session.supportedCommands ?? target.session.capabilities?.supportedCommands ?? []
+            target.supportedCommands
         }
 
         private var hasDirectionalControls: Bool {
@@ -38,8 +39,8 @@ extension RemoteView {
             supportedCommands.contains(.goToSearch) || supportedCommands.contains(.sendString)
         }
 
-        private var hasVolumeControls: Bool {
-            supportedCommands.contains(.toggleMute) || supportedCommands.contains(.setVolume) || proxy.queueItems.isNotEmpty
+        private var hasAudioControls: Bool {
+            supportedCommands.contains(.toggleMute) || supportedCommands.contains(.setVolume)
         }
 
         private func send(_ command: GeneralCommandType) {
@@ -61,27 +62,22 @@ extension RemoteView {
         @ViewBuilder
         private var navigationControlsSection: some View {
             HStack(spacing: 24) {
-                RemoteButton(systemImage: "chevron.backward") {
+                Button(L10n.back, systemImage: "chevron.backward") {
                     perform { send(.back) }
                 }
+                .buttonStyle(.remoteControl)
                 .disabled(!supportedCommands.contains(.back))
 
-                RemoteButton(
-                    systemImage: proxy.isPaused ? "play.fill" : "pause.fill",
-                    size: 76
-                ) {
-                    perform {
-                        if proxy.isPaused {
-                            proxy.play()
-                        } else {
-                            proxy.pause()
-                        }
-                    }
+                Button(L10n.play, systemImage: "play.fill") {
+                    perform(proxy.play)
                 }
+                .buttonStyle(.remoteControl(size: .large))
+                .disabled(proxy.activeItem == nil)
 
-                RemoteButton(systemImage: "house.fill") {
+                Button(L10n.home, systemImage: "house.fill") {
                     perform { send(.goHome) }
                 }
+                .buttonStyle(.remoteControl)
                 .disabled(!supportedCommands.contains(.goHome))
             }
         }
@@ -90,12 +86,10 @@ extension RemoteView {
         private var inputSection: some View {
             HStack(spacing: 24) {
                 if supportedCommands.contains(.goToSearch) {
-                    RemoteButton(
-                        systemImage: GeneralCommandType.goToSearch.systemImage,
-                        size: 44
-                    ) {
+                    Button(L10n.search, systemImage: GeneralCommandType.goToSearch.systemImage) {
                         perform { send(.goToSearch) }
                     }
+                    .buttonStyle(.remoteControl(size: .small))
                 }
 
                 if supportedCommands.contains(.sendString) {
@@ -108,9 +102,10 @@ extension RemoteView {
         private var sendTextButton: some View {
             StateAdapter(initialValue: false) { isPresentingTextEntry in
                 StateAdapter(initialValue: "") { textEntry in
-                    RemoteButton(systemImage: "keyboard", size: 44) {
+                    Button(L10n.sendText, systemImage: "keyboard") {
                         isPresentingTextEntry.wrappedValue = true
                     }
+                    .buttonStyle(.remoteControl(size: .small))
                     .alert(L10n.sendText, isPresented: isPresentingTextEntry) {
                         TextField(L10n.sendText, text: textEntry)
 
@@ -134,8 +129,38 @@ extension RemoteView {
         }
 
         @ViewBuilder
+        private var queueMenu: some View {
+            Menu {
+                ForEach(proxy.queueItems, id: \.id) { queueItem in
+                    Button {
+                        perform { proxy.playQueueItem(queueItem) }
+                    } label: {
+                        if queueItem.id == proxy.activeItem?.id {
+                            Label(queueItem.displayTitle, systemImage: "play.fill")
+                        } else {
+                            Text(queueItem.displayTitle)
+                        }
+                    }
+                }
+            } label: {
+                Image(systemName: "list.bullet")
+                    .frame(width: 44, height: 44)
+                    .backport
+                    .glassEffect(
+                        .regular.selection(
+                            tint: .secondarySystemBackground,
+                            foregroundColor: .primary
+                        ),
+                        in: .circle
+                    )
+            }
+            .menuStyle(.button)
+            .buttonStyle(.isPressed(setMenuPressed))
+        }
+
+        @ViewBuilder
         private var stopButton: some View {
-            if proxy.displayedItem != nil {
+            if proxy.activeItem != nil {
                 StateAdapter(initialValue: false) { isPresentingStopConfirmation in
                     Button(L10n.stop, systemImage: "stop.fill", role: .destructive) {
                         isPresentingStopConfirmation.wrappedValue = true
@@ -163,20 +188,13 @@ extension RemoteView {
 
         var body: some View {
             VStack(spacing: 20) {
-                if let displayedItem = proxy.displayedItem {
+                if let activeItem = proxy.activeItem {
                     NowPlayingSection(
                         proxy: proxy,
-                        item: displayedItem,
-                        isLive: isLiveContent
+                        item: activeItem
                     )
 
-                    PlaybackControls(
-                        proxy: proxy,
-                        isLive: isLiveContent,
-                        supportedCommands: supportedCommands,
-                        send: send,
-                        perform: perform
-                    )
+                    PlaybackControls(proxy: proxy)
                 } else {
                     if hasDirectionalControls {
                         Touchpad(send: send)
@@ -192,25 +210,26 @@ extension RemoteView {
                     }
                 }
 
-                if hasVolumeControls {
-                    VolumeSection(
-                        proxy: proxy,
-                        target: target,
-                        supportedCommands: supportedCommands,
-                        perform: perform,
-                        onMenuPressed: setMenuPressed
-                    )
+                if hasAudioControls || proxy.queueItems.isNotEmpty {
+                    HStack(spacing: 16) {
+                        if hasAudioControls {
+                            VolumeSection(proxy: proxy)
+                        }
+
+                        if proxy.queueItems.isNotEmpty {
+                            queueMenu
+                        }
+                    }
                 }
             }
             .edgePadding(.horizontal)
             .navigationBarMenuButton(
-                isHidden: proxy.displayedItem == nil,
+                isLoading: target.background.is(.sending),
+                isHidden: proxy.activeItem == nil,
                 onPressed: setMenuPressed
             ) {
                 PlaybackMenu(
                     proxy: proxy,
-                    target: target,
-                    supportedCommands: supportedCommands,
                     perform: perform
                 )
             }

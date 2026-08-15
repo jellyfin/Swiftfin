@@ -147,6 +147,12 @@ extension BaseItemDto {
         channelType == .tv
     }
 
+    /// Whether the item is a live source itself or belongs
+    /// to a live channel, like a program.
+    var isLiveContent: Bool {
+        isLiveStream || channelID != nil
+    }
+
     var isAiring: Bool {
         if let currentProgram {
             return currentProgram.isAiring

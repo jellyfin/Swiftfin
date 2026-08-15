@@ -35,12 +35,12 @@ struct RemoteView: View {
             proxy = CastMediaPlayerProxy(item: nowPlayingItem, session: target)
             replaceConfirmation.wrappedValue = true
         } else {
-            castReplacing()
+            castReplacing(provider: provider, target: target)
         }
     }
 
-    private func castReplacing() {
-        guard let provider, let target = selectedTarget, let itemID = provider.item.id else { return }
+    private func castReplacing(provider: MediaPlayerItemProvider, target: SessionViewModel) {
+        guard let itemID = provider.item.id else { return }
 
         target.error = nil
 
@@ -63,9 +63,12 @@ struct RemoteView: View {
 
     @ViewBuilder
     private var targetPicker: some View {
-        Menu(selectedTarget?.session.deviceName ?? L10n.selectDevice) {
+        Menu(
+            selectedTarget?.session.deviceName ?? L10n.selectDevice.localizedCapitalized,
+            systemImage: "chevron.down"
+        ) {
             Picker(
-                L10n.selectDevice,
+                L10n.selectDevice.localizedCapitalized,
                 selection: Binding(
                     get: { selectedTarget?.id },
                     set: { newID in
@@ -88,9 +91,11 @@ struct RemoteView: View {
         }
         .labelStyle(
             CapsuleLabelStyle(
+                insets: .init(vertical: 11, horizontal: 16),
                 isIconTrailing: true
             )
         )
+        .font(.headline)
         .menuStyle(.button)
         .buttonStyle(.isPressed { isPressed in
             viewModel.isPaused = isPressed
@@ -154,7 +159,7 @@ struct RemoteView: View {
             isPresented: replaceConfirmation
         ) {
             Button(L10n.replace, role: .destructive) {
-                castReplacing()
+                castReplacing(provider: provider, target: target)
             }
 
             Button(L10n.cancel, role: .cancel) {
@@ -184,11 +189,14 @@ struct RemoteView: View {
             Touchpad { _ in }
 
             HStack(spacing: 24) {
-                RemoteButton(systemImage: "chevron.backward") {}
+                Button(L10n.back, systemImage: "chevron.backward") {}
+                    .buttonStyle(.remoteControl)
 
-                RemoteButton(systemImage: "play.fill", size: 76) {}
+                Button(L10n.play, systemImage: "play.fill") {}
+                    .buttonStyle(.remoteControl(size: .large))
 
-                RemoteButton(systemImage: "house.fill") {}
+                Button(L10n.home, systemImage: "house.fill") {}
+                    .buttonStyle(.remoteControl)
             }
         }
         .foregroundStyle(.secondary)
@@ -198,19 +206,23 @@ struct RemoteView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            if let proxy, let selectedTarget {
-                ControlsView(
-                    proxy: proxy,
-                    target: selectedTarget,
-                    viewModel: viewModel
-                )
-            } else {
-                disabledRemote
+            ZStack {
+                if let proxy, let selectedTarget {
+                    ControlsView(
+                        proxy: proxy,
+                        viewModel: viewModel
+                    )
+                    .id(selectedTarget.id)
+                    .transition(.opacity)
+                } else {
+                    disabledRemote
+                        .transition(.opacity)
+                }
             }
 
             castButton
         }
-        .edgePadding(.bottom)
+        .edgePadding([.top, .bottom])
         .presentationDragIndicator(.visible)
         .animation(.linear(duration: 0.2), value: selectedTarget?.id)
         .backport
