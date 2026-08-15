@@ -179,8 +179,14 @@ struct RemoteView: View {
 
                         Section {
                             ForEach(viewModel.targets.values.elements, id: \.id) { session in
-                                Text(session.session.deviceName ?? L10n.unknown)
-                                    .tag(session.id)
+                                VStack(alignment: .leading) {
+                                    Text(session.session.deviceName ?? L10n.unknown)
+
+                                    if let client = session.session.client {
+                                        Text(client)
+                                    }
+                                }
+                                .tag(session.id)
                             }
                         }
                     }
@@ -214,6 +220,14 @@ struct RemoteView: View {
         }
         .onChange(of: selectedTarget?.error != nil) { _, hasError in
             guard hasError else { return }
+            isCastPending = false
+        }
+        .task(id: isCastPending) {
+            guard isCastPending else { return }
+
+            try? await Task.sleep(for: .seconds(10))
+            guard !Task.isCancelled else { return }
+
             isCastPending = false
         }
     }

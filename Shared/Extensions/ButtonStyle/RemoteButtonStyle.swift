@@ -14,8 +14,18 @@ extension ButtonStyle where Self == RemoteButtonStyle {
         RemoteButtonStyle(size: .medium)
     }
 
-    static func remoteControl(size: RemoteButtonStyle.Size) -> RemoteButtonStyle {
-        RemoteButtonStyle(size: size)
+    static func remoteControl(
+        size: RemoteButtonStyle.Size = .medium,
+        tint: Color = .secondarySystemBackground,
+        foregroundColor: Color = .primary,
+        onPressed: ((Bool) -> Void)? = nil
+    ) -> RemoteButtonStyle {
+        RemoteButtonStyle(
+            size: size,
+            tint: tint,
+            foregroundColor: foregroundColor,
+            onPressed: onPressed
+        )
     }
 }
 
@@ -52,6 +62,9 @@ struct RemoteButtonStyle: ButtonStyle {
     private var isEnabled
 
     let size: Size
+    var tint: Color = .secondarySystemBackground
+    var foregroundColor: Color = .primary
+    var onPressed: ((Bool) -> Void)?
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -61,13 +74,16 @@ struct RemoteButtonStyle: ButtonStyle {
             .backport
             .glassEffect(
                 .regular.selection(
-                    tint: .secondarySystemBackground,
-                    foregroundColor: .primary
+                    tint: tint,
+                    foregroundColor: foregroundColor
                 ),
                 in: .circle
             )
             .labelStyle(.iconOnly)
             .opacity(configuration.isPressed ? 0.6 : 1)
             .opacity(isEnabled ? 1 : 0.5)
+            .onChange(of: configuration.isPressed) { _, newValue in
+                onPressed?(newValue)
+            }
     }
 }

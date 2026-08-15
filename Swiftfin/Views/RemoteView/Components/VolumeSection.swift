@@ -24,6 +24,8 @@ extension RemoteView {
         private var isAdjustingVolume = false
         @State
         private var volume: Double = 100
+        @State
+        private var volumeSendTask: Task<Void, Never>?
 
         let isMuteSupported: Bool
         let isVolumeSupported: Bool
@@ -35,17 +37,12 @@ extension RemoteView {
                         proxy.toggleMute()
                     } label: {
                         Image(systemName: proxy.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                            .frame(width: 44, height: 44)
-                            .backport
-                            .glassEffect(
-                                .regular.selection(
-                                    tint: proxy.isMuted ? .secondarySystemBackground : accentColor,
-                                    foregroundColor: proxy.isMuted ? .primary : accentColor.overlayColor
-                                ),
-                                in: .circle
-                            )
                     }
-                    .buttonStyle(BasicHoverButtonStyle())
+                    .buttonStyle(.remoteControl(
+                        size: .small,
+                        tint: proxy.isMuted ? .secondarySystemBackground : accentColor,
+                        foregroundColor: proxy.isMuted ? .primary : accentColor.overlayColor
+                    ))
                 }
 
                 if isVolumeSupported {
@@ -54,6 +51,7 @@ extension RemoteView {
                             isAdjustingVolume = isEditing
 
                             if !isEditing {
+                                volumeSendTask?.cancel()
                                 proxy.setVolume(Int(volume))
                             }
                         }
@@ -62,6 +60,17 @@ extension RemoteView {
                         .foregroundStyle(accentColor)
                         .frame(height: 15)
                         .animation(.linear(duration: 0.1), value: isAdjustingVolume)
+                        .onChange(of: volume) { _, newValue in
+                            guard isAdjustingVolume else { return }
+
+                            volumeSendTask?.cancel()
+                            volumeSendTask = Task {
+                                try? await Task.sleep(for: .milliseconds(500))
+                                guard !Task.isCancelled else { return }
+
+                                proxy.setVolume(Int(newValue))
+                            }
+                        }
                         .onChange(of: proxy.volumeLevel) { _, newValue in
                             guard !isAdjustingVolume else { return }
                             volume = Double(newValue)

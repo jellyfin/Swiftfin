@@ -83,7 +83,7 @@ extension RemoteView {
                             perform(proxy.play)
                         }
                         .buttonStyle(.remoteControl(size: .large))
-                        .disabled(proxy.activeItem == nil)
+                        .disabled(true)
 
                         Button(L10n.home, systemImage: "house.fill") {
                             perform { send(.goHome) }
@@ -154,22 +154,17 @@ extension RemoteView {
                                         } else {
                                             Text(queueItem.displayTitle)
                                         }
+
+                                        if let subtitle = queueItem.subtitle {
+                                            Text(subtitle)
+                                        }
                                     }
                                 }
                             } label: {
                                 Image(systemName: "list.bullet")
-                                    .frame(width: 44, height: 44)
-                                    .backport
-                                    .glassEffect(
-                                        .regular.selection(
-                                            tint: .secondarySystemBackground,
-                                            foregroundColor: .primary
-                                        ),
-                                        in: .circle
-                                    )
                             }
                             .menuStyle(.button)
-                            .buttonStyle(.isPressed(setMenuPressed))
+                            .buttonStyle(.remoteControl(size: .small, onPressed: setMenuPressed))
                         }
                     }
                 }
