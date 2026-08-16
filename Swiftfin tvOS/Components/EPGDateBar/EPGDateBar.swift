@@ -54,7 +54,6 @@ struct EPGDateBar: View {
             .focusSection()
             .buttonStyle(EPGButtonStyle())
             .labelStyle(.iconOnly)
-            .backport
             .defaultFocus(
                 $focusedDate,
                 viewModel.availableDates.first {

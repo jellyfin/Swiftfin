@@ -67,7 +67,6 @@ struct EPGContentView: View {
             }
             .ignoresSafeArea(edges: .bottom)
         }
-        .backport
         .onChange(of: channelsViewModel.displayedElements) {
             viewModel.getNextPage(channels: channelsViewModel.displayedElements)
         }

@@ -45,7 +45,6 @@ struct EPGView: View {
                 channelsViewModel.refresh()
             }
         }
-        .backport
         .onChange(of: channelsViewModel.displayedElements) { _, channels in
             guard viewModel.state == .initial else { return }
             viewModel.refresh(channels: channels)
