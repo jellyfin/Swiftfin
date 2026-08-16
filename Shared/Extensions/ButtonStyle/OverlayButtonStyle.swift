@@ -16,7 +16,7 @@ extension VideoPlayer.PlaybackControls {
 
         @ViewBuilder
         func body(content: Content) -> some View {
-            if UIDevice.supportsLiquidGlass {
+            if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
                 content
                     .buttonStyle(OverlayGlassButtonStyle(onPressed: onPressed))
                     .buttonBorderShape(.circle)

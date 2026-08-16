@@ -97,7 +97,7 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
 
     @ViewBuilder
     private func platformAppearanceBody(_ content: some View) -> some View {
-        if UIDevice.supportsLiquidGlass {
+        if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
             glassBody(content)
         } else {
             legacyBody(content)

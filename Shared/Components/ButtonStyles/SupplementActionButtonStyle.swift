@@ -58,7 +58,7 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
 
     @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
-        if UIDevice.supportsLiquidGlass {
+        if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
             glassButton(configuration)
         } else {
             legacyButton(configuration)
