@@ -35,7 +35,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
         }
     }
 
-    private var baseLabel: some View {
+    private var labelView: some View {
         HStack {
             title
                 .foregroundStyle(isFocused ? .black : .white)
@@ -60,7 +60,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
     }
 
     private var glassBody: some View {
-        baseLabel
+        labelView
             .glassEffect(
                 .regular.tint(isFocused ? .white : nil),
                 in: .capsule
@@ -71,7 +71,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
     }
 
     private var legacyBody: some View {
-        baseLabel
+        labelView
             .background {
                 ZStack {
                     RoundedRectangle(cornerRadius: 12.5)
