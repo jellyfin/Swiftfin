@@ -93,7 +93,7 @@ final class UserImageViewModel: ViewModel {
         }
 
         if let userID = user.id {
-            Notifications[.didChangeUserProfile].post(userID)
+            Notifications[.getChangedUser].post(userID)
         }
     }
 }

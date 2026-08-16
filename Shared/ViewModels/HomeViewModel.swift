@@ -64,14 +64,14 @@ final class HomeViewModel: ViewModel, Stateful {
     override init() {
         super.init()
 
-        Notifications[.itemMetadataDidChange]
+        Notifications[.didChangeItem]
             .publisher
             .sink { _ in
                 // Necessary because when this notification is posted, even with asyncAfter,
                 // the view will cause layout issues since it will redraw while in landscape.
                 // TODO: look for better solution
                 DispatchQueue.main.async {
-                    self.notificationsReceived.insert(.itemMetadataDidChange)
+                    self.notificationsReceived.insert(.didChangeItem)
                 }
             }
             .store(in: &cancellables)
@@ -231,7 +231,7 @@ final class HomeViewModel: ViewModel, Stateful {
             )
         }
 
-        let response = try await send(request)
-        Notifications[.itemUserDataDidChange].post(response.value)
+        _ = try await send(request)
+        Notifications[.getChangedItemUserData].post(itemID)
     }
 }

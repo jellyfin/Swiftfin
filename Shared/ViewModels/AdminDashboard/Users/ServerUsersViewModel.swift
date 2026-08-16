@@ -24,10 +24,8 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     // MARK: Actions
 
     enum Action: Equatable {
-        case refreshUser(String)
         case getUsers(isHidden: Bool = false, isDisabled: Bool = false)
         case deleteUsers([String])
-        case appendUser(UserDto)
     }
 
     // MARK: - BackgroundState
@@ -35,7 +33,6 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     enum BackgroundState: Hashable {
         case gettingUsers
         case deletingUsers
-        case appendingUsers
     }
 
     // MARK: - State
@@ -71,12 +68,26 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     override init() {
         super.init()
 
-        Notifications[.didChangeUserProfile]
+        Notifications[.didChangeServerUser]
             .publisher
-            .sink { userID in
-                Task {
-                    self.send(.refreshUser(userID))
-                }
+            .sink { [weak self] user in
+                guard let self, let index = users.firstIndex(where: { $0.id == user.id }) else { return }
+                users[index] = user
+            }
+            .store(in: &cancellables)
+
+        Notifications[.didDeleteServerUser]
+            .publisher
+            .sink { [weak self] id in
+                self?.users.removeAll { $0.id == id }
+            }
+            .store(in: &cancellables)
+
+        Notifications[.didCreateServerUser]
+            .publisher
+            .sink { [weak self] user in
+                self?.users.append(user)
+                self?.users.sort(by: { $0.name ?? "" < $1.name ?? "" })
             }
             .store(in: &cancellables)
     }
@@ -85,32 +96,6 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     func respond(to action: Action) -> State {
         switch action {
-        case let .refreshUser(userID):
-            userTask?.cancel()
-            backgroundStates.insert(.gettingUsers)
-
-            userTask = Task {
-                do {
-                    try await refreshUser(userID)
-
-                    await MainActor.run {
-                        state = .content
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self.backgroundStates.remove(.gettingUsers)
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-
         case let .getUsers(isHidden, isDisabled):
             userTask?.cancel()
             backgroundStates.insert(.gettingUsers)
@@ -163,43 +148,6 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
             .asAnyCancellable()
 
             return state
-
-        case let .appendUser(user):
-            userTask?.cancel()
-            backgroundStates.insert(.appendingUsers)
-
-            userTask = Task {
-                do {
-                    await self.appendUser(user: user)
-
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.deleted)
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self.backgroundStates.remove(.appendingUsers)
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-        }
-    }
-
-    // MARK: - Refresh User
-
-    private func refreshUser(_ userID: String) async throws {
-        let request = Paths.getUserByID(userID: userID)
-        let response = try await send(request)
-
-        let newUser = response.value
-
-        await MainActor.run {
-            if let index = self.users.firstIndex(where: { $0.id == userID }) {
-                self.users[index] = newUser
-            }
         }
     }
 
@@ -240,6 +188,10 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
         await MainActor.run {
             self.users.removeAll(where: { userIdsToDelete.contains($0.id ?? "") })
+
+            for id in userIdsToDelete {
+                Notifications[.didDeleteServerUser].post(id)
+            }
         }
     }
 
@@ -248,14 +200,5 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     private func deleteUser(id: String) async throws {
         let request = Paths.deleteUser(userID: id)
         try await send(request)
-    }
-
-    // MARK: - Append User
-
-    private func appendUser(user: UserDto) async {
-        await MainActor.run {
-            users.append(user)
-            users.sort(by: { $0.name ?? "" < $1.name ?? "" })
-        }
     }
 }

@@ -63,6 +63,14 @@ class ItemEditorViewModel: ViewModel {
     init(item: BaseItemDto) {
         self.item = item
         super.init()
+
+        Notifications[.didChangeItem]
+            .publisher
+            .sink { [weak self] item in
+                guard let self, item.id == self.item.id else { return }
+                self.item = item
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Actions
@@ -102,13 +110,6 @@ class ItemEditorViewModel: ViewModel {
         _ = try await send(request)
 
         events.send(.metadataRefreshStarted)
-
-        // TODO: Remove this call when we have a WebSocket
-        // - Both lines below this can be replaced by the WebSocket
-        // - Centralized, WebSocket gets the new information and updates when new
-        // - Currently, waits 5 seconds before a manual refresh
-        try await Task.sleep(for: .seconds(5))
-        await refreshItem(sendNotification: true)
     }
 
     @Function(\Action.Cases.update)

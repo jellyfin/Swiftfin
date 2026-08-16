@@ -220,7 +220,7 @@ extension ServerSocketManager: UserSessionService {
     }
 }
 
-// MARK: - Playback Commands
+// MARK: - Messages
 
 extension ServerSocketManager {
 
@@ -241,6 +241,34 @@ extension ServerSocketManager {
     var playstateCommands: AnyPublisher<PlaystateRequest, Never> {
         commands { event in
             guard case let .message(.playstateMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var userDataChanges: AnyPublisher<UserDataChangeInfo, Never> {
+        commands { event in
+            guard case let .message(.userDataChangedMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var libraryChanges: AnyPublisher<LibraryUpdateInfo, Never> {
+        commands { event in
+            guard case let .message(.libraryChangedMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var userUpdates: AnyPublisher<UserDto, Never> {
+        commands { event in
+            guard case let .message(.userUpdatedMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var userDeletions: AnyPublisher<String, Never> {
+        commands { event in
+            guard case let .message(.userDeletedMessage(message)) = event else { return nil }
             return message.data
         }
     }

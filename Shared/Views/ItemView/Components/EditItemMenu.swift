@@ -67,7 +67,8 @@ extension ItemView {
 
         var iOSView: some View {
             menuContent
-                .onNotification(.didDeleteItem) { _ in
+                .onNotification(.didDeleteItem) { id in
+                    guard id == viewModel.item.id else { return }
                     UIDevice.feedback(.success)
                     router.dismiss()
                 }
@@ -105,7 +106,8 @@ extension ItemView {
 
                     Button(L10n.cancel, role: .cancel) {}
                 }
-                .onNotification(.didDeleteItem) { _ in
+                .onNotification(.didDeleteItem) { id in
+                    guard id == viewModel.item.id else { return }
                     router.dismiss()
                 }
                 .errorMessage($viewModel.error)
