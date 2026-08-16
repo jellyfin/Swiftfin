@@ -34,7 +34,6 @@ struct ScrollIfLargerThanContainerModifier: ViewModifier {
                 maxHeight: axes.contains(.vertical) ? (isVerticallyLarger ? .infinity : contentSize.height) : nil,
                 alignment: alignment
             )
-            .backport // iOS 17
             .scrollClipDisabled()
             .scrollDisabled((axes.contains(.horizontal) && !isHorizontallyLarger) || (axes.contains(.vertical) && !isVerticallyLarger))
             .scrollIndicators(.never)

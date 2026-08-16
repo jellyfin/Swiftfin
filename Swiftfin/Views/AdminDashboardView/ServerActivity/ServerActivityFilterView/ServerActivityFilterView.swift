@@ -71,7 +71,6 @@ struct ServerActivityFilterView: View {
             }
         }
         .navigationTitle(L10n.startDate.localizedCapitalized)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()

@@ -110,7 +110,6 @@ struct AddAccessScheduleView: View {
                 }
             }
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.addAccessSchedule.localizedCapitalized)
         .navigationBarCloseButton {

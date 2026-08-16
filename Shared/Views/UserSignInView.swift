@@ -298,7 +298,6 @@ struct UserSignInView: View {
             signInSection
             publicUsersSection
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
             router.dismiss()

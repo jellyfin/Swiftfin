@@ -41,7 +41,7 @@ extension EditMetadataView {
                             format: .number
                         )
                         .keyboardType(.decimalPad)
-                        .onChange(of: item.criticRating) { _ in
+                        .onChange(of: item.criticRating) {
                             if let rating = item.criticRating {
                                 item.criticRating = min(max(rating, 0), 100)
                             }
@@ -70,7 +70,7 @@ extension EditMetadataView {
                             format: .number
                         )
                         .keyboardType(.decimalPad)
-                        .onChange(of: item.communityRating) { _ in
+                        .onChange(of: item.communityRating) {
                             if let rating = item.communityRating {
                                 item.communityRating = min(max(rating, 0), 10)
                             }

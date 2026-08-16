@@ -128,7 +128,6 @@ private struct BaseItemDtoLibraryListElement: View {
         } action: {
             item.libraryDidSelectElement(router: router, in: namespace)
         }
-        .backport
         .matchedTransitionSource(id: "item", in: namespace)
         #if os(tvOS)
             .focusedValue(\.focusedPoster, AnyPoster(item))

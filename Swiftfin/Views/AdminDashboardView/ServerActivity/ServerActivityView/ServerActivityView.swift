@@ -36,7 +36,6 @@ struct ServerActivityView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.activity)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .refreshable {
             await usersViewModel.refresh()
@@ -67,7 +66,7 @@ struct ServerActivityView: View {
                 await viewModel.refresh()
             }
         }
-        .onChange(of: viewModel.environment) { _ in
+        .onChange(of: viewModel.environment) {
             viewModel.refresh()
         }
     }

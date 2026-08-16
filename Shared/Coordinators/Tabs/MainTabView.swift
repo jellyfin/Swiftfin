@@ -60,39 +60,6 @@ struct MainTabView: View {
     }
 
     @ViewBuilder
-    private func legacyTabContent() -> some View {
-        TabView(selection: $tabCoordinator.selectedTabID) {
-            ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
-                NavigationInjectionView(
-                    coordinator: tab.coordinator
-                ) {
-                    tab.item.content
-                    #if os(iOS)
-                        .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
-                            view.topBarTrailing {
-                                FirstTabSettingsBarButton()
-                            }
-                        }
-                    #endif
-                }
-                .environmentObject(tabCoordinator)
-                .environment(\.tabItemSelected, tab.publisher)
-                .tabItem {
-                    Label(
-                        tab.item.displayTitle,
-                        systemImage: tab.item.systemImage
-                    )
-                    .labelStyle(tab.item.labelStyle)
-                    .symbolRenderingMode(.monochrome)
-                    .eraseToAnyView()
-                }
-                .tag(tab.item.id)
-            }
-        }
-    }
-
-    @available(iOS 18.0, tvOS 18.0, *)
-    @ViewBuilder
     private func tabContent() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
@@ -129,26 +96,19 @@ struct MainTabView: View {
     }
 
     var body: some View {
-        Group {
-            if #available(iOS 18, tvOS 18.0, *) {
-                tabContent()
-            } else {
-                legacyTabContent()
+        tabContent()
+            .onChange(of: userSessionManager.pendingDeepLink) {
+                routePendingDeepLink(userSessionManager.consumePendingDeepLink())
             }
-        }
-        .backport
-        .onChange(of: userSessionManager.pendingDeepLink) {
-            routePendingDeepLink(userSessionManager.consumePendingDeepLink())
-        }
-        .onReceive(userSessionManager.routePublisher) { route in
-            Task { @MainActor in
-                await tabCoordinator.route(to: route)
+            .onReceive(userSessionManager.routePublisher) { route in
+                Task { @MainActor in
+                    await tabCoordinator.route(to: route)
+                }
             }
-        }
         #if os(tvOS)
-        .background(alignment: .top) {
-            FocusedPosterCinematicBackgroundView()
-        }
+            .background(alignment: .top) {
+                FocusedPosterCinematicBackgroundView()
+            }
         #endif
     }
 }

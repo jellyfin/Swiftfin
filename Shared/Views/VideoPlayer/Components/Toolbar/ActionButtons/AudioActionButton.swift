@@ -62,9 +62,8 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 .foregroundStyle(.primary, .secondary)
                 .videoPlayerActionButtonTransition()
                 .assign(playbackItem.$selectedAudioStreamIndex, to: $selectedAudioStreamIndex)
-                .backport
-                .onChange(of: selectedAudioStreamIndex) { _, newValue in
-                    playbackItem.selectedAudioStreamIndex = newValue
+                .onChange(of: selectedAudioStreamIndex) {
+                    playbackItem.selectedAudioStreamIndex = selectedAudioStreamIndex
                 }
             }
         }

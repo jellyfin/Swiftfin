@@ -193,11 +193,11 @@ extension VideoPlayer.PlaybackControls {
             .overlay(alignment: .topLeading) {
                 previewImage
             }
-            .onChange(of: isFocused) { _, newValue in
-                containerState.isProgressBarFocused = newValue
+            .onChange(of: isFocused) {
+                containerState.isProgressBarFocused = isFocused
             }
-            .onChange(of: containerState.isProgressBarFocused) { _, newValue in
-                if newValue, !isFocused {
+            .onChange(of: containerState.isProgressBarFocused) {
+                if containerState.isProgressBarFocused, !isFocused {
                     isFocused = true
                 }
             }
