@@ -599,9 +599,8 @@ extension AVMediaPlayerProxy {
                     guard state == .stopped else { return }
                     proxy.playbackStopped()
                 }
-                .backport
-                .onChange(of: manager.rate) { _, newValue in
-                    proxy.setRate(newValue)
+                .onChange(of: manager.rate) {
+                    proxy.setRate(manager.rate)
                 }
         }
     }
