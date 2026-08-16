@@ -72,7 +72,6 @@ extension RemoteView {
                 }
             }
             .environment(\.editMode, .constant(isEditing ? .active : .inactive))
-            .backport
             .toolbarTitleDisplayMode(.inline)
             .navigationTitle(L10n.queue)
             .navigationBarMenuButton(isHidden: isEditing) {

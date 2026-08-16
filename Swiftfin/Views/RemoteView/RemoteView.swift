@@ -155,7 +155,6 @@ struct RemoteView: View {
         .edgePadding([.top, .bottom])
         .presentationDragIndicator(.visible)
         .animation(.linear(duration: 0.2), value: selectedTarget?.id)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
