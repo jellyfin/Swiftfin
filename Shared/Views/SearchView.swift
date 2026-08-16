@@ -101,7 +101,7 @@ struct SearchView: View {
         )
         .environmentObject(focusCoordinator)
         #if os(tvOS)
-        .edgePadding(.top)
+            .edgePadding(.top)
         #else
             .navigationBarFilterDrawer(
                 viewModel: viewModel.filterViewModel,
