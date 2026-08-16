@@ -16,69 +16,40 @@ struct PlaybackSpeedPicker: View {
     @State
     private var customSpeed: Float = 1.0
     @State
-    private var isPresentingCustomSpeed = false
+    private var isPresentingCustomSpeed: Bool = false
 
     let title: String
     let selection: Binding<PlaybackSpeed>
 
     @ViewBuilder
     private var picker: some View {
-        if #available(iOS 18.0, tvOS 18.0, *) {
-            Picker(
-                title,
-                selection: selection
-                    .map(
-                        getter: { value -> Float in
-                            if case .custom = value {
-                                Float(0)
-                            } else {
-                                value.rawValue
-                            }
-                        },
-                        setter: {
-                            PlaybackSpeed(rawValue: $0)
+        Picker(
+            title,
+            selection: selection
+                .map(
+                    getter: { value -> Float in
+                        if case .custom = value {
+                            Float(0)
+                        } else {
+                            value.rawValue
                         }
-                    )
-            ) {
-                ForEach(PlaybackSpeed.allCases, id: \.hashValue) { speed in
-                    Text(speed.displayTitle)
-                        .tag(speed.rawValue)
-                }
-
-                Divider()
-
-                Text(L10n.custom)
-                    .tag(Float(0))
-            } currentValueLabel: {
-                Text(selection.wrappedValue.displayTitle)
+                    },
+                    setter: {
+                        PlaybackSpeed(rawValue: $0)
+                    }
+                )
+        ) {
+            ForEach(PlaybackSpeed.allCases, id: \.hashValue) { speed in
+                Text(speed.displayTitle)
+                    .tag(speed.rawValue)
             }
-        } else {
-            Picker(
-                title,
-                selection: selection
-                    .map(
-                        getter: { value -> Float in
-                            if case .custom = value {
-                                Float(0)
-                            } else {
-                                value.rawValue
-                            }
-                        },
-                        setter: {
-                            PlaybackSpeed(rawValue: $0)
-                        }
-                    )
-            ) {
-                ForEach(PlaybackSpeed.allCases, id: \.hashValue) { speed in
-                    Text(speed.displayTitle)
-                        .tag(speed.rawValue)
-                }
 
-                Divider()
+            Divider()
 
-                Text(L10n.custom)
-                    .tag(Float(0))
-            }
+            Text(L10n.custom)
+                .tag(Float(0))
+        } currentValueLabel: {
+            Text(selection.wrappedValue.displayTitle)
         }
     }
 
@@ -95,7 +66,6 @@ struct PlaybackSpeedPicker: View {
 
     var body: some View {
         content
-            .backport
             .onChange(of: selection.wrappedValue) { oldValue, newValue in
                 if case let .custom(value) = newValue {
                     if value == .zero {

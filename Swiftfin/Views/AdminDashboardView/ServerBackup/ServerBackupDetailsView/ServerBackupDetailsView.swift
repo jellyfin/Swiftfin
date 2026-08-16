@@ -57,7 +57,6 @@ struct ServerBackupDetailsView: View {
             }
         }
         .navigationTitle(L10n.backup)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .topBarTrailing {
             if viewModel.background.is(.restoring) {

@@ -162,38 +162,6 @@ extension ParseableFormatStyle where Self == NilIfEmptyStringFormatStyle {
     }
 }
 
-// TODO: remove after iOS 15 support dropped and use `Duration`
-//       types and format styles instead
-
-extension FormatStyle where Self == TimeIntervalFormatStyle {
-
-    static func interval(
-        style: Date.ComponentsFormatStyle.Style,
-        fields: Set<Date.ComponentsFormatStyle.Field>
-    ) -> TimeIntervalFormatStyle {
-        TimeIntervalFormatStyle(style: style, fields: fields)
-    }
-}
-
-struct TimeIntervalFormatStyle: FormatStyle {
-
-    let style: Date.ComponentsFormatStyle.Style
-    let fields: Set<Date.ComponentsFormatStyle.Field>
-
-    func format(_ value: TimeInterval) -> String {
-        let value = abs(value)
-        let t = Date.now
-
-        // issue: not a closed interval
-        return Date.ComponentsFormatStyle(
-            style: style,
-            locale: .current,
-            calendar: .current,
-            fields: fields
-        ).format(t ..< t.addingTimeInterval(value))
-    }
-}
-
 struct LastSeenFormatStyle: FormatStyle {
 
     func format(_ value: Date?) -> String {

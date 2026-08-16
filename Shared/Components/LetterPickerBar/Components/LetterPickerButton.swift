@@ -59,7 +59,6 @@ extension LetterPickerBar {
                     .isSelected(isGlassVisible)
             }
             .buttonStyle(.borderless)
-            .backport
             .buttonBorderShape(.roundedRectangle)
             .focused($isFocused)
             .scaleEffect(isFocused ? 1.2 : 1)

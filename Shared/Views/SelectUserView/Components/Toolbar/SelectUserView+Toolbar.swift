@@ -89,7 +89,6 @@ extension SelectUserView {
             .frame(maxWidth: .infinity)
             .focusSection()
             .edgePadding([.bottom, .horizontal])
-            .backport
             .defaultFocus(
                 $isCenterButtonFocused,
                 true,
@@ -138,7 +137,6 @@ extension SelectUserView {
             .menuOrder(.fixed)
             .symbolRenderingMode(.monochrome)
             .frame(width: buttonHeight, height: buttonHeight)
-            .backport
             .buttonBorderShape(.circle)
             .backport
             .glassEffect(in: .circle)

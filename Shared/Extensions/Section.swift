@@ -123,7 +123,6 @@ private struct LearnMoreButton: View {
                     .edgePadding()
                 }
                 .navigationTitle(title.localizedCapitalized)
-                .backport
                 .toolbarTitleDisplayMode(.inline)
                 #if os(iOS)
                     .navigationBarCloseButton {

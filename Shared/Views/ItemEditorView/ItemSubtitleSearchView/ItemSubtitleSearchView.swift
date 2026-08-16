@@ -38,7 +38,6 @@ struct ItemSubtitleSearchView: View {
             }
         }
         .navigationTitle(L10n.search)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .onReceive(viewModel.events) { event in
             switch event {
@@ -70,9 +69,8 @@ struct ItemSubtitleSearchView: View {
             }
             #endif
         }
-        .backport
-        .onChange(of: isPerfectMatch) { _, newValue in
-            viewModel.search(isPerfectMatch: newValue)
+        .onChange(of: isPerfectMatch) {
+            viewModel.search(isPerfectMatch: isPerfectMatch)
         }
     }
 

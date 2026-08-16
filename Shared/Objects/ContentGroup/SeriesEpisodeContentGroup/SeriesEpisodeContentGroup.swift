@@ -101,11 +101,9 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                 selectPreferredSeasonIfNeeded()
                 refreshSelectedSeasonIfNeeded()
             }
-            .backport
             .onChange(of: viewModel.elements.count) {
                 selectPreferredSeasonIfNeeded()
             }
-            .backport
             .onChange(of: selection) {
                 refreshSelectedSeasonIfNeeded()
             }

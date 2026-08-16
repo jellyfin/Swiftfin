@@ -1128,6 +1128,8 @@ internal enum L10n {
   internal static let onlyForced = L10n.tr("Localizable", "onlyForced", fallback: "Only forced")
   /// On Now
   internal static let onNow = L10n.tr("Localizable", "onNow", fallback: "On Now")
+  /// Opacity
+  internal static let opacity = L10n.tr("Localizable", "opacity", fallback: "Opacity")
   /// Open library
   internal static let openLibrary = L10n.tr("Localizable", "openLibrary", fallback: "Open library")
   /// Options

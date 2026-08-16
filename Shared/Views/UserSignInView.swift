@@ -190,12 +190,10 @@ struct UserSignInView: View {
             .tint(.jellyfinPurple)
             #if os(iOS)
                 .controlSize(.large)
+                .listRowSeparator(.hidden)
             #endif
-            #if os(iOS)
-            .listRowSeparator(.hidden)
-            #endif
-            .frame(maxHeight: 75)
-            .disabled(username.isEmpty)
+                .frame(maxHeight: 75)
+                .disabled(username.isEmpty)
         }
 
         if viewModel.isQuickConnectEnabled {
@@ -300,7 +298,6 @@ struct UserSignInView: View {
             signInSection
             publicUsersSection
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
             router.dismiss()

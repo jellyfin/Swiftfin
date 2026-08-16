@@ -127,7 +127,6 @@ struct ConnectToServerView: View {
 
             localServersSection
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .connecting) {
             router.dismiss()
@@ -168,30 +167,13 @@ struct ConnectToServerView: View {
                     ProgressView()
                 }
             }
-        #if os(tvOS)
-            ._alert(
-                L10n.connection,
-                isPresented: $duplicateServer.isNotNil()
-            ) {
-                if let server = duplicateServer {
-                    DuplicateServerConnectionView(server: server) {
-                        viewModel.addConnection(serverState: server)
-                        duplicateServer = nil
-                        router.dismiss()
-                    }
-                }
-            }
-        #else
             .sheet(item: $duplicateServer) { server in
-                NavigationStack {
-                    DuplicateServerConnectionView(server: server) {
-                        viewModel.addConnection(serverState: server)
-                        duplicateServer = nil
-                        router.dismiss()
-                    }
+                DuplicateServerConnectionView(server: server) {
+                    viewModel.addConnection(serverState: server)
+                    duplicateServer = nil
+                    router.dismiss()
                 }
             }
-        #endif
             .errorMessage($viewModel.error)
     }
 }
