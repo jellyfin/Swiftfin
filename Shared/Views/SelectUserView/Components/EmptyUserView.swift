@@ -48,7 +48,6 @@ extension SelectUserView {
                 #endif
             }
             .foregroundStyle(.primary, .secondary)
-            .backport
             .buttonBorderShape(.circle)
             #if os(tvOS)
                 .buttonStyle(.borderless)

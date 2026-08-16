@@ -79,7 +79,6 @@ struct RemoteImageDetailView: View {
                 }
             }
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.image)
         .topBarTrailing {

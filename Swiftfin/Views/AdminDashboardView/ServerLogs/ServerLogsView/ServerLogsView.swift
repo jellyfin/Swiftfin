@@ -69,7 +69,6 @@ struct ServerLogsView: View {
                 }
             }
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.serverLogs.localizedCapitalized)
         .animation(.linear(duration: 0.2), value: viewModel.state)
@@ -79,7 +78,6 @@ struct ServerLogsView: View {
         .onFirstAppear {
             viewModel.refresh(filter: filter)
         }
-        .backport
         .onChange(of: filter) {
             viewModel.refresh(filter: filter)
         }

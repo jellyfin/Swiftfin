@@ -308,14 +308,12 @@ struct EditServerConnectionView: View {
             isNameFocused = true
         }
         #if os(iOS)
-        .backport
-        .onChange(of: draft.interface) { _, newValue in
-            guard newValue == .wifi, draft.wifiSSIDs.first?.nilIfBlank == nil else { return }
+        .onChange(of: draft.interface) {
+            guard draft.interface == .wifi, draft.wifiSSIDs.first?.nilIfBlank == nil else { return }
             populateCurrentWifiSSID(keepSpecificOnFailure: false)
         }
-        .backport
-        .onChange(of: draft.useWifiName) { _, newValue in
-            guard newValue, draft.interface == .wifi, draft.wifiSSIDs.first?.nilIfBlank == nil else { return }
+        .onChange(of: draft.useWifiName) {
+            guard draft.useWifiName, draft.interface == .wifi, draft.wifiSSIDs.first?.nilIfBlank == nil else { return }
             populateCurrentWifiSSID(keepSpecificOnFailure: true)
         }
         .onAppear {
