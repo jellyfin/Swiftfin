@@ -82,7 +82,6 @@ struct RecordingEditorView: View {
                 seriesSections
             }
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.recording)
         .navigationBarCloseButton {
