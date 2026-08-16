@@ -76,7 +76,6 @@ extension ItemView {
                 .frame(height: UIDevice.isTV ? 75 : 44)
             }
             .focusSection()
-            .backport
             .defaultFocus(
                 $focusedButton,
                 defaultFocusedButton,

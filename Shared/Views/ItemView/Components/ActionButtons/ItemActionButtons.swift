@@ -194,7 +194,6 @@ struct ItemActionButtons: View {
             }
             .frame(maxHeight: .infinity)
             .environmentObject(provider)
-            .backport
             .buttonBorderShape(.capsule)
             .buttonStyle(BasicHoverButtonStyle())
             .font(.title3)
