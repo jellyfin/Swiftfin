@@ -89,9 +89,8 @@ extension VideoPlayer {
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: containerState.isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: containerState.isPresentingOverlay)
-            .backport
-            .onChange(of: manager.proxy?.isBuffering.value) { _, newValue in
-                activeIsBuffering = newValue ?? false
+            .onChange(of: manager.proxy?.isBuffering.value) {
+                activeIsBuffering = manager.proxy?.isBuffering.value ?? false
             }
             .disabled(manager.error != nil)
         }

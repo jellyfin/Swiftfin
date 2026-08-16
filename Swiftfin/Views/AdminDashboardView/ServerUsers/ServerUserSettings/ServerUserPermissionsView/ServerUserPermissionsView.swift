@@ -46,7 +46,6 @@ struct ServerUserPermissionsView: View {
                 }
             }
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.permissions)
         .navigationBarCloseButton {

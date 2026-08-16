@@ -102,7 +102,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .scrollIfLargerThanContainer(axes: .horizontal, alignment: .leading)
             }
             .edgePadding(.horizontal)
-            .backport
             .defaultFocus(
                 $focusedElement,
                 defaultTabFocus,
@@ -164,7 +163,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     // - Focus is only needed from Supplement -> ProgressBar.
                     Color.clear
                         .frame(height: 1)
-                        .backport
                         .focusable(containerState.isPresentingSupplement)
                         .focused($focusedElement, equals: .focusBoundary)
 
@@ -188,9 +186,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 )
                 currentSupplements = newSupplements
             }
-            .backport
-            .onChange(of: focusedElement) { _, newValue in
-                switch newValue {
+            .onChange(of: focusedElement) {
+                switch focusedElement {
                 case let .supplementTab(id):
                     if containerState.selectedSupplement?.id != id,
                        let supplement = currentSupplements[id: id]
@@ -205,9 +202,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     break
                 }
             }
-            .backport
-            .onChange(of: containerState.isProgressBarFocused) { _, focused in
-                if focused, containerState.isPresentingSupplement {
+            .onChange(of: containerState.isProgressBarFocused) {
+                if containerState.isProgressBarFocused, containerState.isPresentingSupplement {
                     containerState.select(supplement: nil)
                 }
             }

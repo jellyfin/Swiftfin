@@ -81,7 +81,6 @@ struct PlayButton: View {
                 in: .capsule
             )
         }
-        .backport
         .buttonBorderShape(.capsule)
         .buttonStyle(BasicHoverButtonStyle())
         .coordinatedFocus(ItemView.Component.play)

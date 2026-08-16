@@ -126,7 +126,6 @@ struct ItemView: View {
         .trackingSize($contentSize)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .refreshable {
             viewModel.background.refresh()

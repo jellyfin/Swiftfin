@@ -32,7 +32,6 @@ struct ServerUserMediaAccessView: View {
 
     var body: some View {
         contentView
-            .backport
             .toolbarTitleDisplayMode(.inline)
             .navigationTitle(L10n.mediaAccess.localizedCapitalized)
             .navigationBarCloseButton {

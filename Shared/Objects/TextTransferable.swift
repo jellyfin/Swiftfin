@@ -28,14 +28,6 @@ public extension TextTransferable {
         }
     }
 
-    // TODO: Switch to this for iOS 17+
-//      static var transferRepresentation: some TransferRepresentation {
-//          DataRepresentation(exportedContentType: .plainText) { (item: Self) in
-//              Data(item.transferBody.utf8)
-//          }
-//          .suggestedFileName { $0.transferTitle.appending(".txt") }
-//      }
-
     #if os(iOS)
     var shareLink: some View {
         ShareLink(

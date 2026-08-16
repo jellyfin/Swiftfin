@@ -114,7 +114,6 @@ struct ActiveSessionsView: View {
                 ProgressView()
             }
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.sessions)
         .animation(.linear(duration: 0.2), value: viewModel.state)

@@ -58,11 +58,9 @@ extension SeriesEpisodeContentGroup {
                     .edgePadding(.horizontal)
                 }
                 .scrollIndicators(.hidden)
-                .backport
                 .scrollClipDisabled()
                 .focusSection()
                 .focused($isPickerFocused)
-                .backport
                 .defaultFocus(
                     $focusedSeason,
                     preferredSelection,
