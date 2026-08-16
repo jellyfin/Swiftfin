@@ -16,7 +16,7 @@ extension VideoPlayer.PlaybackControls {
 
         @ViewBuilder
         func body(content: Content) -> some View {
-            if #available(iOS 26.0, *) {
+            if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
                 content
                     .buttonStyle(OverlayGlassButtonStyle(onPressed: onPressed))
                     .buttonBorderShape(.circle)
@@ -101,13 +101,12 @@ extension VideoPlayer.PlaybackControls {
                 .frame(minHeight: 56)
                 .backport
                 .glassEffect(
-                    .regular.selection(
+                    isFocused ? .regular.selection(
                         tint: .white,
                         foregroundColor: .black
-                    ),
+                    ) : .regular,
                     in: .circle
                 )
-                .isSelected(isFocused)
                 .scaleEffect(configuration.isPressed ? 0.90 : isFocused ? 1.1 : 1)
                 .shadow(color: isFocused ? .black.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
                 .animation(.linear(duration: 0.1), value: isFocused)

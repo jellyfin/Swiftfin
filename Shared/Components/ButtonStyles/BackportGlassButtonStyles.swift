@@ -79,15 +79,11 @@ private struct BackportGlassButtonStyleBody: View {
 
     @ViewBuilder
     var body: some View {
-        #if os(tvOS)
-        nativeBody
-        #else
-        if #available(iOS 26.0, *) {
+        if UIDevice.supportsLiquidGlass {
             nativeBody
         } else {
             fallbackBody
         }
-        #endif
     }
 
     @available(iOS 26.0, tvOS 26.0, *)

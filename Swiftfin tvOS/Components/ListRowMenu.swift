@@ -28,6 +28,14 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
 
     @ViewBuilder
     private var buttonView: some View {
+        if UIDevice.supportsLiquidGlass {
+            glassBody
+        } else {
+            legacyBody
+        }
+    }
+
+    private var baseLabel: some View {
         HStack {
             title
                 .foregroundStyle(isFocused ? .black : .white)
@@ -49,13 +57,36 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
         }
         .padding(.horizontal)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .glassEffect(
-            .regular.tint(isFocused ? .white : nil),
-            in: .capsule
-        )
-        .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
-        .animation(.easeInOut(duration: 0.125), value: isFocused)
-        .listRowBackground(Color.clear)
+    }
+
+    private var glassBody: some View {
+        baseLabel
+            .glassEffect(
+                .regular.tint(isFocused ? .white : nil),
+                in: .capsule
+            )
+            .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
+            .animation(.easeInOut(duration: 0.125), value: isFocused)
+            .listRowBackground(Color.clear)
+    }
+
+    private var legacyBody: some View {
+        baseLabel
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12.5)
+                        .fill(isFocused ? Color.white : Color.clear)
+
+                    if isFocused {
+                        RoundedRectangle(cornerRadius: 12.5)
+                            .fill(Color.white.opacity(0.8))
+                            .scaleEffect(x: 1, y: 1.1, anchor: .center)
+                    }
+                }
+            }
+            .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
+            .animation(.easeInOut(duration: 0.125), value: isFocused)
+            .listRowBackground(Color.clear)
     }
 }
 
