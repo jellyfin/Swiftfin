@@ -88,15 +88,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             Label(L10n.menu, systemImage: menuSystemImage)
         }
 
-        private func isMenuButton(_ button: VideoPlayerActionButton) -> Bool {
-            switch button {
-            case .audio, .playbackSpeed, .playbackSettings, .subtitles:
-                true
-            default:
-                false
-            }
-        }
-
         @ViewBuilder
         private func view(for button: VideoPlayerActionButton) -> some View {
             switch button {
@@ -126,28 +117,24 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         @ViewBuilder
         private var compactView: some View {
             Menu {
-                ForEach(
-                    barActionButtons,
-                    content: view(for:)
-                )
+                Group {
+                    ForEach(
+                        barActionButtons,
+                        content: view(for:)
+                    )
 
-                Divider()
+                    Divider()
 
-                ForEach(
-                    menuActionButtons,
-                    content: view(for:)
-                )
+                    ForEach(
+                        menuActionButtons,
+                        content: view(for:)
+                    )
+                }
+                .modifier(OverlayMenuTimerModifier())
             } label: {
                 menuLabel
             }
             .frame(width: buttonSize, height: buttonSize)
-            .if(usesLiquidGlass) { menu in
-                menu
-                    .backport
-                    .glassEffect(in: .circle)
-            }
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary, .secondary)
             .withViewContext(.isInMenu)
         }
 
@@ -157,11 +144,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 ForEach(barActionButtons) { button in
                     view(for: button)
                         .frame(width: buttonSize, height: buttonSize)
-                        .if(usesLiquidGlass && isMenuButton(button)) { menu in
-                            menu
-                                .backport
-                                .glassEffect(in: .circle)
-                        }
                         .focused($focusedButton, equals: button.rawValue)
                 }
 
@@ -172,17 +154,11 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                             content: view(for:)
                         )
                         .withViewContext(.isInMenu)
+                        .modifier(OverlayMenuTimerModifier())
                     } label: {
                         menuLabel
                     }
                     .frame(width: buttonSize, height: buttonSize)
-                    .if(usesLiquidGlass) { menu in
-                        menu
-                            .backport
-                            .glassEffect(in: .circle)
-                    }
-                    .symbolRenderingMode(.monochrome)
-                    .foregroundStyle(.primary, .secondary)
                     .focused($focusedButton, equals: "menu")
                 }
             }

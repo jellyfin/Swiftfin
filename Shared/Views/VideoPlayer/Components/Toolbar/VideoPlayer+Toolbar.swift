@@ -36,14 +36,6 @@ extension VideoPlayer.PlaybackControls {
             UIDevice.isTV ? 30 : 24
         }
 
-        private func onPressed(isPressed: Bool) {
-            if isPressed {
-                containerState.timer.stop()
-            } else {
-                containerState.timer.poke()
-            }
-        }
-
         @ViewBuilder
         private var closeButton: some View {
             Button {
@@ -82,8 +74,9 @@ extension VideoPlayer.PlaybackControls {
                     .padding(.horizontal)
             }
             .font(.system(size: fontSize, weight: .semibold))
-            .labelStyle(.iconOnly)
-            .modifier(OverlayButtonStyleModifier(onPressed: onPressed))
+            .labelStyle(OverlayLabelStyle())
+            .menuStyle(OverlayMenuStyle())
+            .modifier(OverlayButtonStyleModifier())
             #if os(iOS)
                 .background {
                     EmptyHitTestView()

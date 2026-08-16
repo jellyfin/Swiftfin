@@ -53,63 +53,64 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 }()
 
                 Menu {
-                    if hasVersionSection {
-                        Picker(
-                            selection: Binding(
-                                get: { playbackItem.mediaSource.id },
-                                set: { newID in
-                                    guard let newID,
-                                          newID != playbackItem.mediaSource.id,
-                                          let newSource = versions.first(where: { $0.id == newID })
-                                    else { return }
+                    Group {
+                        if hasVersionSection {
+                            Picker(
+                                selection: Binding(
+                                    get: { playbackItem.mediaSource.id },
+                                    set: { newID in
+                                        guard let newID,
+                                              newID != playbackItem.mediaSource.id,
+                                              let newSource = versions.first(where: { $0.id == newID })
+                                        else { return }
 
-                                    manager.playNewItem(provider: makeProvider(for: newSource, playbackItem: playbackItem))
+                                        manager.playNewItem(provider: makeProvider(for: newSource, playbackItem: playbackItem))
+                                    }
+                                )
+                            ) {
+                                ForEach(versions, id: \.hashValue) { version in
+                                    Text(version.displayTitle)
+                                        .tag(version.id)
                                 }
-                            )
-                        ) {
-                            ForEach(versions, id: \.hashValue) { version in
-                                Text(version.displayTitle)
-                                    .tag(version.id)
+                            } label: {
+                                Text(L10n.version)
+                                Text(playbackItem.mediaSource.displayTitle)
                             }
-                        } label: {
-                            Text(L10n.version)
-                            Text(playbackItem.mediaSource.displayTitle)
+                            .if(hasMultipleSections) { picker in
+                                picker.pickerStyle(.menu)
+                            }
                         }
-                        .if(hasMultipleSections) { picker in
-                            picker.pickerStyle(.menu)
+
+                        if hasBitrateSection {
+                            Picker(
+                                selection: Binding(
+                                    get: { playbackItem.requestedBitrate },
+                                    set: { newBitrate in
+                                        guard newBitrate != playbackItem.requestedBitrate else { return }
+                                        manager.setBitrate(bitrate: newBitrate)
+                                    }
+                                )
+                            ) {
+                                ForEach(bitrates, id: \.rawValue) { bitrate in
+                                    Text(bitrate.displayTitle)
+                                        .tag(bitrate)
+                                }
+                            } label: {
+                                Text(L10n.playbackQuality)
+                                Text(playbackItem.requestedBitrate.displayTitle)
+                            }
+                            .if(hasMultipleSections) { picker in
+                                picker.pickerStyle(.menu)
+                            }
                         }
                     }
-
-                    if hasBitrateSection {
-                        Picker(
-                            selection: Binding(
-                                get: { playbackItem.requestedBitrate },
-                                set: { newBitrate in
-                                    guard newBitrate != playbackItem.requestedBitrate else { return }
-                                    manager.setBitrate(bitrate: newBitrate)
-                                }
-                            )
-                        ) {
-                            ForEach(bitrates, id: \.rawValue) { bitrate in
-                                Text(bitrate.displayTitle)
-                                    .tag(bitrate)
-                            }
-                        } label: {
-                            Text(L10n.playbackQuality)
-                            Text(playbackItem.requestedBitrate.displayTitle)
-                        }
-                        .if(hasMultipleSections) { picker in
-                            picker.pickerStyle(.menu)
-                        }
-                    }
+                    .modifier(OverlayMenuTimerModifier())
                 } label: {
                     Label(
                         menuTitle,
                         systemImage: VideoPlayerActionButton.playbackSettings.systemImage
                     )
                 }
-                .symbolRenderingMode(.monochrome)
-                .foregroundStyle(.primary, .secondary)
             }
         }
     }

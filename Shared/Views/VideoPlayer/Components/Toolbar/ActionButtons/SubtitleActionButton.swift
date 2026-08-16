@@ -42,18 +42,19 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         var body: some View {
             if let playbackItem = manager.playbackItem {
                 Menu {
-                    if isInMenu {
-                        content(playbackItem: playbackItem)
-                    } else {
-                        Section(L10n.subtitles) {
+                    Group {
+                        if isInMenu {
                             content(playbackItem: playbackItem)
+                        } else {
+                            Section(L10n.subtitles) {
+                                content(playbackItem: playbackItem)
+                            }
                         }
                     }
+                    .modifier(OverlayMenuTimerModifier())
                 } label: {
                     Label(L10n.subtitles, systemImage: systemImage)
                 }
-                .symbolRenderingMode(.monochrome)
-                .foregroundStyle(.primary, .secondary)
                 .videoPlayerActionButtonTransition()
                 .assign(playbackItem.$selectedSubtitleStreamIndex, to: $selectedSubtitleStreamIndex)
                 .onChange(of: selectedSubtitleStreamIndex) {

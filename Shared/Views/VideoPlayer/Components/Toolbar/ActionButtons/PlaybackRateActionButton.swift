@@ -38,14 +38,13 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             .tag(manager.rate)
                     }
                 }
+                .modifier(OverlayMenuTimerModifier())
             } label: {
                 Label(
                     L10n.playbackSpeed,
                     systemImage: VideoPlayerActionButton.playbackSpeed.systemImage
                 )
             }
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary, .secondary)
         }
     }
 }
