@@ -132,7 +132,6 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
                     .accessibilityAddTraits(.isHeader)
             }
             .focusSection()
-            .backport
             .defaultFocus(
                 $focusedSection,
                 .content,

@@ -53,11 +53,6 @@ extension EditMetadataView {
 
             Section(L10n.overview) {
                 TextEditor(text: $item.overview.coalesce(""))
-                    .onAppear {
-                        // Workaround for iOS 17 and earlier bug
-                        // where the row height won't be set properly
-                        item.overview = item.overview
-                    }
             }
         }
     }

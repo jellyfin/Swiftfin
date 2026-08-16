@@ -39,7 +39,6 @@ struct ServerUserParentalRatingView: View {
 
             blockUnratedItemsView
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.parentalRatings.localizedCapitalized)
         .navigationBarCloseButton {

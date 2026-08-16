@@ -202,7 +202,6 @@ struct AboutItemGroup: ContentGroup {
                     .edgePadding(.horizontal)
                 }
                 .scrollIndicators(.hidden)
-                .backport
                 .scrollClipDisabled()
                 #if os(tvOS)
                     .withViewContext(.isOverComplexContent)

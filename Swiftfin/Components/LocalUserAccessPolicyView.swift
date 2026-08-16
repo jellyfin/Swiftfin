@@ -85,21 +85,20 @@ struct LocalUserAccessPolicyView: View {
         }
         .animation(.linear, value: accessPolicy)
         .navigationTitle(L10n.security)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()
         }
-        .onChange(of: updatePinHint) { newValue in
-            let truncated = String(newValue.prefix(120))
+        .onChange(of: updatePinHint) {
+            let truncated = String(updatePinHint.prefix(120))
             updatePinHint = truncated
             pinHint = truncated
         }
-        .onChange(of: updatePinHint) { newValue in
-            pinHint = newValue
+        .onChange(of: updatePinHint) {
+            pinHint = updatePinHint
         }
-        .onChange(of: updateSignInPolicy) { newValue in
-            accessPolicy = newValue
+        .onChange(of: updateSignInPolicy) {
+            accessPolicy = updateSignInPolicy
         }
         .trackingSize($listSize)
     }
