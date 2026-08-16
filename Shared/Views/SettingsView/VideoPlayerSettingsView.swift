@@ -102,7 +102,6 @@ struct VideoPlayerSettingsView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.videoPlayer.localizedCapitalized)
         .topBarTrailing {
@@ -152,14 +151,12 @@ struct VideoPlayerSettingsView: View {
                 ))
             }
         }
-        .backport
-        .onChange(of: barActionButtons) { _, newValue in
-            let enabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
+        .onChange(of: barActionButtons) {
+            let enabled = barActionButtons.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
             updateConfiguration { $0.enableNextEpisodeAutoPlay = enabled }
         }
-        .backport
-        .onChange(of: menuActionButtons) { _, newValue in
-            let enabled = newValue.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
+        .onChange(of: menuActionButtons) {
+            let enabled = menuActionButtons.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
             updateConfiguration { $0.enableNextEpisodeAutoPlay = enabled }
         }
     }

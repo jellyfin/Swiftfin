@@ -190,7 +190,6 @@ extension SeriesEpisodeContentGroup {
                 .scrollBehavior(.continuousLeadingEdge)
                 .focusSection()
                 .focused($focusedSection, equals: .episodes)
-                .backport
                 .defaultFocus(
                     $focusedElement,
                     preferredElementID,
@@ -202,7 +201,6 @@ extension SeriesEpisodeContentGroup {
                     .focused($focusedSection, equals: .seasons)
             }
             .focusSection()
-            .backport
             .defaultFocus(
                 $focusedSection,
                 .episodes,

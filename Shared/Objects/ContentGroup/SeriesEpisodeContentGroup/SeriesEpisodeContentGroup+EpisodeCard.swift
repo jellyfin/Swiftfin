@@ -83,7 +83,6 @@ extension SeriesEpisodeContentGroup {
                 .contentShape(.contextMenuPreview, Rectangle())
                 .posterStyle(.landscape)
                 .subtleShadow()
-                .backport
                 .matchedTransitionSource(id: "item", in: namespace)
             }
         }
@@ -197,7 +196,6 @@ extension SeriesEpisodeContentGroup {
                     .focused($focusedElement, equals: .content)
             }
             .focusSection()
-            .backport
             .defaultFocus(
                 $focusedElement,
                 .artwork,

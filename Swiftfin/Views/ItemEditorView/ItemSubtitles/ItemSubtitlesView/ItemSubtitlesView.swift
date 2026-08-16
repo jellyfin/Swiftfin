@@ -58,7 +58,6 @@ struct ItemSubtitlesView: View {
         }
         .navigationTitle(L10n.subtitles)
         .navigationBarBackButtonHidden(isEditing)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .errorMessage($viewModel.error)
         .if(!isEditing) { view in

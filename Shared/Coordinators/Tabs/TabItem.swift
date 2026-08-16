@@ -17,35 +17,17 @@ struct TabItem: Displayable, @MainActor Identifiable, @MainActor Hashable {
     let displayTitle: String
     let id: String
     let systemImage: String
-    let labelStyle: any LabelStyle
 
     init(
         id: String,
         title: String,
         systemImage: String,
-        @ViewBuilder content: () -> some View
-    ) {
-        self.init(
-            id: id,
-            title: title,
-            systemImage: systemImage,
-            labelStyle: .titleAndIcon,
-            content: content
-        )
-    }
-
-    init(
-        id: String,
-        title: String,
-        systemImage: String,
-        labelStyle: some LabelStyle,
         @ViewBuilder content: () -> some View
     ) {
         self.content = AnyView(content())
         self.id = id
         self.displayTitle = title
         self.systemImage = systemImage
-        self.labelStyle = labelStyle
     }
 
     func hash(into hasher: inout Hasher) {

@@ -47,7 +47,6 @@ struct CreateServerBackupView: View {
             }
         }
         .navigationTitle(L10n.createBackup.localizedCapitalized)
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismiss()

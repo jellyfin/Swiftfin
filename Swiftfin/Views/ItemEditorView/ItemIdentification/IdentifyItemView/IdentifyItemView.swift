@@ -83,7 +83,6 @@ struct IdentifyItemView: View {
                 }
             }
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.identify)
         .animation(.linear, value: viewModel.searchResults)
@@ -102,9 +101,8 @@ struct IdentifyItemView: View {
                 router.dismiss()
             }
         }
-        .backport
-        .onChange(of: query) { _, newValue in
-            viewModel.search(query: newValue)
+        .onChange(of: query) {
+            viewModel.search(query: query)
         }
         .errorMessage($viewModel.error)
     }

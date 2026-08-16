@@ -61,7 +61,6 @@ struct EditServerUserAccessTagsView: View {
                 }
             }
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.accessTags.localizedCapitalized)
         .navigationBarBackButtonHidden(isEditing)

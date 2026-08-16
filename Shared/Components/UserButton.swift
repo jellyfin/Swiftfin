@@ -52,7 +52,6 @@ struct UserButton: View {
         .foregroundStyle(.primary, .secondary)
         #if os(tvOS)
             .buttonStyle(.borderless)
-            .backport
             .buttonBorderShape(.circle)
         #endif
     }

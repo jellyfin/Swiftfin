@@ -186,7 +186,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                     .focused($focusedButton, equals: "menu")
                 }
             }
-            .backport
             .defaultFocus(
                 $focusedButton,
                 barActionButtons.first?.rawValue ?? "menu",

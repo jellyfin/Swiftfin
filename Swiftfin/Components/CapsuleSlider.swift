@@ -127,16 +127,17 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
                     }
             }
             .trackingSize($contentSize)
-            .onChange(of: value) { newValue in
+            .onChange(of: value) {
+                let newValue = value
                 guard isEditing else { return }
 
                 if newValue == 0 || newValue == total {
                     UIDevice.impact(.light)
                 }
             }
-            .onChange(of: gestureTranslation) { newValue in
+            .onChange(of: gestureTranslation) {
                 if isEditing {
-                    translationBinding.wrappedValue = newValue
+                    translationBinding.wrappedValue = gestureTranslation
                 }
             }
     }
