@@ -71,11 +71,11 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
             switch viewModel.state {
             case .content:
                 if viewModel.groups.isEmpty {
-                    // TODO: non-error like empty view
-                    ErrorView(error: ErrorMessage(L10n.noResults))
-                        .refreshable {
-                            viewModel.refresh()
-                        }
+                    ContentUnavailableView(
+                        L10n.noResults.localizedCapitalized,
+                        systemImage: "rectangle.on.rectangle.slash"
+                    )
+                    .focusable()
                 } else {
                     contentView
                 }
@@ -94,6 +94,9 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
             .toolbar(router.isRootOfPath ? .hidden : .automatic, for: .navigationBar)
         #endif
             .onFirstAppear {
+                viewModel.refresh()
+            }
+            .refreshable {
                 viewModel.refresh()
             }
             .sinceLastDisappear { interval in

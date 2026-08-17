@@ -141,6 +141,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                             viewModel.isSearchActive ? L10n.noResults.localizedCapitalized : L10n.noItems.localizedCapitalized,
                             systemImage: viewModel.isSearchActive ? "magnifyingglass" : "rectangle.on.rectangle.slash"
                         )
+                        .focusable()
                     } else {
                         elementsView
                     }
@@ -178,6 +179,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             }
         }
         .onFirstAppear {
+            viewModel.refresh()
+        }
+        .refreshable {
             viewModel.refresh()
         }
         #if os(iOS)
