@@ -61,7 +61,6 @@ struct IdentifyItemResultView: View {
                 }
             }
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.identify)
         .navigationBarCloseButton {

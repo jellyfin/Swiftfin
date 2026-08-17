@@ -74,7 +74,6 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                     .edgePadding(.horizontal)
                 }
                 .scrollIndicators(.hidden)
-                .backport
                 .scrollClipDisabled()
             } header: {
                 if displayTitle.isNotEmpty {

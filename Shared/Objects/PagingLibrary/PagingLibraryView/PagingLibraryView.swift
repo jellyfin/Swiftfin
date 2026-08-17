@@ -141,6 +141,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                             viewModel.isSearchActive ? L10n.noResults.localizedCapitalized : L10n.noItems.localizedCapitalized,
                             systemImage: viewModel.isSearchActive ? "magnifyingglass" : "rectangle.on.rectangle.slash"
                         )
+                        .focusable()
                     } else {
                         elementsView
                     }
@@ -158,13 +159,12 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .onPreferenceChange(IsSafeAreaBarApplied.self) { newValue in
             isSafeAreaBarApplied = newValue
         }
-        .backport
+        #if os(iOS)
         .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
-        .backport
+        #endif
         .onChange(of: viewModel.environment) {
             viewModel.refreshForEnvironmentChange()
         }
-        .backport
         .onChange(of: libraryStyle) { oldStyle, newStyle in
             if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero) ==
                 Element.layout(for: newStyle, options: libraryStyleOptions, insets: .zero)
@@ -179,6 +179,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             }
         }
         .onFirstAppear {
+            viewModel.refresh()
+        }
+        .refreshable {
             viewModel.refresh()
         }
         #if os(iOS)

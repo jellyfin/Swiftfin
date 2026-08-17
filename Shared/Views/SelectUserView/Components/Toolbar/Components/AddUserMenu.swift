@@ -41,7 +41,6 @@ extension SelectUserView {
                     .labelStyle(.iconOnly)
             }
             .menuOrder(.fixed)
-            .backport
             .buttonBorderShape(.circle)
             .backport
             .glassEffect(in: .circle)

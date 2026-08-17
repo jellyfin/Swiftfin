@@ -79,9 +79,7 @@ struct SearchView: View {
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea(.keyboard)
         .navigationTitle(L10n.search)
-        .backport
         .toolbarTitleDisplayMode(.inline)
-        .backport
         .searchFocused($isSearchFocused)
         .onReceive(tabItemSelected) { event in
             if event.isRepeat, event.isRoot {
@@ -91,16 +89,17 @@ struct SearchView: View {
         .onFirstAppear {
             viewModel.getSuggestions()
         }
-        .backport
-        .onChange(of: searchQuery) { _, newValue in
-            viewModel.search(query: newValue)
+        .onChange(of: searchQuery) {
+            viewModel.search(query: searchQuery)
         }
         .searchable(
             text: $searchQuery,
             prompt: L10n.search
         )
         .environmentObject(focusCoordinator)
-        #if os(iOS)
+        #if os(tvOS)
+            .edgePadding(.top)
+        #else
             .navigationBarFilterDrawer(
                 viewModel: viewModel.filterViewModel,
                 types: enabledDrawerFilters

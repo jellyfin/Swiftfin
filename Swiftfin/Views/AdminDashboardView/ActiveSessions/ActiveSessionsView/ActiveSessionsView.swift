@@ -85,7 +85,10 @@ struct ActiveSessionsView: View {
     @ViewBuilder
     private var contentView: some View {
         if viewModel.sessions.isEmpty {
-            ContentUnavailableView(L10n.noActivity.localizedCapitalized, systemImage: "waveform.path.ecg")
+            ContentUnavailableView(
+                L10n.noActivity.localizedCapitalized,
+                systemImage: "waveform.path.ecg"
+            )
         } else {
             CollectionVGrid(
                 uniqueElements: viewModel.sessions.keys,
@@ -114,7 +117,6 @@ struct ActiveSessionsView: View {
                 ProgressView()
             }
         }
-        .backport
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(L10n.sessions)
         .animation(.linear(duration: 0.2), value: viewModel.state)

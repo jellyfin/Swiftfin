@@ -55,7 +55,6 @@ struct PosterButton<Item: Poster>: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay { overlay.posterStyle(displayType) }
         .contentShape(.contextMenuPreview, Rectangle())
-        .backport
         .matchedTransitionSource(id: "item", in: namespace)
         .subtleShadow()
         .hoverEffect(.highlight)

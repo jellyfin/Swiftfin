@@ -200,12 +200,10 @@ private struct UserViewLibraryGridElement: View {
                 .id(imageSources.hashValue)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .posterStyle(.landscape)
-                .backport
                 .matchedTransitionSource(id: "item", in: namespace)
         }
         .onFirstAppear(perform: setImageSources)
-        .backport
-        .onChange(of: useRandomImage) { _, _ in
+        .onChange(of: useRandomImage) {
             setImageSources()
         }
         .buttonStyle(.card)
@@ -270,11 +268,9 @@ private struct UserViewLibraryListElement: View {
         } action: {
             element.libraryDidSelectElement(router: router, in: namespace)
         }
-        .backport
         .matchedTransitionSource(id: "item", in: namespace)
         .onFirstAppear(perform: setImageSources)
-        .backport
-        .onChange(of: useRandomImage) { _, _ in
+        .onChange(of: useRandomImage) {
             setImageSources()
         }
     }
