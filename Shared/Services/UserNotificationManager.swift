@@ -14,6 +14,11 @@ import Logging
 @MainActor
 final class UserNotificationManager {
 
+    private enum Source: String {
+        case manual = "Manual"
+        case socket = "Socket"
+    }
+
     private let logger = Logger.swiftfin()
 
     private var cancellables = Set<AnyCancellable>()
@@ -33,7 +38,7 @@ final class UserNotificationManager {
         )
         .sink { [weak self] id in
             self?.waitForSocket(id) {
-                self?.fetchItems(ids: [id])
+                self?.fetchItems(ids: [id], from: .manual)
             }
         }
         .store(in: &cancellables)
@@ -58,7 +63,7 @@ final class UserNotificationManager {
         userSession.serverSocketManager.userDataChanges
             .sink { [weak self] info in
                 guard info.userID == nil || info.userID == self?.userSession?.user.id else { return }
-                self?.fetchItems(ids: info.userDataList.compactMap(\.itemID))
+                self?.fetchItems(ids: info.userDataList.compactMap(\.itemID), from: .socket)
             }
             .store(in: &cancellables)
 
@@ -66,17 +71,14 @@ final class UserNotificationManager {
             .sink { [weak self] info in
                 guard info.isEmpty != true else { return }
 
-                for id in info.itemsRemoved ?? [] {
-                    Notifications[.didDeleteItem].post(id)
-                }
-
-                self?.fetchItems(ids: info.itemsUpdated ?? [])
+                self?.deleteItems(ids: info.itemsRemoved ?? [])
+                self?.fetchItems(ids: info.itemsUpdated ?? [], from: .socket)
 
                 if info.itemsAdded?.isNotEmpty == true ||
                     info.foldersAddedTo?.isNotEmpty == true ||
                     info.foldersRemovedFrom?.isNotEmpty == true
                 {
-                    Notifications[.didRequestGlobalRefresh].post()
+                    self?.requestGlobalRefresh(reason: "Library changed")
                 }
             }
             .store(in: &cancellables)
@@ -86,6 +88,8 @@ final class UserNotificationManager {
                 if let id = user.id {
                     self?.pendingFetches.removeValue(forKey: id)?.cancel()
                 }
+
+                self?.logger.info("Updated user", metadata: ["source": .string(Source.socket.rawValue)])
 
                 Notifications[.didChangeServerUser].post(user)
             }
@@ -128,13 +132,19 @@ final class UserNotificationManager {
         }
     }
 
+    private func requestGlobalRefresh(reason: String) {
+        logger.info("Requesting global refresh", metadata: ["reason": .string(reason)])
+
+        Notifications[.didRequestGlobalRefresh].post()
+    }
+
     // MARK: - Items
 
-    private func fetchItems(ids: [String]) {
+    private func fetchItems(ids: [String], from source: Source) {
         guard ids.isNotEmpty, let userSession else { return }
 
         guard ids.count <= 25 else {
-            Notifications[.didRequestGlobalRefresh].post()
+            requestGlobalRefresh(reason: "\(ids.count) items changed")
             return
         }
 
@@ -153,12 +163,30 @@ final class UserNotificationManager {
                 let request = Paths.getItems(parameters: parameters)
                 let items = try await userSession.client.send(request).value.items ?? []
 
+                logger.info(
+                    "Updated items",
+                    metadata: [
+                        "source": .string(source.rawValue),
+                        "count": .stringConvertible(items.count),
+                    ]
+                )
+
                 for item in items {
                     Notifications[.didChangeItem].post(item)
                 }
             } catch {
                 logger.error("Unable to fetch changed items", metadata: ["error": .string(error.localizedDescription)])
             }
+        }
+    }
+
+    private func deleteItems(ids: [String]) {
+        guard ids.isNotEmpty else { return }
+
+        logger.info("Deleted items", metadata: ["count": .stringConvertible(ids.count)])
+
+        for id in ids {
+            Notifications[.didDeleteItem].post(id)
         }
     }
 
@@ -171,6 +199,8 @@ final class UserNotificationManager {
             do {
                 let request = Paths.getUserByID(userID: id)
                 let user = try await userSession.client.send(request).value
+
+                logger.info("Updated user", metadata: ["source": .string(Source.manual.rawValue)])
 
                 Notifications[.didChangeServerUser].post(user)
             } catch {
