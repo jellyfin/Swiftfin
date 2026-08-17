@@ -1508,6 +1508,8 @@ internal enum L10n {
   internal static let showMissingSeasons = L10n.tr("Localizable", "showMissingSeasons", fallback: "Show missing seasons")
   /// Show progress
   internal static let showProgress = L10n.tr("Localizable", "showProgress", fallback: "Show progress")
+  /// Show recommendations
+  internal static let showRecommendations = L10n.tr("Localizable", "showRecommendations", fallback: "Show recommendations")
   /// Show unwatched
   internal static let showUnwatched = L10n.tr("Localizable", "showUnwatched", fallback: "Show unwatched")
   /// Show watched
