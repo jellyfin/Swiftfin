@@ -10,6 +10,8 @@ import CollectionVGrid
 import Defaults
 import SwiftUI
 
+private let firstElementFocusID = "pagingLibraryView-firstElement"
+
 struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: LibraryElement {
 
     typealias Element = Library.Element
@@ -28,6 +30,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @State
     private var isSafeAreaBarApplied: Bool = false
 
+    @StateObject
+    private var focusCoordinator = FocusCoordinator(initial: firstElementFocusID)
     @StateObject
     private var gridProxy = CollectionVGridProxy()
     @StateObject
@@ -90,6 +94,10 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 )
             ) { element in
                 element.makeBody(libraryStyle: libraryStyle)
+                    .if(element.id == viewModel.displayedElements.first?.id) { view in
+                        view.coordinatedFocus(firstElementFocusID)
+                    }
+                    .environmentObject(focusCoordinator)
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 if viewModel.isSearchActive {
