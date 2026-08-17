@@ -39,6 +39,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     private(set) var groups: [any ContentGroup] = []
 
     private var candidateGroups: [any ContentGroup] = []
+    private var candidateGroupCancellables: Set<AnyCancellable> = []
     private var lastRefreshDate = Date.distantPast
     private var lastRefreshSignalDate = Date.distantPast
 
@@ -97,6 +98,29 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
             .filter(\._shouldBeResolved)
     }
 
+    private func observeCandidateGroups() {
+        candidateGroupCancellables.removeAll()
+
+        for group in candidateGroups {
+            guard let viewModel = getViewModel(for: group) as? any ObservableObject else { continue }
+
+            observeResolution(of: viewModel)
+        }
+    }
+
+    private func observeResolution(of viewModel: some ObservableObject) {
+        viewModel.objectWillChange
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self,
+                      candidateGroups.filter(\._shouldBeResolved).map(\.id) != groups.map(\.id)
+                else { return }
+
+                resolveGroups()
+            }
+            .store(in: &candidateGroupCancellables)
+    }
+
     private func refreshViewModels(
         for groups: [any ContentGroup],
         inBackground: Bool
@@ -141,6 +165,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         )
 
         candidateGroups = newGroups
+        observeCandidateGroups()
         resolveGroups()
     }
 }
