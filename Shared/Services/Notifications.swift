@@ -123,7 +123,7 @@ extension Notifications.Key {
         Key("didChangeItem")
     }
 
-    /// Pulls the item, its season/series, and its children, then posts `didChangeItem` for each.
+    /// Pulls the item, then posts `didChangeItem`. Related items arrive from the socket.
     static var getChangedItemUserData: Key<String> {
         Key("getChangedItemUserData")
     }

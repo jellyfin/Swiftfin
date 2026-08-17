@@ -14,35 +14,36 @@ import Logging
 @MainActor
 final class UserNotificationManager {
 
-    private let maxItemsPerFetch = 100
     private let logger = Logger.swiftfin()
 
     private var cancellables = Set<AnyCancellable>()
+    private var pendingFetches: [String: Task<Void, Never>] = [:]
 
     private weak var userSession: UserSession?
 
     private func start(userSession: UserSession) {
+
         stop()
+
         self.userSession = userSession
 
-        Notifications[.getChangedItemMetadata]
-            .publisher
-            .sink { [weak self] id in
+        Publishers.Merge(
+            Notifications[.getChangedItemMetadata].publisher,
+            Notifications[.getChangedItemUserData].publisher
+        )
+        .sink { [weak self] id in
+            self?.waitForSocket(id) {
                 self?.fetchItems(ids: [id])
             }
-            .store(in: &cancellables)
-
-        Notifications[.getChangedItemUserData]
-            .publisher
-            .sink { [weak self] id in
-                self?.fetchItemUserData(id: id)
-            }
-            .store(in: &cancellables)
+        }
+        .store(in: &cancellables)
 
         Notifications[.getChangedUser]
             .publisher
             .sink { [weak self] id in
-                self?.fetchUser(id: id)
+                self?.waitForSocket(id) {
+                    self?.fetchUser(id: id)
+                }
             }
             .store(in: &cancellables)
 
@@ -81,7 +82,11 @@ final class UserNotificationManager {
             .store(in: &cancellables)
 
         userSession.serverSocketManager.userUpdates
-            .sink { user in
+            .sink { [weak self] user in
+                if let id = user.id {
+                    self?.pendingFetches.removeValue(forKey: id)?.cancel()
+                }
+
                 Notifications[.didChangeServerUser].post(user)
             }
             .store(in: &cancellables)
@@ -91,74 +96,69 @@ final class UserNotificationManager {
                 Notifications[.didDeleteServerUser].post(id)
             }
             .store(in: &cancellables)
+
+        userSession.serverSocketManager.serverRestarts
+            .sink {
+                Notifications[.didServerRestart].post()
+            }
+            .store(in: &cancellables)
+
+        userSession.serverSocketManager.serverShutdowns
+            .sink {
+                Notifications[.didServerShutdown].post()
+            }
+            .store(in: &cancellables)
     }
 
     private func stop() {
         cancellables.removeAll()
+        pendingFetches.values.forEach { $0.cancel() }
+        pendingFetches.removeAll()
+    }
+
+    /// Wait to see if the Socket will give us the update automatically before calling it manually
+    private func waitForSocket(_ id: String, otherwise fetch: @escaping () -> Void) {
+        pendingFetches[id]?.cancel()
+        pendingFetches[id] = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(1))
+            guard !Task.isCancelled else { return }
+
+            self?.pendingFetches[id] = nil
+            fetch()
+        }
     }
 
     // MARK: - Items
 
     private func fetchItems(ids: [String]) {
-        guard ids.isNotEmpty else { return }
+        guard ids.isNotEmpty, let userSession else { return }
 
-        guard ids.count <= maxItemsPerFetch else {
+        guard ids.count <= 25 else {
             Notifications[.didRequestGlobalRefresh].post()
             return
         }
 
+        for id in ids {
+            pendingFetches.removeValue(forKey: id)?.cancel()
+        }
+
         var parameters = Paths.GetItemsParameters()
         parameters.ids = ids
-
-        Task {
-            await fetchItems(parameters)
-        }
-    }
-
-    private func fetchItemUserData(id: String) {
-        Task {
-            var parameters = Paths.GetItemsParameters()
-            parameters.ids = [id]
-
-            guard let item = await fetchItems(parameters).first else { return }
-
-            let parentIDs = [item.seasonID, item.seriesID].compactMap(\.self)
-
-            if parentIDs.isNotEmpty {
-                parameters.ids = parentIDs
-                await fetchItems(parameters)
-            }
-
-            guard item.isFolder == true else { return }
-
-            parameters = Paths.GetItemsParameters()
-            parameters.parentID = id
-            parameters.isRecursive = true
-            await fetchItems(parameters)
-        }
-    }
-
-    @discardableResult
-    private func fetchItems(_ parameters: Paths.GetItemsParameters) async -> [BaseItemDto] {
-        guard let userSession else { return [] }
-
-        var parameters = parameters
         parameters.enableUserData = true
         parameters.fields = ItemFields.allCases
         parameters.userID = userSession.user.id
 
-        do {
-            let request = Paths.getItems(parameters: parameters)
-            let items = try await userSession.client.send(request).value.items ?? []
+        Task {
+            do {
+                let request = Paths.getItems(parameters: parameters)
+                let items = try await userSession.client.send(request).value.items ?? []
 
-            for item in items {
-                Notifications[.didChangeItem].post(item)
+                for item in items {
+                    Notifications[.didChangeItem].post(item)
+                }
+            } catch {
+                logger.error("Unable to fetch changed items", metadata: ["error": .string(error.localizedDescription)])
             }
-
-            return items
-        } catch {
-            logger.error("Unable to fetch changed items", metadata: ["error": .string(error.localizedDescription)])
-            return []
         }
     }
 
