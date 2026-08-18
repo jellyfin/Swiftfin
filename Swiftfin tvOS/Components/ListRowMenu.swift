@@ -17,15 +17,6 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
     private let subtitle: Subtitle?
     private let content: () -> Content
 
-    var body: some View {
-        Menu(content: content) {
-            buttonView
-        }
-        .menuStyle(.borderlessButton)
-        .listRowInsets(.zero)
-        .focused($isFocused)
-    }
-
     @ViewBuilder
     private var buttonView: some View {
         if UIDevice.supportsLiquidGlass {
@@ -35,6 +26,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
         }
     }
 
+    @ViewBuilder
     private var labelView: some View {
         HStack {
             title
@@ -59,6 +51,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
     }
 
+    @ViewBuilder
     private var glassBody: some View {
         labelView
             .glassEffect(
@@ -70,6 +63,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             .listRowBackground(Color.clear)
     }
 
+    @ViewBuilder
     private var legacyBody: some View {
         labelView
             .background {
@@ -87,6 +81,15 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
             .animation(.easeInOut(duration: 0.125), value: isFocused)
             .listRowBackground(Color.clear)
+    }
+
+    var body: some View {
+        Menu(content: content) {
+            buttonView
+        }
+        .menuStyle(.borderlessButton)
+        .listRowInsets(.zero)
+        .focused($isFocused)
     }
 }
 
