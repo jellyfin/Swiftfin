@@ -64,16 +64,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             resolvedActionButtons(rawMenuActionButtons)
         }
 
-        private var usesLiquidGlass: Bool {
-            if #available(iOS 26.0, *) {
-                true
-            } else {
-                false
-            }
-        }
-
         private var menuSystemImage: String {
-            if UIDevice.isTV || usesLiquidGlass {
+            if UIDevice.isTV || UIDevice.supportsLiquidGlass {
                 "ellipsis"
             } else {
                 "ellipsis.circle"
@@ -141,7 +133,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 menuLabel
             }
             .frame(width: buttonSize, height: buttonSize)
-            .if(usesLiquidGlass) { menu in
+            .if(UIDevice.supportsLiquidGlass) { menu in
                 menu
                     .backport
                     .glassEffect(in: .circle)
@@ -157,7 +149,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 ForEach(barActionButtons) { button in
                     view(for: button)
                         .frame(width: buttonSize, height: buttonSize)
-                        .if(usesLiquidGlass && isMenuButton(button)) { menu in
+                        .if(UIDevice.supportsLiquidGlass && isMenuButton(button)) { menu in
                             menu
                                 .backport
                                 .glassEffect(in: .circle)
@@ -176,7 +168,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                         menuLabel
                     }
                     .frame(width: buttonSize, height: buttonSize)
-                    .if(usesLiquidGlass) { menu in
+                    .if(UIDevice.supportsLiquidGlass) { menu in
                         menu
                             .backport
                             .glassEffect(in: .circle)
