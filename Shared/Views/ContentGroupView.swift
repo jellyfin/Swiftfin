@@ -53,9 +53,6 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                 edges: contentGroupOptions.contains(.ignoreSafeAreaTop) ? [.horizontal, .top] : .horizontal
             )
             .scrollIndicators(.hidden)
-            .refreshable {
-                await viewModel.background.refresh()
-            }
             .onReceive(tabItemSelected) { event in
                 if event.isRepeat, event.isRoot {
                     withAnimation {
@@ -83,6 +80,8 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                 viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
                 ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea(edges: .all)
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
