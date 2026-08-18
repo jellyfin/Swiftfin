@@ -64,16 +64,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             resolvedActionButtons(rawMenuActionButtons)
         }
 
-        private var usesLiquidGlass: Bool {
-            if #available(iOS 26.0, *) {
-                true
-            } else {
-                false
-            }
-        }
-
         private var menuSystemImage: String {
-            if UIDevice.isTV || usesLiquidGlass {
+            if UIDevice.isTV || UIDevice.supportsLiquidGlass {
                 "ellipsis"
             } else {
                 "ellipsis.circle"
