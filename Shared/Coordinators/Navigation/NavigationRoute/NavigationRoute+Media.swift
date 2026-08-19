@@ -97,6 +97,11 @@ struct VideoPlayerViewShim: View {
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)
+        .onSceneDidEnterBackground {
+            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
+                manager.setPlaybackRequestStatus(status: .paused)
+            }
+        }
         .onFrameChanged { _, safeArea in
             self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
         }
