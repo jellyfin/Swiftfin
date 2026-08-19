@@ -79,6 +79,8 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                 } else {
                     contentView
                 }
+            case .refreshing where !viewModel.groups.isEmpty:
+                contentView
             case .error:
                 viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:

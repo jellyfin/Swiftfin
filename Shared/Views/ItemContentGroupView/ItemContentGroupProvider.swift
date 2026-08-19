@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import Get
 import JellyfinAPI
@@ -24,6 +25,8 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     let id: String
 
+    let refreshesOnPlaybackStop = false
+
     var displayTitle: String {
         item.displayTitle
     }
@@ -32,12 +35,37 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         self.id = item.id ?? "Unknown"
         self.item = item
         super.init()
+        observePlaybackStop()
     }
 
     init(id: String) {
         self.id = id
         self.item = .init(id: id)
         super.init()
+        observePlaybackStop()
+    }
+
+    private func observePlaybackStop() {
+        Notifications[.didSendStopReport]
+            .publisher
+            .sink { [weak self] in
+                Task { await self?.refreshItemUserData() }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func refreshItemUserData() async {
+        guard let userSession else { return }
+        guard let refreshedItem = try? await item.getFullItem(userSession: userSession) else { return }
+
+        item = refreshedItem
+
+        if let refreshedProvider = try? await resolveMediaPlayerItemProvider(
+            for: refreshedItem,
+            userSession: userSession
+        ) {
+            mediaPlayerItemProvider = refreshedProvider
+        }
     }
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {

@@ -60,6 +60,15 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
             self?.lastRefreshSignalDate = Date.now
         }
         .store(in: &cancellables)
+
+        if provider.refreshesOnPlaybackStop {
+            Notifications[.didSendStopReport]
+                .publisher
+                .sink { [weak self] in
+                    self?.refresh()
+                }
+                .store(in: &cancellables)
+        }
     }
 
     func refreshIfNeeded(
@@ -129,9 +138,6 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     }
 
     private func fullRefresh() async throws {
-
-        self.groups = []
-        self.candidateGroups = []
 
         let newGroups = try await provider.makeGroups(environment: provider.environment)
 

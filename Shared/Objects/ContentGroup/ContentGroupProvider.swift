@@ -14,8 +14,16 @@ protocol ContentGroupProvider: Displayable, Identifiable {
     var environment: Environment { get set }
     var id: String { get }
 
+    var refreshesOnPlaybackStop: Bool { get }
+
     @ContentGroupBuilder
     func makeGroups(environment: Environment) async throws -> [any ContentGroup]
+}
+
+extension ContentGroupProvider {
+    var refreshesOnPlaybackStop: Bool {
+        true
+    }
 }
 
 extension ContentGroupProvider where Environment == Empty {
