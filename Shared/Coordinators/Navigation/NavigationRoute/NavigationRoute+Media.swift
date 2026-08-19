@@ -97,7 +97,7 @@ struct VideoPlayerViewShim: View {
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)
-        .onScenePhase(.background) {
+        .onSceneDidEnterBackground {
             if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
                 manager.setPlaybackRequestStatus(status: .paused)
             }
