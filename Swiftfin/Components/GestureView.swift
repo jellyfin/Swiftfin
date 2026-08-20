@@ -56,7 +56,7 @@ struct GestureView: PlatformViewRepresentable {
                 target: self,
                 action: #selector(handleLongPress)
             )
-            recognizer.minimumPressDuration = 1.2
+            recognizer.minimumPressDuration = 0.5
             return recognizer
         }()
 
