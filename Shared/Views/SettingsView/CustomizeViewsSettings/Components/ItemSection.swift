@@ -37,6 +37,8 @@ extension CustomizeViewsSettings {
         @Default(.Customization.itemMenuActionButtons)
         private var menuActionButtons
 
+        @Default(.Customization.shouldShowRecommendations)
+        private var shouldShowRecommendations
         @Default(.Customization.shouldShowMissingSeasons)
         private var shouldShowMissingSeasons
         @Default(.Customization.shouldShowMissingEpisodes)
@@ -47,10 +49,14 @@ extension CustomizeViewsSettings {
                 Section {
                     PlatformPicker(L10n.style, selection: $itemViewType)
                 } header: {
-                    Text(L10n.itemView)
+                    Text(L10n.itemView.localizedCapitalized)
                 }
 
-                PlatformPicker(L10n.enabledTrailers, selection: $enabledTrailers)
+                Section {
+                    PlatformPicker(L10n.enabledTrailers, selection: $enabledTrailers)
+
+                    Toggle(L10n.showRecommendations, isOn: $shouldShowRecommendations)
+                }
 
                 Section(L10n.buttons) {
                     ChevronButton(L10n.barButtons) {

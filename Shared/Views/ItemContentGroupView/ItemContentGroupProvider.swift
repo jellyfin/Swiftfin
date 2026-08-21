@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Get
 import JellyfinAPI
 import SwiftUI
@@ -224,12 +225,14 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             posterSize: .small
         )
 
-        PosterGroup(
-            id: "similar-items",
-            library: SimilarItemsLibrary(itemID: itemID),
-            posterDisplayType: .landscape,
-            posterSize: .small
-        )
+        if Defaults[.Customization.shouldShowRecommendations] {
+            PosterGroup(
+                id: "similar-items",
+                library: SimilarItemsLibrary(itemID: itemID),
+                posterDisplayType: .landscape,
+                posterSize: .small
+            )
+        }
 
         AboutItemGroup(
             displayTitle: L10n.about,

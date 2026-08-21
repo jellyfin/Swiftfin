@@ -17,17 +17,17 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
     private let subtitle: Subtitle?
     private let content: () -> Content
 
-    var body: some View {
-        Menu(content: content) {
-            buttonView
+    @ViewBuilder
+    private var buttonView: some View {
+        if UIDevice.supportsLiquidGlass {
+            glassBody
+        } else {
+            legacyBody
         }
-        .menuStyle(.borderlessButton)
-        .listRowInsets(.zero)
-        .focused($isFocused)
     }
 
     @ViewBuilder
-    private var buttonView: some View {
+    private var labelView: some View {
         HStack {
             title
                 .foregroundStyle(isFocused ? .black : .white)
@@ -49,13 +49,47 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
         }
         .padding(.horizontal)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .glassEffect(
-            .regular.tint(isFocused ? .white : nil),
-            in: .capsule
-        )
-        .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
-        .animation(.easeInOut(duration: 0.125), value: isFocused)
-        .listRowBackground(Color.clear)
+    }
+
+    @ViewBuilder
+    private var glassBody: some View {
+        labelView
+            .glassEffect(
+                .regular.tint(isFocused ? .white : nil),
+                in: .capsule
+            )
+            .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
+            .animation(.easeInOut(duration: 0.125), value: isFocused)
+            .listRowBackground(Color.clear)
+    }
+
+    @ViewBuilder
+    private var legacyBody: some View {
+        labelView
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12.5)
+                        .fill(isFocused ? Color.white : Color.clear)
+
+                    if isFocused {
+                        RoundedRectangle(cornerRadius: 12.5)
+                            .fill(Color.white.opacity(0.8))
+                            .scaleEffect(x: 1, y: 1.1, anchor: .center)
+                    }
+                }
+            }
+            .scaleEffect(x: isFocused ? 1.01 : 1.0, y: isFocused ? 1.05 : 1.0, anchor: .center)
+            .animation(.easeInOut(duration: 0.125), value: isFocused)
+            .listRowBackground(Color.clear)
+    }
+
+    var body: some View {
+        Menu(content: content) {
+            buttonView
+        }
+        .menuStyle(.borderlessButton)
+        .listRowInsets(.zero)
+        .focused($isFocused)
     }
 }
 

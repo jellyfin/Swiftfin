@@ -141,6 +141,10 @@ extension Defaults.Keys {
             UserKey("latestInLibraryPosterType", default: .portrait)
         }
 
+        static var shouldShowRecommendations: Key<Bool> {
+            UserKey("shouldShowRecommendations", default: true)
+        }
+
         static var shouldShowMissingSeasons: Key<Bool> {
             UserKey("shouldShowMissingSeasons", default: true)
         }
