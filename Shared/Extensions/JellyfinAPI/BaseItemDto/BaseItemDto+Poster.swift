@@ -157,6 +157,13 @@ extension BaseItemDto: Poster {
                 )
             }
         case .collectionFolder, .folder, .musicVideo, .userView, .video:
+            if environment.viewContext.contains(.isThumb) {
+                imageSource(
+                    .thumb,
+                    environment: environment
+                )
+            }
+
             imageSource(
                 .primary,
                 environment: environment

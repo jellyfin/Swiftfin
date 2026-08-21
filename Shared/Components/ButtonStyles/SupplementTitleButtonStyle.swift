@@ -20,7 +20,11 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
 
         @ViewBuilder
         func makeBody(configuration: Configuration) -> some View {
-            glassBody(configuration)
+            if UIDevice.supportsLiquidGlass {
+                glassBody(configuration)
+            } else {
+                legacyBody(configuration)
+            }
         }
 
         private func baseLabel(_ configuration: Configuration) -> some View {
