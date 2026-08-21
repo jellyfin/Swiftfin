@@ -123,6 +123,21 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var isProgressBarFocused: Bool = false
 
+    var presentedMenuCount: Int = 0 {
+        didSet {
+            guard presentedMenuCount >= 0 else {
+                presentedMenuCount = 0
+                return
+            }
+
+            if presentedMenuCount > 0 {
+                timer.stop()
+            } else {
+                timer.poke()
+            }
+        }
+    }
+
     var originalPlaybackRate: Float?
 
     let centerOffsetBox: PublishedBox<CGFloat> = .init(initialValue: 0)
@@ -173,7 +188,16 @@ class VideoPlayerContainerState: ObservableObject {
     init() {
         timerCancellable = timer.sink { [weak self] in
             guard let self else { return }
-            guard !isScrubbing, !isPresentingSupplement, manager?.playbackRequestStatus != .paused else { return }
+
+            if containerView?.presentedViewController != nil {
+                timer.poke()
+                return
+            }
+
+            guard !isScrubbing,
+                  !isPresentingSupplement,
+                  presentedMenuCount == 0,
+                  manager?.playbackRequestStatus != .paused else { return }
 
             withAnimation(.linear(duration: 0.25)) {
                 self.isPresentingOverlay = false

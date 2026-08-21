@@ -48,18 +48,19 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         var body: some View {
             if let playbackItem = manager.playbackItem {
                 Menu {
-                    if isInMenu {
-                        content(playbackItem: playbackItem)
-                    } else {
-                        Section(L10n.audio) {
+                    Group {
+                        if isInMenu {
                             content(playbackItem: playbackItem)
+                        } else {
+                            Section(L10n.audio) {
+                                content(playbackItem: playbackItem)
+                            }
                         }
                     }
+                    .modifier(OverlayMenuTimerModifier())
                 } label: {
                     Label(L10n.audio, systemImage: systemImage)
                 }
-                .symbolRenderingMode(.monochrome)
-                .foregroundStyle(.primary, .secondary)
                 .videoPlayerActionButtonTransition()
                 .assign(playbackItem.$selectedAudioStreamIndex, to: $selectedAudioStreamIndex)
                 .onChange(of: selectedAudioStreamIndex) {

@@ -12,17 +12,35 @@ extension VideoPlayer.PlaybackControls {
 
     struct OverlayButtonStyleModifier: ViewModifier {
 
-        let onPressed: (Bool) -> Void
-
         @ViewBuilder
         func body(content: Content) -> some View {
             if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
                 content
-                    .buttonStyle(OverlayGlassButtonStyle(onPressed: onPressed))
+                    .buttonStyle(OverlayGlassButtonStyle())
                     .buttonBorderShape(.circle)
             } else {
                 content
-                    .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
+                    .buttonStyle(OverlayButtonStyle())
+            }
+        }
+    }
+
+    struct OverlayMenuStyle: MenuStyle {
+
+        @ViewBuilder
+        func makeBody(configuration: Configuration) -> some View {
+            if #available(iOS 26.0, tvOS 26.0, *) {
+                Menu(configuration)
+                    .buttonStyle(.glass)
+                    .buttonBorderShape(.circle)
+                    .labelStyle(OverlayLabelStyle())
+                    .symbolRenderingMode(.monochrome)
+                    .foregroundStyle(.primary, .secondary)
+            } else {
+                Menu(configuration)
+                    .labelStyle(OverlayLabelStyle())
+                    .symbolRenderingMode(.monochrome)
+                    .foregroundStyle(.primary, .secondary)
             }
         }
     }
@@ -30,18 +48,32 @@ extension VideoPlayer.PlaybackControls {
     @available(iOS 26.0, tvOS 26.0, *)
     struct OverlayGlassButtonStyle: PrimitiveButtonStyle {
 
-        let onPressed: (Bool) -> Void
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
 
         func makeBody(configuration: Configuration) -> some View {
-            Button(role: configuration.role) {
+            let button = Button(role: configuration.role) {
+                if UIDevice.isTV {
+                    containerState.timer.poke()
+                }
                 configuration.trigger()
             } label: {
                 configuration.label
             }
             .buttonStyle(.glass)
-            .onLongPressGesture(minimumDuration: .infinity) {} onPressingChanged: { isPressed in
-                onPressed(isPressed)
-            }
+
+            #if os(iOS)
+            return button
+                .onLongPressGesture(minimumDuration: .infinity) {} onPressingChanged: { isPressed in
+                    if isPressed {
+                        containerState.timer.stop()
+                    } else {
+                        containerState.timer.poke()
+                    }
+                }
+            #else
+            return button
+            #endif
         }
     }
 
@@ -52,30 +84,19 @@ extension VideoPlayer.PlaybackControls {
         @Environment(\.isFocused)
         private var isFocused
 
-        let onPressed: (Bool) -> Void
+        @EnvironmentObject
+        private var containerState: VideoPlayerContainerState
 
-        @ViewBuilder
         func makeBody(configuration: Configuration) -> some View {
-            #if os(tvOS)
-            tvOSBody(configuration)
-            #else
-            iOSBody(configuration)
-            #endif
-        }
-
-        #if os(iOS)
-        private func iOSBody(_ configuration: Configuration) -> some View {
             configuration.label
                 .foregroundStyle(isEnabled ? isFocused ? AnyShapeStyle(Color.black) : AnyShapeStyle(HierarchicalShapeStyle.primary) :
                     AnyShapeStyle(Color.gray)
                 )
                 .labelStyle(.iconOnly)
                 .contentShape(Rectangle())
-                .scaleEffect(
-                    configuration.isPressed ? 0.8 : 1
-                )
+                .scaleEffect(configuration.isPressed ? 0.8 : 1)
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.25), value: configuration.isPressed)
-                .padding(UIDevice.isTV ? 12 : 4)
+                .padding(4)
                 .animation(nil, value: configuration.isPressed)
                 .background {
                     Circle()
@@ -85,37 +106,50 @@ extension VideoPlayer.PlaybackControls {
                 .animation(.linear(duration: 0.1).delay(configuration.isPressed ? 0.2 : 0), value: configuration.isPressed)
                 .padding(4)
                 .onChange(of: configuration.isPressed) {
-                    onPressed(configuration.isPressed)
+                    if configuration.isPressed {
+                        containerState.timer.stop()
+                    } else {
+                        containerState.timer.poke()
+                    }
                 }
         }
-        #endif
+    }
 
-        #if os(tvOS)
-        private func tvOSBody(_ configuration: Configuration) -> some View {
-            configuration.label
-                .labelStyle(.iconOnly)
-                .font(.body)
-                .fontWeight(.semibold)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .frame(minHeight: 56)
-                .backport
-                .glassEffect(
-                    .regular.selection(
-                        tint: .white,
-                        foregroundColor: .black
-                    ),
-                    in: .circle
-                )
-                .isSelected(isFocused)
-                .scaleEffect(configuration.isPressed ? 0.90 : isFocused ? 1.1 : 1)
-                .shadow(color: isFocused ? .black.opacity(0.5) : .clear, radius: isFocused ? 10 : 0)
-                .animation(.linear(duration: 0.1), value: isFocused)
-                .animation(.bouncy(duration: 0.25, extraBounce: 0.25), value: configuration.isPressed)
-                .onChange(of: configuration.isPressed) {
-                    onPressed(configuration.isPressed)
-                }
+    struct OverlayLabelStyle: LabelStyle {
+
+        private var size: CGFloat {
+            if #available(iOS 26.0, *) {
+                UIDevice.isTV ? 36 : 32
+            } else {
+                44
+            }
         }
-        #endif
+
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.icon
+                .font(.system(size: UIDevice.isTV ? 36 : 20, weight: .semibold))
+                .frame(width: size, height: size)
+                .contentShape(Circle())
+        }
+    }
+}
+
+struct OverlayMenuTimerModifier: ViewModifier {
+
+    @EnvironmentObject
+    private var containerState: VideoPlayerContainerState
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                if !UIDevice.isTV {
+                    containerState.presentedMenuCount += 1
+                }
+            }
+            .onDisappear {
+                if !UIDevice.isTV {
+                    containerState.presentedMenuCount -= 1
+                }
+            }
     }
 }
