@@ -147,6 +147,19 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
             }
             .store(in: &cancellables)
 
+        Publishers.Merge(
+            Notifications[.didRequestGlobalRefresh].publisher.map { [String]() },
+            Notifications[.didRequestLibraryRefresh].publisher
+        )
+        .sink { [weak self] ids in
+            guard let self else { return }
+
+            if ids.isEmpty || ids.contains(where: { $0 == library.parent.id }) {
+                refreshForEnvironmentChange()
+            }
+        }
+        .store(in: &cancellables)
+
         $searchQuery
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .removeDuplicates()

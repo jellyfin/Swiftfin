@@ -113,6 +113,11 @@ extension Notifications.Key {
         Key("didRequestGlobalRefresh")
     }
 
+    /// - Payload: The library parent IDs (folders and collection folders) that changed.
+    static var didRequestLibraryRefresh: Key<[String]> {
+        Key("didRequestLibraryRefresh")
+    }
+
     // MARK: - Items
 
     static var didDeleteItem: Key<String> {

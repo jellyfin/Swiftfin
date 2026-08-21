@@ -74,11 +74,22 @@ final class UserNotificationManager {
                 self?.deleteItems(ids: info.itemsRemoved ?? [])
                 self?.fetchItems(ids: info.itemsUpdated ?? [], from: .socket)
 
-                if info.itemsAdded?.isNotEmpty == true ||
+                let changedParents = Set(
+                    (info.foldersAddedTo ?? []) +
+                        (info.foldersRemovedFrom ?? []) +
+                        (info.collectionFolders ?? [])
+                )
+
+                let hasStructuralChange = info.itemsAdded?.isNotEmpty == true ||
                     info.foldersAddedTo?.isNotEmpty == true ||
                     info.foldersRemovedFrom?.isNotEmpty == true
-                {
-                    self?.requestGlobalRefresh(reason: "Library changed")
+
+                if hasStructuralChange {
+                    if changedParents.isNotEmpty {
+                        self?.requestLibraryRefresh(ids: Array(changedParents))
+                    } else {
+                        self?.requestGlobalRefresh(reason: "Library changed")
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -136,6 +147,12 @@ final class UserNotificationManager {
         logger.info("Requesting global refresh", metadata: ["reason": .string(reason)])
 
         Notifications[.didRequestGlobalRefresh].post()
+    }
+
+    private func requestLibraryRefresh(ids: [String]) {
+        logger.info("Requesting library refresh", metadata: ["count": .stringConvertible(ids.count)])
+
+        Notifications[.didRequestLibraryRefresh].post(ids)
     }
 
     // MARK: - Items
