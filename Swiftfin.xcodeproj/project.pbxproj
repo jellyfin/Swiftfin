@@ -234,6 +234,7 @@
 				ViewModels/ItemAdministration/IdentifyItemViewModel.swift,
 				ViewModels/ItemAdministration/RemoteImageInfoViewModel.swift,
 				ViewModels/QuickConnectAuthorizeViewModel.swift,
+				Views/ItemView/Components/ActionButtons/EditActionButton.swift,
 				Views/VideoPlayer/Components/Toolbar/ActionButtons/GestureLockActionButton.swift,
 			);
 			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;

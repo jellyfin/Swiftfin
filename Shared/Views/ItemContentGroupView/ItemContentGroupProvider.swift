@@ -22,6 +22,9 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     @Published
     private(set) var randomBackdropItem: BaseItemDto?
 
+    @Published
+    var isPresentingDeleteConfirmation = false
+
     let id: String
 
     var displayTitle: String {
@@ -260,12 +263,40 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         }
     }
 
-    func selectMediaSource(_ mediaSource: MediaSourceInfo?) {
-        guard let mediaPlayerItemProvider, let userSession else { return }
+    enum PlaybackSelection {
+        case mediaSource(MediaSourceInfo?)
+        case audioStreamIndex(Int?)
+        case subtitleStreamIndex(Int?)
+        case bitrate(PlaybackBitrate)
+    }
 
-        self.mediaPlayerItemProvider = mediaPlayerItemProvider.item.getPlaybackItemProvider(
+    func select(_ selection: PlaybackSelection) {
+        guard let provider = mediaPlayerItemProvider, let userSession else { return }
+
+        var mediaSource = provider.mediaSource
+        var audioStreamIndex = provider.audioStreamIndex
+        var subtitleStreamIndex = provider.subtitleStreamIndex
+        var requestedBitrate = provider.requestedBitrate
+
+        switch selection {
+        case let .mediaSource(source):
+            mediaSource = source
+            audioStreamIndex = nil
+            subtitleStreamIndex = nil
+        case let .audioStreamIndex(index):
+            audioStreamIndex = index
+        case let .subtitleStreamIndex(index):
+            subtitleStreamIndex = index
+        case let .bitrate(bitrate):
+            requestedBitrate = bitrate
+        }
+
+        mediaPlayerItemProvider = provider.item.getPlaybackItemProvider(
             userSession: userSession,
-            mediaSource: mediaSource
+            mediaSource: mediaSource,
+            audioStreamIndex: audioStreamIndex,
+            subtitleStreamIndex: subtitleStreamIndex,
+            requestedBitrate: requestedBitrate
         )
     }
 

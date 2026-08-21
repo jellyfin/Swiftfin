@@ -26,6 +26,20 @@ extension NavigationRoute {
         }
     }
 
+    static func itemActionBarButtonSelector(selectedButtonsBinding: Binding<[ItemActionButton]>) -> NavigationRoute {
+        NavigationRoute(id: "itemActionBarButtonSelector") {
+            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: ItemActionButton.allCases)
+                .navigationTitle(L10n.barButtons.localizedCapitalized)
+        }
+    }
+
+    static func itemActionMenuButtonSelector(selectedButtonsBinding: Binding<[ItemActionButton]>) -> NavigationRoute {
+        NavigationRoute(id: "itemActionMenuButtonSelector") {
+            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: ItemActionButton.allCases)
+                .navigationTitle(L10n.menuButtons.localizedCapitalized)
+        }
+    }
+
     static func supplementSelector(selectedSupplementsBinding: Binding<[VideoPlayerSupplement]>) -> NavigationRoute {
         NavigationRoute(id: "supplementSelector") {
             OrderedSectionSelectorView(

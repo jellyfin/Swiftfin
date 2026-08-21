@@ -27,13 +27,6 @@ struct PlayButton: View {
         return provider.mediaPlayerItemProvider?.mediaSource?.displayTitle
     }
 
-    private var mediaSourceSelection: Binding<MediaSourceInfo?> {
-        Binding(
-            get: { provider.mediaPlayerItemProvider?.mediaSource },
-            set: provider.selectMediaSource
-        )
-    }
-
     private func play(fromBeginning: Bool = false) {
         let mediaPlayerItemProvider = if fromBeginning {
             provider.mediaPlayerItemProvider?.modifyingItem {
@@ -59,59 +52,7 @@ struct PlayButton: View {
         )
     }
 
-    @ViewBuilder
-    private var versionMenu: some View {
-        if let mediaSources = provider.mediaPlayerItemProvider?.item.mediaSources,
-           mediaSources.count > 1
-        {
-            Menu {
-                Picker(
-                    L10n.version,
-                    sources: mediaSources,
-                    selection: mediaSourceSelection,
-                    noneStyle: nil
-                )
-            } label: {
-                #if os(tvOS)
-                let shape: Rectangle = .rect
-                #else
-                let shape: RoundedRectangle = .rect(cornerRadius: 10, style: .circular)
-                #endif
-
-                Label {
-                    Text(L10n.version)
-                } icon: {
-                    Image(systemName: "ellipsis")
-                    #if os(tvOS)
-                        .rotationEffect(.degrees(90))
-                    #endif
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .backport
-                .glassEffect(
-                    .regular.selection(
-                        tint: .clear,
-                        foregroundColor: .primary
-                    ),
-                    in: shape
-                )
-            }
-            .foregroundStyle(.primary, .secondary)
-            .font(.title3)
-            .fontWeight(.semibold)
-            .menuStyle(.button)
-            .labelStyle(.iconOnly)
-            .buttonStyle(BasicHoverButtonStyle())
-            #if !os(tvOS)
-                .aspectRatio(1, contentMode: .fit)
-            #else
-                .frame(width: 60)
-            #endif
-        }
-    }
-
-    @ViewBuilder
-    private var playButton: some View {
+    var body: some View {
         Button {
             play()
         } label: {
@@ -151,14 +92,5 @@ struct PlayButton: View {
             }
         }
         .disabled(provider.mediaPlayerItemProvider == nil)
-    }
-
-    var body: some View {
-        HStack(alignment: .center, spacing: UIDevice.isTV ? 30 : 10) {
-            playButton
-
-            versionMenu
-        }
-        .frame(height: UIDevice.isTV ? 75 : 44)
     }
 }
