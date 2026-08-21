@@ -30,7 +30,7 @@ struct ContentGroupVStack: View {
             ForEach(groups, id: \.id) { group in
                 makeGroupBody(group)
                     .eraseToAnyView()
-                    .coordinatedFocus(group.id)
+                    .focusedValue(\.focusedElement, group.id)
             }
         }
         .frame(maxWidth: .infinity, alignment: .topLeading)

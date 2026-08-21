@@ -21,8 +21,6 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
     private var contentGroupOptions: ContentGroupParentOption = .init()
 
     @StateObject
-    private var focusCoordinator: FocusCoordinator = .init()
-    @StateObject
     private var viewModel: ContentGroupViewModel<Provider>
 
     @TabItemSelected
@@ -112,6 +110,5 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                     }
                 }
             }
-            .environmentObject(focusCoordinator)
     }
 }

@@ -8,11 +8,18 @@
 
 import SwiftUI
 
-extension FocusedValues {
+protocol FocusTarget: Hashable, Identifiable {}
 
-    @Entry
-    var focusedPoster: AnyPoster?
+extension FocusTarget {
 
-    @Entry
-    var focusedElement: AnyHashable?
+    var id: Self {
+        self
+    }
+}
+
+enum InitialFocus<Destination: FocusTarget> {
+
+    case waiting
+    case automatic
+    case destination(Destination)
 }

@@ -15,17 +15,17 @@ extension ItemView {
 
     struct ContentGroupScrollView: View {
 
-        @EnvironmentObject
-        private var focusCoordinator: FocusCoordinator
-
         @ObservedObject
         var provider: ItemContentGroupProvider
+
+        @FocusedValue(\.focusedElement)
+        private var focusedElement
 
         let groups: [any ContentGroup]
         let isEnhanced: Bool
 
         private var isHeaderFocused: Bool {
-            focusCoordinator.lastFocusedIDs.contains(Component.header)
+            focusedElement == AnyHashable(Component.header)
         }
 
         private var backgroundImageItem: BaseItemDto {
