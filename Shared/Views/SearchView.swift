@@ -23,8 +23,6 @@ struct SearchView: View {
     private var searchQuery = ""
 
     @StateObject
-    private var focusCoordinator: FocusCoordinator = .init()
-    @StateObject
     private var viewModel = SearchViewModel()
 
     @TabItemSelected
@@ -96,7 +94,6 @@ struct SearchView: View {
             text: $searchQuery,
             prompt: L10n.search
         )
-        .environmentObject(focusCoordinator)
         #if os(tvOS)
             .edgePadding(.top)
         #else

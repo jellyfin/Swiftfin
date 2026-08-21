@@ -14,19 +14,21 @@ import SwiftUI
 
 struct ItemView: View {
 
-    enum Component {
-        static let header = "itemView-header"
-        static let play = "itemView-play"
+    enum Component: String, FocusTarget {
+        case header = "itemView-header"
+        case actions = "itemView-actions"
+        case details = "itemView-details"
     }
 
     @Default(.Customization.itemViewType)
     private var itemViewType
 
+    @FocusState
+    private var focus: Component?
+
     @State
     private var contentSize: CGSize = .zero
 
-    @StateObject
-    private var focusCoordinator = FocusCoordinator(initial: Component.play)
     @StateObject
     private var provider: ItemContentGroupProvider
     @StateObject
@@ -35,6 +37,17 @@ struct ItemView: View {
     init(provider: ItemContentGroupProvider) {
         self._provider = StateObject(wrappedValue: provider)
         self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
+    }
+
+    private var initialFocus: InitialFocus<Component> {
+        switch viewModel.state {
+        case .initial, .refreshing:
+            .waiting
+        case .content:
+            provider.item.presentPlayButton ? .destination(.actions) : .automatic
+        case .error:
+            .automatic
+        }
     }
 
     private var isCompact: Bool {
@@ -122,6 +135,7 @@ struct ItemView: View {
                 ProgressView()
             }
         }
+        .initialFocus($focus, initialFocus)
         .trackingSize($contentSize)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
@@ -132,7 +146,6 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
-        .environmentObject(focusCoordinator)
         #if os(tvOS)
             .toolbarVisibility(.hidden, for: .navigationBar)
         #else

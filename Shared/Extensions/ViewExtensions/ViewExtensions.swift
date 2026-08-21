@@ -198,6 +198,26 @@ extension View {
         }
     }
 
+    func initialFocus<Destination: FocusTarget>(
+        _ binding: FocusState<Destination?>.Binding,
+        _ target: InitialFocus<Destination>,
+        holdsFocus: Bool = true,
+        scope: FocusScope? = nil
+    ) -> some View {
+        modifier(InitialFocusModifier(target: target, holdsFocus: holdsFocus, binding: binding, scope: scope))
+    }
+
+    func initialFocusTarget<ID: FocusTarget>(
+        _ binding: FocusState<ID?>.Binding,
+        equals id: ID
+    ) -> some View {
+        modifier(InitialFocusTargetModifier(id: id, binding: binding))
+    }
+
+    func initialFocusTarget<ID: FocusTarget>(_ id: ID) -> some View {
+        modifier(InitialFocusTargetModifier<ID>(id: id, binding: nil))
+    }
+
     // TODO: rename `invertedMask`?
     @ViewBuilder
     func inverseMask(alignment: Alignment = .center, @ViewBuilder _ content: @escaping () -> some View) -> some View {

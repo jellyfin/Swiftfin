@@ -10,9 +10,13 @@ import CollectionVGrid
 import Defaults
 import SwiftUI
 
-private let firstElementFocusID = "pagingLibraryView-firstElement"
-
 struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: LibraryElement {
+
+    enum Focus: FocusTarget {
+        case firstElement
+        case empty
+        case error
+    }
 
     typealias Element = Library.Element
 
@@ -20,6 +24,11 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     private var rememberIndividualLibraryStyle
     @Default(.Customization.Library.style)
     private var defaultLibraryStyle
+    @Default(.Customization.Library.letterPickerOrientation)
+    private var letterPickerOrientation
+
+    @FocusState
+    private var focus: Focus?
 
     @Namespace
     private var namespace
@@ -28,10 +37,10 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     private var router
 
     @State
+    private var focusScope = FocusScope()
+    @State
     private var isSafeAreaBarApplied: Bool = false
 
-    @StateObject
-    private var focusCoordinator = FocusCoordinator(initial: firstElementFocusID)
     @StateObject
     private var gridProxy = CollectionVGridProxy()
     @StateObject
@@ -42,6 +51,27 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     @TabItemSelected
     private var tabItemSelected
+
+    private var initialFocus: InitialFocus<Focus> {
+        switch viewModel.state {
+        case .initial, .refreshing:
+            .waiting
+        case .content:
+            if viewModel.isSearchActive, viewModel.background.is(.searching) {
+                .waiting
+            } else if viewModel.displayedElements.isEmpty {
+                isEmptyStateFocusable ? .destination(.empty) : .automatic
+            } else {
+                .destination(.firstElement)
+            }
+        case .error:
+            .destination(.error)
+        }
+    }
+
+    private var isEmptyStateFocusable: Bool {
+        !viewModel.isSearchActive && letterPickerOrientation == .disabled
+    }
 
     private var libraryStyleOptions: LibraryStyleOptions {
         viewModel.libraryStyleOptions
@@ -94,10 +124,10 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 )
             ) { element in
                 element.makeBody(libraryStyle: libraryStyle)
+                    .environment(\.focusScope, focusScope)
                     .if(element.id == viewModel.displayedElements.first?.id) { view in
-                        view.coordinatedFocus(firstElementFocusID)
+                        view.initialFocusTarget($focus, equals: .firstElement)
                     }
-                    .environmentObject(focusCoordinator)
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 if viewModel.isSearchActive {
@@ -149,16 +179,19 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                             viewModel.isSearchActive ? L10n.noResults.localizedCapitalized : L10n.noItems.localizedCapitalized,
                             systemImage: viewModel.isSearchActive ? "magnifyingglass" : "rectangle.on.rectangle.slash"
                         )
-                        .focusable()
+                        .focusable(isEmptyStateFocusable)
+                        .initialFocusTarget($focus, equals: .empty)
                     } else {
                         elementsView
                     }
                 case .error:
                     viewModel.error.map(ErrorView.init)
+                        .initialFocusTarget($focus, equals: .error)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .initialFocus($focus, initialFocus, scope: focusScope)
         .animation(.linear(duration: 0.2), value: viewModel.background.is(.gettingNextPage))
         .animation(.linear(duration: 0.2), value: viewModel.background.is(.searching))
         .animation(.linear(duration: 0.2), value: viewModel.elements)
