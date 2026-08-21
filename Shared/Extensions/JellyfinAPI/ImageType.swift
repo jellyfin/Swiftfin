@@ -77,7 +77,7 @@ extension ImageType: Displayable {
         switch self {
         case .primary:
             switch type {
-            case .audio, .channel, .musicAlbum, .tvChannel:
+            case .audio, .channel, .musicAlbum, .playlist, .tvChannel:
                 .square
             case .episode, .folder, .program, .musicVideo, .video, .userView:
                 .landscape

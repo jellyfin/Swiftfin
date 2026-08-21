@@ -52,6 +52,10 @@ internal enum L10n {
   internal static let additionalSecurityAccessDescription = L10n.tr("Localizable", "additionalSecurityAccessDescription", fallback: "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.")
   /// Add server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add server")
+  /// Add to beginning
+  internal static let addToBeginning = L10n.tr("Localizable", "addToBeginning", fallback: "Add to beginning")
+  /// Add this item at the beginning of the playlist instead of the end.
+  internal static let addToBeginningDescription = L10n.tr("Localizable", "addToBeginningDescription", fallback: "Add this item at the beginning of the playlist instead of the end.")
   /// Add to favorites
   internal static let addToFavorites = L10n.tr("Localizable", "addToFavorites", fallback: "Add to favorites")
   /// Add trigger
@@ -1070,6 +1074,8 @@ internal enum L10n {
   internal static let neverRun = L10n.tr("Localizable", "neverRun", fallback: "Never run")
   /// New password
   internal static let newPassword = L10n.tr("Localizable", "newPassword", fallback: "New password")
+  /// New playlist
+  internal static let newPlaylist = L10n.tr("Localizable", "newPlaylist", fallback: "New playlist")
   /// News
   internal static let news = L10n.tr("Localizable", "news", fallback: "News")
   /// New user
@@ -1486,9 +1492,9 @@ internal enum L10n {
   internal static let serverLogs = L10n.tr("Localizable", "serverLogs", fallback: "Server logs")
   /// Servers
   internal static let servers = L10n.tr("Localizable", "servers", fallback: "Servers")
-  /// Update to Jellyfin %@ for the best experience.
+  /// Swiftfin requires Jellyfin version %@ or higher.
   internal static func serverVersionWarning(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "serverVersionWarning", String(describing: p1), fallback: "Update to Jellyfin %@ for the best experience.")
+    return L10n.tr("Localizable", "serverVersionWarning", String(describing: p1), fallback: "Swiftfin requires Jellyfin version %@ or higher.")
   }
   /// Session
   internal static let session = L10n.tr("Localizable", "session", fallback: "Session")
