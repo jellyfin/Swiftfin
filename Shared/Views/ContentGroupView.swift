@@ -53,6 +53,9 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                 edges: contentGroupOptions.contains(.ignoreSafeAreaTop) ? [.horizontal, .top] : .horizontal
             )
             .scrollIndicators(.hidden)
+            .refreshable {
+                await viewModel.background.refresh()
+            }
             .onReceive(tabItemSelected) { event in
                 if event.isRepeat, event.isRoot {
                     withAnimation {
