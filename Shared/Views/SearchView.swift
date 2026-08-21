@@ -95,12 +95,12 @@ struct SearchView: View {
             prompt: L10n.search
         )
         #if os(tvOS)
-            .edgePadding(.top)
+        .edgePadding(.top)
         #else
-            .navigationBarFilterDrawer(
-                viewModel: viewModel.filterViewModel,
-                types: enabledDrawerFilters
-            )
+        .navigationBarFilterDrawer(
+            viewModel: viewModel.filterViewModel,
+            types: enabledDrawerFilters
+        )
         #endif
     }
 }
