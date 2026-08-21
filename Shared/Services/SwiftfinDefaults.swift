@@ -148,6 +148,17 @@ extension Defaults.Keys {
             UserKey("searchPosterType", default: .portrait)
         }
 
+        enum EPG {
+
+            static var programColor: Key<[ProgramType: Color]> {
+                UserKey("epgProgramColor", default: [:])
+            }
+
+            static var programColorSelection: Key<Set<ProgramType>> {
+                UserKey("epgProgramColorSelection", default: [])
+            }
+        }
+
         enum Episodes {
 
             static var useSeriesLandscapeBackdrop: Key<Bool> {
