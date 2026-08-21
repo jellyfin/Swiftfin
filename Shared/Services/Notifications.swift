@@ -144,6 +144,10 @@ extension Notifications.Key {
         Key("didDeleteItem")
     }
 
+    static var timersDidChange: Key<Void> {
+        Key("timersDidChange")
+    }
+
     // MARK: - Server
 
     static var didConnectToServer: Key<ServerState> {

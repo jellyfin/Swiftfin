@@ -91,7 +91,8 @@ struct PosterIndicatorsOverlay: View {
                 ProgressIndicator(
                     title: item.progressLabel ?? "",
                     progress: item.progressPercentage ?? 0,
-                    posterDisplayType: posterDisplayType
+                    posterDisplayType: posterDisplayType,
+                    isRecording: item.isRecording
                 )
                 .zIndex(5)
             }

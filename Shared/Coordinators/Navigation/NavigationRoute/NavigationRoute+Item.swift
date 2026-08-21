@@ -247,4 +247,22 @@ extension NavigationRoute {
             ItemOverviewView(item: item)
         }
     }
+
+    static func seriesTimerEditor(viewModel: ProgramTimerViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "seriesTimerEditor",
+            style: .sheet
+        ) {
+            RecordingEditorView(seriesTimer: viewModel)
+        }
+    }
+
+    static func timerEditor(viewModel: ProgramTimerViewModel) -> NavigationRoute {
+        NavigationRoute(
+            id: "timerEditor",
+            style: .sheet
+        ) {
+            RecordingEditorView(timer: viewModel)
+        }
+    }
 }

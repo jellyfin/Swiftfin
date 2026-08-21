@@ -15,11 +15,19 @@ extension ItemView {
         @ObservedObject
         var provider: ItemContentGroupProvider
 
+        @StateObject
+        private var timerViewModel: ProgramTimerViewModel
+
         @Router
         private var router
 
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
+
+        init(provider: ItemContentGroupProvider) {
+            self.provider = provider
+            self._timerViewModel = StateObject(wrappedValue: ProgramTimerViewModel(item: provider.item))
+        }
 
         private var hasTrailers: Bool {
             if enabledTrailers.contains(.local), provider.localTrailers.isNotEmpty {
@@ -69,6 +77,7 @@ extension ItemView {
             if (UIDevice.isTV && provider.item.canEdit) ||
                 provider.item.canBePlayed ||
                 provider.item.canBeFavorited ||
+                provider.item.canBeRecorded ||
                 hasTrailers
             {
                 contentView
@@ -120,6 +129,87 @@ extension ItemView {
                     .foregroundStyle(.primary, .secondary)
                     #endif
                     .isSelected(isFavorited)
+                }
+
+                // MARK: Record
+
+                if provider.item.canBeRecorded {
+                    let isScheduled = timerViewModel.timer != nil || timerViewModel.seriesTimer != nil
+
+                    ConditionalMenu(
+                        isMenu: timerViewModel.program.isSeries == true || timerViewModel.timer != nil,
+                        action: {
+                            timerViewModel.toggleRecording()
+                        }
+                    ) {
+                        Group {
+                            if let timer = timerViewModel.timer {
+                                Button(role: .destructive) {
+                                    timerViewModel.toggleRecording()
+                                } label: {
+                                    Group {
+                                        if timer.status == .inProgress {
+                                            Label(L10n.stopRecording, systemImage: "stop.circle")
+                                        } else {
+                                            Label(L10n.cancelRecording, systemImage: "xmark.circle")
+                                        }
+                                    }
+                                    .foregroundStyle(.red)
+                                }
+
+                                Button {
+                                    router.route(to: .timerEditor(viewModel: timerViewModel))
+                                } label: {
+                                    Label(L10n.recordingSettings, systemImage: "gearshape")
+                                }
+                            } else {
+                                Button {
+                                    timerViewModel.toggleRecording()
+                                } label: {
+                                    Label(L10n.record, systemImage: "record.circle")
+                                }
+                            }
+
+                            if timerViewModel.program.isSeries == true {
+                                Divider()
+
+                                if timerViewModel.seriesTimer != nil {
+                                    Button(role: .destructive) {
+                                        timerViewModel.toggleSeriesRecording()
+                                    } label: {
+                                        Label(L10n.cancelSeriesRecording, systemImage: "xmark.circle")
+                                            .foregroundStyle(.red)
+                                    }
+
+                                    Button {
+                                        router.route(to: .seriesTimerEditor(viewModel: timerViewModel))
+                                    } label: {
+                                        Label(L10n.seriesSettings, systemImage: "gearshape")
+                                    }
+                                } else {
+                                    Button {
+                                        timerViewModel.toggleSeriesRecording()
+                                    } label: {
+                                        Label(L10n.recordSeries, systemImage: "smallcircle.filled.circle")
+                                    }
+                                }
+                            }
+                        }
+                        .symbolRenderingMode(.monochrome)
+                        .foregroundStyle(.primary)
+                    } label: {
+                        materialLabel(
+                            L10n.record,
+                            systemImage: isScheduled ? "record.circle.fill" : "record.circle",
+                            isHighlighted: isScheduled,
+                            tint: .red,
+                            foregroundColor: .primary
+                        )
+                    }
+                    .isSelected(isScheduled)
+                    .onAppear {
+                        timerViewModel.refresh()
+                    }
                 }
 
                 // MARK: Trailer
