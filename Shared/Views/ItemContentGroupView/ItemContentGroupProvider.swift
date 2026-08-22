@@ -295,9 +295,11 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         return playbackItem?.getPlaybackItemProvider(userSession: userSession)
     }
 
+    // Play-button item is a single episode; keep mediaSources so the
+    // version menu still has data. Listings continue to use MinimumFields.
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetNextUpParameters()
-        parameters.fields = .MinimumFields
+        parameters.fields = .MinimumFields.appending(.mediaSources)
         parameters.seriesID = item.id
 
         let request = Paths.getNextUp(parameters: parameters)
@@ -312,7 +314,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     private func resumeItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetResumeItemsParameters()
-        parameters.fields = .MinimumFields
+        parameters.fields = .MinimumFields.appending(.mediaSources)
         parameters.limit = 1
         parameters.parentID = item.id
 
@@ -324,7 +326,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     private func firstAvailableItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetItemsParameters()
-        parameters.fields = .MinimumFields
+        parameters.fields = .MinimumFields.appending(.mediaSources)
         parameters.includeItemTypes = [.episode]
         parameters.isMissing = false
         parameters.isRecursive = true

@@ -14,8 +14,11 @@ extension ItemFields {
     /// The minimum cases to use when retrieving an item or items
     /// for basic presentation. Depending on the context, using
     /// more fields and including user data may also be necessary.
+    ///
+    /// `mediaSources` is intentionally omitted: it inflates listing
+    /// responses when items have multiple versions. Playback paths
+    /// load sources via `getFullItem` / `MediaPlayerItem.build`.
     static let MinimumFields: [ItemFields] = [
-        .mediaSources,
         .parentID,
     ]
 }

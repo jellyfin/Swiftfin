@@ -176,11 +176,8 @@ extension EpisodeMediaPlayerQueue {
 
         private func select(episode: BaseItemDto) {
             let provider = MediaPlayerItemProvider(item: episode) { [manager] item, modifyItem in
-                let mediaSource = item.mediaSources?.first
-
-                return try await MediaPlayerItem.build(
+                try await MediaPlayerItem.build(
                     for: item,
-                    mediaSource: mediaSource!,
                     requestedBitrate: manager.playbackBitrate,
                     modifyItem: modifyItem
                 )
