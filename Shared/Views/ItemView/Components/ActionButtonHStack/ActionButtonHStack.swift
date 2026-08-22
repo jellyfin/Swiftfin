@@ -21,6 +21,14 @@ extension ItemView {
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers: TrailerSelection
 
+        private var canCast: Bool {
+            #if os(iOS)
+            provider.item.presentPlayButton && provider.mediaPlayerItemProvider != nil
+            #else
+            false
+            #endif
+        }
+
         private var hasTrailers: Bool {
             if enabledTrailers.contains(.local), provider.localTrailers.isNotEmpty {
                 return true
@@ -69,7 +77,8 @@ extension ItemView {
             if (UIDevice.isTV && provider.item.canEdit) ||
                 provider.item.canBePlayed ||
                 provider.item.canBeFavorited ||
-                hasTrailers
+                hasTrailers ||
+                canCast
             {
                 contentView
             }
@@ -137,6 +146,23 @@ extension ItemView {
                         )
                     }
                 }
+
+                // MARK: Cast
+
+                #if os(iOS)
+                if canCast, let mediaPlayerItemProvider = provider.mediaPlayerItemProvider {
+                    CastActionButton(provider: mediaPlayerItemProvider) { isItemPlaying in
+                        materialLabel(
+                            L10n.castToDevice,
+                            systemImage: isItemPlaying ? "tv.badge.wifi.fill" : "tv.badge.wifi",
+                            isHighlighted: isItemPlaying,
+                            tint: .blue,
+                            foregroundColor: .primary
+                        )
+                    }
+                    .foregroundStyle(.primary, .secondary)
+                }
+                #endif
 
                 // MARK: tvOS Options
 
