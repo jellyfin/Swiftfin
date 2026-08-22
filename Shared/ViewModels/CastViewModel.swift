@@ -106,7 +106,7 @@ final class CastViewModel: ViewModel {
 
         let controllableSessions = incomingSessions
             .filter { session in
-                session.isSupportsRemoteControl == true
+                session.capabilities?.isSupportsMediaControl == true
                     && session.deviceID != deviceID
                     && session.userID == userID
                     && session.playableMediaTypes?.contains(.video) == true

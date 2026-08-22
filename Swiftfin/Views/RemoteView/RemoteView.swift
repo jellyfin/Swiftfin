@@ -20,10 +20,21 @@ struct RemoteView: View {
     @State
     private var proxy: CastMediaPlayerProxy?
 
+    @Router
+    private var router
+
     let provider: MediaPlayerItemProvider?
 
     private var selectedTarget: SessionViewModel? {
         viewModel.selectedTarget
+    }
+
+    private var selectorTitle: String {
+        if viewModel.state == .content && viewModel.targets.isEmpty {
+            L10n.noDevicesFound
+        } else {
+            selectedTarget?.session.deviceName ?? L10n.selectDevice.localizedCapitalized
+        }
     }
 
     private func castReplacing(provider: MediaPlayerItemProvider, target: SessionViewModel) {
@@ -60,14 +71,6 @@ struct RemoteView: View {
                     .transition(.opacity)
                 } else {
                     VStack(spacing: 20) {
-                        if viewModel.state == .initial {
-                            ProgressView()
-                        } else if viewModel.targets.isEmpty {
-                            Text(L10n.noDevicesFound)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-
                         Touchpad { _ in }
 
                         HStack(spacing: 24) {
@@ -153,15 +156,11 @@ struct RemoteView: View {
             }
         }
         .edgePadding([.top, .bottom])
-        .presentationDragIndicator(.visible)
         .animation(.linear(duration: 0.2), value: selectedTarget?.id)
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Menu(
-                    selectedTarget?.session.deviceName ?? L10n.selectDevice.localizedCapitalized,
-                    systemImage: "chevron.down"
-                ) {
+                Menu {
                     Picker(
                         L10n.selectDevice.localizedCapitalized,
                         selection: Binding(
@@ -189,6 +188,12 @@ struct RemoteView: View {
                             }
                         }
                     }
+                } label: {
+                    if viewModel.state == .content && viewModel.targets.isEmpty {
+                        EmptyLabel(selectorTitle)
+                    } else {
+                        Label(selectorTitle, systemImage: "chevron.down")
+                    }
                 }
                 .labelStyle(
                     CapsuleLabelStyle(
@@ -202,7 +207,12 @@ struct RemoteView: View {
                     viewModel.isPaused = isPressed
                     proxy?.isSyncSuspended = isPressed
                 })
+                .disabled(viewModel.targets.isEmpty)
+                .id(selectorTitle)
             }
+        }
+        .navigationBarCloseButton {
+            router.dismiss()
         }
         .errorMessage($viewModel.error)
         .onFirstAppear {

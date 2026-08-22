@@ -23,7 +23,7 @@ extension ItemView {
 
         private var canCast: Bool {
             #if os(iOS)
-            provider.mediaPlayerItemProvider != nil
+            provider.item.presentPlayButton && provider.mediaPlayerItemProvider != nil
             #else
             false
             #endif
@@ -150,7 +150,7 @@ extension ItemView {
                 // MARK: Cast
 
                 #if os(iOS)
-                if let mediaPlayerItemProvider = provider.mediaPlayerItemProvider {
+                if canCast, let mediaPlayerItemProvider = provider.mediaPlayerItemProvider {
                     CastActionButton(provider: mediaPlayerItemProvider) { isItemPlaying in
                         materialLabel(
                             L10n.castToDevice,

@@ -16,6 +16,9 @@ extension RemoteView {
         @ObservedObject
         var proxy: CastMediaPlayerProxy
 
+        @Router
+        private var router
+
         @State
         private var isEditing = false
         @State
@@ -54,7 +57,7 @@ extension RemoteView {
                     } action: {
                         proxy.playQueueItem(item)
                     }
-                    .deleteDisabled(item.id == proxy.activeItem?.id)
+                    .deleteDisabled(isEditing || item.id == proxy.activeItem?.id)
                 }
                 .onMove { source, destination in
                     items.move(fromOffsets: source, toOffset: destination)
@@ -74,7 +77,17 @@ extension RemoteView {
             .environment(\.editMode, .constant(isEditing ? .active : .inactive))
             .toolbarTitleDisplayMode(.inline)
             .navigationTitle(L10n.queue)
-            .navigationBarMenuButton(isHidden: isEditing) {
+            .if(!isEditing) { view in
+                view.navigationBarCloseButton {
+                    router.dismiss()
+                }
+            }
+            .navigationBarMenuButton(
+                isHidden: isEditing,
+                onPressed: { isPressed in
+                    proxy.isSyncSuspended = isPressed
+                }
+            ) {
                 if proxy.session.supportedCommands.contains(.setShuffleQueue) {
                     Button(L10n.shuffle, systemImage: "shuffle") {
                         proxy.shuffleQueue()
@@ -109,7 +122,7 @@ extension RemoteView {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     if isEditing {
-                        Button(L10n.done) {
+                        Button(L10n.save) {
                             isEditing = false
                             proxy.reorderQueue(items)
                         }
