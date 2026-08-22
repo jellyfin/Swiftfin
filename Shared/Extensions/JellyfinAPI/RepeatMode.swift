@@ -23,10 +23,12 @@ extension RepeatMode: Displayable, SystemImageable {
 
     var systemImage: String {
         switch self {
+        case .repeatNone:
+            "repeat.badge.xmark"
+        case .repeatAll:
+            "repeat"
         case .repeatOne:
             "repeat.1"
-        default:
-            "repeat"
         }
     }
 }

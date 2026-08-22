@@ -33,7 +33,7 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
     @Published
     private(set) var queueIndex: Int?
     @Published
-    private(set) var queueItems: [BaseItemDto] = []
+    var queueItems: [BaseItemDto] = []
     @Published
     private(set) var repeatMode: RepeatMode = .repeatNone
     @Published
@@ -265,8 +265,8 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
         )
     }
 
-    func reorderQueue(_ items: [BaseItemDto]) {
-        let ids = items.compactMap(\.id)
+    func reorderQueue() {
+        let ids = queueItems.compactMap(\.id)
         guard ids != queueItemIDs,
               let currentID = nowPlayingItem?.id,
               let index = ids.firstIndex(of: currentID)
@@ -274,7 +274,6 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
 
         markLocalCommand()
 
-        queueItems = items
         queueItemIDs = ids
         queueIndex = index
 

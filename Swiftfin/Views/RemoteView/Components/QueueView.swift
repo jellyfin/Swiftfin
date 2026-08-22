@@ -13,70 +13,46 @@ extension RemoteView {
 
     struct QueueView: View {
 
+        @Environment(\.editMode)
+        private var editMode
+
         @ObservedObject
         var proxy: CastMediaPlayerProxy
 
         @Router
         private var router
 
-        @State
-        private var isEditing = false
-        @State
-        private var items: [BaseItemDto] = []
+        private var isEditing: Bool {
+            editMode?.wrappedValue.isEditing == true
+        }
 
         var body: some View {
             List {
-                ForEach(items, id: \.id) { item in
-                    ListRow {
-                        PosterImage(
-                            item: item,
-                            type: item.preferredPosterDisplayType,
-                            contentMode: .fit
-                        )
-                        .frame(width: 60)
-                        .subtleShadow()
-                    } content: {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(item.displayTitle)
-
-                                if let subtitle = item.subtitle {
-                                    Text(subtitle)
-                                        .font(.subheadline)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-
-                            Spacer()
-
-                            if item.id == proxy.activeItem?.id {
-                                Image(systemName: "play.fill")
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    } action: {
+                ForEach(proxy.queueItems, id: \.id) { item in
+                    QueueRow(item: item, isPaused: proxy.isPaused) {
                         proxy.playQueueItem(item)
                     }
+                    .isSelected(item.id == proxy.activeItem?.id)
                     .deleteDisabled(isEditing || item.id == proxy.activeItem?.id)
                 }
                 .onMove { source, destination in
-                    items.move(fromOffsets: source, toOffset: destination)
+                    proxy.queueItems.move(fromOffsets: source, toOffset: destination)
 
                     if !isEditing {
-                        proxy.reorderQueue(items)
+                        proxy.reorderQueue()
                     }
                 }
                 .onDelete { offsets in
-                    items.remove(atOffsets: offsets)
+                    proxy.queueItems.remove(atOffsets: offsets)
 
                     if !isEditing {
-                        proxy.reorderQueue(items)
+                        proxy.reorderQueue()
                     }
                 }
             }
-            .environment(\.editMode, .constant(isEditing ? .active : .inactive))
             .toolbarTitleDisplayMode(.inline)
             .navigationTitle(L10n.queue)
+            .listStyle(.plain)
             .if(!isEditing) { view in
                 view.navigationBarCloseButton {
                     router.dismiss()
@@ -113,31 +89,22 @@ extension RemoteView {
                     }
                 }
 
-                if items.count > 1 {
+                if proxy.queueItems.count > 1 {
                     Button(L10n.edit, systemImage: "pencil") {
-                        isEditing = true
+                        editMode?.wrappedValue = .active
                     }
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if isEditing {
-                        Button(L10n.save) {
-                            isEditing = false
-                            proxy.reorderQueue(items)
-                        }
-                        .backport
-                        .buttonStyle(.glassProminent)
-                        .controlSize(.small)
+            .topBarTrailing {
+                if isEditing {
+                    Button(L10n.save) {
+                        editMode?.wrappedValue = .inactive
+                        proxy.reorderQueue()
                     }
+                    .backport
+                    .buttonStyle(.glassProminent)
+                    .controlSize(.small)
                 }
-            }
-            .onAppear {
-                items = proxy.queueItems
-            }
-            .onChange(of: proxy.queueItems.compactMap(\.id)) { _, _ in
-                guard !isEditing else { return }
-                items = proxy.queueItems
             }
         }
     }
