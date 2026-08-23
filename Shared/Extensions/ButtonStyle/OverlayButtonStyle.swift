@@ -118,7 +118,7 @@ extension VideoPlayer.PlaybackControls {
     struct OverlayLabelStyle: LabelStyle {
 
         private var size: CGFloat {
-            if #available(iOS 26.0, *) {
+            if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
                 UIDevice.isTV ? 36 : 32
             } else {
                 44
