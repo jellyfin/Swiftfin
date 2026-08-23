@@ -136,16 +136,19 @@ extension String {
     }
 
     var initials: String {
-        split(separator: " ")
+        split(separator: Self.space)
             .compactMap(\.first)
-            .reduce("", +)
+            .reduce(Self.empty, +)
     }
 
+    /// --
     static let emptyDash = "--"
-
+    /// --:--
     static let emptyRuntime = "--:--"
-
+    /// ""
     static let empty = ""
+    /// " "
+    static let space = " "
 
     static let tab = "\u{0009}"
     /// —
@@ -159,6 +162,7 @@ extension String {
     /// x
     static let multiply = "\u{00D7}"
 
+    /// A x B
     func multiply(by value: String) -> String {
         "\(self) \(Self.multiply) \(value)"
     }

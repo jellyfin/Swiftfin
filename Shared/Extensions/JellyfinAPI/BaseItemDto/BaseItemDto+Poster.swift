@@ -388,79 +388,26 @@ private struct BaseItemDtoPosterLabel: View {
 
     var body: some View {
         switch item.type {
-        case .program:
-            programLabel
         case .episode:
-            episodeLabel
-        case .season:
-            label(title: item.parentTitle ?? item.displayTitle, subtitle: item.displayTitle)
-        case .video where item.extraType != nil:
-            extrasLabel
-        default:
-            label(title: item.displayTitle, subtitle: item.subtitle)
-        }
-    }
-
-    // TODO: allow title to expand to 2 lines if subtitle is nil?
-    //       - verify layout
-
-    @ViewBuilder
-    private func label(title: String, subtitle: String?) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(title)
-                .font(.footnote)
-                .foregroundStyle(.primary)
-                .accessibilityLabel(item.displayTitle)
-                .lineLimit(1, reservesSpace: true)
-
-            Text(subtitle ?? " ")
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundStyle(.secondary)
-                .lineLimit(1, reservesSpace: true)
-        }
-    }
-
-    @ViewBuilder
-    private var episodeLabel: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if let seriesName = item.seriesName {
-                Text(seriesName)
-                    .font(.footnote)
-                    .fontWeight(.regular)
-                    .foregroundStyle(.primary)
-                    .lineLimit(1, reservesSpace: true)
-            }
-
-            DotHStack {
+            Label {
+                if let seriesName = item.seriesName {
+                    Text(seriesName)
+                }
                 if let indexLabel = item.seasonEpisodeLabel {
                     Text(indexLabel)
                 }
 
                 Text(item.displayTitle)
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .lineLimit(1)
-        }
-    }
+        case .season:
+            Label {
+                Text(item.parentTitle ?? item.displayTitle)
+                Text(item.displayTitle)
+            }
+        case .program:
+            Label {
+                Text(item.displayTitle)
 
-    @ViewBuilder
-    private var programLabel: some View {
-        VStack(alignment: .leading) {
-            Text(item.channelName ?? .emptyDash)
-                .font(.footnote)
-                .fontWeight(.semibold)
-                .foregroundStyle(.primary)
-                .lineLimit(1, reservesSpace: true)
-
-            Text(item.displayTitle)
-                .font(.footnote)
-                .fontWeight(.regular)
-                .foregroundStyle(.primary)
-                .lineLimit(1, reservesSpace: true)
-
-            Group {
                 if let startDate = item.startDate {
                     ViewThatFits {
                         SeparatorHStack {
@@ -486,36 +433,77 @@ private struct BaseItemDtoPosterLabel: View {
                 } else {
                     Text(String.emptyRuntime)
                 }
+
+                if let channelName = item.channelName {
+                    Text(channelName)
+                }
             }
-            .font(.footnote)
-            .foregroundStyle(.secondary)
-            .lineLimit(1, reservesSpace: true)
+        case .video where item.extraType != nil:
+            Label {
+                Text(item.displayTitle)
+
+                if let extraType = item.extraType, extraType != .unknown {
+                    Text(extraType.displayTitle)
+                }
+
+                if let runtime = item.runtime {
+                    Text(runtime, format: .runtime)
+                }
+            }
+        default:
+            Label {
+                Text(item.displayTitle)
+
+                if let subtitle = item.subtitle {
+                    Text(subtitle)
+                }
+            }
         }
     }
 
-    @ViewBuilder
-    private var extrasLabel: some View {
-        VStack(alignment: .leading) {
-            Text(item.displayTitle)
+    private struct Label: View {
+
+        @Environment(\.posterDisplayType)
+        private var posterDisplayType
+
+        private let content: [AnyView]
+
+        private var details: [AnyView] {
+            let details = content.dropFirst()
+
+            return posterDisplayType == .landscape ? details.asArray : details.prefix(1).asArray
+        }
+
+        init(@ArrayBuilder<any View> content: () -> [any View]) {
+            self.content = content().map { AnyView($0) }
+        }
+
+        var body: some View {
+            AlternateLayoutView(alignment: .topLeading) {
+                VStack(spacing: 2) {
+                    Text(String.space)
+                    Text(String.space)
+                }
                 .font(.footnote)
-                .foregroundStyle(.primary)
-                .accessibilityLabel(item.displayTitle)
-                .lineLimit(1, reservesSpace: true)
+                .frame(maxWidth: .infinity)
+            } content: {
+                VStack(alignment: .leading, spacing: 2) {
+                    content.first
+                        .font(.footnote)
+                        .lineLimit(details.isEmpty ? 2 : 1, reservesSpace: true)
 
-            if let extraType = item.extraType, extraType != .unknown {
-                Text(extraType.displayTitle)
+                    DotHStack {
+                        ForEach(details.indices, id: \.self) { index in
+                            details[index]
+                                .layoutPriority(index == 0 ? 1 : 0)
+                        }
+                    }
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundStyle(.secondary)
-                    .lineLimit(1, reservesSpace: true)
-            }
-
-            if let runtime = item.runtime {
-                Text(runtime, format: .runtime)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1, reservesSpace: true)
+                    .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }

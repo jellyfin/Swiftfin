@@ -38,6 +38,9 @@ extension EnvironmentValues {
     var playbackSpeed: Binding<Double> = .constant(1)
 
     @Entry
+    var posterDisplayType: PosterDisplayType = .portrait
+
+    @Entry
     var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
 
     @Entry
