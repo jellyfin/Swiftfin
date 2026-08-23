@@ -29,7 +29,7 @@ extension VideoPlayer.PlaybackControls {
 
         @ViewBuilder
         func makeBody(configuration: Configuration) -> some View {
-            if #available(iOS 26.0, tvOS 26.0, *) {
+            if #available(iOS 26.0, tvOS 26.0, *), UIDevice.supportsLiquidGlass {
                 Menu(configuration)
                     .buttonStyle(.glass)
                     .buttonBorderShape(.circle)

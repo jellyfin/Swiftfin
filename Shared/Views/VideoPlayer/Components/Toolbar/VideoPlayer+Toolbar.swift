@@ -47,7 +47,7 @@ extension VideoPlayer.PlaybackControls {
                 }
             } label: {
                 AlternateLayoutView {
-                    Image(systemName: "xmark")
+                    Label(L10n.close, systemImage: "xmark")
                 } content: {
                     Label(
                         L10n.close,
