@@ -27,7 +27,6 @@ struct ResumeItemsLibrary: BaseItemKindLibrary {
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetResumeItemsParameters()
         parameters.enableUserData = true
-        parameters.fields = .MinimumFields
         parameters.limit = pageState.pageSize
         parameters.mediaTypes = mediaTypes
         parameters.startIndex = pageState.pageOffset
