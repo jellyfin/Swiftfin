@@ -27,21 +27,18 @@ extension VideoPlayer.PlaybackControls {
 
     struct OverlayMenuStyle: MenuStyle {
 
-        @ViewBuilder
         func makeBody(configuration: Configuration) -> some View {
-            if #available(iOS 26.0, tvOS 26.0, *) {
-                Menu(configuration)
-                    .buttonStyle(.glass)
-                    .buttonBorderShape(.circle)
-                    .labelStyle(OverlayLabelStyle())
-                    .symbolRenderingMode(.monochrome)
-                    .foregroundStyle(.primary, .secondary)
-            } else {
-                Menu(configuration)
-                    .labelStyle(OverlayLabelStyle())
-                    .symbolRenderingMode(.monochrome)
-                    .foregroundStyle(.primary, .secondary)
+            Group {
+                if #available(iOS 26.0, tvOS 26.0, *), UIDevice.supportsLiquidGlass {
+                    Menu(configuration)
+                        .buttonStyle(.glass)
+                        .buttonBorderShape(.circle)
+                } else {
+                    Menu(configuration)
+                }
             }
+            .symbolRenderingMode(.monochrome)
+            .foregroundStyle(.primary, .secondary)
         }
     }
 

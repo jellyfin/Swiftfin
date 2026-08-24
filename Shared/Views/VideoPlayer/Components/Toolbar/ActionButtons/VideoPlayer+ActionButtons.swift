@@ -160,23 +160,25 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 priority: .userInitiated
             )
             .focusSection()
-            #if os(iOS)
-                .if(UIDevice.supportsLiquidGlass) { view in
-                    view
-                        .buttonStyle(.plain)
-                        .menuStyle(.button)
-                        .backport
-                        .glassEffect(.regular.interactive(false), in: .capsule)
-                }
-            #endif
         }
 
         var body: some View {
-            if containerState.isCompact {
-                compactView
-            } else {
-                regularView
+            Group {
+                if containerState.isCompact {
+                    compactView
+                } else {
+                    regularView
+                }
             }
+            #if os(iOS)
+            .if(UIDevice.supportsLiquidGlass) { view in
+                view
+                    .buttonStyle(.plain)
+                    .menuStyle(.button)
+                    .backport
+                    .glassEffect(.regular.interactive(false), in: .capsule)
+            }
+            #endif
         }
     }
 }
