@@ -38,12 +38,17 @@ extension CustomizeViewsSettings {
         @Default(.Customization.Indicators.unplayedStyle)
         private var unplayedStyle
 
+        @Default(.Customization.showPosterLabels)
+        private var showPosterLabels
+
         @State
         private var previewItemState: PreviewItemState = .unplayed
 
         private let sampleItem: BaseItemDto = .init(
+            name: L10n.subtitle,
             runTimeTicks: Duration.seconds(1800).ticks,
-            type: .movie,
+            seriesName: L10n.preview,
+            type: .episode,
             userData: .init(
                 isFavorite: true,
                 isPlayed: true,
@@ -80,20 +85,16 @@ extension CustomizeViewsSettings {
                 }
                 .posterCornerRadius(type)
 
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(L10n.preview)
-                        .font(.footnote)
-                        .foregroundStyle(.primary)
-
-                    Text(L10n.subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if showPosterLabels {
+                    previewItem.posterLabel
+                        .environment(\.posterDisplayType, type)
                 }
             }
             .frame(width: (UIDevice.isTV ? 225 : 150) * (type == .landscape ? 1.77 : 1))
             .animation(.linear(duration: 0.1), value: indicators)
             .animation(.linear(duration: 0.1), value: unplayedStyle)
             .animation(.linear(duration: 0.1), value: previewItemState)
+            .animation(.linear(duration: 0.1), value: showPosterLabels)
         }
 
         var body: some View {
@@ -113,6 +114,10 @@ extension CustomizeViewsSettings {
                     #endif
 
                     PlatformPicker(L10n.status, selection: $previewItemState)
+                }
+
+                Section(L10n.labels) {
+                    Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
                 }
 
                 Section(L10n.indicators) {

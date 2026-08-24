@@ -57,6 +57,8 @@ private struct PosterPreferencesEnvironment<Content: View>: View {
     private var enabledPosterIndicators
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
+    @Default(.Customization.showPosterLabels)
+    private var showPosterLabels
 
     let content: Content
 
@@ -68,5 +70,6 @@ private struct PosterPreferencesEnvironment<Content: View>: View {
         content
             .environment(\.enabledPosterIndicators, enabledPosterIndicators)
             .environment(\.useSeriesLandscapeBackdrop, useSeriesLandscapeBackdrop)
+            .environment(\.showPosterLabels, showPosterLabels)
     }
 }

@@ -14,6 +14,9 @@ extension EnvironmentValues {
     var enabledPosterIndicators: PosterIndicator = .all
 
     @Entry
+    var showPosterLabels: Bool = true
+
+    @Entry
     var useSeriesLandscapeBackdrop: Bool = true
 
     @Entry

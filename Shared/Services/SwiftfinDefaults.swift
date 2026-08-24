@@ -131,6 +131,10 @@ extension Defaults.Keys {
             UserKey("shouldShowRecommendations", default: true)
         }
 
+        static var showPosterLabels: Key<Bool> {
+            UserKey("showPosterLabels", default: true)
+        }
+
         static var shouldShowMissingSeasons: Key<Bool> {
             UserKey("shouldShowMissingSeasons", default: true)
         }
