@@ -85,6 +85,7 @@ struct PosterButton<Item: Poster>: View {
                 .trackingSize($posterSize)
             #endif
         }
+        .environment(\.posterDisplayType, displayType)
         .foregroundStyle(.primary, .secondary)
         .buttonStyle(.borderless)
         .buttonBorderShape(.roundedRectangle)
