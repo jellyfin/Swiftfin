@@ -245,6 +245,13 @@ extension ServerSocketManager {
         }
     }
 
+    var libraryUpdates: AnyPublisher<LibraryUpdateInfo, Never> {
+        commands { event in
+            guard case let .message(.libraryChangedMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
     private func commands<Command>(
         extract: @escaping (JellyfinSocket.Session.Event) -> Command?
     ) -> AnyPublisher<Command, Never> {

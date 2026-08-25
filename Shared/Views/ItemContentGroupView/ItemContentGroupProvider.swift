@@ -40,6 +40,17 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         super.init()
     }
 
+    func reloadItem() async throws {
+        let userSession = try requireUserSession()
+        let fullItem = try await item.getFullItem(userSession: userSession)
+
+        item = fullItem
+        mediaPlayerItemProvider = try await resolveMediaPlayerItemProvider(
+            for: fullItem,
+            userSession: userSession
+        )
+    }
+
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
         let userSession = try requireUserSession()
         let fullItem = try await item.getFullItem(userSession: userSession, sendNotification: true)

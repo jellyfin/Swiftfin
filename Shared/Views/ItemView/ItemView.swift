@@ -132,6 +132,22 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
+        .onNotification(.itemShouldRefreshMetadata) { itemID in
+            guard itemID == provider.id else { return }
+
+            Task {
+                do {
+                    try await provider.reloadItem()
+                } catch {
+                    provider.logger.error(
+                        "Unable to reload item after a library change",
+                        metadata: ["error": .string(error.localizedDescription)]
+                    )
+                }
+
+                await viewModel.background.refresh()
+            }
+        }
         .environmentObject(focusCoordinator)
         #if os(tvOS)
             .toolbarVisibility(.hidden, for: .navigationBar)
