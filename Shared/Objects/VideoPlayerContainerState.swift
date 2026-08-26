@@ -196,6 +196,10 @@ class VideoPlayerContainerState: ObservableObject {
         #endif
     }
 
+    func accessibilityToggleOverlay() {
+        isPresentingOverlay.toggle()
+    }
+
     func select(supplement: (any MediaPlayerSupplement)?, isGuest: Bool = false) {
         isGuestSupplement = isGuest
 

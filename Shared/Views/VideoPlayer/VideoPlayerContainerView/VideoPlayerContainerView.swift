@@ -155,6 +155,8 @@ extension VideoPlayer {
                                         : (containerState.isPresentingOverlay ? .up : .allButDown)
                                 )
 
+                            VideoSurfaceAccessibilityView()
+
                             playbackControls
                         }
                         #else
@@ -605,6 +607,17 @@ extension VideoPlayer {
                 containerState.isCompact = isCompact
                 containerState.centerOffsetBox.value = centerOffset
             }
+
+            #if os(iOS)
+            containerState.$isPresentingOverlay
+                .removeDuplicates()
+                .dropFirst()
+                .receive(on: DispatchQueue.main)
+                .sink { _ in
+                    UIAccessibility.post(notification: .layoutChanged, argument: nil)
+                }
+                .store(in: &cancellables)
+            #endif
 
             #if os(tvOS)
             let gesture = UITapGestureRecognizer(target: self, action: #selector(handleMenuEnded))
