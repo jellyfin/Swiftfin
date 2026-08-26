@@ -7,6 +7,37 @@
 //
 
 import SwiftUI
+import UIKit
+
+// MARK: - Filter bar navigation pop gesture exclusion
+
+private extension UIView {
+
+    var enclosingViewController: UIViewController? {
+        sequence(first: next, next: { $0?.next }).first(where: { $0 is UIViewController }) as? UIViewController
+    }
+}
+
+enum FilterBarPopGestureExclusion {
+
+    private static var installedScrollViews = NSHashTable<UIScrollView>.weakObjects()
+
+    static func install(on scrollView: UIScrollView) {
+        guard !installedScrollViews.contains(scrollView) else { return }
+        installedScrollViews.add(scrollView)
+
+        guard let navigationController = scrollView.enclosingViewController?.navigationController else { return }
+
+        let scrollPan = scrollView.panGestureRecognizer
+        navigationController.interactivePopGestureRecognizer?
+            .require(toFail: scrollPan)
+
+        if #available(iOS 26, *) {
+            navigationController.interactiveContentPopGestureRecognizer?
+                .require(toFail: scrollPan)
+        }
+    }
+}
 
 struct NavigationBarDrawerView<Content: View, Drawer: View>: PlatformViewControllerRepresentable {
 

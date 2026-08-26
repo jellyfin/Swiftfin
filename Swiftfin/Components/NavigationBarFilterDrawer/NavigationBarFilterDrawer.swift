@@ -9,6 +9,7 @@
 import Defaults
 import JellyfinAPI
 import SwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 struct NavigationBarFilterDrawer: View {
 
@@ -52,5 +53,8 @@ struct NavigationBarFilterDrawer: View {
         }
         .scrollIndicators(.hidden)
         .scrollClipDisabled()
+        .introspect(.scrollView, on: .iOS(.v15...)) { scrollView in
+            FilterBarPopGestureExclusion.install(on: scrollView)
+        }
     }
 }
