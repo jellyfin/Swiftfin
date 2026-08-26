@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import FactoryKit
 import JellyfinAPI
 import SwiftUI
@@ -15,6 +16,11 @@ struct MainTabView: View {
 
     @InjectedObject(\.userSessionManager)
     private var userSessionManager
+
+    #if os(tvOS)
+    @Default(.Customization.tabBarPlacement)
+    private var tabBarPlacement
+    #endif
 
     @StateObject
     private var tabCoordinator: TabCoordinator
@@ -60,7 +66,7 @@ struct MainTabView: View {
     }
 
     @ViewBuilder
-    private func tabContent() -> some View {
+    private func tabView() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
                 Tab(
@@ -90,8 +96,21 @@ struct MainTabView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func tabContent() -> some View {
         #if os(tvOS)
-        .tabViewStyle(.sidebarAdaptable)
+        switch tabBarPlacement {
+        case .sidebar:
+            tabView()
+                .tabViewStyle(.sidebarAdaptable)
+        case .centered:
+            tabView()
+                .tabViewStyle(.tabBarOnly)
+        }
+        #else
+        tabView()
         #endif
     }
 

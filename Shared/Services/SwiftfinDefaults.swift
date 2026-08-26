@@ -148,6 +148,10 @@ extension Defaults.Keys {
             UserKey("searchPosterType", default: .portrait)
         }
 
+        static var tabBarPlacement: Key<TabBarPlacement> {
+            UserKey("tabBarPlacement", default: .sidebar)
+        }
+
         enum Episodes {
 
             static var useSeriesLandscapeBackdrop: Key<Bool> {
