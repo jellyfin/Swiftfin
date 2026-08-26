@@ -11,7 +11,15 @@ import Foundation
 import Logging
 import SwiftUI
 
-struct GestureView: PlatformViewRepresentable {
+struct GestureView: View {
+
+    var body: some View {
+        GestureViewRepresentable()
+            .accessibilityHidden(true)
+    }
+}
+
+private struct GestureViewRepresentable: PlatformViewRepresentable {
 
     func makeUIView(context: Context) -> UIView {
         let view = UIView(frame: .zero)

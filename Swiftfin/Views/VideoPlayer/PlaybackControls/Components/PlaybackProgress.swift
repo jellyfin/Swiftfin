@@ -193,6 +193,7 @@ extension VideoPlayer.PlaybackControls {
                         .posterBorder()
                         .cornerRadius(ratio: 1 / 30, of: \.width)
                         .offset(x: previewXOffset, y: -100)
+                        .accessibilityHidden(true)
                 }
             }
             .overlay(alignment: .bottom) {
@@ -200,6 +201,7 @@ extension VideoPlayer.PlaybackControls {
                     slowScrubbingIndicator
                         .offset(y: EdgeInsets.edgePadding * 2)
                         .transition(.opacity.animation(.linear(duration: 0.1)))
+                        .accessibilityHidden(true)
                 }
             }
             .onChange(of: isSlowScrubbing) {
