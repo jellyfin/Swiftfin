@@ -115,6 +115,10 @@ extension Defaults.Keys {
             UserKey("mediaItemViewType", default: .enhanced)
         }
 
+        static var resumePosterType: Key<PosterDisplayType> {
+            UserKey("resumePosterType", default: .landscape)
+        }
+
         static var nextUpPosterType: Key<PosterDisplayType> {
             UserKey("nextUpPosterType", default: .portrait)
         }
@@ -123,8 +127,12 @@ extension Defaults.Keys {
             UserKey("recentlyAddedPosterType", default: .portrait)
         }
 
+        static var recentlyPlayedPosterType: Key<PosterDisplayType> {
+            UserKey("recentlyPlayedPosterType", default: .portrait)
+        }
+
         static var latestInLibraryPosterType: Key<PosterDisplayType> {
-            UserKey("latestInLibraryPosterType", default: .portrait)
+            UserKey("latestInLibraryPosterType", default: .landscape)
         }
 
         static var shouldShowRecommendations: Key<Bool> {

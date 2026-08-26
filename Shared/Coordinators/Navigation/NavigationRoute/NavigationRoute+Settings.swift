@@ -184,6 +184,12 @@ extension NavigationRoute {
         CustomizeViewsSettings.LibrarySection()
     }
 
+    static let posterOrientationSettings = NavigationRoute(
+        id: "posterOrientationSettings"
+    ) {
+        CustomizeViewsSettings.PosterOrientationSection()
+    }
+
     static let posterSettings = NavigationRoute(
         id: "posterSettings"
     ) {

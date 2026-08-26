@@ -38,6 +38,9 @@ extension CustomizeViewsSettings {
         @Default(.Customization.Indicators.unplayedStyle)
         private var unplayedStyle
 
+        @Router
+        private var router
+
         @State
         private var previewItemState: PreviewItemState = .unplayed
 
@@ -143,6 +146,12 @@ extension CustomizeViewsSettings {
                     Toggle(L10n.useSeriesThumb, isOn: $useSeriesLandscapeBackdrop)
                 } header: {
                     Text(L10n.episode)
+                }
+
+                Section {
+                    ChevronButton(L10n.orientation) {
+                        router.route(to: .posterOrientationSettings)
+                    }
                 }
             } image: {
                 CenteredLazyVGrid(
