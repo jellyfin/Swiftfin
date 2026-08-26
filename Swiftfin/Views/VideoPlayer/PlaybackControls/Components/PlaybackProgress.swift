@@ -23,6 +23,10 @@ extension VideoPlayer.PlaybackControls {
 
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
+        @Default(.VideoPlayer.jumpBackwardInterval)
+        private var jumpBackwardInterval
+        @Default(.VideoPlayer.jumpForwardInterval)
+        private var jumpForwardInterval
 
         @Environment(ViewState.self)
         private var viewState
@@ -30,6 +34,12 @@ extension VideoPlayer.PlaybackControls {
         private var manager: MediaPlayerManager
         @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>
+
+        @AccessibilityFocusState
+        private var isAccessibilityFocused: Bool
+
+        @State
+        private var announcedSeconds: Duration = .zero
 
         @State
         private var currentTranslation: CGPoint = .zero
@@ -160,6 +170,35 @@ extension VideoPlayer.PlaybackControls {
             .disabled(manager.state == .loadingItem)
         }
 
+        private var accessibilityValue: String {
+            guard let runtime = manager.item.runtime, runtime > .zero else {
+                return announcedSeconds.formatted(.spokenRuntime)
+            }
+
+            return L10n.playbackPositionOfTotal(
+                announcedSeconds.formatted(.spokenRuntime),
+                runtime.formatted(.spokenRuntime)
+            )
+        }
+
+        private func accessibilityAdjust(_ direction: AccessibilityAdjustmentDirection) {
+
+            let interval: Duration = switch direction {
+            case .increment: jumpForwardInterval.rawValue
+            case .decrement: .zero - jumpBackwardInterval.rawValue
+            @unknown default: .zero
+            }
+
+            guard interval != .zero, let runtime = manager.item.runtime, runtime > .zero else { return }
+
+            let newSeconds = clamp(scrubbedSeconds + interval, min: .zero, max: runtime)
+
+            announcedSeconds = newSeconds
+            scrubbedSecondsBox.value = newSeconds
+            manager.seconds = newSeconds
+            manager.proxy?.setSeconds(newSeconds)
+        }
+
         var body: some View {
             VStack(spacing: 5) {
                 if manager.item.isLiveStream {
@@ -169,6 +208,12 @@ extension VideoPlayer.PlaybackControls {
                 } else {
                     capsuleSlider
                         .trackingSize($sliderSize)
+                        .accessibilityElement()
+                        .accessibilityLabel(L10n.playbackPosition)
+                        .accessibilityValue(accessibilityValue)
+                        .accessibilityAdjustableAction(accessibilityAdjust)
+                        .accessibilityFocused($isAccessibilityFocused)
+                        .contentShape(.accessibility, Rectangle().inset(by: -15))
 
                     SplitTimeStamp()
                         .offset(y: isScrubbing ? 5 : 0)
@@ -199,6 +244,10 @@ extension VideoPlayer.PlaybackControls {
             .onChange(of: isSlowScrubbing) {
                 guard isScrubbing else { return }
                 UIDevice.impact(.soft)
+            }
+            .onChange(of: scrubbedSeconds) {
+                guard !isAccessibilityFocused else { return }
+                announcedSeconds = scrubbedSeconds
             }
         }
     }
