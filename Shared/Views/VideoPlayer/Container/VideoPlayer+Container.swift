@@ -549,6 +549,11 @@ extension VideoPlayer {
                 didInitiallyAppear = true
             }
 
+            #if os(iOS)
+            setAccessibilityViewIsModal(true)
+            UIAccessibility.post(notification: .screenChanged, argument: view)
+            #endif
+
             #if os(tvOS)
             Task { @MainActor in
                 disableTogglePlayPauseCommand()
@@ -742,10 +747,23 @@ extension VideoPlayer {
             viewState.centerOffsetBox.value = centerOffset
         }
 
+        // MARK: - iOS
+
         #if os(iOS)
         override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
             viewState.cancelTapGesture()
+            setAccessibilityViewIsModal(false)
+        }
+
+        private func setAccessibilityViewIsModal(_ isModal: Bool) {
+            var controller: UIViewController = self
+
+            while let parent = controller.parent {
+                controller = parent
+            }
+
+            controller.view.accessibilityViewIsModal = isModal
         }
         #endif
 
