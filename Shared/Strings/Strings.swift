@@ -1824,6 +1824,8 @@ internal enum L10n {
   internal static let time = L10n.tr("Localizable", "time", fallback: "Time")
   /// Time Base
   internal static let timeBase = L10n.tr("Localizable", "timeBase", fallback: "Time Base")
+  /// Time elapsed
+  internal static let timeElapsed = L10n.tr("Localizable", "timeElapsed", fallback: "Time elapsed")
   /// Time left
   internal static let timeLeft = L10n.tr("Localizable", "timeLeft", fallback: "Time left")
   /// Time limit
@@ -1844,6 +1846,8 @@ internal enum L10n {
   internal static let trailer = L10n.tr("Localizable", "trailer", fallback: "Trailer")
   /// Trailers
   internal static let trailers = L10n.tr("Localizable", "trailers", fallback: "Trailers")
+  /// Switches between time left and total time
+  internal static let trailingTimestampAccessibilityHint = L10n.tr("Localizable", "trailingTimestampAccessibilityHint", fallback: "Switches between time left and total time")
   /// Trailing value
   internal static let trailingValue = L10n.tr("Localizable", "trailingValue", fallback: "Trailing value")
   /// Transcode
