@@ -81,6 +81,8 @@ extension VideoPlayer.PlaybackControls {
                 .padding(10)
             }
             .foregroundStyle(.primary)
+            .accessibilityLabel(L10n.jumpForward)
+            .accessibilityValue(jumpForwardInterval.rawValue.formatted(.spokenRuntime))
         }
 
         @ViewBuilder
@@ -98,6 +100,8 @@ extension VideoPlayer.PlaybackControls {
                 .padding(10)
             }
             .foregroundStyle(.primary)
+            .accessibilityLabel(L10n.jumpBackward)
+            .accessibilityValue(jumpBackwardInterval.rawValue.formatted(.spokenRuntime))
         }
 
         var body: some View {
