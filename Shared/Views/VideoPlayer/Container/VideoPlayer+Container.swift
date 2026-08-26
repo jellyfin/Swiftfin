@@ -108,6 +108,7 @@ extension VideoPlayer {
                             .isVisible(shouldPresentDimOverlay)
                         }
                         .allowsHitTesting(false)
+                        .accessibilityHidden(true)
                 }
             }
         }
