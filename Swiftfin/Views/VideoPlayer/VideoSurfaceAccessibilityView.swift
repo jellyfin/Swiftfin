@@ -59,6 +59,9 @@ extension VideoPlayer {
                 .accessibilityFocused($isAccessibilityFocused)
                 .accessibilitySortPriority(-1)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                .onChange(of: isAccessibilityFocused) {
+                    containerState.isAccessibilityFocusOnVideo = isAccessibilityFocused
+                }
                 .onChange(of: isPresentingOverlay) {
                     guard !isPresentingOverlay, UIAccessibility.isVoiceOverRunning else { return }
                     isAccessibilityFocused = true

@@ -69,6 +69,17 @@ class VideoPlayerContainerState: ObservableObject {
     }
 
     @Published
+    var isAccessibilityFocusOnVideo: Bool = false {
+        didSet {
+            if isAccessibilityFocusOnVideo {
+                timer.poke()
+            } else {
+                timer.stop()
+            }
+        }
+    }
+
+    @Published
     var isGuestSupplement: Bool = false
 
     // TODO: rename isPresentingPlaybackControls
@@ -181,6 +192,9 @@ class VideoPlayerContainerState: ObservableObject {
         timerCancellable = timer.sink { [weak self] in
             guard let self else { return }
             guard !isScrubbing, !isPresentingSupplement, manager?.playbackRequestStatus != .paused else { return }
+
+            let isAssistiveTechnologyRunning = UIAccessibility.isVoiceOverRunning || UIAccessibility.isSwitchControlRunning
+            guard !isAssistiveTechnologyRunning || isAccessibilityFocusOnVideo else { return }
 
             withAnimation(.linear(duration: 0.25)) {
                 self.isPresentingOverlay = false
