@@ -1204,6 +1204,8 @@ internal enum L10n {
   internal static let playback = L10n.tr("Localizable", "playback", fallback: "Playback")
   /// Shows or hides the playback controls
   internal static let playbackControlsAccessibilityHint = L10n.tr("Localizable", "playbackControlsAccessibilityHint", fallback: "Shows or hides the playback controls")
+  /// Playback position
+  internal static let playbackPosition = L10n.tr("Localizable", "playbackPosition", fallback: "Playback position")
   /// %1$@ of %2$@
   internal static func playbackPositionOfTotal(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "playbackPositionOfTotal", String(describing: p1), String(describing: p2), fallback: "%1$@ of %2$@")
