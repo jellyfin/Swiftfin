@@ -24,9 +24,12 @@ enum FilterBarPopGestureExclusion {
 
     static func install(on scrollView: UIScrollView) {
         guard !installedScrollViews.contains(scrollView) else { return }
-        installedScrollViews.add(scrollView)
 
+        /// The scroll view is not in a navigation controller on the first introspection pass,
+        /// so record it only once the requirement is actually installed.
         guard let navigationController = scrollView.enclosingViewController?.navigationController else { return }
+
+        installedScrollViews.add(scrollView)
 
         let scrollPan = scrollView.panGestureRecognizer
         navigationController.interactivePopGestureRecognizer?
