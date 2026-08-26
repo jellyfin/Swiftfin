@@ -135,6 +135,8 @@ extension VideoPlayer {
                                             : .allButDown)
                                 )
 
+                            VideoSurfaceAccessibilityView()
+
                             playbackControls
                         }
                         #else
