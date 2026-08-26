@@ -22,6 +22,8 @@ extension CustomizeViewsSettings {
         private var maxNextUp
         @Default(.Customization.Home.resumeNextUp)
         private var resumeNextUp
+        @Default(.Customization.Home.showLatestPrefix)
+        private var showLatestPrefix
 
         var body: some View {
             Section(L10n.home) {
@@ -29,6 +31,7 @@ extension CustomizeViewsSettings {
                 Toggle(L10n.recentlyAdded, isOn: $showRecentlyAdded)
                 Toggle(L10n.recentlyPlayed, isOn: $showRecentlyPlayed)
                 Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
+                Toggle(L10n.latestInLibraryPrefix, isOn: $showLatestPrefix)
 
                 StateAdapter(initialValue: false) { isNextUpDaysPresented in
                     ChevronButton {

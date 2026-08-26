@@ -230,6 +230,10 @@ extension Defaults.Keys {
             static var showRecentlyPlayed: Key<Bool> {
                 UserKey("showRecentlyPlayed", default: false)
             }
+
+            static var showLatestPrefix: Key<Bool> {
+                UserKey("showLatestPrefix", default: true)
+            }
         }
 
         enum Search {

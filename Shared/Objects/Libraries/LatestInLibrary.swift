@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 
 struct LatestInLibrary: BaseItemKindLibrary {
@@ -14,8 +15,12 @@ struct LatestInLibrary: BaseItemKindLibrary {
     let parent: TitledLibraryParent
 
     init(library: BaseItemDto) {
+        let displayTitle = Defaults[.Customization.Home.showLatestPrefix]
+            ? L10n.latestWithString(library.displayTitle)
+            : library.displayTitle
+
         self.parent = .init(
-            displayTitle: L10n.latestWithString(library.displayTitle),
+            displayTitle: displayTitle,
             id: library.id
         )
         self.libraryItemTypes = library.supportedItemTypes

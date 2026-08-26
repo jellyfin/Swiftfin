@@ -888,6 +888,8 @@ internal enum L10n {
   }
   /// Last seen
   internal static let lastSeen = L10n.tr("Localizable", "lastSeen", fallback: "Last seen")
+  /// Prefix library titles with Latest
+  internal static let latestInLibraryPrefix = L10n.tr("Localizable", "latestInLibraryPrefix", fallback: "Prefix library titles with Latest")
   /// Latest %@
   internal static func latestWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "latestWithString", String(describing: p1), fallback: "Latest %@")
