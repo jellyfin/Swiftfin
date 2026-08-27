@@ -51,16 +51,19 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
 
         cinematicSelectionContentGroup
         #else
+        let resumePosterType = Defaults[.Customization.resumePosterType]
+
         PosterGroup(
             library: ResumeItemsLibrary(mediaTypes: [.video]),
-            posterDisplayType: .landscape,
-            posterSize: .medium,
+            posterDisplayType: resumePosterType,
+            posterSize: resumePosterType == .landscape ? .medium : .small,
             _viewContext: .isInResume
         )
         #endif
 
         PosterGroup(
-            library: NextUpLibrary()
+            library: NextUpLibrary(),
+            posterDisplayType: Defaults[.Customization.nextUpPosterType]
         )
 
         if Defaults[.Customization.Home.showRecentlyAdded] {
@@ -77,7 +80,8 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
                         sortBy: [.dateCreated],
                         sortOrder: [.descending]
                     )
-                )
+                ),
+                posterDisplayType: Defaults[.Customization.recentlyAddedPosterType]
             )
             #endif
         }
@@ -92,7 +96,8 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
                         sortOrder: [.descending],
                         traits: [.isPlayed]
                     )
-                )
+                ),
+                posterDisplayType: Defaults[.Customization.recentlyPlayedPosterType]
             )
         }
 
@@ -108,7 +113,7 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
             .map {
                 PosterGroup(
                     library: $0,
-                    posterDisplayType: .landscape
+                    posterDisplayType: Defaults[.Customization.latestInLibraryPosterType]
                 )
             }
     }

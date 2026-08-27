@@ -1130,6 +1130,8 @@ internal enum L10n {
   internal static let orange = L10n.tr("Localizable", "orange", fallback: "Orange")
   /// Order
   internal static let order = L10n.tr("Localizable", "order", fallback: "Order")
+  /// Orientation
+  internal static let orientation = L10n.tr("Localizable", "orientation", fallback: "Orientation")
   /// Original air date
   internal static let originalAirDate = L10n.tr("Localizable", "originalAirDate", fallback: "Original air date")
   /// Original aspect ratio
@@ -1232,6 +1234,8 @@ internal enum L10n {
   internal static let playPreviousItem = L10n.tr("Localizable", "playPreviousItem", fallback: "Play previous item")
   /// Portrait
   internal static let portrait = L10n.tr("Localizable", "portrait", fallback: "Portrait")
+  /// Choose the shape of the posters shown in each section.
+  internal static let posterOrientationDescription = L10n.tr("Localizable", "posterOrientationDescription", fallback: "Choose the shape of the posters shown in each section.")
   /// Posters
   internal static let posters = L10n.tr("Localizable", "posters", fallback: "Posters")
   /// Preferred language
