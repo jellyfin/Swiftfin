@@ -182,6 +182,8 @@ internal enum L10n {
   internal static let autoSwitch = L10n.tr("Localizable", "autoSwitch", fallback: "Auto switch")
   /// Connections will automatically switch based on Wi-Fi or cellular connectivity and the ordering of the connections below.
   internal static let autoSwitchDescription = L10n.tr("Localizable", "autoSwitchDescription", fallback: "Connections will automatically switch based on Wi-Fi or cellular connectivity and the ordering of the connections below.")
+  /// Back
+  internal static let back = L10n.tr("Localizable", "back", fallback: "Back")
   /// Backdrop
   internal static let backdrop = L10n.tr("Localizable", "backdrop", fallback: "Backdrop")
   /// A wide background image displayed behind the item details on its media page. Multiple backdrops can be added and will cycle or be selected randomly.
@@ -264,6 +266,8 @@ internal enum L10n {
   internal static let capabilities = L10n.tr("Localizable", "capabilities", fallback: "Capabilities")
   /// Cast & crew
   internal static let castAndCrew = L10n.tr("Localizable", "castAndCrew", fallback: "Cast & crew")
+  /// Cast to Device
+  internal static let castToDevice = L10n.tr("Localizable", "castToDevice", fallback: "Cast to Device")
   /// Category
   internal static let category = L10n.tr("Localizable", "category", fallback: "Category")
   /// Cellular
@@ -1092,6 +1096,8 @@ internal enum L10n {
   internal static let noActivity = L10n.tr("Localizable", "noActivity", fallback: "No activity")
   /// No profiles defined. Playback issues may occur.
   internal static let noDeviceProfileWarning = L10n.tr("Localizable", "noDeviceProfileWarning", fallback: "No profiles defined. Playback issues may occur.")
+  /// No devices found
+  internal static let noDevicesFound = L10n.tr("Localizable", "noDevicesFound", fallback: "No devices found")
   /// No episodes available
   internal static let noEpisodesAvailable = L10n.tr("Localizable", "noEpisodesAvailable", fallback: "No episodes available")
   /// No items
@@ -1110,6 +1116,8 @@ internal enum L10n {
   internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
   /// No runtime limit
   internal static let noRuntimeLimit = L10n.tr("Localizable", "noRuntimeLimit", fallback: "No runtime limit")
+  /// Nothing playing
+  internal static let nothingPlaying = L10n.tr("Localizable", "nothingPlaying", fallback: "Nothing playing")
   /// Official rating
   internal static let officialRating = L10n.tr("Localizable", "officialRating", fallback: "Official rating")
   /// OK
@@ -1284,6 +1292,8 @@ internal enum L10n {
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public users")
   /// Quality
   internal static let quality = L10n.tr("Localizable", "quality", fallback: "Quality")
+  /// Queue
+  internal static let queue = L10n.tr("Localizable", "queue", fallback: "Queue")
   /// Quick Connect
   internal static let quickConnect = L10n.tr("Localizable", "quickConnect", fallback: "Quick Connect")
   /// Quick Connect code
@@ -1354,12 +1364,22 @@ internal enum L10n {
   internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
   /// Reorder
   internal static let reorder = L10n.tr("Localizable", "reorder", fallback: "Reorder")
+  /// Repeat All
+  internal static let repeatAll = L10n.tr("Localizable", "repeatAll", fallback: "Repeat All")
+  /// Repeat Off
+  internal static let repeatOff = L10n.tr("Localizable", "repeatOff", fallback: "Repeat Off")
+  /// Repeat One
+  internal static let repeatOne = L10n.tr("Localizable", "repeatOne", fallback: "Repeat One")
   /// Replace
   internal static let replace = L10n.tr("Localizable", "replace", fallback: "Replace")
   /// Replace all metadata
   internal static let replaceAllMetadata = L10n.tr("Localizable", "replaceAllMetadata", fallback: "Replace all metadata")
   /// Are you sure you want to replace this item?
   internal static let replaceItemConfirmation = L10n.tr("Localizable", "replaceItemConfirmation", fallback: "Are you sure you want to replace this item?")
+  /// %1$@ is currently playing. Replace it with %2$@?
+  internal static func replaceQueueWarning(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "replaceQueueWarning", String(describing: p1), String(describing: p2), fallback: "%1$@ is currently playing. Replace it with %2$@?")
+  }
   /// Replace subtitle
   internal static let replaceSubtitle = L10n.tr("Localizable", "replaceSubtitle", fallback: "Replace subtitle")
   /// Required
@@ -1466,6 +1486,8 @@ internal enum L10n {
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See more")
   /// Select all
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select all")
+  /// Select device
+  internal static let selectDevice = L10n.tr("Localizable", "selectDevice", fallback: "Select device")
   /// Select image
   internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select image")
   /// Select server
@@ -1474,6 +1496,8 @@ internal enum L10n {
   internal static let send = L10n.tr("Localizable", "send", fallback: "Send")
   /// Send progress reports
   internal static let sendProgressReports = L10n.tr("Localizable", "sendProgressReports", fallback: "Send progress reports")
+  /// Send text
+  internal static let sendText = L10n.tr("Localizable", "sendText", fallback: "Send text")
   /// Series
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Series date played
@@ -1514,6 +1538,8 @@ internal enum L10n {
   internal static let showUnwatched = L10n.tr("Localizable", "showUnwatched", fallback: "Show unwatched")
   /// Show watched
   internal static let showWatched = L10n.tr("Localizable", "showWatched", fallback: "Show watched")
+  /// Shuffle
+  internal static let shuffle = L10n.tr("Localizable", "shuffle", fallback: "Shuffle")
   /// Shutdown server
   internal static let shutdownServer = L10n.tr("Localizable", "shutdownServer", fallback: "Shutdown server")
   /// Are you sure you want to shutdown the server?

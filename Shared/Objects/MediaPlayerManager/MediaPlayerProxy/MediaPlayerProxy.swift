@@ -55,6 +55,40 @@ protocol MediaPlayerSubtitleTrackConfigurable {
     func setSubtitleStream(_ stream: MediaStream)
 }
 
+/// A proxy for a media player not owned by a `MediaPlayerManager`.
+@MainActor
+protocol RemoteMediaPlayerProxy: MediaPlayerProxy {
+
+    var activeItem: BaseItemDto? { get }
+    var hasStarted: Bool { get }
+    var isPaused: Bool { get }
+    var seconds: Duration { get }
+    var selectedAudioStreamIndex: Int { get }
+    var selectedSubtitleStreamIndex: Int { get }
+}
+
+@MainActor
+protocol MediaPlayerVolumeConfigurable {
+
+    var isMuted: Bool { get }
+    var volumeLevel: Int { get }
+
+    func setVolume(_ level: Int)
+    func toggleMute()
+}
+
+@MainActor
+protocol MediaPlayerQueueConfigurable {
+
+    var queueCount: Int { get }
+    var queueIndex: Int? { get }
+    var queueItems: [BaseItemDto] { get }
+
+    func nextItem()
+    func playQueueItem(_ item: BaseItemDto)
+    func previousItem()
+}
+
 protocol MediaPlayerOffsetConfigurable {
     func setAudioOffset(_ seconds: Duration)
     func setSubtitleOffset(_ seconds: Duration)
