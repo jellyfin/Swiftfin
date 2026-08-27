@@ -11,13 +11,7 @@ import SwiftUI
 extension EnvironmentValues {
 
     @Entry
-    var enabledPosterIndicators: PosterIndicator = .all
-
-    @Entry
-    var showPosterLabels: Bool = true
-
-    @Entry
-    var useSeriesLandscapeBackdrop: Bool = true
+    var posterConfiguration: PosterConfiguration = .default
 
     @Entry
     var audioOffset: Binding<Duration> = .constant(.zero)

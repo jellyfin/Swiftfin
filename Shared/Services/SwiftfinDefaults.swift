@@ -131,10 +131,6 @@ extension Defaults.Keys {
             UserKey("shouldShowRecommendations", default: true)
         }
 
-        static var showPosterLabels: Key<Bool> {
-            UserKey("showPosterLabels", default: true)
-        }
-
         static var shouldShowMissingSeasons: Key<Bool> {
             UserKey("shouldShowMissingSeasons", default: true)
         }
@@ -152,21 +148,10 @@ extension Defaults.Keys {
             UserKey("searchPosterType", default: .portrait)
         }
 
-        enum Episodes {
+        enum Poster {
 
-            static var useSeriesLandscapeBackdrop: Key<Bool> {
-                UserKey("useSeriesBackdrop", default: true)
-            }
-        }
-
-        enum Indicators {
-
-            static var enabled: Key<PosterIndicator> {
-                UserKey("enabledPosterIndicators", default: .all)
-            }
-
-            static var unplayedStyle: Key<UnplayedIndicatorType> {
-                UserKey("unplayedIndicatorStyle", default: .indicator)
+            static var configuration: Key<PosterConfiguration> {
+                UserKey("posterConfiguration", default: .default)
             }
         }
 

@@ -10,8 +10,8 @@ import SwiftUI
 
 struct PosterButton<Item: Poster>: View {
 
-    @Environment(\.showPosterLabels)
-    private var showPosterLabels
+    @Environment(\.posterConfiguration)
+    private var posterConfiguration
 
     @Environment(\.viewContext)
     private var viewContext
@@ -68,7 +68,7 @@ struct PosterButton<Item: Poster>: View {
         VStack(alignment: .leading) {
             posterImage(overlay: overlay)
 
-            if showPosterLabels {
+            if posterConfiguration.showLabels {
                 item.posterLabel
                     .allowsHitTesting(false)
             }
@@ -83,7 +83,7 @@ struct PosterButton<Item: Poster>: View {
             #if os(tvOS)
             posterImage(overlay: item.posterOverlay(for: displayType))
 
-            if showPosterLabels {
+            if posterConfiguration.showLabels {
                 item.posterLabel
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

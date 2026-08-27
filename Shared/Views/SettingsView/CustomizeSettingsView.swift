@@ -77,8 +77,8 @@ struct CustomizeSettingsView: View {
     @Default(.Customization.shouldShowMissingSeasons)
     private var shouldShowMissingSeasons
 
-    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
-    private var useSeriesLandscapeBackdrop
+    @Default(.Customization.Poster.configuration)
+    private var posterConfiguration
 
     // MARK: - Item Management Defaults
 
@@ -305,7 +305,7 @@ struct CustomizeSettingsView: View {
     private var itemViewSettings: some View {
         if UIDevice.isPhone {
             Section {
-                Toggle(L10n.useSeriesImageForEpisodes, isOn: $useSeriesLandscapeBackdrop)
+                Toggle(L10n.useSeriesImageForEpisodes, isOn: $posterConfiguration.useSeriesLandscapeBackdrop)
             } header: {
                 Text(L10n.itemView)
             }
