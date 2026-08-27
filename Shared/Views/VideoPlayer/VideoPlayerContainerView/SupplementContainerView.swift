@@ -40,6 +40,41 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             containerState.isScrubbing
         }
 
+        #if os(iOS)
+        private var isPresentingFullScreenSupplement: Bool {
+            !containerState.isCompact &&
+                containerState.selectedSupplement?.presentationStyle == .expanded
+        }
+
+        private func onCloseButtonPressed(isPressed: Bool) {
+            if isPressed {
+                containerState.timer.stop()
+            } else {
+                containerState.timer.poke()
+            }
+        }
+
+        private var closeButton: some View {
+            Button {
+                containerState.select(supplement: nil)
+            } label: {
+                Label(L10n.close, systemImage: "chevron.down")
+                    .contentShape(Rectangle())
+            }
+            .frame(
+                width: VideoPlayer.PlaybackControls.Toolbar.buttonSize,
+                height: VideoPlayer.PlaybackControls.Toolbar.buttonSize
+            )
+            .font(.system(size: UIDevice.isTV ? 30 : 24, weight: .semibold))
+            .labelStyle(.iconOnly)
+            .modifier(
+                VideoPlayer.PlaybackControls.OverlayButtonStyleModifier(
+                    onPressed: onCloseButtonPressed
+                )
+            )
+        }
+        #endif
+
         private var defaultTabFocus: SupplementElement? {
             if let id = containerState.selectedSupplement?.id {
                 return .supplementTab(id)
@@ -79,6 +114,12 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     .disabled(true)
             } content: {
                 HStack(spacing: VideoPlayer.PlaybackControls.Toolbar.supplementButtonSpacing) {
+                    #if os(iOS)
+                    if isPresentingFullScreenSupplement {
+                        closeButton
+                    }
+                    #endif
+
                     if containerState.isGuestSupplement, let supplement = containerState.selectedSupplement {
                         Button(supplement.displayTitle) {
                             containerState.select(supplement: nil)
@@ -139,7 +180,14 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                     #else
                     SupplementTabView(
                         items: Array(currentSupplements),
-                        selection: containerState.selectedSupplement?.id
+                        selection: containerState.selectedSupplement?.id,
+                        onPresentedSelectionChange: { id in
+                            let supplement = id.flatMap { currentSupplements[id: $0] }
+                            containerState.containerView?.presentSupplementContainer(
+                                supplement != nil,
+                                presentationStyle: supplement?.presentationStyle
+                            )
+                        }
                     ) { supplement in
                         supplementContainer(for: supplement.supplement)
                             .eraseToAnyView()
@@ -208,6 +256,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 }
             }
             #if os(iOS)
+            .onChange(of: containerState.selectedSupplement?.id) { _, id in
+                containerState.containerView?.presentSupplementContainer(id != nil)
+            }
             .environment(
                 \.panAction,
                 .init(

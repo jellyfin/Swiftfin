@@ -12,10 +12,8 @@ import SwiftUI
 struct EPGSupplement: MediaPlayerSupplement {
 
     let displayTitle: String = L10n.guide
-
-    var id: String {
-        "EPG"
-    }
+    let id: String = "EPG"
+    let presentationStyle: MediaPlayerSupplementPresentationStyle = .expanded
 
     var videoPlayerBody: some PlatformView {
         GuideOverlay()
@@ -26,58 +24,61 @@ extension EPGSupplement {
 
     private struct GuideOverlay: PlatformView {
 
+        @Environment(\.safeAreaInsets)
+        private var safeAreaInsets
+
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @StateObject
-        private var channelsViewModel = PagingLibraryViewModel(library: EPGChannelsLibrary())
+        @State
+        private var lastSuccessfulRefresh = Date.distantPast
+
         @StateObject
         private var viewModel = EPGViewModel()
 
+        private let refreshInterval: TimeInterval = 3 * 60
+
+        @ViewBuilder
         private var content: some View {
-            ZStack {
-                switch (channelsViewModel.state, viewModel.state) {
-                case (.initial, _), (.refreshing, _), (_, .initial), (_, .refreshing):
-                    ProgressView()
-                case (.error, _):
-                    channelsViewModel.error.map(ErrorView.init)
-                case (_, .error):
-                    viewModel.error.map(ErrorView.init)
-                case (.content, _):
-                    if channelsViewModel.displayedElements.isEmpty {
-                        ContentUnavailableView(L10n.noPrograms.localizedCapitalized, systemImage: "tv")
-                    } else {
-                        EPGContentView(
-                            viewModel: viewModel,
-                            channelsViewModel: channelsViewModel,
-                            playing: manager.item.id
-                        ) { item in
-                            if item.id == manager.item.id || item.channelID == manager.item.id {
-                                containerState.select(supplement: nil)
-                                return
-                            }
-
-                            guard let provider = item.getPlaybackItemProvider(userSession: viewModel.userSession) else {
-                                return
-                            }
-
-                            containerState.select(supplement: nil)
-                            manager.playNewItem(provider: provider)
-                        }
-                    }
-                }
+            EPGLoadableView(viewModel: viewModel) {
+                EPGContentView(
+                    viewModel: viewModel,
+                    selectedChannelID: manager.item.id,
+                    action: select
+                )
             }
+            .padding(.leading, safeAreaInsets.leading)
+            .padding(.trailing, safeAreaInsets.trailing)
+            .padding(.bottom, safeAreaInsets.bottom)
             .onFirstAppear {
-                if channelsViewModel.state == .initial {
-                    channelsViewModel.refresh()
+                viewModel.refresh(startDate: nil)
+            }
+            .onChange(of: viewModel.state) { _, state in
+                guard state == .content else { return }
+                lastSuccessfulRefresh = .now
+            }
+            .onChange(of: containerState.selectedSupplement?.id) { _, id in
+                guard id == "EPG",
+                      viewModel.state != .initial,
+                      viewModel.state != .refreshing,
+                      !viewModel.background.is(.gettingNextPage)
+                else { return }
+
+                let hasRecentGuide = Date.now.timeIntervalSince(lastSuccessfulRefresh) < refreshInterval
+                let hasError = viewModel.state == .error
+
+                guard hasError || !hasRecentGuide else { return }
+
+                Task {
+                    await viewModel.refresh(startDate: nil)
                 }
             }
-            .onChange(of: channelsViewModel.displayedElements) { _, channels in
-                guard viewModel.state == .initial else { return }
-                viewModel.refresh(channels: channels)
+            .refreshable {
+                await viewModel.refresh(startDate: nil)
             }
+            .focusSection()
         }
 
         var iOSView: some View {
@@ -87,6 +88,25 @@ extension EPGSupplement {
         var tvOSView: some View {
             content
                 .focusSection()
+        }
+
+        private func select(_ item: BaseItemDto) {
+            let playbackItem = item.channelID
+                .flatMap { channelID in
+                    viewModel.channels.first { $0.id == channelID }
+                } ?? item
+
+            if playbackItem.id == manager.item.id {
+                containerState.select(supplement: nil)
+                return
+            }
+
+            guard let provider = playbackItem.getPlaybackItemProvider(userSession: viewModel.userSession) else {
+                return
+            }
+
+            containerState.select(supplement: nil)
+            manager.playNewItem(provider: provider)
         }
     }
 }

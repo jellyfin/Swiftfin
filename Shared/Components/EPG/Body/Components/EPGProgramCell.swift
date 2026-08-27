@@ -6,173 +6,168 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
+import Combine
 import JellyfinAPI
 import SwiftUI
 
-final class EPGProgramCell: UICollectionViewCell {
+struct EPGProgramCell: View {
 
-    private let chevronView = UIImageView(image: UIImage(systemName: "chevron.down"))
-    private let timeLabel = UILabel()
-    private let titleLabel = UILabel()
+    @State
+    private var stickyOffset: CGFloat
 
-    private var accentColor: UIColor = .clear
-    private var baseColor: UIColor = .clear
-    private var isCurrent = false
+    let scrollState: EPGScrollState
+    let isCurrent: Bool
+    let isFocused: Bool
+    let accentColor: Color
+    let action: () -> Void
 
-    private(set) var block: ProgramBlock?
+    private let leadingOffset: CGFloat
+    private let presentation: ProgramCellPresentation
 
-    var stickyLeadingOffset: CGFloat = 0 {
-        didSet {
-            guard oldValue != stickyLeadingOffset else { return }
-            setNeedsLayout()
-        }
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        clipsToBounds = true
-
-        #if os(iOS)
-        focusEffect = nil
-        #endif
-
-        contentView.layer.cornerRadius = 6
-        contentView.clipsToBounds = true
-
-        titleLabel.textColor = .label
-        timeLabel.textColor = .secondaryLabel
-        chevronView.tintColor = .label
-        chevronView.contentMode = .scaleAspectFit
-
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(timeLabel)
-        contentView.addSubview(chevronView)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func configure(
+    init(
+        scrollState: EPGScrollState,
         block: ProgramBlock,
+        leadingOffset: CGFloat,
         isCurrent: Bool,
-        typeColor: UIColor?
+        isFocused: Bool,
+        accentColor: Color,
+        action: @escaping () -> Void
     ) {
-        let accent = Defaults[.accentColor]
-
-        self.block = block
+        self.scrollState = scrollState
         self.isCurrent = isCurrent
-        self.accentColor = UIColor(accent)
+        self.isFocused = isFocused
+        self.accentColor = accentColor
+        self.action = action
+        self.leadingOffset = leadingOffset
+        self.presentation = ProgramCellPresentation(block: block)
+        self._stickyOffset = State(
+            initialValue: max(0, scrollState.visibleLeadingOffset - leadingOffset)
+        )
+    }
 
-        if isCurrent {
-            baseColor = self.accentColor.withAlphaComponent(0.5)
-        } else if let typeColor {
-            baseColor = typeColor.withAlphaComponent(0.5)
+    private var backgroundColor: Color {
+        if isFocused {
+            .white
+        } else if isCurrent {
+            accentColor.opacity(0.5)
         } else {
-            baseColor = UIColor(Color.secondarySystemFill).withAlphaComponent(0.5)
+            Color.secondarySystemFill.opacity(0.5)
         }
+    }
 
-        let footnote = UIFont.preferredFont(forTextStyle: .footnote)
-        let caption = UIFont.preferredFont(forTextStyle: .caption2)
+    private var primaryColor: Color {
+        isFocused ? .black : .primary
+    }
 
-        titleLabel.font = .systemFont(ofSize: footnote.pointSize, weight: isCurrent ? .semibold : .regular)
-        timeLabel.font = caption
-        chevronView.preferredSymbolConfiguration = .init(font: caption)
+    private var secondaryColor: Color {
+        isFocused ? .black.opacity(0.6) : .secondary
+    }
 
+    private var stickyOffsetPublisher: AnyPublisher<CGFloat, Never> {
+        scrollState.visibleLeadingOffsetPublisher
+            .map { max(0, $0 - leadingOffset) }
+            .removeDuplicates { abs($0 - $1) <= 0.5 }
+            .eraseToAnyPublisher()
+    }
+
+    var body: some View {
+        Button(action: action) {
+            StickyProgramContentLayout(
+                stickyOffset: stickyOffset
+            ) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(presentation.title)
+                        .font(.footnote.weight(isCurrent ? .semibold : .regular))
+                        .foregroundStyle(primaryColor)
+
+                    Text(presentation.time)
+                        .font(.caption2)
+                        .foregroundStyle(secondaryColor)
+                }
+                .lineLimit(1)
+            }
+            .background(backgroundColor)
+            .overlay {
+                Rectangle()
+                    .strokeBorder(Color.secondarySystemFill.opacity(0.5), lineWidth: isFocused ? 0 : 1)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(EPGButtonStyle())
+        .accessibilityValue(isCurrent ? L10n.onNow : "")
+        .onReceive(stickyOffsetPublisher) { stickyOffset in
+            self.stickyOffset = stickyOffset
+        }
+    }
+}
+
+private struct ProgramCellPresentation {
+
+    let title: String
+    let time: String
+
+    init(block: ProgramBlock) {
         if block.isGroup {
             // swiftlint:disable:next hard_coded_display_string
-            titleLabel.text = "\(block.programs.count) \(L10n.programs)"
-            timeLabel.text = block.start.formatted(date: .omitted, time: .shortened)
+            self.title = "\(block.programs.count) \(L10n.programs)"
+            self.time = block.start.formatted(date: .omitted, time: .shortened)
         } else if let program = block.programs.first {
-            titleLabel.text = program.displayTitle
-            timeLabel.text = [
+            self.title = program.displayTitle
+            self.time = [
                 program.startDate?.formatted(date: .omitted, time: .shortened),
                 program.endDate?.formatted(date: .omitted, time: .shortened),
             ]
                 .compactMap(\.self)
                 .joined(separator: " \(String.bullet) ")
-        }
-
-        applyStyle()
-        setNeedsLayout()
-    }
-
-    private func applyStyle() {
-        contentView.backgroundColor = baseColor
-
-        if isFocused {
-            contentView.layer.borderWidth = 4
-            contentView.layer.borderColor = accentColor.cgColor
         } else {
-            contentView.layer.borderWidth = 1
-            contentView.layer.borderColor = UIColor(Color.secondarySystemFill).withAlphaComponent(0.5).cgColor
+            self.title = L10n.programs
+            self.time = ""
         }
     }
+}
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
+private struct StickyProgramContentLayout: Layout {
 
-        let padding: CGFloat = {
-            guard UIDevice.isTV else { return 2 }
-            return isFocused ? 0 : 4
-        }()
+    let stickyOffset: CGFloat
 
-        contentView.frame = bounds.insetBy(dx: padding, dy: padding)
+    func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) -> CGSize {
+        proposal.replacingUnspecifiedDimensions()
+    }
 
-        let showsText = bounds.width >= 70
-        let showsChevron = showsText && block?.isGroup == true
+    func placeSubviews(
+        in bounds: CGRect,
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) {
+        guard let content = subviews.first else { return }
 
-        titleLabel.isHidden = !showsText
-        timeLabel.isHidden = !showsText
-        chevronView.isHidden = !showsChevron
-
-        guard showsText else { return }
-
-        let limit = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        let titleSize = titleLabel.sizeThatFits(limit)
-        let timeSize = timeLabel.sizeThatFits(limit)
-        let chevronSize = showsChevron ? chevronView.intrinsicContentSize : .zero
-
-        let textWidth = max(titleSize.width + (showsChevron ? chevronSize.width + 4 : 0), timeSize.width)
+        let contentSize = content.sizeThatFits(.unspecified)
+        let horizontalPadding: CGFloat = 8
+        let maximumShift = max(0, bounds.width - contentSize.width - horizontalPadding * 2)
         let shift = clamp(
-            stickyLeadingOffset - frame.minX,
+            stickyOffset,
             min: 0,
-            max: max(0, contentView.bounds.width - textWidth - 16)
-        )
-        let originX = 8 + shift
-
-        titleLabel.frame = CGRect(
-            x: originX,
-            y: 6,
-            width: min(titleSize.width, max(0, contentView.bounds.width - originX - 8)),
-            height: titleSize.height
+            max: maximumShift
         )
 
-        chevronView.frame = CGRect(
-            x: titleLabel.frame.maxX + 4,
-            y: titleLabel.frame.midY - chevronSize.height / 2,
-            width: chevronSize.width,
-            height: chevronSize.height
+        content.place(
+            at: CGPoint(
+                x: bounds.minX + horizontalPadding + shift,
+                y: bounds.minY + 6
+            ),
+            anchor: .topLeading,
+            proposal: ProposedViewSize(
+                width: min(
+                    contentSize.width,
+                    max(0, bounds.width - horizontalPadding * 2 - shift)
+                ),
+                height: contentSize.height
+            )
         )
-
-        timeLabel.frame = CGRect(
-            x: originX,
-            y: titleLabel.frame.maxY + 2,
-            width: min(timeSize.width, max(0, contentView.bounds.width - originX - 8)),
-            height: timeSize.height
-        )
-    }
-
-    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
-        super.didUpdateFocus(in: context, with: coordinator)
-
-        coordinator.addCoordinatedAnimations {
-            self.applyStyle()
-            self.setNeedsLayout()
-            self.layoutIfNeeded()
-        }
     }
 }

@@ -15,10 +15,22 @@ final class EPGGridLayout: UICollectionViewLayout {
     var contentWidth: CGFloat = 0
     var nowColor: UIColor = .clear
     var nowOffset: CGFloat?
-    var rowHeight: CGFloat = 0
-    var sectionFrames: [[CGRect]] = []
+    var rowHeight: CGFloat = 0 {
+        didSet {
+            if rowHeight != oldValue {
+                needsSectionAttributesUpdate = true
+            }
+        }
+    }
+
+    var sectionFrames: [[CGRect]] = [] {
+        didSet {
+            needsSectionAttributesUpdate = true
+        }
+    }
 
     private var contentHeight: CGFloat = 0
+    private var needsSectionAttributesUpdate = true
     private var nowLineAttributes: EPGNowLineAttributes?
     private var sectionAttributes: [[UICollectionViewLayoutAttributes]] = []
 
@@ -38,16 +50,20 @@ final class EPGGridLayout: UICollectionViewLayout {
     }
 
     override func prepare() {
-        contentHeight = CGFloat(sectionFrames.count) * rowHeight
+        if needsSectionAttributesUpdate {
+            contentHeight = CGFloat(sectionFrames.count) * rowHeight
 
-        sectionAttributes = sectionFrames.enumerated().map { section, frames in
-            frames.enumerated().map { item, frame in
-                let attributes = UICollectionViewLayoutAttributes(
-                    forCellWith: IndexPath(item: item, section: section)
-                )
-                attributes.frame = frame
-                return attributes
+            sectionAttributes = sectionFrames.enumerated().map { section, frames in
+                frames.enumerated().map { item, frame in
+                    let attributes = UICollectionViewLayoutAttributes(
+                        forCellWith: IndexPath(item: item, section: section)
+                    )
+                    attributes.frame = frame
+                    return attributes
+                }
             }
+
+            needsSectionAttributesUpdate = false
         }
 
         if let nowOffset, (0 ... contentWidth).contains(nowOffset) {

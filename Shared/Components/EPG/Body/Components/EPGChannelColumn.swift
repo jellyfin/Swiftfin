@@ -7,14 +7,11 @@
 //
 
 import Defaults
-import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct EPGChannelColumn: View {
-
-    private let layout = EPGLayout()
 
     @Default(.accentColor)
     private var accentColor
@@ -22,10 +19,12 @@ struct EPGChannelColumn: View {
     @ObservedObject
     var viewModel: EPGViewModel
 
-    let channels: IdentifiedArrayOf<BaseItemDto>
+    let proxy: EPGScrollProxy
     let selectedChannelID: String?
     let bottomInset: CGFloat
-    let onSelect: (BaseItemDto) -> Void
+    let action: (BaseItemDto) -> Void
+
+    private let layout = EPGLayout()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -34,7 +33,7 @@ struct EPGChannelColumn: View {
                 // On Now Button
                 if viewModel.now >= viewModel.startDate {
                     Button {
-                        viewModel.proxy.scrollTo(
+                        proxy.scrollTo(
                             centering: layout.width(from: viewModel.startDate, to: viewModel.now)
                         )
                     } label: {
@@ -59,10 +58,10 @@ struct EPGChannelColumn: View {
 
             ScrollView(.vertical) {
                 LazyVStack(spacing: 0) {
-                    ForEach(channels, id: \.id) { channel in
+                    ForEach(viewModel.channels) { channel in
                         EPGChannelButton(
                             channel: channel,
-                            action: { onSelect(channel) }
+                            action: { action(channel) }
                         )
                         .isSelected(channel.id != nil && channel.id == selectedChannelID)
                     }
@@ -71,12 +70,12 @@ struct EPGChannelColumn: View {
                 .padding(.bottom, bottomInset)
             }
             .scrollIndicators(.hidden)
-            .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
+            .introspect(.scrollView, on: .iOS(.v18...), .tvOS(.v18...)) { scrollView in
                 #if os(tvOS)
                 scrollView.contentInsetAdjustmentBehavior = .never
                 #endif
 
-                viewModel.proxy.registerVertical(scrollView)
+                proxy.registerVertical(scrollView)
             }
         }
         .frame(width: layout.channelColumnWidth)

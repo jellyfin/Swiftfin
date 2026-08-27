@@ -6,82 +6,66 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
+struct EPGLoadableView<Content: View>: View {
+
+    @ObservedObject
+    private var viewModel: EPGViewModel
+
+    private let content: Content
+
+    init(
+        viewModel: EPGViewModel,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.viewModel = viewModel
+        self.content = content()
+    }
+
+    @ViewBuilder
+    var body: some View {
+        switch viewModel.state {
+        case .initial, .refreshing:
+            ProgressView()
+        case .error:
+            if let error = viewModel.error {
+                ErrorView(error: error)
+            }
+        case .content:
+            if viewModel.channels.isEmpty {
+                ContentUnavailableView(L10n.noPrograms, systemImage: "tv")
+            } else {
+                content
+            }
+        }
+    }
+}
+
 struct EPGContentView: View {
+
+    @ObservedObject
+    private var viewModel: EPGViewModel
+
+    @StateObject
+    private var proxy = EPGScrollProxy()
 
     @State
     private var selectedGroup: ProgramBlock?
 
-    @ObservedObject
-    private var viewModel: EPGViewModel
-    @ObservedObject
-    private var channelsViewModel: PagingLibraryViewModel<EPGChannelsLibrary>
-
-    private let selectedChannelID: String?
     private let action: (BaseItemDto) -> Void
+    private let selectedChannelID: String?
 
-    var body: some View {
-        AlternateLayoutView {
-            Color.clear
-        } content: { frame in
-            HStack(spacing: 0) {
-                EPGChannelColumn(
-                    viewModel: viewModel,
-                    channels: channelsViewModel.displayedElements,
-                    selectedChannelID: selectedChannelID,
-                    bottomInset: frame.safeAreaInsets.bottom
-                ) { item in
-                    action(item)
-                }
-
-                VStack(spacing: 0) {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        EPGTimeRuler(viewModel: viewModel)
-                    }
-                    .scrollDisabled(true)
-                    .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
-                        viewModel.proxy.registerHorizontal(scrollView)
-                    }
-
-                    Divider()
-
-                    EPGCollectionView(
-                        viewModel: viewModel,
-                        channels: channelsViewModel.displayedElements,
-                        bottomInset: frame.safeAreaInsets.bottom,
-                        onReachedBottom: {
-                            channelsViewModel.getNextPage()
-                        },
-                        onSelect: {
-                            action($0)
-                        },
-                        onSelectGroup: {
-                            selectedGroup = $0
-                        }
-                    )
-                }
-            }
-            .ignoresSafeArea(edges: .bottom)
-        }
-        .onChange(of: channelsViewModel.displayedElements) {
-            viewModel.getNextPage(channels: channelsViewModel.displayedElements)
-        }
-        .confirmationDialog(
-            L10n.programs,
-            isPresented: isPresentingGroup,
-            titleVisibility: .hidden,
-            presenting: selectedGroup
-        ) { block in
-            ForEach(block.programs, id: \.id) { program in
-                Button(programTitle(for: program)) {
-                    action(program)
-                }
-            }
-        }
+    init(
+        viewModel: EPGViewModel,
+        selectedChannelID: String? = nil,
+        action: @escaping (BaseItemDto) -> Void
+    ) {
+        self.action = action
+        self.selectedChannelID = selectedChannelID
+        self.viewModel = viewModel
     }
 
     private var isPresentingGroup: Binding<Bool> {
@@ -95,42 +79,70 @@ struct EPGContentView: View {
         )
     }
 
+    // TODO: turn into FormatStyle
     private func programTitle(for program: BaseItemDto) -> String {
         guard let start = program.startDate else { return program.displayTitle }
         return "\(start.formatted(date: .omitted, time: .shortened)) \(String.bullet) \(program.displayTitle)"
     }
-}
 
-// MARK: - Initializers
+    var body: some View {
+        AlternateLayoutView {
+            Color.clear
+        } content: { frame in
+            HStack(spacing: 0) {
+                EPGChannelColumn(
+                    viewModel: viewModel,
+                    proxy: proxy,
+                    selectedChannelID: selectedChannelID,
+                    bottomInset: frame.safeAreaInsets.bottom
+                ) { item in
+                    action(item)
+                }
 
-extension EPGContentView {
+                VStack(spacing: 0) {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        EPGTimeRuler(viewModel: viewModel)
+                    }
+                    .environment(\.layoutDirection, .leftToRight)
+                    .scrollDisabled(true)
+                    .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
+                        proxy.registerHorizontal(scrollView)
+                    }
 
-    /// Guide called from View.
-    init(
-        viewModel: EPGViewModel,
-        channelsViewModel: PagingLibraryViewModel<EPGChannelsLibrary>,
-        action: @escaping (BaseItemDto) -> Void
-    ) {
-        self.init(
-            viewModel: viewModel,
-            channelsViewModel: channelsViewModel,
-            selectedChannelID: nil,
-            action: action
-        )
-    }
+                    Divider()
 
-    /// Guide called from Supplement.
-    init(
-        viewModel: EPGViewModel,
-        channelsViewModel: PagingLibraryViewModel<EPGChannelsLibrary>,
-        playing channelID: String?,
-        action: @escaping (BaseItemDto) -> Void
-    ) {
-        self.init(
-            viewModel: viewModel,
-            channelsViewModel: channelsViewModel,
-            selectedChannelID: channelID,
-            action: action
-        )
+                    EPGCollectionView(
+                        viewModel: viewModel,
+                        proxy: proxy,
+                        bottomInset: frame.safeAreaInsets.bottom,
+                        onReachedBottom: {
+                            viewModel.getNextPage()
+                        },
+                        onSelect: {
+                            action($0)
+                        },
+                        onSelectGroup: {
+                            selectedGroup = $0
+                        }
+                    )
+                }
+            }
+            .ignoresSafeArea(edges: .bottom)
+        }
+        .confirmationDialog(
+            L10n.programs,
+            isPresented: isPresentingGroup,
+            titleVisibility: .hidden,
+            presenting: selectedGroup
+        ) { block in
+            ForEach(block.programs) { program in
+                Button(programTitle(for: program)) {
+                    action(program)
+                }
+            }
+        }
+        .onDisappear {
+            proxy.disconnect()
+        }
     }
 }

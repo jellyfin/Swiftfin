@@ -17,13 +17,21 @@ struct EPGLayout: Equatable {
 
     init(
         channelColumnWidth: CGFloat = UIDevice.isTV ? 130 : UIDevice.isPad ? 110 : 84,
-        rowHeight: CGFloat = UIDevice.isTV ? 120 : 74,
-        rulerHeight: CGFloat = UIDevice.isTV ? 44 : 28,
+        rowHeight: CGFloat? = nil,
+        rulerHeight: CGFloat? = nil,
         pointsPerMinute: CGFloat = UIDevice.isTV ? 10 : UIDevice.isPad ? 7 : 5
     ) {
+        let minimumRowHeight: CGFloat = UIDevice.isTV ? 120 : 74
+        let minimumRulerHeight: CGFloat = UIDevice.isTV ? 44 : 28
+        let preferredProgramHeight =
+            UIFont.preferredFont(forTextStyle: .footnote).lineHeight +
+            UIFont.preferredFont(forTextStyle: .caption2).lineHeight +
+            18
+        let preferredRulerHeight = UIFont.preferredFont(forTextStyle: .caption2).lineHeight + 12
+
         self.channelColumnWidth = channelColumnWidth
-        self.rowHeight = rowHeight
-        self.rulerHeight = rulerHeight
+        self.rowHeight = rowHeight ?? max(minimumRowHeight, preferredProgramHeight.rounded(.up))
+        self.rulerHeight = rulerHeight ?? max(minimumRulerHeight, preferredRulerHeight.rounded(.up))
         self.pointsPerMinute = pointsPerMinute
     }
 

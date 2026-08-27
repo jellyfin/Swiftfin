@@ -22,7 +22,6 @@ struct EPGChannelsLibrary: BaseItemKindLibrary {
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetLiveTvChannelsParameters()
-        parameters.fields = .MinimumFields
         parameters.limit = pageState.pageSize
         parameters.startIndex = pageState.pageOffset
         parameters.userID = pageState.userSession.user.id

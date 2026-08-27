@@ -47,9 +47,6 @@ struct EPGDateBar: View {
                     .focused($focusedDate, equals: date)
                     .frame(width: size.width, height: size.height)
                 }
-
-                EPGTypeMenu()
-                    .frame(width: size.height, height: size.height)
             }
             .focusSection()
             .buttonStyle(EPGButtonStyle())

@@ -184,12 +184,6 @@ extension NavigationRoute {
         CustomizeViewsSettings.LibrarySection()
     }
 
-    static let epgColorSettings = NavigationRoute(
-        id: "epgColorSettings"
-    ) {
-        EPGColorSettingsView()
-    }
-
     static let posterSettings = NavigationRoute(
         id: "posterSettings"
     ) {

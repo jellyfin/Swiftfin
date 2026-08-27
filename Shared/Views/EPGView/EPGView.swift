@@ -15,53 +15,7 @@ struct EPGView: View {
     private var router
 
     @StateObject
-    private var channelsViewModel = PagingLibraryViewModel(library: EPGChannelsLibrary())
-    @StateObject
     private var viewModel = EPGViewModel()
-
-    var body: some View {
-        ZStack {
-            switch (channelsViewModel.state, viewModel.state) {
-            case (.initial, _), (.refreshing, _), (_, .initial), (_, .refreshing):
-                ProgressView()
-            case (.error, _):
-                channelsViewModel.error.map {
-                    ErrorView(error: $0)
-                }
-            case (_, .error):
-                viewModel.error.map {
-                    ErrorView(error: $0)
-                }
-            case (.content, _):
-                if channelsViewModel.displayedElements.isEmpty {
-                    ContentUnavailableView(L10n.noPrograms.localizedCapitalized, systemImage: "tv")
-                } else {
-                    contentView
-                }
-            }
-        }
-        .onFirstAppear {
-            if channelsViewModel.state == .initial {
-                channelsViewModel.refresh()
-            }
-        }
-        .onChange(of: channelsViewModel.displayedElements) { _, channels in
-            guard viewModel.state == .initial else { return }
-            viewModel.refresh(channels: channels)
-        }
-        #if os(iOS)
-        .topBarTrailing {
-            EPGTypeMenu()
-
-            EPGDateMenu(viewModel: viewModel)
-        }
-        .navigationTitle(L10n.guide)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.visible, for: .navigationBar)
-        #else
-        .ignoresSafeArea(edges: [.horizontal])
-        #endif
-    }
 
     @ViewBuilder
     private var contentView: some View {
@@ -73,11 +27,37 @@ struct EPGView: View {
             #endif
 
             EPGContentView(
-                viewModel: viewModel,
-                channelsViewModel: channelsViewModel
+                viewModel: viewModel
             ) {
                 router.route(to: .item(item: $0))
             }
         }
+    }
+
+    var body: some View {
+        EPGLoadableView(viewModel: viewModel) {
+            contentView
+        }
+        .onFirstAppear {
+            viewModel.refresh(startDate: nil)
+        }
+        .refreshable {
+            await viewModel.refresh(startDate: nil)
+        }
+        .onSceneWillEnterForeground {
+            Task {
+                await viewModel.refresh(startDate: nil)
+            }
+        }
+        #if os(iOS)
+        .topBarTrailing {
+            EPGDateMenu(viewModel: viewModel)
+        }
+        .navigationTitle(L10n.guide)
+        .toolbarTitleDisplayMode(.inline)
+        .toolbarBackground(.visible, for: .navigationBar)
+        #else
+        .ignoresSafeArea(edges: [.horizontal])
+        #endif
     }
 }

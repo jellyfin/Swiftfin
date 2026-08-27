@@ -160,7 +160,7 @@ final class MediaPlayerManager: ViewModel {
             }
         }
 
-        if item.isLiveStream {
+        if item.isLiveStream, Defaults[.Experimental.videoPlayerEPG] {
             newSupplements.append(EPGSupplement())
         }
 

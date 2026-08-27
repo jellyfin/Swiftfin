@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class EPGProxy: ObservableObject {
+final class EPGScrollProxy: ObservableObject {
 
     private weak var contentScrollView: UIScrollView?
 
@@ -26,6 +26,10 @@ final class EPGProxy: ObservableObject {
     )
 
     func registerContent(_ scrollView: UIScrollView, centeringOn target: CGFloat?) {
+        if contentScrollView !== scrollView {
+            didCenter = false
+        }
+
         contentScrollView = scrollView
 
         registerHorizontal(scrollView)
@@ -60,13 +64,22 @@ final class EPGProxy: ObservableObject {
     }
 
     func reset() {
+        didCenter = false
+
         guard let contentScrollView else { return }
 
-        didCenter = false
         contentScrollView.setContentOffset(
             CGPoint(x: 0, y: contentScrollView.contentOffset.y),
             animated: false
         )
+    }
+
+    func disconnect() {
+        contentScrollView = nil
+        didCenter = false
+
+        invalidateObservations(in: horizontalObservations)
+        invalidateObservations(in: verticalObservations)
     }
 
     func scrollTo(centering target: CGFloat) {
@@ -90,6 +103,14 @@ final class EPGProxy: ObservableObject {
             min: 0,
             max: contentScrollView.contentSize.width - viewport
         )
+    }
+
+    private func invalidateObservations(
+        in observations: NSMapTable<UIScrollView, NSKeyValueObservation>
+    ) {
+        let observationTokens = observations.objectEnumerator()?.allObjects as? [NSKeyValueObservation] ?? []
+        observationTokens.forEach { $0.invalidate() }
+        observations.removeAllObjects()
     }
 
     private func horizontalOffsetDidChange(_ source: UIScrollView) {

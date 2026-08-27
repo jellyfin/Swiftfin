@@ -78,12 +78,6 @@ extension CustomizeViewsSettings {
                 Section(L10n.letterPicker) {
                     PlatformPicker(L10n.letterPicker, selection: $letterPickerOrientation)
                 }
-
-                Section(L10n.liveTV) {
-                    ChevronButton(L10n.guide) {
-                        router.route(to: .epgColorSettings)
-                    }
-                }
             }
             .navigationTitle(L10n.libraries)
         }

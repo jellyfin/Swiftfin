@@ -17,13 +17,16 @@ struct EPGChannelButton: View {
     @FocusState
     private var isFocused: Bool
 
-    private let layout = EPGLayout()
-
     let channel: BaseItemDto
     let action: () -> Void
+    
+    private let layout = EPGLayout()
 
     private var posterSize: CGFloat {
-        UIDevice.isTV && !isFocused ? layout.rowHeight - 8 : layout.rowHeight
+        min(
+            UIDevice.isTV && !isFocused ? layout.rowHeight - 8 : layout.rowHeight,
+            layout.channelColumnWidth
+        )
     }
 
     private var borderWidth: CGFloat {
@@ -36,30 +39,55 @@ struct EPGChannelButton: View {
         }
     }
 
-    var body: some View {
-        Button(action: action) {
+    private var hasPrimaryImage: Bool {
+        channel.imageTags?[ImageType.primary.rawValue] != nil
+    }
+
+    @ViewBuilder
+    private var channelContent: some View {
+        if hasPrimaryImage {
             PosterImage(
                 item: channel,
                 type: .square,
                 contentMode: .fill
             )
-            .frame(width: posterSize, height: posterSize)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .overlay {
-                RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(.tint, lineWidth: borderWidth)
-            }
-            .overlay(alignment: .bottomTrailing) {
-                if isSelected {
-                    Image(systemName: "play.circle.fill")
-                        .font(.subheadline)
-                        .foregroundStyle(.white, .tint)
-                        .subtleShadow()
-                        .padding(4)
+        } else {
+            ZStack {
+                Color.secondarySystemFill
+
+                VStack(spacing: 2) {
+                    if let channelNumber = channel.channelNumber, channelNumber.isNotEmpty {
+                        Text(channelNumber)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                    }
+
+                    Text(channel.displayTitle)
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .minimumScaleFactor(0.7)
                 }
+                .foregroundStyle(.primary)
+                .padding(6)
             }
-            .frame(width: layout.channelColumnWidth, height: layout.rowHeight)
-            .animation(.easeOut(duration: 0.1), value: isFocused)
+        }
+    }
+
+    var body: some View {
+        Button(action: action) {
+            channelContent
+                .frame(width: posterSize, height: posterSize)
+                .clipped()
+                .overlay {
+                    Rectangle()
+                        .strokeBorder(.tint, lineWidth: borderWidth)
+                }
+                .frame(width: layout.channelColumnWidth, height: layout.rowHeight)
+                .animation(.easeOut(duration: 0.1), value: isFocused)
         }
         .buttonStyle(EPGButtonStyle())
         .focused($isFocused)

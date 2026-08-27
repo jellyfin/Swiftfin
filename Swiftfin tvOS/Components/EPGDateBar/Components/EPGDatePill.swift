@@ -32,7 +32,7 @@ extension EPGDateBar {
 
         private var tint: Color? {
             if isFocused {
-                accentColor
+                .white
             } else if isSelected {
                 accentColor.opacity(0.5)
             } else {
@@ -50,13 +50,16 @@ extension EPGDateBar {
                     .glassEffect(
                         .regular.selection(
                             tint: tint,
-                            foregroundColor: isFocused ? accentColor.overlayColor : .primary
+                            foregroundColor: isFocused ? .black : .primary
                         )
                         .interactive(),
                         in: .capsule
                     )
             }
             .focused($isFocused)
+            .scaleEffect(isFocused ? 1.06 : 1)
+            .animation(.easeInOut(duration: 0.1), value: isFocused)
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
         }
     }
 }

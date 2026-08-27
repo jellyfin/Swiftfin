@@ -6,13 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Algorithms
 import Combine
 import Foundation
 import IdentifiedCollections
 import JellyfinAPI
-
-/// https://en.wikipedia.org/wiki/Electronic_program_guide
 
 @MainActor
 @Stateful
@@ -20,24 +17,29 @@ final class EPGViewModel: ViewModel {
 
     @CasePathable
     enum Action {
-        case getNextPage(channels: IdentifiedArrayOf<BaseItemDto>)
-        case refresh(channels: IdentifiedArrayOf<BaseItemDto>)
+        case getNextPage
+        case refresh(startDate: Date?)
         case setDate(date: Date)
+
+        case _actuallyGetNextPage
 
         var transition: Transition {
             switch self {
             case .getNextPage:
-                .background(.refreshing)
+                .none
             case .refresh:
                 .to(.refreshing, then: .content)
+                    .onRepeat(.cancel)
             case .setDate:
                 .none
+            case ._actuallyGetNextPage:
+                .background(.gettingNextPage)
             }
         }
     }
 
     enum BackgroundState {
-        case refreshing
+        case gettingNextPage
     }
 
     enum State {
@@ -47,23 +49,229 @@ final class EPGViewModel: ViewModel {
         case refreshing
     }
 
+    private struct ChannelPage {
+        let channels: IdentifiedArrayOf<BaseItemDto>
+        let nextOffset: Int
+        let hasNextPage: Bool
+    }
+
+    @Published
+    private(set) var channels: IdentifiedArrayOf<BaseItemDto> = IdentifiedArray(
+        [],
+        uniquingIDsWith: { existing, _ in existing }
+    )
     @Published
     private(set) var now: Date = .now
     @Published
     private(set) var programs: [String: [ProgramBlock]] = [:]
+    private(set) var programsRevision = 0
     @Published
     private(set) var startDate: Date
 
-    let availableDates: [Date]
-    let proxy = EPGProxy()
-
-    private let layout = EPGLayout()
+    private let channelPageSize = defaultPagingLibraryPageSize
+    private let channelsLibrary = EPGChannelsLibrary()
     private let minimumDuration: Duration
 
-    private var channels: IdentifiedArrayOf<BaseItemDto> = []
-    private var fetchedChannelIDs: Set<String> = []
+    private var hasNextChannelPage = true
+    private var nextChannelOffset = 0
+    private var requestGeneration = 0
+
+    var availableDates: [Date] {
+        let today = Calendar.current.startOfDay(for: .now)
+
+        return (0 ..< 7).compactMap {
+            Calendar.current.date(byAdding: .day, value: $0, to: today)
+        }
+    }
 
     var endDate: Date {
+        endDate(startingAt: startDate)
+    }
+
+    init(minimumDuration: Duration = .hours(12)) {
+        self.minimumDuration = minimumDuration
+        self.startDate = .now
+
+        super.init()
+
+        self.startDate = defaultStartDate()
+
+        Timer.publish(every: 60, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] date in
+                Task { @MainActor in
+                    guard let self else { return }
+
+                    self.now = date
+
+                    let startOfToday = Calendar.current.startOfDay(for: date)
+                    let guideNeedsRebase = date >= self.endDate || self.startDate < startOfToday
+
+                    if guideNeedsRebase, self.state == .content {
+                        self.refresh(startDate: nil)
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    @Function(\Action.Cases.getNextPage)
+    private func _getNextPage() async throws {
+        guard state == .content,
+              hasNextChannelPage,
+              !background.is(.gettingNextPage)
+        else { return }
+
+        await _actuallyGetNextPage()
+    }
+
+    @Function(\Action.Cases.setDate)
+    private func _setDate(_ date: Date) async throws {
+        let calendar = Calendar.current
+        let newStartDate = calendar.isDateInToday(date)
+            ? defaultStartDate()
+            : calendar.startOfDay(for: date)
+
+        guard newStartDate != startDate else { return }
+        await refresh(startDate: newStartDate)
+    }
+
+    @Function(\Action.Cases._actuallyGetNextPage)
+    private func __actuallyGetNextPage() async throws {
+        guard hasNextChannelPage else { return }
+
+        let generation = requestGeneration
+        let requestStartDate = startDate
+        let requestEndDate = endDate
+        let page = try await getChannelPage(offset: nextChannelOffset)
+        let existingChannelIDs = Set(channels.compactMap(\.id))
+        let newChannels = IdentifiedArray(
+            page.channels.elements.filter { channel in
+                channel.id.map { !existingChannelIDs.contains($0) } ?? false
+            },
+            uniquingIDsWith: { existing, _ in existing }
+        )
+        let newPrograms = try await getProgramBlocks(
+            for: newChannels,
+            startDate: requestStartDate,
+            endDate: requestEndDate
+        )
+
+        guard !Task.isCancelled,
+              generation == requestGeneration,
+              startDate == requestStartDate
+        else { return }
+
+        channels = IdentifiedArray(
+            channels.elements + newChannels.elements,
+            uniquingIDsWith: { existing, _ in existing }
+        )
+        programs.merge(newPrograms) { _, new in new }
+        programsRevision &+= 1
+        nextChannelOffset = page.nextOffset
+        hasNextChannelPage = page.hasNextPage
+    }
+
+    @Function(\Action.Cases.refresh)
+    private func _refresh(_ requestedStartDate: Date?) async throws {
+        requestGeneration += 1
+        let generation = requestGeneration
+        let requestStartDate = requestedStartDate ?? refreshedStartDate()
+        let requestEndDate = endDate(startingAt: requestStartDate)
+        let page = try await getChannelPage(offset: 0)
+        let newPrograms = try await getProgramBlocks(
+            for: page.channels,
+            startDate: requestStartDate,
+            endDate: requestEndDate
+        )
+
+        guard !Task.isCancelled,
+              generation == requestGeneration
+        else { return }
+
+        startDate = requestStartDate
+        channels = page.channels
+        programs = newPrograms
+        programsRevision &+= 1
+        nextChannelOffset = page.nextOffset
+        hasNextChannelPage = page.hasNextPage
+    }
+
+    private func getChannelPage(offset: Int) async throws -> ChannelPage {
+        let items = try await channelsLibrary.retrievePage(
+            environment: Empty(),
+            pageState: LibraryPageState(
+                pageOffset: offset,
+                pageSize: channelPageSize,
+                userSession: requireUserSession()
+            )
+        )
+        let validChannels = items.filter { channel in
+            guard let id = channel.id else { return false }
+            return id.nilIfBlank == id
+        }
+
+        return ChannelPage(
+            channels: IdentifiedArray(
+                validChannels,
+                uniquingIDsWith: { existing, _ in existing }
+            ),
+            nextOffset: offset + items.count,
+            hasNextPage: items.count >= channelPageSize
+        )
+    }
+
+    private func getProgramBlocks(
+        for channels: IdentifiedArrayOf<BaseItemDto>,
+        startDate: Date,
+        endDate: Date
+    ) async throws -> [String: [ProgramBlock]] {
+        let channelIDs = channels.compactMap(\.id)
+        guard channelIDs.isNotEmpty else { return [:] }
+
+        let fetchedPrograms = try await getPrograms(
+            channelIDs: channelIDs,
+            startDate: startDate,
+            endDate: endDate
+        )
+        let programsByChannel = fetchedPrograms.reduce(into: [String: [BaseItemDto]]()) { result, program in
+            guard let channelID = program.channelID,
+                  channelID.nilIfBlank == channelID
+            else { return }
+
+            result[channelID, default: []].append(program)
+        }
+
+        return programsByChannel.mapValues { channelPrograms in
+            channelPrograms.programBlocks(
+                startDate: startDate,
+                endDate: endDate
+            )
+        }
+    }
+
+    private func getPrograms(
+        channelIDs: [String],
+        startDate: Date,
+        endDate: Date
+    ) async throws -> [BaseItemDto] {
+        var parameters = Paths.GetLiveTvProgramsParameters()
+        parameters.channelIDs = channelIDs
+        parameters.enableImages = false
+        parameters.enableTotalRecordCount = false
+        parameters.enableUserData = false
+        parameters.maxStartDate = endDate
+        parameters.minEndDate = startDate
+        parameters.sortBy = [.startDate]
+        parameters.userID = try authenticatedUser.id
+
+        let request = Paths.getLiveTvPrograms(parameters: parameters)
+        let response = try await send(request)
+
+        return response.value.items ?? []
+    }
+
+    private func endDate(startingAt startDate: Date) -> Date {
         let spanEnd = startDate.addingTimeInterval(minimumDuration.seconds)
 
         guard let nextDay = Calendar.current.date(
@@ -77,130 +285,27 @@ final class EPGViewModel: ViewModel {
         return max(spanEnd, nextDay)
     }
 
-    init(minimumDuration: Duration = .hours(12)) {
-        self.minimumDuration = minimumDuration
-
-        let today = Calendar.current.startOfDay(for: .now)
-        self.availableDates = (0 ..< 7).compactMap {
-            Calendar.current.date(byAdding: .day, value: $0, to: today)
-        }
-        self.startDate = .now
-
-        super.init()
-
-        self.startDate = defaultStartDate()
-
-        Timer.publish(every: 60, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] date in
-                Task { @MainActor in
-                    self?.now = date
-                }
-            }
-            .store(in: &cancellables)
-    }
-
-    @Function(\Action.Cases.getNextPage)
-    private func _getNextPage(_ channels: IdentifiedArrayOf<BaseItemDto>) async throws {
-        try await updatePrograms(with: channels)
-    }
-
-    @Function(\Action.Cases.refresh)
-    private func _refresh(_ channels: IdentifiedArrayOf<BaseItemDto>) async throws {
-        try await updatePrograms(with: channels)
-    }
-
-    private func updatePrograms(with channels: IdentifiedArrayOf<BaseItemDto>) async throws {
-        self.channels = channels
-
-        let channelIDs = channels
-            .compactMap(\.id)
-            .filter { !fetchedChannelIDs.contains($0) }
-
-        guard channelIDs.isNotEmpty else { return }
-
-        fetchedChannelIDs.formUnion(channelIDs)
-
-        let requestStartDate = startDate
-        let requestEndDate = endDate
-
-        do {
-            let fetchedPrograms = try await getPrograms(
-                channelIDs: channelIDs,
-                startDate: requestStartDate,
-                endDate: requestEndDate
-            )
-
-            guard startDate == requestStartDate else { return }
-
-            let newPrograms = Dictionary(grouping: fetchedPrograms.filter { $0.channelID != nil }) { $0.channelID ?? "" }
-                .mapValues { channelPrograms in
-                    channelPrograms.programBlocks(
-                        startDate: requestStartDate,
-                        endDate: requestEndDate,
-                        layout: layout
-                    )
-                }
-
-            programs.merge(newPrograms) { _, new in new }
-        } catch {
-            fetchedChannelIDs.subtract(channelIDs)
-            throw error
-        }
-    }
-
-    private func getPrograms(
-        channelIDs: [String],
-        startDate: Date,
-        endDate: Date
-    ) async throws -> [BaseItemDto] {
-        let userID = try authenticatedUser.id
-
-        return try await withThrowingTaskGroup(of: [BaseItemDto].self) { group in
-            for batch in channelIDs.chunks(ofCount: 50) {
-                group.addTask {
-                    var parameters = Paths.GetLiveTvProgramsParameters()
-                    parameters.channelIDs = Array(batch)
-                    parameters.maxStartDate = endDate
-                    parameters.minEndDate = startDate
-                    parameters.sortBy = [.startDate]
-                    parameters.userID = userID
-
-                    let request = Paths.getLiveTvPrograms(parameters: parameters)
-                    let response = try await self.send(request)
-
-                    return response.value.items ?? []
-                }
-            }
-
-            return try await group.reduce(into: []) {
-                $0.append(contentsOf: $1)
-            }
-        }
-    }
-
-    @Function(\Action.Cases.setDate)
-    private func _setDate(_ date: Date) {
+    private func refreshedStartDate() -> Date {
         let calendar = Calendar.current
-        let newStartDate = calendar.isDateInToday(date)
-            ? defaultStartDate()
-            : calendar.startOfDay(for: date)
 
-        guard newStartDate != startDate else { return }
+        if calendar.isDateInToday(startDate) ||
+            startDate < calendar.startOfDay(for: .now)
+        {
+            return defaultStartDate()
+        }
 
-        startDate = newStartDate
-        programs.removeAll()
-        fetchedChannelIDs.removeAll()
-        proxy.reset()
-        refresh(channels: channels)
+        return startDate
     }
 
     private func defaultStartDate() -> Date {
         let current = Date.now
         let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: current)
-        let minute = calendar.component(.minute, from: current)
+        let components = calendar.dateComponents([.minute, .second, .nanosecond], from: current)
+        let minute = components.minute ?? 0
+        let second = components.second ?? 0
+        let nanosecond = components.nanosecond ?? 0
+        let elapsed = TimeInterval((minute % 30) * 60 + second) + TimeInterval(nanosecond) / 1_000_000_000
 
-        return calendar.date(bySettingHour: hour, minute: minute - minute % 30, second: 0, of: current) ?? current
+        return current.addingTimeInterval(-elapsed)
     }
 }
