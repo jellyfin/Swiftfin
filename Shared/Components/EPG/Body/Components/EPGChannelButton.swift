@@ -19,7 +19,7 @@ struct EPGChannelButton: View {
 
     let channel: BaseItemDto
     let action: () -> Void
-    
+
     private let layout = EPGLayout()
 
     private var posterSize: CGFloat {
