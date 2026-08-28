@@ -89,19 +89,3 @@ extension Binding where Value: SetAlgebra, Value.Element: Hashable {
         )
     }
 }
-
-extension Binding where Value: OptionSet, Value.Element == Value {
-
-    func contains(_ element: Value) -> Binding<Bool> {
-        Binding<Bool>(
-            get: { wrappedValue.contains(element) },
-            set: { newValue in
-                if newValue {
-                    wrappedValue.insert(element)
-                } else {
-                    wrappedValue.remove(element)
-                }
-            }
-        )
-    }
-}
