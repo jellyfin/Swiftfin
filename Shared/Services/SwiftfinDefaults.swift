@@ -391,6 +391,10 @@ extension Defaults.Keys {
         static var serverConnectionAutoSwitch: Key<Bool> {
             UserKey("experimentalServerConnectionAutoSwitch", default: false)
         }
+
+        static var videoPlayerEPG: Key<Bool> {
+            UserKey("experimentalVideoPlayerEPG", default: false)
+        }
     }
 
     // tvos specific

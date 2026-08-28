@@ -159,6 +159,8 @@ extension String {
     static let hyphen = "\u{002D}"
     /// ...
     static let ellipsis = "\u{2026}"
+    /// •
+    static let bullet = "\u{2022}"
     /// x
     static let multiply = "\u{00D7}"
 

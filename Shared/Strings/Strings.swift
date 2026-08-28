@@ -762,6 +762,8 @@ internal enum L10n {
   internal static let grouping = L10n.tr("Localizable", "grouping", fallback: "Grouping")
   /// Guest star
   internal static let guestStar = L10n.tr("Localizable", "guestStar", fallback: "Guest star")
+  /// Guide
+  internal static let guide = L10n.tr("Localizable", "guide", fallback: "Guide")
   /// Half side-by-side
   internal static let halfSideBySide = L10n.tr("Localizable", "halfSideBySide", fallback: "Half side-by-side")
   /// Half top and bottom
@@ -1104,6 +1106,8 @@ internal enum L10n {
   internal static let `none` = L10n.tr("Localizable", "none", fallback: "None")
   /// No overview available
   internal static let noOverviewAvailable = L10n.tr("Localizable", "noOverviewAvailable", fallback: "No overview available")
+  /// No programs
+  internal static let noPrograms = L10n.tr("Localizable", "noPrograms", fallback: "No programs")
   /// No public users
   internal static let noPublicUsers = L10n.tr("Localizable", "noPublicUsers", fallback: "No public users")
   /// No results
@@ -1488,9 +1492,9 @@ internal enum L10n {
   internal static let serverLogs = L10n.tr("Localizable", "serverLogs", fallback: "Server logs")
   /// Servers
   internal static let servers = L10n.tr("Localizable", "servers", fallback: "Servers")
-  /// Update to Jellyfin %@ for the best experience.
+  /// Swiftfin requires Jellyfin version %@ or higher.
   internal static func serverVersionWarning(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "serverVersionWarning", String(describing: p1), fallback: "Update to Jellyfin %@ for the best experience.")
+    return L10n.tr("Localizable", "serverVersionWarning", String(describing: p1), fallback: "Swiftfin requires Jellyfin version %@ or higher.")
   }
   /// Session
   internal static let session = L10n.tr("Localizable", "session", fallback: "Session")
