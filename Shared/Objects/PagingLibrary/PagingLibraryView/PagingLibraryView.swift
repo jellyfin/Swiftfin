@@ -181,9 +181,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .onFirstAppear {
             viewModel.refresh()
         }
-        .refreshable {
-            viewModel.refresh()
-        }
         #if os(iOS)
         .navigationBarMenuButton(
             isLoading: viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage)
