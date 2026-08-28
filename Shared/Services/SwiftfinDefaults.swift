@@ -148,21 +148,10 @@ extension Defaults.Keys {
             UserKey("searchPosterType", default: .portrait)
         }
 
-        enum Episodes {
+        enum Poster {
 
-            static var useSeriesLandscapeBackdrop: Key<Bool> {
-                UserKey("useSeriesBackdrop", default: true)
-            }
-        }
-
-        enum Indicators {
-
-            static var enabled: Key<PosterIndicator> {
-                UserKey("enabledPosterIndicators", default: .all)
-            }
-
-            static var unplayedStyle: Key<UnplayedIndicatorType> {
-                UserKey("unplayedIndicatorStyle", default: .indicator)
+            static var configuration: Key<PosterConfiguration> {
+                UserKey("posterConfiguration", default: .default)
             }
         }
 
@@ -401,6 +390,10 @@ extension Defaults.Keys {
 
         static var serverConnectionAutoSwitch: Key<Bool> {
             UserKey("experimentalServerConnectionAutoSwitch", default: false)
+        }
+
+        static var videoPlayerEPG: Key<Bool> {
+            UserKey("experimentalVideoPlayerEPG", default: false)
         }
     }
 

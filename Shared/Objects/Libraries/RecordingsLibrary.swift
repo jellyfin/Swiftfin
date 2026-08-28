@@ -24,7 +24,6 @@ struct RecordingsLibrary: BaseItemKindLibrary {
         parameters.userID = pageState.userSession.user.id
         parameters.startIndex = pageState.pageOffset
         parameters.limit = pageState.pageSize
-        parameters.fields = .MinimumFields.appending(.channelInfo)
         parameters.enableUserData = true
         parameters.isInProgress = false
 

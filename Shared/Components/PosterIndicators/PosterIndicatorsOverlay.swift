@@ -12,29 +12,14 @@ import SwiftUI
 
 struct PosterIndicatorsOverlay: View {
 
-    @Default(.Customization.Indicators.unplayedStyle)
-    private var unplayedStyle
-
-    @Environment(\.enabledPosterIndicators)
-    private var environmentIndicators
+    @Environment(\.posterConfiguration)
+    private var posterConfiguration
 
     let item: BaseItemDto
     let posterDisplayType: PosterDisplayType
 
-    private let overrideIndicators: PosterIndicator?
-
     private var indicators: PosterIndicator {
-        overrideIndicators ?? environmentIndicators
-    }
-
-    init(
-        item: BaseItemDto,
-        indicators: PosterIndicator? = nil,
-        posterDisplayType: PosterDisplayType
-    ) {
-        self.item = item
-        self.posterDisplayType = posterDisplayType
-        self.overrideIndicators = indicators
+        posterConfiguration.indicators
     }
 
     private var indicatorSize: CGFloat {
@@ -60,7 +45,7 @@ struct PosterIndicatorsOverlay: View {
             ZStack {
                 if showsUnplayedIndicator {
                     UnplayedIndicator(
-                        count: unplayedStyle == .count ? item.userData?.unplayedItemCount : nil
+                        count: posterConfiguration.unplayedStyle == .count ? item.userData?.unplayedItemCount : nil
                     )
                     .frame(height: indicatorSize)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
