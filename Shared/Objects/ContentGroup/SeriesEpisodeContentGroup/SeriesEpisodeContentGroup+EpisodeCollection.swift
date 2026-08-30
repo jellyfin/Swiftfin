@@ -127,11 +127,6 @@ extension SeriesEpisodeContentGroup {
         @FocusState
         private var focusedElement: EpisodeElement.ID?
 
-        #if os(iOS)
-        @StateObject
-        private var proxy = CollectionHStackProxy()
-        #endif
-
         let elements: [EpisodeElement]
         let preferredElementID: EpisodeElement.ID?
         let header: Header
@@ -193,27 +188,13 @@ extension SeriesEpisodeContentGroup {
                 .insets(horizontal: EdgeInsets.edgePadding)
                 .itemSpacing(Self.itemSpacing)
                 .scrollBehavior(.continuousLeadingEdge)
-                #if os(iOS)
-                    .proxy(proxy)
-                    .task(id: preferredElementID) {
-                        guard let preferredElementID else { return }
-
-                        do {
-                            try await Task.sleep(for: .milliseconds(100))
-                        } catch {
-                            return
-                        }
-
-                        proxy.scrollTo(id: preferredElementID, animated: false)
-                    }
-                #endif
-                    .focusSection()
-                        .focused($focusedSection, equals: .episodes)
-                        .defaultFocus(
-                            $focusedElement,
-                            preferredElementID,
-                            priority: .userInitiated
-                        )
+                .focusSection()
+                .focused($focusedSection, equals: .episodes)
+                .defaultFocus(
+                    $focusedElement,
+                    preferredElementID,
+                    priority: .userInitiated
+                )
             } header: {
                 header
                     .focusSection()

@@ -327,18 +327,8 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         parameters.isRecursive = true
         parameters.limit = 1
         parameters.parentID = item.id
-        parameters.sortBy = [.airedEpisodeOrder]
         parameters.sortOrder = [.ascending]
 
-        parameters.isPlayed = false
-        let unplayedRequest = Paths.getItems(parameters: parameters)
-        let unplayedResponse = try await send(unplayedRequest)
-
-        if let firstUnplayedItem = unplayedResponse.value.items?.first {
-            return firstUnplayedItem
-        }
-
-        parameters.isPlayed = nil
         let request = Paths.getItems(parameters: parameters)
         let response = try await send(request)
 
