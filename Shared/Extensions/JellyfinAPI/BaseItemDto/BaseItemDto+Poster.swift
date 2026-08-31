@@ -31,7 +31,7 @@ extension BaseItemDto: Poster {
         let viewContext = environment.viewContext
 
         return .init(
-            useParent: viewContext.contains(.isThumb) && environment.useSeriesLandscapeBackdrop,
+            useParent: viewContext.contains(.isThumb) && environment.posterConfiguration.useSeriesLandscapeBackdrop,
             viewContext: viewContext
         )
     }
@@ -490,6 +490,7 @@ private struct BaseItemDtoPosterLabel: View {
                 VStack(alignment: .leading, spacing: 2) {
                     content.first
                         .font(.footnote)
+                        .multilineTextAlignment(.leading)
                         .lineLimit(details.isEmpty ? 2 : 1, reservesSpace: true)
 
                     DotHStack {

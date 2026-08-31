@@ -142,6 +142,9 @@ class VideoPlayerContainerState: ObservableObject {
 
     #if os(tvOS)
     @Published
+    private(set) var presentedSupplementStyle: MediaPlayerSupplementPresentationStyle?
+
+    @Published
     var isPresentingCloseConfirmation: Bool = false
 
     var scrubOriginSeconds: Duration?
@@ -164,6 +167,10 @@ class VideoPlayerContainerState: ObservableObject {
 
         isScrubbing = false
         scrubOriginSeconds = nil
+    }
+
+    func setPresentedSupplementStyle(_ style: MediaPlayerSupplementPresentationStyle?) {
+        presentedSupplementStyle = style
     }
     #endif
 
@@ -197,7 +204,10 @@ class VideoPlayerContainerState: ObservableObject {
             containerView?.presentSupplementContainer(false)
         } else {
             selectedSupplement = supplement
-            containerView?.presentSupplementContainer(supplement != nil)
+            containerView?.presentSupplementContainer(
+                supplement != nil,
+                presentationStyle: isGuest ? supplement?.presentationStyle : nil
+            )
         }
     }
 }
