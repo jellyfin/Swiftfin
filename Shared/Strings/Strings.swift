@@ -268,8 +268,6 @@ internal enum L10n {
   internal static let category = L10n.tr("Localizable", "category", fallback: "Category")
   /// Cellular
   internal static let cellular = L10n.tr("Localizable", "cellular", fallback: "Cellular")
-  /// Centered
-  internal static let centered = L10n.tr("Localizable", "centered", fallback: "Centered")
   /// Change pin
   internal static let changePin = L10n.tr("Localizable", "changePin", fallback: "Change pin")
   /// Channel

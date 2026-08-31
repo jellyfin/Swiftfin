@@ -6,21 +6,17 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-/// The placement of the main tab bar on tvOS.
 enum TabBarPlacement: String, CaseIterable, Displayable, Storable {
 
-    /// A leading sidebar that expands when focused
     case sidebar
-
-    /// A horizontally centered bar along the top
-    case centered
+    case tabBar
 
     var displayTitle: String {
         switch self {
         case .sidebar:
             L10n.sidebar
-        case .centered:
-            L10n.centered
+        case .tabBar:
+            L10n.tabBar
         }
     }
 }

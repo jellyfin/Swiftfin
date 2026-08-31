@@ -14,13 +14,13 @@ import SwiftUI
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
 
-    @InjectedObject(\.userSessionManager)
-    private var userSessionManager
-
     #if os(tvOS)
     @Default(.Customization.tabBarPlacement)
     private var tabBarPlacement
     #endif
+
+    @InjectedObject(\.userSessionManager)
+    private var userSessionManager
 
     @StateObject
     private var tabCoordinator: TabCoordinator
@@ -105,7 +105,7 @@ struct MainTabView: View {
         case .sidebar:
             tabView()
                 .tabViewStyle(.sidebarAdaptable)
-        case .centered:
+        case .tabBar:
             tabView()
                 .tabViewStyle(.tabBarOnly)
         }
