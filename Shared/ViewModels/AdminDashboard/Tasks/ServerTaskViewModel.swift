@@ -6,14 +6,12 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Foundation
 import JellyfinAPI
-import OrderedCollections
 
 @MainActor
 @Stateful
-final class TaskViewModel: ViewModel, Identifiable {
+final class ServerTaskViewModel: ViewModel, @MainActor Identifiable {
 
     @CasePathable
     enum Action {

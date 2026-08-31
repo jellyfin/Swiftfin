@@ -20,9 +20,7 @@ struct HourMinutePicker: View {
     let title: String
     let interval: Binding<TimeInterval>
 
-    /// `UIDatePicker` cannot exceed 23 hours, a larger maximum falls back to a plain hour/minute picker
     var maximumHours: Int = 24
-    /// Style shown in place of a zero interval
     var noneStyle: NoneStyle?
 
     private var content: String {
@@ -68,17 +66,10 @@ struct HourMinutePicker: View {
 
 private struct _HourMinutePickerView: PlatformViewRepresentable {
 
-    private let interval: Binding<TimeInterval>
-    private let maximumHours: Int
-
-    init(interval: Binding<TimeInterval>, maximumHours: Int = 24) {
-        self.interval = interval
-        self.maximumHours = maximumHours
-    }
+    let interval: Binding<TimeInterval>
+    var maximumHours: Int = 24
 
     func makeUIView(context: Context) -> UIView {
-        context.coordinator.interval = interval
-
         guard maximumHours > 24 else {
             let picker = UIDatePicker(frame: .zero)
             picker.translatesAutoresizingMaskIntoConstraints = false
@@ -105,16 +96,19 @@ private struct _HourMinutePickerView: PlatformViewRepresentable {
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(maximumHours: maximumHours)
+        Coordinator(
+            interval: interval,
+            maximumHours: maximumHours
+        )
     }
 
     class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
 
-        var interval: Binding<TimeInterval>!
-
+        private let interval: Binding<TimeInterval>!
         private let maximumHours: Int
 
-        init(maximumHours: Int) {
+        init(interval: Binding<TimeInterval>!, maximumHours: Int) {
+            self.interval = interval
             self.maximumHours = maximumHours
         }
 
@@ -168,13 +162,8 @@ private struct _HourMinutePickerView: PlatformViewRepresentable {
 
 private struct _HourMinutePickerView: PlatformViewRepresentable {
 
-    private let interval: Binding<TimeInterval>
-    private let maximumHours: Int
-
-    init(interval: Binding<TimeInterval>, maximumHours: Int = 24) {
-        self.interval = interval
-        self.maximumHours = maximumHours
-    }
+    let interval: Binding<TimeInterval>
+    var maximumHours: Int = 24
 
     func makeUIView(context: Context) -> some UIView {
         let picker = TVOSPickerView(

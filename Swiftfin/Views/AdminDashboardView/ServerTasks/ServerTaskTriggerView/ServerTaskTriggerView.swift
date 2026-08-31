@@ -13,10 +13,13 @@ import SwiftUI
 struct ServerTaskTriggerView: View {
 
     @ObservedObject
-    var viewModel: TaskViewModel
+    var viewModel: ServerTaskViewModel
 
     @Router
     private var router
+
+    @State
+    private var isPresentingNotSaved = false
 
     @State
     private var taskTriggerInfo = TaskTriggerInfo(type: .startupTrigger)
@@ -73,8 +76,9 @@ struct ServerTaskTriggerView: View {
                     L10n.type,
                     selection: $taskTriggerInfo.type.coalesce(.startupTrigger)
                 )
-                .onChange(of: taskTriggerInfo.type) { _ in
-                    taskTriggerInfo.reset()
+                .onChange(of: taskTriggerInfo.type) {
+                    guard let newValue = taskTriggerInfo.type else { return }
+                    taskTriggerInfo = TaskTriggerInfo.make(type: newValue)
                 }
 
                 switch taskTriggerInfo.type {
@@ -110,47 +114,46 @@ struct ServerTaskTriggerView: View {
     }
 
     var body: some View {
-        StateAdapter(initialValue: false) { isPresentingNotSaved in
-            contentView
-                .animation(.linear(duration: 0.2), value: isDuplicate)
-                .animation(.linear(duration: 0.2), value: taskTriggerInfo.type)
-                .interactiveDismissDisabled(true)
-                .navigationTitle(L10n.addTrigger.localizedCapitalized)
-                .toolbarTitleDisplayMode(.inline)
-                .navigationBarCloseButton {
-                    if taskTriggerInfo != TaskTriggerInfo(type: .startupTrigger) {
-                        isPresentingNotSaved.wrappedValue = true
-                    } else {
-                        router.dismiss()
-                    }
+        contentView
+            .animation(.linear(duration: 0.2), value: isDuplicate)
+            .animation(.linear(duration: 0.2), value: taskTriggerInfo.type)
+            .interactiveDismissDisabled(true)
+            .navigationTitle(L10n.addTrigger.localizedCapitalized)
+            .toolbarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                if taskTriggerInfo != TaskTriggerInfo(type: .startupTrigger) {
+                    isPresentingNotSaved = true
+                } else {
+                    router.dismiss()
                 }
-                .topBarTrailing {
-                    let saveAction: () -> Void = {
-                        UIDevice.impact(.light)
-                        viewModel.addTrigger(taskTriggerInfo)
-                        router.dismiss()
-                    }
+            }
+            .topBarTrailing {
+                let saveAction: () -> Void = {
+                    UIDevice.impact(.light)
+                    viewModel.addTrigger(taskTriggerInfo)
+                    router.dismiss()
+                }
 
-                    Group {
-                        if #available(iOS 26, *) {
-                            Button(L10n.save, role: .confirm, action: saveAction)
-                        } else {
-                            Button(L10n.save, action: saveAction)
-                                .backport
-                                .buttonStyle(.glassProminent)
-                                .controlSize(.small)
-                        }
-                    }
-                    .disabled(isDuplicate)
-                }
-                .alert(L10n.unsavedChangesMessage, isPresented: isPresentingNotSaved) {
-                    Button(L10n.close, role: .destructive) {
-                        router.dismiss()
-                    }
-                    Button(L10n.cancel, role: .cancel) {
-                        isPresentingNotSaved.wrappedValue = false
+                Group {
+                    if #available(iOS 26, *) {
+                        Button(L10n.save, role: .confirm, action: saveAction)
+                    } else {
+                        Button(L10n.save, action: saveAction)
+                            .backport
+                            .buttonStyle(.glassProminent)
+                            .controlSize(.small)
                     }
                 }
-        }
+                .disabled(isDuplicate)
+            }
+            .alert(L10n.unsavedChangesMessage, isPresented: $isPresentingNotSaved) {
+                Button(L10n.close, role: .destructive) {
+                    router.dismiss()
+                }
+
+                Button(L10n.cancel, role: .cancel) {
+                    isPresentingNotSaved = false
+                }
+            }
     }
 }

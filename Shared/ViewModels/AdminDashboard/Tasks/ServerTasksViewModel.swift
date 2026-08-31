@@ -48,7 +48,7 @@ final class ServerTasksViewModel: ViewModel {
     }
 
     @Published
-    var tasks: OrderedDictionary<String, [TaskViewModel]> = [:]
+    var tasks: OrderedDictionary<String, [ServerTaskViewModel]> = [:]
 
     override init() {
         super.init()
@@ -113,7 +113,7 @@ final class ServerTasksViewModel: ViewModel {
         }
 
         for newTask in newTasks {
-            let taskViewModel = TaskViewModel(task: newTask)
+            let taskViewModel = ServerTaskViewModel(task: newTask)
             let category = newTask.category ?? ""
 
             if tasks[category] != nil {

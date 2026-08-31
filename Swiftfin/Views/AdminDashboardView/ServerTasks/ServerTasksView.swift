@@ -70,8 +70,7 @@ struct ServerTasksView: View {
                 HStack {
                     Text(title)
                         .fontWeight(.semibold)
-
-                    Spacer()
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     Image(systemName: systemName)
                         .fontWeight(.bold)

@@ -14,16 +14,17 @@ struct ServerTaskDetailsView: View {
     @CurrentDate
     private var currentDate: Date
 
+    @ObservedObject
+    var viewModel: ServerTaskViewModel
+
     @Router
     private var router
-
-    @ObservedObject
-    var viewModel: TaskViewModel
 
     private var isRunning: Bool {
         viewModel.task.state == .running || viewModel.task.state == .cancelling
     }
 
+    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(
@@ -82,9 +83,11 @@ struct ServerTaskDetailsView: View {
             }
 
             Section(L10n.triggers) {
-                ForEach(viewModel.task.triggers ?? [], id: \.self) { trigger in
-                    TriggerRow(taskTriggerInfo: trigger) {
-                        viewModel.removeTrigger(trigger)
+                if let triggers = viewModel.task.triggers {
+                    ForEach(triggers, id: \.self) { trigger in
+                        TriggerRow(taskTriggerInfo: trigger) {
+                            viewModel.removeTrigger(trigger)
+                        }
                     }
                 }
 

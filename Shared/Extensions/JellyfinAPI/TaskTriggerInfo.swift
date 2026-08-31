@@ -11,25 +11,28 @@ import SwiftUI
 
 extension TaskTriggerInfo {
 
-    mutating func reset() {
+    static func make(type: TaskTriggerInfoType) -> TaskTriggerInfo {
         switch type {
         case .dailyTrigger:
-            timeOfDayTicks = 0
-            dayOfWeek = nil
-            intervalTicks = nil
+            .init(
+                timeOfDayTicks: 0,
+                type: type
+            )
         case .weeklyTrigger:
-            timeOfDayTicks = 0
-            dayOfWeek = .sunday
-            intervalTicks = nil
+            .init(
+                dayOfWeek: .sunday,
+                timeOfDayTicks: 0,
+                type: type
+            )
         case .intervalTrigger:
-            timeOfDayTicks = nil
-            dayOfWeek = nil
-            intervalTicks = Duration.hours(1).ticks
-        default:
-            type = .startupTrigger
-            timeOfDayTicks = nil
-            dayOfWeek = nil
-            intervalTicks = nil
+            .init(
+                intervalTicks: Duration.hours(1).ticks,
+                type: type
+            )
+        case .startupTrigger:
+            .init(
+                type: type
+            )
         }
     }
 }

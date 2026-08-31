@@ -154,13 +154,13 @@ extension NavigationRoute {
         }
     }
 
-    static func taskDetails(viewModel: TaskViewModel) -> NavigationRoute {
+    static func taskDetails(viewModel: ServerTaskViewModel) -> NavigationRoute {
         NavigationRoute(id: "taskDetails") {
             ServerTaskDetailsView(viewModel: viewModel)
         }
     }
 
-    static func taskTrigger(viewModel: TaskViewModel) -> NavigationRoute {
+    static func taskTrigger(viewModel: ServerTaskViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "taskTrigger",
             style: .sheet

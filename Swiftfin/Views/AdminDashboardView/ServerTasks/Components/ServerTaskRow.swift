@@ -16,16 +16,17 @@ extension ServerTasksView {
         @CurrentDate
         private var currentDate: Date
 
+        @ObservedObject
+        var viewModel: ServerTaskViewModel
+
         @Router
         private var router
-
-        @ObservedObject
-        var viewModel: TaskViewModel
 
         private var isRunning: Bool {
             viewModel.task.state == .running
         }
 
+        @ViewBuilder
         private var contentView: some View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
@@ -88,7 +89,6 @@ extension ServerTasksView {
                 contentView
             }
             .animation(.linear(duration: 0.1), value: isRunning)
-            .foregroundStyle(.primary, .secondary)
         }
     }
 }
