@@ -148,6 +148,10 @@ extension Defaults.Keys {
             UserKey("searchPosterType", default: .portrait)
         }
 
+        static var tabBarPlacement: Key<TabBarPlacement> {
+            UserKey("tabBarPlacement", default: .sidebar)
+        }
+
         enum Poster {
 
             static var configuration: Key<PosterConfiguration> {

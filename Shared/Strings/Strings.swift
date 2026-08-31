@@ -1526,6 +1526,8 @@ internal enum L10n {
   internal static let shutdownServer = L10n.tr("Localizable", "shutdownServer", fallback: "Shutdown server")
   /// Are you sure you want to shutdown the server?
   internal static let shutdownWarning = L10n.tr("Localizable", "shutdownWarning", fallback: "Are you sure you want to shutdown the server?")
+  /// Sidebar
+  internal static let sidebar = L10n.tr("Localizable", "sidebar", fallback: "Sidebar")
   /// Sign in
   internal static let signIn = L10n.tr("Localizable", "signIn", fallback: "Sign in")
   /// Sign in to %s
@@ -1648,6 +1650,8 @@ internal enum L10n {
   internal static let syncPlay = L10n.tr("Localizable", "syncPlay", fallback: "SyncPlay")
   /// System
   internal static let system = L10n.tr("Localizable", "system", fallback: "System")
+  /// Tab bar
+  internal static let tabBar = L10n.tr("Localizable", "tabBar", fallback: "Tab bar")
   /// Tagline
   internal static let tagline = L10n.tr("Localizable", "tagline", fallback: "Tagline")
   /// Taglines
