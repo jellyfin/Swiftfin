@@ -420,7 +420,8 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             )
         }
 
-        _ = try await send(request)
+        let response = try await send(request)
+        item.userData = response.value
         Notifications[.getChangedItemUserData].post(itemID)
     }
 
@@ -439,7 +440,8 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             )
         }
 
-        _ = try await send(request)
+        let response = try await send(request)
+        item.userData = response.value
         Notifications[.getChangedItemUserData].post(itemID)
     }
 }
