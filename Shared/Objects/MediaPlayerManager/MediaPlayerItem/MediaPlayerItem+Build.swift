@@ -80,7 +80,7 @@ extension MediaPlayerItem {
         playbackInfo.audioStreamIndex = audioStreamIndex
         playbackInfo.subtitleStreamIndex = subtitleStreamIndex
 
-        if !item.isLiveStream {
+        if !item.isLiveStream, initialMediaSource.type != .placeholder {
             playbackInfo.mediaSourceID = initialMediaSource.id
         }
 
