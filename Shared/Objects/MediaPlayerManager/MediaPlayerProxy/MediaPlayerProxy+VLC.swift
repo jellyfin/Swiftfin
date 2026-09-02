@@ -38,7 +38,17 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         NowPlayableObserver(),
     ]
 
+    private var didPause = false
+    // Unpausing live HLS playlist re-syncs to live, so user gets skipped
+    // forward. Watch first seconds after resume and drag it back
+    private var resumeGuard: (target: Duration, until: Date)?
+
     func play() {
+        if didPause, manager?.item.type == .recording, let seconds = manager?.seconds {
+            resumeGuard = (seconds, .now + 15)
+        }
+        didPause = false
+
         if player.state == .paused {
             player.resume()
         } else {
@@ -50,7 +60,23 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         }
     }
 
+    func enforceResumeGuard(_ seconds: Duration) {
+        guard let resumeGuard else { return }
+
+        if Date.now > resumeGuard.until {
+            self.resumeGuard = nil
+        } else if seconds > resumeGuard.target + .seconds(30) {
+            // Seek the player directly: `setSeconds` would clear the guard
+            do {
+                try player.seek(to: resumeGuard.target)
+            } catch {
+                log(error)
+            }
+        }
+    }
+
     func pause() {
+        didPause = true
         player.pause()
     }
 
@@ -61,6 +87,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     func jumpForward(_ seconds: Duration) {
+        resumeGuard = nil
         let target: Duration
 
         if let runtime = manager?.item.runtime, let current = manager?.seconds {
@@ -76,6 +103,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     func jumpBackward(_ seconds: Duration) {
+        resumeGuard = nil
         player.jump(by: .zero - seconds)
     }
 
@@ -91,6 +119,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         guard player.isSeekable else { return }
 
         pendingStartTime = nil
+        resumeGuard = nil
 
         do {
             try player.seek(to: seconds)
@@ -254,6 +283,7 @@ extension VLCMediaPlayerProxy {
                         if proxy.player.state == .playing {
                             proxy.isBuffering.value = false
                         }
+                        proxy.enforceResumeGuard(newSeconds)
 
                         proxy.videoSize.value = proxy.player.videoSize ?? .zero
                         if let statistics = proxy.player.statistics {
