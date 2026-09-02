@@ -152,10 +152,6 @@ extension Notifications.Key {
         Key("didServerRestart")
     }
 
-    static var didServerShutdown: Key<Void> {
-        Key("didServerShutdown")
-    }
-
     // MARK: - Server Users
 
     static var didDeleteServerUser: Key<String> {

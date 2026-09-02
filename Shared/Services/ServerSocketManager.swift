@@ -285,13 +285,6 @@ extension ServerSocketManager {
         }
     }
 
-    var serverShutdowns: AnyPublisher<Void, Never> {
-        commands { event in
-            guard case .message(.serverShuttingDownMessage) = event else { return nil }
-            return ()
-        }
-    }
-
     private func commands<Command>(
         extract: @escaping (JellyfinSocket.Session.Event) -> Command?
     ) -> AnyPublisher<Command, Never> {

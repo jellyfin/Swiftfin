@@ -117,12 +117,6 @@ final class UserNotificationManager {
                 Notifications[.didServerRestart].post()
             }
             .store(in: &cancellables)
-
-        userSession.serverSocketManager.serverShutdowns
-            .sink {
-                Notifications[.didServerShutdown].post()
-            }
-            .store(in: &cancellables)
     }
 
     private func stop() {
