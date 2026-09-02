@@ -27,7 +27,6 @@ struct LatestInLibrary: BaseItemKindLibrary {
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetLatestMediaParameters()
         parameters.enableUserData = true
-        parameters.fields = .MinimumFields
         parameters.limit = pageState.pageSize
         parameters.parentID = parent.id
         parameters.userID = pageState.userSession.user.id

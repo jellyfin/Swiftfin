@@ -7,6 +7,7 @@
 //
 
 import Combine
+import FactoryKit
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -47,7 +48,32 @@ final class ServerTasksViewModel: ViewModel {
     }
 
     @Published
-    var tasks: OrderedDictionary<String, [ServerTaskObserver]> = [:]
+    var tasks: OrderedDictionary<String, [ServerTaskViewModel]> = [:]
+
+    override init() {
+        super.init()
+
+        Container.shared.userSessionManager()
+            .$currentSession
+            .compactMap { $0?.serverSocketManager.scheduledTasks(interval: .seconds(2)) }
+            .switchToLatest()
+            .sink { [weak self] tasks in
+                Task { @MainActor in
+                    self?.updateTasks(tasks)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func updateTasks(_ updatedTasks: [TaskInfo]) {
+        for taskViewModel in tasks.values.flattened() {
+            guard let updatedTask = updatedTasks.first(where: { $0.id == taskViewModel.task.id }) else {
+                continue
+            }
+
+            taskViewModel.task = updatedTask
+        }
+    }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
@@ -61,8 +87,8 @@ final class ServerTasksViewModel: ViewModel {
         let removedTaskIDs = existingTaskIDs.filtering { allTaskIDs.contains($0) }
 
         for category in tasks.keys {
-            tasks[category]?.removeAll { observer in
-                guard let id = observer.task.id else { return false }
+            tasks[category]?.removeAll { taskViewModel in
+                guard let id = taskViewModel.task.id else { return false }
                 return removedTaskIDs.contains(id)
             }
             if tasks[category]?.isEmpty == true {
@@ -77,40 +103,31 @@ final class ServerTasksViewModel: ViewModel {
         }
 
         for id in existingIDs {
-            if let observer = tasks.values
+            if let taskViewModel = tasks.values
                 .flattened()
                 .first(where: { $0.task.id == id }),
                 let updatedTask = allTasks.first(where: { $0.id == id })
             {
-                observer.task = updatedTask
+                taskViewModel.task = updatedTask
             }
         }
 
         for newTask in newTasks {
-            let observer = ServerTaskObserver(task: newTask)
+            let taskViewModel = ServerTaskViewModel(task: newTask)
             let category = newTask.category ?? ""
 
             if tasks[category] != nil {
-                tasks[category]?.append(observer)
+                tasks[category]?.append(taskViewModel)
             } else {
-                tasks[category] = [observer]
-            }
-        }
-
-        for runningTask in allTasks where runningTask.state == .running {
-            if let observer = tasks.values
-                .flattened()
-                .first(where: { $0.task.id == runningTask.id })
-            {
-                Task {
-                    await observer.start()
-                }
+                tasks[category] = [taskViewModel]
             }
         }
 
         for category in tasks.keys {
             tasks[category]?.sort { ($0.task.name ?? "") < ($1.task.name ?? "") }
         }
+
+        tasks.sort()
     }
 
     @Function(\Action.Cases.restartApplication)

@@ -31,19 +31,17 @@ extension CustomizeViewsSettings {
             }
         }
 
-        @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
-        private var useSeriesLandscapeBackdrop
-        @Default(.Customization.Indicators.enabled)
-        private var indicators
-        @Default(.Customization.Indicators.unplayedStyle)
-        private var unplayedStyle
+        @Default(.Customization.Poster.configuration)
+        private var posterConfiguration
 
         @State
         private var previewItemState: PreviewItemState = .unplayed
 
         private let sampleItem: BaseItemDto = .init(
+            name: L10n.subtitle,
             runTimeTicks: Duration.seconds(1800).ticks,
-            type: .movie,
+            seriesName: L10n.preview,
+            type: .episode,
             userData: .init(
                 isFavorite: true,
                 isPlayed: true,
@@ -74,25 +72,18 @@ extension CustomizeViewsSettings {
                 .overlay {
                     PosterIndicatorsOverlay(
                         item: previewItem,
-                        indicators: indicators,
                         posterDisplayType: type
                     )
                 }
                 .posterCornerRadius(type)
 
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(L10n.preview)
-                        .font(.footnote)
-                        .foregroundStyle(.primary)
-
-                    Text(L10n.subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if posterConfiguration.showLabels {
+                    previewItem.posterLabel
+                        .environment(\.posterDisplayType, type)
                 }
             }
             .frame(width: (UIDevice.isTV ? 225 : 150) * (type == .landscape ? 1.77 : 1))
-            .animation(.linear(duration: 0.1), value: indicators)
-            .animation(.linear(duration: 0.1), value: unplayedStyle)
+            .animation(.linear(duration: 0.1), value: posterConfiguration)
             .animation(.linear(duration: 0.1), value: previewItemState)
         }
 
@@ -115,32 +106,36 @@ extension CustomizeViewsSettings {
                     PlatformPicker(L10n.status, selection: $previewItemState)
                 }
 
+                Section(L10n.labels) {
+                    Toggle(L10n.showPosterLabels, isOn: $posterConfiguration.showLabels)
+                }
+
                 Section(L10n.indicators) {
 
-                    Toggle(L10n.favorited, isOn: $indicators.contains(.favorited))
+                    Toggle(L10n.favorited, isOn: $posterConfiguration.indicators.contains(.favorited))
 
-                    Toggle(L10n.progress, isOn: $indicators.contains(.progress))
+                    Toggle(L10n.progress, isOn: $posterConfiguration.indicators.contains(.progress))
 
-                    Toggle(L10n.played, isOn: $indicators.contains(.played))
+                    Toggle(L10n.played, isOn: $posterConfiguration.indicators.contains(.played))
 
                     PlatformPicker(
                         L10n.unplayed,
                         selection: Binding {
-                            indicators.contains(.unplayed) ? unplayedStyle : .none
+                            posterConfiguration.indicators.contains(.unplayed) ? posterConfiguration.unplayedStyle : .none
                         } set: { newValue in
                             switch newValue {
                             case .none:
-                                indicators.remove(.unplayed)
+                                posterConfiguration.indicators.remove(.unplayed)
                             case .indicator, .count:
-                                indicators.insert(.unplayed)
-                                unplayedStyle = newValue
+                                posterConfiguration.indicators.insert(.unplayed)
+                                posterConfiguration.unplayedStyle = newValue
                             }
                         }
                     )
                 }
 
                 Section {
-                    Toggle(L10n.useSeriesThumb, isOn: $useSeriesLandscapeBackdrop)
+                    Toggle(L10n.useSeriesThumb, isOn: $posterConfiguration.useSeriesLandscapeBackdrop)
                 } header: {
                     Text(L10n.episode)
                 }

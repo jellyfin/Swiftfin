@@ -6,7 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-struct PosterIndicator: OptionSet, Storable {
+struct PosterIndicator: OptionSet, Hashable, Storable {
 
     let rawValue: Int
 
