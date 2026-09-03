@@ -84,7 +84,7 @@ extension DownloadTaskView {
                         }
                     case .complete:
                         Button(L10n.play) {
-                            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                            if Defaults[.VideoPlayer.videoPlayerType] == .vlc {
                                 router.dismiss()
 //                                    router.route(to: .videoPlayer(manager: DownloadVideoPlayerManager(downloadTask: downloadTask)))
                             } else {

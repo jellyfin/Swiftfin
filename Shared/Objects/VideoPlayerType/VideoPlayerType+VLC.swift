@@ -14,7 +14,7 @@ extension VideoPlayerType {
     // MARK: - Direct Play
 
     @ArrayBuilder<DirectPlayProfile>
-    static var _swiftfinDirectPlayProfiles: [DirectPlayProfile] {
+    static var _vlcDirectPlayProfiles: [DirectPlayProfile] {
         DirectPlayProfile(type: .video) {
             AudioCodec.aac
             AudioCodec.ac3
@@ -82,7 +82,7 @@ extension VideoPlayerType {
     // MARK: - Transcoding
 
     @ArrayBuilder<TranscodingProfile>
-    static var _swiftfinTranscodingProfiles: [TranscodingProfile] {
+    static var _vlcTranscodingProfiles: [TranscodingProfile] {
         TranscodingProfile(
             isBreakOnNonKeyFrames: true,
             context: .streaming,
@@ -154,7 +154,7 @@ extension VideoPlayerType {
     // MARK: - Subtitle
 
     @ArrayBuilder<SubtitleProfile>
-    static var _swiftfinSubtitleProfiles: [SubtitleProfile] {
+    static var _vlcSubtitleProfiles: [SubtitleProfile] {
         SubtitleProfile.build(method: .embed) {
             SubtitleFormat.ass
             SubtitleFormat.cc_dec
@@ -207,7 +207,7 @@ extension VideoPlayerType {
     // MARK: - Codec Profiles
 
     @ArrayBuilder<CodecProfile>
-    static var _swiftfinCodecProfiles: [CodecProfile] {
+    static var _vlcCodecProfiles: [CodecProfile] {
         CodecProfile(
             codec: VideoCodec.h264.rawValue,
             type: .video,
@@ -253,7 +253,7 @@ extension VideoPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    swiftfinHDRProfiles
+                    vlcHDRProfiles
                 }
             }
         )
@@ -279,7 +279,7 @@ extension VideoPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    swiftfinHDRProfiles
+                    vlcHDRProfiles
                 }
             }
         )
@@ -305,14 +305,14 @@ extension VideoPlayerType {
                     isRequired: true,
                     property: .videoRangeType
                 ) {
-                    swiftfinHDRProfiles
+                    vlcHDRProfiles
                 }
             }
         )
     }
 
     @ArrayBuilder<VideoRangeType>
-    private static var swiftfinHDRProfiles: [VideoRangeType] {
+    private static var vlcHDRProfiles: [VideoRangeType] {
 
         VideoRangeType.sdr
         VideoRangeType.doviWithSDR

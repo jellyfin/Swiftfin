@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+// TODO: add playbackQuality
 // TODO: add audio/subtitle offset
 
 enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable {
@@ -13,14 +14,16 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     case aspectFill
     case audio
     case autoPlay
-    #if os(iOS)
-    case gestureLock
-    #endif
+    case pictureInPicture
     case playbackSpeed
     case playbackSettings
     case playNextItem
     case playPreviousItem
+    case remotePlayback
     case subtitles
+    #if os(iOS)
+    case gestureLock
+    #endif
 
     var displayTitle: String {
         switch self {
@@ -30,10 +33,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.audio
         case .autoPlay:
             L10n.autoPlay
-        #if os(iOS)
-        case .gestureLock:
-            L10n.gestureLock
-        #endif
+        case .pictureInPicture:
+            L10n.pictureInPicture
         case .playbackSpeed:
             L10n.playbackSpeed
         case .playbackSettings:
@@ -42,8 +43,14 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.playNextItem
         case .playPreviousItem:
             L10n.playPreviousItem
+        case .remotePlayback:
+            L10n.outputs
         case .subtitles:
             L10n.subtitles
+        #if os(iOS)
+        case .gestureLock:
+            L10n.gestureLock
+        #endif
         }
     }
 
@@ -57,10 +64,12 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2"
         case .autoPlay: "play.fill"
+        case .pictureInPicture: "pip.enter"
         case .playbackSpeed: "speedometer"
         case .playbackSettings: "tv"
         case .playNextItem: "forward.end.fill"
         case .playPreviousItem: "backward.end.fill"
+        case .remotePlayback: "airplayvideo"
         case .subtitles: "captions.bubble.fill"
         }
     }
@@ -70,6 +79,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .aspectFill: "arrow.down.right.and.arrow.up.left"
         case .audio: "speaker.wave.2"
         case .autoPlay: "stop.fill"
+        case .pictureInPicture: "pip.exit"
         case .subtitles: "captions.bubble"
         default:
             systemImage
@@ -88,10 +98,12 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .audio: "speaker.wave.2.fill"
         case .autoPlay: usesLiquidGlassSymbols ? "play.fill" : "play.circle.fill"
         case .gestureLock: usesLiquidGlassSymbols ? "lock.fill" : "lock.circle.fill"
+        case .pictureInPicture: "pip.enter"
         case .playbackSpeed: "speedometer"
         case .playbackSettings: usesLiquidGlassSymbols ? "tv" : "tv.circle.fill"
         case .playNextItem: usesLiquidGlassSymbols ? "forward.end.fill" : "forward.end.circle.fill"
         case .playPreviousItem: usesLiquidGlassSymbols ? "backward.end.fill" : "backward.end.circle.fill"
+        case .remotePlayback: "airplayvideo"
         case .subtitles: "captions.bubble.fill"
         }
     }
@@ -107,6 +119,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
                 "stop.circle"
             }
         case .gestureLock: "lock.open.fill"
+        case .pictureInPicture: "pip.exit"
         case .subtitles: "captions.bubble"
         default:
             systemImage
@@ -119,12 +132,14 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         .autoPlay,
         .playPreviousItem,
         .playNextItem,
+        .remotePlayback,
     ]
 
     static let defaultMenuActionButtons: [VideoPlayerActionButton] = [
         .audio,
         .subtitles,
         .playbackSpeed,
+        .pictureInPicture,
         .playbackSettings,
     ]
 }
