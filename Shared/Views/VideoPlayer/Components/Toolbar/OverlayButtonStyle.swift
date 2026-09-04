@@ -12,7 +12,6 @@ extension VideoPlayer.PlaybackControls {
 
     struct OverlayButtonStyleModifier: ViewModifier {
 
-        @ViewBuilder
         func body(content: Content) -> some View {
             if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
                 content
@@ -31,19 +30,17 @@ extension VideoPlayer.PlaybackControls {
             Menu(configuration)
                 .menuStyle(.button)
             #if os(tvOS)
-                // The container checks native menu presentation before hiding the overlay.
-                    .modifier(OverlayButtonStyleModifier())
+                .modifier(OverlayButtonStyleModifier())
             #else
-                    .buttonStyle(OverlayButtonStyle(isMenu: true))
+                .buttonStyle(OverlayButtonStyle(isMenu: true))
             #endif
-                    .symbolRenderingMode(.monochrome)
-                    .foregroundStyle(.primary, .secondary)
+                .symbolRenderingMode(.monochrome)
+                .foregroundStyle(.primary, .secondary)
         }
     }
 
     struct OverlayBarButtonStyleModifier: ViewModifier {
 
-        @ViewBuilder
         func body(content: Content) -> some View {
             #if os(tvOS)
             content

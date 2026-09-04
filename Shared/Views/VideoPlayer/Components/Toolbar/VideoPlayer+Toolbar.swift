@@ -58,6 +58,7 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        @ViewBuilder
         private var content: some View {
             HStack(alignment: UIDevice.isTV ? .bottom : .center) {
 
