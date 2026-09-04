@@ -80,15 +80,6 @@ struct CustomizeSettingsView: View {
     @Default(.Customization.Poster.configuration)
     private var posterConfiguration
 
-    // MARK: - User Permissions
-
-    @Injected(\.currentUserSession)
-    private var userSession
-
-    private var userPolicy: UserPolicy? {
-        userSession?.user.data.policy
-    }
-
     @Router
     private var router
 
