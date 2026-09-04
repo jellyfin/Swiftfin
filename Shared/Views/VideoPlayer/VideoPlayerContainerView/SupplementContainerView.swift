@@ -87,9 +87,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             }
             #if os(iOS)
             .background {
-                    GestureView()
-                        .environment(\.panGestureDirection, .vertical)
-                }
+                GestureView()
+                    .environment(\.panGestureDirection, .vertical)
+            }
             #endif
         }
 

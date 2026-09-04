@@ -92,7 +92,7 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
             .foregroundStyle(.primary, .secondary)
             .accessibilityAction(named: Text(L10n.openLibrary), routeToLibrary)
             #if os(tvOS)
-            .buttonStyle(HeaderButtonStyle())
+                .buttonStyle(HeaderButtonStyle())
             #endif
         } else {
             headerTitle

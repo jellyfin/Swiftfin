@@ -91,29 +91,29 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
         .navigationTitle(viewModel.provider.displayTitle)
         #if os(iOS)
-        .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
+            .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
         #elseif os(tvOS)
-        .toolbar(router.isRootOfPath ? .hidden : .automatic, for: .navigationBar)
+            .toolbar(router.isRootOfPath ? .hidden : .automatic, for: .navigationBar)
         #endif
-        .onFirstAppear {
-            viewModel.refresh()
-        }
-        .refreshable {
-            viewModel.refresh()
-        }
-        .sinceLastDisappear { interval in
-            viewModel.refreshIfNeeded(sinceLastDisappear: interval)
-        }
-        .onSceneWillEnterForeground {
-            viewModel.refreshIfPendingChanges()
-        }
-        .topBarTrailing {
-            if #unavailable(iOS 26.0) {
-                if viewModel.background.is(.refreshing) {
-                    ProgressView()
+            .onFirstAppear {
+                viewModel.refresh()
+            }
+            .refreshable {
+                viewModel.refresh()
+            }
+            .sinceLastDisappear { interval in
+                viewModel.refreshIfNeeded(sinceLastDisappear: interval)
+            }
+            .onSceneWillEnterForeground {
+                viewModel.refreshIfPendingChanges()
+            }
+            .topBarTrailing {
+                if #unavailable(iOS 26.0) {
+                    if viewModel.background.is(.refreshing) {
+                        ProgressView()
+                    }
                 }
             }
-        }
-        .environmentObject(focusCoordinator)
+            .environmentObject(focusCoordinator)
     }
 }

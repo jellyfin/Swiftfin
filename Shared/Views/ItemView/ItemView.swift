@@ -134,14 +134,14 @@ struct ItemView: View {
         }
         .environmentObject(focusCoordinator)
         #if os(tvOS)
-        .toolbarVisibility(.hidden, for: .navigationBar)
+            .toolbarVisibility(.hidden, for: .navigationBar)
         #else
-        .navigationBarMenuButton(
-            isLoading: viewModel.background.is(.refreshing),
-            isHidden: !provider.item.canEdit
-        ) {
-            EditItemMenu(item: provider.item)
-        }
+            .navigationBarMenuButton(
+                isLoading: viewModel.background.is(.refreshing),
+                isHidden: !provider.item.canEdit
+            ) {
+                EditItemMenu(item: provider.item)
+            }
         #endif
     }
 }

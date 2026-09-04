@@ -125,8 +125,8 @@ struct ServerConnectionView: View {
                 }
                 #if os(iOS)
                 .backport
-                    .buttonStyle(.glass)
-                    .controlSize(.small)
+                .buttonStyle(.glass)
+                .controlSize(.small)
                 #endif
             }
         }

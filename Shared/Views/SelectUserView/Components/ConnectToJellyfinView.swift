@@ -35,11 +35,11 @@ extension SelectUserView {
                 .buttonStyle(.glassProminent.shadow(false))
                 .tint(accentColor)
                 #if os(iOS)
-                .controlSize(.large)
+                    .controlSize(.large)
                 #endif
-                .frame(
-                    height: UIDevice.isTV ? 75 : 44
-                )
+                    .frame(
+                        height: UIDevice.isTV ? 75 : 44
+                    )
             }
             .frame(maxWidth: UIDevice.isTV ? 400 : 250)
         }

@@ -44,9 +44,9 @@ struct SettingsView: View {
         }
         #if os(iOS)
         .navigationTitle(L10n.settings)
-            .navigationBarCloseButton {
-                router.dismiss()
-            }
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
         #endif
     }
 
@@ -105,14 +105,14 @@ struct SettingsView: View {
             .listRowInsets(.zero)
             .listRowBackground(Color.clear)
             #if os(iOS)
-            .listRowSeparator(.hidden)
+                .listRowSeparator(.hidden)
             #endif
-            .fontWeight(.semibold)
-            .backport
-            .buttonStyle(.glassProminent.shadow(false))
-            .tint(accentColor)
+                .fontWeight(.semibold)
+                .backport
+                .buttonStyle(.glassProminent.shadow(false))
+                .tint(accentColor)
             #if os(iOS)
-            .controlSize(.large)
+                .controlSize(.large)
             #endif
         }
     }

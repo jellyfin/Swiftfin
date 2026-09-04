@@ -65,10 +65,10 @@ struct ErrorView<ErrorType: Error>: View {
                 .buttonStyle(.glassProminent.shadow(false))
                 .tint(accentColor)
                 #if os(iOS)
-                .controlSize(.large)
+                    .controlSize(.large)
                 #endif
-                .frame(height: buttonHeight)
-                .frame(maxWidth: buttonMaxSize)
+                    .frame(height: buttonHeight)
+                    .frame(maxWidth: buttonMaxSize)
             }
 
             if let localizedError = error as? LocalizedError,

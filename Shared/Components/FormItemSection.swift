@@ -53,7 +53,7 @@ struct FormItemSection<Item: Poster>: PlatformView {
         .listRowBackground(Color.clear)
         .listRowInsets(.zero)
         #if os(iOS)
-        .listRowCornerRadius(0)
+            .listRowCornerRadius(0)
         #endif
     }
 

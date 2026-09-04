@@ -84,28 +84,28 @@ extension SelectUserView {
                     }
                     .isSelected(selectedUsers.contains(item.user))
                     #if os(iOS)
-                    .swipeActions {
-                        if !isEditing {
-                            Button(
-                                L10n.delete,
-                                systemImage: "trash"
-                            ) {
-                                onDelete(item.user)
+                        .swipeActions {
+                            if !isEditing {
+                                Button(
+                                    L10n.delete,
+                                    systemImage: "trash"
+                                ) {
+                                    onDelete(item.user)
+                                }
+                                .tint(.red)
                             }
-                            .tint(.red)
                         }
-                    }
                     #endif
                 }
                 .listRowBackground(Color.clear)
             }
             .listStyle(.plain)
             #if os(iOS)
-            .scrollContentBackground(.hidden)
+                .scrollContentBackground(.hidden)
             #else
-            .edgePadding()
-            .scrollClipDisabled()
-            .focusSection()
+                .edgePadding()
+                .scrollClipDisabled()
+                .focusSection()
             #endif
         }
     }

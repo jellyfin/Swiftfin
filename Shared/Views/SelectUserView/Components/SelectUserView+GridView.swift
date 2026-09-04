@@ -84,7 +84,7 @@ extension SelectUserView {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .scrollIfLargerThanContainer(axes: .horizontal)
             #if os(tvOS)
-            .scrollClipDisabled()
+                .scrollClipDisabled()
             #endif
         }
     }

@@ -75,10 +75,10 @@ struct QuickConnectView: View {
         }
         .navigationTitle(L10n.quickConnect)
         #if os(iOS)
-        .toolbarTitleDisplayMode(.inline)
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
+            .toolbarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                router.dismiss()
+            }
         #endif
     }
 }
