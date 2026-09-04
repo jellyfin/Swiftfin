@@ -32,7 +32,7 @@ struct ChannelScheduleLibrary: BaseItemKindLibrary {
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetLiveTvProgramsParameters()
         parameters.channelIDs = [channelID].compactMap(\.self)
-        parameters.fields = .MinimumFields.appending(.channelInfo)
+        parameters.fields = [.channelInfo]
         parameters.limit = pageState.pageSize
         parameters.minEndDate = startDate
         parameters.sortBy = [.startDate]

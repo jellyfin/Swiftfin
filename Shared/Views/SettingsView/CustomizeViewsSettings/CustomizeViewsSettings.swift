@@ -14,11 +14,22 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.Search.enabledDrawerFilters)
     private var searchEnabledDrawerFilters
 
+    #if os(tvOS)
+    @Default(.Customization.tabBarPlacement)
+    private var tabBarPlacement
+    #endif
+
     @Router
     private var router
 
     var body: some View {
         Form(systemImage: "gear") {
+
+            #if os(tvOS)
+            Section(L10n.tabBar) {
+                ListRowMenu(L10n.layout, selection: $tabBarPlacement)
+            }
+            #endif
 
             Section {
                 ChevronButton(L10n.search) {
