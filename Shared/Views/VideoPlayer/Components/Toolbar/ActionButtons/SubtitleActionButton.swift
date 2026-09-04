@@ -52,8 +52,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 } label: {
                     Label(L10n.subtitles, systemImage: systemImage)
                 }
-                .symbolRenderingMode(.monochrome)
-                .foregroundStyle(.primary, .secondary)
                 .videoPlayerActionButtonTransition()
                 .assign(playbackItem.$selectedSubtitleStreamIndex, to: $selectedSubtitleStreamIndex)
                 .onChange(of: selectedSubtitleStreamIndex) {

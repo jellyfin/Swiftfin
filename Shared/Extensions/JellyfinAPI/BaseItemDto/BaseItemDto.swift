@@ -260,8 +260,7 @@ extension BaseItemDto {
         guard type == .program else { return nil }
 
         var parameters = Paths.GetItemsParameters()
-        parameters.fields = .MinimumFields
-        parameters.ids = [program.channelID ?? ""]
+        parameters.ids = program.channelID.flatMap { [$0] }
 
         let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)

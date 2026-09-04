@@ -36,14 +36,6 @@ extension VideoPlayer.PlaybackControls {
             UIDevice.isTV ? 30 : 24
         }
 
-        private func onPressed(isPressed: Bool) {
-            if isPressed {
-                containerState.timer.stop()
-            } else {
-                containerState.timer.poke()
-            }
-        }
-
         @ViewBuilder
         private var closeButton: some View {
             Button {
@@ -55,7 +47,7 @@ extension VideoPlayer.PlaybackControls {
                 }
             } label: {
                 AlternateLayoutView {
-                    Image(systemName: "xmark")
+                    Label(L10n.close, systemImage: "xmark")
                 } content: {
                     Label(
                         L10n.close,
@@ -66,12 +58,14 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        var body: some View {
+        @ViewBuilder
+        private var content: some View {
             HStack(alignment: UIDevice.isTV ? .bottom : .center) {
 
                 if !UIDevice.isTV {
                     closeButton
                         .frame(width: Self.buttonSize, height: Self.buttonSize)
+                        .modifier(OverlayBarButtonStyleModifier())
                 }
 
                 TitleView(item: manager.item)
@@ -81,9 +75,24 @@ extension VideoPlayer.PlaybackControls {
                     .frame(height: Self.buttonSize)
                     .padding(.horizontal)
             }
+        }
+
+        var body: some View {
+            Group {
+                #if os(iOS)
+                if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
+                    GlassEffectContainer {
+                        content
+                    }
+                } else {
+                    content
+                }
+                #else
+                content
+                #endif
+            }
             .font(.system(size: fontSize, weight: .semibold))
-            .labelStyle(.iconOnly)
-            .modifier(OverlayButtonStyleModifier(onPressed: onPressed))
+            .menuStyle(OverlayMenuStyle())
             #if os(iOS)
                 .background {
                     EmptyHitTestView()

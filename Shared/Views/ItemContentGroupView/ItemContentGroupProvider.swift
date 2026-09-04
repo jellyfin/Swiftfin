@@ -228,7 +228,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         if Defaults[.Customization.shouldShowRecommendations] {
             PosterGroup(
                 id: "similar-items",
-                library: SimilarItemsLibrary(itemID: itemID),
+                library: SimilarItemsLibrary(itemID: itemID, itemType: item.type),
                 posterDisplayType: .landscape,
                 posterSize: .small
             )
@@ -328,7 +328,6 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetNextUpParameters()
-        parameters.fields = .MinimumFields
         parameters.seriesID = item.id
 
         let request = Paths.getNextUp(parameters: parameters)
@@ -343,7 +342,6 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     private func resumeItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetResumeItemsParameters()
-        parameters.fields = .MinimumFields
         parameters.limit = 1
         parameters.parentID = item.id
 
@@ -355,7 +353,6 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     private func firstAvailableItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetItemsParameters()
-        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.episode]
         parameters.isMissing = false
         parameters.isRecursive = true
@@ -384,7 +381,6 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         }
 
         var parameters = Paths.GetItemsParameters()
-        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.movie, .series]
         parameters.isRecursive = true
         parameters.limit = 1

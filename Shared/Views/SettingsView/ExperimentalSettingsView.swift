@@ -13,14 +13,12 @@ import SwiftUI
 /// `Note`: Used for experimental settings that may be removed or implemented officially. Keep for future settings.
 struct ExperimentalSettingsView: View {
 
-    #if os(tvOS)
-    static let isEnabled = false
-    #else
     static let isEnabled = true
-    #endif
 
     @Default(.Experimental.serverConnectionAutoSwitch)
     private var isServerConnectionAutoSwitchEnabled
+    @Default(.Experimental.videoPlayerEPG)
+    private var isVideoPlayerEPGEnabled
 
     @Injected(\.userSessionManager)
     private var userSessionManager: UserSessionManager
@@ -28,7 +26,11 @@ struct ExperimentalSettingsView: View {
     var body: some View {
         Form(systemImage: "flask") {
             // swiftlint:disable hard_coded_display_string
+            Toggle("Live TV EPG", isOn: $isVideoPlayerEPGEnabled)
+
+            #if os(iOS)
             Toggle("Auto switch connection", isOn: $isServerConnectionAutoSwitchEnabled)
+            #endif
 
             // swiftlint:enable hard_coded_display_string
         }
