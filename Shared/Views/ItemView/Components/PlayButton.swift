@@ -82,9 +82,9 @@ struct PlayButton: View {
                     Text(L10n.version)
                 } icon: {
                     Image(systemName: "ellipsis")
-                    #if os(tvOS)
-                        .rotationEffect(.degrees(90))
-                    #endif
+                        #if os(tvOS)
+                            .rotationEffect(.degrees(90))
+                        #endif
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .backport
@@ -103,9 +103,9 @@ struct PlayButton: View {
             .labelStyle(.iconOnly)
             .buttonStyle(BasicHoverButtonStyle())
             #if !os(tvOS)
-                .aspectRatio(1, contentMode: .fit)
+            .aspectRatio(1, contentMode: .fit)
             #else
-                .frame(width: 60)
+            .frame(width: 60)
             #endif
         }
     }

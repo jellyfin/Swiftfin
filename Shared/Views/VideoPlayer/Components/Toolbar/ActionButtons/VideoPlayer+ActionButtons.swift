@@ -109,20 +109,17 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         @ViewBuilder
         private var compactView: some View {
             Menu {
-                Group {
-                    ForEach(
-                        barActionButtons,
-                        content: view(for:)
-                    )
+                ForEach(
+                    barActionButtons,
+                    content: view(for:)
+                )
 
-                    Divider()
+                Divider()
 
-                    ForEach(
-                        menuActionButtons,
-                        content: view(for:)
-                    )
-                }
-                .modifier(OverlayMenuTimerModifier())
+                ForEach(
+                    menuActionButtons,
+                    content: view(for:)
+                )
             } label: {
                 menuLabel
             }
@@ -146,7 +143,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                             content: view(for:)
                         )
                         .withViewContext(.isInMenu)
-                        .modifier(OverlayMenuTimerModifier())
                     } label: {
                         menuLabel
                     }
@@ -170,15 +166,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                     regularView
                 }
             }
-            #if os(iOS)
-            .if(UIDevice.supportsLiquidGlass) { view in
-                view
-                    .buttonStyle(.plain)
-                    .menuStyle(.button)
-                    .backport
-                    .glassEffect(.regular.interactive(false), in: .capsule)
-            }
-            #endif
+            .modifier(VideoPlayer.PlaybackControls.OverlayBarButtonStyleModifier())
         }
     }
 }

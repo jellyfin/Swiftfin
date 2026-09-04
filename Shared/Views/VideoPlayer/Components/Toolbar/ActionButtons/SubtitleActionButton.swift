@@ -42,16 +42,13 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         var body: some View {
             if let playbackItem = manager.playbackItem {
                 Menu {
-                    Group {
-                        if isInMenu {
+                    if isInMenu {
+                        content(playbackItem: playbackItem)
+                    } else {
+                        Section(L10n.subtitles) {
                             content(playbackItem: playbackItem)
-                        } else {
-                            Section(L10n.subtitles) {
-                                content(playbackItem: playbackItem)
-                            }
                         }
                     }
-                    .modifier(OverlayMenuTimerModifier())
                 } label: {
                     Label(L10n.subtitles, systemImage: systemImage)
                 }

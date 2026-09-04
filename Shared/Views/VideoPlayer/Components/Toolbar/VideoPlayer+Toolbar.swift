@@ -58,12 +58,13 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        var body: some View {
+        private var content: some View {
             HStack(alignment: UIDevice.isTV ? .bottom : .center) {
 
                 if !UIDevice.isTV {
                     closeButton
                         .frame(width: Self.buttonSize, height: Self.buttonSize)
+                        .modifier(OverlayBarButtonStyleModifier())
                 }
 
                 TitleView(item: manager.item)
@@ -73,14 +74,28 @@ extension VideoPlayer.PlaybackControls {
                     .frame(height: Self.buttonSize)
                     .padding(.horizontal)
             }
-            .font(.system(size: fontSize, weight: .semibold))
-            .labelStyle(OverlayLabelStyle())
-            .menuStyle(OverlayMenuStyle())
-            .modifier(OverlayButtonStyleModifier())
-            #if os(iOS)
-                .background {
-                    EmptyHitTestView()
+        }
+
+        var body: some View {
+            Group {
+                #if os(iOS)
+                if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
+                    GlassEffectContainer {
+                        content
+                    }
+                } else {
+                    content
                 }
+                #else
+                content
+                #endif
+            }
+            .font(.system(size: fontSize, weight: .semibold))
+            .menuStyle(OverlayMenuStyle())
+            #if os(iOS)
+            .background {
+                EmptyHitTestView()
+            }
             #endif
         }
     }

@@ -97,11 +97,11 @@ struct PosterButton<Item: Poster>: View {
         .buttonStyle(.borderless)
         .buttonBorderShape(.roundedRectangle)
         #if os(tvOS)
-            .focusedValue(\.focusedPoster, AnyPoster(item))
+        .focusedValue(\.focusedPoster, AnyPoster(item))
         #endif
-            .posterContextMenu(for: item) {
-                contextMenuPreview
-                    .withViewContext(viewContext)
-            }
+        .posterContextMenu(for: item) {
+            contextMenuPreview
+                .withViewContext(viewContext)
+        }
     }
 }

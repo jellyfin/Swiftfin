@@ -123,14 +123,9 @@ class VideoPlayerContainerState: ObservableObject {
     @Published
     var isProgressBarFocused: Bool = false
 
-    var presentedMenuCount: Int = 0 {
+    var isPresentingMenu: Bool = false {
         didSet {
-            guard presentedMenuCount >= 0 else {
-                presentedMenuCount = 0
-                return
-            }
-
-            if presentedMenuCount > 0 {
+            if isPresentingMenu {
                 timer.stop()
             } else {
                 timer.poke()
@@ -203,7 +198,7 @@ class VideoPlayerContainerState: ObservableObject {
 
             guard !isScrubbing,
                   !isPresentingSupplement,
-                  presentedMenuCount == 0,
+                  !isPresentingMenu,
                   manager?.playbackRequestStatus != .paused else { return }
 
             withAnimation(.linear(duration: 0.25)) {

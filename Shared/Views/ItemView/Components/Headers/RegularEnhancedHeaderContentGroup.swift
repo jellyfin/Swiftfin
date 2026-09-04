@@ -117,18 +117,18 @@ extension ItemView {
                 #if os(tvOS)
                 .focusSection()
                 #else
-                .edgePadding(.bottom)
-                .background(
-                    alignment: .bottom,
-                    extendedBy: .init(horizontal: EdgeInsets.edgePadding)
-                ) {
-                    Rectangle()
-                        .fill(Material.ultraThin)
-                        .mask(gradient: .eased(.easeOut)) {
-                            (location: 0, opacity: 0)
-                            (location: 1, opacity: 1)
-                        }
-                }
+                    .edgePadding(.bottom)
+                    .background(
+                        alignment: .bottom,
+                        extendedBy: .init(horizontal: EdgeInsets.edgePadding)
+                    ) {
+                        Rectangle()
+                            .fill(Material.ultraThin)
+                            .mask(gradient: .eased(.easeOut)) {
+                                (location: 0, opacity: 0)
+                                (location: 1, opacity: 1)
+                            }
+                    }
                 #endif
             }
 

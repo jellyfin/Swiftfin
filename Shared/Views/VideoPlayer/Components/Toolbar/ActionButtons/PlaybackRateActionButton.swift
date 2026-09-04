@@ -38,7 +38,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             .tag(manager.rate)
                     }
                 }
-                .modifier(OverlayMenuTimerModifier())
             } label: {
                 Label(
                     L10n.playbackSpeed,
