@@ -349,7 +349,6 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetNextUpParameters()
-        parameters.fields = .MinimumFields
 
         if item.type == .series {
             parameters.seriesID = item.id
@@ -382,8 +381,6 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     private func firstAvailableItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetItemsParameters()
-
-        parameters.fields = .MinimumFields
 
         if item.type == .series || item.type == .season {
             parameters.includeItemTypes = [.episode]

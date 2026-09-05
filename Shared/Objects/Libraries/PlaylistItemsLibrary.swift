@@ -34,7 +34,6 @@ struct PlaylistItemsLibrary: BaseItemKindLibrary {
 
         var parameters = Paths.GetPlaylistItemsParameters()
         parameters.enableUserData = true
-        parameters.fields = .MinimumFields
         parameters.limit = pageState.pageSize
         parameters.startIndex = pageState.pageOffset
         parameters.userID = pageState.userSession.user.id

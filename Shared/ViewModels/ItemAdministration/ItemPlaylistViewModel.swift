@@ -65,7 +65,6 @@ final class ItemPlaylistViewModel: ViewModel {
         let userSession = try requireUserSession()
 
         var parameters = Paths.GetItemsParameters()
-        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.playlist]
         parameters.isRecursive = true
         parameters.sortBy = [.sortName]
