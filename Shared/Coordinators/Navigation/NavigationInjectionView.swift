@@ -45,13 +45,21 @@ struct NavigationInjectionView: View {
             content
                 .navigationDestination(for: NavigationRoute.self) { route in
                     route.destination
+                        .environment(
+                            \.router,
+                            .init(
+                                navigationCoordinator: coordinator,
+                                isRootOfPath: false
+                            )
+                        )
                 }
         }
         .trackingFrame(for: .navigationStack)
         .environment(
             \.router,
             .init(
-                navigationCoordinator: coordinator
+                navigationCoordinator: coordinator,
+                isRootOfPath: true
             )
         )
         .environmentObject(coordinator)
