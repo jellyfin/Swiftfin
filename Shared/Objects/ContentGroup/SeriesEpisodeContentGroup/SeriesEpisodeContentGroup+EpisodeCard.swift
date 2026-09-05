@@ -114,6 +114,9 @@ extension SeriesEpisodeContentGroup {
                         }
                     }
                     .posterStyle(.landscape)
+                #if os(tvOS)
+                    .posterCornerRadius(.landscape)
+                #endif
                     .subtleShadow()
             }
         }
