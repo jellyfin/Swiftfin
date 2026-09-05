@@ -54,12 +54,12 @@ struct ItemRefreshView: View {
         }
         .errorMessage($viewModel.error)
         #if os(iOS)
-            .topBarTrailing {
-                Button(L10n.run, action: onRun)
-                    .backport
-                    .buttonStyle(.glassProminent)
-                    .controlSize(.small)
-            }
+        .topBarTrailing {
+            Button(L10n.run, action: onRun)
+                .backport
+                .buttonStyle(.glassProminent)
+                .controlSize(.small)
+        }
         #endif
     }
 
@@ -98,7 +98,7 @@ struct ItemRefreshView: View {
                 .buttonStyle(.glassProminent.shadow(false))
                 .tint(accentColor)
                 #if os(iOS)
-                    .controlSize(.large)
+                .controlSize(.large)
                 #endif
             }
             #endif

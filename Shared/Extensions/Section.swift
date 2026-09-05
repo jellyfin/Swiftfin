@@ -125,9 +125,9 @@ private struct LearnMoreButton: View {
                 .navigationTitle(title.localizedCapitalized)
                 .toolbarTitleDisplayMode(.inline)
                 #if os(iOS)
-                    .navigationBarCloseButton {
-                        isPresented = false
-                    }
+                .navigationBarCloseButton {
+                    isPresented = false
+                }
                 #endif
             }
         }
