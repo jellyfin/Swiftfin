@@ -35,7 +35,7 @@ extension VideoRangeType: Displayable {
         case .doviWithHLG:
             "\(L10n.dolbyVision) / \(L10n.hlg)"
         case .doviInvalid:
-            L10n.invalidX(L10n.dolbyVision)
+            L10n.invalidDolbyVision
         case .doviWithSDR:
             "\(L10n.dolbyVision) / \(L10n.sdr)"
         case .hdr10Plus:
