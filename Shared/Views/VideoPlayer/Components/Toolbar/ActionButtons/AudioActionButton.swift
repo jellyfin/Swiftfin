@@ -58,8 +58,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 } label: {
                     Label(L10n.audio, systemImage: systemImage)
                 }
-                .symbolRenderingMode(.monochrome)
-                .foregroundStyle(.primary, .secondary)
                 .videoPlayerActionButtonTransition()
                 .assign(playbackItem.$selectedAudioStreamIndex, to: $selectedAudioStreamIndex)
                 .onChange(of: selectedAudioStreamIndex) {

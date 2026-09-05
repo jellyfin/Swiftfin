@@ -8,6 +8,7 @@
 
 import Algorithms
 import AVKit
+import Defaults
 import FactoryKit
 import Foundation
 import JellyfinAPI
@@ -208,7 +209,10 @@ extension BaseItemDto {
 
     func getPlaybackItemProvider(
         userSession: UserSession?,
-        mediaSource: MediaSourceInfo? = nil
+        mediaSource: MediaSourceInfo? = nil,
+        audioStreamIndex: Int? = nil,
+        subtitleStreamIndex: Int? = nil,
+        requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
     ) -> MediaPlayerItemProvider? {
         switch type {
         case .program:
@@ -232,11 +236,17 @@ extension BaseItemDto {
 
             return MediaPlayerItemProvider(
                 item: self,
-                mediaSource: selectedMediaSource
+                mediaSource: selectedMediaSource,
+                audioStreamIndex: audioStreamIndex,
+                subtitleStreamIndex: subtitleStreamIndex,
+                requestedBitrate: requestedBitrate
             ) { item, modifyItem in
                 try await MediaPlayerItem.build(
                     for: item,
                     mediaSource: selectedMediaSource,
+                    audioStreamIndex: audioStreamIndex,
+                    subtitleStreamIndex: subtitleStreamIndex,
+                    requestedBitrate: requestedBitrate,
                     modifyItem: modifyItem
                 )
             }
@@ -250,8 +260,7 @@ extension BaseItemDto {
         guard type == .program else { return nil }
 
         var parameters = Paths.GetItemsParameters()
-        parameters.fields = .MinimumFields
-        parameters.ids = [program.channelID ?? ""]
+        parameters.ids = program.channelID.flatMap { [$0] }
 
         let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)

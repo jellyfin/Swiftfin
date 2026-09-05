@@ -36,11 +36,9 @@ extension BaseItemDto {
         case .playlist:
             return canDelete == true
         case .boxSet:
-            return (userPolicy.enableCollectionManagement == true || userPolicy.isAdministrator == true)
-                && StoredValues[.User.enableCollectionManagement]
+            return userPolicy.enableCollectionManagement == true || userPolicy.isAdministrator == true
         default:
             return userPolicy.isAdministrator == true
-                && StoredValues[.User.enableItemEditing]
         }
     }
 
@@ -66,25 +64,5 @@ extension BaseItemDto {
         default:
             return false
         }
-    }
-
-    /// Indicates whether the item can be deleted by the current user
-    var canDeleteItem: Bool {
-        switch type {
-        case .boxSet:
-            StoredValues[.User.enableCollectionManagement] && canDelete == true
-        default:
-            StoredValues[.User.enableItemDeletion] && canDelete == true
-        }
-    }
-
-    /// Indicates whether the Editor Menu should be shown for the item
-    var canEdit: Bool {
-        canEditMetadata
-            || canEditSubtitles
-            || canBeInPlaylist
-        // TODO: Enable with Lyrics and/or Downloads
-        // || canEditLyrics
-        // || (!UIDevice.isTV && canBeDownloaded)
     }
 }

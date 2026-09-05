@@ -6,12 +6,18 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
+
+    #if os(tvOS)
+    @Default(.Customization.tabBarPlacement)
+    private var tabBarPlacement
+    #endif
 
     @InjectedObject(\.userSessionManager)
     private var userSessionManager
@@ -60,7 +66,7 @@ struct MainTabView: View {
     }
 
     @ViewBuilder
-    private func tabContent() -> some View {
+    private func tabView() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
                 Tab(
@@ -90,8 +96,21 @@ struct MainTabView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func tabContent() -> some View {
         #if os(tvOS)
-        .tabViewStyle(.sidebarAdaptable)
+        switch tabBarPlacement {
+        case .sidebar:
+            tabView()
+                .tabViewStyle(.sidebarAdaptable)
+        case .tabBar:
+            tabView()
+                .tabViewStyle(.tabBarOnly)
+        }
+        #else
+        tabView()
         #endif
     }
 
