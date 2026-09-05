@@ -1,5 +1,5 @@
 {
-  "originHash" : "a2ea4831b4277f95b52f845ae611d252f3fc45f831a06467bc6463b283cac2e0",
+  "originHash" : "e2e2f943cfafe0e960eda452b75b8c13a2944e331bf43f5acaefb43b19fdb132",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -317,6 +317,15 @@
       }
     },
     {
+      "identity" : "swiftvlc",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/harflabs/SwiftVLC",
+      "state" : {
+        "revision" : "192393a45cdcd7ebb6befac26586360b8b1676b3",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "transmission",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nathantannar4/Transmission",
@@ -332,15 +341,6 @@
       "state" : {
         "revision" : "90806460f3b3e7564344647241c157aeb0b27a71",
         "version" : "0.3.0"
-      }
-    },
-    {
-      "identity" : "vlcui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/VLCUI",
-      "state" : {
-        "revision" : "e1449ec0a5ceda8f79c3d634fdd59e16b37bc151",
-        "version" : "0.8.1"
       }
     },
     {

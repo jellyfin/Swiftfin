@@ -38,8 +38,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     private(set) var indexMap: MediaTrackIndexMap
 
-    private var externalSubtitlesResolved = false
-
     weak var manager: MediaPlayerManager? {
         didSet {
             for var o in observers {
@@ -175,42 +173,36 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         }
     }
 
-    /// Switches an audio, subtitle track in the player without rebuilding the stream.
+    /// Switches audio or subtitles without rebuilding the stream.
     func switchTrack(type: MediaStreamType, index: Int?) {
-        let playerIndex: Int
-
-        guard let mappedPlayerIndex = indexMap.playerIndex(for: index) else {
-            return
-        }
-
-        playerIndex = mappedPlayerIndex
+        let playerIndex = indexMap.playerIndex(for: index)
 
         switch type {
         case .audio:
-            guard let proxy = manager?.proxy as? any MediaPlayerAudioTrackConfigurable else { return }
+            guard let playerIndex,
+                  let proxy = manager?.proxy as? any MediaPlayerAudioTrackConfigurable
+            else { return }
             proxy.setAudioStream(.init(index: playerIndex))
         case .subtitle:
             guard let proxy = manager?.proxy as? any MediaPlayerSubtitleTrackConfigurable else { return }
-            proxy.setSubtitleStream(.init(index: playerIndex))
+            // Disable subtitles until the requested track is available.
+            proxy.setSubtitleStream(.init(index: playerIndex ?? -1))
         default:
             return
         }
     }
 
-    /// Get subtitle mapped subtitle track indexes from `playbackChildren`
-    func getSubtitleIndexes(subtitleTracks: [(index: Int, title: String)]) {
-        guard !externalSubtitlesResolved else { return }
-        externalSubtitlesResolved = true
+    /// Refreshes sidecar mappings and reapplies the selected subtitle.
+    func updateSubtitleTrackMapping(subtitleTracks: [(playerIndex: Int, id: String)]) {
+        let sidecars: [(jellyfinIndex: Int, url: URL)] = subtitleStreams.sidecarSubtitles.compactMap { subtitle in
+            guard let jellyfinIndex = subtitle.index,
+                  let client = manager?.userSession?.client,
+                  let url = subtitle.url(with: client)
+            else { return nil }
+            return (jellyfinIndex, url)
+        }
 
-        let playbackChildren = subtitleStreams.sidecarSubtitles
-        guard playbackChildren.isNotEmpty else { return }
-
-        indexMap = indexMap.resolvingPlaybackChildren(
-            playbackChildren,
-            subtitleTracks: subtitleTracks,
-            isTranscoding: mediaSource.transcodingURL != nil
-        )
-
+        indexMap = indexMap.resolvingSidecarSubtitles(sidecars, subtitleTracks: subtitleTracks)
         switchTrack(type: .subtitle, index: selectedSubtitleStreamIndex)
     }
 }
