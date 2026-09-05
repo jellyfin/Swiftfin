@@ -69,6 +69,17 @@ class VideoPlayerContainerState: ObservableObject {
     }
 
     @Published
+    var isAccessibilityFocusOnVideo: Bool = false {
+        didSet {
+            if isAccessibilityFocusOnVideo {
+                timer.poke()
+            } else {
+                timer.stop()
+            }
+        }
+    }
+
+    @Published
     var isGuestSupplement: Bool = false
 
     // TODO: rename isPresentingPlaybackControls
@@ -201,6 +212,9 @@ class VideoPlayerContainerState: ObservableObject {
                   !isPresentingMenu,
                   manager?.playbackRequestStatus != .paused else { return }
 
+            let isAssistiveTechnologyRunning = UIAccessibility.isVoiceOverRunning || UIAccessibility.isSwitchControlRunning
+            guard !isAssistiveTechnologyRunning || isAccessibilityFocusOnVideo else { return }
+
             withAnimation(.linear(duration: 0.25)) {
                 self.isPresentingOverlay = false
             }
@@ -213,6 +227,10 @@ class VideoPlayerContainerState: ObservableObject {
                 self?.lastTapLocation = nil
             }
         #endif
+    }
+
+    func accessibilityToggleOverlay() {
+        isPresentingOverlay.toggle()
     }
 
     func select(supplement: (any MediaPlayerSupplement)?, isGuest: Bool = false) {

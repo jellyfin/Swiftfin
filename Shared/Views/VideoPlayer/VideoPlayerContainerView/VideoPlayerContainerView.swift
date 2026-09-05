@@ -131,6 +131,7 @@ extension VideoPlayer {
                     .isVisible(shouldPresentDimOverlay)
                 }
                 .allowsHitTesting(false)
+                .accessibilityHidden(true)
             }
         }
 
@@ -153,6 +154,8 @@ extension VideoPlayer {
                                         ? .vertical
                                         : (containerState.isPresentingOverlay ? .up : .allButDown)
                                 )
+
+                            VideoSurfaceAccessibilityView()
 
                             playbackControls
                         }
@@ -576,6 +579,11 @@ extension VideoPlayer {
                 didInitiallyAppear = true
             }
 
+            #if os(iOS)
+            setAccessibilityViewIsModal(true)
+            UIAccessibility.post(notification: .screenChanged, argument: view)
+            #endif
+
             #if os(tvOS)
             Task { @MainActor in
                 disableTogglePlayPauseCommand()
@@ -599,6 +607,17 @@ extension VideoPlayer {
                 containerState.isCompact = isCompact
                 containerState.centerOffsetBox.value = centerOffset
             }
+
+            #if os(iOS)
+            containerState.$isPresentingOverlay
+                .removeDuplicates()
+                .dropFirst()
+                .receive(on: DispatchQueue.main)
+                .sink { _ in
+                    UIAccessibility.post(notification: .layoutChanged, argument: nil)
+                }
+                .store(in: &cancellables)
+            #endif
 
             #if os(tvOS)
             let gesture = UITapGestureRecognizer(target: self, action: #selector(handleMenuEnded))
@@ -752,6 +771,26 @@ extension VideoPlayer {
             playerCompactBottomAnchor.constant = compactPlayerBottomOffset
             containerState.centerOffsetBox.value = centerOffset
         }
+
+        // MARK: - iOS
+
+        #if os(iOS)
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+
+            setAccessibilityViewIsModal(false)
+        }
+
+        private func setAccessibilityViewIsModal(_ isModal: Bool) {
+            var controller: UIViewController = self
+
+            while let parent = controller.parent {
+                controller = parent
+            }
+
+            controller.view.accessibilityViewIsModal = isModal
+        }
+        #endif
 
         // MARK: - tvOS
 
