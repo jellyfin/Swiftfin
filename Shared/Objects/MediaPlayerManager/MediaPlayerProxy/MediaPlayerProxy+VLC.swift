@@ -35,11 +35,31 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         NowPlayableObserver(),
     ]
 
+    private var didPause = false
+    // Unpausing live HLS playlist re-syncs to live, so user gets skipped
+    // forward. Watch first seconds after resume and drag it back
+    private var resumeGuard: (target: Duration, until: Date)?
+
     func play() {
+        if didPause, manager?.item.type == .recording, let seconds = manager?.seconds {
+            resumeGuard = (seconds, .now + 15)
+        }
+        didPause = false
         vlcUIProxy.play()
     }
 
+    func enforceResumeGuard(_ seconds: Duration) {
+        guard let resumeGuard else { return }
+
+        if Date.now > resumeGuard.until {
+            self.resumeGuard = nil
+        } else if seconds > resumeGuard.target + .seconds(30) {
+            vlcUIProxy.setSeconds(resumeGuard.target)
+        }
+    }
+
     func pause() {
+        didPause = true
         vlcUIProxy.pause()
     }
 
@@ -48,6 +68,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     func jumpForward(_ seconds: Duration) {
+        resumeGuard = nil
         let target: Duration
 
         if let runtime = manager?.item.runtime, let current = manager?.seconds {
@@ -63,6 +84,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     func jumpBackward(_ seconds: Duration) {
+        resumeGuard = nil
         vlcUIProxy.jumpBackward(seconds)
     }
 
@@ -71,6 +93,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     func setSeconds(_ seconds: Duration) {
+        resumeGuard = nil
         vlcUIProxy.setSeconds(seconds)
     }
 
@@ -173,6 +196,7 @@ extension VLCMediaPlayerProxy {
                         }
 
                         manager.seconds = newSeconds
+                        (manager.proxy as? VLCMediaPlayerProxy)?.enforceResumeGuard(newSeconds)
 
                         if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
                             proxy.videoSize.value = info.videoSize
