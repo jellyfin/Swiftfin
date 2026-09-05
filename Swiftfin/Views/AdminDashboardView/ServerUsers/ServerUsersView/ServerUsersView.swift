@@ -41,8 +41,8 @@ struct ServerUsersView: View {
             switch viewModel.state {
             case .content:
                 userListView
-            case let .error(error):
-                ErrorView(error: error)
+            case .error:
+                ErrorView(error: viewModel.error ?? ErrorMessage(L10n.unknownError))
             case .initial:
                 ProgressView()
             }
@@ -52,7 +52,7 @@ struct ServerUsersView: View {
         .toolbarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
         .refreshable {
-            viewModel.send(.getUsers(isHidden: isHiddenFilterActive, isDisabled: isDisabledFilterActive))
+            await viewModel.getUsers(isHidden: isHiddenFilterActive, isDisabled: isDisabledFilterActive)
         }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -96,7 +96,7 @@ struct ServerUsersView: View {
             }
         }
         .navigationBarMenuButton(
-            isLoading: viewModel.backgroundStates.contains(.gettingUsers),
+            isLoading: viewModel.background.is(.gettingUsers),
             isHidden: isEditing
         ) {
             Button(L10n.addUser, systemImage: "plus") {
@@ -118,19 +118,19 @@ struct ServerUsersView: View {
         }
 
         .onChange(of: isDisabledFilterActive) {
-            viewModel.send(.getUsers(
+            viewModel.getUsers(
                 isHidden: isHiddenFilterActive,
                 isDisabled: isDisabledFilterActive
-            ))
+            )
         }
         .onChange(of: isHiddenFilterActive) {
-            viewModel.send(.getUsers(
+            viewModel.getUsers(
                 isHidden: isHiddenFilterActive,
                 isDisabled: isDisabledFilterActive
-            ))
+            )
         }
         .onFirstAppear {
-            viewModel.send(.getUsers())
+            viewModel.getUsers(isHidden: isHiddenFilterActive, isDisabled: isDisabledFilterActive)
         }
         .confirmationDialog(
             L10n.delete,
@@ -156,7 +156,7 @@ struct ServerUsersView: View {
             Text(L10n.deleteUserSelfDeletion(viewModel.userSession?.user.username ?? ""))
         }
         .onNotification(.didAddServerUser) { newUser in
-            viewModel.send(.appendUser(newUser))
+            viewModel.appendUser(newUser)
             router.route(to: .userDetails(user: newUser))
         }
     }
@@ -240,7 +240,7 @@ struct ServerUsersView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
-            viewModel.send(.deleteUsers(Array(selectedUsers)))
+            viewModel.deleteUsers(Array(selectedUsers))
             isEditing = false
             selectedUsers.removeAll()
         }
@@ -257,7 +257,7 @@ struct ServerUsersView: View {
                 if userToDelete == viewModel.userSession?.user.id {
                     isPresentingSelfDeleteError = true
                 } else {
-                    viewModel.send(.deleteUsers([userToDelete]))
+                    viewModel.deleteUsers([userToDelete])
                     selectedUsers.removeAll()
                 }
             }

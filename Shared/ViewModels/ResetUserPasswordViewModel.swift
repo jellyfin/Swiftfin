@@ -10,87 +10,48 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
+@MainActor
+@Stateful
+final class ResetUserPasswordViewModel: ViewModel {
 
-    // MARK: - Event
+    @CasePathable
+    enum Action {
+        case cancel
+        case reset(current: String, new: String)
+
+        var transition: Transition {
+            switch self {
+            case .cancel:
+                .to(.initial)
+            case .reset:
+                .to(.resetting, then: .initial)
+            }
+        }
+    }
 
     enum Event {
-        case error(ErrorMessage)
+        case error
         case success
     }
 
-    // MARK: - Action
-
-    enum Action: Equatable {
-        case cancel
-        case reset(current: String, new: String)
-    }
-
-    // MARK: - State
-
-    enum State: Hashable {
+    enum State {
         case initial
         case resetting
     }
 
-    // MARK: - Published Variables
-
-    @Published
-    var state: State = .initial
     let userID: String
-
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
-    private var resetTask: AnyCancellable?
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-
-    // MARK: - Initializer
 
     init(userID: String) {
         self.userID = userID
     }
 
-    func respond(to action: Action) -> State {
-        switch action {
-        case .cancel:
-            resetTask?.cancel()
-
-            return .initial
-        case let .reset(current, new):
-            resetTask = Task {
-                do {
-//                    try await Task.sleep(nanoseconds: 5_000_000_000)
-
-                    try await reset(current: current, new: new)
-
-                    await MainActor.run {
-                        self.eventSubject.send(.success)
-                        self.state = .initial
-                    }
-                } catch is CancellationError {
-                    // cancel doesn't matter
-                } catch {
-                    await MainActor.run {
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
-                        self.state = .initial
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .resetting
-        }
-    }
-
-    private func reset(current: String, new: String) async throws {
-
+    @Function(\Action.Cases.reset)
+    private func _reset(_ current: String, _ new: String) async throws {
         let body = UpdateUserPassword(currentPw: current, newPw: new)
         let request = Paths.updateUserPassword(userID: userID, body)
 
         try await send(request)
+
+        events.send(.success)
     }
 }
