@@ -116,9 +116,6 @@ jobs:
       - name: Install Homebrew dependencies
         run: brew bundle --file Brewfile
 
-      - name: Update Carthage
-        run: carthage update --use-xcframeworks --cache-builds
-
       - name: Install certificate and provisioning profile
         run: |
           set -euo pipefail

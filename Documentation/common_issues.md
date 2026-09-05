@@ -25,7 +25,7 @@ These four steps resolve many common issues or help narrow down unique issues fr
 
 Your library, posters, and metadata all load. Pressing play gives a black screen or a spinner. This issue is commonly caused by one of the following:
 
-**Your reverse proxy is TLS 1.3 only.** VLCKit only supports TLS **1.1 and 1.2**, so media playback fails while everything else works. NGINX has included 1.3 by default since 1.23.4, so this can appear after an update. Enable 1.2 alongside 1.3 (having both is fine) and VLCKit will fall back to using the supported version. This is a VLC limitation and is documented in the [Players Documentation](players.md).
+**Your reverse proxy is TLS 1.3 only.** libvlc only supports TLS **1.1 and 1.2**, so media playback fails while everything else works. NGINX has included 1.3 by default since 1.23.4, so this can appear after an update. Enable 1.2 alongside 1.3 (having both is fine) and libvlc will fall back to using the supported version. This is a libvlc limitation and is documented in the [Players Documentation](players.md).
 
 **You entered `http` for an `https` server.** You can sign in and browse everything, but nothing plays. Swiftfin attempts to resolve this at login, but HSTS and redirects can mask the issue since some requests follow the redirect but media requests do not. Re-add the server with the correct scheme.
 
@@ -35,7 +35,7 @@ If neither applies, please test on a direct `IP:port` connection before reportin
 
 Purple casts, washed out color, or no tone mapping at all. Both players handle HDR differently and neither is perfect:
 
-- **Swiftfin (VLCKit)** tone maps, but colorspace accuracy varies with content and device.
+- **Swiftfin (SwiftVLC)** tone maps, but colorspace accuracy varies with content and device.
 - **Native (AVPlayer)** needs Direct Play compatible MP4, and often Dolby Vision Profile 5 or 8.
 
 Start by forcing the server to tone map instead of Swiftfin and see if this resolves your issue. These settings can be enabled from:
@@ -47,7 +47,7 @@ Please see the notes in the [Players Documentation](players.md) before reporting
 
 ### Audio Out of Sync over AirPlay Speakers or HomePods
 
-This is a [known VLCKit bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and tracked on Swiftfin [here](https://github.com/jellyfin/Swiftfin/issues/937). This item cannot be resolved by Swiftfin and requires a patch from VLC. As a workaround, please use the Native player for this output.
+This is a [known SwiftVLC bug](https://code.videolan.org/videolan/VLCKit/-/issues/544) and tracked on Swiftfin [here](https://github.com/jellyfin/Swiftfin/issues/937). This item cannot be resolved by Swiftfin and requires a patch from VLC. As a workaround, please use the Native player for this output.
 
 ### Native Player Cannot Select Subtitles or Change Audio Tracks
 

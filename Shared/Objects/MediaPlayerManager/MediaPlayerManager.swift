@@ -11,7 +11,6 @@ import Defaults
 import FactoryKit
 import Foundation
 import JellyfinAPI
-import VLCUI
 
 // TODO: proper error catching
 // TODO: be a UserSessionService?
