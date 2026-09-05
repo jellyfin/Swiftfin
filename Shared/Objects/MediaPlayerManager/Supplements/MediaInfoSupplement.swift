@@ -41,8 +41,12 @@ extension MediaInfoSupplement {
         @State
         private var item: BaseItemDto
 
+        @StateObject
+        private var timerViewModel: ProgramTimerViewModel
+
         init(item: BaseItemDto) {
             self._item = State(initialValue: item)
+            self._timerViewModel = StateObject(wrappedValue: ProgramTimerViewModel(item: item))
         }
 
         @ViewBuilder
@@ -68,6 +72,54 @@ extension MediaInfoSupplement {
                         Text(officialRating)
                     }
                 }
+            }
+        }
+
+        @ViewBuilder
+        private var recordButtons: some View {
+            VStack {
+                Button(role: timerViewModel.timer != nil ? .destructive : nil) {
+                    timerViewModel.toggleRecording()
+                } label: {
+                    Group {
+                        if let timer = timerViewModel.timer {
+                            Label(
+                                timer.status == .inProgress ? L10n.stopRecording : L10n.cancelRecording,
+                                systemImage: "record.circle.fill"
+                            )
+                        } else {
+                            Label(L10n.record, systemImage: "record.circle")
+                        }
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                }
+                .buttonStyle(.supplementAction)
+                .frame(height: UIDevice.isTV ? 80 : 40)
+
+                if timerViewModel.program.isSeries == true {
+                    Button(role: timerViewModel.seriesTimer != nil ? .destructive : nil) {
+                        timerViewModel.toggleSeriesRecording()
+                    } label: {
+                        Group {
+                            if timerViewModel.seriesTimer != nil {
+                                Label(L10n.cancelSeriesRecording, systemImage: "smallcircle.filled.circle.fill")
+                            } else {
+                                Label(L10n.recordSeries, systemImage: "smallcircle.filled.circle")
+                            }
+                        }
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    }
+                    .buttonStyle(.supplementAction)
+                    .frame(height: UIDevice.isTV ? 80 : 40)
+                }
+            }
+            #if os(tvOS)
+            .focusSection()
+            #endif
+            .onAppear {
+                timerViewModel.refresh()
             }
         }
 
@@ -135,6 +187,10 @@ extension MediaInfoSupplement {
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .padding(.vertical)
+                } else if item.canBeRecorded {
+                    recordButtons
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -194,6 +250,8 @@ extension MediaInfoSupplement {
                     } content: {
                         fromBeginningButton
                     }
+                } else if item.canBeRecorded {
+                    recordButtons
                 }
             }
         }
@@ -225,6 +283,7 @@ extension MediaInfoSupplement {
             guard let newItem = try? await item.getFullItem(userSession: userSession) else { return }
 
             item = newItem
+            await timerViewModel.refresh()
         }
     }
 }
