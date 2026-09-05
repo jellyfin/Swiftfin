@@ -30,11 +30,7 @@ struct ItemView: View {
 
     @State
     private var contentSize: CGSize = .zero
-    @State
-    private var isPresentingDeleteConfirmation = false
 
-    @StateObject
-    private var editorViewModel: ItemEditorViewModel
     @StateObject
     private var focusCoordinator = FocusCoordinator(initial: Component.play)
     @StateObject
@@ -45,7 +41,6 @@ struct ItemView: View {
     private var deleteViewModel: ItemEditorViewModel
 
     init(provider: ItemContentGroupProvider) {
-        self._editorViewModel = StateObject(wrappedValue: ItemEditorViewModel(item: provider.item))
         self._provider = StateObject(wrappedValue: provider)
         self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
         self._deleteViewModel = StateObject(wrappedValue: ItemEditorViewModel(item: provider.item))
@@ -172,7 +167,6 @@ struct ItemView: View {
         #if os(tvOS)
             .toolbarVisibility(.hidden, for: .navigationBar)
         #else
-            .errorMessage($editorViewModel.error)
             .navigationBarMenuButton(
                 isLoading: viewModel.background.is(.refreshing),
                 isHidden: overflow.isEmpty && menu.isEmpty
