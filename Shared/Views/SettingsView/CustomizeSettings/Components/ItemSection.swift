@@ -7,10 +7,9 @@
 //
 
 import Defaults
-import FactoryKit
 import SwiftUI
 
-extension CustomizeViewsSettings {
+extension CustomizeSettingsView {
 
     #if os(tvOS)
     typealias PlatformPicker = ListRowMenu
@@ -19,12 +18,6 @@ extension CustomizeViewsSettings {
     #endif
 
     struct ItemSection: View {
-
-        @Injected(\.currentUserSession)
-        private var userSession
-
-        @Router
-        private var router
 
         @Default(.Customization.itemViewType)
         private var itemViewType
@@ -43,6 +36,9 @@ extension CustomizeViewsSettings {
         private var shouldShowMissingSeasons
         @Default(.Customization.shouldShowMissingEpisodes)
         private var shouldShowMissingEpisodes
+
+        @Router
+        private var router
 
         var body: some View {
             Form(systemImage: "gear") {

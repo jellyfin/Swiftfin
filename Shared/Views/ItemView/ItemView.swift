@@ -23,6 +23,11 @@ struct ItemView: View {
     @Default(.Customization.itemViewType)
     private var itemViewType
 
+    @Router
+    private var router
+
+    private var buttonConfiguration = ItemActionButtons.Configuration()
+
     @State
     private var contentSize: CGSize = .zero
 
@@ -32,10 +37,13 @@ struct ItemView: View {
     private var provider: ItemContentGroupProvider
     @StateObject
     private var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
+    @StateObject
+    private var deleteViewModel: ItemEditorViewModel
 
     init(provider: ItemContentGroupProvider) {
         self._provider = StateObject(wrappedValue: provider)
         self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
+        self._deleteViewModel = StateObject(wrappedValue: ItemEditorViewModel(item: provider.item))
     }
 
     private var isCompact: Bool {
@@ -113,6 +121,8 @@ struct ItemView: View {
     }
 
     var body: some View {
+        let (_, overflow, menu) = buttonConfiguration.resolvedButtons(for: provider)
+
         ZStack {
             switch viewModel.state {
             case .content:
@@ -134,13 +144,38 @@ struct ItemView: View {
             viewModel.refresh()
         }
         .environmentObject(focusCoordinator)
+        .confirmationDialog(
+            L10n.deleteItemConfirmationMessage,
+            isPresented: $provider.isPresentingDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button(
+                L10n.confirm,
+                role: .destructive,
+                action: deleteViewModel.delete
+            )
+
+            Button(L10n.cancel, role: .cancel) {}
+        }
+        .onNotification(.didDeleteItem) { itemID in
+            guard itemID == provider.item.id else { return }
+
+            UIDevice.feedback(.success)
+            router.dismiss()
+        }
+        .errorMessage($deleteViewModel.error)
         #if os(tvOS)
             .toolbarVisibility(.hidden, for: .navigationBar)
         #else
-            .topBarTrailing {
-                if viewModel.background.is(.refreshing) {
-                    ProgressView()
-                }
+            .navigationBarMenuButton(
+                isLoading: viewModel.background.is(.refreshing),
+                isHidden: overflow.isEmpty && menu.isEmpty
+            ) {
+                ItemActionButtons.MenuContent(
+                    provider: provider,
+                    buttons: overflow,
+                    menuButtons: menu
+                )
             }
         #endif
     }

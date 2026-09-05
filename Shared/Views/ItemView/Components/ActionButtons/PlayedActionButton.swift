@@ -26,8 +26,6 @@ extension ItemActionButtons {
             ) {
                 Task { await provider.toggleIsPlayed() }
             }
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary, .secondary)
             .isSelected(isPlayed)
         }
     }

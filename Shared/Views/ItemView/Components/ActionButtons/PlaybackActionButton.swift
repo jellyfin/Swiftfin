@@ -72,18 +72,12 @@ extension ItemActionButtons {
             ) {
                 ForEach(mediaSources) { mediaSource in
                     Text(mediaSource.displayTitle)
-                        .tag(mediaSource as MediaSourceInfo)
+                        .tag(mediaSource as MediaSourceInfo?)
                 }
             } label: {
                 Text(L10n.version)
 
-                if let selectedMediaSource = mediaSources
-                    .first(where: { $0.id == provider.mediaPlayerItemProvider?.mediaSource?.id })
-                {
-                    Text(selectedMediaSource.displayTitle)
-                } else {
-                    Text(L10n.none)
-                }
+                Text(provider.mediaPlayerItemProvider?.mediaSource?.displayTitle ?? L10n.none)
             }
             .pickerStyle(.menu)
         }
@@ -163,8 +157,6 @@ extension ItemActionButtons {
             .if(!isInMenu && UIDevice.isTV) { menu in
                 menu.menuStyle(.button)
             }
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary, .secondary)
         }
     }
 }

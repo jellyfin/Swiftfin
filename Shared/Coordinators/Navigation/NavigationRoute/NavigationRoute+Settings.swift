@@ -83,7 +83,7 @@ extension NavigationRoute {
         NavigationRoute(
             id: "customizeSettingsView"
         ) {
-            CustomizeViewsSettings()
+            CustomizeSettingsView()
         }
     }
 
@@ -186,22 +186,28 @@ extension NavigationRoute {
     }
     #endif
 
-    static let itemSettings = NavigationRoute(
-        id: "itemSettings"
-    ) {
-        CustomizeViewsSettings.ItemSection()
+    static var itemSettings: NavigationRoute {
+        NavigationRoute(
+            id: "itemSettings"
+        ) {
+            CustomizeSettingsView.ItemSection()
+        }
     }
 
-    static let librarySettings = NavigationRoute(
-        id: "librarySettings"
-    ) {
-        CustomizeViewsSettings.LibrarySection()
+    static var librarySettings: NavigationRoute {
+        NavigationRoute(
+            id: "librarySettings"
+        ) {
+            CustomizeSettingsView.LibrarySection()
+        }
     }
 
-    static let posterSettings = NavigationRoute(
-        id: "posterSettings"
-    ) {
-        CustomizeViewsSettings.PosterSection()
+    static var posterSettings: NavigationRoute {
+        NavigationRoute(
+            id: "posterSettings"
+        ) {
+            CustomizeSettingsView.PosterSection()
+        }
     }
 
     static var indicatorSettings: NavigationRoute {

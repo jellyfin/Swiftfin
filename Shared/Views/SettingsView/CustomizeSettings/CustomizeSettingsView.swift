@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-struct CustomizeViewsSettings: View {
+struct CustomizeSettingsView: View {
 
     @Default(.Customization.Search.enabledDrawerFilters)
     private var searchEnabledDrawerFilters

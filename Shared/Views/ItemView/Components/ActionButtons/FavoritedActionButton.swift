@@ -34,8 +34,6 @@ extension ItemActionButtons {
             ) {
                 Task { await provider.toggleIsFavorite() }
             }
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary, .secondary)
             .isSelected(isFavorited)
         }
     }

@@ -125,8 +125,6 @@ extension ItemActionButtons {
                 menu.menuStyle(.button)
             }
             .errorMessage($error)
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary, .secondary)
         }
     }
 }

@@ -29,7 +29,8 @@ private struct ItemActionButtonLabelStyle: LabelStyle {
     }
 
     func makeBody(configuration: Configuration) -> some View {
-        configuration.icon
+        Label(configuration)
+            .labelStyle(.iconOnly)
             .font(UIDevice.isTV ? .system(size: 30) : .title3)
             .frame(width: iconSize, height: iconSize)
             .padding(UIDevice.isTV ? 16 : 8)
@@ -52,14 +53,9 @@ struct ItemActionButtons: View {
     @ObservedObject
     var provider: ItemContentGroupProvider
 
-    @StoredValue(.User.enabledTrailers)
-    private var enabledTrailers: TrailerSelection
-
-    @Default(.Customization.itemBarActionButtons)
-    private var barActionButtons: [ItemActionButton]
-    @Default(.Customization.itemMenuActionButtons)
-    private var menuActionButtons: [ItemActionButton]
-
+    let buttons: [ItemActionButton]
+    let overflowButtons: [ItemActionButton]
+    let menuButtons: [ItemActionButton]
     let focusedButton: FocusState<String?>.Binding
 
     private static func hasTrailers(
@@ -90,7 +86,7 @@ struct ItemActionButtons: View {
         case .trailers:
             hasTrailers(for: provider, enabledTrailers: enabledTrailers)
         case .playback:
-            provider.item.presentPlayButton
+            provider.item.presentPlayButton && provider.mediaPlayerItemProvider?.mediaSource != nil
         case .refresh:
             provider.item.canEditMetadata
         case .subtitles:
@@ -125,51 +121,49 @@ struct ItemActionButtons: View {
 
         let hasBarMenu = UIDevice.isTV && (menu.isNotEmpty || bar.count > maximumButtons)
         let visible = Array(bar.prefix(hasBarMenu ? maximumButtons - 1 : maximumButtons))
+        let overflow = Array(bar.dropFirst(visible.count))
 
         return (
             visible: visible,
-            overflow: Array(bar.dropFirst(visible.count)),
-            menu: menu
+            overflow: overflow,
+            menu: menu.subtracting(overflow)
         )
     }
 
     @ViewBuilder
     static func view(for button: ItemActionButton) -> some View {
-        switch button {
-        case .played:
-            Played()
-        case .favorited:
-            Favorited()
-        case .trailers:
-            Trailers()
-        case .playback:
-            Playback()
-        case .refresh:
-            Refresh()
-        case .subtitles:
-            Subtitles()
-        case .delete:
-            Delete()
-        #if os(iOS)
-        case .editMetadata:
-            Edit()
-        #endif
+        Group {
+            switch button {
+            case .played:
+                Played()
+            case .favorited:
+                Favorited()
+            case .trailers:
+                Trailers()
+            case .playback:
+                Playback()
+            case .refresh:
+                Refresh()
+            case .subtitles:
+                Subtitles()
+            case .delete:
+                Delete()
+            #if os(iOS)
+            case .editMetadata:
+                Edit()
+            #endif
+            }
         }
+        .symbolRenderingMode(.monochrome)
+        .foregroundStyle(.primary, .secondary)
     }
 
     var body: some View {
-        let (visible, overflow, menu) = Self.resolvedButtons(
-            bar: barActionButtons,
-            menu: menuActionButtons,
-            for: provider,
-            enabledTrailers: enabledTrailers
-        )
+        let hasBarMenu = UIDevice.isTV && (overflowButtons.isNotEmpty || menuButtons.isNotEmpty)
 
-        let hasBarMenu = UIDevice.isTV && (overflow.isNotEmpty || menu.isNotEmpty)
-
-        if visible.isNotEmpty || hasBarMenu {
+        if buttons.isNotEmpty || hasBarMenu {
             HStack(alignment: .center, spacing: UIDevice.isTV ? 24 : 8) {
-                ForEach(visible) { button in
+                ForEach(buttons) { button in
                     Self.view(for: button)
                         .labelStyle(ItemActionButtonLabelStyle(activeColor: button.activeColor))
                         .focused(focusedButton, equals: button.id)
@@ -179,8 +173,8 @@ struct ItemActionButtons: View {
                     Menu {
                         MenuContent(
                             provider: provider,
-                            buttons: overflow,
-                            menuButtons: menu
+                            buttons: overflowButtons,
+                            menuButtons: menuButtons
                         )
                     } label: {
                         Label(L10n.menu, systemImage: "ellipsis")
@@ -192,7 +186,7 @@ struct ItemActionButtons: View {
                     .focused(focusedButton, equals: ItemView.Component.menu)
                 }
             }
-            .frame(maxHeight: .infinity)
+            .frame(height: UIDevice.isTV ? 75 : 44)
             .environmentObject(provider)
             .buttonBorderShape(.capsule)
             .buttonStyle(BasicHoverButtonStyle())
@@ -203,6 +197,28 @@ struct ItemActionButtons: View {
 }
 
 extension ItemActionButtons {
+
+    struct Configuration: DynamicProperty {
+
+        @StoredValue(.User.enabledTrailers)
+        private var enabledTrailers: TrailerSelection
+
+        @Default(.Customization.itemBarActionButtons)
+        private var barActionButtons
+        @Default(.Customization.itemMenuActionButtons)
+        private var menuActionButtons
+
+        func resolvedButtons(
+            for provider: ItemContentGroupProvider
+        ) -> (visible: [ItemActionButton], overflow: [ItemActionButton], menu: [ItemActionButton]) {
+            ItemActionButtons.resolvedButtons(
+                bar: barActionButtons,
+                menu: menuActionButtons,
+                for: provider,
+                enabledTrailers: enabledTrailers
+            )
+        }
+    }
 
     struct MenuContent: View {
 

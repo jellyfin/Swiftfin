@@ -10,7 +10,7 @@ import Defaults
 import Engine
 import SwiftUI
 
-extension CustomizeViewsSettings {
+extension CustomizeSettingsView {
 
     struct HomeSection: View {
 

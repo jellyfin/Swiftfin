@@ -323,7 +323,15 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             item.isPlayable ? item : nil
         }
 
-        return playbackItem?.getPlaybackItemProvider(userSession: userSession)
+        guard let playbackItem else { return nil }
+
+        let fullPlaybackItem = if item.type == .series || item.type == .season {
+            try await playbackItem.getFullItem(userSession: userSession)
+        } else {
+            playbackItem
+        }
+
+        return fullPlaybackItem.getPlaybackItemProvider(userSession: userSession)
     }
 
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {

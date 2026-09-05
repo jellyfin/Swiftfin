@@ -23,8 +23,6 @@ extension ItemActionButtons {
             ) {
                 provider.isPresentingDeleteConfirmation = true
             }
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary, .secondary)
         }
     }
 }

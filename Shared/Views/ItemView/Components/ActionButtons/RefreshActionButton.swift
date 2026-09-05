@@ -25,8 +25,6 @@ extension ItemActionButtons {
             ) {
                 router.route(to: .itemMetadataRefresh(viewModel: .init(item: provider.item)))
             }
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary, .secondary)
         }
     }
 }

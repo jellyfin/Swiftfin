@@ -32,8 +32,6 @@ extension ItemActionButtons {
                 systemImage: ItemActionButton.subtitles.systemImage,
                 action: action
             )
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary, .secondary)
         }
     }
 }
