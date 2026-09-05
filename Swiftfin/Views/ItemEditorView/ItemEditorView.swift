@@ -41,7 +41,8 @@ struct ItemEditorView: View {
         .refreshable {
             viewModel.refreshItem(sendNotification: false)
         }
-        .onNotification(.didDeleteItem) { _ in
+        .onNotification(.didDeleteItem) { id in
+            guard id == viewModel.item.id else { return }
             UIDevice.feedback(.success)
             router.dismiss()
         }

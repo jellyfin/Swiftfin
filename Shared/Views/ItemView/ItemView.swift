@@ -22,6 +22,9 @@ struct ItemView: View {
     @Default(.Customization.itemViewType)
     private var itemViewType
 
+    @Router
+    private var router
+
     @State
     private var contentSize: CGSize = .zero
 
@@ -131,6 +134,10 @@ struct ItemView: View {
         }
         .onFirstAppear {
             viewModel.refresh()
+        }
+        .onNotification(.didDeleteItem) { id in
+            guard id == provider.id else { return }
+            router.dismiss()
         }
         .environmentObject(focusCoordinator)
         #if os(tvOS)

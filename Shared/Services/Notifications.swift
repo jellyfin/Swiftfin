@@ -105,43 +105,37 @@ extension Notifications.Key {
 
     // MARK: - App Flow
 
-    static var didPurge: Key<Void> {
-        Key("didPurge")
-    }
-
     static var didChangeServerConnection: Key<ServerConnection> {
         Key("didChangeServerConnection")
-    }
-
-    static var didSendStopReport: Key<Void> {
-        Key("didSendStopReport")
     }
 
     static var didRequestGlobalRefresh: Key<Void> {
         Key("didRequestGlobalRefresh")
     }
 
-    // MARK: - Media Items
-
-    // TODO: come up with a cleaner, more defined way for item update notifications
-
-    static var itemUserDataDidChange: Key<UserItemDataDto> {
-        Key("itemUserDataDidChange")
+    /// - Payload: The library parent IDs (folders and collection folders) that changed.
+    static var didRequestLibraryRefresh: Key<[String]> {
+        Key("didRequestLibraryRefresh")
     }
 
-    /// - Payload: The new item with updated metadata.
-    static var itemMetadataDidChange: Key<BaseItemDto> {
-        Key("itemMetadataDidChange")
-    }
+    // MARK: - Items
 
-    /// - Payload: The ID of the item that should refresh
-    static var itemShouldRefreshMetadata: Key<String> {
-        Key("itemShouldRefresh")
-    }
-
-    /// - Payload: The ID of the deleted item.
     static var didDeleteItem: Key<String> {
         Key("didDeleteItem")
+    }
+
+    static var didChangeItem: Key<BaseItemDto> {
+        Key("didChangeItem")
+    }
+
+    /// Pulls the item, then posts `didChangeItem`. Related items arrive from the socket.
+    static var getChangedItemUserData: Key<String> {
+        Key("getChangedItemUserData")
+    }
+
+    /// Pulls the item, then posts `didChangeItem`.
+    static var getChangedItemMetadata: Key<String> {
+        Key("getChangedItemMetadata")
     }
 
     // MARK: - Server
@@ -154,25 +148,27 @@ extension Notifications.Key {
         Key("didDeleteServer")
     }
 
-    // MARK: - User
-
-    /// - Payload: The ID of the user whose Profile Image changed.
-    static var didChangeUserProfile: Key<String> {
-        Key("didChangeUserProfile")
+    static var didServerRestart: Key<Void> {
+        Key("didServerRestart")
     }
 
-    static var didAddServerUser: Key<UserDto> {
-        Key("didAddServerUser")
+    // MARK: - Server Users
+
+    static var didDeleteServerUser: Key<String> {
+        Key("didDeleteServerUser")
     }
 
-    // MARK: - Playback
-
-    static var didStartPlayback: Key<Void> {
-        Key("didStartPlayback")
+    static var didChangeServerUser: Key<UserDto> {
+        Key("didChangeServerUser")
     }
 
-    static var interruption: Key<Void> {
-        Key(AVAudioSession.interruptionNotification)
+    static var didCreateServerUser: Key<UserDto> {
+        Key("didCreateServerUser")
+    }
+
+    /// Pulls the user, then posts `didChangeServerUser`.
+    static var getChangedUser: Key<String> {
+        Key("getChangedUser")
     }
 
     // MARK: - UIApplication

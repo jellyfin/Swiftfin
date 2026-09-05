@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import Get
 import JellyfinAPI
@@ -32,17 +33,46 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         self.id = item.id ?? "Unknown"
         self.item = item
         super.init()
+        observeItemChanges()
     }
 
     init(id: String) {
         self.id = id
         self.item = .init(id: id)
         super.init()
+        observeItemChanges()
+    }
+
+    private func observeItemChanges() {
+        Notifications[.didChangeItem]
+            .publisher
+            .sink { [weak self] newItem in
+                guard let self else { return }
+
+                if newItem.id == id {
+                    item = newItem
+                }
+
+                guard newItem.id == id || newItem.id == mediaPlayerItemProvider?.item.id else { return }
+
+                if item.isFolder == true {
+                    Task { [weak self] in
+                        guard let self, let userSession else { return }
+                        mediaPlayerItemProvider = try? await resolveMediaPlayerItemProvider(for: item, userSession: userSession)
+                    }
+                } else if item.isPlayable {
+                    mediaPlayerItemProvider = item.getPlaybackItemProvider(
+                        userSession: userSession,
+                        mediaSource: mediaPlayerItemProvider?.mediaSource
+                    )
+                }
+            }
+            .store(in: &cancellables)
     }
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
         let userSession = try requireUserSession()
-        let fullItem = try await item.getFullItem(userSession: userSession, sendNotification: true)
+        let fullItem = try await item.getFullItem(userSession: userSession)
         let newMediaPlayerItemProvider = try await resolveMediaPlayerItemProvider(
             for: fullItem,
             userSession: userSession
@@ -387,8 +417,8 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         }
 
         let response = try await send(request)
-        Notifications[.itemUserDataDidChange].post(response.value)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
+        item.userData = response.value
+        Notifications[.getChangedItemUserData].post(itemID)
     }
 
     private func setIsFavorite(_ isFavorite: Bool) async throws {
@@ -407,7 +437,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         }
 
         let response = try await send(request)
-        Notifications[.itemUserDataDidChange].post(response.value)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
+        item.userData = response.value
+        Notifications[.getChangedItemUserData].post(itemID)
     }
 }

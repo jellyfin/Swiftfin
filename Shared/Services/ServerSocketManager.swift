@@ -59,7 +59,7 @@ final class ServerSocketManager {
         stop()
         tasks = [
             Task { [weak self] in await self?.runConnection() },
-            Task { [weak self] in await self?.observeServerConnectionChange() },
+            Task { [weak self] in await self?.observeReconnectTriggers() },
         ]
     }
 
@@ -197,9 +197,14 @@ final class ServerSocketManager {
         }
     }
 
-    private func observeServerConnectionChange() async {
-        for await _ in Notifications[.didChangeServerConnection].publisher.values {
-            logger.debug("Reconnecting the socket (Server Connection Changed)")
+    private func observeReconnectTriggers() async {
+        let triggers = Publishers.Merge(
+            Notifications[.didChangeServerConnection].publisher.map { _ in "Server Connection Changed" },
+            Notifications[.didServerRestart].publisher.map { "Server Restarting" }
+        )
+
+        for await reason in triggers.values {
+            logger.debug("Reconnecting the socket (\(reason))")
             reconnect()
         }
     }
@@ -220,7 +225,7 @@ extension ServerSocketManager: UserSessionService {
     }
 }
 
-// MARK: - Playback Commands
+// MARK: - Messages
 
 extension ServerSocketManager {
 
@@ -242,6 +247,41 @@ extension ServerSocketManager {
         commands { event in
             guard case let .message(.playstateMessage(message)) = event else { return nil }
             return message.data
+        }
+    }
+
+    var userDataChanges: AnyPublisher<UserDataChangeInfo, Never> {
+        commands { event in
+            guard case let .message(.userDataChangedMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var libraryChanges: AnyPublisher<LibraryUpdateInfo, Never> {
+        commands { event in
+            guard case let .message(.libraryChangedMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var userUpdates: AnyPublisher<UserDto, Never> {
+        commands { event in
+            guard case let .message(.userUpdatedMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var userDeletions: AnyPublisher<String, Never> {
+        commands { event in
+            guard case let .message(.userDeletedMessage(message)) = event else { return nil }
+            return message.data
+        }
+    }
+
+    var serverRestarts: AnyPublisher<Void, Never> {
+        commands { event in
+            guard case .message(.serverRestartingMessage) = event else { return nil }
+            return ()
         }
     }
 

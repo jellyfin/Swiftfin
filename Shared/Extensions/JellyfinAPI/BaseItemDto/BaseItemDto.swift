@@ -617,7 +617,9 @@ extension BaseItemDto {
         // be invariant over `id`.
 
         if sendNotification {
-            Notifications[.itemMetadataDidChange].post(response.value)
+            await MainActor.run {
+                Notifications[.didChangeItem].post(response.value)
+            }
         }
 
         return response.value

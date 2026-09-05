@@ -21,8 +21,9 @@ struct PosterButton<Item: Poster>: View {
 
     @State
     private var posterSize: CGSize = .zero
+    @State
+    private var item: Item
 
-    let item: Item
     let displayType: PosterDisplayType
     let size: PosterDisplayType.Size
     let action: (Namespace.ID) -> Void
@@ -102,6 +103,10 @@ struct PosterButton<Item: Poster>: View {
             .posterContextMenu(for: item) {
                 contextMenuPreview
                     .withViewContext(viewContext)
+            }
+            .onNotification(.didChangeItem) { newItem in
+                guard let newItem = newItem as? Item, newItem.id == item.id else { return }
+                item = newItem
             }
     }
 }

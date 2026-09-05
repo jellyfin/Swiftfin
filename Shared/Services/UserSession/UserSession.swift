@@ -30,7 +30,11 @@ final class UserSession {
     lazy var serverSocketManager = ServerSocketManager()
 
     @MainActor
+    lazy var userNotificationManager = UserNotificationManager()
+
+    @MainActor
     private lazy var services: [any UserSessionService] = [
+        userNotificationManager,
         serverConnectionManager,
         serverSocketManager,
     ]

@@ -75,6 +75,7 @@ final class ServerBackupViewModel: ViewModel {
         let request = Paths.startRestoreBackup(parameters)
         _ = try await send(request)
 
+        Notifications[.didServerRestart].post()
         events.send(.restored)
     }
 }

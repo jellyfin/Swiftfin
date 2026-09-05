@@ -125,22 +125,40 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
 
         super.init()
 
-        Notifications[.didDeleteItem]
-            .publisher
-            .sink { [weak self] id in
-                self?.removeDeletedItem(withID: id)
-            }
-            .store(in: &cancellables)
+        Publishers.Merge(
+            Notifications[.didDeleteItem].publisher,
+            Notifications[.didDeleteServerUser].publisher
+        )
+        .sink { [weak self] id in
+            self?.removeDeletedItem(withID: id)
+        }
+        .store(in: &cancellables)
 
-        Notifications[.itemUserDataDidChange]
+        Notifications[.didChangeItem]
             .publisher
-            .sink { [weak self] userData in
+            .sink { [weak self] item in
                 guard let self else { return }
 
-                updateItemUserData(userData)
-                library.onItemUserDataChanged(viewModel: self, userData: userData)
+                updateItem(item)
+
+                if let userData = item.userData {
+                    library.onItemUserDataChanged(viewModel: self, userData: userData)
+                }
             }
             .store(in: &cancellables)
+
+        Publishers.Merge(
+            Notifications[.didRequestGlobalRefresh].publisher.map { [String]() },
+            Notifications[.didRequestLibraryRefresh].publisher
+        )
+        .sink { [weak self] ids in
+            guard let self else { return }
+
+            if ids.isEmpty || ids.contains(where: { $0 == library.parent.id }) {
+                refreshForEnvironmentChange()
+            }
+        }
+        .store(in: &cancellables)
 
         $searchQuery
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -190,23 +208,20 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
         }
     }
 
-    private func updateItemUserData(_ userData: UserItemDataDto) {
-        updateItemUserData(userData, in: &elements)
-        updateItemUserData(userData, in: &searchElements)
+    private func updateItem(_ item: BaseItemDto) {
+        updateItem(item, in: &elements)
+        updateItem(item, in: &searchElements)
     }
 
-    private func updateItemUserData(
-        _ userData: UserItemDataDto,
+    private func updateItem(
+        _ item: BaseItemDto,
         in elements: inout IdentifiedArrayOf<Element>
     ) {
-        guard let itemID = userData.itemID else { return }
+        guard let itemID = item.id else { return }
 
         for index in elements.indices {
-            guard var item = elements[index] as? BaseItemDto,
-                  item.id == itemID
-            else { continue }
+            guard (elements[index] as? BaseItemDto)?.id == itemID else { continue }
 
-            item.userData = userData
             elements[index] = item as! Element
             return
         }
