@@ -33,10 +33,13 @@ struct ItemView: View {
     private var provider: ItemContentGroupProvider
     @StateObject
     private var viewModel: ContentGroupViewModel<ItemContentGroupProvider>
+    @StateObject
+    private var deleteViewModel: ItemEditorViewModel
 
     init(provider: ItemContentGroupProvider) {
         self._provider = StateObject(wrappedValue: provider)
         self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
+        self._deleteViewModel = StateObject(wrappedValue: ItemEditorViewModel(item: provider.item))
     }
 
     private var initialFocus: InitialFocus<Component> {
@@ -125,6 +128,8 @@ struct ItemView: View {
     }
 
     var body: some View {
+        let (_, overflow, menu) = buttonConfiguration.resolvedButtons(for: provider)
+
         ZStack {
             switch viewModel.state {
             case .content:

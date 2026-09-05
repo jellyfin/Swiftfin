@@ -15,7 +15,7 @@ extension GeneralCommandType: Displayable, SystemImageable {
     var displayTitle: String {
         rawValue.reduce(into: .empty) { result, character in
             if character.isUppercase, let last = result.last, !last.isUppercase {
-                result.append(" ")
+                result.append(.space)
             }
             result.append(character)
         }

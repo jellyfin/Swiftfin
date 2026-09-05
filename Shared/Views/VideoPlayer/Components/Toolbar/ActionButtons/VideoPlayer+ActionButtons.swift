@@ -64,16 +64,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             resolvedActionButtons(rawMenuActionButtons)
         }
 
-        private var usesLiquidGlass: Bool {
-            if #available(iOS 26.0, *) {
-                true
-            } else {
-                false
-            }
-        }
-
         private var menuSystemImage: String {
-            if UIDevice.isTV || usesLiquidGlass {
+            if UIDevice.isTV || UIDevice.supportsLiquidGlass {
                 "ellipsis"
             } else {
                 "ellipsis.circle"
@@ -86,15 +78,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
 
         private var menuLabel: some View {
             Label(L10n.menu, systemImage: menuSystemImage)
-        }
-
-        private func isMenuButton(_ button: VideoPlayerActionButton) -> Bool {
-            switch button {
-            case .audio, .playbackSpeed, .playbackSettings, .subtitles:
-                true
-            default:
-                false
-            }
         }
 
         @ViewBuilder
@@ -141,13 +124,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 menuLabel
             }
             .frame(width: buttonSize, height: buttonSize)
-            .if(usesLiquidGlass) { menu in
-                menu
-                    .backport
-                    .glassEffect(in: .circle)
-            }
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary, .secondary)
             .withViewContext(.isInMenu)
         }
 
@@ -157,11 +133,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 ForEach(barActionButtons) { button in
                     view(for: button)
                         .frame(width: buttonSize, height: buttonSize)
-                        .if(usesLiquidGlass && isMenuButton(button)) { menu in
-                            menu
-                                .backport
-                                .glassEffect(in: .circle)
-                        }
                         .focused($focusedButton, equals: button.rawValue)
                 }
 
@@ -176,13 +147,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                         menuLabel
                     }
                     .frame(width: buttonSize, height: buttonSize)
-                    .if(usesLiquidGlass) { menu in
-                        menu
-                            .backport
-                            .glassEffect(in: .circle)
-                    }
-                    .symbolRenderingMode(.monochrome)
-                    .foregroundStyle(.primary, .secondary)
                     .focused($focusedButton, equals: "menu")
                 }
             }
@@ -195,11 +159,14 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         }
 
         var body: some View {
-            if containerState.isCompact {
-                compactView
-            } else {
-                regularView
+            Group {
+                if containerState.isCompact {
+                    compactView
+                } else {
+                    regularView
+                }
             }
+            .modifier(VideoPlayer.PlaybackControls.OverlayBarButtonStyleModifier())
         }
     }
 }

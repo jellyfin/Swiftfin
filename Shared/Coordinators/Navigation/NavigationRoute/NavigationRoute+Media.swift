@@ -16,6 +16,15 @@ import Transmission
 extension NavigationRoute {
 
     @MainActor
+    static var liveGuide: NavigationRoute {
+        NavigationRoute(
+            id: "liveGuide"
+        ) {
+            EPGView()
+        }
+    }
+
+    @MainActor
     static var liveTV: NavigationRoute {
         NavigationRoute(
             id: "liveTV",
@@ -97,6 +106,11 @@ struct VideoPlayerViewShim: View {
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)
+        .onSceneDidEnterBackground {
+            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
+                manager.setPlaybackRequestStatus(status: .paused)
+            }
+        }
         .onFrameChanged { _, safeArea in
             self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
         }

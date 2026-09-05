@@ -108,8 +108,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                         systemImage: VideoPlayerActionButton.playbackSettings.systemImage
                     )
                 }
-                .symbolRenderingMode(.monochrome)
-                .foregroundStyle(.primary, .secondary)
             }
         }
     }

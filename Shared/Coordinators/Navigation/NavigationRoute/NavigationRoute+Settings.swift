@@ -26,6 +26,20 @@ extension NavigationRoute {
         }
     }
 
+    static func itemActionBarButtonSelector(selectedButtonsBinding: Binding<[ItemActionButton]>) -> NavigationRoute {
+        NavigationRoute(id: "itemActionBarButtonSelector") {
+            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: ItemActionButton.allCases)
+                .navigationTitle(L10n.barButtons.localizedCapitalized)
+        }
+    }
+
+    static func itemActionMenuButtonSelector(selectedButtonsBinding: Binding<[ItemActionButton]>) -> NavigationRoute {
+        NavigationRoute(id: "itemActionMenuButtonSelector") {
+            OrderedSectionSelectorView(selection: selectedButtonsBinding, sources: ItemActionButton.allCases)
+                .navigationTitle(L10n.menuButtons.localizedCapitalized)
+        }
+    }
+
     static func supplementSelector(selectedSupplementsBinding: Binding<[VideoPlayerSupplement]>) -> NavigationRoute {
         NavigationRoute(id: "supplementSelector") {
             OrderedSectionSelectorView(
@@ -69,7 +83,7 @@ extension NavigationRoute {
         NavigationRoute(
             id: "customizeSettingsView"
         ) {
-            CustomizeViewsSettings()
+            CustomizeSettingsView()
         }
     }
 
@@ -172,22 +186,28 @@ extension NavigationRoute {
     }
     #endif
 
-    static let itemSettings = NavigationRoute(
-        id: "itemSettings"
-    ) {
-        CustomizeViewsSettings.ItemSection()
+    static var itemSettings: NavigationRoute {
+        NavigationRoute(
+            id: "itemSettings"
+        ) {
+            CustomizeSettingsView.ItemSection()
+        }
     }
 
-    static let librarySettings = NavigationRoute(
-        id: "librarySettings"
-    ) {
-        CustomizeViewsSettings.LibrarySection()
+    static var librarySettings: NavigationRoute {
+        NavigationRoute(
+            id: "librarySettings"
+        ) {
+            CustomizeSettingsView.LibrarySection()
+        }
     }
 
-    static let posterSettings = NavigationRoute(
-        id: "posterSettings"
-    ) {
-        CustomizeViewsSettings.PosterSection()
+    static var posterSettings: NavigationRoute {
+        NavigationRoute(
+            id: "posterSettings"
+        ) {
+            CustomizeSettingsView.PosterSection()
+        }
     }
 
     static var indicatorSettings: NavigationRoute {

@@ -81,6 +81,8 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                 viewModel.error.map(ErrorView.init)
             case .initial, .refreshing:
                 ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea(edges: .all)
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)

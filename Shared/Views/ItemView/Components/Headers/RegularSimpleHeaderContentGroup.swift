@@ -78,14 +78,15 @@ extension ItemView {
 
                         ItemView.Description(item: provider.item)
 
-                        VStack(alignment: .leading, spacing: UIDevice.isTV ? 25 : 5) {
-                            if provider.item.presentPlayButton {
-                                PlayButton(provider: provider)
-                            }
-
-                            ItemView.ActionButtonHStack(provider: provider)
-                        }
+                        ItemView.ActionBar(
+                            provider: provider,
+                            alignment: .leading
+                        )
                         .frame(maxWidth: UIDevice.isTV ? 450 : 300, alignment: .leading)
+                        .if(UIDevice.isTV) { buttons in
+                            buttons
+                                .padding(.vertical)
+                        }
 
                         ItemView.AttributesHStack(
                             attributes: attributes,

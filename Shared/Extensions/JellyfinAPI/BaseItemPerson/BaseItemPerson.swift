@@ -34,8 +34,8 @@ extension BaseItemPerson {
         let split = role.split(separator: "/")
         guard split.count > 1 else { return role }
 
-        guard let firstRole = split.first?.trimmingCharacters(in: CharacterSet(charactersIn: " ")),
-              let lastRole = split.last?.trimmingCharacters(in: CharacterSet(charactersIn: " ")) else { return role }
+        guard let firstRole = split.first?.trimmingCharacters(in: CharacterSet(charactersIn: .space)),
+              let lastRole = split.last?.trimmingCharacters(in: CharacterSet(charactersIn: .space)) else { return role }
 
         var final = firstRole
 
