@@ -11,11 +11,8 @@
 Fork the Swiftfin repo and install the necessary dependencies:
 
 ```bash
-# install Carthage, SwiftFormat, SwiftLint, and SwiftGen with Homebrew
+# install homebrew dependencies
 $ brew bundle --file Brewfile
-
-# install or update dependencies
-$ carthage update --use-xcframeworks
 ```
 
 In the event that all of the Swift Packages cannot be installed, clean the Swift Packages cache or close and reopen Xcode to restart the process.

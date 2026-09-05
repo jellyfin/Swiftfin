@@ -22,7 +22,7 @@ Swiftfin offers two player options: **Swiftfin** (SwiftVLC) and **Native** (AVPl
 
 [2] In Native (AVPlayer), HDR to SDR Tonemapping requires Direct Playing compatible MP4 files and may require Dolby Vision Profiles 5 & 8 for full support.
 
-[3] Swiftfin (SwiftVLC) does not support TLS 1.3.
+[3] libvlc does not support TLS 1.3.
 
 [4] Swiftfin (SwiftVLC) has a [known bug that results in a significant audio delay](https://code.videolan.org/videolan/VLCKit/-/issues/544).
 
