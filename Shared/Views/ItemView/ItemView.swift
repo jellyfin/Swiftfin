@@ -14,25 +14,21 @@ import SwiftUI
 
 struct ItemView: View {
 
-    enum Component {
-        static let header = "itemView-header"
-        static let menu = "itemView-menu"
-        static let play = "itemView-play"
+    enum Component: String, FocusTarget {
+        case header = "itemView-header"
+        case actions = "itemView-actions"
+        case details = "itemView-details"
     }
 
     @Default(.Customization.itemViewType)
     private var itemViewType
 
-    @Router
-    private var router
-
-    private var buttonConfiguration = ItemActionButtons.Configuration()
+    @FocusState
+    private var focus: Component?
 
     @State
     private var contentSize: CGSize = .zero
 
-    @StateObject
-    private var focusCoordinator = FocusCoordinator(initial: Component.play)
     @StateObject
     private var provider: ItemContentGroupProvider
     @StateObject
@@ -44,6 +40,17 @@ struct ItemView: View {
         self._provider = StateObject(wrappedValue: provider)
         self._viewModel = StateObject(wrappedValue: ContentGroupViewModel(provider: provider))
         self._deleteViewModel = StateObject(wrappedValue: ItemEditorViewModel(item: provider.item))
+    }
+
+    private var initialFocus: InitialFocus<Component> {
+        switch viewModel.state {
+        case .initial, .refreshing:
+            .waiting
+        case .content:
+            provider.item.presentPlayButton ? .destination(.actions) : .automatic
+        case .error:
+            .automatic
+        }
     }
 
     private var isCompact: Bool {
@@ -133,6 +140,7 @@ struct ItemView: View {
                 ProgressView()
             }
         }
+        .initialFocus($focus, initialFocus)
         .trackingSize($contentSize)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
@@ -143,40 +151,15 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
-        .environmentObject(focusCoordinator)
-        .confirmationDialog(
-            L10n.deleteItemConfirmationMessage,
-            isPresented: $provider.isPresentingDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(
-                L10n.confirm,
-                role: .destructive,
-                action: deleteViewModel.delete
-            )
-
-            Button(L10n.cancel, role: .cancel) {}
-        }
-        .onNotification(.didDeleteItem) { itemID in
-            guard itemID == provider.item.id else { return }
-
-            UIDevice.feedback(.success)
-            router.dismiss()
-        }
-        .errorMessage($deleteViewModel.error)
         #if os(tvOS)
-            .toolbarVisibility(.hidden, for: .navigationBar)
+        .toolbarVisibility(.hidden, for: .navigationBar)
         #else
-            .navigationBarMenuButton(
-                isLoading: viewModel.background.is(.refreshing),
-                isHidden: overflow.isEmpty && menu.isEmpty
-            ) {
-                ItemActionButtons.MenuContent(
-                    provider: provider,
-                    buttons: overflow,
-                    menuButtons: menu
-                )
-            }
+        .navigationBarMenuButton(
+            isLoading: viewModel.background.is(.refreshing),
+            isHidden: !provider.item.canEdit
+        ) {
+            EditItemMenu(item: provider.item)
+        }
         #endif
     }
 }
