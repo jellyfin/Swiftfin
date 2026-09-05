@@ -89,11 +89,7 @@ extension ItemView {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                        if provider.item.presentPlayButton {
-                            PlayButton(provider: provider)
-                        }
-
-                        ItemView.ActionButtonHStack(provider: provider)
+                        ItemView.ActionBar(provider: provider)
                     }
                     .frame(width: UIDevice.isTV ? 450 : 300)
 
