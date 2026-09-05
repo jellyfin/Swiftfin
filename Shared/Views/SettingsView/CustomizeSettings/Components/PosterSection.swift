@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension CustomizeViewsSettings {
+extension CustomizeSettingsView {
 
     struct PosterSection: View {
 
