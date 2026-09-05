@@ -52,8 +52,12 @@ struct CustomizeSettingsView: View {
                 router.route(to: .posterSettings)
             }
 
+            ChevronButton(L10n.videoPlayer) {
+                router.route(to: .videoPlayerSettings)
+            }
+
             HomeSection()
         }
-        .navigationTitle(L10n.customize)
+        .navigationTitle(L10n.advanced)
     }
 }

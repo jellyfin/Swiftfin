@@ -1,12 +1,12 @@
 # Player Differences
 
-Swiftfin offers two player options: **Swiftfin** (SwiftVLC) and **Native** (AVPlayer). The Swiftfin team recommends using Swiftfin (SwiftVLC) for optimal compatibility and features, though Native (AVPlayer) is also available for certain cases that benefit from Apple's native capabilities. All video, audio, and subtitle formats listed are supported for direct playback but may be repackaged based on container support. If transcoding is enabled on your server, any unsupported formats will be converted automatically.
+Swiftfin offers two standard player options: **VLC** (SwiftVLC) and **Native** (AVPlayer). The Swiftfin team recommends using VLC for optimal compatibility and features, though Native (AVPlayer) is also available for certain cases that benefit from Apple's native capabilities. All video, audio, and subtitle formats listed are supported for direct playback but may be repackaged based on container support. If transcoding is enabled on your server, any unsupported formats will be converted automatically.
 
 ---
 
 ## Feature Support
 
-| Feature                    | Swiftfin (SwiftVLC) | Native (AVPlayer) |
+| Feature                    | VLC | Native (AVPlayer) |
 |----------------------------|-------------------|----------------|
 | **External Audio Tracks**  | ❌                | ❌             |
 | **Framerate Matching**     | ❌                | ✅             |
@@ -18,19 +18,19 @@ Swiftfin offers two player options: **Swiftfin** (SwiftVLC) and **Native** (AVPl
 
 **Notes**
 
-[1] HDR to SDR Tonemapping on Swiftfin (SwiftVLC) may have colorspace accuracy variations depending on content and device configuration.
+[1] HDR to SDR Tonemapping on VLC may have colorspace accuracy variations depending on content and device configuration.
 
 [2] In Native (AVPlayer), HDR to SDR Tonemapping requires Direct Playing compatible MP4 files and may require Dolby Vision Profiles 5 & 8 for full support.
 
 [3] libvlc does not support TLS 1.3.
 
-[4] Swiftfin (SwiftVLC) has a [known bug that results in a significant audio delay](https://code.videolan.org/videolan/VLCKit/-/issues/544).
+[4] VLC has a [known bug that results in a significant audio delay](https://code.videolan.org/videolan/VLCKit/-/issues/544).
 
 ---
 
 ## Container Support
 
-| Container                                                        | Swiftfin (SwiftVLC) | Native (AVPlayer) |
+| Container                                                        | VLC | Native (AVPlayer) |
 |------------------------------------------------------------------|-------------------|-------------------|
 | [AVI](https://en.wikipedia.org/wiki/Audio_Video_Interleave)      | ✅                | 🔶 [1]            |
 | [FLV](https://en.wikipedia.org/wiki/Flash_Video)                 | ✅                | ❌                |
@@ -54,7 +54,7 @@ Swiftfin offers two player options: **Swiftfin** (SwiftVLC) and **Native** (AVPl
 
 ## Audio Support
 
-| Audio Codec                                                                    | Swiftfin (SwiftVLC) | Native (AVPlayer) |
+| Audio Codec                                                                    | VLC | Native (AVPlayer) |
 |--------------------------------------------------------------------------------|-------------------|-------------------|
 | [AAC](https://en.wikipedia.org/wiki/Advanced_Audio_Coding)                     | ✅                | ✅                |
 | [AC3](https://en.wikipedia.org/wiki/Dolby_Digital)                             | ✅                | ✅                |
@@ -91,7 +91,7 @@ Swiftfin offers two player options: **Swiftfin** (SwiftVLC) and **Native** (AVPl
 
 ## Video Support
 
-| Video Codec                                                              | Swiftfin (SwiftVLC) | Native (AVPlayer) |
+| Video Codec                                                              | VLC | Native (AVPlayer) |
 |--------------------------------------------------------------------------|-------------------|-------------------|
 | [AV1](https://en.wikipedia.org/wiki/AV1)                                 | 🔶 [1]            | 🔶 [1]            |
 | [Dirac](https://en.wikipedia.org/wiki/Dirac_(video_compression_format))  | ✅                | ❌                |
@@ -125,7 +125,7 @@ Swiftfin offers two player options: **Swiftfin** (SwiftVLC) and **Native** (AVPl
 
 - [2] HEVC requires A8X Pro, M1, or newer for acceptable performance. Older devices that do not report HEVC capabilities have HEVC disabled by default. All devices supported by Swiftfin should have HEVC available.
 
-- [3] VVC has mixed reports of support by Swiftfin (SwiftVLC). Apple does not provide an API to check VVC capabilities, so VVC is disabled by default.
+- [3] VVC has mixed reports of support by VLC. Apple does not provide an API to check VVC capabilities, so VVC is disabled by default.
 
 - Unsupported codecs will require transcoding to play.
 
@@ -133,7 +133,7 @@ Swiftfin offers two player options: **Swiftfin** (SwiftVLC) and **Native** (AVPl
 
 ## Subtitle Support
 
-| Subtitle Format                                                                 | Swiftfin (SwiftVLC) | Native (AVPlayer) |
+| Subtitle Format                                                                 | VLC | Native (AVPlayer) |
 |---------------------------------------------------------------------------------|-------------------|-------------------|
 | [ASS](https://en.wikipedia.org/wiki/SubStation_Alpha#Advanced_SubStation_Alpha) | ✅                | ❌                |
 | [CC_DEC](https://en.wikipedia.org/wiki/Closed_captioning)                       | ✅                | ✅                |
@@ -167,7 +167,7 @@ Swiftfin offers two player options: **Swiftfin** (SwiftVLC) and **Native** (AVPl
 
 ## HDR Support
 
-| Format                                                                          | Swiftfin (SwiftVLC) | Native (AVPlayer) |
+| Format                                                                          | VLC | Native (AVPlayer) |
 |---------------------------------------------------------------------------------|-------------------|-------------------|
 | [Dolby Vision Profile 5](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles)   | ❌                | ✅                |
 | [Dolby Vision Profile 7.6](https://en.wikipedia.org/wiki/Dolby_Vision#Profiles) | 🔶 [1]            | 🔶 [1]            |
@@ -195,9 +195,9 @@ Swiftfin offers two player options: **Swiftfin** (SwiftVLC) and **Native** (AVPl
 
 ### Miscellaneous
 
-| Feature                      | Swiftfin (SwiftVLC) | Native (AVPlayer) | Notes                                                                                                                                 |
+| Feature                      | VLC | Native (AVPlayer) | Notes                                                                                                                                 |
 |------------------------------|-------------------|-------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| **External Display Support** | 🔶                | ✅                | Swiftfin Player can only be mirrored. As a result, the player will retain the source device dimensions.                               |
-| **Energy Consumption**       | 🔶                | ✅                | Swiftfin Player will use a software decoder if the media cannot be handled by iOS natively. This results in higher power consumption. |
+| **External Display Support** | 🔶                | ✅                | VLC player can only be mirrored. As a result, the player will retain the source device dimensions.                               |
+| **Energy Consumption**       | 🔶                | ✅                | VLC player will use a software decoder if the media cannot be handled by iOS natively. This results in higher power consumption. |
 
 ---

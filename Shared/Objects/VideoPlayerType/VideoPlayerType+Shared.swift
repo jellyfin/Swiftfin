@@ -18,8 +18,8 @@ extension VideoPlayerType {
         switch self {
         case .native:
             Self._nativeCodecProfiles
-        case .swiftfin:
-            Self._swiftfinCodecProfiles
+        case .vlc, .mpv:
+            Self._vlcCodecProfiles
         }
     }
 

@@ -73,7 +73,7 @@ Documentation for advanced or complex features and other implementation reasonin
 
 Swiftfin is developed using SwiftUI. The iOS and tvOS Jellyfin clients share the same backend with each client containing their respective views. Due to this architecture, working on both clients at once may be necessary.
 
-Playback is done with [SwiftVLC](https://github.com/harflabs/SwiftVLC) for its great codec support. Becoming familiar with SwiftVLC will be necessary for video playback development and debugging.
+The VLC player uses [SwiftVLC](https://github.com/harflabs/SwiftVLC) for its great codec support. Becoming familiar with SwiftVLC will be necessary for video playback development and debugging.
 
 ## Design
 

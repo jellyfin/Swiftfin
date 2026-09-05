@@ -192,6 +192,13 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         }
     }
 
+    /// Replaces estimated track indexes with those reported by the player.
+    func setTrackIndexes(_ indexMap: MediaTrackIndexMap) {
+        self.indexMap = indexMap
+        switchTrack(type: .audio, index: selectedAudioStreamIndex)
+        switchTrack(type: .subtitle, index: selectedSubtitleStreamIndex)
+    }
+
     /// Refreshes sidecar mappings and reapplies the selected subtitle.
     func updateSubtitleTrackMapping(subtitleTracks: [(playerIndex: Int, id: String)]) {
         let sidecars: [(jellyfinIndex: Int, url: URL)] = subtitleStreams.sidecarSubtitles.compactMap { subtitle in

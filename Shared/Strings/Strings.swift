@@ -1032,6 +1032,8 @@ internal enum L10n {
   internal static let movie = L10n.tr("Localizable", "movie", fallback: "Movie")
   /// Movies
   internal static let movies = L10n.tr("Localizable", "movies", fallback: "Movies")
+  /// MPV
+  internal static let mpv = L10n.tr("Localizable", "mpv", fallback: "MPV")
   /// Multi tap
   internal static let multiTap = L10n.tr("Localizable", "multiTap", fallback: "Multi tap")
   /// Music
@@ -1202,10 +1204,12 @@ internal enum L10n {
   internal static let playDefaultTrackDescription = L10n.tr("Localizable", "playDefaultTrackDescription", fallback: "Always plays the first track marked as Default, even if not in your language.")
   /// Played
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
+  /// Player
+  internal static let player = L10n.tr("Localizable", "player", fallback: "Player")
   /// Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.
   internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.")
   /// Uses SwiftVLC and libVLC 4 to provide compatibility with nearly any file type.
-  internal static let playerSwiftfinDescription = L10n.tr("Localizable", "playerSwiftfinDescription", fallback: "Uses SwiftVLC and libVLC 4 to provide compatibility with nearly any file type.")
+  internal static let playerVlcDescription = L10n.tr("Localizable", "playerVlcDescription", fallback: "Uses SwiftVLC and libVLC 4 to provide compatibility with nearly any file type.")
   /// Play From beginning
   internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From beginning")
   /// Playlist
@@ -1822,8 +1826,6 @@ internal enum L10n {
   internal static let videoLevelNotSupported = L10n.tr("Localizable", "videoLevelNotSupported", fallback: "The video level is not supported")
   /// Video player
   internal static let videoPlayer = L10n.tr("Localizable", "videoPlayer", fallback: "Video player")
-  /// Video player type
-  internal static let videoPlayerType = L10n.tr("Localizable", "videoPlayerType", fallback: "Video player type")
   /// The video profile is not supported
   internal static let videoProfileNotSupported = L10n.tr("Localizable", "videoProfileNotSupported", fallback: "The video profile is not supported")
   /// Video range type
@@ -1844,6 +1846,8 @@ internal enum L10n {
   internal static let videoTranscoding = L10n.tr("Localizable", "videoTranscoding", fallback: "Video transcoding")
   /// Some views may need an app restart to update.
   internal static let viewsMayRequireRestart = L10n.tr("Localizable", "viewsMayRequireRestart", fallback: "Some views may need an app restart to update.")
+  /// VLC
+  internal static let vlc = L10n.tr("Localizable", "vlc", fallback: "VLC")
   /// Volume
   internal static let volume = L10n.tr("Localizable", "volume", fallback: "Volume")
   /// Votes
