@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import FactoryKit
 import SwiftUI
 import Transmission
@@ -40,7 +41,12 @@ struct VideoPlayer: View {
     private var containerState: VideoPlayerContainerState = .init()
 
     init() {
-        self._proxy = .init(wrappedValue: VLCMediaPlayerProxy())
+        switch Defaults[.VideoPlayer.videoPlayerType] {
+        case .mpv:
+            self._proxy = .init(wrappedValue: MPVMediaPlayerProxy())
+        case .native, .vlc:
+            self._proxy = .init(wrappedValue: VLCMediaPlayerProxy())
+        }
     }
 
     var body: some View {

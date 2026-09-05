@@ -13,7 +13,7 @@ These four steps resolve many common issues or help narrow down unique issues fr
 | Step | Why |
 |------|-----|
 | **1. Update Swiftfin** | We are only able to support the current release which may already have a code fix for the issue you are experiencing. If you see a closed issue for your problem, but it's still not resolved on the latest release, please try using our [TestFlight](https://testflight.apple.com/join/SqNPfdxq) before reporting a new issue. |
-| **2. Switch the player** <br>*Settings > Video Player > Video Player Type* | Each player is based on a different playback engine. Confirming which player(s) has an issue helps narrow the troubleshooting steps. |
+| **2. Switch the player** <br>*Settings > Advanced > Video Player > Engine* | Each player is based on a different playback engine. Confirming which player(s) has an issue helps narrow the troubleshooting steps. |
 | **3. Connect by direct `IP:port`** | If this works and your domain doesn't, the problem is your reverse proxy or network. |
 | **4. Check the logs** <br>*Login Issues: Settings > Advanced > Logs* <br>*Other Issues: Settings > Logs* | These logs show network traffic and logs for Swiftfin. Identifying the failing decodes or packets that exist can help resolve network/proxy issues. |
 
@@ -35,13 +35,13 @@ If neither applies, please test on a direct `IP:port` connection before reportin
 
 Purple casts, washed out color, or no tone mapping at all. Both players handle HDR differently and neither is perfect:
 
-- **Swiftfin (SwiftVLC)** tone maps, but colorspace accuracy varies with content and device.
+- **VLC** tone maps, but colorspace accuracy varies with content and device.
 - **Native (AVPlayer)** needs Direct Play compatible MP4, and often Dolby Vision Profile 5 or 8.
 
-Start by forcing the server to tone map instead of Swiftfin and see if this resolves your issue. These settings can be enabled from:
+Start by forcing the server to tone map instead of VLC and see if this resolves your issue. These settings can be enabled from:
 
-*Settings > Video Player > Playback Quality > HDR > Force Dolby Vision to Transcode*
-*Settings > Video Player > Playback Quality > HDR > Force HDR to Transcode*
+*Settings > Advanced > Video Player > Playback Quality > HDR > Force Dolby Vision to Transcode*
+*Settings > Advanced > Video Player > Playback Quality > HDR > Force HDR to Transcode*
 
 Please see the notes in the [Players Documentation](players.md) before reporting, and include your file's media info from Jellyfin Web.
 
@@ -51,11 +51,11 @@ This is a [known SwiftVLC bug](https://code.videolan.org/videolan/VLCKit/-/issue
 
 ### Native Player Cannot Select Subtitles or Change Audio Tracks
 
-The Native player is built on top of AVPlayer but has not yet been connected to the unified video player interface. Track selection is a known issue and is actively being worked on. In the meantime, please use the Swiftfin player for this support.
+The Native player is built on top of AVPlayer but has not yet been connected to the unified video player interface. Track selection is a known issue and is actively being worked on. In the meantime, please use the VLC player for this support.
 
 ### Unnecessary Transcoding or Remuxing
 
-Swiftfin uses **Device Profiles** that can be manually adjusted based on your device and media. These settings can be found in **Settings > Video Player > Playback Quality** where you can change to a different pre-made **Device Profile** or you can select **Custom** to build your own.
+Swiftfin uses **Device Profiles** that can be manually adjusted based on your device and media. These settings can be found in **Settings > Advanced > Video Player > Playback Quality** where you can change to a different pre-made **Device Profile** or you can select **Custom** to build your own.
 
 You can add a new profile to the existing ones that would keep all else the same but allows a specific format to **Direct Play**, or you can fully replace them all with **Custom** profiles.
 

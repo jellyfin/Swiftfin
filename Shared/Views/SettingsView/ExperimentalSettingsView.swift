@@ -15,6 +15,8 @@ struct ExperimentalSettingsView: View {
 
     static let isEnabled = true
 
+    @Default(.Experimental.mpvPlayer)
+    private var isMPVEnabled
     @Default(.Experimental.serverConnectionAutoSwitch)
     private var isServerConnectionAutoSwitchEnabled
     @Default(.Experimental.videoPlayerEPG)
@@ -26,6 +28,8 @@ struct ExperimentalSettingsView: View {
     var body: some View {
         Form(systemImage: "flask") {
             // swiftlint:disable hard_coded_display_string
+            Toggle("MPV engine", isOn: $isMPVEnabled)
+
             Toggle("Live TV EPG", isOn: $isVideoPlayerEPGEnabled)
 
             #if os(iOS)
@@ -33,6 +37,11 @@ struct ExperimentalSettingsView: View {
             #endif
 
             // swiftlint:enable hard_coded_display_string
+        }
+        .onChange(of: isMPVEnabled) {
+            if !isMPVEnabled {
+                Defaults[.VideoPlayer.videoPlayerType] = .vlc
+            }
         }
         .onChange(of: isServerConnectionAutoSwitchEnabled) {
             if isServerConnectionAutoSwitchEnabled {
