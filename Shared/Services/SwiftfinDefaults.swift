@@ -298,7 +298,7 @@ extension Defaults.Keys {
         }
 
         static var videoPlayerType: Key<VideoPlayerType> {
-            UserKey("videoPlayerType", default: .swiftfin)
+            UserKey("videoPlayerType", default: .vlc)
         }
 
         enum Gesture {
@@ -401,6 +401,10 @@ extension Defaults.Keys {
 
     // Experimental settings
     enum Experimental {
+
+        static var mpvPlayer: Key<Bool> {
+            UserKey("experimentalMPVPlayer", default: false)
+        }
 
         static var downloads: Key<Bool> {
             UserKey("experimentalDownloads", default: false)
