@@ -46,14 +46,6 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 containerState.selectedSupplement?.presentationStyle == .expanded
         }
 
-        private func onCloseButtonPressed(isPressed: Bool) {
-            if isPressed {
-                containerState.timer.stop()
-            } else {
-                containerState.timer.poke()
-            }
-        }
-
         private var closeButton: some View {
             Button {
                 containerState.select(supplement: nil)
@@ -65,12 +57,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 width: VideoPlayer.PlaybackControls.Toolbar.buttonSize,
                 height: VideoPlayer.PlaybackControls.Toolbar.buttonSize
             )
-            .font(.system(size: UIDevice.isTV ? 30 : 24, weight: .semibold))
-            .labelStyle(.iconOnly)
             .modifier(
-                VideoPlayer.PlaybackControls.OverlayButtonStyleModifier(
-                    onPressed: onCloseButtonPressed
-                )
+                VideoPlayer.PlaybackControls.OverlayBarButtonStyleModifier()
             )
         }
         #endif
@@ -99,9 +87,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             }
             #if os(iOS)
             .background {
-                GestureView()
-                    .environment(\.panGestureDirection, .vertical)
-            }
+                    GestureView()
+                        .environment(\.panGestureDirection, .vertical)
+                }
             #endif
         }
 

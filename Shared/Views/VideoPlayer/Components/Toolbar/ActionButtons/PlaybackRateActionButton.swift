@@ -44,8 +44,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     systemImage: VideoPlayerActionButton.playbackSpeed.systemImage
                 )
             }
-            .symbolRenderingMode(.monochrome)
-            .foregroundStyle(.primary, .secondary)
         }
     }
 }

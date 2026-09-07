@@ -98,15 +98,15 @@ struct PosterButton<Item: Poster>: View {
         .buttonStyle(.borderless)
         .buttonBorderShape(.roundedRectangle)
         #if os(tvOS)
-            .focusedValue(\.focusedPoster, AnyPoster(item))
+        .focusedValue(\.focusedPoster, AnyPoster(item))
         #endif
-            .posterContextMenu(for: item) {
-                contextMenuPreview
-                    .withViewContext(viewContext)
-            }
-            .onNotification(.didChangeItem) { newItem in
-                guard let newItem = newItem as? Item, newItem.id == item.id else { return }
-                item = newItem
-            }
+        .posterContextMenu(for: item) {
+            contextMenuPreview
+                .withViewContext(viewContext)
+        }
+        .onNotification(.didChangeItem) { newItem in
+            guard let newItem = newItem as? Item, newItem.id == item.id else { return }
+            item = newItem
+        }
     }
 }

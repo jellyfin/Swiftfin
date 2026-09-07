@@ -106,7 +106,7 @@ struct AddServerUserView: View {
             switch event {
             case let .created(newUser):
                 UIDevice.feedback(.success)
-                Notifications[.didCreateServerUser].post(newUser)
+                Notifications[.didAddServerUser].post(newUser)
                 router.dismiss()
             }
         }

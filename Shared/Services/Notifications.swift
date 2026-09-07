@@ -154,16 +154,21 @@ extension Notifications.Key {
 
     // MARK: - Server Users
 
+    /// - Payload: The ID of the user whose Profile Image changed.
+    static var didChangeUserProfile: Key<String> {
+        Key("didChangeUserProfile")
+    }
+
+    static var didAddServerUser: Key<UserDto> {
+        Key("didAddServerUser")
+    }
+
     static var didDeleteServerUser: Key<String> {
         Key("didDeleteServerUser")
     }
 
     static var didChangeServerUser: Key<UserDto> {
         Key("didChangeServerUser")
-    }
-
-    static var didCreateServerUser: Key<UserDto> {
-        Key("didCreateServerUser")
     }
 
     /// Pulls the user, then posts `didChangeServerUser`.

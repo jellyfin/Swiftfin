@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-struct CustomizeViewsSettings: View {
+struct CustomizeSettingsView: View {
 
     @Default(.Customization.Search.enabledDrawerFilters)
     private var searchEnabledDrawerFilters
@@ -52,8 +52,12 @@ struct CustomizeViewsSettings: View {
                 router.route(to: .posterSettings)
             }
 
+            ChevronButton(L10n.videoPlayer) {
+                router.route(to: .videoPlayerSettings)
+            }
+
             HomeSection()
         }
-        .navigationTitle(L10n.customize)
+        .navigationTitle(L10n.advanced)
     }
 }
