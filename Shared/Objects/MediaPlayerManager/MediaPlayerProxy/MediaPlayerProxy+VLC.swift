@@ -38,16 +38,10 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         NowPlayableObserver(),
     ]
 
-    private var didPause = false
-    // Unpausing live HLS playlist re-syncs to live, so user gets skipped
-    // forward. Watch first seconds after resume and drag it back
-    private var resumeGuard: (target: Duration, until: Date)?
+    private var resumeGuard = ResumeGuard()
 
     func play() {
-        if didPause, manager?.item.type == .recording, let seconds = manager?.seconds {
-            resumeGuard = (seconds, .now + 15)
-        }
-        didPause = false
+        resumeGuard.willResumePlayback(isRecording: manager?.item.type == .recording, at: manager?.seconds)
 
         if player.state == .paused {
             player.resume()
@@ -61,22 +55,18 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     func enforceResumeGuard(_ seconds: Duration) {
-        guard let resumeGuard else { return }
+        guard let target = resumeGuard.correction(for: seconds) else { return }
 
-        if Date.now > resumeGuard.until {
-            self.resumeGuard = nil
-        } else if seconds > resumeGuard.target + .seconds(30) {
-            // Seek the player directly: `setSeconds` would clear the guard
-            do {
-                try player.seek(to: resumeGuard.target)
-            } catch {
-                log(error)
-            }
+        // Seek the player directly: `setSeconds` would disarm the guard
+        do {
+            try player.seek(to: target)
+        } catch {
+            log(error)
         }
     }
 
     func pause() {
-        didPause = true
+        resumeGuard.didPausePlayback()
         player.pause()
     }
 
@@ -87,7 +77,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     func jumpForward(_ seconds: Duration) {
-        resumeGuard = nil
+        resumeGuard.disarm()
         let target: Duration
 
         if let runtime = manager?.item.runtime, let current = manager?.seconds {
@@ -103,7 +93,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     func jumpBackward(_ seconds: Duration) {
-        resumeGuard = nil
+        resumeGuard.disarm()
         player.jump(by: .zero - seconds)
     }
 
@@ -119,7 +109,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         guard player.isSeekable else { return }
 
         pendingStartTime = nil
-        resumeGuard = nil
+        resumeGuard.disarm()
 
         do {
             try player.seek(to: seconds)

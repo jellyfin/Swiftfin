@@ -35,11 +35,22 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
         NowPlayableObserver(),
     ]
 
+    private var resumeGuard = ResumeGuard()
+
     func play() {
+        resumeGuard.willResumePlayback(isRecording: manager?.item.type == .recording, at: manager?.seconds)
         player.play()
     }
 
+    func enforceResumeGuard(_ seconds: Duration) {
+        guard let target = resumeGuard.correction(for: seconds) else { return }
+
+        // Seek the player directly: `setSeconds` would disarm the guard
+        player.seek(to: target)
+    }
+
     func pause() {
+        resumeGuard.didPausePlayback()
         player.pause()
     }
 
@@ -56,6 +67,7 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
     }
 
     func setSeconds(_ seconds: Duration) {
+        resumeGuard.disarm()
         player.seek(to: seconds)
     }
 
@@ -225,6 +237,7 @@ extension MPVMediaPlayerProxy {
                             containerState.scrubbedSeconds.value = player.position
                         }
                         manager.seconds = player.position
+                        proxy.enforceResumeGuard(player.position)
                     }
                     .onChange(of: player.state) {
                         updateState(player.state)
