@@ -40,11 +40,6 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
 
     private var resumeGuard = ResumeGuard()
 
-    /// The player's clock starts here, see `MediaPlayerItem.timelineOffset`
-    private var timelineOffset: Duration {
-        manager?.playbackItem?.timelineOffset ?? .zero
-    }
-
     func play() {
         resumeGuard.willResumePlayback(isRecording: manager?.item.type == .recording, at: manager?.seconds)
 
@@ -63,11 +58,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         guard let target = resumeGuard.correction(for: seconds) else { return }
 
         // Seek the player directly: `setSeconds` would disarm the guard
-        if manager?.playbackItem?.seeksViaServer == true {
-            manager?.seek(seconds: target)
-        } else {
-            seekPlayer(to: target - timelineOffset)
-        }
+        seekPlayer(to: target)
     }
 
     /// libVLC reports an in-progress recording (a growing HLS event playlist)
@@ -127,12 +118,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     func setSeconds(_ seconds: Duration) {
         pendingStartTime = nil
         resumeGuard.disarm()
-
-        if manager?.playbackItem?.seeksViaServer == true {
-            manager?.seek(seconds: seconds)
-        } else {
-            seekPlayer(to: seconds - timelineOffset)
-        }
+        seekPlayer(to: seconds)
     }
 
     func setAudioStream(_ stream: MediaStream) {
@@ -206,7 +192,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         self.pendingStartTime = nil
 
         seekPlayer(to: pendingStartTime)
-        manager?.seconds = pendingStartTime + timelineOffset
+        manager?.seconds = pendingStartTime
 
         return true
     }
@@ -220,9 +206,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
                 (item.baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset])
             )
 
-            // Relative to the player's clock: a server-started stream needs no seek
-            let playerStartSeconds = startSeconds - item.timelineOffset
-            pendingStartTime = !item.baseItem.isLiveStream && playerStartSeconds > .zero ? playerStartSeconds : nil
+            pendingStartTime = !item.baseItem.isLiveStream && startSeconds > .zero ? startSeconds : nil
 
             if let client = manager?.userSession?.client {
                 for subtitle in item.subtitleStreams.sidecarSubtitles {
@@ -280,17 +264,15 @@ extension VLCMediaPlayerProxy {
                               newSeconds == proxy.player.currentTime
                         else { return }
 
-                        let seconds = newSeconds + playbackItem.timelineOffset
-
                         if !isScrubbing {
-                            containerState.scrubbedSeconds.value = seconds
+                            containerState.scrubbedSeconds.value = newSeconds
                         }
 
-                        manager.seconds = seconds
+                        manager.seconds = newSeconds
                         if proxy.player.state == .playing {
                             proxy.isBuffering.value = false
                         }
-                        proxy.enforceResumeGuard(seconds)
+                        proxy.enforceResumeGuard(newSeconds)
 
                         proxy.videoSize.value = proxy.player.videoSize ?? .zero
                         if let statistics = proxy.player.statistics {

@@ -84,16 +84,6 @@ extension MediaPlayerItem {
             playbackInfo.mediaSourceID = initialMediaSource.id
         }
 
-        // The players cannot seek a recording still being written (a growing HLS
-        // playlist), so the server starts the stream at the wanted position and
-        // playback time is offset by it, the way Jellyfin Web handles transcodes.
-        var timelineOffset: Duration = .zero
-
-        if item.type == .recording {
-            timelineOffset = max(.zero, (item.startSeconds ?? .zero) - .seconds(Defaults[.VideoPlayer.resumeOffset]))
-            playbackInfo.startTimeTicks = timelineOffset > .zero ? timelineOffset.ticks : nil
-        }
-
         let request = Paths.getPostedPlaybackInfo(
             itemID: itemID,
             playbackInfo
@@ -194,8 +184,7 @@ extension MediaPlayerItem {
             initialAudioStreamIndex: audioStreamIndex,
             initialSubtitleStreamIndex: subtitleStreamIndex,
             previewImageProvider: previewImageProvider,
-            thumbnailProvider: item.getNowPlayingImage,
-            timelineOffset: timelineOffset
+            thumbnailProvider: item.getNowPlayingImage
         )
     }
 

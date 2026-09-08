@@ -62,16 +62,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     let requestedBitrate: PlaybackBitrate
 
-    /// Seconds the server skipped before the start of this stream, so
-    /// the player's own clock starts here. Non-zero for a recording still
-    /// being written, which the players cannot seek themselves.
-    let timelineOffset: Duration
-
-    /// Seeks restart the stream on the server instead of moving the player
-    var seeksViaServer: Bool {
-        baseItem.type == .recording && mediaSource.transcodingURL != nil
-    }
-
     // MARK: init
 
     init(
@@ -84,11 +74,9 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         initialAudioStreamIndex: Int? = nil,
         initialSubtitleStreamIndex: Int? = nil,
         previewImageProvider: (any PreviewImageProvider)? = nil,
-        thumbnailProvider: ThumbnailProvider? = nil,
-        timelineOffset: Duration = .zero
+        thumbnailProvider: ThumbnailProvider? = nil
     ) {
         self.baseItem = baseItem
-        self.timelineOffset = timelineOffset
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
         self.requestedBitrate = requestedBitrate
