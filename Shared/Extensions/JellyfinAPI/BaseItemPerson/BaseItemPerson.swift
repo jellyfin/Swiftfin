@@ -47,3 +47,52 @@ extension BaseItemPerson {
         return final
     }
 }
+
+/// The person kinds the server sends one credit per job for, meaning someone credited for
+/// multiple jobs is sent as multiple people.
+let mergeableCrewKinds: Set<PersonKind> = [.director, .writer, .producer]
+
+extension Collection where Element == BaseItemPerson {
+
+    /// Combines the credits of a person holding multiple crew jobs into a single element listing
+    /// all of their roles, like "Director / Producer". Kinds outside `mergeableCrewKinds` are never
+    /// combined, so an actor playing multiple characters keeps one element per character. The
+    /// combined element keeps the position of the first credit.
+    func mergingCrewRoles() -> [BaseItemPerson] {
+        var people: [BaseItemPerson] = []
+        var indices: [String: Int] = [:]
+
+        for person in self {
+            guard let type = person.type,
+                  mergeableCrewKinds.contains(type),
+                  let id = person.id
+            else {
+                people.append(person)
+                continue
+            }
+
+            guard let index = indices[id] else {
+                indices[id] = people.count
+                people.append(person)
+                continue
+            }
+
+            people[index].role = mergedRole(people[index].role, person.role)
+        }
+
+        return people
+    }
+}
+
+/// Joins two roles, keeping each role listed once.
+private func mergedRole(_ role: String?, _ other: String?) -> String? {
+    let roles = [role, other]
+        .compactMap { $0 }
+        .filter { $0.isNotEmpty }
+        .reduce(into: [String]()) { unique, next in
+            guard !unique.contains(next) else { return }
+            unique.append(next)
+        }
+
+    return roles.isEmpty ? nil : roles.joined(separator: " / ")
+}
