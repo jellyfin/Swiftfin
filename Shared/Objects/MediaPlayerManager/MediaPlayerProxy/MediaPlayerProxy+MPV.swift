@@ -46,7 +46,48 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
         guard let target = resumeGuard.correction(for: seconds) else { return }
 
         // Seek the player directly: `setSeconds` would disarm the guard
-        player.seek(to: target)
+        seekPlayer(to: target)
+    }
+
+    private var isRecording: Bool {
+        manager?.item.type == .recording
+    }
+
+    /// A seek past the playlist mpv has fetched so far. A recording still being
+    /// written grows its playlist as the server remuxes it, so the seek waits for
+    /// the reported duration to reach the target and is cleared once playback lands.
+    private var pendingSeek: Duration?
+
+    private func seekPlayer(to seconds: Duration) {
+        pendingSeek = nil
+
+        if isRecording, let duration = player.mediaInformation.duration, seconds > duration {
+            pendingSeek = seconds
+            manager?.logger.info("mpv seek to \(seconds) waits for the playlist, known duration \(duration)")
+            return
+        }
+
+        player.seek(to: seconds)
+
+        // With no duration known yet the seek may have fallen outside the playlist
+        if isRecording, player.mediaInformation.duration == nil {
+            pendingSeek = seconds
+        }
+    }
+
+    /// Remembers a position to seek to once the playlist reaches it
+    func deferSeek(to seconds: Duration) {
+        pendingSeek = seconds
+    }
+
+    func applyPendingSeekIfPossible() {
+        guard let pendingSeek, let duration = player.mediaInformation.duration, pendingSeek <= duration else { return }
+        seekPlayer(to: pendingSeek)
+    }
+
+    func settlePendingSeek(at seconds: Duration) {
+        guard let pendingSeek, abs((seconds - pendingSeek).seconds) < 5 else { return }
+        self.pendingSeek = nil
     }
 
     func pause() {
@@ -55,6 +96,7 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
     }
 
     func stop() {
+        pendingSeek = nil
         player.stop()
     }
 
@@ -68,7 +110,7 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
 
     func setSeconds(_ seconds: Duration) {
         resumeGuard.disarm()
-        player.seek(to: seconds)
+        seekPlayer(to: seconds)
     }
 
     func setRate(_ rate: Float) {
@@ -158,6 +200,11 @@ extension MPVMediaPlayerProxy {
 
             let start = max(.zero, (item.baseItem.startSeconds ?? .zero) - .seconds(Defaults[.VideoPlayer.resumeOffset]))
             player.load(item.url, autoPlay: manager.playbackRequestStatus == .playing, startTime: item.baseItem.isLiveStream ? nil : start)
+
+            // The playlist of a recording still being written may not reach the resume position yet
+            if item.baseItem.type == .recording, start > .zero {
+                proxy.deferSeek(to: start)
+            }
             proxy.setRate(manager.rate)
             proxy.setAspectFill(false)
         }
@@ -233,6 +280,8 @@ extension MPVMediaPlayerProxy {
                         textSubtitles.clear()
                     }
                     .onChange(of: player.position) {
+                        proxy.settlePendingSeek(at: player.position)
+
                         if !containerState.isScrubbing {
                             containerState.scrubbedSeconds.value = player.position
                         }
@@ -244,6 +293,9 @@ extension MPVMediaPlayerProxy {
                         if player.state == .ready || player.state == .playing || player.state == .paused {
                             updateTracks(for: item)
                         }
+                    }
+                    .onChange(of: player.mediaInformation.duration) {
+                        proxy.applyPendingSeekIfPossible()
                     }
                     .onChange(of: player.mediaInformation.tracks) {
                         updateTracks(for: item)

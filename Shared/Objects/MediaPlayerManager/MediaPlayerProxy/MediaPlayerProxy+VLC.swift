@@ -61,9 +61,24 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         seekPlayer(to: target)
     }
 
-    /// libVLC reports an in-progress recording (a growing HLS event playlist)
-    /// as not seekable but still honours relative jumps within the playlist.
+    private var isRecording: Bool {
+        manager?.item.type == .recording
+    }
+
+    /// A seek past the playlist libVLC has fetched so far. A recording still being
+    /// written grows its playlist as the server remuxes it, so the seek waits for
+    /// the reported length to reach the target and is cleared once playback lands.
+    private var pendingSeek: Duration?
+
     private func seekPlayer(to seconds: Duration) {
+        pendingSeek = nil
+
+        if isRecording, let duration = player.duration, seconds > duration {
+            pendingSeek = seconds
+            manager?.logger.info("SwiftVLC seek to \(seconds) waits for the playlist, known length \(duration)")
+            return
+        }
+
         if player.isSeekable {
             do {
                 try player.seek(to: seconds)
@@ -73,6 +88,21 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         } else if !player.jump(by: seconds - player.currentTime) {
             manager?.logger.warning("SwiftVLC refused a jump to \(seconds) on non-seekable media")
         }
+
+        // With no length known yet the seek may have fallen outside the playlist
+        if isRecording, player.duration == nil {
+            pendingSeek = seconds
+        }
+    }
+
+    func applyPendingSeekIfPossible() {
+        guard let pendingSeek, let duration = player.duration, pendingSeek <= duration else { return }
+        seekPlayer(to: pendingSeek)
+    }
+
+    func settlePendingSeek(at seconds: Duration) {
+        guard let pendingSeek, abs((seconds - pendingSeek).seconds) < 5 else { return }
+        self.pendingSeek = nil
     }
 
     func pause() {
@@ -82,6 +112,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
 
     func stop() {
         pendingStartTime = nil
+        pendingSeek = nil
         isBuffering.value = false
         player.stop()
     }
@@ -99,12 +130,21 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
 
         guard target > .zero else { return }
 
-        player.jump(by: target)
+        if isRecording, let current = manager?.seconds {
+            seekPlayer(to: current + target)
+        } else {
+            player.jump(by: target)
+        }
     }
 
     func jumpBackward(_ seconds: Duration) {
         resumeGuard.disarm()
-        player.jump(by: .zero - seconds)
+
+        if isRecording, let current = manager?.seconds {
+            seekPlayer(to: max(.zero, current - seconds))
+        } else {
+            player.jump(by: .zero - seconds)
+        }
     }
 
     func setRate(_ rate: Float) {
@@ -264,6 +304,8 @@ extension VLCMediaPlayerProxy {
                               newSeconds == proxy.player.currentTime
                         else { return }
 
+                        proxy.settlePendingSeek(at: newSeconds)
+
                         if !isScrubbing {
                             containerState.scrubbedSeconds.value = newSeconds
                         }
@@ -311,6 +353,9 @@ extension VLCMediaPlayerProxy {
                         } else if fill >= 1 {
                             proxy.isBuffering.value = false
                         }
+                    }
+                    .onChange(of: proxy.player.duration) {
+                        proxy.applyPendingSeekIfPossible()
                     }
                     .onChange(of: proxy.player.isSeekable) { _, isSeekable in
                         manager.logger.info("SwiftVLC seekable: \(isSeekable), duration: \(proxy.player.duration.map(\.seconds) ?? -1)")
