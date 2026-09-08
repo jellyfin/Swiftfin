@@ -55,6 +55,7 @@ final class MediaPlayerManager: ViewModel {
         case ended
         case error
         case playNewItem(provider: MediaPlayerItemProvider)
+        case seek(seconds: Duration)
         case setBitrate(bitrate: PlaybackBitrate)
         case setPlaybackRequestStatus(status: PlaybackRequestStatus)
         case setRate(rate: Float)
@@ -296,6 +297,14 @@ final class MediaPlayerManager: ViewModel {
         playbackItem = try await provider()
     }
 
+    /// Restarts the stream on the server at the given position, for media the player cannot seek itself
+    @Function(\Action.Cases.seek)
+    private func _seek(_ seconds: Duration) async throws {
+        guard let playbackItem else { return }
+
+        try await updateMediaPlayerItem(currentItem: playbackItem, seconds: seconds)
+    }
+
     @Function(\Action.Cases.setBitrate)
     private func _setBitrate(_ requestedBitrate: PlaybackBitrate) async throws {
         guard let currentItem = playbackItem else { return }
@@ -407,11 +416,12 @@ final class MediaPlayerManager: ViewModel {
         currentItem: MediaPlayerItem,
         audioStreamIndex: Int? = nil,
         subtitleStreamIndex: Int? = nil,
-        requestedBitrate: PlaybackBitrate? = nil
+        requestedBitrate: PlaybackBitrate? = nil,
+        seconds: Duration? = nil
     ) async throws {
 
         // Capture the current playback position before stopping
-        let currentSeconds = self.seconds
+        let currentSeconds = seconds ?? self.seconds
 
         logger.info(
             "Rebuilding Media Player Item",

@@ -37,6 +37,11 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
 
     private var resumeGuard = ResumeGuard()
 
+    /// The player's clock starts here, see `MediaPlayerItem.timelineOffset`
+    private var timelineOffset: Duration {
+        manager?.playbackItem?.timelineOffset ?? .zero
+    }
+
     func play() {
         resumeGuard.willResumePlayback(isRecording: manager?.item.type == .recording, at: manager?.seconds)
         player.play()
@@ -46,7 +51,11 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
         guard let target = resumeGuard.correction(for: seconds) else { return }
 
         // Seek the player directly: `setSeconds` would disarm the guard
-        player.seek(to: target)
+        if manager?.playbackItem?.seeksViaServer == true {
+            manager?.seek(seconds: target)
+        } else {
+            player.seek(to: target - timelineOffset)
+        }
     }
 
     func pause() {
@@ -59,16 +68,21 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
     }
 
     func jumpForward(_ seconds: Duration) {
-        setSeconds(player.position + seconds)
+        setSeconds(player.position + timelineOffset + seconds)
     }
 
     func jumpBackward(_ seconds: Duration) {
-        setSeconds(player.position - seconds)
+        setSeconds(player.position + timelineOffset - seconds)
     }
 
     func setSeconds(_ seconds: Duration) {
         resumeGuard.disarm()
-        player.seek(to: seconds)
+
+        if manager?.playbackItem?.seeksViaServer == true {
+            manager?.seek(seconds: seconds)
+        } else {
+            player.seek(to: seconds - timelineOffset)
+        }
     }
 
     func setRate(_ rate: Float) {
@@ -156,7 +170,11 @@ extension MPVMediaPlayerProxy {
             item.setTrackIndexes(.init())
             proxy.isBuffering.value = true
 
-            let start = max(.zero, (item.baseItem.startSeconds ?? .zero) - .seconds(Defaults[.VideoPlayer.resumeOffset]))
+            // Relative to the player's clock: a server-started stream starts at zero
+            let start = max(
+                .zero,
+                (item.baseItem.startSeconds ?? .zero) - .seconds(Defaults[.VideoPlayer.resumeOffset]) - item.timelineOffset
+            )
             player.load(item.url, autoPlay: manager.playbackRequestStatus == .playing, startTime: item.baseItem.isLiveStream ? nil : start)
             proxy.setRate(manager.rate)
             proxy.setAspectFill(false)
@@ -205,7 +223,7 @@ extension MPVMediaPlayerProxy {
                 manager.setPlaybackRequestStatus(status: .paused)
             case .ended:
                 guard manager.playbackItem?.baseItem.isLiveStream == false else { return }
-                manager.seconds = player.position
+                manager.seconds = player.position + (loadedItem?.timelineOffset ?? .zero)
                 manager.ended()
             case let .failed(error):
                 manager.error(error)
@@ -233,11 +251,13 @@ extension MPVMediaPlayerProxy {
                         textSubtitles.clear()
                     }
                     .onChange(of: player.position) {
+                        let seconds = player.position + item.timelineOffset
+
                         if !containerState.isScrubbing {
-                            containerState.scrubbedSeconds.value = player.position
+                            containerState.scrubbedSeconds.value = seconds
                         }
-                        manager.seconds = player.position
-                        proxy.enforceResumeGuard(player.position)
+                        manager.seconds = seconds
+                        proxy.enforceResumeGuard(seconds)
                     }
                     .onChange(of: player.state) {
                         updateState(player.state)
