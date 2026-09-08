@@ -53,26 +53,19 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
         manager?.item.type == .recording
     }
 
-    /// A seek past the playlist mpv has fetched so far. A recording still being
-    /// written grows its playlist as the server remuxes it, so the seek waits for
-    /// the reported duration to reach the target and is cleared once playback lands.
+    /// A seek on a recording still being written is kept until playback lands
+    /// near it: the server grows the playlist as it remuxes, and FFmpeg refreshes
+    /// the playlist on a seek past its known end, so a held seek is retried.
     private var pendingSeek: Duration?
+    private var lastPendingSeekAttempt: Date = .distantPast
 
     private func seekPlayer(to seconds: Duration) {
-        pendingSeek = nil
+        pendingSeek = isRecording ? seconds : nil
+        lastPendingSeekAttempt = .now
 
-        if isRecording, let duration = player.mediaInformation.duration, seconds > duration {
-            pendingSeek = seconds
-            manager?.logger.info("mpv seek to \(seconds) waits for the playlist, known duration \(duration)")
-            return
-        }
-
-        player.seek(to: seconds)
-
-        // With no duration known yet the seek may have fallen outside the playlist
-        if isRecording, player.mediaInformation.duration == nil {
-            pendingSeek = seconds
-        }
+        // The raw command: `MPVPlayer.seek(to:)` clamps to the duration mpv reported
+        // when the file opened, which for a recording is only the playlist produced so far
+        player.command("seek", arguments: [String(format: "%.3f", seconds.seconds), "absolute+exact"])
     }
 
     /// Remembers a position to seek to once the playlist reaches it
@@ -80,8 +73,9 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
         pendingSeek = seconds
     }
 
-    func applyPendingSeekIfPossible() {
-        guard let pendingSeek, let duration = player.mediaInformation.duration, pendingSeek <= duration else { return }
+    func retryPendingSeekIfNeeded() {
+        guard let pendingSeek, Date.now.timeIntervalSince(lastPendingSeekAttempt) >= 5 else { return }
+        manager?.logger.info("mpv retrying held seek to \(pendingSeek)")
         seekPlayer(to: pendingSeek)
     }
 
@@ -281,6 +275,7 @@ extension MPVMediaPlayerProxy {
                     }
                     .onChange(of: player.position) {
                         proxy.settlePendingSeek(at: player.position)
+                        proxy.retryPendingSeekIfNeeded()
 
                         if !containerState.isScrubbing {
                             containerState.scrubbedSeconds.value = player.position
@@ -293,9 +288,6 @@ extension MPVMediaPlayerProxy {
                         if player.state == .ready || player.state == .playing || player.state == .paused {
                             updateTracks(for: item)
                         }
-                    }
-                    .onChange(of: player.mediaInformation.duration) {
-                        proxy.applyPendingSeekIfPossible()
                     }
                     .onChange(of: player.mediaInformation.tracks) {
                         updateTracks(for: item)
