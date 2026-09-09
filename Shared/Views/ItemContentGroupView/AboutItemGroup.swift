@@ -87,12 +87,15 @@ struct AboutItemGroup: ContentGroup {
         @ViewBuilder
         private var descriptionCard: some View {
             let subtitle = item.taglines?.first ?? item.parentTitle
+            let hasOverviewContent = item.taglines?.first?.isNotEmpty == true || item.overview?.isNotEmpty == true
 
             AboutCard(
                 title: item.displayTitle,
                 subtitle: subtitle
             ) {
-                router.route(to: .itemOverview(item: item))
+                if hasOverviewContent {
+                    router.route(to: .itemOverview(item: item))
+                }
             } content: {
                 if let overview = item.overview, overview.isNotEmpty {
                     SeeMoreText(overview)
