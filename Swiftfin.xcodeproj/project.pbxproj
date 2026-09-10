@@ -173,6 +173,7 @@
 		628B95232670CABD0091AF3B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
 		E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCast.xcframework; path = Carthage/Build/GoogleCast.xcframework; sourceTree = "<group>"; };
+		F1A000000000000000000002 /* Swiftfin macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swiftfin macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -234,15 +235,48 @@
 			);
 			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
 		};
+		F1A00000000000000000000A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Info.plist,
+				Resources/Swiftfin.entitlements,
+			);
+			target = F1A000000000000000000003 /* Swiftfin macOS */;
+		};
+		F1A00000000000000000000B /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				DevelopmentTeam.xcconfig,
+				Shared.xcconfig,
+			);
+			target = F1A000000000000000000003 /* Swiftfin macOS */;
+		};
+		F1A00000000000000000000C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/SwiftfinApp.swift,
+				Resources/Info.plist,
+				Resources/Swiftfin.entitlements,
+				Components/GestureView.swift,
+				Components/UnmaskSecureField.swift,
+				Extensions/View/Modifiers/PhotoPickerModifier.swift,
+				Views/PhotoCropView/PhotoCropAspectRatios.swift,
+				Views/PhotoCropView/PhotoCropView.swift,
+				"Views/VideoPlayer/Gestures/VideoPlayerContainerView+PanGesture.swift",
+				"Views/VideoPlayer/VideoPlayer+KeyCommands.swift",
+			);
+			target = F1A000000000000000000003 /* Swiftfin macOS */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E14561A32DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
+		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E14561A32DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, F1A00000000000000000000C /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
 		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		E14565DD2DFCAE78008FF700 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
 		E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14567272DFCAEFD008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Swiftfin tvOS"; sourceTree = "<group>"; };
 		E1456FC82DFCB323008FF700 /* Translations */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Translations; sourceTree = "<group>"; };
-		E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E1BE3EDA2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E1BE3EDB2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = XcodeConfig; sourceTree = "<group>"; };
+		E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E1BE3EDA2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E1BE3EDB2FE9DAE800327990 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, F1A00000000000000000000B /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = XcodeConfig; sourceTree = "<group>"; };
+		F1A000000000000000000001 /* Swiftfin macOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (F1A00000000000000000000A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Swiftfin macOS"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -372,6 +406,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F1A000000000000000000005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E144DBF930464F3A009B85B5 /* SwiftVLC in Frameworks */,
+				E19005010000000000000001 /* MPVUI in Frameworks */,
+				E19005020000000000000001 /* MediaAccessibilityKit in Frameworks */,
+				E1002B6B2793E36600E47059 /* Algorithms in Frameworks */,
+				E13AF3B828A0C598009093AB /* NukeExtensions in Frameworks */,
+				E1575E58293E7685001665B1 /* Files in Frameworks */,
+				E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */,
+				E13AF3BA28A0C598009093AB /* NukeUI in Frameworks */,
+				E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */,
+				E1240A292FEA4F69004E6588 /* StatefulMacros in Frameworks */,
+				E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */,
+				E1BD95B22FBE8E44001CDA57 /* JellyfinAPI in Frameworks */,
+				E1BE3EBC2FE8DEA100327990 /* FactoryKit in Frameworks */,
+				E145EB4B2BE16849003BF6F3 /* KeychainSwift in Frameworks */,
+				E176EBDE2D050067009F4CF1 /* IdentifiedCollections in Frameworks */,
+				E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */,
+				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
+				E1E2D7BF2E3FD936004E2E5F /* Transmission in Frameworks */,
+				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
+				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
+				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -379,6 +441,7 @@
 			isa = PBXGroup;
 			children = (
 				E14560852DFCAE51008FF700 /* Swiftfin */,
+				F1A000000000000000000001 /* Swiftfin macOS */,
 				E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */,
 				E14563272DFCAE6E008FF700 /* Shared */,
 				E1456FC82DFCB323008FF700 /* Translations */,
@@ -393,6 +456,7 @@
 			isa = PBXGroup;
 			children = (
 				5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */,
+				F1A000000000000000000002 /* Swiftfin macOS.app */,
 				535870602669D21600D05A09 /* Swiftfin tvOS.app */,
 			);
 			name = Products;
@@ -593,6 +657,53 @@
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F1A000000000000000000003 /* Swiftfin macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1A000000000000000000009 /* Build configuration list for PBXNativeTarget "Swiftfin macOS" */;
+			buildPhases = (
+				F1A000000000000000000004 /* Sources */,
+				F1A000000000000000000005 /* Frameworks */,
+				F1A000000000000000000006 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F1A000000000000000000001 /* Swiftfin macOS */,
+				E14563272DFCAE6E008FF700 /* Shared */,
+				E1456FC82DFCB323008FF700 /* Translations */,
+				E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */,
+				E14560852DFCAE51008FF700 /* Swiftfin */,
+			);
+			name = "Swiftfin macOS";
+			packageProductDependencies = (
+				E13DD3CC27164CA7009D4DAF /* CoreStore */,
+				E12186DD2718F1C50010884C /* Defaults */,
+				E1002B6A2793E36600E47059 /* Algorithms */,
+				E13AF3B528A0C598009093AB /* Nuke */,
+				E13AF3B728A0C598009093AB /* NukeExtensions */,
+				E13AF3B928A0C598009093AB /* NukeUI */,
+				E13AF3BB28A0C59E009093AB /* BlurHashKit */,
+				E1575E57293E7685001665B1 /* Files */,
+				E1B5F7A629577BCE004B26CF /* Pulse */,
+				E1B5F7A829577BCE004B26CF /* PulseLogHandler */,
+				E1B5F7AA29577BCE004B26CF /* PulseUI */,
+				E19DDEC62948EF9900954E10 /* OrderedCollections */,
+				E145EB4A2BE16849003BF6F3 /* KeychainSwift */,
+				E176EBDD2D050067009F4CF1 /* IdentifiedCollections */,
+				E19005010000000000000003 /* MPVUI */,
+				E19005020000000000000003 /* MediaAccessibilityKit */,
+				E1BD95B12FBE8E44001CDA57 /* JellyfinAPI */,
+				E1240A282FEA4F69004E6588 /* StatefulMacros */,
+				E1BE3EBB2FE8DEA100327990 /* FactoryKit */,
+				E144DBF830464F3A009B85B5 /* SwiftVLC */,
+				E1E2D7BE2E3FD936004E2E5F /* Transmission */,
+			);
+			productName = "Swiftfin macOS";
+			productReference = F1A000000000000000000002 /* Swiftfin macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -611,6 +722,9 @@
 					};
 					5377CBF0263B596A003A4E83 = {
 						CreatedOnToolsVersion = 12.5;
+					};
+					F1A000000000000000000003 = {
+						CreatedOnToolsVersion = 26.3;
 					};
 				};
 			};
@@ -710,6 +824,7 @@
 			targets = (
 				5377CBF0263B596A003A4E83 /* Swiftfin iOS */,
 				5358705F2669D21600D05A09 /* Swiftfin tvOS */,
+				F1A000000000000000000003 /* Swiftfin macOS */,
 			);
 		};
 /* End PBXProject section */
@@ -723,6 +838,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5377CBEF263B596A003A4E83 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1A000000000000000000006 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -897,6 +1019,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5377CBED263B596A003A4E83 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1A000000000000000000004 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1175,6 +1304,77 @@
 			};
 			name = Release;
 		};
+		F1A000000000000000000007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
+			baseConfigurationReferenceRelativePath = Shared.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = "Swiftfin macOS/Resources/Swiftfin.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				INFOPLIST_FILE = "Swiftfin macOS/Resources/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Swiftfin;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+			};
+			name = Debug;
+		};
+		F1A000000000000000000008 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
+			baseConfigurationReferenceRelativePath = Shared.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = "Swiftfin macOS/Resources/Swiftfin.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				INFOPLIST_FILE = "Swiftfin macOS/Resources/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Swiftfin;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1201,6 +1401,15 @@
 			buildConfigurations = (
 				5377CC1C263B596B003A4E83 /* Debug */,
 				5377CC1D263B596B003A4E83 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1A000000000000000000009 /* Build configuration list for PBXNativeTarget "Swiftfin macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1A000000000000000000007 /* Debug */,
+				F1A000000000000000000008 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

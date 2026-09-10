@@ -20,6 +20,7 @@ jobs:
         scheme:
           - "Swiftfin"
           - "Swiftfin tvOS"
+          - "Swiftfin macOS"
 
     runs-on: macos-26
 
