@@ -80,7 +80,9 @@ struct PlaybackSpeedPicker: View {
             }
             .alert(L10n.playbackSpeed, isPresented: $isPresentingCustomSpeed) {
                 TextField(L10n.playbackSpeed, value: $customSpeed.clamp(min: 0.1, max: 10.0), format: .number)
+                #if !os(macOS)
                     .keyboardType(.decimalPad)
+                #endif
 
                 Button(L10n.ok) {
                     selection.wrappedValue = .custom(customSpeed)

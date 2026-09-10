@@ -8,7 +8,9 @@
 
 import JellyfinAPI
 import SwiftUI
+#if !os(macOS)
 @_spi(Advanced) import SwiftUIIntrospect
+#endif
 
 struct EPGLoadableView<Content: View>: View {
 
@@ -105,9 +107,11 @@ struct EPGContentView: View {
                     }
                     .environment(\.layoutDirection, .leftToRight)
                     .scrollDisabled(true)
-                    .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
-                        proxy.registerHorizontal(scrollView)
-                    }
+                    #if !os(macOS)
+                        .introspect(.scrollView, on: .iOS(.v15...), .tvOS(.v15...)) { scrollView in
+                            proxy.registerHorizontal(scrollView)
+                        }
+                    #endif
 
                     Divider()
 

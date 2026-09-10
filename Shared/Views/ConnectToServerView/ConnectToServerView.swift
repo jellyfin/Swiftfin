@@ -37,6 +37,7 @@ struct ConnectToServerView: View {
         case let .connected(server):
             UIDevice.feedback(.success)
             Notifications[.didConnectToServer].post(server)
+
             router.dismiss()
         case let .duplicateServer(server):
             UIDevice.feedback(.warning)
@@ -45,14 +46,14 @@ struct ConnectToServerView: View {
     }
 
     @ViewBuilder
-    private var connectSection: some View {
-        Section(L10n.connectToServer) {
-            TextField(L10n.url, text: $url)
-                .disableAutocorrection(true)
-                .textInputAutocapitalization(.never)
-                .keyboardType(.URL)
-                .focused($isURLFocused)
-        }
+    private var connectFormContent: some View {
+        TextField(L10n.url, text: $url)
+        #if os(iOS)
+            .disableAutocorrection(true)
+            .textInputAutocapitalization(.never)
+            .keyboardType(.URL)
+        #endif
+            .focused($isURLFocused)
 
         if viewModel.state == .connecting {
             Button(role: .cancel) {
@@ -64,15 +65,15 @@ struct ConnectToServerView: View {
             .listRowInsets(.zero)
             .listRowBackground(Color.clear)
             #if os(iOS)
-            .listRowSeparator(.hidden)
+                .listRowSeparator(.hidden)
             #endif
-            .fontWeight(.semibold)
-            .backport
-            .buttonStyle(.glassProminent.shadow(false))
+                .fontWeight(.semibold)
+                .backport
+                .buttonStyle(.glassProminent.shadow(false))
             #if os(iOS)
-            .controlSize(.large)
+                .controlSize(.large)
             #endif
-            .frame(maxHeight: 75)
+                .frame(maxWidth: .infinity, maxHeight: 75)
         } else {
             Button {
                 isURLFocused = false
@@ -84,38 +85,50 @@ struct ConnectToServerView: View {
             .listRowInsets(.zero)
             .listRowBackground(Color.clear)
             #if os(iOS)
-            .listRowSeparator(.hidden)
+                .listRowSeparator(.hidden)
             #endif
-            .fontWeight(.semibold)
-            .backport
-            .buttonStyle(.glassProminent.shadow(false))
-            .tint(accentColor)
+                .fontWeight(.semibold)
+                .backport
+                .buttonStyle(.glassProminent.shadow(false))
+                .tint(accentColor)
             #if os(iOS)
-            .controlSize(.large)
+                .controlSize(.large)
             #endif
-            .frame(maxHeight: 75)
-            .disabled(url.isEmpty)
+                .frame(maxWidth: .infinity, maxHeight: 75)
+                .disabled(url.isEmpty)
+        }
+    }
+
+    @ViewBuilder
+    private var connectSection: some View {
+        Section(L10n.connectToServer) {
+            connectFormContent
         }
     }
 
     // MARK: - Local Servers Section
 
     @ViewBuilder
-    private var localServersSection: some View {
-        Section(L10n.localServers) {
-            if viewModel.localServers.isEmpty {
-                Text(L10n.noLocalServersFound)
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity)
-            } else {
-                ForEach(viewModel.localServers) { server in
-                    LocalServerButton(server: server) {
-                        url = server.currentURL.absoluteString
-                        viewModel.connect(url: server.currentURL.absoluteString)
-                    }
+    private var localServersContent: some View {
+        if viewModel.localServers.isEmpty {
+            Text(L10n.noLocalServersFound)
+                .font(.callout)
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity)
+        } else {
+            ForEach(viewModel.localServers) { server in
+                LocalServerButton(server: server) {
+                    url = server.currentURL.absoluteString
+                    viewModel.connect(url: server.currentURL.absoluteString)
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private var localServersSection: some View {
+        Section(L10n.localServers) {
+            localServersContent
         }
     }
 
@@ -132,48 +145,67 @@ struct ConnectToServerView: View {
             router.dismiss()
         }
         #else
-        SplitLoginWindowView(
-            isLoading: viewModel.state == .connecting
-        ) {
-            connectSection
-        } trailingContentView: {
-            localServersSection
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(L10n.connectToServer)
+                        .font(.headline)
+
+                    connectFormContent
+                }
+
+                Divider()
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(L10n.localServers)
+                        .font(.headline)
+
+                    localServersContent
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(32)
         }
+        .frame(width: 800, height: 500)
         #endif
     }
 
     // MARK: - Body
 
     var body: some View {
-        contentView
+        Group {
+            contentView
+            #if os(iOS)
             .navigationTitle(L10n.connect)
-            .interactiveDismissDisabled(viewModel.state == .connecting)
-            .onFirstAppear {
-                isURLFocused = true
-                viewModel.searchForServers()
-            }
-            .onReceive(timer) { _ in
-                guard viewModel.state != .connecting else { return }
-                viewModel.searchForServers()
-            }
-            .onReceive(viewModel.events, perform: onEvent)
-            .onReceive(viewModel.$error) { error in
-                guard error != nil else { return }
-                UIDevice.feedback(.error)
-                isURLFocused = true
-            }
+            #endif
             .topBarTrailing {
                 if viewModel.state == .connecting {
                     ProgressView()
                 }
             }
-            .sheet(item: $duplicateServer) { server in
-                DuplicateServerConnectionView(server: server) {
-                    viewModel.addConnection(serverState: server)
-                    duplicateServer = nil
-                    router.dismiss()
-                }
+        }
+        .interactiveDismissDisabled(viewModel.state == .connecting)
+        .onFirstAppear {
+            isURLFocused = true
+            viewModel.searchForServers()
+        }
+        .onReceive(timer) { _ in
+            guard viewModel.state != .connecting else { return }
+            viewModel.searchForServers()
+        }
+        .onReceive(viewModel.events, perform: onEvent)
+        .onReceive(viewModel.$error) { error in
+            guard error != nil else { return }
+            UIDevice.feedback(.error)
+            isURLFocused = true
+        }
+        .sheet(item: $duplicateServer) { server in
+            DuplicateServerConnectionView(server: server) {
+                viewModel.addConnection(serverState: server)
+                duplicateServer = nil
+                router.dismiss()
             }
-            .errorMessage($viewModel.error)
+        }
+        .errorMessage($viewModel.error)
     }
 }

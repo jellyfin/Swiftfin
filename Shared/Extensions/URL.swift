@@ -10,6 +10,21 @@ import Foundation
 
 extension URL {
 
+    static var swiftfinDownloadsDirectory: URL {
+        #if os(macOS)
+        let applicationSupport = FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        )[0]
+
+        return applicationSupport
+            .appendingPathComponent("Swiftfin", isDirectory: true)
+            .appendingPathComponent("Downloads", isDirectory: true)
+        #else
+        URL.downloadsDirectory
+        #endif
+    }
+
     init?(string: String?) {
         guard let string else { return nil }
         self.init(string: string)

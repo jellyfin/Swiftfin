@@ -24,8 +24,8 @@ struct LocalUserSettingsView: View {
     }
 
     var body: some View {
-        Form {
-            #if os(iOS)
+        SwiftfinForm {
+            #if os(iOS) || os(macOS)
             if let userSession = imageViewModel.userSession {
                 StateAdapter(initialValue: false) { isPhotoPickerPresented in
                     UserProfileHeroImage(

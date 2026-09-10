@@ -14,7 +14,7 @@ enum ScrollEdgeEffectStyle: Hashable, Sendable {
     case hard
     case soft
 
-    @available(iOS 26.0, tvOS 26.0, *)
+    @available(iOS 26.0, macOS 26.0, tvOS 26.0, *)
     var swiftUIValue: SwiftUI.ScrollEdgeEffectStyle {
         switch self {
         case .automatic: .automatic

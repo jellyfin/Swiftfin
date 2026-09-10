@@ -57,10 +57,14 @@ struct PosterButton<Item: Poster>: View {
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay { overlay.posterStyle(displayType) }
-        .contentShape(.contextMenuPreview, Rectangle())
-        .matchedTransitionSource(id: "item", in: namespace)
-        .subtleShadow()
-        .hoverEffect(.highlight)
+        #if !os(macOS)
+            .contentShape(.contextMenuPreview, Rectangle())
+        #endif
+            .matchedTransitionSource(id: "item", in: namespace)
+            .subtleShadow()
+        #if !os(macOS)
+            .hoverEffect(.highlight)
+        #endif
     }
 
     @ViewBuilder
@@ -97,11 +101,11 @@ struct PosterButton<Item: Poster>: View {
         .buttonStyle(.borderless)
         .buttonBorderShape(.roundedRectangle)
         #if os(tvOS)
-        .focusedValue(\.focusedPoster, AnyPoster(item))
+            .focusedValue(\.focusedPoster, AnyPoster(item))
         #endif
-        .posterContextMenu(for: item) {
-            contextMenuPreview
-                .withViewContext(viewContext)
-        }
+            .posterContextMenu(for: item) {
+                contextMenuPreview
+                    .withViewContext(viewContext)
+            }
     }
 }

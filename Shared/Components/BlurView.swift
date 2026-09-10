@@ -7,7 +7,11 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 struct BlurView: PlatformViewRepresentable {
 
@@ -17,6 +21,19 @@ struct BlurView: PlatformViewRepresentable {
         self.style = style
     }
 
+    #if os(macOS)
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.blendingMode = .behindWindow
+        view.material = .hudWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+        nsView.material = .hudWindow
+    }
+    #else
     func makeUIView(context: Context) -> UIVisualEffectView {
         let view = UIVisualEffectView(effect: UIBlurEffect(style: style))
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -26,4 +43,5 @@ struct BlurView: PlatformViewRepresentable {
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
         uiView.effect = UIBlurEffect(style: style)
     }
+    #endif
 }

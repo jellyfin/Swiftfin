@@ -68,7 +68,9 @@ struct QuickConnectAuthorizeView: View {
 
             Section {
                 TextField(L10n.quickConnectCode, text: $code)
+                #if !os(macOS)
                     .keyboardType(.numberPad)
+                #endif
                     .disabled(viewModel.state == .authorizing)
                     .focused($isCodeFocused)
             } footer: {
@@ -90,7 +92,7 @@ struct QuickConnectAuthorizeView: View {
                 .backport
                 .buttonStyle(.glassProminent.shadow(false))
                 #if os(iOS)
-                .controlSize(.large)
+                    .controlSize(.large)
                 #endif
             } else {
                 Button {
@@ -107,48 +109,56 @@ struct QuickConnectAuthorizeView: View {
                 .buttonStyle(.glassProminent.shadow(false))
                 .tint(accentColor)
                 #if os(iOS)
-                .controlSize(.large)
+                    .controlSize(.large)
                 #endif
-                .disabled(code.count != 6 || viewModel.state == .authorizing)
+                    .disabled(code.count != 6 || viewModel.state == .authorizing)
             }
         }
+        #if os(macOS)
+        .formStyle(.grouped)
+        .frame(
+            maxWidth: 760,
+            maxHeight: .infinity,
+            alignment: .top
+        )
+        #endif
         .interactiveDismissDisabled(viewModel.state == .authorizing)
-        .navigationBarBackButtonHidden(viewModel.state == .authorizing)
-        .navigationTitle(L10n.quickConnect)
-        .onFirstAppear {
-            isCodeFocused = true
-        }
-        .onChange(of: code) {
-            code = String(code.prefix(6))
-        }
-        .onReceive(viewModel.$error) { error in
-            guard error != nil else { return }
-            UIDevice.feedback(.error)
-        }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case .authorized:
-                UIDevice.feedback(.success)
-                isPresentingSuccess = true
+            .navigationBarBackButtonHidden(viewModel.state == .authorizing)
+            .navigationTitle(L10n.quickConnect)
+            .onFirstAppear {
+                isCodeFocused = true
             }
-        }
-        .topBarTrailing {
-            if viewModel.state == .authorizing {
-                ProgressView()
+            .onChange(of: code) {
+                code = String(code.prefix(6))
             }
-        }
-        .alert(
-            L10n.quickConnect,
-            isPresented: $isPresentingSuccess
-        ) {
-            Button(L10n.dismiss, role: .cancel) {
-                router.dismiss()
+            .onReceive(viewModel.$error) { error in
+                guard error != nil else { return }
+                UIDevice.feedback(.error)
             }
-        } message: {
-            Text(L10n.quickConnectSuccessMessage)
-        }
-        .errorMessage($viewModel.error) {
-            isCodeFocused = true
-        }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .authorized:
+                    UIDevice.feedback(.success)
+                    isPresentingSuccess = true
+                }
+            }
+            .topBarTrailing {
+                if viewModel.state == .authorizing {
+                    ProgressView()
+                }
+            }
+            .alert(
+                L10n.quickConnect,
+                isPresented: $isPresentingSuccess
+            ) {
+                Button(L10n.dismiss, role: .cancel) {
+                    router.dismiss()
+                }
+            } message: {
+                Text(L10n.quickConnectSuccessMessage)
+            }
+            .errorMessage($viewModel.error) {
+                isCodeFocused = true
+            }
     }
 }

@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+#if os(iOS)
+
 extension ItemActionButtons {
 
     struct Edit: View {
@@ -28,3 +30,5 @@ extension ItemActionButtons {
         }
     }
 }
+
+#endif

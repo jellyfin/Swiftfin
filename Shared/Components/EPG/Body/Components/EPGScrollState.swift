@@ -7,7 +7,10 @@
 //
 
 import Combine
+import CoreGraphics
+#if canImport(UIKit)
 import UIKit
+#endif
 
 final class EPGScrollState {
 

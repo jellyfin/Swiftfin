@@ -11,7 +11,11 @@ import Combine
 import FactoryKit
 import Foundation
 import JellyfinAPI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 extension Container {
     var notificationCenter: Factory<NotificationCenter> {
@@ -172,35 +176,64 @@ extension Notifications.Key {
     }
 
     static var interruption: Key<Void> {
+        #if os(macOS)
+        Key("AVAudioSession.interruptionNotification")
+        #else
         Key(AVAudioSession.interruptionNotification)
+        #endif
     }
 
     // MARK: - UIApplication
 
     static var applicationDidEnterBackground: Key<Void> {
+        #if os(macOS)
+        Key(NSApplication.didHideNotification)
+        #else
         Key(UIApplication.didEnterBackgroundNotification)
+        #endif
     }
 
     static var applicationWillEnterForeground: Key<Void> {
+        #if os(macOS)
+        Key(NSApplication.didUnhideNotification)
+        #else
         Key(UIApplication.willEnterForegroundNotification)
+        #endif
     }
 
     static var applicationWillResignActive: Key<Void> {
+        #if os(macOS)
+        Key(NSApplication.didResignActiveNotification)
+        #else
         Key(UIApplication.willResignActiveNotification)
+        #endif
     }
 
     static var applicationWillTerminate: Key<Void> {
+        #if os(macOS)
+        Key(NSApplication.willTerminateNotification)
+        #else
         Key(UIApplication.willTerminateNotification)
+        #endif
     }
 
     static var sceneDidEnterBackground: Key<Void> {
+        #if os(macOS)
+        Key(NSApplication.didHideNotification)
+        #else
         Key(UIScene.didEnterBackgroundNotification)
+        #endif
     }
 
     static var sceneWillEnterForeground: Key<Void> {
+        #if os(macOS)
+        Key(NSApplication.didUnhideNotification)
+        #else
         Key(UIScene.willEnterForegroundNotification)
+        #endif
     }
 
+    #if !os(macOS)
     static var avAudioSessionInterruption: Key<(AVAudioSession.InterruptionType, AVAudioSession.InterruptionOptions)> {
         Key(AVAudioSession.interruptionNotification) { userInfo in
             guard let rawValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
@@ -214,4 +247,5 @@ extension Notifications.Key {
             return (type, options)
         }
     }
+    #endif
 }

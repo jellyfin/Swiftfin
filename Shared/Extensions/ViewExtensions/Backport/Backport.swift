@@ -37,6 +37,19 @@ extension Backport where Content: View {
         )
     }
 
+    #if os(macOS)
+    enum MacScrollEdgeEffectStyle {
+        case soft
+    }
+
+    @ViewBuilder
+    func scrollEdgeEffectStyle(
+        _ style: MacScrollEdgeEffectStyle?,
+        for edges: Edge.Set
+    ) -> some View {
+        content
+    }
+    #else
     @ViewBuilder
     func scrollEdgeEffectStyle(
         _ style: ScrollEdgeEffectStyle?,
@@ -51,4 +64,5 @@ extension Backport where Content: View {
             content
         }
     }
+    #endif
 }

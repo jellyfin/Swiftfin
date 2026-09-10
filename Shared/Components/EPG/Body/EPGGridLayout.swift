@@ -6,7 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if !os(macOS)
+#if canImport(UIKit)
 import UIKit
+#endif
 
 private let nowLineKind = "EPGNowLine"
 
@@ -142,3 +145,4 @@ private final class EPGNowLineView: UICollectionReusableView {
         isUserInteractionEnabled = false
     }
 }
+#endif

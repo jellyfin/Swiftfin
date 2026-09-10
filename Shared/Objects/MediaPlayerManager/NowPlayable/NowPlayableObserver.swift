@@ -69,6 +69,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             .sink { [weak self] newValue in self?.secondsDidChange(newValue) }
             .store(in: &cancellables)
 
+        #if !os(macOS)
         Notifications[.avAudioSessionInterruption]
             .publisher
             .sink { i in
@@ -77,6 +78,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
                 }
             }
             .store(in: &cancellables)
+        #endif
 
         Task { @MainActor in
             configureRemoteCommands(
@@ -165,6 +167,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         }
     }
 
+    #if !os(macOS)
     // TODO: complete by referencing apple code
     //       - restart
     @MainActor
@@ -195,6 +198,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         @unknown default: ()
         }
     }
+    #endif
 
     @MainActor
     private func handleCommand(
@@ -281,7 +285,9 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
     }
 
     private func startSession() throws {
-
+        #if os(macOS)
+        return
+        #else
         let audioSession = AVAudioSession.sharedInstance()
 
         do {
@@ -292,9 +298,13 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             logger.critical("Unable to activate AVAudioSession instance: \(error.localizedDescription)")
             throw error
         }
+        #endif
     }
 
     private func stopSession() throws {
+        #if os(macOS)
+        return
+        #else
         do {
             try AVAudioSession.sharedInstance().setActive(false)
             logger.trace("Stopped AVAudioSession")
@@ -302,5 +312,6 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             logger.critical("Unable to deactivate AVAudioSession instance: \(error.localizedDescription)")
             throw error
         }
+        #endif
     }
 }

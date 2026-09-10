@@ -6,8 +6,22 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if !os(macOS)
 import CollectionVGrid
+#endif
 import SwiftUI
+
+#if os(macOS)
+
+/// Target tile widths for Mac library grids.
+///
+/// The grid fits as many columns of at least this width as the window allows,
+/// so column count follows the window instead of a fixed number. Adaptive
+/// columns split before a tile can reach twice its minimum, which keeps tiles
+/// within a sane range on very wide displays.
+private let macGridLandscapeTileWidth: CGFloat = 320
+private let macGridPortraitTileWidth: CGFloat = 180
+#endif
 
 // TODO: Make an Environemnt?
 //       - for libraryStyle, action, etc.
@@ -93,6 +107,40 @@ extension LibraryElement {
         switch libraryStyle.displayType {
         case .grid:
             return UIDevice.isPhone ? phoneGridLayout : gridLayout
+        case .list:
+            return .columns(
+                libraryStyle.listColumnCount,
+                insets: .init(top: insets.top, leading: 0, bottom: insets.bottom, trailing: 0),
+                itemSpacing: 0,
+                lineSpacing: 0
+            )
+        }
+        #elseif os(macOS)
+        let gridInsets = EdgeInsets(
+            top: insets.top,
+            leading: EdgeInsets.edgePadding,
+            bottom: insets.bottom,
+            trailing: EdgeInsets.edgePadding
+        )
+
+        switch libraryStyle.displayType {
+        case .grid:
+            switch libraryStyle.posterDisplayType {
+            case .landscape:
+                return .minWidth(
+                    macGridLandscapeTileWidth,
+                    insets: gridInsets,
+                    itemSpacing: EdgeInsets.edgePadding,
+                    lineSpacing: EdgeInsets.edgePadding
+                )
+            case .portrait, .square:
+                return .minWidth(
+                    macGridPortraitTileWidth,
+                    insets: gridInsets,
+                    itemSpacing: EdgeInsets.edgePadding,
+                    lineSpacing: EdgeInsets.edgePadding
+                )
+            }
         case .list:
             return .columns(
                 libraryStyle.listColumnCount,

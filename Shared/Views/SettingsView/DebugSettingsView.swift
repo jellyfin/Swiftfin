@@ -21,57 +21,55 @@ struct DebugSettingsView: View {
     private var sendProgressReports
 
     var body: some View {
-        Form(systemImage: "ladybug") {
+        SwiftfinForm(systemImage: "ladybug") { Section(L10n.settings) {
+            Toggle(L10n.sendProgressReports, isOn: $sendProgressReports)
+        }
 
-            Section(L10n.settings) {
-                Toggle(L10n.sendProgressReports, isOn: $sendProgressReports)
-            }
+        Section("Device Details") {
+            LabeledContent(
+                "SoC & GPU",
+                value: PlaybackCapabilities.gpuName
+            )
 
-            Section("Device Details") {
-                LabeledContent(
-                    "SoC & GPU",
-                    value: PlaybackCapabilities.gpuName
-                )
+            LabeledContent(
+                "Device Reports HDR Capabilities",
+                value: PlaybackCapabilities.isDeviceHDRCapable ? L10n.yes : L10n.no
+            )
+        }
 
-                LabeledContent(
-                    "Device Reports HDR Capabilities",
-                    value: PlaybackCapabilities.isDeviceHDRCapable ? L10n.yes : L10n.no
-                )
-            }
+        Section("Video Codec Support") {
+            LabeledContent(
+                VideoCodec.av1.displayTitle,
+                value: PlaybackCapabilities.supportsAV1 ? L10n.yes : L10n.no
+            )
 
-            Section("Video Codec Support") {
-                LabeledContent(
-                    VideoCodec.av1.displayTitle,
-                    value: PlaybackCapabilities.supportsAV1 ? L10n.yes : L10n.no
-                )
+            LabeledContent(
+                VideoCodec.hevc.displayTitle,
+                value: PlaybackCapabilities.supportsHEVC ? L10n.yes : L10n.no
+            )
 
-                LabeledContent(
-                    VideoCodec.hevc.displayTitle,
-                    value: PlaybackCapabilities.supportsHEVC ? L10n.yes : L10n.no
-                )
+            LabeledContent(
+                VideoCodec.vp9.displayTitle,
+                value: PlaybackCapabilities.supportsVP9 ? L10n.yes : L10n.no
+            )
+        }
 
-                LabeledContent(
-                    VideoCodec.vp9.displayTitle,
-                    value: PlaybackCapabilities.supportsVP9 ? L10n.yes : L10n.no
-                )
-            }
+        Section("Video Range Support") {
+            LabeledContent(
+                VideoRangeType.hdr10Plus.displayTitle,
+                value: PlaybackCapabilities.supportsHDR10 ? L10n.yes : L10n.no
+            )
 
-            Section("Video Range Support") {
-                LabeledContent(
-                    VideoRangeType.hdr10Plus.displayTitle,
-                    value: PlaybackCapabilities.supportsHDR10 ? L10n.yes : L10n.no
-                )
+            LabeledContent(
+                VideoRangeType.hlg.displayTitle,
+                value: PlaybackCapabilities.supportsHLG ? L10n.yes : L10n.no
+            )
 
-                LabeledContent(
-                    VideoRangeType.hlg.displayTitle,
-                    value: PlaybackCapabilities.supportsHLG ? L10n.yes : L10n.no
-                )
-
-                LabeledContent(
-                    VideoRangeType.dovi.displayTitle,
-                    value: PlaybackCapabilities.supportsDolbyVision ? L10n.yes : L10n.no
-                )
-            }
+            LabeledContent(
+                VideoRangeType.dovi.displayTitle,
+                value: PlaybackCapabilities.supportsDolbyVision ? L10n.yes : L10n.no
+            )
+        }
         }
         .labeledContentStyle(.focusable)
         .navigationTitle("Debug")

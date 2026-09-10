@@ -88,9 +88,19 @@ extension CustomizeSettingsView {
         }
 
         var body: some View {
-            Form {
+            SwiftfinForm {
                 Section(L10n.preview) {
-                    #if os(iOS)
+                    #if os(macOS)
+                    // The preview section is empty on mac without this; a
+                    // desktop pane is wide enough not to need a scroll strip
+                    HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
+                        ForEach([PosterDisplayType.portrait, .landscape, .square]) { type in
+                            posterPreview(type: type)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical)
+                    #elseif os(iOS)
                     ScrollView(.horizontal) {
                         HStack(alignment: .bottom) {
                             ForEach([PosterDisplayType.portrait, .landscape, .square]) { type in

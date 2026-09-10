@@ -27,58 +27,56 @@ struct EditLocalServerView: View {
     }
 
     var body: some View {
-        Form(systemImage: "server.rack") {
+        SwiftfinForm(systemImage: "server.rack") { Section(L10n.server) {
 
-            Section(L10n.server) {
+            LabeledContent(
+                L10n.name,
+                value: viewModel.server.name
+            )
+            #if os(tvOS)
+            .focusable(false)
+            #endif
 
+            if let serverVersion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
                 LabeledContent(
-                    L10n.name,
-                    value: viewModel.server.name
+                    L10n.version,
+                    value: serverVersion
                 )
                 #if os(tvOS)
                 .focusable(false)
                 #endif
+            }
+        }
 
-                if let serverVersion = StoredValues[.Server.publicInfo(id: viewModel.server.id)].version {
-                    LabeledContent(
-                        L10n.version,
-                        value: serverVersion
-                    )
-                    #if os(tvOS)
-                    .focusable(false)
-                    #endif
+        Section {
+            ChevronButton {
+                router.route(to: .serverConnections(viewModel: viewModel))
+            } label: {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(L10n.connection)
+
+                    Text((viewModel.activeConnection?.url ?? viewModel.server.effectiveServerURL).absoluteString)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                 }
             }
+        } footer: {
+            if !viewModel.server.isVersionCompatible {
+                Label(
+                    L10n.serverVersionWarning(viewModel.server.client.version.majorMinor.description),
+                    systemImage: "exclamationmark.circle.fill"
+                )
+                .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+            }
+        }
 
+        if isDeletePresented {
             Section {
-                ChevronButton {
-                    router.route(to: .serverConnections(viewModel: viewModel))
-                } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(L10n.connection)
-
-                        Text((viewModel.activeConnection?.url ?? viewModel.server.effectiveServerURL).absoluteString)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            } footer: {
-                if !viewModel.server.isVersionCompatible {
-                    Label(
-                        L10n.serverVersionWarning(viewModel.server.client.version.majorMinor.description),
-                        systemImage: "exclamationmark.circle.fill"
-                    )
-                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                Button(L10n.delete, role: .destructive) {
+                    isPresentingConfirmDeletion = true
                 }
             }
-
-            if isDeletePresented {
-                Section {
-                    Button(L10n.delete, role: .destructive) {
-                        isPresentingConfirmDeletion = true
-                    }
-                }
-            }
+        }
         }
         .navigationTitle(L10n.server)
         .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {

@@ -7,7 +7,11 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 protocol AppIcon: CaseIterable, Identifiable, Displayable, RawRepresentable {
     var iconName: String { get }

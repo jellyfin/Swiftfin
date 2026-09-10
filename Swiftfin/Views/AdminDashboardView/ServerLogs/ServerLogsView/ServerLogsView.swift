@@ -82,7 +82,7 @@ struct ServerLogsView: View {
             viewModel.refresh(filter: filter)
         }
         .topBarTrailing {
-            let systemImage = if #available(iOS 26, *) {
+            let systemImage = if #available(iOS 26, macOS 26, *) {
                 "line.3.horizontal.decrease"
             } else {
                 "line.3.horizontal.decrease.circle"

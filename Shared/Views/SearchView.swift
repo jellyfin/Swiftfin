@@ -11,10 +11,8 @@ import SwiftUI
 
 struct SearchView: View {
 
-    #if os(iOS)
     @Default(.Customization.Search.enabledDrawerFilters)
     private var enabledDrawerFilters
-    #endif
 
     @FocusState
     private var isSearchFocused: Bool
@@ -39,7 +37,7 @@ struct SearchView: View {
                 }
                 #if os(tvOS)
                 .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
+                .foregroundStyle(.secondary)
                 #endif
             }
         }
@@ -52,6 +50,11 @@ struct SearchView: View {
                 groups: viewModel.itemContentGroupViewModel.groups
             )
             .edgePadding(.vertical)
+            #if os(macOS)
+                // `scrollIndicators(.hidden)` alone is ignored while the system is
+                // set to always show scroll bars.
+                    .macScrollers(.overlay)
+            #endif
         }
         .scrollIndicators(.hidden)
     }
@@ -98,12 +101,12 @@ struct SearchView: View {
         )
         .environmentObject(focusCoordinator)
         #if os(tvOS)
-        .edgePadding(.top)
+            .edgePadding(.top)
         #else
-        .navigationBarFilterDrawer(
-            viewModel: viewModel.filterViewModel,
-            types: enabledDrawerFilters
-        )
+            .navigationBarFilterDrawer(
+                viewModel: viewModel.filterViewModel,
+                types: enabledDrawerFilters
+            )
         #endif
     }
 }

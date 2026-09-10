@@ -56,7 +56,7 @@ struct WithUserAuthentication<Content: View>: View {
     }
 
     private func handleDeviceAuthentication(reason: String?) async throws {
-        #if os(iOS)
+        #if os(iOS) || os(macOS)
         let context = LAContext()
         try context.canEvaluatePolicy(.deviceOwnerAuthentication)
         try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason ?? "")
@@ -96,7 +96,9 @@ struct WithUserAuthentication<Content: View>: View {
             ) { continuation in
 
                 TextField(L10n.pin, text: $pin)
+                #if os(iOS)
                     .keyboardType(.numberPad)
+                #endif
 
                 // bug in SwiftUI: having .disabled will dismiss
                 // alert but not call the closure (for length)

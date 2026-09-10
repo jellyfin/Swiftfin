@@ -15,17 +15,16 @@ struct IndicatorSettingsView: View {
     private var posterConfiguration
 
     var body: some View {
-        Form(systemImage: "checkmark.circle.fill") {
-            Section(L10n.posters) {
-                Toggle(L10n.showWatched, isOn: $posterConfiguration.indicators.contains(.played))
+        SwiftfinForm(systemImage: "checkmark.circle.fill") { Section(L10n.posters) {
+            Toggle(L10n.showWatched, isOn: $posterConfiguration.indicators.contains(.played))
 
-                Toggle(L10n.showFavorited, isOn: $posterConfiguration.indicators.contains(.favorited))
+            Toggle(L10n.showFavorited, isOn: $posterConfiguration.indicators.contains(.favorited))
 
-                Toggle(L10n.showProgress, isOn: $posterConfiguration.indicators.contains(.progress))
+            Toggle(L10n.showProgress, isOn: $posterConfiguration.indicators.contains(.progress))
 
-                Toggle(L10n.showUnwatched, isOn: $posterConfiguration.indicators.contains(.unplayed))
-            }
-            .navigationTitle(L10n.indicators)
+            Toggle(L10n.showUnwatched, isOn: $posterConfiguration.indicators.contains(.unplayed))
+        }
+        .navigationTitle(L10n.indicators)
         }
     }
 }

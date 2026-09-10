@@ -69,7 +69,7 @@ class DownloadManager: ObservableObject {
 
     func downloadedItems() -> [DownloadTask] {
         do {
-            let downloadContents = try FileManager.default.contentsOfDirectory(atPath: URL.downloadsDirectory.path)
+            let downloadContents = try FileManager.default.contentsOfDirectory(atPath: URL.swiftfinDownloadsDirectory.path)
             return downloadContents.compactMap(parseDownloadItem(with:))
         } catch {
             logger.error("Error retrieving all downloads: \(error.localizedDescription)")

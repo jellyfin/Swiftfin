@@ -6,7 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if !os(macOS)
 import CollectionHStack
+#endif
 import SwiftUI
 
 enum PosterHStackMetrics {
@@ -35,6 +37,26 @@ struct PosterHStack<
             columns: displayType == .landscape ? 5 : 7,
             rows: 1,
             columnTrailingInset: 0
+        )
+        #elseif os(macOS)
+        // Desktop density: a fixed tile width lets the visible column count
+        // follow the window width instead of a hard-coded phone count.
+        let columnWidth: CGFloat = {
+            switch (displayType, size) {
+            case (.landscape, .small):
+                240
+            case (.landscape, .medium):
+                320
+            case (_, .small):
+                160
+            default:
+                200
+            }
+        }()
+
+        return .minimumWidth(
+            columnWidth: columnWidth,
+            rows: 1
         )
         #else
         if UIDevice.isPad {

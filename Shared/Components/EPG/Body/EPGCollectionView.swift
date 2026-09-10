@@ -11,6 +11,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+#if !os(macOS)
 struct EPGCollectionView: UIViewRepresentable {
 
     @ObservedObject
@@ -385,3 +386,57 @@ extension EPGCollectionView {
         }
     }
 }
+#else
+struct EPGCollectionView: View {
+
+    @ObservedObject
+    var viewModel: EPGViewModel
+
+    let proxy: EPGScrollProxy
+    let bottomInset: CGFloat
+    let onReachedBottom: () -> Void
+    let onSelect: (BaseItemDto) -> Void
+    let onSelectGroup: (ProgramBlock) -> Void
+
+    private let layout = EPGLayout()
+    private let scrollState = EPGScrollState()
+
+    var body: some View {
+        ScrollView([.horizontal, .vertical], showsIndicators: false) {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                ForEach(Array(viewModel.channels.enumerated()), id: \.offset) { _, channel in
+                    HStack(spacing: 0) {
+                        ForEach(Array((channel.id.flatMap { viewModel.programs[$0] } ?? []).enumerated()), id: \.offset) { _, block in
+                            EPGProgramCell(
+                                scrollState: scrollState,
+                                block: block,
+                                leadingOffset: layout.width(from: viewModel.startDate, to: block.start),
+                                isCurrent: block.isAiring(at: viewModel.now),
+                                isFocused: false,
+                                accentColor: Defaults[.accentColor]
+                            ) {
+                                if block.isGroup {
+                                    onSelectGroup(block)
+                                } else if let program = block.programs.first {
+                                    onSelect(program)
+                                }
+                            }
+                            .frame(
+                                width: max(80, layout.width(from: block.start, to: block.end)),
+                                height: layout.rowHeight
+                            )
+                        }
+                    }
+                }
+
+                Color.clear
+                    .frame(height: max(1, bottomInset))
+                    .onAppear(perform: onReachedBottom)
+            }
+        }
+        .onAppear {
+            proxy.reset()
+        }
+    }
+}
+#endif

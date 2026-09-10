@@ -68,10 +68,19 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                             .fontWeight(.semibold)
                             .labelStyle(CapsuleLabelStyle())
                             .buttonBorderShape(.capsule)
-                            .buttonStyle(.card)
+                            #if os(macOS)
+                                .buttonStyle(.borderless)
+                            #else
+                                .buttonStyle(.card)
+                            #endif
                         }
                     }
                     .edgePadding(.horizontal)
+                    #if os(macOS)
+                        // `scrollIndicators(.hidden)` is ignored while the system
+                        // is set to always show scroll bars.
+                            .macScrollers(.none, axes: .horizontal)
+                    #endif
                 }
                 .scrollIndicators(.hidden)
                 .scrollClipDisabled()

@@ -8,7 +8,9 @@
 
 import Defaults
 import JellyfinAPI
+#if !os(macOS)
 import Mantis
+#endif
 import SwiftUI
 
 struct ServerUserDetailsView: View {

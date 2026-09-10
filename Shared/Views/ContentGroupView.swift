@@ -47,6 +47,12 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                             contentGroupOptions = value
                         }
                 }
+                #if os(macOS)
+                // `scrollIndicators(.hidden)` is ignored while the system is
+                // set to always show scroll bars, which leaves a permanent
+                // legacy scroller strip beside the content.
+                .macScrollers(.overlay)
+                #endif
             }
             .trackingFrame(for: .scrollView)
             .ignoresSafeArea(
@@ -91,29 +97,29 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         .animation(.linear(duration: 0.2), value: viewModel.background.states)
         .navigationTitle(viewModel.provider.displayTitle)
         #if os(iOS)
-        .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
+            .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
         #elseif os(tvOS)
-        .toolbar(router.isRootOfPath ? .hidden : .automatic, for: .navigationBar)
+            .toolbar(router.isRootOfPath ? .hidden : .automatic, for: .navigationBar)
         #endif
-        .onFirstAppear {
-            viewModel.refresh()
-        }
-        .refreshable {
-            viewModel.refresh()
-        }
-        .sinceLastDisappear { interval in
-            viewModel.refreshIfNeeded(sinceLastDisappear: interval)
-        }
-        .onSceneWillEnterForeground {
-            viewModel.refreshIfPendingChanges()
-        }
-        .topBarTrailing {
-            if #unavailable(iOS 26.0) {
-                if viewModel.background.is(.refreshing) {
-                    ProgressView()
+            .onFirstAppear {
+                viewModel.refresh()
+            }
+            .refreshable {
+                viewModel.refresh()
+            }
+            .sinceLastDisappear { interval in
+                viewModel.refreshIfNeeded(sinceLastDisappear: interval)
+            }
+            .onSceneWillEnterForeground {
+                viewModel.refreshIfPendingChanges()
+            }
+            .topBarTrailing {
+                if #unavailable(iOS 26.0) {
+                    if viewModel.background.is(.refreshing) {
+                        ProgressView()
+                    }
                 }
             }
-        }
-        .environmentObject(focusCoordinator)
+            .environmentObject(focusCoordinator)
     }
 }

@@ -18,6 +18,11 @@ struct TabItem: Displayable, @MainActor Identifiable, @MainActor Hashable {
     let id: String
     let systemImage: String
 
+    /// Identifiers of tabs that are selected without building the tab's
+    /// content. The tab definitions below are declared with these.
+    static let searchID = "search"
+    static let settingsID = "settings"
+
     init(
         id: String,
         title: String,
@@ -96,9 +101,11 @@ extension TabItem {
                     filters: filters
                 )
             )
+            #if !os(macOS)
             .if(UIDevice.isTV) { view in
                 view.toolbar(.hidden, for: .navigationBar)
             }
+            #endif
         }
     }
 
@@ -109,9 +116,11 @@ extension TabItem {
             systemImage: "rectangle.stack.fill"
         ) {
             PagingLibraryView(library: UserViewLibrary())
+            #if !os(macOS)
                 .if(UIDevice.isTV) { view in
                     view.toolbar(.hidden, for: .navigationBar)
                 }
+            #endif
         }
     }
 
@@ -127,20 +136,22 @@ extension TabItem {
 
     static var search: TabItem {
         TabItem(
-            id: "search",
+            id: searchID,
             title: L10n.search,
             systemImage: "magnifyingglass"
         ) {
             SearchView()
+            #if !os(macOS)
                 .if(UIDevice.isTV) { view in
                     view.toolbar(.hidden, for: .navigationBar)
                 }
+            #endif
         }
     }
 
     static var settings: TabItem {
         TabItem(
-            id: "settings",
+            id: settingsID,
             title: L10n.settings,
             systemImage: "gearshape"
         ) {

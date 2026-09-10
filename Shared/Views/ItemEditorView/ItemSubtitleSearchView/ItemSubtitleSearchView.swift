@@ -76,51 +76,49 @@ struct ItemSubtitleSearchView: View {
 
     @ViewBuilder
     private var contentView: some View {
-        Form(systemImage: "textformat") {
+        SwiftfinForm(systemImage: "textformat") { Section(L10n.options) {
+            CulturePicker(L10n.language, threeLetterISOLanguageName: $viewModel.language)
 
-            Section(L10n.options) {
-                CulturePicker(L10n.language, threeLetterISOLanguageName: $viewModel.language)
+            Toggle(L10n.perfectMatch, isOn: $isPerfectMatch)
+        }
 
-                Toggle(L10n.perfectMatch, isOn: $isPerfectMatch)
+        #if os(tvOS)
+        Section {
+            Button(action: save) {
+                Text(L10n.save)
+                    .frame(maxWidth: .infinity)
             }
+            .disabled(selectedSubtitles.isEmpty)
+            .listRowInsets(.zero)
+            .listRowBackground(Color.clear)
+            .fontWeight(.semibold)
+            .backport
+            .buttonStyle(.glassProminent.shadow(false))
+            .tint(accentColor)
+        }
+        #endif
 
-            #if os(tvOS)
-            Section {
-                Button(action: save) {
-                    Text(L10n.save)
-                        .frame(maxWidth: .infinity)
-                }
-                .disabled(selectedSubtitles.isEmpty)
-                .listRowInsets(.zero)
-                .listRowBackground(Color.clear)
-                .fontWeight(.semibold)
-                .backport
-                .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
-            }
-            #endif
+        Section(L10n.search) {
 
-            Section(L10n.search) {
-
-                if viewModel.results.isEmpty {
-                    if viewModel.background.is(.searching) {
-                        ProgressView()
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    } else {
-                        Text(L10n.none)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    }
+            if viewModel.results.isEmpty {
+                if viewModel.background.is(.searching) {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, alignment: .center)
                 } else {
-                    ForEach(viewModel.results) { subtitle in
-                        SearchResultRow(subtitle: subtitle) {
-                            guard let subtitleID = subtitle.id else { return }
-                            selectedSubtitles.toggle(value: subtitleID)
-                        }
-                        .isSelected(subtitle.id.map { selectedSubtitles.contains($0) } == true)
+                    Text(L10n.none)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+            } else {
+                ForEach(viewModel.results) { subtitle in
+                    SearchResultRow(subtitle: subtitle) {
+                        guard let subtitleID = subtitle.id else { return }
+                        selectedSubtitles.toggle(value: subtitleID)
                     }
+                    .isSelected(subtitle.id.map { selectedSubtitles.contains($0) } == true)
                 }
             }
+        }
         }
     }
 

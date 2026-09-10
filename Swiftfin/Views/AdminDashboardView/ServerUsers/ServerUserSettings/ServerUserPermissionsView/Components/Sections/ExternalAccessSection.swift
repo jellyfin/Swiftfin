@@ -66,7 +66,9 @@ extension ServerUserPermissionsView {
                 .min(0.001) // Minimum bitrate of 1 Kbps
 
             TextField(L10n.maximumBitrate, value: bitrateBinding, format: .number)
+            #if !os(macOS)
                 .keyboardType(.numbersAndPunctuation)
+            #endif
         }
     }
 }

@@ -13,7 +13,7 @@ extension NavigationRoute {
 
     // MARK: - Item Editing
 
-    #if os(iOS)
+    #if os(iOS) || os(macOS)
     static func addItemElement<Editor: ItemComponentEditor>(
         viewModel: ItemComponentEditorViewModel<Editor>
     ) -> NavigationRoute {
@@ -40,7 +40,7 @@ extension NavigationRoute {
         }
     }
 
-    #if os(iOS)
+    #if os(iOS) || os(macOS)
     @MainActor
     static func editGenres(item: BaseItemDto) -> NavigationRoute {
         NavigationRoute(id: "editGenres") {
@@ -173,7 +173,7 @@ extension NavigationRoute {
         }
     }
 
-    #if os(iOS)
+    #if os(iOS) || os(macOS)
     static func itemEditor(viewModel: ItemEditorViewModel) -> NavigationRoute {
         NavigationRoute(
             id: "itemEditor",

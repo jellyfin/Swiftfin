@@ -80,7 +80,9 @@ extension SeriesEpisodeContentGroup {
                 .overlay(alignment: .bottom) {
                     overlayView
                 }
+                #if !os(macOS)
                 .contentShape(.contextMenuPreview, Rectangle())
+                #endif
                 .posterStyle(.landscape)
                 .subtleShadow()
                 .matchedTransitionSource(id: "item", in: namespace)
@@ -114,9 +116,9 @@ extension SeriesEpisodeContentGroup {
                         }
                     }
                     .posterStyle(.landscape)
-                    #if os(tvOS)
+                #if os(tvOS)
                     .posterCornerRadius(.landscape)
-                    #endif
+                #endif
                     .subtleShadow()
             }
         }
@@ -164,8 +166,12 @@ extension SeriesEpisodeContentGroup {
                 artwork
             }
             .foregroundStyle(.primary, .secondary)
-            .buttonStyle(.card)
-            .focused($focusedElement, equals: .artwork)
+            #if os(macOS)
+                .buttonStyle(.borderless)
+            #else
+                .buttonStyle(.card)
+            #endif
+                .focused($focusedElement, equals: .artwork)
 
             if let contextMenuItem {
                 button.posterContextMenu(for: contextMenuItem) {
@@ -189,14 +195,14 @@ extension SeriesEpisodeContentGroup {
                 }
                 .foregroundStyle(.primary, .secondary)
                 #if os(tvOS)
-                .buttonStyle(
-                    EpisodeContentButtonStyle(
-                        showsMaterial: focusedElement != nil,
-                        isFocused: focusedElement == .content
+                    .buttonStyle(
+                        EpisodeContentButtonStyle(
+                            showsMaterial: focusedElement != nil,
+                            isFocused: focusedElement == .content
+                        )
                     )
-                )
                 #endif
-                .focused($focusedElement, equals: .content)
+                    .focused($focusedElement, equals: .content)
             }
             .focusSection()
             .defaultFocus(

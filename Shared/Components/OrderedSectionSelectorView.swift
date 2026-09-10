@@ -10,8 +10,13 @@ import SwiftUI
 
 struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 
+    #if os(iOS)
     @Environment(\.editMode)
     private var editMode
+    #else
+    @State
+    private var isMacEditing = false
+    #endif
 
     @StateObject
     private var selection: PublishedBox<[Element]>
@@ -41,7 +46,11 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     }
 
     private var isReordering: Bool {
+        #if os(iOS)
         editMode?.wrappedValue.isEditing == true
+        #else
+        isMacEditing
+        #endif
     }
 
     private func select(element: Element) {
@@ -53,12 +62,16 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     @ViewBuilder
     private var editButton: some View {
         Button(isReordering ? L10n.done : L10n.edit) {
+            #if os(iOS)
             editMode?.wrappedValue = isReordering ? .inactive : .active
+            #else
+            isMacEditing.toggle()
+            #endif
         }
         #if os(iOS)
         .backport
-            .buttonStyle(.glass)
-            .controlSize(.small)
+        .buttonStyle(.glass)
+        .controlSize(.small)
         #endif
     }
 
@@ -84,7 +97,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     }
 
     var body: some View {
-        Form(systemImage: systemImage) {
+        SwiftfinForm(systemImage: systemImage) {
             Section(L10n.enabled) {
                 if selection.value.isEmpty {
                     Text(L10n.none)
@@ -121,9 +134,13 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
             }
         }
         .animation(.linear(duration: 0.2), value: selection.value)
-        .animation(.linear(duration: 0.2), value: editMode?.wrappedValue)
-        .toolbar {
-            editButton
-        }
+        #if os(iOS)
+            .animation(.linear(duration: 0.2), value: editMode?.wrappedValue)
+        #else
+            .animation(.linear(duration: 0.2), value: isMacEditing)
+        #endif
+            .toolbar {
+                editButton
+            }
     }
 }

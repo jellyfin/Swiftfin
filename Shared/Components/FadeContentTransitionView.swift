@@ -7,7 +7,12 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
+#if !os(macOS)
 
 struct FadeContentTransitionView<Item: Hashable, Content: View>: PlatformViewRepresentable {
 
@@ -340,3 +345,26 @@ final class UIFadeContentTransitionView: UIView {
         ])
     }
 }
+#else
+struct FadeContentTransitionView<Item: Hashable, Content: View>: View {
+
+    private let item: Item
+    private let content: (Item) -> Content
+
+    init(
+        item: Item,
+        duration: TimeInterval = 0.35,
+        debounce: TimeInterval? = nil,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) {
+        self.item = item
+        self.content = content
+    }
+
+    var body: some View {
+        content(item)
+            .id(item)
+            .transition(.opacity)
+    }
+}
+#endif

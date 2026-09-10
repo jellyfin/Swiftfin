@@ -41,7 +41,7 @@ extension CustomizeSettingsView {
         private var router
 
         var body: some View {
-            Form(systemImage: "gear") {
+            SwiftfinForm(systemImage: "gear") {
                 Section {
                     PlatformPicker(L10n.style, selection: $itemViewType)
                 } header: {

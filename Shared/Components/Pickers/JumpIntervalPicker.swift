@@ -81,7 +81,9 @@ struct JumpIntervalPicker: View {
             }
             .alert(L10n.jump, isPresented: $isPresentingCustomInterval) {
                 TextField(L10n.duration, value: $customSeconds.clamp(min: 1, max: 600), format: .number)
+                #if !os(macOS)
                     .keyboardType(.numberPad)
+                #endif
 
                 Button(L10n.ok) {
                     selection.wrappedValue = .custom(interval: Duration.seconds(customSeconds))

@@ -6,7 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if !os(macOS)
 import CollectionVGrid
+#endif
 import JellyfinAPI
 import SwiftUI
 

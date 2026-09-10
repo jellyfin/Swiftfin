@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-#if os(iOS)
+#if os(iOS) || os(macOS)
 extension NavigationRoute {
 
     // MARK: - Active Sessions

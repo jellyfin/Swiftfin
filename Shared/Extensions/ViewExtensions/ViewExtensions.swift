@@ -360,22 +360,22 @@ extension View {
         switch type {
         case .landscape:
             posterAspectRatio(type, contentMode: contentMode)
-                #if !os(tvOS)
-                    .posterBorder()
-                    .posterCornerRadius(type)
-                #endif
+            #if !os(tvOS)
+                .posterBorder()
+                .posterCornerRadius(type)
+            #endif
         case .portrait:
             posterAspectRatio(type, contentMode: contentMode)
-                #if !os(tvOS)
-                    .posterBorder()
-                    .posterCornerRadius(type)
-                #endif
+            #if !os(tvOS)
+                .posterBorder()
+                .posterCornerRadius(type)
+            #endif
         case .square:
             posterAspectRatio(type, contentMode: contentMode)
-                #if os(iOS)
-                    .posterBorder()
-                    .posterCornerRadius(type)
-                #endif
+            #if os(iOS)
+                .posterBorder()
+                .posterCornerRadius(type)
+            #endif
         }
     }
 
@@ -406,9 +406,14 @@ extension View {
 
     @ViewBuilder
     func topBarTrailing(@ViewBuilder content: @escaping () -> some View) -> some View {
-        toolbar {
+        #if os(macOS)
+        let placement: ToolbarItemPlacement = .automatic
+        #else
+        let placement: ToolbarItemPlacement = .topBarTrailing
+        #endif
+        self.toolbar {
             ToolbarItemGroup(
-                placement: .topBarTrailing,
+                placement: placement,
                 content: content
             )
         }

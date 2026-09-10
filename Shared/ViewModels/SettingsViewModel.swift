@@ -9,7 +9,11 @@
 import Defaults
 import Foundation
 import JellyfinAPI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 // TODO: should probably break out into a `Settings` and `AppSettings` view models
 //       - could clean up all settings view models

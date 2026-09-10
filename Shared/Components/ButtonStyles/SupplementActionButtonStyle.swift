@@ -34,9 +34,14 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 7))
         }
+        #if os(macOS)
+        .buttonStyle(.borderless)
+        #else
         .buttonStyle(.card)
+        #endif
     }
 
+    #if !os(macOS)
     @available(iOS 26.0, tvOS 26.0, *)
     private func glassButton(_ configuration: Configuration) -> some View {
         Button {
@@ -52,16 +57,21 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
         }
         .buttonBorderShape(.capsule)
         #if os(tvOS)
-        .buttonStyle(.card)
+            .buttonStyle(.card)
         #endif
     }
+    #endif
 
     @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
+        #if os(macOS)
+        legacyButton(configuration)
+        #else
         if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
             glassButton(configuration)
         } else {
             legacyButton(configuration)
         }
+        #endif
     }
 }

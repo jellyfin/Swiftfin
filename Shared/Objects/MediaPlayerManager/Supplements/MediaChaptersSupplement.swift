@@ -6,8 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if !os(macOS)
 import CollectionHStack
 import CollectionVGrid
+#endif
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -200,7 +202,9 @@ extension MediaChaptersSupplement {
                 }
                 .posterStyle(.landscape)
                 .subtleShadow()
-                .hoverEffect(.highlight)
+                #if !os(macOS)
+                    .hoverEffect(.highlight)
+                #endif
             }
         }
 

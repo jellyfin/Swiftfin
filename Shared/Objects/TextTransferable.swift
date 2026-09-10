@@ -28,7 +28,7 @@ public extension TextTransferable {
         }
     }
 
-    #if os(iOS)
+    #if os(iOS) || os(macOS)
     var shareLink: some View {
         ShareLink(
             item: self,

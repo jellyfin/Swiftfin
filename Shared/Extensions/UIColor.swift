@@ -6,7 +6,11 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 extension UIColor {
     var overlayColor: UIColor {
@@ -15,7 +19,12 @@ extension UIColor {
         var blue: CGFloat = 0
         var alpha: CGFloat = 0
 
-        getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        #if os(macOS)
+        guard let color = usingColorSpace(.deviceRGB) else { return .white }
+        color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        #else
+        guard getRed(&red, green: &green, blue: &blue, alpha: &alpha) else { return .white }
+        #endif
 
         let brightness = ((red * 299) + (green * 587) + (blue * 114)) / 1000
 

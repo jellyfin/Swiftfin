@@ -96,11 +96,15 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
 
         @ViewBuilder
         func makeBody(configuration: Configuration) -> some View {
+            #if os(macOS)
+            legacyBody(configuration)
+            #else
             if #available(iOS 26.0, *) {
                 glassBody(configuration)
             } else {
                 legacyBody(configuration)
             }
+            #endif
         }
 
         private func baseLabel(_ configuration: Configuration) -> some View {
@@ -137,6 +141,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
             .animation(.bouncy(duration: 0.4), value: isPressed)
         }
 
+        #if !os(macOS)
         @available(iOS 26.0, *)
         private func glassBody(_ configuration: Configuration) -> some View {
             pressableBody(
@@ -150,6 +155,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController.SupplementContainerVi
                 configuration: configuration
             )
         }
+        #endif
 
         private func pressableBody(
             _ content: some View,

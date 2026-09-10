@@ -9,9 +9,7 @@
 import Defaults
 import FactoryKit
 import JellyfinAPI
-import PreferencesView
 import SwiftUI
-import Transmission
 
 extension NavigationRoute {
 
@@ -103,17 +101,21 @@ struct VideoPlayerViewShim: View {
         }
         .colorScheme(.dark) // use over `preferredColorScheme(.dark)` to not have destination change
         .environment(\.safeAreaInsets, safeAreaInsets)
-        .supportedOrientations(.allButUpsideDown)
-        .ignoresSafeArea()
-        .persistentSystemOverlays(.hidden)
-        .toolbar(.hidden, for: .navigationBar)
-        .onSceneDidEnterBackground {
-            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
-                manager.setPlaybackRequestStatus(status: .paused)
+        #if !os(macOS)
+            .supportedOrientations(.allButUpsideDown)
+            .ignoresSafeArea()
+            .persistentSystemOverlays(.hidden)
+            .toolbar(.hidden, for: .navigationBar)
+        #else
+            .ignoresSafeArea()
+        #endif
+            .onSceneDidEnterBackground {
+                if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
+                    manager.setPlaybackRequestStatus(status: .paused)
+                }
             }
-        }
-        .onFrameChanged { _, safeArea in
-            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
-        }
+            .onFrameChanged { _, safeArea in
+                self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
+            }
     }
 }

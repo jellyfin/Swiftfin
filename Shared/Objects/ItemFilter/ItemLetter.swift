@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#endif
 
 struct ItemLetter: CaseIterable, Codable, ExpressibleByStringLiteral, Hashable, ItemFilter {
 
@@ -26,11 +28,15 @@ struct ItemLetter: CaseIterable, Codable, ExpressibleByStringLiteral, Hashable, 
     }
 
     static var allCases: [ItemLetter] {
-        UILocalizedIndexedCollation
+        #if canImport(UIKit)
+        return UILocalizedIndexedCollation
             .current()
             .sectionTitles
             .subtracting(["#"])
             .prepending("#")
             .map(Self.init)
+        #else
+        return ["#"] + Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { Self(stringLiteral: String($0)) }
+        #endif
     }
 }

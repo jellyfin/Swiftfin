@@ -114,7 +114,9 @@ extension EditMetadataView {
                             .min(0),
                         format: .number
                     )
+                    #if !os(macOS)
                     .keyboardType(.numberPad)
+                    #endif
 
                     Button(L10n.save) {
                         if let tempRunTime, tempRunTime != 0 {

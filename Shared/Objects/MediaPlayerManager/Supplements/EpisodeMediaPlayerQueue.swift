@@ -6,8 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if !os(macOS)
 import CollectionHStack
 import CollectionVGrid
+#endif
 import Combine
 import Defaults
 import Foundation
@@ -460,7 +462,9 @@ extension EpisodeMediaPlayerQueue {
             }
             .posterStyle(.landscape)
             .subtleShadow()
-            .hoverEffect(.highlight)
+            #if !os(macOS)
+                .hoverEffect(.highlight)
+            #endif
         }
     }
 

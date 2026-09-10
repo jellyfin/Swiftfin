@@ -23,40 +23,38 @@ struct CustomizeSettingsView: View {
     private var router
 
     var body: some View {
-        Form(systemImage: "gear") {
+        SwiftfinForm(systemImage: "gear") { #if os(tvOS)
+        Section(L10n.tabBar) {
+            ListRowMenu(L10n.layout, selection: $tabBarPlacement)
+        }
+        #endif
 
-            #if os(tvOS)
-            Section(L10n.tabBar) {
-                ListRowMenu(L10n.layout, selection: $tabBarPlacement)
-            }
-            #endif
-
-            Section {
-                ChevronButton(L10n.search) {
-                    router.route(to: .itemFilterDrawerSelector(selection: $searchEnabledDrawerFilters))
-                }
-
-            } header: {
-                Text(L10n.filters)
+        Section {
+            ChevronButton(L10n.search) {
+                router.route(to: .itemFilterDrawerSelector(selection: $searchEnabledDrawerFilters))
             }
 
-            ChevronButton(L10n.items) {
-                router.route(to: .itemSettings)
-            }
+        } header: {
+            Text(L10n.filters)
+        }
 
-            ChevronButton(L10n.libraries) {
-                router.route(to: .librarySettings)
-            }
+        ChevronButton(L10n.items) {
+            router.route(to: .itemSettings)
+        }
 
-            ChevronButton(L10n.posters) {
-                router.route(to: .posterSettings)
-            }
+        ChevronButton(L10n.libraries) {
+            router.route(to: .librarySettings)
+        }
 
-            ChevronButton(L10n.videoPlayer) {
-                router.route(to: .videoPlayerSettings)
-            }
+        ChevronButton(L10n.posters) {
+            router.route(to: .posterSettings)
+        }
 
-            HomeSection()
+        ChevronButton(L10n.videoPlayer) {
+            router.route(to: .videoPlayerSettings)
+        }
+
+        HomeSection()
         }
         .navigationTitle(L10n.advanced)
     }

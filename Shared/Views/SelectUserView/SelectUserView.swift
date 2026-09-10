@@ -145,6 +145,17 @@ struct SelectUserView: View {
         }
     }
 
+    private func completeSignIn(_ user: UserState) {
+        Task { @MainActor in
+            do {
+                try await userSessionManager.signIn(userID: user.id)
+                UIDevice.feedback(.success)
+            } catch {
+                await viewModel.error(error)
+            }
+        }
+    }
+
     @ViewBuilder
     private var splashScreenBackground: some View {
         if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
@@ -161,6 +172,11 @@ struct SelectUserView: View {
                     .opacity(0.9)
             }
         }
+    }
+
+    private var splashBackgroundView: some View {
+        splashScreenBackground
+            .ignoresSafeArea()
     }
 
     @ViewBuilder
@@ -353,8 +369,7 @@ struct SelectUserView: View {
             #endif
         }
         .background {
-            splashScreenBackground
-                .ignoresSafeArea()
+            splashBackgroundView
         }
         #if os(iOS)
         .ignoresSafeArea(.keyboard, edges: .bottom)
@@ -363,19 +378,20 @@ struct SelectUserView: View {
             guard !isEditing, !isPresentingConfirmDeleteUsers else { return }
             selectedUsers.removeAll()
         }
-        .onChange(of: viewModel.servers.keys) {
-            let newValue = viewModel.servers.keys
-            if case let SelectUserServerSelection.server(id: id) = serverSelection,
-               !newValue.contains(where: { $0.id == id })
-            {
-                if newValue.count == 1, let firstServer = newValue.first {
-                    let newSelection = SelectUserServerSelection.server(id: firstServer.id)
-                    serverSelection = newSelection
-                    selectUserAllServersSplashscreen = newSelection
-                } else {
-                    serverSelection = .all
-                    selectUserAllServersSplashscreen = .all
-                }
+        .onReceive(viewModel.$servers) { newServers in
+            guard case let .server(id) = serverSelection else { return }
+            let newServerIDs = newServers.keys.map { server in
+                server.id
+            }
+            guard !newServerIDs.contains(id) else { return }
+
+            if newServers.count == 1, let firstServer = newServers.keys.first {
+                let newSelection = SelectUserServerSelection.server(id: firstServer.id)
+                serverSelection = newSelection
+                selectUserAllServersSplashscreen = newSelection
+            } else {
+                serverSelection = .all
+                selectUserAllServersSplashscreen = .all
             }
         }
         .onReceive(viewModel.$error) { error in
@@ -385,14 +401,7 @@ struct SelectUserView: View {
         .onReceive(viewModel.events) { event in
             switch event {
             case let .signedIn(user):
-                Task { @MainActor in
-                    do {
-                        try await userSessionManager.signIn(userID: user.id)
-                        UIDevice.feedback(.success)
-                    } catch {
-                        await viewModel.error(error)
-                    }
-                }
+                completeSignIn(user)
             }
         }
         .onNotification(.didConnectToServer) { server in

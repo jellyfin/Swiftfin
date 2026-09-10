@@ -7,18 +7,27 @@
 //
 
 import SwiftUI
+#if !os(macOS)
 @_spi(Advanced) import SwiftUIIntrospect
+#endif
 
 struct ScrollViewOffsetModifier: ViewModifier {
 
+    #if !os(macOS)
     @StateObject
     private var scrollViewDelegate: ScrollViewDelegate
+    #endif
 
     init(scrollViewOffset: Binding<CGFloat>) {
+        #if !os(macOS)
         self._scrollViewDelegate = StateObject(wrappedValue: ScrollViewDelegate(scrollViewOffset: scrollViewOffset))
+        #endif
     }
 
     func body(content: Content) -> some View {
+        #if os(macOS)
+        content
+        #else
         content.introspect(
             .scrollView,
             on: .iOS(.v15...),
@@ -26,8 +35,10 @@ struct ScrollViewOffsetModifier: ViewModifier {
         ) { scrollView in
             scrollView.delegate = scrollViewDelegate
         }
+        #endif
     }
 
+    #if !os(macOS)
     private class ScrollViewDelegate: NSObject, ObservableObject, UIScrollViewDelegate {
 
         let scrollViewOffset: Binding<CGFloat>
@@ -40,4 +51,5 @@ struct ScrollViewOffsetModifier: ViewModifier {
             scrollViewOffset.wrappedValue = scrollView.contentOffset.y
         }
     }
+    #endif
 }

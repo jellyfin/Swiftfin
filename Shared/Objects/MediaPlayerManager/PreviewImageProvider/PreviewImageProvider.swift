@@ -7,7 +7,11 @@
 //
 
 import Combine
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 protocol PreviewImageProvider: ObservableObject {
     func image(for seconds: Duration) async -> UIImage?

@@ -6,28 +6,60 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Foundation
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 extension UIDevice {
 
     static var vendorUUIDString: String {
+        #if os(macOS)
+        let key = "org.jellyfin.swiftfin.deviceIdentifier"
+        if let identifier = UserDefaults.standard.string(forKey: key),
+           !identifier.isEmpty
+        {
+            return identifier
+        }
+
+        let identifier = UUID().uuidString
+        UserDefaults.standard.set(identifier, forKey: key)
+        return identifier
+        #else
         current.identifierForVendor!.uuidString
+        #endif
     }
 
     static var isPad: Bool {
+        #if os(macOS)
+        false
+        #else
         current.userInterfaceIdiom == .pad
+        #endif
     }
 
     static var isPhone: Bool {
+        #if os(macOS)
+        false
+        #else
         current.userInterfaceIdiom == .phone
+        #endif
     }
 
     static var isTV: Bool {
+        #if os(macOS)
+        false
+        #else
         current.userInterfaceIdiom == .tv
+        #endif
     }
 
     static let supportsLiquidGlass: Bool = {
-        #if os(tvOS)
+        #if os(macOS)
+        true
+        #elseif os(tvOS)
         var systemInfo = utsname()
         uname(&systemInfo)
         let model = withUnsafeBytes(of: systemInfo.machine) { buffer in
@@ -47,12 +79,18 @@ extension UIDevice {
     }()
 
     static var hasNotch: Bool {
+        #if os(macOS)
+        false
+        #else
         (UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0) > 0 &&
             isPhone
+        #endif
     }
 
     static var platform: String {
-        #if os(tvOS)
+        #if os(macOS)
+        "macOS"
+        #elseif os(tvOS)
         L10n.tvOS
         #else
         if UIDevice.isPad {

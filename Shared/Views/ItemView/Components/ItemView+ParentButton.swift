@@ -42,7 +42,11 @@ extension ItemView {
                 )
             )
             .buttonBorderShape(.capsule)
-            .buttonStyle(.card)
+            #if os(macOS)
+                .buttonStyle(.borderless)
+            #else
+                .buttonStyle(.card)
+            #endif
         }
     }
 }

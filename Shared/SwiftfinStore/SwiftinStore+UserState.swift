@@ -12,7 +12,11 @@ import Foundation
 import JellyfinAPI
 import KeychainSwift
 import Pulse
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 extension SwiftfinStore.State {
 

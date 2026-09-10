@@ -11,7 +11,11 @@ import Defaults
 import FactoryKit
 import Foundation
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 enum AppStartupError: Error {
 
@@ -154,7 +158,11 @@ final class RootCoordinator: ObservableObject {
     @MainActor
     private func applyAppearance(_ appearance: AppAppearance) {
         Defaults[.appearance] = appearance
+        #if os(macOS)
+        NSApp?.appearance = appearance == .system ? nil : NSAppearance(named: appearance.style)
+        #else
         UIApplication.shared.setAppearance(appearance.style)
+        #endif
     }
 
     @MainActor

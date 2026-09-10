@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+#if !os(macOS)
+
 extension UIGestureRecognizer {
 
     func unitPoint(in view: UIView) -> UnitPoint {
@@ -15,3 +17,4 @@ extension UIGestureRecognizer {
         return .init(x: location.x / view.frame.width, y: location.y / view.frame.height)
     }
 }
+#endif

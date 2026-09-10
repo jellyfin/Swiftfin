@@ -7,6 +7,11 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 struct EasedGradient: View, ShapeStyle {
 
@@ -223,6 +228,20 @@ struct EasedGradient: View, ShapeStyle {
     private static func blendedColor(from lower: Color, to upper: Color, amount: Double) -> Color {
         let amount = amount.clamped(to: 0 ... 1)
 
+        #if os(macOS)
+        let lowerColor = UIColor(lower)
+        let upperColor = UIColor(upper)
+
+        guard let lowerRGBA = EasedGradientRGBA(color: lowerColor),
+              let upperRGBA = EasedGradientRGBA(color: upperColor)
+        else {
+            return amount < 0.5 ? lower : upper
+        }
+
+        return Color(
+            nsColor: UIColor(easedGradientRGBA: lowerRGBA.blended(with: upperRGBA, amount: amount))
+        )
+        #else
         return Color(uiColor: UIColor { traits in
             let lowerColor = UIColor(lower).resolvedColor(with: traits)
             let upperColor = UIColor(upper).resolvedColor(with: traits)
@@ -235,6 +254,7 @@ struct EasedGradient: View, ShapeStyle {
 
             return UIColor(easedGradientRGBA: lowerRGBA.blended(with: upperRGBA, amount: amount))
         })
+        #endif
     }
 }
 
@@ -265,9 +285,16 @@ private extension EasedGradientRGBA {
         var blue: CGFloat = 0
         var alpha: CGFloat = 0
 
+        #if os(macOS)
+        guard let color = color.usingColorSpace(.deviceRGB) else {
+            return nil
+        }
+        color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        #else
         guard color.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else {
             return nil
         }
+        #endif
 
         self.init(red: red, green: green, blue: blue, alpha: alpha)
     }

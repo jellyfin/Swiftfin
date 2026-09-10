@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+#if !os(macOS)
+
 struct WithBlurNavigationBar<Content: View>: PlatformViewControllerRepresentable {
 
     private let content: Content
@@ -73,3 +75,18 @@ final class _WithBlurNavigationBarViewController<Content: View>: HostingControll
         navigationController?.navigationBar.shadowImage = nil
     }
 }
+#else
+struct WithBlurNavigationBar<Content: View>: View {
+
+    private let content: Content
+
+    init(@ViewBuilder content: @escaping () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        content
+            .background(.regularMaterial)
+    }
+}
+#endif

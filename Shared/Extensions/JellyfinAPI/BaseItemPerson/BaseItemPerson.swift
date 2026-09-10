@@ -8,7 +8,11 @@
 
 import Foundation
 import JellyfinAPI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 extension BaseItemPerson: Displayable {
     var displayTitle: String {

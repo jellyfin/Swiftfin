@@ -9,7 +9,11 @@
 import Foundation
 import Get
 import JellyfinAPI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 extension JellyfinClient.Configuration {
 

@@ -13,6 +13,16 @@ import SwiftUI
 
 private let userViewLibraryListImageWidth: CGFloat = 110
 
+#if os(macOS)
+/// Mac library cards are roughly 320-400pt wide, so a Retina-sharp source is
+/// needed. The phone values are far too small to fill one.
+private let userViewLibraryImageMaxWidth: CGFloat = 800
+private let userViewLibraryRandomImageMaxWidth: CGFloat = 800
+#else
+private let userViewLibraryImageMaxWidth: CGFloat = 500
+private let userViewLibraryRandomImageMaxWidth: CGFloat = 200
+#endif
+
 struct UserViewLibrary: PagingLibrary {
 
     let hasNextPage: Bool = false
@@ -163,15 +173,25 @@ private struct UserViewLibraryGridElement: View {
     @State
     private var imageSources: [ImageSource] = []
 
+    #if os(macOS)
+    @State
+    private var isHovering: Bool = false
+    #endif
+
     let element: UserViewLibraryElement
 
     private var isTitleLabelVisible: Bool {
+        #if os(macOS)
+        // A borderless artwork tile with no name is unreadable as a library.
+        true
+        #else
         switch element {
         case .favorites:
             true
         case .userView:
             useRandomImage
         }
+        #endif
     }
 
     var body: some View {
@@ -206,20 +226,55 @@ private struct UserViewLibraryGridElement: View {
         .onChange(of: useRandomImage) {
             setImageSources()
         }
+        #if os(macOS)
+        .buttonStyle(.plain)
+        .scaleEffect(isHovering ? 1.02 : 1)
+        .shadow(
+            color: .black.opacity(isHovering ? 0.35 : 0.15),
+            radius: isHovering ? 10 : 4,
+            y: isHovering ? 4 : 2
+        )
+        .animation(.easeOut(duration: 0.12), value: isHovering)
+        .onHover { isHovering = $0 }
+        #else
         .buttonStyle(.card)
+        #endif
     }
 
     @ViewBuilder
     private var titleLabel: some View {
         Text(element.displayTitle)
+        #if os(macOS)
+            .font(.title3)
+        #else
             .font(.title2)
+        #endif
             .fontWeight(.semibold)
             .lineLimit(1)
             .multilineTextAlignment(.center)
             .frame(alignment: .center)
     }
 
+    @ViewBuilder
     private func titleLabelOverlay(with content: some View) -> some View {
+        #if os(macOS)
+        content
+            .overlay(alignment: .bottom) {
+                LinearGradient(
+                    colors: [.clear, .black.opacity(0.8)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 60)
+                .overlay(alignment: .bottomLeading) {
+                    titleLabel
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 10)
+                        .padding(.bottom, 8)
+                }
+            }
+        #else
         ZStack {
             content
 
@@ -229,6 +284,7 @@ private struct UserViewLibraryGridElement: View {
             titleLabel
                 .foregroundStyle(.white)
         }
+        #endif
     }
 
     private func setImageSources() {
@@ -314,7 +370,7 @@ private extension UserViewLibraryElement {
         case .favorites:
             return []
         case let .userView(item):
-            return [item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 500))]
+            return [item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: userViewLibraryImageMaxWidth))]
         }
     }
 
@@ -352,6 +408,6 @@ private extension UserViewLibraryElement {
         let response = try await userSession.client.send(request)
 
         return (response.value.items ?? [])
-            .flatMap { $0.imageSources(for: .landscape, size: .custom(width: 200)) }
+            .flatMap { $0.imageSources(for: .landscape, size: .custom(width: userViewLibraryRandomImageMaxWidth)) }
     }
 }

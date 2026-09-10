@@ -19,6 +19,30 @@ struct ChevronButton<Label: View>: View {
     private let isExternal: Bool
     private let label: Label
 
+    #if os(macOS)
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+
+                label
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                if isEditing {
+                    ListRowCheckbox()
+                } else {
+                    Image(systemName: isExternal ? "arrow.up.forward" : "chevron.right")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.tertiary)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(.primary, .secondary)
+        .macRowHoverHighlight()
+    }
+    #else
     var body: some View {
         Button(action: action) {
             HStack {
@@ -38,6 +62,7 @@ struct ChevronButton<Label: View>: View {
         }
         .foregroundStyle(.primary, .secondary)
     }
+    #endif
 }
 
 extension ChevronButton {
@@ -250,3 +275,36 @@ private struct BoldIconLabelStyle: LabelStyle {
         }
     }
 }
+
+#if os(macOS)
+
+// MARK: - Mac Row Hover Highlight
+
+/// A full-row hover highlight for settings rows that behave like a Mac
+/// disclosure control. Shared by `ChevronButton` and `SettingsView.UserProfileRow`.
+private struct MacRowHoverHighlight: ViewModifier {
+
+    @State
+    private var isHovering: Bool = false
+
+    func body(content: Content) -> some View {
+        content
+            .background {
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(.quaternary)
+                    .opacity(isHovering ? 1 : 0)
+                    .padding(.horizontal, -8)
+                    .padding(.vertical, -4)
+            }
+            .animation(.easeOut(duration: 0.12), value: isHovering)
+            .onHover { isHovering = $0 }
+    }
+}
+
+extension View {
+
+    func macRowHoverHighlight() -> some View {
+        modifier(MacRowHoverHighlight())
+    }
+}
+#endif

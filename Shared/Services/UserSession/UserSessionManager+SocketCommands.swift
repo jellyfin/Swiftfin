@@ -10,7 +10,11 @@ import Combine
 import Defaults
 import Foundation
 import JellyfinAPI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 extension UserSessionManager {
 

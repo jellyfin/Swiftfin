@@ -16,7 +16,7 @@ extension FocusedValues {
 
 // MARK: - Form Overloads
 
-func Form(
+func SwiftfinForm(
     systemImage: String,
     @ViewBuilder content: @escaping () -> some View
 ) -> some View {
@@ -28,7 +28,7 @@ func Form(
     }
 }
 
-func Form(
+func SwiftfinForm(
     image: ImageResource,
     @ViewBuilder content: @escaping () -> some View
 ) -> some View {
@@ -40,7 +40,7 @@ func Form(
     }
 }
 
-func Form(
+func SwiftfinForm(
     @ViewBuilder content: @escaping () -> some View,
     @ViewBuilder image: @escaping () -> some View
 ) -> some View {
@@ -67,9 +67,35 @@ private struct PlatformForm<Image: View, Content: View>: PlatformView {
 
     var iOSView: some View {
         Form {
+            #if os(macOS)
+            // `scrollIndicators(.hidden)` is ignored while the system is set to
+            // always show scroll bars, which leaves a permanent gray scroller
+            // strip beside the form. Applied to the content so that it can
+            // reach the backing `NSScrollView`.
             content
+                .macScrollers(.overlay)
+            #else
+            content
+            #endif
         }
-        .toolbarTitleDisplayMode(.inline)
+        #if os(macOS)
+        // `.grouped` is the native macOS settings look and provides the
+        // standard trailing-aligned label/control columns. The form is given a
+        // readable measure and centered instead of being pinned to the leading
+        // edge of a wide window. No extra horizontal padding: the grouped form
+        // style already insets its sections.
+        .formStyle(.grouped)
+            .controlSize(.regular)
+            .scrollContentBackground(.hidden)
+            .frame(maxWidth: 900)
+            .frame(
+                maxWidth: .infinity,
+                maxHeight: .infinity,
+                alignment: .center
+            )
+        #else
+            .toolbarTitleDisplayMode(.inline)
+        #endif
     }
 
     var tvOSView: some View {

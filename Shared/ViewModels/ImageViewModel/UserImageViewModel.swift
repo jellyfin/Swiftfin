@@ -9,7 +9,11 @@
 import Foundation
 import JellyfinAPI
 import Nuke
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 @MainActor
 @Stateful

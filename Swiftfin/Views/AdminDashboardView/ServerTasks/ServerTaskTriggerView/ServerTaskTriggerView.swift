@@ -135,7 +135,7 @@ struct ServerTaskTriggerView: View {
                 }
 
                 Group {
-                    if #available(iOS 26, *) {
+                    if #available(iOS 26, macOS 26, *) {
                         Button(L10n.save, role: .confirm, action: saveAction)
                     } else {
                         Button(L10n.save, action: saveAction)

@@ -39,7 +39,7 @@ extension CustomizeSettingsView {
         private var router
 
         var body: some View {
-            Form(systemImage: "gear") {
+            SwiftfinForm(systemImage: "gear") {
 
                 Section {
                     Toggle(L10n.favorites, isOn: $showFavorites)

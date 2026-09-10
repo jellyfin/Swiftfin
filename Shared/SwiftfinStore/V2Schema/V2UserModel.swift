@@ -8,7 +8,11 @@
 
 import CoreStore
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 extension SwiftfinStore.V2 {
 

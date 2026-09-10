@@ -252,7 +252,11 @@ extension NavigationRoute {
         NavigationRoute(
             id: "log"
         ) {
+            #if os(macOS)
+            MacConsoleView()
+            #else
             ConsoleView()
+            #endif
         }
     }
 
@@ -264,7 +268,7 @@ extension NavigationRoute {
         }
     }
 
-    #if os(iOS)
+    #if os(iOS) || os(macOS)
     static func resetUserPassword(userID: String) -> NavigationRoute {
         NavigationRoute(
             id: "resetUserPassword",

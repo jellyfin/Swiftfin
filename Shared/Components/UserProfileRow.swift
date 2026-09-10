@@ -22,6 +22,48 @@ extension SettingsView {
         let user: UserDto
         var action: (() -> Void)?
 
+        #if os(macOS)
+        // Mac density: a 50pt phone avatar and body-weight chevron read as an
+        // iOS cell in a grouped form
+        var body: some View {
+            Button {
+                action?()
+            } label: {
+                HStack(spacing: 10) {
+
+                    ZStack {
+                        if let client = userSession?.client {
+                            UserProfileImage(
+                                userID: user.id,
+                                source: user.profileImageSource(
+                                    client: client,
+                                    maxWidth: 120
+                                )
+                            )
+                        }
+                    }
+                    .frame(width: 32, height: 32)
+
+                    Text(user.name ?? L10n.unknown)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+
+                    Spacer()
+
+                    if action != nil {
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.primary, .secondary)
+            .macRowHoverHighlight()
+        }
+        #else
         var body: some View {
             Button {
                 action?()
@@ -58,5 +100,6 @@ extension SettingsView {
             }
             .foregroundStyle(.primary, .secondary)
         }
+        #endif
     }
 }

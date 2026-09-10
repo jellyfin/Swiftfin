@@ -12,6 +12,9 @@ import Defaults
 import Foundation
 @preconcurrency import JellyfinAPI
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 // TODO: After NativeVideoPlayer is removed, can move bindings and
 //       observers to AVPlayerView, like the VLC delegate
@@ -120,10 +123,27 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
         player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
-    // TODO: complete
-    func setRate(_ rate: Float) {}
-    func setAudioStream(_ stream: MediaStream) {}
-    func setSubtitleStream(_ stream: MediaStream) {}
+    func setRate(_ rate: Float) {
+        player.rate = rate
+    }
+
+    func setAudioStream(_ stream: MediaStream) {
+        let characteristic: AVMediaCharacteristic = .audible
+        guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: characteristic) else { return }
+
+        let option = stream.index
+            .flatMap { group.options.indices.contains($0) ? group.options[$0] : nil }
+        player.currentItem?.select(option, in: group)
+    }
+
+    func setSubtitleStream(_ stream: MediaStream) {
+        let characteristic: AVMediaCharacteristic = .legible
+        guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: characteristic) else { return }
+
+        let option = stream.index
+            .flatMap { group.options.indices.contains($0) ? group.options[$0] : nil }
+        player.currentItem?.select(option, in: group)
+    }
 
     func setAspectFill(_ aspectFill: Bool) {
         avPlayerLayer.videoGravity = aspectFill ? .resizeAspectFill : .resizeAspect
@@ -162,7 +182,9 @@ extension AVMediaPlayerProxy {
         let baseItem = item.baseItem
 
         let newAVPlayerItem = AVPlayerItem(url: item.url)
+        #if !os(macOS)
         newAVPlayerItem.externalMetadata = item.baseItem.avMetadata
+        #endif
 
         player.replaceCurrentItem(with: newAVPlayerItem)
 
@@ -227,18 +249,45 @@ extension AVMediaPlayerProxy {
 
         @EnvironmentObject
         private var proxy: AVMediaPlayerProxy
-        @EnvironmentObject
-        private var scrubbedSeconds: PublishedBox<Duration>
 
+        #if os(macOS)
+        func makeNSView(context: Context) -> NSView {
+            MacAVPlayerView(proxy: proxy)
+        }
+
+        func updateNSView(_ nsView: NSView, context: Context) {}
+        #else
         func makeUIView(context: Context) -> UIView {
-//            proxy.isScrubbing = context.environment.isScrubbing
-//            proxy.scrubbedSeconds = $scrubbedSeconds.value
             UIAVPlayerView(proxy: proxy)
         }
 
         func updateUIView(_ uiView: UIView, context: Context) {}
+        #endif
     }
 
+    #if os(macOS)
+    private final class MacAVPlayerView: NSView {
+
+        private let proxy: AVMediaPlayerProxy
+
+        init(proxy: AVMediaPlayerProxy) {
+            self.proxy = proxy
+            super.init(frame: .zero)
+            wantsLayer = true
+            layer?.addSublayer(proxy.avPlayerLayer)
+        }
+
+        @available(*, unavailable)
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        override func layout() {
+            super.layout()
+            proxy.avPlayerLayer.frame = bounds
+        }
+    }
+    #else
     private class UIAVPlayerView: UIView {
 
         let proxy: AVMediaPlayerProxy
@@ -259,4 +308,5 @@ extension AVMediaPlayerProxy {
             proxy.avPlayerLayer.frame = bounds
         }
     }
+    #endif
 }

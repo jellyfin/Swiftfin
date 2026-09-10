@@ -110,7 +110,7 @@ struct ServerTaskDetailsView: View {
                 }
 
                 if isRunning {
-                    if #available(iOS 26, *) {
+                    if #available(iOS 26, macOS 26, *) {
                         Button(L10n.cancel, role: .cancel, action: viewModel.stop)
                     } else {
                         Button(L10n.cancel, role: .cancel, action: viewModel.stop)
@@ -119,7 +119,7 @@ struct ServerTaskDetailsView: View {
                             .controlSize(.small)
                     }
                 } else {
-                    if #available(iOS 26, *) {
+                    if #available(iOS 26, macOS 26, *) {
                         Button(L10n.start, role: .confirm, action: viewModel.start)
                     } else {
                         Button(L10n.start, action: viewModel.start)

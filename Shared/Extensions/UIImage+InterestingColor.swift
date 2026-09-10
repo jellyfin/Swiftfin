@@ -7,7 +7,11 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 extension UIImage {
 
@@ -17,6 +21,16 @@ extension UIImage {
             return nil
         }
 
+        #if os(macOS)
+        return Color(
+            nsColor: UIColor(
+                calibratedRed: sample.red / 255,
+                green: sample.green / 255,
+                blue: sample.blue / 255,
+                alpha: 1
+            )
+        )
+        #else
         return Color(
             uiColor: UIColor(
                 red: sample.red / 255,
@@ -25,6 +39,7 @@ extension UIImage {
                 alpha: 1
             )
         )
+        #endif
     }
 
     private func quantizedColorSample() -> ColorSample? {

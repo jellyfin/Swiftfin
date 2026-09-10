@@ -6,7 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if !os(macOS)
 import CollectionVGrid
+#endif
 import Defaults
 import SwiftUI
 
@@ -75,6 +77,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             Color.clear
         } content: { frame in
 
+            // macOS applies the filter drawer with `safeAreaInset`, so the grid's
+            // scroll view is already inset below the bar. Only the gutter is added
+            // here, and the grid must not ignore that inset.
             let insets: EdgeInsets = if #available(iOS 26, *), isSafeAreaBarApplied {
                 frame.safeAreaInsets + 10
             } else {
@@ -99,9 +104,15 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 }
             }
             .proxy(gridProxy)
-            .ignoresSafeArea(edges: .vertical)
+            #if !os(macOS)
+                .ignoresSafeArea(edges: .vertical)
+            #endif
         }
+        #if os(macOS)
+        .scrollIndicators(.automatic)
+        #else
         .scrollIndicators(.hidden)
+        #endif
         .withViewContext(.isListRowSeparatorVisible)
         .withViewContext(.isThumb)
         .onReceive(tabItemSelected) { event in

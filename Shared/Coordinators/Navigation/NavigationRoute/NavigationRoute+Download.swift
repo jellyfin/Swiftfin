@@ -16,7 +16,7 @@ extension NavigationRoute {
         NavigationRoute(
             id: "downloadList"
         ) {
-            #if os(iOS)
+            #if os(iOS) || os(macOS)
             DownloadListView(viewModel: .init())
             #else
             EmptyView()
@@ -24,7 +24,7 @@ extension NavigationRoute {
         }
     }
 
-    #if os(iOS)
+    #if os(iOS) || os(macOS)
     static func downloadTask(downloadTask: DownloadTask) -> NavigationRoute {
         NavigationRoute(
             id: "downloadTask",

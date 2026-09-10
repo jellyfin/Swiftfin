@@ -13,14 +13,13 @@ struct FontPickerView: View {
     let selection: Binding<String>
 
     var body: some View {
-        Form(systemImage: "textformat.characters") {
-            SelectorView(
-                selection: selection,
-                sources: UIFont.familyNames
-            ) { fontFamily in
-                Text(fontFamily)
-                    .font(.custom(fontFamily, size: UIDevice.isTV ? 30 : 18))
-            }
+        SwiftfinForm(systemImage: "textformat.characters") { SelectorView(
+            selection: selection,
+            sources: UIFont.familyNames
+        ) { fontFamily in
+            Text(fontFamily)
+                .font(.custom(fontFamily, size: UIDevice.isTV ? 30 : 18))
+        }
         }
         .navigationTitle(L10n.subtitleFont.localizedCapitalized)
     }

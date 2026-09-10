@@ -33,16 +33,19 @@ struct SettingsView: View {
     // MARK: - Body
 
     var body: some View {
-        Form(image: .jellyfinBlobBlue) {
+        SwiftfinForm(image: .jellyfinBlobBlue) {
             serverSection
             customizeSection
             diagnosticsSection
         }
         #if os(iOS)
         .navigationTitle(L10n.settings)
-            .navigationBarCloseButton {
-                router.dismiss()
-            }
+        .navigationBarCloseButton {
+            router.dismiss()
+        }
+        #elseif os(macOS)
+        // The mac shell presents settings as a pane, so it needs its own title
+        .navigationTitle(L10n.settings)
         #endif
     }
 
@@ -82,6 +85,22 @@ struct SettingsView: View {
             }
         }
 
+        #if os(macOS)
+        // A trailing-aligned destructive push button instead of the
+        // full-bleed touch bar used on iOS
+        Section {
+            HStack {
+                Spacer()
+
+                Button(L10n.switchUser, role: .destructive) {
+                    Task { @MainActor in
+                        await userSessionManager.signOut(reason: .explicit)
+                        router.dismiss()
+                    }
+                }
+            }
+        }
+        #else
         Section {
             Button {
                 Task { @MainActor in
@@ -101,16 +120,17 @@ struct SettingsView: View {
             .listRowInsets(.zero)
             .listRowBackground(Color.clear)
             #if os(iOS)
-            .listRowSeparator(.hidden)
+                .listRowSeparator(.hidden)
             #endif
-            .fontWeight(.semibold)
-            .backport
-            .buttonStyle(.glassProminent.shadow(false))
-            .tint(accentColor)
+                .fontWeight(.semibold)
+                .backport
+                .buttonStyle(.glassProminent.shadow(false))
+                .tint(accentColor)
             #if os(iOS)
-            .controlSize(.large)
+                .controlSize(.large)
             #endif
         }
+        #endif
     }
 
     // MARK: - Customization Section

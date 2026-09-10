@@ -26,8 +26,7 @@ struct ExperimentalSettingsView: View {
     private var userSessionManager: UserSessionManager
 
     var body: some View {
-        Form(systemImage: "flask") {
-            // swiftlint:disable hard_coded_display_string
+        SwiftfinForm(systemImage: "flask") { // swiftlint:disable hard_coded_display_string
             Toggle("MPV engine", isOn: $isMPVEnabled)
 
             Toggle("Live TV EPG", isOn: $isVideoPlayerEPGEnabled)

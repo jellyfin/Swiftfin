@@ -18,6 +18,16 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
     let action: () -> Void
 
     func body(content: Content) -> some View {
+        #if os(macOS)
+        content.toolbar {
+            ToolbarItem(placement: .navigation) {
+                Button(action: action) {
+                    Image(systemName: "xmark")
+                }
+                .disabled(disabled)
+            }
+        }
+        #else
         content.toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {
                 if #available(iOS 26, *) {
@@ -35,5 +45,6 @@ struct NavigationBarCloseButtonModifier: ViewModifier {
                 }
             }
         }
+        #endif
     }
 }

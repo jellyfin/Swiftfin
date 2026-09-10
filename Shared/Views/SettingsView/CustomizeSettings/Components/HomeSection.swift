@@ -58,7 +58,9 @@ extension CustomizeSettingsView {
                             value: $maxNextUp,
                             format: .dayInterval(range: 0 ... 1000)
                         )
+                        #if !os(macOS)
                         .keyboardType(.numberPad)
+                        #endif
                     } message: {
                         Text(L10n.nextUpDaysDescription)
                     }

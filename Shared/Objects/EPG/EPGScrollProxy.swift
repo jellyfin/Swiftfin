@@ -6,7 +6,12 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
+import CoreGraphics
+#if canImport(UIKit)
 import UIKit
+#endif
+#if !os(macOS)
 
 final class EPGScrollProxy: ObservableObject {
 
@@ -153,3 +158,14 @@ final class EPGScrollProxy: ObservableObject {
         }
     }
 }
+#else
+final class EPGScrollProxy: ObservableObject {
+
+    func registerContent(_ scrollView: Any, centeringOn target: CGFloat?) {}
+    func registerHorizontal(_ scrollView: Any) {}
+    func registerVertical(_ scrollView: Any) {}
+    func reset() {}
+    func disconnect() {}
+    func scrollTo(centering target: CGFloat) {}
+}
+#endif

@@ -71,9 +71,11 @@ extension NSDirectionalEdgeInsets {
     }
 }
 
+#if canImport(UIKit)
 extension UIEdgeInsets {
 
     var asEdgeInsets: EdgeInsets {
         EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
     }
 }
+#endif

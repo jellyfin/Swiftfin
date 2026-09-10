@@ -74,7 +74,11 @@ struct ServerActivityDetailsView: View {
                 }
             }
         }
+        #if os(macOS)
+        .listStyle(.inset)
+        #else
         .listStyle(.insetGrouped)
+        #endif
         .navigationTitle(
             L10n.activityLog
                 .localizedCapitalized

@@ -7,6 +7,11 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 enum AppAppearance: String, CaseIterable, Displayable, Storable {
 
@@ -25,6 +30,7 @@ enum AppAppearance: String, CaseIterable, Displayable, Storable {
         }
     }
 
+    #if canImport(UIKit)
     var style: UIUserInterfaceStyle {
         switch self {
         case .system:
@@ -35,4 +41,16 @@ enum AppAppearance: String, CaseIterable, Displayable, Storable {
             .light
         }
     }
+    #elseif os(macOS)
+    var style: NSAppearance.Name {
+        switch self {
+        case .system:
+            .aqua
+        case .dark:
+            .darkAqua
+        case .light:
+            .aqua
+        }
+    }
+    #endif
 }

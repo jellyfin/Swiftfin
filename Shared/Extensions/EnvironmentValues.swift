@@ -37,8 +37,13 @@ extension EnvironmentValues {
     @Entry
     var posterDisplayType: PosterDisplayType = .portrait
 
+    #if os(iOS) || os(tvOS)
     @Entry
     var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
+    #else
+    @Entry
+    var safeAreaInsets: EdgeInsets = .zero
+    #endif
 
     @Entry
     var subtitleOffset: Binding<Duration> = .constant(.zero)

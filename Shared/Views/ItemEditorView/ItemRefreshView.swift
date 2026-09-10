@@ -54,54 +54,48 @@ struct ItemRefreshView: View {
         }
         .errorMessage($viewModel.error)
         #if os(iOS)
-        .topBarTrailing {
-            Button(L10n.run, action: onRun)
-                .backport
-                .buttonStyle(.glassProminent)
-                .controlSize(.small)
-        }
+            .topBarTrailing {
+                Button(L10n.run, action: onRun)
+                    .backport
+                    .buttonStyle(.glassProminent)
+                    .controlSize(.small)
+            }
         #endif
     }
 
     private var contentView: some View {
-        Form(systemImage: "arrow.clockwise") {
+        SwiftfinForm(systemImage: "arrow.clockwise") { Section {
+            Picker(L10n.type, selection: $refreshType)
+        } header: {
+            Text(L10n.refreshMode)
+        } footer: {
+            Text(L10n.metadataRefreshDescription)
+        }
 
-            Section {
-                #if os(iOS)
-                Picker(L10n.type, selection: $refreshType)
-                #else
-                ListRowMenu(L10n.type, selection: $refreshType)
-                #endif
-            } header: {
-                Text(L10n.refreshMode)
-            } footer: {
-                Text(L10n.metadataRefreshDescription)
+        if refreshType != .scan {
+            Section(L10n.replace) {
+                Toggle(L10n.images, isOn: $replaceImages)
+                Toggle(L10n.trickplays, isOn: $regenerateTrickplay)
             }
+        }
 
-            if refreshType != .scan {
-                Section(L10n.replace) {
-                    Toggle(L10n.images, isOn: $replaceImages)
-                    Toggle(L10n.trickplays, isOn: $regenerateTrickplay)
-                }
+        #if os(tvOS)
+        Section {
+            Button(action: onRun) {
+                Text(L10n.run)
+                    .frame(maxWidth: .infinity)
             }
-
-            #if os(tvOS)
-            Section {
-                Button(action: onRun) {
-                    Text(L10n.run)
-                        .frame(maxWidth: .infinity)
-                }
-                .listRowInsets(.zero)
-                .listRowBackground(Color.clear)
-                .fontWeight(.semibold)
-                .backport
-                .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
-                #if os(iOS)
+            .listRowInsets(.zero)
+            .listRowBackground(Color.clear)
+            .fontWeight(.semibold)
+            .backport
+            .buttonStyle(.glassProminent.shadow(false))
+            .tint(accentColor)
+            #if os(iOS)
                 .controlSize(.large)
-                #endif
-            }
             #endif
+        }
+        #endif
         }
     }
 

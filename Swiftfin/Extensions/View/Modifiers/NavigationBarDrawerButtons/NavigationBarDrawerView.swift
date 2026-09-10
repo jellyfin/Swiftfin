@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+#if !os(macOS)
+
 struct NavigationBarDrawerView<Content: View, Drawer: View>: PlatformViewControllerRepresentable {
 
     private let drawer: Drawer
@@ -134,3 +136,4 @@ class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIVie
         }
     }
 }
+#endif

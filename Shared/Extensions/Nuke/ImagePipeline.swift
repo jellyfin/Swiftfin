@@ -10,7 +10,11 @@ import FactoryKit
 import Foundation
 import Nuke
 import Pulse
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 extension ImagePipeline {
 

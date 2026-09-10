@@ -6,8 +6,28 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if !os(macOS)
 import SVGKit
+#endif
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
+
+#if os(macOS)
+struct FastSVGView: View {
+
+    let data: Data
+
+    var body: some View {
+        if let image = NSImage(data: data) {
+            Image(nsImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+        }
+    }
+}
+#else
 
 // Note: SVGKit does not support the simulator and will appear blank.
 
@@ -31,3 +51,4 @@ struct FastSVGView: PlatformViewRepresentable {
 
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 }
+#endif

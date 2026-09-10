@@ -36,7 +36,7 @@ struct PlaybackQualitySettingsView: View {
     private var router
 
     var body: some View {
-        Form(systemImage: "play.rectangle.on.rectangle") {
+        SwiftfinForm(systemImage: "play.rectangle.on.rectangle") {
             Section(L10n.quality) {
                 PlatformPicker(
                     L10n.resolution,

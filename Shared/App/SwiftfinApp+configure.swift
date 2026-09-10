@@ -11,7 +11,6 @@ import FactoryKit
 import Logging
 import Nuke
 import PulseLogHandler
-import UIKit
 
 extension SwiftfinApp {
 
@@ -23,9 +22,9 @@ extension SwiftfinApp {
             // TODO: have setting for log level
             //       - default info, boolean to go down to trace
             let handlers: [any LogHandler] = [PersistentLogHandler(label: label)]
-                #if DEBUG
-                    .appending(SwiftfinConsoleHandler())
-                #endif
+            #if DEBUG
+                .appending(SwiftfinConsoleHandler())
+            #endif
 
             var multiplexHandler = MultiplexLogHandler(handlers)
             multiplexHandler.logLevel = .trace

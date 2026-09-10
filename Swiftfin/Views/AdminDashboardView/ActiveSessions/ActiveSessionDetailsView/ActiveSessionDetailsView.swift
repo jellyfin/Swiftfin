@@ -9,7 +9,6 @@
 import Foundation
 import JellyfinAPI
 import SwiftUI
-import SwiftUIIntrospect
 
 struct ActiveSessionDetailsView: View {
 

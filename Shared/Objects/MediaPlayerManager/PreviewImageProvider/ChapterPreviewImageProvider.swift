@@ -9,7 +9,11 @@
 import FactoryKit
 import Get
 import JellyfinAPI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 // TODO: preload chapter images
 //       - somehow tell player if there are no images

@@ -40,16 +40,16 @@ struct HourMinutePicker: View {
         }
         #if os(tvOS)
         .sheet(isPresented: $isPresented) {
-                VStack(spacing: 8) {
-                    Text(title.localizedCapitalized)
-                        .font(.title3)
-                        .edgePadding(.bottom)
+            VStack(spacing: 8) {
+                Text(title.localizedCapitalized)
+                    .font(.title3)
+                    .edgePadding(.bottom)
 
-                    _HourMinutePickerView(interval: interval, maximumHours: maximumHours)
-                        .frame(width: 500, height: 400)
-                }
-                .edgePadding()
+                _HourMinutePickerView(interval: interval, maximumHours: maximumHours)
+                    .frame(width: 500, height: 400)
             }
+            .edgePadding()
+        }
         #endif
 
         #if !os(tvOS)
@@ -243,6 +243,39 @@ private struct _HourMinutePickerView: PlatformViewRepresentable {
                 (Int(previousInterval) / 60) % 60
             }
         }
+    }
+}
+#elseif os(macOS)
+
+private struct _HourMinutePickerView: View {
+
+    let interval: Binding<TimeInterval>
+    let maximumHours: Int
+
+    private var totalMinutes: Int {
+        max(0, Int(interval.wrappedValue / 60))
+    }
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Picker(L10n.hours, selection: Binding(
+                get: { totalMinutes / 60 },
+                set: { interval.wrappedValue = TimeInterval($0 * 60 + totalMinutes % 60) * 60 }
+            )) {
+                ForEach(0 ... maximumHours, id: \.self) { hour in
+                    Text(hour, format: .number).tag(hour)
+                }
+            }
+            Picker(L10n.minutes, selection: Binding(
+                get: { totalMinutes % 60 },
+                set: { interval.wrappedValue = TimeInterval((totalMinutes / 60) * 60 + $0) * 60 }
+            )) {
+                ForEach(0 ..< 60, id: \.self) { minute in
+                    Text(minute, format: .number).tag(minute)
+                }
+            }
+        }
+        .pickerStyle(.menu)
     }
 }
 

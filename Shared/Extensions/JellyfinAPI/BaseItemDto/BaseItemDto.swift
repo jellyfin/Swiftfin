@@ -190,7 +190,11 @@ extension BaseItemDto {
             .posterStyle(preferredPosterDisplayType)
             .frame(width: 400)
 
+            #if os(macOS)
+            return ImageRenderer(content: failedSystemContentView).nsImage
+            #else
             return ImageRenderer(content: failedSystemContentView).uiImage
+            #endif
         }
 
         let image = Image(uiImage: firstImage)
@@ -204,7 +208,11 @@ extension BaseItemDto {
         .posterAspectRatio(preferredPosterDisplayType, contentMode: .fit)
         .frame(width: 400)
 
+        #if os(macOS)
+        return ImageRenderer(content: transformedImage).nsImage
+        #else
         return ImageRenderer(content: transformedImage).uiImage
+        #endif
     }
 
     func getPlaybackItemProvider(
@@ -480,7 +488,7 @@ extension BaseItemDto {
     var downloadFolder: URL? {
         guard let type, let id else { return nil }
 
-        let root = URL.downloadsDirectory
+        let root = URL.swiftfinDownloadsDirectory
 //            .appendingPathComponent(userSession.user.id)
 
         switch type {

@@ -178,104 +178,103 @@ struct EditServerConnectionView: View {
     }
 
     var body: some View {
-        Form(systemImage: "network") {
-            Section {
-                TextField(L10n.name, text: $draft.name)
-                    .focused($isNameFocused)
-            } header: {
-                Text(L10n.name)
-            } footer: {
-                if isNameEmpty {
-                    Label(L10n.required, systemImage: "exclamationmark.circle.fill")
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                }
+        SwiftfinForm(systemImage: "network") { Section {
+            TextField(L10n.name, text: $draft.name)
+                .focused($isNameFocused)
+        } header: {
+            Text(L10n.name)
+        } footer: {
+            if isNameEmpty {
+                Label(L10n.required, systemImage: "exclamationmark.circle.fill")
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
             }
+        }
 
-            Section {
-                TextField(L10n.url, text: $draft.urlString)
-                    #if !os(tvOS)
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.URL)
-                        .autocorrectionDisabled()
-                    #endif
-            } header: {
-                Text(L10n.url)
-            } footer: {
-                if isDuplicateConnection {
-                    Label(L10n.connectionAlreadyExists, systemImage: "exclamationmark.circle.fill")
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                }
-            }
-
+        Section {
+            TextField(L10n.url, text: $draft.urlString)
             #if os(iOS)
-            Section {
-                Picker(L10n.network, selection: $draft.interface) {
-                    ForEach(ServerConnection.Interface.allCases, id: \.self) { interface in
-                        Text(interface.displayTitle)
-                            .tag(interface)
-                    }
-                }
-
-                if draft.interface == .wifi {
-                    Toggle(L10n.wifiName, isOn: $draft.useWifiName)
-
-                    if draft.useWifiName {
-                        TextField(L10n.wifiName, text: firstWifiSSID)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                    }
-                }
-            } header: {
-                Text(L10n.network)
-            } footer: {
-                locationPermissionWarning
-            }
+                .textInputAutocapitalization(.never)
+                .keyboardType(.URL)
+                .autocorrectionDisabled()
             #endif
+        } header: {
+            Text(L10n.url)
+        } footer: {
+            if isDuplicateConnection {
+                Label(L10n.connectionAlreadyExists, systemImage: "exclamationmark.circle.fill")
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+            }
+        }
 
-            Section(L10n.status) {
-                if isCurrentConnection {
-                    Label(L10n.active, systemImage: "circle.fill")
-                        .foregroundStyle(.green)
-                } else if isExistingConnection {
-                    Button(L10n.use) {
-                        Task {
-                            await viewModel.setActiveConnectionIfValid(connection)
-                        }
-                    }
-                    .disabled(isTesting || hasChanges)
-                }
-
-                Button(action: testDraft) {
-                    LabeledContent {
-                        switch testState {
-                        case .idle, .failure:
-                            EmptyView()
-                        case .testing:
-                            ProgressView()
-                        case .success:
-                            Image(systemName: "circle.fill")
-                                .font(.caption)
-                                .foregroundStyle(.green)
-                        }
-                    } label: {
-                        Text(L10n.test)
-                    }
-                }
-                .disabled(isTesting)
-
-                if case let .failure(message) = testState {
-                    Text(message.nilIfBlank ?? L10n.connectionFailed)
-                        .foregroundStyle(.red)
+        #if os(iOS)
+        Section {
+            Picker(L10n.network, selection: $draft.interface) {
+                ForEach(ServerConnection.Interface.allCases, id: \.self) { interface in
+                    Text(interface.displayTitle)
+                        .tag(interface)
                 }
             }
 
-            if isExistingConnection {
-                Button(L10n.delete, role: .destructive) {
-                    viewModel.deleteConnection(connection)
-                    router.dismiss()
+            if draft.interface == .wifi {
+                Toggle(L10n.wifiName, isOn: $draft.useWifiName)
+
+                if draft.useWifiName {
+                    TextField(L10n.wifiName, text: firstWifiSSID)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
                 }
-                .disabled(viewModel.connections.count <= 1 || isCurrentConnection)
             }
+        } header: {
+            Text(L10n.network)
+        } footer: {
+            locationPermissionWarning
+        }
+        #endif
+
+        Section(L10n.status) {
+            if isCurrentConnection {
+                Label(L10n.active, systemImage: "circle.fill")
+                    .foregroundStyle(.green)
+            } else if isExistingConnection {
+                Button(L10n.use) {
+                    Task {
+                        await viewModel.setActiveConnectionIfValid(connection)
+                    }
+                }
+                .disabled(isTesting || hasChanges)
+            }
+
+            Button(action: testDraft) {
+                LabeledContent {
+                    switch testState {
+                    case .idle, .failure:
+                        EmptyView()
+                    case .testing:
+                        ProgressView()
+                    case .success:
+                        Image(systemName: "circle.fill")
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                    }
+                } label: {
+                    Text(L10n.test)
+                }
+            }
+            .disabled(isTesting)
+
+            if case let .failure(message) = testState {
+                Text(message.nilIfBlank ?? L10n.connectionFailed)
+                    .foregroundStyle(.red)
+            }
+        }
+
+        if isExistingConnection {
+            Button(L10n.delete, role: .destructive) {
+                viewModel.deleteConnection(connection)
+                router.dismiss()
+            }
+            .disabled(viewModel.connections.count <= 1 || isCurrentConnection)
+        }
         }
         .navigationTitle(L10n.connection)
         .navigationBarCloseButton {

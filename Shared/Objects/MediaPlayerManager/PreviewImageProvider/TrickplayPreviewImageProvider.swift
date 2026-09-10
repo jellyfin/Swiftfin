@@ -8,7 +8,11 @@
 
 import FactoryKit
 import JellyfinAPI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 // TODO: preload adjacent images
 // TODO: don't just select first trickplayinfo

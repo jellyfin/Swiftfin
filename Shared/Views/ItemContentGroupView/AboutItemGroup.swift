@@ -79,8 +79,12 @@ struct AboutItemGroup: ContentGroup {
                     )
                 }
                 .foregroundStyle(.primary, .secondary)
-                .buttonStyle(.card)
-                .buttonBorderShape(.roundedRectangle(radius: 20))
+                #if os(macOS)
+                    .buttonStyle(.plain)
+                #else
+                    .buttonStyle(.card)
+                #endif
+                    .buttonBorderShape(.roundedRectangle(radius: 20))
             }
         }
 
@@ -207,10 +211,10 @@ struct AboutItemGroup: ContentGroup {
                 .scrollIndicators(.hidden)
                 .scrollClipDisabled()
                 #if os(tvOS)
-                .withViewContext(.isOverComplexContent)
+                    .withViewContext(.isOverComplexContent)
                 #endif
-                .frame(height: cardHeight)
-                .frame(maxWidth: .infinity)
+                    .frame(height: cardHeight)
+                    .frame(maxWidth: .infinity)
             } header: {
                 Text(L10n.about)
                     .font(.title2)

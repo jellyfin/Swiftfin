@@ -11,6 +11,18 @@ import SwiftUI
 
 struct NavigationDrawerLabelStyle: LabelStyle {
 
+    #if os(macOS)
+    /// Mac control density, so the drawer reads as a compact toolbar strip
+    /// instead of a row of touch-sized pills.
+    private static let insets: EdgeInsets? = .init(vertical: 3, horizontal: 8)
+    private static let font: Font = .caption
+    private static let fontWeight: Font.Weight = .medium
+    #else
+    private static let insets: EdgeInsets? = nil
+    private static let font: Font = .footnote
+    private static let fontWeight: Font.Weight = .semibold
+    #endif
+
     @Environment(\.isHighlighted)
     private var isHighlighted
 
@@ -26,14 +38,15 @@ struct NavigationDrawerLabelStyle: LabelStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         CapsuleLabelStyle(
+            insets: Self.insets,
             spacing: 2,
             tint: isHighlighted ? .accentColor : nil,
             isTitleVisible: !isIconOnly,
             isIconTrailing: !isIconOnly
         )
         .makeBody(configuration: configuration)
-        .font(.footnote)
-        .fontWeight(.semibold)
+        .font(Self.font)
+        .fontWeight(Self.fontWeight)
         .foregroundStyle(.primary)
     }
 }

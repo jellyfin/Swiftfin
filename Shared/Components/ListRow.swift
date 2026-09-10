@@ -57,9 +57,9 @@ struct ListRow<Leading: View, Content: View>: View {
             .foregroundStyle(.primary, .secondary)
             .focused($isButtonFocused)
             #if os(tvOS)
-            .buttonStyle(.card)
-            #else
-            .contentShape(.contextMenuPreview, Rectangle())
+                .buttonStyle(.card)
+            #elseif !os(macOS)
+                .contentShape(.contextMenuPreview, Rectangle())
             #endif
 
             if isListRowSeparatorVisible, !isButtonFocused {

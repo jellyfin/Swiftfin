@@ -9,7 +9,9 @@
 import Defaults
 import JellyfinAPI
 import SwiftUI
+#if !os(macOS)
 @_spi(Advanced) import SwiftUIIntrospect
+#endif
 
 struct EPGChannelColumn: View {
 
@@ -70,13 +72,15 @@ struct EPGChannelColumn: View {
                 .padding(.bottom, bottomInset)
             }
             .scrollIndicators(.hidden)
-            .introspect(.scrollView, on: .iOS(.v18...), .tvOS(.v18...)) { scrollView in
-                #if os(tvOS)
-                scrollView.contentInsetAdjustmentBehavior = .never
-                #endif
+            #if !os(macOS)
+                .introspect(.scrollView, on: .iOS(.v18...), .tvOS(.v18...)) { scrollView in
+                    #if os(tvOS)
+                    scrollView.contentInsetAdjustmentBehavior = .never
+                    #endif
 
-                proxy.registerVertical(scrollView)
-            }
+                    proxy.registerVertical(scrollView)
+                }
+            #endif
         }
         .frame(width: layout.channelColumnWidth)
         .focusSection()

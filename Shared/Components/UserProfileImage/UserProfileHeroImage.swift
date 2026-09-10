@@ -41,16 +41,28 @@ struct UserProfileHeroImage: View {
                             source: source,
                             pipeline: userSession?.user.id == user.id ? .Swiftfin.local : .Swiftfin.posters
                         )
+                        #if os(macOS)
+                        // Mac density: the 150pt phone hero dominates a settings pane
+                        .frame(width: 96, height: 96)
+                        #else
                         .frame(width: 150, height: 150)
+                        #endif
 
                         Image(systemName: "pencil.circle.fill")
                             .resizable()
+                        #if os(macOS)
+                            .frame(width: 24, height: 24)
+                        #else
                             .frame(width: 30, height: 30)
+                        #endif
                             .shadow(radius: 10)
                             .symbolRenderingMode(.palette)
                             .foregroundStyle(accentColor.overlayColor, accentColor)
                     }
                 }
+                #if os(macOS)
+                .buttonStyle(.plain)
+                #endif
 
                 Text(user.name ?? L10n.unknown)
                     .fontWeight(.semibold)

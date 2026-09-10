@@ -46,9 +46,11 @@ struct AddServerUserView: View {
                     focusedfield = .password
                 }
                 .autocorrectionDisabled()
-                .textInputAutocapitalization(.none)
-                .focused($focusedfield, equals: .username)
-                .disabled(viewModel.state == .addingUser)
+                #if !os(macOS)
+                    .textInputAutocapitalization(.none)
+                #endif
+                    .focused($focusedfield, equals: .username)
+                    .disabled(viewModel.state == .addingUser)
             } header: {
                 Text(L10n.username)
             } footer: {
@@ -68,9 +70,11 @@ struct AddServerUserView: View {
                     focusedfield = .confirmPassword
                 }
                 .autocorrectionDisabled()
-                .textInputAutocapitalization(.none)
-                .focused($focusedfield, equals: .password)
-                .disabled(viewModel.state == .addingUser)
+                #if !os(macOS)
+                    .textInputAutocapitalization(.none)
+                #endif
+                    .focused($focusedfield, equals: .password)
+                    .disabled(viewModel.state == .addingUser)
             }
 
             Section {
@@ -80,9 +84,11 @@ struct AddServerUserView: View {
                     maskToggle: .enabled
                 )
                 .autocorrectionDisabled()
-                .textInputAutocapitalization(.none)
-                .focused($focusedfield, equals: .confirmPassword)
-                .disabled(viewModel.state == .addingUser)
+                #if !os(macOS)
+                    .textInputAutocapitalization(.none)
+                #endif
+                    .focused($focusedfield, equals: .confirmPassword)
+                    .disabled(viewModel.state == .addingUser)
             } header: {
                 Text(L10n.confirmPassword)
             } footer: {
@@ -126,7 +132,7 @@ struct AddServerUserView: View {
                     viewModel.add(username: username, password: password)
                 }
 
-                if #available(iOS 26, *) {
+                if #available(iOS 26, macOS 26, *) {
                     Button(
                         L10n.save,
                         role: .confirm,

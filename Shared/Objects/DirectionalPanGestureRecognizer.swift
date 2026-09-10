@@ -6,7 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if !os(macOS)
+#if canImport(UIKit)
 import UIKit
+#endif
 
 class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
 
@@ -42,3 +45,4 @@ class DirectionalPanGestureRecognizer: UIPanGestureRecognizer {
         }
     }
 }
+#endif

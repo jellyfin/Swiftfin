@@ -32,10 +32,14 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
     }
 
     func body(content: Self.Content) -> some View {
+        #if os(macOS)
+        let toolbarPlacement: ToolbarItemPlacement = .automatic
+        #else
+        let toolbarPlacement: ToolbarItemPlacement = .topBarTrailing
+        #endif
         content
             .toolbar {
-                ToolbarItemGroup(placement: .topBarTrailing) {
-
+                ToolbarItemGroup(placement: toolbarPlacement) {
                     if isLoading {
                         ProgressView()
                     }

@@ -10,7 +10,11 @@ import Defaults
 import FactoryKit
 import Foundation
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 // TODO: organize
 // TODO: all user settings could be moved to `StoredValues`?

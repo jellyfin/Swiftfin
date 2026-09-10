@@ -32,6 +32,11 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
     @FocusState
     private var focusedSection: FocusSection?
 
+    #if os(macOS)
+    @State
+    private var isHeaderHovering: Bool = false
+    #endif
+
     @ObservedObject
     var viewModel: PagingLibraryViewModel<Library>
 
@@ -79,6 +84,18 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
                 )
                 .animation(.easeInOut(duration: 0.15), value: isHeaderFocused)
                 .offset(x: -16)
+                #elseif os(macOS)
+                HStack(spacing: 4) {
+                    headerTitle
+
+                    Image(systemName: "chevron.forward")
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
+                        .opacity(isHeaderHovering ? 1 : 0.4)
+                }
+                .contentShape(Rectangle())
+                .onHover { isHeaderHovering = $0 }
+                .animation(.easeOut(duration: 0.12), value: isHeaderHovering)
                 #else
                 HStack(spacing: 3) {
                     headerTitle
@@ -92,7 +109,11 @@ struct PosterHStackLibrarySection<Library: PagingLibrary>: View
             .foregroundStyle(.primary, .secondary)
             .accessibilityAction(named: Text(L10n.openLibrary), routeToLibrary)
             #if os(tvOS)
-            .buttonStyle(HeaderButtonStyle())
+                .buttonStyle(HeaderButtonStyle())
+            #elseif os(macOS)
+                // without this AppKit draws a bordered push button, which is
+                // the grey slab sitting behind every section title
+                    .buttonStyle(.plain)
             #endif
         } else {
             headerTitle

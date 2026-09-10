@@ -15,82 +15,80 @@ struct AboutAppView: View {
     private var router
 
     var body: some View {
-        Form(image: .jellyfinBlobBlue) {
+        SwiftfinForm(image: .jellyfinBlobBlue) { #if os(iOS)
+        Section {
+            VStack(alignment: .center, spacing: 10) {
+
+                Image(.jellyfinBlobBlue)
+                    .resizable()
+                    .aspectRatio(1, contentMode: .fit)
+                    .frame(height: 150)
+
+                Text(verbatim: "Swiftfin")
+                    .fontWeight(.semibold)
+                    .font(.title2)
+            }
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.clear)
+        }
+        #endif
+
+        Section {
+            LabeledContent(
+                L10n.version,
+                value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
+            )
 
             #if os(iOS)
-            Section {
-                VStack(alignment: .center, spacing: 10) {
-
-                    Image(.jellyfinBlobBlue)
-                        .resizable()
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(height: 150)
-
-                    Text(verbatim: "Swiftfin")
-                        .fontWeight(.semibold)
-                        .font(.title2)
-                }
-                .frame(maxWidth: .infinity)
-                .listRowBackground(Color.clear)
+            ChevronButton(
+                L10n.permissions,
+                systemName: "hand.raised.fill"
+            ) {
+                router.route(to: .appPermissions)
             }
             #endif
 
-            Section {
-                LabeledContent(
-                    L10n.version,
-                    value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
-                )
+            ChevronButton(
+                L10n.settings,
+                systemName: "gearshape.fill",
+                external: true
+            ) {
+                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                UIApplication.shared.open(url)
+            }
+        }
 
-                #if os(iOS)
-                ChevronButton(
-                    L10n.permissions,
-                    systemName: "hand.raised.fill"
-                ) {
-                    router.route(to: .appPermissions)
-                }
-                #endif
+        Section {
 
-                ChevronButton(
-                    L10n.settings,
-                    systemName: "gearshape.fill",
-                    external: true
-                ) {
-                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                    UIApplication.shared.open(url)
-                }
+            // tvOS cannot open generic web links
+            #if !os(tvOS)
+            ChevronButton(
+                L10n.sourceCode,
+                image: .logoGithub,
+                external: true
+            ) {
+                UIApplication.shared.open(.swiftfinGithub)
             }
 
-            Section {
-
-                // tvOS cannot open generic web links
-                #if !os(tvOS)
-                ChevronButton(
-                    L10n.sourceCode,
-                    image: .logoGithub,
-                    external: true
-                ) {
-                    UIApplication.shared.open(.swiftfinGithub)
-                }
-
-                ChevronButton(
-                    L10n.license,
-                    content: L10n.mlp2,
-                    systemName: "text.document",
-                    external: true
-                ) {
-                    UIApplication.shared.open(.swiftfinGithubLicense)
-                }
-
-                ChevronButton(
-                    L10n.bugsAndFeatures,
-                    systemName: "plus.circle.fill",
-                    external: true
-                ) {
-                    UIApplication.shared.open(.swiftfinGithubIssues)
-                }
-                .symbolRenderingMode(.monochrome)
-                #endif
+            ChevronButton(
+                L10n.license,
+                content: L10n.mlp2,
+                systemName: "text.document",
+                external: true
+            ) {
+                UIApplication.shared.open(.swiftfinGithubLicense)
             }
+
+            ChevronButton(
+                L10n.bugsAndFeatures,
+                systemName: "plus.circle.fill",
+                external: true
+            ) {
+                UIApplication.shared.open(.swiftfinGithubIssues)
+            }
+            .symbolRenderingMode(.monochrome)
+            #endif
+        }
         }
         .navigationTitle(L10n.about)
     }

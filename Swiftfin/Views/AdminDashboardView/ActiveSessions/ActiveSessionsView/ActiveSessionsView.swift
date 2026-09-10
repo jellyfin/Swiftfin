@@ -6,7 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if !os(macOS)
 import CollectionVGrid
+#endif
 import JellyfinAPI
 import SwiftUI
 
@@ -131,7 +133,7 @@ struct ActiveSessionsView: View {
                 ProgressView()
             }
 
-            let systemImage = if #available(iOS 26, *) {
+            let systemImage = if #available(iOS 26, macOS 26, *) {
                 "line.3.horizontal.decrease"
             } else {
                 "line.3.horizontal.decrease.circle"
