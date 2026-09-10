@@ -636,6 +636,10 @@ internal enum L10n {
   internal static let enterCustomMaxSessions = L10n.tr("Localizable", "enterCustomMaxSessions", fallback: "Enter custom max sessions")
   /// Enter the episode number.
   internal static let enterEpisodeNumber = L10n.tr("Localizable", "enterEpisodeNumber", fallback: "Enter the episode number.")
+  /// Enter full screen
+  internal static let enterFullScreen = L10n.tr("Localizable", "enterFullScreen", fallback: "Enter full screen")
+  /// Enter Picture in Picture
+  internal static let enterPictureInPicture = L10n.tr("Localizable", "enterPictureInPicture", fallback: "Enter Picture in Picture")
   /// Enter pin for %@
   internal static func enterPinForUser(_ p1: Any) -> String {
     return L10n.tr("Localizable", "enterPinForUser", String(describing: p1), fallback: "Enter pin for %@")
@@ -672,6 +676,10 @@ internal enum L10n {
   internal static let existingItems = L10n.tr("Localizable", "existingItems", fallback: "Existing items")
   /// This item exists on your Jellyfin Server.
   internal static let existsOnServer = L10n.tr("Localizable", "existsOnServer", fallback: "This item exists on your Jellyfin Server.")
+  /// Exit full screen
+  internal static let exitFullScreen = L10n.tr("Localizable", "exitFullScreen", fallback: "Exit full screen")
+  /// Exit Picture in Picture
+  internal static let exitPictureInPicture = L10n.tr("Localizable", "exitPictureInPicture", fallback: "Exit Picture in Picture")
   /// Experimental
   internal static let experimental = L10n.tr("Localizable", "experimental", fallback: "Experimental")
   /// External
