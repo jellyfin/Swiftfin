@@ -8,6 +8,13 @@
 
 import SwiftUI
 
+#if os(macOS)
+typealias PlatformViewRepresentable = NSViewRepresentable
+typealias PlatformViewControllerRepresentable = NSViewControllerRepresentable
+#else
+typealias PlatformViewRepresentable = UIViewRepresentable
+typealias PlatformViewControllerRepresentable = UIViewControllerRepresentable
+#endif
 protocol PlatformView: View {
 
     associatedtype iOSBody: View
@@ -34,6 +41,13 @@ extension PlatformView {
     @MainActor
     var body: some View {
         tvOSView
+    }
+
+    #elseif os(macOS)
+    @ViewBuilder
+    @MainActor
+    var body: some View {
+        iOSView
     }
     #endif
 }
