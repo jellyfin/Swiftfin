@@ -40,23 +40,35 @@ final class FilterViewModel: ViewModel {
     @Published
     var currentFilters: ItemFilterCollection
 
+    /// The filters this view model was created with.
+    ///
+    /// These describe the library itself, such as a fixed item type, and are
+    /// what a reset restores instead of the global default collection.
+    let baseFilters: ItemFilterCollection
+
     private let parent: (any LibraryParent)?
 
     init(
         parent: (any LibraryParent)? = nil,
         currentFilters: ItemFilterCollection = .default
     ) {
+        self.baseFilters = currentFilters
         self.parent = parent
         self.currentFilters = currentFilters
 
         super.init()
     }
 
+    /// Whether any filter differs from the filters the library was created with.
+    var hasActiveFilters: Bool {
+        currentFilters != baseFilters
+    }
+
     func isFilterSelected(type: ItemFilterType) -> Bool {
         type.group
             .map(\.keyPath)
             .contains { keyPath in
-                currentFilters[keyPath: keyPath] != ItemFilterCollection.default[keyPath: keyPath]
+                currentFilters[keyPath: keyPath] != baseFilters[keyPath: keyPath]
             }
     }
 
@@ -64,32 +76,32 @@ final class FilterViewModel: ViewModel {
     private func resetCurrentFilters(_ type: ItemFilterType?) {
 
         guard let type else {
-            currentFilters = .default
+            currentFilters = baseFilters
             return
         }
 
         switch type {
         case .audioLanguage:
-            currentFilters.audioLanguages = ItemFilterCollection.default.audioLanguages
+            currentFilters.audioLanguages = baseFilters.audioLanguages
         case .category:
-            currentFilters.categories = ItemFilterCollection.default.categories
+            currentFilters.categories = baseFilters.categories
         case .genres:
-            currentFilters.genres = ItemFilterCollection.default.genres
+            currentFilters.genres = baseFilters.genres
         case .letter:
-            currentFilters.letter = ItemFilterCollection.default.letter
+            currentFilters.letter = baseFilters.letter
         case .officialRatings:
-            currentFilters.officialRatings = ItemFilterCollection.default.officialRatings
+            currentFilters.officialRatings = baseFilters.officialRatings
         case .sortBy:
-            currentFilters.sortBy = ItemFilterCollection.default.sortBy
-            currentFilters.sortOrder = ItemFilterCollection.default.sortOrder
+            currentFilters.sortBy = baseFilters.sortBy
+            currentFilters.sortOrder = baseFilters.sortOrder
         case .subtitleLanguage:
-            currentFilters.subtitleLanguages = ItemFilterCollection.default.subtitleLanguages
+            currentFilters.subtitleLanguages = baseFilters.subtitleLanguages
         case .tags:
-            currentFilters.tags = ItemFilterCollection.default.tags
+            currentFilters.tags = baseFilters.tags
         case .traits:
-            currentFilters.traits = ItemFilterCollection.default.traits
+            currentFilters.traits = baseFilters.traits
         case .years:
-            currentFilters.years = ItemFilterCollection.default.years
+            currentFilters.years = baseFilters.years
         }
     }
 

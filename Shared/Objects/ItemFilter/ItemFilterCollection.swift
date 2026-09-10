@@ -49,10 +49,6 @@ struct ItemFilterCollection: Hashable, Storable {
         traits: ItemTrait.supportedCases
     )
 
-    var isNotEmpty: Bool {
-        self != Self.default
-    }
-
     var hasQueryableFilters: Bool {
         audioLanguages.isNotEmpty ||
             categories.isNotEmpty ||

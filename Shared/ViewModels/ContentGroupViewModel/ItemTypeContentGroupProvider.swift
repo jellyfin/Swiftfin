@@ -39,7 +39,7 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
 
     func makeGroups(environment: Environment) async throws -> [any ContentGroup] {
 
-        guard environment.filters.isNotEmpty || parent != nil else { return [] }
+        guard environment.filters.hasQueryableFilters || parent != nil else { return [] }
 
         return itemTypes.map { itemType in
             // Server will edit filters if only boxset, add userView as workaround.
