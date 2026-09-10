@@ -191,10 +191,12 @@ class VideoPlayerContainerState: ObservableObject {
         timerCancellable = timer.sink { [weak self] in
             guard let self else { return }
 
+            #if !os(macOS)
             if containerView?.presentedViewController != nil {
                 timer.poke()
                 return
             }
+            #endif
 
             guard !isScrubbing,
                   !isPresentingSupplement,

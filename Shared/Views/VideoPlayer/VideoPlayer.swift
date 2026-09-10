@@ -9,12 +9,13 @@
 import Defaults
 import FactoryKit
 import SwiftUI
-import Transmission
 
 struct VideoPlayer: View {
 
+    #if !os(macOS)
     @Environment(\.presentationCoordinator)
     private var presentationCoordinator
+    #endif
 
     @InjectedObject(\.mediaPlayerManager)
     private var manager: MediaPlayerManager
@@ -57,7 +58,11 @@ struct VideoPlayer: View {
             proxy.videoPlayerBody
                 .eraseToAnyView()
         } playbackControls: {
+            #if os(macOS)
+            MacPlaybackControls()
+            #else
             PlaybackControls()
+            #endif
         }
         .onAppear {
             manager.proxy = proxy
@@ -70,17 +75,21 @@ struct VideoPlayer: View {
             }
         }
         .onChange(of: containerState.isAspectFilled) {
+            #if os(macOS)
+            proxy.setAspectFill(containerState.isAspectFilled)
+            #else
             UIView.animate(withDuration: 0.2) {
                 proxy.setAspectFill(containerState.isAspectFilled)
             }
+            #endif
         }
         .onChange(of: containerState.isScrubbing) {
             if containerState.isScrubbing {
-                scrubbingStartTime = CACurrentMediaTime()
+                scrubbingStartTime = Date.timeIntervalSinceReferenceDate
             }
 
             guard let scrubbingStartTime else { return }
-            let scrubbingDelta = CACurrentMediaTime() - scrubbingStartTime
+            let scrubbingDelta = Date.timeIntervalSinceReferenceDate - scrubbingStartTime
             let secondsDelta = abs(manager.seconds - containerState.scrubbedSeconds.value)
 
             guard secondsDelta >= .seconds(1), scrubbingDelta >= 0.1 else { return }
@@ -98,35 +107,43 @@ struct VideoPlayer: View {
             key: PresentationControllerShouldDismissPreferenceKey.self,
             value: containerState.presentationControllerShouldDismiss
         )
+        // Lets the macOS shell collapse the sidebar and window toolbar
+        // while playback owns the window.
+        .preference(
+            key: VideoPlayerPresentedPreferenceKey.self,
+            value: true
+        )
+        #if !os(macOS)
         .onChange(of: presentationCoordinator.isPresented) {
             guard !presentationCoordinator.isPresented else { return }
             isBeingDismissedByTransition = true
             manager.stop()
         }
+        #endif
         .onReceive(manager.$playbackItem) { newItem in
-            containerState.isAspectFilled = false
-            audioOffset = .zero
-            subtitleOffset = .zero
+                containerState.isAspectFilled = false
+                audioOffset = .zero
+                subtitleOffset = .zero
 
-            // TODO: move to container view
-            containerState.scrubbedSeconds.value = newItem?.baseItem.startSeconds ?? .zero
-        }
-        .onReceive(manager.$state) { newState in
-            if newState == .stopped, !isBeingDismissedByTransition {
-                router.dismiss()
+                // TODO: move to container view
+                containerState.scrubbedSeconds.value = newItem?.baseItem.startSeconds ?? .zero
             }
-        }
+            .onReceive(manager.$state) { newState in
+                if newState == .stopped, !isBeingDismissedByTransition {
+                    router.dismiss()
+                }
+            }
 
-        .alert(
-            L10n.error,
-            isPresented: .constant(manager.error != nil)
-        ) {
-            Button(L10n.close, role: .cancel) {
-                Container.shared.mediaPlayerManager.reset()
-                router.dismiss()
+            .alert(
+                L10n.error,
+                isPresented: .constant(manager.error != nil)
+            ) {
+                Button(L10n.close, role: .cancel) {
+                    Container.shared.mediaPlayerManager.reset()
+                    router.dismiss()
+                }
+            } message: {
+                Text(L10n.unableToLoadThisItem)
             }
-        } message: {
-            Text(L10n.unableToLoadThisItem)
-        }
     }
 }

@@ -33,6 +33,7 @@ import SwiftUI
 
 // MARK: - VideoPlayerContainerView
 
+#if !os(macOS)
 extension VideoPlayer {
 
     struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: PlatformViewControllerRepresentable {
@@ -113,24 +114,24 @@ extension VideoPlayer {
 
             var body: some View {
                 player
-                    #if os(iOS)
-                        .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
-                    #endif
-                    .overlay {
-                        Group {
-                            if presentedSupplementStyle == .expanded {
-                                Color.black.opacity(0.8)
-                            } else {
-                                EasedGradient(
-                                    colors: [.clear, .black],
-                                    startPoint: .center,
-                                    endPoint: .bottom
-                                )
-                            }
+                #if os(iOS)
+                .overlay(Color.black.opacity(shouldPresentDimOverlay ? 0.5 : 0.0))
+                #endif
+                .overlay {
+                    Group {
+                        if presentedSupplementStyle == .expanded {
+                            Color.black.opacity(0.8)
+                        } else {
+                            EasedGradient(
+                                colors: [.clear, .black],
+                                startPoint: .center,
+                                endPoint: .bottom
+                            )
                         }
-                        .isVisible(shouldPresentDimOverlay)
                     }
-                    .allowsHitTesting(false)
+                    .isVisible(shouldPresentDimOverlay)
+                }
+                .allowsHitTesting(false)
             }
         }
 
@@ -165,51 +166,51 @@ extension VideoPlayer {
                 }
                 #if os(iOS)
                 .environment(
-                        \.longPressAction,
-                        .init(
-                            action: {
-                                containerState.containerView?.handleLongPressGesture(
-                                    location: $0,
-                                    unitPoint: $1,
-                                    state: $2
-                                )
-                            }
-                        )
+                    \.longPressAction,
+                    .init(
+                        action: {
+                            containerState.containerView?.handleLongPressGesture(
+                                location: $0,
+                                unitPoint: $1,
+                                state: $2
+                            )
+                        }
                     )
-                    .environment(
-                        \.panAction,
-                        .init(
-                            action: {
-                                containerState.containerView?.handlePanGesture(
-                                    translation: $0,
-                                    velocity: $1,
-                                    location: $2,
-                                    unitPoint: $3,
-                                    state: $4
-                                )
-                            }
-                        )
+                )
+                .environment(
+                    \.panAction,
+                    .init(
+                        action: {
+                            containerState.containerView?.handlePanGesture(
+                                translation: $0,
+                                velocity: $1,
+                                location: $2,
+                                unitPoint: $3,
+                                state: $4
+                            )
+                        }
                     )
-                    .environment(
-                        \.pinchAction,
-                        .init(
-                            action: {
-                                containerState.containerView?.handlePinchGesture(scale: $0, velocity: $1, state: $2)
-                            }
-                        )
+                )
+                .environment(
+                    \.pinchAction,
+                    .init(
+                        action: {
+                            containerState.containerView?.handlePinchGesture(scale: $0, velocity: $1, state: $2)
+                        }
                     )
-                    .environment(
-                        \.tapGestureAction,
-                        .init(
-                            action: {
-                                containerState.containerView?.handleTapGesture(
-                                    location: $0,
-                                    unitPoint: $1,
-                                    count: $2
-                                )
-                            }
-                        )
+                )
+                .environment(
+                    \.tapGestureAction,
+                    .init(
+                        action: {
+                            containerState.containerView?.handleTapGesture(
+                                location: $0,
+                                unitPoint: $1,
+                                count: $2
+                            )
+                        }
                     )
+                )
                 #endif
             }
         }
@@ -943,5 +944,142 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
     }
 
     typealias OnPressEvent = EventPublisher<PressEvent>
+}
+#endif
+#else
+extension VideoPlayer {
+
+    struct VideoPlayerContainerView<Player: View, PlaybackControls: View>: View {
+
+        @ObservedObject
+        private var containerState: VideoPlayerContainerState
+        @ObservedObject
+        private var manager: MediaPlayerManager
+        private let player: Player
+        private let playbackControls: PlaybackControls
+
+        @State
+        private var lastHoverLocation: CGPoint = .zero
+
+        init(
+            containerState: VideoPlayerContainerState,
+            manager: MediaPlayerManager,
+            @ViewBuilder player: @escaping () -> Player,
+            @ViewBuilder playbackControls: @escaping () -> PlaybackControls
+        ) {
+            self.containerState = containerState
+            self.manager = manager
+            self.player = player()
+            self.playbackControls = playbackControls()
+            containerState.manager = manager
+        }
+
+        private var isPresentingControls: Bool {
+            containerState.isPresentingOverlay || containerState.isPresentingPlaybackControls
+        }
+
+        /// Reveals the overlay and restarts the auto-hide countdown.
+        ///
+        /// `isPresentingOverlay` republishes on same-value writes, so a plain
+        /// assignment on every mouse-move event would rebuild the overlay
+        /// continuously. Only write when the value actually changes.
+        private func revealControls() {
+            MacWindowState.shared.setCursorHidden(false)
+
+            guard !containerState.isPresentingOverlay else {
+                containerState.timer.poke()
+                return
+            }
+
+            withAnimation(.easeInOut(duration: 0.2)) {
+                containerState.isPresentingOverlay = true
+            }
+        }
+
+        private func handleHover(_ phase: HoverPhase) {
+            guard case let .active(location) = phase else { return }
+
+            // SwiftUI emits hover events during layout, which would otherwise
+            // keep poking the timer and the overlay would never auto-hide.
+            let delta = hypot(
+                location.x - lastHoverLocation.x,
+                location.y - lastHoverLocation.y
+            )
+            guard delta > 2 else { return }
+
+            lastHoverLocation = location
+            revealControls()
+        }
+
+        var body: some View {
+            OverlayToastView(proxy: containerState.toastProxy) {
+                ZStack {
+                    player
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .allowsHitTesting(false)
+
+                    // The VLC drawable is an AppKit view, so it hit-tests
+                    // before any gesture attached to an ancestor of the stack.
+                    // Catch clicks on a layer stacked above it instead, and
+                    // keep it below the controls so buttons still win.
+                    //
+                    // A single un-composed tap on purpose: pairing it with a
+                    // double-tap recognizer leaves the single tap waiting on a
+                    // failure that never arrives, so no click registers at all.
+                    // Full screen stays on its own button, the green traffic
+                    // light, and the standard system shortcut.
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onContinuousHover(perform: handleHover)
+                        .onTapGesture {
+                            guard !containerState.isPresentingSupplement else { return }
+                            revealControls()
+                            manager.togglePlayPause()
+                        }
+
+                    if containerState.isPresentingSupplement {
+                        UIVideoPlayerContainerViewController.SupplementContainerView()
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    } else if isPresentingControls {
+                        playbackControls
+                            .transition(.opacity)
+                    }
+                }
+                // `PlaybackButtons`, `PlaybackProgress` and the supplements read
+                // these boxes as environment objects. Omitting them traps at
+                // runtime the moment the overlay is presented.
+                .environmentObject(containerState.scrubbedSeconds)
+                .environmentObject(containerState.centerOffsetBox)
+            }
+            .background(Color.black)
+            .clipped()
+            .onChange(of: containerState.isPresentingOverlay) {
+                MacWindowState.shared.setCursorHidden(!containerState.isPresentingOverlay)
+            }
+            .onAppear {
+                // Mirrors the UIKit container's `viewDidAppear`: start with the
+                // controls visible so playback never opens to a bare surface.
+                containerState.isPresentingOverlay = true
+            }
+            .onDisappear {
+                MacWindowState.shared.setCursorHidden(false)
+            }
+            // Applied inside the environment injections so the modifier body can
+            // read them, and outside `playbackControls` so shortcuts keep working
+            // while the overlay is hidden.
+            .modifier(VideoPlayer.KeyCommandsModifier())
+            .environmentObject(containerState)
+            .environmentObject(manager)
+        }
+    }
+
+    final class UIVideoPlayerContainerViewController: NSObject {
+
+        func presentSupplementContainer(
+            _ didPresent: Bool,
+            with panningState: (translation: CGFloat, velocity: CGFloat)? = nil,
+            presentationStyle: MediaPlayerSupplementPresentationStyle? = nil
+        ) {}
+    }
 }
 #endif

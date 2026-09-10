@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+#if !os(macOS)
 import SwiftUI
 
 protocol _PanHandlingAction {
@@ -71,3 +72,4 @@ struct PanHandlingAction<Value: Comparable & AdditiveArithmetic>: _PanHandlingAc
         self.onChange = onChange
     }
 }
+#endif

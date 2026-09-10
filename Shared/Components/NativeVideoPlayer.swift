@@ -11,14 +11,15 @@ import FactoryKit
 import JellyfinAPI
 import Logging
 import SwiftUI
-import Transmission
 
 // TODO: remove
 
 struct NativeVideoPlayer: View {
 
+    #if !os(macOS)
     @Environment(\.presentationCoordinator)
     private var presentationCoordinator
+    #endif
 
     @InjectedObject(\.mediaPlayerManager)
     private var manager: MediaPlayerManager
@@ -50,30 +51,42 @@ struct NativeVideoPlayer: View {
             manager.start()
         }
         .prefersStatusBarHidden()
-        .onChange(of: presentationCoordinator.isPresented) {
-            Container.shared.mediaPlayerManager.reset()
-            guard !presentationCoordinator.isPresented else { return }
-            manager.stop()
-        }
-        .alert(
-            L10n.error,
-            isPresented: .constant(manager.error != nil)
-        ) {
-            Button(L10n.close, role: .cancel) {
+        #if !os(macOS)
+            .onChange(of: presentationCoordinator.isPresented) {
                 Container.shared.mediaPlayerManager.reset()
-                router.dismiss()
+                guard !presentationCoordinator.isPresented else { return }
+                manager.stop()
             }
-        } message: {
-            Text(L10n.unableToLoadThisItem)
-        }
-        .onFinalDisappear {
-            manager.stop()
-        }
+        #endif
+            .alert(
+                    L10n.error,
+                    isPresented: .constant(manager.error != nil)
+                ) {
+                    Button(L10n.close, role: .cancel) {
+                        Container.shared.mediaPlayerManager.reset()
+                        router.dismiss()
+                    }
+                } message: {
+                    Text(L10n.unableToLoadThisItem)
+                }
+                .onFinalDisappear {
+                    manager.stop()
+                }
     }
 }
 
 extension NativeVideoPlayer {
 
+    #if os(macOS)
+    private struct NativeVideoPlayerView: View {
+
+        let proxy: AVMediaPlayerProxy
+
+        var body: some View {
+            proxy.videoPlayerBody
+        }
+    }
+    #else
     private struct NativeVideoPlayerView: PlatformViewControllerRepresentable {
 
         let proxy: AVMediaPlayerProxy
@@ -111,4 +124,5 @@ extension NativeVideoPlayer {
             fatalError("init(coder:) has not been implemented")
         }
     }
+    #endif
 }

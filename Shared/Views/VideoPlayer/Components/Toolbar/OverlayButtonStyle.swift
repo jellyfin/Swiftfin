@@ -13,7 +13,7 @@ extension VideoPlayer.PlaybackControls {
     struct OverlayButtonStyleModifier: ViewModifier {
 
         func body(content: Content) -> some View {
-            if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
+            if #available(iOS 26.0, macOS 26.0, tvOS 26.0, *), UIDevice.supportsLiquidGlass {
                 content
                     .buttonStyle(OverlayGlassButtonStyle())
                     .buttonBorderShape(.circle)
@@ -29,11 +29,11 @@ extension VideoPlayer.PlaybackControls {
         func makeBody(configuration: Configuration) -> some View {
             Menu(configuration)
                 .menuStyle(.button)
-                #if os(tvOS)
+            #if os(tvOS)
                 .modifier(OverlayButtonStyleModifier())
-                #else
+            #else
                 .buttonStyle(OverlayButtonStyle(isMenu: true))
-                #endif
+            #endif
                 .symbolRenderingMode(.monochrome)
                 .foregroundStyle(.primary, .secondary)
         }
@@ -60,7 +60,7 @@ extension VideoPlayer.PlaybackControls {
         }
     }
 
-    @available(iOS 26.0, tvOS 26.0, *)
+    @available(iOS 26.0, macOS 26.0, tvOS 26.0, *)
     struct OverlayGlassButtonStyle: PrimitiveButtonStyle {
 
         @EnvironmentObject
@@ -122,10 +122,10 @@ extension VideoPlayer.PlaybackControls {
                 }
                 .animation(.linear(duration: 0.1).delay(configuration.isPressed ? 0.2 : 0), value: configuration.isPressed)
                 .padding(4)
-                #if os(tvOS)
+            #if os(tvOS)
                 .backport
                 .glassEffect(.regular.tint(isFocused ? .white : nil), in: .circle)
-                #endif
+            #endif
                 .onChange(of: configuration.isPressed) {
                     // Button menus remain pressed until the entire menu hierarchy dismisses.
                     if isMenu {

@@ -85,7 +85,7 @@ struct VideoPlayerSettingsView: View {
     // MARK: - Body
 
     var body: some View {
-        Form(systemImage: "tv") {
+        SwiftfinForm(systemImage: "tv") {
             engineSettings
 
             #if os(iOS)
@@ -132,12 +132,12 @@ struct VideoPlayerSettingsView: View {
     @ViewBuilder
     private var engineSettings: some View {
         Section(L10n.playback) {
-            #if os(iOS)
-            videoPlayerPicker
-            #else
+            #if os(tvOS)
             ListRowMenu(L10n.player, subtitle: videoPlayerType.displayTitle) {
                 videoPlayerPicker
             }
+            #else
+            videoPlayerPicker
             #endif
 
             ChevronButton(L10n.playbackQuality) {

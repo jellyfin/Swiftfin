@@ -7,6 +7,8 @@
 //
 
 import SwiftUI
+
+#if !os(macOS)
 import UIKit
 
 /// `TabView` has an "overscroll" bug on some index selections, workaround with manual `UIPageViewController`
@@ -17,6 +19,29 @@ struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControl
 
     @ViewBuilder
     let content: (Item) -> Content
+    init(
+        items: [Item],
+        selection: Item.ID?,
+        onPresentedSelectionChange: @escaping (Item.ID?) -> Void,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) {
+        self.items = items
+        self.selection = Binding(
+            get: { selection },
+            set: onPresentedSelectionChange
+        )
+        self.content = content
+    }
+
+    init(
+        items: [Item],
+        selection: Binding<Item.ID?>,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) {
+        self.items = items
+        self.selection = selection
+        self.content = content
+    }
 
     func makeUIViewController(context: Context) -> UIPageViewController {
         let controller = UIPageViewController(
@@ -209,3 +234,40 @@ struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControl
         }
     }
 }
+#else
+struct SupplementTabView<Item: Identifiable, Content: View>: View {
+
+    let items: [Item]
+    let selection: Item.ID?
+    let onPresentedSelectionChange: (Item.ID?) -> Void
+
+    @ViewBuilder
+    let content: (Item) -> Content
+    init(
+        items: [Item],
+        selection: Item.ID?,
+        onPresentedSelectionChange: @escaping (Item.ID?) -> Void,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) {
+        self.items = items
+        self.selection = selection
+        self.onPresentedSelectionChange = onPresentedSelectionChange
+        self.content = content
+    }
+
+    var body: some View {
+        TabView(
+            selection: Binding(
+                get: { selection },
+                set: onPresentedSelectionChange
+            )
+        ) {
+            ForEach(items) { item in
+                content(item)
+                    .tag(Optional(item.id))
+            }
+        }
+        .tabViewStyle(.automatic)
+    }
+}
+#endif

@@ -87,7 +87,9 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2.fill"
         case .autoPlay: usesLiquidGlassSymbols ? "play.fill" : "play.circle.fill"
+        #if os(iOS)
         case .gestureLock: usesLiquidGlassSymbols ? "lock.fill" : "lock.circle.fill"
+        #endif
         case .playbackSpeed: "speedometer"
         case .playbackSettings: usesLiquidGlassSymbols ? "tv" : "tv.circle.fill"
         case .playNextItem: usesLiquidGlassSymbols ? "forward.end.fill" : "forward.end.circle.fill"
@@ -106,7 +108,9 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             } else {
                 "stop.circle"
             }
+        #if os(iOS)
         case .gestureLock: "lock.open.fill"
+        #endif
         case .subtitles: "captions.bubble"
         default:
             systemImage

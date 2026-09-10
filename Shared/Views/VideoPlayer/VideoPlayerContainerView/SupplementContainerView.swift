@@ -87,9 +87,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             }
             #if os(iOS)
             .background {
-                    GestureView()
-                        .environment(\.panGestureDirection, .vertical)
-                }
+                GestureView()
+                    .environment(\.panGestureDirection, .vertical)
+            }
             #endif
         }
 
@@ -171,10 +171,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         selection: containerState.selectedSupplement?.id,
                         onPresentedSelectionChange: { id in
                             let supplement = id.flatMap { currentSupplements[id: $0] }
-                            containerState.containerView?.presentSupplementContainer(
-                                supplement != nil,
-                                presentationStyle: supplement?.presentationStyle
-                            )
+                            containerState.select(supplement: supplement?.supplement)
                         }
                     ) { supplement in
                         supplementContainer(for: supplement.supplement)
