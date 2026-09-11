@@ -68,23 +68,6 @@ extension VideoPlayerType {
 
         DirectPlayProfile(type: .video) {
             AudioCodec.aac
-            AudioCodec.ac3
-            AudioCodec.eac3
-            AudioCodec.mp3
-        } videoCodecs: {
-
-            VideoCodec.h264
-
-            if PlaybackCapabilities.supportsHEVC {
-                VideoCodec.hevc
-            }
-
-        } containers: {
-            MediaContainer.mpegts
-        }
-
-        DirectPlayProfile(type: .video) {
-            AudioCodec.aac
             AudioCodec.amr_nb
         } videoCodecs: {
             VideoCodec.h264
