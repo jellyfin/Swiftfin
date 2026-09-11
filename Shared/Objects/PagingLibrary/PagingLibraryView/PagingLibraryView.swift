@@ -99,6 +99,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 }
             }
             .proxy(gridProxy)
+            .onRefresh {
+                await viewModel.background.refresh()
+            }
             .ignoresSafeArea(edges: .vertical)
         }
         .scrollIndicators(.hidden)
@@ -169,7 +172,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero) ==
                 Element.layout(for: newStyle, options: libraryStyleOptions, insets: .zero)
             {
-                gridProxy.layout()
+                gridProxy.redraw()
             }
         }
         .onReceive(viewModel.events) { event in

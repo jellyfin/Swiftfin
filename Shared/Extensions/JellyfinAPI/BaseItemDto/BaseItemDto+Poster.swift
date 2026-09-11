@@ -45,7 +45,7 @@ extension BaseItemDto: Poster {
         case .episode:
             seasonEpisodeLabel
         case .person:
-            people?.first?.firstRole
+            people?.first?.displayRole
         case .video:
             extraType?.displayTitle
         default:

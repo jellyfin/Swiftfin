@@ -130,7 +130,7 @@ private struct BaseItemDtoLibraryListElement: View {
         }
         .matchedTransitionSource(id: "item", in: namespace)
         #if os(tvOS)
-            .focusedValue(\.focusedPoster, AnyPoster(item))
+        .focusedValue(\.focusedPoster, AnyPoster(item))
         #endif
     }
 

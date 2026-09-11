@@ -39,12 +39,12 @@ struct MediaStreamInfoView: View {
         }
         .labeledContentStyle(.focusable)
         #if os(iOS)
-            // tvOS shares this view with another so this title updates with focus and overrides that title
-                .navigationTitle(mediaStream.displayTitle ?? L10n.media)
-                .toolbarTitleDisplayMode(.inline)
-                .topBarTrailing {
-                    mediaStream.shareLink
-                }
+        // tvOS shares this view with another so this title updates with focus and overrides that title
+        .navigationTitle(mediaStream.displayTitle ?? L10n.media)
+        .toolbarTitleDisplayMode(.inline)
+        .topBarTrailing {
+            mediaStream.shareLink
+        }
         #endif
     }
 }

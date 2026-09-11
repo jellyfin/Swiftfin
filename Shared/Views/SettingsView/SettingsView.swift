@@ -21,9 +21,6 @@ struct SettingsView: View {
     @Default(.userAccentColor)
     private var accentColor
 
-    @Default(.VideoPlayer.videoPlayerType)
-    private var videoPlayerType
-
     @Injected(\.userSessionManager)
     private var userSessionManager: UserSessionManager
 
@@ -38,15 +35,14 @@ struct SettingsView: View {
     var body: some View {
         Form(image: .jellyfinBlobBlue) {
             serverSection
-            videoPlayerSection
             customizeSection
             diagnosticsSection
         }
         #if os(iOS)
         .navigationTitle(L10n.settings)
-        .navigationBarCloseButton {
-            router.dismiss()
-        }
+            .navigationBarCloseButton {
+                router.dismiss()
+            }
         #endif
     }
 
@@ -105,45 +101,15 @@ struct SettingsView: View {
             .listRowInsets(.zero)
             .listRowBackground(Color.clear)
             #if os(iOS)
-                .listRowSeparator(.hidden)
+            .listRowSeparator(.hidden)
             #endif
-                .fontWeight(.semibold)
-                .backport
-                .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
+            .fontWeight(.semibold)
+            .backport
+            .buttonStyle(.glassProminent.shadow(false))
+            .tint(accentColor)
             #if os(iOS)
-                .controlSize(.large)
+            .controlSize(.large)
             #endif
-        }
-    }
-
-    // MARK: - Video Player Section
-
-    @ViewBuilder
-    private var videoPlayerSection: some View {
-        Section(L10n.videoPlayer) {
-            #if os(iOS)
-            Picker(L10n.videoPlayerType, selection: $videoPlayerType)
-            #else
-            ListRowMenu(L10n.videoPlayerType, selection: $videoPlayerType)
-            #endif
-
-            ChevronButton(L10n.videoPlayer) {
-                router.route(to: .videoPlayerSettings)
-            }
-
-            ChevronButton(L10n.playbackQuality) {
-                router.route(to: .playbackQualitySettings)
-            }
-        } learnMore: {
-            LabeledContent(
-                L10n.swiftfin,
-                value: L10n.playerSwiftfinDescription
-            )
-            LabeledContent(
-                L10n.native,
-                value: L10n.playerNativeDescription
-            )
         }
     }
 

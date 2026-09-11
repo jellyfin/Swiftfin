@@ -52,7 +52,7 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
         }
         .buttonBorderShape(.capsule)
         #if os(tvOS)
-            .buttonStyle(.card)
+        .buttonStyle(.card)
         #endif
     }
 

@@ -241,3 +241,10 @@ extension CharacterSet {
     // Character that appears on tvOS with voice input
     static var objectReplacement: CharacterSet = .init(charactersIn: "\u{fffc}")
 }
+
+extension StringProtocol {
+
+    func trimmingCharacters(in string: String) -> String {
+        trimmingCharacters(in: CharacterSet(charactersIn: string))
+    }
+}

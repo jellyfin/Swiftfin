@@ -6,9 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import CryptoKit
+import Foundation
 import JellyfinAPI
-
-// TODO: may need some changes for AVPlayer
 
 struct MediaTrackIndexMap {
 
@@ -27,16 +27,9 @@ struct MediaTrackIndexMap {
         playerIndexesByJellyfinIndex[jellyfinIndex] = playerIndex
     }
 
-    /// Builds a mapping from Jellyfin's global stream indexes to VLC's container-position indexes.
-    ///
-    /// Jellyfin assigns a single global index across all streams (video, audio, subtitle — internal and external).
-    /// VLC numbers tracks by their position within the actual media container, starting at 0.
-    ///
-    /// Called at init time — before VLC has loaded the media. Sidecar subtitle indexes are estimated here
-    /// but finalized later by `resolvingPlaybackChildren` once the player reports its actual track list.
-    ///
-    ///  - `Transcode`: The HLS container has exactly 1 video (index 0) and 1 audio (index 1).
-    ///  - `DirectPlay`: Jellyfin lists external tracks first, offsetting all internal container indexes by that count.
+    /// Maps Jellyfin stream indexes to positions in each player track array.
+    /// Embedded tracks keep their order; transcoding exposes only the selected audio track.
+    /// Sidecar subtitles are resolved after loading.
     static func build(
         from mediaStreams: [MediaStream],
         for playMethod: PlayMethod,
@@ -45,90 +38,46 @@ struct MediaTrackIndexMap {
         var indexMap = MediaTrackIndexMap()
 
         if playMethod == .transcode {
-            var containerTracks: [MediaStream] = []
+            let audioStreams = mediaStreams.filter { $0.type == .audio && $0.isExternal != true }
 
-            let videoTracks = mediaStreams.filter { $0.type == .video && !($0.isExternal == true) }
-            let audioTracks = mediaStreams.filter { $0.type == .audio && !($0.isExternal == true) }
-
-            if let firstVideo = videoTracks.first {
-                containerTracks.append(firstVideo)
-            }
-            if let selectedAudio = audioTracks.first(where: { $0.index == selectedAudioStreamIndex }) {
-                containerTracks.append(selectedAudio)
-            }
-
-            for (newIndex, track) in containerTracks.enumerated() {
-                guard let oldIndex = track.index else { continue }
-                indexMap.setPlayerIndex(newIndex, for: oldIndex)
-            }
-
-            let playbackChildStartIndex = containerTracks.count
-            let sidecarSubtitles = mediaStreams.sidecarSubtitles
-
-            for (offset, track) in sidecarSubtitles.enumerated() {
-                guard let oldIndex = track.index else { continue }
-                let playerIndex = playbackChildStartIndex + offset
-                indexMap.setPlayerIndex(playerIndex, for: oldIndex)
+            if let jellyfinIndex = audioStreams.first(where: { $0.index == selectedAudioStreamIndex })?.index {
+                indexMap.setPlayerIndex(0, for: jellyfinIndex)
             }
         } else {
-            let externalCount = mediaStreams.count(where: { $0.isExternal == true })
-            let internalTracks = mediaStreams.filter { $0.isExternal == false }
+            let embeddedAudioStreams = mediaStreams.filter { $0.type == .audio && $0.isExternal != true }
+            let embeddedSubtitleStreams = mediaStreams.filter { $0.type == .subtitle && $0.isExternal != true }
 
-            for track in internalTracks {
-                guard let oldIndex = track.index else { continue }
-                let playerIndex = oldIndex - externalCount
-                indexMap.setPlayerIndex(playerIndex, for: oldIndex)
+            for (playerIndex, stream) in embeddedAudioStreams.enumerated() {
+                guard let jellyfinIndex = stream.index else { continue }
+                indexMap.setPlayerIndex(playerIndex, for: jellyfinIndex)
+            }
+
+            for (playerIndex, stream) in embeddedSubtitleStreams.enumerated() {
+                guard let jellyfinIndex = stream.index else { continue }
+                indexMap.setPlayerIndex(playerIndex, for: jellyfinIndex)
             }
         }
 
         return indexMap
     }
 
-    /// Updates the index map with real player indexes for sidecar subtitles.
-    ///
-    /// Called after VLC reports its actual track list. Sidecar subtitles are loaded as "playback children"
-    /// at runtime, so their player-assigned indexes aren't known until the player is running.
-    ///
-    ///  - `Transcode`: HLS has no embedded subtitles, so all reported subtitle tracks are sidecars — matched sequentially.
-    ///  - `DirectPlay`: Container subtitles are already mapped. The remaining unmapped tracks are sidecars.
-    func resolvingPlaybackChildren(
-        _ playbackChildren: [MediaStream],
-        subtitleTracks: [(index: Int, title: String)],
-        isTranscoding: Bool
+    /// Maps each sidecar to its loaded subtitle track.
+    func resolvingSidecarSubtitles(
+        _ sidecars: [(jellyfinIndex: Int, url: URL)],
+        subtitleTracks: [(playerIndex: Int, id: String)]
     ) -> MediaTrackIndexMap {
-        guard playbackChildren.isNotEmpty else { return self }
+        var resolvedMap = self
 
-        var updatedMap = self
-
-        let playerIndexes = subtitleTracks
-            .map(\.index)
-            .filter { $0 >= 0 }
-            .sorted()
-
-        if isTranscoding {
-            for (offset, playerIndex) in playerIndexes.enumerated() {
-                guard offset < playbackChildren.count,
-                      let jellyfinIndex = playbackChildren[offset].index
-                else { continue }
-
-                updatedMap.setPlayerIndex(playerIndex, for: jellyfinIndex)
-            }
-        } else {
-            let mappedIndexes = Set(playerIndexesByJellyfinIndex.values)
-            let unmappedIndexes = playerIndexes
-                .filter { !mappedIndexes.contains($0) }
-
-            let externalIndexes: [Int] = Array(unmappedIndexes.suffix(playbackChildren.count))
-
-            for (offset, stream) in playbackChildren.enumerated() {
-                guard let jellyfinIndex = stream.index else { continue }
-
-                if offset < externalIndexes.count {
-                    updatedMap.setPlayerIndex(externalIndexes[offset], for: jellyfinIndex)
-                }
-            }
+        for subtitle in sidecars {
+            // Match libVLC's MD5(full URL)/spu/... track IDs in SwiftVLC 1.0.0.
+            // https://github.com/videolan/vlc/blob/c833c4be0/src/input/input.c#L2742-L2765
+            let urlHash = Insecure.MD5.hash(data: Data(subtitle.url.absoluteString.utf8))
+                .map { String(format: "%02x", $0) }.joined()
+            resolvedMap.playerIndexesByJellyfinIndex[subtitle.jellyfinIndex] = subtitleTracks.first {
+                $0.playerIndex >= 0 && $0.id.hasPrefix("\(urlHash)/spu/")
+            }?.playerIndex
         }
 
-        return updatedMap
+        return resolvedMap
     }
 }
