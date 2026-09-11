@@ -10,8 +10,9 @@ import Defaults
 import Foundation
 import JellyfinAPI
 import SwiftUI
-import VLCUI
+import SwiftVLC
 
+@MainActor
 class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     MediaPlayerOffsetConfigurable,
     MediaPlayerSubtitleConfigurable
@@ -21,7 +22,9 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
     let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
-    let vlcUIProxy: VLCVideoPlayer.Proxy = .init()
+    let player = Player()
+
+    private var pendingStartTime: Duration?
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -36,15 +39,25 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     ]
 
     func play() {
-        vlcUIProxy.play()
+        if player.state == .paused {
+            player.resume()
+        } else {
+            do {
+                try player.play()
+            } catch {
+                failPlayback(error)
+            }
+        }
     }
 
     func pause() {
-        vlcUIProxy.pause()
+        player.pause()
     }
 
     func stop() {
-        vlcUIProxy.stop()
+        pendingStartTime = nil
+        isBuffering.value = false
+        player.stop()
     }
 
     func jumpForward(_ seconds: Duration) {
@@ -59,57 +72,153 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
 
         guard target > .zero else { return }
 
-        vlcUIProxy.jumpForward(target)
+        player.jump(by: target)
     }
 
     func jumpBackward(_ seconds: Duration) {
-        vlcUIProxy.jumpBackward(seconds)
+        player.jump(by: .zero - seconds)
     }
 
     func setRate(_ rate: Float) {
-        vlcUIProxy.setRate(.absolute(rate))
+        do {
+            try player.setPlaybackRate(PlaybackRate(rate))
+        } catch {
+            log(error)
+        }
     }
 
     func setSeconds(_ seconds: Duration) {
-        vlcUIProxy.setSeconds(seconds)
+        guard player.isSeekable else { return }
+
+        pendingStartTime = nil
+
+        do {
+            try player.seek(to: seconds)
+        } catch {
+            log(error)
+        }
     }
 
     func setAudioStream(_ stream: MediaStream) {
-        vlcUIProxy.setAudioTrack(.absolute(stream.index ?? -1))
+        guard let index = stream.index, player.audioTracks.indices.contains(index) else {
+            player.selectedAudioTrack = nil
+            return
+        }
+
+        let track = player.audioTracks[index]
+        guard player.selectedAudioTrack != track else { return }
+        player.selectedAudioTrack = track
     }
 
     func setSubtitleStream(_ stream: MediaStream) {
-        vlcUIProxy.setSubtitleTrack(.absolute(stream.index ?? -1))
+        guard let index = stream.index, player.subtitleTracks.indices.contains(index) else {
+            player.selectedSubtitleTrack = nil
+            return
+        }
+
+        let track = player.subtitleTracks[index]
+        guard player.selectedSubtitleTrack != track else { return }
+        player.selectedSubtitleTrack = track
     }
 
     func setAspectFill(_ aspectFill: Bool) {
-        vlcUIProxy.aspectFill(aspectFill ? 1 : 0)
+        player.aspectRatio = aspectFill ? .fill : .default
     }
 
     func setAudioOffset(_ seconds: Duration) {
-        vlcUIProxy.setAudioDelay(seconds)
+        do {
+            try player.setAudioDelay(seconds)
+        } catch {
+            log(error)
+        }
     }
 
     func setSubtitleOffset(_ seconds: Duration) {
-        vlcUIProxy.setSubtitleDelay(seconds)
+        do {
+            try player.setSubtitleDelay(seconds)
+        } catch {
+            log(error)
+        }
     }
 
     func setSubtitleConfiguration(_ configuration: SubtitleConfiguration) {
-        vlcUIProxy.setSubtitleColor(.absolute(configuration.color.uiColor))
-        vlcUIProxy.setSubtitleFont(configuration.fontName)
-        vlcUIProxy.setSubtitleSize(.absolute(25 - configuration.size))
+        player.setSubtitleScale(.init(approximatePoints: Double(25 - configuration.size)))
     }
 
     @ViewBuilder
     var videoPlayerBody: some View {
-        VLCPlayerView()
-            .environmentObject(vlcUIProxy)
+        VLCPlayerView(proxy: self)
+    }
+
+    private func log(_ error: Error) {
+        manager?.logger.warning("SwiftVLC operation rejected: \(error)")
+    }
+
+    private func failPlayback(_ error: Error) {
+        manager?.logger.error("SwiftVLC error: \(error)")
+        manager?.error(ErrorMessage("VLC player error: \(error.localizedDescription)"))
+    }
+
+    /// Applies the resume position as an absolute seek once libVLC has
+    /// established the media timeline. Using `:start-time` rebases some
+    /// inputs and makes the player's reported time relative to that offset.
+    @discardableResult
+    private func applyPendingStartTimeIfPossible() -> Bool {
+        guard let pendingStartTime else { return false }
+        guard player.isSeekable else { return false }
+
+        self.pendingStartTime = nil
+
+        do {
+            try player.seek(to: pendingStartTime)
+            manager?.seconds = pendingStartTime
+        } catch {
+            log(error)
+        }
+
+        return true
+    }
+
+    private func play(_ item: MediaPlayerItem, subtitleConfiguration: SubtitleConfiguration) {
+        do {
+            let media = try Media(url: item.url)
+
+            let startSeconds = max(
+                .zero,
+                (item.baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset])
+            )
+
+            pendingStartTime = !item.baseItem.isLiveStream && startSeconds > .zero ? startSeconds : nil
+
+            if let client = manager?.userSession?.client {
+                for subtitle in item.subtitleStreams.sidecarSubtitles {
+                    guard let url = subtitle.url(with: client) else { continue }
+                    try media.addSlave(from: url, type: .subtitle)
+                }
+            }
+
+            // libVLC 4 applies font and color options when opening media.
+            // Size remains adjustable during playback through SubtitleScale.
+            media.addOption(":freetype-font=\(subtitleConfiguration.fontName)")
+            if let color = Int(subtitleConfiguration.color.hexString.prefix(6), radix: 16) {
+                media.addOption(":freetype-color=\(color)")
+            }
+
+            try player.play(media)
+            setSubtitleConfiguration(subtitleConfiguration)
+        } catch {
+            pendingStartTime = nil
+            failPlayback(error)
+        }
     }
 }
 
 extension VLCMediaPlayerProxy {
 
     struct VLCPlayerView: View {
+
+        @ObservedObject
+        var proxy: VLCMediaPlayerProxy
 
         @Default(.VideoPlayer.Subtitle.configuration)
         private var subtitleConfiguration
@@ -118,114 +227,100 @@ extension VLCMediaPlayerProxy {
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var proxy: VLCVideoPlayer.Proxy
 
         private var isScrubbing: Bool {
             containerState.isScrubbing
         }
 
-        private func vlcConfiguration(for item: MediaPlayerItem) -> VLCVideoPlayer.Configuration {
-            let baseItem = item.baseItem
-            let mediaSource = item.mediaSource
-
-            var configuration = VLCVideoPlayer.Configuration(url: item.url)
-            configuration.autoPlay = true
-
-            let startSeconds = max(.zero, (baseItem.startSeconds ?? .zero) - Duration.seconds(Defaults[.VideoPlayer.resumeOffset]))
-
-            if !baseItem.isLiveStream {
-                configuration.startSeconds = startSeconds
-
-                let subtitleIndex = item.indexMap.playerIndex(for: item.selectedSubtitleStreamIndex) ?? -1
-
-                if mediaSource.transcodingURL != nil {
-                    configuration.audioIndex = .auto
-                } else {
-                    let audioIndex = item.indexMap.playerIndex(for: item.selectedAudioStreamIndex) ?? -1
-                    configuration.audioIndex = .absolute(audioIndex)
-                }
-
-                configuration.subtitleIndex = .absolute(subtitleIndex)
-            }
-
-            let subtitleConfiguration = Defaults[.VideoPlayer.Subtitle.configuration]
-            configuration.subtitleSize = .absolute(25 - subtitleConfiguration.size)
-            configuration.subtitleColor = .absolute(subtitleConfiguration.color.uiColor)
-            configuration.rate = .absolute(Defaults[.VideoPlayer.Playback.playbackRate])
-            if let font = UIFont(name: subtitleConfiguration.fontName, size: 1) {
-                configuration.subtitleFont = .absolute(font)
-            }
-
-            configuration.playbackChildren = item.subtitleStreams.sidecarSubtitles
-                .compactMap(\.asVLCPlaybackChild)
-
-            return configuration
-        }
-
         var body: some View {
             if let playbackItem = manager.playbackItem, manager.state != .stopped {
-                VLCVideoPlayer(configuration: vlcConfiguration(for: playbackItem))
-                    .proxy(proxy)
-                    .onSecondsUpdated { newSeconds, info in
+                VideoView(proxy.player)
+                    .task(id: ObjectIdentifier(playbackItem)) {
+                        proxy.play(playbackItem, subtitleConfiguration: subtitleConfiguration)
+                    }
+                    .onChange(of: proxy.player.currentTime) { _, newSeconds in
+                        // Ignore an initial or already superseded timestamp while
+                        // the absolute resume seek is being established.
+                        guard proxy.player.state == .playing || proxy.player.state == .paused,
+                              !proxy.applyPendingStartTimeIfPossible(),
+                              newSeconds == proxy.player.currentTime
+                        else { return }
+
                         if !isScrubbing {
                             containerState.scrubbedSeconds.value = newSeconds
                         }
 
                         manager.seconds = newSeconds
+                        if proxy.player.state == .playing {
+                            proxy.isBuffering.value = false
+                        }
 
-                        if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
-                            proxy.videoSize.value = info.videoSize
-                            proxy.droppedFrames.value = info.statistics.lostPictures
-                            proxy.corruptedFrames.value = info.statistics.demuxCorrupted
+                        proxy.videoSize.value = proxy.player.videoSize ?? .zero
+                        if let statistics = proxy.player.statistics {
+                            proxy.droppedFrames.value = Int(clamping: statistics.lostPictures)
+                            proxy.corruptedFrames.value = Int(clamping: statistics.demuxCorrupted)
                         }
                     }
-                    .onStateUpdated { state, info in
-                        manager.logger.trace("VLC state updated: \(state)")
+                    .onChange(of: proxy.player.state) { _, state in
+                        manager.logger.trace("SwiftVLC state updated: \(state)")
 
                         switch state {
-                        case .buffering,
-                             .esAdded,
-                             .opening:
-                            // TODO: figure out when to properly set to false
-                            manager.proxy?.isBuffering.value = true
-                        case .ended:
-                            // Live streams will send stopped/ended events
-                            guard manager.playbackItem?.baseItem.isLiveStream == false else { return }
-                            manager.proxy?.isBuffering.value = false
-                            manager.ended()
-                        case .stopped: ()
-                        // Stopped is ignored as the `MediaPlayerManager`
-                        // should instead call this to be stopped, rather
-                        // than react to the event.
+                        case .buffering, .opening:
+                            proxy.isBuffering.value = true
                         case .error:
-                            manager.proxy?.isBuffering.value = false
+                            proxy.isBuffering.value = false
                             manager.error(ErrorMessage("VLC player is unable to perform playback"))
                         case .playing:
-                            manager.proxy?.isBuffering.value = false
+                            proxy.applyPendingStartTimeIfPossible()
+                            proxy.isBuffering.value = false
                             manager.setPlaybackRequestStatus(status: .playing)
-
-                            let tracks = info.subtitleTracks.map { (index: $0.index, title: $0.title) }
-                            manager.playbackItem?.getSubtitleIndexes(subtitleTracks: tracks)
+                            proxy.setRate(manager.rate)
+                            playbackItem.switchTrack(type: .audio, index: playbackItem.selectedAudioStreamIndex)
+                            playbackItem.switchTrack(type: .subtitle, index: playbackItem.selectedSubtitleStreamIndex)
                         case .paused:
+                            proxy.isBuffering.value = false
                             manager.setPlaybackRequestStatus(status: .paused)
+                        case .idle, .stopped, .stopping: ()
                         }
 
-                        if let proxy = manager.proxy as? any VideoMediaPlayerProxy {
-                            proxy.videoSize.value = info.videoSize
+                        proxy.videoSize.value = proxy.player.videoSize ?? .zero
+                    }
+                    .onChange(of: proxy.player.bufferFill) { _, fill in
+                        guard proxy.player.state == .playing else { return }
+                        if fill < 0.9 {
+                            proxy.isBuffering.value = true
+                        } else if fill >= 1 {
+                            proxy.isBuffering.value = false
                         }
                     }
-                    .onReceive(manager.$playbackItem) { playbackItem in
-                        guard let playbackItem else { return }
-                        proxy.playNewMedia(vlcConfiguration(for: playbackItem))
+                    .onChange(of: proxy.player.isSeekable) { _, isSeekable in
+                        guard isSeekable else { return }
+                        proxy.applyPendingStartTimeIfPossible()
+                    }
+                    .onChange(of: proxy.player.didReachEnd) { _, didReachEnd in
+                        guard didReachEnd, manager.playbackItem?.baseItem.isLiveStream == false else { return }
+                        // libVLC resets its clock on stop. Report the completed
+                        // timeline before the manager decides whether to advance.
+                        if let runtime = playbackItem.baseItem.runtime {
+                            manager.seconds = runtime
+                        }
+                        proxy.isBuffering.value = false
+                        manager.ended()
+                    }
+                    .onChange(of: proxy.player.audioTracks) {
+                        playbackItem.switchTrack(type: .audio, index: playbackItem.selectedAudioStreamIndex)
+                    }
+                    .onChange(of: proxy.player.subtitleTracks) {
+                        let subtitleTracks = proxy.player.subtitleTracks.enumerated().map {
+                            (playerIndex: $0.offset, id: $0.element.id)
+                        }
+                        playbackItem.updateSubtitleTrackMapping(subtitleTracks: subtitleTracks)
                     }
                     .onChange(of: manager.rate) {
-                        proxy.setRate(.absolute(manager.rate))
+                        proxy.setRate(manager.rate)
                     }
                     .onChange(of: subtitleConfiguration) {
-                        if let proxy = proxy as? MediaPlayerSubtitleConfigurable {
-                            proxy.setSubtitleConfiguration(subtitleConfiguration)
-                        }
+                        proxy.setSubtitleConfiguration(subtitleConfiguration)
                     }
             }
         }

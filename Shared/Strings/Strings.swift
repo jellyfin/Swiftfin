@@ -286,8 +286,6 @@ internal enum L10n {
   internal static let chapters = L10n.tr("Localizable", "chapters", fallback: "Chapters")
   /// Chapter slider
   internal static let chapterSlider = L10n.tr("Localizable", "chapterSlider", fallback: "Chapter slider")
-  /// Cinematic background
-  internal static let cinematicBackground = L10n.tr("Localizable", "cinematicBackground", fallback: "Cinematic background")
   /// Client
   internal static let client = L10n.tr("Localizable", "client", fallback: "Client")
   /// Clip
@@ -478,8 +476,6 @@ internal enum L10n {
   internal static let `default` = L10n.tr("Localizable", "default", fallback: "Default")
   /// Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.
   internal static let defaultFailedLoginDescription = L10n.tr("Localizable", "defaultFailedLoginDescription", fallback: "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.")
-  /// Default layout
-  internal static let defaultLayout = L10n.tr("Localizable", "defaultLayout", fallback: "Default layout")
   /// Delete
   internal static let delete = L10n.tr("Localizable", "delete", fallback: "Delete")
   /// Failed to delete device
@@ -770,8 +766,6 @@ internal enum L10n {
   internal static let hexColor = L10n.tr("Localizable", "hexColor", fallback: "Hex color")
   /// Hidden
   internal static let hidden = L10n.tr("Localizable", "hidden", fallback: "Hidden")
-  /// Hide played in Latest
-  internal static let hidePlayedInLatest = L10n.tr("Localizable", "hidePlayedInLatest", fallback: "Hide played in Latest")
   /// Hide user from login screen
   internal static let hideUserFromLoginScreen = L10n.tr("Localizable", "hideUserFromLoginScreen", fallback: "Hide user from login screen")
   /// Hint
@@ -906,8 +900,6 @@ internal enum L10n {
   internal static let level = L10n.tr("Localizable", "level", fallback: "Level")
   /// Libraries
   internal static let libraries = L10n.tr("Localizable", "libraries", fallback: "Libraries")
-  /// Library
-  internal static let library = L10n.tr("Localizable", "library", fallback: "Library")
   /// License
   internal static let license = L10n.tr("Localizable", "license", fallback: "License")
   /// Light
@@ -1040,6 +1032,8 @@ internal enum L10n {
   internal static let movie = L10n.tr("Localizable", "movie", fallback: "Movie")
   /// Movies
   internal static let movies = L10n.tr("Localizable", "movies", fallback: "Movies")
+  /// MPV
+  internal static let mpv = L10n.tr("Localizable", "mpv", fallback: "MPV")
   /// Multi tap
   internal static let multiTap = L10n.tr("Localizable", "multiTap", fallback: "Multi tap")
   /// Music
@@ -1210,10 +1204,12 @@ internal enum L10n {
   internal static let playDefaultTrackDescription = L10n.tr("Localizable", "playDefaultTrackDescription", fallback: "Always plays the first track marked as Default, even if not in your language.")
   /// Played
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
+  /// Player
+  internal static let player = L10n.tr("Localizable", "player", fallback: "Player")
   /// Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.
   internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.")
-  /// Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.
-  internal static let playerSwiftfinDescription = L10n.tr("Localizable", "playerSwiftfinDescription", fallback: "Uses VLC's VLCKit to provide compatibility with nearly any file type. However, VLCKit cannot use HomePod or AirPlay-enabled speakers, HDR, Picture in Picture, or AirPlay casting.")
+  /// Uses SwiftVLC and libVLC 4 to provide compatibility with nearly any file type.
+  internal static let playerVlcDescription = L10n.tr("Localizable", "playerVlcDescription", fallback: "Uses SwiftVLC and libVLC 4 to provide compatibility with nearly any file type.")
   /// Play From beginning
   internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From beginning")
   /// Playlist
@@ -1804,8 +1800,6 @@ internal enum L10n {
   internal static let userView = L10n.tr("Localizable", "userView", fallback: "User view")
   /// User views
   internal static let userViews = L10n.tr("Localizable", "userViews", fallback: "User views")
-  /// Use series image for episodes
-  internal static let useSeriesImageForEpisodes = L10n.tr("Localizable", "useSeriesImageForEpisodes", fallback: "Use series image for episodes")
   /// Use series thumb
   internal static let useSeriesThumb = L10n.tr("Localizable", "useSeriesThumb", fallback: "Use series thumb")
   /// Use splashscreen
@@ -1832,8 +1826,6 @@ internal enum L10n {
   internal static let videoLevelNotSupported = L10n.tr("Localizable", "videoLevelNotSupported", fallback: "The video level is not supported")
   /// Video player
   internal static let videoPlayer = L10n.tr("Localizable", "videoPlayer", fallback: "Video player")
-  /// Video player type
-  internal static let videoPlayerType = L10n.tr("Localizable", "videoPlayerType", fallback: "Video player type")
   /// The video profile is not supported
   internal static let videoProfileNotSupported = L10n.tr("Localizable", "videoProfileNotSupported", fallback: "The video profile is not supported")
   /// Video range type
@@ -1854,6 +1846,8 @@ internal enum L10n {
   internal static let videoTranscoding = L10n.tr("Localizable", "videoTranscoding", fallback: "Video transcoding")
   /// Some views may need an app restart to update.
   internal static let viewsMayRequireRestart = L10n.tr("Localizable", "viewsMayRequireRestart", fallback: "Some views may need an app restart to update.")
+  /// VLC
+  internal static let vlc = L10n.tr("Localizable", "vlc", fallback: "VLC")
   /// Volume
   internal static let volume = L10n.tr("Localizable", "volume", fallback: "Volume")
   /// Votes

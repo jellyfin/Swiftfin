@@ -37,7 +37,7 @@ struct SearchView: View {
                 }
                 #if os(tvOS)
                 .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
+                    .foregroundStyle(.secondary)
                 #endif
             }
         }

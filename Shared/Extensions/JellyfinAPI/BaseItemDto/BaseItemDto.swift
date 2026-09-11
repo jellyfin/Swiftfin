@@ -137,6 +137,30 @@ extension BaseItemDto {
         return L10n.episodeNumber(episodeNo)
     }
 
+    /// Merges crew credits
+    var mergedPeople: [BaseItemPerson]? {
+        guard let people else { return nil }
+
+        let crew = Dictionary(grouping: people.filter(\.isCrew), by: \.id)
+        var seen: Set<String> = []
+
+        return people.compactMap { person in
+            guard person.isCrew, let id = person.id, let credits = crew[id], credits.count > 1 else {
+                return person
+            }
+            guard seen.insert(id).inserted else { return nil }
+
+            let roles = credits.compactMap(\.role)
+                .filter(\.isNotEmpty)
+                .uniqued()
+                .joined(separator: " / ")
+
+            var person = person
+            person.role = roles.isEmpty ? nil : roles
+            return person
+        }
+    }
+
     var itemGenres: [ItemGenre]? {
         guard let genres else { return nil }
         return genres.map(ItemGenre.init)

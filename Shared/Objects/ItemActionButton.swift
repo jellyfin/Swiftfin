@@ -103,7 +103,7 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
         .subtitles,
         .delete
     ]
-    #if os(iOS)
-    .prepending(.editMetadata)
-    #endif
+        #if os(iOS)
+            .prepending(.editMetadata)
+        #endif
 }

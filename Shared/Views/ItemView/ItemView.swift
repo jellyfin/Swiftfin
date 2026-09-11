@@ -156,9 +156,13 @@ struct ItemView: View {
         #else
         .navigationBarMenuButton(
             isLoading: viewModel.background.is(.refreshing),
-            isHidden: !provider.item.canEdit
+            isHidden: overflow.isEmpty && menu.isEmpty
         ) {
-            EditItemMenu(item: provider.item)
+            ItemActionButtons.MenuContent(
+                provider: provider,
+                buttons: overflow,
+                menuButtons: menu
+            )
         }
         #endif
     }
