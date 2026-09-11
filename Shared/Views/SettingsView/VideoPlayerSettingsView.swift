@@ -19,6 +19,11 @@ struct VideoPlayerSettingsView: View {
     typealias PlatformPicker = Picker
     #endif
 
+    // MARK: - Player Defaults
+
+    @Default(.VideoPlayer.videoPlayerType)
+    private var videoPlayerType
+
     // MARK: - Button Defaults
 
     @Default(.VideoPlayer.jumpBackwardInterval)
@@ -81,6 +86,8 @@ struct VideoPlayerSettingsView: View {
 
     var body: some View {
         Form(systemImage: "tv") {
+            engineSettings
+
             #if os(iOS)
             gestureSettings
             #endif
@@ -108,6 +115,43 @@ struct VideoPlayerSettingsView: View {
             if viewModel.background.is(.updating) || viewModel.background.is(.refreshing) {
                 ProgressView()
             }
+        }
+    }
+
+    // MARK: - Engine Settings
+
+    @ViewBuilder
+    private var videoPlayerPicker: some View {
+        Picker(L10n.player, selection: $videoPlayerType) {
+            ForEach(VideoPlayerType.supportedCases, id: \.self) { player in
+                Text(player.displayTitle).tag(player)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var engineSettings: some View {
+        Section(L10n.playback) {
+            #if os(iOS)
+            videoPlayerPicker
+            #else
+            ListRowMenu(L10n.player, subtitle: videoPlayerType.displayTitle) {
+                videoPlayerPicker
+            }
+            #endif
+
+            ChevronButton(L10n.playbackQuality) {
+                router.route(to: .playbackQualitySettings)
+            }
+        } learnMore: {
+            LabeledContent(
+                L10n.vlc,
+                value: L10n.playerVlcDescription
+            )
+            LabeledContent(
+                L10n.native,
+                value: L10n.playerNativeDescription
+            )
         }
     }
 

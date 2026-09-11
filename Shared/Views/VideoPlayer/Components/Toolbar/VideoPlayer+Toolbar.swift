@@ -94,9 +94,9 @@ extension VideoPlayer.PlaybackControls {
             .font(.system(size: fontSize, weight: .semibold))
             .menuStyle(OverlayMenuStyle())
             #if os(iOS)
-                .background {
-                    EmptyHitTestView()
-                }
+            .background {
+                EmptyHitTestView()
+            }
             #endif
         }
     }

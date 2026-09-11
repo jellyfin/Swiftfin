@@ -29,11 +29,11 @@ extension VideoPlayer.PlaybackControls {
         func makeBody(configuration: Configuration) -> some View {
             Menu(configuration)
                 .menuStyle(.button)
-            #if os(tvOS)
+                #if os(tvOS)
                 .modifier(OverlayButtonStyleModifier())
-            #else
+                #else
                 .buttonStyle(OverlayButtonStyle(isMenu: true))
-            #endif
+                #endif
                 .symbolRenderingMode(.monochrome)
                 .foregroundStyle(.primary, .secondary)
         }
@@ -122,10 +122,10 @@ extension VideoPlayer.PlaybackControls {
                 }
                 .animation(.linear(duration: 0.1).delay(configuration.isPressed ? 0.2 : 0), value: configuration.isPressed)
                 .padding(4)
-            #if os(tvOS)
+                #if os(tvOS)
                 .backport
                 .glassEffect(.regular.tint(isFocused ? .white : nil), in: .circle)
-            #endif
+                #endif
                 .onChange(of: configuration.isPressed) {
                     // Button menus remain pressed until the entire menu hierarchy dismisses.
                     if isMenu {

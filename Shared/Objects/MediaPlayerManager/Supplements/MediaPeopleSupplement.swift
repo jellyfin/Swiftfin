@@ -124,7 +124,7 @@ extension MediaPeopleSupplement {
                     .lineLimit(1)
                     .foregroundStyle(.primary)
 
-                if let role = person.firstRole {
+                if let role = person.displayRole {
                     Text(role)
                         .font(.caption)
                         .foregroundStyle(.secondary)
