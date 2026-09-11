@@ -6,12 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
 
-extension ItemView {
+extension ItemActionButtons {
 
-    struct CastActionButton<Label: View>: View {
+    struct Cast: View {
+
+        @EnvironmentObject
+        private var provider: ItemContentGroupProvider
 
         @Router
         private var router
@@ -19,16 +21,27 @@ extension ItemView {
         @StateObject
         private var viewModel = CastViewModel()
 
-        let provider: MediaPlayerItemProvider
-        @ViewBuilder
-        let label: (Bool) -> Label
+        private var isPlaying: Bool {
+            viewModel.isPlaying(item: provider.item)
+        }
+
+        private var systemImage: String {
+            if isPlaying {
+                ItemActionButton.cast.systemImage
+            } else {
+                ItemActionButton.cast.secondarySystemImage
+            }
+        }
 
         var body: some View {
-            Button {
-                router.route(to: .remoteControl(provider: provider))
-            } label: {
-                label(viewModel.isPlaying(item: provider.item))
+            Button(
+                ItemActionButton.cast.displayTitle,
+                systemImage: systemImage
+            ) {
+                guard let mediaPlayerItemProvider = provider.mediaPlayerItemProvider else { return }
+                router.route(to: .remoteControl(provider: mediaPlayerItemProvider))
             }
+            .isSelected(isPlaying)
             .onFirstAppear {
                 viewModel.refresh()
             }

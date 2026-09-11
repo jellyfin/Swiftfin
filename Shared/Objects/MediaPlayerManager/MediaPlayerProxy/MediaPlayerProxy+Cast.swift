@@ -467,7 +467,6 @@ private extension CastMediaPlayerProxy {
             guard let userID = session.userSession?.user.id else { return }
 
             var parameters = Paths.GetItemsParameters()
-            parameters.fields = .MinimumFields
             parameters.ids = ids
             parameters.userID = userID
 
