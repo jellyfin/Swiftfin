@@ -29,13 +29,7 @@ extension BaseItemPerson: Poster {
     }
 
     var subtitle: String? {
-        // Crew roles are job names that may have been combined into a single credit,
-        // so they are shown in full instead of being cut at the first "/"
-        guard let type, mergeableCrewKinds.contains(type) else {
-            return firstRole
-        }
-
-        return role
+        displayRole
     }
 
     var systemImage: String {
