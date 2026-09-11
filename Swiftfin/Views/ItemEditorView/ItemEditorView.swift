@@ -92,27 +92,6 @@ struct ItemEditorView: View {
                     }
                 }
             }
-
-            if viewModel.item.canDelete == true {
-                StateAdapter(initialValue: false) { isPresentingDeleteConfirmation in
-                    Button(L10n.delete, role: .destructive) {
-                        isPresentingDeleteConfirmation.wrappedValue = true
-                    }
-                    .confirmationDialog(
-                        L10n.deleteItemConfirmationMessage,
-                        isPresented: isPresentingDeleteConfirmation,
-                        titleVisibility: .visible
-                    ) {
-                        Button(
-                            L10n.confirm,
-                            role: .destructive,
-                            action: viewModel.delete
-                        )
-
-                        Button(L10n.cancel, role: .cancel) {}
-                    }
-                }
-            }
         }
     }
 }

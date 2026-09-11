@@ -27,7 +27,7 @@ struct ProgramsLibrary: BaseItemKindLibrary {
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetLiveTvProgramsParameters()
-        parameters.fields = .MinimumFields.appending(.channelInfo)
+        parameters.fields = [.channelInfo]
         parameters.hasAired = false
         parameters.limit = pageState.pageSize
         parameters.startIndex = pageState.pageOffset

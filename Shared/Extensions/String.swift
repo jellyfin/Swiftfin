@@ -136,16 +136,19 @@ extension String {
     }
 
     var initials: String {
-        split(separator: " ")
+        split(separator: Self.space)
             .compactMap(\.first)
-            .reduce("", +)
+            .reduce(Self.empty, +)
     }
 
+    /// --
     static let emptyDash = "--"
-
+    /// --:--
     static let emptyRuntime = "--:--"
-
+    /// ""
     static let empty = ""
+    /// " "
+    static let space = " "
 
     static let tab = "\u{0009}"
     /// —
@@ -156,9 +159,12 @@ extension String {
     static let hyphen = "\u{002D}"
     /// ...
     static let ellipsis = "\u{2026}"
+    /// •
+    static let bullet = "\u{2022}"
     /// x
     static let multiply = "\u{00D7}"
 
+    /// A x B
     func multiply(by value: String) -> String {
         "\(self) \(Self.multiply) \(value)"
     }
@@ -234,4 +240,11 @@ extension CharacterSet {
 
     // Character that appears on tvOS with voice input
     static var objectReplacement: CharacterSet = .init(charactersIn: "\u{fffc}")
+}
+
+extension StringProtocol {
+
+    func trimmingCharacters(in string: String) -> String {
+        trimmingCharacters(in: CharacterSet(charactersIn: string))
+    }
 }

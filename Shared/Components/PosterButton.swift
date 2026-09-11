@@ -10,6 +10,9 @@ import SwiftUI
 
 struct PosterButton<Item: Poster>: View {
 
+    @Environment(\.posterConfiguration)
+    private var posterConfiguration
+
     @Environment(\.viewContext)
     private var viewContext
 
@@ -65,8 +68,10 @@ struct PosterButton<Item: Poster>: View {
         VStack(alignment: .leading) {
             posterImage(overlay: overlay)
 
-            item.posterLabel
-                .allowsHitTesting(false)
+            if posterConfiguration.showLabels {
+                item.posterLabel
+                    .allowsHitTesting(false)
+            }
         }
     }
 
@@ -78,22 +83,25 @@ struct PosterButton<Item: Poster>: View {
             #if os(tvOS)
             posterImage(overlay: item.posterOverlay(for: displayType))
 
-            item.posterLabel
-                .frame(maxWidth: .infinity, alignment: .leading)
+            if posterConfiguration.showLabels {
+                item.posterLabel
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
             #else
             buttonLabel(overlay: item.posterOverlay(for: displayType))
                 .trackingSize($posterSize)
             #endif
         }
+        .environment(\.posterDisplayType, displayType)
         .foregroundStyle(.primary, .secondary)
         .buttonStyle(.borderless)
         .buttonBorderShape(.roundedRectangle)
         #if os(tvOS)
-            .focusedValue(\.focusedPoster, AnyPoster(item))
+        .focusedValue(\.focusedPoster, AnyPoster(item))
         #endif
-            .posterContextMenu(for: item) {
-                contextMenuPreview
-                    .withViewContext(viewContext)
-            }
+        .posterContextMenu(for: item) {
+            contextMenuPreview
+                .withViewContext(viewContext)
+        }
     }
 }

@@ -53,10 +53,8 @@ struct UserSessionRootView: View {
 
 private struct PosterPreferencesEnvironment<Content: View>: View {
 
-    @Default(.Customization.Indicators.enabled)
-    private var enabledPosterIndicators
-    @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
-    private var useSeriesLandscapeBackdrop
+    @Default(.Customization.Poster.configuration)
+    private var posterConfiguration
 
     let content: Content
 
@@ -66,7 +64,6 @@ private struct PosterPreferencesEnvironment<Content: View>: View {
 
     var body: some View {
         content
-            .environment(\.enabledPosterIndicators, enabledPosterIndicators)
-            .environment(\.useSeriesLandscapeBackdrop, useSeriesLandscapeBackdrop)
+            .environment(\.posterConfiguration, posterConfiguration)
     }
 }

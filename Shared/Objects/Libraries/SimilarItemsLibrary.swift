@@ -13,14 +13,24 @@ struct SimilarItemsLibrary: PagingLibrary {
     let itemID: String
     let parent: TitledLibraryParent = .init(displayTitle: L10n.recommended, id: "similar-items")
 
+    private let itemType: BaseItemKind?
+
+    init(itemID: String, itemType: BaseItemKind?) {
+        self.itemID = itemID
+        self.itemType = itemType
+    }
+
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetSimilarItemsParameters()
-        parameters.fields = .MinimumFields.appending(.channelInfo)
         parameters.limit = pageState.pageSize
         parameters.userID = pageState.userSession.user.id
+
+        if let itemType, [.liveTvProgram, .program, .tvProgram].contains(itemType) {
+            parameters.fields = [.channelInfo]
+        }
 
         let request = Paths.getSimilarItems(
             itemID: itemID,

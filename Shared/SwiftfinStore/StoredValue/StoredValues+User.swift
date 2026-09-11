@@ -146,27 +146,6 @@ extension StoredValues.Keys {
             )
         }
 
-        static var enableItemEditing: Key<Bool> {
-            CurrentUserKey(
-                field: "enableItemEditing",
-                default: false
-            )
-        }
-
-        static var enableItemDeletion: Key<Bool> {
-            CurrentUserKey(
-                field: "enableItemDeletion",
-                default: false
-            )
-        }
-
-        static var enableCollectionManagement: Key<Bool> {
-            CurrentUserKey(
-                field: "enableCollectionManagement",
-                default: false
-            )
-        }
-
         static var enabledTrailers: Key<TrailerSelection> {
             CurrentUserKey(
                 field: "enabledTrailers",

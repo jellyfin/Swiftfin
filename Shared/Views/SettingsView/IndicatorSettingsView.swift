@@ -11,19 +11,19 @@ import SwiftUI
 
 struct IndicatorSettingsView: View {
 
-    @Default(.Customization.Indicators.enabled)
-    private var indicators
+    @Default(.Customization.Poster.configuration)
+    private var posterConfiguration
 
     var body: some View {
         Form(systemImage: "checkmark.circle.fill") {
             Section(L10n.posters) {
-                Toggle(L10n.showWatched, isOn: $indicators.contains(.played))
+                Toggle(L10n.showWatched, isOn: $posterConfiguration.indicators.contains(.played))
 
-                Toggle(L10n.showFavorited, isOn: $indicators.contains(.favorited))
+                Toggle(L10n.showFavorited, isOn: $posterConfiguration.indicators.contains(.favorited))
 
-                Toggle(L10n.showProgress, isOn: $indicators.contains(.progress))
+                Toggle(L10n.showProgress, isOn: $posterConfiguration.indicators.contains(.progress))
 
-                Toggle(L10n.showUnwatched, isOn: $indicators.contains(.unplayed))
+                Toggle(L10n.showUnwatched, isOn: $posterConfiguration.indicators.contains(.unplayed))
             }
             .navigationTitle(L10n.indicators)
         }

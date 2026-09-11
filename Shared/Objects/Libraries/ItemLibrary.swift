@@ -160,7 +160,6 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
     private func makeBaseItemParameters(environment: Environment) -> Paths.GetItemsParameters {
         var parameters = Paths.GetItemsParameters()
         parameters.enableUserData = true
-        parameters.fields = .MinimumFields.appending(.channelInfo)
         parameters.includeItemTypes = parent.supportedItemTypes(for: environment.grouping)
         parameters.isRecursive = parent.isRecursiveCollection(for: environment.grouping)
         parameters.sortBy = [.name]
@@ -299,18 +298,18 @@ private struct ItemLibraryBody<Content: View>: View {
             ) { filters in
                 viewModel.environment.filters = filters
             }
-        #if os(tvOS)
+            #if os(tvOS)
             .background(alignment: .top) {
                 if !router.isRootOfPath {
                     FocusedPosterCinematicBackgroundView()
                 }
             }
-        #else
+            #else
             .navigationBarFilterDrawer(
                 viewModel: filterViewModel,
                 types: enabledDrawerFilters
             )
-        #endif
+            #endif
     }
 
     private func rememberSort(from filters: ItemFilterCollection) {

@@ -6,12 +6,18 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import FactoryKit
 import JellyfinAPI
 import SwiftUI
 
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
+
+    #if os(tvOS)
+    @Default(.Customization.tabBarPlacement)
+    private var tabBarPlacement
+    #endif
 
     @InjectedObject(\.userSessionManager)
     private var userSessionManager
@@ -60,7 +66,7 @@ struct MainTabView: View {
     }
 
     @ViewBuilder
-    private func tabContent() -> some View {
+    private func tabView() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
                 Tab(
@@ -71,13 +77,13 @@ struct MainTabView: View {
                         coordinator: tab.coordinator
                     ) {
                         tab.item.content
-                        #if os(iOS)
-                            .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
-                                view.topBarTrailing {
-                                    FirstTabSettingsBarButton()
+                            #if os(iOS)
+                                .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
+                                    view.topBarTrailing {
+                                        FirstTabSettingsBarButton()
+                                    }
                                 }
-                            }
-                        #endif
+                            #endif
                     }
                     .environmentObject(tabCoordinator)
                     .environment(\.tabItemSelected, tab.publisher)
@@ -90,8 +96,21 @@ struct MainTabView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func tabContent() -> some View {
         #if os(tvOS)
-        .tabViewStyle(.sidebarAdaptable)
+        switch tabBarPlacement {
+        case .sidebar:
+            tabView()
+                .tabViewStyle(.sidebarAdaptable)
+        case .tabBar:
+            tabView()
+                .tabViewStyle(.tabBarOnly)
+        }
+        #else
+        tabView()
         #endif
     }
 
@@ -105,11 +124,11 @@ struct MainTabView: View {
                     await tabCoordinator.route(to: route)
                 }
             }
-        #if os(tvOS)
+            #if os(tvOS)
             .background(alignment: .top) {
                 FocusedPosterCinematicBackgroundView()
             }
-        #endif
+            #endif
     }
 }
 

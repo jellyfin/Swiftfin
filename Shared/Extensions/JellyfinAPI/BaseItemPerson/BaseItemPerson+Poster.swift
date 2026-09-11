@@ -29,7 +29,7 @@ extension BaseItemPerson: Poster {
     }
 
     var subtitle: String? {
-        firstRole
+        displayRole
     }
 
     var systemImage: String {

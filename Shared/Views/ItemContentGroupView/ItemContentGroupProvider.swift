@@ -22,6 +22,9 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     @Published
     private(set) var randomBackdropItem: BaseItemDto?
 
+    @Published
+    var isPresentingDeleteConfirmation = false
+
     let id: String
 
     var displayTitle: String {
@@ -202,7 +205,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             )
         }
 
-        if let castAndCrew = item.people, castAndCrew.isNotEmpty {
+        if let castAndCrew = item.mergedPeople, castAndCrew.isNotEmpty {
             PosterGroup(
                 id: "cast-and-crew",
                 library: StaticLibrary(
@@ -225,7 +228,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         if Defaults[.Customization.shouldShowRecommendations] {
             PosterGroup(
                 id: "similar-items",
-                library: SimilarItemsLibrary(itemID: itemID),
+                library: SimilarItemsLibrary(itemID: itemID, itemType: item.type),
                 posterDisplayType: .landscape,
                 posterSize: .small
             )
@@ -260,12 +263,40 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         }
     }
 
-    func selectMediaSource(_ mediaSource: MediaSourceInfo?) {
-        guard let mediaPlayerItemProvider, let userSession else { return }
+    enum PlaybackSelection {
+        case mediaSource(MediaSourceInfo?)
+        case audioStreamIndex(Int?)
+        case subtitleStreamIndex(Int?)
+        case bitrate(PlaybackBitrate)
+    }
 
-        self.mediaPlayerItemProvider = mediaPlayerItemProvider.item.getPlaybackItemProvider(
+    func select(_ selection: PlaybackSelection) {
+        guard let provider = mediaPlayerItemProvider, let userSession else { return }
+
+        var mediaSource = provider.mediaSource
+        var audioStreamIndex = provider.audioStreamIndex
+        var subtitleStreamIndex = provider.subtitleStreamIndex
+        var requestedBitrate = provider.requestedBitrate
+
+        switch selection {
+        case let .mediaSource(source):
+            mediaSource = source
+            audioStreamIndex = nil
+            subtitleStreamIndex = nil
+        case let .audioStreamIndex(index):
+            audioStreamIndex = index
+        case let .subtitleStreamIndex(index):
+            subtitleStreamIndex = index
+        case let .bitrate(bitrate):
+            requestedBitrate = bitrate
+        }
+
+        mediaPlayerItemProvider = provider.item.getPlaybackItemProvider(
             userSession: userSession,
-            mediaSource: mediaSource
+            mediaSource: mediaSource,
+            audioStreamIndex: audioStreamIndex,
+            subtitleStreamIndex: subtitleStreamIndex,
+            requestedBitrate: requestedBitrate
         )
     }
 
@@ -292,12 +323,19 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             item.isPlayable ? item : nil
         }
 
-        return playbackItem?.getPlaybackItemProvider(userSession: userSession)
+        guard let playbackItem else { return nil }
+
+        let fullPlaybackItem = if item.type == .series || item.type == .season {
+            try await playbackItem.getFullItem(userSession: userSession)
+        } else {
+            playbackItem
+        }
+
+        return fullPlaybackItem.getPlaybackItemProvider(userSession: userSession)
     }
 
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetNextUpParameters()
-        parameters.fields = .MinimumFields
         parameters.seriesID = item.id
 
         let request = Paths.getNextUp(parameters: parameters)
@@ -312,7 +350,6 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     private func resumeItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetResumeItemsParameters()
-        parameters.fields = .MinimumFields
         parameters.limit = 1
         parameters.parentID = item.id
 
@@ -324,7 +361,6 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     private func firstAvailableItem(for item: BaseItemDto) async throws -> BaseItemDto? {
         var parameters = Paths.GetItemsParameters()
-        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.episode]
         parameters.isMissing = false
         parameters.isRecursive = true
@@ -353,7 +389,6 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         }
 
         var parameters = Paths.GetItemsParameters()
-        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.movie, .series]
         parameters.isRecursive = true
         parameters.limit = 1

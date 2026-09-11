@@ -10,9 +10,10 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: alternate sized (normal, medium, fullscreen) supplement styles
-//       - tvOS playback info list
-//       - live tv guide
+enum MediaPlayerSupplementPresentationStyle: Equatable {
+    case regular
+    case expanded
+}
 
 @MainActor
 protocol MediaPlayerSupplement: Displayable, Identifiable {
@@ -20,10 +21,18 @@ protocol MediaPlayerSupplement: Displayable, Identifiable {
     associatedtype VideoPlayerBody: PlatformView
 
     var id: String { get }
+    var presentationStyle: MediaPlayerSupplementPresentationStyle { get }
 
     @MainActor
     @ViewBuilder
     var videoPlayerBody: Self.VideoPlayerBody { get }
+}
+
+extension MediaPlayerSupplement {
+
+    var presentationStyle: MediaPlayerSupplementPresentationStyle {
+        .regular
+    }
 }
 
 struct AnyMediaPlayerSupplement: MediaPlayerSupplement, Equatable {
@@ -36,6 +45,10 @@ struct AnyMediaPlayerSupplement: MediaPlayerSupplement, Equatable {
 
     var id: String {
         supplement.id
+    }
+
+    var presentationStyle: MediaPlayerSupplementPresentationStyle {
+        supplement.presentationStyle
     }
 
     var videoPlayerBody: some PlatformView {

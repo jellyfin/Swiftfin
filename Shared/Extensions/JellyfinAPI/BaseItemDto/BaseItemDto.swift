@@ -8,6 +8,7 @@
 
 import Algorithms
 import AVKit
+import Defaults
 import FactoryKit
 import Foundation
 import JellyfinAPI
@@ -136,6 +137,30 @@ extension BaseItemDto {
         return L10n.episodeNumber(episodeNo)
     }
 
+    /// Merges crew credits
+    var mergedPeople: [BaseItemPerson]? {
+        guard let people else { return nil }
+
+        let crew = Dictionary(grouping: people.filter(\.isCrew), by: \.id)
+        var seen: Set<String> = []
+
+        return people.compactMap { person in
+            guard person.isCrew, let id = person.id, let credits = crew[id], credits.count > 1 else {
+                return person
+            }
+            guard seen.insert(id).inserted else { return nil }
+
+            let roles = credits.compactMap(\.role)
+                .filter(\.isNotEmpty)
+                .uniqued()
+                .joined(separator: " / ")
+
+            var person = person
+            person.role = roles.isEmpty ? nil : roles
+            return person
+        }
+    }
+
     var itemGenres: [ItemGenre]? {
         guard let genres else { return nil }
         return genres.map(ItemGenre.init)
@@ -217,7 +242,10 @@ extension BaseItemDto {
 
     func getPlaybackItemProvider(
         userSession: UserSession?,
-        mediaSource: MediaSourceInfo? = nil
+        mediaSource: MediaSourceInfo? = nil,
+        audioStreamIndex: Int? = nil,
+        subtitleStreamIndex: Int? = nil,
+        requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
     ) -> MediaPlayerItemProvider? {
         switch type {
         case .program:
@@ -241,11 +269,17 @@ extension BaseItemDto {
 
             return MediaPlayerItemProvider(
                 item: self,
-                mediaSource: selectedMediaSource
+                mediaSource: selectedMediaSource,
+                audioStreamIndex: audioStreamIndex,
+                subtitleStreamIndex: subtitleStreamIndex,
+                requestedBitrate: requestedBitrate
             ) { item, modifyItem in
                 try await MediaPlayerItem.build(
                     for: item,
                     mediaSource: selectedMediaSource,
+                    audioStreamIndex: audioStreamIndex,
+                    subtitleStreamIndex: subtitleStreamIndex,
+                    requestedBitrate: requestedBitrate,
                     modifyItem: modifyItem
                 )
             }
@@ -259,8 +293,7 @@ extension BaseItemDto {
         guard type == .program else { return nil }
 
         var parameters = Paths.GetItemsParameters()
-        parameters.fields = .MinimumFields
-        parameters.ids = [program.channelID ?? ""]
+        parameters.ids = program.channelID.flatMap { [$0] }
 
         let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)

@@ -7,10 +7,8 @@
 //
 
 import CoreTransferable
-import FactoryKit
 import Foundation
 import JellyfinAPI
-import VLCUI
 
 extension MediaStream {
 
@@ -18,18 +16,11 @@ extension MediaStream {
 
     static var none: MediaStream = .init(displayTitle: L10n.none, index: -1)
 
-    // TODO: be a function that resolves against given client
-    var asVLCPlaybackChild: VLCVideoPlayer.PlaybackChild? {
-        guard let deliveryURL, let client = Container.shared.currentUserSession()?.client else { return nil }
+    func url(with client: JellyfinClient) -> URL? {
+        guard let deliveryURL else { return nil }
 
         let deliveryPath = deliveryURL.removingFirst(if: client.configuration.url.absoluteString.last == "/")
-        guard let url = client.url(path: deliveryPath) else { return nil }
-
-        return .init(
-            url: url,
-            type: .subtitle,
-            enforce: false
-        )
+        return client.url(path: deliveryPath)
     }
 
     var is4kVideo: Bool {

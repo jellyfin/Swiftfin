@@ -24,6 +24,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>swiftfin</string>
+				<string>jellyfin</string>
 			</array>
 		</dict>
 	</array>

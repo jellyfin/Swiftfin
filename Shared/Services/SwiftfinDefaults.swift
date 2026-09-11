@@ -115,6 +115,20 @@ extension Defaults.Keys {
             UserKey("mediaItemViewType", default: .enhanced)
         }
 
+        static var itemBarActionButtons: Key<[ItemActionButton]> {
+            UserKey(
+                "itemBarActionButtons",
+                default: ItemActionButton.defaultBarActionButtons
+            )
+        }
+
+        static var itemMenuActionButtons: Key<[ItemActionButton]> {
+            UserKey(
+                "itemMenuActionButtons",
+                default: ItemActionButton.defaultMenuActionButtons
+            )
+        }
+
         static var nextUpPosterType: Key<PosterDisplayType> {
             UserKey("nextUpPosterType", default: .portrait)
         }
@@ -148,21 +162,14 @@ extension Defaults.Keys {
             UserKey("searchPosterType", default: .portrait)
         }
 
-        enum Episodes {
-
-            static var useSeriesLandscapeBackdrop: Key<Bool> {
-                UserKey("useSeriesBackdrop", default: true)
-            }
+        static var tabBarPlacement: Key<TabBarPlacement> {
+            UserKey("tabBarPlacement", default: .sidebar)
         }
 
-        enum Indicators {
+        enum Poster {
 
-            static var enabled: Key<PosterIndicator> {
-                UserKey("enabledPosterIndicators", default: .all)
-            }
-
-            static var unplayedStyle: Key<UnplayedIndicatorType> {
-                UserKey("unplayedIndicatorStyle", default: .indicator)
+            static var configuration: Key<PosterConfiguration> {
+                UserKey("posterConfiguration", default: .default)
             }
         }
 
@@ -291,7 +298,7 @@ extension Defaults.Keys {
         }
 
         static var videoPlayerType: Key<VideoPlayerType> {
-            UserKey("videoPlayerType", default: .swiftfin)
+            UserKey("videoPlayerType", default: .vlc)
         }
 
         enum Gesture {
@@ -395,12 +402,20 @@ extension Defaults.Keys {
     // Experimental settings
     enum Experimental {
 
+        static var mpvPlayer: Key<Bool> {
+            UserKey("experimentalMPVPlayer", default: false)
+        }
+
         static var downloads: Key<Bool> {
             UserKey("experimentalDownloads", default: false)
         }
 
         static var serverConnectionAutoSwitch: Key<Bool> {
             UserKey("experimentalServerConnectionAutoSwitch", default: false)
+        }
+
+        static var videoPlayerEPG: Key<Bool> {
+            UserKey("experimentalVideoPlayerEPG", default: false)
         }
     }
 

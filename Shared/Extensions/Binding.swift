@@ -74,9 +74,9 @@ extension Binding where Value: RangeReplaceableCollection, Value.Element: Equata
     }
 }
 
-extension Binding where Value: OptionSet, Value.Element == Value {
+extension Binding where Value: SetAlgebra, Value.Element: Hashable {
 
-    func contains(_ element: Value) -> Binding<Bool> {
+    func contains(_ element: Value.Element) -> Binding<Bool> {
         Binding<Bool>(
             get: { wrappedValue.contains(element) },
             set: { newValue in
