@@ -8,7 +8,7 @@ custom_rules:
   nested_l10n:
     name: "Nested L10n"
     regex: '\bL10n\.\w+\s*\([^()]*\bL10n\.'
-    message: "Do not have nested L10n strings. Use a dedicated localization for the complete phrase."
+    message: "Avoid nested L10n strings. Use a dedicated localization instead."
     severity: warning
 
   hard_coded_display_string:

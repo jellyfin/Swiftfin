@@ -60,6 +60,7 @@ struct ActiveSessionDetailsView: View {
         StateAdapter(
             initialValue: (
                 isPresented: false,
+                // swiftlint:disable:next nested_l10n
                 header: L10n.messageFrom(viewModel.userSession?.user.username ?? L10n.server),
                 text: ""
             )
@@ -67,6 +68,7 @@ struct ActiveSessionDetailsView: View {
             ChevronButton(L10n.message, systemName: "message.fill") {
                 alert.wrappedValue = (
                     isPresented: true,
+                    // swiftlint:disable:next nested_l10n
                     header: L10n.messageFrom(viewModel.userSession?.user.username ?? L10n.server),
                     text: ""
                 )
