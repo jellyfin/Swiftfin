@@ -193,7 +193,7 @@ extension BaseItemKind {
 
     var preferredPosterDisplayType: PosterDisplayType {
         switch self {
-        case .audio, .channel, .liveTvChannel, .musicAlbum, .musicArtist, .tvChannel:
+        case .audio, .channel, .liveTvChannel, .musicAlbum, .musicArtist, .playlist, .tvChannel:
             .square
         case .episode, .folder, .musicVideo, .program, .userView, .video:
             .landscape
@@ -204,7 +204,7 @@ extension BaseItemKind {
 
     var supportedPosterDisplayTypes: [PosterDisplayType] {
         switch self {
-        case .audio, .channel, .liveTvChannel, .musicAlbum, .musicArtist, .tvChannel:
+        case .audio, .channel, .liveTvChannel, .musicAlbum, .musicArtist, .playlist, .tvChannel:
             [.square]
         case .person:
             [.portrait]
