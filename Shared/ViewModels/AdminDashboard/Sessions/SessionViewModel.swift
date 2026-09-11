@@ -28,10 +28,11 @@ final class SessionViewModel: ViewModel, @preconcurrency Identifiable {
         )
         /// Convenience helper to end a Remote Playback Session
         case stopReportPlaybackSession
-
+        case refresh
         case sendMessage(MessageCommand)
         case sendPlaystateCommand(command: PlaystateCommand, seekPositionTicks: Int?)
         case sendGeneralCommand(GeneralCommandType)
+        case sendFullGeneralCommand(GeneralCommand)
 
         var transition: Transition {
             .background(.sending)
@@ -52,6 +53,10 @@ final class SessionViewModel: ViewModel, @preconcurrency Identifiable {
 
     var id: String? {
         session.id
+    }
+
+    var supportedCommands: [GeneralCommandType] {
+        session.supportedCommands ?? session.capabilities?.supportedCommands ?? []
     }
 
     init(session: SessionInfoDto) {
@@ -93,6 +98,19 @@ final class SessionViewModel: ViewModel, @preconcurrency Identifiable {
         await self.sendPlaystateCommand(command: .stop, seekPositionTicks: nil)
     }
 
+    @Function(\Action.Cases.refresh)
+    private func _refresh() async throws {
+        guard let id else { return }
+
+        let parameters = Paths.GetSessionsParameters(deviceID: session.deviceID)
+        let request = Paths.getSessions(parameters: parameters)
+        let response = try await send(request)
+
+        guard let updatedSession = response.value.first(where: { $0.id == id }) else { return }
+
+        session = updatedSession
+    }
+
     // MARK: - Raw Session Commands
 
     @Function(\Action.Cases.sendMessage)
@@ -113,6 +131,7 @@ final class SessionViewModel: ViewModel, @preconcurrency Identifiable {
             seekPositionTicks: seekPositionTicks
         )
         try await send(request)
+        try await _refresh()
     }
 
     @Function(\Action.Cases.sendGeneralCommand)
@@ -121,5 +140,15 @@ final class SessionViewModel: ViewModel, @preconcurrency Identifiable {
 
         let request = Paths.sendGeneralCommand(sessionID: id, command: command.rawValue)
         try await send(request)
+        try await _refresh()
+    }
+
+    @Function(\Action.Cases.sendFullGeneralCommand)
+    private func _sendFullGeneralCommand(_ command: GeneralCommand) async throws {
+        guard let id else { return }
+
+        let request = Paths.sendFullGeneralCommand(sessionID: id, command)
+        try await send(request)
+        try await _refresh()
     }
 }
