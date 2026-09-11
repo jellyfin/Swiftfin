@@ -139,6 +139,8 @@ struct SelectUserView: View {
                 let pin = (evaluatedPolicy as? PinEvaluatedUserAccessPolicy)?.pin ?? ""
 
                 await viewModel.signIn(user, pin: pin)
+            } catch is CancellationError {
+                return
             } catch {
                 await viewModel.error(error)
             }
@@ -272,7 +274,7 @@ struct SelectUserView: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .animation(.linear(duration: 0.1), value: selectedServer)
-        .environment(\.isOverComplexContent, true)
+        .withViewContext(.isOverComplexContent)
         .isEditing(isEditing)
         .onFirstAppear {
             viewModel.getServers()

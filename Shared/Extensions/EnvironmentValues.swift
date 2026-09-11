@@ -26,9 +26,6 @@ extension EnvironmentValues {
     var isHighlighted: Bool = true
 
     @Entry
-    var isOverComplexContent: Bool = false
-
-    @Entry
     var isSelected: Bool = false
 
     @Entry

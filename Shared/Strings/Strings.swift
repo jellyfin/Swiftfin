@@ -820,14 +820,18 @@ internal enum L10n {
   internal static let interval = L10n.tr("Localizable", "interval", fallback: "Interval")
   /// Interview
   internal static let interview = L10n.tr("Localizable", "interview", fallback: "Interview")
+  /// Invalid Dolby Vision
+  internal static let invalidDolbyVision = L10n.tr("Localizable", "invalidDolbyVision", fallback: "Invalid Dolby Vision")
   /// Invalid format
   internal static let invalidFormat = L10n.tr("Localizable", "invalidFormat", fallback: "Invalid format")
+  /// Invalid name
+  internal static let invalidName = L10n.tr("Localizable", "invalidName", fallback: "Invalid name")
+  /// Invalid PIN
+  internal static let invalidPin = L10n.tr("Localizable", "invalidPin", fallback: "Invalid PIN")
   /// Invalid URL
   internal static let invalidURL = L10n.tr("Localizable", "invalidURL", fallback: "Invalid URL")
-  /// Invalid %@
-  internal static func invalidX(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "invalidX", String(describing: p1), fallback: "Invalid %@")
-  }
+  /// Invalid Wi-Fi name
+  internal static let invalidWifiName = L10n.tr("Localizable", "invalidWifiName", fallback: "Invalid Wi-Fi name")
   /// Inverted dark
   internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted dark")
   /// Inverted light

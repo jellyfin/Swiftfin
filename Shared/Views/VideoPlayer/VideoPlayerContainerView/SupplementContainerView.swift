@@ -215,7 +215,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 .animation(.linear(duration: 0.1), value: isScrubbing)
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.1), value: currentSupplements)
             }
-            .environment(\.isOverComplexContent, true)
+            .withViewContext(.isOverComplexContent)
             .onReceive(manager.$supplements) { newValue in
                 let newSupplements = IdentifiedArray(
                     uniqueElements: newValue.map(AnyMediaPlayerSupplement.init)

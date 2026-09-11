@@ -5,6 +5,12 @@ only_rules:
   - custom_rules
 
 custom_rules:
+  nested_l10n:
+    name: "Nested L10n"
+    regex: '\bL10n\.\w+\s*\([^()]*\bL10n\.'
+    message: "Avoid nested L10n strings. Use a dedicated localization instead."
+    severity: warning
+
   hard_coded_display_string:
     name: "Hard-coded Display String"
     regex: '(?:\b(?:Text|Button|Label|Toggle|Picker|Section|LabeledContent)\s*\(\s*"[^"\n]*(?:\\.[^"\n]*)*"|(?<=\n)([ \t]*)(?:\w+\s+)*var\s+displayTitle\s*:\s*String\s*\{(?:(?!\n\1\})[\s\S])*?(?:^|\n)[ \t]*(?!//)[^\n"]*"[^"\n]*(?:\\.[^"\n]*)*")'

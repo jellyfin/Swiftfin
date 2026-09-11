@@ -152,7 +152,7 @@ extension MediaInfoSupplement {
                     contentMode: .fit
                 )
                 .posterCornerRadius(item.preferredPosterDisplayType)
-                .environment(\.isOverComplexContent, true)
+                .withViewContext(.isOverComplexContent)
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(item.displayTitle)

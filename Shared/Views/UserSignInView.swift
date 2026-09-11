@@ -282,7 +282,7 @@ struct UserSignInView: View {
                             password = ""
                             focusedTextField = .password
                         }
-                        .environment(\.isOverComplexContent, true)
+                        .withViewContext(.isOverComplexContent)
                     }
                 }
                 #endif
