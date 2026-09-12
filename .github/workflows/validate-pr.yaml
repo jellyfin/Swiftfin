@@ -32,8 +32,6 @@ jobs:
           import subprocess
           import sys
 
-          # Compare the PR branch with its merge base, ignoring base-only changes.
-          # Disable rename detection so both old and new paths are checked.
           changed_files = subprocess.check_output([
               "git", "diff", "--name-only", "--no-renames", "-z",
               f"{os.environ['BASE_SHA']}...{os.environ['HEAD_SHA']}", "--",
