@@ -109,7 +109,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         @State
         private var subtitleContentSize: CGSize = .zero
 
-        let item: BaseItemDto
+        @StoredItem
+        var item: BaseItemDto
 
         private var _titleSubtitle: (title: String, subtitle: String?) {
             if item.type == .episode {

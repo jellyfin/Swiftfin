@@ -15,6 +15,13 @@ final class UserSession {
     let server: ServerState
     let user: UserState
 
+    @MainActor
+    lazy var items: ItemStore = {
+        let store = ItemStore()
+        store.session = self
+        return store
+    }()
+
     lazy var client: JellyfinClient = JellyfinClient(
         configuration: .swiftfinConfiguration(
             url: server.effectiveServerURL,
@@ -31,6 +38,7 @@ final class UserSession {
 
     @MainActor
     private lazy var services: [any UserSessionService] = [
+        items,
         serverConnectionManager,
         serverSocketManager,
     ]
@@ -58,8 +66,17 @@ final class UserSession {
     }
 
     @MainActor
-    func willStop() {
+    func reuseItems(from session: UserSession) {
+        items = session.items
+        items.session = self
+    }
+
+    @MainActor
+    func willStop(preservingItems: Bool = false) {
         for service in services.reversed() {
+            if preservingItems, service is ItemStore {
+                continue
+            }
             service.willStop(userSession: self)
         }
     }

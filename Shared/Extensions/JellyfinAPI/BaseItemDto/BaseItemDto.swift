@@ -232,6 +232,7 @@ extension BaseItemDto {
         return ImageRenderer(content: transformedImage).uiImage
     }
 
+    @MainActor
     func getPlaybackItemProvider(
         userSession: UserSession?,
         mediaSource: MediaSourceInfo? = nil,
@@ -278,6 +279,7 @@ extension BaseItemDto {
         }
     }
 
+    @MainActor
     func getChannel(
         for program: BaseItemDto,
         userSession: UserSession
@@ -288,7 +290,7 @@ extension BaseItemDto {
         parameters.ids = program.channelID.flatMap { [$0] }
 
         let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await userSession.send(request)
 
         return response.value.items?.first
     }
@@ -617,21 +619,18 @@ extension BaseItemDto {
         }
     }
 
-    func getFullItem(userSession: UserSession, sendNotification: Bool = false) async throws -> BaseItemDto {
+    @MainActor
+    func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
         guard let id else {
             throw ErrorMessage(L10n.unknownError)
         }
 
         let request = Paths.getItem(itemID: id, userID: userSession.user.id)
-        let response = try await userSession.client.send(request)
+        let response = try await userSession.send(request)
 
         // A check against `id` would typically be done, but a plugin
         // may have provided `self` or the response item and may not
         // be invariant over `id`.
-
-        if sendNotification {
-            Notifications[.itemMetadataDidChange].post(response.value)
-        }
 
         return response.value
     }

@@ -22,7 +22,8 @@ extension SeriesEpisodeContentGroup {
         @Router
         private var router
 
-        let episode: BaseItemDto
+        @StoredItem
+        var episode: BaseItemDto
 
         @ViewBuilder
         private var overlayView: some View {
@@ -138,7 +139,8 @@ extension SeriesEpisodeContentGroup {
         let content: String
         let artworkAction: () -> Void
         let contentAction: () -> Void
-        let contextMenuItem: BaseItemDto?
+        @StoredOptionalItem
+        var contextMenuItem: BaseItemDto?
         let artwork: Artwork
 
         init(

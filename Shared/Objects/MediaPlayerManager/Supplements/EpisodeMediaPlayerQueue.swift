@@ -124,7 +124,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
         if let nextItem {
             nextProvider = MediaPlayerItemProvider(item: nextItem) { [weak self] item, modifyItem in
-                let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+                let bitrate = self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
                 return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
                     item.userData?.playbackPositionTicks = .zero
                     modifyItem?(&item)
@@ -134,7 +134,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
         if let previousItem {
             previousProvider = MediaPlayerItemProvider(item: previousItem) { [weak self] item, modifyItem in
-                let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+                let bitrate = self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
                 return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
                     item.userData?.playbackPositionTicks = .zero
                     modifyItem?(&item)
@@ -274,8 +274,8 @@ extension EpisodeMediaPlayerQueue {
                                 lineSpacing: EdgeInsets.itemSpacing
                             )
                         ) { item in
-                            EpisodeRow(episode: item) {
-                                action(item)
+                            EpisodeRow(episode: item.snapshot) {
+                                action(item.snapshot)
                             }
                             .environmentObject(manager)
                         }
@@ -334,8 +334,8 @@ extension EpisodeMediaPlayerQueue {
                     id: \.id,
                     layout: .grid(columns: 5, rows: 1, columnTrailingInset: 0)
                 ) { episode in
-                    EpisodeButton(episode: episode) {
-                        action(episode)
+                    EpisodeButton(episode: episode.snapshot) {
+                        action(episode.snapshot)
                     }
                     .environmentObject(manager)
                 }
@@ -351,8 +351,8 @@ extension EpisodeMediaPlayerQueue {
                     id: \.id,
                     layout: .minimumWidth(columnWidth: 170, rows: 1)
                 ) { item in
-                    EpisodeButton(episode: item) {
-                        action(item)
+                    EpisodeButton(episode: item.snapshot) {
+                        action(item.snapshot)
                     }
                     .environmentObject(manager)
                 }
@@ -452,7 +452,8 @@ extension EpisodeMediaPlayerQueue {
         @Environment(\.isSelected)
         private var isSelected
 
-        let episode: BaseItemDto
+        @StoredItem
+        var episode: BaseItemDto
 
         var body: some View {
             ZStack {
@@ -482,7 +483,8 @@ extension EpisodeMediaPlayerQueue {
 
     private struct EpisodeDescription: View {
 
-        let episode: BaseItemDto
+        @StoredItem
+        var episode: BaseItemDto
 
         var body: some View {
             DotHStack {
@@ -504,7 +506,8 @@ extension EpisodeMediaPlayerQueue {
         @EnvironmentObject
         var manager: MediaPlayerManager
 
-        let episode: BaseItemDto
+        @StoredItem
+        var episode: BaseItemDto
         let action: () -> Void
 
         private var isCurrentEpisode: Bool {
@@ -540,7 +543,8 @@ extension EpisodeMediaPlayerQueue {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        let episode: BaseItemDto
+        @StoredItem
+        var episode: BaseItemDto
         let action: () -> Void
 
         var body: some View {

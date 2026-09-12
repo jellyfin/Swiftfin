@@ -10,6 +10,8 @@ import JellyfinAPI
 
 struct LatestInLibrary: BaseItemKindLibrary {
 
+    let hasNextPage = false
+
     let libraryItemTypes: [BaseItemKind]
     let parent: TitledLibraryParent
 
@@ -24,7 +26,7 @@ struct LatestInLibrary: BaseItemKindLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = Paths.GetLatestMediaParameters()
         parameters.enableUserData = true
         parameters.limit = pageState.pageSize
@@ -34,6 +36,6 @@ struct LatestInLibrary: BaseItemKindLibrary {
         let request = Paths.getLatestMedia(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value
+        return try pageState.items(from: response)
     }
 }

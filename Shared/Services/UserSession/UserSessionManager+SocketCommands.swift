@@ -200,7 +200,7 @@ extension UserSessionManager {
         Task { @MainActor in
             do {
                 let request = Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
-                let response = try await userSession.client.send(request)
+                let response = try await userSession.send(request)
 
                 if let trailerID = response.value.first?.id {
                     playItem(id: trailerID, userSession: userSession)

@@ -8,7 +8,6 @@
 
 import Combine
 import Foundation
-import JellyfinAPI
 
 @MainActor
 @Stateful
@@ -17,10 +16,16 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     @CasePathable
     enum Action {
         case refresh
+        case refreshPendingChanges
 
         var transition: Transition {
-            .to(.refreshing, then: .content)
-                .whenBackground(.refreshing)
+            switch self {
+            case .refresh:
+                .to(.refreshing, then: .content)
+                    .whenBackground(.refreshing)
+            case .refreshPendingChanges:
+                .background(.refreshing)
+            }
         }
     }
 
@@ -39,12 +44,12 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     private(set) var groups: [any ContentGroup] = []
 
     private var candidateGroups: [any ContentGroup] = []
-    private var lastRefreshDate = Date.distantPast
-    private var lastRefreshSignalDate = Date.distantPast
-
-    private var hasPendingRefreshSignals: Bool {
-        lastRefreshSignalDate > lastRefreshDate
-    }
+    private var groupCancellables = Set<AnyCancellable>()
+    private var pendingRefreshes = ContentGroupRefreshQueue()
+    private var scheduledRefresh: Task<Void, Never>?
+    private var isRefreshInFlight = false
+    private var isActive = false
+    private var hasLoadedGroups = false
 
     var provider: Provider
 
@@ -52,40 +57,93 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         self.provider = provider
         super.init()
 
-        Publishers.Merge(
-            Notifications[.itemUserDataDidChange].publisher.map { _ in () },
-            Notifications[.itemMetadataDidChange].publisher.map { _ in () }
-        )
-        .sink { [weak self] _ in
-            self?.lastRefreshSignalDate = Date.now
+        provider.refreshRequests
+            .sink { [weak self] request in
+                self?.requestRefresh(request)
+            }
+            .store(in: &cancellables)
+    }
+
+    func setIsActive(_ isActive: Bool) {
+        self.isActive = isActive
+        if isActive {
+            schedulePendingRefresh()
+        } else {
+            scheduledRefresh?.cancel()
+            scheduledRefresh = nil
         }
-        .store(in: &cancellables)
+    }
+
+    private func requestRefresh(_ request: ContentGroupRefresh, groupID: String? = nil) {
+        pendingRefreshes.insert(request, groupID: groupID)
+        schedulePendingRefresh()
+    }
+
+    private func schedulePendingRefresh() {
+        guard isActive, hasLoadedGroups, !isRefreshInFlight,
+              !pendingRefreshes.isEmpty, scheduledRefresh == nil else { return }
+
+        scheduledRefresh = Task { @MainActor [weak self] in
+            // Coalesce changes from multiple groups and finish publishing their contents first.
+            try? await Task.sleep(for: .milliseconds(50))
+            guard !Task.isCancelled, let self else { return }
+            self.scheduledRefresh = nil
+            await self.background.refreshPendingChanges()
+        }
     }
 
     func refreshIfNeeded(
         sinceLastDisappear interval: TimeInterval,
         staleThreshold: TimeInterval = 60
     ) {
-        guard interval > staleThreshold || hasPendingRefreshSignals else { return }
-
-        background.refresh()
-    }
-
-    func refreshIfPendingChanges() {
-        guard hasPendingRefreshSignals else { return }
-
-        refresh()
+        if interval > staleThreshold {
+            requestRefresh(.contents)
+        } else {
+            schedulePendingRefresh()
+        }
     }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        if StateTask.isBackground {
-            try await backgroundRefresh()
-        } else {
-            try await fullRefresh()
+        guard !isRefreshInFlight else {
+            requestRefresh(StateTask.isBackground ? .contents : .groups)
+            return
         }
 
-        lastRefreshDate = Date.now
+        pendingRefreshes.insert(StateTask.isBackground && hasLoadedGroups ? .contents : .groups)
+        try await performRefresh(inBackground: StateTask.isBackground)
+    }
+
+    @Function(\Action.Cases.refreshPendingChanges)
+    private func _refreshPendingChanges() async throws {
+        guard isActive, hasLoadedGroups, !isRefreshInFlight, !pendingRefreshes.isEmpty else { return }
+        try await performRefresh(inBackground: true)
+    }
+
+    private func performRefresh(inBackground: Bool) async throws {
+        isRefreshInFlight = true
+        scheduledRefresh?.cancel()
+        scheduledRefresh = nil
+        let pending = pendingRefreshes.take()
+        defer { isRefreshInFlight = false }
+
+        do {
+            if pending.rebuildGroups {
+                try await fullRefresh()
+            } else {
+                let groups = candidateGroups.filter { pending.refreshAll || pending.groupIDs.contains($0.id) }
+                try await refreshViewModels(for: groups, inBackground: inBackground)
+                try Task.checkCancellation()
+                resolveGroups()
+            }
+        } catch {
+            // Preserve failed work for the next appearance or explicit refresh, without a retry loop.
+            pendingRefreshes.merge(pending)
+            throw error
+        }
+
+        isRefreshInFlight = false
+        schedulePendingRefresh()
     }
 
     private func getViewModel(for group: some ContentGroup) -> any WithRefresh {
@@ -93,8 +151,24 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     }
 
     private func resolveGroups() {
-        groups = candidateGroups
+        let resolved = candidateGroups
             .filter(\._shouldBeResolved)
+        if groups.map(\.id) != resolved.map(\.id) {
+            groups = resolved
+        }
+    }
+
+    private func observeGroups() {
+        groupCancellables.removeAll()
+        // Empty candidates can become visible after a store change, so observe them too.
+        for group in candidateGroups {
+            let id = group.id
+            group.refreshRequests
+                .sink { [weak self] request in
+                    self?.requestRefresh(request, groupID: id)
+                }
+                .store(in: &groupCancellables)
+        }
     }
 
     private func refreshViewModels(
@@ -119,28 +193,22 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         }
     }
 
-    private func backgroundRefresh() async throws {
-        try await refreshViewModels(
-            for: candidateGroups,
-            inBackground: true
-        )
-
-        resolveGroups()
-    }
-
     private func fullRefresh() async throws {
-
-        self.groups = []
-        self.candidateGroups = []
-
         let newGroups = try await provider.makeGroups(environment: provider.environment)
+        try Task.checkCancellation()
+
+        candidateGroups = newGroups
+        observeGroups()
 
         try await refreshViewModels(
             for: newGroups,
+            // New view models must leave their initial state before replacing the visible groups.
             inBackground: false
         )
 
-        candidateGroups = newGroups
-        resolveGroups()
+        try Task.checkCancellation()
+        hasLoadedGroups = true
+        // New groups may reuse IDs but own different view models.
+        groups = candidateGroups.filter(\._shouldBeResolved)
     }
 }

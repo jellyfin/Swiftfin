@@ -14,7 +14,8 @@ struct ItemOverviewView: View {
     @Router
     private var router
 
-    let item: BaseItemDto
+    @StoredItem
+    var item: BaseItemDto
 
     var body: some View {
         ScrollView {

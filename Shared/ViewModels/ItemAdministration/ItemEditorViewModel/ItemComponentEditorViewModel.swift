@@ -50,7 +50,7 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
         case error
     }
 
-    @Published
+    @StoredItem
     private(set) var item: BaseItemDto
     @Published
     private(set) var matches: [Element] = []
@@ -108,13 +108,16 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
     private func updateItem(_ newItem: BaseItemDto) async throws {
         guard let itemID = item.id else { return }
 
+        let session = try requireUserSession()
+        let token = try session.items.beginRequest()
         var updateItem = newItem
         updateItem.trickplay = nil
 
         let request = Paths.updateItem(itemID: itemID, updateItem)
         _ = try await send(request)
+        try session.items.acceptMetadataDraft(newItem, token: token)
 
-        item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
+        item = try await item.getFullItem(userSession: requireUserSession())
         events.send(.updated)
     }
 }

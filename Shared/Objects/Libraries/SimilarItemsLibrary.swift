@@ -8,7 +8,9 @@
 
 import JellyfinAPI
 
-struct SimilarItemsLibrary: PagingLibrary {
+struct SimilarItemsLibrary: MediaLibrary {
+
+    let hasNextPage = false
 
     let itemID: String
     let parent: TitledLibraryParent = .init(displayTitle: L10n.recommended, id: "similar-items")
@@ -23,7 +25,7 @@ struct SimilarItemsLibrary: PagingLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = Paths.GetSimilarItemsParameters()
         parameters.limit = pageState.pageSize
         parameters.userID = pageState.userSession.user.id
@@ -38,6 +40,6 @@ struct SimilarItemsLibrary: PagingLibrary {
         )
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value.items ?? []
+        return try pageState.items(from: response)
     }
 }

@@ -13,7 +13,8 @@ extension ItemView {
 
     struct MetadataHStack: View {
 
-        let item: BaseItemDto
+        @StoredItem
+        var item: BaseItemDto
 
         var body: some View {
             DotHStack {

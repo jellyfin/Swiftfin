@@ -13,7 +13,8 @@ extension ActiveSessionDetailsView {
 
     struct StreamSection: View {
 
-        let nowPlayingItem: BaseItemDto
+        @StoredItem
+        var nowPlayingItem: BaseItemDto
         let transcodingInfo: TranscodingInfo?
 
         @ViewBuilder

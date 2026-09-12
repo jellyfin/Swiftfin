@@ -6,19 +6,49 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Get
 import JellyfinAPI
 import SwiftUI
 
-struct LibraryPageState {
+@MainActor
+final class LibraryPageState {
     let pageOffset: Int
     let pageSize: Int
     let userSession: UserSession
+    let itemRequest: ItemStore.RequestToken
+
+    init(pageOffset: Int, pageSize: Int, userSession: UserSession) throws {
+        self.pageOffset = pageOffset
+        self.pageSize = pageSize
+        self.userSession = userSession
+        self.itemRequest = try userSession.items.beginRequest()
+    }
+
+    private var consumedRows: Int?
+    private var totalRows: Int?
+
+    func items(from response: Response<BaseItemDtoQueryResult>) throws -> [ItemPatch] {
+        consumedRows = response.value.items?.count ?? 0
+        totalRows = response.value.totalRecordCount
+        return try ItemPatch.items(from: response)
+    }
+
+    func items(from response: Response<[BaseItemDto]>) throws -> [ItemPatch] {
+        consumedRows = response.value.count
+        totalRows = response.value.count
+        return try ItemPatch.items(from: response)
+    }
+
+    func progress(returnedCount: Int) -> LibraryPageProgress {
+        LibraryPageProgress(offset: pageOffset, pageSize: pageSize, consumedRows: consumedRows ?? returnedCount, totalRows: totalRows)
+    }
 }
 
 @MainActor
 protocol PagingLibrary<Element> {
 
     associatedtype Element: Identifiable
+    associatedtype PageElement = Element
     associatedtype Environment: WithDefaultValue = Empty
     associatedtype Parent: LibraryParent = TitledLibraryParent
 
@@ -29,7 +59,11 @@ protocol PagingLibrary<Element> {
     func retrievePage(
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> [Element]
+    ) async throws -> [PageElement]
+
+    func materialize(_ page: [PageElement], pageState: LibraryPageState) throws -> [Element]
+
+    func includes(_ element: Element, environment: Environment) -> Bool
 
     @ViewBuilder
     func makeLibraryBody(
@@ -40,11 +74,6 @@ protocol PagingLibrary<Element> {
     func libraryStyleOptions(environment: Environment) -> LibraryStyleOptions
 
     func makeMenuContent(environment: Binding<Environment>) -> AnyView
-
-    func onItemUserDataChanged(
-        viewModel: PagingLibraryViewModel<Self>,
-        userData: UserItemDataDto
-    )
 }
 
 extension PagingLibrary where Element: LibraryElement {
@@ -65,6 +94,10 @@ extension PagingLibrary where Element: LibraryElement {
 }
 
 extension PagingLibrary {
+
+    func includes(_ element: Element, environment: Environment) -> Bool {
+        true
+    }
 
     var environment: Environment? {
         nil
@@ -90,26 +123,29 @@ extension PagingLibrary {
         EmptyView()
             .eraseToAnyView()
     }
-
-    func onItemUserDataChanged(
-        viewModel: PagingLibraryViewModel<Self>,
-        userData: UserItemDataDto
-    ) {}
 }
 
-protocol WithRandomElementLibrary<Element, Environment>: PagingLibrary {
+@MainActor
+protocol WithRandomElementLibrary<Element, Environment, PageElement>: PagingLibrary {
 
     func retrieveRandomElement(
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> Element?
+    ) async throws -> PageElement?
 }
 
-protocol SearchablePagingLibrary<Element, Environment>: PagingLibrary {
+@MainActor
+protocol SearchablePagingLibrary<Element, Environment, PageElement>: PagingLibrary {
 
     func retrieveSearchPage(
         query: String,
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> [Element]
+    ) async throws -> [PageElement]
+}
+
+extension PagingLibrary where PageElement == Element {
+    func materialize(_ page: [Element], pageState: LibraryPageState) throws -> [Element] {
+        page
+    }
 }

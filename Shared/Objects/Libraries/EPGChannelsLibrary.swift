@@ -20,7 +20,7 @@ struct EPGChannelsLibrary: BaseItemKindLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = Paths.GetLiveTvChannelsParameters()
         parameters.limit = pageState.pageSize
         parameters.startIndex = pageState.pageOffset
@@ -29,6 +29,6 @@ struct EPGChannelsLibrary: BaseItemKindLibrary {
         let request = Paths.getLiveTvChannels(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value.items ?? []
+        return try pageState.items(from: response)
     }
 }

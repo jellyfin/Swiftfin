@@ -16,16 +16,17 @@ struct RecommendedProgramsLibrary: BaseItemKindLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = Paths.GetRecommendedProgramsParameters()
         parameters.fields = [.channelInfo]
         parameters.isAiring = true
         parameters.limit = pageState.pageSize
+        parameters.startIndex = pageState.pageOffset
         parameters.userID = pageState.userSession.user.id
 
         let request = Paths.getRecommendedPrograms(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value.items ?? []
+        return try pageState.items(from: response)
     }
 }

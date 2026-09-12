@@ -24,7 +24,7 @@ struct ResumeItemsLibrary: BaseItemKindLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = Paths.GetResumeItemsParameters()
         parameters.enableUserData = true
         parameters.limit = pageState.pageSize
@@ -35,25 +35,11 @@ struct ResumeItemsLibrary: BaseItemKindLibrary {
         let request = Paths.getResumeItems(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value.items ?? []
+        return try pageState.items(from: response)
     }
 
-    func onItemUserDataChanged(
-        viewModel: PagingLibraryViewModel<ResumeItemsLibrary>,
-        userData: UserItemDataDto
-    ) {
-        guard let itemID = userData.itemID else { return }
-
-        if userData.isPlayed == true {
-            viewModel.elements.removeAll { $0.id == itemID }
-            return
-        }
-
-        let isAlreadyLoaded = viewModel.elements.contains { $0.id == itemID }
-        guard !isAlreadyLoaded else { return }
-        guard (userData.playbackPositionTicks ?? 0) > 0 else { return }
-
-        viewModel.scheduleRefreshForItemUserData(minimumInterval: 30)
+    func includes(_ element: ItemEntry, environment: Empty) -> Bool {
+        element.item.confirmedUserData?.matches([.isResumable]) != false
     }
 }
 

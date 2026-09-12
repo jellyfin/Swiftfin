@@ -104,9 +104,7 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         .sinceLastDisappear { interval in
             viewModel.refreshIfNeeded(sinceLastDisappear: interval)
         }
-        .onSceneWillEnterForeground {
-            viewModel.refreshIfPendingChanges()
-        }
+        .refreshingContentGroups(viewModel: viewModel)
         .topBarTrailing {
             if #unavailable(iOS 26.0) {
                 if viewModel.background.is(.refreshing) {

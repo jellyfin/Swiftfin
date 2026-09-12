@@ -94,7 +94,7 @@ extension EPGSupplement {
         private func select(_ item: BaseItemDto) {
             let playbackItem = item.channelID
                 .flatMap { channelID in
-                    viewModel.channels.first { $0.id == channelID }
+                    viewModel.channels.first { $0.itemID == channelID }?.value
                 } ?? item
 
             if playbackItem.id == manager.item.id {
