@@ -36,12 +36,13 @@ struct ItemEditorView: View {
         }
         .onFirstAppear {
             // Ensure we have a full `BaseItemDto` or some non-required metadata may be missing
-            viewModel.refreshItem(sendNotification: false)
+            viewModel.refreshItem()
         }
         .refreshable {
-            viewModel.refreshItem(sendNotification: false)
+            viewModel.refreshItem()
         }
-        .onNotification(.didDeleteItem) { _ in
+        .onChange(of: viewModel.$item.value == nil) { _, isDeleted in
+            guard isDeleted else { return }
             UIDevice.feedback(.success)
             router.dismiss()
         }

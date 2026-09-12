@@ -9,12 +9,14 @@
 import Defaults
 import JellyfinAPI
 
-typealias MediaPlayerItemProviderResolver = @Sendable (BaseItemDto, (@Sendable (inout BaseItemDto) -> Void)?) async throws
+typealias MediaPlayerItemProviderResolver = @MainActor @Sendable (BaseItemDto, (@Sendable (inout BaseItemDto) -> Void)?) async throws
     -> MediaPlayerItem
 
+@MainActor
 struct MediaPlayerItemProvider {
 
-    let item: BaseItemDto
+    @StoredItem
+    var item: BaseItemDto
     let mediaSource: MediaSourceInfo?
     let audioStreamIndex: Int?
     let subtitleStreamIndex: Int?
@@ -54,6 +56,9 @@ struct MediaPlayerItemProvider {
     }
 
     func callAsFunction() async throws -> MediaPlayerItem {
-        try await resolver(item, modifyItem)
+        guard let item = $item.value else { throw ItemStore.StoreError.itemUnavailable }
+        let playbackItem = try await resolver(item, modifyItem)
+        guard $item.value != nil else { throw ItemStore.StoreError.itemUnavailable }
+        return playbackItem
     }
 }

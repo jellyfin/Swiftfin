@@ -143,6 +143,7 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
+        .refreshingContentGroups(viewModel: viewModel)
         .environmentObject(focusCoordinator)
         .confirmationDialog(
             L10n.deleteItemConfirmationMessage,
@@ -157,13 +158,13 @@ struct ItemView: View {
 
             Button(L10n.cancel, role: .cancel) {}
         }
-        .onNotification(.didDeleteItem) { itemID in
-            guard itemID == provider.item.id else { return }
-
-            UIDevice.feedback(.success)
-            router.dismiss()
+        .onChange(of: provider.$item.value == nil) { _, isUnavailable in
+            if isUnavailable {
+                router.dismiss()
+            }
         }
         .errorMessage($deleteViewModel.error)
+        .errorMessage($provider.actionError)
         #if os(tvOS)
         .toolbarVisibility(.hidden, for: .navigationBar)
         #else

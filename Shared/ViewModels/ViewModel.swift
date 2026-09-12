@@ -60,11 +60,11 @@ class ViewModel: ObservableObject {
         }
     }
 
-    func send<Value: Decodable & Sendable>(_ request: Request<Value>) async throws -> Response<Value> {
-        try await authenticatedClient.send(request)
+    func send<Value: Decodable & Sendable>(_ request: Request<Value>) async throws -> ItemStoreResponse<Value> {
+        try await requireUserSession().send(request)
     }
 
     func send(_ request: Request<Void>) async throws {
-        try await authenticatedClient.send(request)
+        try await requireUserSession().send(request)
     }
 }

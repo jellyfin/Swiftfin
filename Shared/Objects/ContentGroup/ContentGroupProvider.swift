@@ -6,6 +6,8 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
+
 @MainActor
 protocol ContentGroupProvider: Displayable, Identifiable {
 
@@ -14,8 +16,17 @@ protocol ContentGroupProvider: Displayable, Identifiable {
     var environment: Environment { get set }
     var id: String { get }
 
+    /// Emit on the main actor; `.groups` rebuilds the candidates using `makeGroups`.
+    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> { get }
+
     @ContentGroupBuilder
     func makeGroups(environment: Environment) async throws -> [any ContentGroup]
+}
+
+extension ContentGroupProvider {
+    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
+        Combine.Empty().eraseToAnyPublisher()
+    }
 }
 
 extension ContentGroupProvider where Environment == Empty {

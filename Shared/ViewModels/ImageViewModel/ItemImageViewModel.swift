@@ -50,7 +50,7 @@ final class ItemImageViewModel: ViewModel {
         case error
     }
 
-    @Published
+    @StoredItem
     var item: BaseItemDto
 
     @Published
@@ -147,7 +147,7 @@ final class ItemImageViewModel: ViewModel {
             try await send(request)
         }
 
-        item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
+        item = try await item.getFullItem(userSession: requireUserSession())
 
         try await _refresh()
         events.send(.deleted)

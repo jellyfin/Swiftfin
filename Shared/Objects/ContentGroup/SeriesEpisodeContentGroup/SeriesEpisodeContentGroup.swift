@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import JellyfinAPI
 import SwiftUI
 
@@ -15,8 +16,13 @@ import SwiftUI
 struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
     let id: String
-    let playButtonItem: BaseItemDto?
+    @StoredOptionalItem
+    var playButtonItem: BaseItemDto?
     let viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
+
+    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
+        viewModel.contentGroupRefreshRequests.eraseToAnyPublisher()
+    }
 
     var _shouldBeResolved: Bool {
         viewModel.elements.isNotEmpty
@@ -28,7 +34,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
     ) {
         self.id = "\(parent.id ?? "parent")-episode-selector"
         self.playButtonItem = playButtonItem
-        self.viewModel = .init(library: SeasonViewModelLibrary(parent: parent), pageSize: 100)
+        self.viewModel = .init(library: SeasonViewModelLibrary(parent: parent), pageSize: 100, refreshesAutomatically: false)
     }
 
     func body(with viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>) -> Body {
@@ -43,7 +49,8 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
         @ObservedObject
         var viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
-        let playButtonItem: BaseItemDto?
+        @StoredOptionalItem
+        var playButtonItem: BaseItemDto?
 
         @State
         private var selection: PagingLibraryViewModel<EpisodeLibrary>.ID?

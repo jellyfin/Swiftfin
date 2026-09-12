@@ -16,7 +16,8 @@ extension ItemView {
         @Router
         private var router
 
-        let item: BaseItemDto
+        @StoredItem
+        var item: BaseItemDto
 
         private var isPresented: Bool {
             item.taglines?.contains(where: \.isNotEmpty) == true ||
