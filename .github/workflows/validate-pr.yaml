@@ -18,6 +18,42 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate localization changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python3 <<'PY'
+          import os
+          from pathlib import PurePosixPath
+          import subprocess
+          import sys
+
+          # Compare the PR branch with its merge base, ignoring base-only changes.
+          # Disable rename detection so both old and new paths are checked.
+          changed_files = subprocess.check_output([
+              "git", "diff", "--name-only", "--no-renames", "-z",
+              f"{os.environ['BASE_SHA']}...{os.environ['HEAD_SHA']}", "--",
+          ]).split(b"\0")
+          blocked_files = [
+              os.fsdecode(path) for path in changed_files if path and any(
+                  part.endswith(".lproj") and part != "en.lproj"
+                  for part in PurePosixPath(os.fsdecode(path)).parts[:-1]
+              )
+          ]
+
+          if blocked_files:
+              print("::error::Only en.lproj localization files may be changed. "
+                    "Submit other translations through Weblate.")
+              for path in blocked_files:
+                  print(f"  {path!r}")
+              sys.exit(1)
+
+          print("Localization changes are limited to en.lproj.")
+          PY
 
       - name: Install Homebrew dependencies
         run: brew bundle --file Brewfile
