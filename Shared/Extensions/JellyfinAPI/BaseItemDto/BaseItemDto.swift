@@ -499,33 +499,6 @@ extension BaseItemDto {
             }
     }
 
-    // TODO: series-season-episode hierarchy for episodes
-    // TODO: user hierarchy for downloads
-    var downloadFolder: URL? {
-        guard let type, let id else { return nil }
-
-        let root = URL.downloadsDirectory
-//            .appendingPathComponent(userSession.user.id)
-
-        switch type {
-        case .movie, .episode:
-            return root
-                .appendingPathComponent(id)
-//        case .episode:
-//            guard let seasonID = seasonID,
-//                  let seriesID = seriesID
-//            else {
-//                return nil
-//            }
-//            return root
-//                .appendingPathComponent(seriesID)
-//                .appendingPathComponent(seasonID)
-//                .appendingPathComponent(id)
-        default:
-            return nil
-        }
-    }
-
     /// Returns `originalTitle` if it is not the same as `displayTitle`
     var alternateTitle: String? {
         originalTitle != displayTitle ? originalTitle : nil

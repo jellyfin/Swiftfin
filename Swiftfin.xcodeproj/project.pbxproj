@@ -202,7 +202,6 @@
 				ViewModels/AdminDashboard/Tasks/ServerTaskViewModel.swift,
 				ViewModels/AdminDashboard/Users/AddServerUserViewModel.swift,
 				ViewModels/AdminDashboard/Users/ServerUsersViewModel.swift,
-				ViewModels/DownloadListViewModel.swift,
 				ViewModels/ItemAdministration/IdentifyItemViewModel.swift,
 				ViewModels/ItemAdministration/RemoteImageInfoViewModel.swift,
 				ViewModels/QuickConnectAuthorizeViewModel.swift,

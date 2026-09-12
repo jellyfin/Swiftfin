@@ -406,8 +406,10 @@ extension Defaults.Keys {
             UserKey("experimentalMPVPlayer", default: false)
         }
 
+        // TODO: don't use L10n key as key, just used to not
+        // lose translations
         static var downloads: Key<Bool> {
-            UserKey("experimentalDownloads", default: false)
+            UserKey(L10n.download, default: false)
         }
 
         static var serverConnectionAutoSwitch: Key<Bool> {
