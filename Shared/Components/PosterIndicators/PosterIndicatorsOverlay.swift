@@ -81,6 +81,7 @@ struct PosterIndicatorsOverlay: View {
                 .zIndex(5)
             }
         }
+        .animation(.linear(duration: 0.2), value: item.userData)
     }
 }
 

@@ -22,7 +22,12 @@ extension SeriesEpisodeContentGroup {
         @Router
         private var router
 
-        let episode: BaseItemDto
+        @State
+        private var episode: BaseItemDto
+
+        init(episode: BaseItemDto) {
+            self.episode = episode
+        }
 
         @ViewBuilder
         private var overlayView: some View {
@@ -84,6 +89,10 @@ extension SeriesEpisodeContentGroup {
                 .posterStyle(.landscape)
                 .subtleShadow()
                 .matchedTransitionSource(id: "item", in: namespace)
+            }
+            .onNotification(.didChangeItem) { newEpisode in
+                guard newEpisode.id == episode.id else { return }
+                episode = newEpisode
             }
         }
     }

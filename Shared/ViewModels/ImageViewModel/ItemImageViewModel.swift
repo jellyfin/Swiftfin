@@ -111,6 +111,7 @@ final class ItemImageViewModel: ViewModel {
         request.headers = ["Content-Type": contentType]
 
         _ = try await send(request)
+        Notifications[.getChangedItemMetadata].post(itemID)
     }
 
     @Function(\Action.Cases.saveRemoteImage)
@@ -122,6 +123,7 @@ final class ItemImageViewModel: ViewModel {
         let request = Paths.downloadRemoteImage(itemID: itemID, type: type, imageURL: imageURL)
 
         _ = try await send(request)
+        Notifications[.getChangedItemMetadata].post(itemID)
 
         try await _refresh()
         events.send(.updated)
@@ -147,7 +149,7 @@ final class ItemImageViewModel: ViewModel {
             try await send(request)
         }
 
-        item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
+        Notifications[.getChangedItemMetadata].post(itemID)
 
         try await _refresh()
         events.send(.deleted)

@@ -62,11 +62,11 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
 
         super.init()
 
-        Notifications[.didChangeUserProfile]
+        Notifications[.didChangeServerUser]
             .publisher
-            .sink { [weak self] userID in
-                guard let self, userID == self.user.id else { return }
-                self.refresh()
+            .sink { [weak self] user in
+                guard let self, user.id == self.user.id else { return }
+                self.user = user
             }
             .store(in: &cancellables)
     }
@@ -95,11 +95,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
 
         user.policy = policy
 
-        let currentUser = try authenticatedUser
-        if userID == currentUser.id {
-            currentUser.data.policy = policy
-        }
-
+        Notifications[.getChangedUser].post(userID)
         events.send(.updated)
     }
 
@@ -114,11 +110,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
 
         user.configuration = configuration
 
-        let currentUser = try authenticatedUser
-        if userID == currentUser.id {
-            currentUser.data.configuration = configuration
-        }
-
+        Notifications[.getChangedUser].post(userID)
         events.send(.updated)
     }
 
@@ -136,12 +128,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
 
         user.name = username
 
-        let currentUser = try authenticatedUser
-        if userID == currentUser.id {
-            currentUser.data.name = username
-        }
-
-        Notifications[.didChangeUserProfile].post(userID)
+        Notifications[.getChangedUser].post(userID)
         events.send(.updated)
     }
 }
