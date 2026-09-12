@@ -40,7 +40,7 @@ final class SearchViewModel: ViewModel {
         case searching
     }
 
-    @Published
+    @StoredItems
     private(set) var suggestions: [BaseItemDto] = []
 
     let itemContentGroupViewModel: ContentGroupViewModel<SearchContentGroupProvider>
@@ -65,6 +65,10 @@ final class SearchViewModel: ViewModel {
         self.itemContentGroupViewModel = .init(provider: .init())
 
         super.init()
+
+        itemContentGroupViewModel.objectWillChange
+            .sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &cancellables)
 
         observeFilters()
     }

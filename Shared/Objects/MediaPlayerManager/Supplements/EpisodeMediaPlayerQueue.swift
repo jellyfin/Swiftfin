@@ -123,7 +123,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
         if let nextItem {
             nextProvider = MediaPlayerItemProvider(item: nextItem) { [weak self] item, modifyItem in
-                let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+                let bitrate = self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
                 return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
                     item.userData?.playbackPositionTicks = .zero
                     modifyItem?(&item)
@@ -133,7 +133,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
         if let previousItem {
             previousProvider = MediaPlayerItemProvider(item: previousItem) { [weak self] item, modifyItem in
-                let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+                let bitrate = self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
                 return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
                     item.userData?.playbackPositionTicks = .zero
                     modifyItem?(&item)
@@ -245,9 +245,9 @@ extension EpisodeMediaPlayerQueue {
                 if viewModel.elements.isNotEmpty {
                     VideoPlayer.PosterCollectionView(
                         data: viewModel.elements,
-                        currentElementID: manager.item.id.map { .some($0) },
+                        currentElementID: viewModel.elements.first { $0.itemID == manager.item.id }?.id,
                         isCompact: viewState.isCompact,
-                        action: action
+                        action: { action($0.snapshot) }
                     ) { item in
                         VStack(alignment: .leading, spacing: 5) {
                             Text(item.displayTitle)

@@ -15,7 +15,8 @@ import SwiftUI
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
     let displayTitle: String = L10n.info
-    let item: BaseItemDto
+    @StoredItem
+    var item: BaseItemDto
 
     var id: String {
         "MediaInfo-\(item.id ?? "any")"
@@ -38,14 +39,14 @@ extension MediaInfoSupplement {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @State
+        @StoredItem
         private var item: BaseItemDto
 
         @StateObject
         private var recordingViewModel: RecordingTimerViewModel
 
         init(item: BaseItemDto) {
-            self._item = State(initialValue: item)
+            self.item = item
             self._recordingViewModel = StateObject(wrappedValue: RecordingTimerViewModel(item: item))
         }
 
@@ -285,9 +286,7 @@ extension MediaInfoSupplement {
 
             try? await Task.sleep(for: .seconds(max(endDate.timeIntervalSinceNow + 1, 1)))
 
-            guard let newItem = try? await item.getFullItem(userSession: userSession) else { return }
-
-            item = newItem
+            _ = try? await item.getFullItem(userSession: userSession)
             await recordingViewModel.refresh()
         }
     }

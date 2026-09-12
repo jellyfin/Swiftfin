@@ -17,7 +17,8 @@ struct EPGChannelButton: View {
     @FocusState
     private var isFocused: Bool
 
-    let channel: BaseItemDto
+    @StoredItem
+    var channel: BaseItemDto
     let action: () -> Void
 
     private let layout = EPGLayout()

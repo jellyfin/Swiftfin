@@ -19,7 +19,8 @@ extension SeriesEpisodeContentGroup {
         @Router
         private var router
 
-        let episode: BaseItemDto
+        @StoredItem
+        var episode: BaseItemDto
 
         private var episodeContent: String {
             if episode.isUnaired {
@@ -128,7 +129,8 @@ extension SeriesEpisodeContentGroup {
         let content: String
         let artworkAction: () -> Void
         let contentAction: () -> Void
-        let contextMenuItem: BaseItemDto?
+        @StoredOptionalItem
+        var contextMenuItem: BaseItemDto?
         let artwork: Artwork
 
         private var contentAccessibilityLabel: String {

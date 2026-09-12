@@ -15,6 +15,10 @@ struct CinematicSelectionContentGroup: ContentGroup {
     let id = "cinematic-selection"
     let viewModel: CinematicSelectionContentGroupViewModel
 
+    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
+        viewModel.refreshRequests
+    }
+
     var _shouldBeResolved: Bool {
         viewModel.hasContent
     }
@@ -78,9 +82,9 @@ struct CinematicSelectionContentGroup: ContentGroup {
             CinematicItemSelector(
                 items: items
             ) { item in
-                router.route(to: .item(item: item))
+                router.route(to: .item(item: item.snapshot))
             } topContent: { item in
-                ImageView(itemSelectorImageSource(for: item))
+                ImageView(itemSelectorImageSource(for: item.snapshot))
                     .placeholder { _ in
                         EmptyView()
                     }
@@ -107,6 +111,10 @@ struct CinematicRecentlyAddedContentGroup: ContentGroup {
     let id = "cinematic-recently-added"
     let viewModel: CinematicSelectionContentGroupViewModel
 
+    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
+        viewModel.refreshRequests
+    }
+
     var _shouldBeResolved: Bool {
         viewModel.hasResumeItems && viewModel.recentlyAddedViewModel.elements.isNotEmpty
     }
@@ -121,17 +129,35 @@ struct CinematicRecentlyAddedContentGroup: ContentGroup {
 
 final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
 
-    typealias Background = CinematicSelectionContentGroupViewModel
+    struct Background: WithRefresh {
+        let viewModel: CinematicSelectionContentGroupViewModel
+
+        func refresh() {
+            Task { await refresh() }
+        }
+
+        func refresh() async {
+            async let resume: Void = viewModel.resumeViewModel.background.refresh()
+            async let recentlyAdded: Void = viewModel.recentlyAddedViewModel.background.refresh()
+            _ = await (resume, recentlyAdded)
+        }
+    }
 
     let recentlyAddedGroup: PosterGroup<RecentlyAddedLibrary>
     let resumeViewModel: PagingLibraryViewModel<ResumeItemsLibrary>
+
+    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
+        resumeViewModel.contentGroupRefreshRequests
+            .merge(with: recentlyAddedViewModel.contentGroupRefreshRequests)
+            .eraseToAnyPublisher()
+    }
 
     var recentlyAddedViewModel: PagingLibraryViewModel<RecentlyAddedLibrary> {
         recentlyAddedGroup.viewModel
     }
 
-    var background: CinematicSelectionContentGroupViewModel {
-        get { self }
+    var background: Background {
+        get { Background(viewModel: self) }
         set {}
     }
 
@@ -147,7 +173,7 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
         resumeLibrary: ResumeItemsLibrary,
         recentlyAddedLibrary: RecentlyAddedLibrary
     ) {
-        self.resumeViewModel = PagingLibraryViewModel(library: resumeLibrary, pageSize: 20)
+        self.resumeViewModel = PagingLibraryViewModel(library: resumeLibrary, pageSize: 20, refreshesAutomatically: false)
         self.recentlyAddedGroup = PosterGroup(library: recentlyAddedLibrary)
 
         super.init()

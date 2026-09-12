@@ -56,7 +56,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
 
     @Published
     private(set) var user: UserDto
-    @Published
+    @StoredItems
     var libraries: [BaseItemDto] = []
 
     init(user: UserDto) {

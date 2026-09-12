@@ -157,7 +157,7 @@ extension EPGCollectionView {
             let viewModel = representable.viewModel
             let layout = representable.layout
             let contentSignature = RenderContentSignature(
-                channelIDs: viewModel.channels.compactMap(\.id),
+                channelIDs: viewModel.channels.map(\.itemID),
                 programsRevision: viewModel.programsRevision,
                 startDate: viewModel.startDate,
                 layout: layout
@@ -237,7 +237,7 @@ extension EPGCollectionView {
             layout: EPGLayout
         ) -> [RenderSection] {
             viewModel.channels.enumerated().compactMap { section, channel -> RenderSection? in
-                guard let channelID = channel.id else { return nil }
+                let channelID = channel.itemID
 
                 var occurrences: [ProgramBlock.ID: Int] = [:]
                 let items = (viewModel.programs[channelID] ?? []).map { block in

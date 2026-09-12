@@ -16,7 +16,8 @@ struct BaseItemDtoPosterLabel: View {
     @Environment(\.posterDisplayType)
     private var posterDisplayType
 
-    let item: BaseItemDto
+    @StoredItem
+    var item: BaseItemDto
 
     private var isTitlePresented: Bool {
         switch item.type {

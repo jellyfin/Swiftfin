@@ -24,7 +24,7 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
 
         let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
-        let userViews = try await userSession.client.send(userViewsPath)
+        let userViews = try await userSession.send(userViewsPath)
         let excludedLibraryIDs = userSession.user.data.configuration?.latestItemsExcludes ?? []
 
         let resolvedUserViews = (userViews.value.items ?? [])
