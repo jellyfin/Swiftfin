@@ -123,7 +123,7 @@ extension VideoPlayer.PlaybackControls {
 
         @ViewBuilder
         private var videoPlayerSlider: some View {
-            VideoPlayerSlider(
+            SliderContainer(
                 value: $scrubbedSecondsBox.value.map(
                     getter: {
                         guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
@@ -139,9 +139,9 @@ extension VideoPlayer.PlaybackControls {
                         return (manager.item.runtime ?? .zero) * (clamp($0, min: 0, max: 100) / 100)
                     }
                 ),
-                currentProgress: currentProgress,
                 total: 100,
-                isScrollingEnabled: manager.playbackRequestStatus == .paused && manager.state != .loadingItem
+                isScrollingEnabled: manager.playbackRequestStatus == .paused && manager.state != .loadingItem,
+                originProgress: currentProgress
             )
             .onEditingChanged { isEditing in
                 if isEditing {
@@ -151,6 +151,7 @@ extension VideoPlayer.PlaybackControls {
                     isScrubbing = true
                 }
             }
+            .sliderContainerStyle(.capsule(showsProgressWhenUnfocused: false))
             .if(chapterSlider) { view in
                 if let chapters = manager.item.fullChapterInfo, chapters.isNotEmpty {
                     view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }

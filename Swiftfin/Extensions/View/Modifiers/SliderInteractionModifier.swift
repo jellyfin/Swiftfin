@@ -12,17 +12,15 @@ import SwiftUI
 //       - change to be based on given stride of `Value`
 //         to translation diff step
 
-struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
+struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
 
     @Binding
-    private var value: Value
+    var value: Value
 
     @State
     private var contentSize: CGSize = .zero
     @State
     private var gestureTranslation: CGPoint = .zero
-    @State
-    private var isEditing: Bool = false
     @State
     private var translationStartLocation: CGPoint = .zero
 
@@ -36,11 +34,13 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
     @State
     private var needsToSetTranslationStartState: Bool = true
 
-    private var gesturePadding: CGFloat
-    private var onEditingChanged: (Bool) -> Void
-    private let total: Value
-    private let translationBinding: Binding<CGPoint>
-    private let valueDamping: Double
+    let total: Value
+    let isScrollingEnabled: Bool
+    let isEditing: Bool
+    let translationBinding: Binding<CGPoint>
+    let valueDamping: Double
+    let gesturePadding: CGFloat
+    let onEditingChanged: (Bool) -> Void
 
     private var gestureHeight: CGFloat {
         guard contentSize.height.isFinite else { return 0 }
@@ -51,15 +51,11 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
         return max(0, height)
     }
 
-    private var resolvedValue: Value {
-        guard value.isFinite else { return 0 }
-        return clamp(value, min: 0, max: total)
-    }
-
     private var dragGesture: some Gesture {
         DragGesture(coordinateSpace: .global)
             .onChanged { newValue in
-                guard contentSize.width.isFinite,
+                guard isScrollingEnabled,
+                      contentSize.width.isFinite,
                       contentSize.width > 0,
                       newValue.location.x.isFinite,
                       newValue.location.y.isFinite
@@ -106,22 +102,20 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
             }
     }
 
-    var body: some View {
-        ProgressView(value: resolvedValue, total: total)
-            .progressViewStyle(.playback)
+    func body(content: Content) -> some View {
+        content
             .overlay {
                 Color.clear
+                    .allowsHitTesting(isScrollingEnabled)
                     .frame(height: gestureHeight)
                     .contentShape(Rectangle())
                     .highPriorityGesture(dragGesture)
                     .onLongPressGesture(minimumDuration: 0.01, perform: {}) { isPressing in
                         if isPressing {
-                            isEditing = true
+                            guard isScrollingEnabled else { return }
                             onEditingChanged(true)
                             needsToSetTranslationStartState = true
                         } else {
-                            translationBinding.wrappedValue = .zero
-                            isEditing = false
                             onEditingChanged(false)
                         }
                     }
@@ -140,43 +134,11 @@ struct CapsuleSlider<Value: BinaryFloatingPoint>: View {
                     translationBinding.wrappedValue = gestureTranslation
                 }
             }
-    }
-}
-
-extension CapsuleSlider {
-
-    init(
-        value: Binding<Value>,
-        total: Value = 1.0,
-        valueDamping: Double = 1.0
-    ) {
-        self.init(
-            value: value,
-            total: total,
-            translation: .constant(.zero),
-            valueDamping: valueDamping
-        )
-    }
-
-    init(
-        value: Binding<Value>,
-        total: Value = 1.0,
-        translation: Binding<CGPoint>,
-        valueDamping: Double = 1.0
-    ) {
-        self._value = value
-        self.gesturePadding = 0
-        self.onEditingChanged = { _ in }
-        self.total = total.isFinite && total > 0 ? total : 1
-        self.translationBinding = translation
-        self.valueDamping = valueDamping.isFinite ? clamp(valueDamping, min: 0.01, max: 2) : 1
-    }
-
-    func onEditingChanged(perform action: @escaping (Bool) -> Void) -> Self {
-        copy(modifying: \.onEditingChanged, with: action)
-    }
-
-    func gesturePadding(_ padding: CGFloat) -> Self {
-        copy(modifying: \.gesturePadding, with: padding.isFinite ? max(0, padding) : 0)
+            .onChange(of: isEditing) {
+                if !isEditing {
+                    translationBinding.wrappedValue = .zero
+                    needsToSetTranslationStartState = true
+                }
+            }
     }
 }
