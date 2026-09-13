@@ -79,9 +79,13 @@ final class UserSessionManager: ObservableObject {
         guard state == .initial else { return }
 
         do {
+            #if os(tvOS)
+            Defaults[.lastSignedInUserID] = .signedOut
+            #else
             if Defaults[.signOutOnClose] {
                 Defaults[.lastSignedInUserID] = .signedOut
             }
+            #endif
 
             try await updateCurrentSession(with: resolveStoredSession())
         } catch {
