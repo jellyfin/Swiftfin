@@ -12,6 +12,8 @@ import Foundation
 internal enum L10n {
   /// About
   internal static let about = L10n.tr("Localizable", "about", fallback: "About")
+  /// About
+  internal static let aboutApp = L10n.tr("Localizable", "aboutApp", fallback: "About")
   /// Absolute
   internal static let absolute = L10n.tr("Localizable", "absolute", fallback: "Absolute")
   /// Accent color

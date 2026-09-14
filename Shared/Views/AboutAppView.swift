@@ -92,6 +92,6 @@ struct AboutAppView: View {
                 #endif
             }
         }
-        .navigationTitle(L10n.about)
+        .navigationTitle(L10n.aboutApp)
     }
 }
