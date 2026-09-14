@@ -460,8 +460,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS" */;
 			buildPhases = (
-				4EC71FBD2D1620AF00D0B3A8 /* Alphabetize Strings */,
-				6286F0A3271C0ABA00C40ED5 /* Run Swiftgen.swift */,
+				6286F0A3271C0ABA00C40ED5 /* Generate Strings */,
 				BD83D7852B55EEB600652C24 /* Run SwiftFormat */,
 				E1A1B5C42F00000000000002 /* Run SwiftLint */,
 				5358705C2669D21600D05A09 /* Sources */,
@@ -516,8 +515,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5377CC1B263B596B003A4E83 /* Build configuration list for PBXNativeTarget "Swiftfin iOS" */;
 			buildPhases = (
-				4EC71FBC2D16201C00D0B3A8 /* Alphabetize Strings */,
-				6286F09E271C093000C40ED5 /* Run Swiftgen.swift */,
+				6286F09E271C093000C40ED5 /* Generate Strings */,
 				BD0BA2282AD64BB200306A8D /* Run SwiftFormat */,
 				E1A1B5C42F00000000000001 /* Run SwiftLint */,
 				5377CBED263B596A003A4E83 /* Sources */,
@@ -731,47 +729,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		4EC71FBC2D16201C00D0B3A8 /* Alphabetize Strings */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
-			);
-			name = "Alphabetize Strings";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/alphabetizeStrings.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/AlphabetizeStrings.swift\"\n";
-		};
-		4EC71FBD2D1620AF00D0B3A8 /* Alphabetize Strings */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
-			);
-			name = "Alphabetize Strings";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/alphabetizeStrings.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/AlphabetizeStrings.swift\"\n";
-		};
-		6286F09E271C093000C40ED5 /* Run Swiftgen.swift */ = {
+		6286F09E271C093000C40ED5 /* Generate Strings */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -780,17 +738,19 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
+				"$(SRCROOT)/Scripts/Translations/GenerateStrings.swift",
 			);
-			name = "Run Swiftgen.swift";
+			name = "Generate Strings";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftGen installations\nexport PATH=/opt/homebrew/bin:$PATH\n\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\n  return 1\nfi\n";
+			shellScript = "set -eu\ncd \"${SRCROOT}\"\nxcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/GenerateStrings.swift\"\n";
 		};
-		6286F0A3271C0ABA00C40ED5 /* Run Swiftgen.swift */ = {
+		6286F0A3271C0ABA00C40ED5 /* Generate Strings */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -799,15 +759,17 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
+				"$(SRCROOT)/Scripts/Translations/GenerateStrings.swift",
 			);
-			name = "Run Swiftgen.swift";
+			name = "Generate Strings";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftGen installations\nexport PATH=/opt/homebrew/bin:$PATH \n\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\n  return 1\nfi\n";
+			shellScript = "set -eu\ncd \"${SRCROOT}\"\nxcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/GenerateStrings.swift\"\n";
 		};
 		BD0BA2282AD64BB200306A8D /* Run SwiftFormat */ = {
 			isa = PBXShellScriptBuildPhase;
