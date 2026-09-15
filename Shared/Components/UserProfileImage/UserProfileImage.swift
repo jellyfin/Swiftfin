@@ -37,9 +37,9 @@ struct UserProfileImage: View {
                 .fill(.complexSecondary)
 
             RedrawOnNotificationView(
-                .didChangeUserProfile,
+                .didChangeServerUser,
                 filter: {
-                    $0 == userID
+                    $0.id == userID
                 }
             ) {
                 AlternateLayoutView {

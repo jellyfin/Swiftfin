@@ -71,6 +71,21 @@ final class ServerUsersViewModel: ViewModel, Identifiable {
                 self?.refreshUser(userID)
             }
             .store(in: &cancellables)
+
+        Notifications[.didChangeServerUser]
+            .publisher
+            .sink { [weak self] user in
+                guard let self, let index = users.firstIndex(where: { $0.id == user.id }) else { return }
+                users[index] = user
+            }
+            .store(in: &cancellables)
+
+        Notifications[.didDeleteServerUser]
+            .publisher
+            .sink { [weak self] id in
+                self?.users.removeAll { $0.id == id }
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Refresh User
