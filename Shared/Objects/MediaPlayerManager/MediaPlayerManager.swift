@@ -172,7 +172,16 @@ final class MediaPlayerManager: ViewModel {
 
     var seconds: Duration {
         get { secondsBox.value }
-        set { secondsBox.value = newValue }
+        set {
+            secondsBox.value = newValue
+
+            // Workaround for in-progress recordings growing as
+            // they are played, estimate runtime from recording
+            // start (inferred from when the item appeared)
+            if item.type == .recording, let created = item.dateCreated {
+                item.runTimeTicks = max(newValue, Duration.seconds(Date.now.timeIntervalSince(created))).ticks
+            }
+        }
     }
 
     var playbackBitrate: PlaybackBitrate {

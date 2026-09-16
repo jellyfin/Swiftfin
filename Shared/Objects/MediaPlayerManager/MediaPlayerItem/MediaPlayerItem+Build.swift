@@ -125,6 +125,12 @@ extension MediaPlayerItem {
 
         item.runTimeTicks = mediaSource.runTimeTicks ?? item.runTimeTicks
 
+        // The server nulls an active recording's runtime. Seed it from when the recording
+        // file appeared; `MediaPlayerManager` keeps it tracking the live edge during playback.
+        if item.type == .recording, let created = item.dateCreated {
+            item.runTimeTicks = Duration.seconds(Date.now.timeIntervalSince(created)).ticks
+        }
+
         guard let playSessionID = response.value.playSessionID else {
             throw ErrorMessage("No associated play session ID")
         }
