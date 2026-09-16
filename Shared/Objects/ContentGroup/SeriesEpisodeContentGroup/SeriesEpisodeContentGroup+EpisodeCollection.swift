@@ -126,6 +126,10 @@ extension SeriesEpisodeContentGroup {
         private var focusedSection: FocusedSection?
         @FocusState
         private var focusedElement: EpisodeElement.ID?
+        @State
+        private var scrolledToPreferredElementID: EpisodeElement.ID?
+        @StateObject
+        private var proxy = CollectionHStackProxy()
 
         let elements: [EpisodeElement]
         let preferredElementID: EpisodeElement.ID?
@@ -175,6 +179,19 @@ extension SeriesEpisodeContentGroup {
             #endif
         }
 
+        private func scrollToPreferredElementIfNeeded(after element: EpisodeElement) {
+            guard case .episode = element,
+                  let preferredElementID,
+                  scrolledToPreferredElementID != preferredElementID
+            else {
+                return
+            }
+
+            scrolledToPreferredElementID = preferredElementID
+            focusedElement = preferredElementID
+            proxy.scrollTo(id: preferredElementID, animated: false)
+        }
+
         var body: some View {
             ContentGroupSection {
                 CollectionHStack(
@@ -183,10 +200,14 @@ extension SeriesEpisodeContentGroup {
                 ) { element in
                     content(element)
                         .focused($focusedElement, equals: element.id)
+                        .onFirstAppear {
+                            scrollToPreferredElementIfNeeded(after: element)
+                        }
                 }
                 .clipsToBounds(false)
                 .insets(horizontal: EdgeInsets.edgePadding)
                 .itemSpacing(Self.itemSpacing)
+                .proxy(proxy)
                 .scrollBehavior(.continuousLeadingEdge)
                 .focusSection()
                 .focused($focusedSection, equals: .episodes)
