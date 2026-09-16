@@ -68,3 +68,8 @@ protocol MediaPlayerOffsetConfigurable {
 protocol MediaPlayerSubtitleConfigurable {
     func setSubtitleConfiguration(_ configuration: SubtitleConfiguration)
 }
+
+@MainActor
+protocol MediaPlayerDeinterlaceConfigurable {
+    func setDeinterlace(_ mode: DeinterlaceMode)
+}

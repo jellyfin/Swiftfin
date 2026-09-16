@@ -15,7 +15,8 @@ import SwiftVLC
 @MainActor
 class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     MediaPlayerOffsetConfigurable,
-    MediaPlayerSubtitleConfigurable
+    MediaPlayerSubtitleConfigurable,
+    MediaPlayerDeinterlaceConfigurable
 {
 
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
@@ -125,6 +126,17 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         player.aspectRatio = aspectFill ? .fill : .default
     }
 
+    /// Applies the mode to the player. The value lives in Defaults and is driven
+    /// by the view; libVLC resets deinterlace state per play, so this is applied
+    /// on `.playing` and on change.
+    func setDeinterlace(_ mode: DeinterlaceMode) {
+        do {
+            try player.setDeinterlace(state: mode.vlcState, mode: mode.vlcMode)
+        } catch {
+            log(error)
+        }
+    }
+
     func setAudioOffset(_ seconds: Duration) {
         do {
             try player.setAudioDelay(seconds)
@@ -223,6 +235,9 @@ extension VLCMediaPlayerProxy {
         @Default(.VideoPlayer.Subtitle.configuration)
         private var subtitleConfiguration
 
+        @Default(.VideoPlayer.Playback.deinterlaceMode)
+        private var deinterlaceMode
+
         @EnvironmentObject
         private var containerState: VideoPlayerContainerState
         @EnvironmentObject
@@ -230,6 +245,13 @@ extension VLCMediaPlayerProxy {
 
         private var isScrubbing: Bool {
             containerState.isScrubbing
+        }
+
+        // Deinterlace only applies to interlaced video; progressive content is
+        // never filtered, even if a filter is the global default.
+        private func effectiveDeinterlaceMode(for item: MediaPlayerItem) -> DeinterlaceMode {
+            let isInterlaced = item.videoStreams.contains { $0.isInterlaced == true }
+            return isInterlaced ? deinterlaceMode : .off
         }
 
         var body: some View {
@@ -275,6 +297,7 @@ extension VLCMediaPlayerProxy {
                             proxy.isBuffering.value = false
                             manager.setPlaybackRequestStatus(status: .playing)
                             proxy.setRate(manager.rate)
+                            proxy.setDeinterlace(effectiveDeinterlaceMode(for: playbackItem))
                             playbackItem.switchTrack(type: .audio, index: playbackItem.selectedAudioStreamIndex)
                             playbackItem.switchTrack(type: .subtitle, index: playbackItem.selectedSubtitleStreamIndex)
                         case .paused:
@@ -321,6 +344,9 @@ extension VLCMediaPlayerProxy {
                     }
                     .onChange(of: subtitleConfiguration) {
                         proxy.setSubtitleConfiguration(subtitleConfiguration)
+                    }
+                    .onChange(of: deinterlaceMode) {
+                        proxy.setDeinterlace(effectiveDeinterlaceMode(for: playbackItem))
                     }
             }
         }
