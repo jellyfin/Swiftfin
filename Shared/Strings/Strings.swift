@@ -222,6 +222,8 @@ internal enum L10n {
   internal static let bitrateTestDisclaimer = L10n.tr("Localizable", "bitrateTestDisclaimer", fallback: "Longer tests are more accurate but may result in a delayed playback.")
   /// bps
   internal static let bitsPerSecond = L10n.tr("Localizable", "bitsPerSecond", fallback: "bps")
+  /// Blend
+  internal static let blend = L10n.tr("Localizable", "blend", fallback: "Blend")
   /// Blocked
   internal static let blocked = L10n.tr("Localizable", "blocked", fallback: "Blocked")
   /// Block unrated items
@@ -230,6 +232,8 @@ internal enum L10n {
   internal static let blockUnratedItemsDescription = L10n.tr("Localizable", "blockUnratedItemsDescription", fallback: "Block items from this user with no or unrecognized rating information.")
   /// Blue
   internal static let blue = L10n.tr("Localizable", "blue", fallback: "Blue")
+  /// Bob
+  internal static let bob = L10n.tr("Localizable", "bob", fallback: "Bob")
   /// Book
   internal static let book = L10n.tr("Localizable", "book", fallback: "Book")
   /// Books
@@ -472,6 +476,12 @@ internal enum L10n {
   internal static let `default` = L10n.tr("Localizable", "default", fallback: "Default")
   /// Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.
   internal static let defaultFailedLoginDescription = L10n.tr("Localizable", "defaultFailedLoginDescription", fallback: "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.")
+  /// Deinterlace
+  internal static let deinterlace = L10n.tr("Localizable", "deinterlace", fallback: "Deinterlace")
+  /// Applied by the VLC player to interlaced video. Content the server has already deinterlaced is unaffected.
+  internal static let deinterlaceDescription = L10n.tr("Localizable", "deinterlaceDescription", fallback: "Applied by the VLC player to interlaced video. Content the server has already deinterlaced is unaffected.")
+  /// X
+  internal static let deinterlaceX = L10n.tr("Localizable", "deinterlaceX", fallback: "X")
   /// Delete
   internal static let delete = L10n.tr("Localizable", "delete", fallback: "Delete")
   /// Failed to delete device
@@ -558,6 +568,8 @@ internal enum L10n {
   internal static let disabled = L10n.tr("Localizable", "disabled", fallback: "Disabled")
   /// Disc
   internal static let disc = L10n.tr("Localizable", "disc", fallback: "Disc")
+  /// Discard
+  internal static let discard = L10n.tr("Localizable", "discard", fallback: "Discard")
   /// Square disc art representing physical media like CDs, DVDs, or Blu-rays. Commonly used for music albums and movie collections.
   internal static let discImageDescription = L10n.tr("Localizable", "discImageDescription", fallback: "Square disc art representing physical media like CDs, DVDs, or Blu-rays. Commonly used for music albums and movie collections.")
   /// Disclaimer
@@ -840,6 +852,8 @@ internal enum L10n {
   internal static let items = L10n.tr("Localizable", "items", fallback: "Items")
   /// Item view
   internal static let itemView = L10n.tr("Localizable", "itemView", fallback: "Item view")
+  /// Film NTSC (IVTC)
+  internal static let ivtc = L10n.tr("Localizable", "ivtc", fallback: "Film NTSC (IVTC)")
   /// Join groups
   internal static let joinGroups = L10n.tr("Localizable", "joinGroups", fallback: "Join groups")
   /// Jump
@@ -906,6 +920,8 @@ internal enum L10n {
   internal static let likedItems = L10n.tr("Localizable", "likedItems", fallback: "Liked items")
   /// Likes
   internal static let likes = L10n.tr("Localizable", "likes", fallback: "Likes")
+  /// Linear
+  internal static let linear = L10n.tr("Localizable", "linear", fallback: "Linear")
   /// List
   internal static let list = L10n.tr("Localizable", "list", fallback: "List")
   /// Live
@@ -986,6 +1002,8 @@ internal enum L10n {
   internal static let maxParentalRating = L10n.tr("Localizable", "maxParentalRating", fallback: "Maximum parental rating")
   /// Content with a higher rating will be hidden from this user.
   internal static let maxParentalRatingDescription = L10n.tr("Localizable", "maxParentalRatingDescription", fallback: "Content with a higher rating will be hidden from this user.")
+  /// Mean
+  internal static let mean = L10n.tr("Localizable", "mean", fallback: "Mean")
   /// Media
   internal static let media = L10n.tr("Localizable", "media", fallback: "Media")
   /// Media access
@@ -1168,6 +1186,8 @@ internal enum L10n {
   internal static let permissionsSettingsAppFooter = L10n.tr("Localizable", "permissionsSettingsAppFooter", fallback: "Manage additional Swiftfin settings in the Settings app.")
   /// Person
   internal static let person = L10n.tr("Localizable", "person", fallback: "Person")
+  /// Phosphor
+  internal static let phosphor = L10n.tr("Localizable", "phosphor", fallback: "Phosphor")
   /// Photo
   internal static let photo = L10n.tr("Localizable", "photo", fallback: "Photo")
   /// Photo album
@@ -1868,6 +1888,10 @@ internal enum L10n {
   }
   /// Writer
   internal static let writer = L10n.tr("Localizable", "writer", fallback: "Writer")
+  /// Yadif
+  internal static let yadif = L10n.tr("Localizable", "yadif", fallback: "Yadif")
+  /// Yadif (2x)
+  internal static let yadif2x = L10n.tr("Localizable", "yadif2x", fallback: "Yadif (2x)")
   /// Year
   internal static let year = L10n.tr("Localizable", "year", fallback: "Year")
   /// Years
