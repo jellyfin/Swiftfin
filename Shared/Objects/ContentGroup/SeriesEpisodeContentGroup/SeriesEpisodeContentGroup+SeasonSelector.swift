@@ -49,7 +49,12 @@ extension SeriesEpisodeContentGroup {
                             Button(season.library.parent.displayTitle) {
                                 selection = season.id
                             }
-                            .buttonStyle(SeasonButtonStyle(isPickerFocused: isPickerFocused))
+                            .buttonStyle(
+                                SeasonButtonStyle(
+                                    isFocused: focusedSeason == season.id,
+                                    isPickerFocused: isPickerFocused
+                                )
+                            )
                             .isSelected(isSelected)
                             .focused($focusedSeason, equals: season.id)
                             .accessibilityAddTraits(isSelected ? .isSelected : [])
@@ -94,15 +99,24 @@ extension SeriesEpisodeContentGroup {
 
         private struct SeasonButtonStyle: ButtonStyle {
 
-            @Environment(\.isFocused)
-            private var isFocused
             @Environment(\.isSelected)
             private var isSelected
 
+            /// Focus comes from the picker's own `FocusState` rather than `\.isFocused`,
+            /// so that it cannot depend on the environment reaching a `ButtonStyle` body.
+            let isFocused: Bool
             let isPickerFocused: Bool
 
+            /// Whether the button draws a filled capsule: the season being moved over
+            /// while the row has focus, or the chosen season while focus is elsewhere.
             private var isHighlighted: Bool {
                 isFocused || (!isPickerFocused && isSelected)
+            }
+
+            /// The chosen season states its case more quietly while focus is elsewhere,
+            /// so the fill reads as "where you are" once the row is entered.
+            private var inactiveSelectedOpacity: Double {
+                isSelected && !isFocused ? 0.72 : 1
             }
 
             private var glass: BackportGlass {
@@ -119,6 +133,17 @@ extension SeriesEpisodeContentGroup {
                     .padding(CapsuleLabelStyle.defaultInsets)
                     .backport
                     .glassEffect(glass, in: .capsule)
+                    // A filled capsule on its own cannot say whether the row has focus:
+                    // entering it only moves the fill from the chosen season onto the one
+                    // under focus, and entering on the chosen season moves nothing at all.
+                    .opacity(inactiveSelectedOpacity)
+                    .scaleEffect(isFocused ? 1.1 : 1)
+                    .shadow(
+                        color: .black.opacity(isFocused ? 0.5 : 0),
+                        radius: isFocused ? 10 : 0
+                    )
+                    .animation(.easeInOut(duration: 0.15), value: isFocused)
+                    .animation(.easeInOut(duration: 0.15), value: isHighlighted)
             }
         }
 
