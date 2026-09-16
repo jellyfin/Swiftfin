@@ -176,13 +176,9 @@ struct ItemImagesView: View {
                 selectedType.displayTitle,
                 systemImage: "chevron.down"
             )
-            .labelStyle(
-                CapsuleLabelStyle(
-                    isIconTrailing: true
-                )
-            )
-            .font(.headline)
+            .labelStyle(.trailingIcon)
         }
+        .buttonStyle(.capsule)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 

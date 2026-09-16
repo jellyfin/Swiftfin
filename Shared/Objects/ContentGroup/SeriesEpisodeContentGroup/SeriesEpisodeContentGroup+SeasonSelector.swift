@@ -22,8 +22,6 @@ extension SeriesEpisodeContentGroup {
 
         @FocusState
         private var focusedSeason: PagingLibraryViewModel<EpisodeLibrary>.ID?
-        @FocusState
-        private var isPickerFocused: Bool
 
         private var selectedSeason: PagingLibraryViewModel<EpisodeLibrary>? {
             seasons.first { $0.id == selection }
@@ -42,25 +40,19 @@ extension SeriesEpisodeContentGroup {
                 title(L10n.episodes)
             } else {
                 ScrollView(.horizontal) {
-                    HStack(spacing: 20) {
-                        ForEach(seasons) { season in
-                            let isSelected = selection == season.id
-
-                            Button(season.library.parent.displayTitle) {
-                                selection = season.id
-                            }
-                            .buttonStyle(SeasonButtonStyle(isPickerFocused: isPickerFocused))
-                            .isSelected(isSelected)
-                            .focused($focusedSeason, equals: season.id)
-                            .accessibilityAddTraits(isSelected ? .isSelected : [])
-                        }
+                    SelectionTrack(
+                        seasons,
+                        selection: selection,
+                        focus: $focusedSeason
+                    ) { season in
+                        selection = season.id
                     }
+                    .controlSize(.large)
                     .edgePadding(.horizontal)
                 }
                 .scrollIndicators(.hidden)
                 .scrollClipDisabled()
                 .focusSection()
-                .focused($isPickerFocused)
                 .defaultFocus(
                     $focusedSeason,
                     preferredSelection,
@@ -92,36 +84,6 @@ extension SeriesEpisodeContentGroup {
             selection = seasonID
         }
 
-        private struct SeasonButtonStyle: ButtonStyle {
-
-            @Environment(\.isFocused)
-            private var isFocused
-            @Environment(\.isSelected)
-            private var isSelected
-
-            let isPickerFocused: Bool
-
-            private var isHighlighted: Bool {
-                isFocused || (!isPickerFocused && isSelected)
-            }
-
-            private var glass: BackportGlass {
-                isHighlighted ? .regular.selection(
-                    tint: .white,
-                    foregroundColor: .black
-                ) : .identity
-            }
-
-            func makeBody(configuration: Configuration) -> some View {
-                configuration.label
-                    .font(.callout)
-                    .fontWeight(.semibold)
-                    .padding(CapsuleLabelStyle.defaultInsets)
-                    .backport
-                    .glassEffect(glass, in: .capsule)
-            }
-        }
-
         var iOSView: some View {
             if seasons.count <= 1 {
                 title(selectedSeason?.library.parent.displayTitle ?? L10n.episodes)
@@ -137,12 +99,8 @@ extension SeriesEpisodeContentGroup {
                         }
                     }
                 }
-                .labelStyle(
-                    CapsuleLabelStyle(
-                        isIconTrailing: true
-                    )
-                )
-                .font(.headline)
+                .labelStyle(.trailingIcon)
+                .buttonStyle(.capsule)
                 .edgePadding(.horizontal)
             }
         }
