@@ -25,7 +25,7 @@
       "location" : "https://github.com/LePips/CollectionHStack",
       "state" : {
         "branch" : "main",
-        "revision" : "15baaaa759a0e252addae08431c79a49a25e4afc"
+        "revision" : "5824801d31b67f89a125013d642cce7d284143c2"
       }
     },
     {
@@ -34,7 +34,7 @@
       "location" : "https://github.com/LePips/CollectionVGrid",
       "state" : {
         "branch" : "main",
-        "revision" : "7188ac9c8f57ada38dd1000e12b51e25d8bd29ba"
+        "revision" : "07457de8a68986f937d40b7bd08c8850f96a334d"
       }
     },
     {
