@@ -140,7 +140,7 @@ extension MediaPlayerItem {
         let previewImageProvider: (any PreviewImageProvider)? = {
             let previewImageScrubbingSetting = StoredValues[.User.previewImageScrubbing]
             lazy var chapterPreviewImageProvider: ChapterPreviewImageProvider? = {
-                if let chapters = item.fullChapterInfo, chapters.isNotEmpty {
+                if let chapters = item.fullChapterInfo, chapters.contains(where: { $0.imageSource?.url != nil }) {
                     return ChapterPreviewImageProvider(chapters: chapters)
                 }
                 return nil
