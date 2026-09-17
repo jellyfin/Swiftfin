@@ -41,9 +41,11 @@ final class RootCoordinator: ObservableObject {
     }
 
     private var started = false
+    private var selectedAccentColor: Color = .jellyfinPurple
     private var accentColorCancellable: AnyCancellable?
     private var appearanceCancellable: AnyCancellable?
     private var currentSessionCancellable: AnyCancellable?
+    private var increasedContrastCancellable: AnyCancellable?
     private var splashScreenCancellable: AnyCancellable?
 
     @Injected(\.userSessionManager)
@@ -53,6 +55,7 @@ final class RootCoordinator: ObservableObject {
         accentColorCancellable?.cancel()
         appearanceCancellable?.cancel()
         currentSessionCancellable?.cancel()
+        increasedContrastCancellable?.cancel()
         splashScreenCancellable?.cancel()
     }
 
@@ -70,6 +73,18 @@ final class RootCoordinator: ObservableObject {
     }
 
     private func startPreferenceObservation() {
+        increasedContrastCancellable = Notifications[.darkerSystemColorsStatusDidChange]
+            .publisher
+            .sink { [weak self] isIncreasedContrastEnabled in
+                guard let self else { return }
+                Task { @MainActor in
+                    self.applyAccentColor(
+                        self.selectedAccentColor,
+                        isIncreasedContrastEnabled
+                    )
+                }
+            }
+
         setPreferenceObservation(for: userSessionManager.currentSession)
 
         currentSessionCancellable = userSessionManager.$currentSession
@@ -143,11 +158,22 @@ final class RootCoordinator: ObservableObject {
     }
 
     @MainActor
-    private func applyAccentColor(_ color: Color) {
-        Defaults[.accentColor] = color
+    private func applyAccentColor(_ color: Color, _ isIncreasedContrastEnabled: Bool = false) {
+        selectedAccentColor = color
+
+        let appearance = Defaults[.appearance]
+        let isDark = appearance == .dark || (
+            appearance == .system && UIApplication.shared.keyWindow?.traitCollection.userInterfaceStyle == .dark
+        )
+        let resolvedColor = isIncreasedContrastEnabled ? color.mix(
+            with: isDark ? .white : .black,
+            by: 0.25
+        ) : color
+
+        Defaults[.accentColor] = resolvedColor
 
         #if os(iOS)
-        UIApplication.shared.setAccentColor(color.uiColor)
+        UIApplication.shared.setAccentColor(resolvedColor.uiColor)
         #endif
     }
 
@@ -155,6 +181,7 @@ final class RootCoordinator: ObservableObject {
     private func applyAppearance(_ appearance: AppAppearance) {
         Defaults[.appearance] = appearance
         UIApplication.shared.setAppearance(appearance.style)
+        applyAccentColor(selectedAccentColor)
     }
 
     @MainActor

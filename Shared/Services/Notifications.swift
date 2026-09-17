@@ -175,6 +175,14 @@ extension Notifications.Key {
         Key(AVAudioSession.interruptionNotification)
     }
 
+    // MARK: - UIAccessibility
+
+    static var darkerSystemColorsStatusDidChange: Key<Bool> {
+        Key(UIAccessibility.darkerSystemColorsStatusDidChangeNotification) { _ in
+            UIAccessibility.isDarkerSystemColorsEnabled
+        }
+    }
+
     // MARK: - UIApplication
 
     static var applicationDidEnterBackground: Key<Void> {
