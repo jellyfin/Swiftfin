@@ -28,7 +28,7 @@ struct SwiftfinApp: App {
         WindowGroup {
             OverlayToastView {
                 PreferencesView {
-                    WithUserAuthentication {
+                    WithLocalUserAuthentication {
                         RootView()
                             .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
                     }

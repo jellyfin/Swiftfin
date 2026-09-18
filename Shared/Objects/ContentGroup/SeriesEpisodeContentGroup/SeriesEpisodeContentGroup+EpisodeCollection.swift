@@ -184,6 +184,7 @@ extension SeriesEpisodeContentGroup {
                     content(element)
                         .focused($focusedElement, equals: element.id)
                 }
+                .initialElement(id: preferredElementID)
                 .clipsToBounds(false)
                 .insets(horizontal: EdgeInsets.edgePadding)
                 .itemSpacing(Self.itemSpacing)

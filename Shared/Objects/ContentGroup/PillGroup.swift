@@ -60,17 +60,15 @@ struct PillGroup<Element: Displayable>: ContentGroup {
                                 if let imageable = element as? SystemImageable {
                                     Label(element.displayTitle, systemImage: imageable.systemImage)
                                 } else {
-                                    EmptyLabel(element.displayTitle)
+                                    Text(element.displayTitle)
                                 }
                             }
                             .foregroundStyle(.primary, .secondary)
-                            .font(.callout)
-                            .fontWeight(.semibold)
-                            .labelStyle(CapsuleLabelStyle())
-                            .buttonBorderShape(.capsule)
-                            .buttonStyle(.card)
                         }
                     }
+                    .labelStyle(.leadingIcon)
+                    .buttonStyle(.capsule)
+                    .controlSize(UIDevice.isTV ? .large : .regular)
                     .edgePadding(.horizontal)
                 }
                 .scrollIndicators(.hidden)

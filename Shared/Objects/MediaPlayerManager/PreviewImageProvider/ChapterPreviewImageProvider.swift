@@ -12,8 +12,6 @@ import JellyfinAPI
 import UIKit
 
 // TODO: preload chapter images
-//       - somehow tell player if there are no images
-//         and don't present popup overlay
 // TODO: just use Nuke image pipeline
 
 class ChapterPreviewImageProvider: PreviewImageProvider {
@@ -55,7 +53,7 @@ class ChapterPreviewImageProvider: PreviewImageProvider {
         let newTask = Task<UIImage?, Never> {
             guard let client = Container.shared.currentUserSession()?.client else { return nil }
 
-            guard let chapterInfo = chapters[safe: chapterIndex], let imageUrl = chapterInfo.imageSource.url else { return nil }
+            guard let chapterInfo = chapters[safe: chapterIndex], let imageUrl = chapterInfo.imageSource?.url else { return nil }
             let request: Request<Data> = .init(url: imageUrl)
 
             guard let response = try? await client.send(request) else { return nil }

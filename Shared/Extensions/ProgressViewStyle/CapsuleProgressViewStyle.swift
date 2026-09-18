@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct PlaybackProgressViewStyle: ProgressViewStyle {
+struct CapsuleProgressViewStyle: ProgressViewStyle {
 
     enum CornerStyle {
         case round
@@ -20,6 +20,8 @@ struct PlaybackProgressViewStyle: ProgressViewStyle {
 
     var secondaryProgress: Double?
     var cornerStyle: CornerStyle
+    var tickProgress: Double?
+    var showsProgress = true
 
     @ViewBuilder
     private func buildCapsule(for progress: Double) -> some View {
@@ -43,22 +45,34 @@ struct PlaybackProgressViewStyle: ProgressViewStyle {
             .overlay(alignment: .leading) {
                 ZStack(alignment: .leading) {
 
-                    if let secondaryProgress,
-                       secondaryProgress > 0
-                    {
-                        buildCapsule(for: secondaryProgress)
-                            .foregroundStyle(.tertiary)
+                    if showsProgress {
+                        if let secondaryProgress, secondaryProgress > (configuration.fractionCompleted ?? 0) {
+                            buildCapsule(for: secondaryProgress)
+                                .foregroundStyle(.tertiary)
+                        }
+
+                        if let fractionCompleted = configuration.fractionCompleted {
+                            buildCapsule(for: fractionCompleted)
+                                .foregroundStyle(.primary)
+                        }
                     }
 
-                    if let fractionCompleted = configuration.fractionCompleted {
-                        buildCapsule(for: fractionCompleted)
+                    if let tickProgress, tickProgress.isFinite {
+                        let width = contentSize.width.isFinite ? max(0, contentSize.width) : 0
+                        let tickWidth = min(3, width)
+                        let offset = clamp(width * tickProgress - tickWidth / 2, min: 0, max: width - tickWidth)
+
+                        Rectangle()
                             .foregroundStyle(.primary)
+                            .frame(width: tickWidth)
+                            .offset(x: offset)
                     }
                 }
             }
             .trackingSize($contentSize)
-            .mask {
-                Capsule()
+            .clipShape(Capsule())
+            .overlay {
+                Capsule().strokeBorder(.white.opacity(0.18), lineWidth: 0.5)
             }
     }
 }

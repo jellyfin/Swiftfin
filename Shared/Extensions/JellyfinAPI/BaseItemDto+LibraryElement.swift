@@ -145,7 +145,8 @@ private struct BaseItemDtoLibraryListElement: View {
             }
 
             if let progress = program.progressPercentage {
-                ProgressBar(progress: progress)
+                ProgressView(value: progress)
+                    .progressViewStyle(.playback)
                     .frame(height: 4)
                     .foregroundStyle(Color.accentColor)
             }
