@@ -12,7 +12,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: scroll to current chapter on appear
 // TODO: sometimes safe area for CollectionHStack doesn't trigger
 
 class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
