@@ -35,7 +35,7 @@ extension ChapterInfo {
         let chapterInfo: ChapterInfo
         let displayTitle: String
         let id: Int
-        let imageSource: ImageSource
+        let imageSource: ImageSource?
         let preferredPosterDisplayType: PosterDisplayType = .landscape
         let systemImage: String = "film"
 
@@ -43,7 +43,7 @@ extension ChapterInfo {
 
         init(
             chapterInfo: ChapterInfo,
-            imageSource: ImageSource
+            imageSource: ImageSource? = nil
         ) {
             self.chapterInfo = chapterInfo
             self.displayTitle = chapterInfo.displayTitle
@@ -54,7 +54,7 @@ extension ChapterInfo {
         func landscapeImageSources(
             environment: Empty
         ) -> [ImageSource] {
-            [imageSource]
+            [imageSource].compactMap(\.self)
         }
 
         var posterLabel: some View {

@@ -25,7 +25,7 @@
       "location" : "https://github.com/LePips/CollectionHStack",
       "state" : {
         "branch" : "main",
-        "revision" : "15baaaa759a0e252addae08431c79a49a25e4afc"
+        "revision" : "5824801d31b67f89a125013d642cce7d284143c2"
       }
     },
     {
@@ -34,7 +34,7 @@
       "location" : "https://github.com/LePips/CollectionVGrid",
       "state" : {
         "branch" : "main",
-        "revision" : "7188ac9c8f57ada38dd1000e12b51e25d8bd29ba"
+        "revision" : "07457de8a68986f937d40b7bd08c8850f96a334d"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnEstropia/CoreStore.git",
       "state" : {
-        "revision" : "5a0d27cf343c6e341b0ef3c8d36104770b27a839",
-        "version" : "9.3.0"
+        "revision" : "4b6d9a54e75d2c9fd2c3c768f7d4aa3175c09133",
+        "version" : "9.2.0"
       }
     },
     {
@@ -105,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "50be9e583438be414a15d4bba933ff64b6769a91",
-        "version" : "3.1.0"
+        "revision" : "bf2f30b9a17c03da82f47d8faa50a666043f2196",
+        "version" : "3.2.0"
       }
     },
     {

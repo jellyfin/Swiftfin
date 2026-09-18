@@ -136,15 +136,15 @@ extension VideoPlayer.PlaybackControls {
                 // Use scale effect, slider doesn't respond well to horizontal frame changes
                 let xScale = insetSliderWidth > 0 ? max(1, sliderSize.width / insetSliderWidth) : 1
 
-                CapsuleSlider(
+                SliderContainer(
                     value: $scrubbedSecondsBox.value.map(
                         getter: { $0.seconds },
                         setter: { .seconds($0) }
                     ),
-                    total: sliderTotal,
-                    translation: $currentTranslation,
-                    valueDamping: isSlowScrubbing ? 0.1 : 1
+                    total: sliderTotal
                 )
+                .translation($currentTranslation)
+                .valueDamping(isSlowScrubbing ? 0.1 : 1)
                 .gesturePadding(30)
                 .onEditingChanged { newValue in
                     isScrubbing = newValue
