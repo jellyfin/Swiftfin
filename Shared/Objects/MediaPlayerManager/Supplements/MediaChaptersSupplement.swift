@@ -64,6 +64,9 @@ extension MediaChaptersSupplement {
         //        @StateObject
         //        private var collectionVGridProxy: CollectionVGridProxy = .init()
 
+        @State
+        private var initialChapterID: ChapterInfo.FullInfo.ID?
+
         init(supplement: MediaChaptersSupplement) {
             self.supplement = supplement
         }
@@ -93,6 +96,9 @@ extension MediaChaptersSupplement {
                 iOSRegularView
             }
             .onReceive(manager.secondsBox.$value, perform: updateActiveChapter(for:))
+            .onFirstAppear {
+                initialChapterID = supplement.chapterID(at: manager.seconds)
+            }
         }
 
         @ViewBuilder
@@ -135,6 +141,7 @@ extension MediaChaptersSupplement {
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
             }
+            .initialElement(id: initialChapterID)
             .clipsToBounds(false)
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
             .itemSpacing(EdgeInsets.edgePadding / 2)
@@ -168,12 +175,16 @@ extension MediaChaptersSupplement {
             //                    collectionHStackProxy.scrollTo(id: currentChapter.id, animated: false)
             //                }
             //            }
+            .initialElement(id: initialChapterID)
             .clipsToBounds(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .ignoresSafeArea(.container, edges: .horizontal)
             .frame(maxHeight: .infinity)
             .focusSection()
             .onReceive(manager.secondsBox.$value, perform: updateActiveChapter(for:))
+            .onFirstAppear {
+                initialChapterID = supplement.chapterID(at: manager.seconds)
+            }
         }
 
         struct ChapterPreview: View {

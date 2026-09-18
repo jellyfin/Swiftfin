@@ -61,6 +61,7 @@ extension MediaPeopleSupplement {
         private var iOSCompactView: some View {
             CollectionVGrid(
                 uniqueElements: people,
+                id: \.hashValue,
                 layout: .columns(
                     1,
                     insets: .init(EdgeInsets.edgePadding)
@@ -82,7 +83,7 @@ extension MediaPeopleSupplement {
         private var iOSRegularView: some View {
             CollectionHStack(
                 uniqueElements: people,
-                id: \.id,
+                id: \.hashValue,
                 layout: .minimumWidth(columnWidth: 80, rows: 1)
             ) { person in
                 personView(for: person)
@@ -96,7 +97,7 @@ extension MediaPeopleSupplement {
         var tvOSView: some View {
             CollectionHStack(
                 uniqueElements: people,
-                id: \.id,
+                id: \.hashValue,
                 layout: .grid(columns: 9, rows: 1, columnTrailingInset: 0)
             ) { person in
                 personView(for: person)

@@ -335,6 +335,7 @@ extension EpisodeMediaPlayerQueue {
                         action(episode)
                     }
                 }
+                .initialElement(id: manager.item.id)
                 .clipsToBounds(false)
                 .insets(horizontal: EdgeInsets.edgePadding)
                 .ignoresSafeArea(.container, edges: .horizontal)
@@ -350,6 +351,7 @@ extension EpisodeMediaPlayerQueue {
                         action(item)
                     }
                 }
+                .initialElement(id: manager.item.id)
                 .clipsToBounds(false)
                 .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
                 .itemSpacing(EdgeInsets.edgePadding / 2)
