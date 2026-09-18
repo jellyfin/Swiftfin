@@ -98,7 +98,7 @@ extension MediaPeopleSupplement {
             CollectionHStack(
                 uniqueElements: people,
                 id: \.hashValue,
-                layout: .grid(columns: 9, rows: 1, columnTrailingInset: 0)
+                layout: .grid(columns: 10, rows: 1, columnTrailingInset: 0)
             ) { person in
                 personView(for: person)
             }
