@@ -253,6 +253,9 @@ extension EpisodeMediaPlayerQueue {
 
         private struct _Body: View {
 
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
+
             @ObservedObject
             var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
@@ -269,7 +272,7 @@ extension EpisodeMediaPlayerQueue {
                                 insets: .edgeInsets
                             )
                         ) { item in
-                            EpisodeRow(episode: item) {
+                            EpisodeRow(manager: manager, episode: item) {
                                 action(item)
                             }
                         }
@@ -312,6 +315,9 @@ extension EpisodeMediaPlayerQueue {
             private var safeAreaInsets: EdgeInsets
             #endif
 
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
+
             @ObservedObject
             var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
@@ -325,11 +331,14 @@ extension EpisodeMediaPlayerQueue {
                     id: \.id,
                     layout: .grid(columns: 5, rows: 1, columnTrailingInset: 0)
                 ) { episode in
-                    EpisodeButton(episode: episode) {
+                    EpisodeButton(manager: manager, episode: episode) {
                         action(episode)
                     }
                 }
+                .clipsToBounds(false)
+                .insets(horizontal: EdgeInsets.edgePadding)
                 .ignoresSafeArea(.container, edges: .horizontal)
+                .frame(maxHeight: .infinity)
                 .focusSection()
                 #else
                 CollectionHStack(
@@ -337,7 +346,7 @@ extension EpisodeMediaPlayerQueue {
                     id: \.id,
                     layout: .minimumWidth(columnWidth: 170, rows: 1)
                 ) { item in
-                    EpisodeButton(episode: item) {
+                    EpisodeButton(manager: manager, episode: item) {
                         action(item)
                     }
                 }
@@ -485,8 +494,8 @@ extension EpisodeMediaPlayerQueue {
 
     private struct EpisodeRow: View {
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @ObservedObject
+        var manager: MediaPlayerManager
 
         let episode: BaseItemDto
         let action: () -> Void
@@ -521,8 +530,8 @@ extension EpisodeMediaPlayerQueue {
 
     private struct EpisodeButton: View {
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @ObservedObject
+        var manager: MediaPlayerManager
 
         let episode: BaseItemDto
         let action: () -> Void

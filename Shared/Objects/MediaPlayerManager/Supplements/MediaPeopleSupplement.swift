@@ -94,20 +94,17 @@ extension MediaPeopleSupplement {
         }
 
         var tvOSView: some View {
-            CollectionVGrid(
+            CollectionHStack(
                 uniqueElements: people,
                 id: \.id,
-                layout: .columns(
-                    10,
-                    insets: .init(EdgeInsets.edgePadding),
-                    itemSpacing: EdgeInsets.edgePadding,
-                    lineSpacing: EdgeInsets.edgePadding
-                )
+                layout: .grid(columns: 9, rows: 1, columnTrailingInset: 0)
             ) { person in
                 personView(for: person)
-                    .padding(.horizontal, 4)
             }
+            .clipsToBounds(false)
+            .insets(horizontal: EdgeInsets.edgePadding)
             .ignoresSafeArea(.container, edges: .horizontal)
+            .frame(maxHeight: .infinity)
             .focusSection()
         }
     }

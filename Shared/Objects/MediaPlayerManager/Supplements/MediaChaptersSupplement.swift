@@ -168,7 +168,10 @@ extension MediaChaptersSupplement {
             //                    collectionHStackProxy.scrollTo(id: currentChapter.id, animated: false)
             //                }
             //            }
+            .clipsToBounds(false)
+            .insets(horizontal: EdgeInsets.edgePadding)
             .ignoresSafeArea(.container, edges: .horizontal)
+            .frame(maxHeight: .infinity)
             .focusSection()
             .onReceive(manager.secondsBox.$value, perform: updateActiveChapter(for:))
         }
