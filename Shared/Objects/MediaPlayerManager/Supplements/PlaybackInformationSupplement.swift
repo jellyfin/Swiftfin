@@ -20,6 +20,7 @@ class PlaybackInformationSupplement: ObservableObject, MediaPlayerSupplement {
 
     let displayTitle: String = L10n.session
     let itemID: String
+    let presentationStyle: MediaPlayerSupplementPresentationStyle = .expanded
     let provider: PlaybackInformationProvider
 
     var id: String {
@@ -222,6 +223,7 @@ extension PlaybackInformationSupplement {
             .labeledContentStyle(.playbackInfo)
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
+            .padding(.bottom, safeAreaInsets.bottom)
         }
 
         @ViewBuilder
