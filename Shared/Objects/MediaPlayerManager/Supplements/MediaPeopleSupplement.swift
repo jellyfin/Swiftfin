@@ -102,7 +102,6 @@ extension MediaPeopleSupplement {
             ) { person in
                 personView(for: person)
             }
-            .clipsToBounds(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .ignoresSafeArea(.container, edges: .horizontal)
             .frame(maxHeight: .infinity)

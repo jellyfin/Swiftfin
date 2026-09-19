@@ -175,7 +175,6 @@ extension MediaChaptersSupplement {
             //                }
             //            }
             .initialElement(id: initialChapterID)
-            .clipsToBounds(false)
             .insets(horizontal: EdgeInsets.edgePadding)
             .ignoresSafeArea(.container, edges: .horizontal)
             .frame(maxHeight: .infinity)

@@ -336,7 +336,6 @@ extension EpisodeMediaPlayerQueue {
                     }
                 }
                 .initialElement(id: manager.item.id)
-                .clipsToBounds(false)
                 .insets(horizontal: EdgeInsets.edgePadding)
                 .ignoresSafeArea(.container, edges: .horizontal)
                 .frame(maxHeight: .infinity)
