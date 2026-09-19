@@ -24,6 +24,9 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
 
+    @Default(.VideoPlayer.Playback.deinterlaceMode)
+    private var deinterlaceMode
+
     // MARK: - Button Defaults
 
     @Default(.VideoPlayer.jumpBackwardInterval)
@@ -87,6 +90,8 @@ struct VideoPlayerSettingsView: View {
     var body: some View {
         Form(systemImage: "tv") {
             engineSettings
+
+            deinterlaceSettings
 
             #if os(iOS)
             gestureSettings
@@ -152,6 +157,19 @@ struct VideoPlayerSettingsView: View {
                 L10n.native,
                 value: L10n.playerNativeDescription
             )
+        }
+    }
+
+    // MARK: - Deinterlace Settings
+
+    @ViewBuilder
+    private var deinterlaceSettings: some View {
+        Section {
+            PlatformPicker(L10n.deinterlace, selection: $deinterlaceMode)
+        } header: {
+            Text(L10n.deinterlace)
+        } footer: {
+            Text(L10n.deinterlaceDescription)
         }
     }
 

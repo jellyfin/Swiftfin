@@ -51,6 +51,14 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 filteredButtons.removeAll { $0 == .playbackSettings }
             }
 
+            // Deinterlace: only the VLC player supports it, and only interlaced
+            // video benefits (regardless of direct play vs transcode).
+            let supportsDeinterlace = (manager.proxy as? any MediaPlayerDeinterlaceConfigurable) != nil
+            let isInterlaced = manager.playbackItem?.videoStreams.contains { $0.isInterlaced == true } == true
+            if !(supportsDeinterlace && isInterlaced) {
+                filteredButtons.removeAll { $0 == .deinterlace }
+            }
+
             return filteredButtons
         }
 
@@ -87,6 +95,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 Audio()
             case .autoPlay:
                 AutoPlay()
+            case .deinterlace:
+                Deinterlace()
             #if os(iOS)
             case .gestureLock:
                 GestureLock()

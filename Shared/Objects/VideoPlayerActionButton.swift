@@ -13,6 +13,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     case aspectFill
     case audio
     case autoPlay
+    case deinterlace
     #if os(iOS)
     case gestureLock
     #endif
@@ -30,6 +31,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.audio
         case .autoPlay:
             L10n.autoPlay
+        case .deinterlace:
+            L10n.deinterlace
         #if os(iOS)
         case .gestureLock:
             L10n.gestureLock
@@ -57,6 +60,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2"
         case .autoPlay: "play.fill"
+        case .deinterlace: "rectangle.split.1x2"
         case .playbackSpeed: "speedometer"
         case .playbackSettings: "tv"
         case .playNextItem: "forward.end.fill"
@@ -87,6 +91,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2.fill"
         case .autoPlay: usesLiquidGlassSymbols ? "play.fill" : "play.circle.fill"
+        case .deinterlace: "rectangle.split.1x2"
         case .gestureLock: usesLiquidGlassSymbols ? "lock.fill" : "lock.circle.fill"
         case .playbackSpeed: "speedometer"
         case .playbackSettings: usesLiquidGlassSymbols ? "tv" : "tv.circle.fill"
@@ -124,6 +129,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     static let defaultMenuActionButtons: [VideoPlayerActionButton] = [
         .audio,
         .subtitles,
+        .deinterlace,
         .playbackSpeed,
         .playbackSettings,
     ]

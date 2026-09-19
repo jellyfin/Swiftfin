@@ -376,6 +376,10 @@ extension Defaults.Keys {
                 UserKey("customDeviceProfileAction", default: .add)
             }
 
+            static var deinterlaceMode: Key<DeinterlaceMode> {
+                UserKey("deinterlaceMode", default: .off)
+            }
+
             static var rates: Key<[Float]> {
                 UserKey("videoPlayerPlaybackRates", default: [0.5, 1.0, 1.25, 1.5, 2.0])
             }
