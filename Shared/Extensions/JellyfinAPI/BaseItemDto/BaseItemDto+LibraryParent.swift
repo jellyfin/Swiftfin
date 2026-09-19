@@ -44,6 +44,9 @@ extension BaseItemDto: LibraryParent {
                 .appending([.folder, .collectionFolder])
         case (_, .channel), (_, .liveTvChannel), (_, .tvChannel):
             [.liveTvProgram]
+        case (_, .playlist):
+            BaseItemKind.supportedCases
+                .appending([.episode, .audio])
         case (.movies, _):
             [.movie]
         case (.tvshows, _):
@@ -57,6 +60,8 @@ extension BaseItemDto: LibraryParent {
             }
         case (.music, _):
             [.audio, .musicAlbum, .musicArtist]
+        case (.playlists, _):
+            [.playlist]
         case (.boxsets, _):
             BaseItemKind.supportedCases
         default:

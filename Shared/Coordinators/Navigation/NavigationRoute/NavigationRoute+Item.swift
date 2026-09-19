@@ -11,6 +11,16 @@ import SwiftUI
 
 extension NavigationRoute {
 
+    @MainActor
+    static func itemPlaylists(item: BaseItemDto) -> NavigationRoute {
+        NavigationRoute(
+            id: "itemPlaylists",
+            style: .sheet
+        ) {
+            ItemPlaylistView(item: item)
+        }
+    }
+
     // MARK: - Item Editing
 
     #if os(iOS)
