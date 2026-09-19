@@ -136,16 +136,19 @@ extension UserState {
 
     @MainActor
     func updateUserData(server: ServerState) async throws {
+        let userData = try await getUserData(server: server)
+        updateUserData(userData)
+    }
+
+    @MainActor
+    func updateUserData(_ userData: UserDto) {
         let users = StoredValues[.User.users]
         guard let currentUser = users.first(where: { $0.id == id }) else { return }
-
-        let userData = try await getUserData(server: server)
-        let updatedUsername = userData.name ?? currentUser.username
 
         let updatedUser = UserState(
             id: currentUser.id,
             serverID: currentUser.serverID,
-            username: updatedUsername
+            username: userData.name ?? currentUser.username
         )
 
         StoredValues[.User.users] = users.map { $0.id == id ? updatedUser : $0 }

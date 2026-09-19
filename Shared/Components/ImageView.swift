@@ -18,35 +18,41 @@ import SwiftUI
 struct ImageView<_Image: View, Placeholder: View, Failure: View>: View {
 
     @State
-    private var sources: [ImageSource]
+    private var sourceIndex = 0
 
+    private var sources: [ImageSource]
     private var image: (UIImage) -> _Image
     private var pipeline: ImagePipeline
     private var placeholder: (ImageSource) -> Placeholder
     private var failure: Failure
 
     var body: some View {
-        if let currentSource = sources.first {
-            LazyImage(url: currentSource.url, transaction: .init(animation: .linear)) { state in
-                if state.isLoading {
-                    placeholder(currentSource)
-                } else if let container = state.imageContainer {
-                    if let data = container.data {
-                        FastSVGView(data: data)
-                    } else {
-                        image(container.image)
-                    }
-                } else if state.error != nil {
-                    failure
-                        .onAppear {
-                            sources.removeFirstSafe()
+        Group {
+            if let currentSource = sources[safe: sourceIndex] {
+                LazyImage(url: currentSource.url, transaction: .init(animation: .linear)) { state in
+                    if state.isLoading {
+                        placeholder(currentSource)
+                    } else if let container = state.imageContainer {
+                        if let data = container.data {
+                            FastSVGView(data: data)
+                        } else {
+                            image(container.image)
                         }
+                    } else if state.error != nil {
+                        failure
+                            .onAppear {
+                                sourceIndex += 1
+                            }
+                    }
                 }
+                .pipeline(pipeline)
+                .onDisappear(.lowerPriority)
+            } else {
+                failure
             }
-            .pipeline(pipeline)
-            .onDisappear(.lowerPriority)
-        } else {
-            failure
+        }
+        .onChange(of: sources) {
+            sourceIndex = 0
         }
     }
 }
