@@ -331,9 +331,10 @@ extension EpisodeMediaPlayerQueue {
                     id: \.id,
                     layout: .grid(columns: 5, rows: 1, columnTrailingInset: 0)
                 ) { episode in
-                    EpisodeButton(manager: manager, episode: episode) {
+                    EpisodeButton(episode: episode) {
                         action(episode)
                     }
+                    .environmentObject(manager)
                 }
                 .initialElement(id: manager.item.id)
                 .insets(horizontal: EdgeInsets.edgePadding)
@@ -346,9 +347,10 @@ extension EpisodeMediaPlayerQueue {
                     id: \.id,
                     layout: .minimumWidth(columnWidth: 170, rows: 1)
                 ) { item in
-                    EpisodeButton(manager: manager, episode: item) {
+                    EpisodeButton(episode: item) {
                         action(item)
                     }
+                    .environmentObject(manager)
                 }
                 .initialElement(id: manager.item.id)
                 .clipsToBounds(false)
@@ -531,8 +533,8 @@ extension EpisodeMediaPlayerQueue {
 
     private struct EpisodeButton: View {
 
-        @ObservedObject
-        var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
 
         let episode: BaseItemDto
         let action: () -> Void
