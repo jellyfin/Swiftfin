@@ -253,6 +253,9 @@ extension EpisodeMediaPlayerQueue {
 
         private struct _Body: View {
 
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
+
             @ObservedObject
             var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
@@ -269,7 +272,7 @@ extension EpisodeMediaPlayerQueue {
                                 insets: .edgeInsets
                             )
                         ) { item in
-                            EpisodeRow(episode: item) {
+                            EpisodeRow(manager: manager, episode: item) {
                                 action(item)
                             }
                         }
@@ -312,6 +315,9 @@ extension EpisodeMediaPlayerQueue {
             private var safeAreaInsets: EdgeInsets
             #endif
 
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
+
             @ObservedObject
             var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
@@ -328,8 +334,12 @@ extension EpisodeMediaPlayerQueue {
                     EpisodeButton(episode: episode) {
                         action(episode)
                     }
+                    .environmentObject(manager)
                 }
+                .initialElement(id: manager.item.id)
+                .insets(horizontal: EdgeInsets.edgePadding)
                 .ignoresSafeArea(.container, edges: .horizontal)
+                .frame(maxHeight: .infinity)
                 .focusSection()
                 #else
                 CollectionHStack(
@@ -340,7 +350,9 @@ extension EpisodeMediaPlayerQueue {
                     EpisodeButton(episode: item) {
                         action(item)
                     }
+                    .environmentObject(manager)
                 }
+                .initialElement(id: manager.item.id)
                 .clipsToBounds(false)
                 .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
                 .itemSpacing(EdgeInsets.edgePadding / 2)
@@ -485,8 +497,8 @@ extension EpisodeMediaPlayerQueue {
 
     private struct EpisodeRow: View {
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @ObservedObject
+        var manager: MediaPlayerManager
 
         let episode: BaseItemDto
         let action: () -> Void
