@@ -241,6 +241,19 @@ extension View {
     }
 
     @ViewBuilder
+    func navigationBarFilterDrawer(
+        viewModel: FilterViewModel,
+        types: [ItemFilterType]
+    ) -> some View {
+        modifier(
+            NavigationBarFilterDrawerModifier(
+                viewModel: viewModel,
+                types: types
+            )
+        )
+    }
+
+    @ViewBuilder
     func mask(
         gradient: MaskGradientModifier.Style,
         @ArrayBuilder<MaskGradientModifier.Stop> stops: () -> [MaskGradientModifier.Stop]

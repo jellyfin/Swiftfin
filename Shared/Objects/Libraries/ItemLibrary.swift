@@ -298,17 +298,16 @@ private struct ItemLibraryBody<Content: View>: View {
             ) { filters in
                 viewModel.environment.filters = filters
             }
+            .navigationBarFilterDrawer(
+                viewModel: filterViewModel,
+                types: enabledDrawerFilters
+            )
             #if os(tvOS)
             .background(alignment: .top) {
                 if !router.isRootOfPath {
                     FocusedPosterCinematicBackgroundView()
                 }
             }
-            #else
-            .navigationBarFilterDrawer(
-                viewModel: filterViewModel,
-                types: enabledDrawerFilters
-            )
             #endif
     }
 

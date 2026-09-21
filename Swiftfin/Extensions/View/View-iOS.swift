@@ -19,19 +19,6 @@ extension View {
     }
 
     @ViewBuilder
-    func navigationBarFilterDrawer(
-        viewModel: FilterViewModel,
-        types: [ItemFilterType]
-    ) -> some View {
-        modifier(
-            NavigationBarFilterDrawerModifier(
-                viewModel: viewModel,
-                types: types
-            )
-        )
-    }
-
-    @ViewBuilder
     func navigationBarCloseButton(
         disabled: Bool = false,
         _ action: @escaping () -> Void

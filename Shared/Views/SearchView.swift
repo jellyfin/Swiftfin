@@ -11,10 +11,8 @@ import SwiftUI
 
 struct SearchView: View {
 
-    #if os(iOS)
     @Default(.Customization.Search.enabledDrawerFilters)
     private var enabledDrawerFilters
-    #endif
 
     @FocusState
     private var isSearchFocused: Bool
@@ -99,11 +97,10 @@ struct SearchView: View {
         .environmentObject(focusCoordinator)
         #if os(tvOS)
         .edgePadding(.top)
-        #else
+        #endif
         .navigationBarFilterDrawer(
             viewModel: viewModel.filterViewModel,
             types: enabledDrawerFilters
         )
-        #endif
     }
 }
