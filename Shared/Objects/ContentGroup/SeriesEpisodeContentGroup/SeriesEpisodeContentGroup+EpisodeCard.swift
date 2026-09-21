@@ -70,7 +70,8 @@ extension SeriesEpisodeContentGroup {
                 },
                 contextMenuItem: episode
             ) {
-                ImageView(episode.landscapeImageSources(
+                ImageView(episode.imageSources(
+                    for: .landscape,
                     environment: .init(maxWidth: 250)
                 ))
                 .failure {

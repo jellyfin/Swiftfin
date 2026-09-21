@@ -20,10 +20,13 @@ extension RemoteSearchResult: Poster {
         "questionmark"
     }
 
-    func portraitImageSources(
+    func imageSources(
+        for displayType: PosterDisplayType,
         environment: Empty
     ) -> [ImageSource] {
-        [ImageSource(url: imageURL?.url)]
+        if displayType == .portrait {
+            ImageSource(url: imageURL?.url)
+        }
     }
 }
 
