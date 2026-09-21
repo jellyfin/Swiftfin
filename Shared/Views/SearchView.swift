@@ -95,9 +95,6 @@ struct SearchView: View {
             prompt: L10n.search
         )
         .environmentObject(focusCoordinator)
-        #if os(tvOS)
-        .edgePadding(.top)
-        #endif
         .navigationBarFilterDrawer(
             viewModel: viewModel.filterViewModel,
             types: enabledDrawerFilters
