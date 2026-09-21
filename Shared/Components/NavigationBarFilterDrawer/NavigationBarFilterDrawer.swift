@@ -49,23 +49,21 @@ struct NavigationBarFilterDrawer: View {
         ScrollView(.horizontal) {
             HStack(spacing: UIDevice.isTV ? 25 : 5) {
                 if viewModel.currentFilters.isNotEmpty {
-                    StateAdapter(initialValue: false) { isPresentingConfirmation in
-                        Button(L10n.reset, systemImage: "line.3.horizontal.decrease", role: .destructive) {
-                            isPresentingConfirmation.wrappedValue = true
+                    Menu {
+                        Button(L10n.reset, role: .destructive) {
+                            viewModel.reset(filterType: nil)
                         }
-                        .focused($focusTarget, equals: .reset)
-                        .foregroundStyle(.primary, .secondary)
-                        .labelStyle(.iconOnly)
-                        .confirmationDialog(
-                            L10n.filters,
-                            isPresented: isPresentingConfirmation,
-                            titleVisibility: UIDevice.isTV ? .visible : .hidden
-                        ) {
-                            Button(L10n.reset, role: .destructive) {
-                                viewModel.reset(filterType: nil)
-                            }
+                    } label: {
+                        ZStack {
+                            Text(String.space) // Forces the same height as other filter buttons
+                            Image(systemName: "line.3.horizontal.decrease")
                         }
                     }
+                    .menuStyle(.button)
+                    .focused($focusTarget, equals: .reset)
+                    .foregroundStyle(.primary, .secondary)
+                    .accessibilityLabel(L10n.reset)
+                    .focusSection()
                 }
 
                 ForEach(types, id: \.self) { type in

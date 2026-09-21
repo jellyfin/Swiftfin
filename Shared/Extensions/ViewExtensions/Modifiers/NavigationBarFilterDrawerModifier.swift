@@ -48,6 +48,7 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
                     #endif
                         .safeAreaBar(edge: .top, spacing: 0) {
                             drawer
+                                .isolatedHosting()
                     }
                     .preference(key: IsSafeAreaBarApplied.self, value: true)
             } else {

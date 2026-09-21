@@ -12,6 +12,11 @@ import SwiftUIIntrospect
 
 extension View {
 
+    @ViewBuilder
+    func isolatedHosting() -> some View {
+        IsolatedHostingView(content: self)
+    }
+
     /// - Important: This does nothing on tvOS.
     @ViewBuilder
     func navigationBarTitleDisplayMode(_ mode: NavigationBarItem.TitleDisplayMode) -> some View {

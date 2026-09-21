@@ -14,6 +14,13 @@ import SwiftUI
 extension View {
 
     /// - Important: This does nothing on iOS.
+    @ViewBuilder
+    func isolatedHosting() -> some View {
+        self
+    }
+
+    /// - Important: This does nothing on iOS.
+    @ViewBuilder
     func focusSection() -> some View {
         self
     }
