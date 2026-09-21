@@ -126,20 +126,12 @@ struct FilterBar: View {
     private var horizontalBar: some View {
         HStack(spacing: 25) {
             if viewModel.currentFilters.isNotEmpty {
-                Menu {
-                    Button(L10n.reset, role: .destructive) {
-                        viewModel.reset(filterType: nil)
-                    }
-                } label: {
-                    ZStack {
-                        Text(String.space)
-                        Image(systemName: "line.3.horizontal.decrease")
-                    }
+                Button(L10n.reset, systemImage: "line.3.horizontal.decrease") {
+                    viewModel.reset(filterType: nil)
                 }
-                .menuStyle(.button)
                 .focused($focusTarget, equals: .reset)
                 .foregroundStyle(.primary, .secondary)
-                .accessibilityLabel(L10n.reset)
+                .labelStyle(.iconOnly)
             }
 
             ForEach(types, id: \.self) { type in

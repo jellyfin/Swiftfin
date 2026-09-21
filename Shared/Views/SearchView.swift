@@ -30,42 +30,29 @@ struct SearchView: View {
 
     @ViewBuilder
     private var suggestionsView: some View {
-        ForEach(viewModel.suggestions) { item in
-            Button(item.displayTitle) {
-                searchQuery = item.displayTitle
+        VStack(spacing: 20) {
+            ForEach(viewModel.suggestions) { item in
+                Button(item.displayTitle) {
+                    searchQuery = item.displayTitle
+                }
+                #if os(tvOS)
+                .buttonStyle(.plain)
+                    .foregroundStyle(.secondary)
+                #endif
             }
-            #if os(tvOS)
-            .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
-            #endif
         }
-        #if os(tvOS)
-        .frame(maxHeight: .infinity, alignment: .top)
-        #endif
-    }
-
-    @ViewBuilder
-    private var resultsView: some View {
-        ScrollView {
-            ContentGroupVStack(
-                groups: viewModel.itemContentGroupViewModel.groups
-            )
-            .edgePadding(.vertical)
-        }
-        .scrollIndicators(.hidden)
     }
 
     var body: some View {
-        VStack(spacing: 20) {
+        ScrollView {
             #if os(tvOS)
-            if enabledDrawerFilters.isNotEmpty {
-                FilterBar(
-                    viewModel: viewModel.filterViewModel,
-                    types: enabledDrawerFilters,
-                    orientation: .horizontal
-                )
-                .padding(.vertical, 40)
-            }
+            FilterBar(
+                viewModel: viewModel.filterViewModel,
+                types: enabledDrawerFilters,
+                orientation: .horizontal
+            )
+            .edgePadding(.horizontal)
+            .padding(.vertical)
             #endif
 
             ZStack {
@@ -77,19 +64,22 @@ struct SearchView: View {
                         if viewModel.isEmpty {
                             Text(L10n.noResults)
                         } else {
-                            resultsView
+                            ContentGroupVStack(
+                                groups: viewModel.itemContentGroupViewModel.groups
+                            )
                         }
                     } else {
                         suggestionsView
-                            .focusSection()
                     }
                 case .searching:
                     ProgressView()
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(maxWidth: .infinity)
             .focusSection()
         }
+        .ignoresSafeArea(edges: .horizontal)
+        .scrollIndicators(.hidden)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea(.keyboard)
         .navigationTitle(L10n.search)
@@ -111,9 +101,7 @@ struct SearchView: View {
             prompt: L10n.search
         )
         .environmentObject(focusCoordinator)
-        #if os(tvOS)
-        .edgePadding(.top)
-        #else
+        #if os(iOS)
         .navigationBarFilterDrawer(
             viewModel: viewModel.filterViewModel,
             types: enabledDrawerFilters
