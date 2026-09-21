@@ -272,9 +272,10 @@ extension EpisodeMediaPlayerQueue {
                                 insets: .edgeInsets
                             )
                         ) { item in
-                            EpisodeRow(manager: manager, episode: item) {
+                            EpisodeRow(episode: item) {
                                 action(item)
                             }
+                            .environmentObject(manager)
                         }
                     }
                 case .initial, .refreshing:
@@ -497,7 +498,7 @@ extension EpisodeMediaPlayerQueue {
 
     private struct EpisodeRow: View {
 
-        @ObservedObject
+        @EnvironmentObject
         var manager: MediaPlayerManager
 
         let episode: BaseItemDto
