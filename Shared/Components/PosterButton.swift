@@ -53,10 +53,11 @@ struct PosterButton<Item: Poster>: View {
         PosterImage(
             item: item,
             type: displayType,
-            size: size
+            size: size,
+            contentMode: .fit
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .overlay { overlay.posterStyle(displayType) }
+        .overlay { overlay.posterStyle(displayType, contentMode: .fit) }
         .contentShape(.contextMenuPreview, Rectangle())
         .matchedTransitionSource(id: "item", in: namespace)
         .subtleShadow()

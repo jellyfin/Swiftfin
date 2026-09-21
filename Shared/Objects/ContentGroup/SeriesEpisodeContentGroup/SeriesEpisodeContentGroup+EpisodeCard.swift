@@ -81,7 +81,7 @@ extension SeriesEpisodeContentGroup {
                     overlayView
                 }
                 .contentShape(.contextMenuPreview, Rectangle())
-                .posterStyle(.landscape)
+                .posterStyle(.landscape, contentMode: .fit)
                 .subtleShadow()
                 .matchedTransitionSource(id: "item", in: namespace)
             }
@@ -113,7 +113,7 @@ extension SeriesEpisodeContentGroup {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    .posterStyle(.landscape)
+                    .posterStyle(.landscape, contentMode: .fit)
                     #if os(tvOS)
                     .posterCornerRadius(.landscape)
                     #endif
