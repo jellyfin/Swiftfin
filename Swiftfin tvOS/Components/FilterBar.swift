@@ -32,7 +32,8 @@ struct FilterBar: View {
     private var lastFocusTarget: FocusTarget?
 
     let types: [ItemFilterType]
-    let edge: HorizontalEdge
+    let orientation: Axis
+    var edge: HorizontalEdge = .trailing
 
     private let buttonSize: CGFloat = 68
 
@@ -48,7 +49,7 @@ struct FilterBar: View {
     }
 
     @ViewBuilder
-    private func button(
+    private func verticalButton(
         _ title: String,
         systemImage: String,
         target: FocusTarget,
@@ -83,10 +84,11 @@ struct FilterBar: View {
             .zIndex(focusTarget == target ? 1 : 0)
     }
 
-    var body: some View {
+    @ViewBuilder
+    private var verticalBar: some View {
         VStack(spacing: 20) {
             if viewModel.currentFilters.isNotEmpty {
-                button(
+                verticalButton(
                     L10n.reset,
                     systemImage: "line.3.horizontal.decrease",
                     target: .reset,
@@ -97,7 +99,7 @@ struct FilterBar: View {
             }
 
             ForEach(types, id: \.self) { type in
-                button(
+                verticalButton(
                     type.displayTitle,
                     systemImage: type.systemImage,
                     target: .filter(type),
@@ -118,6 +120,57 @@ struct FilterBar: View {
         .animation(.snappy(duration: 0.2), value: focusTarget)
         .scrollIfLargerThanContainer()
         .frame(width: buttonSize)
+    }
+
+    @ViewBuilder
+    private var horizontalBar: some View {
+        HStack(spacing: 25) {
+            if viewModel.currentFilters.isNotEmpty {
+                Menu {
+                    Button(L10n.reset, role: .destructive) {
+                        viewModel.reset(filterType: nil)
+                    }
+                } label: {
+                    ZStack {
+                        Text(String.space)
+                        Image(systemName: "line.3.horizontal.decrease")
+                    }
+                }
+                .menuStyle(.button)
+                .focused($focusTarget, equals: .reset)
+                .foregroundStyle(.primary, .secondary)
+                .accessibilityLabel(L10n.reset)
+            }
+
+            ForEach(types, id: \.self) { type in
+                Button(type.displayTitle, systemImage: "chevron.down") {
+                    router.route(
+                        to: .filter(
+                            type: type,
+                            viewModel: viewModel
+                        )
+                    )
+                }
+                .focused($focusTarget, equals: .filter(type))
+                .foregroundStyle(.primary, .secondary)
+                .isSelected(viewModel.isFilterSelected(type: type))
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .controlSize(.small)
+        .labelStyle(.trailingIcon)
+        .buttonStyle(.capsule(selectionTint: accentColor))
+    }
+
+    var body: some View {
+        ZStack {
+            switch orientation {
+            case .horizontal:
+                horizontalBar
+            case .vertical:
+                verticalBar
+            }
+        }
         .focusSection()
         .defaultFocus(
             $focusTarget,

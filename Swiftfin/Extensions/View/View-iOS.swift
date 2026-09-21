@@ -19,12 +19,12 @@ extension View {
     }
 
     @ViewBuilder
-    func filterBar(
+    func navigationBarFilterDrawer(
         viewModel: FilterViewModel,
         types: [ItemFilterType]
     ) -> some View {
         modifier(
-            FilterBarModifier(
+            NavigationBarFilterDrawerModifier(
                 viewModel: viewModel,
                 types: types
             )

@@ -102,20 +102,27 @@ extension LibraryElement {
             )
         }
         #else
+        let insets = EdgeInsets(
+            top: 0,
+            leading: max(insets.leading + 10, EdgeInsets.edgePadding),
+            bottom: 0,
+            trailing: max(insets.trailing + 10, EdgeInsets.edgePadding)
+        )
+
         switch libraryStyle.displayType {
         case .grid:
             switch libraryStyle.posterDisplayType {
             case .landscape:
                 return .columns(
                     4,
-                    insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
+                    insets: insets,
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
             case .portrait, .square:
                 return .columns(
                     7,
-                    insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
+                    insets: insets,
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
@@ -123,7 +130,7 @@ extension LibraryElement {
         case .list:
             return .columns(
                 libraryStyle.listColumnCount,
-                insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
+                insets: insets,
                 itemSpacing: EdgeInsets.edgePadding,
                 lineSpacing: EdgeInsets.edgePadding
             )

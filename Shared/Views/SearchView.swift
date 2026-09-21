@@ -30,17 +30,18 @@ struct SearchView: View {
 
     @ViewBuilder
     private var suggestionsView: some View {
-        VStack(spacing: 20) {
-            ForEach(viewModel.suggestions) { item in
-                Button(item.displayTitle) {
-                    searchQuery = item.displayTitle
-                }
-                #if os(tvOS)
-                .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
-                #endif
+        ForEach(viewModel.suggestions) { item in
+            Button(item.displayTitle) {
+                searchQuery = item.displayTitle
             }
+            #if os(tvOS)
+            .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+            #endif
         }
+        #if os(tvOS)
+        .frame(maxHeight: .infinity, alignment: .top)
+        #endif
     }
 
     @ViewBuilder
@@ -55,25 +56,40 @@ struct SearchView: View {
     }
 
     var body: some View {
-        ZStack {
-            switch viewModel.state {
-            case .error:
-                viewModel.error.map(ErrorView.init)
-            case .initial:
-                if viewModel.canSearch {
-                    if viewModel.isEmpty {
-                        Text(L10n.noResults)
-                    } else {
-                        resultsView
-                    }
-                } else {
-                    suggestionsView
-                }
-            case .searching:
-                ProgressView()
+        VStack(spacing: 20) {
+            #if os(tvOS)
+            if enabledDrawerFilters.isNotEmpty {
+                FilterBar(
+                    viewModel: viewModel.filterViewModel,
+                    types: enabledDrawerFilters,
+                    orientation: .horizontal
+                )
+                .padding(.vertical, 40)
             }
+            #endif
+
+            ZStack {
+                switch viewModel.state {
+                case .error:
+                    viewModel.error.map(ErrorView.init)
+                case .initial:
+                    if viewModel.canSearch {
+                        if viewModel.isEmpty {
+                            Text(L10n.noResults)
+                        } else {
+                            resultsView
+                        }
+                    } else {
+                        suggestionsView
+                            .focusSection()
+                    }
+                case .searching:
+                    ProgressView()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .focusSection()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea(.keyboard)
         .navigationTitle(L10n.search)
@@ -97,10 +113,11 @@ struct SearchView: View {
         .environmentObject(focusCoordinator)
         #if os(tvOS)
         .edgePadding(.top)
-        #endif
-        .filterBar(
+        #else
+        .navigationBarFilterDrawer(
             viewModel: viewModel.filterViewModel,
             types: enabledDrawerFilters
         )
+        #endif
     }
 }

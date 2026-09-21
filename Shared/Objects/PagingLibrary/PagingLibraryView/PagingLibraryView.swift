@@ -75,11 +75,12 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             Color.clear
         } content: { frame in
 
-            let insets: EdgeInsets = if #available(iOS 26, *), isSafeAreaBarApplied {
-                frame.safeAreaInsets + 10
-            } else {
-                .zero + 10
-            }
+            let insets = EdgeInsets(
+                top: isSafeAreaBarApplied ? frame.safeAreaInsets.top : 0,
+                leading: frame.safeAreaInsets.leading,
+                bottom: isSafeAreaBarApplied ? frame.safeAreaInsets.bottom : 0,
+                trailing: frame.safeAreaInsets.trailing
+            ) + 10
 
             CollectionVGrid(
                 uniqueElements: viewModel.displayedElements,
@@ -102,7 +103,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             .onRefresh {
                 await viewModel.background.refresh()
             }
-            .ignoresSafeArea(edges: .vertical)
+            .ignoresSafeArea()
         }
         .scrollIndicators(.hidden)
         .withViewContext(.isListRowSeparatorVisible)

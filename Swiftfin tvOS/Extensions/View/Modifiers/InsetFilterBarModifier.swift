@@ -6,20 +6,21 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
-struct FilterBarModifier: ViewModifier {
+struct InsetFilterBarModifier: ViewModifier {
+
+    @Default(.Customization.Library.letterPickerOrientation)
+    private var letterPickerOrientation
 
     @ObservedObject
     var viewModel: FilterViewModel
 
-    @State
-    private var letterPickerEdge: HorizontalEdge?
-
     let types: [ItemFilterType]
 
     private var edge: HorizontalEdge {
-        letterPickerEdge == .trailing ? .leading : .trailing
+        letterPickerOrientation == .trailing ? .leading : .trailing
     }
 
     func body(content: Content) -> some View {
@@ -29,17 +30,15 @@ struct FilterBarModifier: ViewModifier {
             content
                 .focusSection()
                 .environment(\.filterBarEdge, edge)
-                .onPreferenceChange(LetterPickerEdgeKey.self) { newValue in
-                    letterPickerEdge = newValue
-                }
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     FilterBar(
                         viewModel: viewModel,
                         types: types,
+                        orientation: .vertical,
                         edge: edge
                     )
                     .offset(x: edge == .leading ? -EdgeInsets.edgePadding / 1.5 : EdgeInsets.edgePadding / 1.5)
-                    .padding(edge == .leading ? .trailing : .leading, -EdgeInsets.edgePadding / 1.2)
+                    .padding(edge == .leading ? .trailing : .leading, -EdgeInsets.edgePadding / 2)
                 }
         }
     }

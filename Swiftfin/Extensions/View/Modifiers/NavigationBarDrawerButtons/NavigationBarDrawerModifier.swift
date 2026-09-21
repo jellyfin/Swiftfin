@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct FilterBarModifier: ViewModifier {
+struct NavigationBarFilterDrawerModifier: ViewModifier {
 
     @ObservedObject
     var viewModel: FilterViewModel
@@ -17,7 +17,7 @@ struct FilterBarModifier: ViewModifier {
 
     @ViewBuilder
     private var drawer: some View {
-        FilterBar(
+        NavigationBarFilterDrawer(
             viewModel: viewModel,
             types: types
         )

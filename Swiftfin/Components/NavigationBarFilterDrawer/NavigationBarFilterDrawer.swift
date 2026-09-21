@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct FilterBar: View {
+struct NavigationBarFilterDrawer: View {
 
     @Default(.accentColor)
     private var accentColor
