@@ -195,7 +195,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
                     supplementContent
                         .isVisible(containerState.isPresentingSupplement)
-                        .disabled(!containerState.isPresentingSupplement)
+                        .enabled(containerState.isPresentingSupplement)
                         .animation(.linear(duration: 0.25), value: containerState.selectedSupplement?.id)
                 }
                 .isVisible(isPresentingOverlay && !isScrubbing)
