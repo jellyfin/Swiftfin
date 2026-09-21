@@ -37,9 +37,9 @@ struct InsetFilterBarModifier: ViewModifier {
                         orientation: .vertical,
                         edge: edge
                     )
-                    .offset(x: edge == .leading ? -EdgeInsets.edgePadding / 1.5 : EdgeInsets.edgePadding / 1.5)
-                    .padding(edge == .leading ? .trailing : .leading, -EdgeInsets.edgePadding / 2)
+                    .padding(edge.asEdgeSet, EdgeInsets.edgePadding / 1.5)
                 }
+                .ignoresSafeArea(.all, edges: edge.asEdgeSet)
         }
     }
 }

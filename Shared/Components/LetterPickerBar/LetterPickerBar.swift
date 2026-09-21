@@ -170,7 +170,7 @@ struct LetterPickerBar: PlatformView {
             }
             .frame(width: dimension)
             .padding(.vertical, EdgeInsets.edgePadding / 2)
-            .padding(orientation == .leading ? .leading : .trailing, EdgeInsets.edgePadding / 4)
+            .padding(edge.asEdgeSet, EdgeInsets.edgePadding / 4)
             .preference(key: PresentationControllerShouldDismissPreferenceKey.self, value: activeLetter == nil)
             .preference(key: LetterPickerActiveLetterKey.self, value: activeLetter)
     }
@@ -185,8 +185,7 @@ struct LetterPickerBar: PlatformView {
                 selectedLetter ?? letters.first ?? "#",
                 priority: focusedLetter == nil ? .userInitiated : .automatic
             )
-            .offset(x: edge == .leading ? -EdgeInsets.edgePadding / 1.5 : EdgeInsets.edgePadding / 1.5)
-            .padding(edge == .leading ? .trailing : .leading, 1 - dimension)
+            .padding(edge.asEdgeSet, EdgeInsets.edgePadding / 1.5)
             .focusSection()
             .task(id: focusedLetter) {
                 activeLetter = focusedLetter

@@ -44,6 +44,7 @@ struct LetterPickerBarModifier: ViewModifier {
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     LetterPickerBar(viewModel: viewModel)
                 }
+                .ignoresSafeArea(.all, edges: UIDevice.isTV ? edge.asEdgeSet : [])
                 .overlayPreferenceValue(LetterPickerActiveLetterKey.self) { letter in
                     ZStack {
                         if let letter {
