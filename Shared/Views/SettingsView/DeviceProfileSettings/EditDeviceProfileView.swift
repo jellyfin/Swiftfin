@@ -79,7 +79,7 @@ extension CustomDeviceProfilesView {
                         Button(L10n.save, action: saveAction)
                         #endif
                     }
-                    .disabled(!isValid)
+                    .enabled(isValid)
                 }
                 #if os(iOS)
                 .navigationBarBackButtonHidden()
