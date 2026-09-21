@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct NavigationBarFilterDrawerModifier: ViewModifier {
+struct FilterBarModifier: ViewModifier {
 
     @ObservedObject
     var viewModel: FilterViewModel
@@ -17,7 +17,7 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
 
     @ViewBuilder
     private var drawer: some View {
-        NavigationBarFilterDrawer(
+        FilterBar(
             viewModel: viewModel,
             types: types
         )
@@ -29,30 +29,11 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
         } else {
             if #available(iOS 26, *) {
                 content
-                    #if os(tvOS)
-                        .mask(extendedBy: .init(vertical: 100, horizontal: 100)) {
-                            VStack(spacing: 0) {
-                                Color.clear
-                                    .frame(height: 80)
-
-                                LinearGradient(
-                                    colors: [.clear, .white],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                                .frame(height: 20)
-
-                                Color.white
-                            }
-                        }
-                    #endif
-                        .safeAreaBar(edge: .top, spacing: 0) {
-                            drawer
-                                .isolatedHosting()
+                    .safeAreaBar(edge: .top, spacing: 0) {
+                        drawer
                     }
                     .preference(key: IsSafeAreaBarApplied.self, value: true)
             } else {
-                #if os(iOS)
                 NavigationBarDrawerView {
                     drawer
                         .ignoresSafeArea()
@@ -60,7 +41,6 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
                     content
                 }
                 .ignoresSafeArea()
-                #endif
             }
         }
     }

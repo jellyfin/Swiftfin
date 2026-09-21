@@ -17,6 +17,15 @@ struct LetterPickerActiveLetterKey: PreferenceKey {
     }
 }
 
+struct LetterPickerEdgeKey: PreferenceKey {
+
+    static var defaultValue: HorizontalEdge?
+
+    static func reduce(value: inout HorizontalEdge?, nextValue: () -> HorizontalEdge?) {
+        value = nextValue() ?? value
+    }
+}
+
 extension LetterPickerBar {
 
     struct LetterPickerCallout: View {

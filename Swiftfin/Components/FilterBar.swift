@@ -10,12 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct NavigationBarFilterDrawer: View {
-
-    private enum FocusTarget: Hashable {
-        case reset
-        case filter(ItemFilterType)
-    }
+struct FilterBar: View {
 
     @Default(.accentColor)
     private var accentColor
@@ -23,47 +18,22 @@ struct NavigationBarFilterDrawer: View {
     @ObservedObject
     var viewModel: FilterViewModel
 
-    @FocusState
-    private var focusTarget: FocusTarget?
-
-    @State
-    private var lastFocusTarget: FocusTarget?
-
     @Router
     private var router
 
     let types: [ItemFilterType]
 
-    private var preferredFocusTarget: FocusTarget? {
-        switch lastFocusTarget {
-        case .reset where viewModel.currentFilters.isNotEmpty:
-            .reset
-        case let .filter(type) where types.contains(type):
-            .filter(type)
-        default:
-            types.first.map(FocusTarget.filter)
-        }
-    }
-
     var body: some View {
         ScrollView(.horizontal) {
-            HStack(spacing: UIDevice.isTV ? 25 : 5) {
+            HStack {
                 if viewModel.currentFilters.isNotEmpty {
-                    Menu {
+                    Menu(L10n.reset, systemImage: "line.3.horizontal.decrease") {
                         Button(L10n.reset, role: .destructive) {
                             viewModel.reset(filterType: nil)
                         }
-                    } label: {
-                        ZStack {
-                            Text(String.space) // Forces the same height as other filter buttons
-                            Image(systemName: "line.3.horizontal.decrease")
-                        }
                     }
-                    .menuStyle(.button)
-                    .focused($focusTarget, equals: .reset)
                     .foregroundStyle(.primary, .secondary)
-                    .accessibilityLabel(L10n.reset)
-                    .focusSection()
+                    .labelStyle(.iconOnly)
                 }
 
                 ForEach(types, id: \.self) { type in
@@ -75,28 +45,17 @@ struct NavigationBarFilterDrawer: View {
                             )
                         )
                     }
-                    .focused($focusTarget, equals: .filter(type))
                     .foregroundStyle(.primary, .secondary)
                     .isSelected(viewModel.isFilterSelected(type: type))
                 }
             }
             .padding(.horizontal)
-            .padding(.bottom, UIDevice.isTV ? 25 : 5)
+            .padding(.bottom, 5)
             .controlSize(.small)
             .labelStyle(.trailingIcon)
             .buttonStyle(.capsule(selectionTint: accentColor))
         }
         .scrollIndicators(.hidden)
         .scrollClipDisabled()
-        .focusSection()
-        .defaultFocus(
-            $focusTarget,
-            preferredFocusTarget,
-            priority: focusTarget == nil ? .userInitiated : .automatic
-        )
-        .onChange(of: focusTarget) { _, newValue in
-            guard let newValue else { return }
-            lastFocusTarget = newValue
-        }
     }
 }

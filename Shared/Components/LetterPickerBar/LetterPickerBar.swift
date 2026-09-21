@@ -186,7 +186,8 @@ struct LetterPickerBar: PlatformView {
                 selectedLetter ?? letters.first ?? "#",
                 priority: focusedLetter == nil ? .userInitiated : .automatic
             )
-            .offset(x: edge == .leading ? -EdgeInsets.edgePadding / 1.5 : EdgeInsets.edgePadding / 1.5)
+            .offset(x: edge == .leading ? -EdgeInsets.edgePadding / 3 : EdgeInsets.edgePadding / 3)
+            .padding(edge == .leading ? .trailing : .leading, 1 - dimension)
             .focusSection()
             .task(id: focusedLetter) {
                 activeLetter = focusedLetter

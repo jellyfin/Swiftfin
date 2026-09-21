@@ -108,24 +108,14 @@ extension LibraryElement {
             case .landscape:
                 return .columns(
                     4,
-                    insets: .init(
-                        top: insets.top,
-                        leading: EdgeInsets.edgePadding,
-                        bottom: 0,
-                        trailing: EdgeInsets.edgePadding
-                    ),
+                    insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
             case .portrait, .square:
                 return .columns(
                     7,
-                    insets: .init(
-                        top: insets.top,
-                        leading: EdgeInsets.edgePadding,
-                        bottom: 0,
-                        trailing: EdgeInsets.edgePadding
-                    ),
+                    insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
                     itemSpacing: EdgeInsets.edgePadding,
                     lineSpacing: EdgeInsets.edgePadding
                 )
@@ -133,12 +123,7 @@ extension LibraryElement {
         case .list:
             return .columns(
                 libraryStyle.listColumnCount,
-                insets: .init(
-                    top: insets.top,
-                    leading: EdgeInsets.edgePadding,
-                    bottom: 0,
-                    trailing: EdgeInsets.edgePadding
-                ),
+                insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
                 itemSpacing: EdgeInsets.edgePadding,
                 lineSpacing: EdgeInsets.edgePadding
             )

@@ -14,15 +14,21 @@ import SwiftUI
 extension View {
 
     /// - Important: This does nothing on iOS.
-    @ViewBuilder
-    func isolatedHosting() -> some View {
+    func focusSection() -> some View {
         self
     }
 
-    /// - Important: This does nothing on iOS.
     @ViewBuilder
-    func focusSection() -> some View {
-        self
+    func filterBar(
+        viewModel: FilterViewModel,
+        types: [ItemFilterType]
+    ) -> some View {
+        modifier(
+            FilterBarModifier(
+                viewModel: viewModel,
+                types: types
+            )
+        )
     }
 
     @ViewBuilder

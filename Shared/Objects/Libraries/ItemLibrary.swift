@@ -282,10 +282,6 @@ private struct ItemLibraryBody<Content: View>: View {
     var body: some View {
         content
             .letterPickerBar(filterViewModel: filterViewModel)
-            .navigationBarFilterDrawer(
-                viewModel: filterViewModel,
-                types: enabledDrawerFilters
-            )
             .onFirstAppear {
                 Task {
                     await filterViewModel.getQueryFilters()
@@ -302,6 +298,10 @@ private struct ItemLibraryBody<Content: View>: View {
             ) { filters in
                 viewModel.environment.filters = filters
             }
+            .filterBar(
+                viewModel: filterViewModel,
+                types: enabledDrawerFilters
+            )
             #if os(tvOS)
             .background(alignment: .top) {
                 if !router.isRootOfPath {
