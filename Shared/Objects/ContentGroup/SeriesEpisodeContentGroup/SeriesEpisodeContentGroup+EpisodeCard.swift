@@ -162,7 +162,6 @@ extension SeriesEpisodeContentGroup {
         private var artworkButton: some View {
             let button = Button(action: artworkAction) {
                 artwork
-                    .posterAspectRatio(.landscape, contentMode: .fit)
             }
             .foregroundStyle(.primary, .secondary)
             .buttonStyle(.card)
@@ -180,6 +179,7 @@ extension SeriesEpisodeContentGroup {
         var body: some View {
             VStack(alignment: .leading) {
                 artworkButton
+                    .posterAspectRatio(.landscape, contentMode: .fit)
 
                 Button(action: contentAction) {
                     EpisodeMetadataView(

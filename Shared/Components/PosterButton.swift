@@ -82,7 +82,8 @@ struct PosterButton<Item: Poster>: View {
             // Layout required for tvOS focused offset label behavior
             #if os(tvOS)
             posterImage(overlay: item.posterOverlay(for: displayType))
-                .fixedSize(horizontal: false, vertical: true)
+                .posterAspectRatio(displayType, contentMode: .fit)
+                .frame(width: posterSize.width > 0 ? posterSize.width : nil)
 
             if posterConfiguration.showLabels {
                 item.posterLabel
@@ -99,6 +100,9 @@ struct PosterButton<Item: Poster>: View {
         .buttonBorderShape(.roundedRectangle)
         #if os(tvOS)
         .focusedValue(\.focusedPoster, AnyPoster(item))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .trackingSize($posterSize)
+        .ignoresSafeArea()
         #endif
         .posterContextMenu(for: item) {
             contextMenuPreview

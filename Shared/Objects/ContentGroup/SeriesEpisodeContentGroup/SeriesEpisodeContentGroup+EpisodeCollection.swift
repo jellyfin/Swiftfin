@@ -175,6 +175,9 @@ extension SeriesEpisodeContentGroup {
                 ) { element in
                     content(element)
                         .focused($focusedElement, equals: element.id)
+                        #if os(tvOS)
+                        .ignoresSafeArea()
+                        #endif
                 }
                 .initialElement(id: preferredElementID)
                 .clipsToBounds(false)
