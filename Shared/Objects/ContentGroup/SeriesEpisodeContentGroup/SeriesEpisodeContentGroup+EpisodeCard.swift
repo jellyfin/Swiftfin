@@ -81,7 +81,7 @@ extension SeriesEpisodeContentGroup {
                     overlayView
                 }
                 .contentShape(.contextMenuPreview, Rectangle())
-                .posterStyle(.landscape, contentMode: .fit)
+                .posterStyle(.landscape)
                 .subtleShadow()
                 .matchedTransitionSource(id: "item", in: namespace)
             }
@@ -113,7 +113,7 @@ extension SeriesEpisodeContentGroup {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    .posterStyle(.landscape, contentMode: .fit)
+                    .posterStyle(.landscape)
                     #if os(tvOS)
                     .posterCornerRadius(.landscape)
                     #endif
@@ -131,6 +131,9 @@ extension SeriesEpisodeContentGroup {
 
         @FocusState
         private var focusedElement: FocusedElement?
+
+        @State
+        private var artworkSize: CGSize = .zero
 
         let header: String
         let subHeader: String
@@ -179,6 +182,8 @@ extension SeriesEpisodeContentGroup {
         var body: some View {
             VStack(alignment: .leading) {
                 artworkButton
+                    .fixedSize(horizontal: false, vertical: true)
+                    .trackingSize($artworkSize)
 
                 Button(action: contentAction) {
                     EpisodeMetadataView(
@@ -196,6 +201,7 @@ extension SeriesEpisodeContentGroup {
                     )
                 )
                 #endif
+                .frame(width: artworkSize.width > 0 ? artworkSize.width : nil)
                 .focused($focusedElement, equals: .content)
             }
             .focusSection()
@@ -204,6 +210,7 @@ extension SeriesEpisodeContentGroup {
                 .artwork,
                 priority: .userInitiated
             )
+            .frame(maxHeight: .infinity, alignment: .top)
         }
     }
 

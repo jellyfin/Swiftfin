@@ -167,14 +167,6 @@ extension SeriesEpisodeContentGroup {
             #endif
         }
 
-        private static var itemSpacing: CGFloat {
-            #if os(tvOS)
-            40
-            #else
-            EdgeInsets.edgePadding / 2
-            #endif
-        }
-
         var body: some View {
             ContentGroupSection {
                 CollectionHStack(
@@ -186,8 +178,8 @@ extension SeriesEpisodeContentGroup {
                 }
                 .initialElement(id: preferredElementID)
                 .clipsToBounds(false)
-                .insets(horizontal: EdgeInsets.edgePadding)
-                .itemSpacing(Self.itemSpacing)
+                .insets(horizontal: PosterHStackMetrics.horizontalInset)
+                .itemSpacing(PosterHStackMetrics.itemSpacing)
                 .scrollBehavior(.continuousLeadingEdge)
                 .focusSection()
                 .focused($focusedSection, equals: .episodes)
