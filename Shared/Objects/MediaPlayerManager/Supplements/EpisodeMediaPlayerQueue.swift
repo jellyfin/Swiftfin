@@ -456,7 +456,7 @@ extension EpisodeMediaPlayerQueue {
                 Rectangle()
                     .fill(.complexSecondary)
 
-                ImageView(episode.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 200)))
+                ImageView(episode.imageSource(.primary, itemID: episode.id, environment: ImageSourceOptions(maxWidth: 200)))
                     .failure {
                         SystemImageContentView(systemName: episode.systemImage)
                     }
@@ -542,18 +542,12 @@ extension EpisodeMediaPlayerQueue {
 
         var body: some View {
             PosterButton(
-                item: episode._withLandscapeImages { environment in
-                    [
-                        episode.imageSource(
-                            .primary,
-                            environment: environment
-                        )
-                    ]
-                },
+                item: episode,
                 displayType: .landscape
             ) { _ in
                 action()
             }
+            .removingViewContext(.isThumb)
             .isSelected(manager.item.id == episode.id)
         }
     }

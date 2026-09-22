@@ -24,7 +24,7 @@ struct FocusedPosterCinematicBackgroundView: View {
                 item: focusedPoster,
                 debounce: 0.5
             ) { item in
-                ImageView(item?.landscapeImageSources(environment: .default) ?? [])
+                ImageView(item?.imageSources(for: .landscape, environment: .init(viewContext: .isBackdrop)) ?? [])
                     .failure {
                         EmptyView()
                     }
