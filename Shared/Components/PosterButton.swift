@@ -91,7 +91,6 @@ struct PosterButton<Item: Poster>: View {
             }
             #else
             buttonLabel(overlay: item.posterOverlay(for: displayType))
-                .trackingSize($posterSize)
             #endif
         }
         .environment(\.posterDisplayType, displayType)
@@ -101,9 +100,9 @@ struct PosterButton<Item: Poster>: View {
         #if os(tvOS)
         .focusedValue(\.focusedPoster, AnyPoster(item))
         .frame(maxWidth: .infinity, alignment: .leading)
-        .trackingSize($posterSize)
         .ignoresSafeArea()
         #endif
+        .trackingSize($posterSize)
         .posterContextMenu(for: item) {
             contextMenuPreview
                 .withViewContext(viewContext)

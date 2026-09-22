@@ -9,25 +9,6 @@
 import CollectionHStack
 import SwiftUI
 
-enum PosterHStackMetrics {
-
-    static let horizontalInset: CGFloat = {
-        #if os(tvOS)
-        60
-        #else
-        EdgeInsets.edgePadding
-        #endif
-    }()
-
-    static let itemSpacing: CGFloat = {
-        #if os(tvOS)
-        40
-        #else
-        EdgeInsets.edgePadding / 2
-        #endif
-    }()
-}
-
 struct PosterHStack<
     Data: Collection
 >: View where Data.Element: Poster, Data.Index == Int {
@@ -102,8 +83,8 @@ struct PosterHStack<
             }
         }
         .clipsToBounds(false)
-        .insets(horizontal: PosterHStackMetrics.horizontalInset)
-        .itemSpacing(PosterHStackMetrics.itemSpacing)
+        .insets(horizontal: EdgeInsets.edgePadding)
+        .itemSpacing(EdgeInsets.itemSpacing)
         .scrollBehavior(.continuousLeadingEdge)
         .withViewContext(.isThumb)
     }

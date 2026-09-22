@@ -144,7 +144,7 @@ extension CustomizeSettingsView {
                     data: [.portrait, .square, .landscape],
                     id: \.self,
                     columns: 2,
-                    spacing: EdgeInsets.edgePadding
+                    spacing: EdgeInsets.itemSpacing
                 ) { type in
                     posterPreview(type: type)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)

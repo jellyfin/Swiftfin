@@ -108,7 +108,9 @@ extension MediaChaptersSupplement {
                 id: \.id,
                 layout: .columns(
                     1,
-                    insets: .init(EdgeInsets.edgePadding)
+                    insets: .init(EdgeInsets.edgePadding),
+                    itemSpacing: EdgeInsets.itemSpacing,
+                    lineSpacing: EdgeInsets.itemSpacing
                 )
             ) { chapter, _ in
                 ChapterRow(supplement: supplement, chapter: chapter) {
@@ -143,7 +145,7 @@ extension MediaChaptersSupplement {
             .initialElement(id: initialChapterID)
             .clipsToBounds(false)
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .itemSpacing(EdgeInsets.itemSpacing)
             .scrollBehavior(.continuousLeadingEdge)
             //            .proxy(collectionHStackProxy)
             //            .onAppear {
@@ -176,6 +178,7 @@ extension MediaChaptersSupplement {
             //            }
             .initialElement(id: initialChapterID)
             .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.itemSpacing)
             .ignoresSafeArea(.container, edges: .horizontal)
             .frame(maxHeight: .infinity)
             .focusSection()

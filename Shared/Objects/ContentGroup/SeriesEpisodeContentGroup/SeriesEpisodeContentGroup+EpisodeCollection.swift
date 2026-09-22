@@ -181,8 +181,8 @@ extension SeriesEpisodeContentGroup {
                 }
                 .initialElement(id: preferredElementID)
                 .clipsToBounds(false)
-                .insets(horizontal: PosterHStackMetrics.horizontalInset)
-                .itemSpacing(PosterHStackMetrics.itemSpacing)
+                .insets(horizontal: EdgeInsets.edgePadding)
+                .itemSpacing(EdgeInsets.itemSpacing)
                 .scrollBehavior(.continuousLeadingEdge)
                 .focusSection()
                 .focused($focusedSection, equals: .episodes)
