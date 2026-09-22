@@ -82,6 +82,7 @@ struct PosterButton<Item: Poster>: View {
             // Layout required for tvOS focused offset label behavior
             #if os(tvOS)
             posterImage(overlay: item.posterOverlay(for: displayType))
+                .fixedSize(horizontal: false, vertical: true)
 
             if posterConfiguration.showLabels {
                 item.posterLabel

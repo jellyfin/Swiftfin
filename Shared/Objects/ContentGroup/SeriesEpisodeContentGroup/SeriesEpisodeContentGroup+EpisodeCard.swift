@@ -132,9 +132,6 @@ extension SeriesEpisodeContentGroup {
         @FocusState
         private var focusedElement: FocusedElement?
 
-        @State
-        private var artworkSize: CGSize = .zero
-
         let header: String
         let subHeader: String
         let content: String
@@ -165,6 +162,7 @@ extension SeriesEpisodeContentGroup {
         private var artworkButton: some View {
             let button = Button(action: artworkAction) {
                 artwork
+                    .posterAspectRatio(.landscape, contentMode: .fit)
             }
             .foregroundStyle(.primary, .secondary)
             .buttonStyle(.card)
@@ -182,8 +180,6 @@ extension SeriesEpisodeContentGroup {
         var body: some View {
             VStack(alignment: .leading) {
                 artworkButton
-                    .fixedSize(horizontal: false, vertical: true)
-                    .trackingSize($artworkSize)
 
                 Button(action: contentAction) {
                     EpisodeMetadataView(
@@ -201,7 +197,6 @@ extension SeriesEpisodeContentGroup {
                     )
                 )
                 #endif
-                .frame(width: artworkSize.width > 0 ? artworkSize.width : nil)
                 .focused($focusedElement, equals: .content)
             }
             .focusSection()
