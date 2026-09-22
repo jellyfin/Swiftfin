@@ -14,6 +14,24 @@ struct FilterBar: View {
     private enum FocusTarget: Hashable {
         case reset
         case filter(ItemFilterType)
+
+        var title: String {
+            switch self {
+            case .reset:
+                L10n.reset
+            case let .filter(type):
+                type.displayTitle
+            }
+        }
+
+        var systemImage: String {
+            switch self {
+            case .reset:
+                "line.3.horizontal.decrease"
+            case let .filter(type):
+                type.systemImage
+            }
+        }
     }
 
     @Default(.accentColor)
@@ -37,132 +55,104 @@ struct FilterBar: View {
 
     private let buttonSize: CGFloat = 68
 
+    private var targets: [FocusTarget] {
+        (viewModel.currentFilters.isNotEmpty ? [.reset] : []) + types.map(FocusTarget.filter)
+    }
+
     private var preferredFocusTarget: FocusTarget? {
-        switch lastFocusTarget {
-        case .reset where viewModel.currentFilters.isNotEmpty:
-            .reset
-        case let .filter(type) where types.contains(type):
-            .filter(type)
-        default:
-            types.first.map(FocusTarget.filter)
+        lastFocusTarget.flatMap { targets.contains($0) ? $0 : nil } ?? types.first.map(FocusTarget.filter)
+    }
+
+    private func isSelected(_ target: FocusTarget) -> Bool {
+        switch target {
+        case .reset:
+            false
+        case let .filter(type):
+            viewModel.isFilterSelected(type: type)
+        }
+    }
+
+    private func action(_ target: FocusTarget) {
+        switch target {
+        case .reset:
+            viewModel.reset(filterType: nil)
+        case let .filter(type):
+            router.route(to: .filter(type: type, viewModel: viewModel))
         }
     }
 
     @ViewBuilder
-    private func verticalButton(
-        _ title: String,
-        systemImage: String,
-        target: FocusTarget,
-        isSelected: Bool,
-        action: @escaping () -> Void
-    ) -> some View {
-        Color.clear
-            .frame(width: buttonSize, height: buttonSize)
-            .overlay(alignment: edge == .leading ? .leading : .trailing) {
-                Button(action: action) {
-                    HStack(spacing: 12) {
-                        if focusTarget == target, edge == .trailing {
-                            Text(title)
-                                .transition(.opacity)
-                        }
-
-                        Image(systemName: systemImage)
-                            .frame(width: buttonSize - 32, height: buttonSize - 16)
-
-                        if focusTarget == target, edge == .leading {
-                            Text(title)
-                                .transition(.opacity)
-                        }
-                    }
-                    .lineLimit(1)
-                }
-                .focused($focusTarget, equals: target)
-                .isSelected(isSelected)
-                .accessibilityLabel(title)
-                .fixedSize()
+    private func buttonLabel(for target: FocusTarget) -> some View {
+        switch orientation {
+        case .horizontal:
+            if target == .reset {
+                Label(target.title, systemImage: target.systemImage)
+                    .labelStyle(.iconOnly)
+            } else {
+                Label(target.title, systemImage: "chevron.down")
+                    .labelStyle(.trailingIcon)
             }
-            .zIndex(focusTarget == target ? 1 : 0)
+        case .vertical:
+            HStack(spacing: 12) {
+                if focusTarget == target, edge == .trailing {
+                    Text(target.title)
+                        .transition(.opacity)
+                }
+
+                Image(systemName: target.systemImage)
+                    .frame(width: buttonSize - 32, height: buttonSize - 16)
+
+                if focusTarget == target, edge == .leading {
+                    Text(target.title)
+                        .transition(.opacity)
+                }
+            }
+            .lineLimit(1)
+        }
     }
 
     @ViewBuilder
-    private var verticalBar: some View {
-        VStack(spacing: 20) {
-            if viewModel.currentFilters.isNotEmpty {
-                verticalButton(
-                    L10n.reset,
-                    systemImage: "line.3.horizontal.decrease",
-                    target: .reset,
-                    isSelected: true
-                ) {
-                    viewModel.reset(filterType: nil)
-                }
-            }
-
-            ForEach(types, id: \.self) { type in
-                verticalButton(
-                    type.displayTitle,
-                    systemImage: type.systemImage,
-                    target: .filter(type),
-                    isSelected: viewModel.isFilterSelected(type: type)
-                ) {
-                    router.route(
-                        to: .filter(
-                            type: type,
-                            viewModel: viewModel
-                        )
-                    )
-                }
-            }
+    private func button(for target: FocusTarget) -> some View {
+        Button {
+            action(target)
+        } label: {
+            buttonLabel(for: target)
         }
-        .font(.callout)
-        .controlSize(.large)
-        .buttonStyle(.capsule(selectionTint: accentColor))
-        .animation(.snappy(duration: 0.2), value: focusTarget)
-        .scrollIfLargerThanContainer()
-        .frame(width: buttonSize)
-    }
-
-    @ViewBuilder
-    private var horizontalBar: some View {
-        HStack(spacing: 25) {
-            if viewModel.currentFilters.isNotEmpty {
-                Button(L10n.reset, systemImage: "line.3.horizontal.decrease") {
-                    viewModel.reset(filterType: nil)
-                }
-                .focused($focusTarget, equals: .reset)
-                .foregroundStyle(.primary, .secondary)
-                .labelStyle(.iconOnly)
-            }
-
-            ForEach(types, id: \.self) { type in
-                Button(type.displayTitle, systemImage: "chevron.down") {
-                    router.route(
-                        to: .filter(
-                            type: type,
-                            viewModel: viewModel
-                        )
-                    )
-                }
-                .focused($focusTarget, equals: .filter(type))
-                .foregroundStyle(.primary, .secondary)
-                .isSelected(viewModel.isFilterSelected(type: type))
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .controlSize(.small)
-        .labelStyle(.trailingIcon)
-        .buttonStyle(.capsule(selectionTint: accentColor))
+        .focused($focusTarget, equals: target)
+        .isSelected(isSelected(target))
+        .foregroundStyle(.primary, .secondary)
+        .accessibilityLabel(target.title)
     }
 
     var body: some View {
-        ZStack {
+        Group {
             switch orientation {
             case .horizontal:
-                horizontalBar
+                HStack(spacing: 25) {
+                    ForEach(targets, id: \.self, content: button)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .controlSize(.small)
             case .vertical:
-                verticalBar
+                VStack(spacing: 20) {
+                    ForEach(targets, id: \.self) { target in
+                        Color.clear
+                            .frame(width: buttonSize, height: buttonSize)
+                            .overlay(alignment: edge == .leading ? .leading : .trailing) {
+                                button(for: target)
+                                    .fixedSize()
+                            }
+                            .zIndex(focusTarget == target ? 1 : 0)
+                    }
+                }
+                .font(.callout)
+                .controlSize(.large)
+                .animation(.snappy(duration: 0.2), value: focusTarget)
+                .scrollIfLargerThanContainer()
+                .frame(width: buttonSize)
             }
         }
+        .buttonStyle(.capsule(selectionTint: accentColor))
         .focusSection()
         .defaultFocus(
             $focusTarget,

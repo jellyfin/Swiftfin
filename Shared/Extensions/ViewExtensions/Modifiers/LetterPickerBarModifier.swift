@@ -19,32 +19,26 @@ struct LetterPickerBarModifier: ViewModifier {
 
     let viewModel: FilterViewModel?
 
-    private func ignoredSafeAreaEdges(letterPickerEdge: HorizontalEdge?) -> Edge.Set {
-        var edges: Edge.Set = []
-
-        if letterPickerEdge != .leading, filterBarEdge != .leading {
-            edges.insert(.leading)
-        }
-
-        if letterPickerEdge != .trailing, filterBarEdge != .trailing {
-            edges.insert(.trailing)
-        }
-
-        return edges
-    }
-
     @ViewBuilder
     func body(content: Content) -> some View {
-        if let edge = letterPickerOrientation.edge,
+        if let letterPickerEdge = letterPickerOrientation.edge,
            let viewModel
         {
             content
                 .focusSection()
-                .ignoresSafeArea(.all, edges: ignoredSafeAreaEdges(letterPickerEdge: edge))
-                .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
+                .ignoresSafeArea(
+                    .all,
+                    edges: Edge.Set.horizontal
+                        .subtracting(filterBarEdge?.asEdgeSet ?? [])
+                        .subtracting(letterPickerEdge.asEdgeSet)
+                )
+                .safeAreaInset(
+                    edge: letterPickerEdge,
+                    alignment: .center, spacing: 0
+                ) {
                     LetterPickerBar(viewModel: viewModel)
                 }
-                .ignoresSafeArea(.all, edges: UIDevice.isTV ? edge.asEdgeSet : [])
+                .ignoresSafeArea(.all, edges: UIDevice.isTV ? letterPickerEdge.asEdgeSet : [])
                 .overlayPreferenceValue(LetterPickerActiveLetterKey.self) { letter in
                     ZStack {
                         if let letter {
@@ -55,7 +49,11 @@ struct LetterPickerBarModifier: ViewModifier {
                 }
         } else {
             content
-                .ignoresSafeArea(.all, edges: ignoredSafeAreaEdges(letterPickerEdge: nil))
+                .ignoresSafeArea(
+                    .all,
+                    edges: Edge.Set.horizontal
+                        .subtracting(filterBarEdge?.asEdgeSet ?? [])
+                )
         }
     }
 }

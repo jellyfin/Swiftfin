@@ -17,7 +17,7 @@ extension EnvironmentValues {
     var audioOffset: Binding<Duration> = .constant(.zero)
 
     @Entry
-    var filterBarEdge: HorizontalEdge? = nil
+    var filterBarEdge: HorizontalEdge?
 
     @Entry
     var frameForParentView: [CoordinateSpace: FrameAndSafeAreaInsets] = [:]
