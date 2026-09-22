@@ -230,7 +230,7 @@ struct ServerUsersView: View {
             }
         }
         .controlSize(.small)
-        .disabled(!isEditing)
+        .enabled(isEditing)
     }
 
     // MARK: - Delete Selected Users Confirmation Actions

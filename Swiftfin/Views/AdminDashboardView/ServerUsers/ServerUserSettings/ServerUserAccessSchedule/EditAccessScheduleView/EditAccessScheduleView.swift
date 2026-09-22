@@ -155,7 +155,7 @@ struct EditAccessScheduleView: View {
             }
         }
         .controlSize(.small)
-        .disabled(!isEditing)
+        .enabled(isEditing)
     }
 
     @ViewBuilder

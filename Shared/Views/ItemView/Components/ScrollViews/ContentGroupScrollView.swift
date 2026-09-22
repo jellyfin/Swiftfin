@@ -43,7 +43,8 @@ extension ItemView {
             AlternateLayoutView {
                 Color.clear
             } content: {
-                ImageView(backgroundImageItem.landscapeImageSources(
+                ImageView(backgroundImageItem.imageSources(
+                    for: .landscape,
                     environment: .init(maxWidth: 1920)
                 ))
                 .failure {
