@@ -22,6 +22,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @Namespace
     private var namespace
 
+    @Environment(\.gridPadding)
+    private var gridPadding
+
     @Router
     private var router
 
@@ -75,12 +78,16 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             Color.clear
         } content: { frame in
 
-            let insets = EdgeInsets(
-                top: isSafeAreaBarApplied ? frame.safeAreaInsets.top : 0,
-                leading: frame.safeAreaInsets.leading,
-                bottom: isSafeAreaBarApplied ? frame.safeAreaInsets.bottom : 0,
-                trailing: frame.safeAreaInsets.trailing
-            ) + 10
+            let insets: EdgeInsets = if isSafeAreaBarApplied {
+                frame.safeAreaInsets + gridPadding
+            } else {
+                EdgeInsets(
+                    top: 0,
+                    leading: frame.safeAreaInsets.leading,
+                    bottom: 0,
+                    trailing: frame.safeAreaInsets.trailing
+                ) + gridPadding
+            }
 
             CollectionVGrid(
                 uniqueElements: viewModel.displayedElements,

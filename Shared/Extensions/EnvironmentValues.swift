@@ -20,6 +20,9 @@ extension EnvironmentValues {
     var filterBarEdge: HorizontalEdge?
 
     @Entry
+    var gridPadding: CGFloat = UIDevice.isTV ? 40 : 10
+
+    @Entry
     var frameForParentView: [CoordinateSpace: FrameAndSafeAreaInsets] = [:]
 
     @Entry

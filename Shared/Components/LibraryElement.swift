@@ -104,9 +104,9 @@ extension LibraryElement {
         #else
         let insets = EdgeInsets(
             top: 0,
-            leading: max(insets.leading + 20, EdgeInsets.edgePadding),
+            leading: max(insets.leading, EdgeInsets.edgePadding),
             bottom: 0,
-            trailing: max(insets.trailing + 20, EdgeInsets.edgePadding)
+            trailing: max(insets.trailing, EdgeInsets.edgePadding)
         )
 
         switch libraryStyle.displayType {

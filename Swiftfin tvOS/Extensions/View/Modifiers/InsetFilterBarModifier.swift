@@ -14,6 +14,9 @@ struct InsetFilterBarModifier: ViewModifier {
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
 
+    @Environment(\.gridPadding)
+    private var gridPadding
+
     @ObservedObject
     var viewModel: FilterViewModel
 
@@ -37,7 +40,7 @@ struct InsetFilterBarModifier: ViewModifier {
                         orientation: .vertical,
                         edge: edge
                     )
-                    .padding(edge.asEdgeSet, EdgeInsets.edgePadding / 1.5)
+                    .padding(edge.asEdgeSet, gridPadding)
                 }
                 .ignoresSafeArea(.all, edges: edge.asEdgeSet)
         }
