@@ -12,6 +12,9 @@ extension VideoPlayer {
 
     struct OverlayActions: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Environment(ViewState.self)
         private var viewState
 
@@ -60,7 +63,7 @@ extension VideoPlayer {
 
         private func buttons(axis: Axis) -> some View {
             let layout = axis == .horizontal
-                ? AnyLayout(HStackLayout(spacing: UIDevice.isTV ? 24 : 12))
+                ? AnyLayout(HStackLayout(spacing: viewLayout.isLarge ? 24 : 12))
                 : AnyLayout(VStackLayout(alignment: .trailing, spacing: 12))
 
             return layout {
@@ -83,6 +86,9 @@ extension VideoPlayer {
 
     private struct OverlayActionButtonStyle: ButtonStyle {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Environment(\.isFocused)
         private var isFocused
         @Environment(\.isEnabled)
@@ -96,8 +102,8 @@ extension VideoPlayer {
                 .fontWeight(.semibold)
                 .foregroundStyle(.black)
                 .symbolRenderingMode(.monochrome)
-                .padding(.horizontal, UIDevice.isTV ? 28 : 20)
-                .padding(.vertical, UIDevice.isTV ? 16 : 10)
+                .padding(.horizontal, viewLayout.isLarge ? 28 : 20)
+                .padding(.vertical, viewLayout.isLarge ? 16 : 10)
                 .frame(minHeight: 44)
                 .background(.white, in: Capsule())
                 .contentShape(Capsule())

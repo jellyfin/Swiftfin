@@ -21,6 +21,9 @@ import SwiftUI
 /// given toasts on top of the given content.
 struct OverlayToastView<Content: View>: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @StateObject
     private var toastProxy: ToastProxy
 
@@ -30,11 +33,7 @@ struct OverlayToastView<Content: View>: View {
     private var safeAreaInsets
 
     private var topPadding: CGFloat {
-        #if os(tvOS)
-        60
-        #else
-        safeAreaInsets.top + 10
-        #endif
+        viewLayout.value(standard: safeAreaInsets.top + 10, large: 60)
     }
 
     init(
@@ -74,6 +73,9 @@ struct OverlayToastView<Content: View>: View {
 
 private struct OverlayToastContent: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @EnvironmentObject
     private var proxy: ToastProxy
 
@@ -109,41 +111,25 @@ private struct OverlayToastContent: View {
         .frame(minHeight: minHeight)
         .backport
         .glassEffect(
-            .regular.interactive(!UIDevice.isTV),
+            .regular.interactive(!viewLayout.isLarge),
             in: .capsule
         )
     }
 
     private var contentPadding: EdgeInsets {
-        #if os(tvOS)
-        EdgeInsets(top: 24, leading: 24, bottom: 24, trailing: 24)
-        #else
-        EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16)
-        #endif
+        viewLayout.value(standard: EdgeInsets(vertical: 6, horizontal: 16), large: EdgeInsets(24))
     }
 
     private var iconSize: CGFloat {
-        #if os(tvOS)
-        30
-        #else
-        25
-        #endif
+        viewLayout.value(standard: 25, large: 30)
     }
 
     private var minHeight: CGFloat {
-        #if os(tvOS)
-        60
-        #else
-        40
-        #endif
+        viewLayout.value(standard: 40, large: 60)
     }
 
     private var textFont: Font {
-        #if os(tvOS)
-        .subheadline
-        #else
-        .body
-        #endif
+        viewLayout.value(standard: .body, large: .subheadline)
     }
 
     private struct ToastButtonStyle: ButtonStyle {

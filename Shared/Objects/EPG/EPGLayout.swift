@@ -16,23 +16,28 @@ struct EPGLayout: Equatable {
     let pointsPerMinute: CGFloat
 
     init(
-        channelColumnWidth: CGFloat = UIDevice.isTV ? 130 : UIDevice.isPad ? 110 : 84,
+        viewLayout: ViewLayout,
+        channelColumnWidth: CGFloat? = nil,
         rowHeight: CGFloat? = nil,
         rulerHeight: CGFloat? = nil,
-        pointsPerMinute: CGFloat = UIDevice.isTV ? 10 : UIDevice.isPad ? 7 : 5
+        pointsPerMinute: CGFloat? = nil
     ) {
-        let minimumRowHeight: CGFloat = UIDevice.isTV ? 120 : 74
-        let minimumRulerHeight: CGFloat = UIDevice.isTV ? 44 : 28
+        let minimumRowHeight: CGFloat = viewLayout.value(standard: 74, large: 120)
+        let minimumRulerHeight: CGFloat = viewLayout.value(standard: 28, large: 44)
+        let traits = UITraitCollection(preferredContentSizeCategory: viewLayout.contentSizeCategory)
         let preferredProgramHeight =
-            UIFont.preferredFont(forTextStyle: .footnote).lineHeight +
-            UIFont.preferredFont(forTextStyle: .caption2).lineHeight +
+            UIFont.preferredFont(forTextStyle: .footnote, compatibleWith: traits).lineHeight +
+            UIFont.preferredFont(forTextStyle: .caption2, compatibleWith: traits).lineHeight +
             18
-        let preferredRulerHeight = UIFont.preferredFont(forTextStyle: .caption2).lineHeight + 12
+        let preferredRulerHeight = UIFont.preferredFont(forTextStyle: .caption2, compatibleWith: traits).lineHeight + 12
 
-        self.channelColumnWidth = channelColumnWidth
+        self.channelColumnWidth = channelColumnWidth ?? viewLayout.value(
+            standard: viewLayout.value(compact: 84, regular: 110),
+            large: 130
+        )
         self.rowHeight = rowHeight ?? max(minimumRowHeight, preferredProgramHeight.rounded(.up))
         self.rulerHeight = rulerHeight ?? max(minimumRulerHeight, preferredRulerHeight.rounded(.up))
-        self.pointsPerMinute = pointsPerMinute
+        self.pointsPerMinute = pointsPerMinute ?? viewLayout.value(standard: viewLayout.value(compact: 5, regular: 7), large: 10)
     }
 
     /// The horizontal distance that a span of time occupies.

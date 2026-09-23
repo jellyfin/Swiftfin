@@ -13,6 +13,9 @@ extension CustomizeSettingsView {
 
     struct LibrarySection: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         #if os(tvOS)
         typealias PlatformPicker = ListRowMenu
         #else
@@ -64,7 +67,7 @@ extension CustomizeSettingsView {
 
                     PlatformPicker(L10n.posters, selection: $libraryStyle.posterDisplayType)
 
-                    if libraryStyle.displayType == .list, !UIDevice.isPhone {
+                    if libraryStyle.displayType == .list, viewLayout.canAdjustLibraryListColumns {
                         Stepper(L10n.columns, value: $libraryStyle.listColumnCount, in: 1 ... 4, step: 1) {
                             LabeledContent(L10n.columns, value: libraryStyle.listColumnCount.description)
                         }

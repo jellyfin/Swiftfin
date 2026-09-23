@@ -15,6 +15,9 @@ extension VideoPlayer {
 
         typealias ViewState = VideoPlayer.ViewState
 
+        @AdaptiveLayout
+        private var viewLayout
+
         // since this view ignores safe area, it must
         // get safe area insets from parent views
         @Environment(\.safeAreaInsets)
@@ -68,7 +71,7 @@ extension VideoPlayer {
                                     (location: 1, opacity: 0.5)
                                 }
                                 .isVisible(isScrubbing)
-                                .frame(height: bottomContentFrame.height + 50 + EdgeInsets.edgePadding * 2)
+                                .frame(height: bottomContentFrame.height + 50 + viewLayout.edgePadding * 2)
                         }
                 }
 

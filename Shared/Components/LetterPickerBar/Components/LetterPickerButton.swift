@@ -13,6 +13,9 @@ extension LetterPickerBar {
 
     struct LetterPickerButton: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Default(.accentColor)
         private var accentColor
 
@@ -31,7 +34,7 @@ extension LetterPickerBar {
             } else if isSelected {
                 accentColor.overlayColor
             } else {
-                UIDevice.isTV ? Color.primary : accentColor
+                viewLayout.value(standard: accentColor, large: Color.primary)
             }
         }
 

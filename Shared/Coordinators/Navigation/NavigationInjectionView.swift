@@ -43,8 +43,10 @@ struct NavigationInjectionView: View {
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             content
+                .trackingFrame(for: .layoutContainer)
                 .navigationDestination(for: NavigationRoute.self) { route in
                     route.destination
+                        .trackingFrame(for: .layoutContainer)
                         .environment(
                             \.router,
                             .init(

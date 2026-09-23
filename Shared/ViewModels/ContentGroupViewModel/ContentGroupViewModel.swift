@@ -45,6 +45,8 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     private var scheduledRebuild: Task<Void, Never>?
     private var needsGroupRebuild = true
     private var hasLoadedGroups = false
+    private var isRefreshingGroups = false
+    private let refreshSource = UUID()
 
     var provider: Provider
 
@@ -53,9 +55,13 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         super.init()
 
         provider.refreshRequests
-            .sink { [weak self] in
-                self?.needsGroupRebuild = true
-                self?.scheduleGroupRebuild()
+            .sink { [weak self] request in
+                // Fetching full details and child groups also updates the shared item store.
+                // Those results are already part of this refresh, not a reason to start another.
+                guard let self, request.source != self.refreshSource else { return }
+
+                self.needsGroupRebuild = true
+                self.scheduleGroupRebuild()
             }
             .store(in: &cancellables)
     }
@@ -65,7 +71,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
     }
 
     private func scheduleGroupRebuild() {
-        guard state != .refreshing, hasLoadedGroups, needsGroupRebuild, scheduledRebuild == nil else { return }
+        guard !isRefreshingGroups, hasLoadedGroups, needsGroupRebuild, scheduledRebuild == nil else { return }
 
         scheduledRebuild = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .milliseconds(350))
@@ -102,20 +108,25 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
 
         let rebuildGroups = needsGroupRebuild
         needsGroupRebuild = false
+        isRefreshingGroups = true
 
         do {
-            if rebuildGroups {
-                try await fullRefresh()
-            } else {
-                await refreshViewModels(in: candidateGroups, inBackground: true)
-                try Task.checkCancellation()
-                resolveGroups()
+            try await ContentGroupRefreshRequest.$currentSource.withValue(refreshSource) {
+                if rebuildGroups {
+                    try await fullRefresh()
+                } else {
+                    await refreshViewModels(in: candidateGroups, inBackground: true)
+                    try Task.checkCancellation()
+                    resolveGroups()
+                }
             }
         } catch {
+            isRefreshingGroups = false
             needsGroupRebuild = needsGroupRebuild || rebuildGroups
             throw error
         }
 
+        isRefreshingGroups = false
         scheduleGroupRebuild()
     }
 

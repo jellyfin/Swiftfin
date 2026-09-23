@@ -23,6 +23,13 @@ extension ItemView {
 
         struct Body: View {
 
+            @AdaptiveLayout
+            private var viewLayout
+            @Environment(\.frameForParentView)
+            private var frameForParentView
+            @Environment(\.layoutDirection)
+            private var layoutDirection
+
             @ObservedObject
             var provider: ItemContentGroupProvider
 
@@ -30,6 +37,31 @@ extension ItemView {
             private var attributes
 
             private let headerAspectRatio = 1.6
+
+            private var artworkLayout: ViewLayout {
+                guard let navigation = frameForParentView[.navigationStack], navigation.frame.width > 0 else {
+                    return viewLayout
+                }
+
+                return viewLayout.resolving(size: navigation.sizeIncludingSafeArea)
+            }
+
+            private var materialInsets: EdgeInsets {
+                let safeArea = frameForParentView[.navigationStack, default: .zero].safeAreaInsets
+                return EdgeInsets(
+                    top: 25,
+                    leading: viewLayout.edgePadding + safeArea.leading,
+                    bottom: 25,
+                    trailing: viewLayout.edgePadding + safeArea.trailing
+                )
+            }
+
+            private var materialHorizontalOffset: CGFloat {
+                // The extended background is centered, but a sidebar or device
+                // obstruction can put the entire safe area on one side.
+                let offset = (materialInsets.trailing - materialInsets.leading) / 2
+                return layoutDirection == .leftToRight ? offset : -offset
+            }
 
             private var logo: some View {
                 ImageView(
@@ -39,6 +71,12 @@ extension ItemView {
                         environment: ImageSourceOptions(maxHeight: 70)
                     )
                 )
+                .image { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 70, alignment: .bottom)
+                }
                 .placeholder { _ in
                     EmptyView()
                 }
@@ -47,22 +85,21 @@ extension ItemView {
                         .fixedSize(horizontal: false, vertical: true)
                         .font(.largeTitle)
                         .fontWeight(.semibold)
-                        .lineLimit(2)
+                        .lineLimit(viewLayout.isAccessibilitySize ? nil : 2)
                         .multilineTextAlignment(.center)
                         .foregroundStyle(.primary)
                 }
-                .aspectRatio(contentMode: .fit)
-                .frame(height: 70, alignment: .bottom)
+                .frame(minHeight: 70, alignment: .bottom)
                 .accessibilityLabel(provider.item.displayTitle)
                 .accessibilityRemoveTraits(.isImage)
             }
 
             private var overlay: some View {
                 VStack(alignment: .center, spacing: 10) {
-                    AlternateLayoutView(alignment: .bottom) {
+                    ZStack(alignment: .bottom) {
                         Color.clear
-                            .aspectRatio(headerAspectRatio, contentMode: .fit)
-                    } content: {
+                            .frame(height: max(0, artworkLayout.size.width - 2 * artworkLayout.edgePadding) / headerAspectRatio)
+
                         logo
                     }
                     .zIndex(10)
@@ -87,10 +124,7 @@ extension ItemView {
                     .edgePadding(.bottom)
                     .background(
                         alignment: .bottom,
-                        extendedBy: .init(
-                            vertical: 25,
-                            horizontal: EdgeInsets.edgePadding
-                        )
+                        extendedBy: materialInsets
                     ) {
                         Rectangle()
                             .fill(Material.ultraThin)
@@ -98,6 +132,7 @@ extension ItemView {
                                 (location: 0, opacity: 0)
                                 (location: 0.2, opacity: 1)
                             }
+                            .offset(x: materialHorizontalOffset)
                     }
                     .zIndex(9)
                 }
@@ -120,27 +155,33 @@ extension ItemView {
                     .colorScheme(.dark)
                     .backgroundParallaxHeader(multiplier: 0.3) {
                         StateAdapter(initialValue: Color.secondarySystemFill) { resolvedColor in
-                            MirrorExtensionView(edges: .top) {
-                                AlternateLayoutView {
-                                    Color.clear
-                                } content: {
-                                    ImageView(provider.item.imageSource(
-                                        .backdrop,
-                                        itemID: provider.item.id,
-                                        environment: ImageSourceOptions(maxWidth: 1320)
-                                    ))
-                                    .image { (image: UIImage) in
-                                        Image(uiImage: image)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .onAppear {
-                                                resolveColor(from: image, binding: resolvedColor)
-                                            }
-                                    }
+                            AlternateLayoutView {
+                                Color.clear
+                            } content: {
+                                ImageView(provider.item.imageSource(
+                                    .backdrop,
+                                    itemID: provider.item.id,
+                                    environment: ImageSourceOptions(maxWidth: 1320)
+                                ))
+                                .image { (image: UIImage) in
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .onAppear {
+                                            resolveColor(from: image, binding: resolvedColor)
+                                        }
                                 }
-                                .aspectRatio(headerAspectRatio, contentMode: .fit)
-                                .accessibilityHidden(true)
                             }
+                            .frame(
+                                width: artworkLayout.size.width,
+                                height: artworkLayout.size.width / headerAspectRatio
+                            )
+                            .clipped()
+                            .accessibilityHidden(true)
+                            // The native effect clips to the artwork bounds, so
+                            // apply it before adding the reflected lower edge.
+                            .backport
+                            .backgroundExtensionEffect()
                             .bottomEdgeGradient(bottomColor: resolvedColor.wrappedValue)
                         }
                     }

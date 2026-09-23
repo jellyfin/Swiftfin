@@ -18,6 +18,9 @@ extension ItemView {
         @Environment(\.tabSafeAreaInsets)
         private var tabSafeAreaInsets
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @EnvironmentObject
         private var focusCoordinator: FocusCoordinator
 
@@ -73,12 +76,10 @@ extension ItemView {
 
         var body: some View {
             ZStack {
-                #if os(tvOS)
-                if isEnhanced {
+                if viewLayout.isLarge, isEnhanced {
                     background
                         .ignoresSafeArea()
                 }
-                #endif
 
                 ScrollView {
                     ContentGroupVStack(groups: groups)
@@ -86,11 +87,7 @@ extension ItemView {
                         .padding(.top, isEnhanced ? 0 : tabSafeAreaInsets.top)
                 }
                 .trackingFrame(for: .scrollView)
-                #if os(tvOS)
-                .ignoresSafeArea(.container, edges: isEnhanced ? .all : [.horizontal, .top])
-                #else
-                .ignoresSafeArea(edges: isEnhanced ? .all : .horizontal)
-                #endif
+                .ignoresSafeArea(.container, edges: viewLayout.value(standard: [], large: isEnhanced ? .all : [.horizontal, .top]))
                 .scrollIndicators(.hidden)
             }
         }

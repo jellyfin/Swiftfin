@@ -12,9 +12,12 @@ import SwiftUI
 
 extension VideoPlayer {
 
-    struct PosterCollectionView<Data: RandomAccessCollection, Content: View>: PlatformView
+    struct PosterCollectionView<Data: RandomAccessCollection, Content: View>: PresentationView
         where Data.Element: Poster, Data.Index == Int
     {
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
@@ -56,7 +59,7 @@ extension VideoPlayer {
         }
 
         private func elementRow(_ element: Data.Element) -> some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+            ListRow(insets: .init(horizontal: viewLayout.edgePadding)) {
                 PosterImage(item: element, type: displayType, size: size)
                     .overlay { element.posterOverlay(for: displayType).posterStyle(displayType) }
                     .subtleShadow()
@@ -82,16 +85,16 @@ extension VideoPlayer {
             .accessibilityAddTraits(isCurrent(element) ? .isSelected : [])
         }
 
-        var iOSView: some View {
+        var standardView: some View {
             CompactOrRegularView(isCompact: isCompact) {
                 CollectionVGrid(
                     uniqueElements: data,
                     id: \.id,
                     layout: .columns(
                         1,
-                        insets: .edgeInsets,
-                        itemSpacing: EdgeInsets.itemSpacing,
-                        lineSpacing: EdgeInsets.itemSpacing
+                        insets: viewLayout.edgeInsets,
+                        itemSpacing: viewLayout.itemSpacing,
+                        lineSpacing: viewLayout.itemSpacing
                     ),
                     viewProvider: elementRow
                 )
@@ -99,14 +102,18 @@ extension VideoPlayer {
                 CollectionHStack(
                     uniqueElements: data,
                     id: \.id,
-                    layout: .minimumWidth(columnWidth: 170, rows: 1),
+                    layout: .minimumWidth(columnWidth: viewLayout.value(standard: 170, large: 300), rows: 1, columnFraction: 0.5),
                     content: elementButton
                 )
                 .initialElement(id: initialElementID)
                 .clipsToBounds(false)
-                .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-                .itemSpacing(EdgeInsets.itemSpacing)
+                .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing, viewLayout.edgePadding))
+                .itemSpacing(viewLayout.itemSpacing)
                 .scrollBehavior(.continuousLeadingEdge)
+                #if os(iOS)
+                .contentInsetAdjustmentBehavior(.never)
+                #endif
+                .focusSection()
             }
             .onChange(of: currentElementID) { _, newID in
                 if initialElementID == nil {
@@ -115,24 +122,8 @@ extension VideoPlayer {
             }
         }
 
-        var tvOSView: some View {
-            CollectionHStack(
-                uniqueElements: data,
-                id: \.id,
-                layout: .grid(columns: displayType == .landscape ? 5 : 7, rows: 1, columnTrailingInset: 0),
-                content: elementButton
-            )
-            .initialElement(id: initialElementID)
-            .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.itemSpacing)
-            .ignoresSafeArea(.container, edges: .horizontal)
-            .frame(maxHeight: .infinity)
-            .focusSection()
-            .onChange(of: currentElementID) { _, newID in
-                if initialElementID == nil {
-                    initialElementID = newID
-                }
-            }
+        var largeView: some View {
+            standardView
         }
     }
 }

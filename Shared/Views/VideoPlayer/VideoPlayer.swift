@@ -11,6 +11,9 @@ import SwiftUI
 
 struct VideoPlayer: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -97,12 +100,13 @@ struct VideoPlayer: View {
         }
         .environment(\.safeAreaInsets, safeAreaInsets)
         .colorScheme(.dark)
-        .supportedOrientations(.allButUpsideDown)
+        .trackingFrame(for: .layoutContainer)
+        .supportedOrientations(.all)
         .ignoresSafeArea()
         .persistentSystemOverlays(.hidden)
         .toolbar(.hidden, for: .navigationBar)
-        .onSizeChanged { _, safeArea in
-            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
+        .onSizeChanged { size, safeArea in
+            self.safeAreaInsets = safeArea.max(viewLayout.resolving(size: size).edgePadding)
         }
     }
 }

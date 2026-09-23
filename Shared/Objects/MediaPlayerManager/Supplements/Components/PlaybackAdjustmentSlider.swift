@@ -10,6 +10,9 @@ import SwiftUI
 
 struct PlaybackAdjustmentSlider: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Binding
     var value: Double
 
@@ -65,33 +68,33 @@ struct PlaybackAdjustmentSlider: View {
             } label: {
                 Text(preset == resetValue ? L10n.reset : formatValue(preset))
                     .monospacedDigit()
-                    .frame(minWidth: UIDevice.isTV ? 104 : nil, minHeight: UIDevice.isTV ? 48 : nil)
+                    .frame(minWidth: viewLayout.isLarge ? 104 : nil, minHeight: viewLayout.isLarge ? 48 : nil)
             }
             .fixedSize()
         }
     }
 
     var body: some View {
-        VStack(spacing: UIDevice.isTV ? 24 : 12) {
+        VStack(spacing: viewLayout.isLarge ? 24 : 12) {
             Text(formatValue(value))
-                .font(UIDevice.isTV ? .title3.weight(.semibold) : .subheadline.weight(.semibold))
+                .font(viewLayout.isLarge ? .title3.weight(.semibold) : .subheadline.weight(.semibold))
                 .monospacedDigit()
                 .contentTransition(.numericText(value: value))
                 .animation(.easeInOut(duration: 0.15), value: value)
-                .padding(.horizontal, UIDevice.isTV ? 24 : 16)
-                .padding(.vertical, UIDevice.isTV ? 12 : 8)
+                .padding(.horizontal, viewLayout.isLarge ? 24 : 16)
+                .padding(.vertical, viewLayout.isLarge ? 12 : 8)
                 .backport
                 .glassEffect(.regular.interactive(false), in: .capsule)
 
-            HStack(spacing: UIDevice.isTV ? 32 : 12) {
+            HStack(spacing: viewLayout.isLarge ? 32 : 12) {
                 Button { sliderValue.wrappedValue = value - step } label: {
                     Label(L10n.decrease, systemImage: "minus")
                         .labelStyle(.iconOnly)
-                        .frame(width: UIDevice.isTV ? 48 : 24, height: UIDevice.isTV ? 48 : 34)
+                        .frame(width: viewLayout.isLarge ? 48 : 24, height: viewLayout.isLarge ? 48 : 34)
                 }
                 .disabled(value <= range.lowerBound)
 
-                VStack(spacing: UIDevice.isTV ? 8 : 0) {
+                VStack(spacing: viewLayout.isLarge ? 8 : 0) {
                     slider
                         .accessibilityLabel(title)
                         .accessibilityValue(formatValue(value))
@@ -111,7 +114,7 @@ struct PlaybackAdjustmentSlider: View {
                         Spacer(minLength: 8)
                         Text(formatValue(range.upperBound))
                     }
-                    .font(UIDevice.isTV ? .caption : .caption2)
+                    .font(viewLayout.isLarge ? .caption : .caption2)
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -122,7 +125,7 @@ struct PlaybackAdjustmentSlider: View {
                 Button { sliderValue.wrappedValue = value + step } label: {
                     Label(L10n.increase, systemImage: "plus")
                         .labelStyle(.iconOnly)
-                        .frame(width: UIDevice.isTV ? 48 : 24, height: UIDevice.isTV ? 48 : 34)
+                        .frame(width: viewLayout.isLarge ? 48 : 24, height: viewLayout.isLarge ? 48 : 34)
                 }
                 .disabled(value >= range.upperBound)
             }
@@ -131,8 +134,8 @@ struct PlaybackAdjustmentSlider: View {
             FlowLayout(
                 alignment: .center,
                 direction: .down,
-                spacing: UIDevice.isTV ? 20 : 8,
-                lineSpacing: UIDevice.isTV ? 20 : 8
+                spacing: viewLayout.isLarge ? 20 : 8,
+                lineSpacing: viewLayout.isLarge ? 20 : 8
             ) {
                 presetButtons
             }
@@ -141,9 +144,9 @@ struct PlaybackAdjustmentSlider: View {
             .focusSection()
             #endif
             .buttonStyle(.capsule)
-            .padding(.top, UIDevice.isTV ? 8 : 4)
+            .padding(.top, viewLayout.isLarge ? 8 : 4)
         }
-        .controlSize(UIDevice.isTV ? .large : .regular)
+        .controlSize(viewLayout.isLarge ? .large : .regular)
         .accessibilityElement(children: .contain)
     }
 }

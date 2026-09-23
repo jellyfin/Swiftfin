@@ -10,6 +10,7 @@ import Defaults
 import FactoryKit
 import JellyfinAPI
 import SwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 // TODO: fix weird tvOS icon rendering
 struct MainTabView: View {
@@ -123,6 +124,7 @@ struct MainTabView: View {
         }
         #else
         tabView()
+            .tabViewStyle(.sidebarAdaptable)
         #endif
     }
 

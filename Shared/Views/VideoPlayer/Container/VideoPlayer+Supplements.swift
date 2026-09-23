@@ -12,7 +12,8 @@ extension VideoPlayer.UIContainerViewController {
 
     struct SupplementContainerView: View {
 
-        private static let buttonSpacing: CGFloat = UIDevice.isTV ? 20 : 10
+        @AdaptiveLayout
+        private var viewLayout
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
@@ -81,7 +82,7 @@ extension VideoPlayer.UIContainerViewController {
                     .frame(maxWidth: .infinity)
                     .disabled(true)
             } content: { (size: CGSize) in
-                HStack(spacing: Self.buttonSpacing) {
+                HStack(spacing: viewLayout.supplementButtonSpacing) {
                     #if os(iOS)
                     if viewState.isPresentingFullScreenSupplement {
                         closeButton(size: size.height)
@@ -94,9 +95,9 @@ extension VideoPlayer.UIContainerViewController {
                         title: \.displayTitle,
                         selection: viewState.selectedSupplementID,
                         focus: $focusedElement,
-                        spacing: Self.buttonSpacing
+                        spacing: viewLayout.supplementButtonSpacing
                     ) { supplement in
-                        if UIDevice.isTV {
+                        if viewLayout.isLarge {
                             viewState.selectedSupplementID = supplement.id
                         } else {
                             viewState.selectedSupplementID = viewState.selectedSupplementID == supplement.id ? nil : supplement.id
@@ -127,9 +128,9 @@ extension VideoPlayer.UIContainerViewController {
             .padding(
                 .init(
                     top: 0,
-                    leading: UIDevice.isTV ? 0 : safeAreaInsets.leading,
-                    bottom: UIDevice.isTV ? 0 : 8,
-                    trailing: UIDevice.isTV ? 0 : safeAreaInsets.trailing
+                    leading: viewLayout.isLarge ? 0 : safeAreaInsets.leading,
+                    bottom: viewLayout.isLarge ? 0 : 8,
+                    trailing: viewLayout.isLarge ? 0 : safeAreaInsets.trailing
                 )
             )
             .buttonStyle(.capsule)
@@ -175,7 +176,7 @@ extension VideoPlayer.UIContainerViewController {
                 }
                 .isVisible(viewState.visibleElements.contains(.supplements))
                 .enabled(viewState.visibleElements.contains(.supplements))
-                .padding(.top, EdgeInsets.edgeInsets.bottom / (UIDevice.isTV ? 2 : 1))
+                .padding(.top, viewLayout.edgeInsets.bottom / (viewLayout.isLarge ? 2 : 1))
                 .animation(.linear(duration: 0.25), value: viewState.presentation)
                 .animation(.linear(duration: 0.1), value: viewState.isScrubbing)
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.1), value: viewState.supplements.map(\.id))

@@ -32,7 +32,10 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
         InfoOverlay(item: item)
     }
 
-    private struct InfoOverlay: PlatformView {
+    private struct InfoOverlay: PresentationView {
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
@@ -113,7 +116,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                     .fontWeight(.semibold)
                 }
                 .buttonStyle(.supplementAction)
-                .frame(height: UIDevice.isTV ? 80 : 40)
+                .frame(height: viewLayout.supplementLogoHeight)
 
                 if recordingViewModel.program?.isSeries == true {
                     Button(role: recordingViewModel.seriesRecordingTimer != nil ? .destructive : nil) {
@@ -130,7 +133,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                         .fontWeight(.semibold)
                     }
                     .buttonStyle(.supplementAction)
-                    .frame(height: UIDevice.isTV ? 80 : 40)
+                    .frame(height: viewLayout.supplementLogoHeight)
                 }
             }
             .enabled(recordingViewModel.canManageRecordings)
@@ -157,16 +160,16 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                     .fontWeight(.semibold)
             }
             .buttonStyle(.supplementAction)
-            .frame(height: UIDevice.isTV ? 80 : 40)
+            .frame(height: viewLayout.supplementLogoHeight)
         }
 
         // TODO: may need to be a layout for correct overview frame
         //       with scrolling if too long
-        var iOSView: some View {
+        var standardView: some View {
             CompactOrRegularView(
                 isCompact: viewState.isCompact
             ) {
-                iOSCompactView
+                compactView
             } regularView: {
                 regularContent
                     .edgePadding()
@@ -178,7 +181,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
             }
         }
 
-        private var iOSCompactView: some View {
+        private var compactView: some View {
             VStack(alignment: .leading) {
                 Text(item.displayTitle)
                     .fontWeight(.semibold)
@@ -219,7 +222,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
         }
 
         private var regularContent: some View {
-            HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
+            HStack(alignment: .bottom, spacing: viewLayout.edgePadding) {
                 // TODO: determine what to do with non-portrait (channel, home video) images
                 //       - use aspect ratio?
                 PosterImage(
@@ -266,7 +269,7 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
                             .fontWeight(.semibold)
                             .padding()
                             .edgePadding(.horizontal)
-                            .frame(height: UIDevice.isTV ? 80 : 50)
+                            .frame(height: viewLayout.supplementRowHeight)
                     } content: {
                         fromBeginningButton
                     }
@@ -276,10 +279,10 @@ extension MediaInfoSupplement: VideoPlayerSupplement {
             }
         }
 
-        var tvOSView: some View {
+        var largeView: some View {
             regularContent
                 .edgePadding(.horizontal)
-                .padding(.vertical, EdgeInsets.edgePadding / 2)
+                .padding(.vertical, viewLayout.edgePadding / 2)
                 .background {
                     RoundedRectangle(cornerRadius: 32)
                         .fill(Material.thin)

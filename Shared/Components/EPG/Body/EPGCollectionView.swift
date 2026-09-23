@@ -13,6 +13,9 @@ import SwiftUI
 
 struct EPGCollectionView: UIViewRepresentable {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @ObservedObject
     var viewModel: EPGViewModel
 
@@ -22,7 +25,9 @@ struct EPGCollectionView: UIViewRepresentable {
     let onSelect: (BaseItemDto) -> Void
     let onSelectGroup: (ProgramBlock) -> Void
 
-    private let layout = EPGLayout()
+    private var layout: EPGLayout {
+        EPGLayout(viewLayout: viewLayout)
+    }
 
     func makeUIView(context: Context) -> UICollectionView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: context.coordinator.gridLayout)

@@ -13,5 +13,12 @@ struct FrameAndSafeAreaInsets: Equatable {
     let frame: CGRect
     let safeAreaInsets: EdgeInsets
 
+    var sizeIncludingSafeArea: CGSize {
+        CGSize(
+            width: frame.width + safeAreaInsets.leading + safeAreaInsets.trailing,
+            height: frame.height + safeAreaInsets.top + safeAreaInsets.bottom
+        )
+    }
+
     static let zero = Self(frame: .zero, safeAreaInsets: .zero)
 }

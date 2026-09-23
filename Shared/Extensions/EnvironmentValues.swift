@@ -32,7 +32,7 @@ extension EnvironmentValues {
     var posterDisplayType: PosterDisplayType = .portrait
 
     @Entry
-    var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
+    var safeAreaInsets: EdgeInsets = .zero
 
     @Entry
     var tabSafeAreaInsets: EdgeInsets = .zero

@@ -19,6 +19,9 @@ struct SelectUserView: View {
         case focusedUserButton
     }
 
+    @AdaptiveLayout
+    private var viewLayout
+
     typealias UserItem = (user: UserState, server: ServerState)
 
     @Default(.accentColor)
@@ -36,8 +39,6 @@ struct SelectUserView: View {
 
     @Environment(\.localUserAuthenticationAction)
     private var authenticationAction
-    @Environment(\.horizontalSizeClass)
-    private var horizontalSizeClass
 
     @Injected(\.userSessionManager)
     private var userSessionManager: UserSessionManager
@@ -79,7 +80,6 @@ struct SelectUserView: View {
             viewModel
                 .servers
                 .keys
-                .shuffled()
                 .map(\.splashScreenImageSource)
 
         case let (.server(id), _), let (.all, .server(id)):
@@ -160,19 +160,26 @@ struct SelectUserView: View {
 
     @ViewBuilder
     private var splashScreenBackground: some View {
-        if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
-            AlternateLayoutView {
-                Color.clear
-            } content: {
-                ImageView(splashScreenImageSources)
+        let sources = splashScreenImageSources
+
+        if selectUserUseSplashscreen, sources.isNotEmpty {
+            GeometryReader { geometry in
+                // Keep the view identity stable while resizing; only a new source
+                // list should choose another random server background.
+                ImageView(sources.shuffled())
                     .pipeline(.Swiftfin.local)
-                    .aspectRatio(contentMode: .fill)
-                    .id(splashScreenImageSources)
+                    .image { image in
+                        image.scaledToFill()
+                    }
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .clipped()
+                    .overlay {
+                        Color.black.opacity(0.9)
+                    }
+                    .id(sources)
             }
-            .overlay {
-                Color.black
-                    .opacity(0.9)
-            }
+            .ignoresSafeArea(.container)
+            .accessibilityHidden(true)
         }
     }
 
@@ -226,10 +233,10 @@ struct SelectUserView: View {
             .animation(.linear(duration: 0.1), value: userListDisplayType)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .focusSection()
+            #if os(tvOS)
             .mask {
                 VStack(spacing: 0) {
-                    #if os(tvOS)
-                    if userListDisplayType == .list {
+                    if viewLayout.isLarge, userListDisplayType == .list {
                         LinearGradient(
                             stops: [
                                 .init(color: .clear, location: 0),
@@ -240,7 +247,6 @@ struct SelectUserView: View {
                         )
                         .frame(height: 30)
                     }
-                    #endif
 
                     Color.white
 
@@ -256,21 +262,33 @@ struct SelectUserView: View {
                 }
                 .ignoresSafeArea(.all, edges: .horizontal)
             }
+            #endif
 
-            Toolbar(
-                servers: viewModel.servers.keys,
-                allUsers: userItems,
-                isEditing: $isEditing,
-                selectedUsers: $selectedUsers,
-                onDelete: {
-                    isPresentingConfirmDeleteUsers = true
-                }
-            )
-            .focusSection()
             #if os(tvOS)
-            .coordinatedFocus(.secondary)
+            userToolbar
             #endif
         }
+        #if os(iOS)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+                userToolbar
+            }
+        #endif
+    }
+
+    private var userToolbar: some View {
+        Toolbar(
+            servers: viewModel.servers.keys,
+            allUsers: userItems,
+            isEditing: $isEditing,
+            selectedUsers: $selectedUsers,
+            onDelete: {
+                isPresentingConfirmDeleteUsers = true
+            }
+        )
+        .focusSection()
+        #if os(tvOS)
+        .coordinatedFocus(.secondary)
+        #endif
     }
 
     var body: some View {
@@ -293,6 +311,7 @@ struct SelectUserView: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .animation(.linear(duration: 0.1), value: selectedServer)
         .withViewContext(.isOverComplexContent)
@@ -305,11 +324,11 @@ struct SelectUserView: View {
                 Image(.jellyfinBlobBlue)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: UIDevice.isTV ? 100 : 30)
+                    .frame(width: viewLayout.value(standard: 30, large: 100))
             }
 
             #if os(iOS)
-            if horizontalSizeClass == .compact {
+            if viewLayout.isCompact {
                 ToolbarItem(placement: .topBarLeading) {
                     if isEditing {
                         Button(
@@ -377,7 +396,6 @@ struct SelectUserView: View {
         }
         .background {
             splashScreenBackground
-                .ignoresSafeArea()
         }
         #if os(iOS)
         .ignoresSafeArea(.keyboard, edges: .bottom)

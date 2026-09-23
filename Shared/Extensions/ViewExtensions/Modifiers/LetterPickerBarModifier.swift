@@ -11,6 +11,9 @@ import SwiftUI
 
 struct LetterPickerBarModifier: ViewModifier {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
 
@@ -23,13 +26,15 @@ struct LetterPickerBarModifier: ViewModifier {
         {
             content
                 .focusSection()
+                #if os(tvOS)
                 .ignoresSafeArea(.all, edges: edge == .leading ? .trailing : .leading)
+                #endif
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     LetterPickerBar(viewModel: viewModel)
                         #if os(tvOS)
                             .coordinatedFocus(.secondary)
                         #endif
-                        .padding(edge.asEdgeSet, EdgeInsets.itemSpacing)
+                        .padding(edge.asEdgeSet, viewLayout.itemSpacing)
                 }
                 #if os(tvOS)
                 .ignoresSafeArea(.all, edges: edge.asEdgeSet)
@@ -38,14 +43,15 @@ struct LetterPickerBarModifier: ViewModifier {
                     ZStack {
                         if let letter {
                             LetterPickerBar.LetterPickerCallout(letter: letter)
-                                .font(.system(size: UIDevice.isTV ? 128 : 64, design: .rounded))
-                                .fontWeight(.bold)
+                                .font(.system(size: viewLayout.value(standard: 64, large: 128), design: .rounded).weight(.bold))
                         }
                     }
                 }
         } else {
             content
-                .ignoresSafeArea(.all, edges: .horizontal)
+                #if os(tvOS)
+                    .ignoresSafeArea(.all, edges: .horizontal)
+                #endif
         }
     }
 }

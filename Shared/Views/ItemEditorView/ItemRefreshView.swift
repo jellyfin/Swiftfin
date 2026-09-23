@@ -12,6 +12,9 @@ import SwiftUI
 
 struct ItemRefreshView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Router
     private var router
 
@@ -85,23 +88,20 @@ struct ItemRefreshView: View {
                 }
             }
 
-            #if os(tvOS)
-            Section {
-                Button(action: onRun) {
-                    Text(L10n.run)
-                        .frame(maxWidth: .infinity)
+            if viewLayout.isLarge {
+                Section {
+                    Button(action: onRun) {
+                        Text(L10n.run)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .listRowInsets(.zero)
+                    .listRowBackground(Color.clear)
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    .tint(accentColor)
                 }
-                .listRowInsets(.zero)
-                .listRowBackground(Color.clear)
-                .fontWeight(.semibold)
-                .backport
-                .buttonStyle(.glassProminent.shadow(false))
-                .tint(accentColor)
-                #if os(iOS)
-                .controlSize(.large)
-                #endif
             }
-            #endif
         }
     }
 

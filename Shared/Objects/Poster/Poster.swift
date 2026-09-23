@@ -134,6 +134,18 @@ extension View {
     @ViewBuilder
     func posterContextMenu<Item: Poster>(
         for item: Item,
+        @ViewBuilder preview: @escaping (CGSize) -> some View
+    ) -> some View {
+        if Item.ContextMenuBody.self == EmptyView.self {
+            self
+        } else {
+            modifier(SizedPosterContextMenuModifier(item: item, preview: preview))
+        }
+    }
+
+    @ViewBuilder
+    func posterContextMenu<Item: Poster>(
+        for item: Item,
         @ViewBuilder preview: @escaping () -> some View
     ) -> some View {
         if Item.ContextMenuBody.self == EmptyView.self {
@@ -145,5 +157,24 @@ extension View {
                 preview()
             }
         }
+    }
+}
+
+/// Keep preview geometry out of the poster button's state. A resize should update
+/// the preview's sizing without rebuilding the artwork, labels and overlays.
+private struct SizedPosterContextMenuModifier<Item: Poster, Preview: View>: ViewModifier {
+
+    @State
+    private var size: CGSize = .zero
+
+    let item: Item
+    let preview: (CGSize) -> Preview
+
+    func body(content: Content) -> some View {
+        content
+            .trackingSize($size)
+            .posterContextMenu(for: item) {
+                preview(size)
+            }
     }
 }

@@ -13,7 +13,10 @@ import SwiftUI
 
 extension SelectUserView {
 
-    struct GridView: PlatformView {
+    struct GridView: PresentationView {
+
+        @AdaptiveLayout
+        private var viewLayout
 
         @Binding
         private var isEditing: Bool
@@ -64,21 +67,29 @@ extension SelectUserView {
             #endif
         }
 
-        var iOSView: some View {
-            CenteredLazyVGrid(
-                data: userItems,
-                id: \.user.id,
-                columns: UIDevice.isPhone ? 2 : 5,
-                spacing: EdgeInsets.itemSpacing
-            ) { item in
-                userGridButton(for: item)
+        var standardView: some View {
+            GeometryReader { geometry in
+                let visibleHeight = max(0, geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom)
+
+                ScrollView {
+                    CenteredLazyVGrid(
+                        data: userItems,
+                        id: \.user.id,
+                        columns: viewLayout.userGridColumns.count(for: geometry.size.width),
+                        spacing: viewLayout.itemSpacing
+                    ) { item in
+                        userGridButton(for: item)
+                    }
+                    .edgePadding(.vertical)
+                    .frame(minHeight: visibleHeight)
+                }
+                .scrollBounceBehavior(.basedOnSize)
             }
-            .edgePadding(UIDevice.isPhone ? [.horizontal, .vertical] : .horizontal)
-            .scrollIfLargerThanContainer(axes: .vertical, padding: 100)
+            .edgePadding(.horizontal)
         }
 
-        var tvOSView: some View {
-            HStack(spacing: EdgeInsets.itemSpacing) {
+        var largeView: some View {
+            HStack(spacing: viewLayout.itemSpacing) {
                 ForEach(userItems, id: \.user.id) { item in
                     userGridButton(for: item)
                         .frame(width: 300)

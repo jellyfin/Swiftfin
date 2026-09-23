@@ -51,6 +51,9 @@ extension AppIconSelectorView {
 
     struct AppIconRow: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         let icon: AppIcon
         let action: () -> Void
 
@@ -60,8 +63,11 @@ extension AppIconSelectorView {
                     Image(icon.iconName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: UIDevice.isTV ? 150 : 60, height: UIDevice.isTV ? 90 : 60)
-                        .cornerRadius(UIDevice.isTV ? 18 : 12)
+                        .frame(
+                            width: viewLayout.value(standard: 60, large: 150),
+                            height: viewLayout.value(standard: 60, large: 90)
+                        )
+                        .cornerRadius(viewLayout.value(standard: 12, large: 18))
                         .subtleShadow()
 
                     Text(icon.displayTitle)

@@ -14,18 +14,6 @@ extension UIDevice {
         current.identifierForVendor!.uuidString
     }
 
-    static var isPad: Bool {
-        current.userInterfaceIdiom == .pad
-    }
-
-    static var isPhone: Bool {
-        current.userInterfaceIdiom == .phone
-    }
-
-    static var isTV: Bool {
-        current.userInterfaceIdiom == .tv
-    }
-
     static let supportsLiquidGlass: Bool = {
         #if os(tvOS)
         var systemInfo = utsname()
@@ -50,7 +38,7 @@ extension UIDevice {
         #if os(tvOS)
         L10n.tvOS
         #else
-        if UIDevice.isPad {
+        if current.userInterfaceIdiom == .pad {
             return L10n.iPadOS
         } else {
             return L10n.iOS
@@ -79,16 +67,6 @@ extension UIDevice {
         UIImpactFeedbackGenerator(style: type).impactOccurred()
         #endif
     }
-
-    #if os(iOS)
-    static var isPortrait: Bool {
-        current.orientation.isPortrait
-    }
-
-    static var isLandscape: Bool {
-        isPad || current.orientation.isLandscape
-    }
-    #endif
 }
 
 #if os(tvOS)

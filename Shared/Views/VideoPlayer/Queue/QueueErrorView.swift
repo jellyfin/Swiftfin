@@ -9,7 +9,10 @@
 import SwiftUI
 
 @MainActor
-struct QueueErrorView: PlatformView {
+struct QueueErrorView: PresentationView {
+
+    @AdaptiveLayout
+    private var viewLayout
 
     @Environment(VideoPlayer.ViewState.self)
     private var viewState
@@ -23,7 +26,7 @@ struct QueueErrorView: PlatformView {
                 .fontWeight(.semibold)
                 .padding()
                 .edgePadding(.horizontal)
-                .frame(height: UIDevice.isTV ? 80 : 40)
+                .frame(height: viewLayout.isLarge ? 80 : 40)
         } content: {
             Button(action: retry) {
                 Label(L10n.retry, systemImage: "arrow.clockwise")
@@ -33,12 +36,12 @@ struct QueueErrorView: PlatformView {
                     .edgePadding(.horizontal)
             }
             .buttonStyle(.supplementAction)
-            .frame(height: UIDevice.isTV ? 80 : 50)
+            .frame(height: viewLayout.isLarge ? 80 : 50)
         }
     }
 
     private var errorCard: some View {
-        VStack(alignment: .leading, spacing: EdgeInsets.edgePadding / 2) {
+        VStack(alignment: .leading, spacing: viewLayout.edgePadding / 2) {
             Text(L10n.unknownError)
                 .font(.callout)
                 .fontWeight(.semibold)
@@ -49,7 +52,7 @@ struct QueueErrorView: PlatformView {
             retryButton
         }
         .edgePadding(.horizontal)
-        .padding(.vertical, EdgeInsets.edgePadding / 2)
+        .padding(.vertical, viewLayout.edgePadding / 2)
         .background {
             RoundedRectangle(cornerRadius: 32)
                 .fill(Material.thin)
@@ -59,7 +62,7 @@ struct QueueErrorView: PlatformView {
         .focusSection()
     }
 
-    var iOSView: some View {
+    var standardView: some View {
         CompactOrRegularView(isCompact: viewState.isCompact) {
             ErrorView(error: ErrorMessage(L10n.unknownError))
                 .refreshable { retry() }
@@ -68,7 +71,7 @@ struct QueueErrorView: PlatformView {
         }
     }
 
-    var tvOSView: some View {
+    var largeView: some View {
         errorCard
     }
 }

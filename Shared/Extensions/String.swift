@@ -63,7 +63,7 @@ private struct StringLibraryListElement: View {
 
                 ListRowCheckbox()
             }
-            .padding(.edgeInsets)
+            .edgePadding()
         }
         .foregroundStyle(.primary, .secondary)
     }

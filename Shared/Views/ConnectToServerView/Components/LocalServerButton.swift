@@ -14,6 +14,9 @@ extension ConnectToServerView {
 
     struct LocalServerButton: View {
 
+        @AdaptiveLayout
+        private var viewLayout
+
         let server: ServerState
         let action: () -> Void
 
@@ -36,9 +39,7 @@ extension ConnectToServerView {
                         .fontWeight(.regular)
                         .foregroundStyle(.secondary)
                 }
-                #if os(tvOS)
-                .padding()
-                #endif
+                .padding(viewLayout.value(standard: 0, large: 16))
             }
             .foregroundStyle(.primary, .secondary)
             .buttonStyle(.card)

@@ -36,6 +36,9 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
+        @AdaptiveLayout
+        private var viewLayout
+
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
 
@@ -66,7 +69,7 @@ extension VideoPlayer.PlaybackControls {
         private var insetSliderWidth: CGFloat {
             guard sliderSize.width.isFinite else { return 0 }
 
-            return max(0, sliderSize.width - EdgeInsets.edgePadding * 2)
+            return max(0, sliderSize.width - viewLayout.edgePadding * 2)
         }
 
         private var previewXOffset: CGFloat {
@@ -215,7 +218,7 @@ extension VideoPlayer.PlaybackControls {
             .overlay(alignment: .bottom) {
                 if isSlowScrubbing {
                     slowScrubbingIndicator
-                        .offset(y: EdgeInsets.edgePadding * 2)
+                        .offset(y: viewLayout.edgePadding * 2)
                         .transition(.opacity.animation(.linear(duration: 0.1)))
                 }
             }

@@ -36,6 +36,9 @@ struct TextSubtitleOverlay: View {
 
 private struct TextSubtitleOverlayContent: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     @Environment(\.scenePhase)
     private var scenePhase
 
@@ -61,11 +64,7 @@ private struct TextSubtitleOverlayContent: View {
     }
 
     private var basePointSize: CGFloat {
-        #if os(tvOS)
-        36
-        #else
-        21
-        #endif
+        viewLayout.value(standard: 21, large: 36)
     }
 
     private var selectedCaptionStyle: CaptionStyle {

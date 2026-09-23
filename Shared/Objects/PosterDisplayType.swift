@@ -8,14 +8,6 @@
 
 import Foundation
 
-#if os(iOS)
-private let landscapeMaxWidth: CGFloat = 300
-private let portraitMaxWidth: CGFloat = 200
-#else
-private let landscapeMaxWidth: CGFloat = 500
-private let portraitMaxWidth: CGFloat = 500
-#endif
-
 enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 
     enum Size: Equatable, Hashable, Storable {
@@ -29,7 +21,10 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
             90
         }
 
-        func width(for displayType: PosterDisplayType) -> CGFloat? {
+        func width(
+            for displayType: PosterDisplayType,
+            presentation: ViewLayout.Presentation = .current
+        ) -> CGFloat? {
             switch self {
             case .extraSmall:
                 switch displayType {
@@ -40,15 +35,15 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
                 }
 
             case .small:
-                switch displayType {
-                case .landscape:
-                    landscapeMaxWidth
-                case .portrait, .square:
-                    portraitMaxWidth
+                if presentation == .large {
+                    500
+                } else {
+                    // Standard presentations use smaller thumbnails than large presentations.
+                    displayType == .landscape ? 300 : 200
                 }
 
             case .medium:
-                landscapeMaxWidth
+                500
 
             case let .custom(width):
                 width

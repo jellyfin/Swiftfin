@@ -18,6 +18,9 @@ extension VideoPlayer {
     @Observable
     final class ViewState {
 
+        var layoutSize: CGSize = .zero
+        var safeAreaInsets: EdgeInsets = .zero
+
         enum Presentation: Equatable {
 
             case hidden
@@ -301,7 +304,7 @@ extension VideoPlayer {
                 return elements
 
             case let .supplement(_, showsPlaybackButtons):
-                if UIDevice.isTV {
+                if ViewLayout.platformDefault.isLarge {
                     return [.supplements, .dimming]
                 }
 
@@ -406,7 +409,7 @@ extension VideoPlayer {
         }
 
         init(timer: PokeIntervalTimer? = nil) {
-            self.timer = timer ?? .init(defaultInterval: UIDevice.isTV ? 10 : 5)
+            self.timer = timer ?? .init(defaultInterval: ViewLayout.platformDefault.isLarge ? 10 : 5)
 
             self.timer
                 .sink { [weak self] in

@@ -14,6 +14,9 @@ import SwiftUI
 
 struct UserSignInView: View {
 
+    @AdaptiveLayout
+    private var viewLayout
+
     private enum Field: Hashable {
 
         case username
@@ -249,50 +252,47 @@ struct UserSignInView: View {
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             } else {
-                #if os(iOS)
-                ForEach(viewModel.publicUsers) { user in
-                    ChevronButton {
-                        username = user.name ?? ""
-                        password = ""
-                        focusedTextField = .password
-                    } label: {
-                        HStack {
-                            UserProfileImage(
-                                userID: user.id,
-                                source: user.profileImageSource(
-                                    client: viewModel.server.client,
-                                    maxWidth: 50
-                                )
-                            )
-                            .frame(width: 50, height: 50)
-
-                            Text(user.name ?? .emptyDash)
-                                .fontWeight(.semibold)
-                                .lineLimit(1)
-                        }
-                    }
-                }
-                #else
-                LazyVGrid(
-                    columns: Array(
-                        repeating: GridItem(.flexible(), spacing: EdgeInsets.itemSpacing),
-                        count: 4
-                    ),
-                    spacing: EdgeInsets.itemSpacing
-                ) {
+                if !viewLayout.isLarge {
                     ForEach(viewModel.publicUsers) { user in
-                        UserButton(
-                            user: user,
-                            client: viewModel.server.client
-                        ) {
+                        ChevronButton {
                             username = user.name ?? ""
                             password = ""
                             focusedTextField = .password
+                        } label: {
+                            HStack {
+                                UserProfileImage(
+                                    userID: user.id,
+                                    source: user.profileImageSource(
+                                        client: viewModel.server.client,
+                                        maxWidth: 50
+                                    )
+                                )
+                                .frame(width: 50, height: 50)
+
+                                Text(user.name ?? .emptyDash)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+                            }
                         }
-                        .withViewContext(.isOverComplexContent)
+                    }
+                } else {
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: 200), spacing: viewLayout.itemSpacing)],
+                        spacing: viewLayout.itemSpacing
+                    ) {
+                        ForEach(viewModel.publicUsers) { user in
+                            UserButton(
+                                user: user,
+                                client: viewModel.server.client
+                            ) {
+                                username = user.name ?? ""
+                                password = ""
+                                focusedTextField = .password
+                            }
+                            .withViewContext(.isOverComplexContent)
+                        }
                     }
                 }
-                #endif
             }
         }
         .disabled(viewModel.state == .signingIn)
