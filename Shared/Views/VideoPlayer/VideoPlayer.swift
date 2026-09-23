@@ -20,25 +20,25 @@ struct VideoPlayer: View {
     private var manager: MediaPlayerManager
 
     @LazyState
-    private var proxy: any VideoMediaPlayerProxy
+    private var proxy: any VideoMediaPlayerLayoutConfigurable
 
     @Router
     private var router
 
-    // TODO: move audio/subtitle offset to container state?
     @State
     private var audioOffset: Duration = .zero
     @State
     private var isBeingDismissedByTransition = false
 
-    // TODO: move behavior to `PlaybackProgress`?
+    #if os(iOS)
     @State
     private var scrubbingStartTime: CFTimeInterval? = nil
+    #endif
     @State
     private var subtitleOffset: Duration = .zero
 
-    @StateObject
-    private var containerState: VideoPlayerContainerState = .init()
+    @State
+    private var viewState: ViewState = .init()
 
     init() {
         switch Defaults[.VideoPlayer.videoPlayerType] {
@@ -50,11 +50,12 @@ struct VideoPlayer: View {
     }
 
     var body: some View {
-        VideoPlayerContainerView(
-            containerState: containerState,
-            manager: manager
-        ) {
-            proxy.videoPlayerBody
+        Container(
+            viewState: viewState,
+            manager: manager,
+            videoSize: proxy.videoSize
+        ) { videoLayout in
+            proxy.videoPlayerBody(layout: videoLayout)
                 .eraseToAnyView()
         } playbackControls: {
             PlaybackControls()
@@ -63,32 +64,31 @@ struct VideoPlayer: View {
             manager.proxy = proxy
             manager.start()
         }
-        .prefersStatusBarHidden(!containerState.isPresentingOverlay)
+        .prefersStatusBarHidden(!viewState.isPresentingControls)
         .onChange(of: audioOffset) {
             if let proxy = proxy as? MediaPlayerOffsetConfigurable {
                 proxy.setAudioOffset(audioOffset)
             }
         }
-        .onChange(of: containerState.isAspectFilled) {
-            UIView.animate(withDuration: 0.2) {
-                proxy.setAspectFill(containerState.isAspectFilled)
-            }
-        }
-        .onChange(of: containerState.isScrubbing) {
-            if containerState.isScrubbing {
+        #if os(iOS)
+        .onChange(of: viewState.isScrubbing) {
+            if viewState.isScrubbing {
                 scrubbingStartTime = CACurrentMediaTime()
+                return
             }
 
             guard let scrubbingStartTime else { return }
+            self.scrubbingStartTime = nil
             let scrubbingDelta = CACurrentMediaTime() - scrubbingStartTime
-            let secondsDelta = abs(manager.seconds - containerState.scrubbedSeconds.value)
+            let secondsDelta = abs(manager.seconds - viewState.scrubbedSeconds.value)
 
             guard secondsDelta >= .seconds(1), scrubbingDelta >= 0.1 else { return }
 
-            let scrubbedSeconds = containerState.scrubbedSeconds.value
+            let scrubbedSeconds = viewState.scrubbedSeconds.value
             manager.seconds = scrubbedSeconds
             proxy.setSeconds(scrubbedSeconds)
         }
+        #endif
         .onChange(of: subtitleOffset) {
             if let proxy = proxy as? MediaPlayerOffsetConfigurable {
                 proxy.setSubtitleOffset(subtitleOffset)
@@ -96,7 +96,7 @@ struct VideoPlayer: View {
         }
         .preference(
             key: PresentationControllerShouldDismissPreferenceKey.self,
-            value: containerState.presentationControllerShouldDismiss
+            value: viewState.presentationControllerShouldDismiss
         )
         .onChange(of: presentationCoordinator.isPresented) {
             guard !presentationCoordinator.isPresented else { return }
@@ -104,12 +104,11 @@ struct VideoPlayer: View {
             manager.stop()
         }
         .onReceive(manager.$playbackItem) { newItem in
-            containerState.isAspectFilled = false
             audioOffset = .zero
             subtitleOffset = .zero
 
             // TODO: move to container view
-            containerState.scrubbedSeconds.value = newItem?.baseItem.startSeconds ?? .zero
+            viewState.scrubbedSeconds.value = newItem?.baseItem.startSeconds ?? .zero
         }
         .onReceive(manager.$state) { newState in
             if newState == .stopped, !isBeingDismissedByTransition {
@@ -122,7 +121,7 @@ struct VideoPlayer: View {
             isPresented: .constant(manager.error != nil)
         ) {
             Button(L10n.close, role: .cancel) {
-                Container.shared.mediaPlayerManager.reset()
+                FactoryKit.Container.shared.mediaPlayerManager.reset()
                 router.dismiss()
             }
         } message: {

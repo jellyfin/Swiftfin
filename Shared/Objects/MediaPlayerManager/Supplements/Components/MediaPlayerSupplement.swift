@@ -34,33 +34,3 @@ extension MediaPlayerSupplement {
         .regular
     }
 }
-
-struct AnyMediaPlayerSupplement: MediaPlayerSupplement, Equatable {
-
-    let supplement: any MediaPlayerSupplement
-
-    var displayTitle: String {
-        supplement.displayTitle
-    }
-
-    var id: String {
-        supplement.id
-    }
-
-    var presentationStyle: MediaPlayerSupplementPresentationStyle {
-        supplement.presentationStyle
-    }
-
-    var videoPlayerBody: some PlatformView {
-        supplement.videoPlayerBody
-            .eraseToAnyView()
-    }
-
-    init(_ supplement: any MediaPlayerSupplement) {
-        self.supplement = supplement
-    }
-
-    static func == (lhs: AnyMediaPlayerSupplement, rhs: AnyMediaPlayerSupplement) -> Bool {
-        lhs.id == rhs.id
-    }
-}

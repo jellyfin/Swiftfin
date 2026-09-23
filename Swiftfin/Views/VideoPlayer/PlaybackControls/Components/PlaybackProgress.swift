@@ -24,8 +24,8 @@ extension VideoPlayer.PlaybackControls {
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
@@ -39,10 +39,10 @@ extension VideoPlayer.PlaybackControls {
 
         private var isScrubbing: Bool {
             get {
-                containerState.isScrubbing
+                viewState.isScrubbing
             }
             nonmutating set {
-                containerState.isScrubbing = newValue
+                viewState.isScrubbing = newValue
             }
         }
 
@@ -77,21 +77,13 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var videoSizeAspectRatio: CGFloat {
-            guard let videoPlayerProxy = manager.proxy as? any VideoMediaPlayerProxy else {
-                return 1.77
-            }
-
-            let videoSize = videoPlayerProxy.videoSize.value
-            guard videoSize.width.isFinite,
-                  videoSize.height.isFinite,
-                  videoSize.width > 0,
-                  videoSize.height > 0
+            guard let aspectRatio = (manager.proxy as? any VideoMediaPlayerProxy)?
+                .videoSize
+                .value
+                .aspectRatio
             else {
                 return 1.77
             }
-
-            let aspectRatio = videoSize.aspectRatio
-            guard aspectRatio.isFinite else { return 1.77 }
 
             return clamp(aspectRatio, min: 0.25, max: 4)
         }

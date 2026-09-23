@@ -8,42 +8,69 @@
 
 import SwiftUI
 
-struct SelectionTrack<Elements: RandomAccessCollection>: View where Elements.Element: Identifiable & Displayable {
+struct SelectionTrack<Elements: RandomAccessCollection, ID: Hashable>: View {
 
     private let elements: Elements
-    private let selection: Elements.Element.ID?
-    private let focus: FocusState<Elements.Element.ID?>.Binding
+    private let id: KeyPath<Elements.Element, ID>
+    private let title: KeyPath<Elements.Element, String>
+    private let selection: ID?
+    private let focus: FocusState<ID?>.Binding
     private let spacing: CGFloat
     private let action: (Elements.Element) -> Void
 
     init(
         _ elements: Elements,
-        selection: Elements.Element.ID?,
-        focus: FocusState<Elements.Element.ID?>.Binding,
+        id: KeyPath<Elements.Element, ID>,
+        title: KeyPath<Elements.Element, String>,
+        selection: ID?,
+        focus: FocusState<ID?>.Binding,
         spacing: CGFloat = 20,
         action: @escaping (Elements.Element) -> Void
     ) {
         self.elements = elements
+        self.id = id
+        self.title = title
         self.selection = selection
         self.focus = focus
         self.spacing = spacing
         self.action = action
     }
 
-    private var setID: Elements.Element.ID? {
+    private var setID: ID? {
         focus.wrappedValue ?? selection
     }
 
     var body: some View {
         HStack(spacing: spacing) {
-            ForEach(elements) { element in
-                Button(element.displayTitle) {
+            ForEach(elements, id: id) { element in
+                Button(element[keyPath: title]) {
                     action(element)
                 }
-                .focused(focus, equals: element.id)
-                .isSelected(setID == element.id)
+                .focused(focus, equals: element[keyPath: id])
+                .isSelected(setID == element[keyPath: id])
             }
         }
         .buttonStyle(.capsule(isSelectionActive: focus.wrappedValue != nil))
+    }
+}
+
+extension SelectionTrack where Elements.Element: Identifiable & Displayable, ID == Elements.Element.ID {
+
+    init(
+        _ elements: Elements,
+        selection: ID?,
+        focus: FocusState<ID?>.Binding,
+        spacing: CGFloat = 20,
+        action: @escaping (Elements.Element) -> Void
+    ) {
+        self.init(
+            elements,
+            id: \.id,
+            title: \.displayTitle,
+            selection: selection,
+            focus: focus,
+            spacing: spacing,
+            action: action
+        )
     }
 }

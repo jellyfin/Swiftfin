@@ -157,8 +157,8 @@ extension EpisodeMediaPlayerQueue {
 
     private struct EpisodeOverlay: PlatformView {
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -204,7 +204,7 @@ extension EpisodeMediaPlayerQueue {
 
         var iOSView: some View {
             CompactOrRegularView(
-                isCompact: containerState.isCompact
+                isCompact: viewState.isCompact
             ) {
                 CompactSeasonStackObserver(
                     selection: $selection,

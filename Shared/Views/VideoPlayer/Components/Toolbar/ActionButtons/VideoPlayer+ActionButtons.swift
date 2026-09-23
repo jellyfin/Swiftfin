@@ -15,13 +15,25 @@ extension VideoPlayer.PlaybackControls.Toolbar {
 
     struct ActionButtons: View {
 
+        typealias ViewState = VideoPlayer.ViewState
+
+        private typealias Toolbar = VideoPlayer.PlaybackControls.Toolbar
+
+        private static var buttonSpacing: CGFloat {
+            if UIDevice.isTV {
+                UIDevice.supportsLiquidGlass ? 20 : 16
+            } else {
+                UIDevice.supportsLiquidGlass ? 4 : 0
+            }
+        }
+
         @Default(.VideoPlayer.barActionButtons)
         private var rawBarActionButtons
         @Default(.VideoPlayer.menuActionButtons)
         private var rawMenuActionButtons
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -70,10 +82,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             }
         }
 
-        private var buttonSize: CGFloat {
-            VideoPlayer.PlaybackControls.Toolbar.buttonSize
-        }
-
         private var menuLabel: some View {
             Label(L10n.menu, systemImage: menuSystemImage)
         }
@@ -106,32 +114,37 @@ extension VideoPlayer.PlaybackControls.Toolbar {
 
         @ViewBuilder
         private var compactView: some View {
+            let barButtons = barActionButtons
+            let menuButtons = menuActionButtons.subtracting(barActionButtons)
+
             Menu {
                 ForEach(
-                    barActionButtons,
+                    barButtons,
                     content: view(for:)
                 )
 
-                Divider()
+                if barButtons.isNotEmpty, menuButtons.isNotEmpty {
+                    Divider()
+                }
 
                 ForEach(
-                    menuActionButtons,
+                    menuButtons,
                     content: view(for:)
                 )
             } label: {
                 menuLabel
             }
-            .frame(width: buttonSize, height: buttonSize)
+            .frame(width: Toolbar.buttonSize, height: Toolbar.buttonSize)
             .withViewContext(.isInMenu)
         }
 
         @ViewBuilder
         private var regularView: some View {
-            HStack(spacing: VideoPlayer.PlaybackControls.Toolbar.buttonSpacing) {
+            HStack(spacing: Self.buttonSpacing) {
                 ForEach(barActionButtons) { button in
                     view(for: button)
-                        .frame(width: buttonSize, height: buttonSize)
-                        .focused($focusedButton, equals: button.rawValue)
+                        .frame(width: Toolbar.buttonSize, height: Toolbar.buttonSize)
+                        .coordinatedFocus(ViewState.Focus.action(button.rawValue), selection: $focusedButton)
                 }
 
                 if menuActionButtons.isNotEmpty {
@@ -144,13 +157,13 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                     } label: {
                         menuLabel
                     }
-                    .frame(width: buttonSize, height: buttonSize)
-                    .focused($focusedButton, equals: "menu")
+                    .frame(width: Toolbar.buttonSize, height: Toolbar.buttonSize)
+                    .coordinatedFocus(ViewState.Focus.action("menu"), selection: $focusedButton)
                 }
             }
             .defaultFocus(
                 $focusedButton,
-                barActionButtons.first?.rawValue ?? "menu",
+                ViewState.Focus.action(barActionButtons.first?.rawValue ?? "menu"),
                 priority: .userInitiated
             )
             .focusSection()
@@ -158,7 +171,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
 
         var body: some View {
             Group {
-                if containerState.isCompact {
+                if viewState.isCompact {
                     compactView
                 } else {
                     regularView

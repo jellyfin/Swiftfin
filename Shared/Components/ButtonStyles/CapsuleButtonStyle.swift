@@ -54,16 +54,16 @@ struct CapsuleButtonStyle: ButtonStyle {
                 self.labelSpacing = 4
             case .large:
                 self.font = .headline
+                self.horizontalPadding = 12
+                self.verticalPadding = 6
+                self.minimumHeight = 36
+                self.labelSpacing = 5
+            case .extraLarge:
+                self.font = .title3
                 self.horizontalPadding = 16
                 self.verticalPadding = 8
                 self.minimumHeight = 44
                 self.labelSpacing = 6
-            case .extraLarge:
-                self.font = .title3
-                self.horizontalPadding = 20
-                self.verticalPadding = 10
-                self.minimumHeight = 52
-                self.labelSpacing = 8
             @unknown default:
                 self = CapsuleControlMetrics(.regular)
             }

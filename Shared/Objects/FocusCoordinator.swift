@@ -11,22 +11,29 @@ import SwiftUI
 @MainActor
 final class FocusCoordinator: ObservableObject {
 
+    fileprivate struct Request: Equatable {
+        let id: String
+        let token = UUID()
+    }
+
     @Published
     private(set) var focusedIDs: Set<String> = []
     @Published
     private(set) var lastFocusedIDs: Set<String> = []
     @Published
-    fileprivate var request: String?
+    fileprivate var request: Request?
 
     init(initial: String? = nil) {
-        self.request = initial
+        self.request = initial.map { Request(id: $0) }
     }
 
     func focus(_ id: String) {
-        request = id
+        request = Request(id: id)
     }
 
     fileprivate func update(_ id: String, isFocused: Bool) {
+        guard focusedIDs.contains(id) != isFocused else { return }
+
         if isFocused {
             focusedIDs.insert(id)
         } else {
@@ -49,10 +56,10 @@ private struct CoordinatedFocusModifier: ViewModifier {
 
     let id: String
 
-    private func apply(_ request: String?) {
+    private func apply(_ request: FocusCoordinator.Request?) {
         guard let request else { return }
 
-        if request == id {
+        if request.id == id {
             isFocused = true
         }
     }
@@ -84,10 +91,10 @@ private struct CoordinatedFocusSelectionModifier: ViewModifier {
     let id: String
     let selection: FocusState<String?>.Binding
 
-    private func apply(_ request: String?) {
+    private func apply(_ request: FocusCoordinator.Request?) {
         guard let request else { return }
 
-        if request == id {
+        if request.id == id {
             selection.wrappedValue = id
         }
     }

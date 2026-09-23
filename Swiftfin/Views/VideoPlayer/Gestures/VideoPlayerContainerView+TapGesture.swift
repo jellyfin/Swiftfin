@@ -13,11 +13,11 @@ import SwiftUI
 //       - don't increment jump progress if hit ends
 //       - verify if ending media
 
-extension VideoPlayer.UIVideoPlayerContainerViewController {
+extension VideoPlayer.UIContainerViewController {
 
     func checkGestureLock() -> Bool {
-        if containerState.isGestureLocked {
-            containerState.toastProxy.present(
+        if viewState.isGestureLocked {
+            viewState.toastProxy.present(
                 L10n.pressAndHoldToUnlock,
                 systemName: VideoPlayerActionButton.gestureLock.systemImage
             )
@@ -31,7 +31,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         unitPoint: UnitPoint,
         count: Int
     ) {
-        guard !containerState.isPresentingSupplement else { return }
+        guard !viewState.isPresentingSupplement else { return }
 
         handleTapGesture(
             location: location,
@@ -66,43 +66,43 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         location: CGPoint,
         unitPoint: UnitPoint
     ) {
-        if containerState.isPresentingSupplement {
-            if containerState.isCompact {
-                containerState.isPresentingPlaybackControls.toggle()
+        if viewState.isPresentingSupplement {
+            if viewState.isCompact {
+                viewState.togglePlaybackButtons()
             } else {
-                containerState.select(supplement: nil)
+                viewState.selectedSupplementID = nil
             }
         } else {
-            containerState.isPresentingOverlay.toggle()
+            viewState.toggleControls()
         }
 
         let action = Defaults[.VideoPlayer.Gesture.multiTapGesture]
-        let jumpProgressObserver = containerState.jumpProgressObserver
+        let jumpProgressObserver = viewState.jumpProgressObserver
         let width = location.x / unitPoint.x
 
         switch action {
         case .none: ()
         case .jump:
-            guard containerState.manager?.item.isLiveStream == false else { return }
+            guard viewState.manager?.item.isLiveStream == false else { return }
 
-            if let lastTapLocation = containerState.lastTapLocation {
+            if let lastTapLocation = viewState.lastTapLocation {
 
                 let (isSameSide, isLeftSide) = pointsAreSameSide(
                     lastTapLocation,
                     location,
                     width: width,
-                    midPadding: containerState.isCompact ? 20 : 50
+                    midPadding: viewState.isCompact ? 20 : 50
                 )
 
                 if isSameSide {
 
-                    containerState.isPresentingOverlay = false
+                    viewState.showProgress(keepingControls: false)
 
                     if isLeftSide {
                         let interval = Defaults[.VideoPlayer.jumpBackwardInterval]
-                        containerState.manager?.proxy?.jumpBackward(interval.rawValue)
+                        viewState.manager?.proxy?.jumpBackward(interval.rawValue)
 
-                        containerState.toastProxy.present(
+                        viewState.toastProxy.present(
                             Text(
                                 interval.rawValue * (jumpProgressObserver.jumps),
                                 format: .minuteSecondsNarrow
@@ -111,9 +111,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                         )
                     } else {
                         let interval = Defaults[.VideoPlayer.jumpForwardInterval]
-                        containerState.manager?.proxy?.jumpForward(interval.rawValue)
+                        viewState.manager?.proxy?.jumpForward(interval.rawValue)
 
-                        containerState.toastProxy.present(
+                        viewState.toastProxy.present(
                             Text(
                                 interval.rawValue * (jumpProgressObserver.jumps),
                                 format: .minuteSecondsNarrow
@@ -128,9 +128,9 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         let side = side(
             of: location,
             width: width,
-            midPadding: containerState.isCompact ? 20 : 50
+            midPadding: viewState.isCompact ? 20 : 50
         )
-        containerState.lastTapLocation = location
+        viewState.lastTapLocation = location
 
         if side {
             jumpProgressObserver.jumpBackward(interval: 0.35)
@@ -172,26 +172,26 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         case .none: ()
         case .aspectFill:
             guard checkGestureLock() else { return }
-            containerState.isAspectFilled.toggle()
+            viewState.toggleAspectFillBehavior()
         case .gestureLock:
-            if containerState.isGestureLocked {
-                containerState.isGestureLocked = false
+            if viewState.isGestureLocked {
+                viewState.isGestureLocked = false
 
-                containerState.toastProxy.present(
+                viewState.toastProxy.present(
                     L10n.gesturesUnlocked,
                     systemName: VideoPlayerActionButton.gestureLock.secondarySystemImage
                 )
             } else {
-                containerState.isGestureLocked = true
+                viewState.isGestureLocked = true
 
-                containerState.toastProxy.present(
+                viewState.toastProxy.present(
                     L10n.gesturesLocked,
                     systemName: VideoPlayerActionButton.gestureLock.systemImage
                 )
             }
         case .pausePlay:
             guard checkGestureLock() else { return }
-            containerState.manager?.togglePlayPause()
+            viewState.manager?.togglePlayPause()
         }
     }
 
@@ -200,12 +200,12 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         unitPoint: UnitPoint,
         state: UILongPressGestureRecognizer.State
     ) {
-        guard !containerState.isGestureLocked else {
+        guard !viewState.isGestureLocked else {
             guard state == .began else { return }
 
-            containerState.isGestureLocked = false
+            viewState.isGestureLocked = false
 
-            containerState.toastProxy.present(
+            viewState.toastProxy.present(
                 L10n.gesturesUnlocked,
                 systemName: VideoPlayerActionButton.gestureLock.secondarySystemImage
             )
@@ -219,35 +219,35 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         case .gestureLock:
             guard state == .began else { return }
 
-            containerState.isGestureLocked = true
+            viewState.isGestureLocked = true
 
-            containerState.toastProxy.present(
+            viewState.toastProxy.present(
                 L10n.gesturesLocked,
                 systemName: VideoPlayerActionButton.gestureLock.systemImage
             )
         case .playbackSpeed:
-            guard containerState.manager?.item.isLiveStream == false else { return }
+            guard viewState.manager?.item.isLiveStream == false else { return }
 
             switch state {
             case .began:
-                containerState.originalPlaybackRate = containerState.manager?.rate
+                viewState.originalPlaybackRate = viewState.manager?.rate
 
                 let multiplier = Defaults[.VideoPlayer.Gesture.longPressSpeedMultiplier]
 
-                containerState.manager?.setRate(rate: multiplier.rawValue)
+                viewState.manager?.setRate(rate: multiplier.rawValue)
 
-                containerState.toastProxy.present(
+                viewState.toastProxy.present(
                     Text(multiplier.displayTitle),
                     systemName: "forward.fill"
                 )
 
             case .ended, .cancelled:
-                guard let originalRate = containerState.originalPlaybackRate else { return }
-                containerState.manager?.setRate(rate: originalRate)
+                guard let originalRate = viewState.originalPlaybackRate else { return }
+                viewState.manager?.setRate(rate: originalRate)
 
-                containerState.originalPlaybackRate = nil
+                viewState.originalPlaybackRate = nil
 
-                containerState.toastProxy.present(
+                viewState.toastProxy.present(
                     Text(originalRate, format: .playbackRate),
                     systemName: "forward.fill"
                 )

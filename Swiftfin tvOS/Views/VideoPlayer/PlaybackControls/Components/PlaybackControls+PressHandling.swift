@@ -10,65 +10,52 @@ import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
-    func handlePressEvent(_ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent) {
+    func handlePressEvent(_ press: VideoPlayer.UIContainerViewController.PressEvent) {
+        let isSeekPress = press.type == .leftArrow || press.type == .rightArrow
 
-        if !containerState.isPresentingOverlay {
-            containerState.isPresentingOverlay = true
+        if press.phase == .began,
+           isSeekPress,
+           !manager.item.isLiveStream,
+           !viewState.isPresentingSupplement,
+           viewState.presentation == .hidden || viewState.presentation == .progress || viewState.isProgressBarFocused
+        {
+            seekingPress = press.type
+            viewState.showProgress()
+        }
+
+        // Retain ownership through ended/cancelled, even while the newly shown
+        // slider is waiting for the focus engine to process our request.
+        if seekingPress == press.type {
+            viewState.refreshAutoDismiss()
+            switch press.phase {
+            case .began:
+                if press.type == .rightArrow {
+                    startSpeedBoost()
+                }
+            case .ended:
+                if press.type == .rightArrow {
+                    stopSpeedBoost(performJump: true)
+                } else {
+                    jumpBackward()
+                }
+                seekingPress = nil
+            case .cancelled:
+                stopSpeedBoost()
+                seekingPress = nil
+            default:
+                break
+            }
             press.resolve(.handled)
             return
         }
 
-        switch press.type {
-        case .leftArrow:
-            handleLeftArrow(press)
-        case .rightArrow:
-            handleRightArrow(press)
-        default:
-            containerState.timer.poke()
-            press.resolve(.fallback)
-        }
-    }
-
-    private func handleLeftArrow(
-        _ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent
-    ) {
-        guard containerState.isProgressBarFocused else {
-            press.resolve(.fallback)
+        if !viewState.isPresentingControls, press.phase == .began {
+            viewState.showControls()
+            press.resolve(.handled)
             return
         }
 
-        switch press.phase {
-        case .began:
-            press.resolve(.handled)
-
-        case .ended, .cancelled:
-            jumpBackward()
-            press.resolve(.handled)
-
-        default:
-            press.resolve(.fallback)
-        }
-    }
-
-    private func handleRightArrow(
-        _ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent
-    ) {
-        guard containerState.isProgressBarFocused else {
-            press.resolve(.fallback)
-            return
-        }
-
-        switch press.phase {
-        case .began:
-            startSpeedBoost()
-            press.resolve(.handled)
-
-        case .ended, .cancelled:
-            stopSpeedBoost(performJump: true)
-            press.resolve(.handled)
-
-        default:
-            press.resolve(.fallback)
-        }
+        viewState.refreshAutoDismiss()
+        press.resolve(.fallback)
     }
 }

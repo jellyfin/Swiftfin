@@ -34,6 +34,9 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         ]
     }
 
+    private let audioSessionMode: AVAudioSession.Mode
+    private let supportsMultichannelContent: Bool?
+
     private var itemImageCancellable: AnyCancellable?
     private var playbackRequestStateBeforeInterruption: MediaPlayerManager.PlaybackRequestStatus = .playing
 
@@ -42,6 +45,12 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             guard let newValue else { return }
             setup(with: newValue)
         }
+    }
+
+    init(audioSessionMode: AVAudioSession.Mode = .default, supportsMultichannelContent: Bool? = nil) {
+        self.audioSessionMode = audioSessionMode
+        self.supportsMultichannelContent = supportsMultichannelContent
+        super.init()
     }
 
     private func setup(with manager: MediaPlayerManager) {
@@ -285,7 +294,10 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         let audioSession = AVAudioSession.sharedInstance()
 
         do {
-            try audioSession.setCategory(.playback, mode: .default)
+            try audioSession.setCategory(.playback, mode: audioSessionMode)
+            if let supportsMultichannelContent {
+                try audioSession.setSupportsMultichannelContent(supportsMultichannelContent)
+            }
             try audioSession.setActive(true)
             logger.trace("Started AVAudioSession")
         } catch {

@@ -33,8 +33,8 @@ extension MediaPeopleSupplement {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
 
         @ObservedObject
         private var supplement: MediaPeopleSupplement
@@ -49,7 +49,7 @@ extension MediaPeopleSupplement {
 
         var iOSView: some View {
             CompactOrRegularView(
-                isCompact: containerState.isCompact
+                isCompact: viewState.isCompact
             ) {
                 iOSCompactView
             } regularView: {
