@@ -93,6 +93,10 @@ extension Poster where OverlayBody == EmptyView {
 
 extension Poster {
 
+    var narrowPosterDisplayType: PosterDisplayType {
+        preferredPosterDisplayType == .square ? .square : .portrait
+    }
+
     var subtitle: String? {
         nil
     }

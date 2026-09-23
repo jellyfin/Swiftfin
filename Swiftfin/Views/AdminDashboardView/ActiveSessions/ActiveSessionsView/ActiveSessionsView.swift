@@ -101,6 +101,7 @@ struct ActiveSessionsView: View {
                     )
                 }
             }
+            .ignoresSafeArea(edges: .vertical)
         }
     }
 
