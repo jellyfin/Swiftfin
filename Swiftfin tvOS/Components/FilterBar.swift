@@ -53,8 +53,6 @@ struct FilterBar: View {
     let orientation: Axis
     var edge: HorizontalEdge = .trailing
 
-    private let buttonSize: CGFloat = 68
-
     private var targets: [FocusTarget] {
         (viewModel.currentFilters.isNotEmpty ? [.reset] : []) + types.map(FocusTarget.filter)
     }
@@ -100,7 +98,10 @@ struct FilterBar: View {
                 }
 
                 Image(systemName: target.systemImage)
-                    .frame(width: buttonSize - 32, height: buttonSize - 16)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 32, height: 32)
+                    .padding(.vertical, 8)
 
                 if focusTarget == target, edge == .leading {
                     Text(target.title)
@@ -137,7 +138,7 @@ struct FilterBar: View {
                 VStack(spacing: 20) {
                     ForEach(targets, id: \.self) { target in
                         Color.clear
-                            .frame(width: buttonSize, height: buttonSize)
+                            .frame(width: 64, height: 64)
                             .overlay(alignment: edge == .leading ? .leading : .trailing) {
                                 button(for: target)
                                     .fixedSize()
@@ -149,7 +150,7 @@ struct FilterBar: View {
                 .controlSize(.large)
                 .animation(.snappy(duration: 0.2), value: focusTarget)
                 .scrollIfLargerThanContainer()
-                .frame(width: buttonSize)
+                .frame(width: 64)
             }
         }
         .buttonStyle(.capsule(selectionTint: accentColor))
