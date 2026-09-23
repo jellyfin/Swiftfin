@@ -72,27 +72,23 @@ extension LibraryElement {
         let libraryStyle = options.normalized(libraryStyle)
 
         #if os(iOS)
-        let gridLayout: CollectionVGridLayout = {
-            switch libraryStyle.posterDisplayType {
-            case .landscape:
-                .minWidth(220, insets: insets)
-            case .portrait, .square:
-                .minWidth(140, insets: insets)
-            }
-        }()
-
-        let phoneGridLayout: CollectionVGridLayout = {
-            switch libraryStyle.posterDisplayType {
-            case .landscape:
-                .columns(2, insets: insets)
-            case .portrait, .square:
-                .columns(3, insets: insets)
-            }
-        }()
-
         switch libraryStyle.displayType {
         case .grid:
-            return UIDevice.isPhone ? phoneGridLayout : gridLayout
+            if UIDevice.isPhone {
+                return .columns(
+                    libraryStyle.posterDisplayType == .landscape ? 2 : 3,
+                    insets: insets,
+                    itemSpacing: EdgeInsets.itemSpacing,
+                    lineSpacing: EdgeInsets.itemSpacing
+                )
+            }
+
+            return .minWidth(
+                libraryStyle.posterDisplayType == .landscape ? 220 : 140,
+                insets: insets,
+                itemSpacing: EdgeInsets.itemSpacing,
+                lineSpacing: EdgeInsets.itemSpacing
+            )
         case .list:
             return .columns(
                 libraryStyle.listColumnCount,
@@ -102,32 +98,19 @@ extension LibraryElement {
             )
         }
         #else
-        switch libraryStyle.displayType {
+        let columnCount = switch libraryStyle.displayType {
         case .grid:
-            switch libraryStyle.posterDisplayType {
-            case .landscape:
-                return .columns(
-                    4,
-                    insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
-                    itemSpacing: EdgeInsets.edgePadding,
-                    lineSpacing: EdgeInsets.edgePadding
-                )
-            case .portrait, .square:
-                return .columns(
-                    7,
-                    insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
-                    itemSpacing: EdgeInsets.edgePadding,
-                    lineSpacing: EdgeInsets.edgePadding
-                )
-            }
+            libraryStyle.posterDisplayType == .landscape ? 4 : 7
         case .list:
-            return .columns(
-                libraryStyle.listColumnCount,
-                insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
-                itemSpacing: EdgeInsets.edgePadding,
-                lineSpacing: EdgeInsets.edgePadding
-            )
+            libraryStyle.listColumnCount
         }
+
+        return .columns(
+            columnCount,
+            insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
+            itemSpacing: EdgeInsets.itemSpacing,
+            lineSpacing: EdgeInsets.itemSpacing
+        )
         #endif
     }
 }
