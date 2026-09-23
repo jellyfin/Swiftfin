@@ -13,12 +13,12 @@ import SwiftUIIntrospect
 extension View {
 
     @ViewBuilder
-    func insetFilterBar(
+    func filterBar(
         viewModel: FilterViewModel,
         types: [ItemFilterType]
     ) -> some View {
         modifier(
-            InsetFilterBarModifier(
+            FilterBarModifier(
                 viewModel: viewModel,
                 types: types
             )

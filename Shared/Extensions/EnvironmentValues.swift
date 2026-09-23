@@ -17,12 +17,6 @@ extension EnvironmentValues {
     var audioOffset: Binding<Duration> = .constant(.zero)
 
     @Entry
-    var filterBarEdge: HorizontalEdge?
-
-    @Entry
-    var gridPadding: CGFloat = UIDevice.isTV ? 40 : 10
-
-    @Entry
     var frameForParentView: [CoordinateSpace: FrameAndSafeAreaInsets] = [:]
 
     @Entry

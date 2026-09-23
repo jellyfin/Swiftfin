@@ -14,12 +14,6 @@ struct LetterPickerBar: PlatformView {
     @Default(.accentColor)
     private var accentColor
 
-    @Default(.Customization.Library.letterPickerOrientation)
-    private var orientation
-
-    @Environment(\.gridPadding)
-    private var gridPadding
-
     @FocusState
     private var focusedLetter: ItemLetter?
 
@@ -38,10 +32,6 @@ struct LetterPickerBar: PlatformView {
     private enum Row: Hashable {
         case letter(ItemLetter)
         case dot
-    }
-
-    private var edge: HorizontalEdge {
-        orientation.edge ?? .trailing
     }
 
     private var dimension: CGFloat {
@@ -173,7 +163,6 @@ struct LetterPickerBar: PlatformView {
             }
             .frame(width: dimension)
             .padding(.vertical, EdgeInsets.edgePadding / 2)
-            .padding(edge.asEdgeSet, gridPadding)
             .preference(key: PresentationControllerShouldDismissPreferenceKey.self, value: activeLetter == nil)
             .preference(key: LetterPickerActiveLetterKey.self, value: activeLetter)
     }
@@ -188,7 +177,6 @@ struct LetterPickerBar: PlatformView {
                 selectedLetter ?? letters.first ?? "#",
                 priority: focusedLetter == nil ? .userInitiated : .automatic
             )
-            .padding(edge.asEdgeSet, gridPadding)
             .focusSection()
             .task(id: focusedLetter) {
                 activeLetter = focusedLetter

@@ -9,13 +9,10 @@
 import Defaults
 import SwiftUI
 
-struct InsetFilterBarModifier: ViewModifier {
+struct FilterBarModifier: ViewModifier {
 
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
-
-    @Environment(\.gridPadding)
-    private var gridPadding
 
     @ObservedObject
     var viewModel: FilterViewModel
@@ -32,7 +29,6 @@ struct InsetFilterBarModifier: ViewModifier {
         } else {
             content
                 .focusSection()
-                .environment(\.filterBarEdge, edge)
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     FilterBar(
                         viewModel: viewModel,
@@ -40,7 +36,7 @@ struct InsetFilterBarModifier: ViewModifier {
                         orientation: .vertical,
                         edge: edge
                     )
-                    .padding(edge.asEdgeSet, gridPadding)
+                    .padding(edge.asEdgeSet, EdgeInsets.itemSpacing)
                 }
                 .ignoresSafeArea(.all, edges: edge.asEdgeSet)
         }

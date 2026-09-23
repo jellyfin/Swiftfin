@@ -107,7 +107,7 @@ extension LibraryElement {
 
         return .columns(
             columnCount,
-            insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
+            insets: insets,
             itemSpacing: EdgeInsets.itemSpacing,
             lineSpacing: EdgeInsets.itemSpacing
         )

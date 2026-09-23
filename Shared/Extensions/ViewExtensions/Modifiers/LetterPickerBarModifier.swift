@@ -14,31 +14,23 @@ struct LetterPickerBarModifier: ViewModifier {
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
 
-    @Environment(\.filterBarEdge)
-    private var filterBarEdge
-
     let viewModel: FilterViewModel?
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if let letterPickerEdge = letterPickerOrientation.edge,
+        if let edge = letterPickerOrientation.edge,
            let viewModel
         {
             content
                 .focusSection()
-                .ignoresSafeArea(
-                    .all,
-                    edges: Edge.Set.horizontal
-                        .subtracting(filterBarEdge?.asEdgeSet ?? [])
-                        .subtracting(letterPickerEdge.asEdgeSet)
-                )
-                .safeAreaInset(
-                    edge: letterPickerEdge,
-                    alignment: .center, spacing: 0
-                ) {
+                .ignoresSafeArea(.all, edges: edge == .leading ? .trailing : .leading)
+                .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     LetterPickerBar(viewModel: viewModel)
+                        .padding(edge.asEdgeSet, EdgeInsets.itemSpacing)
                 }
-                .ignoresSafeArea(.all, edges: UIDevice.isTV ? letterPickerEdge.asEdgeSet : [])
+                #if os(tvOS)
+                .ignoresSafeArea(.all, edges: edge.asEdgeSet)
+                #endif
                 .overlayPreferenceValue(LetterPickerActiveLetterKey.self) { letter in
                     ZStack {
                         if let letter {
@@ -49,11 +41,7 @@ struct LetterPickerBarModifier: ViewModifier {
                 }
         } else {
             content
-                .ignoresSafeArea(
-                    .all,
-                    edges: Edge.Set.horizontal
-                        .subtracting(filterBarEdge?.asEdgeSet ?? [])
-                )
+                .ignoresSafeArea(.all, edges: .horizontal)
         }
     }
 }

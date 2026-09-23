@@ -281,7 +281,6 @@ private struct ItemLibraryBody<Content: View>: View {
 
     var body: some View {
         content
-            .letterPickerBar(filterViewModel: filterViewModel)
             .onFirstAppear {
                 Task {
                     await filterViewModel.getQueryFilters()
@@ -299,10 +298,13 @@ private struct ItemLibraryBody<Content: View>: View {
                 viewModel.environment.filters = filters
             }
             #if os(tvOS)
-            .insetFilterBar(
+            .filterBar(
                 viewModel: filterViewModel,
                 types: enabledDrawerFilters
             )
+            #endif
+            .letterPickerBar(filterViewModel: filterViewModel)
+            #if os(tvOS)
             .background(alignment: .top) {
                 if !router.isRootOfPath {
                     FocusedPosterCinematicBackgroundView()
