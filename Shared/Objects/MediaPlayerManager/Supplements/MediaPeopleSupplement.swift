@@ -64,7 +64,9 @@ extension MediaPeopleSupplement {
                 id: \.hashValue,
                 layout: .columns(
                     1,
-                    insets: .init(EdgeInsets.edgePadding)
+                    insets: .init(EdgeInsets.edgePadding),
+                    itemSpacing: EdgeInsets.itemSpacing,
+                    lineSpacing: EdgeInsets.itemSpacing
                 )
             ) { person, _ in
                 PersonRow(person: person)
@@ -90,7 +92,7 @@ extension MediaPeopleSupplement {
             }
             .clipsToBounds(false)
             .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .itemSpacing(EdgeInsets.itemSpacing)
             .scrollBehavior(.continuousLeadingEdge)
         }
 
@@ -103,6 +105,7 @@ extension MediaPeopleSupplement {
                 personView(for: person)
             }
             .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.itemSpacing)
             .ignoresSafeArea(.container, edges: .horizontal)
             .frame(maxHeight: .infinity)
             .focusSection()

@@ -83,7 +83,11 @@ struct ServerActivityView: View {
         } else {
             CollectionVGrid(
                 uniqueElements: viewModel.elements,
-                layout: .columns(1)
+                layout: .columns(
+                    1,
+                    itemSpacing: EdgeInsets.itemSpacing,
+                    lineSpacing: EdgeInsets.itemSpacing
+                )
             ) { log in
 
                 let user = usersViewModel.elements.first(

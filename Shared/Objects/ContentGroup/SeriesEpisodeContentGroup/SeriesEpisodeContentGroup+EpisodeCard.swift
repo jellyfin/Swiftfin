@@ -82,7 +82,7 @@ extension SeriesEpisodeContentGroup {
                     overlayView
                 }
                 .contentShape(.contextMenuPreview, Rectangle())
-                .posterStyle(.landscape, contentMode: .fit)
+                .posterStyle(.landscape)
                 .subtleShadow()
                 .matchedTransitionSource(id: "item", in: namespace)
             }
@@ -114,7 +114,7 @@ extension SeriesEpisodeContentGroup {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    .posterStyle(.landscape, contentMode: .fit)
+                    .posterStyle(.landscape)
                     #if os(tvOS)
                     .posterCornerRadius(.landscape)
                     #endif
@@ -180,6 +180,7 @@ extension SeriesEpisodeContentGroup {
         var body: some View {
             VStack(alignment: .leading) {
                 artworkButton
+                    .posterAspectRatio(.landscape, contentMode: .fit)
 
                 Button(action: contentAction) {
                     EpisodeMetadataView(
@@ -205,6 +206,7 @@ extension SeriesEpisodeContentGroup {
                 .artwork,
                 priority: .userInitiated
             )
+            .frame(maxHeight: .infinity, alignment: .top)
         }
     }
 

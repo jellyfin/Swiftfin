@@ -139,7 +139,7 @@ struct ItemImagesView: View {
             .clipsToBounds(false)
             .scrollBehavior(.continuousLeadingEdge)
             .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .itemSpacing(EdgeInsets.itemSpacing)
             .id(selectedType)
             .transition(.opacity.animation(.linear(duration: 0.1)))
         } else {
@@ -150,7 +150,7 @@ struct ItemImagesView: View {
                 addImageButton
             }
             .insets(horizontal: EdgeInsets.edgePadding)
-            .itemSpacing(EdgeInsets.edgePadding / 2)
+            .itemSpacing(EdgeInsets.itemSpacing)
             .scrollDisabled(true)
             .id(selectedType)
             .transition(.opacity.animation(.linear(duration: 0.1)))
