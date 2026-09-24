@@ -9,7 +9,6 @@
 import Foundation
 import JellyfinAPI
 import SwiftUI
-import SwiftUIIntrospect
 
 struct ActiveSessionDetailsView: View {
 
@@ -19,92 +18,50 @@ struct ActiveSessionDetailsView: View {
     @Router
     private var router
 
+    @State
+    private var isPresentingStopConfirmation = false
+    @State
+    private var isPresentingMessage = false
+    @State
+    private var messageHeader = ""
+    @State
+    private var messageText = ""
+
     private var isPaused: Bool {
         viewModel.session.playState?.isPaused == true
     }
 
-    @ViewBuilder
-    private func playbackControls(session: SessionInfoDto) -> some View {
-        ChevronButton(
-            isPaused ? L10n.play : L10n.pause,
-            systemName: isPaused ? "play.fill" : "pause.fill"
-        ) {
-            viewModel.sendPlaystateCommand(
-                command: isPaused ? .unpause : .pause,
-                seekPositionTicks: nil
-            )
-        }
+    private var canControl: Bool {
+        guard let user = viewModel.userSession?.user else { return false }
+        let session = viewModel.session
 
-        StateAdapter(initialValue: false) { isPresentingStopConfirmation in
-            ChevronButton(L10n.stop, systemName: "stop.fill") {
-                isPresentingStopConfirmation.wrappedValue = true
-            }
-            .confirmationDialog(
-                L10n.stop,
-                isPresented: isPresentingStopConfirmation,
-                titleVisibility: .visible
-            ) {
-                Button(L10n.stop, role: .destructive) {
-                    viewModel.sendPlaystateCommand(command: .stop, seekPositionTicks: nil)
-                }
+        return user.data.policy?.enableRemoteControlOfOtherUsers == true
+            || session.userID == nil
+            || session.userID == user.id
+            || session.additionalUsers?.contains { $0.userID == user.id } == true
+    }
 
-                Button(L10n.cancel, role: .cancel) {}
-            } message: {
-                Text(L10n.stopPlaybackWarning)
-            }
-        }
+    private var hasPlaybackControls: Bool {
+        canControl && viewModel.session.isSupportsMediaControl == true && viewModel.session.nowPlayingItem != nil
+    }
+
+    private var hasMessageControl: Bool {
+        viewModel.session.supportedCommands?.contains(.displayMessage) == true
     }
 
     @ViewBuilder
-    private func messageControl(session: SessionInfoDto) -> some View {
-        StateAdapter(
-            initialValue: (
-                isPresented: false,
-                // swiftlint:disable:next nested_l10n
-                header: L10n.messageFrom(viewModel.userSession?.user.username ?? L10n.server),
-                text: ""
-            )
-        ) { alert in
-            ChevronButton(L10n.message, systemName: "message.fill") {
-                alert.wrappedValue = (
-                    isPresented: true,
-                    // swiftlint:disable:next nested_l10n
-                    header: L10n.messageFrom(viewModel.userSession?.user.username ?? L10n.server),
-                    text: ""
-                )
-            }
-            .alert(L10n.message, isPresented: alert.isPresented) {
-                TextField(L10n.title, text: alert.header)
-                TextField(L10n.message, text: alert.text)
-
-                Button(L10n.cancel, role: .cancel) {}
-
-                Button(L10n.send) {
-                    viewModel.sendMessage(
-                        .init(
-                            header: alert.header.wrappedValue.nilIfBlank ?? alert.header.wrappedValue,
-                            text: alert.text.wrappedValue
-                        )
-                    )
-                }
-                .disabled(alert.text.wrappedValue.isEmpty)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func commandsSection(session: SessionInfoDto) -> some View {
-        let hasPlaybackControls = session.isSupportsMediaControl == true && session.nowPlayingItem != nil
-        let hasMessageControl = session.supportedCommands?.contains(.displayMessage) == true
-
-        if hasPlaybackControls || hasMessageControl {
-            Section {
-                if hasPlaybackControls {
-                    playbackControls(session: session)
-                }
-
-                if hasMessageControl {
-                    messageControl(session: session)
+    private func transcodeComparison(_ title: String, source: String?, destination: String?) -> some View {
+        if let source {
+            LabeledContent(title) {
+                if let destination, destination.lowercased() != source.lowercased() {
+                    HStack(spacing: 4) {
+                        Text(source.uppercased())
+                        Image(systemName: "arrow.right")
+                            .font(.footnote)
+                        Text(destination.uppercased())
+                    }
+                } else {
+                    Text(source.uppercased())
                 }
             }
         }
@@ -124,8 +81,6 @@ struct ActiveSessionDetailsView: View {
                 }
             }
 
-            commandsSection(session: session)
-
             AdminDashboardView.DeviceSection(
                 client: session.client,
                 device: session.deviceName,
@@ -140,6 +95,12 @@ struct ActiveSessionDetailsView: View {
         nowPlayingItem: BaseItemDto,
         playState: PlayerStateInfo
     ) -> some View {
+        let mediaStreams = nowPlayingItem.mediaStreams ?? []
+        let audioStreams = mediaStreams.filter { $0.type == .audio }
+        let videoStream = mediaStreams.first { $0.type == .video }
+        let audioStream = audioStreams.first { $0.index == playState.audioStreamIndex } ?? audioStreams.first
+        let subtitleStream = mediaStreams.first { $0.type == .subtitle && $0.index == playState.subtitleStreamIndex }
+
         List {
 
             FormItemSection(item: nowPlayingItem)
@@ -147,14 +108,11 @@ struct ActiveSessionDetailsView: View {
             ActiveSessionsView.ProgressSection(
                 item: nowPlayingItem,
                 playState: playState,
-                transcodingInfo: session.transcodingInfo,
-                showTranscodeReason: false
+                transcodingInfo: session.transcodingInfo
             )
             .listRowBackground(Color.clear)
             .listRowInsets(.zero)
             .listRowCornerRadius(0)
-
-            commandsSection(session: session)
 
             if let userID = session.userID {
                 let user = UserDto(id: userID, name: session.userName)
@@ -173,9 +131,27 @@ struct ActiveSessionDetailsView: View {
                 version: session.applicationVersion
             )
 
-            // TODO: allow showing item stream details?
-            // TODO: don't show codec changes on direct play?
-            Section(L10n.streams) {
+            Section(L10n.source) {
+                if let videoStream {
+                    ChevronButton(videoStream.displayTitle ?? .emptyDash, systemName: "film") {
+                        router.route(to: .mediaStreamInfo(mediaStream: videoStream))
+                    }
+                }
+
+                if let audioStream {
+                    ChevronButton(audioStream.displayTitle ?? .emptyDash, systemName: "speaker.wave.2") {
+                        router.route(to: .mediaStreamInfo(mediaStream: audioStream))
+                    }
+                }
+
+                if let subtitleStream {
+                    ChevronButton(subtitleStream.displayTitle ?? .emptyDash, systemName: "captions.bubble") {
+                        router.route(to: .mediaStreamInfo(mediaStream: subtitleStream))
+                    }
+                }
+            }
+
+            Section(L10n.playback) {
                 if let playMethodDisplayTitle = session.playMethodDisplayTitle {
                     LabeledContent(
                         L10n.method,
@@ -183,18 +159,37 @@ struct ActiveSessionDetailsView: View {
                     )
                 }
 
-                StreamSection(
-                    nowPlayingItem: nowPlayingItem,
-                    transcodingInfo: session.transcodingInfo
-                )
+                if let transcodingInfo = session.transcodingInfo {
+                    transcodeComparison(
+                        L10n.video,
+                        source: videoStream?.codec,
+                        destination: transcodingInfo.videoCodec
+                    )
+
+                    transcodeComparison(
+                        L10n.audio,
+                        source: audioStream?.codec,
+                        destination: transcodingInfo.audioCodec
+                    )
+
+                    transcodeComparison(
+                        L10n.container,
+                        source: nowPlayingItem.container,
+                        destination: transcodingInfo.container
+                    )
+                }
             }
 
             if let transcodeReasons = session.transcodingInfo?.transcodeReasons, transcodeReasons.isNotEmpty {
                 Section(L10n.transcodeReasons) {
-                    TranscodeSection(transcodeReasons: transcodeReasons)
+                    ForEach(transcodeReasons, id: \.self) { reason in
+                        Label(reason.displayTitle, systemImage: reason.systemImage)
+                            .foregroundStyle(.primary)
+                    }
                 }
             }
         }
+        .symbolRenderingMode(.monochrome)
     }
 
     var body: some View {
@@ -213,6 +208,62 @@ struct ActiveSessionDetailsView: View {
         }
         .animation(.linear(duration: 0.2), value: viewModel.session)
         .navigationTitle(L10n.session)
+        .navigationBarMenuButton(isHidden: !hasPlaybackControls && !hasMessageControl) {
+
+            if hasMessageControl {
+                Button(L10n.message, systemImage: "message.fill") {
+                    // swiftlint:disable:next nested_l10n
+                    messageHeader = L10n.messageFrom(viewModel.userSession?.user.username ?? L10n.server)
+                    messageText = ""
+                    isPresentingMessage = true
+                }
+            }
+
+            if hasPlaybackControls {
+                Button(
+                    isPaused ? L10n.play : L10n.pause,
+                    systemImage: isPaused ? "play.fill" : "pause.fill"
+                ) {
+                    viewModel.sendPlaystateCommand(
+                        command: isPaused ? .unpause : .pause,
+                        seekPositionTicks: nil
+                    )
+                }
+
+                Button(L10n.stop, systemImage: "stop.fill", role: .destructive) {
+                    isPresentingStopConfirmation = true
+                }
+            }
+        }
+        .confirmationDialog(
+            L10n.stop,
+            isPresented: $isPresentingStopConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button(L10n.stop, role: .destructive) {
+                viewModel.sendPlaystateCommand(command: .stop, seekPositionTicks: nil)
+            }
+
+            Button(L10n.cancel, role: .cancel) {}
+        } message: {
+            Text(L10n.stopPlaybackWarning)
+        }
+        .alert(L10n.message, isPresented: $isPresentingMessage) {
+            TextField(L10n.title, text: $messageHeader)
+            TextField(L10n.message, text: $messageText)
+
+            Button(L10n.cancel, role: .cancel) {}
+
+            Button(L10n.send) {
+                viewModel.sendMessage(
+                    .init(
+                        header: messageHeader.nilIfBlank ?? messageHeader,
+                        text: messageText
+                    )
+                )
+            }
+            .disabled(messageText.isEmpty)
+        }
         .errorMessage($viewModel.error)
     }
 }

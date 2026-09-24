@@ -1636,8 +1636,6 @@ internal enum L10n {
   internal static func streamInfoWithMethod(_ p1: Any) -> String {
     return L10n.tr("Localizable", "streamInfoWithMethod", String(describing: p1), fallback: "%@ Info")
   }
-  /// Streams
-  internal static let streams = L10n.tr("Localizable", "streams", fallback: "Streams")
   /// Studio
   internal static let studio = L10n.tr("Localizable", "studio", fallback: "Studio")
   /// Studios

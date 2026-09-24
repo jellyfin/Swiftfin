@@ -91,16 +91,16 @@ struct ActiveSessionsView: View {
             )
         } else {
             CollectionVGrid(
-                uniqueElements: viewModel.sessions.keys,
-                id: \.self,
+                uniqueElements: viewModel.sessions.values,
                 layout: .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
-            ) { id in
-                ActiveSessionRow(viewModel: viewModel.sessions[id]!) {
+            ) { session in
+                ActiveSessionRow(viewModel: session) {
                     router.route(
-                        to: .activeSessionDetails(viewModel: viewModel.sessions[id]!)
+                        to: .activeSessionDetails(viewModel: session)
                     )
                 }
             }
+            .ignoresSafeArea(edges: .vertical)
         }
     }
 

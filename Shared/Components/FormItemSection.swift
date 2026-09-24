@@ -18,7 +18,7 @@ struct FormItemSection<Item: Poster>: PlatformView {
             HStack(alignment: .bottom, spacing: 12) {
                 PosterImage(
                     item: item,
-                    type: item.preferredPosterDisplayType,
+                    type: item.posterDisplayType(for: .compact),
                     contentMode: .fit
                 )
                 .frame(width: 100)
