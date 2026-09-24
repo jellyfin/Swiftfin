@@ -10,8 +10,12 @@ import UIKit
 
 extension CGSize {
 
-    var aspectRatio: CGFloat {
-        width / height
+    var aspectRatio: CGFloat? {
+        guard width > 0, height > 0,
+              width.isFinite, height.isFinite
+        else { return nil }
+        let ratio = width / height
+        return ratio > 0 && ratio.isFinite ? ratio : nil
     }
 
     var isLandscape: Bool {

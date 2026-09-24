@@ -21,8 +21,8 @@ extension VideoPlayer {
         @Default(.VideoPlayer.jumpForwardInterval)
         private var jumpForwardInterval
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(ViewState.self)
+        private var viewState
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
@@ -41,7 +41,7 @@ extension VideoPlayer {
                         input: "f",
                         modifierFlags: .command
                     ) { @MainActor in
-                        containerState.isAspectFilled.toggle()
+                        viewState.toggleAspectFillBehavior()
                     }
 
                     KeyCommandAction(
@@ -50,7 +50,7 @@ extension VideoPlayer {
                     ) {
                         manager.togglePlayPause()
 
-                        if !containerState.isPresentingOverlay {
+                        if !viewState.isPresentingControls {
                             if manager.playbackRequestStatus == .paused {
                                 toaster.present(
                                     L10n.pause,
@@ -149,12 +149,13 @@ extension VideoPlayer {
                         title: L10n.jumpBackward,
                         input: UIKeyCommand.inputLeftArrow
                     ) {
-                        containerState.jumpProgressObserver.jumpBackward()
+                        viewState.showProgress()
+                        viewState.jumpProgressObserver.jumpBackward()
                         manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
 
                         toaster.present(
                             Text(
-                                jumpBackwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
+                                jumpBackwardInterval.rawValue * viewState.jumpProgressObserver.jumps,
                                 format: .minuteSecondsAbbreviated
                             ),
                             systemName: "gobackward"
@@ -167,12 +168,13 @@ extension VideoPlayer {
                         title: L10n.jumpForward,
                         input: UIKeyCommand.inputRightArrow
                     ) {
-                        containerState.jumpProgressObserver.jumpForward()
+                        viewState.showProgress()
+                        viewState.jumpProgressObserver.jumpForward()
                         manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
 
                         toaster.present(
                             Text(
-                                jumpForwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
+                                jumpForwardInterval.rawValue * viewState.jumpProgressObserver.jumps,
                                 format: .minuteSecondsAbbreviated
                             ),
                             systemName: "goforward"

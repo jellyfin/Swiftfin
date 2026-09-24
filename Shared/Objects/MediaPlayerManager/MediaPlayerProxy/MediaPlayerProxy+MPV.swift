@@ -12,7 +12,7 @@ import MPVUI
 import SwiftUI
 
 @MainActor
-class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
+class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerLayoutConfigurable,
     @MainActor MediaPlayerOffsetConfigurable
 {
 
@@ -21,7 +21,7 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
     // MPVUI does not currently expose frame statistics.
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
     let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
-    let player = MPVPlayer()
+    let player = MPVPlayer(configuration: .init(audio: .init(audioSession: .hostManaged)))
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -32,7 +32,7 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
     }
 
     var observers: [any MediaPlayerObserver] = [
-        NowPlayableObserver(),
+        NowPlayableObserver(audioSessionMode: .moviePlayback, supportsMultichannelContent: true),
     ]
 
     func play() {
@@ -82,12 +82,8 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
         }
 
         if let track = tracks.first(where: { $0.mpvID == index }), !track.isSelected {
-            player.selectTrack(track)
+            player.selectTrack(track.id)
         }
-    }
-
-    func setAspectFill(_ aspectFill: Bool) {
-        player.setProperty("panscan", to: aspectFill ? "1" : "0")
     }
 
     func setAudioOffset(_ seconds: Duration) {
@@ -98,8 +94,8 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerProxy,
         player.setSubtitleDelay(seconds)
     }
 
-    var videoPlayerBody: some View {
-        MPVPlayerView()
+    func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> some View {
+        MPVPlayerView(videoLayout: layout)
             .environmentObject(self)
     }
 }
@@ -108,8 +104,8 @@ extension MPVMediaPlayerProxy {
 
     struct MPVPlayerView: View {
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
@@ -122,12 +118,14 @@ extension MPVMediaPlayerProxy {
         @State
         private var textSubtitles = TextSubtitlePresentation()
 
+        let videoLayout: VideoPlayer.VideoLayout
+
         private var player: MPVPlayer {
             proxy.player
         }
 
-        private var subtitleVideoSize: CGSize? {
-            guard let dimensions = player.mediaInformation.dimensions else { return nil }
+        private var videoSize: CGSize {
+            guard let dimensions = player.mediaInformation.dimensions else { return .zero }
             var width = CGFloat(dimensions.effectiveWidth)
             var height = CGFloat(dimensions.effectiveHeight)
             let rotation = ((player.mediaInformation.rotation % 360) + 360) % 360
@@ -143,11 +141,11 @@ extension MPVMediaPlayerProxy {
             loadedSubtitleIndexes.removeAll()
             item.setTrackIndexes(.init())
             proxy.isBuffering.value = true
+            proxy.videoSize.value = .zero
 
             let start = max(.zero, (item.baseItem.startSeconds ?? .zero) - .seconds(Defaults[.VideoPlayer.resumeOffset]))
             player.load(item.url, autoPlay: manager.playbackRequestStatus == .playing, startTime: item.baseItem.isLiveStream ? nil : start)
             proxy.setRate(manager.rate)
-            proxy.setAspectFill(false)
         }
 
         private func updateTracks(for item: MediaPlayerItem) {
@@ -205,12 +203,11 @@ extension MPVMediaPlayerProxy {
         var body: some View {
             if let item = manager.playbackItem, manager.state != .stopped {
                 MPVVideoPlayer(player: player)
+                    .scaleEffect(videoLayout.scale)
                     .overlay {
-                        TextSubtitleOverlay(
-                            snapshot: loadedItem === item ? textSubtitles.snapshot : TextSubtitleSnapshot(),
-                            videoSize: subtitleVideoSize,
-                            isAspectFilled: containerState.isAspectFilled
-                        )
+                        if loadedItem === item, let snapshot = textSubtitles.snapshot {
+                            TextSubtitleOverlay(snapshot: snapshot, videoLayout: videoLayout)
+                        }
                     }
                     .task(id: ObjectIdentifier(item)) {
                         await textSubtitles.observe(player) {
@@ -221,8 +218,8 @@ extension MPVMediaPlayerProxy {
                         textSubtitles.clear()
                     }
                     .onChange(of: player.position) {
-                        if !containerState.isScrubbing {
-                            containerState.scrubbedSeconds.value = player.position
+                        if !viewState.isScrubbing {
+                            viewState.scrubbedSeconds.value = player.position
                         }
                         manager.seconds = player.position
                     }
@@ -235,9 +232,8 @@ extension MPVMediaPlayerProxy {
                     .onChange(of: player.mediaInformation.tracks) {
                         updateTracks(for: item)
                     }
-                    .onChange(of: player.mediaInformation.dimensions) {
-                        let dimensions = player.mediaInformation.dimensions
-                        proxy.videoSize.value = CGSize(width: dimensions?.effectiveWidth ?? 0, height: dimensions?.effectiveHeight ?? 0)
+                    .onChange(of: videoSize, initial: true) {
+                        proxy.videoSize.value = videoSize
                     }
                     .onChange(of: manager.rate) {
                         proxy.setRate(manager.rate)

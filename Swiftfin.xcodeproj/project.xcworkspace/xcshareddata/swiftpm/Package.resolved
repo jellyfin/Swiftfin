@@ -1,5 +1,5 @@
 {
-  "originHash" : "cff8e261a7fd8c60b832ace6eb28dc4c8d37ffd5bc7c886831f7f2c64e8d0efd",
+  "originHash" : "172fa81da963fb365f44b7771b055ebb784420e1a02316cadc96e02e818d401f",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -159,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/MediaAccessibilityKit",
       "state" : {
-        "revision" : "178a06258c39bd964fb11f1031891a9bd231ebb8",
-        "version" : "0.1.0"
+        "revision" : "fb4073607e083964d746b6533afddabc6fb4f2d1",
+        "version" : "0.2.0"
       }
     },
     {
@@ -168,8 +168,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/MPVUI",
       "state" : {
-        "revision" : "794ef73e5fb0fa356a4b488ab98d3cd43903b521",
-        "version" : "0.1.1"
+        "revision" : "67c0a8d44d56dce18531ace856049904cc4f0df4",
+        "version" : "0.3.0"
       }
     },
     {

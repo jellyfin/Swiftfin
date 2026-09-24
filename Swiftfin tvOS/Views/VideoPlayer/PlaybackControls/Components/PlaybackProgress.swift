@@ -24,15 +24,12 @@ extension VideoPlayer.PlaybackControls {
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>
-
-        @FocusState
-        private var isFocused: Bool
 
         @State
         private var sliderSize: CGSize = .zero
@@ -48,10 +45,10 @@ extension VideoPlayer.PlaybackControls {
 
         private var isScrubbing: Bool {
             get {
-                containerState.isScrubbing
+                viewState.isScrubbing
             }
             nonmutating set {
-                containerState.isScrubbing = newValue
+                viewState.isScrubbing = newValue
             }
         }
 
@@ -72,7 +69,7 @@ extension VideoPlayer.PlaybackControls {
                 return nil
             }
 
-            let currentSeconds = containerState.scrubOriginSeconds ?? manager.seconds
+            let currentSeconds = viewState.scrubOriginSeconds ?? manager.seconds
             let progress = (currentSeconds / runtime) * 100
             guard progress.isFinite else { return nil }
 
@@ -80,21 +77,13 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var videoSizeAspectRatio: CGFloat {
-            guard let videoPlayerProxy = manager.proxy as? any VideoMediaPlayerProxy else {
-                return 1.77
-            }
-
-            let videoSize = videoPlayerProxy.videoSize.value
-            guard videoSize.width.isFinite,
-                  videoSize.height.isFinite,
-                  videoSize.width > 0,
-                  videoSize.height > 0
+            guard let aspectRatio = (manager.proxy as? any VideoMediaPlayerProxy)?
+                .videoSize
+                .value
+                .aspectRatio
             else {
                 return 1.77
             }
-
-            let aspectRatio = videoSize.aspectRatio
-            guard aspectRatio.isFinite else { return 1.77 }
 
             return clamp(aspectRatio, min: 0.25, max: 4)
         }
@@ -145,8 +134,8 @@ extension VideoPlayer.PlaybackControls {
             )
             .onEditingChanged { isEditing in
                 if isEditing {
-                    if containerState.scrubOriginSeconds == nil {
-                        containerState.scrubOriginSeconds = manager.seconds
+                    if viewState.scrubOriginSeconds == nil {
+                        viewState.scrubOriginSeconds = manager.seconds
                     }
                     isScrubbing = true
                 }
@@ -189,18 +178,20 @@ extension VideoPlayer.PlaybackControls {
                         .foregroundStyle(.white, Color.lightGray)
                 }
             }
-            .focused($isFocused)
+            .coordinatedFocus(ViewState.Focus.progress)
+            .onReceive(
+                viewState.focusCoordinator.$focusedIDs
+                    .map { $0.contains(ViewState.Focus.progress) }
+                    .removeDuplicates()
+                    .dropFirst()
+            ) { isFocused in
+                if !isFocused {
+                    viewState.cancelScrub()
+                }
+            }
             .foregroundStyle(Color.white.opacity(0.75))
             .overlay(alignment: .topLeading) {
                 previewImage
-            }
-            .onChange(of: isFocused) {
-                containerState.isProgressBarFocused = isFocused
-            }
-            .onChange(of: containerState.isProgressBarFocused) {
-                if containerState.isProgressBarFocused, !isFocused {
-                    isFocused = true
-                }
             }
         }
     }

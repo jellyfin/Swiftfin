@@ -11,7 +11,7 @@ import MediaPlayer
 import SwiftUI
 import UIKit
 
-extension VideoPlayer.UIVideoPlayerContainerViewController {
+extension VideoPlayer.UIContainerViewController {
 
     func handlePanGesture(
         translation: CGPoint,
@@ -23,14 +23,14 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         guard checkGestureLock() else { return }
 
         if state == .began {
-            containerState.timer.stop()
+            viewState.setInteraction(.pan, active: true)
         }
 
         if state == .ended || state == .cancelled || state == .failed {
-            containerState.timer.poke()
+            viewState.setInteraction(.pan, active: false)
         }
 
-        if containerState.isPresentingSupplement {
+        if viewState.isPresentingSupplement {
             handleSupplementPanAction(
                 translation: translation,
                 velocity: velocity.y,
@@ -58,16 +58,16 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         )
 
         if Defaults[.VideoPlayer.Gesture.horizontalSwipeAction] != .none, direction.isHorizontal {
-            if !containerState.didSwipe,
+            if !viewState.didSwipe,
                max(velocity.x.magnitude, velocity.y.magnitude) >= 1200,
                max(translation.x.magnitude, translation.y.magnitude) >= 80
             {
                 handleSwipeAction(direction: direction)
-                containerState.didSwipe = true
+                viewState.didSwipe = true
             }
 
             if state == .ended {
-                containerState.didSwipe = false
+                viewState.didSwipe = false
             }
 
             return
@@ -80,10 +80,10 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 unitPoint: unitPoint
             )
 
-            containerState.panHandlingAction = newAction
+            viewState.panHandlingAction = newAction
         }
 
-        if let currentAction = containerState.panHandlingAction {
+        if let currentAction = viewState.panHandlingAction {
             unpackAndHandlePan(
                 handlingState: handlingState,
                 action: currentAction
@@ -91,7 +91,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         }
 
         guard state != .ended, state != .cancelled, state != .failed else {
-            containerState.panHandlingAction = nil
+            viewState.panHandlingAction = nil
             return
         }
     }
@@ -103,7 +103,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         action.onChange(
             action.startState,
             handlingState,
-            containerState
+            viewState
         )
     }
 
@@ -113,7 +113,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         unitPoint: UnitPoint
     ) -> any _PanHandlingAction {
         let newAction: any _PanHandlingAction = {
-            if containerState.isPresentingOverlay {
+            if viewState.isPresentingControls {
                 Self.SupplementPanHandlingAction
             } else if direction.isVertical {
                 if unitPoint.x < 0.5 {
@@ -139,8 +139,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             action.startState = _PanStartHandlingState(
                 direction: direction,
                 location: location,
-                startedWithOverlay: containerState.isPresentingOverlay,
-                value: action.startValue(containerState)
+                value: action.startValue(viewState)
             )
             return action
         }
@@ -149,7 +148,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
     }
 
     private func panActionForGestureAction(for gestureAction: PanGestureAction) -> any _PanHandlingAction {
-        let isLiveStream = containerState.manager?.item.isLiveStream == true
+        let isLiveStream = viewState.manager?.item.isLiveStream == true
 
         switch (gestureAction, isLiveStream) {
         case (.none, _), (.scrub, true), (.slowScrub, true):
@@ -166,15 +165,16 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
     }
 
     private func handleSwipeAction(direction: Direction) {
-        guard containerState.manager?.item.isLiveStream == false else { return }
-        let jumpProgressObserver = containerState.jumpProgressObserver
+        guard viewState.manager?.item.isLiveStream == false else { return }
+        let jumpProgressObserver = viewState.jumpProgressObserver
+        viewState.showProgress()
 
         if direction == .left {
             let interval = Defaults[.VideoPlayer.jumpBackwardInterval]
-            containerState.manager?.proxy?.jumpBackward(interval.rawValue)
+            viewState.manager?.proxy?.jumpBackward(interval.rawValue)
             jumpProgressObserver.jumpBackward()
 
-            containerState.toastProxy.present(
+            viewState.toastProxy.present(
                 Text(
                     interval.rawValue * jumpProgressObserver.jumps,
                     format: .minuteSecondsNarrow
@@ -183,10 +183,10 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
             )
         } else if direction == .right {
             let interval = Defaults[.VideoPlayer.jumpForwardInterval]
-            containerState.manager?.proxy?.jumpForward(interval.rawValue)
+            viewState.manager?.proxy?.jumpForward(interval.rawValue)
             jumpProgressObserver.jumpForward()
 
-            containerState.toastProxy.present(
+            viewState.toastProxy.present(
                 Text(
                     interval.rawValue * jumpProgressObserver.jumps,
                     format: .minuteSecondsNarrow
@@ -199,14 +199,14 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
 // MARK: - Pan actions
 
-extension VideoPlayer.UIVideoPlayerContainerViewController {
+extension VideoPlayer.UIContainerViewController {
 
     // MARK: - Brightness
 
     private static var BrightnessPanHandlingAction: PanHandlingAction<CGFloat> {
         PanHandlingAction<CGFloat>(
             startValue: UIScreen.main.brightness
-        ) { startState, handlingState, containerState in
+        ) { startState, handlingState, viewState in
             guard handlingState.gestureState != .ended else { return }
 
             let translation: CGFloat = {
@@ -223,7 +223,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 max: 1
             )
 
-            containerState.toastProxy.present(
+            viewState.toastProxy.present(
                 Text(newBrightness, format: .percent.precision(.fractionLength(0))),
                 systemName: "sun.max.fill"
             )
@@ -240,23 +240,20 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
         damping: CGFloat = 1
     ) -> PanHandlingAction<Duration> {
         PanHandlingAction<Duration>(
-            startValue: { containerState in
-                containerState.scrubbedSeconds.value
+            startValue: { viewState in
+                viewState.scrubbedSeconds.value
             }
-        ) { startState, handlingState, containerState in
+        ) { startState, handlingState, viewState in
             if handlingState.gestureState == .ended ||
                 handlingState.gestureState == .cancelled ||
                 handlingState.gestureState == .failed
             {
-                containerState.isScrubbing = false
+                viewState.isScrubbing = false
 
-                if !startState.startedWithOverlay {
-                    containerState.isPresentingOverlay = false
-                }
                 return
             }
 
-            guard let runtime = containerState.manager?.item.runtime else { return }
+            guard let runtime = viewState.manager?.item.runtime else { return }
 
             let translation: CGFloat = {
                 if startState.direction.isHorizontal {
@@ -273,8 +270,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
                 }
             }()
 
-            containerState.isScrubbing = true
-            containerState.isPresentingOverlay = true
+            viewState.isScrubbing = true
 
             let newSeconds = clamp(
                 startState.value.seconds + (translation / totalSize) * runtime.seconds * damping,
@@ -284,7 +280,7 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
 
             let newSecondsDuration = Duration.seconds(newSeconds)
 
-            containerState.scrubbedSeconds.value = newSecondsDuration
+            viewState.scrubbedSeconds.value = newSecondsDuration
         }
     }
 
@@ -293,8 +289,8 @@ extension VideoPlayer.UIVideoPlayerContainerViewController {
     private static var SupplementPanHandlingAction: PanHandlingAction<CGFloat> {
         PanHandlingAction<CGFloat>(
             startValue: 0
-        ) { _, handlingState, containerState in
-            containerState.containerView?.handleSupplementPanAction(
+        ) { _, handlingState, viewState in
+            viewState.containerView?.handleSupplementPanAction(
                 translation: handlingState.translation,
                 velocity: handlingState.velocity.y,
                 location: handlingState.location,

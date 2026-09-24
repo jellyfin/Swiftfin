@@ -10,30 +10,12 @@ import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
-    struct OverlayButtonStyleModifier: ViewModifier {
-
-        func body(content: Content) -> some View {
-            if #available(iOS 26.0, *), UIDevice.supportsLiquidGlass {
-                content
-                    .buttonStyle(OverlayGlassButtonStyle())
-                    .buttonBorderShape(.circle)
-            } else {
-                content
-                    .buttonStyle(OverlayButtonStyle())
-            }
-        }
-    }
-
     struct OverlayMenuStyle: MenuStyle {
 
         func makeBody(configuration: Configuration) -> some View {
             Menu(configuration)
                 .menuStyle(.button)
-                #if os(tvOS)
-                .modifier(OverlayButtonStyleModifier())
-                #else
-                .buttonStyle(OverlayButtonStyle(isMenu: true))
-                #endif
+                .buttonStyle(OverlayButtonStyle(isInBar: true, isMenu: true))
                 .symbolRenderingMode(.monochrome)
                 .foregroundStyle(.primary, .secondary)
         }
@@ -42,78 +24,91 @@ extension VideoPlayer.PlaybackControls {
     struct OverlayBarButtonStyleModifier: ViewModifier {
 
         func body(content: Content) -> some View {
-            #if os(tvOS)
             content
-                .font(.system(size: 30, weight: .semibold))
-                .labelStyle(.iconOnly)
-                .modifier(OverlayButtonStyleModifier())
-            #else
-            content
-                .font(.system(size: 20, weight: .semibold))
-                .buttonStyle(OverlayButtonStyle())
+                .font(.system(size: UIDevice.isTV ? 30 : 20, weight: .semibold))
+                .buttonStyle(OverlayButtonStyle(isInBar: true))
+                #if os(iOS)
                 .if(UIDevice.supportsLiquidGlass) { view in
                     view
                         .backport
-                        .glassEffect(.regular.interactive(false), in: .capsule)
+                        .glassEffect(.regular.interactive(true), in: .capsule)
                 }
-            #endif
-        }
-    }
-
-    @available(iOS 26.0, tvOS 26.0, *)
-    struct OverlayGlassButtonStyle: PrimitiveButtonStyle {
-
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
-
-        func makeBody(configuration: Configuration) -> some View {
-            let button = Button(role: configuration.role) {
-                if UIDevice.isTV {
-                    containerState.timer.poke()
-                }
-                configuration.trigger()
-            } label: {
-                configuration.label
-            }
-            .buttonStyle(.glass)
-
-            #if os(iOS)
-            return button
-                .onLongPressGesture(minimumDuration: .infinity) {} onPressingChanged: { isPressed in
-                    if isPressed {
-                        containerState.timer.stop()
-                    } else {
-                        containerState.timer.poke()
-                    }
-                }
-            #else
-            return button
-            #endif
+                #endif
         }
     }
 
     struct OverlayButtonStyle: ButtonStyle {
+
+        private static let padding: CGFloat = 8
 
         @Environment(\.isEnabled)
         private var isEnabled
         @Environment(\.isFocused)
         private var isFocused
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(ViewState.self)
+        private var viewState
 
+        @State
+        private var interactionID = UUID()
+
+        var isInBar: Bool = false
         var isMenu: Bool = false
 
+        private var labelSize: CGFloat? {
+            isInBar && UIDevice.isTV ? Toolbar.buttonSize - 2 * Self.padding : nil
+        }
+
+        private var interaction: ViewState.Interaction {
+            isMenu ? .menu(interactionID) : .button(interactionID)
+        }
+
         func makeBody(configuration: Configuration) -> some View {
+            styledLabel(configuration)
+                .onChange(of: configuration.isPressed) {
+                    // Button menus remain pressed through their nested menu hierarchy.
+                    viewState.setInteraction(interaction, active: configuration.isPressed)
+                }
+                .onDisappear {
+                    viewState.setInteraction(interaction, active: false)
+                }
+        }
+
+        private func label(_ configuration: Configuration) -> some View {
             configuration.label
                 .foregroundStyle(isEnabled ? isFocused ? AnyShapeStyle(Color.black) : AnyShapeStyle(HierarchicalShapeStyle.primary) :
                     AnyShapeStyle(Color.gray)
                 )
                 .labelStyle(.iconOnly)
+                // Menu's outer frame does not size the styled label or its focus surface.
+                .frame(width: labelSize, height: labelSize)
+                .contentTransition(.symbolEffect(.replace))
                 .contentShape(Rectangle())
+        }
+
+        @ViewBuilder
+        private func styledLabel(_ configuration: Configuration) -> some View {
+            if #available(iOS 26.0, tvOS 26.0, *), UIDevice.supportsLiquidGlass {
+                if isInBar, !UIDevice.isTV {
+                    // The bar supplies one glass surface for all of its buttons.
+                    label(configuration)
+                        .padding(Self.padding)
+                        .contentShape(Rectangle())
+                } else {
+                    label(configuration)
+                        .padding(Self.padding)
+                        .glassEffect(.regular.tint(isFocused ? .white : nil).interactive(isEnabled), in: .circle)
+                }
+            } else {
+                legacyLabel(configuration)
+            }
+        }
+
+        private func legacyLabel(_ configuration: Configuration) -> some View {
+            label(configuration)
                 .scaleEffect(configuration.isPressed ? 0.8 : 1)
                 .animation(.bouncy(duration: 0.25, extraBounce: 0.25), value: configuration.isPressed)
-                .padding(4)
+                .padding(Self.padding / 2)
                 .animation(nil, value: configuration.isPressed)
                 .background {
                     Circle()
@@ -121,26 +116,11 @@ extension VideoPlayer.PlaybackControls {
                         .scaleEffect(configuration.isPressed ? 1 : 0.9)
                 }
                 .animation(.linear(duration: 0.1).delay(configuration.isPressed ? 0.2 : 0), value: configuration.isPressed)
-                .padding(4)
+                .padding(Self.padding / 2)
                 #if os(tvOS)
                 .backport
                 .glassEffect(.regular.tint(isFocused ? .white : nil), in: .circle)
                 #endif
-                .onChange(of: configuration.isPressed) {
-                    // Button menus remain pressed until the entire menu hierarchy dismisses.
-                    if isMenu {
-                        containerState.isPresentingMenu = configuration.isPressed
-                    } else if configuration.isPressed {
-                        containerState.timer.stop()
-                    } else {
-                        containerState.timer.poke()
-                    }
-                }
-                .onDisappear {
-                    if isMenu, configuration.isPressed {
-                        containerState.isPresentingMenu = false
-                    }
-                }
         }
     }
 }

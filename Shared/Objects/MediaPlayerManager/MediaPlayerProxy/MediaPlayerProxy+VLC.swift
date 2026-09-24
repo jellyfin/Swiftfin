@@ -13,7 +13,7 @@ import SwiftUI
 import SwiftVLC
 
 @MainActor
-class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
+class VLCMediaPlayerProxy: VideoMediaPlayerLayoutConfigurable,
     MediaPlayerOffsetConfigurable,
     MediaPlayerSubtitleConfigurable
 {
@@ -121,10 +121,6 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         player.selectedSubtitleTrack = track
     }
 
-    func setAspectFill(_ aspectFill: Bool) {
-        player.aspectRatio = aspectFill ? .fill : .default
-    }
-
     func setAudioOffset(_ seconds: Duration) {
         do {
             try player.setAudioDelay(seconds)
@@ -146,8 +142,8 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     @ViewBuilder
-    var videoPlayerBody: some View {
-        VLCPlayerView(proxy: self)
+    func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> some View {
+        VLCPlayerView(proxy: self, videoLayout: layout)
     }
 
     private func log(_ error: Error) {
@@ -223,18 +219,31 @@ extension VLCMediaPlayerProxy {
         @Default(.VideoPlayer.Subtitle.configuration)
         private var subtitleConfiguration
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        let videoLayout: VideoPlayer.VideoLayout
+
         private var isScrubbing: Bool {
-            containerState.isScrubbing
+            viewState.isScrubbing
+        }
+
+        private var videoSurface: some View {
+            VideoView(proxy.player)
+                .onChange(of: videoLayout.behavior, initial: true) { _, behavior in
+                    // libVLC applies sample aspect ratio and orientation before fitting.
+                    proxy.player.aspectRatio = behavior == .fill ? .fill : .default
+                }
+                .onChange(of: proxy.player.videoSize, initial: true) { _, size in
+                    proxy.videoSize.value = size ?? .zero
+                }
         }
 
         var body: some View {
             if let playbackItem = manager.playbackItem, manager.state != .stopped {
-                VideoView(proxy.player)
+                videoSurface
                     .task(id: ObjectIdentifier(playbackItem)) {
                         proxy.play(playbackItem, subtitleConfiguration: subtitleConfiguration)
                     }
@@ -247,7 +256,7 @@ extension VLCMediaPlayerProxy {
                         else { return }
 
                         if !isScrubbing {
-                            containerState.scrubbedSeconds.value = newSeconds
+                            viewState.scrubbedSeconds.value = newSeconds
                         }
 
                         manager.seconds = newSeconds
@@ -255,7 +264,6 @@ extension VLCMediaPlayerProxy {
                             proxy.isBuffering.value = false
                         }
 
-                        proxy.videoSize.value = proxy.player.videoSize ?? .zero
                         if let statistics = proxy.player.statistics {
                             proxy.droppedFrames.value = Int(clamping: statistics.lostPictures)
                             proxy.corruptedFrames.value = Int(clamping: statistics.demuxCorrupted)
@@ -282,8 +290,6 @@ extension VLCMediaPlayerProxy {
                             manager.setPlaybackRequestStatus(status: .paused)
                         case .idle, .stopped, .stopping: ()
                         }
-
-                        proxy.videoSize.value = proxy.player.videoSize ?? .zero
                     }
                     .onChange(of: proxy.player.bufferFill) { _, fill in
                         guard proxy.player.state == .playing else { return }

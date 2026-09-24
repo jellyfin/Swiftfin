@@ -52,7 +52,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 } label: {
                     Label(L10n.subtitles, systemImage: systemImage)
                 }
-                .videoPlayerActionButtonTransition()
                 .assign(playbackItem.$selectedSubtitleStreamIndex, to: $selectedSubtitleStreamIndex)
                 .onChange(of: selectedSubtitleStreamIndex) {
                     playbackItem.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex

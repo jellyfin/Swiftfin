@@ -10,13 +10,19 @@ import SwiftUI
 import UIKit
 
 /// `TabView` has an "overscroll" bug on some index selections, workaround with manual `UIPageViewController`
-struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControllerRepresentable {
+struct SupplementTabView<
+    Element,
+    ID: Hashable,
+    Data: Collection,
+    Content: View
+>: PlatformViewControllerRepresentable where Data.Element == Element, Data.Index == Int {
 
-    let items: [Item]
-    let selection: Binding<Item.ID?>
+    let data: Data
+    let id: KeyPath<Element, ID>
+    let selection: Binding<ID?>
 
     @ViewBuilder
-    let content: (Item) -> Content
+    let content: (Element) -> Content
 
     func makeUIViewController(context: Context) -> UIPageViewController {
         let controller = UIPageViewController(
@@ -35,104 +41,121 @@ struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControl
 
     func updateUIViewController(_ controller: UIPageViewController, context: Context) {
         context.coordinator.sync(
-            items: items,
+            data: data,
             newID: selection.wrappedValue,
             content: content
         )
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(selection: selection)
+        Coordinator(
+            data: data,
+            id: id,
+            selection: selection
+        )
     }
 
     final class Coordinator: NSObject, UIPageViewControllerDelegate, UIPageViewControllerDataSource {
 
         weak var controller: UIPageViewController?
 
-        private var currentID: Item.ID?
-        private var viewControllers: [Item.ID: HostingController<Content>] = [:]
-        private var items: [Item] = []
-        private let selection: Binding<Item.ID?>
+        private var requestedID: ID?
+        private var selectionRevision = 0
+        private var isTransitioning = false
+        private var swipeSelection: (id: ID?, revision: Int)?
+        private var data: Data
+        private let id: KeyPath<Element, ID>
+        private let selection: Binding<ID?>
+        private var viewControllers: [ID: HostingController<Content>] = [:]
 
-        init(selection: Binding<Item.ID?>) {
+        init(
+            data: Data,
+            id: KeyPath<Element, ID>,
+            selection: Binding<ID?>
+        ) {
+            self.data = data
+            self.id = id
             self.selection = selection
         }
 
         func sync(
-            items: [Item],
-            newID: Item.ID?,
-            @ViewBuilder content: (Item) -> Content
+            data: Data,
+            newID: ID?,
+            @ViewBuilder content: (Element) -> Content
         ) {
-            guard let controller else { return }
+            guard controller != nil else { return }
 
-            let previousID = currentID
-
-            self.items = items
-
-            updateHosts(with: items, content: content)
-
-            switch (previousID, newID) {
-            case (_, nil):
-                currentID = nil
-
-            case (nil, let .some(newID)):
-                select(
-                    targetID(for: newID),
-                    in: controller,
-                    animated: false
-                )
-
-            case let (.some, .some(selection)):
-                select(
-                    targetID(for: selection),
-                    in: controller,
-                    animated: true
-                )
+            let wasPresenting = requestedID != nil
+            if requestedID != newID {
+                selectionRevision += 1
             }
+            requestedID = newID
+
+            self.data = data
+
+            updateHosts(with: data, content: content)
+
+            selectCurrent(animated: wasPresenting)
         }
 
-        private func select(
-            _ targetID: Item.ID?,
-            in controller: UIPageViewController,
-            animated: Bool
-        ) {
-            guard let targetID, let target = viewControllers[targetID] else { return }
-
-            currentID = targetID
+        private func selectCurrent(animated: Bool) {
+            // UIKit must settle both programmatic and interactive transitions before
+            // accepting another page. Read the binding again when a transition ends.
+            guard !isTransitioning,
+                  let controller,
+                  let selection = selection.wrappedValue,
+                  let targetID = targetID(for: selection),
+                  let target = viewControllers[targetID]
+            else { return }
 
             guard controller.viewControllers?.first !== target else { return }
 
+            isTransitioning = true
             controller.setViewControllers(
                 [target],
                 direction: direction(from: controller.viewControllers?.first, to: targetID),
                 animated: animated
-            )
+            ) { [weak self] _ in
+                guard let self else { return }
+                isTransitioning = false
+                selectCurrent(animated: true)
+            }
         }
 
         private func updateHosts(
-            with items: [Item],
-            @ViewBuilder content: (Item) -> Content
+            with data: Data,
+            @ViewBuilder content: (Element) -> Content
         ) {
-            let currentIDs = Set(items.map(\.id))
+            let currentIDs = Set(data.map { $0[keyPath: id] })
             viewControllers = viewControllers.filter { currentIDs.contains($0.key) }
 
-            for item in items {
-                if let host = viewControllers[item.id] {
-                    host.content = content(item)
+            for element in data {
+                if let host = viewControllers[element[keyPath: id]] {
+                    host.content = content(element)
                 } else {
-                    let host = HostingController(content: content(item))
+                    let host = HostingController(content: content(element))
                     host.disableSafeArea = true
                     host.view.backgroundColor = .clear
-                    viewControllers[item.id] = host
+                    viewControllers[element[keyPath: id]] = host
                 }
             }
         }
 
-        private func targetID(for selection: Item.ID) -> Item.ID? {
-            let targetID = viewControllers[selection] != nil ? selection : items.first?.id
+        private func targetID(for selection: ID) -> ID? {
+            let targetID = viewControllers[selection] != nil ? selection : data.first?[keyPath: id]
 
             if targetID != selection {
-                setSelection(targetID)
+                let revision = selectionRevision
+                DispatchQueue.main.async { [weak self] in
+                    guard let self,
+                          revision == selectionRevision,
+                          self.selection.wrappedValue == selection,
+                          viewControllers[selection] == nil,
+                          data.first?[keyPath: id] == targetID
+                    else { return }
+
+                    self.selection.wrappedValue = targetID
+                }
             }
 
             return targetID
@@ -140,21 +163,15 @@ struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControl
 
         private func direction(
             from visible: UIViewController?,
-            to targetID: Item.ID
+            to targetID: ID
         ) -> UIPageViewController.NavigationDirection {
             guard let visible,
-                  let currentID = id(for: visible),
-                  let currentIndex = items.firstIndex(where: { $0.id == currentID }),
-                  let targetIndex = items.firstIndex(where: { $0.id == targetID })
+                  let currentID = viewControllerID(for: visible),
+                  let currentIndex = data.firstIndex(where: { $0[keyPath: id] == currentID }),
+                  let targetIndex = data.firstIndex(where: { $0[keyPath: id] == targetID })
             else { return .forward }
 
             return targetIndex < currentIndex ? .reverse : .forward
-        }
-
-        private func setSelection(_ id: Item.ID?) {
-            DispatchQueue.main.async {
-                self.selection.wrappedValue = id
-            }
         }
 
         // MARK: UIPageViewControllerDataSource
@@ -177,35 +194,52 @@ struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControl
 
         func pageViewController(
             _ controller: UIPageViewController,
+            willTransitionTo pendingViewControllers: [UIViewController]
+        ) {
+            isTransitioning = true
+            swipeSelection = (selection.wrappedValue, selectionRevision)
+        }
+
+        func pageViewController(
+            _ controller: UIPageViewController,
             didFinishAnimating finished: Bool,
             previousViewControllers: [UIViewController],
             transitionCompleted: Bool
         ) {
-            // Only commit the binding when the swipe actually settled.
-            guard transitionCompleted,
-                  let visible = controller.viewControllers?.first,
-                  let newID = id(for: visible)
-            else { return }
+            guard let swipeSelection else { return }
+            self.swipeSelection = nil
+            isTransitioning = false
 
-            if selection.wrappedValue != newID {
-                setSelection(newID)
+            // A tab tap or dismissal during the swipe takes precedence over its result.
+            if transitionCompleted,
+               swipeSelection.id != nil,
+               swipeSelection.revision == selectionRevision,
+               selection.wrappedValue == swipeSelection.id,
+               let visible = controller.viewControllers?.first,
+               let newID = viewControllerID(for: visible)
+            {
+                requestedID = newID
+                selectionRevision += 1
+                selection.wrappedValue = newID
             }
+
+            selectCurrent(animated: true)
         }
 
-        private func id(for controller: UIViewController) -> Item.ID? {
+        private func viewControllerID(for controller: UIViewController) -> ID? {
             viewControllers.first(where: { $0.value === controller })?.key
         }
 
         private func adjacent(to viewController: UIViewController, offset: Int) -> UIViewController? {
-            guard let id = id(for: viewController),
-                  let index = items.firstIndex(where: { $0.id == id })
+            guard let viewControllerID = viewControllerID(for: viewController),
+                  let index = data.firstIndex(where: { $0[keyPath: id] == viewControllerID })
             else { return nil }
 
             let target = index + offset
 
-            guard items.indices.contains(target) else { return nil }
+            guard data.indices.contains(target) else { return nil }
 
-            return viewControllers[items[target].id]
+            return viewControllers[data[target][keyPath: id]]
         }
     }
 }

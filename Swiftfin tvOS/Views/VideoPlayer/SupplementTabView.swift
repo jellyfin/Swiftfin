@@ -10,14 +10,19 @@ import SwiftUI
 import UIKit
 
 /// `TabView` acts weird with horizontal stacks, workaround with manual supplement presentation
-struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControllerRepresentable {
+struct SupplementTabView<
+    Element,
+    ID: Hashable,
+    Data: Collection,
+    Content: View
+>: PlatformViewControllerRepresentable where Data.Element == Element {
 
-    let items: [Item]
-    let selection: Item.ID?
-    let onPresentedSelectionChange: (Item.ID?) -> Void
+    let data: Data
+    let id: KeyPath<Element, ID>
+    let selection: Binding<ID?>
 
     @ViewBuilder
-    let content: (Item) -> Content
+    let content: (Element) -> Content
 
     func makeUIViewController(context: Context) -> UIViewController {
         let controller = UIViewController()
@@ -31,9 +36,8 @@ struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControl
     func updateUIViewController(_ controller: UIViewController, context: Context) {
         context.coordinator.container = controller
         context.coordinator.sync(
-            items: items,
-            selection: selection,
-            onPresentedSelectionChange: onPresentedSelectionChange,
+            data: data,
+            selection: selection.wrappedValue,
             content: content
         )
     }
@@ -43,39 +47,35 @@ struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControl
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator()
+        Coordinator(id: id)
     }
 
     final class Coordinator {
 
         weak var container: UIViewController?
 
-        private var visibleID: Item.ID?
-        private var pendingSelectionID: Item.ID?
-        private var pendingSelectionWorkItem: DispatchWorkItem?
+        private let id: KeyPath<Element, ID>
+        private var visibleID: ID?
         private var transitionID: Int = 0
-        private var hosts: [Item.ID: HostingController<Content>] = [:]
-        private var onPresentedSelectionChange: ((Item.ID?) -> Void)?
+        private var hosts: [ID: HostingController<Content>] = [:]
 
-        private let selectionDebounceInterval: TimeInterval = 0.5
+        init(id: KeyPath<Element, ID>) {
+            self.id = id
+        }
 
         func sync(
-            items: [Item],
-            selection: Item.ID?,
-            onPresentedSelectionChange: @escaping (Item.ID?) -> Void,
-            @ViewBuilder content: (Item) -> Content
+            data: Data,
+            selection: ID?,
+            @ViewBuilder content: (Element) -> Content
         ) {
             guard let container else { return }
 
-            self.onPresentedSelectionChange = onPresentedSelectionChange
-            updateHosts(with: items, content: content)
-            selectDebounced(selection, in: container)
+            updateHosts(with: data, content: content)
+            select(selection, in: container)
         }
 
         func removeAll() {
-            pendingSelectionWorkItem?.cancel()
-            pendingSelectionWorkItem = nil
-            pendingSelectionID = nil
+            transitionID += 1
 
             for host in hosts.values {
                 remove(host)
@@ -86,10 +86,10 @@ struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControl
         }
 
         private func updateHosts(
-            with items: [Item],
-            content: (Item) -> Content
+            with data: Data,
+            content: (Element) -> Content
         ) {
-            let currentIDs = Set(items.map(\.id))
+            let currentIDs = Set(data.map { $0[keyPath: id] })
 
             let removedIDs = hosts.keys.filter { !currentIDs.contains($0) }
 
@@ -104,76 +104,29 @@ struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControl
                 }
             }
 
-            for item in items {
-                if let host = hosts[item.id] {
-                    host.content = content(item)
+            for element in data {
+                if let host = hosts[element[keyPath: id]] {
+                    host.content = content(element)
                 } else {
-                    let host = HostingController(content: content(item))
+                    let host = HostingController(content: content(element))
                     host.disableSafeArea = true
                     host.view.backgroundColor = .clear
-                    hosts[item.id] = host
+                    hosts[element[keyPath: id]] = host
                 }
             }
         }
 
-        private func selectDebounced(_ selection: Item.ID?, in container: UIViewController) {
-            guard pendingSelectionWorkItem == nil || selection != pendingSelectionID else { return }
-
-            pendingSelectionWorkItem?.cancel()
-            pendingSelectionWorkItem = nil
-            pendingSelectionID = selection
-
-            guard let selection else {
-                pendingSelectionID = nil
-                select(nil, in: container)
-                return
-            }
-
-            guard selection != visibleID else {
-                pendingSelectionID = nil
-                select(selection, in: container)
-                return
-            }
-
-            let workItem = DispatchWorkItem { [weak self, weak container] in
-                guard let self, let container, self.pendingSelectionID == selection else { return }
-
-                self.pendingSelectionID = nil
-                self.pendingSelectionWorkItem = nil
-                self.select(selection, in: container)
-            }
-
-            pendingSelectionWorkItem = workItem
-            DispatchQueue.main.asyncAfter(deadline: .now() + selectionDebounceInterval, execute: workItem)
-        }
-
-        private func select(_ selection: Item.ID?, in container: UIViewController) {
-            guard let selection else {
-                let hadVisibleSelection = visibleID != nil
-                removeVisibleHost(animated: true)
-                if hadVisibleSelection {
-                    onPresentedSelectionChange?(nil)
-                }
-                return
-            }
-
-            guard let host = hosts[selection] else {
-                removeVisibleHost(animated: true)
-                return
-            }
-
-            if host.parent === container {
-                visibleID = selection
-                host.view.alpha = 1
-                return
-            }
-
+        private func select(_ selection: ID?, in container: UIViewController) {
             let previousHost = visibleID.flatMap { hosts[$0] }
+            let host = selection.flatMap { hosts[$0] }
+            guard host !== previousHost else { return }
 
-            remove(host)
-            add(host, to: container, alpha: 0)
-            visibleID = selection
-            onPresentedSelectionChange?(selection)
+            if let host, host.parent !== container {
+                remove(host)
+                add(host, to: container, alpha: 0)
+            }
+
+            visibleID = host == nil ? nil : selection
             transition(from: previousHost, to: host)
         }
 
@@ -194,25 +147,14 @@ struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControl
             host.didMove(toParent: container)
         }
 
-        private func removeVisibleHost(animated: Bool = false) {
-            guard let visibleID, let host = hosts[visibleID] else {
-                self.visibleID = nil
-                return
-            }
-
-            self.visibleID = nil
-
-            guard animated else {
-                remove(host)
-                return
-            }
-
-            transition(from: host, to: nil)
-        }
-
         private func transition(from oldHost: UIViewController?, to newHost: UIViewController?) {
             transitionID += 1
             let currentTransitionID = transitionID
+
+            // Interrupted transitions may leave an outgoing host attached.
+            for host in hosts.values where host !== oldHost && host !== newHost {
+                remove(host)
+            }
 
             UIView.animate(
                 withDuration: 0.2,
@@ -233,6 +175,7 @@ struct SupplementTabView<Item: Identifiable, Content: View>: PlatformViewControl
         private func remove(_ host: UIViewController) {
             guard host.parent != nil else { return }
 
+            host.view.layer.removeAllAnimations()
             host.willMove(toParent: nil)
             host.view.removeFromSuperview()
             host.removeFromParent()

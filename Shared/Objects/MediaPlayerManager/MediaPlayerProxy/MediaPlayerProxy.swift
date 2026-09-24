@@ -34,18 +34,22 @@ protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
 @MainActor
 protocol VideoMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable, MediaPlayerSubtitleTrackConfigurable {
 
-    associatedtype VideoPlayerBody: View
-
+    /// Display dimensions, including pixel aspect ratio and rotation when available.
     var videoSize: PublishedBox<CGSize> { get }
     var droppedFrames: PublishedBox<Int> { get }
     var corruptedFrames: PublishedBox<Int> { get }
+}
 
-    // TODO: remove when container view handles aspect fill
-    func setAspectFill(_ aspectFill: Bool)
+@MainActor
+protocol VideoMediaPlayerLayoutConfigurable: VideoMediaPlayerProxy {
 
+    associatedtype VideoPlayerBody: View
+
+    /// Apply the layout's scale or native fit/fill behavior to the renderer.
+    /// Overlays retain the viewport's size.
     @ViewBuilder
     @MainActor
-    var videoPlayerBody: Self.VideoPlayerBody { get }
+    func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> Self.VideoPlayerBody
 }
 
 @MainActor

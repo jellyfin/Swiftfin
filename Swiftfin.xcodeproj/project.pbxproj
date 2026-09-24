@@ -1364,7 +1364,7 @@
 			repositoryURL = "https://github.com/LePips/MPVUI";
 			requirement = {
 				kind = exactVersion;
-				version = 0.1.1;
+				version = 0.3.0;
 			};
 		};
 		E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */ = {
@@ -1372,7 +1372,7 @@
 			repositoryURL = "https://github.com/LePips/MediaAccessibilityKit";
 			requirement = {
 				kind = exactVersion;
-				version = 0.1.0;
+				version = 0.2.0;
 			};
 		};
 		E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */ = {

@@ -23,8 +23,8 @@ extension VideoPlayer.PlaybackControls {
 
         @EnvironmentObject
         private var centerOffsetBox: PublishedBox<CGFloat>
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -42,15 +42,10 @@ extension VideoPlayer.PlaybackControls {
                     manager.setPlaybackRequestStatus(status: .playing)
                 }
             } label: {
-                Group {
-                    switch manager.playbackRequestStatus {
-                    case .playing:
-                        Label(L10n.pause, systemImage: "pause.fill")
-                    case .paused:
-                        Label(L10n.play, systemImage: "play.fill")
-                    }
-                }
-                .transition(.opacity.combined(with: .scale).animation(.bouncy(duration: 0.7, extraBounce: 0.2)))
+                Label(
+                    manager.playbackRequestStatus == .playing ? L10n.pause : L10n.play,
+                    systemImage: manager.playbackRequestStatus == .playing ? "pause.fill" : "play.fill"
+                )
                 .font(.system(size: 36, weight: .bold, design: .default))
                 .contentShape(Rectangle())
                 .labelStyle(.iconOnly)
@@ -105,7 +100,7 @@ extension VideoPlayer.PlaybackControls {
                     jumpForwardButton
                 }
             }
-            .modifier(OverlayButtonStyleModifier())
+            .buttonStyle(OverlayButtonStyle())
             .padding(.horizontal, 50)
             .offset(y: centerOffsetBox.value / 2)
         }

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import MediaAccessibility
 import MediaAccessibilityKit
 import MPVUI
 import SwiftUI
@@ -13,31 +14,27 @@ import SwiftUI
 struct TextSubtitleOverlay: View {
 
     let snapshot: TextSubtitleSnapshot
-    let videoSize: CGSize?
-    let isAspectFilled: Bool
+    let videoLayout: VideoPlayer.VideoLayout
 
     var body: some View {
-        TextSubtitleOverlayContent(
-            snapshot: snapshot,
-            videoSize: videoSize,
-            isAspectFilled: isAspectFilled
-        )
-        .mediaCaptionStyle()
-        .allowsHitTesting(false)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(snapshot.text)
-        .accessibilityHidden(snapshot.isEmpty)
+        TextSubtitleOverlayContent(snapshot: snapshot, videoLayout: videoLayout)
+            .allowsHitTesting(false)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(snapshot.text)
+            .accessibilityHidden(snapshot.isEmpty)
     }
 }
 
 private struct TextSubtitleOverlayContent: View {
 
-    @Environment(\.mediaCaptionStyle)
-    private var captionStyle
+    @Environment(\.scenePhase)
+    private var scenePhase
+
+    @State
+    private var captionStyle = CaptionStyle.current
 
     let snapshot: TextSubtitleSnapshot
-    let videoSize: CGSize?
-    let isAspectFilled: Bool
+    let videoLayout: VideoPlayer.VideoLayout
 
     private var basePointSize: CGFloat {
         #if os(tvOS)
@@ -48,64 +45,67 @@ private struct TextSubtitleOverlayContent: View {
     }
 
     private var pointSize: CGFloat {
-        basePointSize * captionStyle.text.sizeScale.value
+        basePointSize * captionStyle.text.sizeScale.resolved(contentValue: nil)
+    }
+
+    @ViewBuilder
+    private func subtitleRegions(_ regions: [TextSubtitleRegion]) -> some View {
+        SubtitleRegionsLayout(regions: regions, pointSize: pointSize, videoLayout: videoLayout) {
+            ForEach(Array(regions.enumerated()), id: \.offset) { _, region in
+                switch region.placement {
+                case .automatic:
+                    SubtitleRegionText(
+                        text: region.text,
+                        alignment: .center,
+                        writingDirection: .horizontal,
+                        constrainsHeight: false,
+                        captionStyle: captionStyle,
+                        basePointSize: basePointSize,
+                        pointSize: pointSize
+                    )
+                case let .webVTT(placement):
+                    SubtitleRegionText(
+                        text: region.text,
+                        alignment: placement.textAlignment.swiftUIValue,
+                        writingDirection: placement.writingDirection,
+                        constrainsHeight: placement.maximumHeight != nil,
+                        captionStyle: captionStyle,
+                        basePointSize: basePointSize,
+                        pointSize: pointSize
+                    )
+                }
+            }
+        }
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            if !snapshot.isEmpty {
-                SubtitleRegionsLayout(
-                    regions: snapshot.regions,
-                    videoViewport: SubtitleViewport.frame(
-                        videoSize: videoSize,
-                        containerSize: geometry.size,
-                        isAspectFilled: isAspectFilled
-                    ),
-                    automaticBottom: automaticSubtitleBottom(in: geometry),
-                    pointSize: pointSize
-                ) {
-                    ForEach(Array(snapshot.regions.enumerated()), id: \.offset) { index, _ in
-                        let region = snapshot.regions[index]
-
-                        switch region.placement {
-                        case .automatic:
-                            SubtitleRegionText(
-                                text: region.text,
-                                alignment: .center,
-                                writingDirection: .horizontal,
-                                constrainsHeight: false,
-                                basePointSize: basePointSize,
-                                pointSize: pointSize
-                            )
-                        case let .webVTT(placement):
-                            SubtitleRegionText(
-                                text: region.text,
-                                alignment: placement.textAlignment.swiftUIValue,
-                                writingDirection: placement.writingDirection,
-                                constrainsHeight: placement.maximumHeight != nil,
-                                basePointSize: basePointSize,
-                                pointSize: pointSize
-                            )
-                        }
-                    }
-                }
-                .frame(width: geometry.size.width, height: geometry.size.height)
+        Color.clear
+            .overlay {
+                subtitleRegions(snapshot.regions)
             }
-        }
-        .clipped()
-    }
+            .clipped()
+            .task {
+                let changes = NotificationCenter.default
+                    .notifications(named: Notification.Name(kMACaptionAppearanceSettingsChangedNotification as String))
 
-    private func automaticSubtitleBottom(in geometry: GeometryProxy) -> CGFloat {
-        geometry.size.height - max(24, geometry.size.height * 0.08)
+                captionStyle = .current
+                for await _ in changes {
+                    captionStyle = .current
+                }
+            }
+            .onChange(of: scenePhase) {
+                if scenePhase == .active {
+                    captionStyle = .current
+                }
+            }
     }
 }
 
 private struct SubtitleRegionsLayout: Layout {
 
     let regions: [TextSubtitleRegion]
-    let videoViewport: CGRect
-    let automaticBottom: CGFloat
     let pointSize: CGFloat
+    let videoLayout: VideoPlayer.VideoLayout
 
     func sizeThatFits(
         proposal: ProposedViewSize,
@@ -133,13 +133,13 @@ private struct SubtitleRegionsLayout: Layout {
             subviews: subviews
         )
 
-        let viewport = videoViewport.offsetBy(dx: bounds.minX, dy: bounds.minY)
+        let videoFrame = videoLayout.videoFrame(in: bounds)
         for index in 0 ..< count {
             guard case let .webVTT(placement) = regions[index].placement else { continue }
             placeWebVTTRegion(
                 subviews[index],
                 placement: placement,
-                in: viewport
+                in: videoFrame
             )
         }
     }
@@ -151,6 +151,7 @@ private struct SubtitleRegionsLayout: Layout {
     ) {
         guard indices.isNotEmpty else { return }
 
+        let automaticBottom = bounds.maxY - max(24, bounds.height * 0.08)
         let horizontalPadding = max(24, bounds.width * 0.08)
         let regionProposal = ProposedViewSize(
             width: max(0, bounds.width - horizontalPadding * 2),
@@ -185,23 +186,18 @@ private struct SubtitleRegionsLayout: Layout {
                 max(0, CGFloat($0) * viewport.height)
             } ?? viewport.height
         )
-        let size = subview.sizeThatFits(regionProposal)
-        let anchor = CGPoint(
+        let anchor = UnitPoint(
             x: placement.horizontalAnchor.unitValue,
             y: placement.verticalAnchor.unitValue
         )
         let origin = CGPoint(
-            x: viewport.minX
-                + CGFloat(placement.horizontalPosition) * viewport.width
-                - size.width * anchor.x,
-            y: viewport.minY
-                + CGFloat(placement.verticalPosition) * viewport.height
-                - size.height * anchor.y
+            x: viewport.minX + CGFloat(placement.horizontalPosition) * viewport.width,
+            y: viewport.minY + CGFloat(placement.verticalPosition) * viewport.height
         )
 
         subview.place(
             at: origin,
-            anchor: .topLeading,
+            anchor: anchor,
             proposal: regionProposal
         )
     }
@@ -213,6 +209,7 @@ private struct SubtitleRegionText: View {
     let alignment: SwiftUI.TextAlignment
     let writingDirection: WebVTTPlacement.WritingDirection
     let constrainsHeight: Bool
+    let captionStyle: CaptionStyle
     let basePointSize: CGFloat
     let pointSize: CGFloat
 
@@ -224,8 +221,9 @@ private struct SubtitleRegionText: View {
             .joined(separator: "\n")
     }
 
+    @ViewBuilder
     private var styledText: some View {
-        CaptionText(presentationText, baseSize: basePointSize)
+        CaptionText(presentationText, baseSize: basePointSize, style: captionStyle)
             .multilineTextAlignment(alignment)
             .lineSpacing(pointSize * 0.12)
             .fixedSize(horizontal: false, vertical: !constrainsHeight)
@@ -303,39 +301,5 @@ private extension WebVTTPlacement.TextAlignment {
         case .center: .center
         case .right: .trailing
         }
-    }
-}
-
-/// Maps authored WebVTT coordinates to the rendered video, including letterboxing and cropping.
-enum SubtitleViewport {
-    static func frame(
-        videoSize: CGSize?,
-        containerSize: CGSize,
-        isAspectFilled: Bool
-    ) -> CGRect {
-        guard containerSize.width > 0,
-              containerSize.height > 0,
-              containerSize.width.isFinite,
-              containerSize.height.isFinite,
-              let videoSize,
-              videoSize.width > 0,
-              videoSize.height > 0,
-              videoSize.width.isFinite,
-              videoSize.height.isFinite
-        else {
-            return CGRect(origin: .zero, size: containerSize)
-        }
-
-        let horizontalScale = containerSize.width / videoSize.width
-        let verticalScale = containerSize.height / videoSize.height
-        let scale = isAspectFilled ? max(horizontalScale, verticalScale) : min(horizontalScale, verticalScale)
-        let viewportSize = CGSize(width: videoSize.width * scale, height: videoSize.height * scale)
-
-        return CGRect(
-            x: (containerSize.width - viewportSize.width) / 2,
-            y: (containerSize.height - viewportSize.height) / 2,
-            width: viewportSize.width,
-            height: viewportSize.height
-        )
     }
 }

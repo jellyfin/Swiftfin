@@ -18,13 +18,16 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         @Default(.VideoPlayer.Playback.rates)
         private var rates: [Float]
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
         var body: some View {
-            Menu {
+            Menu(
+                L10n.playbackSpeed,
+                systemImage: VideoPlayerActionButton.playbackSpeed.systemImage
+            ) {
                 Picker(L10n.playbackSpeed, selection: $manager.rate) {
                     ForEach(rates, id: \.self) { rate in
                         Text(rate, format: .playbackRate)
@@ -38,11 +41,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             .tag(manager.rate)
                     }
                 }
-            } label: {
-                Label(
-                    L10n.playbackSpeed,
-                    systemImage: VideoPlayerActionButton.playbackSpeed.systemImage
-                )
             }
         }
     }
