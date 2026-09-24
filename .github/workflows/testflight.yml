@@ -101,7 +101,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.client_payload.ref || 'main' }}
           token: ${{ secrets.GITHUB_TOKEN }}
