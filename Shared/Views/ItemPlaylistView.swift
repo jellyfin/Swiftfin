@@ -50,6 +50,7 @@ struct ItemPlaylistView: View {
                         Button(L10n.cancel, role: .cancel) {}
                     }
                 }
+                .foregroundStyle(.primary)
             }
 
             // TODO: Remove for 13.X.
@@ -60,6 +61,7 @@ struct ItemPlaylistView: View {
                 } footer: {
                     Text(L10n.addToBeginningDescription)
                 }
+                .foregroundStyle(.primary)
             }
 
             Section(L10n.playlists) {
@@ -88,7 +90,6 @@ struct ItemPlaylistView: View {
                 }
             }
         }
-        .foregroundStyle(.primary)
         .disabled(viewModel.background.is(.updating))
     }
 
