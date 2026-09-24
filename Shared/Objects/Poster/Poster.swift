@@ -93,8 +93,13 @@ extension Poster where OverlayBody == EmptyView {
 
 extension Poster {
 
-    var narrowPosterDisplayType: PosterDisplayType {
-        preferredPosterDisplayType == .square ? .square : .portrait
+    func posterDisplayType(for style: UserInterfaceSizeClass) -> PosterDisplayType {
+        switch style {
+        case .compact:
+            preferredPosterDisplayType == .square ? .square : .portrait
+        default:
+            preferredPosterDisplayType
+        }
     }
 
     var subtitle: String? {

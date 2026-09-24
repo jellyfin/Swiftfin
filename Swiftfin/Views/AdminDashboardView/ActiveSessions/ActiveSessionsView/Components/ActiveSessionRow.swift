@@ -35,7 +35,7 @@ extension ActiveSessionsView {
             if let nowPlayingItem = session.nowPlayingItem {
                 PosterImage(
                     item: nowPlayingItem,
-                    type: nowPlayingItem.narrowPosterDisplayType,
+                    type: nowPlayingItem.posterDisplayType(for: .compact),
                     contentMode: .fit
                 )
                 .frame(width: 60)
