@@ -41,7 +41,7 @@ extension RemoteView {
                 }
 
                 if isVolumeSupported {
-                    CapsuleSlider(value: $volume, total: 100)
+                    SliderContainer(value: $volume, total: 100)
                         .onEditingChanged { isEditing in
                             isAdjustingVolume = isEditing
 

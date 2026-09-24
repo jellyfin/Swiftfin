@@ -189,18 +189,18 @@ struct RemoteView: View {
                         }
                     }
                 } label: {
-                    if viewModel.state == .content && viewModel.targets.isEmpty {
-                        EmptyLabel(selectorTitle)
-                    } else {
-                        Label(selectorTitle, systemImage: "chevron.down")
+                    Group {
+                        if viewModel.state == .content && viewModel.targets.isEmpty {
+                            EmptyLabel(selectorTitle)
+                        } else {
+                            Label(selectorTitle, systemImage: "chevron.down")
+                        }
                     }
+                    .labelStyle(.trailingIcon)
+                    .padding(.init(vertical: 11, horizontal: 16))
+                    .backport
+                    .glassEffect(in: .capsule)
                 }
-                .labelStyle(
-                    CapsuleLabelStyle(
-                        insets: .init(vertical: 11, horizontal: 16),
-                        isIconTrailing: true
-                    )
-                )
                 .font(.headline)
                 .menuStyle(.button)
                 .buttonStyle(.isPressed { isPressed in

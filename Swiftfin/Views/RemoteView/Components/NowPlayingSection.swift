@@ -87,7 +87,7 @@ extension RemoteView {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
-                    CapsuleSlider(
+                    SliderContainer(
                         value: $scrubbedSeconds,
                         total: max(item.runtime?.seconds ?? (item.isLiveContent ? scrubbedSeconds : 0), 1)
                     )
