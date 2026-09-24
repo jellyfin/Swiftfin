@@ -14,6 +14,9 @@ struct FilterBarModifier: ViewModifier {
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
 
+    @FocusState
+    private var focusedFilter: FilterTrack.FocusTarget?
+
     @ObservedObject
     var viewModel: FilterViewModel
 
@@ -23,6 +26,31 @@ struct FilterBarModifier: ViewModifier {
         letterPickerOrientation == .trailing ? .leading : .trailing
     }
 
+    @ViewBuilder
+    private var filters: some View {
+        VStack(spacing: 20) {
+            ForEach(subviews: FilterTrack(
+                viewModel: viewModel,
+                types: types,
+                focus: $focusedFilter,
+                style: .compact,
+                iconEdge: edge
+            )) { button in
+                Color.clear
+                    .frame(width: 64, height: 64)
+                    .overlay(alignment: edge == .leading ? .leading : .trailing) {
+                        button
+                    }
+            }
+        }
+        .scrollIfLargerThanContainer()
+        .frame(width: 64)
+        .coordinatedFocusScope(
+            $focusedFilter,
+            values: types.map(FilterTrack.FocusTarget.filter) + (viewModel.hasActiveFilters ? [.reset] : [])
+        )
+    }
+
     func body(content: Content) -> some View {
         if types.isEmpty {
             content
@@ -30,13 +58,9 @@ struct FilterBarModifier: ViewModifier {
             content
                 .focusSection()
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
-                    FilterBar(
-                        viewModel: viewModel,
-                        types: types,
-                        orientation: .vertical,
-                        edge: edge
-                    )
-                    .padding(edge.asEdgeSet, EdgeInsets.itemSpacing)
+                    filters
+                        .coordinatedFocus(.secondary)
+                        .padding(edge.asEdgeSet, EdgeInsets.itemSpacing)
                 }
                 .ignoresSafeArea(.all, edges: edge.asEdgeSet)
         }

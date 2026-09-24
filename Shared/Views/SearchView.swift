@@ -17,6 +17,11 @@ struct SearchView: View {
     @FocusState
     private var isSearchFocused: Bool
 
+    #if os(tvOS)
+    @FocusState
+    private var focusedFilter: FilterTrack.FocusTarget?
+    #endif
+
     @State
     private var searchQuery = ""
 
@@ -45,38 +50,50 @@ struct SearchView: View {
 
     var body: some View {
         ScrollView {
-            #if os(tvOS)
-            FilterBar(
-                viewModel: viewModel.filterViewModel,
-                types: enabledDrawerFilters,
-                orientation: .horizontal
-            )
-            .edgePadding(.horizontal)
-            .padding(.vertical)
-            #endif
-
-            ZStack {
-                switch viewModel.state {
-                case .error:
-                    viewModel.error.map(ErrorView.init)
-                case .initial:
-                    if viewModel.canSearch {
-                        if viewModel.isEmpty {
-                            Text(L10n.noResults)
-                        } else {
-                            ContentGroupVStack(
-                                groups: viewModel.itemContentGroupViewModel.groups
-                            )
+            VStack(spacing: 0) {
+                #if os(tvOS)
+                if enabledDrawerFilters.isNotEmpty {
+                    ScrollView(.horizontal) {
+                        HStack(spacing: 20) {
+                            FilterTrack(viewModel: viewModel.filterViewModel, types: enabledDrawerFilters, focus: $focusedFilter)
                         }
-                    } else {
-                        suggestionsView
                     }
-                case .searching:
-                    ProgressView()
+                    .scrollClipDisabled()
+                    .scrollIndicators(.hidden)
+                    .frame(height: 64)
+                    .coordinatedFocusScope(
+                        $focusedFilter,
+                        values: enabledDrawerFilters.map(FilterTrack.FocusTarget.filter) +
+                            (viewModel.filterViewModel.hasActiveFilters ? [.reset] : [])
+                    )
+                    .edgePadding(.horizontal)
+                    .padding(.vertical, EdgeInsets.itemSpacing)
                 }
+                #endif
+
+                ZStack {
+                    switch viewModel.state {
+                    case .error:
+                        viewModel.error.map(ErrorView.init)
+                    case .initial:
+                        if viewModel.canSearch {
+                            if viewModel.isEmpty {
+                                Text(L10n.noResults)
+                            } else {
+                                ContentGroupVStack(
+                                    groups: viewModel.itemContentGroupViewModel.groups
+                                )
+                            }
+                        } else {
+                            suggestionsView
+                        }
+                    case .searching:
+                        ProgressView()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .focusSection()
             }
-            .frame(maxWidth: .infinity)
-            .focusSection()
         }
         .ignoresSafeArea(edges: .horizontal)
         .scrollIndicators(.hidden)
@@ -101,6 +118,12 @@ struct SearchView: View {
             prompt: L10n.search
         )
         .environmentObject(focusCoordinator)
+        #if os(tvOS)
+        .modifier(SearchSafeAreaModifier())
+        .onReceive(viewModel.filterViewModel.$currentFilters) { filters in
+            searchQuery = filters.query ?? ""
+        }
+        #endif
         #if os(iOS)
         .navigationBarFilterDrawer(
             viewModel: viewModel.filterViewModel,
