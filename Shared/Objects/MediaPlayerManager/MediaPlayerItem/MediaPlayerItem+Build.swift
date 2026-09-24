@@ -42,6 +42,9 @@ extension MediaPlayerItem {
         }
 
         var item = try await initialItem.getFullItem(userSession: userSession)
+        let storedItem = StoredItem(wrappedValue: item).entry
+        guard let currentItem = storedItem.value else { throw ItemStore.StoreError.itemUnavailable }
+        item = currentItem
 
         if let modifyItem {
             modifyItem(&item)
@@ -89,7 +92,8 @@ extension MediaPlayerItem {
             playbackInfo
         )
 
-        let response = try await userSession.client.send(request)
+        let response = try await userSession.send(request)
+        guard storedItem.value != nil else { throw ItemStore.StoreError.itemUnavailable }
 
         let mediaSource: MediaSourceInfo? = {
 
@@ -178,7 +182,7 @@ extension MediaPlayerItem {
             initialAudioStreamIndex: audioStreamIndex,
             initialSubtitleStreamIndex: subtitleStreamIndex,
             previewImageProvider: previewImageProvider,
-            thumbnailProvider: item.getNowPlayingImage
+            thumbnailProvider: { await storedItem.value?.getNowPlayingImage() }
         )
     }
 

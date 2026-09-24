@@ -14,7 +14,8 @@ extension ItemView {
     struct AttributesHStack: View {
 
         let attributes: [ItemViewAttribute]
-        let item: BaseItemDto
+        @StoredItem
+        var item: BaseItemDto
         let selectedMediaSource: MediaSourceInfo?
 
         var alignment: HorizontalAlignment = .center

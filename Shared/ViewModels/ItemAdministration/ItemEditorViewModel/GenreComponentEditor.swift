@@ -49,7 +49,7 @@ struct GenreComponentEditor: ItemComponentEditor {
     func search(_ searchTerm: String, userSession: UserSession) async throws -> [String] {
         let parameters = Paths.GetGenresParameters(searchTerm: searchTerm.isEmpty ? nil : searchTerm)
         let request = Paths.getGenres(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await userSession.send(request)
 
         return response.value.items?.compactMap(\.name) ?? []
     }

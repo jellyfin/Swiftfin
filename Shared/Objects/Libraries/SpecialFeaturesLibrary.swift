@@ -10,6 +10,8 @@ import JellyfinAPI
 
 struct SpecialFeaturesLibrary: BaseItemKindLibrary {
 
+    let hasNextPage = false
+
     let itemID: String
     let libraryItemTypes: [BaseItemKind] = [.video]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.specialFeatures, id: "special-features")
@@ -17,10 +19,10 @@ struct SpecialFeaturesLibrary: BaseItemKindLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         let request = Paths.getSpecialFeatures(itemID: itemID)
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value
+        return try pageState.items(from: response)
     }
 }

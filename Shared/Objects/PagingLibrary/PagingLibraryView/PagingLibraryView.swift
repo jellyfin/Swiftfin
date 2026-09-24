@@ -28,6 +28,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @State
     private var isSafeAreaBarApplied: Bool = false
 
+    @State
+    private var slotHeights: [Element.ID: CGFloat] = [:]
+
     @StateObject
     private var gridProxy = CollectionVGridProxy()
     @StateObject
@@ -66,7 +69,11 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     init(library: Library) {
         self._parentLibraryStyle = StoredValue(.User.libraryStyle(id: library.parent.pagingLibraryID))
-        self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(library: library))
+        let viewModel = PagingLibraryViewModel(library: library)
+        if Element.self == ItemEntry.self {
+            viewModel.maximumLoadedPages = 5
+        }
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
     @ViewBuilder
@@ -82,14 +89,40 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             }
 
             CollectionVGrid(
-                uniqueElements: viewModel.displayedElements,
+                uniqueElements: viewModel.displayedSlots,
                 layout: Element.layout(
                     for: libraryStyle,
                     options: libraryStyleOptions,
                     insets: insets
                 )
-            ) { element in
-                element.makeBody(libraryStyle: libraryStyle)
+            ) { slot in
+                Group {
+                    if let element = slot.element {
+                        element.makeBody(libraryStyle: libraryStyle)
+                            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                                if slotHeights[slot.id] != height {
+                                    slotHeights[slot.id] = height
+                                }
+                            }
+                    } else {
+                        Button {
+                            viewModel.reloadPage(at: slot.offset)
+                        } label: {
+                            ZStack {
+                                Color.secondarySystemFill
+                                if viewModel.failedPageOffsets.contains(slot.offset) {
+                                    Image(systemName: "arrow.clockwise")
+                                } else {
+                                    ProgressView()
+                                }
+                            }
+                            .frame(height: slotHeights[slot.id] ?? 160)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .onAppear { viewModel.pageDidAppear(slot) }
+                .onDisappear { viewModel.pageDidDisappear(slot) }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 if viewModel.isSearchActive {
@@ -139,7 +172,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 case .content:
                     if viewModel.isSearchActive, viewModel.background.is(.searching) {
                         ProgressView()
-                    } else if viewModel.displayedElements.isEmpty {
+                    } else if viewModel.displayedSlots.isEmpty {
                         ContentUnavailableView(
                             viewModel.isSearchActive ? L10n.noResults.localizedCapitalized : L10n.noItems.localizedCapitalized,
                             systemImage: viewModel.isSearchActive ? "magnifyingglass" : "rectangle.on.rectangle.slash"
@@ -159,6 +192,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .animation(.linear(duration: 0.2), value: viewModel.elements)
         .animation(.linear(duration: 0.2), value: viewModel.searchElements)
         .navigationTitle(viewModel.library.parent.displayTitle)
+        .errorMessage($viewModel.error)
         .onPreferenceChange(IsSafeAreaBarApplied.self) { newValue in
             isSafeAreaBarApplied = newValue
         }
@@ -167,6 +201,10 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         #endif
         .onChange(of: viewModel.environment) {
             viewModel.refreshForEnvironmentChange()
+        }
+        .onChange(of: viewModel.displayedSlots.map(\.id)) { _, ids in
+            let retained = Set(ids)
+            slotHeights = slotHeights.filter { retained.contains($0.key) }
         }
         .onChange(of: libraryStyle) { oldStyle, newStyle in
             if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero) ==

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import JellyfinAPI
 import SwiftUI
 
 private func anyPosterImageSources<P: Poster>(
@@ -54,12 +55,16 @@ struct AnyPoster: Poster {
 
     private let _id: ID
 
+    @MainActor
     init<P: Poster>(_ poster: P) {
-        self._poster = poster
-        self._id = ID(
-            posterType: ObjectIdentifier(P.self),
-            value: AnyHashable(poster.id)
-        )
+        if let dto = poster as? BaseItemDto {
+            let entry = StoredItem(wrappedValue: dto).entry
+            self._poster = entry
+            self._id = ID(posterType: ObjectIdentifier(ItemEntry.self), value: AnyHashable(entry.id))
+        } else {
+            self._poster = poster
+            self._id = ID(posterType: ObjectIdentifier(P.self), value: AnyHashable(poster.id))
+        }
     }
 
     var preferredPosterDisplayType: PosterDisplayType {

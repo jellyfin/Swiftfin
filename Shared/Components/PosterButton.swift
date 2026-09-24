@@ -22,7 +22,8 @@ struct PosterButton<Item: Poster>: View {
     @State
     private var posterSize: CGSize = .zero
 
-    let item: Item
+    @StoredMediaValue
+    var item: Item
     let displayType: PosterDisplayType
     let size: PosterDisplayType.Size
     let action: (Namespace.ID) -> Void

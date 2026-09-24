@@ -29,14 +29,15 @@ struct PeopleLibrary: BaseItemKindLibrary {
     func retrievePage(
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = Paths.GetPersonsParameters()
         parameters.limit = pageState.pageSize
+        parameters.startIndex = pageState.pageOffset
         parameters.searchTerm = environment.query
 
         let request = Paths.getPersons(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value.items ?? []
+        return try pageState.items(from: response)
     }
 }

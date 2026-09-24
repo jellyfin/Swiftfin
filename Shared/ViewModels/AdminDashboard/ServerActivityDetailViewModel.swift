@@ -38,7 +38,7 @@ final class ServerActivityDetailViewModel: ViewModel {
     var log: ActivityLogEntry
     @Published
     var user: UserDto?
-    @Published
+    @StoredOptionalItem
     var item: BaseItemDto?
 
     init(log: ActivityLogEntry, user: UserDto?) {
@@ -48,11 +48,14 @@ final class ServerActivityDetailViewModel: ViewModel {
     }
 
     @Function(\Action.Cases.refresh)
-    private func _refresh() async {
+    private func _refresh() async throws {
+        let session = try requireUserSession()
+        let token = try session.items.beginRequest()
         async let fetchedItem: BaseItemDto? = getItem(for: log.itemID)
         async let fetchedUser: UserDto? = getUser(for: log.userID)
 
         let results = try? await (fetchedItem, fetchedUser)
+        try session.items.validate(token)
         item = results?.0
         user = results?.1
     }

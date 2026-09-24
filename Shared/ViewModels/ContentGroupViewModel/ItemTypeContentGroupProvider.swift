@@ -23,7 +23,8 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
     let displayTitle: String
     var environment: Environment
     let itemTypes: [BaseItemKind]
-    let parent: BaseItemDto?
+    @StoredOptionalItem
+    var parent: BaseItemDto?
 
     init(
         itemTypes: [BaseItemKind],

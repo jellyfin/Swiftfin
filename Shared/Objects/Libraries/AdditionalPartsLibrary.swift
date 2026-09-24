@@ -10,6 +10,8 @@ import JellyfinAPI
 
 struct AdditionalPartsLibrary: BaseItemKindLibrary {
 
+    let hasNextPage = false
+
     let itemID: String
     let libraryItemTypes: [BaseItemKind] = [.video]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.additionalParts, id: "additional-parts")
@@ -17,10 +19,10 @@ struct AdditionalPartsLibrary: BaseItemKindLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         let request = Paths.getAdditionalPart(itemID: itemID)
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value.items ?? []
+        return try pageState.items(from: response)
     }
 }

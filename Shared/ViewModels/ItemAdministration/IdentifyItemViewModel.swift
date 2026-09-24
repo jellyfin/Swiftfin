@@ -63,7 +63,8 @@ final class IdentifyItemViewModel: ViewModel {
     @Published
     private(set) var searchResults: [RemoteSearchResult] = []
 
-    let item: BaseItemDto
+    @StoredItem
+    var item: BaseItemDto
     private var searchQuery = CurrentValueSubject<SearchQuery, Never>(.init())
 
     init(item: BaseItemDto) {
@@ -172,7 +173,7 @@ final class IdentifyItemViewModel: ViewModel {
         let request = Paths.applySearchCriteria(itemID: itemID, searchResult)
         _ = try await send(request)
 
-        _ = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
+        _ = try await item.getFullItem(userSession: requireUserSession())
 
         events.send(.updated)
     }

@@ -85,16 +85,21 @@ final class ActiveSessionsViewModel: ViewModel {
         let parameters = Paths.GetSessionsParameters(activeWithinSeconds: environment.activeWithinSeconds)
         let request = Paths.getSessions(parameters: parameters)
         let response = try await send(request)
+        defer { withExtendedLifetime(response) {} }
 
-        updateSessions(response.value)
+        updateSessions(response.value, mergeItems: false)
     }
 
-    private func updateSessions(_ incomingSessions: [SessionInfoDto]) {
+    private func updateSessions(_ incomingSessions: [SessionInfoDto], mergeItems: Bool = true) {
 
         guard !environment.isPaused else {
             logger.debug("Socket updates are paused")
             return
         }
+
+        // Retain newly merged records until each session model takes ownership.
+        let records = mergeItems ? try? userSession?.items.receiveSessionItems(incomingSessions) : nil
+        defer { withExtendedLifetime(records) {} }
 
         // Reuse existing observers so ActiveSessionDetailsViews keep receiving updates
         var updatedSessions: OrderedDictionary<String, SessionViewModel> = [:]

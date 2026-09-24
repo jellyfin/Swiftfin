@@ -14,7 +14,7 @@ extension SeriesEpisodeContentGroup {
 
     private enum EpisodeElement: Identifiable {
         case empty
-        case episode(BaseItemDto)
+        case episode(ItemEntry)
         case error(Error)
         case loading(Int)
 
@@ -27,7 +27,7 @@ extension SeriesEpisodeContentGroup {
             case .empty:
                 "empty"
             case let .episode(episode):
-                episode.id ?? episode.displayTitle
+                episode.itemID
             case .error:
                 "error"
             case let .loading(index):
@@ -62,7 +62,8 @@ extension SeriesEpisodeContentGroup {
         @ObservedObject
         var seasonViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
-        let playButtonItem: BaseItemDto?
+        @StoredOptionalItem
+        var playButtonItem: BaseItemDto?
         let header: Header
 
         init(
@@ -225,7 +226,7 @@ extension SeriesEpisodeContentGroup {
                 )
                 .disabled(true)
             case let .episode(episode):
-                EpisodeCard(episode: episode)
+                EpisodeCard(episode: episode.snapshot)
             case let .error(error):
                 EpisodeStateCard(
                     title: L10n.error,

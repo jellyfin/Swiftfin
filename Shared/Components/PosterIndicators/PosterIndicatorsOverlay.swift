@@ -15,7 +15,8 @@ struct PosterIndicatorsOverlay: View {
     @Environment(\.posterConfiguration)
     private var posterConfiguration
 
-    let item: BaseItemDto
+    @StoredItem
+    var item: BaseItemDto
     let posterDisplayType: PosterDisplayType
 
     private var indicators: PosterIndicator {
