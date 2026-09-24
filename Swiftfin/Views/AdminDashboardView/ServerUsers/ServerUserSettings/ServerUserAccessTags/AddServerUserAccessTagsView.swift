@@ -135,7 +135,7 @@ struct AddServerUserAccessTagsView: View {
                             .controlSize(.small)
                     }
                 }
-                .disabled(!isValid)
+                .enabled(isValid)
             }
         }
         .onChange(of: input.name) {

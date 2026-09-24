@@ -53,8 +53,8 @@ struct ImageView<_Image: View, Placeholder: View, Failure: View>: View {
 
 extension ImageView where _Image == Image, Placeholder == DefaultPlaceholderView, Failure == EmptyView {
 
-    init(_ source: ImageSource) {
-        self.init([source].compacted(using: \.url))
+    init(_ source: ImageSource?) {
+        self.init([source].compactMap(\.self))
     }
 
     init(_ sources: [ImageSource]) {

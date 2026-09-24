@@ -13,8 +13,12 @@ final class EPGScrollProxy: ObservableObject {
     private weak var contentScrollView: UIScrollView?
 
     private var didCenter = false
+    private var isConnected = true
     private var isSyncingHorizontally = false
     private var isSyncingVertically = false
+
+    private let horizontalScrollViews = NSHashTable<UIScrollView>.weakObjects()
+    private let verticalScrollViews = NSHashTable<UIScrollView>.weakObjects()
 
     private let horizontalObservations = NSMapTable<UIScrollView, NSKeyValueObservation>(
         keyOptions: .weakMemory,
@@ -44,7 +48,9 @@ final class EPGScrollProxy: ObservableObject {
     }
 
     func registerHorizontal(_ scrollView: UIScrollView) {
-        guard horizontalObservations.object(forKey: scrollView) == nil else { return }
+        horizontalScrollViews.add(scrollView)
+
+        guard isConnected, horizontalObservations.object(forKey: scrollView) == nil else { return }
 
         let observation = scrollView.observe(\.contentOffset) { [weak self] scrollView, _ in
             self?.horizontalOffsetDidChange(scrollView)
@@ -54,7 +60,9 @@ final class EPGScrollProxy: ObservableObject {
     }
 
     func registerVertical(_ scrollView: UIScrollView) {
-        guard verticalObservations.object(forKey: scrollView) == nil else { return }
+        verticalScrollViews.add(scrollView)
+
+        guard isConnected, verticalObservations.object(forKey: scrollView) == nil else { return }
 
         let observation = scrollView.observe(\.contentOffset) { [weak self] scrollView, _ in
             self?.verticalOffsetDidChange(scrollView)
@@ -74,9 +82,15 @@ final class EPGScrollProxy: ObservableObject {
         )
     }
 
+    func connect() {
+        isConnected = true
+
+        horizontalScrollViews.allObjects.forEach(registerHorizontal)
+        verticalScrollViews.allObjects.forEach(registerVertical)
+    }
+
     func disconnect() {
-        contentScrollView = nil
-        didCenter = false
+        isConnected = false
 
         invalidateObservations(in: horizontalObservations)
         invalidateObservations(in: verticalObservations)

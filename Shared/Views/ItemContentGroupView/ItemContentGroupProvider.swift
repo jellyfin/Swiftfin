@@ -194,9 +194,18 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                     id: "seasons",
                     elements: [BaseItemDto(
                         id: item.seasonID,
+                        imageTags: item.parentPrimaryImageItemID == item.seasonID
+                            ? item.parentPrimaryImageTag.map { [ImageType.primary.rawValue: $0] }
+                            : nil,
                         name: item.seasonName,
+                        parentBackdropImageTags: item.parentBackdropImageTags,
+                        parentBackdropItemID: item.parentBackdropItemID,
+                        parentThumbImageTag: item.parentThumbImageTag,
+                        parentThumbItemID: item.parentThumbItemID,
                         seriesID: item.seriesID,
                         seriesName: item.seriesName,
+                        seriesPrimaryImageTag: item.seriesPrimaryImageTag,
+                        seriesThumbImageTag: item.seriesThumbImageTag,
                         type: .season
                     )]
                 ),
