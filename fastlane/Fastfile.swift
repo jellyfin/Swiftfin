@@ -261,9 +261,12 @@ class Fastfile: LaneFile {
 
         buildApp(
             scheme: .userDefined(scheme),
-            exportMethod: .userDefined("development"),
-            skipArchive: .userDefined(true),
+            outputDirectory: "fastlane/build",
+            skipPackageIpa: .userDefined(true),
+            skipArchive: .userDefined(false),
             skipCodesigning: .userDefined(true),
+            archivePath: .userDefined("fastlane/build/\(sanitizedName(for: scheme)).xcarchive"),
+            sdk: .userDefined(sdk(forScheme: scheme)),
             xcargs: .userDefined("-skipMacroValidation"),
             skipProfileDetection: true
         )

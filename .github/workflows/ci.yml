@@ -57,3 +57,21 @@ jobs:
           command: bundle exec fastlane buildLane \
             scheme:"\"${{ matrix.scheme }}\"" \
             xcodeVersion:${{ env.XCODE_VERSION }}
+
+      - name: Package unsigned IPA
+        env:
+          SCHEME: ${{ matrix.scheme }}
+        run: |
+          set -euo pipefail
+          mkdir -p fastlane/build/Payload
+          cp -R fastlane/build/*.xcarchive/Products/Applications/*.app fastlane/build/Payload/
+          cd fastlane/build
+          zip -r -y "$SCHEME-unsigned.ipa" Payload
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.scheme }}-unsigned
+          path: fastlane/build/*-unsigned.ipa
+          if-no-files-found: error
+          compression-level: 0

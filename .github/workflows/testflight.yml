@@ -250,3 +250,13 @@ jobs:
 
           echo "Building and uploading scheme '$SCHEME' for platform '$PLATFORM'"
           bundle exec fastlane testFlightLane "${args[@]}"
+
+      # Preserve the IPA even if uploading it to TestFlight fails.
+      - name: Upload TestFlight IPA
+        if: ${{ !cancelled() && hashFiles('fastlane/build/**/*.ipa') != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.scheme }}-testflight
+          path: fastlane/build/**/*.ipa
+          if-no-files-found: error
+          compression-level: 0
