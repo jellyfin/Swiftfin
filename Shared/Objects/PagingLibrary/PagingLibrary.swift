@@ -45,6 +45,8 @@ protocol PagingLibrary<Element> {
         viewModel: PagingLibraryViewModel<Self>,
         userData: UserItemDataDto
     )
+
+    func onTimersChanged(viewModel: PagingLibraryViewModel<Self>)
 }
 
 extension PagingLibrary where Element: LibraryElement {
@@ -95,6 +97,8 @@ extension PagingLibrary {
         viewModel: PagingLibraryViewModel<Self>,
         userData: UserItemDataDto
     ) {}
+
+    func onTimersChanged(viewModel: PagingLibraryViewModel<Self>) {}
 }
 
 protocol WithRandomElementLibrary<Element, Environment>: PagingLibrary {

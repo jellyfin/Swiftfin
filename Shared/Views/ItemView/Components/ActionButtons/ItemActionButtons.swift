@@ -87,6 +87,8 @@ struct ItemActionButtons: View {
             hasTrailers(for: provider, enabledTrailers: enabledTrailers)
         case .playback:
             provider.item.presentPlayButton && provider.mediaPlayerItemProvider?.mediaSource != nil
+        case .record:
+            provider.item.canBeRecorded
         case .refresh:
             provider.item.canEditMetadata
         case .subtitles:
@@ -142,6 +144,8 @@ struct ItemActionButtons: View {
                 Trailers()
             case .playback:
                 Playback()
+            case .record:
+                Record()
             case .refresh:
                 Refresh()
             case .subtitles:

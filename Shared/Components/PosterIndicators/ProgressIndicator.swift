@@ -17,6 +17,7 @@ struct ProgressIndicator: View {
     let title: String
     let progress: Double
     let posterDisplayType: PosterDisplayType
+    var isRecording: Bool = false
 
     @ViewBuilder
     private var compactView: some View {
@@ -31,9 +32,18 @@ struct ProgressIndicator: View {
     private var regularView: some View {
         VStack(alignment: .leading, spacing: 5) {
 
-            Text(title)
-                .font(.system(.footnote, design: .rounded))
-                .fontWeight(.medium)
+            HStack(spacing: 5) {
+                Text(title)
+                    .font(.system(.footnote, design: .rounded))
+                    .fontWeight(.medium)
+
+                if isRecording {
+                    Image(systemName: "circle.fill")
+                        .font(.system(.caption2, design: .rounded))
+                        .foregroundStyle(.red)
+                        .imageScale(.small)
+                }
+            }
 
             ProgressView(value: progress)
                 .progressViewStyle(.playback)
