@@ -19,6 +19,10 @@ public enum ArrayBuilder<Component> {
         [expression]
     }
 
+    public static func buildExpression(_ expression: Component?) -> [Component] {
+        expression.flatMap { [$0] } ?? []
+    }
+
     public static func buildOptional(_ component: [Component]?) -> [Component] {
         component ?? []
     }

@@ -19,7 +19,7 @@ extension ProgressViewStyle where Self == GaugeProgressViewStyle {
     }
 }
 
-extension ProgressViewStyle where Self == PlaybackProgressViewStyle {
+extension ProgressViewStyle where Self == CapsuleProgressViewStyle {
 
     static var playback: Self {
         .init(secondaryProgress: nil, cornerStyle: .round)

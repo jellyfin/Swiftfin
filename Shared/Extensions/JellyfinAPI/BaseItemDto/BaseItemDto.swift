@@ -23,6 +23,7 @@ extension BaseItemDto {
     init(person: BaseItemPerson) {
         self.init(
             id: person.id,
+            imageTags: person.primaryImageTag.map { [ImageType.primary.rawValue: $0] },
             name: person.name,
             type: .person
         )
@@ -485,9 +486,14 @@ extension BaseItemDto {
             .enumerated()
             .map { i, chapter in
 
+                guard let imageTag = chapter.imageTag, imageTag.isNotEmpty else {
+                    return .init(chapterInfo: chapter)
+                }
+
                 let parameters = Paths.GetItemImageParameters(
                     maxWidth: 500,
                     quality: 90,
+                    tag: imageTag,
                     imageIndex: i
                 )
 
@@ -506,33 +512,6 @@ extension BaseItemDto {
                     imageSource: .init(url: imageURL)
                 )
             }
-    }
-
-    // TODO: series-season-episode hierarchy for episodes
-    // TODO: user hierarchy for downloads
-    var downloadFolder: URL? {
-        guard let type, let id else { return nil }
-
-        let root = URL.downloadsDirectory
-//            .appendingPathComponent(userSession.user.id)
-
-        switch type {
-        case .movie, .episode:
-            return root
-                .appendingPathComponent(id)
-//        case .episode:
-//            guard let seasonID = seasonID,
-//                  let seriesID = seriesID
-//            else {
-//                return nil
-//            }
-//            return root
-//                .appendingPathComponent(seriesID)
-//                .appendingPathComponent(seasonID)
-//                .appendingPathComponent(id)
-        default:
-            return nil
-        }
     }
 
     /// Returns `originalTitle` if it is not the same as `displayTitle`

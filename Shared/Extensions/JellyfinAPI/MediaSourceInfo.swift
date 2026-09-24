@@ -54,35 +54,35 @@ extension MediaSourceInfo: @retroactive Transferable, TextTransferable {
     @ArrayBuilder<Property>
     var transferProperties: [Property] {
         if let value = path {
-            (label: "Path", value: value)
+            (label: L10n.path, value: value)
         }
 
         if let value = container {
-            (label: "Container", value: value)
+            (label: L10n.container, value: value)
         }
 
         if let value = size {
-            (label: "Size", value: Int64(value).formatted(.byteCount(style: .binary)))
+            (label: L10n.size, value: Int64(value).formatted(.byteCount(style: .binary)))
         }
 
         if let value = bitrate {
-            (label: "Bitrate", value: value.formatted(.bitRate))
+            (label: L10n.bitrate, value: value.formatted(.bitRate))
         }
 
         if let value = video3DFormat {
-            (label: "3D format", value: value.rawValue)
+            (label: L10n.format3D, value: value.rawValue)
         }
 
         if let value = isoType {
-            (label: "ISO type", value: value.rawValue)
+            (label: L10n.isoType, value: value.rawValue)
         }
 
         if let value = timestamp {
-            (label: "Timestamp", value: value.rawValue)
+            (label: L10n.timestamp, value: value.rawValue)
         }
 
         if let value = isRemote {
-            (label: "Remote", value: value ? L10n.yes : L10n.no)
+            (label: L10n.remote, value: value ? L10n.yes : L10n.no)
         }
     }
 

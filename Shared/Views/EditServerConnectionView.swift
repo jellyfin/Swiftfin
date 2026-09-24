@@ -136,7 +136,7 @@ struct EditServerConnectionView: View {
 
     private func save() async throws {
         guard !isNameEmpty else {
-            throw ErrorMessage(L10n.invalidX(L10n.name))
+            throw ErrorMessage(L10n.invalidName)
         }
 
         let connection = try draft.connection()
@@ -364,7 +364,7 @@ private struct ServerConnectionDraft: Equatable {
            useWifiName,
            normalizedSSIDs.isEmpty
         {
-            throw ErrorMessage(L10n.invalidX(L10n.wifiName))
+            throw ErrorMessage(L10n.invalidWifiName)
         }
 
         return ServerConnection(

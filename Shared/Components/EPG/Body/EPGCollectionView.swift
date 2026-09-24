@@ -307,6 +307,7 @@ extension EPGCollectionView {
                     accentColor: accentColor,
                     action: action
                 )
+                .ignoresSafeArea()
             }
             .margins(.all, 0)
 

@@ -49,9 +49,10 @@ extension EPGSupplement {
                     action: select
                 )
             }
-            .padding(.leading, safeAreaInsets.leading)
-            .padding(.trailing, safeAreaInsets.trailing)
-            .padding(.bottom, safeAreaInsets.bottom)
+            .if(UIDevice.isPhone) { view in
+                view
+                    .padding(.leading, safeAreaInsets.leading)
+            }
             .onFirstAppear {
                 viewModel.refresh(startDate: nil)
             }

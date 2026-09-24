@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Algorithms
 import FactoryKit
 import Foundation
 import Get
@@ -96,144 +97,93 @@ extension BaseItemDto: Poster {
         }
     }
 
-    @ImageSourceBuilder
-    func portraitImageSources(
+    func imageSources(
+        for displayType: PosterDisplayType,
         environment: Environment
     ) -> [ImageSource] {
-        switch type {
-        case .episode:
-            imageSource(
-                itemID: seriesID,
-                .primary,
-                tag: seriesPrimaryImageTag,
-                environment: environment
-            )
-        case .boxSet, .channel, .liveTvChannel, .liveTvProgram, .movie, .musicArtist, .person, .program, .series, .tvChannel:
-            imageSource(
-                .primary,
-                environment: environment
-            )
-        case .season:
-            imageSource(
-                .primary,
-                environment: environment
-            )
+        @ImageSourceBuilder
+        var sources: [ImageSource] {
+            let isLandscape = displayType == .landscape
+            let preferThumb = isLandscape && environment.viewContext.contains(.isThumb)
+            let inheritLandscape = !isLandscape || type != .episode || environment.useParent
+            let isProgram = type == .program || type == .liveTvProgram || type == .tvProgram
 
-            imageSource(
-                itemID: seriesID,
-                .primary,
-                tag: seriesPrimaryImageTag,
-                environment: environment
-            )
-        default:
-            []
-        }
-    }
-
-    @ImageSourceBuilder
-    func landscapeImageSources(
-        environment: Environment
-    ) -> [ImageSource] {
-        switch type {
-        case .episode:
-            if environment.useParent {
-                if environment.viewContext.contains(.isThumb) {
-                    imageSource(
-                        itemID: seriesID,
-                        .thumb,
-                        tag: seriesThumbImageTag,
-                        environment: environment
-                    )
+            if isLandscape, environment.viewContext.contains(.isBackdrop) {
+                if type == .episode {
+                    imageSource(.backdrop, itemID: parentBackdropItemID, tag: parentBackdropImageTags?.first, environment: environment)
                 }
 
-                imageSource(
-                    .primary,
-                    environment: environment
-                )
-            } else {
-                imageSource(
-                    .primary,
-                    environment: environment
-                )
-            }
-        case .collectionFolder, .folder, .musicVideo, .userView, .video:
-            if environment.viewContext.contains(.isThumb) {
-                imageSource(
-                    .thumb,
-                    environment: environment
-                )
+                imageSource(.backdrop, itemID: id, environment: environment)
             }
 
-            imageSource(
-                .primary,
-                environment: environment
-            )
-        case .season:
-            if environment.viewContext.contains(.isThumb) {
-                imageSource(
-                    itemID: seriesID,
-                    .thumb,
-                    tag: seriesThumbImageTag,
-                    environment: environment
-                )
+            // Program squares represent the channel in the guide.
+            if displayType == .square, isProgram {
+                imageSource(.primary, itemID: channelID, tag: channelPrimaryImageTag, environment: environment)
             }
 
-            imageSource(
-                itemID: seriesID,
-                .backdrop,
-                tag: parentBackdropImageTags?.first,
-                environment: environment
-            )
-        default:
-            if environment.viewContext.contains(.isThumb) {
-                imageSource(
-                    .thumb,
-                    environment: environment
-                )
+            if preferThumb {
+                imageSource(.thumb, itemID: id, environment: environment)
+
+                if inheritLandscape {
+                    imageSource(.thumb, itemID: seriesID, tag: seriesThumbImageTag, environment: environment)
+                    imageSource(.thumb, itemID: parentThumbItemID, tag: parentThumbImageTag, environment: environment)
+                }
             }
 
-            imageSource(
-                .backdrop,
-                tag: backdropImageTags?.first,
-                environment: environment
-            )
+            if isLandscape {
+                let preferPrimary: Bool = if let primaryImageAspectRatio, primaryImageAspectRatio > 0 {
+                    primaryImageAspectRatio >= 1.33
+                } else {
+                    switch type {
+                    case .collectionFolder, .episode, .folder, .musicVideo, .userView, .video:
+                        true
+                    default:
+                        false
+                    }
+                }
+
+                if preferThumb || !preferPrimary {
+                    imageSource(.backdrop, itemID: id, environment: environment)
+                }
+
+                if type == .season || (type == .episode && environment.useParent) {
+                    imageSource(.backdrop, itemID: parentBackdropItemID, tag: parentBackdropImageTags?.first, environment: environment)
+                }
+            } else if type == .episode {
+                // A portrait episode card uses its season/series poster when available.
+                imageSource(.primary, itemID: parentPrimaryImageItemID, tag: parentPrimaryImageTag, environment: environment)
+                imageSource(.primary, itemID: seriesID, tag: seriesPrimaryImageTag, environment: environment)
+            }
+
+            imageSource(.primary, itemID: id, environment: environment)
+
+            // Never substitute a parent portrait for an episode's landscape still.
+            if type != .episode || !isLandscape {
+                imageSource(.primary, itemID: seriesID, tag: seriesPrimaryImageTag, environment: environment)
+                imageSource(.primary, itemID: parentPrimaryImageItemID, tag: parentPrimaryImageTag, environment: environment)
+            }
+
+            imageSource(.primary, itemID: albumID, tag: albumPrimaryImageTag, environment: environment)
+
+            if type == .season {
+                imageSource(.thumb, itemID: id, environment: environment)
+            }
+
+            imageSource(.backdrop, itemID: id, environment: environment)
+            imageSource(.thumb, itemID: id, environment: environment)
+
+            if inheritLandscape {
+                imageSource(.thumb, itemID: seriesID, tag: seriesThumbImageTag, environment: environment)
+                imageSource(.thumb, itemID: parentThumbItemID, tag: parentThumbImageTag, environment: environment)
+                imageSource(.backdrop, itemID: parentBackdropItemID, tag: parentBackdropImageTags?.first, environment: environment)
+            }
+
+            if isProgram {
+                imageSource(.primary, itemID: channelID, tag: channelPrimaryImageTag, environment: environment)
+            }
         }
-    }
 
-    @ImageSourceBuilder
-    func squareImageSources(
-        environment: Environment
-    ) -> [ImageSource] {
-        switch type {
-        case .audio:
-            imageSource(
-                .primary,
-                environment: environment
-            )
-
-            imageSource(
-                itemID: albumID,
-                .primary,
-                tag: albumPrimaryImageTag,
-                environment: environment
-            )
-        case .channel, .musicAlbum, .tvChannel:
-            imageSource(
-                .primary,
-                environment: environment
-            )
-        case .program:
-            if let channelID {
-                imageSource(
-                    itemID: channelID,
-                    .primary,
-                    tag: channelPrimaryImageTag,
-                    environment: environment
-                )
-            }
-        default:
-            []
-        }
+        return Array(sources.uniqued())
     }
 
     @ViewBuilder
