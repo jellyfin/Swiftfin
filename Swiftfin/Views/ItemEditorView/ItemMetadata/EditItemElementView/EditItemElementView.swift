@@ -53,7 +53,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
             }
         }
         .controlSize(.small)
-        .disabled(!isEditing)
+        .enabled(isEditing)
     }
 
     @ViewBuilder

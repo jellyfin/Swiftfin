@@ -27,10 +27,18 @@ struct RemoteImageSearchView: View {
 
     private var layout: CollectionVGridLayout {
         guard UIDevice.isPhone else {
-            return .minWidth(150)
+            return .minWidth(
+                150,
+                itemSpacing: EdgeInsets.itemSpacing,
+                lineSpacing: EdgeInsets.itemSpacing
+            )
         }
 
-        return posterType == .landscape ? .columns(2) : .columns(3)
+        return .columns(
+            posterType == .landscape ? 2 : 3,
+            itemSpacing: EdgeInsets.itemSpacing,
+            lineSpacing: EdgeInsets.itemSpacing
+        )
     }
 
     private var posterType: PosterDisplayType {

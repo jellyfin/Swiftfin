@@ -28,24 +28,8 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
     func resolveEnvironment(_ environment: EnvironmentValues) -> Environment
 
     @ImageSourceBuilder
-    func portraitImageSources(
-        environment: Environment
-    ) -> [ImageSource]
-
-    @ImageSourceBuilder
-    func landscapeImageSources(
-        environment: Environment
-    ) -> [ImageSource]
-
-    @ImageSourceBuilder
-    func squareImageSources(
-        environment: Environment
-    ) -> [ImageSource]
-
-    @ImageSourceBuilder
     func imageSources(
         for displayType: PosterDisplayType,
-        size: PosterDisplayType.Size,
         environment: Environment
     ) -> [ImageSource]
 
@@ -117,28 +101,10 @@ extension Poster {
         .default
     }
 
-    func portraitImageSources(
-        environment: Environment
-    ) -> [ImageSource] {
-        []
-    }
-
-    func landscapeImageSources(
-        environment: Environment
-    ) -> [ImageSource] {
-        []
-    }
-
-    func squareImageSources(
-        environment: Environment
-    ) -> [ImageSource] {
-        []
-    }
-
     func imageSources(
         for displayType: PosterDisplayType,
         size: PosterDisplayType.Size,
-        environment: Environment
+        environment: Environment = .default
     ) -> [ImageSource] {
         var environment = environment
 
@@ -148,35 +114,7 @@ extension Poster {
             environment = imageSourceEnvironment as! Environment
         }
 
-        return switch displayType {
-        case .landscape:
-            landscapeImageSources(
-                environment: environment
-            )
-        case .portrait:
-            portraitImageSources(
-                environment: environment
-            )
-        case .square:
-            squareImageSources(
-                environment: environment
-            )
-        }
-    }
-
-    func imageSources(
-        for displayType: PosterDisplayType,
-        size: PosterDisplayType.Size
-    ) -> [ImageSource] {
-        imageSources(
-            for: displayType,
-            size: size,
-            environment: .default
-        )
-    }
-
-    func _withLandscapeImages(_ imageSources: @escaping (AnyPoster.Environment) -> [ImageSource]) -> AnyPoster {
-        .init(self, _withLandscapeImages: imageSources)
+        return imageSources(for: displayType, environment: environment)
     }
 }
 

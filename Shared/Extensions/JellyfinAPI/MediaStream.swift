@@ -44,157 +44,157 @@ extension MediaStream {
     @ArrayBuilder<Property>
     var metadataProperties: [Property] {
         if let value = type {
-            (label: "Type", value: value.rawValue)
+            (label: L10n.type, value: value.rawValue)
         }
 
         if let value = codec {
-            (label: "Codec", value: value)
+            (label: L10n.codec, value: value)
         }
 
         if let value = codecTag {
-            (label: "Codec Tag", value: value)
+            (label: L10n.codecTag, value: value)
         }
 
         if let value = language {
-            (label: "Language", value: value)
+            (label: L10n.language, value: value)
         }
 
         if let value = timeBase {
-            (label: "Time Base", value: value)
+            (label: L10n.timeBase, value: value)
         }
 
         if let value = codecTimeBase {
-            (label: "Codec Time Base", value: value)
+            (label: L10n.codecTimeBase, value: value)
         }
 
         if let value = videoRange {
-            (label: "Video Range", value: value.rawValue)
+            (label: L10n.videoRange, value: value.rawValue)
         }
 
         if let value = isInterlaced {
-            (label: "Interlaced", value: value.description)
+            (label: L10n.interlaced, value: value ? L10n.yes : L10n.no)
         }
 
         if let value = isAVC {
-            (label: "AVC", value: value.description)
+            (label: L10n.avc, value: value ? L10n.yes : L10n.no)
         }
 
         if let value = channelLayout {
-            (label: "Channel Layout", value: value)
+            (label: L10n.channelLayout, value: value)
         }
 
         if let value = bitRate {
-            (label: "Bitrate", value: value.description)
+            (label: L10n.bitrate, value: value.description)
         }
 
         if let value = bitDepth {
-            (label: "Bit Depth", value: value.description)
+            (label: L10n.bitDepth, value: value.description)
         }
 
         if let value = refFrames {
-            (label: "Reference Frames", value: value.description)
+            (label: L10n.referenceFrames, value: value.description)
         }
 
         if let value = packetLength {
-            (label: "Packet Length", value: value.description)
+            (label: L10n.packetLength, value: value.description)
         }
 
         if let value = channels {
-            (label: "Channels", value: value.description)
+            (label: L10n.channels, value: value.description)
         }
 
         if let value = sampleRate {
-            (label: "Sample Rate", value: value.description)
+            (label: L10n.sampleRate, value: value.description)
         }
 
         if let value = isDefault {
-            (label: "Default", value: value.description)
+            (label: L10n.default, value: value ? L10n.yes : L10n.no)
         }
 
         if let value = isForced {
-            (label: "Forced", value: value.description)
+            (label: L10n.forced, value: value ? L10n.yes : L10n.no)
         }
 
         if let value = averageFrameRate {
-            (label: "Average Frame Rate", value: value.description)
+            (label: L10n.averageFrameRate, value: value.description)
         }
 
         if let value = realFrameRate {
-            (label: "Real Frame Rate", value: value.description)
+            (label: L10n.realFrameRate, value: value.description)
         }
 
         if let value = profile {
-            (label: "Profile", value: value)
+            (label: L10n.profile, value: value)
         }
 
         if let value = aspectRatio {
-            (label: "Aspect Ratio", value: value)
+            (label: L10n.aspectRatio, value: value)
         }
 
         if let value = index {
-            (label: "Index", value: value.description)
+            (label: L10n.index, value: value.description)
         }
 
         if let value = score {
-            (label: "Score", value: value.description)
+            (label: L10n.score, value: value.description)
         }
 
         if let value = pixelFormat {
-            (label: "Pixel Format", value: value)
+            (label: L10n.pixelFormat, value: value)
         }
 
         if let value = level {
-            (label: "Level", value: value.description)
+            (label: L10n.level, value: value.description)
         }
 
         if let value = isAnamorphic {
-            (label: "Anamorphic", value: value.description)
+            (label: L10n.anamorphic, value: value ? L10n.yes : L10n.no)
         }
     }
 
     @ArrayBuilder<Property>
     var colorProperties: [Property] {
         if let value = colorRange {
-            (label: "Range", value: value)
+            (label: L10n.range, value: value)
         }
 
         if let value = colorSpace {
-            (label: "Space", value: value)
+            (label: L10n.colorSpace, value: value)
         }
 
         if let value = colorTransfer {
-            (label: "Transfer", value: value)
+            (label: L10n.transfer, value: value)
         }
 
         if let value = colorPrimaries {
-            (label: "Primaries", value: value)
+            (label: L10n.primaries, value: value)
         }
     }
 
     @ArrayBuilder<Property>
     var deliveryProperties: [Property] {
         if let value = isExternal {
-            (label: "External", value: value.description)
+            (label: L10n.external, value: value ? L10n.yes : L10n.no)
         }
 
         if let value = deliveryMethod {
-            (label: "Delivery Method", value: value.rawValue)
+            (label: L10n.deliveryMethod, value: value.rawValue)
         }
 
         if let value = deliveryURL {
-            (label: "URL", value: value)
+            (label: L10n.url, value: value)
         }
 
         if let value = deliveryURL {
-            (label: "External URL", value: value.description)
+            (label: L10n.externalURL, value: value.description)
         }
 
         if let value = isTextSubtitleStream {
-            (label: "Text Subtitle", value: value.description)
+            (label: L10n.textSubtitle, value: value ? L10n.yes : L10n.no)
         }
 
         if let value = path {
-            (label: "Path", value: value)
+            (label: L10n.path, value: value)
         }
     }
 }
@@ -204,115 +204,115 @@ extension MediaStream: @retroactive Transferable, TextTransferable {
     @ArrayBuilder<Property>
     private var sharedTransferProperties: [Property] {
         if let value = displayTitle {
-            (label: "Title", value: value)
+            (label: L10n.title, value: value)
         }
 
         if let value = language {
-            (label: "Language", value: value)
+            (label: L10n.language, value: value)
         }
 
         if let value = codec {
-            (label: "Codec", value: value.uppercased())
+            (label: L10n.codec, value: value.uppercased())
         }
 
         if let value = isAVC {
-            (label: "AVC", value: value ? L10n.yes : L10n.no)
+            (label: L10n.avc, value: value ? L10n.yes : L10n.no)
         }
 
         if let value = profile {
-            (label: "Profile", value: value)
+            (label: L10n.profile, value: value)
         }
     }
 
     @ArrayBuilder<Property>
     private var resolutionTransferProperties: [Property] {
         if let width, let height, width > 0, height > 0 {
-            (label: "Resolution", value: width.description.multiply(by: height.description))
+            (label: L10n.resolution, value: width.description.multiply(by: height.description))
         }
     }
 
     @ArrayBuilder<Property>
     private var flagTransferProperties: [Property] {
         if let value = isDefault {
-            (label: "Default", value: value ? L10n.yes : L10n.no)
+            (label: L10n.default, value: value ? L10n.yes : L10n.no)
         }
 
         if let value = isForced {
-            (label: "Forced", value: value ? L10n.yes : L10n.no)
+            (label: L10n.forced, value: value ? L10n.yes : L10n.no)
         }
 
         if let value = isExternal {
-            (label: "External", value: value ? L10n.yes : L10n.no)
+            (label: L10n.external, value: value ? L10n.yes : L10n.no)
         }
     }
 
     @ArrayBuilder<Property>
     private var videoTransferProperties: [Property] {
         if let value = level {
-            (label: "Level", value: value.formatted())
+            (label: L10n.level, value: value.formatted())
         }
 
         if let value = aspectRatio {
-            (label: "Aspect ratio", value: value)
+            (label: L10n.aspectRatio, value: value)
         }
 
         if let value = isAnamorphic {
-            (label: "Anamorphic", value: value ? L10n.yes : L10n.no)
+            (label: L10n.anamorphic, value: value ? L10n.yes : L10n.no)
         }
 
         if let value = isInterlaced {
-            (label: "Interlaced", value: value ? L10n.yes : L10n.no)
+            (label: L10n.interlaced, value: value ? L10n.yes : L10n.no)
         }
 
         if let value = realFrameRate ?? averageFrameRate {
-            (label: "Framerate", value: value.description)
+            (label: L10n.framerate, value: value.description)
         }
 
         if let value = bitRate {
-            (label: "Bitrate", value: value.formatted(.bitRate))
+            (label: L10n.bitrate, value: value.formatted(.bitRate))
         }
 
         if let value = bitDepth {
-            (label: "Bit depth", value: "\(value) bit")
+            (label: L10n.bitDepth, value: "\(value) bit")
         }
 
         if let value = videoRange {
-            (label: "Video range", value: value.rawValue)
+            (label: L10n.videoRange, value: value.rawValue)
         }
 
         if let value = videoRangeType {
-            (label: "Video range type", value: value.rawValue)
+            (label: L10n.videoRangeType, value: value.rawValue)
         }
 
         if let value = pixelFormat {
-            (label: "Pixel format", value: value)
+            (label: L10n.pixelFormat, value: value)
         }
 
         if let value = refFrames {
-            (label: "Ref frames", value: value.description)
+            (label: L10n.referenceFrames, value: value.description)
         }
 
         if let value = nalLengthSize {
-            (label: "NAL", value: value)
+            (label: L10n.nal, value: value)
         }
     }
 
     @ArrayBuilder<Property>
     private var audioTransferProperties: [Property] {
         if let value = channelLayout {
-            (label: "Layout", value: value)
+            (label: L10n.layout, value: value)
         }
 
         if let value = channels {
-            (label: "Channels", value: "\(value) ch")
+            (label: L10n.channels, value: "\(value) ch")
         }
 
         if let value = bitRate {
-            (label: "Bitrate", value: value.formatted(.bitRate))
+            (label: L10n.bitrate, value: value.formatted(.bitRate))
         }
 
         if let value = sampleRate {
-            (label: "Sample rate", value: "\(value) Hz")
+            (label: L10n.sampleRate, value: "\(value) Hz")
         }
     }
 

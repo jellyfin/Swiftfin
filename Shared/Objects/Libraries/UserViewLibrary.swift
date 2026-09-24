@@ -314,7 +314,7 @@ private extension UserViewLibraryElement {
         case .favorites:
             return []
         case let .userView(item):
-            return [item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 500))]
+            return [item.imageSource(.primary, itemID: item.id, environment: ImageSourceOptions(maxWidth: 500))].compactMap(\.self)
         }
     }
 
