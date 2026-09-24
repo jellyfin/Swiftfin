@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -39,17 +39,21 @@ jobs:
       - name: Install Homebrew dependencies
         run: brew bundle --file Brewfile
 
-      # FIXME: caches would keep failed compiles?
-
-      # - name: Cache Swift packages
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: PackageCache
-      #     key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
-      #     restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
+      - name: Restore Swift packages
+        id: swift-packages
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            build/SourcePackages/checkouts
+            build/SourcePackages/repositories
+            build/SourcePackages/artifacts
+            build/SourcePackages/workspace-state.json
+          key: spm-v1-${{ runner.os }}-${{ runner.arch }}-${{ env.XCODE_VERSION }}-${{ matrix.scheme }}-${{ hashFiles('Swiftfin.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+          restore-keys: |
+            spm-v1-${{ runner.os }}-${{ runner.arch }}-${{ env.XCODE_VERSION }}-${{ matrix.scheme }}-
 
       - name: Build
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v4
         with:
           max_attempts: 3
           retry_on: error
@@ -57,3 +61,34 @@ jobs:
           command: bundle exec fastlane buildLane \
             scheme:"\"${{ matrix.scheme }}\"" \
             xcodeVersion:${{ env.XCODE_VERSION }}
+
+      - name: Package unsigned IPA
+        env:
+          SCHEME: ${{ matrix.scheme }}
+        run: |
+          set -euo pipefail
+          mkdir -p fastlane/build/Payload
+          cp -R fastlane/build/*.xcarchive/Products/Applications/*.app fastlane/build/Payload/
+          cd fastlane/build
+          zip -r -y "$SCHEME-unsigned.ipa" Payload
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.scheme }}-unsigned
+          path: fastlane/build/*-unsigned.ipa
+          if-no-files-found: error
+          compression-level: 0
+
+      # Populate the shared cache from main,
+      # PR caches are isolated to their merge ref
+      - name: Save Swift packages
+        if: ${{ github.event_name == 'push' && steps.swift-packages.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            build/SourcePackages/checkouts
+            build/SourcePackages/repositories
+            build/SourcePackages/artifacts
+            build/SourcePackages/workspace-state.json
+          key: ${{ steps.swift-packages.outputs.cache-primary-key }}
