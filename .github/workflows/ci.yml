@@ -39,14 +39,18 @@ jobs:
       - name: Install Homebrew dependencies
         run: brew bundle --file Brewfile
 
-      # FIXME: caches would keep failed compiles?
-
-      # - name: Cache Swift packages
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: PackageCache
-      #     key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
-      #     restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
+      - name: Restore Swift packages
+        id: swift-packages
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            build/SourcePackages/checkouts
+            build/SourcePackages/repositories
+            build/SourcePackages/artifacts
+            build/SourcePackages/workspace-state.json
+          key: spm-v1-${{ runner.os }}-${{ runner.arch }}-${{ env.XCODE_VERSION }}-${{ matrix.scheme }}-${{ hashFiles('Swiftfin.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+          restore-keys: |
+            spm-v1-${{ runner.os }}-${{ runner.arch }}-${{ env.XCODE_VERSION }}-${{ matrix.scheme }}-
 
       - name: Build
         uses: nick-fields/retry@v4
@@ -75,3 +79,16 @@ jobs:
           path: fastlane/build/*-unsigned.ipa
           if-no-files-found: error
           compression-level: 0
+
+      # Populate the shared cache from main,
+      # PR caches are isolated to their merge ref
+      - name: Save Swift packages
+        if: ${{ github.event_name == 'push' && steps.swift-packages.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            build/SourcePackages/checkouts
+            build/SourcePackages/repositories
+            build/SourcePackages/artifacts
+            build/SourcePackages/workspace-state.json
+          key: ${{ steps.swift-packages.outputs.cache-primary-key }}
