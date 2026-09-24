@@ -17,6 +17,8 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
 
         @State
         private var selectedAudioStreamIndex: Int?
@@ -31,6 +33,16 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         @ViewBuilder
         private func content(playbackItem: MediaPlayerItem) -> some View {
+            if manager.proxy is MediaPlayerOffsetConfigurable {
+                Button {
+                    viewState.presentGuestSupplement(PlaybackAdjustmentSupplement.audioOffset)
+                } label: {
+                    Text(L10n.audioOffset)
+                    Text(manager.audioOffset, format: .playbackOffset)
+                }
+                Divider()
+            }
+
             Picker(selection: $selectedAudioStreamIndex) {
                 ForEach(playbackItem.audioStreams, id: \.index) { stream in
                     Text(stream.displayTitle ?? L10n.unknown)
@@ -56,6 +68,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                         }
                     }
                 }
+                .menuOrder(.fixed)
                 .assign(playbackItem.$selectedAudioStreamIndex, to: $selectedAudioStreamIndex)
                 .onChange(of: selectedAudioStreamIndex) {
                     playbackItem.selectedAudioStreamIndex = selectedAudioStreamIndex

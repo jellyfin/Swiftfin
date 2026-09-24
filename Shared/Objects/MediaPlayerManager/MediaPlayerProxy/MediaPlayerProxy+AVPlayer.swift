@@ -121,7 +121,7 @@ class AVMediaPlayerProxy: VideoMediaPlayerProxy {
     }
 
     // TODO: complete
-    func setRate(_ rate: Float) {}
+    func setRate(_ rate: Double) {}
     func setAudioStream(_ stream: MediaStream) {}
     func setSubtitleStream(_ stream: MediaStream) {}
 

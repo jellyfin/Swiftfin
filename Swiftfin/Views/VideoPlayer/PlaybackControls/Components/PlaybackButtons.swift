@@ -10,7 +10,6 @@ import Defaults
 import SwiftUI
 
 // TODO: adjust button sizes/padding on compact/regular?
-// TODO: jump rotation symbol effects
 
 extension VideoPlayer.PlaybackControls {
 
@@ -47,44 +46,22 @@ extension VideoPlayer.PlaybackControls {
                     systemImage: manager.playbackRequestStatus == .playing ? "pause.fill" : "play.fill"
                 )
                 .font(.system(size: 36, weight: .bold, design: .default))
-                .contentShape(Rectangle())
                 .labelStyle(.iconOnly)
-                .padding(20)
+                .frame(width: 44, height: 44)
+                .padding(16)
             }
         }
 
-        @ViewBuilder
         private var jumpForwardButton: some View {
-            Button {
+            JumpButton(interval: jumpForwardInterval, isForward: true) {
                 manager.proxy?.jumpForward(jumpForwardInterval.rawValue)
-            } label: {
-                // swiftlint:disable:next hard_coded_display_string
-                Label(
-                    "\(jumpForwardInterval.rawValue, format: Duration.UnitsFormatStyle(allowedUnits: [.seconds], width: .narrow))",
-                    systemImage: jumpForwardInterval.systemImage
-                )
-                .labelStyle(.iconOnly)
-                .font(.system(size: 32, weight: .regular, design: .default))
-                .padding(10)
             }
-            .foregroundStyle(.primary)
         }
 
-        @ViewBuilder
         private var jumpBackwardButton: some View {
-            Button {
+            JumpButton(interval: jumpBackwardInterval, isForward: false) {
                 manager.proxy?.jumpBackward(jumpBackwardInterval.rawValue)
-            } label: {
-                // swiftlint:disable:next hard_coded_display_string
-                Label(
-                    "\(jumpBackwardInterval.rawValue, format: Duration.UnitsFormatStyle(allowedUnits: [.seconds], width: .narrow))",
-                    systemImage: jumpBackwardInterval.secondarySystemImage
-                )
-                .labelStyle(.iconOnly)
-                .font(.system(size: 32, weight: .regular, design: .default))
-                .padding(10)
             }
-            .foregroundStyle(.primary)
         }
 
         var body: some View {
@@ -100,9 +77,49 @@ extension VideoPlayer.PlaybackControls {
                     jumpForwardButton
                 }
             }
-            .buttonStyle(OverlayButtonStyle())
+            .buttonStyle(OverlayButtonStyle(symbolEffectSpeed: 2))
             .padding(.horizontal, 50)
             .offset(y: centerOffsetBox.value / 2)
+        }
+    }
+
+    private struct JumpButton: View {
+
+        @State
+        private var rotationTrigger = false
+        @State
+        private var lastRotationStart: ContinuousClock.Instant?
+
+        let interval: MediaJumpInterval
+        let isForward: Bool
+        let action: () -> Void
+
+        var body: some View {
+            Button {
+                action()
+
+                let now = ContinuousClock.now
+                // A burst gets one finite effect. Further taps still seek immediately,
+                // but cannot queue rotations that outlive the user's interaction.
+                guard lastRotationStart.map({ $0.duration(to: now) >= .milliseconds(500) }) ?? true
+                else { return }
+
+                lastRotationStart = now
+                rotationTrigger.toggle()
+            } label: {
+                Image(systemName: isForward ? interval.systemImage : interval.secondarySystemImage)
+                    .symbolEffect(
+                        isForward ? .rotate.clockwise.byLayer : .rotate.counterClockwise.byLayer,
+                        options: .nonRepeating.speed(4),
+                        value: rotationTrigger
+                    )
+                    .font(.system(size: 28, weight: .regular))
+                    .frame(width: 32, height: 32)
+                    .padding(8)
+            }
+            .foregroundStyle(.primary)
+            .accessibilityLabel(isForward ? L10n.jumpForward : L10n.jumpBackward)
+            .accessibilityValue(interval.rawValue.formatted(Duration.UnitsFormatStyle(allowedUnits: [.seconds], width: .wide)))
         }
     }
 }

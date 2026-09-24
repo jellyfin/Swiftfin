@@ -79,9 +79,9 @@ class VLCMediaPlayerProxy: VideoMediaPlayerLayoutConfigurable,
         player.jump(by: .zero - seconds)
     }
 
-    func setRate(_ rate: Float) {
+    func setRate(_ rate: Double) {
         do {
-            try player.setPlaybackRate(PlaybackRate(rate))
+            try player.setPlaybackRate(PlaybackRate(Float(rate)))
         } catch {
             log(error)
         }
@@ -285,6 +285,7 @@ extension VLCMediaPlayerProxy {
                             proxy.setRate(manager.rate)
                             playbackItem.switchTrack(type: .audio, index: playbackItem.selectedAudioStreamIndex)
                             playbackItem.switchTrack(type: .subtitle, index: playbackItem.selectedSubtitleStreamIndex)
+                            manager.applyPlaybackOffsets()
                         case .paused:
                             proxy.isBuffering.value = false
                             manager.setPlaybackRequestStatus(status: .paused)

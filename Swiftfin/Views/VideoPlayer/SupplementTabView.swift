@@ -10,167 +10,182 @@ import SwiftUI
 import UIKit
 
 /// `TabView` has an "overscroll" bug on some index selections, workaround with manual `UIPageViewController`
-struct SupplementTabView<
-    Element,
-    ID: Hashable,
-    Data: Collection,
-    Content: View
->: PlatformViewControllerRepresentable where Data.Element == Element, Data.Index == Int {
+struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
 
-    let data: Data
-    let id: KeyPath<Element, ID>
-    let selection: Binding<ID?>
+    let data: [any MediaPlayerSupplement]
+    let selection: Binding<String?>
 
     @ViewBuilder
-    let content: (Element) -> Content
+    let content: (any MediaPlayerSupplement) -> Content
 
-    func makeUIViewController(context: Context) -> UIPageViewController {
-        let controller = UIPageViewController(
-            transitionStyle: .scroll,
-            navigationOrientation: .horizontal
-        )
-
-        controller.dataSource = context.coordinator
-        controller.delegate = context.coordinator
+    func makeUIViewController(context: Context) -> UIViewController {
+        let controller = UIViewController()
         controller.view.backgroundColor = .clear
-
-        context.coordinator.controller = controller
-
+        context.coordinator.container = controller
         return controller
     }
 
-    func updateUIViewController(_ controller: UIPageViewController, context: Context) {
-        context.coordinator.sync(
-            data: data,
-            newID: selection.wrappedValue,
-            content: content
-        )
+    func updateUIViewController(_ controller: UIViewController, context: Context) {
+        context.coordinator.sync(data: data, selection: selection, content: content)
+    }
+
+    static func dismantleUIViewController(_: UIViewController, coordinator: Coordinator) {
+        coordinator.removeAll()
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(
-            data: data,
-            id: id,
-            selection: selection
-        )
+        Coordinator(selection: selection)
     }
 
     final class Coordinator: NSObject, UIPageViewControllerDelegate, UIPageViewControllerDataSource {
 
-        weak var controller: UIPageViewController?
+        weak var container: UIViewController?
 
-        private var requestedID: ID?
+        private var hosts: [String: HostingController<Content>] = [:]
+        private var ids: [String] = []
+        private var pageController: UIPageViewController?
+        private var requestedID: String?
         private var selectionRevision = 0
         private var isTransitioning = false
-        private var swipeSelection: (id: ID?, revision: Int)?
-        private var data: Data
-        private let id: KeyPath<Element, ID>
-        private let selection: Binding<ID?>
-        private var viewControllers: [ID: HostingController<Content>] = [:]
+        private var swipeSelection: (id: String?, revision: Int)?
+        private var selection: Binding<String?>
 
-        init(
-            data: Data,
-            id: KeyPath<Element, ID>,
-            selection: Binding<ID?>
-        ) {
-            self.data = data
-            self.id = id
+        init(selection: Binding<String?>) {
             self.selection = selection
         }
 
         func sync(
-            data: Data,
-            newID: ID?,
-            @ViewBuilder content: (Element) -> Content
+            data: [any MediaPlayerSupplement],
+            selection: Binding<String?>,
+            @ViewBuilder content: (any MediaPlayerSupplement) -> Content
         ) {
-            guard controller != nil else { return }
+            guard container != nil else { return }
 
+            self.selection = selection
             let wasPresenting = requestedID != nil
-            if requestedID != newID {
+
+            let newIDs = data.map(\.id)
+            let trackChanged = ids != newIDs
+            if trackChanged {
                 selectionRevision += 1
+                // Clear UIKit's adjacent-page cache before releasing hosts that left the track.
+                removePageController()
             }
-            requestedID = newID
+            ids = newIDs
+            hosts = hosts.filter { newIDs.contains($0.key) }
+            for supplement in data {
+                if let host = hosts[supplement.id] {
+                    host.content = content(supplement)
+                } else {
+                    let host = HostingController(content: content(supplement))
+                    host.disableSafeArea = true
+                    host.view.backgroundColor = .clear
+                    hosts[supplement.id] = host
+                }
+            }
 
-            self.data = data
+            selectCurrent(animated: wasPresenting && !trackChanged)
+        }
 
-            updateHosts(with: data, content: content)
+        func removeAll() {
+            selectionRevision += 1
+            removePageController()
+            hosts.removeAll()
+            ids.removeAll()
+            requestedID = nil
+            selection = .constant(nil)
+        }
 
-            selectCurrent(animated: wasPresenting)
+        private func makePageController() -> UIPageViewController? {
+            guard let container else { return nil }
+            if let pageController {
+                return pageController
+            }
+
+            let page = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            page.dataSource = self
+            page.delegate = self
+            page.view.backgroundColor = .clear
+            page.view.translatesAutoresizingMaskIntoConstraints = false
+            container.addChild(page)
+            container.view.addSubview(page.view)
+            NSLayoutConstraint.activate([
+                page.view.leadingAnchor.constraint(equalTo: container.view.leadingAnchor),
+                page.view.trailingAnchor.constraint(equalTo: container.view.trailingAnchor),
+                page.view.topAnchor.constraint(equalTo: container.view.topAnchor),
+                page.view.bottomAnchor.constraint(equalTo: container.view.bottomAnchor),
+            ])
+            page.didMove(toParent: container)
+            pageController = page
+            return page
+        }
+
+        private func removePageController() {
+            guard let page = pageController else { return }
+            pageController = nil
+            page.delegate = nil
+            page.dataSource = nil
+            remove(page)
+            for host in hosts.values {
+                remove(host)
+            }
+            isTransitioning = false
+            swipeSelection = nil
+        }
+
+        private func remove(_ controller: UIViewController) {
+            guard controller.parent != nil else { return }
+            controller.view.layer.removeAllAnimations()
+            controller.willMove(toParent: nil)
+            controller.view.removeFromSuperview()
+            controller.removeFromParent()
         }
 
         private func selectCurrent(animated: Bool) {
-            // UIKit must settle both programmatic and interactive transitions before
-            // accepting another page. Read the binding again when a transition ends.
+            let newID = selection.wrappedValue
+            if requestedID != newID {
+                selectionRevision += 1
+                requestedID = newID
+            }
+
+            guard let targetID = requestedID, let target = hosts[targetID] else {
+                removePageController()
+                return
+            }
+
+            // Serialize tab selections with both programmatic and interactive paging.
             guard !isTransitioning,
-                  let controller,
-                  let selection = selection.wrappedValue,
-                  let targetID = targetID(for: selection),
-                  let target = viewControllers[targetID]
+                  let page = makePageController()
             else { return }
 
-            guard controller.viewControllers?.first !== target else { return }
+            guard page.viewControllers?.first !== target else { return }
 
+            let direction = direction(from: page.viewControllers?.first, to: targetID)
             isTransitioning = true
-            controller.setViewControllers(
+            page.setViewControllers(
                 [target],
-                direction: direction(from: controller.viewControllers?.first, to: targetID),
-                animated: animated
-            ) { [weak self] _ in
-                guard let self else { return }
-                isTransitioning = false
-                selectCurrent(animated: true)
-            }
-        }
-
-        private func updateHosts(
-            with data: Data,
-            @ViewBuilder content: (Element) -> Content
-        ) {
-            let currentIDs = Set(data.map { $0[keyPath: id] })
-            viewControllers = viewControllers.filter { currentIDs.contains($0.key) }
-
-            for element in data {
-                if let host = viewControllers[element[keyPath: id]] {
-                    host.content = content(element)
-                } else {
-                    let host = HostingController(content: content(element))
-                    host.disableSafeArea = true
-                    host.view.backgroundColor = .clear
-                    viewControllers[element[keyPath: id]] = host
+                direction: direction,
+                animated: animated && page.viewControllers?.isEmpty == false
+            ) { [weak self, weak page] _ in
+                // UIKit finishes its page hierarchy after invoking this completion.
+                // Starting the next transition here can leave the previous panel visible.
+                DispatchQueue.main.async { [weak self, weak page] in
+                    guard let self, let page, self.pageController === page else { return }
+                    isTransitioning = false
+                    selectCurrent(animated: true)
                 }
             }
-        }
-
-        private func targetID(for selection: ID) -> ID? {
-            let targetID = viewControllers[selection] != nil ? selection : data.first?[keyPath: id]
-
-            if targetID != selection {
-                let revision = selectionRevision
-                DispatchQueue.main.async { [weak self] in
-                    guard let self,
-                          revision == selectionRevision,
-                          self.selection.wrappedValue == selection,
-                          viewControllers[selection] == nil,
-                          data.first?[keyPath: id] == targetID
-                    else { return }
-
-                    self.selection.wrappedValue = targetID
-                }
-            }
-
-            return targetID
         }
 
         private func direction(
             from visible: UIViewController?,
-            to targetID: ID
+            to targetID: String
         ) -> UIPageViewController.NavigationDirection {
             guard let visible,
-                  let currentID = viewControllerID(for: visible),
-                  let currentIndex = data.firstIndex(where: { $0[keyPath: id] == currentID }),
-                  let targetIndex = data.firstIndex(where: { $0[keyPath: id] == targetID })
+                  let currentID = hostID(for: visible),
+                  let currentIndex = ids.firstIndex(of: currentID),
+                  let targetIndex = ids.firstIndex(of: targetID)
             else { return .forward }
-
             return targetIndex < currentIndex ? .reverse : .forward
         }
 
@@ -180,14 +195,16 @@ struct SupplementTabView<
             _ controller: UIPageViewController,
             viewControllerBefore viewController: UIViewController
         ) -> UIViewController? {
-            adjacent(to: viewController, offset: -1)
+            guard controller === pageController else { return nil }
+            return adjacent(to: viewController, offset: -1)
         }
 
         func pageViewController(
             _ controller: UIPageViewController,
             viewControllerAfter viewController: UIViewController
         ) -> UIViewController? {
-            adjacent(to: viewController, offset: 1)
+            guard controller === pageController else { return nil }
+            return adjacent(to: viewController, offset: 1)
         }
 
         // MARK: UIPageViewControllerDelegate
@@ -196,6 +213,7 @@ struct SupplementTabView<
             _ controller: UIPageViewController,
             willTransitionTo pendingViewControllers: [UIViewController]
         ) {
+            guard controller === pageController else { return }
             isTransitioning = true
             swipeSelection = (selection.wrappedValue, selectionRevision)
         }
@@ -206,7 +224,7 @@ struct SupplementTabView<
             previousViewControllers: [UIViewController],
             transitionCompleted: Bool
         ) {
-            guard let swipeSelection else { return }
+            guard controller === pageController, let swipeSelection else { return }
             self.swipeSelection = nil
             isTransitioning = false
 
@@ -216,30 +234,26 @@ struct SupplementTabView<
                swipeSelection.revision == selectionRevision,
                selection.wrappedValue == swipeSelection.id,
                let visible = controller.viewControllers?.first,
-               let newID = viewControllerID(for: visible)
+               let newID = hostID(for: visible)
             {
                 requestedID = newID
                 selectionRevision += 1
                 selection.wrappedValue = newID
             }
-
             selectCurrent(animated: true)
         }
 
-        private func viewControllerID(for controller: UIViewController) -> ID? {
-            viewControllers.first(where: { $0.value === controller })?.key
+        private func hostID(for controller: UIViewController) -> String? {
+            hosts.first { $0.value === controller }?.key
         }
 
         private func adjacent(to viewController: UIViewController, offset: Int) -> UIViewController? {
-            guard let viewControllerID = viewControllerID(for: viewController),
-                  let index = data.firstIndex(where: { $0[keyPath: id] == viewControllerID })
+            guard let id = hostID(for: viewController),
+                  let index = ids.firstIndex(of: id)
             else { return nil }
-
             let target = index + offset
-
-            guard data.indices.contains(target) else { return nil }
-
-            return viewControllers[data[target][keyPath: id]]
+            guard ids.indices.contains(target) else { return nil }
+            return hosts[ids[target]]
         }
     }
 }

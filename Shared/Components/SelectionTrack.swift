@@ -37,7 +37,11 @@ struct SelectionTrack<Elements: RandomAccessCollection, ID: Hashable>: View {
     }
 
     private var setID: ID? {
+        #if os(tvOS)
         focus.wrappedValue ?? selection
+        #else
+        selection
+        #endif
     }
 
     var body: some View {

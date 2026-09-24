@@ -9,14 +9,12 @@
 import Defaults
 import SwiftUI
 
-// TODO: set through proxy
-
 extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct PlaybackRateMenu: View {
 
         @Default(.VideoPlayer.Playback.rates)
-        private var rates: [Float]
+        private var rates: [Double]
 
         @Environment(ViewState.self)
         private var viewState
@@ -40,6 +38,12 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                         Text(manager.rate, format: .playbackRate)
                             .tag(manager.rate)
                     }
+                }
+
+                Divider()
+
+                Button(L10n.custom) {
+                    viewState.presentGuestSupplement(PlaybackAdjustmentSupplement.playbackSpeed)
                 }
             }
         }

@@ -164,6 +164,8 @@ internal enum L10n {
   internal static let audioCodecNotSupported = L10n.tr("Localizable", "audioCodecNotSupported", fallback: "The audio codec is not supported")
   /// The audio track is external and requires transcoding
   internal static let audioIsExternal = L10n.tr("Localizable", "audioIsExternal", fallback: "The audio track is external and requires transcoding")
+  /// Audio offset
+  internal static let audioOffset = L10n.tr("Localizable", "audioOffset", fallback: "Audio offset")
   /// The audio profile is not supported
   internal static let audioProfileNotSupported = L10n.tr("Localizable", "audioProfileNotSupported", fallback: "The audio profile is not supported")
   /// Audio sample rate
@@ -488,6 +490,8 @@ internal enum L10n {
   internal static let dayOfWeek = L10n.tr("Localizable", "dayOfWeek", fallback: "Day of week")
   /// Days
   internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
+  /// Decrease
+  internal static let decrease = L10n.tr("Localizable", "decrease", fallback: "Decrease")
   /// Decrement
   internal static let decrement = L10n.tr("Localizable", "decrement", fallback: "Decrement")
   /// Default
@@ -822,6 +826,8 @@ internal enum L10n {
   internal static func incorrectPinForUser(_ p1: Any) -> String {
     return L10n.tr("Localizable", "incorrectPinForUser", String(describing: p1), fallback: "Incorrect pin for %@")
   }
+  /// Increase
+  internal static let increase = L10n.tr("Localizable", "increase", fallback: "Increase")
   /// Increment
   internal static let increment = L10n.tr("Localizable", "increment", fallback: "Increment")
   /// Index
@@ -1226,6 +1232,8 @@ internal enum L10n {
   internal static let playAndPause = L10n.tr("Localizable", "playAndPause", fallback: "Play / Pause")
   /// Playback
   internal static let playback = L10n.tr("Localizable", "playback", fallback: "Playback")
+  /// Positive values play later; negative values play earlier.
+  internal static let playbackOffsetDescription = L10n.tr("Localizable", "playbackOffsetDescription", fallback: "Positive values play later; negative values play earlier.")
   /// Playback quality
   internal static let playbackQuality = L10n.tr("Localizable", "playbackQuality", fallback: "Playback quality")
   /// Force media from the server to transcode if it exceeds the selected resolution or bitrate.
@@ -1670,6 +1678,8 @@ internal enum L10n {
   internal static let subtitleModeOnlyForcedDescription = L10n.tr("Localizable", "subtitleModeOnlyForcedDescription", fallback: "Only show subtitles marked as Forced, typically for foreign language sections.")
   /// Show subtitles when the audio language differs from your preferred language.
   internal static let subtitleModeSmartDescription = L10n.tr("Localizable", "subtitleModeSmartDescription", fallback: "Show subtitles when the audio language differs from your preferred language.")
+  /// Subtitle offset
+  internal static let subtitleOffset = L10n.tr("Localizable", "subtitleOffset", fallback: "Subtitle offset")
   /// Subtitles
   internal static let subtitles = L10n.tr("Localizable", "subtitles", fallback: "Subtitles")
   /// Settings only affect some subtitle types

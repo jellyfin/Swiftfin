@@ -44,11 +44,15 @@ extension VideoPlayer {
             @Bindable
             var viewState = viewState
 
-            VStack(spacing: 30) {
+            VStack(spacing: 0) {
+
+                OverlayActions()
+                    .padding(.bottom, viewState.isPresentingOverlayActions ? 30 : 0)
 
                 Toolbar()
                     .isVisible(viewState.visibleElements.contains(.toolbar))
                     .enabled(viewState.visibleElements.contains(.toolbar))
+                    .padding(.bottom, 30)
 
                 PlaybackProgress()
                     .fixedSize(horizontal: false, vertical: true)

@@ -27,7 +27,7 @@ protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
 
     func jumpForward(_ seconds: Duration)
     func jumpBackward(_ seconds: Duration)
-    func setRate(_ rate: Float)
+    func setRate(_ rate: Double)
     func setSeconds(_ seconds: Duration)
 }
 

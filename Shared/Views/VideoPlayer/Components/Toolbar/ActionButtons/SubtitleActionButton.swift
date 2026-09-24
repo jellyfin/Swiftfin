@@ -17,6 +17,8 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
 
         @State
         private var selectedSubtitleStreamIndex: Int?
@@ -31,6 +33,16 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         @ViewBuilder
         private func content(playbackItem: MediaPlayerItem) -> some View {
+            if manager.proxy is MediaPlayerOffsetConfigurable {
+                Button {
+                    viewState.presentGuestSupplement(PlaybackAdjustmentSupplement.subtitleOffset)
+                } label: {
+                    Text(L10n.subtitleOffset)
+                    Text(manager.subtitleOffset, format: .playbackOffset)
+                }
+                Divider()
+            }
+
             Picker(L10n.subtitles, selection: $selectedSubtitleStreamIndex) {
                 ForEach(playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
                     Text(stream.displayTitle ?? L10n.unknown)
@@ -52,6 +64,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 } label: {
                     Label(L10n.subtitles, systemImage: systemImage)
                 }
+                .menuOrder(.fixed)
                 .assign(playbackItem.$selectedSubtitleStreamIndex, to: $selectedSubtitleStreamIndex)
                 .onChange(of: selectedSubtitleStreamIndex) {
                     playbackItem.selectedSubtitleStreamIndex = selectedSubtitleStreamIndex

@@ -11,13 +11,14 @@ import SwiftUI
 struct CapsuleSliderStyle: SliderContainerStyle {
 
     var showsProgressWhenUnfocused = true
+    var neutralProgress: Double?
 
     func makeBody(configuration: SliderContainerStyleConfiguration) -> some View {
         let progress = configuration.progress
-        let origin = configuration.originProgress
+        let origin = neutralProgress == nil ? configuration.originProgress : nil
         let committedProgress = min(progress, origin ?? progress)
         let pendingProgress = origin.map { max(progress, $0) }
-        let tickProgress = origin.flatMap { abs($0 - progress) > 0.001 ? $0 : nil }
+        let tickProgress = neutralProgress ?? origin.flatMap { abs($0 - progress) > 0.001 ? $0 : nil }
             ?? (!showsProgressWhenUnfocused && !configuration.isFocused ? progress : nil)
 
         ProgressView(value: committedProgress, total: 1)
@@ -25,7 +26,8 @@ struct CapsuleSliderStyle: SliderContainerStyle {
                 secondaryProgress: pendingProgress,
                 cornerStyle: .round,
                 tickProgress: tickProgress,
-                showsProgress: showsProgressWhenUnfocused || configuration.isFocused
+                showsProgress: showsProgressWhenUnfocused || configuration.isFocused,
+                neutralProgress: neutralProgress
             ))
             #if os(tvOS)
             .opacity(configuration.isFocused ? 1 : 0.7)
@@ -43,5 +45,9 @@ extension SliderContainerStyle where Self == CapsuleSliderStyle {
 
     static func capsule(showsProgressWhenUnfocused: Bool) -> CapsuleSliderStyle {
         CapsuleSliderStyle(showsProgressWhenUnfocused: showsProgressWhenUnfocused)
+    }
+
+    static func capsule(neutralProgress: Double) -> CapsuleSliderStyle {
+        CapsuleSliderStyle(neutralProgress: neutralProgress)
     }
 }

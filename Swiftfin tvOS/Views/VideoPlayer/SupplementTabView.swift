@@ -10,19 +10,21 @@ import SwiftUI
 import UIKit
 
 /// `TabView` acts weird with horizontal stacks, workaround with manual supplement presentation
-struct SupplementTabView<
-    Element,
-    ID: Hashable,
-    Data: Collection,
-    Content: View
->: PlatformViewControllerRepresentable where Data.Element == Element {
+struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
 
-    let data: Data
-    let id: KeyPath<Element, ID>
-    let selection: Binding<ID?>
+    let data: [any MediaPlayerSupplement]
+    let selection: Binding<String?>
 
     @ViewBuilder
-    let content: (Element) -> Content
+    let content: (any MediaPlayerSupplement) -> Content
+
+    private var selectionPresented: (String) -> Void = { _ in }
+
+    func onSelectionPresented(_ action: @escaping (String) -> Void) -> Self {
+        var copy = self
+        copy.selectionPresented = action
+        return copy
+    }
 
     func makeUIViewController(context: Context) -> UIViewController {
         let controller = UIViewController()
@@ -38,6 +40,7 @@ struct SupplementTabView<
         context.coordinator.sync(
             data: data,
             selection: selection.wrappedValue,
+            selectionPresented: selectionPresented,
             content: content
         )
     }
@@ -47,30 +50,47 @@ struct SupplementTabView<
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(id: id)
+        Coordinator()
     }
 
+    @MainActor
     final class Coordinator {
 
         weak var container: UIViewController?
 
-        private let id: KeyPath<Element, ID>
-        private var visibleID: ID?
+        private var hosts: [String: HostingController<Content>] = [:]
+        private weak var visibleHost: HostingController<Content>?
         private var transitionID: Int = 0
-        private var hosts: [ID: HostingController<Content>] = [:]
-
-        init(id: KeyPath<Element, ID>) {
-            self.id = id
-        }
+        private var selectionPresented: (String) -> Void = { _ in }
 
         func sync(
-            data: Data,
-            selection: ID?,
-            @ViewBuilder content: (Element) -> Content
+            data: [any MediaPlayerSupplement],
+            selection: String?,
+            selectionPresented: @escaping (String) -> Void,
+            @ViewBuilder content: (any MediaPlayerSupplement) -> Content
         ) {
             guard let container else { return }
 
-            updateHosts(with: data, content: content)
+            self.selectionPresented = selectionPresented
+
+            let ids = Set(data.map(\.id))
+            for id in hosts.keys.filter({ !ids.contains($0) }) {
+                guard let host = hosts.removeValue(forKey: id) else { continue }
+                remove(host)
+                if visibleHost === host {
+                    visibleHost = nil
+                }
+            }
+            for supplement in data {
+                if let host = hosts[supplement.id] {
+                    host.content = content(supplement)
+                } else {
+                    let host = HostingController(content: content(supplement))
+                    host.disableSafeArea = true
+                    host.view.backgroundColor = .clear
+                    hosts[supplement.id] = host
+                }
+            }
             select(selection, in: container)
         }
 
@@ -82,42 +102,11 @@ struct SupplementTabView<
             }
 
             hosts.removeAll()
-            visibleID = nil
+            visibleHost = nil
         }
 
-        private func updateHosts(
-            with data: Data,
-            content: (Element) -> Content
-        ) {
-            let currentIDs = Set(data.map { $0[keyPath: id] })
-
-            let removedIDs = hosts.keys.filter { !currentIDs.contains($0) }
-
-            for id in removedIDs {
-                guard let host = hosts[id] else { continue }
-
-                remove(host)
-                hosts[id] = nil
-
-                if visibleID == id {
-                    visibleID = nil
-                }
-            }
-
-            for element in data {
-                if let host = hosts[element[keyPath: id]] {
-                    host.content = content(element)
-                } else {
-                    let host = HostingController(content: content(element))
-                    host.disableSafeArea = true
-                    host.view.backgroundColor = .clear
-                    hosts[element[keyPath: id]] = host
-                }
-            }
-        }
-
-        private func select(_ selection: ID?, in container: UIViewController) {
-            let previousHost = visibleID.flatMap { hosts[$0] }
+        private func select(_ selection: String?, in container: UIViewController) {
+            let previousHost = visibleHost
             let host = selection.flatMap { hosts[$0] }
             guard host !== previousHost else { return }
 
@@ -126,8 +115,8 @@ struct SupplementTabView<
                 add(host, to: container, alpha: 0)
             }
 
-            visibleID = host == nil ? nil : selection
-            transition(from: previousHost, to: host)
+            visibleHost = host
+            transition(from: previousHost, to: host, selection: selection)
         }
 
         private func add(_ host: UIViewController, to container: UIViewController, alpha: CGFloat = 1) {
@@ -147,7 +136,7 @@ struct SupplementTabView<
             host.didMove(toParent: container)
         }
 
-        private func transition(from oldHost: UIViewController?, to newHost: UIViewController?) {
+        private func transition(from oldHost: UIViewController?, to newHost: UIViewController?, selection: String?) {
             transitionID += 1
             let currentTransitionID = transitionID
 
@@ -168,6 +157,11 @@ struct SupplementTabView<
 
                 if let oldHost, oldHost !== newHost {
                     self.remove(oldHost)
+                }
+
+                // Guest panels become focusable after their host finishes appearing.
+                if newHost != nil, let selection {
+                    self.selectionPresented(selection)
                 }
             }
         }

@@ -59,8 +59,8 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerLayoutConfigurable,
         player.seek(to: seconds)
     }
 
-    func setRate(_ rate: Float) {
-        player.setPlaybackRate(Double(rate))
+    func setRate(_ rate: Double) {
+        player.setPlaybackRate(rate)
     }
 
     func setAudioStream(_ stream: MediaStream) {
@@ -146,6 +146,7 @@ extension MPVMediaPlayerProxy {
             let start = max(.zero, (item.baseItem.startSeconds ?? .zero) - .seconds(Defaults[.VideoPlayer.resumeOffset]))
             player.load(item.url, autoPlay: manager.playbackRequestStatus == .playing, startTime: item.baseItem.isLiveStream ? nil : start)
             proxy.setRate(manager.rate)
+            manager.applyPlaybackOffsets()
         }
 
         private func updateTracks(for item: MediaPlayerItem) {
@@ -227,6 +228,7 @@ extension MPVMediaPlayerProxy {
                         updateState(player.state)
                         if player.state == .ready || player.state == .playing || player.state == .paused {
                             updateTracks(for: item)
+                            manager.applyPlaybackOffsets()
                         }
                     }
                     .onChange(of: player.mediaInformation.tracks) {

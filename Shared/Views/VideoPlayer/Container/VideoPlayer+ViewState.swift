@@ -25,6 +25,7 @@ extension VideoPlayer {
         }
 
         enum Element {
+            case overlayActions
             case progress
             case toolbar
             case playbackButtons
@@ -47,7 +48,6 @@ extension VideoPlayer {
         enum Focus {
             static let progress = "player.progress"
             static let controls = "player.controls"
-            static let supplementBoundary = "player.supplementBoundary"
             static let supplementTabs = "player.supplementTabs"
 
             static func action(_ id: String) -> String {
@@ -58,6 +58,68 @@ extension VideoPlayer {
                 "player.supplementContent.\(id)"
             }
         }
+
+        struct OverlayAction: Identifiable {
+
+            struct ID: Hashable {
+                let supplementID: String
+                let actionID: String
+
+                var focusID: String {
+                    "player.overlayAction.\(supplementID.count):\(supplementID)\(actionID)"
+                }
+            }
+
+            let id: ID
+            let button: VideoPlayerOverlayAction
+        }
+
+        var overlayActions: [OverlayAction] {
+            access(keyPath: \.overlayActions)
+            return supplements.flatMap { supplement in
+                supplement.overlayActions.map {
+                    OverlayAction(id: .init(supplementID: supplement.id, actionID: $0.id), button: $0)
+                }
+            }
+        }
+
+        var isPresentingOverlayActions: Bool {
+            visibleElements.contains(.overlayActions)
+        }
+
+        var isOverlayActionFocused: Bool {
+            isPresentingOverlayActions && overlayActions.contains { focusCoordinator.focusedIDs.contains($0.id.focusID) }
+        }
+
+        func performOverlayAction(_ id: OverlayAction.ID) {
+            guard isPresentingOverlayActions,
+                  let action = overlayActions.first(where: { $0.id == id })
+            else { return }
+            action.button.action()
+            refreshAutoDismiss()
+        }
+
+        #if os(tvOS)
+        func updateOverlayActionFocus(previousIDs: [OverlayAction.ID] = []) {
+            guard !isPresentingCloseConfirmation,
+                  containerView?.presentedViewController == nil
+            else { return }
+
+            if presentation == .hidden, isPresentingOverlayActions {
+                if !isOverlayActionFocused, let first = overlayActions.first {
+                    focusCoordinator.focus(first.id.focusID)
+                }
+            } else if isPresentingProgress,
+                      previousIDs.contains(where: {
+                          focusCoordinator.focusedIDs.contains($0.focusID) ||
+                              focusCoordinator.lastFocusedIDs.contains($0.focusID)
+                      }),
+                      !isOverlayActionFocused
+            {
+                focusCoordinator.focus(Focus.progress)
+            }
+        }
+        #endif
 
         private(set) var presentation: Presentation = .hidden
 
@@ -91,8 +153,44 @@ extension VideoPlayer {
         var selectedSupplement: (any MediaPlayerSupplement)? {
             guard let selectedSupplementID else { return nil }
             access(keyPath: \.selectedSupplement)
-            return manager?.supplements.first { $0.id == selectedSupplementID }
+            return supplements.first { $0.id == selectedSupplementID }
         }
+
+        private(set) var guestSupplement: (any MediaPlayerSupplement)? {
+            didSet { observeSupplementActions() }
+        }
+
+        var supplements: [any MediaPlayerSupplement] {
+            access(keyPath: \.supplements)
+            var supplements = manager?.supplements ?? []
+            if let guestSupplement {
+                supplements.append(guestSupplement)
+            }
+            return supplements
+        }
+
+        func presentGuestSupplement(_ supplement: some MediaPlayerSupplement) {
+            guard !isGestureLocked else { return }
+            guestSupplement = supplement
+            #if os(tvOS)
+            pendingGuestFocusID = supplement.id
+            #endif
+            transition(to: .supplement(supplement.id))
+        }
+
+        #if os(tvOS)
+        @ObservationIgnored
+        private var pendingGuestFocusID: String?
+
+        // The host fade and container slide can finish in either order. Keep the request
+        // pending until the preferred control receives focus after these transitions.
+        func focusGuestSupplementIfNeeded(_ id: String) {
+            guard pendingGuestFocusID == id, selectedSupplementID == id,
+                  let guestSupplement, guestSupplement.id == id
+            else { return }
+            focusCoordinator.focus(guestSupplement.preferredFocusID)
+        }
+        #endif
 
         var isPresentingSupplement: Bool {
             selectedSupplementID != nil
@@ -121,17 +219,22 @@ extension VideoPlayer {
         /// Layout and interaction affect visibility, without writing another state.
         var visibleElements: Set<Element> {
             guard !isGestureLocked else { return [] }
+
             if isScrubbing {
                 return [.progress]
             }
 
             switch presentation {
             case .hidden:
-                return []
+                return overlayActions.isEmpty ? [] : [.overlayActions]
             case .progress:
-                return [.progress]
+                return overlayActions.isEmpty ? [.progress] : [.progress, .overlayActions]
             case .controls:
-                return [.progress, .toolbar, .playbackButtons, .supplements, .dimming]
+                var elements: Set<Element> = [.progress, .toolbar, .playbackButtons, .dimming]
+                if supplements.isNotEmpty {
+                    elements.insert(.supplements)
+                }
+                return elements
             case let .supplement(_, showsPlaybackButtons):
                 if UIDevice.isTV {
                     return [.supplements, .dimming]
@@ -149,7 +252,7 @@ extension VideoPlayer {
             }
         }
 
-        var originalPlaybackRate: Float?
+        var originalPlaybackRate: Double?
 
         let centerOffsetBox: PublishedBox<CGFloat> = .init(initialValue: 0)
         let focusCoordinator: FocusCoordinator = .init()
@@ -172,6 +275,8 @@ extension VideoPlayer {
         private var playbackItemCancellable: AnyCancellable?
         @ObservationIgnored
         private var supplementsCancellable: AnyCancellable?
+        @ObservationIgnored
+        private var supplementActionCancellables: [AnyCancellable] = []
 
         #if os(iOS)
         var panHandlingAction: (any _PanHandlingAction)?
@@ -229,8 +334,17 @@ extension VideoPlayer {
             focusCoordinator.$focusedIDs
                 .dropFirst()
                 .receive(on: DispatchQueue.main)
-                .sink { [weak self] _ in
-                    self?.refreshAutoDismiss()
+                .sink { [weak self] focusedIDs in
+                    guard let self else { return }
+                    #if os(tvOS)
+                    if let guestSupplement = self.guestSupplement,
+                       self.pendingGuestFocusID == guestSupplement.id,
+                       focusedIDs.contains(guestSupplement.preferredFocusID)
+                    {
+                        self.pendingGuestFocusID = nil
+                    }
+                    #endif
+                    self.refreshAutoDismiss()
                 }
                 .store(in: &cancellables)
 
@@ -243,22 +357,33 @@ extension VideoPlayer {
         }
 
         func connect(manager: MediaPlayerManager) {
-            withMutation(keyPath: \.selectedSupplement) {
-                self.manager = manager
+            withMutation(keyPath: \.supplements) {
+                withMutation(keyPath: \.selectedSupplement) {
+                    self.manager = manager
+                }
             }
+            observeSupplementActions()
             supplementsCancellable = manager.$supplements
                 .dropFirst()
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
-                    guard let self, let selectedSupplementID else { return }
+                    guard let self else { return }
+
+                    self.observeSupplementActions()
 
                     // Bridge the manager's Combine updates, including replacements with the same ID.
-                    withMutation(keyPath: \.selectedSupplement) {
-                        if self.manager?.supplements.contains(where: { $0.id == selectedSupplementID }) == true {
-                            self.transition(to: self.presentation)
-                        } else {
-                            self.selectedSupplementID = nil
+                    self.withMutation(keyPath: \.supplements) {
+                        self.withMutation(keyPath: \.selectedSupplement) {
+                            guard let selectedSupplementID = self.selectedSupplementID else { return }
+                            if self.supplements.contains(where: { $0.id == selectedSupplementID }) {
+                                self.transition(to: self.presentation)
+                            } else {
+                                self.selectedSupplementID = nil
+                            }
                         }
+                    }
+                    if self.supplements.isEmpty {
+                        self.containerView?.cancelSupplementPan()
                     }
                 }
             playbackItemCancellable = manager.$playbackItem
@@ -276,6 +401,22 @@ extension VideoPlayer {
                     }
                     #endif
                     refreshAutoDismiss()
+                }
+        }
+
+        private func observeSupplementActions() {
+            supplementActionCancellables = supplements.compactMap { supplement in
+                guard let observable = supplement as? any ObservableObject else { return nil }
+                return observeActions(of: observable)
+            }
+            withMutation(keyPath: \.overlayActions) {}
+        }
+
+        private func observeActions(of supplement: some ObservableObject) -> AnyCancellable {
+            supplement.objectWillChange
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in
+                    self?.withMutation(keyPath: \.overlayActions) {}
                 }
         }
 
@@ -369,11 +510,18 @@ extension VideoPlayer {
             let wasPresentingProgress = isPresentingProgress
             self.presentation = presentation
 
+            if selectedSupplementID != guestSupplement?.id {
+                guestSupplement = nil
+            }
+
             if wasPresentingSupplement || isPresentingSupplement {
                 containerView?.presentSupplementContainer(isPresentingSupplement)
             }
 
             #if os(tvOS)
+            if pendingGuestFocusID != selectedSupplementID {
+                pendingGuestFocusID = nil
+            }
             if isPresentingProgress, !wasPresentingProgress {
                 focusCoordinator.focus(Focus.progress)
             }

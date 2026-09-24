@@ -47,13 +47,13 @@ extension VideoPlayer.UIContainerViewController {
         #endif
 
         private var defaultTabFocus: String? {
-            viewState.selectedSupplementID ?? manager.supplements.first?.id
+            viewState.selectedSupplementID ?? viewState.supplements.first?.id
         }
 
         private var focusedSupplementID: String? {
             guard viewState.visibleElements.contains(.supplements) else { return nil }
 
-            return manager.supplements.first {
+            return viewState.supplements.first {
                 $0.id == focusedElement
             }?.id
         }
@@ -93,7 +93,7 @@ extension VideoPlayer.UIContainerViewController {
                     #endif
 
                     SelectionTrack(
-                        manager.supplements,
+                        viewState.supplements,
                         id: \.id,
                         title: \.displayTitle,
                         selection: viewState.selectedSupplementID,
@@ -112,12 +112,19 @@ extension VideoPlayer.UIContainerViewController {
                 .scrollIfLargerThanContainer(axes: .horizontal, alignment: .leading)
             }
             .edgePadding(.horizontal)
+            #if os(tvOS)
             .defaultFocus(
                 $focusedElement,
                 defaultTabFocus,
                 priority: .userInitiated
             )
             .focusSection()
+            .onMoveCommand { direction in
+                if direction == .up, viewState.isPresentingSupplement {
+                    viewState.selectedSupplementID = nil
+                }
+            }
+            #endif
             .padding(
                 .init(
                     top: 0,
@@ -132,36 +139,36 @@ extension VideoPlayer.UIContainerViewController {
         }
 
         var body: some View {
-            @Bindable
-            var viewState = viewState
-
             ZStack {
                 #if os(iOS)
                 GestureView()
-                    .environment(\.panGestureDirection, viewState.presentationControllerShouldDismiss ? .up : .vertical)
+                    .environment(
+                        \.panGestureDirection,
+                        viewState.supplements.isEmpty ? [] : (viewState.presentationControllerShouldDismiss ? .up : .vertical)
+                    )
                 #endif
 
                 VStack(alignment: .leading, spacing: 0) {
 
-                    // Exists to catch focus between supplement & controls.
-                    // - The progress bar isn't visible while the supplements are up.
-                    // - Focus is only needed from Supplement -> ProgressBar.
-                    Color.clear
-                        .frame(height: 1)
-                        .focusable(viewState.isPresentingSupplement)
-                        .coordinatedFocus(ViewState.Focus.supplementBoundary, selection: $focusedElement)
-
                     tabButtons
 
                     SupplementTabView(
-                        data: manager.supplements,
-                        id: \.id,
-                        selection: $viewState.selectedSupplementID
+                        data: viewState.supplements,
+                        // UIKit callbacks must read the latest selection, even before SwiftUI renders again.
+                        selection: Binding(
+                            get: { viewState.selectedSupplementID },
+                            set: { viewState.selectedSupplementID = $0 }
+                        )
                     ) { supplement in
                         supplementContainer(for: supplement)
                             .eraseToAnyView()
                     }
-                    .isVisible(viewState.isPresentingSupplement)
+                    #if os(tvOS)
+                    .onSelectionPresented { id in
+                            viewState.focusGuestSupplementIfNeeded(id)
+                        }
+                    #endif
+                        .isVisible(viewState.isPresentingSupplement)
                     .enabled(viewState.isPresentingSupplement)
                     .animation(.linear(duration: 0.25), value: viewState.selectedSupplementID)
                 }
@@ -170,19 +177,19 @@ extension VideoPlayer.UIContainerViewController {
                 .padding(.top, EdgeInsets.edgeInsets.bottom / (UIDevice.isTV ? 2 : 1))
                 .animation(.linear(duration: 0.25), value: viewState.presentation)
                 .animation(.linear(duration: 0.1), value: viewState.isScrubbing)
-                .animation(.bouncy(duration: 0.25, extraBounce: 0.1), value: manager.supplements.map(\.id))
+                .animation(.bouncy(duration: 0.25, extraBounce: 0.1), value: viewState.supplements.map(\.id))
             }
             .withViewContext(.isOverComplexContent)
-            .onChange(of: focusedElement) {
-                if focusedElement == ViewState.Focus.supplementBoundary {
-                    viewState.selectedSupplementID = nil
+            #if os(tvOS)
+            .onChange(of: viewState.guestSupplement?.id) { _, id in
+                if let id {
+                    focusedElement = id
                 }
             }
             .task(id: focusedSupplementID) {
                 let previousSelection = viewState.selectedSupplementID
                 guard let id = focusedSupplementID, id != previousSelection else { return }
 
-                #if os(tvOS)
                 if previousSelection != nil {
                     do {
                         try await Task.sleep(for: .milliseconds(500))
@@ -190,7 +197,6 @@ extension VideoPlayer.UIContainerViewController {
                         return
                     }
                 }
-                #endif
 
                 guard !Task.isCancelled,
                       focusedSupplementID == id,
@@ -198,6 +204,7 @@ extension VideoPlayer.UIContainerViewController {
                 else { return }
                 viewState.selectedSupplementID = id
             }
+            #endif
             #if os(iOS)
             .environment(
                 \.panAction,

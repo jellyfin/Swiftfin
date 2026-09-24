@@ -54,6 +54,7 @@ extension VideoPlayer.PlaybackControls {
 
         var isInBar: Bool = false
         var isMenu: Bool = false
+        var symbolEffectSpeed: Double = 1
 
         private var labelSize: CGFloat? {
             isInBar && UIDevice.isTV ? Toolbar.buttonSize - 2 * Self.padding : nil
@@ -82,8 +83,7 @@ extension VideoPlayer.PlaybackControls {
                 .labelStyle(.iconOnly)
                 // Menu's outer frame does not size the styled label or its focus surface.
                 .frame(width: labelSize, height: labelSize)
-                .contentTransition(.symbolEffect(.replace))
-                .contentShape(Rectangle())
+                .contentTransition(.symbolEffect(.replace, options: .speed(symbolEffectSpeed)))
         }
 
         @ViewBuilder
@@ -98,6 +98,7 @@ extension VideoPlayer.PlaybackControls {
                     label(configuration)
                         .padding(Self.padding)
                         .glassEffect(.regular.tint(isFocused ? .white : nil).interactive(isEnabled), in: .circle)
+                        .contentShape(.circle)
                 }
             } else {
                 legacyLabel(configuration)
@@ -121,6 +122,7 @@ extension VideoPlayer.PlaybackControls {
                 .backport
                 .glassEffect(.regular.tint(isFocused ? .white : nil), in: .circle)
                 #endif
+                .contentShape(.circle)
         }
     }
 }

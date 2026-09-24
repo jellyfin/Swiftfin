@@ -26,16 +26,12 @@ struct VideoPlayer: View {
     private var router
 
     @State
-    private var audioOffset: Duration = .zero
-    @State
     private var isBeingDismissedByTransition = false
 
     #if os(iOS)
     @State
     private var scrubbingStartTime: CFTimeInterval? = nil
     #endif
-    @State
-    private var subtitleOffset: Duration = .zero
 
     @State
     private var viewState: ViewState = .init()
@@ -65,11 +61,6 @@ struct VideoPlayer: View {
             manager.start()
         }
         .prefersStatusBarHidden(!viewState.isPresentingControls)
-        .onChange(of: audioOffset) {
-            if let proxy = proxy as? MediaPlayerOffsetConfigurable {
-                proxy.setAudioOffset(audioOffset)
-            }
-        }
         #if os(iOS)
         .onChange(of: viewState.isScrubbing) {
             if viewState.isScrubbing {
@@ -89,11 +80,6 @@ struct VideoPlayer: View {
             proxy.setSeconds(scrubbedSeconds)
         }
         #endif
-        .onChange(of: subtitleOffset) {
-            if let proxy = proxy as? MediaPlayerOffsetConfigurable {
-                proxy.setSubtitleOffset(subtitleOffset)
-            }
-        }
         .preference(
             key: PresentationControllerShouldDismissPreferenceKey.self,
             value: viewState.presentationControllerShouldDismiss
@@ -104,9 +90,6 @@ struct VideoPlayer: View {
             manager.stop()
         }
         .onReceive(manager.$playbackItem) { newItem in
-            audioOffset = .zero
-            subtitleOffset = .zero
-
             // TODO: move to container view
             viewState.scrubbedSeconds.value = newItem?.baseItem.startSeconds ?? .zero
         }

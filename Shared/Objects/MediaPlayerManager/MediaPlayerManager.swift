@@ -57,7 +57,7 @@ final class MediaPlayerManager: ViewModel {
         case playNewItem(provider: MediaPlayerItemProvider)
         case setBitrate(bitrate: PlaybackBitrate)
         case setPlaybackRequestStatus(status: PlaybackRequestStatus)
-        case setRate(rate: Float)
+        case setRate(rate: Double)
         case setTrack(type: MediaStreamType, from: Int?, to: Int? = nil)
         case start
         case stop
@@ -102,6 +102,9 @@ final class MediaPlayerManager: ViewModel {
     var playbackItem: MediaPlayerItem? = nil {
         didSet {
             if let playbackItem {
+                if oldValue?.baseItem.id != playbackItem.baseItem.id || oldValue == nil {
+                    resetPlaybackOffsets()
+                }
                 self.item = playbackItem.baseItem
                 seconds = playbackItem.baseItem.startSeconds ?? .zero
                 playbackItem.manager = self
@@ -127,10 +130,35 @@ final class MediaPlayerManager: ViewModel {
     @Published
     private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
     @Published
-    var rate: Float = Defaults[.VideoPlayer.Playback.playbackRate] {
+    var rate: Double = Defaults[.VideoPlayer.Playback.playbackRate] {
         didSet {
             Defaults[.VideoPlayer.Playback.playbackRate] = rate
         }
+    }
+
+    @Published
+    var audioOffset: Duration = .zero {
+        didSet {
+            (proxy as? MediaPlayerOffsetConfigurable)?.setAudioOffset(audioOffset)
+        }
+    }
+
+    @Published
+    var subtitleOffset: Duration = .zero {
+        didSet {
+            (proxy as? MediaPlayerOffsetConfigurable)?.setSubtitleOffset(subtitleOffset)
+        }
+    }
+
+    func applyPlaybackOffsets() {
+        guard let proxy = proxy as? MediaPlayerOffsetConfigurable else { return }
+        proxy.setAudioOffset(audioOffset)
+        proxy.setSubtitleOffset(subtitleOffset)
+    }
+
+    private func resetPlaybackOffsets() {
+        audioOffset = .zero
+        subtitleOffset = .zero
     }
 
     @Published
@@ -282,6 +310,7 @@ final class MediaPlayerManager: ViewModel {
 
     @Function(\Action.Cases.playNewItem)
     private func _playNewItem(_ provider: MediaPlayerItemProvider) async throws {
+        resetPlaybackOffsets()
         item = provider.item
         setSupplements()
         proxy?.stop()
@@ -313,7 +342,7 @@ final class MediaPlayerManager: ViewModel {
     }
 
     @Function(\Action.Cases.setRate)
-    private func set(_ rate: Float) {
+    private func set(_ rate: Double) {
         if self.rate != rate {
             self.rate = rate
         }
