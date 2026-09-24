@@ -146,6 +146,7 @@ struct RemoteView: View {
                         }
                     } message: {
                         Text(
+                            // swiftlint:disable:next nested_l10n
                             L10n.replaceQueueWarning(
                                 selectedTarget.session.nowPlayingItem?.displayTitle ?? L10n.unknown,
                                 provider.item.displayTitle
