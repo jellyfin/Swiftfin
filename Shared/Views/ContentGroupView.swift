@@ -14,6 +14,10 @@ import SwiftUI
 
 struct ContentGroupView<Provider: ContentGroupProvider>: View {
 
+    private enum Focus: String {
+        case content = "contentGroup-content"
+    }
+
     @Environment(\.tabSafeAreaInsets)
     private var tabSafeAreaInsets
 
@@ -24,7 +28,7 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
     private var contentGroupOptions: ContentGroupParentOption = .init()
 
     @StateObject
-    private var focusCoordinator: FocusCoordinator = .init()
+    private var focusCoordinator = FocusCoordinator(waitingFor: Focus.content.rawValue, focusPlaceholder: true)
     @StateObject
     private var viewModel: ContentGroupViewModel<Provider>
 
@@ -54,6 +58,7 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
             }
             .trackingFrame(for: .scrollView)
             #if os(tvOS)
+            .coordinatedFocus(Focus.content.rawValue)
             .ignoresSafeArea(.container, edges: [.horizontal, .top])
             #else
             .ignoresSafeArea(
@@ -84,13 +89,22 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                         systemImage: "rectangle.on.rectangle.slash"
                     )
                     .focusable()
+                    #if os(tvOS)
+                    .coordinatedFocus(.fallback)
+                    #endif
                 } else {
                     contentView
                 }
             case .error:
                 viewModel.error.map(ErrorView.init)
+                    #if os(tvOS)
+                        .coordinatedFocus(.fallback)
+                    #endif
             case .initial, .refreshing:
                 ProgressView()
+                    #if os(tvOS)
+                        .coordinatedFocus(.placeholder)
+                    #endif
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea(edges: .all)
             }

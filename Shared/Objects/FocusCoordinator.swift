@@ -12,7 +12,7 @@ import SwiftUI
 final class FocusCoordinator: ObservableObject {
 
     enum InitialFocusRole {
-        /// Holds focus while waiting for the initial content without requesting it.
+        /// Holds focus while waiting for the initial content, optionally requesting it once.
         case placeholder
         /// Becomes available after the initial target receives focus.
         case secondary
@@ -30,6 +30,8 @@ final class FocusCoordinator: ObservableObject {
     @Published
     private var pendingInitialFocusID: String?
 
+    private var shouldFocusInitialPlaceholder = false
+
     var isInitialFocusPending: Bool {
         pendingInitialFocusID != nil
     }
@@ -39,9 +41,16 @@ final class FocusCoordinator: ObservableObject {
     }
 
     /// Defers secondary controls until the target receives focus naturally.
-    /// This does not request focus when the target appears or steal focus from another view.
-    init(waitingFor id: String) {
+    /// Optionally focuses the loading placeholder once, without requesting focus when content arrives.
+    init(waitingFor id: String, focusPlaceholder: Bool = false) {
         self.pendingInitialFocusID = id
+        self.shouldFocusInitialPlaceholder = focusPlaceholder
+    }
+
+    fileprivate func claimInitialPlaceholderFocus() -> Bool {
+        guard isInitialFocusPending, shouldFocusInitialPlaceholder else { return false }
+        shouldFocusInitialPlaceholder = false
+        return true
     }
 
     func focus(_ id: String) {
@@ -106,6 +115,9 @@ private struct CoordinatedInitialFocusModifier: ViewModifier {
     @EnvironmentObject
     private var coordinator: FocusCoordinator
 
+    @FocusState
+    private var isPlaceholderFocused: Bool
+
     let role: FocusCoordinator.InitialFocusRole
 
     @ViewBuilder
@@ -115,6 +127,14 @@ private struct CoordinatedInitialFocusModifier: ViewModifier {
             content
                 .focusable(coordinator.isInitialFocusPending)
                 .focusEffectDisabled()
+                #if os(tvOS)
+                .focused($isPlaceholderFocused)
+                .onAppear {
+                    if coordinator.claimInitialPlaceholderFocus() {
+                        isPlaceholderFocused = true
+                    }
+                }
+                #endif
         case .secondary:
             content
                 .disabled(coordinator.isInitialFocusPending)
