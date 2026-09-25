@@ -30,24 +30,26 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
 
     init(
         parent: BaseItemDto,
-        filters: ItemFilterCollection? = nil
+        filters: ItemFilterCollection? = nil,
+        staticFilters: ItemFilterCollection = .default
     ) {
-        var environment = Environment(
-            grouping: parent.groupings?.defaultSelection,
-            filters: filters ?? .default
-        )
+        var filters = filters ?? .default
 
         if let id = parent.id, Defaults[.Customization.Library.rememberSort] {
             let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
 
-            environment.filters.sortBy = storedFilters.sortBy
-            environment.filters.sortOrder = storedFilters.sortOrder
+            filters.sortBy = storedFilters.sortBy
+            filters.sortOrder = storedFilters.sortOrder
         }
 
-        self.environment = environment
+        self.environment = .init(
+            grouping: parent.groupings?.defaultSelection,
+            filters: staticFilters.union(filters)
+        )
         self.filterViewModel = .init(
             parent: parent,
-            currentFilters: environment.filters
+            currentFilters: filters,
+            staticFilters: staticFilters
         )
         self.parent = parent
     }
@@ -143,12 +145,11 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         var parameters = attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(environment: environment),
-                using: environment.filters,
-                isLetterFilterIncluded: false
+                using: environment.filters
             ),
             pageState: pageState
         )
-        parameters.searchTerm = query
+        parameters.searchTerm = filterViewModel.staticFilters.query ?? query
         parameters.userID = pageState.userSession.user.id
 
         let request = Paths.getItems(parameters: parameters)
@@ -202,8 +203,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
 
     private func attachFilters(
         to parameters: Paths.GetItemsParameters,
-        using filters: ItemFilterCollection,
-        isLetterFilterIncluded: Bool = true
+        using filters: ItemFilterCollection
     ) -> Paths.GetItemsParameters {
         var parameters = parameters
         parameters.audioLanguages = filters.audioLanguages.map(\.value)
@@ -230,15 +230,12 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
             parameters.includeItemTypes = filters.itemTypes
         }
 
-        guard isLetterFilterIncluded else { return parameters }
-
-        if filters.letter.first?.value == "#" {
-            parameters.nameLessThan = "A"
-        } else {
-            parameters.nameStartsWith = filters.letter
-                .map(\.value)
-                .filter { $0 != "#" }
-                .first
+        if let letter = filters.letter.first {
+            if letter.value == "#" {
+                parameters.nameLessThan = "A"
+            } else {
+                parameters.nameStartsWith = letter.value
+            }
         }
 
         return parameters
@@ -269,6 +266,10 @@ private struct ItemLibraryBody<Content: View>: View {
     private let content: Content
     private let filterViewModel: FilterViewModel
 
+    private var filterTypes: [ItemFilterType] {
+        enabledDrawerFilters.filter { !filterViewModel.staticFilters.containsFilters(ofType: $0) }
+    }
+
     init(
         filterViewModel: FilterViewModel,
         viewModel: PagingLibraryViewModel<ItemLibrary>,
@@ -281,7 +282,6 @@ private struct ItemLibraryBody<Content: View>: View {
 
     var body: some View {
         content
-            .letterPickerBar(filterViewModel: filterViewModel)
             .onFirstAppear {
                 Task {
                     await filterViewModel.getQueryFilters()
@@ -292,12 +292,20 @@ private struct ItemLibraryBody<Content: View>: View {
             }
             .onReceive(
                 filterViewModel.$currentFilters
-                    .dropFirst()
+                    .map { filterViewModel.staticFilters.union($0) }
                     .removeDuplicates()
                     .debounce(for: 1, scheduler: RunLoop.main)
             ) { filters in
+                guard viewModel.environment.filters != filters else { return }
                 viewModel.environment.filters = filters
             }
+            #if os(tvOS)
+            .filterBar(
+                viewModel: filterViewModel,
+                types: filterTypes
+            )
+            #endif
+            .letterPickerBar(filterViewModel: filterViewModel)
             #if os(tvOS)
             .background(alignment: .top) {
                 if !router.isRootOfPath {
@@ -307,7 +315,7 @@ private struct ItemLibraryBody<Content: View>: View {
             #else
             .navigationBarFilterDrawer(
                 viewModel: filterViewModel,
-                types: enabledDrawerFilters
+                types: filterTypes
             )
             #endif
     }

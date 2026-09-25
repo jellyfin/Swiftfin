@@ -152,7 +152,7 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
         case .officialRatings:
             "person.badge.shield.checkmark"
         case .sortBy:
-            "line.3.horizontal.decrease"
+            "arrow.up.arrow.down"
         case .subtitleLanguage:
             "captions.bubble"
         case .tags:
