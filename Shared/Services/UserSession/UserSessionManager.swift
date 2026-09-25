@@ -297,6 +297,7 @@ final class UserSessionManager: ObservableObject {
             .store(in: &cancellables)
 
         observeSocketCommands()
+        observeLibraryChanges()
     }
 
     @MainActor
