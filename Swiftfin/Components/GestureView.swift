@@ -163,7 +163,7 @@ struct GestureView: PlatformViewRepresentable {
             tapAction?(
                 location: location,
                 unitPoint: unitPoint,
-                count: gesture.numberOfTouches
+                count: gesture.numberOfTouchesRequired
             )
         }
     }
