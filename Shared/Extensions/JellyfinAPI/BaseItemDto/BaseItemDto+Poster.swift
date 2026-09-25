@@ -304,8 +304,7 @@ private struct BaseItemDtoPosterContextMenu: View {
 
         let response = try await userSession.client.send(request)
         item.userData = response.value
-        Notifications[.itemUserDataDidChange].post(response.value)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
+        Notifications[.getChangedItemUserData].post(itemID)
     }
 
     private func setIsFavorite(_ isFavorite: Bool) async throws {
@@ -327,8 +326,7 @@ private struct BaseItemDtoPosterContextMenu: View {
 
         let response = try await userSession.client.send(request)
         item.userData = response.value
-        Notifications[.itemUserDataDidChange].post(response.value)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
+        Notifications[.getChangedItemUserData].post(itemID)
     }
 }
 
