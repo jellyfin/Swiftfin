@@ -13,9 +13,6 @@ extension SeriesEpisodeContentGroup {
 
     struct EpisodeCard: View {
 
-        @Environment(\.posterConfiguration)
-        private var posterConfiguration
-
         @Namespace
         private var namespace
 
@@ -23,22 +20,6 @@ extension SeriesEpisodeContentGroup {
         private var router
 
         let episode: BaseItemDto
-
-        @ViewBuilder
-        private var overlayView: some View {
-            if posterConfiguration.indicators.contains(.progress), let progressLabel = episode.progressLabel {
-                ProgressIndicator(
-                    title: progressLabel,
-                    progress: (episode.userData?.playedPercentage ?? 0) / 100,
-                    posterDisplayType: .landscape
-                )
-            } else if posterConfiguration.indicators.contains(.played), episode.userData?.isPlayed ?? false {
-                PlayedIndicator()
-                    .frame(width: UIDevice.isTV ? 45 : 25, height: UIDevice.isTV ? 45 : 25)
-                    .padding(3)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-            }
-        }
 
         private var episodeContent: String {
             if episode.isUnaired {
@@ -79,7 +60,7 @@ extension SeriesEpisodeContentGroup {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(alignment: .bottom) {
-                    overlayView
+                    PosterIndicatorsOverlay(item: episode, posterDisplayType: .landscape)
                 }
                 .contentShape(.contextMenuPreview, Rectangle())
                 .posterStyle(.landscape)
@@ -130,6 +111,9 @@ extension SeriesEpisodeContentGroup {
             case content
         }
 
+        @Environment(\.posterConfiguration)
+        private var posterConfiguration
+
         @FocusState
         private var focusedElement: FocusedElement?
 
@@ -140,6 +124,11 @@ extension SeriesEpisodeContentGroup {
         let contentAction: () -> Void
         let contextMenuItem: BaseItemDto?
         let artwork: Artwork
+
+        private var contentAccessibilityLabel: String {
+            let title = contextMenuItem?.posterAccessibility(configuration: posterConfiguration).label
+            return PosterAccessibility.joined([title ?? header, contextMenuItem == nil ? subHeader : nil, content])
+        }
 
         init(
             header: String,
@@ -162,7 +151,15 @@ extension SeriesEpisodeContentGroup {
         @ViewBuilder
         private var artworkButton: some View {
             let button = Button(action: artworkAction) {
-                artwork
+                if let contextMenuItem {
+                    artwork
+                        .posterAccessibility(for: contextMenuItem)
+                        .accessibilityHint(L10n.posterAccessibilityPlayHint)
+                } else {
+                    artwork
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(PosterAccessibility.joined([header, subHeader]))
+                }
             }
             .foregroundStyle(.primary, .secondary)
             .buttonStyle(.card)
@@ -171,6 +168,7 @@ extension SeriesEpisodeContentGroup {
             if let contextMenuItem {
                 button.posterContextMenu(for: contextMenuItem) {
                     artwork
+                        .posterAccessibility(for: contextMenuItem)
                 }
             } else {
                 button
@@ -188,6 +186,9 @@ extension SeriesEpisodeContentGroup {
                         subHeader: subHeader,
                         content: content
                     )
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(contentAccessibilityLabel)
+                    .accessibilityHint(contextMenuItem == nil ? "" : L10n.posterAccessibilityDetailsHint)
                 }
                 .foregroundStyle(.primary, .secondary)
                 #if os(tvOS)

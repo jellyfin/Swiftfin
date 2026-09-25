@@ -64,6 +64,14 @@ extension ChapterInfo {
             ChapterPosterLabel(chapter: self)
         }
 
+        func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
+            let startTime = PosterAccessibility.duration(chapterInfo.startSeconds ?? .zero)
+            return PosterAccessibility(
+                label: displayTitle,
+                value: L10n.posterAccessibilityStartTime(startTime)
+            )
+        }
+
         func posterOverlay(for displayType: PosterDisplayType) -> some View {
             PosterSelectionOverlay()
         }

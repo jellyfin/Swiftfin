@@ -1260,8 +1260,64 @@ internal enum L10n {
   internal static let playPreviousItem = L10n.tr("Localizable", "playPreviousItem", fallback: "Play previous item")
   /// Portrait
   internal static let portrait = L10n.tr("Localizable", "portrait", fallback: "Portrait")
+  /// Community rating: %1$@ out of 10 - Spoken community rating on a scale of ten.
+  internal static func posterAccessibilityCommunityRating(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "posterAccessibilityCommunityRating", String(describing: p1), fallback: "Community rating: %1$@ out of 10")
+  }
+  /// %1$@: %2$@ - Spoken poster metadata. The first argument is the field name and the second is its value.
+  internal static func posterAccessibilityDetail(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "posterAccessibilityDetail", String(describing: p1), String(describing: p2), fallback: "%1$@: %2$@")
+  }
+  /// Opens episode details. - Accessibility hint for episode text that opens its details.
+  internal static let posterAccessibilityDetailsHint = L10n.tr("Localizable", "posterAccessibilityDetailsHint", fallback: "Opens episode details.")
+  /// End time: %1$@ - Spoken program end date and time.
+  internal static func posterAccessibilityEndTime(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "posterAccessibilityEndTime", String(describing: p1), fallback: "End time: %1$@")
+  }
+  /// Episodes %1$@ through %2$@ - Spoken range for an item containing multiple episodes.
+  internal static func posterAccessibilityEpisodeRange(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "posterAccessibilityEpisodeRange", String(describing: p1), String(describing: p2), fallback: "Episodes %1$@ through %2$@")
+  }
+  /// Plays this episode. - Accessibility hint for episode artwork that starts playback.
+  internal static let posterAccessibilityPlayHint = L10n.tr("Localizable", "posterAccessibilityPlayHint", fallback: "Plays this episode.")
+  /// Progress: %1$@ - Spoken playback progress, with a formatted percentage.
+  internal static func posterAccessibilityProgress(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "posterAccessibilityProgress", String(describing: p1), fallback: "Progress: %1$@")
+  }
+  /// %1$@ remaining - Spoken time remaining, with a duration in full words.
+  internal static func posterAccessibilityRemaining(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "posterAccessibilityRemaining", String(describing: p1), fallback: "%1$@ remaining")
+  }
+  /// Runtime: %1$@ - Spoken total runtime of a poster, with a duration in full words.
+  internal static func posterAccessibilityRuntime(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "posterAccessibilityRuntime", String(describing: p1), fallback: "Runtime: %1$@")
+  }
+  /// Season %1$@ - Spoken season number, without abbreviation.
+  internal static func posterAccessibilitySeason(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "posterAccessibilitySeason", String(describing: p1), fallback: "Season %1$@")
+  }
+  /// Start time: %1$@ - Spoken start time, either a program date and time or a chapter position.
+  internal static func posterAccessibilityStartTime(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "posterAccessibilityStartTime", String(describing: p1), fallback: "Start time: %1$@")
+  }
+  /// Unplayed items: %1$@ - Spoken count of unplayed items. The value is a formatted number.
+  internal static func posterAccessibilityUnplayedCount(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "posterAccessibilityUnplayedCount", String(describing: p1), fallback: "Unplayed items: %1$@")
+  }
+  /// Age rating
+  internal static let posterAgeRating = L10n.tr("Localizable", "posterAgeRating", fallback: "Age rating")
+  /// %@%% critics
+  internal static func posterCriticScore(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "posterCriticScore", String(describing: p1), fallback: "%@%% critics")
+  }
+  /// Season and episode
+  internal static let posterEpisodeNumber = L10n.tr("Localizable", "posterEpisodeNumber", fallback: "Season and episode")
+  /// Extra type
+  internal static let posterExtraType = L10n.tr("Localizable", "posterExtraType", fallback: "Extra type")
   /// Posters
   internal static let posters = L10n.tr("Localizable", "posters", fallback: "Posters")
+  /// Poster subtitles
+  internal static let posterSubtitles = L10n.tr("Localizable", "posterSubtitles", fallback: "Poster subtitles")
   /// Preferred language
   internal static let preferredLanguage = L10n.tr("Localizable", "preferredLanguage", fallback: "Preferred language")
   /// Premiere date
@@ -1446,6 +1502,8 @@ internal enum L10n {
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
   /// Reviews
   internal static let reviews = L10n.tr("Localizable", "reviews", fallback: "Reviews")
+  /// Rewatching
+  internal static let rewatching = L10n.tr("Localizable", "rewatching", fallback: "Rewatching")
   /// Rewind
   internal static let rewind = L10n.tr("Localizable", "rewind", fallback: "Rewind")
   /// Right
@@ -1548,6 +1606,8 @@ internal enum L10n {
   internal static let showMissingSeasons = L10n.tr("Localizable", "showMissingSeasons", fallback: "Show missing seasons")
   /// Show poster labels
   internal static let showPosterLabels = L10n.tr("Localizable", "showPosterLabels", fallback: "Show poster labels")
+  /// Show poster titles - Controls titles on movie, series, and collection posters. Specialized posters keep their identifying titles.
+  internal static let showPosterTitles = L10n.tr("Localizable", "showPosterTitles", fallback: "Show poster titles")
   /// Show progress
   internal static let showProgress = L10n.tr("Localizable", "showProgress", fallback: "Show progress")
   /// Show recommendations

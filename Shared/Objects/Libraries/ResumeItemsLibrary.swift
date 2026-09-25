@@ -27,6 +27,7 @@ struct ResumeItemsLibrary: BaseItemKindLibrary {
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetResumeItemsParameters()
         parameters.enableUserData = true
+        parameters.fields = PosterSubtitleField.itemFields
         parameters.limit = pageState.pageSize
         parameters.mediaTypes = mediaTypes
         parameters.startIndex = pageState.pageOffset

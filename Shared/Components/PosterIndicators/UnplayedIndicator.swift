@@ -18,24 +18,20 @@ struct UnplayedIndicator: View {
 
     var body: some View {
         if let count, count > 0 {
-            ZStack {
-                Color.clear
-                    .aspectRatio(1, contentMode: .fit)
-
-                Text(count.description)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(accentColor.overlayColor)
-                    .padding(.horizontal, UIDevice.isTV ? 8 : 4)
-                    .fixedSize()
+            Quadrant(.topTrailing) {
+                QuadrantItem(color: accentColor) {
+                    Text(count.description)
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(accentColor.overlayColor)
+                }
             }
-            .background {
-                UnevenRoundedRectangle(bottomLeadingRadius: UIDevice.isTV ? 18 : 6)
-                    .fill(accentColor)
-            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(L10n.posterAccessibilityUnplayedCount(count.formatted()))
         } else {
             Q3RightTriangle()
                 .fill(accentColor)
                 .aspectRatio(1, contentMode: .fit)
+                .accessibilityLabel(L10n.unplayed)
         }
     }
 }
