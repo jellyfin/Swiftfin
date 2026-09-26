@@ -92,7 +92,7 @@ extension LibraryElement {
         case .list:
             return .columns(
                 libraryStyle.listColumnCount,
-                insets: .init(top: insets.top, leading: 0, bottom: insets.bottom, trailing: 0),
+                insets: insets,
                 itemSpacing: 0,
                 lineSpacing: 0
             )
@@ -107,7 +107,7 @@ extension LibraryElement {
 
         return .columns(
             columnCount,
-            insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
+            insets: insets,
             itemSpacing: EdgeInsets.itemSpacing,
             lineSpacing: EdgeInsets.itemSpacing
         )

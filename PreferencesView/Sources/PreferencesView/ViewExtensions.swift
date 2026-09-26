@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import SwiftfinMacros
 import SwiftUI
 
 extension UIInterfaceOrientationMask: CustomDebugStringConvertible {
@@ -48,18 +49,15 @@ public extension View {
 }
 
 #if os(tvOS)
-public struct UIInterfaceOrientationMask: OptionSet {
+@OptionSet<Int>
+public struct UIInterfaceOrientationMask {
 
-    public let rawValue: Int
-
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
+    private enum Options: Int {
+        case portrait = 1
+        case landscapeLeft = 4
+        case landscapeRight = 3
+        case portraitUpsideDown = 2
     }
-
-    public static let portrait = Self(rawValue: 1 << 1)
-    public static let landscapeLeft = Self(rawValue: 1 << 4)
-    public static let landscapeRight = Self(rawValue: 1 << 3)
-    public static let portraitUpsideDown = Self(rawValue: 1 << 2)
 
     public static var landscape: Self {
         [.landscapeLeft, .landscapeRight]

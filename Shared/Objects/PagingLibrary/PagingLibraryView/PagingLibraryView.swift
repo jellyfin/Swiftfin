@@ -9,8 +9,13 @@
 import CollectionVGrid
 import Defaults
 import SwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: LibraryElement {
+
+    private enum Focus: String {
+        case firstElement = "pagingLibrary-firstElement"
+    }
 
     typealias Element = Library.Element
 
@@ -18,6 +23,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     private var rememberIndividualLibraryStyle
     @Default(.Customization.Library.style)
     private var defaultLibraryStyle
+
+    @Environment(\.tabSafeAreaInsets)
+    private var tabSafeAreaInsets
 
     @Namespace
     private var namespace
@@ -28,6 +36,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @State
     private var isSafeAreaBarApplied: Bool = false
 
+    @StateObject
+    private var focusCoordinator = FocusCoordinator(waitingFor: Focus.firstElement.rawValue)
     @StateObject
     private var gridProxy = CollectionVGridProxy()
     @StateObject
@@ -69,27 +79,64 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(library: library))
     }
 
+    private func contentInsets(for frame: FrameAndSafeAreaInsets) -> EdgeInsets {
+        #if os(tvOS)
+        // The collection disables automatic adjustment, so include both the local
+        // safe area (including filter bars) and the tab's measured top inset.
+        var insets = frame.safeAreaInsets
+        insets.top = max(insets.top, tabSafeAreaInsets.top)
+        return insets + EdgeInsets.itemSpacing
+        #else
+        var insets: EdgeInsets = if isSafeAreaBarApplied {
+            frame.safeAreaInsets + EdgeInsets.itemSpacing
+        } else {
+            EdgeInsets(
+                top: 0,
+                leading: frame.safeAreaInsets.leading,
+                bottom: 0,
+                trailing: frame.safeAreaInsets.trailing
+            ) + EdgeInsets.itemSpacing
+        }
+
+        // TODO: shouldn't need explicitly for list, find fix
+        if libraryStyle.displayType == .list {
+            insets.leading = frame.safeAreaInsets.leading
+            insets.trailing = frame.safeAreaInsets.trailing
+        }
+
+        return insets
+        #endif
+    }
+
     @ViewBuilder
     private var elementsView: some View {
         AlternateLayoutView {
             Color.clear
         } content: { frame in
 
-            let insets: EdgeInsets = if #available(iOS 26, *), isSafeAreaBarApplied {
-                frame.safeAreaInsets + 10
-            } else {
-                .zero + 10
-            }
-
             CollectionVGrid(
                 uniqueElements: viewModel.displayedElements,
                 layout: Element.layout(
                     for: libraryStyle,
                     options: libraryStyleOptions,
-                    insets: insets
+                    insets: contentInsets(for: frame)
                 )
             ) { element in
                 element.makeBody(libraryStyle: libraryStyle)
+                    #if os(tvOS)
+                        .if(element.id == viewModel.displayedElements.first?.id) { view in
+                            view
+                                .coordinatedFocus(Focus.firstElement.rawValue)
+                                .environmentObject(focusCoordinator)
+                        }
+                        .introspect(.viewController, on: .tvOS(.v26...)) { controller in
+                            // Do not have hosting controller apply safe regions
+                            // TODO: do in CollectionVGrid instead
+                            if let hostingController = controller as? UIHostingController<AnyView> {
+                                hostingController.safeAreaRegions.remove(.container)
+                            }
+                        }
+                    #endif
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 if viewModel.isSearchActive {
@@ -102,7 +149,13 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             .onRefresh {
                 await viewModel.background.refresh()
             }
-            .ignoresSafeArea(edges: .vertical)
+            #if os(tvOS)
+            .introspect(.scrollView, on: .tvOS(.v26...)) { collectionView in
+                // TODO: CollectionVGrid option instead
+                collectionView.contentInsetAdjustmentBehavior = .never
+            }
+            #endif
+            .ignoresSafeArea()
         }
         .scrollIndicators(.hidden)
         .withViewContext(.isListRowSeparatorVisible)
@@ -136,6 +189,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 switch viewModel.state {
                 case .initial, .refreshing:
                     ProgressView()
+                        #if os(tvOS)
+                            .coordinatedFocus(.placeholder)
+                        #endif
                 case .content:
                     if viewModel.isSearchActive, viewModel.background.is(.searching) {
                         ProgressView()
@@ -145,11 +201,17 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                             systemImage: viewModel.isSearchActive ? "magnifyingglass" : "rectangle.on.rectangle.slash"
                         )
                         .focusable()
+                        #if os(tvOS)
+                        .coordinatedFocus(.fallback)
+                        #endif
                     } else {
                         elementsView
                     }
                 case .error:
                     viewModel.error.map(ErrorView.init)
+                        #if os(tvOS)
+                            .coordinatedFocus(.fallback)
+                        #endif
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -184,7 +246,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .onFirstAppear {
             viewModel.refresh()
         }
-        #if os(iOS)
+        #if os(tvOS)
+        .environmentObject(focusCoordinator)
+        #else
         .navigationBarMenuButton(
             isLoading: viewModel.background.is(.gettingNextPage) || viewModel.background.is(.gettingNextSearchPage)
         ) {

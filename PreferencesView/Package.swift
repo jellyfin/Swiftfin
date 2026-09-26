@@ -14,9 +14,15 @@ let package = Package(
             targets: ["PreferencesView"]
         ),
     ],
+    dependencies: [
+        .package(path: "../SwiftfinMacros"),
+    ],
     targets: [
         .target(
             name: "PreferencesView",
+            dependencies: [
+                .product(name: "SwiftfinMacros", package: "SwiftfinMacros"),
+            ]
         ),
     ]
 )

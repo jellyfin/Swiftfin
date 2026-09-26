@@ -25,6 +25,8 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
     /// Optional subtitle when used as a poster
     var subtitle: String? { get }
 
+    func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility
+
     func resolveEnvironment(_ environment: EnvironmentValues) -> Environment
 
     @ImageSourceBuilder
@@ -92,6 +94,19 @@ extension Poster where OverlayBody == EmptyView {
 }
 
 extension Poster {
+
+    func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
+        PosterAccessibility(label: PosterAccessibility.joined([displayTitle, subtitle]))
+    }
+
+    func posterDisplayType(for style: UserInterfaceSizeClass) -> PosterDisplayType {
+        switch style {
+        case .compact:
+            preferredPosterDisplayType == .square ? .square : .portrait
+        default:
+            preferredPosterDisplayType
+        }
+    }
 
     var subtitle: String? {
         nil

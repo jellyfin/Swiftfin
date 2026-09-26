@@ -12,6 +12,19 @@ import SwiftUIIntrospect
 
 extension View {
 
+    @ViewBuilder
+    func filterBar(
+        viewModel: FilterViewModel,
+        types: [ItemFilterType]
+    ) -> some View {
+        modifier(
+            FilterBarModifier(
+                viewModel: viewModel,
+                types: types
+            )
+        )
+    }
+
     /// - Important: This does nothing on tvOS.
     @ViewBuilder
     func navigationBarTitleDisplayMode(_ mode: NavigationBarItem.TitleDisplayMode) -> some View {

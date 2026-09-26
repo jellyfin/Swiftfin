@@ -408,6 +408,14 @@ extension BaseItemDto {
         mediaStreams?.filter { $0.type == .video } ?? []
     }
 
+    var isRecording: Bool {
+        if let currentProgram {
+            return currentProgram.isRecording
+        }
+
+        return timerID != nil
+    }
+
     // MARK: Missing and Unaired
 
     var isMissing: Bool {
@@ -543,6 +551,20 @@ extension BaseItemDto {
             true
         default:
             false
+        }
+    }
+
+    /// Can this `BaseItemDto` be recorded
+    var canBeRecorded: Bool {
+        guard Container.shared.currentUserSession()?.user.data.policy?.enableLiveTvManagement == true else { return false }
+
+        switch type {
+        case .channel, .liveTvChannel, .tvChannel:
+            return true
+        case .program, .liveTvProgram, .tvProgram:
+            return (endDate ?? .distantPast) > Date()
+        default:
+            return false
         }
     }
 

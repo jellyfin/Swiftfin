@@ -34,6 +34,9 @@ extension EnvironmentValues {
     @Entry
     var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
 
+    @Entry
+    var tabSafeAreaInsets: EdgeInsets = .zero
+
     // TODO: figure out this directional response stuff
     @Entry
     var panGestureDirection: Direction = .all

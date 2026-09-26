@@ -108,6 +108,7 @@ struct ServerActivityView: View {
                 viewModel.getNextPage()
             }
             .frame(maxWidth: .infinity)
+            .ignoresSafeArea(edges: .vertical)
         }
     }
 

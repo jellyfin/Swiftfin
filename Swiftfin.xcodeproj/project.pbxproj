@@ -97,6 +97,8 @@
 		E19005010000000000000002 /* MPVUI in Frameworks */ = {isa = PBXBuildFile; productRef = E19005010000000000000004 /* MPVUI */; };
 		E19005020000000000000001 /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19005020000000000000003 /* MediaAccessibilityKit */; };
 		E19005020000000000000002 /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19005020000000000000004 /* MediaAccessibilityKit */; };
+		E19009260000000000000001 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000003 /* SwiftfinMacros */; };
+		E19009260000000000000002 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000004 /* SwiftfinMacros */; };
 		E19138CA2E7E7FA20061E464 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19138C92E7E7FA20061E464 /* StatefulMacros */; };
 		E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E19D41B12BF2BFA50082B8B2 /* KeychainSwift */; };
 		E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E19DDEC62948EF9900954E10 /* OrderedCollections */; };
@@ -123,7 +125,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		535870602669D21600D05A09 /* Swiftfin tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swiftfin tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		535870602669D21600D05A09 /* Swiftfin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swiftfin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5362E4A7267D4067000E2F71 /* GoogleCast.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleCast.framework; path = "../../Downloads/GoogleCastSDK-ios-4.6.0_dynamic/GoogleCast.framework"; sourceTree = "<group>"; };
 		5362E4AA267D40AD000E2F71 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5362E4AC267D40B1000E2F71 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
@@ -141,7 +143,7 @@
 		5362E4C4267D40F0000E2F71 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		5362E4C6267D40F4000E2F71 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		5362E4C8267D40F7000E2F71 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swiftfin iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5377CBF1263B596A003A4E83 /* Swiftfin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swiftfin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53ABFDDB267972BF00886593 /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/System/Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
 		62666E0027E5016900EC0ECD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		62666E0527E5017A00EC0ECD /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
@@ -284,6 +286,7 @@
 				62666E1F27E501DF00EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
 				E1A7B1652B9A9F7800152546 /* PreferencesView in Frameworks */,
+				E19009260000000000000002 /* SwiftfinMacros in Frameworks */,
 				E12CDBC12FFB593800828742 /* CollectionVGrid in Frameworks */,
 				E1153DD22BBB649C00424D36 /* SVGKit in Frameworks */,
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
@@ -365,6 +368,7 @@
 				E1153DAC2BBA6AD200424D36 /* CollectionHStack in Frameworks */,
 				62666E0D27E501AA00EC0ECD /* QuartzCore.framework in Frameworks */,
 				E15D4F052B1B0C3C00442DB8 /* PreferencesView in Frameworks */,
+				E19009260000000000000001 /* SwiftfinMacros in Frameworks */,
 				E19E6E0728A0B958005C10C8 /* NukeUI in Frameworks */,
 				E134DD2C2E7F4DC300AED027 /* StatefulMacros in Frameworks */,
 				E1A76F1A2E8369A500A5F2C1 /* StatefulMacros in Frameworks */,
@@ -393,8 +397,8 @@
 		5377CBF2263B596A003A4E83 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */,
-				535870602669D21600D05A09 /* Swiftfin tvOS.app */,
+				5377CBF1263B596A003A4E83 /* Swiftfin.app */,
+				535870602669D21600D05A09 /* Swiftfin.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -495,6 +499,7 @@
 				E1B5F7AA29577BCE004B26CF /* PulseUI */,
 				E1B5F7AC29577BDD004B26CF /* OrderedCollections */,
 				E1A7B1642B9A9F7800152546 /* PreferencesView */,
+				E19009260000000000000004 /* SwiftfinMacros */,
 				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
 				E1153DD12BBB649C00424D36 /* SVGKit */,
 				E19D41B12BF2BFA50082B8B2 /* KeychainSwift */,
@@ -511,7 +516,7 @@
 				E16C08F8305A386900895062 /* CollectionHStack */,
 			);
 			productName = "JellyfinPlayer tvOS";
-			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
+			productReference = 535870602669D21600D05A09 /* Swiftfin.app */;
 			productType = "com.apple.product-type.application";
 		};
 		5377CBF0263B596A003A4E83 /* Swiftfin iOS */ = {
@@ -553,6 +558,7 @@
 				E1523F812B132C350062821A /* CollectionHStack */,
 				E114DB322B1944FA00B75FB3 /* CollectionVGrid */,
 				E15D4F042B1B0C3C00442DB8 /* PreferencesView */,
+				E19009260000000000000003 /* SwiftfinMacros */,
 				E113A2A62B5A178D009CAAAA /* CollectionHStack */,
 				E113A2A92B5A179A009CAAAA /* CollectionVGrid */,
 				E15EFA832BA167350080E926 /* CollectionHStack */,
@@ -592,7 +598,7 @@
 				E16C08F6305A385900895062 /* CollectionHStack */,
 			);
 			productName = JellyfinPlayer;
-			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
+			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -691,6 +697,7 @@
 				E19DDEC52948EF9900954E10 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */,
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
+				E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */,
 				E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */,
 				E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				E14EA1632BF70A8E00DE757A /* XCRemoteSwiftPackageReference "Mantis" */,
@@ -926,7 +933,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.4.1;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Swiftfin;
 				SDKROOT = appletvos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -956,7 +963,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.4.1;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Swiftfin;
 				SDKROOT = appletvos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1115,7 +1122,6 @@
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Swiftfin/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Swiftfin;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1124,7 +1130,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Swiftfin;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1155,7 +1161,6 @@
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Swiftfin/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Swiftfin;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1165,7 +1170,7 @@
 				MARKETING_VERSION = 1.0;
 				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Swiftfin;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1212,6 +1217,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PreferencesView;
 		};
+		E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = SwiftfinMacros;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -1220,7 +1229,7 @@
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 26.0.0;
+				minimumVersion = 27.0.0;
 			};
 		};
 		BD88CB402D77E6A0006BB5E3 /* XCRemoteSwiftPackageReference "TVOSPicker" */ = {
@@ -1702,6 +1711,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */;
 			productName = MediaAccessibilityKit;
+		};
+		E19009260000000000000003 /* SwiftfinMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */;
+			productName = SwiftfinMacros;
+		};
+		E19009260000000000000004 /* SwiftfinMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19009260000000000000005 /* XCLocalSwiftPackageReference "SwiftfinMacros" */;
+			productName = SwiftfinMacros;
 		};
 		E19138C92E7E7FA20061E464 /* StatefulMacros */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -82,6 +82,10 @@ struct AnyPoster: Poster {
         _id
     }
 
+    func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
+        _poster.posterAccessibility(configuration: configuration)
+    }
+
     var posterLabel: some View {
         _poster.posterLabel
             .eraseToAnyView()

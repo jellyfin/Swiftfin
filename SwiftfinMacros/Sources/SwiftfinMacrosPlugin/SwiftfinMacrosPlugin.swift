@@ -6,14 +6,10 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
+import SwiftCompilerPlugin
+import SwiftSyntaxMacros
 
-struct FavoriteIndicator: View {
-
-    var body: some View {
-        Image(systemName: "heart.circle.fill")
-            .resizable()
-            .symbolRenderingMode(.palette)
-            .foregroundStyle(.white, .pink)
-    }
+@main
+struct SwiftfinMacrosPlugin: CompilerPlugin {
+    let providingMacros: [Macro.Type] = [DefaultDecodableMacro.self, OptionSetMacro.self]
 }

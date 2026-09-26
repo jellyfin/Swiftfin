@@ -72,6 +72,7 @@ struct NavigationInjectionView: View {
             NavigationInjectionView(coordinator: presentedRoute.coordinator) {
                 presentedRoute.route.destination
             }
+            .environment(\.tabSafeAreaInsets, .zero)
             .background(.regularMaterial)
         }
         .fullScreenCover(
@@ -80,6 +81,7 @@ struct NavigationInjectionView: View {
             NavigationInjectionView(coordinator: presentedRoute.coordinator) {
                 presentedRoute.route.destination
             }
+            .environment(\.tabSafeAreaInsets, .zero)
         }
         #else
         .sheet(
