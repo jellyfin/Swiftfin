@@ -144,8 +144,8 @@ extension Notifications.Key {
         Key("didDeleteItem")
     }
 
-    static var timersDidChange: Key<Void> {
-        Key("timersDidChange")
+    static var recordingTimersDidChange: Key<Void> {
+        Key("recordingTimersDidChange")
     }
 
     // MARK: - Server

@@ -71,7 +71,7 @@ struct LiveTVGroupProvider: ContentGroupProvider {
                 )
             case .schedule:
                 router.route(
-                    to: .library(library: ScheduleLibrary())
+                    to: .library(library: ScheduledRecordingsLibrary())
                 )
             }
         }

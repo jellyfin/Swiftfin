@@ -142,15 +142,6 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
             }
             .store(in: &cancellables)
 
-        Notifications[.timersDidChange]
-            .publisher
-            .sink { [weak self] in
-                guard let self else { return }
-
-                library.onTimersChanged(viewModel: self)
-            }
-            .store(in: &cancellables)
-
         $searchQuery
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .removeDuplicates()

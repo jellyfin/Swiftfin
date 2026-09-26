@@ -8,8 +8,9 @@
 
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
-struct ScheduleLibrary: BaseItemKindLibrary {
+struct ScheduledRecordingsLibrary: BaseItemKindLibrary {
 
     let libraryItemTypes: [BaseItemKind] = [.program]
     let parent: TitledLibraryParent = .init(
@@ -27,23 +28,19 @@ struct ScheduleLibrary: BaseItemKindLibrary {
         let response = try await pageState.userSession.client.send(request)
 
         return (response.value.items ?? [])
-            .filter { timer in
-                if let endDate = timer.endDate, endDate <= Date() {
-                    return false
-                }
-
-                switch timer.status {
-                case .cancelled, .completed, .error:
-                    return false
-                default:
-                    return true
-                }
-            }
+            .filter(\.isScheduledRecording)
             .sorted(using: \.startDate)
             .compactMap(\.programInfo)
     }
 
-    func onTimersChanged(viewModel: PagingLibraryViewModel<ScheduleLibrary>) {
-        viewModel.background.refresh()
+    func makeLibraryBody(
+        viewModel: PagingLibraryViewModel<Self>,
+        @ViewBuilder content: @escaping () -> some View
+    ) -> AnyView {
+        content()
+            .onReceive(Notifications[.recordingTimersDidChange].publisher) {
+                viewModel.background.refresh()
+            }
+            .eraseToAnyView()
     }
 }

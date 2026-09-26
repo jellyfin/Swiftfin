@@ -248,21 +248,19 @@ extension NavigationRoute {
         }
     }
 
-    static func seriesTimerEditor(viewModel: ProgramTimerViewModel) -> NavigationRoute {
+    @MainActor
+    static func editRecordingTimer(
+        viewModel: RecordingTimerViewModel,
+        isSeries: Bool
+    ) -> NavigationRoute {
         NavigationRoute(
-            id: "seriesTimerEditor",
+            id: "editRecordingTimer",
             style: .sheet
         ) {
-            RecordingEditorView(seriesTimer: viewModel)
-        }
-    }
-
-    static func timerEditor(viewModel: ProgramTimerViewModel) -> NavigationRoute {
-        NavigationRoute(
-            id: "timerEditor",
-            style: .sheet
-        ) {
-            RecordingEditorView(timer: viewModel)
+            EditRecordingView(
+                viewModel: viewModel,
+                isSeries: isSeries
+            )
         }
     }
 }

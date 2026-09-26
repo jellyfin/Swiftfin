@@ -26,40 +26,40 @@ extension ItemActionButtons.Record {
 
     private struct Content: View {
 
-        @Router
-        private var router
-
         @ViewContextContains(.isInMenu)
         private var isInMenu
 
+        @Router
+        private var router
+
         @StateObject
-        private var viewModel: ProgramTimerViewModel
+        private var viewModel: RecordingTimerViewModel
 
         init(item: BaseItemDto) {
-            self._viewModel = StateObject(wrappedValue: ProgramTimerViewModel(item: item))
+            self._viewModel = StateObject(wrappedValue: RecordingTimerViewModel(item: item))
         }
 
         private var isSeries: Bool {
-            viewModel.program.isSeries == true
+            viewModel.program?.isSeries == true
         }
 
         private var isScheduled: Bool {
-            viewModel.timer != nil || viewModel.seriesTimer != nil
+            viewModel.recordingTimer != nil || viewModel.seriesRecordingTimer != nil
         }
 
         @ViewBuilder
-        private var timerButtons: some View {
-            if let timer = viewModel.timer {
+        private var recordingButtons: some View {
+            if let recordingTimer = viewModel.recordingTimer {
                 Button(
-                    timer.status == .inProgress ? L10n.stopRecording : L10n.cancelRecording,
-                    systemImage: timer.status == .inProgress ? "stop.circle" : "xmark.circle",
+                    recordingTimer.status == .inProgress ? L10n.stopRecording : L10n.cancelRecording,
+                    systemImage: recordingTimer.status == .inProgress ? "stop.circle" : "xmark.circle",
                     role: .destructive
                 ) {
                     viewModel.toggleRecording()
                 }
 
                 Button(L10n.recordingSettings, systemImage: "gearshape") {
-                    router.route(to: .timerEditor(viewModel: viewModel))
+                    router.route(to: .editRecordingTimer(viewModel: viewModel, isSeries: false))
                 }
             } else {
                 Button(
@@ -73,19 +73,19 @@ extension ItemActionButtons.Record {
 
         var body: some View {
             Group {
-                if isSeries || viewModel.timer != nil {
+                if isSeries || viewModel.recordingTimer != nil {
                     Menu(
                         ItemActionButton.record.displayTitle,
                         systemImage: isScheduled
                             ? ItemActionButton.record.systemImage
                             : ItemActionButton.record.secondarySystemImage
                     ) {
-                        timerButtons
+                        recordingButtons
 
                         if isSeries {
                             Divider()
 
-                            if viewModel.seriesTimer == nil {
+                            if viewModel.seriesRecordingTimer == nil {
                                 Button(
                                     L10n.recordSeries,
                                     systemImage: "smallcircle.filled.circle"
@@ -102,7 +102,10 @@ extension ItemActionButtons.Record {
                                 }
 
                                 Button(L10n.seriesSettings, systemImage: "gearshape") {
-                                    router.route(to: .seriesTimerEditor(viewModel: viewModel))
+                                    router.route(to: .editRecordingTimer(
+                                        viewModel: viewModel,
+                                        isSeries: true
+                                    ))
                                 }
                             }
                         }
@@ -111,13 +114,18 @@ extension ItemActionButtons.Record {
                         menu.menuStyle(.button)
                     }
                 } else {
-                    timerButtons
+                    recordingButtons
                 }
             }
             .isSelected(isScheduled)
+            .enabled(viewModel.canManageRecordings)
             .onAppear {
                 viewModel.refresh()
             }
+            .onReceive(Notifications[.recordingTimersDidChange].publisher) {
+                viewModel.refresh()
+            }
+            .errorMessage($viewModel.error)
         }
     }
 }

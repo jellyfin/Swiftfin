@@ -409,7 +409,11 @@ extension BaseItemDto {
     }
 
     var isRecording: Bool {
-        timerID != nil && status != "Cancelled"
+        if let currentProgram {
+            return currentProgram.isRecording
+        }
+
+        return timerID != nil && status == RecordingStatus.inProgress.rawValue
     }
 
     // MARK: Missing and Unaired
