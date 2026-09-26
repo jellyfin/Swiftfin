@@ -25,16 +25,12 @@ extension VideoPlayer.UIContainerViewController {
         @FocusState
         private var focusedElement: String?
 
-        private var isPresentingFullScreenSupplement: Bool {
-            !viewState.isCompact &&
-                viewState.selectedSupplement?.presentationStyle == .expanded
-        }
-
         #if os(iOS)
         @ViewBuilder
         private func closeButton(size: CGFloat) -> some View {
             Button {
                 viewState.selectedSupplementID = nil
+                UIDevice.impact(.light)
             } label: {
                 Label(L10n.close, systemImage: "chevron.down")
                     .contentShape(Rectangle())
@@ -87,7 +83,7 @@ extension VideoPlayer.UIContainerViewController {
             } content: { (size: CGSize) in
                 HStack(spacing: Self.buttonSpacing) {
                     #if os(iOS)
-                    if isPresentingFullScreenSupplement {
+                    if viewState.isPresentingFullScreenSupplement {
                         closeButton(size: size.height)
                     }
                     #endif

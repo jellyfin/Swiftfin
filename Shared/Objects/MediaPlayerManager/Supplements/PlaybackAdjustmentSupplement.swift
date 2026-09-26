@@ -35,41 +35,47 @@ extension PlaybackAdjustmentSupplement {
 
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
+
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
         let supplement: PlaybackAdjustmentSupplement
 
+        @ViewBuilder
         private var content: some View {
-            ScrollView {
-                VStack(spacing: 12) {
-                    PlaybackAdjustmentSlider(
-                        value: supplement.value(manager),
-                        title: supplement.displayTitle,
-                        range: supplement.range,
-                        step: supplement.step,
-                        presets: supplement.presets,
-                        resetValue: supplement.resetValue,
-                        formatValue: supplement.formatValue,
-                        focusID: supplement.preferredFocusID
-                    )
+            GeometryReader { proxy in
+                ScrollView {
+                    VStack(spacing: UIDevice.isTV ? 20 : 12) {
+                        PlaybackAdjustmentSlider(
+                            value: supplement.value(manager),
+                            title: supplement.displayTitle,
+                            range: supplement.range,
+                            step: supplement.step,
+                            presets: supplement.presets,
+                            resetValue: supplement.resetValue,
+                            formatValue: supplement.formatValue,
+                            focusID: supplement.preferredFocusID
+                        )
 
-                    if let description = supplement.description {
-                        Text(description)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
+                        if let description = supplement.description {
+                            Text(description)
+                                .font(UIDevice.isTV ? .callout : .caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
                     }
+                    .frame(maxWidth: UIDevice.isTV ? 1200 : 700)
+                    .frame(maxWidth: .infinity)
+                    .edgePadding(.horizontal)
+                    .padding(.vertical, UIDevice.isTV ? 24 : 12)
+                    .padding(.leading, safeAreaInsets.leading)
+                    .padding(.trailing, safeAreaInsets.trailing)
+                    // Center within the usable viewport, but let taller content scroll.
+                    .frame(minHeight: max(0, proxy.size.height - safeAreaInsets.bottom))
+                    .padding(.bottom, safeAreaInsets.bottom)
                 }
-                .frame(maxWidth: UIDevice.isTV ? 1000 : 700)
-                .frame(maxWidth: .infinity)
-                .edgePadding(.horizontal)
-                .padding(.vertical, 12)
-                .padding(.leading, safeAreaInsets.leading)
-                .padding(.trailing, safeAreaInsets.trailing)
-                .padding(.bottom, safeAreaInsets.bottom)
+                .scrollBounceBehavior(.basedOnSize)
             }
-            .scrollBounceBehavior(.basedOnSize)
         }
 
         var iOSView: some View {
@@ -100,7 +106,7 @@ extension PlaybackAdjustmentSupplement {
             value: { manager in
                 Binding(get: { manager.rate }, set: { manager.rate = $0 })
             },
-            range: 0.1 ... 10,
+            range: 0.1 ... 5,
             step: 0.05,
             presets: [0.5, 0.75, 1, 1.25, 1.5, 2],
             resetValue: 1,

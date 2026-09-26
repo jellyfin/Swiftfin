@@ -46,7 +46,6 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
         private var pageController: UIPageViewController?
         private var requestedID: String?
         private var selectionRevision = 0
-        private var isTransitioning = false
         private var swipeSelection: (id: String?, revision: Int)?
         private var selection: Binding<String?>
 
@@ -62,8 +61,6 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             guard container != nil else { return }
 
             self.selection = selection
-            let wasPresenting = requestedID != nil
-
             let newIDs = data.map(\.id)
             let trackChanged = ids != newIDs
             if trackChanged {
@@ -84,7 +81,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
                 }
             }
 
-            selectCurrent(animated: wasPresenting && !trackChanged)
+            selectCurrent()
         }
 
         func removeAll() {
@@ -129,7 +126,6 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             for host in hosts.values {
                 remove(host)
             }
-            isTransitioning = false
             swipeSelection = nil
         }
 
@@ -141,11 +137,17 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             controller.removeFromParent()
         }
 
-        private func selectCurrent(animated: Bool) {
+        private func selectCurrent() {
             let newID = selection.wrappedValue
             if requestedID != newID {
                 selectionRevision += 1
                 requestedID = newID
+
+                // A tab tap takes precedence over an in-flight swipe. Rebuild the
+                // pager so its eventual completion cannot restore the old panel.
+                if swipeSelection != nil {
+                    removePageController()
+                }
             }
 
             guard let targetID = requestedID, let target = hosts[targetID] else {
@@ -153,28 +155,22 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
                 return
             }
 
-            // Serialize tab selections with both programmatic and interactive paging.
-            guard !isTransitioning,
+            guard swipeSelection == nil,
                   let page = makePageController()
             else { return }
 
             guard page.viewControllers?.first !== target else { return }
 
             let direction = direction(from: page.viewControllers?.first, to: targetID)
-            isTransitioning = true
+            // The container can change height at the same time (regular/expanded
+            // supplements). Animating UIKit's page scroll during that resize can
+            // leave its visible page behind the selection. Only user swipes page
+            // interactively; explicit selections are installed synchronously.
             page.setViewControllers(
                 [target],
                 direction: direction,
-                animated: animated && page.viewControllers?.isEmpty == false
-            ) { [weak self, weak page] _ in
-                // UIKit finishes its page hierarchy after invoking this completion.
-                // Starting the next transition here can leave the previous panel visible.
-                DispatchQueue.main.async { [weak self, weak page] in
-                    guard let self, let page, self.pageController === page else { return }
-                    isTransitioning = false
-                    selectCurrent(animated: true)
-                }
-            }
+                animated: false
+            )
         }
 
         private func direction(
@@ -214,7 +210,6 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             willTransitionTo pendingViewControllers: [UIViewController]
         ) {
             guard controller === pageController else { return }
-            isTransitioning = true
             swipeSelection = (selection.wrappedValue, selectionRevision)
         }
 
@@ -226,7 +221,6 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
         ) {
             guard controller === pageController, let swipeSelection else { return }
             self.swipeSelection = nil
-            isTransitioning = false
 
             // A tab tap or dismissal during the swipe takes precedence over its result.
             if transitionCompleted,
@@ -240,7 +234,11 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
                 selectionRevision += 1
                 selection.wrappedValue = newID
             }
-            selectCurrent(animated: true)
+            // UIKit still owns the page hierarchy while delivering this callback.
+            DispatchQueue.main.async { [weak self, weak controller] in
+                guard let self, let controller, self.pageController === controller else { return }
+                self.selectCurrent()
+            }
         }
 
         private func hostID(for controller: UIViewController) -> String? {

@@ -196,6 +196,10 @@ extension VideoPlayer {
             selectedSupplementID != nil
         }
 
+        var isPresentingFullScreenSupplement: Bool {
+            !isCompact && selectedSupplement?.presentationStyle == .expanded
+        }
+
         var isPresentingControls: Bool {
             presentation == .controls || isPresentingSupplement
         }
@@ -246,7 +250,7 @@ extension VideoPlayer {
                         : [.toolbar, .supplements]
                 }
 
-                return selectedSupplement?.presentationStyle == .expanded
+                return isPresentingFullScreenSupplement
                     ? [.supplements, .dimming]
                     : [.toolbar, .supplements, .dimming]
             }

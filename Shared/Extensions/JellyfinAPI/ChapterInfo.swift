@@ -79,6 +79,9 @@ extension ChapterInfo {
     }
 }
 
+// TODO: have label match what BaseItemDto does in PosterCollectionView
+//       - different height, causes clipping
+
 private struct ChapterPosterLabel: View {
 
     let chapter: ChapterInfo.FullInfo

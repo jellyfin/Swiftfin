@@ -44,11 +44,15 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             var filteredButtons = rawButtons
 
             if manager.playbackItem?.audioStreams.isEmpty == true {
-                filteredButtons.removeAll { $0 == .audio }
+                filteredButtons.removeAll { $0 == .audio || $0 == .audioOffset }
             }
 
             if manager.playbackItem?.subtitleStreams.isEmpty == true {
-                filteredButtons.removeAll { $0 == .subtitles }
+                filteredButtons.removeAll { $0 == .subtitles || $0 == .subtitleOffset }
+            }
+
+            if manager.playbackItem == nil || !(manager.proxy is MediaPlayerOffsetConfigurable) {
+                filteredButtons.removeAll { $0 == .audioOffset || $0 == .subtitleOffset }
             }
 
             if manager.queue == nil {
@@ -93,6 +97,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 AspectFill()
             case .audio:
                 Audio()
+            case .audioOffset:
+                AudioOffset()
             case .autoPlay:
                 AutoPlay()
             #if os(iOS)
@@ -109,6 +115,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 PlayPreviousItem()
             case .subtitles:
                 Subtitles()
+            case .subtitleOffset:
+                SubtitleOffset()
             }
         }
 

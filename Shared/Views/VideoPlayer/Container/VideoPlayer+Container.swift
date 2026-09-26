@@ -102,7 +102,7 @@ extension VideoPlayer {
                         #endif
                         .overlay {
                             Group {
-                                if viewState.selectedSupplement?.presentationStyle == .expanded {
+                                if viewState.isPresentingFullScreenSupplement {
                                     Color.black.opacity(0.8)
                                 } else {
                                     EasedGradient(
@@ -247,6 +247,19 @@ extension VideoPlayer {
             return controller
         }()
 
+        private lazy var overlayActionsViewController: HostingController<AnyView> = {
+            let controller = HostingController(
+                content: OverlayActions()
+                    .environment(viewState)
+                    .environmentObject(viewState.focusCoordinator)
+                    .eraseToAnyView()
+            )
+            controller.disableSafeArea = true
+            controller.sizingOptions = .intrinsicContentSize
+            controller.view.translatesAutoresizingMaskIntoConstraints = false
+            return controller
+        }()
+
         private var playerView: UIView {
             playerViewController.view
         }
@@ -257,6 +270,10 @@ extension VideoPlayer {
 
         private var supplementContainerView: UIView {
             supplementContainerViewController.view
+        }
+
+        private var overlayActionsView: UIView {
+            overlayActionsViewController.view
         }
 
         // MARK: - Constants
@@ -275,11 +292,13 @@ extension VideoPlayer {
                 return availableHeight
             }
 
-            // Reserve space for playback above regular supplements, allowing the
-            // content to shrink with small windows instead of enforcing a minimum.
+            if !isCompact, !UIDevice.isTV {
+                return min(availableHeight, 200 + EdgeInsets.edgePadding * 2)
+            }
+
             let bottomInset = min(view.safeAreaInsets.bottom, availableHeight)
             let contentHeight = availableHeight - bottomInset
-            let fraction: CGFloat = isCompact ? 0.6 : (UIDevice.isTV ? 1.0 / 3.0 : 0.5)
+            let fraction: CGFloat = isCompact ? 0.6 : 1.0 / 3.0
             let preferredHeight = contentHeight * fraction + bottomInset + EdgeInsets.edgePadding * 2
 
             return min(availableHeight, max(dismissedSupplementContainerOffset, preferredHeight))
@@ -660,6 +679,11 @@ extension VideoPlayer {
             supplementContainerViewController.didMove(toParent: self)
             supplementContainerView.backgroundColor = .clear
 
+            addChild(overlayActionsViewController)
+            view.addSubview(overlayActionsView)
+            overlayActionsViewController.didMove(toParent: self)
+            overlayActionsView.backgroundColor = .clear
+
             view.addSubview(initialHitBlockView)
             view.bringSubviewToFront(initialHitBlockView)
         }
@@ -697,15 +721,43 @@ extension VideoPlayer {
                 equalTo: supplementContainerView.topAnchor
             )
             #endif
+            playbackControlsBottomAnchor.priority = .defaultHigh
 
             playbackControlsConstraints = [
                 playbackControlsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 playbackControlsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 playbackControlsView.topAnchor.constraint(equalTo: view.topAnchor),
                 playbackControlsBottomAnchor,
+                playbackControlsView.bottomAnchor.constraint(
+                    lessThanOrEqualTo: overlayActionsView.topAnchor,
+                    constant: -EdgeInsets.edgePadding
+                ),
             ]
 
             NSLayoutConstraint.activate(playbackControlsConstraints)
+
+            #if os(tvOS)
+            NSLayoutConstraint.activate([
+                overlayActionsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: EdgeInsets.edgePadding),
+                overlayActionsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -EdgeInsets.edgePadding),
+                overlayActionsView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -EdgeInsets.edgePadding),
+            ])
+            #else
+            NSLayoutConstraint.activate([
+                overlayActionsView.leadingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                    constant: EdgeInsets.edgePadding
+                ),
+                overlayActionsView.trailingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                    constant: -EdgeInsets.edgePadding
+                ),
+                overlayActionsView.bottomAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                    constant: -EdgeInsets.edgePadding
+                ),
+            ])
+            #endif
 
             NSLayoutConstraint.activate([
                 initialHitBlockView.topAnchor.constraint(equalTo: view.topAnchor),

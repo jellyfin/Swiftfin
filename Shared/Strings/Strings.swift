@@ -1326,6 +1326,8 @@ internal enum L10n {
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public users")
   /// Quality
   internal static let quality = L10n.tr("Localizable", "quality", fallback: "Quality")
+  /// Queue
+  internal static let queue = L10n.tr("Localizable", "queue", fallback: "Queue")
   /// Quick Connect
   internal static let quickConnect = L10n.tr("Localizable", "quickConnect", fallback: "Quick Connect")
   /// Quick Connect code

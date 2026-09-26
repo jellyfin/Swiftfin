@@ -46,9 +46,6 @@ extension VideoPlayer {
 
             VStack(spacing: 0) {
 
-                OverlayActions()
-                    .padding(.bottom, viewState.isPresentingOverlayActions ? 30 : 0)
-
                 Toolbar()
                     .isVisible(viewState.visibleElements.contains(.toolbar))
                     .enabled(viewState.visibleElements.contains(.toolbar))

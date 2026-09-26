@@ -52,11 +52,6 @@ extension VideoPlayer {
                     Spacer()
                         .allowsHitTesting(false)
 
-                    OverlayActions()
-                        .edgePadding(.horizontal)
-                        .padding(.leading, safeAreaInsets.leading)
-                        .padding(.trailing, safeAreaInsets.trailing)
-
                     PlaybackProgress()
                         .isVisible(viewState.isPresentingProgress)
                         .enabled(viewState.isPresentingProgress)

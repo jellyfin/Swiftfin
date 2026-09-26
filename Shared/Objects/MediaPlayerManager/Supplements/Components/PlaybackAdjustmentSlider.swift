@@ -39,7 +39,7 @@ struct PlaybackAdjustmentSlider: View {
             total: range.upperBound - range.lowerBound
         )
         .sliderContainerStyle(.capsule(neutralProgress: (resetValue - range.lowerBound) / (range.upperBound - range.lowerBound)))
-        .frame(height: 16)
+        .frame(height: 24)
         .ifLet(focusID) { view, id in
             view.coordinatedFocus(id)
         }
@@ -61,35 +61,38 @@ struct PlaybackAdjustmentSlider: View {
     @ViewBuilder
     private var presetButtons: some View {
         ForEach(presets, id: \.self) { preset in
-            Button(preset == resetValue ? L10n.reset : formatValue(preset)) {
+            Button {
                 sliderValue.wrappedValue = preset
+            } label: {
+                Text(preset == resetValue ? L10n.reset : formatValue(preset))
+                    .monospacedDigit()
+                    .frame(minWidth: UIDevice.isTV ? 104 : nil, minHeight: UIDevice.isTV ? 48 : nil)
             }
-            .monospacedDigit()
             .fixedSize()
         }
     }
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: UIDevice.isTV ? 24 : 12) {
             Text(formatValue(value))
-                .font(.headline)
+                .font(UIDevice.isTV ? .title2.weight(.semibold) : .headline)
                 .monospacedDigit()
                 .contentTransition(.numericText(value: value))
                 .animation(.easeInOut(duration: 0.15), value: value)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+                .padding(.horizontal, UIDevice.isTV ? 24 : 16)
+                .padding(.vertical, UIDevice.isTV ? 12 : 8)
                 .backport
                 .glassEffect(.regular.interactive(false), in: .capsule)
 
-            HStack(spacing: 12) {
+            HStack(spacing: UIDevice.isTV ? 32 : 12) {
                 Button { sliderValue.wrappedValue = value - step } label: {
                     Label(L10n.decrease, systemImage: "minus")
                         .labelStyle(.iconOnly)
-                        .frame(width: 24, height: 34)
+                        .frame(width: UIDevice.isTV ? 48 : 24, height: UIDevice.isTV ? 48 : 34)
                 }
                 .disabled(value <= range.lowerBound)
 
-                VStack(spacing: 0) {
+                VStack(spacing: UIDevice.isTV ? 8 : 0) {
                     slider
                         .accessibilityLabel(title)
                         .accessibilityValue(formatValue(value))
@@ -106,7 +109,7 @@ struct PlaybackAdjustmentSlider: View {
                         Spacer(minLength: 8)
                         Text(formatValue(range.upperBound))
                     }
-                    .font(.caption2)
+                    .font(UIDevice.isTV ? .caption : .caption2)
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -117,13 +120,18 @@ struct PlaybackAdjustmentSlider: View {
                 Button { sliderValue.wrappedValue = value + step } label: {
                     Label(L10n.increase, systemImage: "plus")
                         .labelStyle(.iconOnly)
-                        .frame(width: 24, height: 34)
+                        .frame(width: UIDevice.isTV ? 48 : 24, height: UIDevice.isTV ? 48 : 34)
                 }
                 .disabled(value >= range.upperBound)
             }
             .buttonStyle(.capsule)
 
-            FlowLayout(alignment: .center, direction: .down, spacing: 8, lineSpacing: 8) {
+            FlowLayout(
+                alignment: .center,
+                direction: .down,
+                spacing: UIDevice.isTV ? 20 : 8,
+                lineSpacing: UIDevice.isTV ? 20 : 8
+            ) {
                 presetButtons
             }
             .frame(maxWidth: .infinity)
@@ -131,8 +139,9 @@ struct PlaybackAdjustmentSlider: View {
             .focusSection()
             #endif
             .buttonStyle(.capsule)
-            .padding(.top, 4)
+            .padding(.top, UIDevice.isTV ? 8 : 4)
         }
+        .controlSize(UIDevice.isTV ? .large : .regular)
         .accessibilityElement(children: .contain)
     }
 }
