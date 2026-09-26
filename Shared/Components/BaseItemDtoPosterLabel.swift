@@ -23,10 +23,11 @@ struct BaseItemDtoPosterLabel: View {
         item.posterTitle(using: posterConfiguration.subtitleField)
     }
 
-    private var showsTitle: Bool {
+    private var isTitlePresented: Bool {
         switch item.type {
-        case .movie, .series, .boxSet:
-            posterConfiguration.showTitles
+        case .audio, .audioBook, .book, .boxSet, .episode, .liveTvProgram, .movie, .musicAlbum, .musicVideo,
+             .photo, .photoAlbum, .playlist, .program, .recording, .season, .series, .trailer, .tvProgram, .video:
+            posterConfiguration.isTitlePresented
         default:
             true
         }
@@ -38,9 +39,9 @@ struct BaseItemDtoPosterLabel: View {
     }
 
     private var subtitle: String? {
-        guard let subtitle = item.posterSubtitle(using: posterConfiguration.subtitleField),
-              subtitle != title,
-              subtitle != episodeLocator else { return nil }
+        guard item.type != .episode,
+              let subtitle = item.posterSubtitle(using: posterConfiguration.subtitleField),
+              subtitle != title else { return nil }
         return subtitle
     }
 
@@ -117,9 +118,9 @@ struct BaseItemDtoPosterLabel: View {
             .font(.footnote)
             .frame(maxWidth: .infinity)
         } content: {
-            if showsTitle || hasSubtitle {
+            if isTitlePresented || hasSubtitle {
                 VStack(alignment: .leading, spacing: 2) {
-                    if showsTitle {
+                    if isTitlePresented {
                         Text(title)
                             .font(.footnote)
                             .multilineTextAlignment(.leading)

@@ -14,7 +14,7 @@ struct PosterConfiguration: Hashable, Storable, WithDefaultValue {
     var unplayedStyle: UnplayedIndicatorType
     var useSeriesLandscapeBackdrop: Bool
     var subtitleField: PosterSubtitleField = .none
-    var showTitles: Bool = true
+    var isTitlePresented: Bool = true
 
     static let `default`: PosterConfiguration = .init(
         indicators: .all,
@@ -28,7 +28,7 @@ extension PosterConfiguration {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.indicators = try container.decode(PosterIndicator.self, forKey: .indicators)
-        self.showTitles = try container.decodeIfPresent(Bool.self, forKey: .showTitles) ?? true
+        self.isTitlePresented = try container.decodeIfPresent(Bool.self, forKey: .isTitlePresented) ?? true
         self.unplayedStyle = try container.decode(UnplayedIndicatorType.self, forKey: .unplayedStyle)
         self.useSeriesLandscapeBackdrop = try container.decode(Bool.self, forKey: .useSeriesLandscapeBackdrop)
         let subtitleField = try container.decodeIfPresent(String.self, forKey: .subtitleField)

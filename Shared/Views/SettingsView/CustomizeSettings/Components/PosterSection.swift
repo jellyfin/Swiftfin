@@ -38,16 +38,12 @@ extension CustomizeSettingsView {
         private var posterConfiguration
 
         @State
-        private var previewItemType: BaseItemKind = .episode
-
-        @State
         private var previewItemState: PreviewItemState = .inProgress
 
         private let sampleItem: BaseItemDto = .init(
-            name: L10n.subtitle,
+            name: L10n.preview,
             runTimeTicks: Duration.seconds(1800).ticks,
-            seriesName: L10n.preview,
-            type: .episode,
+            type: .movie,
             userData: .init(
                 isFavorite: true,
                 isPlayed: true,
@@ -59,11 +55,6 @@ extension CustomizeSettingsView {
 
         private var previewItem: BaseItemDto {
             var item = sampleItem
-            item.type = previewItemType
-            item.name = previewItemType == .episode ? L10n.subtitle : previewItemType.displayTitle
-            item.indexNumber = previewItemType == .episode ? 3 : nil
-            item.parentIndexNumber = previewItemType == .episode ? 1 : nil
-            item.extraType = previewItemType == .video ? .trailer : nil
             item.productionYear = 2024
             item.officialRating = "PG-13"
             item.communityRating = 8.2
@@ -78,14 +69,6 @@ extension CustomizeSettingsView {
             item.userData?.playedPercentage = isInProgress ? 100 / 3 : 0
 
             return item
-        }
-
-        private var itemTypePicker: some View {
-            Picker(L10n.type, selection: $previewItemType) {
-                ForEach([BaseItemKind.movie, .series, .season, .episode, .musicVideo, .video], id: \.self) { type in
-                    Text(type.displayTitle).tag(type)
-                }
-            }
         }
 
         @ViewBuilder
@@ -130,18 +113,10 @@ extension CustomizeSettingsView {
                     #endif
 
                     PlatformPicker(L10n.status, selection: $previewItemState)
-
-                    #if os(tvOS)
-                    ListRowMenu(L10n.type, subtitle: previewItemType.displayTitle) {
-                        itemTypePicker
-                    }
-                    #else
-                    itemTypePicker
-                    #endif
                 }
 
                 Section(L10n.labels) {
-                    Toggle(L10n.showPosterTitles, isOn: $posterConfiguration.showTitles)
+                    Toggle(L10n.showTitle, isOn: $posterConfiguration.isTitlePresented)
 
                     #if os(tvOS)
                     ListRowMenu(L10n.subtitle, selection: $posterConfiguration.subtitleField)

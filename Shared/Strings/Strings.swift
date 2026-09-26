@@ -1598,12 +1598,12 @@ internal enum L10n {
   internal static let showMissingEpisodes = L10n.tr("Localizable", "showMissingEpisodes", fallback: "Show missing episodes")
   /// Show missing seasons
   internal static let showMissingSeasons = L10n.tr("Localizable", "showMissingSeasons", fallback: "Show missing seasons")
-  /// Show poster titles - Controls titles on movie, series, and collection posters. Specialized posters keep their identifying titles.
-  internal static let showPosterTitles = L10n.tr("Localizable", "showPosterTitles", fallback: "Show poster titles")
   /// Show progress
   internal static let showProgress = L10n.tr("Localizable", "showProgress", fallback: "Show progress")
   /// Show recommendations
   internal static let showRecommendations = L10n.tr("Localizable", "showRecommendations", fallback: "Show recommendations")
+  /// Show title - Controls title visibility on media posters. People and chapter titles, and episode season and episode locators, remain visible.
+  internal static let showTitle = L10n.tr("Localizable", "showTitle", fallback: "Show title")
   /// Show unwatched
   internal static let showUnwatched = L10n.tr("Localizable", "showUnwatched", fallback: "Show unwatched")
   /// Show watched

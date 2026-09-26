@@ -73,7 +73,7 @@ extension BaseItemDto {
     }
 
     private func posterAccessibilitySubtitle(using field: PosterSubtitleField) -> String? {
-        guard type != .person, let subtitle = posterSubtitle(using: field) else { return nil }
+        guard type != .episode, type != .person, let subtitle = posterSubtitle(using: field) else { return nil }
 
         switch field {
         case .none, .title, .episodeNumber, .runtime:

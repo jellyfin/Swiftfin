@@ -16,7 +16,7 @@ extension BaseItemDto {
         guard posterSubtitle(using: field) != nil else { return displayTitle }
 
         switch (type, field) {
-        case (.episode, .episodeNumber), (.episode, .title), (.season, .title):
+        case (.season, .title):
             return parentTitle ?? displayTitle
         default:
             return displayTitle
