@@ -75,7 +75,7 @@ struct Stepper<
                         value = min(range.upperBound, value.advanced(by: -step))
                     }
                     .buttonStyle(.bordered)
-                    .disabled(!canDecrement)
+                    .enabled(canDecrement)
 
                     Text(value, format: format)
                         .font(.headline)
@@ -98,7 +98,7 @@ struct Stepper<
                         value = min(range.upperBound, value.advanced(by: step))
                     }
                     .buttonStyle(.bordered)
-                    .disabled(!canIncrement)
+                    .enabled(canIncrement)
                 }
                 .labelStyle(.iconOnly)
                 .focusSection()

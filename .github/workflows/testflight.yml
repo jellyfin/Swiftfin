@@ -101,7 +101,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.client_payload.ref || 'main' }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -115,6 +115,25 @@ jobs:
 
       - name: Install Homebrew dependencies
         run: brew bundle --file Brewfile
+
+      - name: Resolve Xcode version
+        id: xcode
+        run: |
+          set -euo pipefail
+          xcode_version="$(printf '%s' "$PAYLOAD_XCODE_VERSION" | tr -d '\r\n')"
+          echo "version=${xcode_version:-$XCODE_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Swift packages
+        uses: actions/cache@v6
+        with:
+          path: |
+            build/SourcePackages/checkouts
+            build/SourcePackages/repositories
+            build/SourcePackages/artifacts
+            build/SourcePackages/workspace-state.json
+          key: spm-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.xcode.outputs.version }}-${{ matrix.scheme }}-${{ hashFiles('Swiftfin.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+          restore-keys: |
+            spm-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.xcode.outputs.version }}-${{ matrix.scheme }}-
 
       - name: Install certificate and provisioning profile
         run: |
@@ -191,6 +210,7 @@ jobs:
       - name: Build and upload to TestFlight
         env:
           AUTO_CHANGELOG: ${{ steps.changelog.outputs.changelog }}
+          RESOLVED_XCODE_VERSION: ${{ steps.xcode.outputs.version }}
         run: |
           set -euo pipefail
 
@@ -212,11 +232,10 @@ jobs:
           key_contents="$(clean "$FL_KEY_CONTENTS")"
           code_sign_base64="$(clean "$FL_CODE_SIGN_BASE64")"
           profile_name_base64="$(clean "$FL_PROFILE_NAME_BASE64")"
-          payload_xcode_version="$(clean "$PAYLOAD_XCODE_VERSION")"
           payload_build="$(clean "$PAYLOAD_BUILD")"
           payload_version="$(clean "$PAYLOAD_VERSION")"
 
-          resolved_xcode_version="$(clean "${payload_xcode_version:-$XCODE_VERSION}")"
+          resolved_xcode_version="$(clean "$RESOLVED_XCODE_VERSION")"
 
           require_non_empty "$key_id" "FL_KEY_ID"
           require_non_empty "$issuer_id" "FL_ISSUER_ID"
@@ -250,3 +269,13 @@ jobs:
 
           echo "Building and uploading scheme '$SCHEME' for platform '$PLATFORM'"
           bundle exec fastlane testFlightLane "${args[@]}"
+
+      # Preserve the IPA even if uploading it to TestFlight fails.
+      - name: Upload TestFlight IPA
+        if: ${{ !cancelled() && hashFiles('fastlane/build/**/*.ipa') != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.scheme }}-testflight
+          path: fastlane/build/**/*.ipa
+          if-no-files-found: error
+          compression-level: 0

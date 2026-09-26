@@ -247,4 +247,20 @@ extension NavigationRoute {
             ItemOverviewView(item: item)
         }
     }
+
+    @MainActor
+    static func editRecordingTimer(
+        viewModel: RecordingTimerViewModel,
+        isSeries: Bool
+    ) -> NavigationRoute {
+        NavigationRoute(
+            id: "editRecordingTimer",
+            style: .sheet
+        ) {
+            EditRecordingView(
+                viewModel: viewModel,
+                isSeries: isSeries
+            )
+        }
+    }
 }

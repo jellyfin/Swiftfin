@@ -34,7 +34,7 @@
       "location" : "https://github.com/LePips/CollectionVGrid",
       "state" : {
         "branch" : "main",
-        "revision" : "07457de8a68986f937d40b7bd08c8850f96a334d"
+        "revision" : "7e4c4d8f20c8534cc5736e46f06265cd3686c944"
       }
     },
     {
@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "26986a57e31c813f98262ddb62d4b07d40008535",
-        "version" : "26.0.1"
+        "revision" : "a37eca1db7bebc9437ee89508e7b4433ff34adb4",
+        "version" : "27.0.0"
       }
     },
     {

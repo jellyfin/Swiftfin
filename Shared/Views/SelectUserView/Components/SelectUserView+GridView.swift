@@ -64,7 +64,7 @@ extension SelectUserView {
                 data: userItems,
                 id: \.user.id,
                 columns: UIDevice.isPhone ? 2 : 5,
-                spacing: EdgeInsets.edgePadding
+                spacing: EdgeInsets.itemSpacing
             ) { item in
                 userGridButton(for: item)
             }
@@ -73,7 +73,7 @@ extension SelectUserView {
         }
 
         var tvOSView: some View {
-            HStack(spacing: EdgeInsets.edgePadding) {
+            HStack(spacing: EdgeInsets.itemSpacing) {
                 ForEach(userItems, id: \.user.id) { item in
                     userGridButton(for: item)
                         .frame(width: 300)

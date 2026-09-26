@@ -41,8 +41,12 @@ extension MediaInfoSupplement {
         @State
         private var item: BaseItemDto
 
+        @StateObject
+        private var recordingViewModel: RecordingTimerViewModel
+
         init(item: BaseItemDto) {
             self._item = State(initialValue: item)
+            self._recordingViewModel = StateObject(wrappedValue: RecordingTimerViewModel(item: item))
         }
 
         @ViewBuilder
@@ -69,6 +73,59 @@ extension MediaInfoSupplement {
                     }
                 }
             }
+        }
+
+        @ViewBuilder
+        private var recordButtons: some View {
+            VStack {
+                Button(role: recordingViewModel.recordingTimer != nil ? .destructive : nil) {
+                    recordingViewModel.toggleRecording()
+                } label: {
+                    Group {
+                        if let recordingTimer = recordingViewModel.recordingTimer {
+                            Label(
+                                recordingTimer.status == .inProgress ? L10n.stopRecording : L10n.cancelRecording,
+                                systemImage: "record.circle.fill"
+                            )
+                        } else {
+                            Label(L10n.record, systemImage: "record.circle")
+                        }
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                }
+                .buttonStyle(.supplementAction)
+                .frame(height: UIDevice.isTV ? 80 : 40)
+
+                if recordingViewModel.program?.isSeries == true {
+                    Button(role: recordingViewModel.seriesRecordingTimer != nil ? .destructive : nil) {
+                        recordingViewModel.toggleSeriesRecording()
+                    } label: {
+                        Group {
+                            if recordingViewModel.seriesRecordingTimer != nil {
+                                Label(L10n.cancelSeriesRecording, systemImage: "smallcircle.filled.circle.fill")
+                            } else {
+                                Label(L10n.recordSeries, systemImage: "smallcircle.filled.circle")
+                            }
+                        }
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    }
+                    .buttonStyle(.supplementAction)
+                    .frame(height: UIDevice.isTV ? 80 : 40)
+                }
+            }
+            .enabled(recordingViewModel.canManageRecordings)
+            #if os(tvOS)
+            .focusSection()
+            #endif
+            .onAppear {
+                recordingViewModel.refresh()
+            }
+            .onReceive(Notifications[.recordingTimersDidChange].publisher) {
+                recordingViewModel.refresh()
+            }
+            .errorMessage($recordingViewModel.error)
         }
 
         @ViewBuilder
@@ -135,6 +192,10 @@ extension MediaInfoSupplement {
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .padding(.vertical)
+                } else if item.canBeRecorded {
+                    recordButtons
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -194,6 +255,8 @@ extension MediaInfoSupplement {
                     } content: {
                         fromBeginningButton
                     }
+                } else if item.canBeRecorded {
+                    recordButtons
                 }
             }
         }
@@ -225,6 +288,7 @@ extension MediaInfoSupplement {
             guard let newItem = try? await item.getFullItem(userSession: userSession) else { return }
 
             item = newItem
+            await recordingViewModel.refresh()
         }
     }
 }

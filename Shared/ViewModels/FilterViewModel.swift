@@ -40,24 +40,37 @@ final class FilterViewModel: ViewModel {
     @Published
     var currentFilters: ItemFilterCollection
 
+    /// Fixed filters, excluded from selection state and reset actions
+    let staticFilters: ItemFilterCollection
+
     private let parent: (any LibraryParent)?
+
+    var hasActiveFilters: Bool {
+        staticFilters.union(currentFilters) != staticFilters
+    }
+
+    private var itemTypes: [BaseItemKind] {
+        staticFilters.itemTypes.isEmpty ?
+            parent?.supportedItemTypes ?? BaseItemKind.supportedCases :
+            staticFilters.itemTypes
+    }
 
     init(
         parent: (any LibraryParent)? = nil,
-        currentFilters: ItemFilterCollection = .default
+        currentFilters: ItemFilterCollection = .default,
+        staticFilters: ItemFilterCollection = .default
     ) {
         self.parent = parent
         self.currentFilters = currentFilters
+        self.staticFilters = staticFilters
 
         super.init()
     }
 
     func isFilterSelected(type: ItemFilterType) -> Bool {
-        type.group
-            .map(\.keyPath)
-            .contains { keyPath in
-                currentFilters[keyPath: keyPath] != ItemFilterCollection.default[keyPath: keyPath]
-            }
+        guard !staticFilters.containsFilters(ofType: type) else { return false }
+
+        return currentFilters.containsFilters(ofType: type)
     }
 
     @Function(\Action.Cases.reset)
@@ -105,7 +118,7 @@ final class FilterViewModel: ViewModel {
         let parameters = try Paths.GetQueryFiltersLegacyParameters(
             userID: authenticatedUser.id,
             parentID: parent?.id,
-            includeItemTypes: parent?.supportedItemTypes ?? BaseItemKind.supportedCases
+            includeItemTypes: itemTypes
         )
 
         let request = Paths.getQueryFiltersLegacy(parameters: parameters)
@@ -128,7 +141,7 @@ final class FilterViewModel: ViewModel {
         let parameters = try Paths.GetQueryFiltersParameters(
             userID: authenticatedUser.id,
             parentID: parent?.id,
-            includeItemTypes: parent?.supportedItemTypes ?? BaseItemKind.supportedCases,
+            includeItemTypes: itemTypes,
             isRecursive: true
         )
 

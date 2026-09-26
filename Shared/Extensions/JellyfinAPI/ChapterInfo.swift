@@ -51,10 +51,13 @@ extension ChapterInfo {
             self.imageSource = imageSource
         }
 
-        func landscapeImageSources(
+        func imageSources(
+            for displayType: PosterDisplayType,
             environment: Empty
         ) -> [ImageSource] {
-            [imageSource].compactMap(\.self)
+            if displayType == .landscape {
+                imageSource
+            }
         }
 
         var posterLabel: some View {

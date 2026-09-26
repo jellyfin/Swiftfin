@@ -270,8 +270,11 @@ struct UserSignInView: View {
                 }
                 #else
                 LazyVGrid(
-                    columns: Array(repeating: GridItem(.flexible()), count: 4),
-                    spacing: 30
+                    columns: Array(
+                        repeating: GridItem(.flexible(), spacing: EdgeInsets.itemSpacing),
+                        count: 4
+                    ),
+                    spacing: EdgeInsets.itemSpacing
                 ) {
                     ForEach(viewModel.publicUsers) { user in
                         UserButton(

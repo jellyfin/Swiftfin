@@ -19,14 +19,22 @@ struct LetterPickerBarModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         if let edge = letterPickerOrientation.edge,
-           let viewModel
+           let viewModel,
+           !viewModel.staticFilters.containsFilters(ofType: .letter)
         {
             content
                 .focusSection()
                 .ignoresSafeArea(.all, edges: edge == .leading ? .trailing : .leading)
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     LetterPickerBar(viewModel: viewModel)
+                        #if os(tvOS)
+                            .coordinatedFocus(.secondary)
+                        #endif
+                        .padding(edge.asEdgeSet, EdgeInsets.itemSpacing)
                 }
+                #if os(tvOS)
+                .ignoresSafeArea(.all, edges: edge.asEdgeSet)
+                #endif
                 .overlayPreferenceValue(LetterPickerActiveLetterKey.self) { letter in
                     ZStack {
                         if let letter {

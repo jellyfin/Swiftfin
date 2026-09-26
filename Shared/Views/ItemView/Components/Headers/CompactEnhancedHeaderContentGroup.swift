@@ -36,6 +36,7 @@ extension ItemView {
                 ImageView(
                     provider.item.imageSource(
                         .logo,
+                        itemID: provider.item.id,
                         environment: ImageSourceOptions(maxHeight: 70)
                     )
                 )
@@ -127,6 +128,7 @@ extension ItemView {
                                 } content: {
                                     ImageView(provider.item.imageSource(
                                         .backdrop,
+                                        itemID: provider.item.id,
                                         environment: ImageSourceOptions(maxWidth: 1320)
                                     ))
                                     .image { (image: UIImage) in

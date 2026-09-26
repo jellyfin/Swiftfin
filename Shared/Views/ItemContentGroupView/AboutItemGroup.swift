@@ -186,7 +186,7 @@ struct AboutItemGroup: ContentGroup {
         var body: some View {
             ContentGroupSection {
                 ScrollView(.horizontal) {
-                    HStack(spacing: PosterHStackMetrics.itemSpacing) {
+                    HStack(spacing: EdgeInsets.itemSpacing) {
                         descriptionCard
 
                         if let mediaSources = item.mediaSources {

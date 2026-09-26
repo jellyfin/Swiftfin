@@ -70,7 +70,8 @@ extension SeriesEpisodeContentGroup {
                 },
                 contextMenuItem: episode
             ) {
-                ImageView(episode.landscapeImageSources(
+                ImageView(episode.imageSources(
+                    for: .landscape,
                     environment: .init(maxWidth: 250)
                 ))
                 .failure {
@@ -179,6 +180,7 @@ extension SeriesEpisodeContentGroup {
         var body: some View {
             VStack(alignment: .leading) {
                 artworkButton
+                    .posterAspectRatio(.landscape, contentMode: .fit)
 
                 Button(action: contentAction) {
                     EpisodeMetadataView(
@@ -204,6 +206,7 @@ extension SeriesEpisodeContentGroup {
                 .artwork,
                 priority: .userInitiated
             )
+            .frame(maxHeight: .infinity, alignment: .top)
         }
     }
 

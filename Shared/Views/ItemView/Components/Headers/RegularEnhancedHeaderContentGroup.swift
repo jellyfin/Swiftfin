@@ -51,6 +51,7 @@ extension ItemView {
                 ImageView(
                     provider.item.imageSource(
                         .logo,
+                        itemID: provider.item.id,
                         environment: ImageSourceOptions(maxHeight: logoHeight)
                     )
                 )
@@ -163,7 +164,7 @@ extension ItemView {
                         AlternateLayoutView {
                             Color.clear
                         } content: {
-                            ImageView(headerImageItem.landscapeImageSources(environment: .init(maxWidth: 1920)))
+                            ImageView(headerImageItem.imageSources(for: .landscape, environment: .init(maxWidth: 1920)))
                                 .image { (image: UIImage) in
                                     Image(uiImage: image)
                                         .resizable()

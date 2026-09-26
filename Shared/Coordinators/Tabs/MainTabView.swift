@@ -66,6 +66,22 @@ struct MainTabView: View {
     }
 
     @ViewBuilder
+    private func tabRoot(_ tab: TabCoordinator.TabData) -> some View {
+        NavigationInjectionView(coordinator: tab.coordinator) {
+            tab.item.content
+                #if os(iOS)
+                    .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
+                        view.topBarTrailing {
+                            FirstTabSettingsBarButton()
+                        }
+                    }
+                #endif
+        }
+        .environmentObject(tabCoordinator)
+        .environment(\.tabItemSelected, tab.publisher)
+    }
+
+    @ViewBuilder
     private func tabView() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in
@@ -73,20 +89,14 @@ struct MainTabView: View {
                     value: tab.item.id,
                     role: tab.item.id == TabItem.search.id ? .search : nil
                 ) {
-                    NavigationInjectionView(
-                        coordinator: tab.coordinator
-                    ) {
-                        tab.item.content
-                            #if os(iOS)
-                                .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
-                                    view.topBarTrailing {
-                                        FirstTabSettingsBarButton()
-                                    }
-                                }
-                            #endif
+                    #if os(tvOS)
+                    GeometryReader { proxy in
+                        tabRoot(tab)
+                            .environment(\.tabSafeAreaInsets, proxy.safeAreaInsets)
                     }
-                    .environmentObject(tabCoordinator)
-                    .environment(\.tabItemSelected, tab.publisher)
+                    #else
+                    tabRoot(tab)
+                    #endif
                 } label: {
                     Label(
                         tab.item.displayTitle,

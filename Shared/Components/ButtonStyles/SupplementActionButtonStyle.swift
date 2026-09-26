@@ -19,7 +19,7 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
 
     private func baseLabel(_ configuration: Configuration) -> some View {
         configuration.label
-            .foregroundStyle(.black)
+            .foregroundStyle(configuration.role == .destructive ? .white : .black)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
@@ -30,7 +30,7 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
             baseLabel(configuration)
                 .background {
                     RoundedRectangle(cornerRadius: 7)
-                        .fill(.white)
+                        .fill(configuration.role == .destructive ? .red : .white)
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 7))
         }
@@ -45,7 +45,7 @@ struct SupplementActionButtonStyle: PrimitiveButtonStyle {
             baseLabel(configuration)
                 .glassEffect(
                     .regular
-                        .tint(.white)
+                        .tint(configuration.role == .destructive ? .red : .white)
                         .interactive(),
                     in: Capsule()
                 )

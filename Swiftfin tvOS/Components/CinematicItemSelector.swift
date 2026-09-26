@@ -80,7 +80,7 @@ struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
                 item: resolvedSelectedPoster,
                 debounce: 0.5
             ) { item in
-                ImageView(item?.landscapeImageSources(environment: .default) ?? [])
+                ImageView(item?.imageSources(for: .landscape, environment: .init(viewContext: .isBackdrop)) ?? [])
                     .failure {
                         EmptyView()
                     }

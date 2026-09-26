@@ -208,7 +208,7 @@ struct DevicesView: View {
             }
         }
         .controlSize(.small)
-        .disabled(!isEditing)
+        .enabled(isEditing)
     }
 
     // MARK: - Delete Selected Devices Confirmation Actions

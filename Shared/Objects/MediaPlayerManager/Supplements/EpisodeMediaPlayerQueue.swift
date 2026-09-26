@@ -253,6 +253,9 @@ extension EpisodeMediaPlayerQueue {
 
         private struct _Body: View {
 
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
+
             @ObservedObject
             var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
@@ -266,12 +269,15 @@ extension EpisodeMediaPlayerQueue {
                             uniqueElements: selectionViewModel.elements,
                             layout: .columns(
                                 1,
-                                insets: .edgeInsets
+                                insets: .edgeInsets,
+                                itemSpacing: EdgeInsets.itemSpacing,
+                                lineSpacing: EdgeInsets.itemSpacing
                             )
                         ) { item in
                             EpisodeRow(episode: item) {
                                 action(item)
                             }
+                            .environmentObject(manager)
                         }
                     }
                 case .initial, .refreshing:
@@ -312,6 +318,9 @@ extension EpisodeMediaPlayerQueue {
             private var safeAreaInsets: EdgeInsets
             #endif
 
+            @EnvironmentObject
+            private var manager: MediaPlayerManager
+
             @ObservedObject
             var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
@@ -328,8 +337,13 @@ extension EpisodeMediaPlayerQueue {
                     EpisodeButton(episode: episode) {
                         action(episode)
                     }
+                    .environmentObject(manager)
                 }
+                .initialElement(id: manager.item.id)
+                .insets(horizontal: EdgeInsets.edgePadding)
+                .itemSpacing(EdgeInsets.itemSpacing)
                 .ignoresSafeArea(.container, edges: .horizontal)
+                .frame(maxHeight: .infinity)
                 .focusSection()
                 #else
                 CollectionHStack(
@@ -340,10 +354,12 @@ extension EpisodeMediaPlayerQueue {
                     EpisodeButton(episode: item) {
                         action(item)
                     }
+                    .environmentObject(manager)
                 }
+                .initialElement(id: manager.item.id)
                 .clipsToBounds(false)
                 .insets(horizontal: max(safeAreaInsets.leading, safeAreaInsets.trailing) + EdgeInsets.edgePadding)
-                .itemSpacing(EdgeInsets.edgePadding / 2)
+                .itemSpacing(EdgeInsets.itemSpacing)
                 .scrollBehavior(.continuousLeadingEdge)
                 #endif
             }
@@ -443,7 +459,7 @@ extension EpisodeMediaPlayerQueue {
                 Rectangle()
                     .fill(.complexSecondary)
 
-                ImageView(episode.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 200)))
+                ImageView(episode.imageSource(.primary, itemID: episode.id, environment: ImageSourceOptions(maxWidth: 200)))
                     .failure {
                         SystemImageContentView(systemName: episode.systemImage)
                     }
@@ -486,7 +502,7 @@ extension EpisodeMediaPlayerQueue {
     private struct EpisodeRow: View {
 
         @EnvironmentObject
-        private var manager: MediaPlayerManager
+        var manager: MediaPlayerManager
 
         let episode: BaseItemDto
         let action: () -> Void
@@ -529,18 +545,12 @@ extension EpisodeMediaPlayerQueue {
 
         var body: some View {
             PosterButton(
-                item: episode._withLandscapeImages { environment in
-                    [
-                        episode.imageSource(
-                            .primary,
-                            environment: environment
-                        )
-                    ]
-                },
+                item: episode,
                 displayType: .landscape
             ) { _ in
                 action()
             }
+            .removingViewContext(.isThumb)
             .isSelected(manager.item.id == episode.id)
         }
     }

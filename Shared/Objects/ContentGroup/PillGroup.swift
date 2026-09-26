@@ -52,7 +52,7 @@ struct PillGroup<Element: Displayable>: ContentGroup {
         var body: some View {
             ContentGroupSection {
                 ScrollView(.horizontal) {
-                    HStack(spacing: PosterHStackMetrics.itemSpacing) {
+                    HStack(spacing: EdgeInsets.itemSpacing) {
                         ForEach(elements) { element in
                             Button {
                                 action(router, element)
