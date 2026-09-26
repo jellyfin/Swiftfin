@@ -11,7 +11,6 @@ import Foundation
 struct PosterConfiguration: Hashable, Storable, WithDefaultValue {
 
     var indicators: PosterIndicator
-    var showLabels: Bool
     var unplayedStyle: UnplayedIndicatorType
     var useSeriesLandscapeBackdrop: Bool
     var subtitleField: PosterSubtitleField = .none
@@ -19,7 +18,6 @@ struct PosterConfiguration: Hashable, Storable, WithDefaultValue {
 
     static let `default`: PosterConfiguration = .init(
         indicators: .all,
-        showLabels: true,
         unplayedStyle: .indicator,
         useSeriesLandscapeBackdrop: true
     )
@@ -30,7 +28,6 @@ extension PosterConfiguration {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.indicators = try container.decode(PosterIndicator.self, forKey: .indicators)
-        self.showLabels = try container.decode(Bool.self, forKey: .showLabels)
         self.showTitles = try container.decodeIfPresent(Bool.self, forKey: .showTitles) ?? true
         self.unplayedStyle = try container.decode(UnplayedIndicatorType.self, forKey: .unplayedStyle)
         self.useSeriesLandscapeBackdrop = try container.decode(Bool.self, forKey: .useSeriesLandscapeBackdrop)

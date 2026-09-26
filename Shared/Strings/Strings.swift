@@ -1316,8 +1316,6 @@ internal enum L10n {
   internal static let posterExtraType = L10n.tr("Localizable", "posterExtraType", fallback: "Extra type")
   /// Posters
   internal static let posters = L10n.tr("Localizable", "posters", fallback: "Posters")
-  /// Poster subtitles
-  internal static let posterSubtitles = L10n.tr("Localizable", "posterSubtitles", fallback: "Poster subtitles")
   /// Preferred language
   internal static let preferredLanguage = L10n.tr("Localizable", "preferredLanguage", fallback: "Preferred language")
   /// Premiere date
@@ -1604,8 +1602,6 @@ internal enum L10n {
   internal static let showMissingEpisodes = L10n.tr("Localizable", "showMissingEpisodes", fallback: "Show missing episodes")
   /// Show missing seasons
   internal static let showMissingSeasons = L10n.tr("Localizable", "showMissingSeasons", fallback: "Show missing seasons")
-  /// Show poster labels
-  internal static let showPosterLabels = L10n.tr("Localizable", "showPosterLabels", fallback: "Show poster labels")
   /// Show poster titles - Controls titles on movie, series, and collection posters. Specialized posters keep their identifying titles.
   internal static let showPosterTitles = L10n.tr("Localizable", "showPosterTitles", fallback: "Show poster titles")
   /// Show progress

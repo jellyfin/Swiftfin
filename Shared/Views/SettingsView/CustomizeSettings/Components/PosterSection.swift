@@ -141,12 +141,8 @@ extension CustomizeSettingsView {
                 }
 
                 Section(L10n.labels) {
-                    Toggle(L10n.showPosterLabels, isOn: $posterConfiguration.showLabels)
                     Toggle(L10n.showPosterTitles, isOn: $posterConfiguration.showTitles)
-                        .disabled(!posterConfiguration.showLabels)
-                }
 
-                Section(L10n.posterSubtitles) {
                     #if os(tvOS)
                     ListRowMenu(L10n.subtitle, selection: $posterConfiguration.subtitleField)
                     #else

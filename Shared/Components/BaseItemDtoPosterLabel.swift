@@ -117,9 +117,7 @@ struct BaseItemDtoPosterLabel: View {
             .font(.footnote)
             .frame(maxWidth: .infinity)
         } content: {
-            if posterConfiguration.showLabels || item.type == .episode,
-               showsTitle || hasSubtitle
-            {
+            if showsTitle || hasSubtitle {
                 VStack(alignment: .leading, spacing: 2) {
                     if showsTitle {
                         Text(title)
