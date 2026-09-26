@@ -78,12 +78,12 @@ extension ServerActivityView {
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
                 }
-
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 Image(systemName: "chevron.right")
                     .padding()
-                    .font(.body.weight(.regular))
+                    .font(.body)
+                    .fontWeight(.regular)
                     .foregroundStyle(.secondary)
             }
         }

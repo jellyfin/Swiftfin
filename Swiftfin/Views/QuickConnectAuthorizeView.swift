@@ -51,8 +51,7 @@ struct QuickConnectAuthorizeView: View {
             Text(viewModel.user.name ?? L10n.unknown)
                 .fontWeight(.semibold)
                 .foregroundStyle(.primary)
-
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 

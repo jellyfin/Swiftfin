@@ -194,7 +194,7 @@ private struct UserViewLibraryGridElement: View {
                         .opacity(0.75)
                         .overlay {
                             titleLabel
-                                .foregroundColor(.primary)
+                                .foregroundStyle(.primary)
                         }
                 }
                 .id(imageSources.hashValue)

@@ -80,8 +80,7 @@ struct ServerConnectionView: View {
                         } label: {
                             HStack {
                                 Text(L10n.evaluate)
-
-                                Spacer()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
 
                                 if viewModel.isEvaluatingAutoSwitchConnection {
                                     ProgressView()
