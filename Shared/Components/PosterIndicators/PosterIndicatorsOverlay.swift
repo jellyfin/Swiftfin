@@ -15,6 +15,8 @@ struct PosterIndicatorsOverlay: View {
     @Default(.accentColor)
     private var accentColor
 
+    @Environment(\.isSelected)
+    private var isSelected
     @Environment(\.posterConfiguration)
     private var posterConfiguration
 
@@ -63,7 +65,6 @@ struct PosterIndicatorsOverlay: View {
         if showsFavoriteIndicator {
             QuadrantItem(color: .pink) {
                 Text(Image(systemName: "heart.fill"))
-                    .foregroundStyle(.white)
                     .accessibilityLabel(L10n.favorited)
             }
         }
@@ -72,7 +73,6 @@ struct PosterIndicatorsOverlay: View {
             QuadrantItem(color: accentColor) {
                 Text(Image(systemName: "checkmark"))
                     .fontWeight(.bold)
-                    .foregroundStyle(accentColor.overlayColor)
                     .accessibilityLabel(L10n.played)
             }
         }
@@ -108,6 +108,8 @@ struct PosterIndicatorsOverlay: View {
                 }
             }
         }
+        .opacity(isSelected ? 0.85 : 1)
+        .posterCornerRadius(posterDisplayType)
     }
 }
 

@@ -47,8 +47,7 @@ struct ProgressIndicator: View {
             .frame(height: 6)
             .padding(.horizontal, 5)
             .padding(.bottom, 5)
-            .accessibilityLabel(L10n.progress)
-            .accessibilityValue(Text(normalizedProgress, format: .percent.precision(.fractionLength(0))))
+            .accessibilityHidden(true)
     }
 
     private var compactProgressBar: some View {
@@ -57,8 +56,7 @@ struct ProgressIndicator: View {
             .scaleEffect(x: normalizedProgress, y: 1, anchor: .leading)
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 6)
-            .accessibilityLabel(L10n.progress)
-            .accessibilityValue(Text(normalizedProgress, format: .percent.precision(.fractionLength(0))))
+            .accessibilityHidden(true)
     }
 
     private var runtime: some View {

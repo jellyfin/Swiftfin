@@ -99,11 +99,9 @@ extension BaseItemDto {
         if isPosterAccessibilityProgram || isLiveStream || type == .tvChannel || type == .liveTvChannel {
             if isAiring, let startDate, let endDate, endDate > startDate {
                 let now = Date.now
-                let progress = now.timeIntervalSince(startDate) / endDate.timeIntervalSince(startDate)
                 let remaining = Duration.seconds(max(0, endDate.timeIntervalSince(now)))
                 return [
                     L10n.live,
-                    posterAccessibilityProgress(progress),
                     L10n.posterAccessibilityRemaining(PosterAccessibility.duration(remaining))
                 ]
             }
@@ -133,11 +131,8 @@ extension BaseItemDto {
             state.append(userData?.isPlayed == true ? L10n.rewatching : L10n.inProgress)
 
             if let runTimeTicks, runTimeTicks > 0, position > 0 {
-                state.append(posterAccessibilityProgress(Double(position) / Double(runTimeTicks)))
                 let remaining = Duration.ticks(max(0, runTimeTicks - position))
                 state.append(L10n.posterAccessibilityRemaining(PosterAccessibility.duration(remaining)))
-            } else if percentage.isFinite, percentage > 0 {
-                state.append(posterAccessibilityProgress(percentage / 100))
             }
         } else if let isPlayed = userData?.isPlayed {
             state.append(isPlayed ? L10n.played : L10n.unplayed)
@@ -148,10 +143,5 @@ extension BaseItemDto {
         }
 
         return state
-    }
-
-    private func posterAccessibilityProgress(_ progress: Double) -> String {
-        let percentage = min(1, max(0, progress)).formatted(.percent.precision(.fractionLength(0)))
-        return L10n.posterAccessibilityProgress(percentage)
     }
 }

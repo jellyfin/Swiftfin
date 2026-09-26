@@ -88,12 +88,12 @@ extension BaseItemDto: Poster {
     @ViewBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         ZStack {
-            PosterSelectionOverlay()
-
             PosterIndicatorsOverlay(
                 item: self,
                 posterDisplayType: displayType
             )
+
+            PosterSelectionOverlay()
         }
     }
 

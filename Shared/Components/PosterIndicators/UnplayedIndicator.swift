@@ -22,7 +22,6 @@ struct UnplayedIndicator: View {
                 QuadrantItem(color: accentColor) {
                     Text(count.description)
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(accentColor.overlayColor)
                 }
             }
             .accessibilityElement(children: .ignore)

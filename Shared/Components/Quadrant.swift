@@ -107,6 +107,7 @@ struct QuadrantItem: View {
             .padding(.horizontal, configuration.size * 0.16)
             .frame(minWidth: configuration.size)
             .frame(height: configuration.size)
+            .foregroundStyle(color.overlayColor)
             .background {
                 Group {
                     if configuration.isFloating {

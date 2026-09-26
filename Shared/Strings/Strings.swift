@@ -1280,10 +1280,6 @@ internal enum L10n {
   }
   /// Plays this episode. - Accessibility hint for episode artwork that starts playback.
   internal static let posterAccessibilityPlayHint = L10n.tr("Localizable", "posterAccessibilityPlayHint", fallback: "Plays this episode.")
-  /// Progress: %1$@ - Spoken playback progress, with a formatted percentage.
-  internal static func posterAccessibilityProgress(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "posterAccessibilityProgress", String(describing: p1), fallback: "Progress: %1$@")
-  }
   /// %1$@ remaining - Spoken time remaining, with a duration in full words.
   internal static func posterAccessibilityRemaining(_ p1: Any) -> String {
     return L10n.tr("Localizable", "posterAccessibilityRemaining", String(describing: p1), fallback: "%1$@ remaining")
