@@ -32,6 +32,7 @@ struct NextUpLibrary: BaseItemKindLibrary {
         var parameters = Paths.GetNextUpParameters()
         parameters.enableRewatching = environment.enableRewatching
         parameters.enableUserData = true
+        parameters.fields = PosterSubtitleField.itemFields
         parameters.limit = pageState.pageSize
         parameters.startIndex = pageState.pageOffset
 

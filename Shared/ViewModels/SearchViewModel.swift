@@ -103,6 +103,7 @@ final class SearchViewModel: ViewModel {
         await filterViewModel.getQueryFilters()
 
         var parameters = Paths.GetItemsParameters()
+        parameters.fields = PosterSubtitleField.itemFields
         parameters.includeItemTypes = [.movie, .series]
         parameters.isRecursive = true
         parameters.limit = 10

@@ -16,6 +16,7 @@ extension CustomizeSettingsView {
 
         enum PreviewItemState: CaseIterable, Displayable {
             case inProgress
+            case rewatching
             case played
             case unplayed
 
@@ -23,6 +24,8 @@ extension CustomizeSettingsView {
                 switch self {
                 case .inProgress:
                     L10n.inProgress
+                case .rewatching:
+                    L10n.rewatching
                 case .played:
                     L10n.played
                 case .unplayed:
@@ -35,13 +38,12 @@ extension CustomizeSettingsView {
         private var posterConfiguration
 
         @State
-        private var previewItemState: PreviewItemState = .unplayed
+        private var previewItemState: PreviewItemState = .inProgress
 
         private let sampleItem: BaseItemDto = .init(
-            name: L10n.subtitle,
+            name: L10n.preview,
             runTimeTicks: Duration.seconds(1800).ticks,
-            seriesName: L10n.preview,
-            type: .episode,
+            type: .movie,
             userData: .init(
                 isFavorite: true,
                 isPlayed: true,
@@ -53,10 +55,18 @@ extension CustomizeSettingsView {
 
         private var previewItem: BaseItemDto {
             var item = sampleItem
+            item.productionYear = 2024
+            item.officialRating = "PG-13"
+            item.communityRating = 8.2
+            item.criticRating = 92
+            item.genres = [L10n.genre]
+            item.studios = [.init(name: L10n.preview)]
+            item.mediaStreams = [.init(height: 2160, type: .video, videoRangeType: .hdr10, width: 3840)]
 
-            item.userData?.isPlayed = previewItemState == .played
-            item.userData?.playbackPositionTicks = previewItemState == .inProgress ? Duration.seconds(600).ticks : 0
-            item.userData?.playedPercentage = previewItemState == .inProgress ? 100 / 3 : 0
+            let isInProgress = previewItemState == .inProgress || previewItemState == .rewatching
+            item.userData?.isPlayed = previewItemState == .played || previewItemState == .rewatching
+            item.userData?.playbackPositionTicks = isInProgress ? Duration.seconds(600).ticks : 0
+            item.userData?.playedPercentage = isInProgress ? 100 / 3 : 0
 
             return item
         }
@@ -77,12 +87,11 @@ extension CustomizeSettingsView {
                 }
                 .posterCornerRadius(type)
 
-                if posterConfiguration.showLabels {
-                    previewItem.posterLabel
-                        .environment(\.posterDisplayType, type)
-                }
+                previewItem.posterLabel
+                    .environment(\.posterDisplayType, type)
             }
             .frame(width: (UIDevice.isTV ? 225 : 150) * (type == .landscape ? 1.77 : 1))
+            .posterAccessibility(for: previewItem)
             .animation(.linear(duration: 0.1), value: posterConfiguration)
             .animation(.linear(duration: 0.1), value: previewItemState)
         }
@@ -107,7 +116,14 @@ extension CustomizeSettingsView {
                 }
 
                 Section(L10n.labels) {
-                    Toggle(L10n.showPosterLabels, isOn: $posterConfiguration.showLabels)
+                    Toggle(L10n.showTitle, isOn: $posterConfiguration.isTitlePresented)
+
+                    #if os(tvOS)
+                    ListRowMenu(L10n.subtitle, selection: $posterConfiguration.subtitleField)
+                    #else
+                    Picker(L10n.subtitle, selection: $posterConfiguration.subtitleField)
+                        .pickerStyle(.menu)
+                    #endif
                 }
 
                 Section(L10n.indicators) {
@@ -150,6 +166,7 @@ extension CustomizeSettingsView {
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                 }
             }
+            .environment(\.posterConfiguration, posterConfiguration)
             .navigationTitle(L10n.posters)
         }
     }

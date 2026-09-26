@@ -18,47 +18,111 @@ struct ProgressIndicator: View {
     let progress: Double
     let posterDisplayType: PosterDisplayType
 
-    @ViewBuilder
-    private var compactView: some View {
-        Rectangle()
-            .fill(accentColor)
-            .scaleEffect(x: progress, y: 1, anchor: .leading)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: 6)
+    private let indicators: [QuadrantItem]
+
+    init(
+        title: String,
+        progress: Double,
+        posterDisplayType: PosterDisplayType,
+        @ArrayBuilder<QuadrantItem> indicators: () -> [QuadrantItem]
+    ) {
+        self.title = title
+        self.progress = progress
+        self.posterDisplayType = posterDisplayType
+        self.indicators = indicators()
     }
 
-    @ViewBuilder
-    private var regularView: some View {
-        VStack(alignment: .leading, spacing: 5) {
+    private var inset: CGFloat {
+        UIDevice.isTV ? 10 : 6
+    }
 
-            Text(title)
-                .font(.system(.footnote, design: .rounded))
-                .fontWeight(.medium)
+    private var normalizedProgress: Double {
+        progress.isFinite ? clamp(progress, min: 0, max: 1) : 0
+    }
 
-            ProgressView(value: progress)
-                .progressViewStyle(.playback)
-                .foregroundStyle(accentColor)
-                .frame(height: 6)
+    private var progressBar: some View {
+        ProgressView(value: normalizedProgress)
+            .progressViewStyle(.playback)
+            .foregroundStyle(accentColor)
+            .frame(height: 6)
+            .padding(.horizontal, 5)
+            .padding(.bottom, 5)
+            .accessibilityHidden(true)
+    }
+
+    private var compactProgressBar: some View {
+        Rectangle()
+            .fill(accentColor)
+            .scaleEffect(x: normalizedProgress, y: 1, anchor: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: 6)
+            .accessibilityHidden(true)
+    }
+
+    private var runtime: some View {
+        Text(title)
+            .font(.system(.footnote, design: .rounded, weight: .semibold))
+            .monospacedDigit()
+            .foregroundStyle(.white)
+            .lineLimit(1)
+            .padding(.horizontal, UIDevice.isTV ? 12 : 8)
+            .padding(.vertical, UIDevice.isTV ? 5 : 3)
+            .background(.black.opacity(0.72), in: Capsule())
+            .overlay {
+                Capsule().strokeBorder(.white.opacity(0.18), lineWidth: 0.5)
+            }
+    }
+
+    private var indicatorTrack: some View {
+        Quadrant(.bottomTrailing, isFloating: true) {
+            indicators
         }
-        .padding(.bottom, 5)
-        .padding(.horizontal, 5)
-        .background(extendedBy: .init(top: 5, leading: 0, bottom: 0, trailing: 0)) {
-            Rectangle()
-                .fill(Color.black)
-                .mask(gradient: .linear) {
-                    (location: 0, opacity: 0)
-                    (location: 0.5, opacity: 0.7)
-                    (location: 1, opacity: 1)
+    }
+
+    private func landscapeView(showsIndicators: Bool) -> some View {
+        VStack(spacing: inset) {
+            HStack(spacing: inset) {
+                runtime
+
+                Spacer(minLength: 0)
+
+                if showsIndicators {
+                    indicatorTrack
                 }
+            }
+            .padding(.horizontal, inset)
+
+            progressBar
         }
-        .colorScheme(.dark)
+    }
+
+    private func compactView(showsIndicators: Bool) -> some View {
+        VStack(alignment: .trailing, spacing: inset) {
+            if showsIndicators {
+                indicatorTrack
+                    .padding(.horizontal, inset)
+            }
+
+            // Badges sit above the bar so progress uses the full poster width.
+            compactProgressBar
+        }
     }
 
     var body: some View {
-        if posterDisplayType != .landscape {
-            compactView
-        } else {
-            regularView
+        Group {
+            if posterDisplayType == .landscape {
+                landscapeView(showsIndicators: !indicators.isEmpty)
+            } else {
+                compactView(showsIndicators: !indicators.isEmpty)
+            }
         }
+        .background {
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.65)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
+        .colorScheme(.dark)
     }
 }

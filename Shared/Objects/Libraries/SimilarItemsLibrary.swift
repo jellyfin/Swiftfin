@@ -25,11 +25,12 @@ struct SimilarItemsLibrary: PagingLibrary {
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetSimilarItemsParameters()
+        parameters.fields = PosterSubtitleField.itemFields
         parameters.limit = pageState.pageSize
         parameters.userID = pageState.userSession.user.id
 
         if let itemType, [.liveTvProgram, .program, .tvProgram].contains(itemType) {
-            parameters.fields = [.channelInfo]
+            parameters.fields = PosterSubtitleField.itemFields + [.channelInfo]
         }
 
         let request = Paths.getSimilarItems(

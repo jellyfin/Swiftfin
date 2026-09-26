@@ -45,6 +45,7 @@ struct SeasonLibrary: BaseItemKindLibrary {
         }
 
         var parameters = Paths.GetSeasonsParameters()
+        parameters.fields = PosterSubtitleField.itemFields
         parameters.isMissing = Defaults[.Customization.shouldShowMissingSeasons] ? nil : false
         parameters.userID = pageState.userSession.user.id
 
