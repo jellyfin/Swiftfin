@@ -413,7 +413,7 @@ extension BaseItemDto {
             return currentProgram.isRecording
         }
 
-        return timerID != nil && status == RecordingStatus.inProgress.rawValue
+        return timerID != nil
     }
 
     // MARK: Missing and Unaired

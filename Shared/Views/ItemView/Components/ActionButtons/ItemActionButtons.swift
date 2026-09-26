@@ -28,6 +28,14 @@ private struct ItemActionButtonLabelStyle: LabelStyle {
         return activeColor
     }
 
+    private var foregroundColor: Color {
+        guard isSelected, let activeColor else {
+            return .primary
+        }
+
+        return activeColor.overlayColor
+    }
+
     func makeBody(configuration: Configuration) -> some View {
         Label(configuration)
             .labelStyle(.iconOnly)
@@ -39,7 +47,7 @@ private struct ItemActionButtonLabelStyle: LabelStyle {
             .glassEffect(
                 .regular.selection(
                     tint: tint,
-                    foregroundColor: .primary
+                    foregroundColor: foregroundColor
                 ),
                 in: .capsule
             )

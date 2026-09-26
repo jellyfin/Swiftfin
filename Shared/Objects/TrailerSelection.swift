@@ -8,13 +8,15 @@
 
 import SwiftUI
 
-struct TrailerSelection: OptionSet, CaseIterable, Displayable, Hashable, Storable {
+@OptionSet<Int>
+struct TrailerSelection: CaseIterable, Displayable, Hashable, Storable {
 
-    let rawValue: Int
+    private enum Options: Int {
+        case local
+        case external
+        case none
+    }
 
-    static let local = Self(rawValue: 1 << 0)
-    static let external = Self(rawValue: 1 << 1)
-    static let none = Self(rawValue: 1 << 2)
     static var all: Self {
         [.local, .external]
     }

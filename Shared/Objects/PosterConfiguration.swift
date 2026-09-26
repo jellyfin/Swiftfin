@@ -6,19 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
-
+@DefaultDecodable
 struct PosterConfiguration: Hashable, Storable, WithDefaultValue {
 
-    var indicators: PosterIndicator
-    var showLabels: Bool
-    var unplayedStyle: UnplayedIndicatorType
-    var useSeriesLandscapeBackdrop: Bool
+    var indicators: PosterIndicator = .all
+    var unplayedStyle: UnplayedIndicatorType = .indicator
+    var useSeriesLandscapeBackdrop: Bool = true
+    var subtitleField: PosterSubtitleField = .none
+    var isTitlePresented: Bool = true
 
-    static let `default`: PosterConfiguration = .init(
-        indicators: .all,
-        showLabels: true,
-        unplayedStyle: .indicator,
-        useSeriesLandscapeBackdrop: true
-    )
+    static let `default` = PosterConfiguration()
 }
