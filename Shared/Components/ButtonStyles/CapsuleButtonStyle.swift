@@ -14,9 +14,10 @@ extension ButtonStyle where Self == CapsuleButtonStyle {
         CapsuleButtonStyle()
     }
 
-    static func capsule(selectionTint: Color = .white, isSelectionActive: Bool = true) -> Self {
+    static func capsule(selectionTint: Color = .white, focusTint: Color? = nil, isSelectionActive: Bool = true) -> Self {
         CapsuleButtonStyle(
             selectionTint: selectionTint,
+            focusTint: focusTint,
             isSelectionActive: isSelectionActive
         )
     }
@@ -82,6 +83,7 @@ struct CapsuleButtonStyle: ButtonStyle {
     private var font
 
     var selectionTint: Color = .white
+    var focusTint: Color?
     var isSelectionActive: Bool = true
 
     private var metrics: CapsuleControlMetrics {
@@ -92,8 +94,12 @@ struct CapsuleButtonStyle: ButtonStyle {
         isSelected || (isEnabled && isFocused)
     }
 
+    private var highlightTint: Color {
+        isEnabled && isFocused ? focusTint ?? selectionTint : selectionTint
+    }
+
     private var foregroundStyle: AnyShapeStyle {
-        isHighlighted ? AnyShapeStyle(selectionTint.overlayColor) : AnyShapeStyle(HierarchicalShapeStyle.primary)
+        isHighlighted ? AnyShapeStyle(highlightTint.overlayColor) : AnyShapeStyle(HierarchicalShapeStyle.primary)
     }
 
     private var highlightOpacity: Double {
@@ -109,7 +115,7 @@ struct CapsuleButtonStyle: ButtonStyle {
             .glassEffect(.regular.interactive(isEnabled), in: .capsule)
             .overlay {
                 Capsule()
-                    .fill(selectionTint)
+                    .fill(highlightTint)
                     .opacity(highlightOpacity)
             }
     }
@@ -135,6 +141,7 @@ struct CapsuleButtonStyle: ButtonStyle {
             .padding(.horizontal, metrics.horizontalPadding)
             .padding(.vertical, metrics.verticalPadding)
             .frame(minHeight: metrics.minimumHeight)
+            .clipShape(.capsule)
             .background { background }
             .contentShape(.capsule)
             .scaleEffect(isEnabled && isFocused ? 1.05 : 1)

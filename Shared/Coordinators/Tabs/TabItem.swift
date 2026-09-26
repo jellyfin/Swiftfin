@@ -93,7 +93,7 @@ extension TabItem {
             PagingLibraryView(
                 library: ItemLibrary(
                     parent: BaseItemDto(name: title),
-                    filters: filters
+                    staticFilters: filters
                 )
             )
             .if(UIDevice.isTV) { view in

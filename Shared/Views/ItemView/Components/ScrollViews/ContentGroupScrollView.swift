@@ -15,6 +15,9 @@ extension ItemView {
 
     struct ContentGroupScrollView: View {
 
+        @Environment(\.tabSafeAreaInsets)
+        private var tabSafeAreaInsets
+
         @EnvironmentObject
         private var focusCoordinator: FocusCoordinator
 
@@ -81,9 +84,14 @@ extension ItemView {
                 ScrollView {
                     ContentGroupVStack(groups: groups)
                         .edgePadding(.bottom)
+                        .padding(.top, isEnhanced ? 0 : tabSafeAreaInsets.top)
                 }
                 .trackingFrame(for: .scrollView)
+                #if os(tvOS)
+                .ignoresSafeArea(.container, edges: isEnhanced ? .all : [.horizontal, .top])
+                #else
                 .ignoresSafeArea(edges: isEnhanced ? .all : .horizontal)
+                #endif
                 .scrollIndicators(.hidden)
             }
         }

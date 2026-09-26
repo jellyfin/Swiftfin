@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5358705F2669D21600D05A09"
-               BuildableName = "Swiftfin tvOS.app"
+               BuildableName = "Swiftfin.app"
                BlueprintName = "Swiftfin tvOS"
                ReferencedContainer = "container:Swiftfin.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5358705F2669D21600D05A09"
-            BuildableName = "Swiftfin tvOS.app"
+            BuildableName = "Swiftfin.app"
             BlueprintName = "Swiftfin tvOS"
             ReferencedContainer = "container:Swiftfin.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5358705F2669D21600D05A09"
-            BuildableName = "Swiftfin tvOS.app"
+            BuildableName = "Swiftfin.app"
             BlueprintName = "Swiftfin tvOS"
             ReferencedContainer = "container:Swiftfin.xcodeproj">
          </BuildableReference>

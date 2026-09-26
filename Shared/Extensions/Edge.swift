@@ -8,6 +8,18 @@
 
 import SwiftUI
 
+extension HorizontalEdge {
+
+    var asEdgeSet: Edge.Set {
+        switch self {
+        case .leading:
+            .leading
+        case .trailing:
+            .trailing
+        }
+    }
+}
+
 extension Edge.Set {
 
     var asUIRectEdge: UIRectEdge {

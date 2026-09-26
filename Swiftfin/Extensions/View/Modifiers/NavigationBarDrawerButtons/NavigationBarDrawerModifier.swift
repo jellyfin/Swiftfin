@@ -10,6 +10,9 @@ import SwiftUI
 
 struct NavigationBarFilterDrawerModifier: ViewModifier {
 
+    @FocusState
+    private var focusedFilter: FilterTrack.FocusTarget?
+
     @ObservedObject
     var viewModel: FilterViewModel
 
@@ -17,10 +20,15 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
 
     @ViewBuilder
     private var drawer: some View {
-        NavigationBarFilterDrawer(
-            viewModel: viewModel,
-            types: types
-        )
+        ScrollView(.horizontal) {
+            HStack {
+                FilterTrack(viewModel: viewModel, types: types, focus: $focusedFilter)
+            }
+        }
+        .contentMargins(.horizontal, 16, for: .scrollContent)
+        .padding(.bottom, 5)
+        .scrollIndicators(.hidden)
+        .scrollClipDisabled()
     }
 
     func body(content: Content) -> some View {
