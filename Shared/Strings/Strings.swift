@@ -868,10 +868,6 @@ internal enum L10n {
   internal static let invalidURL = L10n.tr("Localizable", "invalidURL", fallback: "Invalid URL")
   /// Invalid Wi-Fi name
   internal static let invalidWifiName = L10n.tr("Localizable", "invalidWifiName", fallback: "Invalid Wi-Fi name")
-  /// Inverted dark
-  internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted dark")
-  /// Inverted light
-  internal static let invertedLight = L10n.tr("Localizable", "invertedLight", fallback: "Inverted light")
   /// ISO type
   internal static let isoType = L10n.tr("Localizable", "isoType", fallback: "ISO type")
   /// Item already exists
@@ -906,8 +902,6 @@ internal enum L10n {
   internal static let landscape = L10n.tr("Localizable", "landscape", fallback: "Landscape")
   /// Language
   internal static let language = L10n.tr("Localizable", "language", fallback: "Language")
-  /// Large
-  internal static let large = L10n.tr("Localizable", "large", fallback: "Large")
   /// Larger
   internal static let larger = L10n.tr("Localizable", "larger", fallback: "Larger")
   /// Largest
@@ -1146,8 +1140,6 @@ internal enum L10n {
   internal static let noPublicUsers = L10n.tr("Localizable", "noPublicUsers", fallback: "No public users")
   /// No results
   internal static let noResults = L10n.tr("Localizable", "noResults", fallback: "No results")
-  /// Normal
-  internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
   /// No runtime limit
   internal static let noRuntimeLimit = L10n.tr("Localizable", "noRuntimeLimit", fallback: "No runtime limit")
   /// Official rating

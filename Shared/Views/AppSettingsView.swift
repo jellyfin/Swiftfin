@@ -33,12 +33,12 @@ struct AppSettingsView: View {
     @Router
     private var router
 
-    @StateObject
-    private var viewModel = SettingsViewModel()
+    @StoredValue(.Server.servers)
+    private var servers
 
     #if os(tvOS)
     private var selectedServer: ServerState? {
-        viewModel.servers.first { server in
+        servers.first { server in
             selectUserAllServersSplashscreen == .server(id: server.id)
         }
     }
@@ -49,7 +49,7 @@ struct AppSettingsView: View {
             Label(L10n.random, systemImage: "dice.fill")
                 .tag(SelectUserServerSelection.all)
 
-            ForEach(viewModel.servers) { server in
+            ForEach(servers.sorted(using: \.name)) { server in
                 Text(server.name)
                     .tag(SelectUserServerSelection.server(id: server.id))
             }
@@ -69,8 +69,7 @@ struct AppSettingsView: View {
             Section(L10n.customize) {
 
                 ChevronButton(L10n.appIcon) {
-                    // TODO: Create NavigationRoute.appIconSelector
-                    router.route(to: .appIconSelector(viewModel: viewModel))
+                    router.route(to: .appIconSelector)
                 }
 
                 if !selectUserUseSplashscreen {

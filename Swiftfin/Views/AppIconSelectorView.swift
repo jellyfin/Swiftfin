@@ -6,45 +6,34 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 struct AppIconSelectorView: View {
 
-    @ObservedObject
-    var viewModel: SettingsViewModel
+    @State
+    private var currentAppIcon = AppIcon.resolve(alternateIconName: UIApplication.shared.alternateIconName)
+
+    @MainActor
+    private func select(icon: AppIcon) async {
+        let previousAppIcon = currentAppIcon
+        currentAppIcon = icon
+
+        do {
+            try await UIApplication.shared.setAlternateIconName(icon.alternateIconName)
+        } catch {
+            currentAppIcon = previousAppIcon
+        }
+    }
 
     var body: some View {
         Form {
-
-            Section {
-                ForEach(PrimaryAppIcon.allCases) { icon in
-                    AppIconRow(viewModel: viewModel, icon: icon)
+            ForEach(AppIcon.allCases) { icon in
+                AppIconRow(icon: icon) {
+                    Task {
+                        await select(icon: icon)
+                    }
                 }
-            }
-
-            Section(L10n.dark) {
-                ForEach(DarkAppIcon.allCases) { icon in
-                    AppIconRow(viewModel: viewModel, icon: icon)
-                }
-            }
-
-            Section(L10n.light) {
-                ForEach(LightAppIcon.allCases) { icon in
-                    AppIconRow(viewModel: viewModel, icon: icon)
-                }
-            }
-
-            Section(L10n.invertedDark) {
-                ForEach(InvertedDarkAppIcon.allCases) { icon in
-                    AppIconRow(viewModel: viewModel, icon: icon)
-                }
-            }
-
-            Section(L10n.invertedLight) {
-                ForEach(InvertedLightAppIcon.allCases) { icon in
-                    AppIconRow(viewModel: viewModel, icon: icon)
-                }
+                .isSelected(icon == currentAppIcon)
             }
         }
         .navigationTitle(L10n.appIcon.localizedCapitalized)
@@ -55,42 +44,28 @@ extension AppIconSelectorView {
 
     struct AppIconRow: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
-        @ObservedObject
-        var viewModel: SettingsViewModel
-
-        let icon: any AppIcon
+        let icon: AppIcon
+        let action: () -> Void
 
         var body: some View {
-            Button {
-                viewModel.select(icon: icon)
-            } label: {
+            Button(action: action) {
                 HStack {
-
                     Image(icon.iconName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 60, height: 60)
                         .cornerRadius(12)
-                        .shadow(radius: 2)
+                        .subtleShadow()
 
                     Text(icon.displayTitle)
                         .foregroundStyle(.primary)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    if icon.iconName == viewModel.currentAppIcon.iconName {
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .fontWeight(.bold)
-                            .aspectRatio(1, contentMode: .fit)
-                            .frame(width: 24, height: 24)
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(accentColor.overlayColor, accentColor)
-                    }
+                    ListRowCheckbox()
+                        .isEditing(true)
                 }
             }
+            .foregroundStyle(.primary, .secondary)
         }
     }
 }

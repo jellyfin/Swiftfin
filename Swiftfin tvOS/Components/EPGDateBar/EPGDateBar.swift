@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// TODO: Have pills use `SelectionTrack` instead
+
 struct EPGDateBar: View {
 
     @FocusState
