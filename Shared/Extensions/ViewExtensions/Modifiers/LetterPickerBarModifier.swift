@@ -39,7 +39,8 @@ struct LetterPickerBarModifier: ViewModifier {
                     ZStack {
                         if let letter {
                             LetterPickerBar.LetterPickerCallout(letter: letter)
-                                .font(.system(size: UIDevice.isTV ? 128 : 64, design: .rounded).weight(.bold))
+                                .font(.system(size: UIDevice.isTV ? 128 : 64, design: .rounded))
+                                .fontWeight(.bold)
                         }
                     }
                 }

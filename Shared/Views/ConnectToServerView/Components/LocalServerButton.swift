@@ -29,8 +29,7 @@ extension ConnectToServerView {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
-
-                    Spacer()
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     Image(systemName: "chevron.right")
                         .font(.body)

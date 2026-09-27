@@ -203,7 +203,7 @@ extension View {
     func inverseMask(alignment: Alignment = .center, @ViewBuilder _ content: @escaping () -> some View) -> some View {
         mask(alignment: alignment) {
             content()
-                .foregroundColor(.black)
+                .foregroundStyle(.black)
                 .background(.white)
                 .compositingGroup()
                 .luminanceToAlpha()

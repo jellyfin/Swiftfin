@@ -97,7 +97,7 @@ private struct ChapterPosterLabel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(chapter.chapterInfo.displayTitle)
-                .font(.subheadline.weight(.semibold))
+                .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundStyle(.primary)
                 .lineLimit(1)

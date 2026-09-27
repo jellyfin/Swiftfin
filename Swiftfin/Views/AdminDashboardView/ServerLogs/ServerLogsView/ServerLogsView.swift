@@ -38,7 +38,7 @@ struct ServerLogsView: View {
                         UIApplication.shared.open(url)
                     } label: {
                         VStack(alignment: .leading) {
-                            Text(log.name ?? L10n.unknown)
+                            Text(log.name)
                                 .lineLimit(2)
                                 .multilineTextAlignment(.leading)
 

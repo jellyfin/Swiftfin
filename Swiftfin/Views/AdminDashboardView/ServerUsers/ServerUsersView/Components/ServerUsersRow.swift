@@ -109,8 +109,7 @@ extension ServerUsersView {
                 }
                 .font(.subheadline)
                 .foregroundStyle(labelForegroundStyle, .secondary)
-
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 ListRowCheckbox()
             }

@@ -32,8 +32,7 @@ struct ListRowMenu<Content: View, Subtitle: View>: View {
             title
                 .foregroundStyle(isFocused ? .black : .white)
                 .padding(.leading, 4)
-
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             if let subtitle {
                 subtitle

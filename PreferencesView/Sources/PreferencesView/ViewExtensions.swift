@@ -9,7 +9,7 @@
 import SwiftfinMacros
 import SwiftUI
 
-extension UIInterfaceOrientationMask: CustomDebugStringConvertible {
+extension UIInterfaceOrientationMask: @retroactive CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
         case .all: "All Orientations"

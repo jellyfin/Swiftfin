@@ -106,7 +106,7 @@ struct ConnectToServerView: View {
             if viewModel.localServers.isEmpty {
                 Text(L10n.noLocalServersFound)
                     .font(.callout)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
             } else {
                 ForEach(viewModel.localServers) { server in
