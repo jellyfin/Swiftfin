@@ -73,7 +73,7 @@ extension ActiveSessionsView {
                     if let runtime = item.runtime {
                         // swiftlint:disable:next hard_coded_display_string
                         Text("/")
-                        Text(runtime ?? .zero, format: .runtime)
+                        Text(runtime, format: .runtime)
                     }
                 }
                 .monospacedDigit()
