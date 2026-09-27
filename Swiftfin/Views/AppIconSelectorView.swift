@@ -77,9 +77,8 @@ extension AppIconSelectorView {
                         .shadow(radius: 2)
 
                     Text(icon.displayTitle)
-                        .foregroundColor(.primary)
-
-                    Spacer()
+                        .foregroundStyle(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     if icon.iconName == viewModel.currentAppIcon.iconName {
                         Image(systemName: "checkmark.circle.fill")

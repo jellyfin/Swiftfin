@@ -43,7 +43,8 @@ extension EPGDateBar {
         var body: some View {
             Button(action: action) {
                 Text(title)
-                    .font(.footnote.weight(.semibold))
+                    .font(.footnote)
+                    .fontWeight(.semibold)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .backport

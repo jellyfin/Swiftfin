@@ -146,7 +146,7 @@ struct AboutItemGroup: ContentGroup {
                             } else {
                                 Image(.tomatoRotten)
                                     .symbolRenderingMode(.monochrome)
-                                    .foregroundColor(.green)
+                                    .foregroundStyle(.green)
                             }
                         }
                         .font(.largeTitle)

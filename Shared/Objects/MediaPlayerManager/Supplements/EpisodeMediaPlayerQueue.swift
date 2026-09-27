@@ -401,7 +401,8 @@ extension EpisodeMediaPlayerQueue {
         private var retryButton: some View {
             AlternateLayoutView {
                 Label(L10n.retry, systemImage: "arrow.clockwise")
-                    .font(.subheadline.weight(.semibold))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
                     .padding()
                     .edgePadding(.horizontal)
                     .frame(height: UIDevice.isTV ? 80 : 40)
