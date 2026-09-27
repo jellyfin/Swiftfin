@@ -109,6 +109,9 @@ extension VideoPlayer.UIContainerViewController {
             }
             .edgePadding(.horizontal)
             #if os(tvOS)
+            // Menu dismissal can restore an old tab before the guest content finishes appearing.
+            // Keep tabs out of the focus engine until the requested control receives focus.
+            .disabled(viewState.isGuestSupplementFocusPending)
             .defaultFocus(
                 $focusedElement,
                 defaultTabFocus,
@@ -177,14 +180,11 @@ extension VideoPlayer.UIContainerViewController {
             }
             .withViewContext(.isOverComplexContent)
             #if os(tvOS)
-            .onChange(of: viewState.guestSupplement?.id) { _, id in
-                if let id {
-                    focusedElement = id
-                }
-            }
             .task(id: focusedSupplementID) {
                 let previousSelection = viewState.selectedSupplementID
-                guard let id = focusedSupplementID, id != previousSelection else { return }
+                guard !viewState.isGuestSupplementFocusPending,
+                      let id = focusedSupplementID, id != previousSelection
+                else { return }
 
                 if previousSelection != nil {
                     do {
@@ -195,6 +195,7 @@ extension VideoPlayer.UIContainerViewController {
                 }
 
                 guard !Task.isCancelled,
+                      !viewState.isGuestSupplementFocusPending,
                       focusedSupplementID == id,
                       viewState.selectedSupplementID == previousSelection
                 else { return }

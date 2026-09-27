@@ -179,8 +179,11 @@ extension VideoPlayer {
         }
 
         #if os(tvOS)
-        @ObservationIgnored
         private var pendingGuestFocusID: String?
+
+        var isGuestSupplementFocusPending: Bool {
+            pendingGuestFocusID != nil
+        }
 
         // The host fade and container slide can finish in either order. Keep the request
         // pending until the preferred control receives focus after these transitions.
@@ -501,9 +504,18 @@ extension VideoPlayer {
             return true
         }
 
+        private var autoDismissInterval: TimeInterval {
+            #if os(tvOS)
+            // Short interval for progress only
+            presentation == .progress ? 2 : 10
+            #else
+            5
+            #endif
+        }
+
         func refreshAutoDismiss() {
             if canAutoDismiss {
-                timer.poke()
+                timer.poke(interval: autoDismissInterval)
             } else {
                 timer.stop()
             }
