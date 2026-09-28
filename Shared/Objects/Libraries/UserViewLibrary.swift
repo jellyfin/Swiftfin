@@ -257,7 +257,6 @@ private struct UserViewLibraryListElement: View {
     var body: some View {
         ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
             imageView
-                .matchedTransitionSource(id: "item", in: namespace)
         } content: {
             Text(element.displayTitle)
                 .font(.callout)
@@ -269,6 +268,9 @@ private struct UserViewLibraryListElement: View {
         } action: {
             element.libraryDidSelectElement(router: router, in: namespace)
         }
+        #if !os(tvOS)
+        .matchedTransitionSource(id: "item", in: namespace)
+        #endif
         .onFirstAppear(perform: setImageSources)
         .onChange(of: useRandomImage) {
             setImageSources()

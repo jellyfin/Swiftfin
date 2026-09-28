@@ -105,7 +105,6 @@ private struct BaseItemDtoLibraryListElement: View {
             )
             .subtleShadow()
             .frame(width: resolvedLibraryStyle.posterDisplayType == .landscape ? baseItemListLandscapeWidth : baseItemListPortraitWidth)
-            .matchedTransitionSource(id: "item", in: namespace)
         } content: {
             VStack(alignment: .leading, spacing: 5) {
                 Text(item.displayTitle)
@@ -129,6 +128,9 @@ private struct BaseItemDtoLibraryListElement: View {
         } action: {
             item.libraryDidSelectElement(router: router, in: namespace)
         }
+        #if !os(tvOS)
+        .matchedTransitionSource(id: "item", in: namespace)
+        #endif
         #if os(tvOS)
         .focusedValue(\.focusedPoster, AnyPoster(item))
         #endif
