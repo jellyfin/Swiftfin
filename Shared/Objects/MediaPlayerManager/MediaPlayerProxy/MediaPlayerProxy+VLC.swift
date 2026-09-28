@@ -22,9 +22,22 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
     let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
-    let player = Player()
+    let player: Player
 
     private var pendingStartTime: Duration?
+
+    init() {
+        let subtitleConfiguration = Defaults[.VideoPlayer.Subtitle.configuration]
+
+        var arguments = VLCInstance.defaultArguments
+        arguments.append("--freetype-font=\(subtitleConfiguration.fontName)")
+        if let color = Int(subtitleConfiguration.color.hexString.prefix(6), radix: 16) {
+            arguments.append("--freetype-color=\(color)")
+        }
+
+        let instance = try! VLCInstance(arguments: arguments)
+        player = Player(instance: instance)
+    }
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -195,13 +208,6 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
                     guard let url = subtitle.url(with: client) else { continue }
                     try media.addSlave(from: url, type: .subtitle)
                 }
-            }
-
-            // libVLC 4 applies font and color options when opening media.
-            // Size remains adjustable during playback through SubtitleScale.
-            media.addOption(":freetype-font=\(subtitleConfiguration.fontName)")
-            if let color = Int(subtitleConfiguration.color.hexString.prefix(6), radix: 16) {
-                media.addOption(":freetype-color=\(color)")
             }
 
             try player.play(media)
