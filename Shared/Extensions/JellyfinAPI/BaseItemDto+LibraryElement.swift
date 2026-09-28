@@ -105,9 +105,7 @@ private struct BaseItemDtoLibraryListElement: View {
             )
             .subtleShadow()
             .frame(width: resolvedLibraryStyle.posterDisplayType == .landscape ? baseItemListLandscapeWidth : baseItemListPortraitWidth)
-            #if os(tvOS)
             .matchedTransitionSource(id: "item", in: namespace)
-            #endif
         } content: {
             VStack(alignment: .leading, spacing: 5) {
                 Text(item.displayTitle)

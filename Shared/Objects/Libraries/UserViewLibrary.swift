@@ -257,9 +257,7 @@ private struct UserViewLibraryListElement: View {
     var body: some View {
         ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
             imageView
-                #if os(tvOS)
-                    .matchedTransitionSource(id: "item", in: namespace)
-                #endif
+                .matchedTransitionSource(id: "item", in: namespace)
         } content: {
             Text(element.displayTitle)
                 .font(.callout)
