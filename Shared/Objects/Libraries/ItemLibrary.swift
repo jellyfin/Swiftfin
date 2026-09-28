@@ -33,14 +33,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         filters: ItemFilterCollection? = nil,
         staticFilters: ItemFilterCollection = .default
     ) {
-        var filters = filters ?? .default
-
-        if let id = parent.id, Defaults[.Customization.Library.rememberSort] {
-            let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
-
-            filters.sortBy = storedFilters.sortBy
-            filters.sortOrder = storedFilters.sortOrder
-        }
+        let filters = filters ?? .default
 
         self.environment = .init(
             grouping: parent.groupings?.defaultSelection,
@@ -288,9 +281,6 @@ private struct ItemLibraryBody<Content: View>: View {
                     await filterViewModel.getQueryFilters()
                 }
             }
-            .onChange(of: filterViewModel.currentFilters) {
-                rememberSort(from: filterViewModel.currentFilters)
-            }
             .onReceive(
                 filterViewModel.$currentFilters
                     .map { filterViewModel.staticFilters.union($0) }
@@ -319,17 +309,5 @@ private struct ItemLibraryBody<Content: View>: View {
                 types: filterTypes
             )
             #endif
-    }
-
-    private func rememberSort(from filters: ItemFilterCollection) {
-        guard let id = viewModel.library.parent.id,
-              Defaults[.Customization.Library.rememberSort]
-        else { return }
-
-        let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
-            .mutating(\.sortBy, with: filters.sortBy)
-            .mutating(\.sortOrder, with: filters.sortOrder)
-
-        StoredValues[.User.libraryFilters(parentID: id)] = storedFilters
     }
 }

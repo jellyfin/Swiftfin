@@ -27,13 +27,10 @@ extension CustomizeSettingsView {
         private var libraryRandomImage
         @Default(.Customization.Library.style)
         private var libraryStyle
-        @Default(.Customization.Library.letterPickerOrientation)
-        private var letterPickerOrientation
-
         @Default(.Customization.Library.rememberLayout)
         private var rememberLibraryLayout
-        @Default(.Customization.Library.rememberSort)
-        private var rememberLibrarySort
+        @Default(.Customization.Library.letterPickerOrientation)
+        private var letterPickerOrientation
 
         @Router
         private var router
@@ -55,10 +52,6 @@ extension CustomizeSettingsView {
                     }
                 }
 
-                Section {
-                    Toggle(L10n.rememberSorting, isOn: $rememberLibrarySort)
-                }
-
                 Section(L10n.layout) {
                     PlatformPicker(L10n.layout, selection: $libraryStyle.displayType)
 
@@ -69,9 +62,7 @@ extension CustomizeSettingsView {
                             LabeledContent(L10n.columns, value: libraryStyle.listColumnCount.description)
                         }
                     }
-                }
 
-                Section {
                     Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
                 }
 

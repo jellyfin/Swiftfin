@@ -39,14 +39,48 @@ final class FilterViewModel: ViewModel {
     private(set) var allFilters: ItemFilterCollection = .all
     @Published
     var currentFilters: ItemFilterCollection
+    @Published
+    var savedFilters: [SavedItemFilter] = [] {
+        didSet {
+            StoredValues[savedFiltersKey] = savedFilters
+        }
+    }
 
     /// Fixed filters, excluded from selection state and reset actions
     let staticFilters: ItemFilterCollection
 
-    private let parent: (any LibraryParent)?
+    let parent: (any LibraryParent)?
 
     var hasActiveFilters: Bool {
         staticFilters.union(currentFilters) != staticFilters
+    }
+
+    var hasFilterOptions: Bool {
+        hasActiveFilters || savedFilters.isNotEmpty
+    }
+
+    @Published
+    private var selectedSavedFilterID: String?
+
+    var selectedSavedFilter: SavedItemFilter? {
+        get {
+            savedFilters.first { $0.id == selectedSavedFilterID }
+        }
+        set {
+            guard let newValue else { return }
+            selectedSavedFilterID = newValue.id
+            currentFilters = newValue.filters
+                .mutating(\.itemTypes, with: currentFilters.itemTypes)
+                .mutating(\.query, with: currentFilters.query)
+        }
+    }
+
+    private var savedFiltersKey: StoredValues.Key<[SavedItemFilter]> {
+        if let parent {
+            .User.libraryFilters(parentID: parent.pagingLibraryID)
+        } else {
+            .User.searchFilters
+        }
     }
 
     private var itemTypes: [BaseItemKind] {
@@ -65,6 +99,9 @@ final class FilterViewModel: ViewModel {
         self.staticFilters = staticFilters
 
         super.init()
+
+        self.savedFilters = StoredValues[savedFiltersKey]
+        self.selectedSavedFilterID = savedFilters.first { $0.filters == currentFilters }?.id
     }
 
     func isFilterSelected(type: ItemFilterType) -> Bool {
@@ -78,6 +115,7 @@ final class FilterViewModel: ViewModel {
 
         guard let type else {
             currentFilters = .default
+            selectedSavedFilterID = nil
             return
         }
 
