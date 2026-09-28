@@ -94,9 +94,7 @@ extension MediaPeopleSupplement: VideoPlayerSupplement {
             ))
             .itemSpacing(viewLayout.itemSpacing)
             .scrollBehavior(.continuousLeadingEdge)
-            #if os(iOS)
             .contentInsetAdjustmentBehavior(.never)
-            #endif
             .focusSection()
         }
 

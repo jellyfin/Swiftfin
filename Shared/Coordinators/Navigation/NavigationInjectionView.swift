@@ -46,6 +46,7 @@ struct NavigationInjectionView: View {
                 .navigationDestination(for: NavigationRoute.self) { route in
                     route.destination
                         .trackingFrame(for: .layoutContainer)
+                        .removingViewContext(.isTabRoot)
                         .environment(
                             \.router,
                             .init(
@@ -71,7 +72,9 @@ struct NavigationInjectionView: View {
             coordinator.presentedSheet = nil
         } content: { presentedRoute in
             NavigationInjectionView(coordinator: presentedRoute.coordinator) {
-                presentedRoute.route.destination
+                presentedRoute.route
+                    .destination
+                    .removingViewContext(.isTabRoot)
             }
             .transformEnvironment(\.frameForParentView) { $0[.tabView] = nil }
             .background(.regularMaterial)
@@ -80,7 +83,9 @@ struct NavigationInjectionView: View {
             item: $coordinator.presentedFullScreen
         ) { presentedRoute in
             NavigationInjectionView(coordinator: presentedRoute.coordinator) {
-                presentedRoute.route.destination
+                presentedRoute.route
+                    .destination
+                    .removingViewContext(.isTabRoot)
             }
             .transformEnvironment(\.frameForParentView) { $0[.tabView] = nil }
         }
@@ -91,7 +96,9 @@ struct NavigationInjectionView: View {
             coordinator.presentedSheet = nil
         } content: { presentedRoute in
             NavigationInjectionView(coordinator: presentedRoute.coordinator) {
-                presentedRoute.route.destination
+                presentedRoute.route
+                    .destination
+                    .removingViewContext(.isTabRoot)
             }
         }
         .presentation(
@@ -120,6 +127,7 @@ struct NavigationInjectionView: View {
                     presentedRouteBinding.wrappedValue
                         .route
                         .destination
+                        .removingViewContext(.isTabRoot)
                         .onPreferenceChange(PresentationControllerShouldDismissPreferenceKey.self) { newValue in
                             isPresentationInteractive = newValue
                         }

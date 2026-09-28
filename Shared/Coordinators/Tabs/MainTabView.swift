@@ -71,13 +71,15 @@ struct MainTabView: View {
 
     private func tabRoot(_ tab: TabCoordinator.TabData) -> some View {
         NavigationInjectionView(coordinator: tab.coordinator) {
-            tab.item.content
+            tab.item
+                .content
+                .withViewContext(.isTabRoot)
                 #if os(iOS)
-                    .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
-                        view.topBarTrailing {
-                            FirstTabSettingsBarButton()
-                        }
+                .if(tabCoordinator.tabs.first?.item.id == tab.item.id) { view in
+                    view.topBarTrailing {
+                        FirstTabSettingsBarButton()
                     }
+                }
                 #endif
         }
         .environmentObject(tabCoordinator)

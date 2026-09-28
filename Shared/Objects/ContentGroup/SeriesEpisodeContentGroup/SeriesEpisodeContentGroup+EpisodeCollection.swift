@@ -132,8 +132,6 @@ extension SeriesEpisodeContentGroup {
 
         @FocusState
         private var focusedSection: FocusedSection?
-        @FocusState
-        private var focusedElement: EpisodeElement.ID?
 
         let elements: [EpisodeElement]
         let preferredElementID: EpisodeElement.ID?
@@ -167,23 +165,21 @@ extension SeriesEpisodeContentGroup {
                     layout: layout
                 ) { element in
                     content(element)
-                        .focused($focusedElement, equals: element.id)
+                        #if os(tvOS)
+                            .ignoresSafeArea()
+                        #endif
                 }
+                #if os(tvOS)
+                .focusBehavior(initial: .leading, returning: .leading)
+                #endif
                 .initialElement(id: preferredElementID)
                 .clipsToBounds(false)
                 .insets(horizontal: viewLayout.edgePadding)
                 .itemSpacing(viewLayout.itemSpacing)
                 .scrollBehavior(.continuousLeadingEdge)
-                #if os(iOS)
                 .contentInsetAdjustmentBehavior(.never)
-                #endif
                 .focusSection()
                 .focused($focusedSection, equals: .episodes)
-                .defaultFocus(
-                    $focusedElement,
-                    preferredElementID,
-                    priority: .userInitiated
-                )
             } header: {
                 header
                     .focusSection()
