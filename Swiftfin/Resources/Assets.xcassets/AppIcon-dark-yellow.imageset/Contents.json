@@ -2,7 +2,15 @@
   "images" : [
     {
       "filename" : "AppIcon-dark-yellow.svg",
-      "idiom" : "universal"
+      "idiom" : "iphone"
+    },
+    {
+      "filename" : "AppIcon-dark-yellow.svg",
+      "idiom" : "ipad"
+    },
+    {
+      "filename" : "AppIcon-dark-yellow.svg",
+      "idiom" : "mac"
     }
   ],
   "info" : {
