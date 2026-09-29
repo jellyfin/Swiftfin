@@ -15,11 +15,7 @@ enum AppIcon: String, CaseIterable, Displayable, Identifiable {
     case green
     case blue
 
-    #if os(tvOS)
-    private static let prefix = "AppIcon-tvOS-"
-    #else
     private static let prefix = "AppIcon-dark-"
-    #endif
 
     var iconName: String {
         Self.prefix + rawValue
