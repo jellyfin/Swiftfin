@@ -142,7 +142,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     func setSubtitleConfiguration(_ configuration: SubtitleConfiguration) {
-        player.setSubtitleScale(.init(approximatePoints: Double(25 - configuration.size)))
+        player.setSubtitleScale(.init(Float(configuration.sizeScale)))
     }
 
     @ViewBuilder

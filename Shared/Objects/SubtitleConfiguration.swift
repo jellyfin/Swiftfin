@@ -10,9 +10,16 @@ import SwiftUI
 
 struct SubtitleConfiguration: Hashable, Storable, WithDefaultValue {
 
+    static let sizeRange = 1 ... 20
+
     var color: Color
     var fontName: String
     var size: Int
+
+    var sizeScale: CGFloat {
+        let clampedSize = min(max(size, Self.sizeRange.lowerBound), Self.sizeRange.upperBound)
+        return CGFloat(clampedSize) / CGFloat(Self.default.size)
+    }
 
     /// Note: "Noto Sans CJK SC" should be our default as it successfully handles English and non-Romantic
     static let `default`: SubtitleConfiguration = .init(
