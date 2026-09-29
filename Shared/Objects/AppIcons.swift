@@ -6,8 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import UIKit
-
 enum AppIcon: String, CaseIterable, Displayable, Identifiable {
 
     case jellyfin
