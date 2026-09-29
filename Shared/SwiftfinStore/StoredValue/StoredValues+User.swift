@@ -120,17 +120,9 @@ extension StoredValues.Keys {
             )
         }
 
-        static func libraryFilters(parentID: String?) -> Key<[SavedItemFilter]> {
+        static var savedFilters: Key<[SavedItemFilter]> {
             CurrentUserKey(
-                parentID,
-                field: "setting-libraryFilters",
-                default: []
-            )
-        }
-
-        static var searchFilters: Key<[SavedItemFilter]> {
-            CurrentUserKey(
-                field: "setting-searchFilters",
+                field: "setting-savedFilters",
                 default: []
             )
         }

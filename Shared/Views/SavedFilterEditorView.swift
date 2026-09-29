@@ -61,22 +61,16 @@ struct SavedFilterEditorView: View {
                 }
             }
 
-            Section(L10n.home) {
-                Toggle(L10n.addToHome, isOn: $isPinned)
+            if viewModel.parent != nil {
+                Section(L10n.home) {
+                    Toggle(L10n.addToHome, isOn: $isPinned)
 
-                if let groupings = (viewModel.parent as? BaseItemDto)?.groupings {
-                    Picker(L10n.defaultGrouping, selection: $grouping) {
-                        Text(L10n.none)
-                            .tag(nil as BaseItemDto.Grouping?)
-
-                        ForEach(groupings.elements) { grouping in
-                            Text(grouping.displayTitle)
-                                .tag(grouping as BaseItemDto.Grouping?)
-                        }
+                    if let groupings = (viewModel.parent as? BaseItemDto)?.groupings {
+                        Picker(L10n.defaultGrouping, sources: groupings.elements, selection: $grouping)
                     }
-                }
 
-                PlatformPicker(L10n.defaultPosters, selection: $posterDisplayType)
+                    PlatformPicker(L10n.defaultPosters, selection: $posterDisplayType)
+                }
             }
 
             if let savedFilter {
@@ -98,7 +92,9 @@ struct SavedFilterEditorView: View {
         .topBarTrailing {
             Button(L10n.save) {
                 var editedFilter = savedFilter ?? SavedItemFilter(
+                    libraryID: viewModel.parent?.pagingLibraryID,
                     parentID: viewModel.parent?.id,
+                    parentType: viewModel.parent?.libraryType,
                     name: trimmedName,
                     filters: viewModel.staticFilters
                         .union(viewModel.currentFilters)

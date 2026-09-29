@@ -34,15 +34,6 @@ extension AnyStoredData {
         return values.first
     }
 
-    static func fetchAll<Value: Codable>(ownerID: String, field: String) throws -> [Value] {
-        try SwiftfinStore.dataStack
-            .fetchAll(fetchClause(ownerID: ownerID, field: field))
-            .compactMap(\.data)
-            .compactMap {
-                try? JSONDecoder().decode(Value.self, from: $0)
-            }
-    }
-
     static func store(value: some Codable, ownerID: String, field: String, key: String) throws {
 
         let ownerFilter: Where<AnyStoredData> = Where(\.$ownerID == ownerID)

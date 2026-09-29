@@ -42,7 +42,8 @@ extension NavigationRoute {
 
     @MainActor
     static func homeFilterSelector(selection: Binding<[String]>) -> NavigationRoute {
-        let savedFilters = SavedItemFilter.libraryFilters
+        let savedFilters = StoredValues[.User.savedFilters]
+            .filter { $0.libraryID != nil }
 
         return NavigationRoute(id: "homeFilterSelector") {
             OrderedSectionSelectorView(

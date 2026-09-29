@@ -44,7 +44,8 @@ final class FilterViewModel: ViewModel {
     @Published
     var savedFilters: [SavedItemFilter] = [] {
         didSet {
-            StoredValues[savedFiltersKey] = savedFilters
+            StoredValues[.User.savedFilters] = StoredValues[.User.savedFilters]
+                .filter { $0.libraryID != parent?.pagingLibraryID } + savedFilters
         }
     }
 
@@ -78,14 +79,6 @@ final class FilterViewModel: ViewModel {
         }
     }
 
-    private var savedFiltersKey: StoredValues.Key<[SavedItemFilter]> {
-        if let parent {
-            .User.libraryFilters(parentID: parent.pagingLibraryID)
-        } else {
-            .User.searchFilters
-        }
-    }
-
     private var itemTypes: [BaseItemKind] {
         staticFilters.itemTypes.isEmpty ?
             parent?.supportedItemTypes ?? BaseItemKind.supportedCases :
@@ -105,7 +98,14 @@ final class FilterViewModel: ViewModel {
 
         super.init()
 
-        self.savedFilters = StoredValues[savedFiltersKey]
+        Notifications[.savedFiltersDidChange].publisher
+            .prepend(())
+            .sink { [weak self] _ in
+                guard let self else { return }
+                savedFilters = StoredValues[.User.savedFilters]
+                    .filter { $0.libraryID == self.parent?.pagingLibraryID }
+            }
+            .store(in: &cancellables)
     }
 
     func isFilterSelected(type: ItemFilterType) -> Bool {

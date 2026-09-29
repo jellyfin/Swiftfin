@@ -37,12 +37,12 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
                 using: \.collectionType
             )
 
-        let savedFilters = SavedItemFilter.libraryFilters
+        let savedFilters = StoredValues[.User.savedFilters]
         let pinnedFilters = Defaults[.Customization.Home.pinnedFilters]
             .compactMap { id in savedFilters.first { $0.id == id } }
             .map { savedFilter in
                 let parent = userViews.value.items?.first { $0.id == savedFilter.parentID } ??
-                    BaseItemDto(id: savedFilter.parentID)
+                    BaseItemDto(id: savedFilter.parentID, type: savedFilter.parentType)
 
                 return PosterGroup(
                     library: ItemLibrary(
