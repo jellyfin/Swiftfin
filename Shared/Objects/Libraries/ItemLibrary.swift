@@ -34,7 +34,16 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         staticFilters: ItemFilterCollection = .default,
         grouping: BaseItemDto.Grouping? = nil
     ) {
-        let filters = filters ?? .default
+        var filters = filters ?? .default
+
+        if let id = parent.id,
+           Defaults[.Customization.Library.rememberFilters],
+           filters.mutating(\.itemTypes, with: []) == .default
+        {
+            filters = StoredValues[.User.libraryFilters(parentID: id)]
+                .mutating(\.itemTypes, with: filters.itemTypes)
+        }
+
         let grouping = grouping ?? parent.groupings?.defaultSelection
 
         self.environment = .init(
@@ -283,6 +292,15 @@ private struct ItemLibraryBody<Content: View>: View {
                 Task {
                     await filterViewModel.getQueryFilters()
                 }
+            }
+            .onChange(of: filterViewModel.currentFilters) { _, filters in
+                guard let id = viewModel.library.parent.id,
+                      Defaults[.Customization.Library.rememberFilters]
+                else { return }
+
+                StoredValues[.User.libraryFilters(parentID: id)] = filters
+                    .mutating(\.itemTypes, with: [])
+                    .mutating(\.query, with: nil)
             }
             .onReceive(
                 filterViewModel.$currentFilters

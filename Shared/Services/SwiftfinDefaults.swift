@@ -212,6 +212,10 @@ extension Defaults.Keys {
             static var rememberLayout: Key<Bool> {
                 UserKey("libraryRememberLayout", default: false)
             }
+
+            static var rememberFilters: Key<Bool> {
+                UserKey("libraryRememberFilters", default: false)
+            }
         }
 
         enum Home {

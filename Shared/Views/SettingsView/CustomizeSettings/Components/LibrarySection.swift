@@ -32,6 +32,8 @@ extension CustomizeSettingsView {
 
         @Default(.Customization.Library.rememberLayout)
         private var rememberLibraryLayout
+        @Default(.Customization.Library.rememberFilters)
+        private var rememberLibraryFilters
 
         @Router
         private var router
@@ -51,6 +53,8 @@ extension CustomizeSettingsView {
                             to: .itemFilterDrawerSelector(selection: $libraryEnabledDrawerFilters)
                         )
                     }
+
+                    Toggle(L10n.rememberFiltering, isOn: $rememberLibraryFilters)
                 }
 
                 Section(L10n.layout) {
