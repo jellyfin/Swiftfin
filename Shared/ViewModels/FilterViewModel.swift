@@ -40,6 +40,8 @@ final class FilterViewModel: ViewModel {
     @Published
     var currentFilters: ItemFilterCollection
     @Published
+    var grouping: BaseItemDto.Grouping?
+    @Published
     var savedFilters: [SavedItemFilter] = [] {
         didSet {
             StoredValues[savedFiltersKey] = savedFilters
@@ -59,19 +61,20 @@ final class FilterViewModel: ViewModel {
         hasActiveFilters || savedFilters.isNotEmpty
     }
 
-    @Published
-    private var selectedSavedFilterID: String?
-
     var selectedSavedFilter: SavedItemFilter? {
         get {
-            savedFilters.first { $0.id == selectedSavedFilterID }
+            let filters = staticFilters
+                .union(currentFilters)
+                .mutating(\.query, with: nil)
+
+            return savedFilters.first { $0.filters.mutating(\.itemTypes, with: filters.itemTypes) == filters }
         }
         set {
             guard let newValue else { return }
-            selectedSavedFilterID = newValue.id
             currentFilters = newValue.filters
                 .mutating(\.itemTypes, with: currentFilters.itemTypes)
                 .mutating(\.query, with: currentFilters.query)
+            grouping = newValue.grouping ?? grouping
         }
     }
 
@@ -92,16 +95,17 @@ final class FilterViewModel: ViewModel {
     init(
         parent: (any LibraryParent)? = nil,
         currentFilters: ItemFilterCollection = .default,
-        staticFilters: ItemFilterCollection = .default
+        staticFilters: ItemFilterCollection = .default,
+        grouping: BaseItemDto.Grouping? = nil
     ) {
         self.parent = parent
         self.currentFilters = currentFilters
+        self.grouping = grouping
         self.staticFilters = staticFilters
 
         super.init()
 
         self.savedFilters = StoredValues[savedFiltersKey]
-        self.selectedSavedFilterID = savedFilters.first { $0.filters == currentFilters }?.id
     }
 
     func isFilterSelected(type: ItemFilterType) -> Bool {
@@ -115,7 +119,6 @@ final class FilterViewModel: ViewModel {
 
         guard let type else {
             currentFilters = .default
-            selectedSavedFilterID = nil
             return
         }
 

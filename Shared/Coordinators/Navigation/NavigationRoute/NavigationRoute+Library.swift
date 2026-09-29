@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -19,6 +20,25 @@ extension NavigationRoute {
             FilterView(
                 viewModel: viewModel,
                 type: type
+            )
+        }
+    }
+
+    @MainActor
+    static func savedFilterEditor(viewModel: FilterViewModel) -> NavigationRoute {
+        let savedFilter = viewModel.selectedSavedFilter
+
+        return NavigationRoute(
+            id: "saved-filter-editor",
+            style: .sheet
+        ) {
+            SavedFilterEditorView(
+                viewModel: viewModel,
+                name: savedFilter?.name ?? "",
+                grouping: savedFilter == nil ? viewModel.grouping : savedFilter?.grouping,
+                posterDisplayType: savedFilter?.posterDisplayType ?? Defaults[.Customization.Library.style].posterDisplayType,
+                isPinned: savedFilter.map { Defaults[.Customization.Home.pinnedFilters].contains($0.id) } ?? false,
+                savedFilter: savedFilter
             )
         }
     }

@@ -18,6 +18,9 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         case content = "contentGroup-content"
     }
 
+    @Default(.Customization.Home.pinnedFilters)
+    private var pinnedFilters
+
     @Environment(\.tabSafeAreaInsets)
     private var tabSafeAreaInsets
 
@@ -128,6 +131,14 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         }
         .onSceneWillEnterForeground {
             viewModel.refreshIfPendingChanges()
+        }
+        .onChange(of: pinnedFilters) {
+            guard viewModel.provider is DefaultContentGroupProvider else { return }
+            viewModel.refresh()
+        }
+        .onNotification(.savedFiltersDidChange) {
+            guard viewModel.provider is DefaultContentGroupProvider, pinnedFilters.isNotEmpty else { return }
+            viewModel.refresh()
         }
         .topBarTrailing {
             if #unavailable(iOS 26.0) {

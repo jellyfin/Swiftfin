@@ -27,10 +27,11 @@ extension CustomizeSettingsView {
         private var libraryRandomImage
         @Default(.Customization.Library.style)
         private var libraryStyle
-        @Default(.Customization.Library.rememberLayout)
-        private var rememberLibraryLayout
         @Default(.Customization.Library.letterPickerOrientation)
         private var letterPickerOrientation
+
+        @Default(.Customization.Library.rememberLayout)
+        private var rememberLibraryLayout
 
         @Router
         private var router
@@ -62,7 +63,9 @@ extension CustomizeSettingsView {
                             LabeledContent(L10n.columns, value: libraryStyle.listColumnCount.description)
                         }
                     }
+                }
 
+                Section {
                     Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
                 }
 

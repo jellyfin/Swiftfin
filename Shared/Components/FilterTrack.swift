@@ -80,23 +80,6 @@ struct FilterTrack: View {
     var style: Style = .regular
     var iconEdge: HorizontalEdge = .leading
 
-    @State
-    private var isPresentingSavedFilterEditor = false
-    @State
-    private var savedFilter: SavedItemFilter?
-    @State
-    private var savedFilterName = ""
-
-    private var trimmedSavedFilterName: String {
-        savedFilterName.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-
-    private var isSavedFilterNameDuplicate: Bool {
-        viewModel.savedFilters.contains {
-            $0.id != savedFilter?.id && $0.name.caseInsensitiveCompare(trimmedSavedFilterName) == .orderedSame
-        }
-    }
-
     private var targets: [FocusTarget] {
         (viewModel.hasFilterOptions ? [.options] : []) + types.map(FocusTarget.filter)
     }
@@ -110,18 +93,32 @@ struct FilterTrack: View {
         }
     }
 
+    private func reset() {
+        #if os(tvOS)
+        if viewModel.savedFilters.isEmpty {
+            focus.wrappedValue = types.first.map(FocusTarget.filter)
+        }
+        #endif
+        viewModel.reset(filterType: nil)
+    }
+
+    @ViewBuilder
+    private func buttonIcon(for target: FocusTarget) -> some View {
+        Image(systemName: target.systemImage)
+            #if os(tvOS)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 32, height: 32)
+                .padding(.vertical, 8)
+            #endif
+    }
+
     @ViewBuilder
     private func buttonLabel(for target: FocusTarget) -> some View {
         Label {
             Text(target.title)
         } icon: {
-            Image(systemName: target.systemImage)
-                #if os(tvOS)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 32, height: 32)
-                    .padding(.vertical, 8)
-                #endif
+            buttonIcon(for: target)
         }
     }
 
@@ -131,19 +128,10 @@ struct FilterTrack: View {
             viewModel.selectedSavedFilter == nil ? L10n.save : L10n.edit,
             systemImage: viewModel.selectedSavedFilter == nil ? "square.and.arrow.down" : "pencil"
         ) {
-            savedFilter = viewModel.selectedSavedFilter
-            savedFilterName = viewModel.selectedSavedFilter?.name ?? ""
-            isPresentingSavedFilterEditor = true
+            router.route(to: .savedFilterEditor(viewModel: viewModel))
         }
 
-        Button(L10n.clear, systemImage: "text.badge.xmark", role: .destructive) {
-            #if os(tvOS)
-            if viewModel.savedFilters.isEmpty {
-                focus.wrappedValue = types.first.map(FocusTarget.filter)
-            }
-            #endif
-            viewModel.reset(filterType: nil)
-        }
+        Button(L10n.clear, systemImage: "text.badge.xmark", role: .destructive, action: reset)
     }
 
     @ViewBuilder
@@ -195,47 +183,6 @@ struct FilterTrack: View {
                 #else
                 .labelStyle(.iconOnly)
                 #endif
-                .alert(L10n.savedFilter.localizedCapitalized, isPresented: $isPresentingSavedFilterEditor) {
-                    TextField(L10n.name, text: $savedFilterName)
-
-                    Button(L10n.save) {
-                        let filters = viewModel.currentFilters.mutating(\.query, with: nil)
-
-                        if let index = viewModel.savedFilters.firstIndex(where: { $0.id == savedFilter?.id }) {
-                            viewModel.savedFilters[index].name = trimmedSavedFilterName
-                            viewModel.savedFilters[index].filters = filters
-                        } else {
-                            let savedFilter = SavedItemFilter(
-                                parentID: viewModel.parent?.id,
-                                name: trimmedSavedFilterName,
-                                filters: filters
-                            )
-
-                            viewModel.savedFilters.append(savedFilter)
-                            viewModel.selectedSavedFilter = savedFilter
-                        }
-                    }
-                    .disabled(
-                        trimmedSavedFilterName.isEmpty ||
-                            isSavedFilterNameDuplicate ||
-                            (
-                                savedFilter?.name == trimmedSavedFilterName &&
-                                    savedFilter?.filters == viewModel.currentFilters.mutating(\.query, with: nil)
-                            )
-                    )
-
-                    if let savedFilter {
-                        Button(L10n.delete, role: .destructive) {
-                            viewModel.savedFilters.removeAll { $0.id == savedFilter.id }
-                        }
-                    }
-
-                    Button(L10n.cancel, role: .cancel) {}
-                } message: {
-                    if isSavedFilterNameDuplicate {
-                        Text(L10n.duplicateUserSaved(trimmedSavedFilterName))
-                    }
-                }
             case let .filter(type):
                 Button {
                     router.route(to: .filter(type: type, viewModel: viewModel))

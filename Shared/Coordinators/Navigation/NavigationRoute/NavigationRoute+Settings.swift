@@ -40,6 +40,23 @@ extension NavigationRoute {
         }
     }
 
+    @MainActor
+    static func homeFilterSelector(selection: Binding<[String]>) -> NavigationRoute {
+        let savedFilters = SavedItemFilter.libraryFilters
+
+        return NavigationRoute(id: "homeFilterSelector") {
+            OrderedSectionSelectorView(
+                systemImage: "line.3.horizontal.decrease",
+                selection: selection.map(
+                    getter: { ids in ids.compactMap { id in savedFilters.first { $0.id == id } } },
+                    setter: { $0.map(\.id) }
+                ),
+                sources: savedFilters
+            )
+            .navigationTitle(L10n.pinnedFilters.localizedCapitalized)
+        }
+    }
+
     static func supplementSelector(selectedSupplementsBinding: Binding<[VideoPlayerSupplement]>) -> NavigationRoute {
         NavigationRoute(id: "supplementSelector") {
             OrderedSectionSelectorView(

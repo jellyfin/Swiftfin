@@ -31,18 +31,21 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
     init(
         parent: BaseItemDto,
         filters: ItemFilterCollection? = nil,
-        staticFilters: ItemFilterCollection = .default
+        staticFilters: ItemFilterCollection = .default,
+        grouping: BaseItemDto.Grouping? = nil
     ) {
         let filters = filters ?? .default
+        let grouping = grouping ?? parent.groupings?.defaultSelection
 
         self.environment = .init(
-            grouping: parent.groupings?.defaultSelection,
+            grouping: grouping,
             filters: staticFilters.union(filters)
         )
         self.filterViewModel = .init(
             parent: parent,
             currentFilters: filters,
-            staticFilters: staticFilters
+            staticFilters: staticFilters,
+            grouping: grouping
         )
         self.parent = parent
     }
@@ -289,6 +292,13 @@ private struct ItemLibraryBody<Content: View>: View {
             ) { filters in
                 guard viewModel.environment.filters != filters else { return }
                 viewModel.environment.filters = filters
+            }
+            .onReceive(filterViewModel.$grouping.removeDuplicates()) { grouping in
+                guard viewModel.environment.grouping != grouping else { return }
+                viewModel.environment.grouping = grouping
+            }
+            .onChange(of: viewModel.environment.grouping) { _, grouping in
+                filterViewModel.grouping = grouping
             }
             #if os(tvOS)
             .filterBar(
