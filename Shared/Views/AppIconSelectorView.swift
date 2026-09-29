@@ -35,6 +35,13 @@ struct AppIconSelectorView: View {
                 }
                 .isSelected(icon == currentAppIcon)
             }
+        } image: {
+            Image(currentAppIcon.iconName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(maxWidth: 400)
+                .cornerRadius(48)
+                .subtleShadow()
         }
         .navigationTitle(L10n.appIcon.localizedCapitalized)
     }
@@ -53,8 +60,8 @@ extension AppIconSelectorView {
                     Image(icon.iconName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 60, height: 60)
-                        .cornerRadius(12)
+                        .frame(width: UIDevice.isTV ? 150 : 60, height: UIDevice.isTV ? 90 : 60)
+                        .cornerRadius(UIDevice.isTV ? 18 : 12)
                         .subtleShadow()
 
                     Text(icon.displayTitle)

@@ -65,21 +65,21 @@ struct AppSettingsView: View {
                 }
             }
 
-            #if os(iOS)
             Section(L10n.customize) {
 
                 ChevronButton(L10n.appIcon) {
                     router.route(to: .appIconSelector)
                 }
 
+                #if os(iOS)
                 if !selectUserUseSplashscreen {
                     Picker(
                         L10n.appearance,
                         selection: $appearance
                     )
                 }
+                #endif
             }
-            #endif
 
             Section {
                 Toggle(L10n.useSplashscreen, isOn: $selectUserUseSplashscreen)
