@@ -26,7 +26,7 @@ struct AppIconSelectorView: View {
     }
 
     var body: some View {
-        Form(image: .jellyfinBlobBlue) {
+        Form {
             ForEach(AppIcon.allCases) { icon in
                 AppIconRow(icon: icon) {
                     Task {
@@ -35,6 +35,13 @@ struct AppIconSelectorView: View {
                 }
                 .isSelected(icon == currentAppIcon)
             }
+        } image: {
+            Image(currentAppIcon.iconName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(maxWidth: 400)
+                .cornerRadius(48)
+                .subtleShadow()
         }
         .navigationTitle(L10n.appIcon.localizedCapitalized)
     }
