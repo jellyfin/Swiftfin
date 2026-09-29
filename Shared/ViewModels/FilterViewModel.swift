@@ -39,14 +39,8 @@ final class FilterViewModel: ViewModel {
     private(set) var allFilters: ItemFilterCollection = .all
     @Published
     var currentFilters: ItemFilterCollection
-    var grouping: BaseItemDto.Grouping?
     @Published
-    var savedFilters: [SavedItemFilter] = [] {
-        didSet {
-            StoredValues[.User.savedFilters] = StoredValues[.User.savedFilters]
-                .filter { $0.libraryID != parent?.pagingLibraryID } + savedFilters
-        }
-    }
+    private(set) var savedFilters: [SavedItemFilter] = []
 
     /// Fixed filters, excluded from selection state and reset actions
     let staticFilters: ItemFilterCollection
@@ -55,6 +49,14 @@ final class FilterViewModel: ViewModel {
 
     var hasActiveFilters: Bool {
         staticFilters.union(currentFilters) != staticFilters
+    }
+
+    var hasSavableFilters: Bool {
+        staticFilters.union(
+            currentFilters
+                .mutating(\.itemTypes, with: [])
+                .mutating(\.query, with: nil)
+        ) != staticFilters
     }
 
     var hasFilterOptions: Bool {
@@ -86,12 +88,10 @@ final class FilterViewModel: ViewModel {
     init(
         parent: (any LibraryParent)? = nil,
         currentFilters: ItemFilterCollection = .default,
-        staticFilters: ItemFilterCollection = .default,
-        grouping: BaseItemDto.Grouping? = nil
+        staticFilters: ItemFilterCollection = .default
     ) {
         self.parent = parent
         self.currentFilters = currentFilters
-        self.grouping = grouping
         self.staticFilters = staticFilters
 
         super.init()

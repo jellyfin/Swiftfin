@@ -19,6 +19,9 @@ struct SavedFilterEditorView: View {
     @State
     var name: String
 
+    @StoredValue(.User.savedFilters)
+    private var savedFilters
+
     let savedFilter: SavedItemFilter?
 
     private var trimmedName: String {
@@ -47,7 +50,7 @@ struct SavedFilterEditorView: View {
             if let savedFilter {
                 Section {
                     Button(L10n.delete, role: .destructive) {
-                        viewModel.savedFilters.removeAll { $0.id == savedFilter.id }
+                        savedFilters.removeAll { $0.id == savedFilter.id }
                         Notifications[.savedFiltersDidChange].post()
                         router.dismiss()
                     }
@@ -61,15 +64,12 @@ struct SavedFilterEditorView: View {
         }
         .topBarTrailing {
             Button(L10n.save) {
-                if let index = viewModel.savedFilters.firstIndex(where: { $0.id == savedFilter?.id }) {
-                    viewModel.savedFilters[index].name = trimmedName
+                if let index = savedFilters.firstIndex(where: { $0.id == savedFilter?.id }) {
+                    savedFilters[index].name = trimmedName
                 } else {
-                    viewModel.savedFilters.append(
+                    savedFilters.append(
                         SavedItemFilter(
                             libraryID: viewModel.parent?.pagingLibraryID,
-                            parentID: viewModel.parent?.id,
-                            parentType: viewModel.parent?.libraryType,
-                            grouping: viewModel.grouping,
                             name: trimmedName,
                             filters: viewModel.staticFilters
                                 .union(viewModel.currentFilters)

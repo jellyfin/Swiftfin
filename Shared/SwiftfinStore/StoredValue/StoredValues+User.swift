@@ -120,19 +120,19 @@ extension StoredValues.Keys {
             )
         }
 
-        static func libraryGrouping(id: String?, default defaultValue: BaseItemDto.Grouping) -> Key<BaseItemDto.Grouping> {
-            CurrentUserKey(
-                id,
-                field: "setting-libraryGrouping",
-                default: defaultValue
-            )
-        }
-
         static func libraryFilters(parentID: String?) -> Key<ItemFilterCollection> {
             CurrentUserKey(
                 parentID,
                 field: "setting-libraryFilters",
                 default: ItemFilterCollection.default
+            )
+        }
+
+        static func libraryGrouping(id: String?, default defaultValue: BaseItemDto.Grouping) -> Key<BaseItemDto.Grouping> {
+            CurrentUserKey(
+                id,
+                field: "setting-libraryGrouping",
+                default: defaultValue
             )
         }
 

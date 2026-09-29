@@ -35,12 +35,8 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
     ) {
         var filters = filters ?? .default
 
-        if let id = parent.id,
-           Defaults[.Customization.Library.rememberFilters],
-           filters.mutating(\.itemTypes, with: []) == .default
-        {
+        if let id = parent.id, Defaults[.Customization.Library.rememberFilters], filters == .default {
             filters = StoredValues[.User.libraryFilters(parentID: id)]
-                .mutating(\.itemTypes, with: filters.itemTypes)
         }
 
         var grouping = parent.groupings?.defaultSelection
@@ -60,8 +56,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         self.filterViewModel = .init(
             parent: parent,
             currentFilters: filters,
-            staticFilters: staticFilters,
-            grouping: grouping
+            staticFilters: staticFilters
         )
         self.parent = parent
     }
@@ -302,12 +297,11 @@ private struct ItemLibraryBody<Content: View>: View {
             }
             .onChange(of: filterViewModel.currentFilters) { _, filters in
                 guard let id = viewModel.library.parent.id,
-                      Defaults[.Customization.Library.rememberFilters]
+                      Defaults[.Customization.Library.rememberFilters],
+                      filters.itemTypes.isEmpty
                 else { return }
 
-                StoredValues[.User.libraryFilters(parentID: id)] = filters
-                    .mutating(\.itemTypes, with: [])
-                    .mutating(\.query, with: nil)
+                StoredValues[.User.libraryFilters(parentID: id)] = filters.mutating(\.query, with: nil)
             }
             .onReceive(
                 filterViewModel.$currentFilters
@@ -319,8 +313,6 @@ private struct ItemLibraryBody<Content: View>: View {
                 viewModel.environment.filters = filters
             }
             .onChange(of: viewModel.environment.grouping) { _, grouping in
-                filterViewModel.grouping = grouping
-
                 guard let grouping, Defaults[.Customization.Library.rememberLayout] else { return }
 
                 StoredValues[

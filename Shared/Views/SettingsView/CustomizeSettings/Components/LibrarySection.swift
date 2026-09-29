@@ -67,9 +67,7 @@ extension CustomizeSettingsView {
                             LabeledContent(L10n.columns, value: libraryStyle.listColumnCount.description)
                         }
                     }
-                }
 
-                Section {
                     Toggle(L10n.rememberLayout, isOn: $rememberLibraryLayout)
                 }
 

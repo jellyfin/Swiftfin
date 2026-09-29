@@ -7,15 +7,11 @@
 //
 
 import Foundation
-import JellyfinAPI
 
 struct SavedItemFilter: Hashable, Identifiable, Storable {
 
     private(set) var id: String = UUID().uuidString
     let libraryID: String?
-    let parentID: String?
-    let parentType: BaseItemKind?
-    let grouping: BaseItemDto.Grouping?
     var name: String
     let filters: ItemFilterCollection
 }
