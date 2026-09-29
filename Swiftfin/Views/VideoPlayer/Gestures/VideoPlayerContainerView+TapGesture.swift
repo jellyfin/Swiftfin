@@ -66,26 +66,23 @@ extension VideoPlayer.UIContainerViewController {
         location: CGPoint,
         unitPoint: UnitPoint
     ) {
-        if viewState.isPresentingSupplement {
-            if viewState.isCompact {
-                viewState.togglePlaybackButtons()
-            } else {
-                viewState.selectedSupplementID = nil
-            }
-        } else {
-            viewState.toggleControls()
+        let action = Defaults[.VideoPlayer.Gesture.multiTapGesture]
+        let canMultiTap = action != .none && viewState.manager?.item.isLiveStream == false
+
+        guard canMultiTap else {
+            viewState.cancelTapGesture()
+            performSingleTapGesture()
+            return
         }
 
-        let action = Defaults[.VideoPlayer.Gesture.multiTapGesture]
         let jumpProgressObserver = viewState.jumpProgressObserver
-        let width = location.x / unitPoint.x
+        let width = unitPoint.x > 0 ? location.x / unitPoint.x : view.bounds.width
+        var isMultiTap = false
 
         switch action {
         case .none: ()
         case .jump:
-            guard viewState.manager?.item.isLiveStream == false else { return }
-
-            if let lastTapLocation = viewState.lastTapLocation {
+            if canMultiTap, let lastTapLocation = viewState.lastTapLocation {
 
                 let (isSameSide, isLeftSide) = pointsAreSameSide(
                     lastTapLocation,
@@ -95,8 +92,8 @@ extension VideoPlayer.UIContainerViewController {
                 )
 
                 if isSameSide {
-
-                    viewState.showProgress(keepingControls: false)
+                    isMultiTap = true
+                    viewState.hideControls()
 
                     if isLeftSide {
                         let interval = Defaults[.VideoPlayer.jumpBackwardInterval]
@@ -125,6 +122,11 @@ extension VideoPlayer.UIContainerViewController {
             }
         }
 
+        // Respond to the first tap immediately; subsequent seek taps keep controls hidden.
+        if !isMultiTap {
+            performSingleTapGesture()
+        }
+
         let side = side(
             of: location,
             width: width,
@@ -136,6 +138,18 @@ extension VideoPlayer.UIContainerViewController {
             jumpProgressObserver.jumpBackward(interval: 0.35)
         } else {
             jumpProgressObserver.jumpForward(interval: 0.35)
+        }
+    }
+
+    private func performSingleTapGesture() {
+        if viewState.isPresentingSupplement {
+            if viewState.isCompact {
+                viewState.togglePlaybackButtons()
+            } else {
+                viewState.selectedSupplementID = nil
+            }
+        } else {
+            viewState.toggleControls()
         }
     }
 
@@ -166,6 +180,7 @@ extension VideoPlayer.UIContainerViewController {
         location: CGPoint,
         unitPoint: UnitPoint
     ) {
+        viewState.cancelTapGesture()
         let action = Defaults[.VideoPlayer.Gesture.doubleTouchGesture]
 
         switch action {
@@ -200,6 +215,10 @@ extension VideoPlayer.UIContainerViewController {
         unitPoint: UnitPoint,
         state: UILongPressGestureRecognizer.State
     ) {
+        if state == .began {
+            viewState.cancelTapGesture()
+        }
+
         guard !viewState.isGestureLocked else {
             guard state == .began else { return }
 

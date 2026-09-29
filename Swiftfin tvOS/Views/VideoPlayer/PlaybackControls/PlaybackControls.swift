@@ -80,15 +80,17 @@ extension VideoPlayer {
                 pendingJumpWork?.cancel()
                 viewState.cancelScrub()
             }
-            .onChange(of: focusCoordinator.focusedIDs) { oldIDs, newIDs in
-                if oldIDs.contains(ViewState.Focus.progress),
-                   !newIDs.contains(ViewState.Focus.progress)
-                {
-                    viewState.cancelScrub()
+            .onReceive(
+                focusCoordinator.$focusedIDs
+                    .map { $0.contains(ViewState.Focus.progress) }
+                    .removeDuplicates()
+                    .dropFirst()
+            ) { isFocused in
+                guard !isFocused else { return }
+                viewState.cancelScrub()
 
-                    stopSpeedBoost()
-                    seekingPress = nil
-                }
+                stopSpeedBoost()
+                seekingPress = nil
             }
         }
     }

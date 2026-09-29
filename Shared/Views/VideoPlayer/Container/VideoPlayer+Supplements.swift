@@ -109,9 +109,9 @@ extension VideoPlayer.UIContainerViewController {
             }
             .edgePadding(.horizontal)
             #if os(tvOS)
-            // Menu dismissal can restore an old tab before the guest content finishes appearing.
+            // Menu dismissal can restore a tab before the content finishes appearing.
             // Keep tabs out of the focus engine until the requested control receives focus.
-            .disabled(viewState.isGuestSupplementFocusPending)
+            .disabled(viewState.isSupplementFocusPending)
             .defaultFocus(
                 $focusedElement,
                 defaultTabFocus,
@@ -164,10 +164,13 @@ extension VideoPlayer.UIContainerViewController {
                     }
                     #if os(tvOS)
                     .onSelectionPresented { id in
-                            viewState.focusGuestSupplementIfNeeded(id)
+                            viewState.focusSupplementIfNeeded(id)
                         }
+                        .onFocusExit(.up, perform: viewState.singleSupplement == nil ? nil : {
+                            viewState.selectedSupplementID = nil
+                        })
                     #endif
-                        .isVisible(viewState.isPresentingSupplement)
+                    .isVisible(viewState.isPresentingSupplement)
                     .enabled(viewState.isPresentingSupplement)
                     .animation(.linear(duration: 0.25), value: viewState.selectedSupplementID)
                 }
@@ -182,7 +185,7 @@ extension VideoPlayer.UIContainerViewController {
             #if os(tvOS)
             .task(id: focusedSupplementID) {
                 let previousSelection = viewState.selectedSupplementID
-                guard !viewState.isGuestSupplementFocusPending,
+                guard !viewState.isSupplementFocusPending,
                       let id = focusedSupplementID, id != previousSelection
                 else { return }
 
@@ -195,7 +198,7 @@ extension VideoPlayer.UIContainerViewController {
                 }
 
                 guard !Task.isCancelled,
-                      !viewState.isGuestSupplementFocusPending,
+                      !viewState.isSupplementFocusPending,
                       focusedSupplementID == id,
                       viewState.selectedSupplementID == previousSelection
                 else { return }

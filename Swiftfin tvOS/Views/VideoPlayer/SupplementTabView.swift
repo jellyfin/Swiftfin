@@ -19,6 +19,8 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
     let content: (any MediaPlayerSupplement) -> Content
 
     private var selectionPresented: (String) -> Void = { _ in }
+    private var focusExitHeading: UIFocusHeading = []
+    private var focusExit: (() -> Void)?
 
     func onSelectionPresented(_ action: @escaping (String) -> Void) -> Self {
         var copy = self
@@ -26,8 +28,15 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
         return copy
     }
 
-    func makeUIViewController(context: Context) -> UIViewController {
-        let controller = UIViewController()
+    func onFocusExit(_ heading: UIFocusHeading, perform action: (() -> Void)?) -> Self {
+        var copy = self
+        copy.focusExitHeading = heading
+        copy.focusExit = action
+        return copy
+    }
+
+    func makeUIViewController(context: Context) -> ContainerViewController {
+        let controller = ContainerViewController()
         controller.view.backgroundColor = .clear
 
         context.coordinator.container = controller
@@ -35,7 +44,9 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
         return controller
     }
 
-    func updateUIViewController(_ controller: UIViewController, context: Context) {
+    func updateUIViewController(_ controller: ContainerViewController, context: Context) {
+        controller.focusExitHeading = focusExitHeading
+        controller.focusExit = focusExit
         context.coordinator.container = controller
         context.coordinator.sync(
             data: data,
@@ -45,12 +56,35 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
         )
     }
 
-    static func dismantleUIViewController(_: UIViewController, coordinator: Coordinator) {
+    static func dismantleUIViewController(_: ContainerViewController, coordinator: Coordinator) {
         coordinator.removeAll()
     }
 
     func makeCoordinator() -> Coordinator {
         Coordinator()
+    }
+
+    final class ContainerViewController: UIViewController {
+
+        var focusExitHeading: UIFocusHeading = []
+        var focusExit: (() -> Void)?
+
+        override func shouldUpdateFocus(in context: UIFocusUpdateContext) -> Bool {
+            guard super.shouldUpdateFocus(in: context) else { return false }
+
+            // Only intercept navigation out of the content. Moving between rows
+            // inside a supplement must remain under the focus engine's control.
+            if !context.focusHeading.intersection(focusExitHeading).isEmpty,
+               context.previouslyFocusedView?.isDescendant(of: view) == true,
+               let nextView = context.nextFocusedView, !nextView.isDescendant(of: view),
+               let focusExit
+            {
+                DispatchQueue.main.async(execute: focusExit)
+                return false
+            }
+
+            return true
+        }
     }
 
     @MainActor
@@ -159,7 +193,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
                     self.remove(oldHost)
                 }
 
-                // Guest panels become focusable after their host finishes appearing.
+                // Panels become focusable after their host finishes appearing.
                 if newHost != nil, let selection {
                     self.selectionPresented(selection)
                 }

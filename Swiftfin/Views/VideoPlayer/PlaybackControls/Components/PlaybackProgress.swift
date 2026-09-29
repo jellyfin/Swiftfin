@@ -142,7 +142,7 @@ extension VideoPlayer.PlaybackControls {
                     isScrubbing = newValue
                 }
                 .if(chapterSlider) { view in
-                    view.ifLet(manager.item.fullChapterInfo) { view, chapters in
+                    view.ifLet(manager.item.chapters) { view, chapters in
                         if chapters.isEmpty {
                             view
                         } else {

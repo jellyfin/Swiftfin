@@ -23,6 +23,7 @@ extension VideoPlayer.UIContainerViewController {
         guard checkGestureLock() else { return }
 
         if state == .began {
+            viewState.cancelTapGesture()
             viewState.setInteraction(.pan, active: true)
         }
 
@@ -34,7 +35,6 @@ extension VideoPlayer.UIContainerViewController {
             handleSupplementPanAction(
                 translation: translation,
                 velocity: velocity.y,
-                location: location,
                 state: state
             )
 
@@ -293,7 +293,6 @@ extension VideoPlayer.UIContainerViewController {
             viewState.containerView?.handleSupplementPanAction(
                 translation: handlingState.translation,
                 velocity: handlingState.velocity.y,
-                location: handlingState.location,
                 state: handlingState.gestureState
             )
         }
@@ -302,12 +301,15 @@ extension VideoPlayer.UIContainerViewController {
     // MARK: - Volume
 
     private static var VolumePanHandlingAction: PanHandlingAction<Float> {
-        PanHandlingAction<Float>(
+        // Retain one system volume view for the gesture instead of rebuilding it on every move.
+        let volumeView = MPVolumeView()
+
+        return PanHandlingAction<Float>(
             startValue: AVAudioSession.sharedInstance().outputVolume
         ) { startState, handlingState, _ in
             guard handlingState.gestureState != .ended else { return }
 
-            guard let slider = MPVolumeView()
+            guard let slider = volumeView
                 .subviews
                 .first(where: { $0 is UISlider }) as? UISlider else { return }
             let translation: CGFloat = {

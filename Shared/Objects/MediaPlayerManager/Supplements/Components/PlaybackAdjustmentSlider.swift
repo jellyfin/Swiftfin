@@ -75,7 +75,7 @@ struct PlaybackAdjustmentSlider: View {
     var body: some View {
         VStack(spacing: UIDevice.isTV ? 24 : 12) {
             Text(formatValue(value))
-                .font(UIDevice.isTV ? .title2.weight(.semibold) : .headline)
+                .font(UIDevice.isTV ? .title3.weight(.semibold) : .subheadline.weight(.semibold))
                 .monospacedDigit()
                 .contentTransition(.numericText(value: value))
                 .animation(.easeInOut(duration: 0.15), value: value)

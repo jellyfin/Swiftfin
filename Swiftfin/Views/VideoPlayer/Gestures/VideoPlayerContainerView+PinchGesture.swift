@@ -16,6 +16,10 @@ extension VideoPlayer.UIContainerViewController {
         velocity: CGFloat,
         state: UIGestureRecognizer.State
     ) {
+        if state == .began {
+            viewState.cancelTapGesture()
+        }
+
         guard checkGestureLock() else { return }
         guard !viewState.isPresentingSupplement, state == .ended else { return }
 

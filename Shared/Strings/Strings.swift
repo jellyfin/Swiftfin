@@ -146,10 +146,6 @@ internal enum L10n {
   internal static let asManyAsPossible = L10n.tr("Localizable", "asManyAsPossible", fallback: "As many as possible")
   /// Aspect fill
   internal static let aspectFill = L10n.tr("Localizable", "aspectFill", fallback: "Aspect fill")
-  /// Safe area
-  internal static let aspectFillSafeArea = L10n.tr("Localizable", "aspectFillSafeArea", fallback: "Safe area")
-  /// Screen
-  internal static let aspectFillScreen = L10n.tr("Localizable", "aspectFillScreen", fallback: "Screen")
   /// Aspect ratio
   internal static let aspectRatio = L10n.tr("Localizable", "aspectRatio", fallback: "Aspect ratio")
   /// Audio

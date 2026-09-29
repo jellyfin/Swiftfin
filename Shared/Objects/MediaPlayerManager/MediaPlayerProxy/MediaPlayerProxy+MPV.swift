@@ -204,7 +204,9 @@ extension MPVMediaPlayerProxy {
         var body: some View {
             if let item = manager.playbackItem, manager.state != .stopped {
                 MPVVideoPlayer(player: player)
-                    .scaleEffect(videoLayout.scale)
+                    .frame(width: videoLayout.renderSize.width, height: videoLayout.renderSize.height)
+                    .scaleEffect(videoLayout.renderScale)
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                     .overlay {
                         if loadedItem === item, let snapshot = textSubtitles.snapshot {
                             TextSubtitleOverlay(snapshot: snapshot, videoLayout: videoLayout)

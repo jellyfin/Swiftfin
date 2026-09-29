@@ -260,10 +260,6 @@ extension Defaults.Keys {
             UserKey("appMaximumBitrateTest", default: .regular)
         }
 
-        static var aspectFillWithinSafeArea: Key<Bool> {
-            UserKey("videoPlayerAspectFillWithinSafeArea", default: true)
-        }
-
         static var autoPlayEnabled: Key<Bool> {
             UserKey("autoPlayEnabled", default: true)
         }

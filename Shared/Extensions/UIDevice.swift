@@ -46,11 +46,6 @@ extension UIDevice {
         #endif
     }()
 
-    static var hasNotch: Bool {
-        (UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0) > 0 &&
-            isPhone
-    }
-
     static var platform: String {
         #if os(tvOS)
         L10n.tvOS

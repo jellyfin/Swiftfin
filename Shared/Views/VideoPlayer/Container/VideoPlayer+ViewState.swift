@@ -100,6 +100,10 @@ extension VideoPlayer {
         }
 
         #if os(tvOS)
+        private func focusPlaybackControls() {
+            focusCoordinator.focus(manager?.item.isLiveStream == true ? Focus.controls : Focus.progress)
+        }
+
         func updateOverlayActionFocus(previousIDs: [OverlayAction.ID] = []) {
             guard !isPresentingCloseConfirmation,
                   containerView?.presentedViewController == nil
@@ -116,7 +120,7 @@ extension VideoPlayer {
                       }),
                       !isOverlayActionFocused
             {
-                focusCoordinator.focus(Focus.progress)
+                focusPlaybackControls()
             }
         }
         #endif
@@ -162,36 +166,38 @@ extension VideoPlayer {
 
         var supplements: [any MediaPlayerSupplement] {
             access(keyPath: \.supplements)
-            var supplements = manager?.supplements ?? []
             if let guestSupplement {
-                supplements.append(guestSupplement)
+                return [guestSupplement]
             }
-            return supplements
+            return manager?.supplements ?? []
+        }
+
+        var singleSupplement: (any MediaPlayerSupplement)? {
+            let supplements = supplements
+            return supplements.count == 1 ? supplements.first : nil
         }
 
         func presentGuestSupplement(_ supplement: some MediaPlayerSupplement) {
             guard !isGestureLocked else { return }
             guestSupplement = supplement
-            #if os(tvOS)
-            pendingGuestFocusID = supplement.id
-            #endif
             transition(to: .supplement(supplement.id))
         }
 
         #if os(tvOS)
-        private var pendingGuestFocusID: String?
+        private var pendingSupplementFocusID: String?
 
-        var isGuestSupplementFocusPending: Bool {
-            pendingGuestFocusID != nil
+        var isSupplementFocusPending: Bool {
+            pendingSupplementFocusID != nil
         }
 
         // The host fade and container slide can finish in either order. Keep the request
         // pending until the preferred control receives focus after these transitions.
-        func focusGuestSupplementIfNeeded(_ id: String) {
-            guard pendingGuestFocusID == id, selectedSupplementID == id,
-                  let guestSupplement, guestSupplement.id == id
+        func focusSupplementIfNeeded(_ id: String) {
+            guard pendingSupplementFocusID == id,
+                  let selectedSupplement, selectedSupplement.id == id
             else { return }
-            focusCoordinator.focus(guestSupplement.preferredFocusID)
+            containerView?.focusSupplementContent()
+            focusCoordinator.focus(selectedSupplement.preferredFocusID)
         }
         #endif
 
@@ -289,6 +295,12 @@ extension VideoPlayer {
         var panHandlingAction: (any _PanHandlingAction)?
         var didSwipe: Bool = false
         var lastTapLocation: CGPoint?
+
+        func cancelTapGesture() {
+            lastTapLocation = nil
+            jumpProgressObserver.timer.stop()
+            jumpProgressObserver.reset()
+        }
         #endif
 
         #if os(tvOS)
@@ -344,11 +356,11 @@ extension VideoPlayer {
                 .sink { [weak self] focusedIDs in
                     guard let self else { return }
                     #if os(tvOS)
-                    if let guestSupplement = self.guestSupplement,
-                       self.pendingGuestFocusID == guestSupplement.id,
-                       focusedIDs.contains(guestSupplement.preferredFocusID)
+                    if let supplement = self.selectedSupplement,
+                       self.pendingSupplementFocusID == supplement.id,
+                       focusedIDs.contains(supplement.preferredFocusID)
                     {
-                        self.pendingGuestFocusID = nil
+                        self.pendingSupplementFocusID = nil
                     }
                     #endif
                     self.refreshAutoDismiss()
@@ -395,6 +407,9 @@ extension VideoPlayer {
                 }
             playbackItemCancellable = manager.$playbackItem
                 .sink { [weak self] _ in
+                    #if os(iOS)
+                    self?.cancelTapGesture()
+                    #endif
                     self?.fitVideo()
                 }
             playbackStatusCancellable = manager.$playbackRequestStatus
@@ -522,24 +537,34 @@ extension VideoPlayer {
         }
 
         private func transition(to presentation: Presentation) {
+            #if os(iOS)
+            // A presentation change outside the tap handler ends the tap sequence.
+            if self.presentation != presentation {
+                lastTapLocation = nil
+            }
+            #endif
             let wasPresentingSupplement = isPresentingSupplement
             let wasPresentingProgress = isPresentingProgress
+            let previousSupplementID = selectedSupplementID
             self.presentation = presentation
 
             if selectedSupplementID != guestSupplement?.id {
                 guestSupplement = nil
             }
 
+            #if os(tvOS)
+            if selectedSupplementID != previousSupplementID {
+                pendingSupplementFocusID = singleSupplement?.id == selectedSupplementID ? selectedSupplementID : nil
+            }
+            #endif
+
             if wasPresentingSupplement || isPresentingSupplement {
                 containerView?.presentSupplementContainer(isPresentingSupplement)
             }
 
             #if os(tvOS)
-            if pendingGuestFocusID != selectedSupplementID {
-                pendingGuestFocusID = nil
-            }
             if isPresentingProgress, !wasPresentingProgress {
-                focusCoordinator.focus(Focus.progress)
+                focusPlaybackControls()
             }
             #endif
 

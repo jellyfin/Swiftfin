@@ -18,7 +18,6 @@ struct PlaybackAdjustmentSupplement: MediaPlayerSupplement {
     let presets: [Double]
     let resetValue: Double
     let formatValue: (Double) -> String
-    var description: String?
 
     var preferredFocusID: String {
         "\(VideoPlayer.ViewState.Focus.supplementContent(id)).slider"
@@ -43,39 +42,24 @@ extension PlaybackAdjustmentSupplement {
 
         @ViewBuilder
         private var content: some View {
-            GeometryReader { proxy in
-                ScrollView {
-                    VStack(spacing: UIDevice.isTV ? 20 : 12) {
-                        PlaybackAdjustmentSlider(
-                            value: supplement.value(manager),
-                            title: supplement.displayTitle,
-                            range: supplement.range,
-                            step: supplement.step,
-                            presets: supplement.presets,
-                            resetValue: supplement.resetValue,
-                            formatValue: supplement.formatValue,
-                            focusID: supplement.preferredFocusID
-                        )
-
-                        if let description = supplement.description {
-                            Text(description)
-                                .font(UIDevice.isTV ? .callout : .caption)
-                                .foregroundStyle(.secondary)
-                                .multilineTextAlignment(.center)
-                        }
-                    }
-                    .frame(maxWidth: UIDevice.isTV ? 1200 : 700)
-                    .frame(maxWidth: .infinity)
-                    .edgePadding(.horizontal)
-                    .padding(.vertical, UIDevice.isTV ? 24 : 12)
-                    .padding(.leading, safeAreaInsets.leading)
-                    .padding(.trailing, safeAreaInsets.trailing)
-                    // Center within the usable viewport, but let taller content scroll.
-                    .frame(minHeight: max(0, proxy.size.height - safeAreaInsets.bottom))
-                    .padding(.bottom, safeAreaInsets.bottom)
-                }
-                .scrollBounceBehavior(.basedOnSize)
-            }
+            PlaybackAdjustmentSlider(
+                value: supplement.value(manager),
+                title: supplement.displayTitle,
+                range: supplement.range,
+                step: supplement.step,
+                presets: supplement.presets,
+                resetValue: supplement.resetValue,
+                formatValue: supplement.formatValue,
+                focusID: supplement.preferredFocusID
+            )
+            .frame(maxWidth: UIDevice.isTV ? 1200 : 700)
+            .frame(maxWidth: .infinity)
+            .edgePadding(.horizontal)
+            .padding(.vertical, UIDevice.isTV ? 24 : 12)
+            .padding(.leading, safeAreaInsets.leading)
+            .padding(.trailing, safeAreaInsets.trailing)
+            .scrollIfLargerThanContainer()
+            .padding(.bottom, safeAreaInsets.bottom)
         }
 
         var iOSView: some View {
@@ -135,8 +119,7 @@ extension PlaybackAdjustmentSupplement {
             formatValue: { value in
                 Duration.milliseconds(Int64(value.rounded()))
                     .formatted(.playbackOffset)
-            },
-            description: L10n.playbackOffsetDescription
+            }
         )
     }
 }

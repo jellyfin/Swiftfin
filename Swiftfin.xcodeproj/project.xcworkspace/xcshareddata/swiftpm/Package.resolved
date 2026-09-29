@@ -168,8 +168,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/MPVUI",
       "state" : {
-        "revision" : "f775533c3be863233c739ed75d8271afc0eb621d",
-        "version" : "0.4.0"
+        "revision" : "cf277d979465b919b34bbdb33d62fdb24c377fbe",
+        "version" : "0.5.0"
       }
     },
     {

@@ -12,9 +12,10 @@ extension VideoPlayer {
 
     struct VideoLayout {
 
-        let aspectRatio: CGFloat?
+        private let aspectRatio: CGFloat?
         let behavior: ViewState.AspectFillBehavior
-        let scale: CGFloat
+        let renderSize: CGSize
+        let renderScale: CGFloat
 
         init(
             videoSize: CGSize,
@@ -24,25 +25,33 @@ extension VideoPlayer {
             self.aspectRatio = videoSize.aspectRatio
             self.behavior = behavior
 
-            if behavior == .fill,
-               let videoAspectRatio = aspectRatio,
-               let viewportAspectRatio = viewportSize.aspectRatio
-            {
-                let relativeRatio = videoAspectRatio / viewportAspectRatio
-                let scale = max(relativeRatio, 1 / relativeRatio)
-                self.scale = scale.isFinite ? scale : 1
-            } else {
-                self.scale = 1
+            let geometry = Self.renderGeometry(aspectRatio: aspectRatio, viewportSize: viewportSize, behavior: behavior)
+            self.renderSize = geometry.size
+            self.renderScale = geometry.scale
+        }
+
+        private static func renderGeometry(
+            aspectRatio: CGFloat?,
+            viewportSize: CGSize,
+            behavior: ViewState.AspectFillBehavior
+        ) -> (size: CGSize, scale: CGFloat) {
+            if let aspectRatio, viewportSize.aspectRatio != nil {
+                let height = viewportSize.width / aspectRatio
+                let heightScale = viewportSize.height / height
+
+                if height.isFinite, height > 0, heightScale.isFinite {
+                    return (
+                        CGSize(width: viewportSize.width, height: height),
+                        behavior == .fill ? max(1, heightScale) : min(1, heightScale)
+                    )
+                }
             }
+            return (viewportSize, 1)
         }
 
         func videoFrame(in bounds: CGRect) -> CGRect {
-            guard let aspectRatio, let viewportAspectRatio = bounds.size.aspectRatio else { return bounds }
-
-            let fittedSize = aspectRatio > viewportAspectRatio
-                ? CGSize(width: bounds.width, height: bounds.width / aspectRatio)
-                : CGSize(width: bounds.height * aspectRatio, height: bounds.height)
-            let size = CGSize(width: fittedSize.width * scale, height: fittedSize.height * scale)
+            let geometry = Self.renderGeometry(aspectRatio: aspectRatio, viewportSize: bounds.size, behavior: behavior)
+            let size = CGSize(width: geometry.size.width * geometry.scale, height: geometry.size.height * geometry.scale)
             guard size.width.isFinite, size.height.isFinite else { return bounds }
 
             return CGRect(
@@ -53,19 +62,22 @@ extension VideoPlayer {
             )
         }
 
+        #if os(iOS)
         static func padding(
-            safeAreaInsets: EdgeInsets,
-            hasNotch: Bool,
-            isLandscape: Bool,
-            behavior: ViewState.AspectFillBehavior,
-            fillWithinSafeArea: Bool
+            insets: EdgeInsets,
+            behavior: ViewState.AspectFillBehavior
         ) -> EdgeInsets {
-            guard hasNotch, behavior == .fit || fillWithinSafeArea else { return .init() }
-            guard isLandscape else { return safeAreaInsets }
+            guard behavior == .fit else { return .init() }
 
-            let horizontalInset = max(safeAreaInsets.leading, safeAreaInsets.trailing)
-            return EdgeInsets(top: 0, leading: horizontalInset, bottom: 0, trailing: horizontalInset)
+            let horizontalInset = max(insets.leading, insets.trailing)
+            return EdgeInsets(
+                top: insets.top,
+                leading: horizontalInset,
+                bottom: insets.bottom,
+                trailing: horizontalInset
+            )
         }
+        #endif
     }
 
     struct VideoViewport<Content: View>: View {
@@ -76,34 +88,41 @@ extension VideoPlayer {
         @ObservedObject
         var videoSize: PublishedBox<CGSize>
 
-        let fillWithinSafeArea: Bool
-        let hasNotch: Bool
-
         @ViewBuilder
         let content: (VideoLayout) -> Content
 
+        private var viewport: some View {
+            GeometryReader { viewport in
+                content(VideoLayout(
+                    videoSize: videoSize.value,
+                    viewportSize: viewport.size,
+                    behavior: viewState.aspectFillBehavior
+                ))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+
         var body: some View {
-            GeometryReader { safeGeometry in
-                GeometryReader { viewport in
-                    content(VideoLayout(
-                        videoSize: videoSize.value,
-                        viewportSize: viewport.size,
+            #if os(iOS)
+            NotchReader { notchMeasurement in
+                let usesSystemSafeArea = viewState.isCompact && notchMeasurement?.cutout == nil
+                viewport
+                    .padding(usesSystemSafeArea ? EdgeInsets() : VideoLayout.padding(
+                        insets: notchMeasurement?.insets ?? .init(),
                         behavior: viewState.aspectFillBehavior
                     ))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-                .padding(VideoLayout.padding(
-                    safeAreaInsets: safeGeometry.safeAreaInsets,
-                    hasNotch: hasNotch,
-                    // A compact supplement can make a portrait phone's viewport wide.
-                    isLandscape: !viewState.isCompact && safeGeometry.size.isLandscape,
-                    behavior: viewState.aspectFillBehavior,
-                    fillWithinSafeArea: fillWithinSafeArea
-                ))
-                .ignoresSafeArea(.container)
-                .animation(.easeInOut(duration: 0.2), value: viewState.aspectFillBehavior)
-                .animation(.easeInOut(duration: 0.2), value: fillWithinSafeArea)
+                    .opacity(viewState.aspectFillBehavior == .fill || notchMeasurement != nil ? 1 : 0)
+                    .animation(.easeInOut(duration: 0.2), value: viewState.aspectFillBehavior)
+                    .ignoresSafeArea(
+                        .container,
+                        edges: viewState.aspectFillBehavior == .fill || !usesSystemSafeArea ? .all : []
+                    )
             }
+            #else
+            viewport
+                .animation(.easeInOut(duration: 0.2), value: viewState.aspectFillBehavior)
+                .ignoresSafeArea(.container)
+            #endif
         }
     }
 }

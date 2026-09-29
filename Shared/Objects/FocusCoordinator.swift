@@ -160,62 +160,29 @@ private struct CoordinatedFocusModifier: ViewModifier {
     private var coordinator: FocusCoordinator
 
     @FocusState
-    private var isFocused: Bool
+    private var localSelection: String?
 
     let id: String
+    var selection: FocusState<String?>.Binding?
+
+    private var focus: FocusState<String?>.Binding {
+        selection ?? $localSelection
+    }
 
     private func apply(_ request: FocusCoordinator.Request?) {
-        guard let request else { return }
-
-        if request.id == id {
-            isFocused = true
-        }
+        guard request?.id == id else { return }
+        focus.wrappedValue = id
     }
 
     func body(content: Content) -> some View {
         content
-            .focused($isFocused)
+            .focused(focus, equals: id)
             .onAppear {
                 apply(coordinator.request)
-                coordinator.update(id, isFocused: isFocused)
+                coordinator.update(id, isFocused: focus.wrappedValue == id)
             }
-            .onChange(of: isFocused) {
-                coordinator.update(id, isFocused: isFocused)
-            }
-            .onChange(of: coordinator.request) {
-                apply(coordinator.request)
-            }
-            .onDisappear {
-                coordinator.update(id, isFocused: false)
-            }
-    }
-}
-
-private struct CoordinatedFocusSelectionModifier: ViewModifier {
-
-    @EnvironmentObject
-    private var coordinator: FocusCoordinator
-
-    let id: String
-    let selection: FocusState<String?>.Binding
-
-    private func apply(_ request: FocusCoordinator.Request?) {
-        guard let request else { return }
-
-        if request.id == id {
-            selection.wrappedValue = id
-        }
-    }
-
-    func body(content: Content) -> some View {
-        content
-            .focused(selection, equals: id)
-            .onAppear {
-                apply(coordinator.request)
-                coordinator.update(id, isFocused: selection.wrappedValue == id)
-            }
-            .onChange(of: selection.wrappedValue) {
-                coordinator.update(id, isFocused: selection.wrappedValue == id)
+            .onChange(of: focus.wrappedValue) {
+                coordinator.update(id, isFocused: focus.wrappedValue == id)
             }
             .onChange(of: coordinator.request) {
                 apply(coordinator.request)
@@ -251,6 +218,6 @@ extension View {
         _ id: String,
         selection: FocusState<String?>.Binding
     ) -> some View {
-        modifier(CoordinatedFocusSelectionModifier(id: id, selection: selection))
+        modifier(CoordinatedFocusModifier(id: id, selection: selection))
     }
 }

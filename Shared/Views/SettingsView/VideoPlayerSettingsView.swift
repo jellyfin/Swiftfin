@@ -24,9 +24,6 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
 
-    @Default(.VideoPlayer.aspectFillWithinSafeArea)
-    private var aspectFillWithinSafeArea
-
     // MARK: - Button Defaults
 
     @Default(.VideoPlayer.jumpBackwardInterval)
@@ -146,10 +143,6 @@ struct VideoPlayerSettingsView: View {
             ChevronButton(L10n.playbackQuality) {
                 router.route(to: .playbackQualitySettings)
             }
-
-            if UIDevice.hasNotch {
-                aspectFillPicker
-            }
         } learnMore: {
             LabeledContent(
                 L10n.vlc,
@@ -159,14 +152,6 @@ struct VideoPlayerSettingsView: View {
                 L10n.native,
                 value: L10n.playerNativeDescription
             )
-        }
-    }
-
-    @ViewBuilder
-    private var aspectFillPicker: some View {
-        Picker(L10n.aspectFill, selection: $aspectFillWithinSafeArea) {
-            Text(L10n.aspectFillSafeArea).tag(true)
-            Text(L10n.aspectFillScreen).tag(false)
         }
     }
 

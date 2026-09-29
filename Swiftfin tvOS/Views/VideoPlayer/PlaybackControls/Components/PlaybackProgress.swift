@@ -142,7 +142,7 @@ extension VideoPlayer.PlaybackControls {
             }
             .sliderContainerStyle(.capsule(showsProgressWhenUnfocused: false))
             .if(chapterSlider) { view in
-                if let chapters = manager.item.fullChapterInfo, chapters.isNotEmpty {
+                if let chapters = manager.item.chapters, chapters.isNotEmpty {
                     view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
                 } else {
                     view
@@ -179,16 +179,6 @@ extension VideoPlayer.PlaybackControls {
                 }
             }
             .coordinatedFocus(ViewState.Focus.progress)
-            .onReceive(
-                viewState.focusCoordinator.$focusedIDs
-                    .map { $0.contains(ViewState.Focus.progress) }
-                    .removeDuplicates()
-                    .dropFirst()
-            ) { isFocused in
-                if !isFocused {
-                    viewState.cancelScrub()
-                }
-            }
             .foregroundStyle(Color.white.opacity(0.75))
             .overlay(alignment: .topLeading) {
                 previewImage
