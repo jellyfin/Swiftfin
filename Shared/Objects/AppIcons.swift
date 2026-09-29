@@ -6,7 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+import UIKit
 
 enum AppIcon: String, CaseIterable, Displayable, Identifiable {
 
@@ -17,8 +17,14 @@ enum AppIcon: String, CaseIterable, Displayable, Identifiable {
     case green
     case blue
 
+    #if os(tvOS)
+    private static let prefix = "AppIcon-tvOS-"
+    #else
+    private static let prefix = "AppIcon-dark-"
+    #endif
+
     var iconName: String {
-        "AppIcon-dark-\(rawValue)"
+        Self.prefix + rawValue
     }
 
     var id: String {
@@ -48,12 +54,12 @@ enum AppIcon: String, CaseIterable, Displayable, Identifiable {
 
     static func resolve(alternateIconName: String?) -> Self {
         guard let alternateIconName,
-              alternateIconName.hasPrefix("AppIcon-dark-")
+              alternateIconName.hasPrefix(prefix)
         else {
             return .blue
         }
 
-        let rawValue = alternateIconName.dropFirst("AppIcon-dark-".count)
+        let rawValue = alternateIconName.dropFirst(prefix.count)
         return Self(rawValue: String(rawValue)) ?? .blue
     }
 }
