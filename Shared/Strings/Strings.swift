@@ -50,8 +50,6 @@ internal enum L10n {
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add server")
   /// Add to favorites
   internal static let addToFavorites = L10n.tr("Localizable", "addToFavorites", fallback: "Add to favorites")
-  /// Add to home
-  internal static let addToHome = L10n.tr("Localizable", "addToHome", fallback: "Add to home")
   /// Add trigger
   internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add trigger")
   /// Add user
@@ -506,10 +504,6 @@ internal enum L10n {
   internal static let `default` = L10n.tr("Localizable", "default", fallback: "Default")
   /// Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.
   internal static let defaultFailedLoginDescription = L10n.tr("Localizable", "defaultFailedLoginDescription", fallback: "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.")
-  /// Default grouping
-  internal static let defaultGrouping = L10n.tr("Localizable", "defaultGrouping", fallback: "Default grouping")
-  /// Default posters
-  internal static let defaultPosters = L10n.tr("Localizable", "defaultPosters", fallback: "Default posters")
   /// Delete
   internal static let delete = L10n.tr("Localizable", "delete", fallback: "Delete")
   /// Failed to delete device
@@ -1238,8 +1232,6 @@ internal enum L10n {
   internal static let pin = L10n.tr("Localizable", "pin", fallback: "Pin")
   /// Pinch
   internal static let pinch = L10n.tr("Localizable", "pinch", fallback: "Pinch")
-  /// Pinned filters
-  internal static let pinnedFilters = L10n.tr("Localizable", "pinnedFilters", fallback: "Pinned filters")
   /// Pixel format
   internal static let pixelFormat = L10n.tr("Localizable", "pixelFormat", fallback: "Pixel format")
   /// Play

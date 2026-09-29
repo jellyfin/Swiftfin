@@ -237,10 +237,6 @@ extension Defaults.Keys {
             static var showRecentlyPlayed: Key<Bool> {
                 UserKey("showRecentlyPlayed", default: false)
             }
-
-            static var pinnedFilters: Key<[String]> {
-                UserKey("homePinnedFilters", default: [])
-            }
         }
 
         enum Search {

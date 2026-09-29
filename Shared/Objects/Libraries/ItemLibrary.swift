@@ -31,8 +31,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
     init(
         parent: BaseItemDto,
         filters: ItemFilterCollection? = nil,
-        staticFilters: ItemFilterCollection = .default,
-        grouping: BaseItemDto.Grouping? = nil
+        staticFilters: ItemFilterCollection = .default
     ) {
         var filters = filters ?? .default
 
@@ -44,7 +43,15 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
                 .mutating(\.itemTypes, with: filters.itemTypes)
         }
 
-        let grouping = grouping ?? parent.groupings?.defaultSelection
+        var grouping = parent.groupings?.defaultSelection
+
+        if let groupings = parent.groupings, Defaults[.Customization.Library.rememberLayout] {
+            let storedGrouping = StoredValues[
+                .User.libraryGrouping(id: parent.pagingLibraryID, default: groupings.defaultSelection)
+            ]
+
+            grouping = groupings.elements.first { $0.id == storedGrouping.id } ?? grouping
+        }
 
         self.environment = .init(
             grouping: grouping,
@@ -311,12 +318,14 @@ private struct ItemLibraryBody<Content: View>: View {
                 guard viewModel.environment.filters != filters else { return }
                 viewModel.environment.filters = filters
             }
-            .onReceive(filterViewModel.$grouping.removeDuplicates()) { grouping in
-                guard viewModel.environment.grouping != grouping else { return }
-                viewModel.environment.grouping = grouping
-            }
             .onChange(of: viewModel.environment.grouping) { _, grouping in
                 filterViewModel.grouping = grouping
+
+                guard let grouping, Defaults[.Customization.Library.rememberLayout] else { return }
+
+                StoredValues[
+                    .User.libraryGrouping(id: viewModel.library.parent.pagingLibraryID, default: grouping)
+                ] = grouping
             }
             #if os(tvOS)
             .filterBar(

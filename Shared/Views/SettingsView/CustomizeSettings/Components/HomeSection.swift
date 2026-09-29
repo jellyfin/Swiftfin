@@ -22,11 +22,6 @@ extension CustomizeSettingsView {
         private var maxNextUp
         @Default(.Customization.Home.resumeNextUp)
         private var resumeNextUp
-        @Default(.Customization.Home.pinnedFilters)
-        private var pinnedFilters
-
-        @Router
-        private var router
 
         var body: some View {
             Section(L10n.home) {
@@ -34,10 +29,6 @@ extension CustomizeSettingsView {
                 Toggle(L10n.recentlyAdded, isOn: $showRecentlyAdded)
                 Toggle(L10n.recentlyPlayed, isOn: $showRecentlyPlayed)
                 Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
-
-                ChevronButton(L10n.pinnedFilters) {
-                    router.route(to: .homeFilterSelector(selection: $pinnedFilters))
-                }
 
                 StateAdapter(initialValue: false) { isNextUpDaysPresented in
                     ChevronButton {

@@ -39,7 +39,6 @@ final class FilterViewModel: ViewModel {
     private(set) var allFilters: ItemFilterCollection = .all
     @Published
     var currentFilters: ItemFilterCollection
-    @Published
     var grouping: BaseItemDto.Grouping?
     @Published
     var savedFilters: [SavedItemFilter] = [] {
@@ -75,7 +74,6 @@ final class FilterViewModel: ViewModel {
             currentFilters = newValue.filters
                 .mutating(\.itemTypes, with: currentFilters.itemTypes)
                 .mutating(\.query, with: currentFilters.query)
-            grouping = newValue.grouping ?? grouping
         }
     }
 

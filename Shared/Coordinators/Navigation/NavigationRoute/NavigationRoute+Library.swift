@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -35,9 +34,6 @@ extension NavigationRoute {
             SavedFilterEditorView(
                 viewModel: viewModel,
                 name: savedFilter?.name ?? "",
-                grouping: savedFilter == nil ? viewModel.grouping : savedFilter?.grouping,
-                posterDisplayType: savedFilter?.posterDisplayType ?? Defaults[.Customization.Library.style].posterDisplayType,
-                isPinned: savedFilter.map { Defaults[.Customization.Home.pinnedFilters].contains($0.id) } ?? false,
                 savedFilter: savedFilter
             )
         }

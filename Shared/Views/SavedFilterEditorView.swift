@@ -6,20 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import JellyfinAPI
 import SwiftUI
 
 struct SavedFilterEditorView: View {
-
-    #if os(tvOS)
-    typealias PlatformPicker = ListRowMenu
-    #else
-    typealias PlatformPicker = Picker
-    #endif
-
-    @Default(.Customization.Home.pinnedFilters)
-    private var pinnedFilters
 
     @ObservedObject
     var viewModel: FilterViewModel
@@ -29,12 +18,6 @@ struct SavedFilterEditorView: View {
 
     @State
     var name: String
-    @State
-    var grouping: BaseItemDto.Grouping?
-    @State
-    var posterDisplayType: PosterDisplayType
-    @State
-    var isPinned: Bool
 
     let savedFilter: SavedItemFilter?
 
@@ -61,23 +44,10 @@ struct SavedFilterEditorView: View {
                 }
             }
 
-            if viewModel.parent != nil {
-                Section(L10n.home) {
-                    Toggle(L10n.addToHome, isOn: $isPinned)
-
-                    if let groupings = (viewModel.parent as? BaseItemDto)?.groupings {
-                        Picker(L10n.defaultGrouping, sources: groupings.elements, selection: $grouping)
-                    }
-
-                    PlatformPicker(L10n.defaultPosters, selection: $posterDisplayType)
-                }
-            }
-
             if let savedFilter {
                 Section {
                     Button(L10n.delete, role: .destructive) {
                         viewModel.savedFilters.removeAll { $0.id == savedFilter.id }
-                        pinnedFilters.removeAll { $0 == savedFilter.id }
                         Notifications[.savedFiltersDidChange].post()
                         router.dismiss()
                     }
@@ -91,45 +61,27 @@ struct SavedFilterEditorView: View {
         }
         .topBarTrailing {
             Button(L10n.save) {
-                var editedFilter = savedFilter ?? SavedItemFilter(
-                    libraryID: viewModel.parent?.pagingLibraryID,
-                    parentID: viewModel.parent?.id,
-                    parentType: viewModel.parent?.libraryType,
-                    name: trimmedName,
-                    filters: viewModel.staticFilters
-                        .union(viewModel.currentFilters)
-                        .mutating(\.query, with: nil)
-                )
-
-                editedFilter.name = trimmedName
-                editedFilter.grouping = grouping
-                editedFilter.posterDisplayType = posterDisplayType
-
-                if let index = viewModel.savedFilters.firstIndex(where: { $0.id == editedFilter.id }) {
-                    viewModel.savedFilters[index] = editedFilter
+                if let index = viewModel.savedFilters.firstIndex(where: { $0.id == savedFilter?.id }) {
+                    viewModel.savedFilters[index].name = trimmedName
                 } else {
-                    viewModel.savedFilters.append(editedFilter)
-                }
-
-                if !isPinned {
-                    pinnedFilters.removeAll { $0 == editedFilter.id }
-                } else if !pinnedFilters.contains(editedFilter.id) {
-                    pinnedFilters.append(editedFilter.id)
+                    viewModel.savedFilters.append(
+                        SavedItemFilter(
+                            libraryID: viewModel.parent?.pagingLibraryID,
+                            parentID: viewModel.parent?.id,
+                            parentType: viewModel.parent?.libraryType,
+                            grouping: viewModel.grouping,
+                            name: trimmedName,
+                            filters: viewModel.staticFilters
+                                .union(viewModel.currentFilters)
+                                .mutating(\.query, with: nil)
+                        )
+                    )
                 }
 
                 Notifications[.savedFiltersDidChange].post()
                 router.dismiss()
             }
-            .disabled(
-                trimmedName.isEmpty ||
-                    isDuplicate ||
-                    (
-                        savedFilter?.name == trimmedName &&
-                            savedFilter?.grouping == grouping &&
-                            savedFilter?.posterDisplayType == posterDisplayType &&
-                            savedFilter.map { pinnedFilters.contains($0.id) } == isPinned
-                    )
-            )
+            .disabled(trimmedName.isEmpty || isDuplicate || savedFilter?.name == trimmedName)
         }
     }
 }

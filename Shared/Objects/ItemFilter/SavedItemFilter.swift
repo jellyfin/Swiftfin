@@ -9,18 +9,13 @@
 import Foundation
 import JellyfinAPI
 
-struct SavedItemFilter: Displayable, Hashable, Identifiable, Storable {
+struct SavedItemFilter: Hashable, Identifiable, Storable {
 
     private(set) var id: String = UUID().uuidString
     let libraryID: String?
     let parentID: String?
     let parentType: BaseItemKind?
+    let grouping: BaseItemDto.Grouping?
     var name: String
-    var filters: ItemFilterCollection
-    var grouping: BaseItemDto.Grouping?
-    var posterDisplayType: PosterDisplayType?
-
-    var displayTitle: String {
-        name
-    }
+    let filters: ItemFilterCollection
 }

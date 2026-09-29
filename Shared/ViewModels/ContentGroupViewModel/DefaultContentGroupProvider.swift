@@ -37,28 +37,11 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
                 using: \.collectionType
             )
 
-        let savedFilters = StoredValues[.User.savedFilters]
-        let pinnedFilters = Defaults[.Customization.Home.pinnedFilters]
-            .compactMap { id in savedFilters.first { $0.id == id } }
-            .map { savedFilter in
-                let parent = userViews.value.items?.first { $0.id == savedFilter.parentID } ??
-                    BaseItemDto(id: savedFilter.parentID, type: savedFilter.parentType)
-
-                return PosterGroup(
-                    library: ItemLibrary(
-                        parent: parent.mutating(\.name, with: savedFilter.name),
-                        filters: savedFilter.filters,
-                        grouping: savedFilter.grouping
-                    ),
-                    posterDisplayType: savedFilter.posterDisplayType ?? .portrait
-                )
-            }
-
-        return _makeGroups(userViews: resolvedUserViews, pinnedFilters: pinnedFilters)
+        return _makeGroups(userViews: resolvedUserViews)
     }
 
     @ContentGroupBuilder
-    private func _makeGroups(userViews: [BaseItemDto], pinnedFilters: [PosterGroup<ItemLibrary>]) -> [any ContentGroup] {
+    private func _makeGroups(userViews: [BaseItemDto]) -> [any ContentGroup] {
 
         #if os(tvOS)
         let cinematicSelectionContentGroup = CinematicSelectionContentGroup(
@@ -128,7 +111,5 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
                     posterDisplayType: .landscape
                 )
             }
-
-        pinnedFilters
     }
 }
