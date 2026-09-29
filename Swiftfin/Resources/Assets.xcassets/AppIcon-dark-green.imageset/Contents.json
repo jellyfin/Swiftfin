@@ -7,6 +7,10 @@
     {
       "filename" : "AppIcon-dark-green.svg",
       "idiom" : "ipad"
+    },
+    {
+      "filename" : "AppIcon-dark-green.svg",
+      "idiom" : "mac"
     }
   ],
   "info" : {

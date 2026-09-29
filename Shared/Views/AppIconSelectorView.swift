@@ -53,13 +53,8 @@ extension AppIconSelectorView {
                     Image(icon.iconName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        #if os(tvOS)
-                        .frame(width: 150, height: 90)
-                        .cornerRadius(18)
-                        #else
-                        .frame(width: 60, height: 60)
-                        .cornerRadius(12)
-                        #endif
+                        .frame(width: UIDevice.isTV ? 150 : 60, height: UIDevice.isTV ? 90 : 60)
+                        .cornerRadius(UIDevice.isTV ? 18 : 12)
                         .subtleShadow()
 
                     Text(icon.displayTitle)

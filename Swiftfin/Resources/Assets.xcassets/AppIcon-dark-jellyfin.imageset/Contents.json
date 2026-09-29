@@ -7,6 +7,10 @@
     {
       "filename" : "AppIcon-dark-jellyfin.svg",
       "idiom" : "ipad"
+    },
+    {
+      "filename" : "AppIcon-dark-jellyfin.svg",
+      "idiom" : "mac"
     }
   ],
   "info" : {
