@@ -2,15 +2,7 @@
   "images" : [
     {
       "filename" : "AppIcon-dark-jellyfin.svg",
-      "idiom" : "iphone"
-    },
-    {
-      "filename" : "AppIcon-dark-jellyfin.svg",
-      "idiom" : "ipad"
-    },
-    {
-      "filename" : "AppIcon-dark-jellyfin.svg",
-      "idiom" : "mac"
+      "idiom" : "universal"
     }
   ],
   "info" : {
