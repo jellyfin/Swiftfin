@@ -11,63 +11,66 @@ import SwiftUI
 struct AppIconSelectorView: View {
 
     @State
-    private var currentAppIcon = AppIcon(alternateIconName: UIApplication.shared.alternateIconName)
-    @State
-    private var currentBackground = AppIconBackground(alternateIconName: UIApplication.shared.alternateIconName)
+    private var currentAppIcon = AppIcon.resolve(alternateIconName: UIApplication.shared.alternateIconName)
 
-    #if os(tvOS)
-    private let size = CGSize(width: 150, height: 90)
-    private let darkColor = Color(red: 0, green: 0.055, blue: 0.192)
-    #else
-    private let size = CGSize(width: 60, height: 60)
-    private let darkColor = Color.black
-    #endif
+    @MainActor
+    private func select(icon: AppIcon) async {
+        let previousAppIcon = currentAppIcon
+        currentAppIcon = icon
+
+        do {
+            try await UIApplication.shared.setAlternateIconName(icon.alternateIconName)
+        } catch {
+            currentAppIcon = previousAppIcon
+        }
+    }
 
     var body: some View {
         Form(image: .jellyfinBlobBlue) {
-            #if os(tvOS)
-            ListRowMenu(L10n.appearance, subtitle: currentBackground.displayTitle) {
-                Picker(L10n.appearance, selection: $currentBackground)
-            }
-            #endif
-
-            Section {
-                ForEach(AppIcon.allCases) { icon in
-                    Button {
-                        currentAppIcon = icon
-                    } label: {
-                        HStack {
-                            Image("AppIcon-glyph-\(icon.rawValue)")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: size.width, height: size.height)
-                                .background(currentBackground == .dark ? darkColor : .white)
-                                .cornerRadius(size.height / 5)
-                                .subtleShadow()
-
-                            Text(icon.displayTitle)
-                                .foregroundStyle(.primary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-
-                            ListRowCheckbox()
-                                .isEditing(true)
-                                .isSelected(icon == currentAppIcon)
-                        }
+            ForEach(AppIcon.allCases) { icon in
+                AppIconRow(icon: icon) {
+                    Task {
+                        await select(icon: icon)
                     }
-                    .foregroundStyle(.primary, .secondary)
                 }
+                .isSelected(icon == currentAppIcon)
             }
         }
         .navigationTitle(L10n.appIcon.localizedCapitalized)
-        .onChange(of: currentAppIcon.alternateIconName(background: currentBackground)) { _, newValue in
-            Task {
-                do {
-                    try await UIApplication.shared.setAlternateIconName(newValue)
-                } catch {
-                    currentAppIcon = AppIcon(alternateIconName: UIApplication.shared.alternateIconName)
-                    currentBackground = AppIconBackground(alternateIconName: UIApplication.shared.alternateIconName)
+    }
+}
+
+extension AppIconSelectorView {
+
+    struct AppIconRow: View {
+
+        let icon: AppIcon
+        let action: () -> Void
+
+        var body: some View {
+            Button(action: action) {
+                HStack {
+                    Image(icon.iconName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        #if os(tvOS)
+                        .frame(width: 150, height: 90)
+                        .cornerRadius(18)
+                        #else
+                        .frame(width: 60, height: 60)
+                        .cornerRadius(12)
+                        #endif
+                        .subtleShadow()
+
+                    Text(icon.displayTitle)
+                        .foregroundStyle(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    ListRowCheckbox()
+                        .isEditing(true)
                 }
             }
+            .foregroundStyle(.primary, .secondary)
         }
     }
 }

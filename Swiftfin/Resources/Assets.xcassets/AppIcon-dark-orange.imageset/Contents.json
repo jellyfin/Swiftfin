@@ -1,0 +1,19 @@
+{
+  "images" : [
+    {
+      "filename" : "AppIcon-dark-orange.svg",
+      "idiom" : "iphone"
+    },
+    {
+      "filename" : "AppIcon-dark-orange.svg",
+      "idiom" : "ipad"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

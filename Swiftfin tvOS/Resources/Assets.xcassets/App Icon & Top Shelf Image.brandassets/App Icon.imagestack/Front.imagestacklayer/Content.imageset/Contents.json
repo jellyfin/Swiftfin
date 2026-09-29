@@ -1,12 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "216.png",
+      "filename" : "front.png",
       "idiom" : "tv",
       "scale" : "1x"
     },
     {
-      "filename" : "Webp.net-resizeimage-2.png",
+      "filename" : "front@2x.png",
       "idiom" : "tv",
       "scale" : "2x"
     }

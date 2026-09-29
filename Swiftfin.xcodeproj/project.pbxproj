@@ -918,7 +918,7 @@
 			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
 			baseConfigurationReferenceRelativePath = Shared.xcconfig;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-dark-jellyfin AppIcon-dark-green AppIcon-dark-orange AppIcon-dark-red AppIcon-dark-yellow AppIcon-light-jellyfin AppIcon-light-blue AppIcon-light-green AppIcon-light-orange AppIcon-light-red AppIcon-light-yellow";
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-dark-jellyfin AppIcon-dark-green AppIcon-dark-orange AppIcon-dark-red AppIcon-dark-yellow";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -949,7 +949,7 @@
 			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
 			baseConfigurationReferenceRelativePath = Shared.xcconfig;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-dark-jellyfin AppIcon-dark-green AppIcon-dark-orange AppIcon-dark-red AppIcon-dark-yellow AppIcon-light-jellyfin AppIcon-light-blue AppIcon-light-green AppIcon-light-orange AppIcon-light-red AppIcon-light-yellow";
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-dark-jellyfin AppIcon-dark-green AppIcon-dark-orange AppIcon-dark-red AppIcon-dark-yellow";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
