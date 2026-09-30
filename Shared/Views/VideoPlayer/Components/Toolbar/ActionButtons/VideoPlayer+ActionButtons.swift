@@ -39,6 +39,10 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 filteredButtons.removeAll { $0 == .subtitles }
             }
 
+            if manager.item.chapters?.isEmpty ?? true {
+                filteredButtons.removeAll { $0 == .nextChapter }
+            }
+
             if manager.queue == nil {
                 filteredButtons.removeAll { $0 == .autoPlay }
                 filteredButtons.removeAll { $0 == .playNextItem }
@@ -91,6 +95,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             case .gestureLock:
                 GestureLock()
             #endif
+            case .nextChapter:
+                NextChapter()
             case .playbackSpeed:
                 PlaybackRateMenu()
             case .playbackSettings:

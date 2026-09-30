@@ -159,6 +159,15 @@ class VideoPlayerContainerState: ObservableObject {
 
     var scrubOriginSeconds: Duration?
 
+    let introSkipPrompt = IntroSkipPrompt()
+
+    var isPresentingIntroSkipPrompt: Bool {
+        introSkipPrompt.target != nil &&
+            !isPresentingOverlay &&
+            !isPresentingSupplement &&
+            !isScrubbing
+    }
+
     func commitScrub() {
         guard isScrubbing else { return }
 

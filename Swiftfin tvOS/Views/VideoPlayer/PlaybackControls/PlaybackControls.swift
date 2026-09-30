@@ -56,6 +56,9 @@ extension VideoPlayer {
                     )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .overlay(alignment: .bottomTrailing) {
+                SkipIntroPrompt(prompt: containerState.introSkipPrompt)
+            }
             .edgePadding(.horizontal)
             .focusSection()
             .animation(.easeInOut(duration: 0.25), value: containerState.isPresentingSupplement)

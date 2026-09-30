@@ -25,6 +25,18 @@ extension ChapterInfo {
     }
 }
 
+extension ChapterNavigator {
+
+    init(chapters: [ChapterInfo]) {
+        self.init(
+            chapters: chapters.compactMap { chapter in
+                guard let start = chapter.startSeconds else { return nil }
+                return Chapter(title: chapter.name, start: start)
+            }
+        )
+    }
+}
+
 extension ChapterInfo {
 
     // TODO: possibly remove

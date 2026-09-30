@@ -16,6 +16,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     #if os(iOS)
     case gestureLock
     #endif
+    case nextChapter
     case playbackSpeed
     case playbackSettings
     case playNextItem
@@ -34,6 +35,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .gestureLock:
             L10n.gestureLock
         #endif
+        case .nextChapter:
+            L10n.nextChapter
         case .playbackSpeed:
             L10n.playbackSpeed
         case .playbackSettings:
@@ -57,6 +60,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2"
         case .autoPlay: "play.fill"
+        case .nextChapter: "forward.end.alt.fill"
         case .playbackSpeed: "speedometer"
         case .playbackSettings: "tv"
         case .playNextItem: "forward.end.fill"
@@ -88,6 +92,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .audio: "speaker.wave.2.fill"
         case .autoPlay: usesLiquidGlassSymbols ? "play.fill" : "play.circle.fill"
         case .gestureLock: usesLiquidGlassSymbols ? "lock.fill" : "lock.circle.fill"
+        case .nextChapter: "forward.end.alt.fill"
         case .playbackSpeed: "speedometer"
         case .playbackSettings: usesLiquidGlassSymbols ? "tv" : "tv.circle.fill"
         case .playNextItem: usesLiquidGlassSymbols ? "forward.end.fill" : "forward.end.circle.fill"
@@ -115,6 +120,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     #endif
 
     static let defaultBarActionButtons: [VideoPlayerActionButton] = [
+        .nextChapter,
         .aspectFill,
         .autoPlay,
         .playPreviousItem,

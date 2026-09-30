@@ -776,6 +776,9 @@ extension VideoPlayer {
         override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
             super.touchesBegan(touches, with: event)
 
+            // A click begins as a touch, presenting the overlay would hide the prompt before select arrives
+            guard !containerState.isPresentingIntroSkipPrompt else { return }
+
             let now = CACurrentMediaTime()
             guard now - lastTouchPokeTime > 1.0 else { return }
             lastTouchPokeTime = now
@@ -874,6 +877,12 @@ extension VideoPlayer {
         }
 
         private func handleSelectEnded(_ press: UIPress, event: UIPressesEvent?) {
+            // Focus may not have moved to the skip intro prompt yet
+            if containerState.isPresentingIntroSkipPrompt, let target = containerState.introSkipPrompt.target {
+                manager.seek(to: target)
+                return
+            }
+
             if !containerState.isPresentingOverlay {
                 containerState.isPresentingOverlay = true
                 containerState.timer.poke()
@@ -908,6 +917,8 @@ extension VideoPlayer {
                 containerState.timer.poke()
             } else if containerState.isPresentingOverlay {
                 containerState.isPresentingOverlay = false
+            } else if containerState.isPresentingIntroSkipPrompt {
+                containerState.introSkipPrompt.dismiss()
             } else if Defaults[.confirmClose] {
                 containerState.isPresentingCloseConfirmation = true
             } else {

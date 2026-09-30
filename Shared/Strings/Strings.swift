@@ -1108,6 +1108,8 @@ internal enum L10n {
   internal static let newUser = L10n.tr("Localizable", "newUser", fallback: "New user")
   /// Next
   internal static let next = L10n.tr("Localizable", "next", fallback: "Next")
+  /// Next chapter
+  internal static let nextChapter = L10n.tr("Localizable", "nextChapter", fallback: "Next chapter")
   /// Next item
   internal static let nextItem = L10n.tr("Localizable", "nextItem", fallback: "Next item")
   /// Next Up
@@ -1658,6 +1660,8 @@ internal enum L10n {
   internal static let size = L10n.tr("Localizable", "size", fallback: "Size")
   /// Skip duplicates
   internal static let skipDuplicates = L10n.tr("Localizable", "skipDuplicates", fallback: "Skip duplicates")
+  /// Skip intro
+  internal static let skipIntro = L10n.tr("Localizable", "skipIntro", fallback: "Skip intro")
   /// Slider
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slow scrub

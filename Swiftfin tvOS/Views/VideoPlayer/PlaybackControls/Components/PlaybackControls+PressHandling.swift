@@ -13,6 +13,12 @@ extension VideoPlayer.PlaybackControls {
     func handlePressEvent(_ press: VideoPlayer.UIVideoPlayerContainerViewController.PressEvent) {
 
         if !containerState.isPresentingOverlay {
+            // Select arrives alongside other press types, which must not hide the skip intro prompt
+            if containerState.isPresentingIntroSkipPrompt, !press.type.isDirectional {
+                press.resolve(.fallback)
+                return
+            }
+
             containerState.isPresentingOverlay = true
             press.resolve(.handled)
             return
@@ -69,6 +75,18 @@ extension VideoPlayer.PlaybackControls {
 
         default:
             press.resolve(.fallback)
+        }
+    }
+}
+
+private extension UIPress.PressType {
+
+    var isDirectional: Bool {
+        switch self {
+        case .upArrow, .downArrow, .leftArrow, .rightArrow:
+            true
+        default:
+            false
         }
     }
 }
