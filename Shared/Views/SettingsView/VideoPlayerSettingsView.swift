@@ -171,14 +171,36 @@ struct VideoPlayerSettingsView: View {
     // MARK: - Button Settings
 
     @ViewBuilder
+    private func jumpIntervalPicker(title: String, selection: Binding<MediaJumpInterval>) -> some View {
+        CustomAlertPicker(
+            title: title,
+            selection: selection,
+            customTitle: L10n.jump,
+            customDescription: L10n.customJumpIntervalDescription
+        ) { value in
+            TextField(
+                L10n.duration,
+                value: value
+                    .map(
+                        getter: { Int($0.rawValue.seconds) },
+                        setter: { MediaJumpInterval(rawValue: .seconds($0)) }
+                    )
+                    .clamp(min: 1, max: 600),
+                format: .number
+            )
+            .keyboardType(.numberPad)
+        }
+    }
+
+    @ViewBuilder
     private var buttonSettings: some View {
         Section(L10n.buttons) {
-            JumpIntervalPicker(
+            jumpIntervalPicker(
                 title: L10n.jumpBackwardLength,
                 selection: $jumpBackwardLength
             )
 
-            JumpIntervalPicker(
+            jumpIntervalPicker(
                 title: L10n.jumpForwardLength,
                 selection: $jumpForwardLength
             )

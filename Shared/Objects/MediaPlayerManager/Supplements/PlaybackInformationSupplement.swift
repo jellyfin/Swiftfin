@@ -44,8 +44,8 @@ extension PlaybackInformationSupplement {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -214,7 +214,7 @@ extension PlaybackInformationSupplement {
 
         var iOSView: some View {
             CompactOrRegularView(
-                isCompact: containerState.isCompact
+                isCompact: viewState.isCompact
             ) {
                 compactView
             } regularView: {

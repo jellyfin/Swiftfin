@@ -209,9 +209,13 @@ extension String {
             }
     }
 
-    var base64: String? {
-        guard let input = data(using: .utf8) else { return nil }
-        return input.base64EncodedString()
+    var base64Decoded: String? {
+        guard let data = Data(base64Encoded: self) else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+
+    func asSelector() -> Selector? {
+        NSSelectorFromString(self)
     }
 
     var url: URL? {

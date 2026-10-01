@@ -27,8 +27,8 @@ extension EPGSupplement {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -60,7 +60,7 @@ extension EPGSupplement {
                 guard state == .content else { return }
                 lastSuccessfulRefresh = .now
             }
-            .onChange(of: containerState.selectedSupplement?.id) { _, id in
+            .onChange(of: viewState.selectedSupplementID) { _, id in
                 guard id == "EPG",
                       viewModel.state != .initial,
                       viewModel.state != .refreshing,
@@ -98,7 +98,7 @@ extension EPGSupplement {
                 } ?? item
 
             if playbackItem.id == manager.item.id {
-                containerState.select(supplement: nil)
+                viewState.selectedSupplementID = nil
                 return
             }
 
@@ -106,7 +106,7 @@ extension EPGSupplement {
                 return
             }
 
-            containerState.select(supplement: nil)
+            viewState.selectedSupplementID = nil
             manager.playNewItem(provider: provider)
         }
     }

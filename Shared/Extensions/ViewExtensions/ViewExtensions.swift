@@ -414,12 +414,6 @@ extension View {
         }
     }
 
-    // TODO: look at changing to symbolEffect
-    @ViewBuilder
-    func videoPlayerActionButtonTransition() -> some View {
-        transition(.opacity.combined(with: .scale).animation(.snappy))
-    }
-
     // MARK: debug
 
     // Useful modifiers during development for layout

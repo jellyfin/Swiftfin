@@ -30,6 +30,14 @@ extension FormatStyle where Self == MinuteSecondsFormatStyle {
 
 extension FormatStyle where Self == Duration.UnitsFormatStyle {
 
+    static var playbackOffset: Duration.UnitsFormatStyle {
+        Duration.UnitsFormatStyle(
+            allowedUnits: [.seconds],
+            width: .abbreviated,
+            fractionalPart: .show(length: 2)
+        )
+    }
+
     static var minuteSecondsAbbreviated: Duration.UnitsFormatStyle {
         Duration.UnitsFormatStyle(
             allowedUnits: [.minutes, .seconds],
@@ -106,8 +114,8 @@ struct PlaybackRateStyle: FormatStyle {
         self.precision = precision
     }
 
-    func format(_ value: Float) -> String {
-        FloatingPointFormatStyle<Float>()
+    func format(_ value: Double) -> String {
+        FloatingPointFormatStyle<Double>()
             .precision(.fractionLength(0 ... precision))
             .format(value)
             .appending(.multiply)

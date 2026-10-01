@@ -52,7 +52,10 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     }
                 }()
 
-                Menu {
+                Menu(
+                    menuTitle,
+                    systemImage: VideoPlayerActionButton.playbackSettings.systemImage
+                ) {
                     if hasVersionSection {
                         Picker(
                             selection: Binding(
@@ -67,7 +70,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                                 }
                             )
                         ) {
-                            ForEach(versions, id: \.hashValue) { version in
+                            ForEach(versions) { version in
                                 Text(version.displayTitle)
                                     .tag(version.id)
                             }
@@ -75,9 +78,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             Text(L10n.version)
                             Text(playbackItem.mediaSource.displayTitle)
                         }
-                        .if(hasMultipleSections) { picker in
-                            picker.pickerStyle(.menu)
-                        }
+                        .pickerStyle(hasMultipleSections ? AnyPickerStyle(.menu) : AnyPickerStyle(.automatic))
                     }
 
                     if hasBitrateSection {
@@ -98,15 +99,8 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             Text(L10n.playbackQuality)
                             Text(playbackItem.requestedBitrate.displayTitle)
                         }
-                        .if(hasMultipleSections) { picker in
-                            picker.pickerStyle(.menu)
-                        }
+                        .pickerStyle(hasMultipleSections ? AnyPickerStyle(.menu) : AnyPickerStyle(.automatic))
                     }
-                } label: {
-                    Label(
-                        menuTitle,
-                        systemImage: VideoPlayerActionButton.playbackSettings.systemImage
-                    )
                 }
             }
         }

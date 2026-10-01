@@ -12,32 +12,17 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct AspectFill: View {
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
-
-        private var isAspectFilled: Bool {
-            get { containerState.isAspectFilled }
-            nonmutating set { containerState.isAspectFilled = newValue }
-        }
+        @Environment(ViewState.self)
+        private var viewState
 
         var body: some View {
-            Button {
-                isAspectFilled.toggle()
-            } label: {
-                Group {
-                    if isAspectFilled {
-                        Label(
-                            L10n.aspectFill,
-                            systemImage: VideoPlayerActionButton.aspectFill.secondarySystemImage
-                        )
-                    } else {
-                        Label(
-                            L10n.aspectFill,
-                            systemImage: VideoPlayerActionButton.aspectFill.systemImage
-                        )
-                    }
-                }
-                .videoPlayerActionButtonTransition()
+            Button(
+                L10n.aspectFill,
+                systemImage: viewState.aspectFillBehavior == .fill ?
+                    VideoPlayerActionButton.aspectFill.secondarySystemImage :
+                    VideoPlayerActionButton.aspectFill.systemImage
+            ) {
+                viewState.toggleAspectFillBehavior()
             }
         }
     }

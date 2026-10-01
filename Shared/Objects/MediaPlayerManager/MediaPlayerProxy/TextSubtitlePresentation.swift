@@ -16,7 +16,7 @@ import Observation
 @Observable
 final class TextSubtitlePresentation {
 
-    private(set) var snapshot = TextSubtitleSnapshot()
+    private(set) var snapshot: TextSubtitleSnapshot?
 
     @ObservationIgnored
     private var observationID: UUID?
@@ -25,7 +25,7 @@ final class TextSubtitlePresentation {
         let id = UUID()
         observationID = id
         let subtitles = player.textSubtitleStream()
-        snapshot = TextSubtitleSnapshot()
+        snapshot = nil
         load()
 
         defer {
@@ -42,6 +42,6 @@ final class TextSubtitlePresentation {
 
     func clear() {
         observationID = nil
-        snapshot = TextSubtitleSnapshot()
+        snapshot = nil
     }
 }

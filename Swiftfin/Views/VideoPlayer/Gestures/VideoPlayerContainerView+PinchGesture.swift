@@ -9,26 +9,29 @@
 import Defaults
 import SwiftUI
 
-extension VideoPlayer.UIVideoPlayerContainerViewController {
+extension VideoPlayer.UIContainerViewController {
 
     func handlePinchGesture(
         scale: CGFloat,
         velocity: CGFloat,
         state: UIGestureRecognizer.State
     ) {
+        if state == .began {
+            viewState.cancelTapGesture()
+        }
+
         guard checkGestureLock() else { return }
-        guard !containerState.isPresentingSupplement, state != .ended else { return }
-        guard state != .ended else { return }
+        guard !viewState.isPresentingSupplement, state == .ended else { return }
 
         let action = Defaults[.VideoPlayer.Gesture.pinchGesture]
 
         switch action {
         case .none: ()
         case .aspectFill:
-            if scale > 1, !containerState.isAspectFilled {
-                containerState.isAspectFilled = true
-            } else if scale < 1, containerState.isAspectFilled {
-                containerState.isAspectFilled = false
+            if scale > 1 {
+                viewState.fillVideo()
+            } else if scale < 1 {
+                viewState.fitVideo()
             }
         }
     }
