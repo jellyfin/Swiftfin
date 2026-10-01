@@ -365,7 +365,7 @@ struct VideoPlayerSettingsView: View {
                 router.route(to: .fontPicker(selection: $subtitleConfiguration.fontName))
             }
 
-            Stepper(L10n.subtitleSize, value: $subtitleConfiguration.size, in: 1 ... 20, step: 1) {
+            Stepper(L10n.subtitleSize, value: $subtitleConfiguration.size, in: SubtitleConfiguration.sizeRange, step: 1) {
                 LabeledContent(L10n.subtitleSize) {
                     Text(subtitleConfiguration.size.description)
                         .foregroundStyle(.secondary)

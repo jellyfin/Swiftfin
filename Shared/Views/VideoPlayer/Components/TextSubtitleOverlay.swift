@@ -6,11 +6,15 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import MediaAccessibilityKit
 import MPVUI
 import SwiftUI
 
 struct TextSubtitleOverlay: View {
+
+    @Default(.VideoPlayer.Subtitle.configuration)
+    private var subtitleConfiguration
 
     let snapshot: TextSubtitleSnapshot
     let videoSize: CGSize?
@@ -20,7 +24,8 @@ struct TextSubtitleOverlay: View {
         TextSubtitleOverlayContent(
             snapshot: snapshot,
             videoSize: videoSize,
-            isAspectFilled: isAspectFilled
+            isAspectFilled: isAspectFilled,
+            subtitleSizeScale: subtitleConfiguration.sizeScale
         )
         .mediaCaptionStyle()
         .allowsHitTesting(false)
@@ -38,13 +43,15 @@ private struct TextSubtitleOverlayContent: View {
     let snapshot: TextSubtitleSnapshot
     let videoSize: CGSize?
     let isAspectFilled: Bool
+    let subtitleSizeScale: CGFloat
 
     private var basePointSize: CGFloat {
         #if os(tvOS)
-        36
+        let platformBasePointSize: CGFloat = 36
         #else
-        21
+        let platformBasePointSize: CGFloat = 21
         #endif
+        return platformBasePointSize * subtitleSizeScale
     }
 
     private var pointSize: CGFloat {
