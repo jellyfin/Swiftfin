@@ -17,7 +17,7 @@ jobs:
   build:
     name: "Validate PR 🧹"
     if: github.event.pull_request.draft != true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -57,19 +57,41 @@ jobs:
           print("Localization changes are limited to en.lproj.")
           PY
 
-      - name: Run Swiftformat
+      - name: Run validation checks
+        shell: bash
         run: |
-          docker run --rm \
+          set -uo pipefail
+          logs="$(mktemp -d)"
+          trap 'rm -rf "$logs"' EXIT
+
+          { time docker run --rm \
             -v "$GITHUB_WORKSPACE:/work:ro" -w /work \
             ghcr.io/nicklockwood/swiftformat:0.63.0 \
-            . --lint --config .swiftformat --cache ignore
+            . --lint --config .swiftformat --cache ignore; } > "$logs/swiftformat" 2>&1 &
+          format_pid=$!
 
-      - name: Run SwiftLint
-        run: |
-          docker run --rm \
+          { time docker run --rm \
             -v "$GITHUB_WORKSPACE:/work:ro" -w /work \
             ghcr.io/realm/swiftlint:0.65.1 \
-            lint --strict --config .swiftlint.yml --no-cache
+            lint --strict --config .swiftlint.yml --no-cache --quiet; } > "$logs/swiftlint" 2>&1 &
+          lint_pid=$!
 
-      - name: Find Unused Strings
-        run: swift Scripts/Translations/FindUnusedStrings.swift
+          { time swift Scripts/Translations/FindUnusedStrings.swift; } > "$logs/strings" 2>&1 &
+          strings_pid=$!
+
+          failures=0
+          report_check() {
+            local name="$1" pid="$2" log="$3"
+            echo "::group::$name"
+            if ! wait "$pid"; then
+              echo "::error::$name failed"
+              failures=1
+            fi
+            cat "$log"
+            echo '::endgroup::'
+          }
+
+          report_check SwiftFormat "$format_pid" "$logs/swiftformat"
+          report_check SwiftLint "$lint_pid" "$logs/swiftlint"
+          report_check 'Unused strings' "$strings_pid" "$logs/strings"
+          exit "$failures"
