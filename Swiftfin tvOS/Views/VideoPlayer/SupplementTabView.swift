@@ -15,7 +15,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
     private let content: (any MediaPlayerSupplement) -> Content
     private let data: [any MediaPlayerSupplement]
     private let selection: Binding<String?>
-    
+
     init(
         data: [any MediaPlayerSupplement],
         selection: Binding<String?>,
