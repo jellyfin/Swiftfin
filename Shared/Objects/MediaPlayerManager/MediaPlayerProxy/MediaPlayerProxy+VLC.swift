@@ -38,7 +38,11 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         NowPlayableObserver(),
     ]
 
+    private var resumeGuard = ResumeGuard()
+
     func play() {
+        resumeGuard.willResumePlayback(isRecording: manager?.item.type == .recording, at: manager?.seconds)
+
         if player.state == .paused {
             player.resume()
         } else {
@@ -50,17 +54,71 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
         }
     }
 
+    func enforceResumeGuard(_ seconds: Duration) {
+        guard let target = resumeGuard.correction(for: seconds) else { return }
+
+        // Seek the player directly: `setSeconds` would disarm the guard
+        seekPlayer(to: target)
+    }
+
+    private var isRecording: Bool {
+        manager?.item.type == .recording
+    }
+
+    /// A seek past the playlist libVLC has fetched so far. A recording still being
+    /// written grows its playlist as the server remuxes it, so the seek waits for
+    /// the reported length to reach the target and is cleared once playback lands.
+    private var pendingSeek: Duration?
+
+    private func seekPlayer(to seconds: Duration) {
+        pendingSeek = nil
+
+        if isRecording, let duration = player.duration, seconds > duration {
+            pendingSeek = seconds
+            manager?.logger.info("SwiftVLC seek to \(seconds) waits for the playlist, known length \(duration)")
+            return
+        }
+
+        if player.isSeekable {
+            do {
+                try player.seek(to: seconds)
+            } catch {
+                log(error)
+            }
+        } else if !player.jump(by: seconds - player.currentTime) {
+            manager?.logger.warning("SwiftVLC refused a jump to \(seconds) on non-seekable media")
+        }
+
+        // With no length known yet the seek may have fallen outside the playlist
+        if isRecording, player.duration == nil {
+            pendingSeek = seconds
+        }
+    }
+
+    func applyPendingSeekIfPossible() {
+        guard let pendingSeek, let duration = player.duration, pendingSeek <= duration else { return }
+        seekPlayer(to: pendingSeek)
+    }
+
+    func settlePendingSeek(at seconds: Duration) {
+        guard let pendingSeek, abs((seconds - pendingSeek).seconds) < 5 else { return }
+        self.pendingSeek = nil
+    }
+
     func pause() {
+        resumeGuard.didPausePlayback()
         player.pause()
     }
 
     func stop() {
         pendingStartTime = nil
+        pendingSeek = nil
         isBuffering.value = false
         player.stop()
     }
 
     func jumpForward(_ seconds: Duration) {
+        resumeGuard.disarm()
         let target: Duration
 
         if let runtime = manager?.item.runtime, let current = manager?.seconds {
@@ -72,11 +130,21 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
 
         guard target > .zero else { return }
 
-        player.jump(by: target)
+        if isRecording, let current = manager?.seconds {
+            seekPlayer(to: current + target)
+        } else {
+            player.jump(by: target)
+        }
     }
 
     func jumpBackward(_ seconds: Duration) {
-        player.jump(by: .zero - seconds)
+        resumeGuard.disarm()
+
+        if isRecording, let current = manager?.seconds {
+            seekPlayer(to: max(.zero, current - seconds))
+        } else {
+            player.jump(by: .zero - seconds)
+        }
     }
 
     func setRate(_ rate: Float) {
@@ -88,15 +156,9 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     }
 
     func setSeconds(_ seconds: Duration) {
-        guard player.isSeekable else { return }
-
         pendingStartTime = nil
-
-        do {
-            try player.seek(to: seconds)
-        } catch {
-            log(error)
-        }
+        resumeGuard.disarm()
+        seekPlayer(to: seconds)
     }
 
     func setAudioStream(_ stream: MediaStream) {
@@ -165,16 +227,12 @@ class VLCMediaPlayerProxy: VideoMediaPlayerProxy,
     @discardableResult
     private func applyPendingStartTimeIfPossible() -> Bool {
         guard let pendingStartTime else { return false }
-        guard player.isSeekable else { return false }
+        guard player.isSeekable || player.state == .playing else { return false }
 
         self.pendingStartTime = nil
 
-        do {
-            try player.seek(to: pendingStartTime)
-            manager?.seconds = pendingStartTime
-        } catch {
-            log(error)
-        }
+        seekPlayer(to: pendingStartTime)
+        manager?.seconds = pendingStartTime
 
         return true
     }
@@ -246,6 +304,8 @@ extension VLCMediaPlayerProxy {
                               newSeconds == proxy.player.currentTime
                         else { return }
 
+                        proxy.settlePendingSeek(at: newSeconds)
+
                         if !isScrubbing {
                             containerState.scrubbedSeconds.value = newSeconds
                         }
@@ -254,6 +314,7 @@ extension VLCMediaPlayerProxy {
                         if proxy.player.state == .playing {
                             proxy.isBuffering.value = false
                         }
+                        proxy.enforceResumeGuard(newSeconds)
 
                         proxy.videoSize.value = proxy.player.videoSize ?? .zero
                         if let statistics = proxy.player.statistics {
@@ -293,7 +354,11 @@ extension VLCMediaPlayerProxy {
                             proxy.isBuffering.value = false
                         }
                     }
+                    .onChange(of: proxy.player.duration) {
+                        proxy.applyPendingSeekIfPossible()
+                    }
                     .onChange(of: proxy.player.isSeekable) { _, isSeekable in
+                        manager.logger.info("SwiftVLC seekable: \(isSeekable), duration: \(proxy.player.duration.map(\.seconds) ?? -1)")
                         guard isSeekable else { return }
                         proxy.applyPendingStartTimeIfPossible()
                     }
@@ -301,7 +366,9 @@ extension VLCMediaPlayerProxy {
                         guard didReachEnd, manager.playbackItem?.baseItem.isLiveStream == false else { return }
                         // libVLC resets its clock on stop. Report the completed
                         // timeline before the manager decides whether to advance.
-                        if let runtime = playbackItem.baseItem.runtime {
+                        // A recording still in progress ends early at its live edge,
+                        // so leave its position for the manager's near-end guard.
+                        if playbackItem.baseItem.type != .recording, let runtime = playbackItem.baseItem.runtime {
                             manager.seconds = runtime
                         }
                         proxy.isBuffering.value = false
