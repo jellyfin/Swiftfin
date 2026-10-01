@@ -9,11 +9,15 @@ on:
       - ready_for_review
     branches: [ main ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     name: "Validate PR 🧹"
-    if: github.event.pull_request.draft == false
-    runs-on: macos-26
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -53,14 +57,19 @@ jobs:
           print("Localization changes are limited to en.lproj.")
           PY
 
-      - name: Install Homebrew dependencies
-        run: brew bundle --file Brewfile
-
       - name: Run Swiftformat
-        run: swiftformat . --lint --config ".swiftformat"
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/work:ro" -w /work \
+            ghcr.io/nicklockwood/swiftformat:0.63.0 \
+            . --lint --config .swiftformat --cache ignore
 
       - name: Run SwiftLint
-        run: swiftlint lint --strict --config ".swiftlint.yml"
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/work:ro" -w /work \
+            ghcr.io/realm/swiftlint:0.65.1 \
+            lint --strict --config .swiftlint.yml --no-cache
 
       - name: Find Unused Strings
         run: swift Scripts/Translations/FindUnusedStrings.swift
