@@ -12,11 +12,19 @@ import UIKit
 /// `TabView` acts weird with horizontal stacks, workaround with manual supplement presentation
 struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
 
-    let data: [any MediaPlayerSupplement]
-    let selection: Binding<String?>
+    private let content: (any MediaPlayerSupplement) -> Content
+    private let data: [any MediaPlayerSupplement]
+    private let selection: Binding<String?>
 
-    @ViewBuilder
-    let content: (any MediaPlayerSupplement) -> Content
+    init(
+        data: [any MediaPlayerSupplement],
+        selection: Binding<String?>,
+        @ViewBuilder content: @escaping (any MediaPlayerSupplement) -> Content
+    ) {
+        self.data = data
+        self.selection = selection
+        self.content = content
+    }
 
     private var selectionPresented: (String) -> Void = { _ in }
     private var focusExitHeading: UIFocusHeading = []
