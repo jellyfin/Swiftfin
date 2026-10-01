@@ -30,7 +30,6 @@ extension NavigationRoute {
 
     #endif
 
-    #if os(iOS)
     static var appIconSelector: NavigationRoute {
         NavigationRoute(
             id: "app-icon-selector"
@@ -38,7 +37,6 @@ extension NavigationRoute {
             AppIconSelectorView()
         }
     }
-    #endif
 
     static var appSettings: NavigationRoute {
         NavigationRoute(

@@ -6,8 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 enum AppIcon: String, CaseIterable, Displayable, Identifiable {
 
     case jellyfin
@@ -17,8 +15,10 @@ enum AppIcon: String, CaseIterable, Displayable, Identifiable {
     case green
     case blue
 
+    private static let prefix = "AppIcon-dark-"
+
     var iconName: String {
-        "AppIcon-dark-\(rawValue)"
+        Self.prefix + rawValue
     }
 
     var id: String {
@@ -48,12 +48,12 @@ enum AppIcon: String, CaseIterable, Displayable, Identifiable {
 
     static func resolve(alternateIconName: String?) -> Self {
         guard let alternateIconName,
-              alternateIconName.hasPrefix("AppIcon-dark-")
+              alternateIconName.hasPrefix(prefix)
         else {
             return .blue
         }
 
-        let rawValue = alternateIconName.dropFirst("AppIcon-dark-".count)
+        let rawValue = alternateIconName.dropFirst(prefix.count)
         return Self(rawValue: String(rawValue)) ?? .blue
     }
 }
