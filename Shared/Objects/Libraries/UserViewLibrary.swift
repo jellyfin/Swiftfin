@@ -202,6 +202,7 @@ private struct UserViewLibraryGridElement: View {
                 .posterStyle(.landscape)
                 .matchedTransitionSource(id: "item", in: namespace)
         }
+        .foregroundStyle(.primary, .secondary)
         .onFirstAppear(perform: setImageSources)
         .onChange(of: useRandomImage) {
             setImageSources()
@@ -219,6 +220,7 @@ private struct UserViewLibraryGridElement: View {
             .frame(alignment: .center)
     }
 
+    @ViewBuilder
     private func titleLabelOverlay(with content: some View) -> some View {
         ZStack {
             content
@@ -277,6 +279,7 @@ private struct UserViewLibraryListElement: View {
         }
     }
 
+    @ViewBuilder
     private var imageView: some View {
         ZStack {
             Color.secondarySystemFill

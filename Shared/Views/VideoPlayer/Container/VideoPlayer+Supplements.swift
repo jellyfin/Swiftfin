@@ -153,7 +153,6 @@ extension VideoPlayer.UIContainerViewController {
 
                     SupplementTabView(
                         data: viewState.supplements,
-                        // UIKit callbacks must read the latest selection, even before SwiftUI renders again.
                         selection: Binding(
                             get: { viewState.selectedSupplementID },
                             set: { viewState.selectedSupplementID = $0 }
