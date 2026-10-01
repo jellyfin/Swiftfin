@@ -1244,8 +1244,6 @@ internal enum L10n {
   internal static let playAndPause = L10n.tr("Localizable", "playAndPause", fallback: "Play / Pause")
   /// Playback
   internal static let playback = L10n.tr("Localizable", "playback", fallback: "Playback")
-  /// Positive values play later; negative values play earlier.
-  internal static let playbackOffsetDescription = L10n.tr("Localizable", "playbackOffsetDescription", fallback: "Positive values play later; negative values play earlier.")
   /// Playback quality
   internal static let playbackQuality = L10n.tr("Localizable", "playbackQuality", fallback: "Playback quality")
   /// Force media from the server to transcode if it exceeds the selected resolution or bitrate.
