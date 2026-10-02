@@ -22,7 +22,7 @@ concurrency:
 jobs:
   build:
     name: "Build 🔨"
-    if: github.event.pull_request.draft != true
+    if: github.event.pull_request.draft == false
     strategy:
       matrix:
         scheme:
@@ -61,13 +61,14 @@ jobs:
             spm-v1-${{ runner.os }}-${{ runner.arch }}-${{ env.XCODE_VERSION }}-${{ matrix.scheme }}-
 
       - name: Build
-        timeout-minutes: 60
-        env:
-          SCHEME: ${{ matrix.scheme }}
-        run: |
-          bundle exec fastlane buildLane \
-            scheme:"\"${SCHEME}\"" \
-            xcodeVersion:"${XCODE_VERSION}"
+        uses: nick-fields/retry@v4
+        with:
+          max_attempts: 3
+          retry_on: error
+          timeout_minutes: 60
+          command: bundle exec fastlane buildLane \
+            scheme:"\"${{ matrix.scheme }}\"" \
+            xcodeVersion:${{ env.XCODE_VERSION }}
 
       - name: Package unsigned IPA
         env:
