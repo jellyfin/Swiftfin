@@ -193,8 +193,8 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                     }
                 }
             }
-            .onNotification(.itemMetadataDidChange) { _ in
-                elements = viewModel.editor.elements(in: viewModel.item)
+            .onChange(of: viewModel.editor.elements(in: viewModel.item)) { _, updatedElements in
+                elements = updatedElements
             }
             .onReceive(viewModel.events) { event in
                 switch event {

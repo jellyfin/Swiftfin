@@ -216,7 +216,7 @@ private struct BaseItemDtoPosterContextMenu: View {
     @Router
     private var router
 
-    @State
+    @SharedBaseItem
     private var item: BaseItemDto
 
     init(item: BaseItemDto) {
@@ -263,71 +263,21 @@ private struct BaseItemDtoPosterContextMenu: View {
 
     @MainActor
     private func toggleIsPlayed() async {
-        let beforeIsPlayed = item.userData?.isPlayed ?? false
-
-        item.userData?.isPlayed = !beforeIsPlayed
+        guard let session = Container.shared.currentUserSession() else { return }
         do {
-            try await setIsPlayed(!beforeIsPlayed)
+            try await session.setPlayed($item, to: !isPlayed)
         } catch {
-            item.userData?.isPlayed = beforeIsPlayed
+            session.itemActionErrors.send(error)
         }
     }
 
     @MainActor
     private func toggleIsFavorite() async {
-        let beforeIsFavorite = item.userData?.isFavorite ?? false
-
-        item.userData?.isFavorite = !beforeIsFavorite
+        guard let session = Container.shared.currentUserSession() else { return }
         do {
-            try await setIsFavorite(!beforeIsFavorite)
+            try await session.setFavorite($item, to: !isFavorite)
         } catch {
-            item.userData?.isFavorite = beforeIsFavorite
+            session.itemActionErrors.send(error)
         }
-    }
-
-    private func setIsPlayed(_ isPlayed: Bool) async throws {
-        guard let itemID = item.id,
-              let userSession = Container.shared.currentUserSession()
-        else { return }
-
-        let request: Request<UserItemDataDto> = if isPlayed {
-            Paths.markPlayedItem(
-                itemID: itemID,
-                userID: userSession.user.id
-            )
-        } else {
-            Paths.markUnplayedItem(
-                itemID: itemID,
-                userID: userSession.user.id
-            )
-        }
-
-        let response = try await userSession.client.send(request)
-        item.userData = response.value
-        Notifications[.itemUserDataDidChange].post(response.value)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
-    }
-
-    private func setIsFavorite(_ isFavorite: Bool) async throws {
-        guard let itemID = item.id,
-              let userSession = Container.shared.currentUserSession()
-        else { return }
-
-        let request: Request<UserItemDataDto> = if isFavorite {
-            Paths.markFavoriteItem(
-                itemID: itemID,
-                userID: userSession.user.id
-            )
-        } else {
-            Paths.unmarkFavoriteItem(
-                itemID: itemID,
-                userID: userSession.user.id
-            )
-        }
-
-        let response = try await userSession.client.send(request)
-        item.userData = response.value
-        Notifications[.itemUserDataDidChange].post(response.value)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
     }
 }

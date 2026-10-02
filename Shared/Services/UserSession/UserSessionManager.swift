@@ -30,17 +30,20 @@ extension Container {
 final class UserSessionManager: ObservableObject {
 
     enum State: Equatable {
+
         case initial
         case signedOut
         case signedIn
     }
 
     enum SignOutReason {
+
         case backgroundTimeout
         case explicit
     }
 
     enum AuthenticationError: Error {
+
         case missingAuthenticationAction
     }
 
@@ -63,6 +66,9 @@ final class UserSessionManager: ObservableObject {
     let logger = Logger.swiftfin()
 
     private(set) var mediaPlayerManager: MediaPlayerManager?
+
+    @MainActor
+    private var sessionTransition: (id: UUID, task: Task<Void, Never>)?
 
     @MainActor
     var hasActivePlayback: Bool {
@@ -119,7 +125,7 @@ final class UserSessionManager: ObservableObject {
 
     @MainActor
     func signOut(reason: SignOutReason) async {
-        guard currentSession != nil else { return }
+        guard currentSession != nil || sessionTransition != nil else { return }
 
         Defaults[.lastSignedInUserID] = .signedOut
         await refreshCurrentSession()
@@ -159,10 +165,6 @@ final class UserSessionManager: ObservableObject {
                     user: deepLinkSession.user,
                     authenticationAction: authenticationAction
                 )
-
-                if hasActivePlayback {
-                    await stopActivePlayback()
-                }
 
                 try await signIn(userID: deepLinkSession.user.id)
             }
@@ -209,6 +211,7 @@ final class UserSessionManager: ObservableObject {
     }
 
     private enum ServerInformationRefreshReason {
+
         case explicitSignIn
         case stale
     }
@@ -301,9 +304,33 @@ final class UserSessionManager: ObservableObject {
 
     @MainActor
     private func updateCurrentSession(with newSession: UserSession?) async {
+        let previous = sessionTransition?.task
+        let id = UUID()
+        let task = Task {
+            await previous?.value
+            await applyCurrentSession(newSession)
+        }
+        sessionTransition = (id, task)
+        await task.value
+        if sessionTransition?.id == id {
+            sessionTransition = nil
+        }
+    }
+
+    /// Serialize transitions because starting and stopping session services can suspend.
+    @MainActor
+    private func applyCurrentSession(_ newSession: UserSession?) async {
         let previousSession = currentSession
 
-        previousSession?.willStop()
+        let preservesItems = previousSession != nil && newSession != nil &&
+            previousSession?.server.id == newSession?.server.id && previousSession?.user.id == newSession?.user.id
+        if preservesItems, let previousSession {
+            newSession?.reuseItems(from: previousSession)
+        }
+        if !preservesItems {
+            await stopActivePlayback()
+        }
+        previousSession?.willStop(preservingItems: preservesItems)
         await newSession?.willStart()
 
         currentSession = newSession

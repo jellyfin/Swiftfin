@@ -16,6 +16,7 @@ final class SessionViewModel: ViewModel, @preconcurrency Identifiable {
 
     @CasePathable
     enum Action {
+
         /// Start playing an item via a Remote Playback Session on another Jellyfin Client
         case remotePlaybackSession(
             command: PlayCommand,
@@ -39,23 +40,45 @@ final class SessionViewModel: ViewModel, @preconcurrency Identifiable {
     }
 
     enum BackgroundState {
+
         case sending
     }
 
     enum State {
+
         case initial
         case error
     }
 
     @Published
-    var session: SessionInfoDto
+    private var sessionInfo: SessionInfoDto
+    @OptionalSharedBaseItem
+    private var nowPlayingItem: BaseItemDto?
+
+    var session: SessionInfoDto {
+        get {
+            var value = sessionInfo
+            value.nowPlayingItem = nowPlayingItem
+            return value
+        }
+        set {
+            var value = newValue
+            // Remote playback progress belongs to that playback session, not this user's library state.
+            nowPlayingItem = value.nowPlayingItem?.withoutUserData
+            value.nowPlayingItem = nil
+            sessionInfo = value
+        }
+    }
 
     var id: String? {
         session.id
     }
 
     init(session: SessionInfoDto) {
-        self.session = session
+        var value = session
+        self.nowPlayingItem = value.nowPlayingItem?.withoutUserData
+        value.nowPlayingItem = nil
+        self.sessionInfo = value
         super.init()
     }
 

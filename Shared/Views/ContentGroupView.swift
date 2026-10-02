@@ -15,6 +15,7 @@ import SwiftUI
 struct ContentGroupView<Provider: ContentGroupProvider>: View {
 
     private enum Focus: String {
+
         case content = "contentGroup-content"
     }
 

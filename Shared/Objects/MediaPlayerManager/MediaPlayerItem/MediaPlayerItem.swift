@@ -48,7 +48,23 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     var observers: [any MediaPlayerObserver] = []
 
-    let baseItem: BaseItemDto
+    @SharedBaseItem
+    private var sharedItem: BaseItemDto
+    private let startPositionTicks: Int?
+    private let runtimeTicks: Int?
+
+    /// Playback overrides stay local; other metadata comes from the shared record.
+    var baseItem: BaseItemDto {
+        var value = sharedItem
+        value.runTimeTicks = runtimeTicks ?? value.runTimeTicks
+        if let startPositionTicks {
+            var data = value.userData ?? UserItemDataDto(key: value.id ?? "")
+            data.playbackPositionTicks = startPositionTicks
+            value.userData = data
+        }
+        return value
+    }
+
     let deviceProfile: DeviceProfile
     let mediaSource: MediaSourceInfo
     let playSessionID: String
@@ -76,7 +92,9 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         previewImageProvider: (any PreviewImageProvider)? = nil,
         thumbnailProvider: ThumbnailProvider? = nil
     ) {
-        self.baseItem = baseItem
+        self.sharedItem = baseItem
+        self.startPositionTicks = baseItem.userData?.playbackPositionTicks
+        self.runtimeTicks = mediaSource.runTimeTicks ?? baseItem.runTimeTicks
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
         self.requestedBitrate = requestedBitrate

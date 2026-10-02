@@ -18,6 +18,7 @@ import JellyfinAPI
 typealias MediaPlayerManagerPublisher = LegacyEventPublisher<MediaPlayerManager?>
 
 extension Scope {
+
     static let session = Cached()
 }
 
@@ -52,6 +53,7 @@ final class MediaPlayerManager: ViewModel {
 
     @CasePathable
     enum Action {
+
         case ended
         case error
         case playNewItem(provider: MediaPlayerItemProvider)
@@ -81,6 +83,7 @@ final class MediaPlayerManager: ViewModel {
     }
 
     enum State {
+
         case error
         case initial
         case loadingItem
@@ -125,8 +128,19 @@ final class MediaPlayerManager: ViewModel {
         }
     }
 
-    @Published
-    private(set) var item: BaseItemDto
+    @SharedBaseItem
+    private var selectedItem: BaseItemDto
+
+    private(set) var item: BaseItemDto {
+        get {
+            if let playbackItem, playbackItem.baseItem.id == selectedItem.id {
+                return playbackItem.baseItem
+            }
+            return selectedItem
+        }
+        set { selectedItem = newValue }
+    }
+
     @Published
     private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
     @Published
@@ -232,7 +246,7 @@ final class MediaPlayerManager: ViewModel {
         provider: MediaPlayerItemProvider,
         queue: (any MediaPlayerQueue)? = nil
     ) {
-        self.item = provider.item
+        self.selectedItem = provider.item
         self.queue = queue.map { AnyMediaPlayerQueue($0) }
         self.state = .loadingItem
         self.initialMediaPlayerItemProvider = provider
@@ -245,7 +259,7 @@ final class MediaPlayerManager: ViewModel {
         playbackItem: MediaPlayerItem,
         queue: (any MediaPlayerQueue)? = nil
     ) {
-        self.item = playbackItem.baseItem
+        self.selectedItem = playbackItem.baseItem
         self.queue = queue.map { AnyMediaPlayerQueue($0) }
         self.state = .playback
         super.init()
@@ -484,7 +498,7 @@ final class MediaPlayerManager: ViewModel {
         }
 
         let testStartTime = Date()
-        let _ = try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize.rawValue))
+        let _ = try await userSession.send(Paths.getBitrateTestBytes(size: testSize.rawValue))
         let testDuration = Date().timeIntervalSince(testStartTime)
         let testSizeBits = Double(testSize.rawValue * 8)
         let testBitrate = testSizeBits / testDuration

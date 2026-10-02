@@ -14,6 +14,7 @@ import SwiftUI
 struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: LibraryElement {
 
     private enum Focus: String {
+
         case firstElement = "pagingLibrary-firstElement"
     }
 
@@ -221,6 +222,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .animation(.linear(duration: 0.2), value: viewModel.elements)
         .animation(.linear(duration: 0.2), value: viewModel.searchElements)
         .navigationTitle(viewModel.library.parent.displayTitle)
+        .errorMessage($viewModel.error)
         .onPreferenceChange(IsSafeAreaBarApplied.self) { newValue in
             isSafeAreaBarApplied = newValue
         }
