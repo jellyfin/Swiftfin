@@ -9,16 +9,24 @@
 import JellyfinAPI
 
 struct StaticMediaLibrary: PagingLibrary {
+
     let elements: [ItemEntry]
     let hasNextPage = false
     let parent: TitledLibraryParent
 
-    init(title: String, id: String, elements: [BaseItemDto]) {
-        self.elements = elements.map { StoredItem(wrappedValue: $0).entry }
+    init(
+        title: String,
+        id: String,
+        elements: [BaseItemDto]
+    ) {
+        self.elements = elements.map { SharedBaseItem(wrappedValue: $0).entry }
         self.parent = TitledLibraryParent(displayTitle: title, id: id)
     }
 
-    func retrievePage(environment: Empty, pageState: LibraryPageState) async throws -> [ItemEntry] {
+    func retrievePage(
+        environment: Empty,
+        pageState: LibraryPageState
+    ) async throws -> [ItemEntry] {
         elements.filter { $0.value != nil }
     }
 }

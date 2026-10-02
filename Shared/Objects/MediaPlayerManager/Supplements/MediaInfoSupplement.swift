@@ -15,7 +15,7 @@ import SwiftUI
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
     let displayTitle: String = L10n.info
-    @StoredItem
+    @SharedBaseItem
     var item: BaseItemDto
 
     var id: String {
@@ -39,7 +39,7 @@ extension MediaInfoSupplement {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @StoredItem
+        @SharedBaseItem
         private var item: BaseItemDto
 
         @StateObject

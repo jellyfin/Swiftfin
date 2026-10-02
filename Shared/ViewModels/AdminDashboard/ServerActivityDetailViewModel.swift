@@ -16,6 +16,7 @@ final class ServerActivityDetailViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
 
         var transition: Transition {
@@ -25,10 +26,12 @@ final class ServerActivityDetailViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case refreshing
     }
 
     enum State {
+
         case initial
         case error
         case refreshing
@@ -38,7 +41,7 @@ final class ServerActivityDetailViewModel: ViewModel {
     var log: ActivityLogEntry
     @Published
     var user: UserDto?
-    @StoredOptionalItem
+    @OptionalSharedBaseItem
     var item: BaseItemDto?
 
     init(log: ActivityLogEntry, user: UserDto?) {

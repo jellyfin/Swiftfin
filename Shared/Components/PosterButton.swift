@@ -19,7 +19,7 @@ struct PosterButton<Item: Poster>: View {
     @State
     private var posterSize: CGSize = .zero
 
-    @StoredMediaValue
+    @SharedPoster
     var item: Item
     let displayType: PosterDisplayType
     let size: PosterDisplayType.Size

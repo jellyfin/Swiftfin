@@ -53,6 +53,7 @@ extension ItemPatch {
 }
 
 extension BaseItemDto {
+
     var withoutUserData: BaseItemDto {
         var value = self
         value.userData = nil

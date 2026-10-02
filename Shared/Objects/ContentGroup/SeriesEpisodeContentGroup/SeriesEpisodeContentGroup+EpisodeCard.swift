@@ -19,7 +19,7 @@ extension SeriesEpisodeContentGroup {
         @Router
         private var router
 
-        @StoredItem
+        @SharedBaseItem
         var episode: BaseItemDto
 
         private var episodeContent: String {
@@ -108,6 +108,7 @@ extension SeriesEpisodeContentGroup {
     private struct EpisodeCardLayout<Artwork: View>: View {
 
         private enum FocusedElement: Hashable {
+
             case artwork
             case content
         }
@@ -129,7 +130,7 @@ extension SeriesEpisodeContentGroup {
         let content: String
         let artworkAction: () -> Void
         let contentAction: () -> Void
-        @StoredOptionalItem
+        @OptionalSharedBaseItem
         var contextMenuItem: BaseItemDto?
         let artwork: Artwork
 

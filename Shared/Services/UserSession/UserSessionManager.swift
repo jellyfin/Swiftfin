@@ -30,17 +30,20 @@ extension Container {
 final class UserSessionManager: ObservableObject {
 
     enum State: Equatable {
+
         case initial
         case signedOut
         case signedIn
     }
 
     enum SignOutReason {
+
         case backgroundTimeout
         case explicit
     }
 
     enum AuthenticationError: Error {
+
         case missingAuthenticationAction
     }
 
@@ -208,6 +211,7 @@ final class UserSessionManager: ObservableObject {
     }
 
     private enum ServerInformationRefreshReason {
+
         case explicitSignIn
         case stale
     }
@@ -313,8 +317,7 @@ final class UserSessionManager: ObservableObject {
         }
     }
 
-    /// Session services suspend while starting and stopping. Complete a transition
-    /// before another caller can reuse or invalidate its store.
+    /// Serialize transitions because starting and stopping session services can suspend.
     @MainActor
     private func applyCurrentSession(_ newSession: UserSession?) async {
         let previousSession = currentSession

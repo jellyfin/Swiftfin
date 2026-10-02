@@ -17,6 +17,7 @@ import OrderedCollections
 final class IdentifyItemViewModel: ViewModel {
 
     struct SearchQuery: Equatable {
+
         var name: String?
         var originalTitle: String?
         var year: Int?
@@ -32,6 +33,7 @@ final class IdentifyItemViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case _actuallySearch(query: SearchQuery)
         case search(query: SearchQuery)
         case update(RemoteSearchResult)
@@ -47,15 +49,18 @@ final class IdentifyItemViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case searching
         case updating
     }
 
     enum Event {
+
         case updated
     }
 
     enum State {
+
         case initial
         case error
     }
@@ -63,7 +68,7 @@ final class IdentifyItemViewModel: ViewModel {
     @Published
     private(set) var searchResults: [RemoteSearchResult] = []
 
-    @StoredItem
+    @SharedBaseItem
     var item: BaseItemDto
     private var searchQuery = CurrentValueSubject<SearchQuery, Never>(.init())
 

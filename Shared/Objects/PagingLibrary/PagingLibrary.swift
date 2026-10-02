@@ -12,12 +12,17 @@ import SwiftUI
 
 @MainActor
 final class LibraryPageState {
+
     let pageOffset: Int
     let pageSize: Int
     let userSession: UserSession
     let itemRequest: ItemStore.RequestToken
 
-    init(pageOffset: Int, pageSize: Int, userSession: UserSession) throws {
+    init(
+        pageOffset: Int,
+        pageSize: Int,
+        userSession: UserSession
+    ) throws {
         self.pageOffset = pageOffset
         self.pageSize = pageSize
         self.userSession = userSession
@@ -39,8 +44,14 @@ final class LibraryPageState {
         return try ItemPatch.items(from: response)
     }
 
-    func progress(returnedCount: Int) -> LibraryPageProgress {
-        LibraryPageProgress(offset: pageOffset, pageSize: pageSize, consumedRows: consumedRows ?? returnedCount, totalRows: totalRows)
+    func progress(returnedCount: Int) -> (nextOffset: Int, hasNextPage: Bool) {
+        let consumedRows = consumedRows ?? returnedCount
+        let nextOffset = pageOffset + consumedRows
+        guard consumedRows > 0 else { return (nextOffset, false) }
+        if let totalRows, totalRows >= nextOffset {
+            return (nextOffset, nextOffset < totalRows)
+        }
+        return (nextOffset, consumedRows >= pageSize)
     }
 }
 
@@ -64,6 +75,9 @@ protocol PagingLibrary<Element> {
     func materialize(_ page: [PageElement], pageState: LibraryPageState) throws -> [Element]
 
     func includes(_ element: Element, environment: Environment) -> Bool
+
+    /// Reload only when user data can change this library's membership or ordering.
+    func shouldRefreshForUserDataChange(environment: Environment) -> Bool
 
     @ViewBuilder
     func makeLibraryBody(
@@ -97,6 +111,10 @@ extension PagingLibrary {
 
     func includes(_ element: Element, environment: Environment) -> Bool {
         true
+    }
+
+    func shouldRefreshForUserDataChange(environment: Environment) -> Bool {
+        false
     }
 
     var environment: Environment? {
@@ -145,6 +163,7 @@ protocol SearchablePagingLibrary<Element, Environment, PageElement>: PagingLibra
 }
 
 extension PagingLibrary where PageElement == Element {
+
     func materialize(_ page: [Element], pageState: LibraryPageState) throws -> [Element] {
         page
     }

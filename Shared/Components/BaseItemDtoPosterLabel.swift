@@ -16,7 +16,7 @@ struct BaseItemDtoPosterLabel: View {
     @Environment(\.posterDisplayType)
     private var posterDisplayType
 
-    @StoredItem
+    @SharedBaseItem
     var item: BaseItemDto
 
     private var isTitlePresented: Bool {

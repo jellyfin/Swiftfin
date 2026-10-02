@@ -14,13 +14,13 @@ import SwiftUI
 
 final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
-    @StoredItem
+    @SharedBaseItem
     private(set) var item: BaseItemDto
-    @StoredItems
+    @SharedBaseItems
     private(set) var localTrailers: [BaseItemDto] = []
     @Published
     private(set) var mediaPlayerItemProvider: MediaPlayerItemProvider?
-    @StoredOptionalItem
+    @OptionalSharedBaseItem
     private(set) var randomBackdropItem: BaseItemDto?
 
     @Published
@@ -32,15 +32,15 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         item.displayTitle
     }
 
-    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
+    var refreshRequests: AnyPublisher<Void, Never> {
         guard let store = userSession?.items else {
             return Combine.Empty().eraseToAnyPublisher()
         }
         return store.changes
-            .compactMap { [weak self, weak store] change -> ContentGroupRefresh? in
+            .compactMap { [weak self, weak store] change -> Void? in
                 guard let self, case let .updated(update) = change else { return nil }
                 if update.itemID == self.id, update.metadataChanged {
-                    return .groups
+                    return ()
                 }
                 // Series and season playback selection depends on their children's progress.
                 guard self.item.type == .series || self.item.type == .season,
@@ -49,7 +49,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 if update.itemID == self.id || changedItem?.seriesID == self.id || changedItem?.seasonID == self.id ||
                     changedItem?.type == nil
                 {
-                    return .groups
+                    return ()
                 }
                 return nil
             }
@@ -282,7 +282,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     func toggleIsFavorite() async {
         do {
             let session = try requireUserSession()
-            try await session.items.setFavorite($item, to: item.userData?.isFavorite != true, userSession: session)
+            try await session.setFavorite($item, to: item.userData?.isFavorite != true)
         } catch {
             actionError = error
         }
@@ -291,13 +291,14 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     func toggleIsPlayed() async {
         do {
             let session = try requireUserSession()
-            try await session.items.setPlayed($item, to: item.userData?.isPlayed != true, userSession: session)
+            try await session.setPlayed($item, to: item.userData?.isPlayed != true)
         } catch {
             actionError = error
         }
     }
 
     enum PlaybackSelection {
+
         case mediaSource(MediaSourceInfo?)
         case audioStreamIndex(Int?)
         case subtitleStreamIndex(Int?)

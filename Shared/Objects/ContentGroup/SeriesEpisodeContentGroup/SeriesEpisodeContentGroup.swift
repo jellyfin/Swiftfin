@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import JellyfinAPI
 import SwiftUI
 
@@ -16,13 +15,9 @@ import SwiftUI
 struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
     let id: String
-    @StoredOptionalItem
+    @OptionalSharedBaseItem
     var playButtonItem: BaseItemDto?
     let viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
-
-    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
-        viewModel.contentGroupRefreshRequests.eraseToAnyPublisher()
-    }
 
     var _shouldBeResolved: Bool {
         viewModel.elements.isNotEmpty
@@ -34,7 +29,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
     ) {
         self.id = "\(parent.id ?? "parent")-episode-selector"
         self.playButtonItem = playButtonItem
-        self.viewModel = .init(library: SeasonViewModelLibrary(parent: parent), pageSize: 100, refreshesAutomatically: false)
+        self.viewModel = .init(library: SeasonViewModelLibrary(parent: parent), pageSize: 100)
     }
 
     func body(with viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>) -> Body {
@@ -49,7 +44,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
         @ObservedObject
         var viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
-        @StoredOptionalItem
+        @OptionalSharedBaseItem
         var playButtonItem: BaseItemDto?
 
         @State
@@ -108,8 +103,9 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                 selectPreferredSeasonIfNeeded()
                 refreshSelectedSeasonIfNeeded()
             }
-            .onChange(of: viewModel.elements.count) {
+            .onChange(of: viewModel.elements.map(ObjectIdentifier.init)) {
                 selectPreferredSeasonIfNeeded()
+                refreshSelectedSeasonIfNeeded()
             }
             .onChange(of: selection) {
                 refreshSelectedSeasonIfNeeded()

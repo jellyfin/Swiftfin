@@ -15,6 +15,7 @@ import SwiftUI
 struct ItemView: View {
 
     enum Component {
+
         static let header = "itemView-header"
         static let menu = "itemView-menu"
         static let play = "itemView-play"
@@ -143,7 +144,6 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.refresh()
         }
-        .refreshingContentGroups(viewModel: viewModel)
         .environmentObject(focusCoordinator)
         .confirmationDialog(
             L10n.deleteItemConfirmationMessage,

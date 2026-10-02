@@ -8,9 +8,9 @@
 
 import Foundation
 
-/// Use the SDK's Codable implementation as the field schema. Both sides use the
-/// same codec, so dates and nested values don't depend on the server's JSON format.
+/// Use the SDK's codec to preserve its field names, dates, and nested values.
 enum CodableFields {
+
     static func encode(_ value: some Encodable) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
@@ -25,9 +25,9 @@ enum CodableFields {
     }
 }
 
-/// Tracks fields as they arrive. A replacement also protects fields that have
-/// never been loaded, preventing an older response from filling an intentional nil.
+/// Replacements protect cleared and unloaded fields from older responses.
 struct FieldRevisions {
+
     private var fields: [String: UInt64] = [:]
     private var replacement: UInt64 = 0
 

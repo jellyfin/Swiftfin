@@ -15,6 +15,7 @@ import SwiftUI
 struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibrary {
 
     struct Environment: WithDefaultValue {
+
         var grouping: BaseItemDto.Grouping?
         var filters: ItemFilterCollection
 
@@ -26,7 +27,7 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
 
     let environment: Environment?
     let filterViewModel: FilterViewModel
-    @StoredItem
+    @SharedBaseItem
     var parent: BaseItemDto
 
     init(
@@ -205,6 +206,20 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
 
     func includes(_ element: ItemEntry, environment: Environment) -> Bool {
         element.item.confirmedUserData?.matches(environment.filters.traits) != false
+    }
+
+    func shouldRefreshForUserDataChange(environment: Environment) -> Bool {
+        environment.filters.traits.contains {
+            switch $0 {
+            case .isFavorite, .isPlayed, .isUnplayed, .isResumable, .likes, .dislikes, .isFavoriteOrLikes: true
+            default: false
+            }
+        } || environment.filters.sortBy.contains {
+            switch $0 {
+            case .datePlayed, .playCount, .isUnplayed, .isPlayed, .isFavoriteOrLiked, .seriesDatePlayed: true
+            default: false
+            }
+        }
     }
 
     private func attachFilters(

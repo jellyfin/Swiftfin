@@ -16,7 +16,7 @@ extension ItemView {
         @Router
         private var router
 
-        @StoredItem
+        @SharedBaseItem
         var item: BaseItemDto
 
         private var isPresented: Bool {

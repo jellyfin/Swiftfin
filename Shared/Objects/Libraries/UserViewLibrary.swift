@@ -15,11 +15,6 @@ private let userViewLibraryListImageWidth: CGFloat = 110
 
 struct UserViewLibrary: PagingLibrary {
 
-    enum PageElement {
-        case favorites
-        case userView(ItemPatch)
-    }
-
     typealias Element = UserViewLibraryElement
 
     let hasNextPage: Bool = false
@@ -35,7 +30,7 @@ struct UserViewLibrary: PagingLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [PageElement] {
+    ) async throws -> [ItemPatch] {
         guard pageState.pageOffset == 0 else { return [] }
 
         let parameters = Paths.GetUserViewsParameters(userID: pageState.userSession.user.id)
@@ -46,28 +41,20 @@ struct UserViewLibrary: PagingLibrary {
 
         let excludedLibraryIDs = try await currentUser.value.configuration?.myMediaExcludes ?? []
         let response = try await userViews
-        let elements = try pageState.items(from: response)
+        return try pageState.items(from: response)
             .filter { patch in
                 CollectionType.supportedCases.contains(patch.value.collectionType ?? .folders) &&
                     !excludedLibraryIDs.contains(patch.value.id ?? "")
             }
-            .map(PageElement.userView)
-
-        return elements
-            .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
     }
 
-    func materialize(_ page: [PageElement], pageState: LibraryPageState) throws -> [UserViewLibraryElement] {
-        try page.compactMap { element in
-            switch element {
-            case .favorites:
-                return .favorites
-            case let .userView(patch):
-                guard let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else { return nil }
-                let isFolder = patch.value.type == .userView && (patch.value.collectionType ?? .folders) == .folders
-                return .userView(ItemEntry(item: record, presentationType: isFolder ? .folder : nil))
-            }
+    func materialize(_ page: [ItemPatch], pageState: LibraryPageState) throws -> [UserViewLibraryElement] {
+        let elements: [UserViewLibraryElement] = try page.compactMap { patch in
+            guard let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else { return nil }
+            let isFolder = patch.value.type == .userView && (patch.value.collectionType ?? .folders) == .folders
+            return .userView(ItemEntry(item: record, presentationType: isFolder ? .folder : nil))
         }
+        return elements.prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
     }
 }
 
@@ -103,7 +90,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         case .favorites:
             "heart.fill"
         case let .userView(item):
-            if item.collectionType == .livetv {
+            if item.snapshot.collectionType == .livetv {
                 "tv"
             } else {
                 "folder.fill"
@@ -139,7 +126,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
                 in: namespace
             )
         case let .userView(item):
-            if item.collectionType == .livetv {
+            if item.snapshot.collectionType == .livetv {
                 router.route(to: .liveTV, in: namespace)
             } else {
                 router.route(
@@ -353,7 +340,7 @@ private extension UserViewLibraryElement {
         case .favorites:
             filters = [.isFavorite]
         case let .userView(item):
-            if item.collectionType == .livetv {
+            if item.snapshot.collectionType == .livetv {
                 includeItemTypes = [.tvProgram, .liveTvProgram]
             } else {
                 parentID = item.itemID

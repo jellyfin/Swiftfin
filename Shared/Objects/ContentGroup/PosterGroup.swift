@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import SwiftUI
 
 struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: LibraryElement, Library.Element: Poster {
@@ -29,10 +28,6 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
     let posterSize: PosterDisplayType.Size
     let viewModel: PagingLibraryViewModel<Library>
 
-    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
-        viewModel.contentGroupRefreshRequests.eraseToAnyPublisher()
-    }
-
     var _shouldBeResolved: Bool {
         viewModel.elements.isNotEmpty
     }
@@ -40,22 +35,24 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
     init(
         id: String = UUID().uuidString,
         library: Library,
+        displayTitle: String? = nil,
         posterDisplayType: PosterDisplayType = .portrait,
         posterSize: PosterDisplayType.Size = .small,
         environment: Environment
     ) {
-        self.displayTitle = library.parent.displayTitle
+        self.displayTitle = displayTitle ?? library.parent.displayTitle
         self.environment = environment
         self.id = id
         self.library = library
         self.posterDisplayType = posterDisplayType
         self.posterSize = posterSize
-        self.viewModel = .init(library: library, pageSize: 20, refreshesAutomatically: false)
+        self.viewModel = .init(library: library, pageSize: 20)
     }
 
     init(
         id: String = UUID().uuidString,
         library: Library,
+        displayTitle: String? = nil,
         posterDisplayType: PosterDisplayType = .portrait,
         posterSize: PosterDisplayType.Size = .small,
         _viewContext: ViewContext? = nil
@@ -63,6 +60,7 @@ struct PosterGroup<Library: PagingLibrary>: ContentGroup where Library.Element: 
         self.init(
             id: id,
             library: library,
+            displayTitle: displayTitle,
             posterDisplayType: posterDisplayType,
             posterSize: posterSize,
             environment: .init(viewContext: _viewContext ?? .init())

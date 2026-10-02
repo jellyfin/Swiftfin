@@ -14,7 +14,7 @@ struct ItemOverviewView: View {
     @Router
     private var router
 
-    @StoredItem
+    @SharedBaseItem
     var item: BaseItemDto
 
     var body: some View {

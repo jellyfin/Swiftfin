@@ -21,6 +21,10 @@ struct ResumeItemsLibrary: BaseItemKindLibrary {
         self.mediaTypes = mediaTypes
     }
 
+    func shouldRefreshForUserDataChange(environment: Empty) -> Bool {
+        true
+    }
+
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState

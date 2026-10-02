@@ -15,7 +15,7 @@ typealias MediaPlayerItemProviderResolver = @MainActor @Sendable (BaseItemDto, (
 @MainActor
 struct MediaPlayerItemProvider {
 
-    @StoredItem
+    @SharedBaseItem
     var item: BaseItemDto
     let mediaSource: MediaSourceInfo?
     let audioStreamIndex: Int?

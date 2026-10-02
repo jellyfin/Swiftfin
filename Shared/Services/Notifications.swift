@@ -14,6 +14,7 @@ import JellyfinAPI
 import UIKit
 
 extension Container {
+
     var notificationCenter: Factory<NotificationCenter> {
         self { NotificationCenter.default }.singleton
     }
@@ -24,6 +25,7 @@ enum Notifications {
     typealias Keys = _AnyKey
 
     class _AnyKey {
+
         typealias Key = Notifications.Key
     }
 

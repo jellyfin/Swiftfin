@@ -20,7 +20,7 @@ struct ProgramBlock: Identifiable {
     }
 
     let id: ID
-    @StoredItems
+    @SharedBaseItems
     var programs: [BaseItemDto]
     let start: Date
     let end: Date

@@ -129,7 +129,7 @@ struct MainTabView: View {
     }
 
     private var itemErrors: AnyPublisher<Error, Never> {
-        userSessionManager.currentSession?.items.actionErrors.eraseToAnyPublisher()
+        userSessionManager.currentSession?.itemActionErrors.eraseToAnyPublisher()
             ?? Combine.Empty<Error, Never>().eraseToAnyPublisher()
     }
 

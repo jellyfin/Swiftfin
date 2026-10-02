@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import SwiftUI
 
 // TODO: Relax `WithRefresh` requirement?
@@ -23,17 +22,11 @@ protocol ContentGroup<ViewModel>: Identifiable {
     var viewModel: ViewModel { get }
     var _shouldBeResolved: Bool { get }
 
-    /// Emit on the main actor to flag content, visibility, or provider changes.
-    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> { get }
-
     @ViewBuilder
     func body(with viewModel: ViewModel) -> Body
 }
 
 extension ContentGroup {
-    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
-        Combine.Empty().eraseToAnyPublisher()
-    }
 
     var _shouldBeResolved: Bool {
         true
@@ -41,6 +34,7 @@ extension ContentGroup {
 }
 
 extension ContentGroup where ViewModel == Empty {
+
     var viewModel: Empty {
         .init()
     }

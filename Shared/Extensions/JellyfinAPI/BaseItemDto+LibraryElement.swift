@@ -64,7 +64,7 @@ private struct BaseItemDtoLibraryGridElement: View {
     @Router
     private var router
 
-    @StoredItem
+    @SharedBaseItem
     var item: BaseItemDto
     let libraryStyle: LibraryStyle
 
@@ -90,7 +90,7 @@ private struct BaseItemDtoLibraryListElement: View {
     @Router
     private var router
 
-    @StoredItem
+    @SharedBaseItem
     var item: BaseItemDto
     let libraryStyle: LibraryStyle
 

@@ -13,7 +13,7 @@ struct AboutItemGroup: ContentGroup {
 
     let displayTitle: String
     let id: String
-    @StoredItem
+    @SharedBaseItem
     var item: BaseItemDto
 
     func body(with viewModel: Empty) -> Body {
@@ -25,7 +25,7 @@ struct AboutItemGroup: ContentGroup {
         @Router
         private var router
 
-        @StoredItem
+        @SharedBaseItem
         var item: BaseItemDto
 
         private struct AboutCard<Content: View>: View {

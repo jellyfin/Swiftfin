@@ -13,7 +13,7 @@ struct EpisodeLibrary: BaseItemKindLibrary {
 
     let hasNextPage = false
     let libraryItemTypes: [BaseItemKind] = [.episode]
-    @StoredItem
+    @SharedBaseItem
     var parent: BaseItemDto
 
     init(season: BaseItemDto) {

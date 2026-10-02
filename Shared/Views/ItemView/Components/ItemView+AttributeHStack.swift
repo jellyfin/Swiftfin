@@ -14,7 +14,7 @@ extension ItemView {
     struct AttributesHStack: View {
 
         let attributes: [ItemViewAttribute]
-        @StoredItem
+        @SharedBaseItem
         var item: BaseItemDto
         let selectedMediaSource: MediaSourceInfo?
 

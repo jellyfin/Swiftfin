@@ -33,6 +33,10 @@ extension ItemEntry: @MainActor LibraryElement, @MainActor Poster {
         snapshot.supportedLibraryStyleOptions
     }
 
+    func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
+        snapshot.posterAccessibility(configuration: configuration)
+    }
+
     func resolveEnvironment(_ environment: EnvironmentValues) -> Environment {
         snapshot.resolveEnvironment(environment)
     }

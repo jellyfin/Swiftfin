@@ -16,6 +16,7 @@ final class ItemSubtitlesViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case _actuallySearch(isPerfectMatch: Bool)
         case delete(Set<MediaStream>)
         case refresh
@@ -36,16 +37,19 @@ final class ItemSubtitlesViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case updating
         case searching
     }
 
     enum Event {
+
         case deleted
         case uploaded
     }
 
     enum State {
+
         case initial
         case content
         case error
@@ -62,7 +66,7 @@ final class ItemSubtitlesViewModel: ViewModel {
     @Published
     var language: String? = Locale.current.language.languageCode?.identifier(.alpha3)
 
-    @StoredItem
+    @SharedBaseItem
     var item: BaseItemDto
 
     private var query: CurrentValueSubject<Bool, Never> = .init(false)

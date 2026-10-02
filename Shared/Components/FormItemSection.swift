@@ -11,7 +11,7 @@ import SwiftUI
 
 struct FormItemSection<Item: Poster>: PlatformView {
 
-    @StoredMediaValue
+    @SharedPoster
     var item: Item
 
     var iOSView: some View {

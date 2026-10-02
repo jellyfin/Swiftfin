@@ -14,6 +14,7 @@ import SwiftUI
 struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: LibraryElement {
 
     private enum Focus: String {
+
         case firstElement = "pagingLibrary-firstElement"
     }
 
@@ -35,9 +36,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     @State
     private var isSafeAreaBarApplied: Bool = false
-
-    @State
-    private var slotHeights: [Element.ID: CGFloat] = [:]
 
     @StateObject
     private var focusCoordinator = FocusCoordinator(waitingFor: Focus.firstElement.rawValue)
@@ -79,11 +77,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     init(library: Library) {
         self._parentLibraryStyle = StoredValue(.User.libraryStyle(id: library.parent.pagingLibraryID))
-        let viewModel = PagingLibraryViewModel(library: library)
-        if Element.self == ItemEntry.self {
-            viewModel.maximumLoadedPages = 5
-        }
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(library: library))
     }
 
     private func contentInsets(for frame: FrameAndSafeAreaInsets) -> EdgeInsets {
@@ -122,40 +116,16 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         } content: { frame in
 
             CollectionVGrid(
-                uniqueElements: viewModel.displayedSlots,
+                uniqueElements: viewModel.displayedElements,
                 layout: Element.layout(
                     for: libraryStyle,
                     options: libraryStyleOptions,
                     insets: contentInsets(for: frame)
                 )
-            ) { slot in
-                Group {
-                    if let element = slot.element {
-                        element.makeBody(libraryStyle: libraryStyle)
-                            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
-                                if slotHeights[slot.id] != height {
-                                    slotHeights[slot.id] = height
-                                }
-                            }
-                    } else {
-                        Button {
-                            viewModel.reloadPage(at: slot.offset)
-                        } label: {
-                            ZStack {
-                                Color.secondarySystemFill
-                                if viewModel.failedPageOffsets.contains(slot.offset) {
-                                    Image(systemName: "arrow.clockwise")
-                                } else {
-                                    ProgressView()
-                                }
-                            }
-                            .frame(height: slotHeights[slot.id] ?? 160)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
+            ) { element in
+                element.makeBody(libraryStyle: libraryStyle)
                     #if os(tvOS)
-                        .if(slot.id == viewModel.displayedSlots.first?.id) { view in
+                        .if(element.id == viewModel.displayedElements.first?.id) { view in
                             view
                                 .coordinatedFocus(Focus.firstElement.rawValue)
                                 .environmentObject(focusCoordinator)
@@ -168,8 +138,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                             }
                         }
                     #endif
-                .onAppear { viewModel.pageDidAppear(slot) }
-                .onDisappear { viewModel.pageDidDisappear(slot) }
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 if viewModel.isSearchActive {
@@ -228,7 +196,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 case .content:
                     if viewModel.isSearchActive, viewModel.background.is(.searching) {
                         ProgressView()
-                    } else if viewModel.displayedSlots.isEmpty {
+                    } else if viewModel.displayedElements.isEmpty {
                         ContentUnavailableView(
                             viewModel.isSearchActive ? L10n.noResults.localizedCapitalized : L10n.noItems.localizedCapitalized,
                             systemImage: viewModel.isSearchActive ? "magnifyingglass" : "rectangle.on.rectangle.slash"
@@ -263,10 +231,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         #endif
         .onChange(of: viewModel.environment) {
             viewModel.refreshForEnvironmentChange()
-        }
-        .onChange(of: viewModel.displayedSlots.map(\.id)) { _, ids in
-            let retained = Set(ids)
-            slotHeights = slotHeights.filter { retained.contains($0.key) }
         }
         .onChange(of: libraryStyle) { oldStyle, newStyle in
             if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero) ==

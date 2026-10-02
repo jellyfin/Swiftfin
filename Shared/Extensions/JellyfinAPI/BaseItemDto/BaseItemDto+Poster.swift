@@ -216,7 +216,7 @@ private struct BaseItemDtoPosterContextMenu: View {
     @Router
     private var router
 
-    @StoredItem
+    @SharedBaseItem
     private var item: BaseItemDto
 
     init(item: BaseItemDto) {
@@ -265,9 +265,9 @@ private struct BaseItemDtoPosterContextMenu: View {
     private func toggleIsPlayed() async {
         guard let session = Container.shared.currentUserSession() else { return }
         do {
-            try await session.items.setPlayed($item, to: !isPlayed, userSession: session)
+            try await session.setPlayed($item, to: !isPlayed)
         } catch {
-            session.items.actionErrors.send(error)
+            session.itemActionErrors.send(error)
         }
     }
 
@@ -275,9 +275,9 @@ private struct BaseItemDtoPosterContextMenu: View {
     private func toggleIsFavorite() async {
         guard let session = Container.shared.currentUserSession() else { return }
         do {
-            try await session.items.setFavorite($item, to: !isFavorite, userSession: session)
+            try await session.setFavorite($item, to: !isFavorite)
         } catch {
-            session.items.actionErrors.send(error)
+            session.itemActionErrors.send(error)
         }
     }
 }

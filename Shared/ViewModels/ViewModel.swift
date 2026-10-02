@@ -60,7 +60,7 @@ class ViewModel: ObservableObject {
         }
     }
 
-    func send<Value: Decodable & Sendable>(_ request: Request<Value>) async throws -> ItemStoreResponse<Value> {
+    func send<Value: Decodable & Sendable>(_ request: Request<Value>) async throws -> (value: Value, items: [ItemRecord]) {
         try await requireUserSession().send(request)
     }
 

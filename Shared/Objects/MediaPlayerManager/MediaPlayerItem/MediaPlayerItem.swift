@@ -48,13 +48,12 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     var observers: [any MediaPlayerObserver] = []
 
-    @StoredItem
+    @SharedBaseItem
     private var sharedItem: BaseItemDto
     private let startPositionTicks: Int?
     private let runtimeTicks: Int?
 
-    /// Resume choices and the selected version's duration belong to this playback.
-    /// Metadata and library user data continue to come from the shared record.
+    /// Playback overrides stay local; other metadata comes from the shared record.
     var baseItem: BaseItemDto {
         var value = sharedItem
         value.runTimeTicks = runtimeTicks ?? value.runTimeTicks

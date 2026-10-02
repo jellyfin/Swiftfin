@@ -16,6 +16,7 @@ final class ItemImageViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case deleteImage(ImageInfo)
         case refresh
         case saveRemoteImage(RemoteImageInfo)
@@ -35,22 +36,25 @@ final class ItemImageViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case deleting
         case updating
     }
 
     enum Event {
+
         case deleted
         case updated
     }
 
     enum State {
+
         case initial
         case content
         case error
     }
 
-    @StoredItem
+    @SharedBaseItem
     var item: BaseItemDto
 
     @Published

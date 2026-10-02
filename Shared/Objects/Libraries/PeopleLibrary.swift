@@ -11,6 +11,7 @@ import JellyfinAPI
 struct PeopleLibrary: BaseItemKindLibrary {
 
     struct Environment: WithDefaultValue {
+
         var query: String?
 
         static var `default`: Self {
