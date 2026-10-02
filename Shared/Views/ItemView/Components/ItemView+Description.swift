@@ -33,12 +33,12 @@ extension ItemView {
                             .lineLimit(2)
                     }
 
-                    if let itemOverview = item.overview, itemOverview.isNotEmpty {
+                    if let itemOverview = item.attributedOverview, itemOverview.characters.isNotEmpty {
                         InlinePlatformView {
                             Button {
                                 router.route(to: .itemOverview(item: item))
                             } label: {
-                                SeeMoreText(itemOverview)
+                                SeeMoreText(Text(itemOverview))
                                     .font(.footnote)
                                     .lineLimit(3)
                             }
