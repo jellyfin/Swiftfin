@@ -1244,6 +1244,14 @@ internal enum L10n {
   internal static let playAndPause = L10n.tr("Localizable", "playAndPause", fallback: "Play / Pause")
   /// Playback
   internal static let playback = L10n.tr("Localizable", "playback", fallback: "Playback")
+  /// Shows or hides the playback controls
+  internal static let playbackControlsAccessibilityHint = L10n.tr("Localizable", "playbackControlsAccessibilityHint", fallback: "Shows or hides the playback controls")
+  /// Playback position
+  internal static let playbackPosition = L10n.tr("Localizable", "playbackPosition", fallback: "Playback position")
+  /// %1$@ of %2$@
+  internal static func playbackPositionOfTotal(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "playbackPositionOfTotal", String(describing: p1), String(describing: p2), fallback: "%1$@ of %2$@")
+  }
   /// Playback quality
   internal static let playbackQuality = L10n.tr("Localizable", "playbackQuality", fallback: "Playback quality")
   /// Force media from the server to transcode if it exceeds the selected resolution or bitrate.
@@ -1818,6 +1826,8 @@ internal enum L10n {
   internal static let time = L10n.tr("Localizable", "time", fallback: "Time")
   /// Time Base
   internal static let timeBase = L10n.tr("Localizable", "timeBase", fallback: "Time Base")
+  /// Time elapsed
+  internal static let timeElapsed = L10n.tr("Localizable", "timeElapsed", fallback: "Time elapsed")
   /// Time left
   internal static let timeLeft = L10n.tr("Localizable", "timeLeft", fallback: "Time left")
   /// Time limit
@@ -1838,6 +1848,8 @@ internal enum L10n {
   internal static let trailer = L10n.tr("Localizable", "trailer", fallback: "Trailer")
   /// Trailers
   internal static let trailers = L10n.tr("Localizable", "trailers", fallback: "Trailers")
+  /// Switches between time left and total time
+  internal static let trailingTimestampAccessibilityHint = L10n.tr("Localizable", "trailingTimestampAccessibilityHint", fallback: "Switches between time left and total time")
   /// Trailing value
   internal static let trailingValue = L10n.tr("Localizable", "trailingValue", fallback: "Trailing value")
   /// Transcode
