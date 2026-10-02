@@ -12,6 +12,7 @@ import JellyfinAPI
 struct ItemTypeContentGroupProvider: ContentGroupProvider {
 
     struct Environment: WithDefaultValue {
+
         var filters: ItemFilterCollection
 
         static var `default`: Self {
@@ -23,7 +24,7 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
     let displayTitle: String
     var environment: Environment
     let itemTypes: [BaseItemKind]
-    @StoredOptionalItem
+    @OptionalSharedBaseItem
     var parent: BaseItemDto?
 
     init(
@@ -50,17 +51,14 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
             filters.itemTypes = itemTypes
 
             let library = ItemLibrary(
-                parent: BaseItemDto(
-                    id: parent?.id,
-                    name: itemType.pluralDisplayTitle,
-                    type: parent?.type
-                ),
+                parent: parent ?? BaseItemDto(),
                 filters: filters
             )
 
             return PosterGroup(
                 id: "\(parent?.id ?? "unknown")-\(itemType.rawValue)",
                 library: library,
+                displayTitle: itemType.pluralDisplayTitle,
                 posterDisplayType: itemType.preferredPosterDisplayType
             )
         }

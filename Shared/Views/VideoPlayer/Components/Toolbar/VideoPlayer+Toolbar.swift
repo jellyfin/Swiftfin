@@ -82,7 +82,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         @State
         private var subtitleContentSize: CGSize = .zero
 
-        @StoredItem
+        @SharedBaseItem
         var item: BaseItemDto
 
         private var _titleSubtitle: (title: String, subtitle: String?) {

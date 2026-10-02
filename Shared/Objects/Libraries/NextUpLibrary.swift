@@ -13,6 +13,7 @@ import JellyfinAPI
 struct NextUpLibrary: BaseItemKindLibrary {
 
     struct Environment: WithDefaultValue {
+
         var enableRewatching: Bool
         var maxNextUp: TimeInterval
 
@@ -24,6 +25,10 @@ struct NextUpLibrary: BaseItemKindLibrary {
 
     let libraryItemTypes: [BaseItemKind] = [.episode]
     let parent: TitledLibraryParent = .init(displayTitle: L10n.nextUp, id: "next-up")
+
+    func shouldRefreshForUserDataChange(environment: Environment) -> Bool {
+        true
+    }
 
     func retrievePage(
         environment: Environment,

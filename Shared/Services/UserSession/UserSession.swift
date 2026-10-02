@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Foundation
 import JellyfinAPI
 import Pulse
@@ -16,11 +17,13 @@ final class UserSession {
     let user: UserState
 
     @MainActor
-    lazy var items: ItemStore = {
-        let store = ItemStore()
-        store.session = self
-        return store
-    }()
+    lazy var items = ItemStore()
+
+    @MainActor
+    var itemActionErrors = PassthroughSubject<Error, Never>()
+
+    @MainActor
+    var itemChanges: AnyCancellable?
 
     lazy var client: JellyfinClient = JellyfinClient(
         configuration: .swiftfinConfiguration(
@@ -38,7 +41,6 @@ final class UserSession {
 
     @MainActor
     private lazy var services: [any UserSessionService] = [
-        items,
         serverConnectionManager,
         serverSocketManager,
     ]
@@ -53,6 +55,7 @@ final class UserSession {
 
     @MainActor
     func willStart() async {
+        observeItemChanges()
         for service in services {
             await service.willStart(userSession: self)
         }
@@ -68,16 +71,18 @@ final class UserSession {
     @MainActor
     func reuseItems(from session: UserSession) {
         items = session.items
-        items.session = self
+        itemActionErrors = session.itemActionErrors
     }
 
     @MainActor
     func willStop(preservingItems: Bool = false) {
+        itemChanges = nil
         for service in services.reversed() {
-            if preservingItems, service is ItemStore {
-                continue
-            }
             service.willStop(userSession: self)
+        }
+        if !preservingItems {
+            items.invalidate()
+            itemActionErrors.send(completion: .finished)
         }
     }
 }

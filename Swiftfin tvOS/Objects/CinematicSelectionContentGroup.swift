@@ -15,10 +15,6 @@ struct CinematicSelectionContentGroup: ContentGroup {
     let id = "cinematic-selection"
     let viewModel: CinematicSelectionContentGroupViewModel
 
-    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
-        viewModel.refreshRequests
-    }
-
     var _shouldBeResolved: Bool {
         viewModel.hasContent
     }
@@ -111,10 +107,6 @@ struct CinematicRecentlyAddedContentGroup: ContentGroup {
     let id = "cinematic-recently-added"
     let viewModel: CinematicSelectionContentGroupViewModel
 
-    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
-        viewModel.refreshRequests
-    }
-
     var _shouldBeResolved: Bool {
         viewModel.hasResumeItems && viewModel.recentlyAddedViewModel.elements.isNotEmpty
     }
@@ -130,6 +122,7 @@ struct CinematicRecentlyAddedContentGroup: ContentGroup {
 final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
 
     struct Background: WithRefresh {
+
         let viewModel: CinematicSelectionContentGroupViewModel
 
         func refresh() {
@@ -145,12 +138,6 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
 
     let recentlyAddedGroup: PosterGroup<RecentlyAddedLibrary>
     let resumeViewModel: PagingLibraryViewModel<ResumeItemsLibrary>
-
-    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
-        resumeViewModel.contentGroupRefreshRequests
-            .merge(with: recentlyAddedViewModel.contentGroupRefreshRequests)
-            .eraseToAnyPublisher()
-    }
 
     var recentlyAddedViewModel: PagingLibraryViewModel<RecentlyAddedLibrary> {
         recentlyAddedGroup.viewModel
@@ -173,7 +160,7 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
         resumeLibrary: ResumeItemsLibrary,
         recentlyAddedLibrary: RecentlyAddedLibrary
     ) {
-        self.resumeViewModel = PagingLibraryViewModel(library: resumeLibrary, pageSize: 20, refreshesAutomatically: false)
+        self.resumeViewModel = PagingLibraryViewModel(library: resumeLibrary, pageSize: 20)
         self.recentlyAddedGroup = PosterGroup(library: recentlyAddedLibrary)
 
         super.init()

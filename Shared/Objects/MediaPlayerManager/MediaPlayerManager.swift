@@ -18,6 +18,7 @@ import JellyfinAPI
 typealias MediaPlayerManagerPublisher = LegacyEventPublisher<MediaPlayerManager?>
 
 extension Scope {
+
     static let session = Cached()
 }
 
@@ -52,6 +53,7 @@ final class MediaPlayerManager: ViewModel {
 
     @CasePathable
     enum Action {
+
         case ended
         case error
         case playNewItem(provider: MediaPlayerItemProvider)
@@ -84,6 +86,7 @@ final class MediaPlayerManager: ViewModel {
     }
 
     enum State {
+
         case error
         case initial
         case loadingItem
@@ -128,7 +131,7 @@ final class MediaPlayerManager: ViewModel {
         }
     }
 
-    @StoredItem
+    @SharedBaseItem
     private var selectedItem: BaseItemDto
 
     private(set) var item: BaseItemDto {

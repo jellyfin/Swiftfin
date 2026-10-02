@@ -15,25 +15,22 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
-        case refreshPendingChanges
 
         var transition: Transition {
-            switch self {
-            case .refresh:
-                .to(.refreshing, then: .content)
-                    .whenBackground(.refreshing)
-            case .refreshPendingChanges:
-                .background(.refreshing)
-            }
+            .to(.refreshing, then: .content)
+                .whenBackground(.refreshing)
         }
     }
 
     enum BackgroundState {
+
         case refreshing
     }
 
     enum State {
+
         case content
         case error
         case initial
@@ -45,11 +42,10 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
 
     private var candidateGroups: [any ContentGroup] = []
     private var groupCancellables = Set<AnyCancellable>()
-    private var pendingRefreshes = ContentGroupRefreshQueue()
-    private var scheduledRefresh: Task<Void, Never>?
-    private var isRefreshInFlight = false
-    private var isActive = false
+    private var scheduledRebuild: Task<Void, Never>?
+    private var needsGroupRebuild = true
     private var hasLoadedGroups = false
+    private var isRefreshInFlight = false
 
     var provider: Provider
 
@@ -58,37 +54,26 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         super.init()
 
         provider.refreshRequests
-            .sink { [weak self] request in
-                self?.requestRefresh(request)
+            .sink { [weak self] in
+                self?.needsGroupRebuild = true
+                self?.scheduleGroupRebuild()
             }
             .store(in: &cancellables)
     }
 
-    func setIsActive(_ isActive: Bool) {
-        self.isActive = isActive
-        if isActive {
-            schedulePendingRefresh()
-        } else {
-            scheduledRefresh?.cancel()
-            scheduledRefresh = nil
-        }
+    deinit {
+        scheduledRebuild?.cancel()
     }
 
-    private func requestRefresh(_ request: ContentGroupRefresh, groupID: String? = nil) {
-        pendingRefreshes.insert(request, groupID: groupID)
-        schedulePendingRefresh()
-    }
+    private func scheduleGroupRebuild() {
+        guard hasLoadedGroups, needsGroupRebuild, !isRefreshInFlight, scheduledRebuild == nil else { return }
 
-    private func schedulePendingRefresh() {
-        guard isActive, hasLoadedGroups, !isRefreshInFlight,
-              !pendingRefreshes.isEmpty, scheduledRefresh == nil else { return }
-
-        scheduledRefresh = Task { @MainActor [weak self] in
-            // Coalesce changes from multiple groups and finish publishing their contents first.
-            try? await Task.sleep(for: .milliseconds(50))
+        // Coalesce detail changes without keeping a dismissed screen alive.
+        scheduledRebuild = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .milliseconds(350))
             guard !Task.isCancelled, let self else { return }
-            self.scheduledRefresh = nil
-            await self.background.refreshPendingChanges()
+            self.scheduledRebuild = nil
+            await self.background.refresh()
         }
     }
 
@@ -96,90 +81,77 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         sinceLastDisappear interval: TimeInterval,
         staleThreshold: TimeInterval = 60
     ) {
-        if interval > staleThreshold {
-            requestRefresh(.contents)
-        } else {
-            schedulePendingRefresh()
-        }
+        guard interval > staleThreshold || needsGroupRebuild else { return }
+        background.refresh()
+    }
+
+    func refreshIfPendingChanges() {
+        guard needsGroupRebuild else { return }
+        background.refresh()
     }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        guard !isRefreshInFlight else {
-            requestRefresh(StateTask.isBackground ? .contents : .groups)
-            return
+        if !StateTask.isBackground {
+            needsGroupRebuild = true
         }
+        guard !isRefreshInFlight else { return }
 
-        pendingRefreshes.insert(StateTask.isBackground && hasLoadedGroups ? .contents : .groups)
-        try await performRefresh(inBackground: StateTask.isBackground)
-    }
-
-    @Function(\Action.Cases.refreshPendingChanges)
-    private func _refreshPendingChanges() async throws {
-        guard isActive, hasLoadedGroups, !isRefreshInFlight, !pendingRefreshes.isEmpty else { return }
-        try await performRefresh(inBackground: true)
-    }
-
-    private func performRefresh(inBackground: Bool) async throws {
+        scheduledRebuild?.cancel()
+        scheduledRebuild = nil
         isRefreshInFlight = true
-        scheduledRefresh?.cancel()
-        scheduledRefresh = nil
-        let pending = pendingRefreshes.take()
         defer { isRefreshInFlight = false }
 
+        let rebuildGroups = needsGroupRebuild
+        needsGroupRebuild = false
         do {
-            if pending.rebuildGroups {
+            if rebuildGroups {
                 try await fullRefresh()
             } else {
-                let groups = candidateGroups.filter { pending.refreshAll || pending.groupIDs.contains($0.id) }
-                try await refreshViewModels(for: groups, inBackground: inBackground)
+                await refreshViewModels(inBackground: true)
                 try Task.checkCancellation()
                 resolveGroups()
             }
         } catch {
-            // Preserve failed work for the next appearance or explicit refresh, without a retry loop.
-            pendingRefreshes.merge(pending)
+            // Keep a failed rebuild pending for the next explicit refresh or appearance.
+            needsGroupRebuild = needsGroupRebuild || rebuildGroups
             throw error
         }
 
         isRefreshInFlight = false
-        schedulePendingRefresh()
-    }
-
-    private func getViewModel(for group: some ContentGroup) -> any WithRefresh {
-        group.viewModel
+        // Changes received during the request still need a subsequent rebuild.
+        scheduleGroupRebuild()
     }
 
     private func resolveGroups() {
-        let resolved = candidateGroups
-            .filter(\._shouldBeResolved)
+        let resolved = candidateGroups.filter(\._shouldBeResolved)
         if groups.map(\.id) != resolved.map(\.id) {
             groups = resolved
         }
     }
 
+    private var uniqueViewModels: [any WithRefresh] {
+        var seen = Set<ObjectIdentifier>()
+        return candidateGroups.map { $0.viewModel as any WithRefresh }
+            .filter { seen.insert(ObjectIdentifier($0 as AnyObject)).inserted }
+    }
+
     private func observeGroups() {
         groupCancellables.removeAll()
-        // Empty candidates can become visible after a store change, so observe them too.
-        for group in candidateGroups {
-            let id = group.id
-            group.refreshRequests
-                .sink { [weak self] request in
-                    self?.requestRefresh(request, groupID: id)
+        // Observe hidden candidates too, after their published values have changed.
+        for case let viewModel as ViewModel in uniqueViewModels {
+            viewModel.objectWillChange
+                .receive(on: RunLoop.main)
+                .sink { [weak self] in
+                    self?.resolveGroups()
                 }
                 .store(in: &groupCancellables)
         }
     }
 
-    private func refreshViewModels(
-        for groups: [any ContentGroup],
-        inBackground: Bool
-    ) async throws {
-        let viewModels = groups.map { getViewModel(for: $0) }
-            .uniqued { ObjectIdentifier($0 as AnyObject) }
-
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            for viewModel in viewModels {
+    private func refreshViewModels(inBackground: Bool) async {
+        await withTaskGroup(of: Void.self) { group in
+            for viewModel in uniqueViewModels {
                 group.addTask {
                     if inBackground {
                         await viewModel.background.refresh()
@@ -188,8 +160,6 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
                     }
                 }
             }
-
-            try await group.waitForAll()
         }
     }
 
@@ -199,14 +169,10 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
 
         candidateGroups = newGroups
         observeGroups()
-
-        try await refreshViewModels(
-            for: newGroups,
-            // New view models must leave their initial state before replacing the visible groups.
-            inBackground: false
-        )
-
+        // New view models must leave .initial before becoming visible.
+        await refreshViewModels(inBackground: false)
         try Task.checkCancellation()
+
         hasLoadedGroups = true
         // New groups may reuse IDs but own different view models.
         groups = candidateGroups.filter(\._shouldBeResolved)

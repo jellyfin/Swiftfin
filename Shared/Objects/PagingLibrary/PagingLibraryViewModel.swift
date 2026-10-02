@@ -25,6 +25,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     @CasePathable
     enum Action {
+
         case refresh
         case getNextPage
         case getRandomItem
@@ -59,6 +60,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     }
 
     enum BackgroundState {
+
         case refreshing
         case gettingNextPage
         case gettingRandomItem
@@ -67,16 +69,19 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     }
 
     enum Event {
+
         case gotRandomItem(Element)
     }
 
     enum State {
+
         case content
         case error
         case initial
         case refreshing
     }
 
+    // Collections own their items until they are replaced or this view model is released.
     @Published
     private(set) var elements: IdentifiedArrayOf<Element>
     @Published
@@ -85,14 +90,12 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             guard environment != oldValue else { return }
             generation += 1
             searchGeneration += 1
-            pages.removeAll()
-            searchPages.removeAll()
+            elements.removeAll()
+            searchElements.removeAll()
             nextOffset = 0
             nextSearchOffset = 0
             hasNextPage = library.hasNextPage
             hasNextSearchPage = false
-            resetPageVisibility()
-            publishPages()
         }
     }
 
@@ -105,42 +108,19 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             else { return }
             searchGeneration += 1
             hasNextSearchPage = false
-            searchPages.removeAll()
-            searchSlots.removeAll()
             searchElements.removeAll()
-            resetPageVisibility()
+            nextSearchOffset = 0
         }
     }
 
     let library: Library
     let pageSize: Int
 
-    /// Content groups delegate scheduled refreshes to their parent so visibility is resolved with the result.
-    let contentGroupRefreshRequests = PassthroughSubject<ContentGroupRefresh, Never>()
-    private let refreshesAutomatically: Bool
-
-    @Published
-    private(set) var slots: [LibraryPageSlot<Element>] = []
-    @Published
-    private(set) var searchSlots: [LibraryPageSlot<Element>] = []
-    @Published
-    private(set) var failedPageOffsets: Set<Int> = []
-
-    var maximumLoadedPages: Int?
-    private var pages = LibraryPageWindow<Element>()
-    private var searchPages = LibraryPageWindow<Element>()
-    private var visibleSlots: [Element.ID: Int] = [:]
-    private var pageReloads: [Int: Task<Void, Never>] = [:]
-
-    var displayedSlots: [LibraryPageSlot<Element>] {
-        isSearchActive ? searchSlots : slots
-    }
-
     private var nextOffset = 0
     private var nextSearchOffset = 0
     private var generation = 0
     private var searchGeneration = 0
-    private var isReleased = false
+    private var isInvalidated = false
 
     private var hasNextPage: Bool
     private var hasNextSearchPage: Bool
@@ -173,7 +153,6 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     init(
         library: Library,
         pageSize: Int = defaultPagingLibraryPageSize,
-        refreshesAutomatically: Bool = true,
         userSession: UserSession? = Container.shared.currentUserSession()
     ) {
         self.id = library.parent.pagingLibraryID
@@ -184,7 +163,6 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         self.hasNextSearchPage = false
         self.library = library
         self.pageSize = pageSize
-        self.refreshesAutomatically = refreshesAutomatically
 
         super.init()
         self.userSession = userSession
@@ -193,17 +171,24 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             .sink { [weak self] change in
                 guard let self else { return }
                 switch change {
-                case .updated:
-                    self.reconcileMembership()
-                    // Server-backed item collections share one invalidation rule. The
-                    // server resolves membership and ordering, including unloaded items.
-                    if PageElement.self == ItemPatch.self {
+                case let .updated(update):
+                    // User data can change membership in other collections.
+                    if update.userDataChanged,
+                       self.library.shouldRefreshForUserDataChange(environment: self.environment)
+                    {
+                        self.reconcileMembership(withID: update.itemID)
                         self.scheduleRefreshForStoreChange()
                     }
+                case .libraryChanged:
+                    self.scheduleRefreshForStoreChange()
                 case let .deleted(id):
-                    self.removeDeletedItem(withID: id)
+                    let removed = self.removeElements { self.matchesItemID($0.id, id) }
+                    // A deleted row can shift server offsets even when it was never loaded.
+                    if removed || self.library.hasNextPage {
+                        self.scheduleRefreshForStoreChange()
+                    }
                 case .invalidated:
-                    self.releaseLoadedPages()
+                    self.invalidateItems()
                 }
             }
             .store(in: &cancellables)
@@ -214,7 +199,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             .removeDuplicates()
             .debounce(for: .milliseconds(350), scheduler: RunLoop.main)
             .sink { [weak self] query in
-                guard let self, !self.isReleased else { return }
+                guard let self, !self.isInvalidated else { return }
                 self.search(query: query)
             }
             .store(in: &cancellables)
@@ -227,52 +212,39 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         }
     }
 
-    private func reconcileMembership() {
-        let removed = Set(slots.compactMap { slot in
-            slot.element.flatMap { library.includes($0, environment: environment) ? nil : slot.id }
-        })
-        let searchRemoved = Set(searchSlots.compactMap { slot in
-            slot.element.flatMap { library.includes($0, environment: environment) ? nil : slot.id }
-        })
-        guard !removed.isEmpty || !searchRemoved.isEmpty else { return }
-        pages.remove(ids: removed)
-        searchPages.remove(ids: searchRemoved)
-        publishPages()
-        scheduleRefreshForStoreChange()
+    private func reconcileMembership(withID id: String) {
+        _ = removeElements { element in
+            matchesItemID(element.id, id) && !library.includes(element, environment: environment)
+        }
     }
 
-    private func removeDeletedItem(withID id: String) {
-        let removed = Set(slots.compactMap { slot in
-            (slot.id as? ItemEntry.ID)?.item.itemID == id ||
-                (slot.id as? String) == id || (slot.id as? String?) == id ? slot.id : nil
-        })
-        let searchRemoved = Set(searchSlots.compactMap { slot in
-            (slot.id as? ItemEntry.ID)?.item.itemID == id ||
-                (slot.id as? String) == id || (slot.id as? String?) == id ? slot.id : nil
-        })
-        guard !removed.isEmpty || !searchRemoved.isEmpty else { return }
-        pages.remove(ids: removed)
-        searchPages.remove(ids: searchRemoved)
-        publishPages()
-        // Removing a server row shifts later offsets, including evicted pages.
-        scheduleRefreshForStoreChange()
+    private func removeElements(where shouldRemove: (Element) -> Bool) -> Bool {
+        var removed = false
+        if elements.contains(where: shouldRemove) {
+            elements.removeAll(where: shouldRemove)
+            removed = true
+        }
+        if searchElements.contains(where: shouldRemove) {
+            searchElements.removeAll(where: shouldRemove)
+            removed = true
+        }
+        return removed
     }
 
-    /// Releases membership while detail screens and other collections retain their own records.
-    func releaseLoadedPages() {
+    private func matchesItemID(_ elementID: Element.ID, _ itemID: String) -> Bool {
+        (elementID as? ItemEntry.ID)?.item.itemID == itemID ||
+            (elementID as? String) == itemID || (elementID as? String?) == itemID
+    }
+
+    private func invalidateItems() {
         generation += 1
         searchGeneration += 1
-        isReleased = true
+        isInvalidated = true
         storeRefreshTask?.cancel()
         storeRefreshTask = nil
         hasPendingStoreRefresh = false
         elements.removeAll()
         searchElements.removeAll()
-        pages.removeAll()
-        searchPages.removeAll()
-        slots.removeAll()
-        searchSlots.removeAll()
-        resetPageVisibility()
         nextOffset = 0
         nextSearchOffset = 0
         hasNextPage = false
@@ -280,206 +252,104 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         cancel()
     }
 
-    func pageDidAppear(_ slot: LibraryPageSlot<Element>) {
-        visibleSlots[slot.id] = slot.offset
-        guard maximumLoadedPages != nil else { return }
-        if slot.element == nil {
-            reloadPage(at: slot.offset)
-        }
-    }
-
-    func pageDidDisappear(_ slot: LibraryPageSlot<Element>) {
-        visibleSlots.removeValue(forKey: slot.id)
-        let offset = visibleSlots.values.min(by: { abs($0 - slot.offset) < abs($1 - slot.offset) }) ?? slot.offset
-        if retainPages(around: offset, isSearch: isSearchActive) {
-            publishPages()
-        }
-    }
-
-    func reloadPage(at offset: Int) {
-        let isSearch = isSearchActive
-        guard pageReloads[offset] == nil, !isReleased,
-              !(isSearch ? searchPages.isLoaded(offset: offset) : pages.isLoaded(offset: offset))
-        else { return }
-        let query = normalizedSearchQuery
-        let requestGeneration = generation
-        let requestSearchGeneration = searchGeneration
-        failedPageOffsets.remove(offset)
-        pageReloads[offset] = Task { [weak self] in
-            guard let self else { return }
-            defer {
-                if self.generation == requestGeneration, self.searchGeneration == requestSearchGeneration {
-                    self.pageReloads.removeValue(forKey: offset)
-                }
-            }
-            do {
-                let page = try self.pageState(offset: offset, pageSize: self.pageSize)
-                let response: [PageElement] = if isSearch, let searchable = self.searchableLibrary {
-                    try await searchable.retrieveSearchPage(query: query, environment: self.environment, pageState: page)
-                } else {
-                    try await self.library.retrievePage(environment: self.environment, pageState: page)
-                }
-                guard !Task.isCancelled, self.generation == requestGeneration,
-                      self.searchGeneration == requestSearchGeneration, !self.isReleased else { return }
-                try page.userSession.items.validate(page.itemRequest)
-                let elements = try self.materialize(response, pageState: page)
-                if isSearch {
-                    self.searchPages.store(elements, at: offset)
-                } else {
-                    self.pages.store(elements, at: offset)
-                }
-                self.retainPages(around: offset, isSearch: isSearch)
-                self.publishPages()
-            } catch {
-                guard !Task.isCancelled, self.generation == requestGeneration,
-                      self.searchGeneration == requestSearchGeneration else { return }
-                self.failedPageOffsets.insert(offset)
-                self.error = error
-            }
-        }
-    }
-
-    @discardableResult
-    private func retainPages(around offset: Int, isSearch: Bool) -> Bool {
-        guard let maximumLoadedPages else { return false }
-        let visibleOffsets = Set(visibleSlots.values)
-        if isSearch {
-            return searchPages.retain(around: offset, visibleOffsets: visibleOffsets, limit: maximumLoadedPages)
-        } else {
-            return pages.retain(around: offset, visibleOffsets: visibleOffsets, limit: maximumLoadedPages)
-        }
-    }
-
-    private func resetPageVisibility() {
-        cancelPageReloads()
-        visibleSlots.removeAll()
-    }
-
-    private func cancelPageReloads() {
-        pageReloads.values.forEach { $0.cancel() }
-        pageReloads.removeAll()
-        failedPageOffsets.removeAll()
-    }
-
     private func materialize(_ response: [PageElement], pageState: LibraryPageState) throws -> [Element] {
         try library.materialize(response, pageState: pageState).filter { library.includes($0, environment: environment) }
     }
 
-    private func publishPages() {
-        slots = pages.slots
-        searchSlots = searchPages.slots
-        visibleSlots = Dictionary(uniqueKeysWithValues: displayedSlots.compactMap { slot in
-            visibleSlots[slot.id].map { _ in (slot.id, slot.offset) }
-        })
-        elements = IdentifiedArray(uniqueElements: slots.compactMap(\.element))
-        searchElements = IdentifiedArray(uniqueElements: searchSlots.compactMap(\.element))
-        contentGroupRefreshRequests.send(.resolution)
-    }
-
     private func scheduleRefreshForStoreChange() {
-        guard !isReleased else { return }
-
+        guard !isInvalidated else { return }
         hasPendingStoreRefresh = true
         guard storeRefreshTask == nil else { return }
 
+        let delay = max(0.35, 5 - Date.now.timeIntervalSince(lastStoreRefresh))
         storeRefreshTask = Task { @MainActor [weak self] in
-            guard let self else { return }
+            try? await Task.sleep(for: .seconds(delay))
+            guard !Task.isCancelled, let self, !self.isInvalidated else { return }
+            self.hasPendingStoreRefresh = false
 
-            // A response can itself update the store. Keep changes received in flight
-            // for the next pass instead of cancelling the request that discovered them.
-            while self.hasPendingStoreRefresh {
-                let delay = max(0.35, 5 - Date.now.timeIntervalSince(self.lastStoreRefresh))
-                try? await Task.sleep(for: .seconds(delay))
-                guard !Task.isCancelled, !self.isReleased else { return }
-                self.hasPendingStoreRefresh = false
-
-                if self.refreshesAutomatically {
-                    await self.background.refresh()
-                    guard !Task.isCancelled else { return }
-                    if self.isSearchActive {
-                        await self.search(query: self.normalizedSearchQuery)
-                    }
-                    guard !Task.isCancelled else { return }
-                } else {
-                    self.contentGroupRefreshRequests.send(.contents)
-                }
-                self.lastStoreRefresh = Date.now
+            await self.background.refresh()
+            guard !Task.isCancelled else { return }
+            if self.isSearchActive {
+                await self.search(query: self.normalizedSearchQuery)
             }
+            guard !Task.isCancelled else { return }
+            self.lastStoreRefresh = Date.now
             self.storeRefreshTask = nil
+
+            // Changes received during the request get another pass without retaining this owner while waiting.
+            if self.hasPendingStoreRefresh {
+                self.scheduleRefreshForStoreChange()
+            }
         }
         .asAnyCancellable()
     }
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
+        guard !isInvalidated else { return }
         generation += 1
-        isReleased = false
         hasNextPage = true
         nextOffset = 0
-        cancelPageReloads()
         if !StateTask.isBackground {
-            visibleSlots.removeAll()
-            pages.removeAll()
-            publishPages()
+            elements.removeAll()
         }
         try await loadPage(replacing: true)
     }
 
     @Function(\Action.Cases.getNextPage)
     private func _getNextPage() async throws {
-        guard hasNextPage, !isReleased else { return }
+        guard hasNextPage, !isInvalidated, !background.is(.refreshing) else { return }
         await _actuallyGetNextPage()
     }
 
     @Function(\Action.Cases._actuallyGetNextPage)
     private func __actuallyGetNextPage() async throws {
-        guard hasNextPage, !isReleased else { return }
+        guard hasNextPage, !isInvalidated, !background.is(.refreshing) else { return }
         try await loadPage(replacing: false)
     }
 
     private func loadPage(replacing: Bool) async throws {
         let requestGeneration = generation
         var replacing = replacing
-        while !Task.isCancelled, !isReleased {
+        while !Task.isCancelled, !isInvalidated {
             let offset = replacing ? 0 : nextOffset
             let page = try pageState(offset: offset, pageSize: pageSize)
             let response = try await library.retrievePage(environment: environment, pageState: page)
 
-            guard !Task.isCancelled, requestGeneration == generation, !isReleased,
+            guard !Task.isCancelled, requestGeneration == generation, !isInvalidated,
                   replacing || offset == nextOffset else { return }
             try page.userSession.items.validate(page.itemRequest)
-            let previousCount = replacing ? 0 : slots.count
-            let items = try materialize(response, pageState: page)
+            let previousCount = replacing ? 0 : elements.count
+            let items = try IdentifiedArray(
+                materialize(response, pageState: page),
+                uniquingIDsWith: { existing, _ in existing }
+            )
             let progress = page.progress(returnedCount: response.count)
             nextOffset = progress.nextOffset
             hasNextPage = library.hasNextPage && progress.hasNextPage
             if replacing {
-                pages.removeAll()
+                elements = items
                 replacing = false
+            } else {
+                elements.append(contentsOf: items.filter { elements[id: $0.id] == nil })
             }
-            pages.store(items, at: offset)
-            retainPages(around: offset, isSearch: false)
-            publishPages()
-            guard slots.count == previousCount, hasNextPage else { return }
+            guard elements.count == previousCount, hasNextPage else { return }
         }
     }
 
     @Function(\Action.Cases.search)
     private func _search(_ query: String) async throws {
-        guard !isReleased else { return }
+        guard !isInvalidated else { return }
         nextSearchOffset = 0
-        searchPages.removeAll()
+        searchElements.removeAll()
         guard query.isNotEmpty,
               searchableLibrary != nil
         else {
             hasNextSearchPage = false
-            publishPages()
             return
         }
 
         searchGeneration += 1
-        resetPageVisibility()
-        publishPages()
         hasNextSearchPage = true
         try await retrieveNextSearchPage(query: query)
     }
@@ -500,7 +370,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         else { return }
 
         let requestGeneration = searchGeneration
-        while !Task.isCancelled, !isReleased {
+        while !Task.isCancelled, !isInvalidated {
             let offset = nextSearchOffset
             let page = try pageState(offset: offset, pageSize: pageSize)
             let response = try await searchableLibrary.retrieveSearchPage(
@@ -512,19 +382,20 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             guard !Task.isCancelled,
                   query == normalizedSearchQuery,
                   requestGeneration == searchGeneration,
-                  offset == nextSearchOffset, !isReleased
+                  offset == nextSearchOffset, !isInvalidated
             else { return }
 
             try page.userSession.items.validate(page.itemRequest)
-            let previousCount = searchSlots.count
-            let items = try materialize(response, pageState: page)
+            let previousCount = searchElements.count
+            let items = try IdentifiedArray(
+                materialize(response, pageState: page),
+                uniquingIDsWith: { existing, _ in existing }
+            )
             let progress = page.progress(returnedCount: response.count)
             nextSearchOffset = progress.nextOffset
             hasNextSearchPage = progress.hasNextPage
-            searchPages.store(items, at: offset)
-            retainPages(around: offset, isSearch: true)
-            publishPages()
-            guard searchSlots.count == previousCount, hasNextSearchPage else { return }
+            searchElements.append(contentsOf: items.filter { searchElements[id: $0.id] == nil })
+            guard searchElements.count == previousCount, hasNextSearchPage else { return }
         }
     }
 
@@ -535,7 +406,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         if let randomLibrary = library as? any WithRandomElementLibrary<Element, Environment, PageElement> {
             let page = try pageState(offset: 0, pageSize: 1)
             let value = try await randomLibrary.retrieveRandomElement(environment: environment, pageState: page)
-            guard !Task.isCancelled, requestGeneration == generation, !isReleased else { return }
+            guard !Task.isCancelled, requestGeneration == generation, !isInvalidated else { return }
             try page.userSession.items.validate(page.itemRequest)
             randomElement = try value.flatMap { try materialize([$0], pageState: page).first }
         } else {

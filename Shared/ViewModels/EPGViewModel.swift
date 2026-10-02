@@ -17,6 +17,7 @@ final class EPGViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case getNextPage
         case refresh(startDate: Date?)
         case setDate(date: Date)
@@ -42,10 +43,12 @@ final class EPGViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case gettingNextPage
     }
 
     enum State {
+
         case content
         case error
         case initial
@@ -53,6 +56,7 @@ final class EPGViewModel: ViewModel {
     }
 
     private struct ChannelPage {
+
         let channels: [ItemPatch]
         let pageState: LibraryPageState
         let nextOffset: Int
@@ -60,7 +64,7 @@ final class EPGViewModel: ViewModel {
     }
 
     @Published
-    private(set) var channels: ItemCollection = IdentifiedArray(
+    private(set) var channels: IdentifiedArrayOf<ItemEntry> = IdentifiedArray(
         [],
         uniquingIDsWith: { existing, _ in existing }
     )
@@ -107,8 +111,12 @@ final class EPGViewModel: ViewModel {
                 case let .deleted(id):
                     self.channels.removeAll { $0.itemID == id }
                     self.programs.removeValue(forKey: id)
-                    for channelID in self.programs.keys {
-                        self.programs[channelID]?.removeAll { $0.programs.isEmpty }
+                    for (channelID, blocks) in self.programs where blocks.contains(where: { $0.id.programIDs.contains(id) }) {
+                        // Grouped programs cache their bounds, so rebuild them after removing a member.
+                        self.programs[channelID] = blocks.flatMap(\.programs).programBlocks(
+                            startDate: self.startDate,
+                            endDate: self.endDate
+                        )
                     }
                     self.programsRevision &+= 1
                 case .invalidated:
@@ -117,7 +125,7 @@ final class EPGViewModel: ViewModel {
                     self.programs.removeAll()
                     self.hasNextChannelPage = false
                     self.programsRevision &+= 1
-                case .updated:
+                case .updated, .libraryChanged:
                     break
                 }
             }
@@ -233,7 +241,7 @@ final class EPGViewModel: ViewModel {
                   let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else { return nil }
             return ItemEntry(item: record)
         }
-        let byChannel = Dictionary(grouping: entries) { $0.channelID ?? "" }
+        let byChannel = Dictionary(grouping: entries) { $0.snapshot.channelID ?? "" }
         return byChannel.mapValues { entries in
             entries.map(\.snapshot).programBlocks(startDate: startDate, endDate: endDate)
         }

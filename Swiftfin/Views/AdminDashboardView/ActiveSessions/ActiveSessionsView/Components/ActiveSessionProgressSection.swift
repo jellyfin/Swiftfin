@@ -13,7 +13,7 @@ extension ActiveSessionsView {
 
     struct ProgressSection: View {
 
-        @StoredItem
+        @SharedBaseItem
         var item: BaseItemDto
         let playState: PlayerStateInfo
         let transcodingInfo: TranscodingInfo?

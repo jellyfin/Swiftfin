@@ -17,6 +17,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
 
     @CasePathable
     enum Action {
+
         case cancel
         case refresh
         case getLibraries(isHidden: Bool? = false)
@@ -40,15 +41,18 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
     }
 
     enum BackgroundState {
+
         case updating
         case refreshing
     }
 
     enum Event {
+
         case updated
     }
 
     enum State {
+
         case initial
         case content
         case error
@@ -56,7 +60,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
 
     @Published
     private(set) var user: UserDto
-    @StoredItems
+    @SharedBaseItems
     var libraries: [BaseItemDto] = []
 
     init(user: UserDto) {

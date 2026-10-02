@@ -39,23 +39,26 @@ class ItemEditorViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case updating
     }
 
     enum Event {
+
         case deleted
         case metadataRefreshStarted
         case updated
     }
 
     enum State {
+
         case initial
         case error
     }
 
     // MARK: - Published Properties
 
-    @StoredItem
+    @SharedBaseItem
     var item: BaseItemDto
 
     // MARK: - Initialization

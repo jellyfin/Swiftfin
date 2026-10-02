@@ -16,7 +16,7 @@ struct PosterImage<Element: Poster>: View {
     private var environment
 
     private let contentMode: ContentMode
-    @StoredMediaValue
+    @SharedPoster
     private var element: Element
     private var pipeline: ImagePipeline
     private let size: PosterDisplayType.Size

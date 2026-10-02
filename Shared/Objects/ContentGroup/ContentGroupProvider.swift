@@ -16,20 +16,21 @@ protocol ContentGroupProvider: Displayable, Identifiable {
     var environment: Environment { get set }
     var id: String { get }
 
-    /// Emit on the main actor; `.groups` rebuilds the candidates using `makeGroups`.
-    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> { get }
+    var refreshRequests: AnyPublisher<Void, Never> { get }
 
     @ContentGroupBuilder
     func makeGroups(environment: Environment) async throws -> [any ContentGroup]
 }
 
 extension ContentGroupProvider {
-    var refreshRequests: AnyPublisher<ContentGroupRefresh, Never> {
+
+    var refreshRequests: AnyPublisher<Void, Never> {
         Combine.Empty().eraseToAnyPublisher()
     }
 }
 
 extension ContentGroupProvider where Environment == Empty {
+
     var environment: Empty {
         get { .init() }
         set {}

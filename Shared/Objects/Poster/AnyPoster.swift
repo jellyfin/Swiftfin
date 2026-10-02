@@ -35,6 +35,7 @@ private func anyPosterImageSources<P: Poster>(
 struct AnyPoster: Poster {
 
     struct ID: Hashable {
+
         let posterType: ObjectIdentifier
         let value: AnyHashable
     }
@@ -58,7 +59,7 @@ struct AnyPoster: Poster {
     @MainActor
     init<P: Poster>(_ poster: P) {
         if let dto = poster as? BaseItemDto {
-            let entry = StoredItem(wrappedValue: dto).entry
+            let entry = SharedBaseItem(wrappedValue: dto).entry
             self._poster = entry
             self._id = ID(posterType: ObjectIdentifier(ItemEntry.self), value: AnyHashable(entry.id))
         } else {
@@ -128,5 +129,36 @@ struct AnyPoster: Poster {
 
     static func == (lhs: AnyPoster, rhs: AnyPoster) -> Bool {
         lhs.id == rhs.id
+    }
+}
+
+@MainActor
+@propertyWrapper
+struct SharedPoster<Value: Poster> {
+
+    private enum Storage {
+
+        case item(SharedBaseItem)
+        case value(Value)
+    }
+
+    private var storage: Storage
+
+    init(wrappedValue: Value) {
+        if let item = wrappedValue as? BaseItemDto {
+            storage = .item(SharedBaseItem(wrappedValue: item))
+        } else {
+            storage = .value(wrappedValue)
+        }
+    }
+
+    var wrappedValue: Value {
+        get {
+            switch storage {
+            case let .item(item): item.wrappedValue as! Value
+            case let .value(value): value
+            }
+        }
+        set { self = SharedPoster(wrappedValue: newValue) }
     }
 }

@@ -15,6 +15,7 @@ import SwiftUI
 struct ContentGroupView<Provider: ContentGroupProvider>: View {
 
     private enum Focus: String {
+
         case content = "contentGroup-content"
     }
 
@@ -128,7 +129,9 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
         .sinceLastDisappear { interval in
             viewModel.refreshIfNeeded(sinceLastDisappear: interval)
         }
-        .refreshingContentGroups(viewModel: viewModel)
+        .onSceneWillEnterForeground {
+            viewModel.refreshIfPendingChanges()
+        }
         .topBarTrailing {
             if #unavailable(iOS 26.0) {
                 if viewModel.background.is(.refreshing) {

@@ -41,7 +41,7 @@ extension MediaPlayerItem {
         }
 
         var item = try await initialItem.getFullItem(userSession: userSession)
-        let storedItem = StoredItem(wrappedValue: item).entry
+        let storedItem = SharedBaseItem(wrappedValue: item).entry
         guard let currentItem = storedItem.value else { throw ItemStore.StoreError.itemUnavailable }
         item = currentItem
 

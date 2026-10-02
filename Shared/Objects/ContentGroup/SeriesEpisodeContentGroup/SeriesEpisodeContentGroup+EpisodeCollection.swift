@@ -13,6 +13,7 @@ import SwiftUI
 extension SeriesEpisodeContentGroup {
 
     private enum EpisodeElement: Identifiable {
+
         case empty
         case episode(ItemEntry)
         case error(Error)
@@ -62,7 +63,7 @@ extension SeriesEpisodeContentGroup {
         @ObservedObject
         var seasonViewModel: PagingLibraryViewModel<EpisodeLibrary>
 
-        @StoredOptionalItem
+        @OptionalSharedBaseItem
         var playButtonItem: BaseItemDto?
         let header: Header
 
@@ -121,6 +122,7 @@ extension SeriesEpisodeContentGroup {
     private struct EpisodeCollectionLayout<Header: View, Content: View>: View {
 
         private enum FocusedSection: Hashable {
+
             case seasons
             case episodes
         }

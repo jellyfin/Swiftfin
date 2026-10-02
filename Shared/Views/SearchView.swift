@@ -112,7 +112,6 @@ struct SearchView: View {
         .onFirstAppear {
             viewModel.getSuggestions()
         }
-        .refreshingContentGroups(viewModel: viewModel.itemContentGroupViewModel)
         .onChange(of: searchQuery) {
             viewModel.search(query: searchQuery)
         }

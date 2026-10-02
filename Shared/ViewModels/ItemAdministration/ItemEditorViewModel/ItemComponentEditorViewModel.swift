@@ -18,6 +18,7 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
 
     @CasePathable
     enum Action {
+
         case actuallySearch(String)
         case add([Element])
         case remove([Element])
@@ -37,20 +38,23 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
     }
 
     enum BackgroundState {
+
         case updating
         case searching
     }
 
     enum Event {
+
         case updated
     }
 
     enum State {
+
         case initial
         case error
     }
 
-    @StoredItem
+    @SharedBaseItem
     private(set) var item: BaseItemDto
     @Published
     private(set) var matches: [Element] = []

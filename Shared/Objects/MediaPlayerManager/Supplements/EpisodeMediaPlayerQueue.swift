@@ -195,10 +195,12 @@ extension EpisodeMediaPlayerQueue {
         }
 
         private func setSelectionIfNeeded(seasons: IdentifiedArrayOf<PagingLibraryViewModel<EpisodeLibrary>>) {
-            guard selection == nil, !seasons.isEmpty else { return }
-
-            selection = seasons.first?.id
-            seasons.first?.refresh()
+            if selection == nil || !seasons.contains(where: { $0.id == selection }) {
+                selection = seasons.first?.id
+            }
+            if let selection, let selectedSeason = seasons[id: selection], selectedSeason.state == .initial {
+                selectedSeason.refresh()
+            }
         }
 
         @ViewBuilder
@@ -262,7 +264,7 @@ extension EpisodeMediaPlayerQueue {
                                     Text(subtitle)
                                 }
 
-                                if let runtime = item.runTimeLabel {
+                                if let runtime = item.snapshot.runTimeLabel {
                                     Text(runtime)
                                 }
                             }

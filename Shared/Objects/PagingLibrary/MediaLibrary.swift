@@ -14,6 +14,7 @@ protocol MediaLibrary: PagingLibrary where Element == ItemEntry, PageElement == 
 
 @MainActor
 extension MediaLibrary {
+
     func materialize(_ page: [ItemPatch], pageState: LibraryPageState) throws -> [ItemEntry] {
         try page.compactMap { patch in
             guard patch.value.id?.nilIfBlank != nil,
@@ -21,14 +22,5 @@ extension MediaLibrary {
             else { return nil }
             return ItemEntry(item: record, occurrence: patch.value.playlistItemID)
         }
-    }
-}
-
-extension ItemStore {
-    func results<Library: MediaLibrary>(
-        for library: Library,
-        pageSize: Int = defaultPagingLibraryPageSize
-    ) -> PagingLibraryViewModel<Library> {
-        PagingLibraryViewModel(library: library, pageSize: pageSize, userSession: session as? UserSession)
     }
 }

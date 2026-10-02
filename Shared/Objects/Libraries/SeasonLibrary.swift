@@ -12,12 +12,15 @@ import JellyfinAPI
 struct SeasonViewModelLibrary: PagingLibrary {
 
     let hasNextPage = false
-    @StoredItem
+    @SharedBaseItem
     var parent: BaseItemDto
 
     typealias Element = PagingLibraryViewModel<EpisodeLibrary>
 
-    func retrievePage(environment: Empty, pageState: LibraryPageState) async throws -> [ItemPatch] {
+    func retrievePage(
+        environment: Empty,
+        pageState: LibraryPageState
+    ) async throws -> [ItemPatch] {
         if parent.type == .season {
             return try [ItemPatch(value: parent)]
         }
@@ -36,7 +39,7 @@ struct SeasonLibrary: BaseItemKindLibrary {
     let hasNextPage = false
 
     let libraryItemTypes: [BaseItemKind] = [.season]
-    @StoredItem
+    @SharedBaseItem
     var parent: BaseItemDto
 
     func retrievePage(

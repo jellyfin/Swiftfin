@@ -10,22 +10,27 @@ import Combine
 import Foundation
 import JellyfinAPI
 
+/// Views and collections own records; each session's store keeps weak references.
 @MainActor
 final class ItemStore {
 
     struct RequestToken {
+
         fileprivate let sessionID: UUID
         fileprivate let revision: UInt64
     }
 
     enum Change {
+
         case updated(Update)
         case deleted(String)
+        /// Membership or ordering changed, including unloaded items.
+        case libraryChanged
         case invalidated
     }
 
-    /// Describes a confirmed change, without copying item data out of the store.
     struct Update {
+
         let itemID: String
         var metadataChanged = false
         var userDataChanged = false
@@ -36,6 +41,7 @@ final class ItemStore {
     }
 
     enum StoreError: Error {
+
         case invalidItemID
         case invalidSession
         case itemUnavailable
@@ -47,21 +53,19 @@ final class ItemStore {
         changeSubject.eraseToAnyPublisher()
     }
 
-    let actionErrors = PassthroughSubject<Error, Never>()
     let sessionID = UUID()
-    weak var session: AnyObject?
     private(set) var isActive = true
     private var revision: UInt64 = 0
     private var records: [String: WeakBox<ItemRecord>] = [:]
     private var deletedIDs: Set<String> = []
-    private var insertionsSincePrune = 0
+    private var insertionsUntilPrune = 128
     private var mutations: [String: [(id: UUID, task: Task<Void, Error>)]] = [:]
-    var subscriptions = Set<AnyCancellable>()
 
     func retainedRecord(id: String) -> ItemRecord? {
         records[id]?.value
     }
 
+    /// Create before sending a request to order its updates against other responses.
     func beginRequest() throws -> RequestToken {
         guard isActive else { throw StoreError.invalidSession }
         revision += 1
@@ -128,53 +132,57 @@ final class ItemStore {
         }
     }
 
-    /// Editors submit complete metadata drafts. Their nil fields are intentional clears;
-    /// user data belongs to the current session and is never copied from an editing draft.
+    /// Nil draft fields clear metadata; session user data is preserved.
     func acceptMetadataDraft(_ value: BaseItemDto, token: RequestToken) throws {
         try validate(token)
         _ = try merge(ItemPatch(value: value, replacesMetadata: true), token: beginRequest())
+        libraryDidChange()
     }
 
-    /// Serialize writes for an item. Pending changes overlay confirmed data, so a failed
-    /// earlier operation can never roll back a later choice or another field.
+    /// Serialize writes while preserving later optimistic changes if an earlier write fails.
     func mutateUserData(
-        _ entry: ItemEntry,
+        _ item: ItemRecord,
         field: ItemUserDataField,
         to value: Bool,
         operation: @escaping @MainActor () async throws -> ItemUserDataPatch
     ) async throws {
-        guard entry.id.item.sessionID == sessionID, entry.value != nil else { throw StoreError.itemUnavailable }
+        guard item.id.sessionID == sessionID, item.value != nil else { throw StoreError.itemUnavailable }
+        let itemID = item.id.itemID
         let token = try beginRequest()
         let mutationID = UUID()
-        let previous = mutations[entry.itemID]?.last?.task
-        entry.item.beginChange(id: mutationID, field: field, value: value)
+        let previous = mutations[itemID]?.last?.task
+        item.beginChange(id: mutationID, field: field, value: value)
         let task = Task {
             defer {
-                entry.item.endChange(id: mutationID)
-                mutations[entry.itemID]?.removeAll { $0.id == mutationID }
-                if mutations[entry.itemID]?.isEmpty == true {
-                    mutations.removeValue(forKey: entry.itemID)
+                item.endChange(id: mutationID)
+                mutations[itemID]?.removeAll { $0.id == mutationID }
+                if mutations[itemID]?.isEmpty == true {
+                    mutations.removeValue(forKey: itemID)
                 }
             }
             if let previous {
                 _ = await previous.result
             }
             try validate(token)
-            guard entry.value != nil else { throw StoreError.itemUnavailable }
+            guard item.value != nil else { throw StoreError.itemUnavailable }
             var data = try await operation()
             try validate(token)
-            guard entry.value != nil else { throw StoreError.itemUnavailable }
-            data.value.itemID = entry.itemID
-            // Confirm and remove the overlay before the next queued write starts.
-            // Reads started during the write must not restore its old state.
+            guard item.value != nil else { throw StoreError.itemUnavailable }
+            data.value.itemID = itemID
+            // A new revision prevents reads started during the write from restoring stale data.
             try mergeUserData(data, token: beginRequest())
         }
-        mutations[entry.itemID, default: []].append((mutationID, task))
+        mutations[itemID, default: []].append((mutationID, task))
         try await withTaskCancellationHandler {
             try await task.value
         } onCancel: {
             task.cancel()
         }
+    }
+
+    func libraryDidChange() {
+        guard isActive else { return }
+        changeSubject.send(.libraryChanged)
     }
 
     func delete(id: String) {
@@ -193,7 +201,6 @@ final class ItemStore {
             mutation.task.cancel()
         }
         mutations.removeAll()
-        subscriptions.removeAll()
         for record in records.values {
             record.value?.invalidate()
         }
@@ -201,24 +208,25 @@ final class ItemStore {
         deletedIDs.removeAll()
         changeSubject.send(.invalidated)
         changeSubject.send(completion: .finished)
-        actionErrors.send(completion: .finished)
     }
 
     func prune() {
         records = records.filter { $0.value.value != nil }
-        insertionsSincePrune = 0
+        insertionsUntilPrune = max(128, records.count)
     }
 
     private func record(for id: String) -> ItemRecord {
         if let record = records[id]?.value {
             return record
         }
-        if insertionsSincePrune >= 128 {
+        // Only discard dead weak references. Space scans with the registry size so
+        // loading a large, still-owned library does not repeatedly scan every item.
+        if insertionsUntilPrune == 0 {
             prune()
         }
         let record = ItemRecord(id: ItemKey(sessionID: sessionID, itemID: id))
         records[id] = WeakBox(value: record)
-        insertionsSincePrune += 1
+        insertionsUntilPrune -= 1
         return record
     }
 
