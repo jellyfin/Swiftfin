@@ -3,6 +3,10 @@ name: "Build 🔨"
 on:
   push:
     branches: [ main ]
+    paths:
+      - '**'
+      - '!Translations/*.lproj/**'
+      - 'Translations/en.lproj/**'
   pull_request:
     types:
       - opened
@@ -10,6 +14,10 @@ on:
       - synchronize
       - ready_for_review
     branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
