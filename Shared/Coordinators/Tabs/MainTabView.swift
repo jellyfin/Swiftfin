@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Defaults
 import FactoryKit
 import JellyfinAPI
@@ -22,9 +21,6 @@ struct MainTabView: View {
 
     @InjectedObject(\.userSessionManager)
     private var userSessionManager
-
-    @State
-    private var itemActionError: Error?
 
     @StateObject
     private var tabCoordinator: TabCoordinator
@@ -129,17 +125,8 @@ struct MainTabView: View {
         #endif
     }
 
-    private var itemErrors: AnyPublisher<Error, Never> {
-        userSessionManager.currentSession?.itemActionErrors.eraseToAnyPublisher()
-            ?? Combine.Empty<Error, Never>().eraseToAnyPublisher()
-    }
-
     var body: some View {
         tabContent()
-            .onReceive(itemErrors) { error in
-                itemActionError = error
-            }
-            .errorMessage($itemActionError)
             .onChange(of: userSessionManager.pendingDeepLink) {
                 routePendingDeepLink(userSessionManager.consumePendingDeepLink())
             }

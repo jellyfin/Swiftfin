@@ -92,7 +92,7 @@ final class ItemRecord: Identifiable {
         var metadataRevisions = self.metadataRevisions
         var value = previous
 
-        if !metadataFields.isEmpty || patch.replacesMetadata {
+        if metadataFields.isNotEmpty || patch.replacesMetadata {
             var incomingMetadata = patch.value
             incomingMetadata.userData = nil
             incomingMetadata.currentProgram = nil
