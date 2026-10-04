@@ -18,7 +18,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         var body: some View {
             Button(
                 L10n.aspectFill,
-                systemImage: viewState.aspectFillBehavior == .fill ?
+                systemImage: viewState.isVideoEnlarged ?
                     VideoPlayerActionButton.aspectFill.secondarySystemImage :
                     VideoPlayerActionButton.aspectFill.systemImage
             ) {

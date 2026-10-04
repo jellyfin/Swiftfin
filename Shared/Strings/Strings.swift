@@ -728,6 +728,8 @@ internal enum L10n {
   internal static let featurette = L10n.tr("Localizable", "featurette", fallback: "Featurette")
   /// File
   internal static let file = L10n.tr("Localizable", "file", fallback: "File")
+  /// Fill
+  internal static let fill = L10n.tr("Localizable", "fill", fallback: "Fill")
   /// Filters
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
   /// Folder
@@ -1168,6 +1170,8 @@ internal enum L10n {
   internal static let orange = L10n.tr("Localizable", "orange", fallback: "Orange")
   /// Order
   internal static let order = L10n.tr("Localizable", "order", fallback: "Order")
+  /// Original
+  internal static let original = L10n.tr("Localizable", "original", fallback: "Original")
   /// Original air date
   internal static let originalAirDate = L10n.tr("Localizable", "originalAirDate", fallback: "Original air date")
   /// Original aspect ratio
@@ -2024,6 +2028,8 @@ internal enum L10n {
   internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")
   /// Yes
   internal static let yes = L10n.tr("Localizable", "yes", fallback: "Yes")
+  /// Zoom
+  internal static let zoom = L10n.tr("Localizable", "zoom", fallback: "Zoom")
 }
 
 extension L10n {

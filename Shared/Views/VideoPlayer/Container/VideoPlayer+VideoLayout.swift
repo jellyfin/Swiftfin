@@ -16,18 +16,39 @@ extension VideoPlayer {
         let behavior: ViewState.AspectFillBehavior
         let renderSize: CGSize
         let renderScale: CGFloat
+        let renderOffset: CGSize
+        private let zoomFrame: CGRect?
+
+        var isZoomed: Bool {
+            zoomFrame != nil
+        }
 
         init(
             videoSize: CGSize,
             viewportSize: CGSize,
-            behavior: ViewState.AspectFillBehavior
+            behavior: ViewState.AspectFillBehavior,
+            zoom: VideoZoom = VideoZoom()
         ) {
             self.aspectRatio = videoSize.aspectRatio
-            self.behavior = behavior
 
-            let geometry = Self.renderGeometry(aspectRatio: aspectRatio, viewportSize: viewportSize, behavior: behavior)
-            self.renderSize = geometry.size
-            self.renderScale = geometry.scale
+            if let geometry = zoom.geometry, let transform = zoom.transform {
+                let frame = geometry.frame(at: transform.scale, offset: transform.offset)
+                self.behavior = .fit
+                self.renderSize = geometry.fitFrame.size
+                self.renderScale = transform.scale
+                self.renderOffset = CGSize(
+                    width: frame.midX - geometry.viewportSize.width / 2,
+                    height: frame.midY - geometry.viewportSize.height / 2
+                )
+                self.zoomFrame = frame
+            } else {
+                let geometry = Self.renderGeometry(aspectRatio: aspectRatio, viewportSize: viewportSize, behavior: behavior)
+                self.behavior = behavior
+                self.renderSize = geometry.size
+                self.renderScale = geometry.scale
+                self.renderOffset = .zero
+                self.zoomFrame = nil
+            }
         }
 
         private static func renderGeometry(
@@ -50,6 +71,9 @@ extension VideoPlayer {
         }
 
         func videoFrame(in bounds: CGRect) -> CGRect {
+            if let zoomFrame {
+                return zoomFrame.offsetBy(dx: bounds.minX, dy: bounds.minY)
+            }
             let geometry = Self.renderGeometry(aspectRatio: aspectRatio, viewportSize: bounds.size, behavior: behavior)
             let size = CGSize(width: geometry.size.width * geometry.scale, height: geometry.size.height * geometry.scale)
             guard size.width.isFinite, size.height.isFinite else { return bounds }
@@ -96,27 +120,50 @@ extension VideoPlayer {
                 content(VideoLayout(
                     videoSize: videoSize.value,
                     viewportSize: viewport.size,
-                    behavior: viewState.aspectFillBehavior
+                    behavior: viewState.aspectFillBehavior,
+                    zoom: viewState.zoom
                 ))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .transaction { transaction in
+                    if viewState.zoom.isInteracting {
+                        transaction.animation = nil
+                        transaction.disablesAnimations = true
+                    }
+                }
             }
         }
 
         var body: some View {
             #if os(iOS)
             NotchReader { notchMeasurement in
-                let usesSystemSafeArea = viewState.isCompact && notchMeasurement?.cutout == nil
-                viewport
-                    .padding(usesSystemSafeArea ? EdgeInsets() : VideoLayout.padding(
-                        insets: notchMeasurement?.insets ?? .init(),
-                        behavior: viewState.aspectFillBehavior
-                    ))
-                    .opacity(viewState.aspectFillBehavior == .fill || notchMeasurement != nil ? 1 : 0)
-                    .animation(.easeInOut(duration: 0.2), value: viewState.aspectFillBehavior)
-                    .ignoresSafeArea(
-                        .container,
-                        edges: viewState.aspectFillBehavior == .fill || !usesSystemSafeArea ? .all : []
+                GeometryReader { geometry in
+                    let usesSystemSafeArea = viewState.isCompact && notchMeasurement?.cutout == nil
+                    let fitInsets = usesSystemSafeArea
+                        ? (notchMeasurement?.systemInsets ?? geometry.safeAreaInsets)
+                        : VideoLayout.padding(insets: notchMeasurement?.insets ?? .init(), behavior: .fit)
+                    let zoomGeometry = VideoZoom.Geometry(
+                        videoSize: videoSize.value,
+                        viewportSize: geometry.size,
+                        fitViewport: CGRect(
+                            x: fitInsets.leading,
+                            y: fitInsets.top,
+                            width: geometry.size.width - fitInsets.leading - fitInsets.trailing,
+                            height: geometry.size.height - fitInsets.top - fitInsets.bottom
+                        )
                     )
+
+                    viewport
+                        .padding(viewState.zoom.transform == nil && viewState.aspectFillBehavior == .fit ? fitInsets : .init())
+                        .opacity(viewState.aspectFillBehavior == .fill || notchMeasurement != nil ? 1 : 0)
+                        .animation(.easeInOut(duration: 0.2), value: viewState.aspectFillBehavior)
+                        .onChange(of: zoomGeometry, initial: true) { _, value in
+                            if viewState.zoom.geometry != value {
+                                viewState.resetZoom()
+                                viewState.zoom = VideoZoom(geometry: value)
+                            }
+                        }
+                }
+                .ignoresSafeArea(.container)
             }
             #else
             viewport

@@ -41,6 +41,11 @@ extension VideoPlayer.UIContainerViewController {
             return
         }
 
+        if viewState.canPanZoom || viewState.zoom.isPanning {
+            handleZoomPan(translation: translation, state: state)
+            return
+        }
+
         let direction: Direction = {
             // Prioritize horizontal detection just a bit more
             if velocity.y.magnitude < velocity.x.magnitude + 20 {
@@ -93,6 +98,25 @@ extension VideoPlayer.UIContainerViewController {
         guard state != .ended, state != .cancelled, state != .failed else {
             viewState.panHandlingAction = nil
             return
+        }
+    }
+
+    private func handleZoomPan(translation: CGPoint, state: UIGestureRecognizer.State) {
+        switch state {
+        case .began:
+            viewState.zoom.beginPan()
+            viewState.zoom.updatePan(translation: translation)
+        case .changed:
+            viewState.zoom.updatePan(translation: translation)
+        case .ended:
+            viewState.zoom.updatePan(translation: translation)
+            fallthrough
+        case .cancelled, .failed:
+            withAnimation(.spring(response: 0.3, dampingFraction: 1)) {
+                viewState.zoom.endPan()
+            }
+        default:
+            break
         }
     }
 
