@@ -149,7 +149,7 @@ struct VideoPlayerSettingsView: View {
                 value: L10n.playerVlcDescription
             )
             LabeledContent(
-                L10n.native,
+                L10n.avPlayer,
                 value: L10n.playerNativeDescription
             )
         }

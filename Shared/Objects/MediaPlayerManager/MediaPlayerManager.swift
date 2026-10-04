@@ -496,3 +496,36 @@ final class MediaPlayerManager: ViewModel {
         )
     }
 }
+
+// MARK: - Picture in Picture
+
+extension MediaPlayerManager {
+
+    func startPictureInPicture() {
+        guard proxy is any MediaPlayerPictureInPictureCapable else { return }
+
+        Task { await startPiPWhenReady(attemptsLeft: 5) }
+    }
+
+    func stopPictureInPicture() {
+        (proxy as? MediaPlayerPictureInPictureCapable)?.stopPiP()
+    }
+
+    // Retries because the proxy swap is async and AVKit ignores an early start.
+    private func startPiPWhenReady(attemptsLeft: Int) async {
+        guard attemptsLeft > 0,
+              let capable = proxy as? MediaPlayerPictureInPictureCapable
+        else { return }
+
+        if capable.isPiPActive.value {
+            return
+        }
+
+        if capable.isPiPAvailable.value {
+            capable.startPiP()
+        }
+
+        try? await Task.sleep(for: .milliseconds(300))
+        await startPiPWhenReady(attemptsLeft: attemptsLeft - 1)
+    }
+}

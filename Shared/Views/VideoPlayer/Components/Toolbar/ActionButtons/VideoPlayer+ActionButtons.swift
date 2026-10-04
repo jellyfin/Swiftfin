@@ -101,10 +101,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 AudioOffset()
             case .autoPlay:
                 AutoPlay()
-            #if os(iOS)
-            case .gestureLock:
-                GestureLock()
-            #endif
+            case .pictureInPicture:
+                PictureInPicture()
             case .playbackSpeed:
                 PlaybackRateMenu()
             case .playbackSettings:
@@ -115,6 +113,10 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 PlayPreviousItem()
             case .subtitles:
                 Subtitles()
+            #if os(iOS)
+            case .gestureLock:
+                GestureLock()
+            #endif
             case .subtitleOffset:
                 SubtitleOffset()
             }

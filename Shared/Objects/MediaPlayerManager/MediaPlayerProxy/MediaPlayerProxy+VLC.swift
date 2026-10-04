@@ -17,7 +17,6 @@ class VLCMediaPlayerProxy: VideoMediaPlayerLayoutConfigurable,
     MediaPlayerOffsetConfigurable,
     MediaPlayerSubtitleConfigurable
 {
-
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
     let videoSize: PublishedBox<CGSize> = .init(initialValue: .zero)
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)

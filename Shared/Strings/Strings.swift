@@ -1094,8 +1094,6 @@ internal enum L10n {
   internal static let name = L10n.tr("Localizable", "name", fallback: "Name")
   /// Narrator
   internal static let narrator = L10n.tr("Localizable", "narrator", fallback: "Narrator")
-  /// Native
-  internal static let native = L10n.tr("Localizable", "native", fallback: "Native")
   /// Network
   internal static let network = L10n.tr("Localizable", "network", fallback: "Network")
   /// Network timed out
@@ -1232,6 +1230,8 @@ internal enum L10n {
   internal static let photoAlbums = L10n.tr("Localizable", "photoAlbums", fallback: "Photo albums")
   /// Photos
   internal static let photos = L10n.tr("Localizable", "photos", fallback: "Photos")
+  /// Picture in Picture
+  internal static let pictureInPicture = L10n.tr("Localizable", "pictureInPicture", fallback: "Picture in Picture")
   /// Pin
   internal static let pin = L10n.tr("Localizable", "pin", fallback: "Pin")
   /// Pinch
@@ -1262,8 +1262,8 @@ internal enum L10n {
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
   /// Player
   internal static let player = L10n.tr("Localizable", "player", fallback: "Player")
-  /// Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.
-  internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple\'s AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.")
+  /// Uses Apple's AVPlayer for HDR and Picture in Picture with supported media formats.
+  internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple\'s AVPlayer for HDR and Picture in Picture with supported media formats.")
   /// Uses SwiftVLC and libVLC 4 to provide compatibility with nearly any file type.
   internal static let playerVlcDescription = L10n.tr("Localizable", "playerVlcDescription", fallback: "Uses SwiftVLC and libVLC 4 to provide compatibility with nearly any file type.")
   /// Play From beginning

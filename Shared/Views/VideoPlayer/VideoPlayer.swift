@@ -27,6 +27,8 @@ struct VideoPlayer: View {
 
     @State
     private var isBeingDismissedByTransition = false
+    @State
+    private var safeAreaInsets: EdgeInsets = .init()
 
     #if os(iOS)
     @State
@@ -38,9 +40,11 @@ struct VideoPlayer: View {
 
     init() {
         switch Defaults[.VideoPlayer.videoPlayerType] {
+        case .avPlayer:
+            self._proxy = .init(wrappedValue: AVMediaPlayerProxy())
         case .mpv:
             self._proxy = .init(wrappedValue: MPVMediaPlayerProxy())
-        case .native, .vlc:
+        case .vlc:
             self._proxy = .init(wrappedValue: VLCMediaPlayerProxy())
         }
     }
@@ -109,6 +113,21 @@ struct VideoPlayer: View {
             }
         } message: {
             Text(L10n.unableToLoadThisItem)
+        }
+        .environment(\.safeAreaInsets, safeAreaInsets)
+        .colorScheme(.dark) // use over `preferredColorScheme(.dark)` to not have destination change
+        .supportedOrientations(.allButUpsideDown)
+        .ignoresSafeArea()
+        .persistentSystemOverlays(.hidden)
+        .toolbar(.hidden, for: .navigationBar)
+        .onSceneDidEnterBackground {
+            let isPictureInPictureActive = (proxy as? MediaPlayerPictureInPictureCapable)?.isPiPActive.value == true
+            if Defaults[.VideoPlayer.Transition.pauseOnBackground], !isPictureInPictureActive {
+                manager.setPlaybackRequestStatus(status: .paused)
+            }
+        }
+        .onSizeChanged { _, safeArea in
+            self.safeAreaInsets = safeArea.max(EdgeInsets.edgePadding)
         }
     }
 }

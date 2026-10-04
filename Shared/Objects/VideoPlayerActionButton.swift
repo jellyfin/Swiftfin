@@ -12,14 +12,15 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     case audio
     case audioOffset
     case autoPlay
-    #if os(iOS)
-    case gestureLock
-    #endif
+    case pictureInPicture
     case playbackSpeed
     case playbackSettings
     case playNextItem
     case playPreviousItem
     case subtitles
+    #if os(iOS)
+    case gestureLock
+    #endif
     case subtitleOffset
 
     var displayTitle: String {
@@ -32,10 +33,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.audioOffset
         case .autoPlay:
             L10n.autoPlay
-        #if os(iOS)
-        case .gestureLock:
-            L10n.gestureLock
-        #endif
+        case .pictureInPicture:
+            L10n.pictureInPicture
         case .playbackSpeed:
             L10n.playbackSpeed
         case .playbackSettings:
@@ -46,6 +45,10 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.playPreviousItem
         case .subtitles:
             L10n.subtitles
+        #if os(iOS)
+        case .gestureLock:
+            L10n.gestureLock
+        #endif
         case .subtitleOffset:
             L10n.subtitleOffset
         }
@@ -62,6 +65,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .audio: "speaker.wave.2"
         case .audioOffset: "waveform.path"
         case .autoPlay: "play.fill"
+        case .pictureInPicture: "pip.enter"
         case .playbackSpeed: "speedometer"
         case .playbackSettings: "tv"
         case .playNextItem: "forward.end.fill"
@@ -76,6 +80,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .aspectFill: "arrow.down.right.and.arrow.up.left"
         case .audio: "speaker.wave.2"
         case .autoPlay: "stop.fill"
+        case .pictureInPicture: "pip.exit"
         case .subtitles: "captions.bubble"
         default:
             systemImage
@@ -95,6 +100,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .audioOffset: "waveform.path"
         case .autoPlay: usesLiquidGlassSymbols ? "play.fill" : "play.circle.fill"
         case .gestureLock: usesLiquidGlassSymbols ? "lock.fill" : "lock.circle.fill"
+        case .pictureInPicture: "pip.enter"
         case .playbackSpeed: "speedometer"
         case .playbackSettings: usesLiquidGlassSymbols ? "tv" : "tv.circle.fill"
         case .playNextItem: usesLiquidGlassSymbols ? "forward.end.fill" : "forward.end.circle.fill"
@@ -115,6 +121,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
                 "stop.circle"
             }
         case .gestureLock: "lock.open.fill"
+        case .pictureInPicture: "pip.exit"
         case .subtitles: "captions.bubble"
         default:
             systemImage
@@ -135,6 +142,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         .subtitles,
         .subtitleOffset,
         .playbackSpeed,
+        .pictureInPicture,
         .playbackSettings,
     ]
 }

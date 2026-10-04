@@ -14,7 +14,7 @@ extension VideoPlayerType {
     // MARK: - Direct Play
 
     @ArrayBuilder<DirectPlayProfile>
-    static var _nativeDirectPlayProfiles: [DirectPlayProfile] {
+    static var _avPlayerDirectPlayProfiles: [DirectPlayProfile] {
 
         DirectPlayProfile(type: .video) {
             AudioCodec.aac
@@ -90,7 +90,7 @@ extension VideoPlayerType {
     // MARK: - Transcoding
 
     @ArrayBuilder<TranscodingProfile>
-    static var _nativeTranscodingProfiles: [TranscodingProfile] {
+    static var _avPlayerTranscodingProfiles: [TranscodingProfile] {
 
         TranscodingProfile(
             isBreakOnNonKeyFrames: true,
@@ -127,7 +127,7 @@ extension VideoPlayerType {
     // MARK: - Subtitle
 
     @ArrayBuilder<SubtitleProfile>
-    static var _nativeSubtitleProfiles: [SubtitleProfile] {
+    static var _avPlayerSubtitleProfiles: [SubtitleProfile] {
 
         SubtitleProfile.build(method: .embed) {
             SubtitleFormat.cc_dec
@@ -149,7 +149,7 @@ extension VideoPlayerType {
     // MARK: - Codec Profiles
 
     @ArrayBuilder<CodecProfile>
-    static var _nativeCodecProfiles: [CodecProfile] {
+    static var _avPlayerCodecProfiles: [CodecProfile] {
 
         CodecProfile(
             codec: VideoCodec.h264.rawValue,
@@ -183,7 +183,7 @@ extension VideoPlayerType {
                     isRequired: false,
                     property: .videoRangeType
                 ) {
-                    nativeHDRProfiles
+                    avPlayerHDRProfiles
                 }
                 ProfileCondition(
                     condition: .equalsAny,
@@ -223,14 +223,14 @@ extension VideoPlayerType {
                     isRequired: false,
                     property: .videoRangeType
                 ) {
-                    nativeHDRProfiles
+                    avPlayerHDRProfiles
                 }
             }
         )
     }
 
     @ArrayBuilder<VideoRangeType>
-    private static var nativeHDRProfiles: [VideoRangeType] {
+    private static var avPlayerHDRProfiles: [VideoRangeType] {
 
         VideoRangeType.sdr
         VideoRangeType.doviWithSDR

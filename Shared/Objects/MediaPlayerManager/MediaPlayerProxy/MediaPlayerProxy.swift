@@ -10,10 +10,6 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: feature implementations
-//       - PiP
-// TODO: Chromecast proxy
-
 /// The proxy for top-down communication to an
 /// underlying media player
 @MainActor
@@ -66,6 +62,14 @@ protocol MediaPlayerSubtitleTrackConfigurable {
 protocol MediaPlayerOffsetConfigurable {
     func setAudioOffset(_ seconds: Duration)
     func setSubtitleOffset(_ seconds: Duration)
+}
+
+@MainActor
+protocol MediaPlayerPictureInPictureCapable: AnyObject {
+    var isPiPActive: PublishedBox<Bool> { get }
+    var isPiPAvailable: PublishedBox<Bool> { get }
+    func startPiP()
+    func stopPiP()
 }
 
 @MainActor
