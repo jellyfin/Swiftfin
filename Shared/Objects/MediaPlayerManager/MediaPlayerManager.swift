@@ -11,7 +11,6 @@ import Defaults
 import FactoryKit
 import Foundation
 import JellyfinAPI
-import VLCUI
 
 // TODO: proper error catching
 // TODO: be a UserSessionService?
@@ -58,7 +57,7 @@ final class MediaPlayerManager: ViewModel {
         case playNewItem(provider: MediaPlayerItemProvider)
         case setBitrate(bitrate: PlaybackBitrate)
         case setPlaybackRequestStatus(status: PlaybackRequestStatus)
-        case setRate(rate: Float)
+        case setRate(rate: Double)
         case setTrack(type: MediaStreamType, from: Int?, to: Int? = nil)
         case start
         case stop
@@ -103,6 +102,9 @@ final class MediaPlayerManager: ViewModel {
     var playbackItem: MediaPlayerItem? = nil {
         didSet {
             if let playbackItem {
+                if oldValue?.baseItem.id != playbackItem.baseItem.id || oldValue == nil {
+                    resetPlaybackOffsets()
+                }
                 self.item = playbackItem.baseItem
                 seconds = playbackItem.baseItem.startSeconds ?? .zero
                 playbackItem.manager = self
@@ -128,10 +130,35 @@ final class MediaPlayerManager: ViewModel {
     @Published
     private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
     @Published
-    var rate: Float = Defaults[.VideoPlayer.Playback.playbackRate] {
+    var rate: Double = Defaults[.VideoPlayer.Playback.playbackRate] {
         didSet {
             Defaults[.VideoPlayer.Playback.playbackRate] = rate
         }
+    }
+
+    @Published
+    var audioOffset: Duration = .zero {
+        didSet {
+            (proxy as? MediaPlayerOffsetConfigurable)?.setAudioOffset(audioOffset)
+        }
+    }
+
+    @Published
+    var subtitleOffset: Duration = .zero {
+        didSet {
+            (proxy as? MediaPlayerOffsetConfigurable)?.setSubtitleOffset(subtitleOffset)
+        }
+    }
+
+    func applyPlaybackOffsets() {
+        guard let proxy = proxy as? MediaPlayerOffsetConfigurable else { return }
+        proxy.setAudioOffset(audioOffset)
+        proxy.setSubtitleOffset(subtitleOffset)
+    }
+
+    private func resetPlaybackOffsets() {
+        audioOffset = .zero
+        subtitleOffset = .zero
     }
 
     @Published
@@ -139,8 +166,6 @@ final class MediaPlayerManager: ViewModel {
 
     @Published
     var supplements: [any MediaPlayerSupplement] = []
-
-    let remote = RemotePlaybackManager()
 
     // TODO: replace with graph dependency package
     private func setSupplements() {
@@ -154,7 +179,8 @@ final class MediaPlayerManager: ViewModel {
             case .queue:
                 return queue
             case .people:
-                guard let people = item.people?.filter({ $0.type?.isSupported == true }), people.isNotEmpty else { return nil }
+                guard let people = item.mergedPeople?.filter({ $0.type?.isSupported == true }),
+                      people.isNotEmpty else { return nil }
                 return MediaPeopleSupplement(people: people)
             case .playbackInformation:
                 guard let itemID = item.id else { return nil }
@@ -181,36 +207,13 @@ final class MediaPlayerManager: ViewModel {
         playbackItem?.requestedBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
     }
 
-    /// The local playback engine.
+    /// Holds a weak reference to the current media player proxy.
     weak var proxy: (any MediaPlayerProxy)? {
         didSet {
-            objectWillChange.send()
             if var proxy {
                 proxy.manager = self
             }
         }
-    }
-
-    /// The remote session, when casting.
-    @Published
-    var remoteProxy: (any RemoteSession)? {
-        didSet {
-            if var remoteProxy {
-                remoteProxy.manager = self
-            }
-        }
-    }
-
-    var activeProxy: (any MediaPlayerProxy)? {
-        remoteProxy ?? proxy
-    }
-
-    /// `nil` when playback is fully remote (a session, no local engine).
-    var videoPlayerType: VideoPlayerType? {
-        if remoteProxy is any RemotePlaybackSession {
-            return nil
-        }
-        return Defaults[.VideoPlayer.videoPlayerType]
     }
 
     private var initialMediaPlayerItemProvider: MediaPlayerItemProvider?
@@ -235,9 +238,6 @@ final class MediaPlayerManager: ViewModel {
         self.initialMediaPlayerItemProvider = provider
         super.init()
 
-        seconds = item.startSeconds ?? .zero
-
-        setUpRemote()
         self.queue?.manager = self
     }
 
@@ -250,17 +250,8 @@ final class MediaPlayerManager: ViewModel {
         self.state = .playback
         super.init()
 
-        setUpRemote()
         self.queue?.manager = self
         self.playbackItem = playbackItem
-    }
-
-    private func setUpRemote() {
-        remote.manager = self
-        remote.refresh()
-        remote.objectWillChange
-            .sink { [weak self] in self?.objectWillChange.send() }
-            .store(in: &cancellables)
     }
 
     @Function(\Action.Cases.ended)
@@ -319,6 +310,7 @@ final class MediaPlayerManager: ViewModel {
 
     @Function(\Action.Cases.playNewItem)
     private func _playNewItem(_ provider: MediaPlayerItemProvider) async throws {
+        resetPlaybackOffsets()
         item = provider.item
         setSupplements()
         proxy?.stop()
@@ -328,11 +320,6 @@ final class MediaPlayerManager: ViewModel {
     @Function(\Action.Cases.setBitrate)
     private func _setBitrate(_ requestedBitrate: PlaybackBitrate) async throws {
         guard let currentItem = playbackItem else { return }
-
-        if let session = remoteProxy as? any RemotePlaybackSession {
-            session.setBitrate(requestedBitrate)
-            return
-        }
 
         try await updateMediaPlayerItem(
             currentItem: currentItem,
@@ -347,15 +334,15 @@ final class MediaPlayerManager: ViewModel {
 
             switch status {
             case .paused:
-                activeProxy?.pause()
+                proxy?.pause()
             case .playing:
-                activeProxy?.play()
+                proxy?.play()
             }
         }
     }
 
     @Function(\Action.Cases.setRate)
-    private func set(_ rate: Float) {
+    private func set(_ rate: Double) {
         if self.rate != rate {
             self.rate = rate
         }
@@ -365,11 +352,6 @@ final class MediaPlayerManager: ViewModel {
     private func _setTrack(_ type: MediaStreamType, _ oldIndex: Int?, _ newIndex: Int?) async throws {
         guard let playbackItem else {
             logger.warning("MediaPlayerManager.SetTrack call with an invalid playbackItem")
-            return
-        }
-
-        if let session = remoteProxy as? any RemotePlaybackSession {
-            session.setTrack(type: type, index: newIndex)
             return
         }
 
@@ -423,7 +405,6 @@ final class MediaPlayerManager: ViewModel {
     private func _stop() async throws {
         await self.cancel()
 
-        remote.stop()
         proxy?.stop()
         Container.shared.mediaPlayerManagerPublisher().send(nil)
         Container.shared.mediaPlayerManager.reset()
@@ -491,31 +472,28 @@ final class MediaPlayerManager: ViewModel {
         self.seconds = currentSeconds
     }
 
-    func resumeLocal() async {
-        guard let item = playbackItem else {
-            proxy?.play()
-            return
+    nonisolated static func getMaxBitrate(
+        for requestedBitrate: PlaybackBitrate,
+        testSize: PlaybackBitrateTestSize = Defaults[.VideoPlayer.appMaximumBitrateTest]
+    ) async throws -> Int {
+
+        guard requestedBitrate == .auto else { return requestedBitrate.rawValue }
+
+        guard let userSession = Container.shared.currentUserSession() else {
+            throw UserSessionError.missingCurrentSession
         }
 
-        let positionTicks = seconds.ticks
+        let testStartTime = Date()
+        let _ = try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize.rawValue))
+        let testDuration = Date().timeIntervalSince(testStartTime)
+        let testSizeBits = Double(testSize.rawValue * 8)
+        let testBitrate = testSizeBits / testDuration
 
-        do {
-            let resumed = try await MediaPlayerItem.build(
-                for: item.baseItem,
-                mediaSource: item.mediaSource,
-                videoPlayerType: Defaults[.VideoPlayer.videoPlayerType],
-                requestedBitrate: item.requestedBitrate
-            ) { base in
-                if base.userData == nil {
-                    base.userData = .init(key: "")
-                }
-                base.userData?.playbackPositionTicks = positionTicks
-            }
-
-            playbackItem = resumed
-        } catch {
-            logger.error("Failed to resume local playback: \(error.localizedDescription)")
-        }
+        return clamp(
+            Int(testBitrate),
+            min: PlaybackBitrate.kbps420.rawValue,
+            max: Int(Int32.max)
+        )
     }
 }
 
@@ -549,29 +527,5 @@ extension MediaPlayerManager {
 
         try? await Task.sleep(for: .milliseconds(300))
         await startPiPWhenReady(attemptsLeft: attemptsLeft - 1)
-    }
-
-    nonisolated static func getMaxBitrate(
-        for requestedBitrate: PlaybackBitrate,
-        testSize: PlaybackBitrateTestSize = Defaults[.VideoPlayer.appMaximumBitrateTest]
-    ) async throws -> Int {
-
-        guard requestedBitrate == .auto else { return requestedBitrate.rawValue }
-
-        guard let userSession = Container.shared.currentUserSession() else {
-            throw UserSessionError.missingCurrentSession
-        }
-
-        let testStartTime = Date()
-        let _ = try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize.rawValue))
-        let testDuration = Date().timeIntervalSince(testStartTime)
-        let testSizeBits = Double(testSize.rawValue * 8)
-        let testBitrate = testSizeBits / testDuration
-
-        return clamp(
-            Int(testBitrate),
-            min: PlaybackBitrate.kbps420.rawValue,
-            max: Int(Int32.max)
-        )
     }
 }

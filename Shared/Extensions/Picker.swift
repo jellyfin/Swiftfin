@@ -68,6 +68,7 @@ where Data.Element == Element {
     }
 }
 
+@MainActor
 extension Picker where Label == Text {
 
     init<E: CaseIterable & Displayable & Hashable>(

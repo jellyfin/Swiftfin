@@ -1,5 +1,5 @@
 {
-  "originHash" : "a2ea4831b4277f95b52f845ae611d252f3fc45f831a06467bc6463b283cac2e0",
+  "originHash" : "172fa81da963fb365f44b7771b055ebb784420e1a02316cadc96e02e818d401f",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -25,7 +25,7 @@
       "location" : "https://github.com/LePips/CollectionHStack",
       "state" : {
         "branch" : "main",
-        "revision" : "ce86c82ae46ba958d6e7f8459d592a77e1e299c5"
+        "revision" : "5824801d31b67f89a125013d642cce7d284143c2"
       }
     },
     {
@@ -34,7 +34,7 @@
       "location" : "https://github.com/LePips/CollectionVGrid",
       "state" : {
         "branch" : "main",
-        "revision" : "b6f489c85fbd642295aef64e02d05476d30e10fa"
+        "revision" : "7e4c4d8f20c8534cc5736e46f06265cd3686c944"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnEstropia/CoreStore.git",
       "state" : {
-        "revision" : "5a0d27cf343c6e341b0ef3c8d36104770b27a839",
-        "version" : "9.3.0"
+        "revision" : "4b6d9a54e75d2c9fd2c3c768f7d4aa3175c09133",
+        "version" : "9.2.0"
       }
     },
     {
@@ -105,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "37a2f5028bd24689b772effb559f72ec5388f021",
-        "version" : "3.0.0"
+        "revision" : "8ce10a167ad0b4145b2bc005acf8bebcfe6ebe46",
+        "version" : "3.3.0"
       }
     },
     {
@@ -152,6 +152,24 @@
       "state" : {
         "revision" : "b3c237aff54b8307440157a2f5956bdea2e76791",
         "version" : "2.31.2"
+      }
+    },
+    {
+      "identity" : "mediaaccessibilitykit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/MediaAccessibilityKit",
+      "state" : {
+        "revision" : "fb4073607e083964d746b6533afddabc6fb4f2d1",
+        "version" : "0.2.0"
+      }
+    },
+    {
+      "identity" : "mpvui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/MPVUI",
+      "state" : {
+        "revision" : "cf277d979465b919b34bbdb33d62fdb24c377fbe",
+        "version" : "0.5.0"
       }
     },
     {
@@ -312,8 +330,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "26986a57e31c813f98262ddb62d4b07d40008535",
-        "version" : "26.0.1"
+        "revision" : "a37eca1db7bebc9437ee89508e7b4433ff34adb4",
+        "version" : "27.0.0"
+      }
+    },
+    {
+      "identity" : "swiftvlc",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/harflabs/SwiftVLC",
+      "state" : {
+        "revision" : "192393a45cdcd7ebb6befac26586360b8b1676b3",
+        "version" : "1.0.0"
       }
     },
     {
@@ -332,15 +359,6 @@
       "state" : {
         "revision" : "90806460f3b3e7564344647241c157aeb0b27a71",
         "version" : "0.3.0"
-      }
-    },
-    {
-      "identity" : "vlcui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/VLCUI",
-      "state" : {
-        "revision" : "e1449ec0a5ceda8f79c3d634fdd59e16b37bc151",
-        "version" : "0.8.1"
       }
     },
     {

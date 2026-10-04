@@ -23,10 +23,6 @@ extension RemoteImageInfo: @retroactive Identifiable {
     var thumbnailImageSource: ImageSource {
         ImageSource(url: thumbnailURL?.url)
     }
-
-    private var imageSources: [ImageSource] {
-        [thumbnailImageSource, primaryImageSource]
-    }
 }
 
 extension RemoteImageInfo: Poster {
@@ -47,21 +43,11 @@ extension RemoteImageInfo: Poster {
         "photo"
     }
 
-    func portraitImageSources(
+    func imageSources(
+        for displayType: PosterDisplayType,
         environment: Empty
     ) -> [ImageSource] {
-        imageSources
-    }
-
-    func landscapeImageSources(
-        environment: Empty
-    ) -> [ImageSource] {
-        imageSources
-    }
-
-    func squareImageSources(
-        environment: Empty
-    ) -> [ImageSource] {
-        imageSources
+        thumbnailImageSource
+        primaryImageSource
     }
 }

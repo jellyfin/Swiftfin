@@ -65,16 +65,16 @@ extension ActiveSessionsView {
                             .foregroundStyle(.secondary)
                     }
                 }
-
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 HStack(spacing: 2) {
                     Text(playState.position ?? .zero, format: .runtime)
 
-                    // swiftlint:disable:next hard_coded_display_string
-                    Text("/")
-
-                    Text(item.runtime ?? .zero, format: .runtime)
+                    if let runtime = item.runtime {
+                        // swiftlint:disable:next hard_coded_display_string
+                        Text("/")
+                        Text(runtime, format: .runtime)
+                    }
                 }
                 .monospacedDigit()
                 .fixedSize(horizontal: true, vertical: true)

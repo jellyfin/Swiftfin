@@ -64,6 +64,7 @@ struct AppPermissionsView: View {
                         ) {
                             Button(L10n.ok, role: .cancel) {}
                         } message: {
+                            // swiftlint:disable:next nested_l10n
                             Text(L10n.permissionRequestError(title, errorMessage.wrappedValue ?? L10n.unknownError))
                         }
                     }

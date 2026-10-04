@@ -47,7 +47,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         var body: some View {
             if let playbackItem = manager.playbackItem {
-                Menu {
+                Menu(L10n.audio, systemImage: systemImage) {
                     if isInMenu {
                         content(playbackItem: playbackItem)
                     } else {
@@ -55,12 +55,8 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             content(playbackItem: playbackItem)
                         }
                     }
-                } label: {
-                    Label(L10n.audio, systemImage: systemImage)
                 }
-                .symbolRenderingMode(.monochrome)
-                .foregroundStyle(.primary, .secondary)
-                .videoPlayerActionButtonTransition()
+                .menuOrder(.fixed)
                 .assign(playbackItem.$selectedAudioStreamIndex, to: $selectedAudioStreamIndex)
                 .onChange(of: selectedAudioStreamIndex) {
                     playbackItem.selectedAudioStreamIndex = selectedAudioStreamIndex

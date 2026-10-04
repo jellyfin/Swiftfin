@@ -49,7 +49,7 @@ extension NavigationRoute {
             id: "userSignIn",
             style: .sheet
         ) {
-            WithUserAuthentication {
+            WithLocalUserAuthentication {
                 UserSignInView(server: server)
             }
         }

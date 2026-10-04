@@ -6,7 +6,6 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import FactoryKit
 import JellyfinAPI
 import PreferencesView
@@ -77,15 +76,6 @@ extension NavigationRoute {
             style: .fullscreen
         ) {
             VideoPlayer()
-        }
-    }
-
-    static var remotePlayback: NavigationRoute {
-        NavigationRoute(
-            id: "remotePlayback",
-            style: .sheet
-        ) {
-            RemotePlaybackPickerView()
         }
     }
 }

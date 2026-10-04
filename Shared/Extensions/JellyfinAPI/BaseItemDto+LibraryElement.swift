@@ -116,6 +116,8 @@ private struct BaseItemDtoLibraryListElement: View {
 
                 if let program = item.currentProgram {
                     currentProgramView(program)
+                } else if item.type == .program {
+                    currentProgramView(item)
                 } else {
                     accessoryView
                         .font(.caption)
@@ -126,30 +128,44 @@ private struct BaseItemDtoLibraryListElement: View {
         } action: {
             item.libraryDidSelectElement(router: router, in: namespace)
         }
+        #if !os(tvOS)
         .matchedTransitionSource(id: "item", in: namespace)
+        #endif
         #if os(tvOS)
-            .focusedValue(\.focusedPoster, AnyPoster(item))
+        .focusedValue(\.focusedPoster, AnyPoster(item))
         #endif
     }
 
     @ViewBuilder
     private func currentProgramView(_ program: BaseItemDto) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(program.displayTitle)
-                .font(.subheadline)
-                .foregroundStyle(.primary)
-                .lineLimit(1)
+            if program.id != item.id {
+                Text(program.displayTitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+            }
 
             if let progress = program.progressPercentage {
-                ProgressBar(progress: progress)
+                ProgressView(value: progress)
+                    .progressViewStyle(.playback)
                     .frame(height: 4)
                     .foregroundStyle(Color.accentColor)
             }
 
             if let start = program.startDate, let end = program.endDate {
                 DotHStack {
+                    if !Calendar.current.isDateInToday(start) {
+                        Text(start, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
+                    }
+
                     Text(start, style: .time)
                     Text(end, style: .time)
+
+                    if program.isRecording && program.isAiring {
+                        Text(L10n.recording)
+                            .foregroundStyle(.red)
+                    }
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)

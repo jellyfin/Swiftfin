@@ -17,25 +17,21 @@ struct UnplayedIndicator: View {
     let count: Int?
 
     var body: some View {
-        AlternateLayoutView(alignment: .topTrailing) {
-            Color.clear
-                .aspectRatio(1, contentMode: .fit)
-        } content: { (size: CGSize) in
-            if let count, count > 0 {
-                Text(count.description)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(accentColor.overlayColor)
-                    .padding(.horizontal, UIDevice.isTV ? 8 : 4)
-                    .fixedSize()
-                    .frame(minWidth: size.width, minHeight: size.height)
-                    .background {
-                        UnevenRoundedRectangle(bottomLeadingRadius: UIDevice.isTV ? 18 : 6)
-                            .fill(accentColor)
-                    }
-            } else {
-                Q3RightTriangle()
-                    .fill(accentColor)
+        if let count, count > 0 {
+            Quadrant(.topTrailing) {
+                QuadrantItem(color: accentColor) {
+                    Text(count.description)
+                        .font(.body)
+                        .fontWeight(.semibold)
+                }
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(L10n.posterAccessibilityUnplayedCount(count.formatted()))
+        } else {
+            Q3RightTriangle()
+                .fill(accentColor)
+                .aspectRatio(1, contentMode: .fit)
+                .accessibilityLabel(L10n.unplayed)
         }
     }
 }

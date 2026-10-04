@@ -13,65 +13,44 @@ extension VideoPlayer.PlaybackControls {
 
     struct Toolbar: View {
 
+        typealias ViewState = VideoPlayer.ViewState
+
         static let buttonSize: CGFloat = UIDevice.isTV ? 56 : 44
-        static let supplementButtonSpacing: CGFloat = UIDevice.isTV ? 20 : 10
 
-        static var buttonSpacing: CGFloat {
-            if UIDevice.supportsLiquidGlass {
-                supplementButtonSpacing
-            } else {
-                UIDevice.isTV ? 16 : 0
-            }
-        }
-
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
         @Router
         private var router
 
-        private var fontSize: CGFloat {
-            UIDevice.isTV ? 30 : 24
-        }
-
-        private func onPressed(isPressed: Bool) {
-            if isPressed {
-                containerState.timer.stop()
-            } else {
-                containerState.timer.poke()
-            }
-        }
-
         @ViewBuilder
         private var closeButton: some View {
             Button {
-                if containerState.isPresentingSupplement {
-                    containerState.select(supplement: nil)
+                if viewState.isPresentingSupplement {
+                    viewState.selectedSupplementID = nil
                 } else {
                     manager.stop()
                     router.dismiss()
                 }
             } label: {
-                AlternateLayoutView {
-                    Image(systemName: "xmark")
-                } content: {
-                    Label(
-                        L10n.close,
-                        systemImage: containerState.isPresentingSupplement ? "chevron.down" : "xmark"
-                    )
-                }
-                .contentShape(Rectangle())
+                Label(
+                    L10n.close,
+                    systemImage: viewState.isPresentingSupplement ? "chevron.down" : "xmark"
+                )
+                .labelStyle(.iconOnly)
             }
+            .frame(width: Self.buttonSize, height: Self.buttonSize)
         }
 
-        var body: some View {
+        @ViewBuilder
+        private var content: some View {
             HStack(alignment: UIDevice.isTV ? .bottom : .center) {
 
                 if !UIDevice.isTV {
                     closeButton
-                        .frame(width: Self.buttonSize, height: Self.buttonSize)
+                        .modifier(OverlayBarButtonStyleModifier())
                 }
 
                 TitleView(item: manager.item)
@@ -81,14 +60,17 @@ extension VideoPlayer.PlaybackControls {
                     .frame(height: Self.buttonSize)
                     .padding(.horizontal)
             }
-            .font(.system(size: fontSize, weight: .semibold))
-            .labelStyle(.iconOnly)
-            .modifier(OverlayButtonStyleModifier(onPressed: onPressed))
-            #if os(iOS)
+        }
+
+        var body: some View {
+            content
+                .font(.system(size: UIDevice.isTV ? 30 : 24, weight: .semibold))
+                .menuStyle(OverlayMenuStyle())
+                #if os(iOS)
                 .background {
                     EmptyHitTestView()
                 }
-            #endif
+                #endif
         }
     }
 }

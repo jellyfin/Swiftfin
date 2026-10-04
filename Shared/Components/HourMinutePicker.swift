@@ -40,16 +40,16 @@ struct HourMinutePicker: View {
         }
         #if os(tvOS)
         .sheet(isPresented: $isPresented) {
-            VStack(spacing: 8) {
-                Text(title.localizedCapitalized)
-                    .font(.title3)
-                    .edgePadding(.bottom)
+                VStack(spacing: 8) {
+                    Text(title.localizedCapitalized)
+                        .font(.title3)
+                        .edgePadding(.bottom)
 
-                _HourMinutePickerView(interval: interval, maximumHours: maximumHours)
-                    .frame(width: 500, height: 400)
+                    _HourMinutePickerView(interval: interval, maximumHours: maximumHours)
+                        .frame(width: 500, height: 400)
+                }
+                .edgePadding()
             }
-            .edgePadding()
-        }
         #endif
 
         #if !os(tvOS)

@@ -51,6 +51,7 @@ extension ItemView {
                 ImageView(
                     provider.item.imageSource(
                         .logo,
+                        itemID: provider.item.id,
                         environment: ImageSourceOptions(maxHeight: logoHeight)
                     )
                 )
@@ -89,11 +90,7 @@ extension ItemView {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                        if provider.item.presentPlayButton {
-                            PlayButton(provider: provider)
-                        }
-
-                        ItemView.ActionButtonHStack(provider: provider)
+                        ItemView.ActionBar(provider: provider)
                     }
                     .frame(width: UIDevice.isTV ? 450 : 300)
 
@@ -117,18 +114,18 @@ extension ItemView {
                 #if os(tvOS)
                 .focusSection()
                 #else
-                .edgePadding(.bottom)
-                .background(
-                    alignment: .bottom,
-                    extendedBy: .init(horizontal: EdgeInsets.edgePadding)
-                ) {
-                    Rectangle()
-                        .fill(Material.ultraThin)
-                        .mask(gradient: .eased(.easeOut)) {
-                            (location: 0, opacity: 0)
-                            (location: 1, opacity: 1)
-                        }
-                }
+                    .edgePadding(.bottom)
+                    .background(
+                        alignment: .bottom,
+                        extendedBy: .init(horizontal: EdgeInsets.edgePadding)
+                    ) {
+                        Rectangle()
+                            .fill(Material.ultraThin)
+                            .mask(gradient: .eased(.easeOut)) {
+                                (location: 0, opacity: 0)
+                                (location: 1, opacity: 1)
+                            }
+                    }
                 #endif
             }
 
@@ -167,7 +164,7 @@ extension ItemView {
                         AlternateLayoutView {
                             Color.clear
                         } content: {
-                            ImageView(headerImageItem.landscapeImageSources(environment: .init(maxWidth: 1920)))
+                            ImageView(headerImageItem.imageSources(for: .landscape, environment: .init(maxWidth: 1920)))
                                 .image { (image: UIImage) in
                                     Image(uiImage: image)
                                         .resizable()

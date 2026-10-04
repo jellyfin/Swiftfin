@@ -352,6 +352,13 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
     }
 }
 
+extension PagingLibraryViewModel: @MainActor Displayable {
+
+    var displayTitle: String {
+        library.parent.displayTitle
+    }
+}
+
 extension PagingLibraryViewModel where Element: LibraryElement {
 
     var libraryStyleOptions: LibraryStyleOptions {

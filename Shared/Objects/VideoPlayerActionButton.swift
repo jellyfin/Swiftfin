@@ -6,24 +6,22 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-// TODO: add playbackQuality
-// TODO: add audio/subtitle offset
-
 enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Identifiable, Storable, SystemImageable {
 
     case aspectFill
     case audio
+    case audioOffset
     case autoPlay
     case pictureInPicture
     case playbackSpeed
     case playbackSettings
     case playNextItem
     case playPreviousItem
-    case remotePlayback
     case subtitles
     #if os(iOS)
     case gestureLock
     #endif
+    case subtitleOffset
 
     var displayTitle: String {
         switch self {
@@ -31,6 +29,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.aspectFill
         case .audio:
             L10n.audio
+        case .audioOffset:
+            L10n.audioOffset
         case .autoPlay:
             L10n.autoPlay
         case .pictureInPicture:
@@ -43,14 +43,14 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
             L10n.playNextItem
         case .playPreviousItem:
             L10n.playPreviousItem
-        case .remotePlayback:
-            L10n.outputs
         case .subtitles:
             L10n.subtitles
         #if os(iOS)
         case .gestureLock:
             L10n.gestureLock
         #endif
+        case .subtitleOffset:
+            L10n.subtitleOffset
         }
     }
 
@@ -63,14 +63,15 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         switch self {
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2"
+        case .audioOffset: "waveform.path"
         case .autoPlay: "play.fill"
         case .pictureInPicture: "pip.enter"
         case .playbackSpeed: "speedometer"
         case .playbackSettings: "tv"
         case .playNextItem: "forward.end.fill"
         case .playPreviousItem: "backward.end.fill"
-        case .remotePlayback: "airplayvideo"
         case .subtitles: "captions.bubble.fill"
+        case .subtitleOffset: "textformat.abc"
         }
     }
 
@@ -96,6 +97,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         return switch self {
         case .aspectFill: "arrow.up.left.and.arrow.down.right"
         case .audio: "speaker.wave.2.fill"
+        case .audioOffset: "waveform.path"
         case .autoPlay: usesLiquidGlassSymbols ? "play.fill" : "play.circle.fill"
         case .gestureLock: usesLiquidGlassSymbols ? "lock.fill" : "lock.circle.fill"
         case .pictureInPicture: "pip.enter"
@@ -103,8 +105,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         case .playbackSettings: usesLiquidGlassSymbols ? "tv" : "tv.circle.fill"
         case .playNextItem: usesLiquidGlassSymbols ? "forward.end.fill" : "forward.end.circle.fill"
         case .playPreviousItem: usesLiquidGlassSymbols ? "backward.end.fill" : "backward.end.circle.fill"
-        case .remotePlayback: "airplayvideo"
         case .subtitles: "captions.bubble.fill"
+        case .subtitleOffset: "textformat.abc"
         }
     }
 
@@ -132,12 +134,13 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
         .autoPlay,
         .playPreviousItem,
         .playNextItem,
-        .remotePlayback,
     ]
 
     static let defaultMenuActionButtons: [VideoPlayerActionButton] = [
         .audio,
+        .audioOffset,
         .subtitles,
+        .subtitleOffset,
         .playbackSpeed,
         .pictureInPicture,
         .playbackSettings,

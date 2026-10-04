@@ -8,6 +8,7 @@
 
 import Algorithms
 import AVKit
+import Defaults
 import FactoryKit
 import Foundation
 import JellyfinAPI
@@ -22,6 +23,7 @@ extension BaseItemDto {
     init(person: BaseItemPerson) {
         self.init(
             id: person.id,
+            imageTags: person.primaryImageTag.map { [ImageType.primary.rawValue: $0] },
             name: person.name,
             type: .person
         )
@@ -136,6 +138,30 @@ extension BaseItemDto {
         return L10n.episodeNumber(episodeNo)
     }
 
+    /// Merges crew credits
+    var mergedPeople: [BaseItemPerson]? {
+        guard let people else { return nil }
+
+        let crew = Dictionary(grouping: people.filter(\.isCrew), by: \.id)
+        var seen: Set<String> = []
+
+        return people.compactMap { person in
+            guard person.isCrew, let id = person.id, let credits = crew[id], credits.count > 1 else {
+                return person
+            }
+            guard seen.insert(id).inserted else { return nil }
+
+            let roles = credits.compactMap(\.role)
+                .filter(\.isNotEmpty)
+                .uniqued()
+                .joined(separator: " / ")
+
+            var person = person
+            person.role = roles.isEmpty ? nil : roles
+            return person
+        }
+    }
+
     var itemGenres: [ItemGenre]? {
         guard let genres else { return nil }
         return genres.map(ItemGenre.init)
@@ -208,7 +234,10 @@ extension BaseItemDto {
 
     func getPlaybackItemProvider(
         userSession: UserSession?,
-        mediaSource: MediaSourceInfo? = nil
+        mediaSource: MediaSourceInfo? = nil,
+        audioStreamIndex: Int? = nil,
+        subtitleStreamIndex: Int? = nil,
+        requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
     ) -> MediaPlayerItemProvider? {
         switch type {
         case .program:
@@ -232,11 +261,17 @@ extension BaseItemDto {
 
             return MediaPlayerItemProvider(
                 item: self,
-                mediaSource: selectedMediaSource
+                mediaSource: selectedMediaSource,
+                audioStreamIndex: audioStreamIndex,
+                subtitleStreamIndex: subtitleStreamIndex,
+                requestedBitrate: requestedBitrate
             ) { item, modifyItem in
                 try await MediaPlayerItem.build(
                     for: item,
                     mediaSource: selectedMediaSource,
+                    audioStreamIndex: audioStreamIndex,
+                    subtitleStreamIndex: subtitleStreamIndex,
+                    requestedBitrate: requestedBitrate,
                     modifyItem: modifyItem
                 )
             }
@@ -373,6 +408,14 @@ extension BaseItemDto {
         mediaStreams?.filter { $0.type == .video } ?? []
     }
 
+    var isRecording: Bool {
+        if let currentProgram {
+            return currentProgram.isRecording
+        }
+
+        return timerID != nil
+    }
+
     // MARK: Missing and Unaired
 
     var isMissing: Bool {
@@ -442,9 +485,14 @@ extension BaseItemDto {
             .enumerated()
             .map { i, chapter in
 
+                guard let imageTag = chapter.imageTag, imageTag.isNotEmpty else {
+                    return .init(chapterInfo: chapter)
+                }
+
                 let parameters = Paths.GetItemImageParameters(
                     maxWidth: 500,
                     quality: 90,
+                    tag: imageTag,
                     imageIndex: i
                 )
 
@@ -463,33 +511,6 @@ extension BaseItemDto {
                     imageSource: .init(url: imageURL)
                 )
             }
-    }
-
-    // TODO: series-season-episode hierarchy for episodes
-    // TODO: user hierarchy for downloads
-    var downloadFolder: URL? {
-        guard let type, let id else { return nil }
-
-        let root = URL.downloadsDirectory
-//            .appendingPathComponent(userSession.user.id)
-
-        switch type {
-        case .movie, .episode:
-            return root
-                .appendingPathComponent(id)
-//        case .episode:
-//            guard let seasonID = seasonID,
-//                  let seriesID = seriesID
-//            else {
-//                return nil
-//            }
-//            return root
-//                .appendingPathComponent(seriesID)
-//                .appendingPathComponent(seasonID)
-//                .appendingPathComponent(id)
-        default:
-            return nil
-        }
     }
 
     /// Returns `originalTitle` if it is not the same as `displayTitle`
@@ -530,6 +551,20 @@ extension BaseItemDto {
             true
         default:
             false
+        }
+    }
+
+    /// Can this `BaseItemDto` be recorded
+    var canBeRecorded: Bool {
+        guard Container.shared.currentUserSession()?.user.data.policy?.enableLiveTvManagement == true else { return false }
+
+        switch type {
+        case .channel, .liveTvChannel, .tvChannel:
+            return true
+        case .program, .liveTvProgram, .tvProgram:
+            return (endDate ?? .distantPast) > Date()
+        default:
+            return false
         }
     }
 

@@ -36,10 +36,18 @@ struct AboutAppView: View {
             #endif
 
             Section {
+                #if DEBUG
+                // swiftlint:disable:next hard_coded_display_string
+                LabeledContent(
+                    "Branch",
+                    value: UIApplication.gitBranch ?? .emptyDash
+                )
+                #else
                 LabeledContent(
                     L10n.version,
                     value: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
+                #endif
 
                 #if os(iOS)
                 ChevronButton(
@@ -92,6 +100,6 @@ struct AboutAppView: View {
                 #endif
             }
         }
-        .navigationTitle(L10n.about)
+        .navigationTitle(L10n.aboutApp)
     }
 }

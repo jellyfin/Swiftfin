@@ -35,7 +35,7 @@ extension ChapterInfo {
         let chapterInfo: ChapterInfo
         let displayTitle: String
         let id: Int
-        let imageSource: ImageSource
+        let imageSource: ImageSource?
         let preferredPosterDisplayType: PosterDisplayType = .landscape
         let systemImage: String = "film"
 
@@ -43,7 +43,7 @@ extension ChapterInfo {
 
         init(
             chapterInfo: ChapterInfo,
-            imageSource: ImageSource
+            imageSource: ImageSource? = nil
         ) {
             self.chapterInfo = chapterInfo
             self.displayTitle = chapterInfo.displayTitle
@@ -51,14 +51,25 @@ extension ChapterInfo {
             self.imageSource = imageSource
         }
 
-        func landscapeImageSources(
+        func imageSources(
+            for displayType: PosterDisplayType,
             environment: Empty
         ) -> [ImageSource] {
-            [imageSource]
+            if displayType == .landscape {
+                imageSource
+            }
         }
 
         var posterLabel: some View {
             ChapterPosterLabel(chapter: self)
+        }
+
+        func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
+            let startTime = PosterAccessibility.duration(chapterInfo.startSeconds ?? .zero)
+            return PosterAccessibility(
+                label: displayTitle,
+                value: L10n.posterAccessibilityStartTime(startTime)
+            )
         }
 
         func posterOverlay(for displayType: PosterDisplayType) -> some View {
@@ -76,6 +87,9 @@ extension ChapterInfo {
     }
 }
 
+// TODO: have label match what BaseItemDto does in PosterCollectionView
+//       - different height, causes clipping
+
 private struct ChapterPosterLabel: View {
 
     let chapter: ChapterInfo.FullInfo
@@ -83,7 +97,7 @@ private struct ChapterPosterLabel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(chapter.chapterInfo.displayTitle)
-                .font(.subheadline.weight(.semibold))
+                .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundStyle(.primary)
                 .lineLimit(1)

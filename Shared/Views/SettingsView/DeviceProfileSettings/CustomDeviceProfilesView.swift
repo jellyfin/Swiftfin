@@ -51,11 +51,11 @@ struct CustomDeviceProfilesView: View {
         .topBarTrailing {
             if customProfiles.isNotEmpty {
                 addButton
-                #if os(iOS)
-                .backport
-                .buttonStyle(.glassProminent)
-                .controlSize(.small)
-                #endif
+                    #if os(iOS)
+                        .backport
+                        .buttonStyle(.glassProminent)
+                        .controlSize(.small)
+                    #endif
             }
         }
     }
@@ -107,10 +107,10 @@ struct CustomDeviceProfilesView: View {
                 }
                 #if os(iOS)
                 .swipeActions {
-                    deleteButton(profile: profile)
-                }
+                        deleteButton(profile: profile)
+                    }
                 #else
-                .contextMenu {
+                    .contextMenu {
                         deleteButton(profile: profile)
                     }
                 #endif

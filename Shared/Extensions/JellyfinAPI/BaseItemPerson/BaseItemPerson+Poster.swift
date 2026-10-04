@@ -13,23 +13,14 @@ import SwiftUI
 
 extension BaseItemPerson: Poster {
 
-    struct Environment: WithDefaultValue, WithImageSourceOptions {
-
-        var maxWidth: CGFloat?
-        var maxHeight: CGFloat?
-        var quality: Int?
-
-        static var `default`: Self {
-            .init()
-        }
-    }
+    typealias Environment = BaseItemDto.Environment
 
     var preferredPosterDisplayType: PosterDisplayType {
         .portrait
     }
 
     var subtitle: String? {
-        firstRole
+        displayRole
     }
 
     var systemImage: String {
@@ -44,21 +35,14 @@ extension BaseItemPerson: Poster {
         BaseItemDto(person: self).posterContextMenu
     }
 
-    func portraitImageSources(
+    func imageSources(
+        for displayType: PosterDisplayType,
         environment: Environment
     ) -> [ImageSource] {
         BaseItemDto(person: self)
-            .portraitImageSources(
-                environment: baseItemDtoEnvironment(from: environment)
+            .imageSources(
+                for: displayType,
+                environment: environment
             )
-    }
-
-    private func baseItemDtoEnvironment(from environment: Environment) -> BaseItemDto.Environment {
-        var itemEnvironment = BaseItemDto.Environment.default
-        itemEnvironment.maxWidth = environment.maxWidth
-        itemEnvironment.maxHeight = environment.maxHeight
-        itemEnvironment.quality = environment.quality
-
-        return itemEnvironment
     }
 }

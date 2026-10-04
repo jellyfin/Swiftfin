@@ -115,6 +115,20 @@ extension Defaults.Keys {
             UserKey("mediaItemViewType", default: .enhanced)
         }
 
+        static var itemBarActionButtons: Key<[ItemActionButton]> {
+            UserKey(
+                "itemBarActionButtons",
+                default: ItemActionButton.defaultBarActionButtons
+            )
+        }
+
+        static var itemMenuActionButtons: Key<[ItemActionButton]> {
+            UserKey(
+                "itemMenuActionButtons",
+                default: ItemActionButton.defaultMenuActionButtons
+            )
+        }
+
         static var nextUpPosterType: Key<PosterDisplayType> {
             UserKey("nextUpPosterType", default: .portrait)
         }
@@ -362,12 +376,12 @@ extension Defaults.Keys {
                 UserKey("customDeviceProfileAction", default: .add)
             }
 
-            static var rates: Key<[Float]> {
+            static var rates: Key<[Double]> {
                 UserKey("videoPlayerPlaybackRates", default: [0.5, 1.0, 1.25, 1.5, 2.0])
             }
 
-            static var playbackRate: Key<Float> {
-                UserKey("playbackRate", default: Float(1.0))
+            static var playbackRate: Key<Double> {
+                UserKey("playbackRate", default: 1.0)
             }
         }
 
@@ -388,8 +402,14 @@ extension Defaults.Keys {
     // Experimental settings
     enum Experimental {
 
+        static var mpvPlayer: Key<Bool> {
+            UserKey("experimentalMPVPlayer", default: false)
+        }
+
+        // TODO: don't use L10n key as key, just used to not
+        // lose translations
         static var downloads: Key<Bool> {
-            UserKey("experimentalDownloads", default: false)
+            UserKey(L10n.download, default: false)
         }
 
         static var serverConnectionAutoSwitch: Key<Bool> {

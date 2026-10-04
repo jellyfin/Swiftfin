@@ -70,8 +70,7 @@ extension ServerTasksView {
                     }
                 }
                 .font(.subheadline)
-
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 if isRunning {
                     ProgressView(value: (viewModel.task.currentProgressPercentage ?? 0) / 100)

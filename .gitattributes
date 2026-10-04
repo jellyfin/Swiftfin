@@ -1,0 +1,4 @@
+# Localization files use UTF-16. Preserve their bytes and decode them for diffs.
+# Enable the diff driver in each checkout with:
+# git config --local diff.strings.textconv 'iconv -f UTF-16 -t UTF-8'
+*.strings -text diff=strings

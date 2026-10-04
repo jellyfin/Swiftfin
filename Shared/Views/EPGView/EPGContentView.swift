@@ -144,5 +144,8 @@ struct EPGContentView: View {
         .onDisappear {
             proxy.disconnect()
         }
+        .onAppear {
+            proxy.connect()
+        }
     }
 }

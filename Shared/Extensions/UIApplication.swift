@@ -18,6 +18,17 @@ extension UIApplication {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
     }
 
+    #if DEBUG
+    static var gitBranch: String? {
+        guard let url = Bundle.main.url(forResource: "GitBranch", withExtension: "txt"),
+              let contents = try? String(contentsOf: url, encoding: .utf8)
+        else { return nil }
+
+        let branch = contents.trimmingCharacters(in: .whitespacesAndNewlines)
+        return branch.isEmpty ? nil : branch
+    }
+    #endif
+
     var keyWindow: UIWindow? {
         connectedScenes
             .compactMap {

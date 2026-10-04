@@ -18,7 +18,7 @@ extension VideoPlayerType {
         switch self {
         case .avPlayer:
             Self._avPlayerCodecProfiles
-        case .vlc:
+        case .vlc, .mpv:
             Self._vlcCodecProfiles
         }
     }

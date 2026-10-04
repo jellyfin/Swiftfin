@@ -10,9 +10,6 @@ import SwiftUI
 
 struct PosterButton<Item: Poster>: View {
 
-    @Environment(\.posterConfiguration)
-    private var posterConfiguration
-
     @Environment(\.viewContext)
     private var viewContext
 
@@ -42,6 +39,7 @@ struct PosterButton<Item: Poster>: View {
     @ViewBuilder
     private var contextMenuPreview: some View {
         buttonLabel()
+            .posterAccessibility(for: item)
             .frame(width: posterSize.width)
             .padding(20)
             .backport
@@ -68,10 +66,8 @@ struct PosterButton<Item: Poster>: View {
         VStack(alignment: .leading) {
             posterImage(overlay: overlay)
 
-            if posterConfiguration.showLabels {
-                item.posterLabel
-                    .allowsHitTesting(false)
-            }
+            item.posterLabel
+                .allowsHitTesting(false)
         }
     }
 
@@ -82,14 +78,16 @@ struct PosterButton<Item: Poster>: View {
             // Layout required for tvOS focused offset label behavior
             #if os(tvOS)
             posterImage(overlay: item.posterOverlay(for: displayType))
+                .posterAspectRatio(displayType, contentMode: .fit)
+                .frame(width: posterSize.width > 0 ? posterSize.width : nil)
+                .posterAccessibility(for: item)
 
-            if posterConfiguration.showLabels {
-                item.posterLabel
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
+            item.posterLabel
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityHidden(true)
             #else
             buttonLabel(overlay: item.posterOverlay(for: displayType))
-                .trackingSize($posterSize)
+                .posterAccessibility(for: item)
             #endif
         }
         .environment(\.posterDisplayType, displayType)
@@ -97,11 +95,14 @@ struct PosterButton<Item: Poster>: View {
         .buttonStyle(.borderless)
         .buttonBorderShape(.roundedRectangle)
         #if os(tvOS)
-            .focusedValue(\.focusedPoster, AnyPoster(item))
+        .focusedValue(\.focusedPoster, AnyPoster(item))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .ignoresSafeArea()
         #endif
-            .posterContextMenu(for: item) {
-                contextMenuPreview
-                    .withViewContext(viewContext)
-            }
+        .trackingSize($posterSize)
+        .posterContextMenu(for: item) {
+            contextMenuPreview
+                .withViewContext(viewContext)
+        }
     }
 }

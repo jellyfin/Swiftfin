@@ -57,8 +57,8 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
         }
         #if os(iOS)
         .backport
-        .buttonStyle(.glass)
-        .controlSize(.small)
+            .buttonStyle(.glass)
+            .controlSize(.small)
         #endif
     }
 

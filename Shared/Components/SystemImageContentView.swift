@@ -67,7 +67,7 @@ struct SystemImageContentView: View {
             Image(systemName: systemName ?? "circle")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
     }
 }

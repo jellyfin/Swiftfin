@@ -17,9 +17,6 @@ struct ListRow<Leading: View, Content: View>: View {
     @ViewContextContains(.isListRowSeparatorVisible)
     private var isListRowSeparatorVisible
 
-    @FocusState
-    private var isButtonFocused
-
     @State
     private var contentSize: CGSize = .zero
 
@@ -28,16 +25,16 @@ struct ListRow<Leading: View, Content: View>: View {
     private var insets: EdgeInsets
     private let leading: Leading
 
-    private init(
-        leading: Leading,
-        content: Content,
-        action: @escaping () -> Void,
-        insets: EdgeInsets
+    init(
+        insets: EdgeInsets = .zero,
+        @ViewBuilder leading: @escaping () -> Leading,
+        @ViewBuilder content: @escaping () -> Content,
+        action: @escaping () -> Void = {}
     ) {
-        self.leading = leading
-        self.content = content
         self.action = action
+        self.content = content()
         self.insets = insets
+        self.leading = leading()
     }
 
     var body: some View {
@@ -55,48 +52,18 @@ struct ListRow<Leading: View, Content: View>: View {
                 .padding(insets)
             }
             .foregroundStyle(.primary, .secondary)
-            .focused($isButtonFocused)
+            .contentShape(.contextMenuPreview, Rectangle())
             #if os(tvOS)
-                .buttonStyle(.card)
-            #else
-                .contentShape(.contextMenuPreview, Rectangle())
+            .buttonStyle(.card)
             #endif
 
-            if isListRowSeparatorVisible, !isButtonFocused {
+            #if !os(tvOS)
+            if isListRowSeparatorVisible {
                 Color.secondarySystemFill
                     .frame(width: contentSize.width, height: 1)
                     .padding(.trailing, insets.trailing)
             }
+            #endif
         }
-    }
-}
-
-extension ListRow {
-
-    init(
-        insets: EdgeInsets = .zero,
-        @ViewBuilder leading: @escaping () -> Leading,
-        @ViewBuilder content: @escaping () -> Content
-    ) {
-        self.init(
-            insets: insets,
-            leading: leading,
-            content: content,
-            action: {}
-        )
-    }
-
-    init(
-        insets: EdgeInsets = .zero,
-        @ViewBuilder leading: @escaping () -> Leading,
-        @ViewBuilder content: @escaping () -> Content,
-        action: @escaping () -> Void
-    ) {
-        self.init(
-            leading: leading(),
-            content: content(),
-            action: action,
-            insets: insets
-        )
     }
 }

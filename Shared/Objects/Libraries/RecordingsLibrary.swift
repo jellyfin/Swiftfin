@@ -21,6 +21,7 @@ struct RecordingsLibrary: BaseItemKindLibrary {
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetRecordingsParameters()
+        parameters.fields = PosterSubtitleField.itemFields
         parameters.userID = pageState.userSession.user.id
         parameters.startIndex = pageState.pageOffset
         parameters.limit = pageState.pageSize

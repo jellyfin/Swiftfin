@@ -44,7 +44,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                         manager.startPictureInPicture()
                     }
                 }
-                .videoPlayerActionButtonTransition()
                 .onReceive(isPiPActivePublisher) { isPiPActive = $0 }
             }
         }

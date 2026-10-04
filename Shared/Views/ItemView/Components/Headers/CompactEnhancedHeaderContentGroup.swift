@@ -36,6 +36,7 @@ extension ItemView {
                 ImageView(
                     provider.item.imageSource(
                         .logo,
+                        itemID: provider.item.id,
                         environment: ImageSourceOptions(maxHeight: 70)
                     )
                 )
@@ -71,14 +72,8 @@ extension ItemView {
                     VStack(alignment: .center, spacing: 10) {
                         MetadataHStack(item: provider.item)
 
-                        VStack(alignment: .center, spacing: 5) {
-                            if provider.item.presentPlayButton {
-                                PlayButton(provider: provider)
-                            }
-
-                            ItemView.ActionButtonHStack(provider: provider)
-                        }
-                        .frame(maxWidth: 300)
+                        ItemView.ActionBar(provider: provider)
+                            .frame(maxWidth: 300)
 
                         ItemView.Description(item: provider.item)
 
@@ -133,6 +128,7 @@ extension ItemView {
                                 } content: {
                                     ImageView(provider.item.imageSource(
                                         .backdrop,
+                                        itemID: provider.item.id,
                                         environment: ImageSourceOptions(maxWidth: 1320)
                                     ))
                                     .image { (image: UIImage) in

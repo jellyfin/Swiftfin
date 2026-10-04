@@ -15,7 +15,7 @@ import SwiftUI
 
 @MainActor
 class AVMediaPlayerProxy: NSObject,
-    VideoMediaPlayerProxy,
+    VideoMediaPlayerLayoutConfigurable,
     MediaPlayerPictureInPictureCapable
 {
     let isBuffering: PublishedBox<Bool> = .init(initialValue: false)
@@ -53,7 +53,6 @@ class AVMediaPlayerProxy: NSObject,
     private var cachedSubtitleGroup: AVMediaSelectionGroup?
 
     private var pipAvailableObserver: NSKeyValueObservation?
-    private var externalPlaybackObserver: NSKeyValueObservation?
     private var statusObserver: NSKeyValueObservation?
     private var timeControlStatusObserver: NSKeyValueObservation?
     private var videoSizeObserver: NSKeyValueObservation?
@@ -70,7 +69,7 @@ class AVMediaPlayerProxy: NSObject,
     }
 
     var observers: [any MediaPlayerObserver] = [
-        NowPlayableObserver(),
+        NowPlayableObserver(audioSessionMode: .moviePlayback, supportsMultichannelContent: true),
     ]
 
     override init() {
@@ -81,27 +80,13 @@ class AVMediaPlayerProxy: NSObject,
 
         player.appliesMediaSelectionCriteriaAutomatically = false
 
-        #if os(iOS)
-        player.usesExternalPlaybackWhileExternalScreenIsActive = true
-        #endif
-
-        externalPlaybackObserver = player.observe(
-            \.isExternalPlaybackActive,
-            options: [.initial, .new]
-        ) { [weak self] player, _ in
-
-            let isActive = player.isExternalPlaybackActive
-
-            Task { @MainActor [weak self] in
-                self?.manager?.remote.setAirPlayActive(isActive)
-            }
-        }
+        player.allowsExternalPlayback = false
 
         addTimeObserver()
     }
 
     func play() {
-        player.rate = manager?.rate ?? 1.0
+        player.rate = Float(manager?.rate ?? 1.0)
     }
 
     func pause() {
@@ -136,24 +121,21 @@ class AVMediaPlayerProxy: NSObject,
         player.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
-    func setRate(_ rate: Float) {
+    func setRate(_ rate: Double) {
         // `play()` applies the rate when playback resumes while setting one during a pause forces a resume
         guard player.rate != 0 else { return }
-        player.rate = rate
+        player.rate = Float(rate)
     }
 
-    func setSeconds(_ seconds: Duration, completion: ((Bool) -> Void)? = nil) {
+    func setSeconds(_ seconds: Duration) {
         guard player.currentItem?.status == .readyToPlay else {
             pendingSeekSeconds = seconds
-            completion?(true)
             return
         }
 
         let time = CMTime(seconds: seconds.seconds, preferredTimescale: 600)
 
-        player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { finished in
-            completion?(finished)
-        }
+        player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
     func setAudioStream(_ stream: MediaStream) {
@@ -161,11 +143,9 @@ class AVMediaPlayerProxy: NSObject,
               let group = cachedAudioGroup
         else { return }
 
-        let targetIndex = stream.index ?? -1
+        guard let index = stream.index, group.options.indices.contains(index) else { return }
 
-        guard let option = selectionOption(matching: targetIndex, in: group, from: cachedAudioStreams) else { return }
-
-        item.select(option, in: group)
+        item.select(group.options[index], in: group)
     }
 
     func setSubtitleStream(_ stream: MediaStream) {
@@ -173,20 +153,12 @@ class AVMediaPlayerProxy: NSObject,
               let group = cachedSubtitleGroup
         else { return }
 
-        let targetIndex = stream.index ?? -1
-
-        if targetIndex == -1 {
+        guard let index = stream.index, group.options.indices.contains(index) else {
             item.select(nil, in: group)
             return
         }
 
-        guard let option = selectionOption(matching: targetIndex, in: group, from: cachedSubtitleStreams) else { return }
-
-        item.select(option, in: group)
-    }
-
-    func setAspectFill(_ aspectFill: Bool) {
-        avPlayerLayer.videoGravity = aspectFill ? .resizeAspectFill : .resizeAspect
+        item.select(group.options[index], in: group)
     }
 
     private func selectionOption(
@@ -215,8 +187,8 @@ class AVMediaPlayerProxy: NSObject,
     }
 
     @ViewBuilder
-    var videoPlayerBody: some View {
-        AVPlayerView()
+    func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> some View {
+        AVPlayerView(videoLayout: layout)
             .environmentObject(self)
     }
 }
@@ -407,8 +379,6 @@ extension AVMediaPlayerProxy {
                 self.isBuffering.value = player.timeControlStatus == .waitingToPlayAtSpecifiedRate
                 #endif
 
-                guard self.manager?.remote.isRemotePlayback == false else { return }
-
                 switch status {
                 case .playing:
                     self.manager?.setPlaybackRequestStatus(status: .playing)
@@ -506,8 +476,21 @@ extension AVMediaPlayerProxy {
         await updatePreferredDisplayCriteria()
         #endif
 
-        setAudioStream(.init(index: item.selectedAudioStreamIndex))
-        setSubtitleStream(.init(index: item.selectedSubtitleStreamIndex ?? -1))
+        var indexMap = MediaTrackIndexMap()
+        for (streams, cachedStreams, group) in [
+            (item.audioStreams, cachedAudioStreams, cachedAudioGroup),
+            (item.subtitleStreams, cachedSubtitleStreams, cachedSubtitleGroup),
+        ] {
+            guard let group else { continue }
+            for stream in streams {
+                guard let index = stream.index,
+                      let option = selectionOption(matching: index, in: group, from: cachedStreams),
+                      let playerIndex = group.options.firstIndex(of: option)
+                else { continue }
+                indexMap.setPlayerIndex(playerIndex, for: index)
+            }
+        }
+        item.setTrackIndexes(indexMap)
 
         player.seek(
             to: CMTime(seconds: startSeconds.seconds, preferredTimescale: 600),
@@ -521,7 +504,7 @@ extension AVMediaPlayerProxy {
                       manager.playbackRequestStatus == .playing
                 else { return }
 
-                self.player.rate = manager.rate
+                self.player.rate = Float(manager.rate)
             }
         }
     }
@@ -589,8 +572,13 @@ extension AVMediaPlayerProxy {
         @EnvironmentObject
         private var proxy: AVMediaPlayerProxy
 
+        let videoLayout: VideoPlayer.VideoLayout
+
         var body: some View {
             AVPlayerLayerView(proxy: proxy)
+                .frame(width: videoLayout.renderSize.width, height: videoLayout.renderSize.height)
+                .scaleEffect(videoLayout.renderScale)
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 .onReceive(manager.$playbackItem) { playbackItem in
                     guard let playbackItem else { return }
                     proxy.playNew(item: playbackItem)
@@ -607,19 +595,19 @@ extension AVMediaPlayerProxy {
 
     private struct AVPlayerLayerView: UIViewRepresentable {
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
 
         let proxy: AVMediaPlayerProxy
 
         func makeUIView(context: Context) -> UIView {
             proxy.isScrubbing = Binding(
-                get: { containerState.isScrubbing },
-                set: { containerState.isScrubbing = $0 }
+                get: { viewState.isScrubbing },
+                set: { viewState.isScrubbing = $0 }
             )
             proxy.scrubbedSeconds = Binding(
-                get: { containerState.scrubbedSeconds.value },
-                set: { containerState.scrubbedSeconds.value = $0 }
+                get: { viewState.scrubbedSeconds.value },
+                set: { viewState.scrubbedSeconds.value = $0 }
             )
 
             return AVPlayerUIView(proxy: proxy)

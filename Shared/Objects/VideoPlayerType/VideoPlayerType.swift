@@ -6,12 +6,14 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 
-enum VideoPlayerType: String, CaseIterable, Displayable, Storable {
+enum VideoPlayerType: String, CaseIterable, Displayable, SupportedCaseIterable, Storable {
 
-    case avPlayer
+    case avPlayer = "native"
     case vlc
+    case mpv
 
     var displayTitle: String {
         switch self {
@@ -19,6 +21,8 @@ enum VideoPlayerType: String, CaseIterable, Displayable, Storable {
             L10n.avPlayer
         case .vlc:
             L10n.vlc
+        case .mpv:
+            L10n.mpv
         }
     }
 
@@ -26,7 +30,7 @@ enum VideoPlayerType: String, CaseIterable, Displayable, Storable {
         switch self {
         case .avPlayer:
             Self._avPlayerDirectPlayProfiles
-        case .vlc:
+        case .vlc, .mpv:
             Self._vlcDirectPlayProfiles
         }
     }
@@ -35,7 +39,7 @@ enum VideoPlayerType: String, CaseIterable, Displayable, Storable {
         switch self {
         case .avPlayer:
             Self._avPlayerTranscodingProfiles
-        case .vlc:
+        case .vlc, .mpv:
             Self._vlcTranscodingProfiles
         }
     }
@@ -44,8 +48,18 @@ enum VideoPlayerType: String, CaseIterable, Displayable, Storable {
         switch self {
         case .avPlayer:
             Self._avPlayerSubtitleProfiles
-        case .vlc:
+        case .vlc, .mpv:
             Self._vlcSubtitleProfiles
+        }
+    }
+
+    @ArrayBuilder<VideoPlayerType>
+    static var supportedCases: [VideoPlayerType] {
+        VideoPlayerType.avPlayer
+        VideoPlayerType.vlc
+
+        if Defaults[.Experimental.mpvPlayer] {
+            VideoPlayerType.mpv
         }
     }
 }

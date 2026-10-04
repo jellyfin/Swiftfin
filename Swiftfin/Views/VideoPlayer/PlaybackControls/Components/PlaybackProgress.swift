@@ -24,8 +24,8 @@ extension VideoPlayer.PlaybackControls {
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
@@ -39,10 +39,10 @@ extension VideoPlayer.PlaybackControls {
 
         private var isScrubbing: Bool {
             get {
-                containerState.isScrubbing
+                viewState.isScrubbing
             }
             nonmutating set {
-                containerState.isScrubbing = newValue
+                viewState.isScrubbing = newValue
             }
         }
 
@@ -77,21 +77,13 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var videoSizeAspectRatio: CGFloat {
-            guard let videoPlayerProxy = manager.proxy as? any VideoMediaPlayerProxy else {
-                return 1.77
-            }
-
-            let videoSize = videoPlayerProxy.videoSize.value
-            guard videoSize.width.isFinite,
-                  videoSize.height.isFinite,
-                  videoSize.width > 0,
-                  videoSize.height > 0
+            guard let aspectRatio = (manager.proxy as? any VideoMediaPlayerProxy)?
+                .videoSize
+                .value
+                .aspectRatio
             else {
                 return 1.77
             }
-
-            let aspectRatio = videoSize.aspectRatio
-            guard aspectRatio.isFinite else { return 1.77 }
 
             return clamp(aspectRatio, min: 0.25, max: 4)
         }
@@ -136,21 +128,21 @@ extension VideoPlayer.PlaybackControls {
                 // Use scale effect, slider doesn't respond well to horizontal frame changes
                 let xScale = insetSliderWidth > 0 ? max(1, sliderSize.width / insetSliderWidth) : 1
 
-                CapsuleSlider(
+                SliderContainer(
                     value: $scrubbedSecondsBox.value.map(
                         getter: { $0.seconds },
                         setter: { .seconds($0) }
                     ),
-                    total: sliderTotal,
-                    translation: $currentTranslation,
-                    valueDamping: isSlowScrubbing ? 0.1 : 1
+                    total: sliderTotal
                 )
+                .translation($currentTranslation)
+                .valueDamping(isSlowScrubbing ? 0.1 : 1)
                 .gesturePadding(30)
                 .onEditingChanged { newValue in
                     isScrubbing = newValue
                 }
                 .if(chapterSlider) { view in
-                    view.ifLet(manager.item.fullChapterInfo) { view, chapters in
+                    view.ifLet(manager.item.chapters) { view, chapters in
                         if chapters.isEmpty {
                             view
                         } else {

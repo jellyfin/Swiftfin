@@ -25,8 +25,10 @@ extension VideoRangeType: Displayable {
         case .dovi:
             L10n.dolbyVision
         case .doviWithEL:
+            // swiftlint:disable:next nested_l10n
             L10n.withEnhancementLayer(L10n.dolbyVision)
         case .doviWithELHDR10Plus:
+            // swiftlint:disable:next nested_l10n
             "\(L10n.withEnhancementLayer(L10n.dolbyVision)) / \(L10n.hdr10Plus)"
         case .doviWithHDR10:
             "\(L10n.dolbyVision) / \(L10n.hdr10)"
@@ -35,7 +37,7 @@ extension VideoRangeType: Displayable {
         case .doviWithHLG:
             "\(L10n.dolbyVision) / \(L10n.hlg)"
         case .doviInvalid:
-            L10n.invalidX(L10n.dolbyVision)
+            L10n.invalidDolbyVision
         case .doviWithSDR:
             "\(L10n.dolbyVision) / \(L10n.sdr)"
         case .hdr10Plus:

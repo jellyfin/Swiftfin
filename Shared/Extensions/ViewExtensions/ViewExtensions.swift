@@ -203,7 +203,7 @@ extension View {
     func inverseMask(alignment: Alignment = .center, @ViewBuilder _ content: @escaping () -> some View) -> some View {
         mask(alignment: alignment) {
             content()
-                .foregroundColor(.black)
+                .foregroundStyle(.black)
                 .background(.white)
                 .compositingGroup()
                 .luminanceToAlpha()
@@ -360,22 +360,22 @@ extension View {
         switch type {
         case .landscape:
             posterAspectRatio(type, contentMode: contentMode)
-            #if !os(tvOS)
-                .posterBorder()
-                .posterCornerRadius(type)
-            #endif
+                #if !os(tvOS)
+                    .posterBorder()
+                    .posterCornerRadius(type)
+                #endif
         case .portrait:
             posterAspectRatio(type, contentMode: contentMode)
-            #if !os(tvOS)
-                .posterBorder()
-                .posterCornerRadius(type)
-            #endif
+                #if !os(tvOS)
+                    .posterBorder()
+                    .posterCornerRadius(type)
+                #endif
         case .square:
             posterAspectRatio(type, contentMode: contentMode)
-            #if os(iOS)
-                .posterBorder()
-                .posterCornerRadius(type)
-            #endif
+                #if os(iOS)
+                    .posterBorder()
+                    .posterCornerRadius(type)
+                #endif
         }
     }
 
@@ -412,12 +412,6 @@ extension View {
                 content: content
             )
         }
-    }
-
-    // TODO: look at changing to symbolEffect
-    @ViewBuilder
-    func videoPlayerActionButtonTransition() -> some View {
-        transition(.opacity.combined(with: .scale).animation(.snappy))
     }
 
     // MARK: debug

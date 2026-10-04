@@ -87,14 +87,8 @@ extension ItemView {
                         content
                     }
 
-                    VStack(alignment: .center, spacing: 5) {
-                        if provider.item.presentPlayButton {
-                            PlayButton(provider: provider)
-                        }
-
-                        ItemView.ActionButtonHStack(provider: provider)
-                    }
-                    .frame(maxWidth: 300)
+                    ItemView.ActionBar(provider: provider)
+                        .frame(maxWidth: 300)
 
                     Divider()
 

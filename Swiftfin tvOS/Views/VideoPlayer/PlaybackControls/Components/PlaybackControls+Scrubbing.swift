@@ -18,28 +18,33 @@ extension VideoPlayer.PlaybackControls {
     }
 
     func startSpeedBoost() {
-        guard !isSpeedBoosting else { return }
+        guard !isSpeedBoosting, speedBoostTimer == nil else { return }
+        viewState.setInteraction(.speedBoost, active: true)
 
         speedBoostTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [self] _ in
-            isSpeedBoosting = true
-            containerState.originalPlaybackRate = manager.rate
+            // This timer is scheduled on the main actor's run loop.
+            MainActor.assumeIsolated {
+                isSpeedBoosting = true
+                viewState.originalPlaybackRate = manager.rate
 
-            let multiplier = Defaults[.VideoPlayer.Gesture.longPressSpeedMultiplier]
-            manager.setRate(rate: multiplier.rawValue)
+                let multiplier = Defaults[.VideoPlayer.Gesture.longPressSpeedMultiplier]
+                manager.setRate(rate: multiplier.rawValue)
 
-            toaster.present(
-                Text(multiplier.displayTitle),
-                systemName: "forward.fill"
-            )
+                toaster.present(
+                    Text(multiplier.displayTitle),
+                    systemName: "forward.fill"
+                )
+            }
         }
     }
 
     func stopSpeedBoost(performJump: Bool = false) {
         speedBoostTimer?.invalidate()
         speedBoostTimer = nil
+        viewState.setInteraction(.speedBoost, active: false)
 
         if isSpeedBoosting {
-            if let originalRate = containerState.originalPlaybackRate {
+            if let originalRate = viewState.originalPlaybackRate {
                 manager.setRate(rate: originalRate)
 
                 toaster.present(
@@ -48,7 +53,7 @@ extension VideoPlayer.PlaybackControls {
                 )
             }
 
-            containerState.originalPlaybackRate = nil
+            viewState.originalPlaybackRate = nil
             isSpeedBoosting = false
             return
         }
@@ -59,10 +64,11 @@ extension VideoPlayer.PlaybackControls {
     }
 
     func jumpForward() {
-        containerState.jumpProgressObserver.jumpForward()
+        viewState.showProgress()
+        viewState.jumpProgressObserver.jumpForward()
         toaster.present(
             Text(
-                jumpForwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
+                jumpForwardInterval.rawValue * viewState.jumpProgressObserver.jumps,
                 format: .minuteSecondsAbbreviated
             ),
             systemName: "goforward"
@@ -71,10 +77,11 @@ extension VideoPlayer.PlaybackControls {
     }
 
     func jumpBackward() {
-        containerState.jumpProgressObserver.jumpBackward()
+        viewState.showProgress()
+        viewState.jumpProgressObserver.jumpBackward()
         toaster.present(
             Text(
-                jumpBackwardInterval.rawValue * containerState.jumpProgressObserver.jumps,
+                jumpBackwardInterval.rawValue * viewState.jumpProgressObserver.jumps,
                 format: .minuteSecondsAbbreviated
             ),
             systemName: "gobackward"
@@ -85,12 +92,12 @@ extension VideoPlayer.PlaybackControls {
     func scheduleJump(direction: JumpDirection) {
         pendingJumpWork?.cancel()
 
-        let jumpCount = containerState.jumpProgressObserver.jumps
+        let jumpCount = viewState.jumpProgressObserver.jumps
         let interval = direction == .forward
             ? jumpForwardInterval.rawValue
             : jumpBackwardInterval.rawValue
 
-        let work = DispatchWorkItem { [weak manager, weak containerState] in
+        let work = DispatchWorkItem { [weak manager, weak viewState] in
             let totalDuration = interval * jumpCount
 
             switch direction {
@@ -99,7 +106,7 @@ extension VideoPlayer.PlaybackControls {
             case .backward:
                 manager?.proxy?.jumpBackward(totalDuration)
             }
-            containerState?.jumpProgressObserver.reset()
+            viewState?.jumpProgressObserver.reset()
         }
 
         pendingJumpWork = work

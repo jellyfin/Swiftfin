@@ -194,7 +194,7 @@ private struct UserViewLibraryGridElement: View {
                         .opacity(0.75)
                         .overlay {
                             titleLabel
-                                .foregroundColor(.primary)
+                                .foregroundStyle(.primary)
                         }
                 }
                 .id(imageSources.hashValue)
@@ -202,6 +202,7 @@ private struct UserViewLibraryGridElement: View {
                 .posterStyle(.landscape)
                 .matchedTransitionSource(id: "item", in: namespace)
         }
+        .foregroundStyle(.primary, .secondary)
         .onFirstAppear(perform: setImageSources)
         .onChange(of: useRandomImage) {
             setImageSources()
@@ -219,6 +220,7 @@ private struct UserViewLibraryGridElement: View {
             .frame(alignment: .center)
     }
 
+    @ViewBuilder
     private func titleLabelOverlay(with content: some View) -> some View {
         ZStack {
             content
@@ -268,13 +270,16 @@ private struct UserViewLibraryListElement: View {
         } action: {
             element.libraryDidSelectElement(router: router, in: namespace)
         }
+        #if !os(tvOS)
         .matchedTransitionSource(id: "item", in: namespace)
+        #endif
         .onFirstAppear(perform: setImageSources)
         .onChange(of: useRandomImage) {
             setImageSources()
         }
     }
 
+    @ViewBuilder
     private var imageView: some View {
         ZStack {
             Color.secondarySystemFill
@@ -306,15 +311,15 @@ private extension UserViewLibraryElement {
 
     @MainActor
     func libraryImageSources(useRandomImage: Bool) async -> [ImageSource] {
-        if useRandomImage {
-            return await (try? randomItemImageSources()) ?? []
-        }
-
         switch self {
         case .favorites:
-            return []
+            return await (try? randomItemImageSources()) ?? []
         case let .userView(item):
-            return [item.imageSource(.primary, environment: ImageSourceOptions(maxWidth: 500))]
+            if useRandomImage {
+                return await (try? randomItemImageSources()) ?? []
+            }
+
+            return [item.imageSource(.primary, itemID: item.id, environment: ImageSourceOptions(maxWidth: 500))].compactMap(\.self)
         }
     }
 

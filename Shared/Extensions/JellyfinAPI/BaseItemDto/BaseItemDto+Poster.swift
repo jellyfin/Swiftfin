@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Algorithms
 import FactoryKit
 import Foundation
 import Get
@@ -45,7 +46,7 @@ extension BaseItemDto: Poster {
         case .episode:
             seasonEpisodeLabel
         case .person:
-            people?.first?.firstRole
+            people?.first?.displayRole
         case .video:
             extraType?.displayTitle
         default:
@@ -87,153 +88,102 @@ extension BaseItemDto: Poster {
     @ViewBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         ZStack {
-            PosterSelectionOverlay()
-
             PosterIndicatorsOverlay(
                 item: self,
                 posterDisplayType: displayType
             )
+
+            PosterSelectionOverlay()
         }
     }
 
-    @ImageSourceBuilder
-    func portraitImageSources(
+    func imageSources(
+        for displayType: PosterDisplayType,
         environment: Environment
     ) -> [ImageSource] {
-        switch type {
-        case .episode:
-            imageSource(
-                itemID: seriesID,
-                .primary,
-                tag: seriesPrimaryImageTag,
-                environment: environment
-            )
-        case .boxSet, .channel, .liveTvChannel, .liveTvProgram, .movie, .musicArtist, .person, .program, .series, .tvChannel:
-            imageSource(
-                .primary,
-                environment: environment
-            )
-        case .season:
-            imageSource(
-                .primary,
-                environment: environment
-            )
+        @ImageSourceBuilder
+        var sources: [ImageSource] {
+            let isLandscape = displayType == .landscape
+            let preferThumb = isLandscape && environment.viewContext.contains(.isThumb)
+            let inheritLandscape = !isLandscape || type != .episode || environment.useParent
+            let isProgram = type == .program || type == .liveTvProgram || type == .tvProgram
 
-            imageSource(
-                itemID: seriesID,
-                .primary,
-                tag: seriesPrimaryImageTag,
-                environment: environment
-            )
-        default:
-            []
-        }
-    }
-
-    @ImageSourceBuilder
-    func landscapeImageSources(
-        environment: Environment
-    ) -> [ImageSource] {
-        switch type {
-        case .episode:
-            if environment.useParent {
-                if environment.viewContext.contains(.isThumb) {
-                    imageSource(
-                        itemID: seriesID,
-                        .thumb,
-                        tag: seriesThumbImageTag,
-                        environment: environment
-                    )
+            if isLandscape, environment.viewContext.contains(.isBackdrop) {
+                if type == .episode {
+                    imageSource(.backdrop, itemID: parentBackdropItemID, tag: parentBackdropImageTags?.first, environment: environment)
                 }
 
-                imageSource(
-                    .primary,
-                    environment: environment
-                )
-            } else {
-                imageSource(
-                    .primary,
-                    environment: environment
-                )
-            }
-        case .collectionFolder, .folder, .musicVideo, .userView, .video:
-            if environment.viewContext.contains(.isThumb) {
-                imageSource(
-                    .thumb,
-                    environment: environment
-                )
+                imageSource(.backdrop, itemID: id, environment: environment)
             }
 
-            imageSource(
-                .primary,
-                environment: environment
-            )
-        case .season:
-            if environment.viewContext.contains(.isThumb) {
-                imageSource(
-                    itemID: seriesID,
-                    .thumb,
-                    tag: seriesThumbImageTag,
-                    environment: environment
-                )
+            // Program squares represent the channel in the guide.
+            if displayType == .square, isProgram {
+                imageSource(.primary, itemID: channelID, tag: channelPrimaryImageTag, environment: environment)
             }
 
-            imageSource(
-                itemID: seriesID,
-                .backdrop,
-                tag: parentBackdropImageTags?.first,
-                environment: environment
-            )
-        default:
-            if environment.viewContext.contains(.isThumb) {
-                imageSource(
-                    .thumb,
-                    environment: environment
-                )
+            if preferThumb {
+                imageSource(.thumb, itemID: id, environment: environment)
+
+                if inheritLandscape {
+                    imageSource(.thumb, itemID: seriesID, tag: seriesThumbImageTag, environment: environment)
+                    imageSource(.thumb, itemID: parentThumbItemID, tag: parentThumbImageTag, environment: environment)
+                }
             }
 
-            imageSource(
-                .backdrop,
-                tag: backdropImageTags?.first,
-                environment: environment
-            )
+            if isLandscape {
+                let preferPrimary: Bool = if let primaryImageAspectRatio, primaryImageAspectRatio > 0 {
+                    primaryImageAspectRatio >= 1.33
+                } else {
+                    switch type {
+                    case .collectionFolder, .episode, .folder, .musicVideo, .userView, .video:
+                        true
+                    default:
+                        false
+                    }
+                }
+
+                if preferThumb || !preferPrimary {
+                    imageSource(.backdrop, itemID: id, environment: environment)
+                }
+
+                if type == .season || (type == .episode && environment.useParent) {
+                    imageSource(.backdrop, itemID: parentBackdropItemID, tag: parentBackdropImageTags?.first, environment: environment)
+                }
+            } else if type == .episode {
+                // A portrait episode card uses its season/series poster when available.
+                imageSource(.primary, itemID: parentPrimaryImageItemID, tag: parentPrimaryImageTag, environment: environment)
+                imageSource(.primary, itemID: seriesID, tag: seriesPrimaryImageTag, environment: environment)
+            }
+
+            imageSource(.primary, itemID: id, environment: environment)
+
+            // Never substitute a parent portrait for an episode's landscape still.
+            if type != .episode || !isLandscape {
+                imageSource(.primary, itemID: seriesID, tag: seriesPrimaryImageTag, environment: environment)
+                imageSource(.primary, itemID: parentPrimaryImageItemID, tag: parentPrimaryImageTag, environment: environment)
+            }
+
+            imageSource(.primary, itemID: albumID, tag: albumPrimaryImageTag, environment: environment)
+
+            if type == .season {
+                imageSource(.thumb, itemID: id, environment: environment)
+            }
+
+            imageSource(.backdrop, itemID: id, environment: environment)
+            imageSource(.thumb, itemID: id, environment: environment)
+
+            if inheritLandscape {
+                imageSource(.thumb, itemID: seriesID, tag: seriesThumbImageTag, environment: environment)
+                imageSource(.thumb, itemID: parentThumbItemID, tag: parentThumbImageTag, environment: environment)
+                imageSource(.backdrop, itemID: parentBackdropItemID, tag: parentBackdropImageTags?.first, environment: environment)
+            }
+
+            if isProgram {
+                imageSource(.primary, itemID: channelID, tag: channelPrimaryImageTag, environment: environment)
+            }
         }
-    }
 
-    @ImageSourceBuilder
-    func squareImageSources(
-        environment: Environment
-    ) -> [ImageSource] {
-        switch type {
-        case .audio:
-            imageSource(
-                .primary,
-                environment: environment
-            )
-
-            imageSource(
-                itemID: albumID,
-                .primary,
-                tag: albumPrimaryImageTag,
-                environment: environment
-            )
-        case .channel, .musicAlbum, .tvChannel:
-            imageSource(
-                .primary,
-                environment: environment
-            )
-        case .program:
-            if let channelID {
-                imageSource(
-                    itemID: channelID,
-                    .primary,
-                    tag: channelPrimaryImageTag,
-                    environment: environment
-                )
-            }
-        default:
-            []
-        }
+        return Array(sources.uniqued())
     }
 
     @ViewBuilder
@@ -379,133 +329,5 @@ private struct BaseItemDtoPosterContextMenu: View {
         item.userData = response.value
         Notifications[.itemUserDataDidChange].post(response.value)
         Notifications[.itemShouldRefreshMetadata].post(itemID)
-    }
-}
-
-private struct BaseItemDtoPosterLabel: View {
-
-    let item: BaseItemDto
-
-    var body: some View {
-        switch item.type {
-        case .episode:
-            Label {
-                if let seriesName = item.seriesName {
-                    Text(seriesName)
-                }
-                if let indexLabel = item.seasonEpisodeLabel {
-                    Text(indexLabel)
-                }
-
-                Text(item.displayTitle)
-            }
-        case .season:
-            Label {
-                Text(item.parentTitle ?? item.displayTitle)
-                Text(item.displayTitle)
-            }
-        case .program:
-            Label {
-                Text(item.displayTitle)
-
-                if let startDate = item.startDate {
-                    ViewThatFits {
-                        SeparatorHStack {
-                            Text(String.hyphen)
-                        } content: {
-                            if !Calendar.current.isDateInToday(startDate) {
-                                Text(startDate, format: .dateTime.weekday(.abbreviated).hour().minute())
-                            } else {
-                                Text(startDate, style: .time)
-                            }
-
-                            if let endDate = item.endDate {
-                                Text(endDate, style: .time)
-                            }
-                        }
-
-                        if !Calendar.current.isDateInToday(startDate) {
-                            Text(startDate, format: .dateTime.weekday(.abbreviated).hour().minute())
-                        } else {
-                            Text(startDate, style: .time)
-                        }
-                    }
-                } else {
-                    Text(String.emptyRuntime)
-                }
-
-                if let channelName = item.channelName {
-                    Text(channelName)
-                }
-            }
-        case .video where item.extraType != nil:
-            Label {
-                Text(item.displayTitle)
-
-                if let extraType = item.extraType, extraType != .unknown {
-                    Text(extraType.displayTitle)
-                }
-
-                if let runtime = item.runtime {
-                    Text(runtime, format: .runtime)
-                }
-            }
-        default:
-            Label {
-                Text(item.displayTitle)
-
-                if let subtitle = item.subtitle {
-                    Text(subtitle)
-                }
-            }
-        }
-    }
-
-    private struct Label: View {
-
-        @Environment(\.posterDisplayType)
-        private var posterDisplayType
-
-        private let content: [AnyView]
-
-        private var details: [AnyView] {
-            let details = content.dropFirst()
-
-            return posterDisplayType == .landscape ? details.asArray : details.prefix(1).asArray
-        }
-
-        init(@ArrayBuilder<any View> content: () -> [any View]) {
-            self.content = content().map { AnyView($0) }
-        }
-
-        var body: some View {
-            AlternateLayoutView(alignment: .topLeading) {
-                VStack(spacing: 2) {
-                    Text(String.space)
-                    Text(String.space)
-                }
-                .font(.footnote)
-                .frame(maxWidth: .infinity)
-            } content: {
-                VStack(alignment: .leading, spacing: 2) {
-                    content.first
-                        .font(.footnote)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(details.isEmpty ? 2 : 1, reservesSpace: true)
-
-                    DotHStack {
-                        ForEach(details.indices, id: \.self) { index in
-                            details[index]
-                                .layoutPriority(index == 0 ? 1 : 0)
-                        }
-                    }
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-        }
     }
 }

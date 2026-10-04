@@ -136,7 +136,7 @@ struct EditServerConnectionView: View {
 
     private func save() async throws {
         guard !isNameEmpty else {
-            throw ErrorMessage(L10n.invalidX(L10n.name))
+            throw ErrorMessage(L10n.invalidName)
         }
 
         let connection = try draft.connection()
@@ -193,11 +193,11 @@ struct EditServerConnectionView: View {
 
             Section {
                 TextField(L10n.url, text: $draft.urlString)
-                #if !os(tvOS)
-                    .textInputAutocapitalization(.never)
-                    .keyboardType(.URL)
-                    .autocorrectionDisabled()
-                #endif
+                    #if !os(tvOS)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.URL)
+                        .autocorrectionDisabled()
+                    #endif
             } header: {
                 Text(L10n.url)
             } footer: {
@@ -364,7 +364,7 @@ private struct ServerConnectionDraft: Equatable {
            useWifiName,
            normalizedSSIDs.isEmpty
         {
-            throw ErrorMessage(L10n.invalidX(L10n.wifiName))
+            throw ErrorMessage(L10n.invalidWifiName)
         }
 
         return ServerConnection(

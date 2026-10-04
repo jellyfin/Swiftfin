@@ -52,14 +52,14 @@ extension ConnectToServerView {
                     .listRowInsets(.zero)
                     .listRowBackground(Color.clear)
                     #if os(iOS)
-                        .listRowSeparator(.hidden)
+                    .listRowSeparator(.hidden)
                     #endif
-                        .fontWeight(.semibold)
-                        .backport
-                        .buttonStyle(.glassProminent.shadow(false))
-                        .tint(.jellyfinPurple)
+                    .fontWeight(.semibold)
+                    .backport
+                    .buttonStyle(.glassProminent.shadow(false))
+                    .tint(.jellyfinPurple)
                     #if os(iOS)
-                        .controlSize(.large)
+                    .controlSize(.large)
                     #endif
                 }
                 .toolbarTitleDisplayMode(.inline)

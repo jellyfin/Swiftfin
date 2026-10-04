@@ -144,6 +144,10 @@ extension Notifications.Key {
         Key("didDeleteItem")
     }
 
+    static var recordingTimersDidChange: Key<Void> {
+        Key("recordingTimersDidChange")
+    }
+
     // MARK: - Server
 
     static var didConnectToServer: Key<ServerState> {
@@ -173,6 +177,14 @@ extension Notifications.Key {
 
     static var interruption: Key<Void> {
         Key(AVAudioSession.interruptionNotification)
+    }
+
+    // MARK: - UIAccessibility
+
+    static var darkerSystemColorsStatusDidChange: Key<Bool> {
+        Key(UIAccessibility.darkerSystemColorsStatusDidChangeNotification) { _ in
+            UIAccessibility.isDarkerSystemColorsEnabled
+        }
     }
 
     // MARK: - UIApplication

@@ -19,6 +19,11 @@ struct VideoPlayerSettingsView: View {
     typealias PlatformPicker = Picker
     #endif
 
+    // MARK: - Player Defaults
+
+    @Default(.VideoPlayer.videoPlayerType)
+    private var videoPlayerType
+
     // MARK: - Button Defaults
 
     @Default(.VideoPlayer.jumpBackwardInterval)
@@ -81,6 +86,8 @@ struct VideoPlayerSettingsView: View {
 
     var body: some View {
         Form(systemImage: "tv") {
+            engineSettings
+
             #if os(iOS)
             gestureSettings
             #endif
@@ -111,6 +118,43 @@ struct VideoPlayerSettingsView: View {
         }
     }
 
+    // MARK: - Engine Settings
+
+    @ViewBuilder
+    private var videoPlayerPicker: some View {
+        Picker(L10n.player, selection: $videoPlayerType) {
+            ForEach(VideoPlayerType.supportedCases, id: \.self) { player in
+                Text(player.displayTitle).tag(player)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var engineSettings: some View {
+        Section(L10n.playback) {
+            #if os(iOS)
+            videoPlayerPicker
+            #else
+            ListRowMenu(L10n.player, subtitle: videoPlayerType.displayTitle) {
+                videoPlayerPicker
+            }
+            #endif
+
+            ChevronButton(L10n.playbackQuality) {
+                router.route(to: .playbackQualitySettings)
+            }
+        } learnMore: {
+            LabeledContent(
+                L10n.vlc,
+                value: L10n.playerVlcDescription
+            )
+            LabeledContent(
+                L10n.avPlayer,
+                value: L10n.playerNativeDescription
+            )
+        }
+    }
+
     // MARK: - Gesture Settings
 
     #if os(iOS)
@@ -127,14 +171,36 @@ struct VideoPlayerSettingsView: View {
     // MARK: - Button Settings
 
     @ViewBuilder
+    private func jumpIntervalPicker(title: String, selection: Binding<MediaJumpInterval>) -> some View {
+        CustomAlertPicker(
+            title: title,
+            selection: selection,
+            customTitle: L10n.jump,
+            customDescription: L10n.customJumpIntervalDescription
+        ) { value in
+            TextField(
+                L10n.duration,
+                value: value
+                    .map(
+                        getter: { Int($0.rawValue.seconds) },
+                        setter: { MediaJumpInterval(rawValue: .seconds($0)) }
+                    )
+                    .clamp(min: 1, max: 600),
+                format: .number
+            )
+            .keyboardType(.numberPad)
+        }
+    }
+
+    @ViewBuilder
     private var buttonSettings: some View {
         Section(L10n.buttons) {
-            JumpIntervalPicker(
+            jumpIntervalPicker(
                 title: L10n.jumpBackwardLength,
                 selection: $jumpBackwardLength
             )
 
-            JumpIntervalPicker(
+            jumpIntervalPicker(
                 title: L10n.jumpForwardLength,
                 selection: $jumpForwardLength
             )

@@ -13,12 +13,13 @@ extension VideoPlayer.PlaybackControls.PlaybackProgress {
 
     struct ChapterTrackMask: View {
 
-        let chapters: [ChapterInfo.FullInfo]
+        // Tick marks only need timestamps, not the chapter image URLs in FullInfo.
+        let chapters: [ChapterInfo]
         let runtime: Duration
 
         private var unitPoints: [Double] {
             chapters.map { chapter in
-                guard let startSeconds = chapter.chapterInfo.startSeconds,
+                guard let startSeconds = chapter.startSeconds,
                       runtime > .zero,
                       startSeconds >= .zero,
                       startSeconds < runtime

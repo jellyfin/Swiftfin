@@ -46,13 +46,13 @@ extension SettingsView {
                     Text(user.name ?? L10n.unknown)
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
-
-                    Spacer()
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     if action != nil {
                         Image(systemName: "chevron.right")
-                            .font(.body.weight(.regular))
-                            .foregroundColor(.secondary)
+                            .font(.body)
+                            .fontWeight(.regular)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }

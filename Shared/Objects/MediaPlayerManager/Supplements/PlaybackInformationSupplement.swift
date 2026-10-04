@@ -20,6 +20,7 @@ class PlaybackInformationSupplement: ObservableObject, MediaPlayerSupplement {
 
     let displayTitle: String = L10n.session
     let itemID: String
+    let presentationStyle: MediaPlayerSupplementPresentationStyle = .expanded
     let provider: PlaybackInformationProvider
 
     var id: String {
@@ -43,8 +44,8 @@ extension PlaybackInformationSupplement {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -74,11 +75,7 @@ extension PlaybackInformationSupplement {
                 .fontWeight(.semibold)
                 .padding(.vertical, 4)
 
-            if let videoPlayerType = manager.videoPlayerType {
-                LabeledContent(L10n.videoPlayer, value: videoPlayerType.displayTitle)
-            } else if let route = manager.remote.state?.type {
-                LabeledContent(L10n.videoPlayer, value: route.displayTitle)
-            }
+            LabeledContent(L10n.videoPlayer, value: Defaults[.VideoPlayer.videoPlayerType].displayTitle)
 
             if let playMethod = viewModel.currentSession?.playMethodDisplayTitle {
                 LabeledContent(L10n.method, value: playMethod)
@@ -217,7 +214,7 @@ extension PlaybackInformationSupplement {
 
         var iOSView: some View {
             CompactOrRegularView(
-                isCompact: containerState.isCompact
+                isCompact: viewState.isCompact
             ) {
                 compactView
             } regularView: {
@@ -226,6 +223,7 @@ extension PlaybackInformationSupplement {
             .labeledContentStyle(.playbackInfo)
             .padding(.leading, safeAreaInsets.leading)
             .padding(.trailing, safeAreaInsets.trailing)
+            .padding(.bottom, safeAreaInsets.bottom)
         }
 
         @ViewBuilder

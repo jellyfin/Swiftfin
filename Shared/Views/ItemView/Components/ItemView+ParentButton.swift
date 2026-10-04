@@ -24,25 +24,17 @@ extension ItemView {
             } label: {
                 Label {
                     Text(title)
-                        .font(.headline)
-                        .multilineTextAlignment(.center)
                         .lineLimit(1)
                 } icon: {
                     Image(systemName: "chevron.forward")
-                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
-                .font(.callout)
-                .fontWeight(.semibold)
             }
+            .lineLimit(1)
             .foregroundStyle(.primary, .secondary)
-            .labelStyle(
-                CapsuleLabelStyle(
-                    isIconTrailing: true
-                )
-            )
-            .buttonBorderShape(.capsule)
-            .buttonStyle(.card)
+            .labelStyle(.trailingIcon)
+            .buttonStyle(.capsule)
+            .controlSize(UIDevice.isTV ? .large : .regular)
         }
     }
 }
