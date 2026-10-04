@@ -59,6 +59,9 @@ extension UIDevice {
     }
 
     /// - Important: Does nothing on non-iOS platforms.
+    ///
+    /// - Note: For real-time interactions, manually manage a
+    ///         `UIImpactFeedbackGenerator` with `prepare()`.
     static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {
         #if os(iOS)
         UINotificationFeedbackGenerator().notificationOccurred(type)
@@ -68,6 +71,9 @@ extension UIDevice {
     // TODO: make more custom feedback types with Core Haptics
     //       - soft with intensity
     /// - Important: Does nothing on non-iOS platforms.
+    ///
+    /// - Note: For real-time interactions, manually manage a
+    ///         `UIImpactFeedbackGenerator` with `prepare()`.
     static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
         #if os(iOS)
         UIImpactFeedbackGenerator(style: type).impactOccurred()

@@ -21,6 +21,7 @@ struct GestureView: PlatformViewRepresentable {
         view.addGestureRecognizer(context.coordinator.pinchGesture)
         view.addGestureRecognizer(context.coordinator.tapGesture)
         view.addGestureRecognizer(context.coordinator.doubleTouchGesture)
+        context.coordinator.doubleTouchGesture.require(toFail: context.coordinator.pinchGesture)
 
         view.backgroundColor = .clear
         return view
@@ -61,11 +62,13 @@ struct GestureView: PlatformViewRepresentable {
         }()
 
         lazy var panGesture: DirectionalPanGestureRecognizer! = {
-            .init(
+            let recognizer = DirectionalPanGestureRecognizer(
                 direction: .allButDown,
                 target: self,
                 action: #selector(handlePan)
             )
+            recognizer.maximumNumberOfTouches = 1
+            return recognizer
         }()
 
         lazy var pinchGesture: UIPinchGestureRecognizer! = {
@@ -143,9 +146,13 @@ struct GestureView: PlatformViewRepresentable {
 
         @objc
         func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+            if gesture.state == .began || gesture.state == .changed {
+                guard gesture.numberOfTouches == 2 else { return }
+            }
+
             pinchAction?(
                 scale: gesture.scale,
-                velocity: gesture.velocity,
+                location: gesture.location(in: gesture.view),
                 state: gesture.state
             )
         }

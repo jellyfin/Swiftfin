@@ -14,10 +14,6 @@ import SwiftUI
 // TODO: pause when center tapped when overlay dismissed
 //       - can be done entirely on playback controls layer
 // TODO: account for gesture state active when item changes
-// TODO: only show player view if not error/other bad states
-//       - only show when have item?
-//       - helps with not rendering before ready
-//       - would require refactor so that video players take media player items
 
 extension VideoPlayer {
 
@@ -109,6 +105,9 @@ extension VideoPlayer {
                         }
                         .allowsHitTesting(false)
                 }
+                .overlay {
+                    VideoZoomBorder(isVisible: viewState.zoom.isFillBorderPresented)
+                }
             }
         }
 
@@ -119,26 +118,35 @@ extension VideoPlayer {
 
             let playbackControls: AnyView
 
+            private var panGestureDirection: Direction {
+                if viewState.canPanZoom {
+                    .all
+                } else {
+                    if viewState.isPresentingSupplement {
+                        .vertical
+                    } else {
+                        if viewState.isPresentingControls {
+                            if viewState.supplements.isEmpty {
+                                []
+                            } else {
+                                Direction.up
+                            }
+                        } else {
+                            .allButDown
+                        }
+                    }
+                }
+            }
+
             var body: some View {
                 OverlayToastView(proxy: viewState.toastProxy) {
-                    Group {
+                    ZStack {
                         #if os(iOS)
-                        ZStack {
-                            GestureView()
-                                .environment(
-                                    \.panGestureDirection,
-                                    viewState.isPresentingSupplement
-                                        ? .vertical
-                                        : (viewState.isPresentingControls
-                                            ? (viewState.supplements.isEmpty ? [] : .up)
-                                            : .allButDown)
-                                )
-
-                            playbackControls
-                        }
-                        #else
-                        playbackControls
+                        GestureView()
+                            .environment(\.panGestureDirection, panGestureDirection)
                         #endif
+
+                        playbackControls
                     }
                     .environmentObject(viewState.scrubbedSeconds)
                     .environmentObject(viewState.centerOffsetBox)
@@ -174,7 +182,11 @@ extension VideoPlayer {
                         \.pinchAction,
                         .init(
                             action: {
-                                viewState.containerView?.handlePinchGesture(scale: $0, velocity: $1, state: $2)
+                                viewState.containerView?.handlePinchGesture(
+                                    scale: $0,
+                                    location: $1,
+                                    state: $2
+                                )
                             }
                         )
                     )
@@ -193,6 +205,24 @@ extension VideoPlayer {
                 #endif
             }
         }
+
+        #if os(iOS)
+        private let zoomHaptic = UIImpactFeedbackGenerator(style: .light)
+        private var zoomStopFeedback = VideoZoom.StopFeedback()
+
+        func prepareZoomHaptics() {
+            zoomStopFeedback = VideoZoom.StopFeedback(stop: viewState.zoom.stop)
+            zoomHaptic.prepare()
+        }
+
+        func updateZoomHaptics() {
+            guard let transform = viewState.zoom.transform,
+                  zoomStopFeedback.update(scale: transform.scale, stop: viewState.zoom.stop)
+            else { return }
+            zoomHaptic.impactOccurred()
+            zoomHaptic.prepare()
+        }
+        #endif
 
         private lazy var initialHitBlockView: UIView = {
             let view = UIView(frame: .zero)
@@ -255,6 +285,10 @@ extension VideoPlayer {
 
         private var playerView: UIView {
             playerViewController.view
+        }
+
+        func playerLocation(fromControls point: CGPoint) -> CGPoint {
+            playerView.convert(point, from: playbackControlsView)
         }
 
         private var playbackControlsView: UIView {

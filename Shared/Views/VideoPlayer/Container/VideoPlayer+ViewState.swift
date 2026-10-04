@@ -40,6 +40,7 @@ extension VideoPlayer {
 
         enum Interaction: Hashable {
             case pan
+            case pinch
             case speedBoost
             case button(UUID)
             case menu(UUID)
@@ -129,9 +130,26 @@ extension VideoPlayer {
 
         private(set) var aspectFillBehavior: AspectFillBehavior = .fit
 
+        var zoom = VideoZoom()
+
+        var canPanZoom: Bool {
+            !isGestureLocked && !isPresentingSupplement && zoom.canPan
+        }
+
+        func resetZoom() {
+            if zoom.isPanning {
+                setInteraction(.pan, active: false)
+            }
+            zoom.reset()
+            setInteraction(.pinch, active: false)
+        }
+
         var isGestureLocked: Bool = false {
             didSet {
                 if isGestureLocked {
+                    zoom.endInteraction()
+                    setInteraction(.pan, active: false)
+                    setInteraction(.pinch, active: false)
                     hideControls()
                 }
             }
@@ -443,17 +461,25 @@ extension VideoPlayer {
         }
 
         func fillVideo() {
-            guard aspectFillBehavior != .fill else { return }
+            resetZoom()
             aspectFillBehavior = .fill
         }
 
         func fitVideo() {
-            guard aspectFillBehavior != .fit else { return }
+            resetZoom()
             aspectFillBehavior = .fit
         }
 
+        var isVideoEnlarged: Bool {
+            zoom.transform.map { $0.scale > 1 } ?? (aspectFillBehavior == .fill)
+        }
+
         func toggleAspectFillBehavior() {
-            aspectFillBehavior = aspectFillBehavior == .fit ? .fill : .fit
+            if isVideoEnlarged {
+                fitVideo()
+            } else {
+                fillVideo()
+            }
         }
 
         func showControls() {
@@ -543,6 +569,9 @@ extension VideoPlayer {
                 lastTapLocation = nil
             }
             #endif
+            if case .supplement = presentation {
+                resetZoom()
+            }
             let wasPresentingSupplement = isPresentingSupplement
             let wasPresentingProgress = isPresentingProgress
             let previousSupplementID = selectedSupplementID
