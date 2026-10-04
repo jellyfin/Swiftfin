@@ -115,6 +115,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                             .offset(y: subtitleContentSize.height)
                     }
                 }
+                .accessibilityElement(children: .combine)
         }
 
         var tvOSView: some View {
