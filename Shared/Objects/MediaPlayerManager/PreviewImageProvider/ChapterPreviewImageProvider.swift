@@ -31,6 +31,7 @@ class ChapterPreviewImageProvider: PreviewImageProvider {
         guard let currentChapterIndex = chapters
             .firstIndex(where: {
                 guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
+
                 return startSeconds > seconds
             }
             ) else { return nil }
@@ -52,8 +53,8 @@ class ChapterPreviewImageProvider: PreviewImageProvider {
 
         let newTask = Task<UIImage?, Never> {
             guard let client = Container.shared.currentUserSession()?.client else { return nil }
-
             guard let chapterInfo = chapters[safe: chapterIndex], let imageUrl = chapterInfo.imageSource?.url else { return nil }
+
             let request: Request<Data> = .init(url: imageUrl)
 
             guard let response = try? await client.send(request) else { return nil }

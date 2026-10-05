@@ -55,6 +55,7 @@ extension ImagePipeline {
         cache.removeCachedData(for: request)
 
         guard let dataCacheKey = Self.cacheKey(for: url) else { return }
+
         configuration.dataCache?.removeData(for: dataCacheKey)
     }
 }
@@ -99,6 +100,7 @@ final class SwiftfinImagePipelineDelegate: ImagePipeline.Delegate {
 
     func cacheKey(for request: ImageRequest, pipeline: ImagePipeline) -> String? {
         guard let url = request.url else { return nil }
+
         return ImagePipeline.cacheKey(for: url)
     }
 }

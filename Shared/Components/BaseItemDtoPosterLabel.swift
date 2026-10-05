@@ -30,12 +30,14 @@ struct BaseItemDtoPosterLabel: View {
 
     private var episodeLocator: String? {
         guard item.type == .episode else { return nil }
+
         return item.seasonEpisodeLabel ?? item.episodeLocator
     }
 
     private var subtitle: String? {
         guard let subtitle = item.posterSubtitle(using: posterConfiguration.subtitleField),
               item.extraType != nil || subtitle != item.displayTitle else { return nil }
+
         return subtitle
     }
 

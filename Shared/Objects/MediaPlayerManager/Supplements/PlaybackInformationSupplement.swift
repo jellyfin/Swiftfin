@@ -62,6 +62,7 @@ extension PlaybackInformationSupplement {
 
         private var audioStream: MediaStream? {
             guard let playbackItem = manager.playbackItem else { return nil }
+
             if let selectedIndex = playbackItem.selectedAudioStreamIndex {
                 return playbackItem.audioStreams.first { $0.index == selectedIndex }
             }
@@ -282,7 +283,8 @@ class PlaybackInformationProvider: ViewModel, MediaPlayerObserver {
     init(itemID: String) {
         super.init()
 
-        Container.shared.userSessionManager()
+        Container.shared
+            .userSessionManager()
             .$currentSession
             .map { session -> AnyPublisher<[SessionInfoDto], Never> in
                 session?.serverSocketManager.sessions() ?? Combine.Empty<[SessionInfoDto], Never>().eraseToAnyPublisher()

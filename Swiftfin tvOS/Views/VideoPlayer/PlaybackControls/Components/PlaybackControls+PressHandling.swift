@@ -49,6 +49,7 @@ extension VideoPlayer.PlaybackControls {
                 if press.type == .rightArrow {
                     startSpeedBoost()
                 }
+
             case .ended:
                 if press.type == .rightArrow {
                     stopSpeedBoost(performJump: true)
@@ -56,9 +57,11 @@ extension VideoPlayer.PlaybackControls {
                     jumpBackward()
                 }
                 seekingPress = nil
+
             case .cancelled:
                 stopSpeedBoost()
                 seekingPress = nil
+
             default:
                 break
             }

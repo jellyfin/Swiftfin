@@ -71,6 +71,7 @@ struct EditServerConnectionView: View {
 
     private var isDuplicateConnection: Bool {
         guard let connection = try? draft.connection() else { return false }
+
         return ServerConnection.isDuplicate(connection, in: viewModel.connections)
     }
 
@@ -124,6 +125,7 @@ struct EditServerConnectionView: View {
                 if locationPermissionStatus == .denied {
                     Button(L10n.permissions) {
                         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+
                         UIApplication.shared.open(url)
                     }
                     .foregroundStyle(Color.accentColor)
@@ -310,10 +312,12 @@ struct EditServerConnectionView: View {
         #if os(iOS)
         .onChange(of: draft.interface) {
             guard draft.interface == .wifi, draft.wifiSSIDs.first?.nilIfBlank == nil else { return }
+
             populateCurrentWifiSSID(keepSpecificOnFailure: false)
         }
         .onChange(of: draft.useWifiName) {
             guard draft.useWifiName, draft.interface == .wifi, draft.wifiSSIDs.first?.nilIfBlank == nil else { return }
+
             populateCurrentWifiSSID(keepSpecificOnFailure: true)
         }
         .onAppear {

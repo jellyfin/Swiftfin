@@ -124,6 +124,7 @@ class AVMediaPlayerProxy: NSObject,
     func setRate(_ rate: Double) {
         // `play()` applies the rate when playback resumes while setting one during a pause forces a resume
         guard player.rate != 0 else { return }
+
         player.rate = Float(rate)
     }
 
@@ -142,7 +143,6 @@ class AVMediaPlayerProxy: NSObject,
         guard let item = player.currentItem,
               let group = cachedAudioGroup
         else { return }
-
         guard let index = stream.index, group.options.indices.contains(index) else { return }
 
         item.select(group.options[index], in: group)
@@ -152,7 +152,6 @@ class AVMediaPlayerProxy: NSObject,
         guard let item = player.currentItem,
               let group = cachedSubtitleGroup
         else { return }
-
         guard let index = stream.index, group.options.indices.contains(index) else {
             item.select(nil, in: group)
             return
@@ -180,7 +179,8 @@ class AVMediaPlayerProxy: NSObject,
             return AVMediaSelectionGroup.mediaSelectionOptions(
                 from: group.options,
                 filteredAndSortedAccordingToPreferredLanguages: [language]
-            ).first
+            )
+            .first
         }
 
         return nil
@@ -453,10 +453,12 @@ extension AVMediaPlayerProxy {
                 DispatchQueue.main.async {
                     self.manager?.error(ErrorMessage("AVPlayer error: \(error?.localizedDescription ?? L10n.unknownError)"))
                 }
+
             case .readyToPlay:
                 Task { @MainActor [weak self] in
                     await self?.itemDidBecomeReady(playerItem: playerItem, item: item)
                 }
+
             default: ()
             }
         }
@@ -482,11 +484,13 @@ extension AVMediaPlayerProxy {
             (item.subtitleStreams, cachedSubtitleStreams, cachedSubtitleGroup),
         ] {
             guard let group else { continue }
+
             for stream in streams {
                 guard let index = stream.index,
                       let option = selectionOption(matching: index, in: group, from: cachedStreams),
                       let playerIndex = group.options.firstIndex(of: option)
                 else { continue }
+
                 indexMap.setPlayerIndex(playerIndex, for: index)
             }
         }
@@ -524,7 +528,6 @@ extension AVMediaPlayerProxy {
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     guard let self else { return }
-
                     guard !inProgress else {
                         self.isBuffering.value = true
                         return
@@ -581,10 +584,12 @@ extension AVMediaPlayerProxy {
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 .onReceive(manager.$playbackItem) { playbackItem in
                     guard let playbackItem else { return }
+
                     proxy.playNew(item: playbackItem)
                 }
                 .onReceive(manager.$state) { state in
                     guard state == .stopped else { return }
+
                     proxy.playbackStopped()
                 }
                 .onChange(of: manager.rate) {

@@ -106,6 +106,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerLayoutConfigurable,
 
         let track = player.audioTracks[index]
         guard player.selectedAudioTrack != track else { return }
+
         player.selectedAudioTrack = track
     }
 
@@ -117,6 +118,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerLayoutConfigurable,
 
         let track = player.subtitleTracks[index]
         guard player.selectedSubtitleTrack != track else { return }
+
         player.selectedSubtitleTrack = track
     }
 
@@ -188,6 +190,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerLayoutConfigurable,
             if let client = manager?.userSession?.client {
                 for subtitle in item.subtitleStreams.sidecarSubtitles {
                     guard let url = subtitle.url(with: client) else { continue }
+
                     try media.addSlave(from: url, type: .subtitle)
                 }
             }
@@ -274,9 +277,11 @@ extension VLCMediaPlayerProxy {
                         switch state {
                         case .buffering, .opening:
                             proxy.isBuffering.value = true
+
                         case .error:
                             proxy.isBuffering.value = false
                             manager.error(ErrorMessage("VLC player is unable to perform playback"))
+
                         case .playing:
                             proxy.applyPendingStartTimeIfPossible()
                             proxy.isBuffering.value = false
@@ -285,14 +290,17 @@ extension VLCMediaPlayerProxy {
                             playbackItem.switchTrack(type: .audio, index: playbackItem.selectedAudioStreamIndex)
                             playbackItem.switchTrack(type: .subtitle, index: playbackItem.selectedSubtitleStreamIndex)
                             manager.applyPlaybackOffsets()
+
                         case .paused:
                             proxy.isBuffering.value = false
                             manager.setPlaybackRequestStatus(status: .paused)
+
                         case .idle, .stopped, .stopping: ()
                         }
                     }
                     .onChange(of: proxy.player.bufferFill) { _, fill in
                         guard proxy.player.state == .playing else { return }
+
                         if fill < 0.9 {
                             proxy.isBuffering.value = true
                         } else if fill >= 1 {
@@ -301,10 +309,12 @@ extension VLCMediaPlayerProxy {
                     }
                     .onChange(of: proxy.player.isSeekable) { _, isSeekable in
                         guard isSeekable else { return }
+
                         proxy.applyPendingStartTimeIfPossible()
                     }
                     .onChange(of: proxy.player.didReachEnd) { _, didReachEnd in
                         guard didReachEnd, manager.playbackItem?.baseItem.isLiveStream == false else { return }
+
                         // libVLC resets its clock on stop. Report the completed
                         // timeline before the manager decides whether to advance.
                         if let runtime = playbackItem.baseItem.runtime {

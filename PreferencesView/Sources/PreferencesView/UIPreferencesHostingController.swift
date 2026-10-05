@@ -82,6 +82,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
     private func keyCommandHit(keyCommand: UIKeyCommand) {
         guard let action = _keyCommandActions
             .first(where: { $0.input == keyCommand.input && $0.modifierFlags == keyCommand.modifierFlags }) else { return }
+
         action.action()
     }
 
@@ -139,9 +140,9 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
 
     override public func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         guard let buttonPress = presses.first?.type else { return }
-
         guard let action = _pressCommandActions
             .first(where: { $0.press == buttonPress }) else { return }
+
         action.action()
     }
     #endif

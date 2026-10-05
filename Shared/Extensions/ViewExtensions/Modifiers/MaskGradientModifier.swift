@@ -38,6 +38,7 @@ struct MaskGradientModifier: ViewModifier {
                 startPoint: .top,
                 endPoint: .bottom
             )
+
         case let .eased(curve):
             EasedGradient(
                 stops: gradientStops,

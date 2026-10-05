@@ -68,11 +68,14 @@ final class MediaPlayerManager: ViewModel {
             case .error:
                 .to(.error)
                     .invalid(.stopped)
+
             case .playNewItem, .start:
                 .to(.loadingItem, then: .playback)
                     .invalid(.stopped)
+
             case .stop:
                 .to(.stopped)
+
             default:
                 .none
                     .invalid(.stopped)
@@ -152,6 +155,7 @@ final class MediaPlayerManager: ViewModel {
 
     func applyPlaybackOffsets() {
         guard let proxy = proxy as? MediaPlayerOffsetConfigurable else { return }
+
         proxy.setAudioOffset(audioOffset)
         proxy.setSubtitleOffset(subtitleOffset)
     }
@@ -173,17 +177,24 @@ final class MediaPlayerManager: ViewModel {
             switch kind {
             case .info:
                 return MediaInfoSupplement(item: item)
+
             case .chapters:
                 guard let chapters = item.fullChapterInfo, chapters.isNotEmpty else { return nil }
+
                 return MediaChaptersSupplement(chapters: chapters)
+
             case .queue:
                 return queue
+
             case .people:
                 guard let people = item.mergedPeople?.filter({ $0.type?.isSupported == true }),
                       people.isNotEmpty else { return nil }
+
                 return MediaPeopleSupplement(people: people)
+
             case .playbackInformation:
                 guard let itemID = item.id else { return nil }
+
                 return PlaybackInformationSupplement(itemID: itemID)
             }
         }
@@ -266,6 +277,7 @@ final class MediaPlayerManager: ViewModel {
             await self.stop()
             return
         }
+
         let isNearEnd = (runtime - seconds) <= .seconds(1)
 
         guard isNearEnd else {
@@ -370,6 +382,7 @@ final class MediaPlayerManager: ViewModel {
             } else {
                 playbackItem.switchTrack(type: .audio, index: newIndex)
             }
+
         case .subtitle:
             guard newIndex == -1 || playbackItem.subtitleStreams.contains(where: { $0.index == newIndex }) else {
                 logger.warning("MediaPlayerManager.SetTrack call with an invalid subtitle track index")
@@ -384,6 +397,7 @@ final class MediaPlayerManager: ViewModel {
             } else {
                 playbackItem.switchTrack(type: .subtitle, index: newIndex)
             }
+
         default:
             logger.warning("MediaPlayerManager.SetTrack called with unsupported type: \(String(describing: type))")
         }
@@ -395,6 +409,7 @@ final class MediaPlayerManager: ViewModel {
             await self.stop()
             return
         }
+
         self.initialMediaPlayerItemProvider = nil
         playbackItem = try await initialMediaPlayerItemProvider()
     }
@@ -478,7 +493,6 @@ final class MediaPlayerManager: ViewModel {
     ) async throws -> Int {
 
         guard requestedBitrate == .auto else { return requestedBitrate.rawValue }
-
         guard let userSession = Container.shared.currentUserSession() else {
             throw UserSessionError.missingCurrentSession
         }

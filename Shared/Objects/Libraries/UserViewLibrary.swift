@@ -123,6 +123,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
                 ),
                 in: namespace
             )
+
         case let .userView(item):
             if item.collectionType == .livetv {
                 router.route(to: .liveTV, in: namespace)

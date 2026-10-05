@@ -90,6 +90,7 @@ struct ItemSubtitleUploadView: View {
             } else {
                 let saveAction: () -> Void = {
                     guard let selectedFile else { return }
+
                     viewModel.upload(
                         file: selectedFile,
                         isForced: isForced,

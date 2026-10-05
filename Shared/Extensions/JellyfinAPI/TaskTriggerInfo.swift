@@ -18,17 +18,20 @@ extension TaskTriggerInfo {
                 timeOfDayTicks: 0,
                 type: type
             )
+
         case .weeklyTrigger:
             .init(
                 dayOfWeek: .sunday,
                 timeOfDayTicks: 0,
                 type: type
             )
+
         case .intervalTrigger:
             .init(
                 intervalTicks: Duration.hours(1).ticks,
                 type: type
             )
+
         case .startupTrigger:
             .init(
                 type: type

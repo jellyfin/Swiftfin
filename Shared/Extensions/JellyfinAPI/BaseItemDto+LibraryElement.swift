@@ -37,6 +37,7 @@ extension BaseItemDto: LibraryElement {
                 to: .library(library: ItemLibrary(parent: self, filters: .default)),
                 in: namespace
             )
+
         default:
             router.route(to: .item(item: self), in: namespace)
         }

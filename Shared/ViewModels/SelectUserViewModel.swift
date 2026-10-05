@@ -27,8 +27,10 @@ final class SelectUserViewModel: ViewModel {
             case .getServers:
                 .to(.loading, then: .content)
                     .whenBackground(.refreshing)
+
             case .deleteUsers:
                 .background(.refreshing)
+
             case .error, .signIn:
                 .none
             }

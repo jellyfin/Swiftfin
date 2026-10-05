@@ -26,10 +26,12 @@ class MediaChaptersSupplement: ObservableObject, MediaPlayerSupplement {
     func chapterID(at seconds: Duration) -> ChapterInfo.FullInfo.ID? {
         guard let nextIndex = chapters.firstIndex(where: {
             guard let startSeconds = $0.chapterInfo.startSeconds else { return false }
+
             return startSeconds > seconds
         }) else {
             return chapters.last?.id
         }
+
         return chapters[safe: max(0, nextIndex - 1)]?.id
     }
 
@@ -52,6 +54,7 @@ extension MediaChaptersSupplement {
 
         private func select(chapter: ChapterInfo.FullInfo) {
             guard let startSeconds = chapter.chapterInfo.startSeconds else { return }
+
             manager.proxy?.setSeconds(startSeconds)
             manager.setPlaybackRequestStatus(status: .playing)
         }

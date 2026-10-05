@@ -65,6 +65,7 @@ struct ItemView: View {
             }
 
             return provider.item.type != .person && provider.item.type != .season
+
         case .simple:
             return false
         }
@@ -107,12 +108,14 @@ struct ItemView: View {
             switch (isEnhanced, isCompact) {
             case (true, true):
                 blurredNavigationBarScrollView
+
             case (true, false):
                 InlinePlatformView {
                     blurredNavigationBarScrollView
                 } tvOSView: {
                     contentGroupScrollView(isEnhanced: true)
                 }
+
             default:
                 contentGroupScrollView()
             }

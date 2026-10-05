@@ -36,11 +36,13 @@ struct ColorGradientSlider: View {
                     0,
                     (color.wrappedValue.rgbaComponents[keyPath: component] * 255 - step) / 255
                 )
+
             case .right:
                 color.wrappedValue.rgbaComponents[keyPath: component] = min(
                     1,
                     (color.wrappedValue.rgbaComponents[keyPath: component] * 255 + step) / 255
                 )
+
             default:
                 break
             }

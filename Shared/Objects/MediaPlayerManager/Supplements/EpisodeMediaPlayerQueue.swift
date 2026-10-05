@@ -20,6 +20,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         didSet {
             cancellables = []
             guard let manager else { return }
+
             manager.$playbackItem
                 .sink { [weak self] newItem in
                     self?.didReceive(newItem: newItem)
@@ -166,6 +167,7 @@ extension EpisodeMediaPlayerQueue {
 
         private var selectionViewModel: PagingLibraryViewModel<EpisodeLibrary>? {
             guard let selection else { return nil }
+
             return viewModel.elements[id: selection]
         }
 
@@ -194,6 +196,7 @@ extension EpisodeMediaPlayerQueue {
 
         private func setSelectionIfNeeded(seasons: IdentifiedArrayOf<PagingLibraryViewModel<EpisodeLibrary>>) {
             guard selection == nil, !seasons.isEmpty else { return }
+
             selection = seasons.first?.id
             seasons.first?.refresh()
         }
@@ -268,8 +271,10 @@ extension EpisodeMediaPlayerQueue {
                         }
                     }
                 }
+
             case .initial, .refreshing:
                 EmptyView()
+
             case .error:
                 errorView
             }

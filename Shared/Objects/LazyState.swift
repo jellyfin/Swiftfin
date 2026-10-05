@@ -45,6 +45,7 @@ struct LazyState<Value>: @preconcurrency DynamicProperty {
 
     func update() {
         guard !holder.didThunk else { return }
+
         holder.setup()
     }
 

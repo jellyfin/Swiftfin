@@ -50,6 +50,7 @@ struct VideoZoom {
 
     mutating func beginPinch(input: CGFloat, location: CGPoint, fillsViewport: Bool) -> Bool {
         guard let geometry else { return false }
+
         let initial = transform ?? Transform(scale: fillsViewport ? geometry.fillScale : 1)
         pinch = Pinch(
             transform: Transform(scale: min(initial.scale, Self.maximumScale), offset: initial.offset),
@@ -62,23 +63,27 @@ struct VideoZoom {
 
     mutating func updatePinch(input: CGFloat, location: CGPoint) {
         guard var pinch else { return }
+
         pinch.update(input, location: location)
         self.pinch = pinch
     }
 
     mutating func endPinch() {
         guard let pinch else { return }
+
         restingTransform = pinch.settledTransform
         self.pinch = nil
     }
 
     mutating func beginPan() {
         guard canPan, !isPinching else { return }
+
         panOffset = transform?.offset
     }
 
     mutating func updatePan(translation: CGPoint) {
         guard let panOffset, let transform, let geometry else { return }
+
         restingTransform = Transform(
             scale: transform.scale,
             offset: geometry.rubberBandedOffset(
@@ -90,6 +95,7 @@ struct VideoZoom {
 
     mutating func endPan() {
         guard isPanning, let transform, let geometry else { return }
+
         restingTransform = Transform(
             scale: transform.scale,
             offset: geometry.constrainedOffset(transform.offset, at: transform.scale)
@@ -147,6 +153,7 @@ struct VideoZoom {
                 self.lastStop = nil
             }
             guard let stop, stop != lastStop else { return false }
+
             lastStop = stop
             return true
         }

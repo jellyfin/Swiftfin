@@ -67,6 +67,7 @@ final class UserSessionManager: ObservableObject {
     @MainActor
     var hasActivePlayback: Bool {
         guard let mediaPlayerManager else { return false }
+
         return mediaPlayerManager.state != .stopped
     }
 
@@ -217,7 +218,6 @@ final class UserSessionManager: ObservableObject {
         guard let server = StoredValues[.Server.servers].first(where: { $0.id == deepLink.serverID }) else {
             throw DeepLinkError.missingServer(deepLink.serverID)
         }
-
         guard let user = StoredValues[.User.users].first(where: { $0.id == deepLink.userID && $0.serverID == server.id }) else {
             throw DeepLinkError.missingUser(deepLink.userID)
         }
@@ -288,7 +288,8 @@ final class UserSessionManager: ObservableObject {
             }
             .store(in: &cancellables)
 
-        Container.shared.mediaPlayerManagerPublisher()
+        Container.shared
+            .mediaPlayerManagerPublisher()
             .sink { [weak self] manager in
                 Task { @MainActor in
                     self?.mediaPlayerManager = manager
@@ -324,12 +325,10 @@ final class UserSessionManager: ObservableObject {
 
     private func resolveStoredSession() throws -> UserSession? {
         guard case let .signedIn(userId) = Defaults[.lastSignedInUserID] else { return nil }
-
         guard let user = StoredValues[.User.users].first(where: { $0.id == userId }) else {
             Defaults[.lastSignedInUserID] = .signedOut
             throw UserSessionError.invalidStoredSession(userID: userId)
         }
-
         guard let server = StoredValues[.Server.servers].first(where: { $0.id == user.serverID }) else {
             Defaults[.lastSignedInUserID] = .signedOut
             throw UserSessionError.invalidStoredSession(userID: userId)

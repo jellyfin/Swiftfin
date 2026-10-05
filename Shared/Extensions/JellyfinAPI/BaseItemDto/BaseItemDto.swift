@@ -120,21 +120,25 @@ extension BaseItemDto {
 
     var birthday: Date? {
         guard type == .person else { return nil }
+
         return premiereDate
     }
 
     var birthplace: String? {
         guard type == .person else { return nil }
+
         return productionLocations?.first { $0.isNotEmpty }
     }
 
     var deathday: Date? {
         guard type == .person else { return nil }
+
         return endDate
     }
 
     var episodeLocator: String? {
         guard let episodeNo = indexNumber else { return nil }
+
         return L10n.episodeNumber(episodeNo)
     }
 
@@ -164,6 +168,7 @@ extension BaseItemDto {
 
     var itemGenres: [ItemGenre]? {
         guard let genres else { return nil }
+
         return genres.map(ItemGenre.init)
     }
 
@@ -179,6 +184,7 @@ extension BaseItemDto {
         }
 
         guard let startDate, let endDate else { return false }
+
         return startDate <= .now && .now <= endDate
     }
 
@@ -256,6 +262,7 @@ extension BaseItemDto {
                     modifyItem: modifyItem
                 )
             }
+
         default:
             let selectedMediaSource = mediaSource ?? mediaSources?.first
 
@@ -295,16 +302,19 @@ extension BaseItemDto {
 
     var runtime: Duration? {
         guard let ticks = runTimeTicks, ticks > 0 else { return nil }
+
         return Duration.ticks(ticks)
     }
 
     var startSeconds: Duration? {
         guard let ticks = userData?.playbackPositionTicks else { return nil }
+
         return Duration.ticks(ticks)
     }
 
     var seasonEpisodeLabel: String? {
         guard let seasonNo = parentIndexNumber, let episodeNo = indexNumber else { return nil }
+
         return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
     }
 
@@ -352,6 +362,7 @@ extension BaseItemDto {
 
     var programDuration: TimeInterval? {
         guard let startDate, let endDate else { return nil }
+
         return endDate.timeIntervalSince(startDate)
     }
 
@@ -436,11 +447,13 @@ extension BaseItemDto {
 
     var hasAired: Bool {
         guard let startDate, let endDate else { return false }
+
         return startDate <= Date.now && endDate < Date.now
     }
 
     var airDateLabel: String? {
         guard let premiereDateFormatted = premiereDateLabel else { return nil }
+
         return L10n.airWithDate(premiereDateFormatted)
     }
 
@@ -454,6 +467,7 @@ extension BaseItemDto {
 
     var premiereDateYear: String? {
         guard let premiereDate else { return nil }
+
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY"
         return dateFormatter.string(from: premiereDate)
@@ -461,6 +475,7 @@ extension BaseItemDto {
 
     var hasExternalLinks: Bool {
         guard let externalURLs else { return false }
+
         return externalURLs.isNotEmpty
     }
 
@@ -478,7 +493,6 @@ extension BaseItemDto {
         guard let chapters = chapters?
             .sorted(using: \.startPositionTicks)
             .compacted(using: \.startPositionTicks) else { return nil }
-
         guard let userSession = Container.shared.currentUserSession() else { return nil }
 
         return chapters

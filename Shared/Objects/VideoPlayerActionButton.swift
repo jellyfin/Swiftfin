@@ -113,16 +113,22 @@ enum VideoPlayerActionButton: String, CaseIterable, Displayable, Equatable, Iden
     var secondarySystemImage: String {
         switch self {
         case .aspectFill: "arrow.down.right.and.arrow.up.left"
+
         case .audio: "speaker.wave.2"
+
         case .autoPlay:
             if #available(iOS 26.0, *) {
                 "stop"
             } else {
                 "stop.circle"
             }
+
         case .gestureLock: "lock.open.fill"
+
         case .pictureInPicture: "pip.exit"
+
         case .subtitles: "captions.bubble"
+
         default:
             systemImage
         }

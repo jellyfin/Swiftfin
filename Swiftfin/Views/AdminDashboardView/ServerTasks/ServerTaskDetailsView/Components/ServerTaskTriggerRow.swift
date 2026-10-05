@@ -35,6 +35,7 @@ extension ServerTaskDetailsView {
                             .formatted(date: .omitted, time: .shortened)
                     )
                 }
+
             case .weeklyTrigger:
                 if let dayOfWeek = taskTriggerInfo.dayOfWeek,
                    let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks
@@ -46,6 +47,7 @@ extension ServerTaskDetailsView {
                             .formatted(date: .omitted, time: .shortened)
                     )
                 }
+
             case .intervalTrigger:
                 if let intervalTicks = taskTriggerInfo.intervalTicks {
                     return L10n.everyInterval(
@@ -53,6 +55,7 @@ extension ServerTaskDetailsView {
                             .formatted(.hourMinuteAbbreviated)
                     )
                 }
+
             case .startupTrigger:
                 return triggerType.displayTitle
             }

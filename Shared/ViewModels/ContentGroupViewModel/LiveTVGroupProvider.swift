@@ -63,12 +63,15 @@ struct LiveTVGroupProvider: ContentGroupProvider {
                         )
                     )
                 )
+
             case .guide:
                 router.route(to: .liveGuide)
+
             case .recordings:
                 router.route(
                     to: .library(library: RecordingsLibrary())
                 )
+
             case .schedule:
                 router.route(
                     to: .library(library: ScheduledRecordingsLibrary())

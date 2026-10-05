@@ -52,6 +52,7 @@ extension VideoPlayer.PlaybackControls {
 
         private var insetSliderWidth: CGFloat {
             guard sliderSize.width.isFinite else { return 0 }
+
             return max(0, sliderSize.width - EdgeInsets.edgePadding * 2)
         }
 
@@ -91,6 +92,7 @@ extension VideoPlayer.PlaybackControls {
         private var sliderTotal: Double {
             let total = (manager.item.runtime ?? .zero).seconds
             guard total.isFinite, total > 0 else { return 1 }
+
             return total
         }
 
@@ -196,6 +198,7 @@ extension VideoPlayer.PlaybackControls {
             }
             .onChange(of: isSlowScrubbing) {
                 guard isScrubbing else { return }
+
                 UIDevice.impact(.soft)
             }
         }

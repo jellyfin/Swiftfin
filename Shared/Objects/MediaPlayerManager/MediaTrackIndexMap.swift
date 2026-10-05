@@ -20,6 +20,7 @@ struct MediaTrackIndexMap {
 
     func playerIndex(for jellyfinIndex: Int?) -> Int? {
         guard let jellyfinIndex, jellyfinIndex != -1 else { return -1 }
+
         return playerIndexesByJellyfinIndex[jellyfinIndex]
     }
 
@@ -49,11 +50,13 @@ struct MediaTrackIndexMap {
 
             for (playerIndex, stream) in embeddedAudioStreams.enumerated() {
                 guard let jellyfinIndex = stream.index else { continue }
+
                 indexMap.setPlayerIndex(playerIndex, for: jellyfinIndex)
             }
 
             for (playerIndex, stream) in embeddedSubtitleStreams.enumerated() {
                 guard let jellyfinIndex = stream.index else { continue }
+
                 indexMap.setPlayerIndex(playerIndex, for: jellyfinIndex)
             }
         }
@@ -72,7 +75,8 @@ struct MediaTrackIndexMap {
             // Match libVLC's MD5(full URL)/spu/... track IDs in SwiftVLC 1.0.0.
             // https://github.com/videolan/vlc/blob/c833c4be0/src/input/input.c#L2742-L2765
             let urlHash = Insecure.MD5.hash(data: Data(subtitle.url.absoluteString.utf8))
-                .map { String(format: "%02x", $0) }.joined()
+                .map { String(format: "%02x", $0) }
+                .joined()
             resolvedMap.playerIndexesByJellyfinIndex[subtitle.jellyfinIndex] = subtitleTracks.first {
                 $0.playerIndex >= 0 && $0.id.hasPrefix("\(urlHash)/spu/")
             }?.playerIndex

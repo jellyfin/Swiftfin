@@ -19,6 +19,7 @@ struct SinceLastDisappearModifier: ViewModifier {
         content
             .onAppear {
                 guard let lastDisappear else { return }
+
                 let interval = Date.now.timeIntervalSince(lastDisappear)
                 action(interval)
             }

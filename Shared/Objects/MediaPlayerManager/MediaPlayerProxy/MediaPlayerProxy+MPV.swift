@@ -126,6 +126,7 @@ extension MPVMediaPlayerProxy {
 
         private var videoSize: CGSize {
             guard let dimensions = player.mediaInformation.dimensions else { return .zero }
+
             var width = CGFloat(dimensions.effectiveWidth)
             var height = CGFloat(dimensions.effectiveHeight)
             let rotation = ((player.mediaInformation.rotation % 360) + 360) % 360
@@ -137,6 +138,7 @@ extension MPVMediaPlayerProxy {
 
         private func load(_ item: MediaPlayerItem) {
             guard loadedItem !== item else { return }
+
             loadedItem = item
             loadedSubtitleIndexes.removeAll()
             item.setTrackIndexes(.init())
@@ -186,16 +188,22 @@ extension MPVMediaPlayerProxy {
             switch state {
             case .loading:
                 loadedSubtitleIndexes.removeAll()
+
             case .playing:
                 manager.setPlaybackRequestStatus(status: .playing)
+
             case .paused:
                 manager.setPlaybackRequestStatus(status: .paused)
+
             case .ended:
                 guard manager.playbackItem?.baseItem.isLiveStream == false else { return }
+
                 manager.seconds = player.position
                 manager.ended()
+
             case let .failed(error):
                 manager.error(error)
+
             case .idle, .ready, .buffering, .seeking, .stopped:
                 break
             }

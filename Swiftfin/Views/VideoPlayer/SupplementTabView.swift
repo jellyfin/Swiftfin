@@ -95,6 +95,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
 
         private func makePageController() -> UIPageViewController? {
             guard let container else { return nil }
+
             if let pageController {
                 return pageController
             }
@@ -119,6 +120,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
 
         private func removePageController() {
             guard let page = pageController else { return }
+
             pageController = nil
             page.delegate = nil
             page.dataSource = nil
@@ -131,6 +133,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
 
         private func remove(_ controller: UIViewController) {
             guard controller.parent != nil else { return }
+
             controller.view.layer.removeAllAnimations()
             controller.willMove(toParent: nil)
             controller.view.removeFromSuperview()
@@ -154,11 +157,9 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
                 removePageController()
                 return
             }
-
             guard swipeSelection == nil,
                   let page = makePageController()
             else { return }
-
             guard page.viewControllers?.first !== target else { return }
 
             let direction = direction(from: page.viewControllers?.first, to: targetID)
@@ -182,6 +183,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
                   let currentIndex = ids.firstIndex(of: currentID),
                   let targetIndex = ids.firstIndex(of: targetID)
             else { return .forward }
+
             return targetIndex < currentIndex ? .reverse : .forward
         }
 
@@ -192,6 +194,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             viewControllerBefore viewController: UIViewController
         ) -> UIViewController? {
             guard controller === pageController else { return nil }
+
             return adjacent(to: viewController, offset: -1)
         }
 
@@ -200,6 +203,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             viewControllerAfter viewController: UIViewController
         ) -> UIViewController? {
             guard controller === pageController else { return nil }
+
             return adjacent(to: viewController, offset: 1)
         }
 
@@ -210,6 +214,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             willTransitionTo pendingViewControllers: [UIViewController]
         ) {
             guard controller === pageController else { return }
+
             swipeSelection = (selection.wrappedValue, selectionRevision)
         }
 
@@ -220,6 +225,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             transitionCompleted: Bool
         ) {
             guard controller === pageController, let swipeSelection else { return }
+
             self.swipeSelection = nil
 
             // A tab tap or dismissal during the swipe takes precedence over its result.
@@ -237,6 +243,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             // UIKit still owns the page hierarchy while delivering this callback.
             DispatchQueue.main.async { [weak self, weak controller] in
                 guard let self, let controller, self.pageController === controller else { return }
+
                 self.selectCurrent()
             }
         }
@@ -249,8 +256,10 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             guard let id = hostID(for: viewController),
                   let index = ids.firstIndex(of: id)
             else { return nil }
+
             let target = index + offset
             guard ids.indices.contains(target) else { return nil }
+
             return hosts[ids[target]]
         }
     }

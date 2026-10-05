@@ -75,6 +75,7 @@ struct SearchView: View {
                     switch viewModel.state {
                     case .error:
                         viewModel.error.map(ErrorView.init)
+
                     case .initial:
                         if viewModel.canSearch {
                             if viewModel.isEmpty {
@@ -87,6 +88,7 @@ struct SearchView: View {
                         } else {
                             suggestionsView
                         }
+
                     case .searching:
                         ProgressView()
                     }

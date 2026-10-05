@@ -106,15 +106,19 @@ extension VideoPlayer.UIContainerViewController {
         case .began:
             viewState.zoom.beginPan()
             viewState.zoom.updatePan(translation: translation)
+
         case .changed:
             viewState.zoom.updatePan(translation: translation)
+
         case .ended:
             viewState.zoom.updatePan(translation: translation)
             fallthrough
+
         case .cancelled, .failed:
             withAnimation(.spring(response: 0.3, dampingFraction: 1)) {
                 viewState.zoom.endPan()
             }
+
         default:
             break
         }
@@ -190,6 +194,7 @@ extension VideoPlayer.UIContainerViewController {
 
     private func handleSwipeAction(direction: Direction) {
         guard viewState.manager?.item.isLiveStream == false else { return }
+
         let jumpProgressObserver = viewState.jumpProgressObserver
         viewState.showProgress()
 
@@ -332,10 +337,10 @@ extension VideoPlayer.UIContainerViewController {
             startValue: AVAudioSession.sharedInstance().outputVolume
         ) { startState, handlingState, _ in
             guard handlingState.gestureState != .ended else { return }
-
             guard let slider = volumeView
                 .subviews
                 .first(where: { $0 is UISlider }) as? UISlider else { return }
+
             let translation: CGFloat = {
                 if startState.direction.isHorizontal {
                     handlingState.translation.x

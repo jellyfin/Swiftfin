@@ -94,6 +94,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 parent: item,
                 playButtonItem: mediaPlayerItemProvider?.item
             )
+
         default:
             []
         }
@@ -163,6 +164,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                     posterSize: .small
                 )
             }
+
         case .boxSet, .person, .musicArtist:
             try await ItemTypeContentGroupProvider(
                 itemTypes: BaseItemKind.supportedCases
@@ -171,12 +173,14 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 parent: item
             )
             .makeGroups(environment: .default)
+
         case .series:
             try await ItemTypeContentGroupProvider(
                 itemTypes: [.season],
                 parent: item
             )
             .makeGroups(environment: .default)
+
         case .channel, .liveTvChannel, .tvChannel:
             PosterGroup(
                 id: "channel-programs",
@@ -184,6 +188,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 posterDisplayType: .landscape,
                 posterSize: .small
             )
+
         default: []
         }
 
@@ -292,10 +297,13 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             mediaSource = source
             audioStreamIndex = nil
             subtitleStreamIndex = nil
+
         case let .audioStreamIndex(index):
             audioStreamIndex = index
+
         case let .subtitleStreamIndex(index):
             subtitleStreamIndex = index
+
         case let .bitrate(bitrate):
             requestedBitrate = bitrate
         }
@@ -322,12 +330,14 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             } else {
                 try await firstAvailableItem(for: item)
             }
+
         case .season:
             if let resumeItem = try await resumeItem(for: item) {
                 resumeItem
             } else {
                 try await firstAvailableItem(for: item)
             }
+
         default:
             item.isPlayable ? item : nil
         }

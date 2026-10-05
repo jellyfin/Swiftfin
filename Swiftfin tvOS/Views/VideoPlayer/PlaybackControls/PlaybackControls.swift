@@ -87,6 +87,7 @@ extension VideoPlayer {
                     .dropFirst()
             ) { isFocused in
                 guard !isFocused else { return }
+
                 viewState.cancelScrub()
 
                 stopSpeedBoost()

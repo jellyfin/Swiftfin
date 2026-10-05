@@ -40,6 +40,7 @@ struct CustomDeviceProfile: Hashable, Storable {
                 videoCodecs: video,
                 containers: container
             )
+
         default:
             assertionFailure("Only Video is currently supported.")
             return DirectPlayProfile()
@@ -63,6 +64,7 @@ struct CustomDeviceProfile: Hashable, Storable {
             } containers: {
                 container
             }
+
         default:
             assertionFailure("Only Video is currently supported.")
             return TranscodingProfile(audioCodec: nil)

@@ -116,6 +116,7 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
                     .onLongPressGesture(minimumDuration: 0.01, perform: {}) { isPressing in
                         if isPressing {
                             guard isScrollingEnabled else { return }
+
                             onEditingChanged(true)
                             needsToSetTranslationStartState = true
                         } else {

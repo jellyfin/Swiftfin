@@ -36,8 +36,10 @@ struct DevicesView: View {
                 viewModel.error.map {
                     ErrorView(error: $0)
                 }
+
             case .initial:
                 contentView
+
             case .refreshing:
                 ProgressView()
             }

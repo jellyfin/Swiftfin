@@ -93,10 +93,12 @@ struct ServerTasksView: View {
             switch viewModel.state {
             case .content:
                 contentView
+
             case .error:
                 viewModel.error.map {
                     ErrorView(error: $0)
                 }
+
             case .initial:
                 ProgressView()
             }

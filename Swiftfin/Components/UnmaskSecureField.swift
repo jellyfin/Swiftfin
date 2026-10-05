@@ -96,6 +96,7 @@ struct _UnmaskSecureField: PlatformViewRepresentable {
         @objc
         func buttonPressed() {
             guard let textField else { return }
+
             textField.toggleSecureEntry()
 
             let eye = textField.isSecureTextEntry ? "eye.fill" : "eye.slash"
@@ -105,6 +106,7 @@ struct _UnmaskSecureField: PlatformViewRepresentable {
         @objc
         func textDidChange() {
             guard let textField, let text = textField.text else { return }
+
             button?.isEnabled = !text.isEmpty
             textBinding.wrappedValue = text
         }

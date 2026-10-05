@@ -87,6 +87,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                                 get: { playbackItem.requestedBitrate },
                                 set: { newBitrate in
                                     guard newBitrate != playbackItem.requestedBitrate else { return }
+
                                     manager.setBitrate(bitrate: newBitrate)
                                 }
                             )

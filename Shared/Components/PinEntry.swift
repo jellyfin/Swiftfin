@@ -141,6 +141,7 @@ private struct PinTextField: UIViewRepresentable {
             // Wait until SwiftUI has finished updating the presentation state.
             DispatchQueue.main.async { [weak self] in
                 guard let self, window != nil else { return }
+
                 if isPresented, !isFirstResponder {
                     // A second PIN request must wait for the previous text entry controller to dismiss.
                     var controller = window?.rootViewController
