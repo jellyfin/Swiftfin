@@ -118,6 +118,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
             let ids = Set(data.map(\.id))
             for id in hosts.keys.filter({ !ids.contains($0) }) {
                 guard let host = hosts.removeValue(forKey: id) else { continue }
+
                 remove(host)
                 if visibleHost === host {
                     visibleHost = nil

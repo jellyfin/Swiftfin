@@ -51,6 +51,7 @@ extension VideoPlayer {
 
         private func isCurrent(_ element: Data.Element) -> Bool {
             guard let currentElementID else { return false }
+
             return element.id == currentElementID
         }
 

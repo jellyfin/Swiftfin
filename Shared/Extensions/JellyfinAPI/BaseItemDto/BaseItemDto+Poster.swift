@@ -194,6 +194,7 @@ extension BaseItemDto: Poster {
                 image
                     .aspectRatio(contentMode: .fit)
             }
+
         case .program:
             if displayType == .square {
                 ContainerRelativeView(ratio: 0.95) {
@@ -204,6 +205,7 @@ extension BaseItemDto: Poster {
                 image
                     .aspectRatio(contentMode: .fill)
             }
+
         default:
             image
                 .aspectRatio(contentMode: .fill)

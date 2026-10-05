@@ -58,6 +58,7 @@ extension EPGSupplement {
             }
             .onChange(of: viewModel.state) { _, state in
                 guard state == .content else { return }
+
                 lastSuccessfulRefresh = .now
             }
             .onChange(of: viewState.selectedSupplementID) { _, id in

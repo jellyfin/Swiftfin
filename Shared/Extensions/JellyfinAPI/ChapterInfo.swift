@@ -21,6 +21,7 @@ extension ChapterInfo {
 
     var startSeconds: Duration? {
         guard let startPositionTicks else { return nil }
+
         return Duration.ticks(startPositionTicks)
     }
 }

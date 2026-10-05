@@ -171,7 +171,7 @@ extension String {
 
     var shortFileName: String {
         (split(separator: "/").last?.description ?? self)
-            .replacingOccurrences(of: ".swift", with: "")
+            .replacing(".swift", with: "")
     }
 
     static func random(count: Int) -> String {
@@ -194,6 +194,7 @@ extension String {
 
         while s.last == suffix.last {
             guard s.isNotEmpty else { break }
+
             s.removeLast()
             suffix.removeLast()
         }
@@ -203,6 +204,7 @@ extension String {
 
     var sha1: String? {
         guard let input = data(using: .utf8) else { return nil }
+
         return Insecure.SHA1.hash(data: input)
             .reduce(into: "") { partialResult, byte in
                 partialResult += String(format: "%02x", byte)
@@ -211,6 +213,7 @@ extension String {
 
     var base64Decoded: String? {
         guard let data = Data(base64Encoded: self) else { return nil }
+
         return String(data: data, encoding: .utf8)
     }
 

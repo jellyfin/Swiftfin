@@ -84,8 +84,10 @@ extension ImageType: Displayable {
             default:
                 .portrait
             }
+
         case .disc:
             .square
+
         default:
             .landscape
         }

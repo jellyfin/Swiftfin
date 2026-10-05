@@ -38,6 +38,7 @@ struct ConnectToServerView: View {
             UIDevice.feedback(.success)
             Notifications[.didConnectToServer].post(server)
             router.dismiss()
+
         case let .duplicateServer(server):
             UIDevice.feedback(.warning)
             duplicateServer = server
@@ -154,11 +155,13 @@ struct ConnectToServerView: View {
             }
             .onReceive(timer) { _ in
                 guard viewModel.state != .connecting else { return }
+
                 viewModel.searchForServers()
             }
             .onReceive(viewModel.events, perform: onEvent)
             .onReceive(viewModel.$error) { error in
                 guard error != nil else { return }
+
                 UIDevice.feedback(.error)
                 isURLFocused = true
             }

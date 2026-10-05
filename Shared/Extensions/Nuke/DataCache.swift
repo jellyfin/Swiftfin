@@ -24,6 +24,7 @@ extension DataCache.Swiftfin {
 
         let dataCache = try? DataCache(name: "org.jellyfin.swiftfin/Posters") { name in
             guard let url = name.url else { return nil }
+
             return ImagePipeline.cacheKey(for: url)
         }
 
@@ -50,7 +51,6 @@ extension DataCache.Swiftfin {
 
                 // Account for hosting at a path
                 guard let prefixURL = url.absoluteString.trimmingSuffix("/Branding/Splashscreen?").url else { return nil }
-
                 guard let server = StoredValues[.Server.servers].first(
                     where: { $0.hasServerConnection(url: prefixURL) }
                 ) else { return nil }

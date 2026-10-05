@@ -125,6 +125,7 @@ extension VideoPlayer.PlaybackControls {
                     },
                     setter: {
                         guard $0.isFinite else { return .zero }
+
                         return (manager.item.runtime ?? .zero) * (clamp($0, min: 0, max: 100) / 100)
                     }
                 ),

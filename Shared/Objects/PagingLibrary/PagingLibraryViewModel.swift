@@ -36,15 +36,20 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
             case .refresh:
                 .to(.refreshing, then: .content)
                     .whenBackground(.refreshing)
+
             case .getNextPage:
                 .none
+
             case .getRandomItem:
                 .background(.gettingRandomItem)
+
             case .getNextSearchPage:
                 .background(.gettingNextSearchPage)
+
             case .search:
                 .background(.searching)
                     .onRepeat(.cancel)
+
             case ._actuallyGetNextPage:
                 .background(.gettingNextPage)
             }
@@ -252,6 +257,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, @MainActor Iden
     @Function(\Action.Cases.getNextPage)
     private func _getNextPage() async throws {
         guard hasNextPage else { return }
+
         await _actuallyGetNextPage()
     }
 

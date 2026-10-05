@@ -36,6 +36,7 @@ final class TextSubtitlePresentation {
 
         for await snapshot in subtitles {
             guard !Task.isCancelled, observationID == id else { return }
+
             self.snapshot = snapshot
         }
     }

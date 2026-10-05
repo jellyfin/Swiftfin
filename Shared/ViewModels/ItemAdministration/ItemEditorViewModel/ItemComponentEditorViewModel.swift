@@ -68,6 +68,7 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] query in
                 guard let self else { return }
+
                 if query.isNotEmpty {
                     actuallySearch(query)
                 } else {

@@ -107,6 +107,7 @@ struct RemoteImageDetailView: View {
             case .updated:
                 UIDevice.feedback(.success)
                 router.dismiss()
+
             case .deleted:
                 break
             }

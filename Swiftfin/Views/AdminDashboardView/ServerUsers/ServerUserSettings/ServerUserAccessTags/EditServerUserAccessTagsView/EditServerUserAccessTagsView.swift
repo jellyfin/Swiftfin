@@ -35,13 +35,17 @@ struct EditServerUserAccessTagsView: View {
     }
 
     private var allowedTags: [TagWithAccess] {
-        viewModel.user.policy?.allowedTags?
+        viewModel.user
+            .policy?
+            .allowedTags?
             .sorted()
             .map { TagWithAccess(tag: $0, access: true) } ?? []
     }
 
     private var blockedTags: [TagWithAccess] {
-        viewModel.user.policy?.blockedTags?
+        viewModel.user
+            .policy?
+            .blockedTags?
             .sorted()
             .map { TagWithAccess(tag: $0, access: false) } ?? []
     }

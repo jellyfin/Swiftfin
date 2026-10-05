@@ -44,6 +44,7 @@ final class NavigationCoordinator: ObservableObject {
                 route: route,
                 coordinator: .init()
             )
+
         case .fullscreen:
             presentedFullScreen = .init(
                 route: route,
@@ -54,11 +55,13 @@ final class NavigationCoordinator: ObservableObject {
         switch route.transitionStyle {
         case .push:
             path.append(route)
+
         case .sheet:
             presentedSheet = .init(
                 route: route,
                 coordinator: .init()
             )
+
         case .fullscreen:
             withAnimation {
                 presentedFullScreen = .init(

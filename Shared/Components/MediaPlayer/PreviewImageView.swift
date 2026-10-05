@@ -59,6 +59,7 @@ extension VideoPlayer.PlaybackControls {
                 let newImage = await previewImageProvider.image(for: scrubbedSeconds)
                 // Providers may finish shared cached work after this view's task is cancelled.
                 guard !Task.isCancelled else { return }
+
                 image = newImage.map { (index: index, image: $0) }
             }
         }

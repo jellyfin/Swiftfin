@@ -32,6 +32,7 @@ struct SliderContainerStyleConfiguration {
 
     private func progress(for value: Double) -> Double {
         guard total.isFinite, total > 0, value.isFinite else { return 0 }
+
         return clamp(value / total, min: 0, max: 1)
     }
 }

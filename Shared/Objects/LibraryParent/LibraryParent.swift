@@ -32,6 +32,7 @@ extension LibraryParent {
         case .folder:
             BaseItemKind.supportedCases
                 .appending([.folder, .collectionFolder])
+
         default:
             BaseItemKind.supportedCases
         }
@@ -47,13 +48,17 @@ extension LibraryParent {
         switch libraryType {
         case .boxSet, .collectionFolder, .userView:
             parameters.parentID = id
+
         case .folder:
             parameters.parentID = id
             parameters.isRecursive = nil
+
         case .person:
             parameters.personIDs = [id]
+
         case .studio:
             parameters.studioIDs = [id]
+
         default: ()
         }
 

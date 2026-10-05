@@ -78,6 +78,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
         private func refreshSelectedSeasonIfNeeded() {
             guard let selectedSeasonViewModel, selectedSeasonViewModel.state == .initial else { return }
+
             selectedSeasonViewModel.refresh()
         }
 

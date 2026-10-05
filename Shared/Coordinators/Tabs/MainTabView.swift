@@ -115,6 +115,7 @@ struct MainTabView: View {
         case .sidebar:
             tabView()
                 .tabViewStyle(.sidebarAdaptable)
+
         case .tabBar:
             tabView()
                 .tabViewStyle(.tabBarOnly)

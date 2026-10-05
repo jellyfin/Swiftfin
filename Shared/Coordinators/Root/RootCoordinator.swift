@@ -62,6 +62,7 @@ final class RootCoordinator: ObservableObject {
     @Function(\Action.Cases.start)
     private func _start() async throws {
         guard !started else { return }
+
         started = true
 
         do {
@@ -77,6 +78,7 @@ final class RootCoordinator: ObservableObject {
             .publisher
             .sink { [weak self] isIncreasedContrastEnabled in
                 guard let self else { return }
+
                 Task { @MainActor in
                     self.applyAccentColor(
                         self.selectedAccentColor,

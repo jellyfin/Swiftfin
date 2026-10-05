@@ -54,6 +54,7 @@ final class FocusCoordinator: ObservableObject {
 
     fileprivate func claimInitialPlaceholderFocus() -> Bool {
         guard isInitialFocusPending, shouldFocusInitialPlaceholder else { return false }
+
         shouldFocusInitialPlaceholder = false
         return true
     }
@@ -66,6 +67,7 @@ final class FocusCoordinator: ObservableObject {
     /// Completes initial focus once, including when loading ends without a target.
     func resolveInitialFocus() {
         guard pendingInitialFocusID != nil else { return }
+
         pendingInitialFocusID = nil
     }
 
@@ -111,6 +113,7 @@ private struct CoordinatedFocusScopeModifier<Value: Hashable>: ViewModifier {
             )
             .onChange(of: selection.wrappedValue) { _, newValue in
                 guard let newValue else { return }
+
                 lastSelection = newValue
             }
     }
@@ -142,9 +145,11 @@ private struct CoordinatedInitialFocusModifier: ViewModifier {
                     }
                 }
                 #endif
+
         case .secondary:
             content
                 .disabled(coordinator.isInitialFocusPending)
+
         case .fallback:
             content
                 .onAppear {
@@ -171,6 +176,7 @@ private struct CoordinatedFocusModifier: ViewModifier {
 
     private func apply(_ request: FocusCoordinator.Request?) {
         guard request?.id == id else { return }
+
         focus.wrappedValue = id
     }
 

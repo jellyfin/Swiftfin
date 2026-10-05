@@ -173,10 +173,13 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         case .folder:
             parameters.parentID = parentID
             parameters.isRecursive = nil
+
         case .person:
             parameters.personIDs = [parentID]
+
         case .studio:
             parameters.studioIDs = [parentID]
+
         default:
             parameters.parentID = parentID
         }
@@ -298,6 +301,7 @@ private struct ItemLibraryBody<Content: View>: View {
                     .debounce(for: 1, scheduler: RunLoop.main)
             ) { filters in
                 guard viewModel.environment.filters != filters else { return }
+
                 viewModel.environment.filters = filters
             }
             #if os(tvOS)

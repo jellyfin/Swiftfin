@@ -185,9 +185,12 @@ extension VideoPlayer.UIContainerViewController {
 
         switch action {
         case .none: ()
+
         case .aspectFill:
             guard checkGestureLock() else { return }
+
             viewState.toggleAspectFillBehavior()
+
         case .gestureLock:
             if viewState.isGestureLocked {
                 viewState.isGestureLocked = false
@@ -204,8 +207,10 @@ extension VideoPlayer.UIContainerViewController {
                     systemName: VideoPlayerActionButton.gestureLock.systemImage
                 )
             }
+
         case .pausePlay:
             guard checkGestureLock() else { return }
+
             viewState.manager?.togglePlayPause()
         }
     }
@@ -235,6 +240,7 @@ extension VideoPlayer.UIContainerViewController {
 
         switch action {
         case .none: ()
+
         case .gestureLock:
             guard state == .began else { return }
 
@@ -244,6 +250,7 @@ extension VideoPlayer.UIContainerViewController {
                 L10n.gesturesLocked,
                 systemName: VideoPlayerActionButton.gestureLock.systemImage
             )
+
         case .playbackSpeed:
             guard viewState.manager?.item.isLiveStream == false else { return }
 
@@ -262,6 +269,7 @@ extension VideoPlayer.UIContainerViewController {
 
             case .ended, .cancelled:
                 guard let originalRate = viewState.originalPlaybackRate else { return }
+
                 viewState.manager?.setRate(rate: originalRate)
 
                 viewState.originalPlaybackRate = nil

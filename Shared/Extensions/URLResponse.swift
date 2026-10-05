@@ -12,6 +12,7 @@ extension URLResponse {
 
     var mimeSubtype: String? {
         guard let subtype = mimeType?.split(separator: "/")[safe: 1] else { return nil }
+
         return String(subtype)
     }
 }

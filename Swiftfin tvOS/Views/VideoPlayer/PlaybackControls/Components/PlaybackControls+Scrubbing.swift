@@ -19,6 +19,7 @@ extension VideoPlayer.PlaybackControls {
 
     func startSpeedBoost() {
         guard !isSpeedBoosting, speedBoostTimer == nil else { return }
+
         viewState.setInteraction(.speedBoost, active: true)
 
         speedBoostTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [self] _ in

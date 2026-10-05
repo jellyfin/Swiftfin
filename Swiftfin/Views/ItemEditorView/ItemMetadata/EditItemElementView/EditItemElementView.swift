@@ -90,6 +90,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                 }
                 .onMove { source, destination in
                     guard isReordering else { return }
+
                     elements.move(fromOffsets: source, toOffset: destination)
                 }
             } else {

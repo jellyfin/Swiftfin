@@ -325,12 +325,15 @@ extension MediaStream: @retroactive Transferable, TextTransferable {
         case .video:
             resolutionTransferProperties
             videoTransferProperties
+
         case .audio:
             audioTransferProperties
             flagTransferProperties
+
         case .subtitle:
             resolutionTransferProperties
             flagTransferProperties
+
         default:
             []
         }

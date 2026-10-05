@@ -30,10 +30,12 @@ struct EPGLoadableView<Content: View>: View {
         switch viewModel.state {
         case .initial, .refreshing:
             ProgressView()
+
         case .error:
             if let error = viewModel.error {
                 ErrorView(error: error)
             }
+
         case .content:
             if viewModel.channels.isEmpty {
                 ContentUnavailableView(L10n.noPrograms, systemImage: "tv")
@@ -82,6 +84,7 @@ struct EPGContentView: View {
     // TODO: turn into FormatStyle
     private func programTitle(for program: BaseItemDto) -> String {
         guard let start = program.startDate else { return program.displayTitle }
+
         return "\(start.formatted(date: .omitted, time: .shortened)) \(String.bullet) \(program.displayTitle)"
     }
 

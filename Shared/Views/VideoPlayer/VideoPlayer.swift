@@ -73,6 +73,7 @@ struct VideoPlayer: View {
             }
 
             guard let scrubbingStartTime else { return }
+
             self.scrubbingStartTime = nil
             let scrubbingDelta = CACurrentMediaTime() - scrubbingStartTime
             let secondsDelta = abs(manager.seconds - viewState.scrubbedSeconds.value)
@@ -90,6 +91,7 @@ struct VideoPlayer: View {
         )
         .onChange(of: presentationCoordinator.isPresented) {
             guard !presentationCoordinator.isPresented else { return }
+
             isBeingDismissedByTransition = true
             manager.stop()
         }

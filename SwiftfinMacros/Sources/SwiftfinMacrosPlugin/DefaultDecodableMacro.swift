@@ -87,7 +87,8 @@ struct DefaultDecodableMacro: ExtensionMacro {
             }
         }
 
-        let access = declaration.modifiers.first { ["public", "package"].contains($0.name.text) }
+        let access = declaration.modifiers
+            .first { ["public", "package"].contains($0.name.text) }
             .map { "\($0.name.text) " } ?? ""
         let keyConformance = keys.isEmpty ? "CodingKey" : "String, CodingKey"
         let container = keys.isEmpty

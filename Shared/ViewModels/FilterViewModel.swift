@@ -84,23 +84,32 @@ final class FilterViewModel: ViewModel {
         switch type {
         case .audioLanguage:
             currentFilters.audioLanguages = ItemFilterCollection.default.audioLanguages
+
         case .category:
             currentFilters.categories = ItemFilterCollection.default.categories
+
         case .genres:
             currentFilters.genres = ItemFilterCollection.default.genres
+
         case .letter:
             currentFilters.letter = ItemFilterCollection.default.letter
+
         case .officialRatings:
             currentFilters.officialRatings = ItemFilterCollection.default.officialRatings
+
         case .sortBy:
             currentFilters.sortBy = ItemFilterCollection.default.sortBy
             currentFilters.sortOrder = ItemFilterCollection.default.sortOrder
+
         case .subtitleLanguage:
             currentFilters.subtitleLanguages = ItemFilterCollection.default.subtitleLanguages
+
         case .tags:
             currentFilters.tags = ItemFilterCollection.default.tags
+
         case .traits:
             currentFilters.traits = ItemFilterCollection.default.traits
+
         case .years:
             currentFilters.years = ItemFilterCollection.default.years
         }

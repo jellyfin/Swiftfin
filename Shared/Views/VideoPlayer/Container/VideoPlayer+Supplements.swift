@@ -49,9 +49,10 @@ extension VideoPlayer.UIContainerViewController {
         private var focusedSupplementID: String? {
             guard viewState.visibleElements.contains(.supplements) else { return nil }
 
-            return viewState.supplements.first {
-                $0.id == focusedElement
-            }?.id
+            return viewState.supplements
+                .first {
+                    $0.id == focusedElement
+                }?.id
         }
 
         @ViewBuilder
@@ -201,6 +202,7 @@ extension VideoPlayer.UIContainerViewController {
                       focusedSupplementID == id,
                       viewState.selectedSupplementID == previousSelection
                 else { return }
+
                 viewState.selectedSupplementID = id
             }
             #endif

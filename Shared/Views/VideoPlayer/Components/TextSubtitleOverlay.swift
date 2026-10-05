@@ -63,6 +63,7 @@ private struct TextSubtitleOverlayContent: View {
                         basePointSize: basePointSize,
                         pointSize: pointSize
                     )
+
                 case let .webVTT(placement):
                     SubtitleRegionText(
                         text: region.text,
@@ -136,6 +137,7 @@ private struct SubtitleRegionsLayout: Layout {
         let videoFrame = videoLayout.videoFrame(in: bounds)
         for index in 0 ..< count {
             guard case let .webVTT(placement) = regions[index].placement else { continue }
+
             placeWebVTTRegion(
                 subviews[index],
                 placement: placement,
@@ -215,6 +217,7 @@ private struct SubtitleRegionText: View {
 
     private var presentationText: String {
         guard writingDirection == .verticalGrowingRight else { return text }
+
         return text
             .split(separator: "\n", omittingEmptySubsequences: false)
             .reversed()
@@ -250,6 +253,7 @@ private struct VerticalSubtitleLayout: Layout {
         cache _: inout ()
     ) -> CGSize {
         guard let subview = subviews.first else { return .zero }
+
         let size = subview.sizeThatFits(proposal.rotated)
         return CGSize(width: size.height, height: size.width)
     }

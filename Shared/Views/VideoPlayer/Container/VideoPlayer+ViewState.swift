@@ -96,6 +96,7 @@ extension VideoPlayer {
             guard isPresentingOverlayActions,
                   let action = overlayActions.first(where: { $0.id == id })
             else { return }
+
             action.button.action()
             refreshAutoDismiss()
         }
@@ -164,16 +165,19 @@ extension VideoPlayer {
         var selectedSupplementID: String? {
             get {
                 guard case let .supplement(id, _) = presentation else { return nil }
+
                 return id
             }
             set {
                 guard !isGestureLocked, newValue != selectedSupplementID else { return }
+
                 transition(to: newValue.map { .supplement($0) } ?? .controls)
             }
         }
 
         var selectedSupplement: (any MediaPlayerSupplement)? {
             guard let selectedSupplementID else { return nil }
+
             access(keyPath: \.selectedSupplement)
             return supplements.first { $0.id == selectedSupplementID }
         }
@@ -197,6 +201,7 @@ extension VideoPlayer {
 
         func presentGuestSupplement(_ supplement: some MediaPlayerSupplement) {
             guard !isGestureLocked else { return }
+
             guestSupplement = supplement
             transition(to: .supplement(supplement.id))
         }
@@ -214,6 +219,7 @@ extension VideoPlayer {
             guard pendingSupplementFocusID == id,
                   let selectedSupplement, selectedSupplement.id == id
             else { return }
+
             containerView?.focusSupplementContent()
             focusCoordinator.focus(selectedSupplement.preferredFocusID)
         }
@@ -258,14 +264,17 @@ extension VideoPlayer {
             switch presentation {
             case .hidden:
                 return overlayActions.isEmpty ? [] : [.overlayActions]
+
             case .progress:
                 return overlayActions.isEmpty ? [.progress] : [.progress, .overlayActions]
+
             case .controls:
                 var elements: Set<Element> = [.progress, .toolbar, .playbackButtons, .dimming]
                 if supplements.isNotEmpty {
                     elements.insert(.supplements)
                 }
                 return elements
+
             case let .supplement(_, showsPlaybackButtons):
                 if UIDevice.isTV {
                     return [.supplements, .dimming]
@@ -353,26 +362,28 @@ extension VideoPlayer {
         init(timer: PokeIntervalTimer? = nil) {
             self.timer = timer ?? .init(defaultInterval: UIDevice.isTV ? 10 : 5)
 
-            self.timer.sink { [weak self] in
-                guard let self, canAutoDismiss else { return }
+            self.timer
+                .sink { [weak self] in
+                    guard let self, canAutoDismiss else { return }
 
-                // UIKit presentations do not all participate in SwiftUI focus.
-                if containerView?.presentedViewController != nil {
-                    refreshAutoDismiss()
-                    return
-                }
+                    // UIKit presentations do not all participate in SwiftUI focus.
+                    if containerView?.presentedViewController != nil {
+                        refreshAutoDismiss()
+                        return
+                    }
 
-                withAnimation(.linear(duration: 0.25)) {
-                    self.hideControls()
+                    withAnimation(.linear(duration: 0.25)) {
+                        self.hideControls()
+                    }
                 }
-            }
-            .store(in: &cancellables)
+                .store(in: &cancellables)
 
             focusCoordinator.$focusedIDs
                 .dropFirst()
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] focusedIDs in
                     guard let self else { return }
+
                     #if os(tvOS)
                     if let supplement = self.selectedSupplement,
                        self.pendingSupplementFocusID == supplement.id,
@@ -386,10 +397,11 @@ extension VideoPlayer {
                 .store(in: &cancellables)
 
             #if os(iOS)
-            jumpProgressObserver.timer.sink { [weak self] in
-                self?.lastTapLocation = nil
-            }
-            .store(in: &cancellables)
+            jumpProgressObserver.timer
+                .sink { [weak self] in
+                    self?.lastTapLocation = nil
+                }
+                .store(in: &cancellables)
             #endif
         }
 
@@ -412,6 +424,7 @@ extension VideoPlayer {
                     self.withMutation(keyPath: \.supplements) {
                         self.withMutation(keyPath: \.selectedSupplement) {
                             guard let selectedSupplementID = self.selectedSupplementID else { return }
+
                             if self.supplements.contains(where: { $0.id == selectedSupplementID }) {
                                 self.transition(to: self.presentation)
                             } else {
@@ -435,6 +448,7 @@ extension VideoPlayer {
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] status in
                     guard let self else { return }
+
                     #if os(tvOS)
                     if status == .paused, presentation == .hidden {
                         showControls()
@@ -447,6 +461,7 @@ extension VideoPlayer {
         private func observeSupplementActions() {
             supplementActionCancellables = supplements.compactMap { supplement in
                 guard let observable = supplement as? any ObservableObject else { return nil }
+
                 return observeActions(of: observable)
             }
             withMutation(keyPath: \.overlayActions) {}
@@ -484,6 +499,7 @@ extension VideoPlayer {
 
         func showControls() {
             guard !isGestureLocked else { return }
+
             if !isPresentingControls {
                 transition(to: .controls)
             } else {
@@ -494,6 +510,7 @@ extension VideoPlayer {
         /// Reveal the least UI needed for a seek, retaining an already open overlay.
         func showProgress(keepingControls: Bool = true) {
             guard !isGestureLocked else { return }
+
             if presentation == .hidden || !keepingControls {
                 transition(to: .progress)
             } else {
@@ -515,6 +532,7 @@ extension VideoPlayer {
 
         func togglePlaybackButtons() {
             guard isCompact, case let .supplement(id, showsPlaybackButtons) = presentation else { return }
+
             transition(to: .supplement(id, showsPlaybackButtons: !showsPlaybackButtons))
         }
 
@@ -540,6 +558,7 @@ extension VideoPlayer {
             guard !isPresentingCloseConfirmation,
                   !isFocusOutsidePlayer
             else { return false }
+
             #endif
 
             return true

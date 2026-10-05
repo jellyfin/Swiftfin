@@ -27,13 +27,16 @@ extension VideoPlayer.UIContainerViewController {
 
         switch action {
         case .none: ()
+
         case .aspectFill:
             guard state == .ended else { return }
+
             if scale > 1 {
                 viewState.fillVideo()
             } else if scale < 1 {
                 viewState.fitVideo()
             }
+
         case .zoom:
             handleZoomGesture(scale: scale, location: playerLocation(fromControls: location), state: state)
         }
@@ -47,17 +50,20 @@ extension VideoPlayer.UIContainerViewController {
                 location: location,
                 fillsViewport: viewState.aspectFillBehavior == .fill
             ) else { return }
+
             prepareZoomHaptics()
             viewState.setInteraction(.pinch, active: true)
 
         case .changed:
             guard viewState.zoom.isPinching else { return }
+
             viewState.zoom.updatePinch(input: scale, location: location)
 
         case .ended, .cancelled, .failed:
             // Ignore terminal scale/location: after a finger lifts they may no
             // longer describe the last displayed two-finger transform.
             guard viewState.zoom.isPinching else { return }
+
             withAnimation(.spring(response: 0.3, dampingFraction: 1)) {
                 viewState.zoom.endPinch()
             }
@@ -72,6 +78,7 @@ extension VideoPlayer.UIContainerViewController {
 
     private func presentZoomAmount() {
         guard let transform = viewState.zoom.transform else { return }
+
         let scale = VideoZoom.displayedScale(transform.scale)
         if scale <= 1.0001 {
             viewState.toastProxy.present(L10n.original)

@@ -57,7 +57,9 @@ enum NotchDeviceReader {
         else { return nil }
 
         let bounds = view.bounds
-        let safe = view.safeAreaLayoutGuide.layoutFrame.intersection(bounds)
+        let safe = view.safeAreaLayoutGuide
+            .layoutFrame
+            .intersection(bounds)
             .intersection(view.convert(window.safeAreaLayoutGuide.layoutFrame, from: window))
         let left = safe.isNull ? 0 : max(0, safe.minX - bounds.minX)
         let right = safe.isNull ? 0 : max(0, bounds.maxX - safe.maxX)
@@ -143,7 +145,6 @@ enum NotchDeviceReader {
               returns(method, type: "@"),
               let area = screen.perform(selector)?.takeUnretainedValue() as? NSObject
         else { return nil }
-
         guard let rectSelector = "cmVjdA==".base64Decoded?.asSelector(),
               let rectMethod = class_getInstanceMethod(type(of: area), rectSelector),
               method_getNumberOfArguments(rectMethod) == 2,
@@ -168,6 +169,7 @@ enum NotchDeviceReader {
         guard radius.isFinite, radius >= 0,
               radius <= min(screen.bounds.width, screen.bounds.height) / 2
         else { return 0 }
+
         return CGFloat(radius)
     }
 

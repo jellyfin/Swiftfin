@@ -24,6 +24,7 @@ extension ActiveSessionsView {
 
         private var transcodingPercentage: Double? {
             guard let c = transcodingInfo?.completionPercentage else { return nil }
+
             return clamp(c / 100.0, min: 0, max: 1)
         }
 

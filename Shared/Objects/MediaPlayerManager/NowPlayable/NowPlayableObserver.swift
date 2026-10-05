@@ -43,6 +43,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
     weak var manager: MediaPlayerManager? {
         willSet {
             guard let newValue else { return }
+
             setup(with: newValue)
         }
     }
@@ -74,7 +75,8 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
             .sink { [weak self] newValue in self?.playbackRequestStatusDidChange(newValue) }
             .store(in: &cancellables)
 
-        manager.secondsBox.$value
+        manager.secondsBox
+            .$value
             .sink { [weak self] newValue in self?.secondsDidChange(newValue) }
             .store(in: &cancellables)
 
@@ -185,6 +187,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         case .began:
             playbackRequestStateBeforeInterruption = manager?.playbackRequestStatus ?? .playing
             manager?.setPlaybackRequestStatus(status: .paused)
+
         case .ended:
             do {
                 try startSession()
@@ -201,6 +204,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
                 logger.critical("Unable to reactivate audio session after interruption: \(error.localizedDescription)")
                 manager?.stop()
             }
+
         @unknown default: ()
         }
     }
@@ -213,25 +217,38 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
         switch command {
         case .pause:
             manager?.setPlaybackRequestStatus(status: .paused)
+
         case .play:
             manager?.setPlaybackRequestStatus(status: .playing)
+
         case .togglePausePlay:
             manager?.togglePlayPause()
+
         case .skipBackward:
             guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+
             manager?.proxy?.jumpBackward(.seconds(event.interval))
+
         case .skipForward:
             guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+
             manager?.proxy?.jumpForward(.seconds(event.interval))
+
         case .changePlaybackPosition:
             guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
+
             manager?.proxy?.setSeconds(Duration.seconds(event.positionTime))
+
         case .nextTrack:
             guard let nextItem = manager?.queue?.nextItem else { return .commandFailed }
+
             manager?.playNewItem(provider: nextItem)
+
         case .previousTrack:
             guard let previousItem = manager?.queue?.previousItem else { return .commandFailed }
+
             manager?.playNewItem(provider: previousItem)
+
         default: ()
         }
 

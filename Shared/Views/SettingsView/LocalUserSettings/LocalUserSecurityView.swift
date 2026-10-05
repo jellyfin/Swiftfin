@@ -105,6 +105,7 @@ struct LocalUserSecurityView: View {
         .navigationTitle(L10n.security)
         .onFirstAppear {
             guard let user = viewModel.userSession?.user else { return }
+
             signInPolicy = user.accessPolicy
             pinHint = user.pinHint
         }

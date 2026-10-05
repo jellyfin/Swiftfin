@@ -68,7 +68,8 @@ extension NavigationRoute {
             manager
         }
 
-        Container.shared.mediaPlayerManagerPublisher()
+        Container.shared
+            .mediaPlayerManagerPublisher()
             .send(manager)
 
         return NavigationRoute(

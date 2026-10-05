@@ -221,6 +221,7 @@ extension VideoPlayer {
             guard let transform = viewState.zoom.transform,
                   zoomStopFeedback.update(scale: transform.scale, stop: viewState.zoom.stop)
             else { return }
+
             zoomHaptic.impactOccurred()
             zoomHaptic.prepare()
         }
@@ -363,6 +364,7 @@ extension VideoPlayer {
             else {
                 return nil
             }
+
             let supplementContainerHeight = supplementHeightAnchor.constant
             let offsetPercentage = 1 - clamp(supplementBottomAnchor.constant.magnitude / supplementContainerHeight, min: 0, max: 1)
             return (dismissedSupplementContainerOffset + EdgeInsets.edgePadding) * offsetPercentage
@@ -425,7 +427,6 @@ extension VideoPlayer {
                 return
             }
             guard state == .began || isPanning else { return }
-
             guard let supplementBottomAnchor,
                   let supplementHeightAnchor,
                   let playerCompactBottomAnchor
@@ -520,6 +521,7 @@ extension VideoPlayer {
 
         func cancelSupplementPan() {
             guard isPanning else { return }
+
             isPanning = false
             verticalPanGestureStartConstant = nil
             viewState.setInteraction(.pan, active: false)
@@ -552,6 +554,7 @@ extension VideoPlayer {
             pendingPlaybackFocusRequest = playbackFocusRequest
             completion = { [weak self] finished in
                 guard let self, finished else { return }
+
                 if let supplementID {
                     viewState.focusSupplementIfNeeded(supplementID)
                 } else if let playbackFocusRequest {
@@ -807,6 +810,7 @@ extension VideoPlayer {
 
         private func restorePlaybackFocusIfNeeded(_ request: UUID) {
             guard pendingPlaybackFocusRequest == request else { return }
+
             pendingPlaybackFocusRequest = nil
 
             // Retry only if the controls could not receive focus during dismissal.
@@ -849,6 +853,7 @@ extension VideoPlayer {
                           viewState.visibleElements.contains(.supplements),
                           viewState.singleSupplement?.id == supplement.id
                     else { return }
+
                     viewState.selectedSupplementID = supplement.id
                 }
                 return false
@@ -886,6 +891,7 @@ extension VideoPlayer {
 
             let now = CACurrentMediaTime()
             guard now - lastTouchPokeTime > 1.0 else { return }
+
             lastTouchPokeTime = now
 
             if manager.item.isLiveStream {
@@ -917,6 +923,7 @@ extension VideoPlayer {
                 default:
                     let defaultAction: () -> Void = { [weak self] in
                         guard let self else { return }
+
                         self.forwardPressesBegan([press], event: event)
                     }
 
@@ -943,6 +950,7 @@ extension VideoPlayer {
                 default:
                     let defaultAction: () -> Void = { [weak self] in
                         guard let self else { return }
+
                         self.forwardPressesEnded([press], event: event)
                     }
 

@@ -45,6 +45,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             } else {
                 sendStartReport(for: item, seconds: manager?.seconds)
             }
+
         case .paused:
             sendProgressReport(for: item, seconds: manager?.seconds, isPaused: true)
         }
@@ -79,6 +80,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
     private func endPlaybackSession() {
         guard let item else { return }
+
         sendStopReport(for: item, seconds: manager?.seconds)
     }
 
@@ -107,6 +109,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
             timer.stop()
             cancellables = []
             item = nil
+
         default: ()
         }
     }
@@ -115,6 +118,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
+
         #endif
 
         Task {
@@ -139,6 +143,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
+
         #endif
 
         Task {
@@ -159,6 +164,7 @@ class MediaProgressObserver: ViewModel, MediaPlayerObserver {
 
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
+
         #endif
 
         Task {

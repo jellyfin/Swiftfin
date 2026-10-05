@@ -77,6 +77,7 @@ struct ItemImagesView: View {
                 if let url = urls.first {
                     viewModel.uploadFile(file: url, type: selectedType)
                 }
+
             case let .failure(fileError):
                 uploadError = fileError
             }

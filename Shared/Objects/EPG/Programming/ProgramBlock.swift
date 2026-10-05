@@ -47,6 +47,7 @@ struct ProgramBlock: Identifiable {
     func isAiring(at date: Date) -> Bool {
         programs.contains { program in
             guard let start = program.startDate, let end = program.endDate else { return false }
+
             return start <= date && date < end
         }
     }

@@ -95,11 +95,13 @@ struct ContentGroupView<Provider: ContentGroupProvider>: View {
                 } else {
                     contentView
                 }
+
             case .error:
                 viewModel.error.map(ErrorView.init)
                     #if os(tvOS)
                         .coordinatedFocus(.fallback)
                     #endif
+
             case .initial, .refreshing:
                 ProgressView()
                     #if os(tvOS)

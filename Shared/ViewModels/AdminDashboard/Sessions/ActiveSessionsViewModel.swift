@@ -103,6 +103,7 @@ final class ActiveSessionsViewModel: ViewModel {
             .filter { session in
                 guard let seconds = environment.activeWithinSeconds else { return true }
                 guard let date = session.lastActivityDate else { return true }
+
                 return Date.now.timeIntervalSince(date) <= TimeInterval(seconds)
             }
             .filter { session in
