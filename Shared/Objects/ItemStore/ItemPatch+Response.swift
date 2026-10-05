@@ -15,10 +15,12 @@ extension ItemPatch {
     static func sessionItems(from response: Response<[SessionInfoDto]>) throws -> [ItemPatch] {
         let objects = try JSONSerialization.jsonObject(with: response.data) as? [[String: Any]] ?? []
         guard objects.count == response.value.count else { throw CocoaError(.coderInvalidValue) }
+
         return zip(response.value, objects).compactMap { session, object in
             guard let item = session.nowPlayingItem,
                   let fields = object["NowPlayingItem"] as? [String: Any] else { return nil }
-            return ItemPatch(value: item.withoutUserData, object: removingUserData(from: fields))
+
+            return ItemPatch.decoded(item.withoutUserData, object: removingUserData(from: fields))
         }
     }
 
@@ -43,12 +45,13 @@ extension ItemPatch {
         let json = try JSONSerialization.jsonObject(with: data)
         let objects = (json as? [[String: Any]]) ?? (json as? [String: Any])?["Items"] as? [[String: Any]] ?? []
         guard objects.count == values.count else { throw CocoaError(.coderInvalidValue) }
-        return zip(values, objects).map { ItemPatch(value: $0, object: $1) }
+
+        return zip(values, objects).map { ItemPatch.decoded($0, object: $1) }
     }
 
-    init(response: Response<BaseItemDto>) throws {
+    static func item(from response: Response<BaseItemDto>) throws -> ItemPatch {
         let object = try JSONSerialization.jsonObject(with: response.data) as? [String: Any] ?? [:]
-        self.init(value: response.value, object: object)
+        return ItemPatch.decoded(response.value, object: object)
     }
 }
 

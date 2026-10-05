@@ -232,6 +232,7 @@ extension SeriesEpisodeContentGroup {
 
             case let .episode(episode):
                 EpisodeCard(episode: episode.snapshot)
+
             case let .error(error):
                 EpisodeStateCard(
                     title: L10n.error,

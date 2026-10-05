@@ -16,6 +16,7 @@ private let userViewLibraryListImageWidth: CGFloat = 110
 struct UserViewLibrary: PagingLibrary {
 
     typealias Element = UserViewLibraryElement
+    typealias PageElement = ItemPatch
 
     let hasNextPage: Bool = false
     let parent: TitledLibraryParent = .init(
@@ -51,8 +52,8 @@ struct UserViewLibrary: PagingLibrary {
     func materialize(_ page: [ItemPatch], pageState: LibraryPageState) throws -> [UserViewLibraryElement] {
         let elements: [UserViewLibraryElement] = try page.compactMap { patch in
             guard let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else { return nil }
-            let isFolder = patch.value.type == .userView && (patch.value.collectionType ?? .folders) == .folders
-            return .userView(ItemEntry(item: record, presentationType: isFolder ? .folder : nil))
+
+            return .userView(ItemEntry(item: record))
         }
         return elements.prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
     }

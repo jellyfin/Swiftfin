@@ -9,9 +9,11 @@
 import Foundation
 import JellyfinAPI
 
+/// Represents one occurrence of an item backed by a shared record.
 @MainActor
 struct ItemEntry: Identifiable, Hashable {
 
+    /// Distinguishes repeated appearances of the same item in a collection.
     struct ID: Hashable, Sendable {
 
         let item: ItemKey
@@ -20,24 +22,16 @@ struct ItemEntry: Identifiable, Hashable {
 
     nonisolated let id: ID
     let item: ItemRecord
-    var presentationType: BaseItemKind?
 
-    init(
-        item: ItemRecord,
-        occurrence: String? = nil,
-        presentationType: BaseItemKind? = nil
-    ) {
+    init(item: ItemRecord, occurrence: String? = nil) {
         self.id = ID(item: item.id, occurrence: occurrence)
         self.item = item
-        self.presentationType = presentationType
     }
 
     var value: BaseItemDto? {
         guard var value = item.value else { return nil }
+
         value.playlistItemID = id.occurrence
-        if let presentationType {
-            value.type = presentationType
-        }
         return value
     }
 

@@ -20,6 +20,7 @@ extension MediaLibrary {
             guard patch.value.id?.nilIfBlank != nil,
                   let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest)
             else { return nil }
+
             return ItemEntry(item: record, occurrence: patch.value.playlistItemID)
         }
     }

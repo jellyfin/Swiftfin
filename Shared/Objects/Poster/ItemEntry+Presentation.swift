@@ -63,6 +63,7 @@ extension ItemEntry: @MainActor LibraryElement, @MainActor Poster {
 
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
         guard let value else { return }
+
         value.libraryDidSelectElement(router: router, in: namespace)
     }
 

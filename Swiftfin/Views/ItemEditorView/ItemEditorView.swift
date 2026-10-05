@@ -43,6 +43,7 @@ struct ItemEditorView: View {
         }
         .onChange(of: viewModel.$item.value == nil) { _, isDeleted in
             guard isDeleted else { return }
+
             UIDevice.feedback(.success)
             router.dismiss()
         }

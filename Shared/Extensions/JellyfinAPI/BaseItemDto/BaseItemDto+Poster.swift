@@ -266,6 +266,7 @@ private struct BaseItemDtoPosterContextMenu: View {
     @MainActor
     private func toggleIsPlayed() async {
         guard let session = Container.shared.currentUserSession() else { return }
+
         do {
             try await session.setPlayed($item, to: !isPlayed)
         } catch {
@@ -276,6 +277,7 @@ private struct BaseItemDtoPosterContextMenu: View {
     @MainActor
     private func toggleIsFavorite() async {
         guard let session = Container.shared.currentUserSession() else { return }
+
         do {
             try await session.setFavorite($item, to: !isFavorite)
         } catch {

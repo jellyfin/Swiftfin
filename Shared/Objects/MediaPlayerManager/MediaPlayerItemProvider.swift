@@ -57,8 +57,10 @@ struct MediaPlayerItemProvider {
 
     func callAsFunction() async throws -> MediaPlayerItem {
         guard let item = $item.value else { throw ItemStore.StoreError.itemUnavailable }
+
         let playbackItem = try await resolver(item, modifyItem)
         guard $item.value != nil else { throw ItemStore.StoreError.itemUnavailable }
+
         return playbackItem
     }
 }

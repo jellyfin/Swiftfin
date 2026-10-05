@@ -72,6 +72,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         scheduledRebuild = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .milliseconds(350))
             guard !Task.isCancelled, let self else { return }
+
             self.scheduledRebuild = nil
             await self.background.refresh()
         }
@@ -82,11 +83,13 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         staleThreshold: TimeInterval = 60
     ) {
         guard interval > staleThreshold || needsGroupRebuild else { return }
+
         background.refresh()
     }
 
     func refreshIfPendingChanges() {
         guard needsGroupRebuild else { return }
+
         background.refresh()
     }
 
@@ -108,7 +111,7 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
             if rebuildGroups {
                 try await fullRefresh()
             } else {
-                await refreshViewModels(inBackground: true)
+                await refreshViewModels(in: candidateGroups, inBackground: true)
                 try Task.checkCancellation()
                 resolveGroups()
             }
@@ -130,16 +133,16 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         }
     }
 
-    private var uniqueViewModels: [any WithRefresh] {
+    private func uniqueViewModels(in groups: [any ContentGroup]) -> [any WithRefresh] {
         var seen = Set<ObjectIdentifier>()
-        return candidateGroups.map { $0.viewModel as any WithRefresh }
+        return groups.map { $0.viewModel as any WithRefresh }
             .filter { seen.insert(ObjectIdentifier($0 as AnyObject)).inserted }
     }
 
     private func observeGroups() {
         groupCancellables.removeAll()
         // Observe hidden candidates too, after their published values have changed.
-        for case let viewModel as ViewModel in uniqueViewModels {
+        for case let viewModel as ViewModel in uniqueViewModels(in: candidateGroups) {
             viewModel.objectWillChange
                 .receive(on: RunLoop.main)
                 .sink { [weak self] in
@@ -149,9 +152,9 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         }
     }
 
-    private func refreshViewModels(inBackground: Bool) async {
+    private func refreshViewModels(in groups: [any ContentGroup], inBackground: Bool) async {
         await withTaskGroup(of: Void.self) { group in
-            for viewModel in uniqueViewModels {
+            for viewModel in uniqueViewModels(in: groups) {
                 group.addTask {
                     if inBackground {
                         await viewModel.background.refresh()
@@ -167,12 +170,12 @@ final class ContentGroupViewModel<Provider: ContentGroupProvider>: ViewModel {
         let newGroups = try await provider.makeGroups(environment: provider.environment)
         try Task.checkCancellation()
 
-        candidateGroups = newGroups
-        observeGroups()
         // New view models must leave .initial before becoming visible.
-        await refreshViewModels(inBackground: false)
+        await refreshViewModels(in: newGroups, inBackground: false)
         try Task.checkCancellation()
 
+        candidateGroups = newGroups
+        observeGroups()
         hasLoadedGroups = true
         // New groups may reuse IDs but own different view models.
         groups = candidateGroups.filter(\._shouldBeResolved)

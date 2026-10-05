@@ -80,6 +80,7 @@ final class UserSession {
         for service in services.reversed() {
             service.willStop(userSession: self)
         }
+
         if !preservingItems {
             items.invalidate()
             itemActionErrors.send(completion: .finished)

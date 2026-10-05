@@ -11,15 +11,19 @@ import Foundation
 import JellyfinAPI
 
 /// Views and collections own records; each session's store keeps weak references.
+///
+/// Stored for shared media item values.
 @MainActor
 final class ItemStore {
 
+    /// Ties a response to its session and request order.
     struct RequestToken {
 
         fileprivate let sessionID: UUID
         fileprivate let revision: UInt64
     }
 
+    /// Describes an item or collection change for store observers.
     enum Change {
 
         case updated(Update)
@@ -29,14 +33,15 @@ final class ItemStore {
         case invalidated
     }
 
+    /// Identifies which part of a retained item changed.
     struct Update {
 
         let itemID: String
         var metadataChanged = false
         var userDataChanged = false
 
-        var isEmpty: Bool {
-            !metadataChanged && !userDataChanged
+        var hasChanges: Bool {
+            metadataChanged || userDataChanged
         }
     }
 
@@ -68,6 +73,7 @@ final class ItemStore {
     /// Create before sending a request to order its updates against other responses.
     func beginRequest() throws -> RequestToken {
         guard isActive else { throw StoreError.invalidSession }
+
         revision += 1
         return RequestToken(sessionID: sessionID, revision: revision)
     }
@@ -80,13 +86,14 @@ final class ItemStore {
     /// Resolve a retained snapshot without letting a view constructor overwrite newer data.
     func reference(to value: BaseItemDto) throws -> ItemRecord {
         guard isActive else { throw StoreError.invalidSession }
+
         let id = try itemID(value)
         if let record = records[id]?.value {
             return record
         }
         let record = record(for: id)
         if !deletedIDs.contains(id) {
-            let patch = try ItemPatch(value: value)
+            let patch = try ItemPatch.snapshot(value)
             let program = try value.currentProgram.flatMap { $0.id == id ? nil : try reference(to: $0) }
             try record.merge(patch, revision: 0, program: program)
         }
@@ -98,36 +105,38 @@ final class ItemStore {
         try validate(token)
         let id = try itemID(patch.value)
         guard !deletedIDs.contains(id) else { return nil }
+
         let record = record(for: id)
         var program: ItemRecord?
         if !patch.replacesMetadata, let value = patch.value.currentProgram, let object = patch.program,
            value.id != id
         {
-            program = try merge(ItemPatch(value: value, object: object), token: token)
+            program = try merge(ItemPatch.decoded(value, object: object), token: token)
         }
         let wasRetained = record.value != nil
         let update = try record.merge(patch, revision: token.revision, program: program)
         // Loading a new page establishes membership; it must not trigger another fetch.
-        if wasRetained, !update.isEmpty {
+        if wasRetained, update.hasChanges {
             changeSubject.send(.updated(update))
         }
         return record
     }
 
-    func mergeUserData(_ data: UserItemDataDto, token: RequestToken) throws {
-        try mergeUserData(ItemUserDataPatch(value: data), token: token)
-    }
-
-    func mergeUserData(_ data: ItemUserDataPatch, token: RequestToken) throws {
+    /// HTTP replies supply raw field names; socket DTOs use their encoded fields.
+    func mergeUserData(_ data: UserItemDataDto, fields: Set<String>? = nil, token: RequestToken) throws {
         try validate(token)
-        guard let id = data.value.itemID, !deletedIDs.contains(id) else { return }
-        guard !id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw StoreError.invalidItemID }
-        let fields = Dictionary(uniqueKeysWithValues: data.fields.map { ($0, NSNull() as Any) })
-        let patch = ItemPatch(value: BaseItemDto(id: id, userData: data.value), object: ["UserData": fields])
+        guard let id = data.itemID, !deletedIDs.contains(id) else { return }
+        guard id.nilIfBlank != nil else { throw StoreError.invalidItemID }
+
+        let patch = try ItemPatch(
+            value: BaseItemDto(id: id, userData: data),
+            fields: ["UserData"],
+            userDataFields: fields ?? Set(CodableFields.encode(data).keys)
+        )
         let record = record(for: id)
         let update = try record.merge(patch, revision: token.revision, program: nil)
         // Actions and socket updates can affect collections even when the item isn't loaded.
-        if !update.isEmpty {
+        if update.hasChanges {
             changeSubject.send(.updated(update))
         }
     }
@@ -135,7 +144,7 @@ final class ItemStore {
     /// Nil draft fields clear metadata; session user data is preserved.
     func acceptMetadataDraft(_ value: BaseItemDto, token: RequestToken) throws {
         try validate(token)
-        _ = try merge(ItemPatch(value: value, replacesMetadata: true), token: beginRequest())
+        _ = try merge(ItemPatch.snapshot(value, replacesMetadata: true), token: beginRequest())
         libraryDidChange()
     }
 
@@ -144,9 +153,10 @@ final class ItemStore {
         _ item: ItemRecord,
         field: ItemUserDataField,
         to value: Bool,
-        operation: @escaping @MainActor () async throws -> ItemUserDataPatch
+        operation: @escaping @MainActor () async throws -> (value: UserItemDataDto, fields: Set<String>)
     ) async throws {
         guard item.id.sessionID == sessionID, item.value != nil else { throw StoreError.itemUnavailable }
+
         let itemID = item.id.itemID
         let token = try beginRequest()
         let mutationID = UUID()
@@ -165,12 +175,14 @@ final class ItemStore {
             }
             try validate(token)
             guard item.value != nil else { throw StoreError.itemUnavailable }
+
             var data = try await operation()
             try validate(token)
             guard item.value != nil else { throw StoreError.itemUnavailable }
+
             data.value.itemID = itemID
             // A new revision prevents reads started during the write from restoring stale data.
-            try mergeUserData(data, token: beginRequest())
+            try mergeUserData(data.value, fields: data.fields, token: beginRequest())
         }
         mutations[itemID, default: []].append((mutationID, task))
         try await withTaskCancellationHandler {
@@ -182,11 +194,13 @@ final class ItemStore {
 
     func libraryDidChange() {
         guard isActive else { return }
+
         changeSubject.send(.libraryChanged)
     }
 
     func delete(id: String) {
         guard isActive, deletedIDs.insert(id).inserted else { return }
+
         for mutation in mutations.removeValue(forKey: id) ?? [] {
             mutation.task.cancel()
         }
@@ -196,6 +210,7 @@ final class ItemStore {
 
     func invalidate() {
         guard isActive else { return }
+
         isActive = false
         for mutation in mutations.values.joined() {
             mutation.task.cancel()
@@ -210,7 +225,7 @@ final class ItemStore {
         changeSubject.send(completion: .finished)
     }
 
-    func prune() {
+    private func prune() {
         records = records.filter { $0.value.value != nil }
         insertionsUntilPrune = max(128, records.count)
     }
@@ -231,9 +246,10 @@ final class ItemStore {
     }
 
     private func itemID(_ value: BaseItemDto) throws -> String {
-        guard let id = value.id, !id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+        guard let id = value.id, id.nilIfBlank != nil else {
             throw StoreError.invalidItemID
         }
+
         return id
     }
 }

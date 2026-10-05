@@ -31,7 +31,7 @@ extension UserSession {
     private func receiveItems(_ response: Response<some Any>, token: ItemStore.RequestToken) throws -> [ItemRecord] {
         let patches: [ItemPatch]
         if let value = response.value as? BaseItemDto {
-            patches = try [ItemPatch(response: response.map { _ in value })]
+            patches = try [ItemPatch.item(from: response.map { _ in value })]
         } else if let value = response.value as? BaseItemDtoQueryResult {
             patches = try ItemPatch.items(from: response.map { _ in value })
         } else if let value = response.value as? [BaseItemDto] {
@@ -43,6 +43,7 @@ extension UserSession {
         }
         return try patches.compactMap { patch in
             guard patch.value.id?.nilIfBlank != nil else { return nil }
+
             return try items.merge(patch, token: token)
         }
     }
@@ -51,7 +52,8 @@ extension UserSession {
         let token = try items.beginRequest()
         return try sessions.compactMap { session in
             guard let item = session.nowPlayingItem, item.id?.nilIfBlank != nil else { return nil }
-            return try items.merge(ItemPatch(value: item.withoutUserData), token: token)
+
+            return try items.merge(ItemPatch.snapshot(item.withoutUserData), token: token)
         }
     }
 
@@ -80,7 +82,7 @@ extension UserSession {
         try await items.mutateUserData(entry.item, field: field, to: value) {
             let response = try await self.client.send(request())
             let object = try JSONSerialization.jsonObject(with: response.data) as? [String: Any] ?? [:]
-            return ItemUserDataPatch(value: response.value, fields: Set(object.keys))
+            return (response.value, Set(object.keys))
         }
     }
 }

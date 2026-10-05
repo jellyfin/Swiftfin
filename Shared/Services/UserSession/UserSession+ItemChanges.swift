@@ -19,27 +19,32 @@ extension UserSession {
             .sink { [weak self] event in
                 guard let self, self.itemChanges != nil, self.items.isActive,
                       case let .message(message) = event else { return }
+
                 switch message {
                 case let .userDataChangedMessage(message):
                     guard let data = message.data, data.userID == self.user.id else { return }
+
                     for data in data.userDataList {
-                        do {
-                            try self.items.mergeUserData(data, token: self.items.beginRequest())
-                        } catch {}
+                        _ = try? self.items.mergeUserData(data, token: self.items.beginRequest())
                     }
+
                 case let .libraryChangedMessage(message):
                     guard let data = message.data else { return }
+
                     self.items.libraryDidChange()
                     for id in data.itemsRemoved ?? [] {
                         self.items.delete(id: id)
                     }
                     for id in data.itemsUpdated ?? [] {
                         guard let record = self.items.retainedRecord(id: id) else { continue }
+
                         Task { @MainActor [weak self] in
                             guard let self, self.itemChanges != nil, let item = record.value else { return }
+
                             _ = try? await item.getFullItem(userSession: self)
                         }
                     }
+
                 default:
                     break
                 }

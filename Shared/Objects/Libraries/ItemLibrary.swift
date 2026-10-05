@@ -171,11 +171,13 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
 
         guard let parentID = parent.id else { return parameters }
 
-        switch parent.libraryType {
-        case .folder:
+        if parent.isFolderCollection {
             parameters.parentID = parentID
             parameters.isRecursive = nil
+            return parameters
+        }
 
+        switch parent.libraryType {
         case .person:
             parameters.personIDs = [parentID]
 
@@ -199,11 +201,8 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
             else {
                 return nil
             }
-            return ItemEntry(
-                item: record,
-                occurrence: patch.value.playlistItemID,
-                presentationType: parent.libraryType == .folder && patch.value.type == .collectionFolder ? .folder : nil
-            )
+
+            return ItemEntry(item: record, occurrence: patch.value.playlistItemID)
         }
     }
 

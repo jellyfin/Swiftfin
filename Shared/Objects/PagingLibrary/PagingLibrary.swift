@@ -10,6 +10,7 @@ import Get
 import JellyfinAPI
 import SwiftUI
 
+/// Carries pagination counts and a request token until a page is accepted.
 @MainActor
 final class LibraryPageState {
 
@@ -48,6 +49,7 @@ final class LibraryPageState {
         let consumedRows = consumedRows ?? returnedCount
         let nextOffset = pageOffset + consumedRows
         guard consumedRows > 0 else { return (nextOffset, false) }
+
         if let totalRows, totalRows >= nextOffset {
             return (nextOffset, nextOffset < totalRows)
         }

@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+/// Holds an object without extending its lifetime.
 struct WeakBox<Value: AnyObject> {
 
     weak var value: Value?

@@ -104,9 +104,11 @@ final class EPGViewModel: ViewModel {
 
         self.startDate = defaultStartDate()
 
-        userSession?.items.changes
+        userSession?.items
+            .changes
             .sink { [weak self] change in
                 guard let self else { return }
+
                 switch change {
                 case let .deleted(id):
                     self.channels.removeAll { $0.itemID == id }
@@ -119,12 +121,14 @@ final class EPGViewModel: ViewModel {
                         )
                     }
                     self.programsRevision &+= 1
+
                 case .invalidated:
                     self.requestGeneration += 1
                     self.channels.removeAll()
                     self.programs.removeAll()
                     self.hasNextChannelPage = false
                     self.programsRevision &+= 1
+
                 case .updated, .libraryChanged:
                     break
                 }
@@ -175,6 +179,7 @@ final class EPGViewModel: ViewModel {
     @Function(\Action.Cases._actuallyGetNextPage)
     private func __actuallyGetNextPage() async throws {
         guard hasNextChannelPage else { return }
+
         try await loadChannels(replacing: false, from: startDate)
     }
 
@@ -200,6 +205,7 @@ final class EPGViewModel: ViewModel {
 
         guard !Task.isCancelled, generation == requestGeneration,
               replacing || offset == nextChannelOffset else { return }
+
         try page.pageState.userSession.items.validate(page.pageState.itemRequest)
         let newChannels = try channelsLibrary.materialize(patches, pageState: page.pageState)
         let newPrograms = try makeProgramBlocks(programPatches, pageState: page.pageState, startDate: date, endDate: end)
@@ -239,6 +245,7 @@ final class EPGViewModel: ViewModel {
         let entries = try patches.compactMap { patch -> ItemEntry? in
             guard patch.value.id?.nilIfBlank != nil,
                   let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else { return nil }
+
             return ItemEntry(item: record)
         }
         let byChannel = Dictionary(grouping: entries) { $0.snapshot.channelID ?? "" }
@@ -253,7 +260,8 @@ final class EPGViewModel: ViewModel {
         endDate: Date,
         userSession: UserSession
     ) async throws -> [ItemPatch] {
-        guard !channelIDs.isEmpty else { return [] }
+        guard channelIDs.isNotEmpty else { return [] }
+
         var parameters = Paths.GetLiveTvProgramsParameters()
         parameters.channelIDs = channelIDs
         parameters.enableImages = false

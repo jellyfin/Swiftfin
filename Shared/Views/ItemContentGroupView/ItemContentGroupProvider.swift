@@ -36,15 +36,18 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         guard let store = userSession?.items else {
             return Combine.Empty().eraseToAnyPublisher()
         }
+
         return store.changes
             .compactMap { [weak self, weak store] change -> Void? in
                 guard let self, case let .updated(update) = change else { return nil }
+
                 if update.itemID == self.id, update.metadataChanged {
                     return ()
                 }
                 // Series and season playback selection depends on their children's progress.
                 guard self.item.type == .series || self.item.type == .season,
                       update.userDataChanged else { return nil }
+
                 let changedItem = store?.retainedRecord(id: update.itemID)?.value
                 if update.itemID == self.id || changedItem?.seriesID == self.id || changedItem?.seasonID == self.id ||
                     changedItem?.type == nil
@@ -79,6 +82,7 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         let newRandomBackdropItem = try? await randomBackdropItem(for: fullItem)
 
         guard $item.value != nil else { throw ItemStore.StoreError.itemUnavailable }
+
         item = fullItem
         localTrailers = newLocalTrailers ?? []
         mediaPlayerItemProvider = newMediaPlayerItemProvider

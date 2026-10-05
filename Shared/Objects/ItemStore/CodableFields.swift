@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// Use the SDK's codec to preserve its field names, dates, and nested values.
+/// Converts DTOs to field dictionaries using their Codable mappings.
 enum CodableFields {
 
     static func encode(_ value: some Encodable) throws -> [String: Any] {
@@ -16,6 +16,7 @@ enum CodableFields {
         guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw CocoaError(.coderInvalidValue)
         }
+
         return object
     }
 
@@ -25,7 +26,7 @@ enum CodableFields {
     }
 }
 
-/// Replacements protect cleared and unloaded fields from older responses.
+/// Tracks field revisions so older partial responses cannot overwrite newer values.
 struct FieldRevisions {
 
     private var fields: [String: UInt64] = [:]
@@ -52,6 +53,7 @@ struct FieldRevisions {
         replacing: Bool = false
     ) -> [String: Any] {
         guard accepts(revision) else { return current }
+
         var result = current
         let candidates = replacing ? presentFields.union(current.keys) : presentFields
         for field in candidates where revision >= fields[field, default: 0] {

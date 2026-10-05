@@ -88,6 +88,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     var environment: Environment {
         didSet {
             guard environment != oldValue else { return }
+
             generation += 1
             searchGeneration += 1
             elements.removeAll()
@@ -104,8 +105,9 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     @Published
     var searchQuery: String = "" {
         didSet {
-            guard searchQuery.trimmingCharacters(in: .whitespacesAndNewlines) != oldValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard searchQuery.nilIfBlank != oldValue.nilIfBlank
             else { return }
+
             searchGeneration += 1
             hasNextSearchPage = false
             searchElements.removeAll()
@@ -143,7 +145,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     }
 
     private var normalizedSearchQuery: String {
-        searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        searchQuery.nilIfBlank ?? ""
     }
 
     private var searchableLibrary: (any SearchablePagingLibrary<Element, Environment, PageElement>)? {
@@ -167,9 +169,11 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         super.init()
         self.userSession = userSession
 
-        userSession?.items.changes
+        userSession?.items
+            .changes
             .sink { [weak self] change in
                 guard let self else { return }
+
                 switch change {
                 case let .updated(update):
                     // User data can change membership in other collections.
@@ -179,14 +183,17 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
                         self.reconcileMembership(withID: update.itemID)
                         self.scheduleRefreshForStoreChange()
                     }
+
                 case .libraryChanged:
                     self.scheduleRefreshForStoreChange()
+
                 case let .deleted(id):
                     let removed = self.removeElements { self.matchesItemID($0.id, id) }
                     // A deleted row can shift server offsets even when it was never loaded.
                     if removed || self.library.hasNextPage {
                         self.scheduleRefreshForStoreChange()
                     }
+
                 case .invalidated:
                     self.invalidateItems()
                 }
@@ -200,6 +207,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             .debounce(for: .milliseconds(350), scheduler: RunLoop.main)
             .sink { [weak self] query in
                 guard let self, !self.isInvalidated else { return }
+
                 self.search(query: query)
             }
             .store(in: &cancellables)
@@ -258,6 +266,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     private func scheduleRefreshForStoreChange() {
         guard !isInvalidated else { return }
+
         hasPendingStoreRefresh = true
         guard storeRefreshTask == nil else { return }
 
@@ -265,14 +274,17 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         storeRefreshTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(delay))
             guard !Task.isCancelled, let self, !self.isInvalidated else { return }
+
             self.hasPendingStoreRefresh = false
 
             await self.background.refresh()
             guard !Task.isCancelled else { return }
+
             if self.isSearchActive {
                 await self.search(query: self.normalizedSearchQuery)
             }
             guard !Task.isCancelled else { return }
+
             self.lastStoreRefresh = Date.now
             self.storeRefreshTask = nil
 
@@ -287,6 +299,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         guard !isInvalidated else { return }
+
         generation += 1
         hasNextPage = true
         nextOffset = 0
@@ -299,12 +312,14 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     @Function(\Action.Cases.getNextPage)
     private func _getNextPage() async throws {
         guard hasNextPage, !isInvalidated, !background.is(.refreshing) else { return }
+
         await _actuallyGetNextPage()
     }
 
     @Function(\Action.Cases._actuallyGetNextPage)
     private func __actuallyGetNextPage() async throws {
         guard hasNextPage, !isInvalidated, !background.is(.refreshing) else { return }
+
         try await loadPage(replacing: false)
     }
 
@@ -318,6 +333,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
             guard !Task.isCancelled, requestGeneration == generation, !isInvalidated,
                   replacing || offset == nextOffset else { return }
+
             try page.userSession.items.validate(page.itemRequest)
             let previousCount = replacing ? 0 : elements.count
             let items = try IdentifiedArray(
@@ -340,6 +356,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     @Function(\Action.Cases.search)
     private func _search(_ query: String) async throws {
         guard !isInvalidated else { return }
+
         nextSearchOffset = 0
         searchElements.removeAll()
         guard query.isNotEmpty,
@@ -407,6 +424,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             let page = try pageState(offset: 0, pageSize: 1)
             let value = try await randomLibrary.retrieveRandomElement(environment: environment, pageState: page)
             guard !Task.isCancelled, requestGeneration == generation, !isInvalidated else { return }
+
             try page.userSession.items.validate(page.itemRequest)
             randomElement = try value.flatMap { try materialize([$0], pageState: page).first }
         } else {

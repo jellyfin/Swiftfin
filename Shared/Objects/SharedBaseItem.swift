@@ -11,7 +11,7 @@ import FactoryKit
 import Foundation
 import JellyfinAPI
 
-/// Assignment changes the reference without merging a potentially stale snapshot.
+/// Wraps a DTO in a shared item record without merging stale snapshots on assignment.
 @MainActor
 @propertyWrapper
 struct SharedBaseItem: Hashable {
@@ -20,18 +20,21 @@ struct SharedBaseItem: Hashable {
 
     init(wrappedValue: BaseItemDto) {
         let store = Container.shared.currentUserSession()?.items
+
         let record: ItemRecord = if let store, let shared = try? store.reference(to: wrappedValue) {
             shared
-        } else if let store, let id = wrappedValue.id, !store.isActive {
+        } else if let store, !store.isActive, let id = wrappedValue.id {
+            // An identified item from an inactive session must stay unavailable.
             ItemRecord(id: ItemKey(sessionID: store.sessionID, itemID: id))
         } else {
-            ItemRecord(presentation: wrappedValue)
+            // Presentation-only records never share the active session identity.
+            ItemRecord(
+                id: ItemKey(sessionID: UUID(), itemID: wrappedValue.id ?? UUID().uuidString),
+                presentationValue: wrappedValue
+            )
         }
-        entry = ItemEntry(
-            item: record,
-            occurrence: wrappedValue.playlistItemID,
-            presentationType: wrappedValue.type == .folder && record.value?.type != .folder ? .folder : nil
-        )
+
+        entry = ItemEntry(item: record, occurrence: wrappedValue.playlistItemID)
     }
 
     var wrappedValue: BaseItemDto {
@@ -60,6 +63,7 @@ struct SharedBaseItem: Hashable {
     }
 }
 
+/// Wraps an optional DTO in a shared item record.
 @MainActor
 @propertyWrapper
 struct OptionalSharedBaseItem {
@@ -88,6 +92,7 @@ struct OptionalSharedBaseItem {
     }
 }
 
+/// Wraps a DTO collection in shared item records.
 @MainActor
 @propertyWrapper
 struct SharedBaseItems: Hashable {

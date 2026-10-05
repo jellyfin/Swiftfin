@@ -22,7 +22,7 @@ struct SeasonViewModelLibrary: PagingLibrary {
         pageState: LibraryPageState
     ) async throws -> [ItemPatch] {
         if parent.type == .season {
-            return try [ItemPatch(value: parent)]
+            return try [ItemPatch.snapshot(parent)]
         }
         return try await SeasonLibrary(parent: parent).retrievePage(environment: environment, pageState: pageState)
     }

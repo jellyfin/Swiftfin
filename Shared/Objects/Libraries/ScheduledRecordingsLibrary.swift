@@ -32,7 +32,7 @@ struct ScheduledRecordingsLibrary: BaseItemKindLibrary {
             .filter(\.isScheduledRecording)
             .sorted(using: \.startDate)
             .compactMap(\.programInfo)
-            .map { try ItemPatch(value: $0) }
+            .map { try ItemPatch.snapshot($0) }
     }
 
     func makeLibraryBody(

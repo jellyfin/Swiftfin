@@ -10,14 +10,17 @@ import Foundation
 import JellyfinAPI
 import Observation
 
+/// Identifies an item within one user session.
 struct ItemKey: Hashable, Sendable {
 
     let sessionID: UUID
     let itemID: String
 }
 
+/// Selects a Boolean user-data field for an optimistic update.
 typealias ItemUserDataField = WritableKeyPath<UserItemDataDto, Bool?>
 
+/// Holds observable item data shared by views and collections in one session.
 @MainActor
 @Observable
 final class ItemRecord: Identifiable {
@@ -25,6 +28,7 @@ final class ItemRecord: Identifiable {
     nonisolated let id: ItemKey
     private var metadata: BaseItemDto?
     private var currentProgram: ItemRecord?
+    /// An optimistic change shows a requested value before server confirmation and rolls back if the request fails.
     private var optimisticChanges: [(id: UUID, field: ItemUserDataField, value: Bool)] = []
 
     @ObservationIgnored
@@ -36,9 +40,12 @@ final class ItemRecord: Identifiable {
 
     var value: BaseItemDto? {
         guard var value = metadata else { return nil }
-        value.currentProgram = currentProgram?.value
 
-        if !optimisticChanges.isEmpty {
+        if let currentProgram {
+            value.currentProgram = currentProgram.value
+        }
+
+        if optimisticChanges.isNotEmpty {
             var data = value.userData ?? UserItemDataDto(key: id.itemID)
             for change in optimisticChanges {
                 data[keyPath: change.field] = change.value
@@ -65,17 +72,10 @@ final class ItemRecord: Identifiable {
         optimisticChanges.removeAll { $0.id == id }
     }
 
-    init(id: ItemKey) {
+    /// Stored records start empty; presentation fallbacks may start with a local snapshot.
+    init(id: ItemKey, presentationValue: BaseItemDto? = nil) {
         self.id = id
-    }
-
-    /// Presentation-only items retain their nil server ID.
-    init(presentation value: BaseItemDto) {
-        self.id = ItemKey(sessionID: UUID(), itemID: value.id ?? UUID().uuidString)
-        self.metadata = value
-        self.metadata?.playlistItemID = nil
-        self.metadata?.currentProgram = nil
-        self.currentProgram = value.currentProgram.map { ItemRecord(presentation: $0) }
+        self.metadata = presentationValue.map(Self.withoutPlaylistOccurrences)
     }
 
     @discardableResult
@@ -166,6 +166,13 @@ final class ItemRecord: Identifiable {
     private func references(_ record: ItemRecord) -> Bool {
         self === record || currentProgram?.references(record) == true
     }
+
+    private static func withoutPlaylistOccurrences(_ item: BaseItemDto) -> BaseItemDto {
+        var item = item
+        item.playlistItemID = nil
+        item.currentProgram = item.currentProgram.map(withoutPlaylistOccurrences)
+        return item
+    }
 }
 
 /// The decoded DTO plus the fields actually present on the wire, including nulls.
@@ -177,34 +184,34 @@ struct ItemPatch {
     let program: [String: Any]?
     let replacesMetadata: Bool
 
+    /// Builds a patch when field presence is already known, such as a user-data update.
     init(
         value: BaseItemDto,
-        object: [String: Any],
+        fields: Set<String>,
+        userDataFields: Set<String> = [],
+        program: [String: Any]? = nil,
         replacesMetadata: Bool = false
     ) {
         self.value = value
-        self.replacesMetadata = replacesMetadata
-        self.fields = Set(object.keys)
-        self.userDataFields = Set((object["UserData"] as? [String: Any] ?? [:]).keys)
-        self.program = object["CurrentProgram"] as? [String: Any]
-    }
-
-    init(value: BaseItemDto, replacesMetadata: Bool = false) throws {
-        try self.init(value: value, object: CodableFields.encode(value), replacesMetadata: replacesMetadata)
-    }
-}
-
-struct ItemUserDataPatch {
-
-    var value: UserItemDataDto
-    let fields: Set<String>
-
-    init(value: UserItemDataDto, fields: Set<String>) {
-        self.value = value
         self.fields = fields
+        self.userDataFields = userDataFields
+        self.program = program
+        self.replacesMetadata = replacesMetadata
     }
 
-    init(value: UserItemDataDto) throws {
-        try self.init(value: value, fields: Set(CodableFields.encode(value).keys))
+    /// Preserves field presence from a decoded server response.
+    static func decoded(_ value: BaseItemDto, object: [String: Any], replacesMetadata: Bool = false) -> ItemPatch {
+        ItemPatch(
+            value: value,
+            fields: Set(object.keys),
+            userDataFields: Set((object["UserData"] as? [String: Any] ?? [:]).keys),
+            program: object["CurrentProgram"] as? [String: Any],
+            replacesMetadata: replacesMetadata
+        )
+    }
+
+    /// Uses encoded fields when a local snapshot has no raw response.
+    static func snapshot(_ value: BaseItemDto, replacesMetadata: Bool = false) throws -> ItemPatch {
+        try decoded(value, object: CodableFields.encode(value), replacesMetadata: replacesMetadata)
     }
 }

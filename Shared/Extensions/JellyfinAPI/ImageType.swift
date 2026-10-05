@@ -79,7 +79,7 @@ extension ImageType: Displayable {
             switch type {
             case .audio, .channel, .musicAlbum, .tvChannel:
                 .square
-            case .episode, .folder, .program, .musicVideo, .video, .userView:
+            case .collectionFolder, .episode, .folder, .program, .musicVideo, .video, .userView:
                 .landscape
             default:
                 .portrait
