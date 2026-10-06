@@ -73,6 +73,7 @@ final class FilterViewModel: ViewModel {
         }
         set {
             guard let newValue else { return }
+
             currentFilters = newValue.filters
                 .mutating(\.itemTypes, with: currentFilters.itemTypes)
                 .mutating(\.query, with: currentFilters.query)
@@ -96,10 +97,12 @@ final class FilterViewModel: ViewModel {
 
         super.init()
 
-        Notifications[.savedFiltersDidChange].publisher
+        Notifications[.savedFiltersDidChange]
+            .publisher
             .prepend(())
             .sink { [weak self] _ in
                 guard let self else { return }
+
                 savedFilters = StoredValues[.User.savedFilters]
                     .filter { $0.libraryID == self.parent?.pagingLibraryID }
             }
