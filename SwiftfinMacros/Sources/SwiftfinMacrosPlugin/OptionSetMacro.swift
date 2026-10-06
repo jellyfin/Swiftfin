@@ -50,6 +50,7 @@ struct OptionSetMacro: MemberMacro, ExtensionMacro {
     ) throws -> [ExtensionDeclSyntax] {
         // The member expansion reports invalid declarations; avoid duplicate diagnostics here.
         guard (try? definition(of: node, declaration: declaration)) != nil else { return [] }
+
         if declaration.inheritanceClause?.inheritedTypes.contains(where: {
             ["OptionSet", "Swift.OptionSet"].contains($0.type.trimmedDescription)
         }) == true {
@@ -73,8 +74,9 @@ struct OptionSetMacro: MemberMacro, ExtensionMacro {
         else {
             throw MacroExpansionErrorMessage("@OptionSet requires a standard integer raw type, such as @OptionSet<Int>")
         }
-
-        guard let options = declaration.memberBlock.members.compactMap({ $0.decl.as(EnumDeclSyntax.self) })
+        guard let options = declaration.memberBlock
+            .members
+            .compactMap({ $0.decl.as(EnumDeclSyntax.self) })
             .first(where: { $0.name.text == "Options" }),
             options.inheritanceClause?.inheritedTypes.first.map({ ["Int", "Swift.Int"].contains($0.type.trimmedDescription) }) == true
         else {
@@ -88,10 +90,12 @@ struct OptionSetMacro: MemberMacro, ExtensionMacro {
             guard let declaration = member.decl.as(EnumCaseDeclSyntax.self), declaration.attributes.isEmpty else {
                 throw MacroExpansionErrorMessage("@OptionSet Options must contain only unconditional, unattributed cases")
             }
+
             for option in declaration.elements {
                 guard option.parameterClause == nil else {
                     throw MacroExpansionErrorMessage("@OptionSet cases cannot have associated values")
                 }
+
                 let position: Int
                 if let value = option.rawValue {
                     guard let literal = value.value.as(IntegerLiteralExprSyntax.self),
@@ -99,6 +103,7 @@ struct OptionSetMacro: MemberMacro, ExtensionMacro {
                     else {
                         throw MacroExpansionErrorMessage("@OptionSet bit positions must be nonnegative integer literals")
                     }
+
                     position = parsed
                 } else {
                     position = nextPosition
@@ -109,6 +114,7 @@ struct OptionSetMacro: MemberMacro, ExtensionMacro {
                 guard positions.insert(position).inserted else {
                     throw MacroExpansionErrorMessage("@OptionSet bit position \(position) is used more than once")
                 }
+
                 nextPosition = position + 1
                 cases.append(option)
             }
@@ -140,7 +146,8 @@ struct OptionSetMacro: MemberMacro, ExtensionMacro {
             }
         }
 
-        let access = declaration.modifiers.first { ["public", "package"].contains($0.name.text) }
+        let access = declaration.modifiers
+            .first { ["public", "package"].contains($0.name.text) }
             .map { "\($0.name.text) " } ?? ""
         return Definition(rawType: rawType, cases: cases, access: access)
     }

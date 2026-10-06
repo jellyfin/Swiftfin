@@ -192,6 +192,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                         #if os(tvOS)
                             .coordinatedFocus(.placeholder)
                         #endif
+
                 case .content:
                     if viewModel.isSearchActive, viewModel.background.is(.searching) {
                         ProgressView()
@@ -207,6 +208,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                     } else {
                         elementsView
                     }
+
                 case .error:
                     viewModel.error.map(ErrorView.init)
                         #if os(tvOS)

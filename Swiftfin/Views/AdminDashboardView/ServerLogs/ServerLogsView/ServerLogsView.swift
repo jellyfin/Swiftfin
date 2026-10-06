@@ -35,6 +35,7 @@ struct ServerLogsView: View {
                 ForEach(viewModel.logs, id: \.self) { log in
                     ChevronButton(external: true) {
                         guard let url = log.url else { return }
+
                         UIApplication.shared.open(url)
                     } label: {
                         VStack(alignment: .leading) {

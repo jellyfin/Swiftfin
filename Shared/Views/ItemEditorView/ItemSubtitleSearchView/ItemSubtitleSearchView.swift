@@ -115,6 +115,7 @@ struct ItemSubtitleSearchView: View {
                     ForEach(viewModel.results) { subtitle in
                         SearchResultRow(subtitle: subtitle) {
                             guard let subtitleID = subtitle.id else { return }
+
                             selectedSubtitles.toggle(value: subtitleID)
                         }
                         .isSelected(subtitle.id.map { selectedSubtitles.contains($0) } == true)
@@ -126,6 +127,7 @@ struct ItemSubtitleSearchView: View {
 
     private func save() {
         guard selectedSubtitles.isNotEmpty else { return }
+
         viewModel.set(selectedSubtitles)
     }
 }

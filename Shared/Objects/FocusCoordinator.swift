@@ -11,6 +11,11 @@ import SwiftUI
 @MainActor
 final class FocusCoordinator: ObservableObject {
 
+    fileprivate struct Request: Equatable {
+        let id: String
+        let token = UUID()
+    }
+
     enum InitialFocusRole {
         /// Holds focus while waiting for the initial content, optionally requesting it once.
         case placeholder
@@ -25,7 +30,7 @@ final class FocusCoordinator: ObservableObject {
     @Published
     private(set) var lastFocusedIDs: Set<String> = []
     @Published
-    fileprivate var request: String?
+    fileprivate var request: Request?
 
     @Published
     private var pendingInitialFocusID: String?
@@ -37,7 +42,7 @@ final class FocusCoordinator: ObservableObject {
     }
 
     init(initial: String? = nil) {
-        self.request = initial
+        self.request = initial.map { Request(id: $0) }
     }
 
     /// Defers secondary controls until the target receives focus naturally.
@@ -49,22 +54,26 @@ final class FocusCoordinator: ObservableObject {
 
     fileprivate func claimInitialPlaceholderFocus() -> Bool {
         guard isInitialFocusPending, shouldFocusInitialPlaceholder else { return false }
+
         shouldFocusInitialPlaceholder = false
         return true
     }
 
     func focus(_ id: String) {
         resolveInitialFocus()
-        request = id
+        request = Request(id: id)
     }
 
     /// Completes initial focus once, including when loading ends without a target.
     func resolveInitialFocus() {
         guard pendingInitialFocusID != nil else { return }
+
         pendingInitialFocusID = nil
     }
 
     fileprivate func update(_ id: String, isFocused: Bool) {
+        guard focusedIDs.contains(id) != isFocused else { return }
+
         if isFocused {
             focusedIDs.insert(id)
 
@@ -104,6 +113,7 @@ private struct CoordinatedFocusScopeModifier<Value: Hashable>: ViewModifier {
             )
             .onChange(of: selection.wrappedValue) { _, newValue in
                 guard let newValue else { return }
+
                 lastSelection = newValue
             }
     }
@@ -135,9 +145,11 @@ private struct CoordinatedInitialFocusModifier: ViewModifier {
                     }
                 }
                 #endif
+
         case .secondary:
             content
                 .disabled(coordinator.isInitialFocusPending)
+
         case .fallback:
             content
                 .onAppear {
@@ -153,62 +165,30 @@ private struct CoordinatedFocusModifier: ViewModifier {
     private var coordinator: FocusCoordinator
 
     @FocusState
-    private var isFocused: Bool
+    private var localSelection: String?
 
     let id: String
+    var selection: FocusState<String?>.Binding?
 
-    private func apply(_ request: String?) {
-        guard let request else { return }
+    private var focus: FocusState<String?>.Binding {
+        selection ?? $localSelection
+    }
 
-        if request == id {
-            isFocused = true
-        }
+    private func apply(_ request: FocusCoordinator.Request?) {
+        guard request?.id == id else { return }
+
+        focus.wrappedValue = id
     }
 
     func body(content: Content) -> some View {
         content
-            .focused($isFocused)
+            .focused(focus, equals: id)
             .onAppear {
                 apply(coordinator.request)
-                coordinator.update(id, isFocused: isFocused)
+                coordinator.update(id, isFocused: focus.wrappedValue == id)
             }
-            .onChange(of: isFocused) {
-                coordinator.update(id, isFocused: isFocused)
-            }
-            .onChange(of: coordinator.request) {
-                apply(coordinator.request)
-            }
-            .onDisappear {
-                coordinator.update(id, isFocused: false)
-            }
-    }
-}
-
-private struct CoordinatedFocusSelectionModifier: ViewModifier {
-
-    @EnvironmentObject
-    private var coordinator: FocusCoordinator
-
-    let id: String
-    let selection: FocusState<String?>.Binding
-
-    private func apply(_ request: String?) {
-        guard let request else { return }
-
-        if request == id {
-            selection.wrappedValue = id
-        }
-    }
-
-    func body(content: Content) -> some View {
-        content
-            .focused(selection, equals: id)
-            .onAppear {
-                apply(coordinator.request)
-                coordinator.update(id, isFocused: selection.wrappedValue == id)
-            }
-            .onChange(of: selection.wrappedValue) {
-                coordinator.update(id, isFocused: selection.wrappedValue == id)
+            .onChange(of: focus.wrappedValue) {
+                coordinator.update(id, isFocused: focus.wrappedValue == id)
             }
             .onChange(of: coordinator.request) {
                 apply(coordinator.request)
@@ -244,6 +224,6 @@ extension View {
         _ id: String,
         selection: FocusState<String?>.Binding
     ) -> some View {
-        modifier(CoordinatedFocusSelectionModifier(id: id, selection: selection))
+        modifier(CoordinatedFocusModifier(id: id, selection: selection))
     }
 }

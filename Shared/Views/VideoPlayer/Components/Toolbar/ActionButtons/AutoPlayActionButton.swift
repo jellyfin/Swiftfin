@@ -73,8 +73,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                     Text(isAutoPlayEnabled ? "On" : "Off")
                 }
             }
-            .videoPlayerActionButtonTransition()
-            .if(!UIDevice.isTV) { button in
+            .if(isInMenu && !UIDevice.isTV) { button in
                 button
                     .id(isAutoPlayEnabled)
             }

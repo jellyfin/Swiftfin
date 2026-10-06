@@ -109,7 +109,9 @@ struct NavigationInjectionView: View {
         ) { presentedRouteBinding, _ in
             let vc = UIPreferencesHostingController {
                 NavigationInjectionView(coordinator: presentedRouteBinding.wrappedValue.coordinator) {
-                    presentedRouteBinding.wrappedValue.route.destination
+                    presentedRouteBinding.wrappedValue
+                        .route
+                        .destination
                         .onPreferenceChange(PresentationControllerShouldDismissPreferenceKey.self) { newValue in
                             isPresentationInteractive = newValue
                         }

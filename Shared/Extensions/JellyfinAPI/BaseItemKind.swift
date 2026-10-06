@@ -6,6 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import AVFAudio
 import JellyfinAPI
 
 extension BaseItemKind: SupportedCaseIterable {
@@ -267,6 +268,7 @@ extension BaseItemKind {
             ItemSortBy.isUnplayed
             ItemSortBy.playCount
             ItemSortBy.runtime
+
         case .book:
             ItemSortBy.communityRating
             ItemSortBy.dateCreated
@@ -276,6 +278,7 @@ extension BaseItemKind {
             ItemSortBy.isUnplayed
             ItemSortBy.officialRating
             ItemSortBy.productionYear
+
         case .boxSet:
             ItemSortBy.communityRating
             ItemSortBy.criticRating
@@ -284,10 +287,12 @@ extension BaseItemKind {
             ItemSortBy.isFavoriteOrLiked
             ItemSortBy.officialRating
             ItemSortBy.studio
+
         case .collectionFolder:
             ItemSortBy.dateCreated
             ItemSortBy.dateLastContentAdded
             ItemSortBy.isFolder
+
         case .episode:
             ItemSortBy.airedEpisodeOrder
             ItemSortBy.communityRating
@@ -306,10 +311,12 @@ extension BaseItemKind {
             ItemSortBy.seriesSortName
             ItemSortBy.studio
             ItemSortBy.videoBitRate
+
         case .folder:
             ItemSortBy.dateCreated
             ItemSortBy.dateLastContentAdded
             ItemSortBy.isFolder
+
         case .movie:
             ItemSortBy.communityRating
             ItemSortBy.criticRating
@@ -325,6 +332,7 @@ extension BaseItemKind {
             ItemSortBy.runtime
             ItemSortBy.studio
             ItemSortBy.videoBitRate
+
         case .musicAlbum:
             ItemSortBy.albumArtist
             ItemSortBy.artist
@@ -334,12 +342,14 @@ extension BaseItemKind {
             ItemSortBy.isFavoriteOrLiked
             ItemSortBy.premiereDate
             ItemSortBy.productionYear
+
         case .musicArtist:
             ItemSortBy.albumArtist
             ItemSortBy.artist
             ItemSortBy.communityRating
             ItemSortBy.dateCreated
             ItemSortBy.isFavoriteOrLiked
+
         case .musicVideo:
             ItemSortBy.album
             ItemSortBy.artist
@@ -352,30 +362,36 @@ extension BaseItemKind {
             ItemSortBy.productionYear
             ItemSortBy.runtime
             ItemSortBy.videoBitRate
+
         case .photo:
             ItemSortBy.album
             ItemSortBy.dateCreated
             ItemSortBy.isFavoriteOrLiked
             ItemSortBy.isFolder
+
         case .photoAlbum:
             ItemSortBy.dateCreated
             ItemSortBy.isFavoriteOrLiked
+
         case .playlist:
             ItemSortBy.dateCreated
             ItemSortBy.dateLastContentAdded
             ItemSortBy.isFavoriteOrLiked
             ItemSortBy.runtime
+
         case .program:
             ItemSortBy.airTime
             ItemSortBy.communityRating
             ItemSortBy.officialRating
             ItemSortBy.startDate
+
         case .season:
             ItemSortBy.dateCreated
             ItemSortBy.dateLastContentAdded
             ItemSortBy.indexNumber
             ItemSortBy.premiereDate
             ItemSortBy.productionYear
+
         case .series:
             ItemSortBy.communityRating
             ItemSortBy.criticRating
@@ -386,20 +402,24 @@ extension BaseItemKind {
             ItemSortBy.premiereDate
             ItemSortBy.productionYear
             ItemSortBy.studio
+
         case .tvChannel:
             ItemSortBy.airTime
             ItemSortBy.communityRating
             ItemSortBy.officialRating
             ItemSortBy.startDate
+
         case .userView:
             ItemSortBy.dateCreated
             ItemSortBy.dateLastContentAdded
             ItemSortBy.isFolder
+
         case .video:
             ItemSortBy.isFavoriteOrLiked
             ItemSortBy.isPlayed
             ItemSortBy.isUnplayed
             ItemSortBy.videoBitRate
+
         default:
             [ItemSortBy]()
         }
@@ -411,5 +431,15 @@ extension BaseItemKind {
     /// Item types that can be identified on the server.
     static var itemIdentifiableCases: [BaseItemKind] {
         [.boxSet, .movie, .person, .series]
+    }
+
+    /// Which `AVAudioSession.Mode` should be used for this type.
+    var audioMode: AVAudioSession.Mode {
+        switch self {
+        case .channel, .channelFolderItem, .episode, .movie, .musicVideo, .recording, .trailer, .video:
+            .moviePlayback
+        default:
+            .default
+        }
     }
 }

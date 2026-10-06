@@ -57,7 +57,7 @@ final class MediaPlayerManager: ViewModel {
         case playNewItem(provider: MediaPlayerItemProvider)
         case setBitrate(bitrate: PlaybackBitrate)
         case setPlaybackRequestStatus(status: PlaybackRequestStatus)
-        case setRate(rate: Float)
+        case setRate(rate: Double)
         case setTrack(type: MediaStreamType, from: Int?, to: Int? = nil)
         case start
         case stop
@@ -68,11 +68,14 @@ final class MediaPlayerManager: ViewModel {
             case .error:
                 .to(.error)
                     .invalid(.stopped)
+
             case .playNewItem, .start:
                 .to(.loadingItem, then: .playback)
                     .invalid(.stopped)
+
             case .stop:
                 .to(.stopped)
+
             default:
                 .none
                     .invalid(.stopped)
@@ -102,6 +105,9 @@ final class MediaPlayerManager: ViewModel {
     var playbackItem: MediaPlayerItem? = nil {
         didSet {
             if let playbackItem {
+                if oldValue?.baseItem.id != playbackItem.baseItem.id || oldValue == nil {
+                    resetPlaybackOffsets()
+                }
                 self.item = playbackItem.baseItem
                 seconds = playbackItem.baseItem.startSeconds ?? .zero
                 playbackItem.manager = self
@@ -127,10 +133,36 @@ final class MediaPlayerManager: ViewModel {
     @Published
     private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
     @Published
-    var rate: Float = Defaults[.VideoPlayer.Playback.playbackRate] {
+    var rate: Double = Defaults[.VideoPlayer.Playback.playbackRate] {
         didSet {
             Defaults[.VideoPlayer.Playback.playbackRate] = rate
         }
+    }
+
+    @Published
+    var audioOffset: Duration = .zero {
+        didSet {
+            (proxy as? MediaPlayerOffsetConfigurable)?.setAudioOffset(audioOffset)
+        }
+    }
+
+    @Published
+    var subtitleOffset: Duration = .zero {
+        didSet {
+            (proxy as? MediaPlayerOffsetConfigurable)?.setSubtitleOffset(subtitleOffset)
+        }
+    }
+
+    func applyPlaybackOffsets() {
+        guard let proxy = proxy as? MediaPlayerOffsetConfigurable else { return }
+
+        proxy.setAudioOffset(audioOffset)
+        proxy.setSubtitleOffset(subtitleOffset)
+    }
+
+    private func resetPlaybackOffsets() {
+        audioOffset = .zero
+        subtitleOffset = .zero
     }
 
     @Published
@@ -145,17 +177,24 @@ final class MediaPlayerManager: ViewModel {
             switch kind {
             case .info:
                 return MediaInfoSupplement(item: item)
+
             case .chapters:
                 guard let chapters = item.fullChapterInfo, chapters.isNotEmpty else { return nil }
+
                 return MediaChaptersSupplement(chapters: chapters)
+
             case .queue:
                 return queue
+
             case .people:
                 guard let people = item.mergedPeople?.filter({ $0.type?.isSupported == true }),
                       people.isNotEmpty else { return nil }
+
                 return MediaPeopleSupplement(people: people)
+
             case .playbackInformation:
                 guard let itemID = item.id else { return nil }
+
                 return PlaybackInformationSupplement(itemID: itemID)
             }
         }
@@ -238,6 +277,7 @@ final class MediaPlayerManager: ViewModel {
             await self.stop()
             return
         }
+
         let isNearEnd = (runtime - seconds) <= .seconds(1)
 
         guard isNearEnd else {
@@ -282,6 +322,7 @@ final class MediaPlayerManager: ViewModel {
 
     @Function(\Action.Cases.playNewItem)
     private func _playNewItem(_ provider: MediaPlayerItemProvider) async throws {
+        resetPlaybackOffsets()
         item = provider.item
         setSupplements()
         proxy?.stop()
@@ -313,7 +354,7 @@ final class MediaPlayerManager: ViewModel {
     }
 
     @Function(\Action.Cases.setRate)
-    private func set(_ rate: Float) {
+    private func set(_ rate: Double) {
         if self.rate != rate {
             self.rate = rate
         }
@@ -341,6 +382,7 @@ final class MediaPlayerManager: ViewModel {
             } else {
                 playbackItem.switchTrack(type: .audio, index: newIndex)
             }
+
         case .subtitle:
             guard newIndex == -1 || playbackItem.subtitleStreams.contains(where: { $0.index == newIndex }) else {
                 logger.warning("MediaPlayerManager.SetTrack call with an invalid subtitle track index")
@@ -355,6 +397,7 @@ final class MediaPlayerManager: ViewModel {
             } else {
                 playbackItem.switchTrack(type: .subtitle, index: newIndex)
             }
+
         default:
             logger.warning("MediaPlayerManager.SetTrack called with unsupported type: \(String(describing: type))")
         }
@@ -366,6 +409,7 @@ final class MediaPlayerManager: ViewModel {
             await self.stop()
             return
         }
+
         self.initialMediaPlayerItemProvider = nil
         playbackItem = try await initialMediaPlayerItemProvider()
     }
@@ -449,7 +493,6 @@ final class MediaPlayerManager: ViewModel {
     ) async throws -> Int {
 
         guard requestedBitrate == .auto else { return requestedBitrate.rawValue }
-
         guard let userSession = Container.shared.currentUserSession() else {
             throw UserSessionError.missingCurrentSession
         }
@@ -465,5 +508,38 @@ final class MediaPlayerManager: ViewModel {
             min: PlaybackBitrate.kbps420.rawValue,
             max: Int(Int32.max)
         )
+    }
+}
+
+// MARK: - Picture in Picture
+
+extension MediaPlayerManager {
+
+    func startPictureInPicture() {
+        guard proxy is any MediaPlayerPictureInPictureCapable else { return }
+
+        Task { await startPiPWhenReady(attemptsLeft: 5) }
+    }
+
+    func stopPictureInPicture() {
+        (proxy as? MediaPlayerPictureInPictureCapable)?.stopPiP()
+    }
+
+    // Retries because the proxy swap is async and AVKit ignores an early start.
+    private func startPiPWhenReady(attemptsLeft: Int) async {
+        guard attemptsLeft > 0,
+              let capable = proxy as? MediaPlayerPictureInPictureCapable
+        else { return }
+
+        if capable.isPiPActive.value {
+            return
+        }
+
+        if capable.isPiPAvailable.value {
+            capable.startPiP()
+        }
+
+        try? await Task.sleep(for: .milliseconds(300))
+        await startPiPWhenReady(attemptsLeft: attemptsLeft - 1)
     }
 }

@@ -46,11 +46,6 @@ extension UIDevice {
         #endif
     }()
 
-    static var hasNotch: Bool {
-        (UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0) > 0 &&
-            isPhone
-    }
-
     static var platform: String {
         #if os(tvOS)
         L10n.tvOS
@@ -64,6 +59,9 @@ extension UIDevice {
     }
 
     /// - Important: Does nothing on non-iOS platforms.
+    ///
+    /// - Note: For real-time interactions, manually manage a
+    ///         `UIImpactFeedbackGenerator` with `prepare()`.
     static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {
         #if os(iOS)
         UINotificationFeedbackGenerator().notificationOccurred(type)
@@ -73,6 +71,9 @@ extension UIDevice {
     // TODO: make more custom feedback types with Core Haptics
     //       - soft with intensity
     /// - Important: Does nothing on non-iOS platforms.
+    ///
+    /// - Note: For real-time interactions, manually manage a
+    ///         `UIImpactFeedbackGenerator` with `prepare()`.
     static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
         #if os(iOS)
         UIImpactFeedbackGenerator(style: type).impactOccurred()

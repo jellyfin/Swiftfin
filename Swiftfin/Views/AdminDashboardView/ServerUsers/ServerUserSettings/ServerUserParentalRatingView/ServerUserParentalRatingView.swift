@@ -124,7 +124,8 @@ struct ServerUserParentalRatingView: View {
 
     private func reducedParentalRatings() -> [ParentalRating] {
         [ParentalRating(name: L10n.none, value: nil)] +
-            parentalRatingsViewModel.elements.grouped { $0.value ?? 0 }
+            parentalRatingsViewModel.elements
+            .grouped { $0.value ?? 0 }
             .map { key, group in
                 if key < 100 {
                     if key == 0 {

@@ -35,7 +35,6 @@ extension MediaPlayerItem {
             logger.critical("No item ID!")
             throw ErrorMessage(L10n.unknownError)
         }
-
         guard let userSession = Container.shared.currentUserSession() else {
             logger.critical("No user session!")
             throw ErrorMessage(L10n.unknownError)

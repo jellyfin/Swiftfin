@@ -33,8 +33,8 @@ extension MediaInfoSupplement {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -133,7 +133,7 @@ extension MediaInfoSupplement {
             Button {
                 manager.proxy?.setSeconds(.zero)
                 manager.setPlaybackRequestStatus(status: .playing)
-                containerState.select(supplement: nil)
+                viewState.selectedSupplementID = nil
             } label: {
                 Label(L10n.fromBeginning, systemImage: "play.fill")
                     .font(.subheadline)
@@ -147,7 +147,7 @@ extension MediaInfoSupplement {
         //       with scrolling if too long
         var iOSView: some View {
             CompactOrRegularView(
-                isCompact: containerState.isCompact
+                isCompact: viewState.isCompact
             ) {
                 iOSCompactView
             } regularView: {

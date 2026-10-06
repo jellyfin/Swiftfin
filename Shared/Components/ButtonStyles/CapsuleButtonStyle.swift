@@ -47,30 +47,35 @@ struct CapsuleButtonStyle: ButtonStyle {
                 self.verticalPadding = 2
                 self.minimumHeight = 20
                 self.labelSpacing = 2
+
             case .small:
                 self.font = .footnote
                 self.horizontalPadding = 8
                 self.verticalPadding = 4
                 self.minimumHeight = 26
                 self.labelSpacing = 2
+
             case .regular:
                 self.font = .callout
                 self.horizontalPadding = 10
                 self.verticalPadding = 5
                 self.minimumHeight = 30
                 self.labelSpacing = 4
+
             case .large:
                 self.font = .headline
+                self.horizontalPadding = 12
+                self.verticalPadding = 6
+                self.minimumHeight = 36
+                self.labelSpacing = 5
+
+            case .extraLarge:
+                self.font = .title3
                 self.horizontalPadding = 16
                 self.verticalPadding = 8
                 self.minimumHeight = 44
                 self.labelSpacing = 6
-            case .extraLarge:
-                self.font = .title3
-                self.horizontalPadding = 20
-                self.verticalPadding = 10
-                self.minimumHeight = 52
-                self.labelSpacing = 8
+
             @unknown default:
                 self = CapsuleControlMetrics(.regular)
             }
@@ -111,6 +116,7 @@ struct CapsuleButtonStyle: ButtonStyle {
 
     private var highlightOpacity: Double {
         guard isHighlighted else { return 0 }
+
         return isFocused || isSelectionActive ? 1 : 0.8
     }
 

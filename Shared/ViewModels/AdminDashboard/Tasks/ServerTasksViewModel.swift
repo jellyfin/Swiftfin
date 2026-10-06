@@ -53,7 +53,8 @@ final class ServerTasksViewModel: ViewModel {
     override init() {
         super.init()
 
-        Container.shared.userSessionManager()
+        Container.shared
+            .userSessionManager()
             .$currentSession
             .compactMap { $0?.serverSocketManager.scheduledTasks(interval: .seconds(2)) }
             .switchToLatest()
@@ -89,6 +90,7 @@ final class ServerTasksViewModel: ViewModel {
         for category in tasks.keys {
             tasks[category]?.removeAll { taskViewModel in
                 guard let id = taskViewModel.task.id else { return false }
+
                 return removedTaskIDs.contains(id)
             }
             if tasks[category]?.isEmpty == true {
@@ -99,6 +101,7 @@ final class ServerTasksViewModel: ViewModel {
         let existingIDs = existingTaskIDs.filter { allTaskIDs.contains($0) }
         let newTasks = allTasks.filter { task in
             guard let id = task.id else { return false }
+
             return !existingTaskIDs.contains(id)
         }
 

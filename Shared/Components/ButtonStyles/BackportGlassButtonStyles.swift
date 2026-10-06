@@ -99,6 +99,7 @@ private struct BackportGlassButtonStyleBody: View {
                 #if !os(iOS)
                     .buttonStyle(.glass)
                 #endif
+
         case .prominent:
             nativeButton
                 .buttonStyle(.glassProminent)
@@ -131,6 +132,7 @@ private struct BackportGlassButtonStyleBody: View {
             fallbackButton
                 .backport
                 .glassEffect(legacyGlass, in: .capsule)
+
         case .prominent:
             fallbackButton
                 .backport

@@ -83,8 +83,10 @@ extension SeriesEpisodeContentGroup {
                 } else {
                     seasonViewModel.elements.map(EpisodeElement.episode)
                 }
+
             case .error:
                 [seasonViewModel.error.map(EpisodeElement.error) ?? .error(ErrorMessage(L10n.unknownError))]
+
             case .initial, .refreshing:
                 EpisodeElement.loadingElements
             }
@@ -224,8 +226,10 @@ extension SeriesEpisodeContentGroup {
                     action: {}
                 )
                 .disabled(true)
+
             case let .episode(episode):
                 EpisodeCard(episode: episode)
+
             case let .error(error):
                 EpisodeStateCard(
                     title: L10n.error,
@@ -234,6 +238,7 @@ extension SeriesEpisodeContentGroup {
                     systemImage: "arrow.clockwise",
                     action: refresh
                 )
+
             case .loading:
                 EpisodeStateCard(
                     title: String.random(count: 10 ..< 20),

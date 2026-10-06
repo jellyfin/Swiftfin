@@ -126,7 +126,6 @@
 
 /* Begin PBXFileReference section */
 		535870602669D21600D05A09 /* Swiftfin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swiftfin.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5362E4A7267D4067000E2F71 /* GoogleCast.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleCast.framework; path = "../../Downloads/GoogleCastSDK-ios-4.6.0_dynamic/GoogleCast.framework"; sourceTree = "<group>"; };
 		5362E4AA267D40AD000E2F71 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5362E4AC267D40B1000E2F71 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -171,11 +170,9 @@
 		62666E2D27E5021400EC0ECD /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		62666E2F27E5021800EC0ECD /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/VideoToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		62666E3127E5021E00EC0ECD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCastSDK.xcframework; path = Frameworks/GoogleCastSDK.xcframework; sourceTree = "<group>"; };
 		628B95212670CABD0091AF3B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		628B95232670CABD0091AF3B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
-		E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCast.xcframework; path = Carthage/Build/GoogleCast.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -185,19 +182,6 @@
 				Resources/Info.plist,
 			);
 			target = 5377CBF0263B596A003A4E83 /* Swiftfin iOS */;
-		};
-		E14561A32DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Resources/AppIcons/AppIcon-dark-blue.icon",
-				"Resources/AppIcons/AppIcon-dark-green.icon",
-				"Resources/AppIcons/AppIcon-dark-jellyfin.icon",
-				"Resources/AppIcons/AppIcon-dark-orange.icon",
-				"Resources/AppIcons/AppIcon-dark-red.icon",
-				"Resources/AppIcons/AppIcon-dark-yellow.icon",
-				Resources/Assets.xcassets,
-			);
-			target = 5358705F2669D21600D05A09 /* Swiftfin tvOS */;
 		};
 		E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -245,7 +229,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E14561A32DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
+		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
 		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		E14565DD2DFCAE78008FF700 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
 		E145669F2DFCAEFD008FF700 /* Swiftfin tvOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14567272DFCAEFD008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Swiftfin tvOS"; sourceTree = "<group>"; };
@@ -412,9 +396,7 @@
 		53D5E3DB264B47EE00BADDC8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */,
 				637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */,
-				62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */,
 				62666E3127E5021E00EC0ECD /* UIKit.framework */,
 				62666E2F27E5021800EC0ECD /* VideoToolbox.framework */,
 				62666E2D27E5021400EC0ECD /* Security.framework */,
@@ -457,7 +439,6 @@
 				5362E4AE267D40B5000E2F71 /* AudioToolbox.framework */,
 				5362E4AC267D40B1000E2F71 /* Accelerate.framework */,
 				5362E4AA267D40AD000E2F71 /* AVFoundation.framework */,
-				5362E4A7267D4067000E2F71 /* GoogleCast.framework */,
 				53ABFDDB267972BF00886593 /* TVServices.framework */,
 				628B95212670CABD0091AF3B /* WidgetKit.framework */,
 				628B95232670CABD0091AF3B /* SwiftUI.framework */,
@@ -688,6 +669,7 @@
 				enm,
 				gl,
 				ka,
+				ml,
 			);
 			mainGroup = 5377CBE8263B596A003A4E83;
 			packageReferences = (
@@ -924,6 +906,7 @@
 			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
 			baseConfigurationReferenceRelativePath = Shared.xcconfig;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-dark-jellyfin AppIcon-dark-green AppIcon-dark-orange AppIcon-dark-red AppIcon-dark-yellow";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -954,6 +937,7 @@
 			baseConfigurationReferenceAnchor = E150B7D12DFF2E7C00DC7CF4 /* XcodeConfig */;
 			baseConfigurationReferenceRelativePath = Shared.xcconfig;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-dark-jellyfin AppIcon-dark-green AppIcon-dark-orange AppIcon-dark-red AppIcon-dark-yellow";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -1381,7 +1365,7 @@
 			repositoryURL = "https://github.com/LePips/MPVUI";
 			requirement = {
 				kind = exactVersion;
-				version = 0.1.1;
+				version = 0.5.0;
 			};
 		};
 		E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */ = {
@@ -1389,7 +1373,7 @@
 			repositoryURL = "https://github.com/LePips/MediaAccessibilityKit";
 			requirement = {
 				kind = exactVersion;
-				version = 0.1.0;
+				version = 0.2.0;
 			};
 		};
 		E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */ = {
@@ -1429,7 +1413,7 @@
 			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.1.0;
+				minimumVersion = 3.3.0;
 			};
 		};
 		E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */ = {

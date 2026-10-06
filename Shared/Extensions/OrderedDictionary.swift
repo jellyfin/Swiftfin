@@ -27,6 +27,7 @@ extension OrderedDictionary {
 
         return OrderedDictionary(uniqueKeysWithValues: sortedKeys.compactMap { key in
             guard let value = self[key] else { return nil }
+
             return (key, value)
         })
     }

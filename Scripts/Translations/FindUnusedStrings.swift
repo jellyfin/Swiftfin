@@ -22,10 +22,12 @@ guard let content = try? String(contentsOfFile: localizationFile, encoding: .utf
 var usedKeys = Set<String>()
 for directory in directoriesToScan {
     guard let files = FileManager.default.enumerator(atPath: directory) else { continue }
+
     for case let file as String in files where file.hasSuffix(".swift") {
         let path = "\(directory)/\(file)"
         guard path != excludedFile,
               let source = try? String(contentsOfFile: path, encoding: .utf8) else { continue }
+
         usedKeys.formUnion(source.matches(of: usageRegex).map { String($0.output.key) })
     }
 }
@@ -33,6 +35,7 @@ for directory in directoriesToScan {
 var lines = content.components(separatedBy: "\n")
 let unused = lines.enumerated().compactMap { index, line -> (index: Int, key: String)? in
     guard let match = line.firstMatch(of: keyRegex) else { return nil }
+
     let key = String(match.output.key)
     return usedKeys.contains(key) ? nil : (index, key)
 }

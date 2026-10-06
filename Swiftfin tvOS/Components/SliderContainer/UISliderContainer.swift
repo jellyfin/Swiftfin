@@ -70,6 +70,7 @@ final class UISliderContainer<Value: BinaryFloatingPoint>: UIControl {
         self.onFocusChanged = onFocusChanged
 
         guard self.isScrollingEnabled != isScrollingEnabled else { return }
+
         self.isScrollingEnabled = isScrollingEnabled
         panGestureRecognizer.isEnabled = isScrollingEnabled
 
@@ -87,9 +88,11 @@ final class UISliderContainer<Value: BinaryFloatingPoint>: UIControl {
             stopDecelerating()
             onEditingChanged(true)
             panStartValue = value.wrappedValue
+
         case .changed:
             let translation = gestureRecognizer.translation(in: self).x / panDampingValue
             setValue(panStartValue + Value(translation))
+
         case .ended:
             panStartValue = value.wrappedValue
             let velocity = gestureRecognizer.velocity(in: self).x
@@ -106,9 +109,11 @@ final class UISliderContainer<Value: BinaryFloatingPoint>: UIControl {
             } else {
                 onEditingChanged(false)
             }
+
         case .cancelled, .failed:
             stopDecelerating()
             onEditingChanged(false)
+
         default:
             break
         }
@@ -130,6 +135,7 @@ final class UISliderContainer<Value: BinaryFloatingPoint>: UIControl {
     private func setValue(_ newValue: Value) {
         let clampedValue = clamp(newValue, min: 0, max: total)
         guard value.wrappedValue != clampedValue else { return }
+
         value.wrappedValue = clampedValue
         sendActions(for: .valueChanged)
     }

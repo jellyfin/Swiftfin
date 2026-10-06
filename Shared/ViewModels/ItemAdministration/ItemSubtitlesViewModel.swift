@@ -162,7 +162,6 @@ final class ItemSubtitlesViewModel: ViewModel {
         guard let itemID = item.id, let language, language.isNotEmpty else {
             throw ErrorMessage(L10n.unknownError)
         }
-
         guard file.isFileURL, let format = SubtitleFormat(url: file) else {
             throw ErrorMessage(L10n.invalidFormat)
         }

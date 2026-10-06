@@ -89,6 +89,7 @@ extension LibraryElement {
                 itemSpacing: EdgeInsets.itemSpacing,
                 lineSpacing: EdgeInsets.itemSpacing
             )
+
         case .list:
             return .columns(
                 libraryStyle.listColumnCount,

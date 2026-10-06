@@ -22,6 +22,7 @@ struct CapsuleProgressViewStyle: ProgressViewStyle {
     var cornerStyle: CornerStyle
     var tickProgress: Double?
     var showsProgress = true
+    var neutralProgress: Double?
 
     @ViewBuilder
     private func buildCapsule(for progress: Double) -> some View {
@@ -29,13 +30,21 @@ struct CapsuleProgressViewStyle: ProgressViewStyle {
         let height = contentSize.height.isFinite ? max(0, contentSize.height) : 0
         let normalizedProgress = progress.isFinite ? clamp(progress, min: 0, max: 1) : 0
 
-        Rectangle()
-            .cornerRadius(
-                cornerStyle == .round ? height / 2 : 0,
-                corners: [.topLeft, .bottomLeft]
-            )
-            .frame(width: width * normalizedProgress + height)
-            .offset(x: -height)
+        if let neutralProgress, neutralProgress.isFinite {
+            let neutral = clamp(neutralProgress, min: 0, max: 1)
+
+            Rectangle()
+                .frame(width: width * abs(normalizedProgress - neutral))
+                .offset(x: width * min(normalizedProgress, neutral))
+        } else {
+            Rectangle()
+                .cornerRadius(
+                    cornerStyle == .round ? height / 2 : 0,
+                    corners: [.topLeft, .bottomLeft]
+                )
+                .frame(width: width * normalizedProgress + height)
+                .offset(x: -height)
+        }
     }
 
     func makeBody(configuration: Configuration) -> some View {

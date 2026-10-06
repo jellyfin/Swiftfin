@@ -27,6 +27,7 @@ struct PosterAccessibility {
                   !component.isEmpty,
                   !values.contains(component)
             else { continue }
+
             values.append(component)
         }
         return values.joined(separator: ", ")

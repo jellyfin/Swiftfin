@@ -19,6 +19,7 @@ struct OnFirstAppearModifier: ViewModifier {
         content
             .onAppear {
                 guard !didAppear else { return }
+
                 didAppear = true
                 action()
             }

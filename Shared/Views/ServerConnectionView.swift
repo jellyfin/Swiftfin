@@ -31,6 +31,7 @@ struct ServerConnectionView: View {
     private func serverConnectionRow(_ connection: ServerConnection) -> some View {
         Button {
             guard !isEditing else { return }
+
             router.route(to: .editServerConnection(viewModel: viewModel, connection: connection))
         } label: {
             HStack(spacing: 12) {

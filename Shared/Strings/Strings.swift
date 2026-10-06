@@ -168,6 +168,8 @@ internal enum L10n {
   internal static let audioCodecNotSupported = L10n.tr("Localizable", "audioCodecNotSupported", fallback: "The audio codec is not supported")
   /// The audio track is external and requires transcoding
   internal static let audioIsExternal = L10n.tr("Localizable", "audioIsExternal", fallback: "The audio track is external and requires transcoding")
+  /// Audio offset
+  internal static let audioOffset = L10n.tr("Localizable", "audioOffset", fallback: "Audio offset")
   /// The audio profile is not supported
   internal static let audioProfileNotSupported = L10n.tr("Localizable", "audioProfileNotSupported", fallback: "The audio profile is not supported")
   /// Audio sample rate
@@ -498,6 +500,8 @@ internal enum L10n {
   internal static let dayOfWeek = L10n.tr("Localizable", "dayOfWeek", fallback: "Day of week")
   /// Days
   internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
+  /// Decrease
+  internal static let decrease = L10n.tr("Localizable", "decrease", fallback: "Decrease")
   /// Decrement
   internal static let decrement = L10n.tr("Localizable", "decrement", fallback: "Decrement")
   /// Default
@@ -726,6 +730,8 @@ internal enum L10n {
   internal static let featurette = L10n.tr("Localizable", "featurette", fallback: "Featurette")
   /// File
   internal static let file = L10n.tr("Localizable", "file", fallback: "File")
+  /// Fill
+  internal static let fill = L10n.tr("Localizable", "fill", fallback: "Fill")
   /// Filters
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
   /// Folder
@@ -834,6 +840,8 @@ internal enum L10n {
   internal static func incorrectPinForUser(_ p1: Any) -> String {
     return L10n.tr("Localizable", "incorrectPinForUser", String(describing: p1), fallback: "Incorrect pin for %@")
   }
+  /// Increase
+  internal static let increase = L10n.tr("Localizable", "increase", fallback: "Increase")
   /// Increment
   internal static let increment = L10n.tr("Localizable", "increment", fallback: "Increment")
   /// Index
@@ -1090,8 +1098,6 @@ internal enum L10n {
   internal static let name = L10n.tr("Localizable", "name", fallback: "Name")
   /// Narrator
   internal static let narrator = L10n.tr("Localizable", "narrator", fallback: "Narrator")
-  /// Native
-  internal static let native = L10n.tr("Localizable", "native", fallback: "Native")
   /// Network
   internal static let network = L10n.tr("Localizable", "network", fallback: "Network")
   /// Network timed out
@@ -1166,6 +1172,8 @@ internal enum L10n {
   internal static let orange = L10n.tr("Localizable", "orange", fallback: "Orange")
   /// Order
   internal static let order = L10n.tr("Localizable", "order", fallback: "Order")
+  /// Original
+  internal static let original = L10n.tr("Localizable", "original", fallback: "Original")
   /// Original air date
   internal static let originalAirDate = L10n.tr("Localizable", "originalAirDate", fallback: "Original air date")
   /// Original aspect ratio
@@ -1228,6 +1236,8 @@ internal enum L10n {
   internal static let photoAlbums = L10n.tr("Localizable", "photoAlbums", fallback: "Photo albums")
   /// Photos
   internal static let photos = L10n.tr("Localizable", "photos", fallback: "Photos")
+  /// Picture in Picture
+  internal static let pictureInPicture = L10n.tr("Localizable", "pictureInPicture", fallback: "Picture in Picture")
   /// Pin
   internal static let pin = L10n.tr("Localizable", "pin", fallback: "Pin")
   /// Pinch
@@ -1258,8 +1268,8 @@ internal enum L10n {
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
   /// Player
   internal static let player = L10n.tr("Localizable", "player", fallback: "Player")
-  /// Uses Apple's AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.
-  internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple\'s AVPlayer which supports HDR, Picture in Picture, AirPlay casting, and HomePod or AirPlay-enabled speakers. However, it has no subtitle support and is very restrictive with file formats.")
+  /// Uses Apple's AVPlayer for HDR and Picture in Picture with supported media formats.
+  internal static let playerNativeDescription = L10n.tr("Localizable", "playerNativeDescription", fallback: "Uses Apple\'s AVPlayer for HDR and Picture in Picture with supported media formats.")
   /// Uses SwiftVLC and libVLC 4 to provide compatibility with nearly any file type.
   internal static let playerVlcDescription = L10n.tr("Localizable", "playerVlcDescription", fallback: "Uses SwiftVLC and libVLC 4 to provide compatibility with nearly any file type.")
   /// Play From beginning
@@ -1378,6 +1388,8 @@ internal enum L10n {
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public users")
   /// Quality
   internal static let quality = L10n.tr("Localizable", "quality", fallback: "Quality")
+  /// Queue
+  internal static let queue = L10n.tr("Localizable", "queue", fallback: "Queue")
   /// Quick Connect
   internal static let quickConnect = L10n.tr("Localizable", "quickConnect", fallback: "Quick Connect")
   /// Quick Connect code
@@ -1748,6 +1760,8 @@ internal enum L10n {
   internal static let subtitleModeOnlyForcedDescription = L10n.tr("Localizable", "subtitleModeOnlyForcedDescription", fallback: "Only show subtitles marked as Forced, typically for foreign language sections.")
   /// Show subtitles when the audio language differs from your preferred language.
   internal static let subtitleModeSmartDescription = L10n.tr("Localizable", "subtitleModeSmartDescription", fallback: "Show subtitles when the audio language differs from your preferred language.")
+  /// Subtitle offset
+  internal static let subtitleOffset = L10n.tr("Localizable", "subtitleOffset", fallback: "Subtitle offset")
   /// Subtitles
   internal static let subtitles = L10n.tr("Localizable", "subtitles", fallback: "Subtitles")
   /// Settings only affect some subtitle types
@@ -2018,6 +2032,8 @@ internal enum L10n {
   internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")
   /// Yes
   internal static let yes = L10n.tr("Localizable", "yes", fallback: "Yes")
+  /// Zoom
+  internal static let zoom = L10n.tr("Localizable", "zoom", fallback: "Zoom")
 }
 
 extension L10n {

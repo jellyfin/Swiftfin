@@ -30,6 +30,7 @@ extension Trie {
             guard let nextNode = currentNode.children[key] else {
                 return false
             }
+
             currentNode = nextNode
         }
 
@@ -65,6 +66,7 @@ extension Trie {
             guard let nextNode = currentNode.children[key] else {
                 return []
             }
+
             currentNode = nextNode
         }
 

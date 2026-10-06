@@ -27,11 +27,14 @@ final class EPGViewModel: ViewModel {
             switch self {
             case .getNextPage:
                 .none
+
             case .refresh:
                 .to(.refreshing, then: .content)
                     .onRepeat(.cancel)
+
             case .setDate:
                 .none
+
             case ._actuallyGetNextPage:
                 .background(.gettingNextPage)
             }
@@ -133,6 +136,7 @@ final class EPGViewModel: ViewModel {
             : calendar.startOfDay(for: date)
 
         guard newStartDate != startDate else { return }
+
         await refresh(startDate: newStartDate)
     }
 
@@ -208,6 +212,7 @@ final class EPGViewModel: ViewModel {
         )
         let validChannels = items.filter { channel in
             guard let id = channel.id else { return false }
+
             return id.nilIfBlank == id
         }
 

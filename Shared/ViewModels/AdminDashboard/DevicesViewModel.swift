@@ -27,6 +27,7 @@ final class DevicesViewModel: ViewModel {
             case .refresh:
                 .loop(.refreshing)
                     .whenBackground(.refreshing)
+
             case .delete, .update:
                 .background(.updating)
             }

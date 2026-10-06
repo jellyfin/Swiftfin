@@ -24,6 +24,7 @@ struct PlayButton: View {
 
     private var mediaSource: String? {
         guard provider.mediaPlayerItemProvider?.item.mediaSources?.count ?? 0 > 1 else { return nil }
+
         return provider.mediaPlayerItemProvider?.mediaSource?.displayTitle
     }
 

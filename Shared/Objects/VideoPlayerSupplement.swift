@@ -21,7 +21,7 @@ enum VideoPlayerSupplement: String, CaseIterable, Displayable, Equatable, Identi
         case .chapters:
             L10n.chapters
         case .queue:
-            L10n.episodes
+            L10n.queue
         case .people:
             L10n.people
         case .playbackInformation:

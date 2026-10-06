@@ -16,8 +16,8 @@ extension VideoPlayerType {
     @ArrayBuilder<CodecProfile>
     var codecProfiles: [CodecProfile] {
         switch self {
-        case .native:
-            Self._nativeCodecProfiles
+        case .avPlayer:
+            Self._avPlayerCodecProfiles
         case .vlc, .mpv:
             Self._vlcCodecProfiles
         }

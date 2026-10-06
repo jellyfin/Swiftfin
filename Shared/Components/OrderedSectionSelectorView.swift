@@ -46,6 +46,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 
     private func select(element: Element) {
         guard isRemovable(element) else { return }
+
         selection.value.toggle(element)
         UIDevice.impact(.light)
     }

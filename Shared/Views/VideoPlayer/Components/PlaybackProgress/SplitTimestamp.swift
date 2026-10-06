@@ -16,8 +16,8 @@ extension VideoPlayer.PlaybackControls {
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>
         @EnvironmentObject
@@ -34,6 +34,7 @@ extension VideoPlayer.PlaybackControls {
 
         private var scrubbedProgress: Double {
             guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+
             return scrubbedSeconds / runtime
         }
 
@@ -50,7 +51,7 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var isScrubbing: Bool {
-            containerState.isScrubbing
+            viewState.isScrubbing
         }
 
         private var scrubbedSeconds: Duration {
@@ -159,8 +160,8 @@ extension VideoPlayer.PlaybackControls {
             .fontWeight(UIDevice.isTV ? .medium : nil)
             .monospacedDigit()
             .trackingSize($contentSize)
-            .foregroundStyle(containerState.isProgressBarFocused ? .primary : .secondary)
-            .opacity(containerState.isProgressBarFocused ? 1 : 0.7)
+            .foregroundStyle(viewState.isProgressBarFocused ? .primary : .secondary)
+            .opacity(viewState.isProgressBarFocused ? 1 : 0.7)
         }
     }
 }

@@ -28,9 +28,11 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
             switch self {
             case .cancel:
                 .to(.initial)
+
             case .refresh, .getLibraries:
                 .to(.initial, then: .content)
                     .whenBackground(.refreshing)
+
             case .updatePolicy, .updateConfiguration, .updateUsername:
                 .background(.updating)
             }
@@ -66,6 +68,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
             .publisher
             .sink { [weak self] userID in
                 guard let self, userID == self.user.id else { return }
+
                 self.refresh()
             }
             .store(in: &cancellables)

@@ -37,6 +37,7 @@ extension BaseItemDto: LibraryElement {
                 to: .library(library: ItemLibrary(parent: self, filters: .default)),
                 in: namespace
             )
+
         default:
             router.route(to: .item(item: self), in: namespace)
         }
@@ -128,7 +129,9 @@ private struct BaseItemDtoLibraryListElement: View {
         } action: {
             item.libraryDidSelectElement(router: router, in: namespace)
         }
+        #if !os(tvOS)
         .matchedTransitionSource(id: "item", in: namespace)
+        #endif
         #if os(tvOS)
         .focusedValue(\.focusedPoster, AnyPoster(item))
         #endif

@@ -93,10 +93,12 @@ struct SelectUserView: View {
                         users.map { UserItem(user: $0, server: server) }
                     }
                     .flattened()
+
             case let .server(id: id):
                 guard let server = viewModel.servers.keys.first(where: { $0.id == id }) else {
                     return []
                 }
+
                 return viewModel.servers[server]!
                     .map { UserItem(user: $0, server: server) }
             }
@@ -200,6 +202,7 @@ struct SelectUserView: View {
                             action: { select(user: $0) },
                             onDelete: { delete(user: $0) }
                         )
+
                     case .grid:
                         GridView(
                             userItems: userItems,
@@ -363,6 +366,7 @@ struct SelectUserView: View {
         #endif
         .onChange(of: isEditing) {
             guard !isEditing, !isPresentingConfirmDeleteUsers else { return }
+
             selectedUsers.removeAll()
         }
         .onChange(of: viewModel.servers.keys) {
@@ -382,6 +386,7 @@ struct SelectUserView: View {
         }
         .onReceive(viewModel.$error) { error in
             guard error != nil else { return }
+
             UIDevice.feedback(.error)
         }
         .onReceive(viewModel.events) { event in

@@ -294,6 +294,7 @@ extension EPGCollectionView {
 
             let action = { [weak self] in
                 guard let self else { return }
+
                 select(itemID)
             }
 
@@ -354,6 +355,7 @@ extension EPGCollectionView {
             didSelectItemAt indexPath: IndexPath
         ) {
             guard let itemID = dataSource?.itemIdentifier(for: indexPath) else { return }
+
             select(itemID)
         }
 
@@ -376,7 +378,6 @@ extension EPGCollectionView {
                 didRequestNextPage = false
                 return
             }
-
             guard !didRequestNextPage,
                   !representable.viewModel.background.is(.gettingNextPage)
             else { return }

@@ -123,6 +123,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
                 ),
                 in: namespace
             )
+
         case let .userView(item):
             if item.collectionType == .livetv {
                 router.route(to: .liveTV, in: namespace)
@@ -202,6 +203,7 @@ private struct UserViewLibraryGridElement: View {
                 .posterStyle(.landscape)
                 .matchedTransitionSource(id: "item", in: namespace)
         }
+        .foregroundStyle(.primary, .secondary)
         .onFirstAppear(perform: setImageSources)
         .onChange(of: useRandomImage) {
             setImageSources()
@@ -219,6 +221,7 @@ private struct UserViewLibraryGridElement: View {
             .frame(alignment: .center)
     }
 
+    @ViewBuilder
     private func titleLabelOverlay(with content: some View) -> some View {
         ZStack {
             content
@@ -268,13 +271,16 @@ private struct UserViewLibraryListElement: View {
         } action: {
             element.libraryDidSelectElement(router: router, in: namespace)
         }
+        #if !os(tvOS)
         .matchedTransitionSource(id: "item", in: namespace)
+        #endif
         .onFirstAppear(perform: setImageSources)
         .onChange(of: useRandomImage) {
             setImageSources()
         }
     }
 
+    @ViewBuilder
     private var imageView: some View {
         ZStack {
             Color.secondarySystemFill

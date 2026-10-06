@@ -125,6 +125,7 @@ extension View {
         }
         .onChange(of: error.wrappedValue != nil) {
             guard error.wrappedValue != nil else { return }
+
             UIDevice.feedback(.error)
         }
     }
@@ -364,12 +365,14 @@ extension View {
                     .posterBorder()
                     .posterCornerRadius(type)
                 #endif
+
         case .portrait:
             posterAspectRatio(type, contentMode: contentMode)
                 #if !os(tvOS)
                     .posterBorder()
                     .posterCornerRadius(type)
                 #endif
+
         case .square:
             posterAspectRatio(type, contentMode: contentMode)
                 #if os(iOS)
@@ -412,12 +415,6 @@ extension View {
                 content: content
             )
         }
-    }
-
-    // TODO: look at changing to symbolEffect
-    @ViewBuilder
-    func videoPlayerActionButtonTransition() -> some View {
-        transition(.opacity.combined(with: .scale).animation(.snappy))
     }
 
     // MARK: debug

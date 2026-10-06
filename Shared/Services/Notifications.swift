@@ -224,6 +224,7 @@ extension Notifications.Key {
             else {
                 return nil
             }
+
             let options = (userInfo[AVAudioSessionInterruptionOptionKey] as? UInt)
                 .map(AVAudioSession.InterruptionOptions.init(rawValue:)) ?? []
 

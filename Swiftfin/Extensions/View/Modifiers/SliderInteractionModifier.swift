@@ -34,6 +34,9 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
     @State
     private var needsToSetTranslationStartState: Bool = true
 
+    @State
+    private var hapticGenerator: UIImpactFeedbackGenerator = .init(style: .light)
+
     let total: Value
     let isScrollingEnabled: Bool
     let isEditing: Bool
@@ -113,6 +116,7 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
                     .onLongPressGesture(minimumDuration: 0.01, perform: {}) { isPressing in
                         if isPressing {
                             guard isScrollingEnabled else { return }
+
                             onEditingChanged(true)
                             needsToSetTranslationStartState = true
                         } else {
@@ -125,8 +129,10 @@ struct SliderInteractionModifier<Value: BinaryFloatingPoint>: ViewModifier {
                 let newValue = value
                 guard isEditing else { return }
 
+                hapticGenerator.prepare()
+
                 if newValue == 0 || newValue == total {
-                    UIDevice.impact(.light)
+                    hapticGenerator.impactOccurred()
                 }
             }
             .onChange(of: gestureTranslation) {

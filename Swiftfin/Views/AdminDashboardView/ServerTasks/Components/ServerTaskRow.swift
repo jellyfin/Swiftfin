@@ -64,6 +64,7 @@ extension ServerTasksView {
                             .foregroundStyle(.orange)
                             .fontWeight(.semibold)
                         }
+
                     default:
                         Text(viewModel.task.state?.displayTitle)
                             .foregroundStyle(.secondary)

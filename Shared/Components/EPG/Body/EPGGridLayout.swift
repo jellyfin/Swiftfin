@@ -129,6 +129,7 @@ private final class EPGNowLineAttributes: UICollectionViewLayoutAttributes {
 
     override func isEqual(_ object: Any?) -> Bool {
         guard let object = object as? EPGNowLineAttributes else { return false }
+
         return super.isEqual(object) && object.color == color
     }
 }

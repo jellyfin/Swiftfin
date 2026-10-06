@@ -68,10 +68,12 @@ final class ItemImageViewModel: ViewModel {
         let request = Paths.getItemImageInfos(itemID: itemID)
         let response = try await send(request)
 
-        images = response.value.grouped(by: \.imageType)
+        images = response.value
+            .grouped(by: \.imageType)
             .mapValues { $0.sorted(using: \.imageIndex) }
             .reduce(into: [:]) { partialResult, kv in
                 guard let k = kv.key else { return }
+
                 partialResult[k] = kv.value
             }
     }
@@ -90,6 +92,7 @@ final class ItemImageViewModel: ViewModel {
             logger.error("Unable to access file at \(file)")
             throw ErrorMessage(L10n.unknownError)
         }
+
         defer { file.stopAccessingSecurityScopedResource() }
 
         guard let image = try UIImage(data: Data(contentsOf: file)) else {

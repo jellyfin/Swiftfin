@@ -33,6 +33,7 @@ final class SQLObservable<Value: Storable>: ObservableObject, _StoredValueObserv
         }
         set {
             guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return }
+
             shouldListenToPublish = false
 
             onObjectChanged?()

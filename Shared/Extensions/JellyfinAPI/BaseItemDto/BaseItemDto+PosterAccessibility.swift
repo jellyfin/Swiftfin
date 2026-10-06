@@ -87,13 +87,18 @@ extension BaseItemDto {
         case .none, .runtime:
             // Runtime is always spoken, even with visual labels hidden.
             return nil
+
         case .communityRating:
             guard let communityRating else { return nil }
+
             return L10n.posterAccessibilityCommunityRating(communityRating.formatted(.number.precision(.fractionLength(0 ... 1))))
+
         case .criticRating:
             guard let criticRating else { return nil }
+
             let rating = (criticRating / 100).formatted(.percent.precision(.fractionLength(0)))
             return L10n.posterAccessibilityDetail(field.displayTitle, rating)
+
         default:
             return L10n.posterAccessibilityDetail(field.displayTitle, subtitle)
         }

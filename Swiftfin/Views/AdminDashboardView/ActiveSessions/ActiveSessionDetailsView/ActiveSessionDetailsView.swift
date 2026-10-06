@@ -33,6 +33,7 @@ struct ActiveSessionDetailsView: View {
 
     private var canControl: Bool {
         guard let user = viewModel.userSession?.user else { return false }
+
         let session = viewModel.session
 
         return user.data.policy?.enableRemoteControlOfOtherUsers == true

@@ -21,6 +21,7 @@ extension ChapterInfo {
 
     var startSeconds: Duration? {
         guard let startPositionTicks else { return nil }
+
         return Duration.ticks(startPositionTicks)
     }
 }
@@ -86,6 +87,9 @@ extension ChapterInfo {
         }
     }
 }
+
+// TODO: have label match what BaseItemDto does in PosterCollectionView
+//       - different height, causes clipping
 
 private struct ChapterPosterLabel: View {
 

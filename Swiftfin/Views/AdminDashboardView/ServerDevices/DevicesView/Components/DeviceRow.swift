@@ -40,6 +40,7 @@ extension DevicesView {
 
         private var labelForegroundStyle: some ShapeStyle {
             guard isEditing else { return .primary }
+
             return isSelected ? .primary : .secondary
         }
 

@@ -41,6 +41,7 @@ struct AppPermissionsView: View {
                                     Label(L10n.active, systemImage: "circle.fill")
                                         .foregroundStyle(.green)
                                         .labelStyle(.iconOnly)
+
                                 default:
                                     Text(L10n.allow.localizedUppercase)
                                         .font(.subheadline)
@@ -86,6 +87,7 @@ struct AppPermissionsView: View {
                     external: true
                 ) {
                     guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+
                     UIApplication.shared.open(url)
                 }
             } footer: {
