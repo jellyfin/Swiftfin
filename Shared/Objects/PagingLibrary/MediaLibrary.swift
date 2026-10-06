@@ -17,9 +17,7 @@ extension MediaLibrary {
 
     func materialize(_ page: [ItemPatch], pageState: LibraryPageState) throws -> [ItemEntry] {
         try page.compactMap { patch in
-            guard patch.value.id?.nilIfBlank != nil,
-                  let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest)
-            else { return nil }
+            guard let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else { return nil }
 
             return ItemEntry(item: record, occurrence: patch.value.playlistItemID)
         }

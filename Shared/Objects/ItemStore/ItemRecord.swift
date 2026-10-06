@@ -10,10 +10,9 @@ import Foundation
 import JellyfinAPI
 import Observation
 
-/// Identifies an item within one user session.
+/// Identifies a server item within its owning store.
 struct ItemKey: Hashable, Sendable {
 
-    let sessionID: UUID
     let itemID: String
 }
 

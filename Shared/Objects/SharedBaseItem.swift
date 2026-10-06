@@ -25,11 +25,11 @@ struct SharedBaseItem: Hashable {
             shared
         } else if let store, !store.isActive, let id = wrappedValue.id {
             // An identified item from an inactive session must stay unavailable.
-            ItemRecord(id: ItemKey(sessionID: store.sessionID, itemID: id))
+            ItemRecord(id: ItemKey(itemID: id))
         } else {
-            // Presentation-only records never share the active session identity.
+            // Presentation-only records are not entered into the session store.
             ItemRecord(
-                id: ItemKey(sessionID: UUID(), itemID: wrappedValue.id ?? UUID().uuidString),
+                id: ItemKey(itemID: wrappedValue.id ?? UUID().uuidString),
                 presentationValue: wrappedValue
             )
         }

@@ -323,23 +323,13 @@ final class UserSessionManager: ObservableObject {
     private func applyCurrentSession(_ newSession: UserSession?) async {
         let previousSession = currentSession
 
-        let preservesItems = previousSession != nil && newSession != nil &&
-            previousSession?.server.id == newSession?.server.id && previousSession?.user.id == newSession?.user.id
-        if preservesItems, let previousSession {
-            newSession?.reuseItems(from: previousSession)
-        }
-        if !preservesItems {
-            await stopActivePlayback()
-        }
-        previousSession?.willStop(preservingItems: preservesItems)
+        await stopActivePlayback()
+        previousSession?.willStop()
         await newSession?.willStart()
 
         currentSession = newSession
         Container.shared.currentUserSession.reset()
-
-        if previousSession?.server.id != newSession?.server.id || previousSession?.user.id != newSession?.user.id {
-            Container.shared.mediaPlayerManager.reset()
-        }
+        Container.shared.mediaPlayerManager.reset()
 
         if newSession == nil {
             state = .signedOut

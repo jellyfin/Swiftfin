@@ -206,7 +206,7 @@ final class EPGViewModel: ViewModel {
         guard !Task.isCancelled, generation == requestGeneration,
               replacing || offset == nextChannelOffset else { return }
 
-        try page.pageState.userSession.items.validate(page.pageState.itemRequest)
+        try page.pageState.userSession.items.validate()
         let newChannels = try channelsLibrary.materialize(patches, pageState: page.pageState)
         let newPrograms = try makeProgramBlocks(programPatches, pageState: page.pageState, startDate: date, endDate: end)
         if replacing {
@@ -243,8 +243,7 @@ final class EPGViewModel: ViewModel {
         endDate: Date
     ) throws -> [String: [ProgramBlock]] {
         let entries = try patches.compactMap { patch -> ItemEntry? in
-            guard patch.value.id?.nilIfBlank != nil,
-                  let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else { return nil }
+            guard let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else { return nil }
 
             return ItemEntry(item: record)
         }

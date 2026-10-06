@@ -16,10 +16,9 @@ import JellyfinAPI
 @MainActor
 final class ItemStore {
 
-    /// Ties a response to its session and request order.
+    /// Orders responses within one store.
     struct RequestToken {
 
-        fileprivate let sessionID: UUID
         fileprivate let revision: UInt64
     }
 
@@ -58,7 +57,6 @@ final class ItemStore {
         changeSubject.eraseToAnyPublisher()
     }
 
-    let sessionID = UUID()
     private(set) var isActive = true
     private var revision: UInt64 = 0
     private var records: [String: WeakBox<ItemRecord>] = [:]
@@ -75,12 +73,12 @@ final class ItemStore {
         guard isActive else { throw StoreError.invalidSession }
 
         revision += 1
-        return RequestToken(sessionID: sessionID, revision: revision)
+        return RequestToken(revision: revision)
     }
 
-    func validate(_ token: RequestToken) throws {
+    func validate() throws {
         try Task.checkCancellation()
-        guard isActive, token.sessionID == sessionID else { throw StoreError.invalidSession }
+        guard isActive else { throw StoreError.invalidSession }
     }
 
     /// Resolve a retained snapshot without letting a view constructor overwrite newer data.
@@ -100,23 +98,24 @@ final class ItemStore {
         return record
     }
 
+    /// Returns nil when a response has no usable ID or the item was deleted.
     @discardableResult
     func merge(_ patch: ItemPatch, token: RequestToken) throws -> ItemRecord? {
-        try validate(token)
-        let id = try itemID(patch.value)
+        try validate()
+        guard let id = try? itemID(patch.value) else { return nil }
         guard !deletedIDs.contains(id) else { return nil }
 
-        let record = record(for: id)
+        let retained = retainedRecord(id: id)
+        let record = retained ?? record(for: id)
         var program: ItemRecord?
         if !patch.replacesMetadata, let value = patch.value.currentProgram, let object = patch.program,
            value.id != id
         {
             program = try merge(ItemPatch.decoded(value, object: object), token: token)
         }
-        let wasRetained = record.value != nil
         let update = try record.merge(patch, revision: token.revision, program: program)
         // Loading a new page establishes membership; it must not trigger another fetch.
-        if wasRetained, update.hasChanges {
+        if retained != nil, update.hasChanges {
             changeSubject.send(.updated(update))
         }
         return record
@@ -124,16 +123,21 @@ final class ItemStore {
 
     /// HTTP replies supply raw field names; socket DTOs use their encoded fields.
     func mergeUserData(_ data: UserItemDataDto, fields: Set<String>? = nil, token: RequestToken) throws {
-        try validate(token)
+        try validate()
         guard let id = data.itemID, !deletedIDs.contains(id) else { return }
         guard id.nilIfBlank != nil else { throw StoreError.invalidItemID }
+
+        // Unloaded items can affect a collection without needing a retained record.
+        guard let record = retainedRecord(id: id) else {
+            changeSubject.send(.updated(Update(itemID: id, userDataChanged: true)))
+            return
+        }
 
         let patch = try ItemPatch(
             value: BaseItemDto(id: id, userData: data),
             fields: ["UserData"],
             userDataFields: fields ?? Set(CodableFields.encode(data).keys)
         )
-        let record = record(for: id)
         let update = try record.merge(patch, revision: token.revision, program: nil)
         // Actions and socket updates can affect collections even when the item isn't loaded.
         if update.hasChanges {
@@ -142,8 +146,9 @@ final class ItemStore {
     }
 
     /// Nil draft fields clear metadata; session user data is preserved.
-    func acceptMetadataDraft(_ value: BaseItemDto, token: RequestToken) throws {
-        try validate(token)
+    func acceptMetadataDraft(_ value: BaseItemDto) throws {
+        try validate()
+        _ = try itemID(value)
         _ = try merge(ItemPatch.snapshot(value, replacesMetadata: true), token: beginRequest())
         libraryDidChange()
     }
@@ -155,10 +160,12 @@ final class ItemStore {
         to value: Bool,
         operation: @escaping @MainActor () async throws -> (value: UserItemDataDto, fields: Set<String>)
     ) async throws {
-        guard item.id.sessionID == sessionID, item.value != nil else { throw StoreError.itemUnavailable }
+        // Item IDs can match across sessions; only this store's record may be mutated.
+        guard isActive, retainedRecord(id: item.id.itemID) === item, item.value != nil else {
+            throw StoreError.itemUnavailable
+        }
 
         let itemID = item.id.itemID
-        let token = try beginRequest()
         let mutationID = UUID()
         let previous = mutations[itemID]?.last?.task
         item.beginChange(id: mutationID, field: field, value: value)
@@ -173,11 +180,11 @@ final class ItemStore {
             if let previous {
                 _ = await previous.result
             }
-            try validate(token)
+            try validate()
             guard item.value != nil else { throw StoreError.itemUnavailable }
 
             var data = try await operation()
-            try validate(token)
+            try validate()
             guard item.value != nil else { throw StoreError.itemUnavailable }
 
             data.value.itemID = itemID
@@ -239,7 +246,7 @@ final class ItemStore {
         if insertionsUntilPrune == 0 {
             prune()
         }
-        let record = ItemRecord(id: ItemKey(sessionID: sessionID, itemID: id))
+        let record = ItemRecord(id: ItemKey(itemID: id))
         records[id] = WeakBox(value: record)
         insertionsUntilPrune -= 1
         return record

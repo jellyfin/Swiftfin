@@ -130,13 +130,12 @@ class ItemEditorViewModel: ViewModel {
         guard let itemId = item.id else { return }
 
         let session = try requireUserSession()
-        let token = try session.items.beginRequest()
         var updateItem = newItem
         updateItem.trickplay = nil
 
         let request = Paths.updateItem(itemID: itemId, updateItem)
         _ = try await send(request)
-        try session.items.acceptMetadataDraft(newItem, token: token)
+        try session.items.acceptMetadataDraft(newItem)
 
         await refreshItem()
     }

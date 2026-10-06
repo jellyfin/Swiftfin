@@ -196,9 +196,7 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
             if let type = patch.value.collectionType, !CollectionType.supportedCases.contains(type) {
                 return nil
             }
-            guard patch.value.id?.nilIfBlank != nil,
-                  let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest)
-            else {
+            guard let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else {
                 return nil
             }
 

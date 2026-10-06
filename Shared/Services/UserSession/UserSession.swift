@@ -17,7 +17,7 @@ final class UserSession {
     let user: UserState
 
     @MainActor
-    lazy var items = ItemStore()
+    private(set) lazy var items = ItemStore()
 
     @MainActor
     var itemActionErrors = PassthroughSubject<Error, Never>()
@@ -69,21 +69,13 @@ final class UserSession {
     }
 
     @MainActor
-    func reuseItems(from session: UserSession) {
-        items = session.items
-        itemActionErrors = session.itemActionErrors
-    }
-
-    @MainActor
-    func willStop(preservingItems: Bool = false) {
+    func willStop() {
         itemChanges = nil
         for service in services.reversed() {
             service.willStop(userSession: self)
         }
 
-        if !preservingItems {
-            items.invalidate()
-            itemActionErrors.send(completion: .finished)
-        }
+        items.invalidate()
+        itemActionErrors.send(completion: .finished)
     }
 }

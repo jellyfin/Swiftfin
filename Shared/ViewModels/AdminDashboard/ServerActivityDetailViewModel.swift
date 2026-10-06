@@ -53,12 +53,12 @@ final class ServerActivityDetailViewModel: ViewModel {
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
         let session = try requireUserSession()
-        let token = try session.items.beginRequest()
+        try session.items.validate()
         async let fetchedItem: BaseItemDto? = getItem(for: log.itemID)
         async let fetchedUser: UserDto? = getUser(for: log.userID)
 
         let results = try? await (fetchedItem, fetchedUser)
-        try session.items.validate(token)
+        try session.items.validate()
         item = results?.0
         user = results?.1
     }

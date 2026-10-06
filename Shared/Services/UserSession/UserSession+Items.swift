@@ -16,16 +16,16 @@ extension UserSession {
     func send<Value: Decodable & Sendable>(_ request: Request<Value>) async throws -> (value: Value, items: [ItemRecord]) {
         let token = try items.beginRequest()
         let response = try await client.send(request)
-        try items.validate(token)
+        try items.validate()
         let records = try receiveItems(response, token: token)
         // Keep merged records alive until the caller takes ownership.
         return (response.value, records)
     }
 
     func send(_ request: Request<Void>) async throws {
-        let token = try items.beginRequest()
+        try items.validate()
         try await client.send(request)
-        try items.validate(token)
+        try items.validate()
     }
 
     private func receiveItems(_ response: Response<some Any>, token: ItemStore.RequestToken) throws -> [ItemRecord] {
@@ -41,17 +41,13 @@ extension UserSession {
         } else {
             return []
         }
-        return try patches.compactMap { patch in
-            guard patch.value.id?.nilIfBlank != nil else { return nil }
-
-            return try items.merge(patch, token: token)
-        }
+        return try patches.compactMap { try items.merge($0, token: token) }
     }
 
     func receiveSessionItems(_ sessions: [SessionInfoDto]) throws -> [ItemRecord] {
         let token = try items.beginRequest()
         return try sessions.compactMap { session in
-            guard let item = session.nowPlayingItem, item.id?.nilIfBlank != nil else { return nil }
+            guard let item = session.nowPlayingItem else { return nil }
 
             return try items.merge(ItemPatch.snapshot(item.withoutUserData), token: token)
         }

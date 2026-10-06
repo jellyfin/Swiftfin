@@ -334,7 +334,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             guard !Task.isCancelled, requestGeneration == generation, !isInvalidated,
                   replacing || offset == nextOffset else { return }
 
-            try page.userSession.items.validate(page.itemRequest)
+            try page.userSession.items.validate()
             let previousCount = replacing ? 0 : elements.count
             let items = try IdentifiedArray(
                 materialize(response, pageState: page),
@@ -402,7 +402,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
                   offset == nextSearchOffset, !isInvalidated
             else { return }
 
-            try page.userSession.items.validate(page.itemRequest)
+            try page.userSession.items.validate()
             let previousCount = searchElements.count
             let items = try IdentifiedArray(
                 materialize(response, pageState: page),
@@ -425,7 +425,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             let value = try await randomLibrary.retrieveRandomElement(environment: environment, pageState: page)
             guard !Task.isCancelled, requestGeneration == generation, !isInvalidated else { return }
 
-            try page.userSession.items.validate(page.itemRequest)
+            try page.userSession.items.validate()
             randomElement = try value.flatMap { try materialize([$0], pageState: page).first }
         } else {
             randomElement = elements.randomElement()
