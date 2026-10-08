@@ -47,18 +47,13 @@ final class FilterViewModel: ViewModel {
 
     let parent: (any LibraryParent)?
 
-    var hasActiveFilters: Bool {
-        staticFilters.union(currentFilters) != staticFilters
-    }
-
     var savableFilters: ItemFilterCollection {
         currentFilters
             .mutating(\.itemTypes, with: [])
-            .mutating(\.letter, with: [])
             .mutating(\.query, with: nil)
     }
 
-    var hasSavableFilters: Bool {
+    var hasActiveFilters: Bool {
         savableFilters != .default
     }
 
@@ -87,7 +82,6 @@ final class FilterViewModel: ViewModel {
 
             currentFilters = newValue.filters
                 .mutating(\.itemTypes, with: currentFilters.itemTypes)
-                .mutating(\.letter, with: currentFilters.letter)
                 .mutating(\.query, with: currentFilters.query)
         }
     }

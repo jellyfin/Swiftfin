@@ -124,14 +124,11 @@ struct FilterTrack: View {
 
     @ViewBuilder
     private var menuActions: some View {
-        if viewModel.selectedSavedFilter != nil {
-            Button(L10n.edit, systemImage: "pencil") {
-                router.route(to: .savedFilterEditor(viewModel: viewModel))
-            }
-        } else if viewModel.hasSavableFilters {
-            Button(L10n.save, systemImage: "square.and.arrow.down") {
-                router.route(to: .savedFilterEditor(viewModel: viewModel))
-            }
+        Button(
+            viewModel.selectedSavedFilter == nil ? L10n.save : L10n.edit,
+            systemImage: viewModel.selectedSavedFilter == nil ? "square.and.arrow.down" : "pencil"
+        ) {
+            router.route(to: .savedFilterEditor(viewModel: viewModel))
         }
 
         Button(L10n.clear, systemImage: "text.badge.xmark", role: .destructive, action: reset)
