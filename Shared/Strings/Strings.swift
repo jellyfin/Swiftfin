@@ -1456,8 +1456,6 @@ internal enum L10n {
   internal static let rememberFiltering = L10n.tr("Localizable", "rememberFiltering", fallback: "Remember filtering")
   /// Remember layout
   internal static let rememberLayout = L10n.tr("Localizable", "rememberLayout", fallback: "Remember layout")
-  /// Remember sorting
-  internal static let rememberSorting = L10n.tr("Localizable", "rememberSorting", fallback: "Remember sorting")
   /// Remember track selection
   internal static let rememberTrackSelection = L10n.tr("Localizable", "rememberTrackSelection", fallback: "Remember track selection")
   /// Remembers your selected track the next time you play this item.
