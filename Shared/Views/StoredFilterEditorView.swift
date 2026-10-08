@@ -61,6 +61,9 @@ struct StoredFilterEditorView: View {
         Form(systemImage: "line.3.horizontal.decrease") {
             Section {
                 TextField(L10n.name, text: $name)
+                    #if os(tvOS)
+                        .listRowInsets(.zero)
+                    #endif
             } header: {
                 Text(L10n.name)
             } footer: {
