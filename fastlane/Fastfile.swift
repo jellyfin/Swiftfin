@@ -329,8 +329,6 @@ class Fastfile: LaneFile {
 
         let repositoryDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
         let toolsDirectory = repositoryDirectory.appendingPathComponent("Screenshots/Tools")
-        let captionsDirectory = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Caches/tools.fastlane/Captions")
 
         for platform in platforms {
             let captureDirectory = repositoryDirectory.appendingPathComponent("build/Screenshots/Capture/\(platform.rawValue)")
@@ -342,8 +340,6 @@ class Fastfile: LaneFile {
                 log: .userDefined(false)
             )
             .trimmingCharacters(in: .whitespacesAndNewlines)
-
-            try? FileManager.default.removeItem(at: captionsDirectory)
 
             captureIosScreenshots(
                 project: .userDefined(xcodeProject),
@@ -372,10 +368,10 @@ class Fastfile: LaneFile {
             sh(
                 command: [
                     "swift \"\(toolsDirectory.path)/ProcessScreenshots.swift\"",
+                    platform.rawValue,
+                    deviceType,
                     "\"\(captureDirectory.path)\"",
                     "\"\(outputDirectory.path)\"",
-                    "\"\(device)\"",
-                    "\"\(captionsDirectory.path)\"",
                     isRawOnly ? "--raw-only" : "",
                 ]
                 .joined(separator: " ")

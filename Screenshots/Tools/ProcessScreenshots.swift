@@ -12,15 +12,15 @@ let arguments = CommandLine.arguments.dropFirst()
 
 guard arguments.count == 4 || arguments.count == 5 else {
     print(
-        "Usage: swift Screenshots/Tools/ProcessScreenshots.swift <capture directory> <output directory> <device> <captions directory> [--raw-only]"
+        "Usage: swift Screenshots/Tools/ProcessScreenshots.swift <platform> <device type> <capture directory> <output directory> [--raw-only]"
     )
     exit(1)
 }
 
-let captureDirectory = URL(fileURLWithPath: arguments[arguments.startIndex])
-let outputDirectory = URL(fileURLWithPath: arguments[arguments.startIndex + 1])
-let device = arguments[arguments.startIndex + 2]
-let captionsDirectory = URL(fileURLWithPath: arguments[arguments.startIndex + 3])
+let platform = arguments[arguments.startIndex]
+let deviceType = arguments[arguments.startIndex + 1]
+let captureDirectory = URL(fileURLWithPath: arguments[arguments.startIndex + 2])
+let outputDirectory = URL(fileURLWithPath: arguments[arguments.startIndex + 3])
 let isRawOnly = arguments.contains("--raw-only")
 
 let scriptDirectory = URL(fileURLWithPath: CommandLine.arguments[0]).deletingLastPathComponent()
@@ -50,10 +50,26 @@ func makeContext(width: Int, height: Int) -> CGContext {
     )!
 }
 
-func framed(_ screenshot: CGImage) -> CGImage? {
-    let size = "\(screenshot.width)x\(screenshot.height)"
+func rotated(_ image: CGImage, by angle: CGFloat) -> CGImage? {
+    let context = makeContext(width: image.height, height: image.width)
 
-    guard let frame = loadImage(at: framesDirectory.appendingPathComponent("\(size).png")) else {
+    context.translateBy(x: CGFloat(image.height) / 2, y: CGFloat(image.width) / 2)
+    context.rotate(by: angle)
+    context.draw(image, in: CGRect(x: -image.width / 2, y: -image.height / 2, width: image.width, height: image.height))
+
+    return context.makeImage()
+}
+
+func framed(_ screenshot: CGImage) -> CGImage? {
+    let directory = framesDirectory.appendingPathComponent("\(platform)/\(deviceType)")
+
+    guard let frame = loadImage(at: directory.appendingPathComponent("Frame.png")) else {
+        return nil
+    }
+
+    let isRotated = (frame.height > frame.width) != (screenshot.height > screenshot.width)
+
+    guard let screenshot = isRotated ? rotated(screenshot, by: -.pi / 2) : screenshot else {
         return nil
     }
 
@@ -66,7 +82,7 @@ func framed(_ screenshot: CGImage) -> CGImage? {
     )
 
     context.saveGState()
-    if let mask = loadImage(at: framesDirectory.appendingPathComponent("\(size)-mask.png")) {
+    if let mask = loadImage(at: directory.appendingPathComponent("Mask.png")) {
         context.clip(to: screenshotRect, mask: mask)
     }
     context.draw(screenshot, in: screenshotRect)
@@ -74,7 +90,7 @@ func framed(_ screenshot: CGImage) -> CGImage? {
 
     context.draw(frame, in: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
 
-    return context.makeImage()
+    return context.makeImage().flatMap { isRotated ? rotated($0, by: .pi / 2) : $0 }
 }
 
 // MARK: - Cards
@@ -273,14 +289,14 @@ func collect(_ language: URL) throws -> URL {
     for screenshot in try FileManager.default.contentsOfDirectory(at: language, includingPropertiesForKeys: nil)
         where screenshot.pathExtension == "png"
     {
-        let name = screenshot.lastPathComponent.replacing("\(device)-", with: "")
+        let name = screenshot.lastPathComponent.split(separator: "-").last.map(String.init) ?? screenshot.lastPathComponent
         try FileManager.default.copyItem(at: screenshot, to: rawDirectory.appendingPathComponent(name))
     }
 
     return languageDirectory
 }
 
-func process(_ languageDirectory: URL) throws {
+func process(_ languageDirectory: URL, captions: URL) throws {
     let screenshots = try FileManager.default
         .contentsOfDirectory(at: languageDirectory.appendingPathComponent("Raw"), includingPropertiesForKeys: nil)
         .filter { $0.pathExtension == "png" }
@@ -291,7 +307,7 @@ func process(_ languageDirectory: URL) throws {
         }
 
     let captioned = screenshots.compactMap { screenshot in
-        (try? Data(contentsOf: captionsDirectory.appendingPathComponent("\(screenshot.name).json")))
+        (try? Data(contentsOf: captions.appendingPathComponent("\(screenshot.name).json")))
             .flatMap { try? JSONDecoder().decode([String: String].self, from: $0) }
             .map { (screenshot: screenshot, caption: $0) }
     }
@@ -335,6 +351,6 @@ for language in languages {
     let languageDirectory = try collect(language)
 
     if !isRawOnly {
-        try process(languageDirectory)
+        try process(languageDirectory, captions: language)
     }
 }

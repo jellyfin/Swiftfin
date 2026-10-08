@@ -86,13 +86,15 @@ class Robot {
         #endif
     }
 
-    func back() {
+    func goBack() -> LibraryRobot {
         #if os(tvOS)
         XCUIRemote.shared.press(.menu)
         sleep(2)
         #else
         tap(app.navigationBars.buttons.element(boundBy: 0))
         #endif
+
+        return LibraryRobot(app: app)
     }
 
     @discardableResult

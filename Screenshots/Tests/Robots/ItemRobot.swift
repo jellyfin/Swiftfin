@@ -47,9 +47,4 @@ final class ItemRobot: Robot {
         tap(detailsButton)
         return ItemRobot(app: app)
     }
-
-    func goBack() -> LibraryRobot {
-        back()
-        return LibraryRobot(app: app)
-    }
 }

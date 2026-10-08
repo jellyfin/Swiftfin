@@ -65,7 +65,10 @@ enum Screenshot: String, CaseIterable {
 
     @MainActor
     func saveCaption() {
-        guard let directory = Snapshot.cacheDirectory?.appendingPathComponent("Captions", isDirectory: true) else { return }
+        let directory = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .appendingPathComponent("../../../build/Screenshots/Capture/\(UIDevice.platform)/\(Snapshot.deviceLanguage)")
+            .standardized
 
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         try? JSONEncoder()

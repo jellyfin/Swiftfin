@@ -27,7 +27,7 @@ Default devices:
 A simulator is created on the newest runtime if none exists for the device type.
 
 > [!NOTE]
-> Screenshots are only framed when `Screenshots/Tools/Frames` has a frame matching their size. Otherwise, cards use the unframed screenshot.
+> Screenshots are framed with `Screenshots/Tools/Frames/<Platform>/<device type>/Frame.png`, clipped to the screen shape by an optional `Mask.png`. Device types without a frame use the unframed screenshot.
 
 ## Output
 

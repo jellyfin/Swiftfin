@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-/// https://docs.fastlane.tools/actions/snapshot/
+// See: https://docs.fastlane.tools/actions/snapshot/
 
 @MainActor
 func setupSnapshot(_ app: XCUIApplication, waitForAnimations: Bool = true) {

@@ -32,7 +32,6 @@ final class VideoPlayerRobot: Robot {
         revealControls()
         button(L10n.aspectFill).tap()
         sleep(1)
-        revealControls()
         #endif
 
         return self
@@ -52,7 +51,6 @@ final class VideoPlayerRobot: Robot {
         start.press(forDuration: 0.5, thenDragTo: start.withOffset(CGVector(dx: width * progress, dy: 0)))
 
         sleep(2)
-        revealControls()
         #else
         for _ in 0 ..< 200 {
             XCUIRemote.shared.press(.right)
