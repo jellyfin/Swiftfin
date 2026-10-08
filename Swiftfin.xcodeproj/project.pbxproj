@@ -198,6 +198,9 @@
 		24EBA6499E0C420F8E5B2D33 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Extensions/Collection.swift,
+				Extensions/UIDevice.swift,
+				Strings/ProperNouns.swift,
 				Strings/Strings.swift,
 			);
 			target = 0558DEDC63B5442F9F6D7D72 /* Swiftfin tvOS Screenshots */;
@@ -205,6 +208,9 @@
 		3002B5F683E649EFBCF37FED /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Extensions/Collection.swift,
+				Extensions/UIDevice.swift,
+				Strings/ProperNouns.swift,
 				Strings/Strings.swift,
 			);
 			target = 6E22078F6D5C4A179202982B /* Swiftfin iOS Screenshots */;

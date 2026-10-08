@@ -317,44 +317,12 @@ class Fastfile: LaneFile {
         }
     }
 
-    private struct DeviceTypeList: Decodable {
-        struct DeviceType: Decodable {
-            let identifier: String
-            let name: String
-        }
-
-        let devicetypes: [DeviceType]
-    }
-
-    private struct RuntimeList: Decodable {
-        struct Runtime: Decodable {
-            let identifier: String
-            let platform: String?
-            let version: String
-            let isAvailable: Bool
-        }
-
-        let runtimes: [Runtime]
-    }
-
-    private struct DeviceList: Decodable {
-        struct Device: Decodable {
-            let name: String
-            let deviceTypeIdentifier: String?
-        }
-
-        let devices: [String: [Device]]
-    }
-
-    private let repositoryDirectory = URL(fileURLWithPath: #filePath)
-        .deletingLastPathComponent()
-        .deletingLastPathComponent()
-
     func screenshotsLane(withOptions options: [String: String]?) {
 
+        let options = options ?? [:]
         let platforms: [ScreenshotPlatform]
 
-        if let platform = options?["platform"]?.trimOption() {
+        if let platform = options["platform"]?.trimOption() {
             guard let screenshotPlatform = ScreenshotPlatform.allCases.first(where: {
                 $0.rawValue.lowercased() == platform.lowercased()
             }) else {
@@ -366,7 +334,7 @@ class Fastfile: LaneFile {
             platforms = ScreenshotPlatform.allCases
         }
 
-        let shouldProcess = options?["process"]?.trimOption().map { $0.lowercased() != "false" } ?? true
+        let isRawOnly = options["process"]?.trimOption()?.lowercased() == "false"
 
         let launchArguments = [
             ("server", "ScreenshotServer"),
@@ -374,20 +342,25 @@ class Fastfile: LaneFile {
             ("password", "ScreenshotPassword"),
         ]
         .compactMap { option, argument in
-            options?[option]?.trimOption().map { "-\(argument) \($0)" }
+            options[option]?.trimOption().map { "-\(argument) \($0)" }
         }
         .joined(separator: " ")
+
+        let repositoryDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+        let toolsDirectory = repositoryDirectory.appendingPathComponent("Screenshots/Tools")
+        let captionsDirectory = FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Caches/tools.fastlane/Captions")
 
         for platform in platforms {
             let captureDirectory = repositoryDirectory.appendingPathComponent("build/Screenshots/Capture/\(platform.rawValue)")
             let outputDirectory = repositoryDirectory.appendingPathComponent("Documentation/Screenshots/\(platform.rawValue)")
-            let captionsDirectory = FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Caches/tools.fastlane/Captions")
+            let deviceType = options[platform.deviceOption]?.trimOption() ?? platform.defaultDeviceType
 
-            let device = simulator(
-                deviceType: options?[platform.deviceOption]?.trimOption() ?? platform.defaultDeviceType,
-                runtimePlatform: platform.runtimePlatform
+            let device = sh(
+                command: "swift \"\(toolsDirectory.path)/Simulator.swift\" \(deviceType) \(platform.runtimePlatform)",
+                log: .userDefined(false)
             )
+            .trimmingCharacters(in: .whitespacesAndNewlines)
 
             try? FileManager.default.removeItem(at: captionsDirectory)
 
@@ -416,79 +389,18 @@ class Fastfile: LaneFile {
                 xcodebuildFormatter: isInstalled("xcbeautify") ? "xcbeautify" : ""
             )
 
-            let languages = collectScreenshots(device: device, from: captureDirectory, to: outputDirectory)
-
-            guard shouldProcess else { continue }
-
-            let script = repositoryDirectory.appendingPathComponent("Scripts/Screenshots/ProcessScreenshots.swift")
-
-            for language in languages {
-                sh(command: "swift \"\(script.path)\" \"\(language.path)\" \"\(captionsDirectory.path)\"")
-            }
+            sh(
+                command: [
+                    "swift \"\(toolsDirectory.path)/ProcessScreenshots.swift\"",
+                    "\"\(captureDirectory.path)\"",
+                    "\"\(outputDirectory.path)\"",
+                    "\"\(device)\"",
+                    "\"\(captionsDirectory.path)\"",
+                    isRawOnly ? "--raw-only" : "",
+                ]
+                .joined(separator: " ")
+            )
         }
-    }
-
-    private func collectScreenshots(device: String, from captureDirectory: URL, to outputDirectory: URL) -> [URL] {
-        let fileManager = FileManager.default
-
-        try? fileManager.removeItem(at: outputDirectory)
-
-        let languages = (try? fileManager.contentsOfDirectory(at: captureDirectory, includingPropertiesForKeys: [.isDirectoryKey])) ?? []
-        var outputLanguages: [URL] = []
-
-        for language in languages where language.hasDirectoryPath {
-            let outputLanguage = outputDirectory.appendingPathComponent(language.lastPathComponent)
-            let rawDirectory = outputLanguage.appendingPathComponent("Raw")
-            let screenshots = (try? fileManager.contentsOfDirectory(at: language, includingPropertiesForKeys: nil)) ?? []
-
-            try? fileManager.createDirectory(at: rawDirectory, withIntermediateDirectories: true)
-
-            for screenshot in screenshots where screenshot.pathExtension == "png" {
-                let name = screenshot.lastPathComponent.replacingOccurrences(of: "\(device)-", with: "")
-                try? fileManager.copyItem(at: screenshot, to: rawDirectory.appendingPathComponent(name))
-            }
-
-            outputLanguages.append(outputLanguage)
-        }
-
-        return outputLanguages
-    }
-
-    private func simctlList<T: Decodable>(_ type: T.Type, _ arguments: String) -> T {
-        let output = sh(command: "xcrun simctl list -j \(arguments)", log: .userDefined(false))
-
-        guard let list = try? JSONDecoder().decode(T.self, from: Data(output.utf8)) else {
-            fail("unable to read simctl \(arguments)")
-        }
-
-        return list
-    }
-
-    private func simulator(deviceType: String, runtimePlatform: String) -> String {
-        let identifier = deviceType.hasPrefix("com.apple") ? deviceType : "com.apple.CoreSimulator.SimDeviceType.\(deviceType)"
-        let deviceTypes = simctlList(DeviceTypeList.self, "devicetypes").devicetypes
-
-        guard let type = deviceTypes.first(where: { $0.identifier == identifier }) else {
-            let available = deviceTypes.map { $0.identifier.replacingOccurrences(of: "com.apple.CoreSimulator.SimDeviceType.", with: "") }
-            fail("simulator type '\(deviceType)' is not installed. Available: \(available.joined(separator: ", "))")
-        }
-
-        let devices = simctlList(DeviceList.self, "devices available").devices.values.flatMap { $0 }
-
-        if let existing = devices.first(where: { $0.deviceTypeIdentifier == identifier }) {
-            return existing.name
-        }
-
-        guard let runtime = simctlList(RuntimeList.self, "runtimes").runtimes
-            .filter({ $0.isAvailable && $0.platform == runtimePlatform })
-            .max(by: { $0.version.compare($1.version, options: .numeric) == .orderedAscending })
-        else {
-            fail("no \(runtimePlatform) simulator runtime is installed")
-        }
-
-        sh(command: "xcrun simctl create \"\(type.name)\" \(identifier) \(runtime.identifier)")
-
-        return type.name
     }
 
     private var statusBarTime: String {

@@ -25,6 +25,10 @@ class Robot {
         app.buttons.matching(NSPredicate(format: "label CONTAINS %@", text))
     }
 
+    func buttons(labeled label: String) -> XCUIElementQuery {
+        app.buttons.matching(NSPredicate(format: "label == %@", label))
+    }
+
     func largest(_ query: XCUIElementQuery) -> XCUIElement {
         waitFor(query.firstMatch)
 

@@ -22,10 +22,3 @@ final class UserSignInRobot: Robot {
         return MainTabRobot(app: app)
     }
 }
-
-extension String {
-
-    var isNotEmpty: Bool {
-        !isEmpty
-    }
-}

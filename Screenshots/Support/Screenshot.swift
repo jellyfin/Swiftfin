@@ -57,18 +57,10 @@ enum Screenshot: String, CaseIterable {
         case .episode:
             L10n.screenshotSubtitleEpisode
         case .playback:
-            L10n.screenshotSubtitlePlayback(platformName)
+            L10n.screenshotSubtitlePlayback(UIDevice.platform)
         case .userSelection:
             L10n.screenshotSubtitleUserSelection
         }
-    }
-
-    private var platformName: String {
-        #if os(tvOS)
-        "tvOS"
-        #else
-        UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS"
-        #endif
     }
 
     @MainActor

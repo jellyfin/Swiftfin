@@ -11,8 +11,7 @@ import XCTest
 final class ItemRobot: Robot {
 
     func play() -> VideoPlayerRobot {
-        let playButtons = app.buttons
-            .matching(NSPredicate(format: "label == %@", L10n.play))
+        let playButtons = buttons(labeled: L10n.play)
         waitFor(playButtons.firstMatch)
 
         #if os(tvOS)

@@ -20,7 +20,7 @@ final class ScreenshotTests: XCTestCase {
         setupSnapshot(app)
 
         #if os(iOS)
-        XCUIDevice.shared.orientation = UIDevice.current.userInterfaceIdiom == .pad ? .landscapeLeft : .portrait
+        XCUIDevice.shared.orientation = UIDevice.isPad ? .landscapeLeft : .portrait
         #endif
 
         app.launch()

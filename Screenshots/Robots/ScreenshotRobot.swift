@@ -78,7 +78,7 @@ final class ScreenshotRobot: Robot {
 
     private func setPhoneLandscape(_ isLandscape: Bool) {
         #if os(iOS)
-        if UIDevice.current.userInterfaceIdiom == .phone {
+        if UIDevice.isPhone {
             XCUIDevice.shared.orientation = isLandscape ? .landscapeLeft : .portrait
         }
         #endif

@@ -11,7 +11,7 @@ import XCTest
 final class LibraryRobot: Robot {
 
     func library(_ name: String) -> LibraryRobot {
-        tap(largest(app.buttons.matching(NSPredicate(format: "label == %@", name))))
+        tap(largest(buttons(labeled: name)))
         return LibraryRobot(app: app)
     }
 
@@ -22,9 +22,8 @@ final class LibraryRobot: Robot {
         return ItemRobot(app: app)
     }
 
-    @discardableResult
-    func goBack() -> Self {
+    func goBack() -> LibraryRobot {
         back()
-        return self
+        return LibraryRobot(app: app)
     }
 }

@@ -19,16 +19,18 @@ struct Caption: Decodable {
 
 let arguments = CommandLine.arguments.dropFirst()
 
-guard arguments.count == 2 else {
-    print("Usage: swift Scripts/Screenshots/ProcessScreenshots.swift <language directory> <captions directory>")
+guard arguments.count == 4 || arguments.count == 5 else {
+    print(
+        "Usage: swift Screenshots/Tools/ProcessScreenshots.swift <capture directory> <output directory> <device> <captions directory> [--raw-only]"
+    )
     exit(1)
 }
 
-let languageDirectory = URL(fileURLWithPath: arguments[arguments.startIndex])
-let captionsDirectory = URL(fileURLWithPath: arguments[arguments.startIndex + 1])
-let rawDirectory = languageDirectory.appendingPathComponent("Raw")
-let framedDirectory = languageDirectory.appendingPathComponent("Framed")
-let cardsDirectory = languageDirectory.appendingPathComponent("Cards")
+let captureDirectory = URL(fileURLWithPath: arguments[arguments.startIndex])
+let outputDirectory = URL(fileURLWithPath: arguments[arguments.startIndex + 1])
+let device = arguments[arguments.startIndex + 2]
+let captionsDirectory = URL(fileURLWithPath: arguments[arguments.startIndex + 3])
+let isRawOnly = arguments.contains("--raw-only")
 
 let scriptDirectory = URL(fileURLWithPath: CommandLine.arguments[0]).deletingLastPathComponent()
 let framesDirectory = scriptDirectory.appendingPathComponent("Frames")
@@ -386,7 +388,7 @@ func card(caption: Caption, device: CGImage, isFramed: Bool, size: CGSize, textS
 
 // MARK: - Process
 
-struct Screenshot {
+struct Capture {
 
     let name: String
     let raw: CGImage
@@ -402,46 +404,83 @@ struct Screenshot {
     }
 }
 
-let screenshots = ((try? FileManager.default.contentsOfDirectory(at: rawDirectory, includingPropertiesForKeys: nil)) ?? [])
-    .filter { $0.pathExtension == "png" }
-    .compactMap { url -> Screenshot? in
-        guard let raw = loadImage(at: url) else { return nil }
+func collect(_ language: URL) throws -> URL {
+    let languageDirectory = outputDirectory.appendingPathComponent(language.lastPathComponent)
+    let rawDirectory = languageDirectory.appendingPathComponent("Raw")
 
-        let name = url.deletingPathExtension().lastPathComponent
-        let caption = (try? Data(contentsOf: captionsDirectory.appendingPathComponent("\(name).json")))
-            .flatMap { try? JSONDecoder().decode(Caption.self, from: $0) }
+    try FileManager.default.createDirectory(at: rawDirectory, withIntermediateDirectories: true)
 
-        return Screenshot(name: name, raw: raw, framed: framed(raw), caption: caption)
+    for screenshot in try FileManager.default.contentsOfDirectory(at: language, includingPropertiesForKeys: nil)
+        where screenshot.pathExtension == "png"
+    {
+        let name = screenshot.lastPathComponent.replacing("\(device)-", with: "")
+        try FileManager.default.copyItem(at: screenshot, to: rawDirectory.appendingPathComponent(name))
     }
 
-try? FileManager.default.removeItem(at: framedDirectory)
-try? FileManager.default.removeItem(at: cardsDirectory)
-
-for screenshot in screenshots {
-    if let framed = screenshot.framed {
-        try write(framed, to: framedDirectory.appendingPathComponent("\(screenshot.name).png"))
-    }
+    return languageDirectory
 }
 
-let captioned = screenshots.filter { $0.caption != nil }
-let textScales = Dictionary(grouping: captioned, by: \.isPortrait)
-    .mapValues { group in
-        group.map { CardText.fittingScale(for: $0.caption!, size: $0.size) }.min() ?? 1
+func process(_ languageDirectory: URL) throws {
+    let rawDirectory = languageDirectory.appendingPathComponent("Raw")
+    let frameDirectory = languageDirectory.appendingPathComponent("Frame")
+    let cardDirectory = languageDirectory.appendingPathComponent("Card")
+
+    let captures = try FileManager.default
+        .contentsOfDirectory(at: rawDirectory, includingPropertiesForKeys: nil)
+        .filter { $0.pathExtension == "png" }
+        .compactMap { url -> Capture? in
+            guard let raw = loadImage(at: url) else { return nil }
+
+            let name = url.deletingPathExtension().lastPathComponent
+            let caption = (try? Data(contentsOf: captionsDirectory.appendingPathComponent("\(name).json")))
+                .flatMap { try? JSONDecoder().decode(Caption.self, from: $0) }
+
+            return Capture(name: name, raw: raw, framed: framed(raw), caption: caption)
+        }
+
+    for capture in captures {
+        if let framed = capture.framed {
+            try write(framed, to: frameDirectory.appendingPathComponent("\(capture.name).png"))
+        }
     }
 
-for screenshot in captioned {
-    guard let image = card(
-        caption: screenshot.caption!,
-        device: screenshot.framed ?? screenshot.raw,
-        isFramed: screenshot.framed != nil,
-        size: screenshot.size,
-        textScale: textScales[screenshot.isPortrait] ?? 1
-    ) else {
-        print("Unable to make card for \(screenshot.name)")
-        exit(1)
+    let captioned = captures.compactMap { capture in
+        capture.caption.map { (capture: capture, caption: $0) }
     }
 
-    try write(image, to: cardsDirectory.appendingPathComponent("\(screenshot.name).png"))
+    let textScales = Dictionary(grouping: captioned, by: \.capture.isPortrait)
+        .mapValues { group in
+            group.map { CardText.fittingScale(for: $0.caption, size: $0.capture.size) }.min() ?? 1
+        }
+
+    for (capture, caption) in captioned {
+        guard let image = card(
+            caption: caption,
+            device: capture.framed ?? capture.raw,
+            isFramed: capture.framed != nil,
+            size: capture.size,
+            textScale: textScales[capture.isPortrait] ?? 1
+        ) else {
+            print("Unable to make card for \(capture.name)")
+            exit(1)
+        }
+
+        try write(image, to: cardDirectory.appendingPathComponent("\(capture.name).png"))
+    }
+
+    print("Framed \(captures.count { $0.framed != nil }) and made \(captioned.count) cards in \(languageDirectory.path)")
 }
 
-print("Framed \(screenshots.count { $0.framed != nil }) and made \(captioned.count) cards in \(languageDirectory.path)")
+try? FileManager.default.removeItem(at: outputDirectory)
+
+let languages = try FileManager.default
+    .contentsOfDirectory(at: captureDirectory, includingPropertiesForKeys: [.isDirectoryKey])
+    .filter(\.hasDirectoryPath)
+
+for language in languages {
+    let languageDirectory = try collect(language)
+
+    if !isRawOnly {
+        try process(languageDirectory)
+    }
+}

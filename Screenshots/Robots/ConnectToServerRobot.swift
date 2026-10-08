@@ -15,8 +15,7 @@ final class ConnectToServerRobot: Robot {
         type(url, into: urlField)
 
         let fieldCenter = CGPoint(x: urlField.frame.midX, y: urlField.frame.midY)
-        let connectButton = app.buttons
-            .matching(NSPredicate(format: "label == %@", L10n.connect))
+        let connectButton = buttons(labeled: L10n.connect)
             .allElementsBoundByIndex
             .min { distance($0.frame, fieldCenter) < distance($1.frame, fieldCenter) }!
 

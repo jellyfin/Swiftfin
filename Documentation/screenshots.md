@@ -21,31 +21,44 @@ Options:
 
 Default devices:
 
-- iOS: `iPhone-18-Pro`
+- iOS: `iPhone-17-Pro`
 - iPadOS: `iPad-Pro-13-inch-M5-12GB`
 - tvOS: `Apple-TV-4K-3rd-generation-4K`
 
 A simulator is created on the newest runtime if none exists for the device type.
 
 > [!NOTE]
-> Screenshots are only framed when `Scripts/Screenshots/Frames` has a frame matching their size. Otherwise, cards use the unframed screenshot.
+> Screenshots are only framed when `Screenshots/Tools/Frames` has a frame matching their size. Otherwise, cards use the unframed screenshot.
 
 ## Output
 
-Screenshots are written to `Documentation/Screenshots/<Platform>/<Language>/`:
+Screenshots are written to `Documentation/Screenshots/<Platform>/<Language>/` and shown in [Platforms](./Screenshots/platforms.md):
 
 - `Raw`: the screenshots as captured
-- `Framed`: the screenshots inside a device frame (iOS and iPadOS)
-- `Cards`: App Store cards with a caption over the framed screenshot
+- `Frame`: the screenshots inside a device frame (iOS and iPadOS)
+- `Card`: App Store cards with a caption over the framed screenshot
 
 ## Structure
 
-- `Screenshots/Support/Screenshot.swift`: each screenshot, in capture order, with its headline and subtitle
-- `Screenshots/Robots/ScreenshotRobot.swift`: how to reach and capture each screenshot
-- `Screenshots/Robots`: one robot per screen, shared by iOS and tvOS
-- `Scripts/Screenshots/ProcessScreenshots.swift`: builds `Framed` and `Cards`
-- `Scripts/Screenshots/Frames`: device frames, named by screenshot size (`<width>x<height>-frame.png`, optional `-mask.png`)
-- `Scripts/Screenshots/Fonts`: Figtree and Inter
+Everything lives in `Screenshots/`:
+
+- `Support/Screenshot.swift`: each screenshot, in capture order, with its headline and subtitle
+- `Robots/ScreenshotRobot.swift`: how to reach and capture each screenshot
+- `Robots`: one robot per screen, shared by iOS and tvOS
+- `Support/SnapshotHelper.swift`: fastlane's snapshot helper
+- `Tools/Simulator.swift`: finds or creates the simulator for a device type
+- `Tools/ProcessScreenshots.swift`: copies captures into `Raw` and builds `Frame` and `Card`
+- `Tools/Frames`: device frames, named by screenshot size (`<width>x<height>-frame.png`, optional `-mask.png`)
+- `Tools/Fonts`: Figtree and Inter
+
+Outside of `Screenshots/`:
+
+- `fastlane/Fastfile.swift`: the `screenshots` lane
+- `Swiftfin.xcodeproj`: the `Swiftfin iOS Screenshots` and `Swiftfin tvOS Screenshots` targets and schemes. `Screenshots/Tools` is excluded from both, and they compile `Shared/Strings` and the `Collection` and `UIDevice` extensions from `Shared/Extensions`.
+- `Translations/en.lproj/Localizable.strings`: the `screenshotHeadline` and `screenshotSubtitle` captions
+- `Scripts/Translations/FindUnusedStrings.swift`: scans `Screenshots` so the captions are not purged
+- `Shared/Objects/Libraries/UserViewLibrary.swift`, `Shared/Views/ItemView/Components/PlayButton.swift`: accessibility labels the robots find library cards and the play button by
+- `Documentation/Screenshots`: the output and [Platforms](./Screenshots/platforms.md) page, linked from the README
 
 ## Adding a screenshot
 

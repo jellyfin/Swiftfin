@@ -22,10 +22,9 @@ struct ScreenshotConfiguration {
 
     init(launchArguments: [String]) {
         func value(for key: String) -> String? {
-            guard let index = launchArguments.firstIndex(of: "-\(key)"),
-                  launchArguments.indices.contains(index + 1) else { return nil }
+            guard let index = launchArguments.firstIndex(of: "-\(key)") else { return nil }
 
-            return launchArguments[index + 1].trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+            return launchArguments[safe: index + 1]?.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
         }
 
         server = value(for: "ScreenshotServer") ?? server
