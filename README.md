@@ -37,21 +37,56 @@ Use the TestFlight version to test new features and bug fixes before being publi
 
 ## 📸 Screenshots
 
-<p align="center">
-  <img width="24%" alt="Home on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Home.png"/>
-  <img width="24%" alt="Library on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Library.png"/>
-  <img width="24%" alt="Series on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Series.png"/>
-</p>
-<p align="center">
-  <img width="50%" alt="Playback on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Playback.png"/>
-</p>
-<p align="center">
-  <img width="40%" alt="Home on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Home.png"/>
-  <img width="40%" alt="Library on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Library.png"/>
-  <br/>
-  <img width="40%" alt="Series on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Series.png"/>
-  <img width="40%" alt="Playback on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Playback.png"/>
-</p>
+<details open>
+<summary><b>iOS</b></summary>
+<br/>
+<table>
+  <tr>
+    <td><img height="400" alt="Home on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Home.png"/></td>
+    <td><img height="400" alt="Media on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Media.png"/></td>
+    <td><img height="400" alt="Library on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Library.png"/></td>
+    <td><img height="400" alt="Movie on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Movie.png"/></td>
+    <td><img height="400" alt="Series on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Series.png"/></td>
+    <td><img height="400" alt="Episode on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Episode.png"/></td>
+    <td><img height="196" alt="Playback on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Playback.png"/></td>
+    <td><img height="400" alt="UserSelection on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/UserSelection.png"/></td>
+  </tr>
+</table>
+</details>
+
+<details>
+<summary><b>iPadOS</b></summary>
+<br/>
+<table>
+  <tr>
+    <td><img height="300" alt="Home on iPadOS" src="./Documentation/Screenshots/iPadOS/en-US/Framed/Home.png"/></td>
+    <td><img height="300" alt="Media on iPadOS" src="./Documentation/Screenshots/iPadOS/en-US/Framed/Media.png"/></td>
+    <td><img height="300" alt="Library on iPadOS" src="./Documentation/Screenshots/iPadOS/en-US/Framed/Library.png"/></td>
+    <td><img height="300" alt="Movie on iPadOS" src="./Documentation/Screenshots/iPadOS/en-US/Framed/Movie.png"/></td>
+    <td><img height="300" alt="Series on iPadOS" src="./Documentation/Screenshots/iPadOS/en-US/Framed/Series.png"/></td>
+    <td><img height="300" alt="Episode on iPadOS" src="./Documentation/Screenshots/iPadOS/en-US/Framed/Episode.png"/></td>
+    <td><img height="300" alt="Playback on iPadOS" src="./Documentation/Screenshots/iPadOS/en-US/Framed/Playback.png"/></td>
+    <td><img height="300" alt="UserSelection on iPadOS" src="./Documentation/Screenshots/iPadOS/en-US/Framed/UserSelection.png"/></td>
+  </tr>
+</table>
+</details>
+
+<details>
+<summary><b>tvOS</b></summary>
+<br/>
+<table>
+  <tr>
+    <td><img height="300" alt="Home on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Home.png"/></td>
+    <td><img height="300" alt="Media on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Media.png"/></td>
+    <td><img height="300" alt="Library on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Library.png"/></td>
+    <td><img height="300" alt="Movie on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Movie.png"/></td>
+    <td><img height="300" alt="Series on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Series.png"/></td>
+    <td><img height="300" alt="Episode on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Episode.png"/></td>
+    <td><img height="300" alt="Playback on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Playback.png"/></td>
+    <td><img height="300" alt="UserSelection on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/UserSelection.png"/></td>
+  </tr>
+</table>
+</details>
 
 ## 📖 Documentation
 
