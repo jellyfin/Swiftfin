@@ -21,23 +21,6 @@
   <b>Swiftfin</b> is a modern video client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Made using Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
 </p>
 
-## 📸 Screenshots
-
-<p align="center">
-  <img width="32%" alt="Home on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Home.png"/>
-  <img width="32%" alt="Library on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Library.png"/>
-  <img width="32%" alt="Series on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Series.png"/>
-</p>
-<p align="center">
-  <img width="97%" alt="Playback on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Playback.png"/>
-</p>
-<p align="center">
-  <img width="48%" alt="Home on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Home.png"/>
-  <img width="48%" alt="Library on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Library.png"/>
-  <img width="48%" alt="Series on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Series.png"/>
-  <img width="48%" alt="Playback on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Playback.png"/>
-</p>
-
 ## ⚡️ Download
 
 <a href="https://apps.apple.com/us/app/swiftfin/id1604098728">
@@ -51,6 +34,24 @@ Use the TestFlight version to test new features and bug fixes before being publi
 <a href="https://testflight.apple.com/join/SqNPfdxq">
   <img height=75 alt="Get the beta on TestFlight" src="./Resources/testflight.svg"/>
 </a>
+
+## 📸 Screenshots
+
+<p align="center">
+  <img width="24%" alt="Home on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Home.png"/>
+  <img width="24%" alt="Library on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Library.png"/>
+  <img width="24%" alt="Series on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Series.png"/>
+</p>
+<p align="center">
+  <img width="50%" alt="Playback on iOS" src="./Documentation/Screenshots/iOS/en-US/Framed/Playback.png"/>
+</p>
+<p align="center">
+  <img width="40%" alt="Home on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Home.png"/>
+  <img width="40%" alt="Library on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Library.png"/>
+  <br/>
+  <img width="40%" alt="Series on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Series.png"/>
+  <img width="40%" alt="Playback on tvOS" src="./Documentation/Screenshots/tvOS/en-US/Raw/Playback.png"/>
+</p>
 
 ## 📖 Documentation
 
