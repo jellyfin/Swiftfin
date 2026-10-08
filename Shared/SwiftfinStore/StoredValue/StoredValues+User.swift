@@ -136,7 +136,7 @@ extension StoredValues.Keys {
             )
         }
 
-        static var savedFilters: Key<[SavedItemFilter]> {
+        static var savedFilters: Key<[StoredItemFilter]> {
             CurrentUserKey(
                 field: "setting-savedFilters",
                 default: []

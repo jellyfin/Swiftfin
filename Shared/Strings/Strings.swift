@@ -954,6 +954,8 @@ internal enum L10n {
   internal static let likedItems = L10n.tr("Localizable", "likedItems", fallback: "Liked items")
   /// Likes
   internal static let likes = L10n.tr("Localizable", "likes", fallback: "Likes")
+  /// Limit to library
+  internal static let limitToLibrary = L10n.tr("Localizable", "limitToLibrary", fallback: "Limit to library")
   /// List
   internal static let list = L10n.tr("Localizable", "list", fallback: "List")
   /// Live

@@ -25,17 +25,11 @@ extension NavigationRoute {
 
     @MainActor
     static func savedFilterEditor(viewModel: FilterViewModel) -> NavigationRoute {
-        let savedFilter = viewModel.selectedSavedFilter
-
-        return NavigationRoute(
+        NavigationRoute(
             id: "saved-filter-editor",
             style: .sheet
         ) {
-            SavedFilterEditorView(
-                viewModel: viewModel,
-                name: savedFilter?.name ?? "",
-                savedFilter: savedFilter
-            )
+            StoredFilterEditorView(viewModel: viewModel, filters: viewModel.savableFilters)
         }
     }
 

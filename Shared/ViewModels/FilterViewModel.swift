@@ -40,7 +40,7 @@ final class FilterViewModel: ViewModel {
     @Published
     var currentFilters: ItemFilterCollection
     @Published
-    private(set) var savedFilters: [SavedItemFilter] = []
+    private(set) var savedFilters: [StoredItemFilter] = []
 
     /// Fixed filters, excluded from selection state and reset actions
     let staticFilters: ItemFilterCollection
@@ -51,31 +51,43 @@ final class FilterViewModel: ViewModel {
         staticFilters.union(currentFilters) != staticFilters
     }
 
+    var savableFilters: ItemFilterCollection {
+        currentFilters
+            .mutating(\.itemTypes, with: [])
+            .mutating(\.letter, with: [])
+            .mutating(\.query, with: nil)
+    }
+
     var hasSavableFilters: Bool {
-        staticFilters.union(
-            currentFilters
-                .mutating(\.itemTypes, with: [])
-                .mutating(\.query, with: nil)
-        ) != staticFilters
+        savableFilters != .default
+    }
+
+    var libraryID: String? {
+        if let parent {
+            parent.id
+        } else {
+            "search"
+        }
+    }
+
+    var libraryItemTypes: [BaseItemKind] {
+        staticFilters.union(currentFilters).itemTypes
     }
 
     var hasFilterOptions: Bool {
         hasActiveFilters || savedFilters.isNotEmpty
     }
 
-    var selectedSavedFilter: SavedItemFilter? {
+    var selectedSavedFilter: StoredItemFilter? {
         get {
-            let filters = staticFilters
-                .union(currentFilters)
-                .mutating(\.query, with: nil)
-
-            return savedFilters.first { $0.filters.mutating(\.itemTypes, with: filters.itemTypes) == filters }
+            savedFilters.first { $0.filters.mutating(\.itemTypes, with: []) == savableFilters }
         }
         set {
             guard let newValue else { return }
 
             currentFilters = newValue.filters
                 .mutating(\.itemTypes, with: currentFilters.itemTypes)
+                .mutating(\.letter, with: currentFilters.letter)
                 .mutating(\.query, with: currentFilters.query)
         }
     }
@@ -104,7 +116,10 @@ final class FilterViewModel: ViewModel {
                 guard let self else { return }
 
                 savedFilters = StoredValues[.User.savedFilters]
-                    .filter { $0.libraryID == self.parent?.pagingLibraryID }
+                    .filter {
+                        ($0.libraryID == nil || $0.libraryID == self.libraryID) &&
+                            ($0.filters.itemTypes.isEmpty || $0.filters.itemTypes == self.libraryItemTypes)
+                    }
             }
             .store(in: &cancellables)
     }

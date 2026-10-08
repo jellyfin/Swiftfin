@@ -35,8 +35,11 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
     ) {
         var filters = filters ?? .default
 
-        if let id = parent.id, Defaults[.Customization.Library.rememberFilters], filters == .default {
-            filters = StoredValues[.User.libraryFilters(parentID: id)]
+        if let id = parent.id,
+           Defaults[.Customization.Library.rememberFilters],
+           staticFilters.union(filters).itemTypes.isEmpty
+        {
+            filters = filters.union(StoredValues[.User.libraryFilters(parentID: id)])
         }
 
         var grouping = parent.groupings?.defaultSelection
@@ -298,10 +301,10 @@ private struct ItemLibraryBody<Content: View>: View {
                     await filterViewModel.getQueryFilters()
                 }
             }
-            .onChange(of: filterViewModel.currentFilters) { _, filters in
+            .onReceive(filterViewModel.$currentFilters.dropFirst()) { filters in
                 guard let id = viewModel.library.parent.id,
                       Defaults[.Customization.Library.rememberFilters],
-                      filters.itemTypes.isEmpty
+                      filterViewModel.libraryItemTypes.isEmpty
                 else { return }
 
                 StoredValues[.User.libraryFilters(parentID: id)] = filters.mutating(\.query, with: nil)

@@ -8,10 +8,10 @@
 
 import Foundation
 
-struct SavedItemFilter: Hashable, Identifiable, Storable {
+struct StoredItemFilter: Hashable, Identifiable, Storable {
 
     private(set) var id: String = UUID().uuidString
-    let libraryID: String?
+    var libraryID: String?
     var name: String
-    let filters: ItemFilterCollection
+    var filters: ItemFilterCollection
 }

@@ -144,8 +144,7 @@ struct FilterTrack: View {
             case .options:
                 Menu {
                     if viewModel.hasActiveFilters {
-                        #if os(iOS)
-                        if viewModel.savedFilters.isEmpty {
+                        if UIDevice.isTV || viewModel.savedFilters.isEmpty {
                             Section {
                                 menuActions
                             }
@@ -154,22 +153,16 @@ struct FilterTrack: View {
                                 menuActions
                             }
                         }
-                        #else
-                        Section {
-                            menuActions
-                        }
-                        #endif
                     }
 
                     Section {
                         Picker(L10n.filters, selection: $viewModel.selectedSavedFilter) {
                             ForEach(viewModel.savedFilters) { savedFilter in
                                 Text(savedFilter.name)
-                                    .tag(savedFilter as SavedItemFilter?)
+                                    .tag(savedFilter as StoredItemFilter?)
                             }
                         }
                         .pickerStyle(.inline)
-                        .labelsHidden()
                     }
                 } label: {
                     buttonLabel(for: target)
@@ -186,6 +179,7 @@ struct FilterTrack: View {
                 #else
                 .labelStyle(.iconOnly)
                 #endif
+
             case let .filter(type):
                 Button {
                     router.route(to: .filter(type: type, viewModel: viewModel))
