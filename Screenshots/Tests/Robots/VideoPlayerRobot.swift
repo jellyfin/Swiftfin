@@ -14,10 +14,6 @@ final class VideoPlayerRobot: Robot {
         button(L10n.close)
     }
 
-    private var remainingTime: XCUIElement {
-        app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH '-'")).firstMatch
-    }
-
     @discardableResult
     func showControls() -> Self {
         #if os(tvOS)
@@ -47,7 +43,7 @@ final class VideoPlayerRobot: Robot {
         #if os(iOS)
         revealControls()
 
-        let remaining = waitFor(remainingTime)
+        let remaining = waitFor(app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH '-'")).firstMatch)
         let width = remaining.frame.maxX - (app.frame.width - remaining.frame.maxX)
         let start = app.coordinate(withNormalizedOffset: .zero)
             .withOffset(CGVector(dx: app.frame.midX, dy: remaining.frame.minY - 10))

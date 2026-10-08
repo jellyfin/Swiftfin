@@ -8,45 +8,31 @@
 
 import Foundation
 
-struct DeviceTypeList: Decodable {
+struct SimulatorList: Decodable {
 
     struct DeviceType: Decodable {
         let identifier: String
         let name: String
     }
 
-    let devicetypes: [DeviceType]
-}
-
-struct RuntimeList: Decodable {
-
     struct Runtime: Decodable {
         let identifier: String
-        let platform: String?
         let version: String
         let isAvailable: Bool
+        let supportedDeviceTypes: [DeviceType]
     }
-
-    let runtimes: [Runtime]
-}
-
-struct DeviceList: Decodable {
 
     struct Device: Decodable {
         let name: String
         let deviceTypeIdentifier: String?
+        let isAvailable: Bool
     }
 
+    let runtimes: [Runtime]
     let devices: [String: [Device]]
 }
 
-func fail(_ message: String) -> Never {
-    print(message)
-    exit(1)
-}
-
-@discardableResult
-func simctl(_ arguments: [String]) -> Data {
+func simctl(_ arguments: String...) throws -> Data {
     let process = Process()
     let output = Pipe()
 
@@ -54,63 +40,47 @@ func simctl(_ arguments: [String]) -> Data {
     process.arguments = ["simctl"] + arguments
     process.standardOutput = output
 
-    do {
-        try process.run()
-    } catch {
-        fail("Unable to run simctl: \(error.localizedDescription)")
-    }
-
+    try process.run()
     let data = output.fileHandleForReading.readDataToEndOfFile()
     process.waitUntilExit()
 
     guard process.terminationStatus == 0 else {
-        fail("simctl \(arguments.joined(separator: " ")) failed")
+        print("simctl \(arguments.joined(separator: " ")) failed")
+        exit(1)
     }
 
     return data
 }
 
-func list<T: Decodable>(_ type: T.Type, _ arguments: String...) -> T {
-    guard let list = try? JSONDecoder().decode(T.self, from: simctl(["list", "-j"] + arguments)) else {
-        fail("Unable to read simctl list \(arguments.joined(separator: " "))")
-    }
-
-    return list
+guard CommandLine.arguments.count == 2 else {
+    print("Usage: swift Screenshots/Tools/Simulator.swift <device type>")
+    exit(1)
 }
 
-let arguments = CommandLine.arguments.dropFirst()
-
-guard arguments.count == 2 else {
-    fail("Usage: swift Screenshots/Tools/Simulator.swift <device type> <runtime platform>")
-}
-
-let deviceType = arguments[arguments.startIndex]
-let runtimePlatform = arguments[arguments.startIndex + 1]
 let typePrefix = "com.apple.CoreSimulator.SimDeviceType."
+let deviceType = CommandLine.arguments[1]
 let identifier = deviceType.hasPrefix(typePrefix) ? deviceType : typePrefix + deviceType
 
-let deviceTypes = list(DeviceTypeList.self, "devicetypes").devicetypes
+let list = try JSONDecoder().decode(SimulatorList.self, from: simctl("list", "-j"))
 
-guard let type = deviceTypes.first(where: { $0.identifier == identifier }) else {
-    let available = deviceTypes.map { $0.identifier.replacing(typePrefix, with: "") }
-    fail("Simulator type '\(deviceType)' is not installed. Available: \(available.joined(separator: ", "))")
-}
-
-let devices = list(DeviceList.self, "devices", "available").devices.values.flatMap(\.self)
-
-if let existing = devices.first(where: { $0.deviceTypeIdentifier == identifier }) {
-    print(existing.name)
+if let device = list.devices.values.joined().first(where: { $0.isAvailable && $0.deviceTypeIdentifier == identifier }) {
+    print(device.name)
     exit(0)
 }
 
-guard let runtime = list(RuntimeList.self, "runtimes")
-    .runtimes
-    .filter({ $0.isAvailable && $0.platform == runtimePlatform })
-    .max(by: { $0.version.compare($1.version, options: .numeric) == .orderedAscending })
+guard let runtime = list.runtimes
+    .filter({ $0.isAvailable && $0.supportedDeviceTypes.contains { $0.identifier == identifier } })
+    .max(by: { $0.version.compare($1.version, options: .numeric) == .orderedAscending }),
+    let type = runtime.supportedDeviceTypes.first(where: { $0.identifier == identifier })
 else {
-    fail("No \(runtimePlatform) simulator runtime is installed")
+    let available = Set(list.runtimes.filter(\.isAvailable).flatMap(\.supportedDeviceTypes).map(\.identifier))
+        .map { $0.replacing(typePrefix, with: "") }
+        .sorted()
+
+    print("Simulator type '\(deviceType)' is not installed. Available: \(available.joined(separator: ", "))")
+    exit(1)
 }
 
-simctl(["create", type.name, identifier, runtime.identifier])
+_ = try simctl("create", type.name, identifier, runtime.identifier)
 
 print(type.name)

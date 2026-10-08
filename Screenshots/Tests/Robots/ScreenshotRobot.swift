@@ -10,21 +10,21 @@ import XCTest
 
 final class ScreenshotRobot: Robot {
 
-    private let configuration: ScreenshotConfiguration
+    private let server = "https://demo.jellyfin.org/stable"
+    private let username = "demo"
+    private let movieLibrary = "Movies"
+    private let movie = "Caminandes: Llama Drama"
+    private let showLibrary = "Shows"
+    private let series = "Pioneer One"
 
     private var library: LibraryRobot!
     private var item: ItemRobot!
 
     private lazy var tabs = SelectUserRobot(app: app)
         .connect()
-        .connect(to: configuration.server)
+        .connect(to: server)
         .addUser()
-        .signIn(username: configuration.username, password: configuration.password)
-
-    init(app: XCUIApplication, configuration: ScreenshotConfiguration) {
-        self.configuration = configuration
-        super.init(app: app)
-    }
+        .signIn(username: username)
 
     func capture(_ screenshot: Screenshot) {
         switch screenshot {
@@ -37,18 +37,18 @@ final class ScreenshotRobot: Robot {
                 .screenshot(.media)
 
         case .library:
-            library = library.library(configuration.movieLibrary)
+            library = library.library(movieLibrary)
                 .screenshot(.library)
 
         case .movie:
-            item = library.item(configuration.movie)
+            item = library.item(movie)
                 .screenshot(.movie)
 
         case .series:
             item = item.goBack()
                 .goBack()
-                .library(configuration.showLibrary)
-                .item(configuration.series)
+                .library(showLibrary)
+                .item(series)
                 .screenshot(.series)
 
         case .episode:

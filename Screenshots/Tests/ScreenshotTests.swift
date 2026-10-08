@@ -25,7 +25,7 @@ final class ScreenshotTests: XCTestCase {
 
         app.launch()
 
-        let robot = ScreenshotRobot(app: app, configuration: ScreenshotConfiguration(launchArguments: app.launchArguments))
+        let robot = ScreenshotRobot(app: app)
 
         for screenshot in Screenshot.allCases {
             robot.capture(screenshot)

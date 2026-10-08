@@ -10,12 +10,8 @@ import XCTest
 
 final class UserSignInRobot: Robot {
 
-    func signIn(username: String, password: String) -> MainTabRobot {
+    func signIn(username: String) -> MainTabRobot {
         type(username, into: waitFor(app.textFields[L10n.username]))
-
-        if password.isNotEmpty {
-            type(password, into: app.secureTextFields[L10n.password])
-        }
 
         tap(button(L10n.signIn))
 

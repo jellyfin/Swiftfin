@@ -198,7 +198,6 @@
 		24EBA6499E0C420F8E5B2D33 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Extensions/Collection.swift,
 				Extensions/UIDevice.swift,
 				Strings/ProperNouns.swift,
 				Strings/Strings.swift,
@@ -208,7 +207,6 @@
 		3002B5F683E649EFBCF37FED /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Extensions/Collection.swift,
 				Extensions/UIDevice.swift,
 				Strings/ProperNouns.swift,
 				Strings/Strings.swift,

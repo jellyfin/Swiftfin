@@ -1,6 +1,6 @@
 # Screenshots
 
-Use this guide to generate App Store screenshots for iOS, iPadOS, and tvOS.
+Use this guide to generate App Store screenshots for iOS, iPadOS, and tvOS from the [Jellyfin demo server](https://demo.jellyfin.org/stable).
 
 > [!IMPORTANT]
 > Each simulator is erased before its screenshots are captured.
@@ -15,7 +15,6 @@ Options:
 
 - `platform`: `ios`, `ipados`, or `tvos`. Runs all platforms when omitted.
 - `process`: `false` to skip framing and cards.
-- `server`, `username`, `password`: the Jellyfin server to sign in to. Defaults to the [Jellyfin demo server](https://demo.jellyfin.org/stable).
 - `iosDevice`, `ipadosDevice`, `tvosDevice`: the simulator device type to use, as listed by `xcrun simctl list devicetypes`.
   - Example: `iosDevice:iPhone-16-Pro`
 

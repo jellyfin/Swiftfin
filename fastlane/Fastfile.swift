@@ -306,15 +306,6 @@ class Fastfile: LaneFile {
                 "Apple-TV-4K-3rd-generation-4K"
             }
         }
-
-        var runtimePlatform: String {
-            switch self {
-            case .iOS, .iPadOS:
-                "iOS"
-            case .tvOS:
-                "tvOS"
-            }
-        }
     }
 
     func screenshotsLane(withOptions options: [String: String]?) {
@@ -336,16 +327,6 @@ class Fastfile: LaneFile {
 
         let isRawOnly = options["process"]?.trimOption()?.lowercased() == "false"
 
-        let launchArguments = [
-            ("server", "ScreenshotServer"),
-            ("username", "ScreenshotUsername"),
-            ("password", "ScreenshotPassword"),
-        ]
-        .compactMap { option, argument in
-            options[option]?.trimOption().map { "-\(argument) \($0)" }
-        }
-        .joined(separator: " ")
-
         let repositoryDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
         let toolsDirectory = repositoryDirectory.appendingPathComponent("Screenshots/Tools")
         let captionsDirectory = FileManager.default.homeDirectoryForCurrentUser
@@ -357,7 +338,7 @@ class Fastfile: LaneFile {
             let deviceType = options[platform.deviceOption]?.trimOption() ?? platform.defaultDeviceType
 
             let device = sh(
-                command: "swift \"\(toolsDirectory.path)/Simulator.swift\" \(deviceType) \(platform.runtimePlatform)",
+                command: "swift \"\(toolsDirectory.path)/Simulator.swift\" \(deviceType)",
                 log: .userDefined(false)
             )
             .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -369,7 +350,6 @@ class Fastfile: LaneFile {
                 xcargs: .userDefined("-skipMacroValidation -collect-test-diagnostics never"),
                 devices: .userDefined([device]),
                 languages: ["en-US"],
-                launchArguments: [launchArguments],
                 outputDirectory: captureDirectory.path,
                 skipOpenSummary: .userDefined(true),
                 clearPreviousScreenshots: .userDefined(true),
