@@ -32,10 +32,11 @@ extension UserSession {
                     guard let data = message.data else { return }
 
                     self.items.libraryDidChange()
+
                     for id in data.itemsRemoved ?? [] {
                         self.items.delete(id: id)
                     }
-                    // Unloaded items rely on their next collection fetch for metadata
+
                     for id in data.itemsUpdated ?? [] {
                         guard let record = self.items[id] else { continue }
 

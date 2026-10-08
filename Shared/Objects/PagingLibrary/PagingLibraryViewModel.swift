@@ -186,6 +186,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
                     }
 
                 case .libraryChanged:
+                    // TODO: determine if always safe
                     self.scheduleRefreshForStoreChange()
 
                 case let .deleted(id):
