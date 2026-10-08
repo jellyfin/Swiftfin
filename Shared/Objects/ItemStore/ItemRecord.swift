@@ -10,24 +10,17 @@ import Foundation
 import JellyfinAPI
 import Observation
 
-/// Identifies a server item within its owning store.
-struct ItemKey: Hashable, Sendable {
-
-    let itemID: String
-}
-
-/// Selects a Boolean user-data field for an optimistic update.
 typealias ItemUserDataField = WritableKeyPath<UserItemDataDto, Bool?>
 
-/// Holds observable item data shared by views and collections in one session.
+/// Holds observable item data shared by views and collections in one session
 @MainActor
 @Observable
 final class ItemRecord: Identifiable {
 
-    nonisolated let id: ItemKey
+    nonisolated let id: String
     private var metadata: BaseItemDto?
     private var currentProgram: ItemRecord?
-    /// An optimistic change shows a requested value before server confirmation and rolls back if the request fails.
+    // Pending writes overlay confirmed data until each write finishes
     private var optimisticChanges: [(id: UUID, field: ItemUserDataField, value: Bool)] = []
 
     @ObservationIgnored
@@ -45,7 +38,7 @@ final class ItemRecord: Identifiable {
         }
 
         if optimisticChanges.isNotEmpty {
-            var data = value.userData ?? UserItemDataDto(key: id.itemID)
+            var data = value.userData ?? UserItemDataDto(key: id)
 
             for change in optimisticChanges {
                 data[keyPath: change.field] = change.value
@@ -73,8 +66,8 @@ final class ItemRecord: Identifiable {
         optimisticChanges.removeAll { $0.id == id }
     }
 
-    /// Stored records start empty; presentation fallbacks may start with a local snapshot.
-    init(id: ItemKey, presentationValue: BaseItemDto? = nil) {
+    /// Accepts an initial snapshot for presentation-only records
+    init(id: String, presentationValue: BaseItemDto? = nil) {
         self.id = id
         self.metadata = presentationValue.map(Self.withoutPlaylistOccurrences)
     }
@@ -85,12 +78,14 @@ final class ItemRecord: Identifiable {
         revision: UInt64,
         program: ItemRecord?
     ) throws -> ItemStore.Update {
-        let previous = metadata ?? BaseItemDto(id: id.itemID)
+        let previous = metadata ?? BaseItemDto(id: id)
+        // User-data changes should not trigger metadata refreshes
         var previousMetadata = previous
         previousMetadata.userData = nil
 
         let excluded: Set<String> = ["Id", "UserData", "CurrentProgram", "PlaylistItemId"]
         let metadataFields = patch.fields.subtracting(excluded)
+        // Revision changes are committed only after decoding succeeds
         var metadataRevisions = self.metadataRevisions
         var value = previous
 
@@ -110,7 +105,7 @@ final class ItemRecord: Identifiable {
                 replacing: patch.scope != .partial
             )
 
-            merged["Id"] = id.itemID
+            merged["Id"] = id
             value = try JSONSerialization.decode(BaseItemDto.self, from: merged)
             value.userData = previous.userData
         }
@@ -130,18 +125,21 @@ final class ItemRecord: Identifiable {
                     )
 
                     value.userData = try JSONSerialization.decode(UserItemDataDto.self, from: merged)
-                    value.userData?.itemID = id.itemID
+                    value.userData?.itemID = id
                 }
             } else if revision >= userDataRevisions.latest {
+                // Clearing user data must not discard any newer field update
                 value.userData = nil
                 userDataRevisions.clear(at: revision)
             }
         }
 
         let previousProgramID = currentProgram?.id
-        if (patch.scope == .fullItem || (patch.scope == .partial && patch.fields.contains("CurrentProgram"))) && revision >=
-            programRevision
+
+        if (patch.scope == .fullItem || (patch.scope == .partial && patch.fields.contains("CurrentProgram")))
+            && revision >= programRevision
         {
+            // Reject program links that would create a cycle of retained records
             currentProgram = program?.references(self) == true ? nil : program
             programRevision = revision
         }
@@ -153,7 +151,7 @@ final class ItemRecord: Identifiable {
         updatedMetadata.userData = nil
 
         let update = ItemStore.Update(
-            itemID: id.itemID,
+            itemID: id,
             metadataChanged: previousMetadata != updatedMetadata || previousProgramID != currentProgram?.id,
             userDataChanged: previous.userData != value.userData
         )
@@ -178,6 +176,7 @@ final class ItemRecord: Identifiable {
         self === record || currentProgram?.references(record) == true
     }
 
+    // Playlist positions belong to entries rather than shared records
     private static func withoutPlaylistOccurrences(_ item: BaseItemDto) -> BaseItemDto {
         var item = item
         item.playlistItemID = nil

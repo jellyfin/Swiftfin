@@ -101,7 +101,7 @@ final class ActiveSessionsViewModel: ViewModel {
             return
         }
 
-        // Retain newly merged records until each session model takes ownership.
+        // Retain newly merged records until each session model takes ownership
         let records = mergeItems ? try? userSession?.receiveSessionItems(incomingSessions) : nil
         defer { withExtendedLifetime(records) {} }
 

@@ -55,7 +55,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     private let startPositionTicks: Int?
     private let runtimeTicks: Int?
 
-    /// Playback overrides stay local; other metadata comes from the shared record.
+    /// Applies local playback overrides to the latest shared metadata
     var baseItem: BaseItemDto {
         var value = sharedItem
         value.runTimeTicks = runtimeTicks ?? value.runTimeTicks

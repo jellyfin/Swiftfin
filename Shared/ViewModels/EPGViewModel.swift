@@ -114,7 +114,7 @@ final class EPGViewModel: ViewModel {
                     self.channels.removeAll { $0.itemID == id }
                     self.programs.removeValue(forKey: id)
                     for (channelID, blocks) in self.programs where blocks.contains(where: { $0.id.programIDs.contains(id) }) {
-                        // Grouped programs cache their bounds, so rebuild them after removing a member.
+                        // Rebuild grouped programs to recalculate their bounds after a deletion
                         self.programs[channelID] = blocks.flatMap(\.programs).programBlocks(
                             startDate: self.startDate,
                             endDate: self.endDate

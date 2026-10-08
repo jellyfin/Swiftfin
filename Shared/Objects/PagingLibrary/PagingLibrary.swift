@@ -10,7 +10,7 @@ import Get
 import JellyfinAPI
 import SwiftUI
 
-/// Carries pagination counts and a request token until a page is accepted.
+/// Carries pagination counts and a request token until a page is accepted
 @MainActor
 final class LibraryPageState {
 
@@ -45,6 +45,7 @@ final class LibraryPageState {
         return try response.patches()
     }
 
+    // Server offsets count rows that may be filtered out before they reach the collection
     func progress(returnedCount: Int) -> (nextOffset: Int, hasNextPage: Bool) {
         let consumedRows = consumedRows ?? returnedCount
         let nextOffset = pageOffset + consumedRows
@@ -78,7 +79,7 @@ protocol PagingLibrary<Element> {
 
     func includes(_ element: Element, environment: Environment) -> Bool
 
-    /// Reload only when user data can change this library's membership or ordering.
+    /// Reloads when user data can change this library's membership or ordering
     func shouldRefreshForUserDataChange(environment: Environment) -> Bool
 
     @ViewBuilder

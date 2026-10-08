@@ -9,14 +9,14 @@
 import Foundation
 import JellyfinAPI
 
-/// Represents one occurrence of an item backed by a shared record.
+/// Represents one occurrence of an item backed by a shared record
 @MainActor
 struct ItemEntry: Identifiable, Hashable {
 
-    /// Distinguishes repeated appearances of the same item in a collection.
+    /// Distinguishes repeated appearances of the same item in a collection
     struct ID: Hashable, Sendable {
 
-        let item: ItemKey
+        let itemID: String
         let occurrence: String?
     }
 
@@ -24,25 +24,28 @@ struct ItemEntry: Identifiable, Hashable {
     let item: ItemRecord
 
     init(item: ItemRecord, occurrence: String? = nil) {
-        self.id = ID(item: item.id, occurrence: occurrence)
+        self.id = ID(itemID: item.id, occurrence: occurrence)
         self.item = item
     }
 
     var value: BaseItemDto? {
         guard var value = item.value else { return nil }
 
+        // Apply playlist identity to this occurrence without changing the shared record
         value.playlistItemID = id.occurrence
         return value
     }
 
     nonisolated var itemID: String {
-        id.item.itemID
+        id.itemID
     }
 
+    /// Keeps the item ID available after its record is invalidated
     var snapshot: BaseItemDto {
         value ?? BaseItemDto(id: itemID)
     }
 
+    // Metadata changes do not change the identity of an entry
     nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
     }

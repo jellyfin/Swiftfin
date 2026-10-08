@@ -10,24 +10,22 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-/// Views and collections own records; each session's store keeps weak references.
-///
-/// Stored for shared media item values.
+/// Keeps weak references to records owned by views and collections
 @MainActor
 final class ItemStore {
 
-    /// Orders responses within one store.
+    /// Identifies when a request began within this store
     struct RequestToken {
 
         fileprivate let revision: UInt64
     }
 
-    /// Describes an item or collection change for store observers.
+    /// Describes an item or collection change for store observers
     enum Change {
 
         case updated(Update)
         case deleted(String)
-        /// Membership or ordering changed, including unloaded items.
+        /// Signals that collection membership or ordering may have changed
         case libraryChanged
         case invalidated
     }
@@ -60,15 +58,19 @@ final class ItemStore {
     private(set) var isActive = true
     private var revision: UInt64 = 0
     private var records: [String: WeakBox<ItemRecord>] = [:]
+    // Deleted IDs stay blocked even after their weak records are released
     private var deletedIDs: Set<String> = []
     private var insertionsUntilPrune = 128
     private var mutations: [String: [(id: UUID, task: Task<Void, Error>)]] = [:]
 
-    func retainedRecord(id: String) -> ItemRecord? {
-        records[id]?.value
+    /// Looks up an available shared record without creating one
+    subscript(id: String) -> ItemRecord? {
+        guard isAvailable(id: id) else { return nil }
+
+        return records[id]?.value
     }
 
-    /// Create before sending a request to order its updates against other responses.
+    /// Assigns a revision before sending so late responses cannot restore older data
     func beginRequest() throws -> RequestToken {
         guard isActive else { throw StoreError.invalidSession }
 
@@ -81,40 +83,40 @@ final class ItemStore {
         guard isActive else { throw StoreError.invalidSession }
     }
 
-    /// Resolve a retained snapshot without letting a view constructor overwrite newer data.
-    func reference(to value: BaseItemDto) throws -> ItemRecord {
-        guard isActive else { throw StoreError.invalidSession }
-
+    /// Seeds a snapshot only when its shared record is first created
+    func record(for value: BaseItemDto) throws -> ItemRecord {
         let id = try itemID(value)
+        let acquisition = acquireRecord(id: id)
+        let record = acquisition.record
 
-        if let record = records[id]?.value {
-            return record
-        }
+        guard case .created = acquisition else { return record }
 
-        let record = record(for: id)
-
-        if !deletedIDs.contains(id) {
-            let patch = try ItemPatch.snapshot(value)
-            let program = try value.currentProgram.flatMap { $0.id == id ? nil : try reference(to: $0) }
-            try record.merge(patch, revision: 0, program: program)
-        }
+        let patch = try ItemPatch.snapshot(value)
+        let program = try value.currentProgram.flatMap { $0.id == id ? nil : try self.record(for: $0) }
+        // Snapshot data starts below every request revision
+        try record.merge(patch, revision: 0, program: program)
 
         return record
     }
 
-    /// Returns nil when a response has no usable ID or the item was deleted.
+    /// Returns nil when a response has no usable ID or the item was deleted
     @discardableResult
     func merge(_ patch: ItemPatch, token: RequestToken) throws -> ItemRecord? {
         try validate()
 
         guard let id = try? itemID(patch.value) else { return nil }
-        guard !deletedIDs.contains(id) else { return nil }
 
-        let retained = retainedRecord(id: id)
-        let record = retained ?? record(for: id)
+        let acquisition = acquireRecord(id: id)
+
+        if case .unavailable = acquisition {
+            return nil
+        }
+
+        let record = acquisition.record
 
         var program: ItemRecord?
 
+        // Nested programs share the parent request revision and merge scope
         if patch.scope != .metadataSnapshot, let value = patch.value.currentProgram, let object = patch.program,
            value.id != id
         {
@@ -123,23 +125,28 @@ final class ItemStore {
 
         let update = try record.merge(patch, revision: token.revision, program: program)
 
-        // Loading a new page establishes membership; it must not trigger another fetch.
-        if retained != nil, update.hasChanges {
+        // Initial record loads avoid triggering another collection refresh
+        if case .existing = acquisition, update.hasChanges {
             changeSubject.send(.updated(update))
         }
 
         return record
     }
 
-    /// HTTP replies supply raw field names; socket DTOs use their encoded fields.
-    func mergeUserData(_ data: UserItemDataDto, fields: Set<String>? = nil, token: RequestToken) throws {
+    /// Uses raw field names when an HTTP response provides them
+    func mergeUserData(
+        _ data: UserItemDataDto,
+        fields: Set<String>? = nil,
+        token: RequestToken
+    ) throws {
         try validate()
 
-        guard let id = data.itemID, !deletedIDs.contains(id) else { return }
+        guard let id = data.itemID else { return }
         guard id.nilIfBlank != nil else { throw StoreError.invalidItemID }
+        guard isAvailable(id: id) else { return }
 
-        // Unloaded items can affect a collection without needing a retained record.
-        guard let record = retainedRecord(id: id) else {
+        // Unloaded items can affect a collection without needing a retained record
+        guard let record = self[id] else {
             changeSubject.send(.updated(Update(itemID: id, userDataChanged: true)))
             return
         }
@@ -150,13 +157,12 @@ final class ItemStore {
             userDataFields: fields ?? Set(JSONSerialization.encode(data).keys)
         )
         let update = try record.merge(patch, revision: token.revision, program: nil)
-        // Actions and socket updates can affect collections even when the item isn't loaded.
         if update.hasChanges {
             changeSubject.send(.updated(update))
         }
     }
 
-    /// Nil draft fields clear metadata; session user data is preserved.
+    /// Replaces draft metadata without changing session user data
     func acceptMetadataDraft(_ value: BaseItemDto) throws {
         try validate()
 
@@ -166,18 +172,18 @@ final class ItemStore {
         libraryDidChange()
     }
 
-    /// Serialize writes while preserving later optimistic changes if an earlier write fails.
+    /// Queues writes for each item while showing optimistic values immediately
     func mutateUserData(
         _ item: ItemRecord,
         field: ItemUserDataField,
         to value: Bool,
         operation: @escaping @MainActor () async throws -> (value: UserItemDataDto, fields: Set<String>)
     ) async throws {
-        guard isActive, retainedRecord(id: item.id.itemID) === item, item.value != nil else {
+        guard self[item.id] === item, item.value != nil else {
             throw StoreError.itemUnavailable
         }
 
-        let itemID = item.id.itemID
+        let itemID = item.id
         let mutationID = UUID()
         let previous = mutations[itemID]?.last?.task
         item.beginChange(id: mutationID, field: field, value: value)
@@ -193,6 +199,7 @@ final class ItemStore {
             }
 
             if let previous {
+                // Failed writes do not block later changes
                 _ = await previous.result
             }
 
@@ -204,8 +211,13 @@ final class ItemStore {
             guard item.value != nil else { throw StoreError.itemUnavailable }
 
             data.value.itemID = itemID
-            // A new revision prevents reads started during the write from restoring stale data.
-            try mergeUserData(data.value, fields: data.fields, token: beginRequest())
+
+            // Confirmation gets a new revision to protect it from reads started during the write
+            try mergeUserData(
+                data.value,
+                fields: data.fields,
+                token: beginRequest()
+            )
         }
 
         mutations[itemID, default: []].append((mutationID, task))
@@ -223,6 +235,7 @@ final class ItemStore {
         changeSubject.send(.libraryChanged)
     }
 
+    /// Invalidates loaded items and blocks later responses for the same ID
     func delete(id: String) {
         guard isActive, deletedIDs.insert(id).inserted else { return }
 
@@ -234,6 +247,7 @@ final class ItemStore {
         changeSubject.send(.deleted(id))
     }
 
+    /// Makes records held by existing views unavailable when the session ends
     func invalidate() {
         guard isActive else { return }
 
@@ -255,27 +269,46 @@ final class ItemStore {
         changeSubject.send(completion: .finished)
     }
 
-    private func prune() {
-        records = records.filter { $0.value.value != nil }
-        insertionsUntilPrune = max(128, records.count)
+    /// Distinguishes records when seeding or merging data
+    private enum Acquisition {
+
+        case existing(ItemRecord)
+        case created(ItemRecord)
+        case unavailable(ItemRecord)
+
+        var record: ItemRecord {
+            switch self {
+            case let .existing(record), let .created(record), let .unavailable(record):
+                record
+            }
+        }
     }
 
-    private func record(for id: String) -> ItemRecord {
+    private func isAvailable(id: String) -> Bool {
+        isActive && !deletedIDs.contains(id)
+    }
+
+    /// Resolves record identity before deciding whether it can be updated
+    private func acquireRecord(id: String) -> Acquisition {
+        guard isActive else { return .unavailable(ItemRecord(id: id)) }
+
+        let isAvailable = isAvailable(id: id)
+
         if let record = records[id]?.value {
-            return record
+            return isAvailable ? .existing(record) : .unavailable(record)
         }
 
-        // Only discard dead weak references. Space scans with the registry size so
-        // loading a large, still-owned library does not repeatedly scan every item.
+        // Prune less often as the number of retained records grows
         if insertionsUntilPrune == 0 {
-            prune()
+            records = records.filter { $0.value.value != nil }
+            insertionsUntilPrune = max(128, records.count)
         }
 
-        let record = ItemRecord(id: ItemKey(itemID: id))
+        let record = ItemRecord(id: id)
         records[id] = WeakBox(value: record)
         insertionsUntilPrune -= 1
 
-        return record
+        return isAvailable ? .created(record) : .unavailable(record)
     }
 
     private func itemID(_ value: BaseItemDto) throws -> String {

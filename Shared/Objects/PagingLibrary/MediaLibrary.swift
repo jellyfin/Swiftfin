@@ -8,7 +8,7 @@
 
 import JellyfinAPI
 
-/// Requests return patches; only the accepting pager may publish them to the session store.
+/// Defers patch merging until the pager accepts the response
 @MainActor
 protocol MediaLibrary: PagingLibrary where Element == ItemEntry, PageElement == ItemPatch {}
 

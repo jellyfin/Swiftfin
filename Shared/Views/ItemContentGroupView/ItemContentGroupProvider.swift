@@ -44,11 +44,11 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
                 if update.itemID == self.id, update.metadataChanged {
                     return ()
                 }
-                // Series and season playback selection depends on their children's progress.
+                // Series and season playback selection depends on their children's progress
                 guard self.item.type == .series || self.item.type == .season,
                       update.userDataChanged else { return nil }
 
-                let changedItem = store?.retainedRecord(id: update.itemID)?.value
+                let changedItem = store?[update.itemID]?.value
                 if update.itemID == self.id || changedItem?.seriesID == self.id || changedItem?.seasonID == self.id ||
                     changedItem?.type == nil
                 {
@@ -73,7 +73,8 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
         let userSession = try requireUserSession()
-        let fullItem = try await item.getFullItem(userSession: userSession)
+        let entry = try await userSession.getFullItem(item)
+        let fullItem = entry.snapshot
         let newMediaPlayerItemProvider = try await resolveMediaPlayerItemProvider(
             for: fullItem,
             userSession: userSession
@@ -81,9 +82,9 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
         let newLocalTrailers = try? await localTrailers(for: fullItem)
         let newRandomBackdropItem = try? await randomBackdropItem(for: fullItem)
 
-        guard $item.value != nil else { throw ItemStore.StoreError.itemUnavailable }
+        guard $item.value != nil, let fullItem = entry.value else { throw ItemStore.StoreError.itemUnavailable }
 
-        item = fullItem
+        $item = entry
         localTrailers = newLocalTrailers ?? []
         mediaPlayerItemProvider = newMediaPlayerItemProvider
         randomBackdropItem = newRandomBackdropItem
@@ -374,13 +375,15 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
 
         guard let playbackItem else { return nil }
 
-        let fullPlaybackItem = if item.type == .series || item.type == .season {
-            try await playbackItem.getFullItem(userSession: userSession)
-        } else {
-            playbackItem
+        if item.type == .series || item.type == .season {
+            let entry = try await userSession.getFullItem(playbackItem)
+            // Keep the record alive until the playback provider takes ownership
+            return withExtendedLifetime(entry) {
+                entry.snapshot.getPlaybackItemProvider(userSession: userSession)
+            }
         }
 
-        return fullPlaybackItem.getPlaybackItemProvider(userSession: userSession)
+        return playbackItem.getPlaybackItemProvider(userSession: userSession)
     }
 
     private func nextUpItem(for item: BaseItemDto) async throws -> BaseItemDto? {

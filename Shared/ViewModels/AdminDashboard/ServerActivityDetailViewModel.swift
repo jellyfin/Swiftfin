@@ -54,19 +54,19 @@ final class ServerActivityDetailViewModel: ViewModel {
     private func _refresh() async throws {
         let session = try requireUserSession()
         try session.items.validate()
-        async let fetchedItem: BaseItemDto? = getItem(for: log.itemID)
+        async let fetchedItem: ItemEntry? = getItem(for: log.itemID, userSession: session)
         async let fetchedUser: UserDto? = getUser(for: log.userID)
 
         let results = try? await (fetchedItem, fetchedUser)
         try session.items.validate()
-        item = results?.0
+        $item = results?.0
         user = results?.1
     }
 
-    private func getItem(for itemID: String?) async throws -> BaseItemDto? {
+    private func getItem(for itemID: String?, userSession: UserSession) async throws -> ItemEntry? {
         guard let itemID else { return nil }
 
-        return try await BaseItemDto(id: itemID).getFullItem(userSession: requireUserSession())
+        return try await userSession.getFullItem(id: itemID)
     }
 
     private func getUser(for userID: String?) async throws -> UserDto? {

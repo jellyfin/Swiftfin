@@ -318,7 +318,7 @@ final class UserSessionManager: ObservableObject {
         }
     }
 
-    /// Serialize transitions because starting and stopping session services can suspend.
+    /// Serialize transitions because starting and stopping session services can suspend
     @MainActor
     private func applyCurrentSession(_ newSession: UserSession?) async {
         let previousSession = currentSession

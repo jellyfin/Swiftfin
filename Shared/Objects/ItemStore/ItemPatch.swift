@@ -9,14 +9,17 @@
 import Foundation
 import JellyfinAPI
 
-/// Carries a decoded DTO and the field names selected for merging.
+/// Carries a decoded DTO and the field names selected for merging
 struct ItemPatch {
 
-    /// Controls whether omitted fields are kept, clear metadata, or clear the full item.
+    /// Defines field update behavior
     enum Scope {
 
+        /// Preserves omitted fields
         case partial
+        /// Replaces metadata while preserving user data and the current program
         case metadataSnapshot
+        /// Represents all valid data, including omitted fields
         case fullItem
     }
 
@@ -26,7 +29,7 @@ struct ItemPatch {
     let program: [String: Any]?
     let scope: Scope
 
-    /// Builds a patch when field presence is already known, such as a user-data update.
+    /// Builds a patch when field presence is already known, such as a user-data update
     init(
         value: BaseItemDto,
         fields: Set<String>,
@@ -41,8 +44,12 @@ struct ItemPatch {
         self.scope = scope
     }
 
-    /// Pairs a decoded DTO with the field names in its source object.
-    static func decoded(_ value: BaseItemDto, object: [String: Any], scope: Scope = .partial) -> ItemPatch {
+    /// Preserves field presence so explicit nulls can clear stored values
+    static func decoded(
+        _ value: BaseItemDto,
+        object: [String: Any],
+        scope: Scope = .partial
+    ) -> ItemPatch {
         ItemPatch(
             value: value,
             fields: Set(object.keys),
@@ -52,8 +59,15 @@ struct ItemPatch {
         )
     }
 
-    /// Uses encoded fields when a local snapshot has no raw response.
-    static func snapshot(_ value: BaseItemDto, scope: Scope = .partial) throws -> ItemPatch {
-        try decoded(value, object: JSONSerialization.encode(value), scope: scope)
+    /// Builds a patch from the fields included by DTO encoding
+    static func snapshot(
+        _ value: BaseItemDto,
+        scope: Scope = .partial
+    ) throws -> ItemPatch {
+        try decoded(
+            value,
+            object: JSONSerialization.encode(value),
+            scope: scope
+        )
     }
 }

@@ -37,7 +37,7 @@ extension BaseItemDto: LibraryParent {
         supportedItemTypes(for: nil)
     }
 
-    /// Folder libraries browse direct children, including nested folders.
+    /// Folder libraries browse direct children, including nested folders
     var isFolderCollection: Bool {
         libraryType == .folder ||
             ((libraryType == .collectionFolder || libraryType == .userView) && (collectionType ?? .folders) == .folders)

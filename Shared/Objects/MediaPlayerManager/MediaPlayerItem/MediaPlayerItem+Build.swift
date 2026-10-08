@@ -17,7 +17,7 @@ import Logging
 
 extension MediaPlayerItem {
 
-    /// The main `MediaPlayerItem` builder for normal online usage.
+    /// Builds a playback item from server metadata and playback information
     static func build(
         for initialItem: BaseItemDto,
         mediaSource _initialMediaSource: MediaSourceInfo? = nil,
@@ -40,12 +40,11 @@ extension MediaPlayerItem {
             throw ErrorMessage(L10n.unknownError)
         }
 
-        var item = try await initialItem.getFullItem(userSession: userSession)
-        let storedItem = SharedBaseItem(wrappedValue: item).entry
-        guard let currentItem = storedItem.value else { throw ItemStore.StoreError.itemUnavailable }
+        // Keep the shared record alive through playback setup
+        let storedItem = try await userSession.getFullItem(initialItem)
+        guard var item = storedItem.value else { throw ItemStore.StoreError.itemUnavailable }
 
-        item = currentItem
-
+        // Playback overrides apply to this copy without updating the shared record
         if let modifyItem {
             modifyItem(&item)
         }

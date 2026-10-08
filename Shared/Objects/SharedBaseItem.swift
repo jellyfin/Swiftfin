@@ -11,7 +11,6 @@ import FactoryKit
 import Foundation
 import JellyfinAPI
 
-/// Wraps a DTO in a shared item record without merging stale snapshots on assignment.
 @MainActor
 @propertyWrapper
 struct SharedBaseItem: Hashable {
@@ -21,18 +20,11 @@ struct SharedBaseItem: Hashable {
     init(wrappedValue: BaseItemDto) {
         let store = Container.shared.currentUserSession()?.items
 
-        let record: ItemRecord = if let store, let shared = try? store.reference(to: wrappedValue) {
-            shared
-        } else if let store, !store.isActive, let id = wrappedValue.id {
-            // An identified item from an inactive session must stay unavailable.
-            ItemRecord(id: ItemKey(itemID: id))
-        } else {
-            // Presentation-only records are not entered into the session store.
-            ItemRecord(
-                id: ItemKey(itemID: wrappedValue.id ?? UUID().uuidString),
-                presentationValue: wrappedValue
-            )
-        }
+        // Values without a session or usable ID are only for presentation
+        let record = (try? store?.record(for: wrappedValue)) ?? ItemRecord(
+            id: wrappedValue.id ?? UUID().uuidString,
+            presentationValue: wrappedValue
+        )
 
         entry = ItemEntry(item: record, occurrence: wrappedValue.playlistItemID)
     }
@@ -43,11 +35,25 @@ struct SharedBaseItem: Hashable {
     }
 
     var projectedValue: ItemEntry {
-        entry
+        get { entry }
+        set { entry = newValue }
     }
 
     nonisolated func hash(into hasher: inout Hasher) {
         hasher.combine(entry)
+    }
+
+    // Entry replacement must notify owners using Combine observation
+    static subscript<Owner: ObservableObject>(
+        _enclosingInstance owner: Owner,
+        projected projectedKeyPath: ReferenceWritableKeyPath<Owner, ItemEntry>,
+        storage storageKeyPath: ReferenceWritableKeyPath<Owner, Self>
+    ) -> ItemEntry {
+        get { owner[keyPath: storageKeyPath].projectedValue }
+        set {
+            (owner.objectWillChange as? ObservableObjectPublisher)?.send()
+            owner[keyPath: storageKeyPath].projectedValue = newValue
+        }
     }
 
     static subscript<Owner: ObservableObject>(
@@ -63,20 +69,36 @@ struct SharedBaseItem: Hashable {
     }
 }
 
-/// Wraps an optional DTO in a shared item record.
 @MainActor
 @propertyWrapper
 struct OptionalSharedBaseItem {
 
-    private var item: SharedBaseItem?
+    private var entry: ItemEntry?
 
     init(wrappedValue: BaseItemDto?) {
-        item = wrappedValue.map { SharedBaseItem(wrappedValue: $0) }
+        entry = wrappedValue.map { SharedBaseItem(wrappedValue: $0).entry }
     }
 
     var wrappedValue: BaseItemDto? {
-        get { item?.entry.value }
-        set { item = newValue.map { SharedBaseItem(wrappedValue: $0) } }
+        get { entry?.value }
+        set { entry = newValue.map { SharedBaseItem(wrappedValue: $0).entry } }
+    }
+
+    var projectedValue: ItemEntry? {
+        get { entry }
+        set { entry = newValue }
+    }
+
+    static subscript<Owner: ObservableObject>(
+        _enclosingInstance owner: Owner,
+        projected projectedKeyPath: ReferenceWritableKeyPath<Owner, ItemEntry?>,
+        storage storageKeyPath: ReferenceWritableKeyPath<Owner, Self>
+    ) -> ItemEntry? {
+        get { owner[keyPath: storageKeyPath].projectedValue }
+        set {
+            (owner.objectWillChange as? ObservableObjectPublisher)?.send()
+            owner[keyPath: storageKeyPath].projectedValue = newValue
+        }
     }
 
     static subscript<Owner: ObservableObject>(
@@ -92,7 +114,6 @@ struct OptionalSharedBaseItem {
     }
 }
 
-/// Wraps a DTO collection in shared item records.
 @MainActor
 @propertyWrapper
 struct SharedBaseItems: Hashable {

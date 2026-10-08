@@ -12,7 +12,7 @@ import Foundation
 
 extension JSONSerialization {
 
-    /// Encodes a value as a JSON field dictionary.
+    /// Encodes a value as a JSON field dictionary
     static func encode(_ value: some Encodable) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
 

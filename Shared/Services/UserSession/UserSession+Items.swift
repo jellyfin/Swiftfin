@@ -19,16 +19,30 @@ extension UserSession {
         try await send(request, itemScope: .partial)
     }
 
-    /// Treats the returned item as the source of truth for all of its fields.
-    func sendFullItem(_ request: Request<BaseItemDto>) async throws -> BaseItemDto {
+    func getFullItem(_ item: BaseItemDto) async throws -> ItemEntry {
+        try await getFullItem(id: item.id, occurrence: item.playlistItemID)
+    }
+
+    /// Fetches the full item into a retained shared entry
+    func getFullItem(id: String?, occurrence: String? = nil) async throws -> ItemEntry {
+        guard let id, id.nilIfBlank != nil else { throw ItemStore.StoreError.invalidItemID }
+
+        // Don't validate id, plugins may return a different item ID
+        let request = Paths.getItem(itemID: id, userID: user.id)
         let response = try await send(request, itemScope: .fullItem)
-        return response.value
+
+        guard let record = response.items.first, record.value != nil else {
+            throw ItemStore.StoreError.itemUnavailable
+        }
+
+        return ItemEntry(item: record, occurrence: occurrence ?? response.value.playlistItemID)
     }
 
     private func send<Value: Decodable & Sendable>(
         _ request: Request<Value>,
         itemScope: ItemPatch.Scope
     ) async throws -> (value: Value, items: [ItemRecord]) {
+        try items.validate()
         let token = try items.beginRequest()
         let response = try await client.send(request)
         try items.validate()
@@ -42,7 +56,7 @@ extension UserSession {
             records = []
         }
 
-        // Keep merged records alive until the caller takes ownership.
+        // Keep merged records alive until the caller takes ownership
         return (response.value, records)
     }
 

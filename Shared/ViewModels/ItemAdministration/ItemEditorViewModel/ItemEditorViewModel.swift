@@ -106,7 +106,7 @@ class ItemEditorViewModel: ViewModel {
 
         events.send(.metadataRefreshStarted)
 
-        // Fall back to one refresh if the server doesn't report the library change over its socket.
+        // Fall back to one refresh if the server doesn't report the library change over its socket
         try await Task.sleep(for: .seconds(5))
         await refreshItem()
     }
@@ -118,7 +118,7 @@ class ItemEditorViewModel: ViewModel {
 
     @Function(\Action.Cases.refreshItem)
     private func _refreshItem() async throws {
-        self.item = try await item.getFullItem(userSession: requireUserSession())
+        $item = try await requireUserSession().getFullItem(item)
         events.send(.updated)
     }
 

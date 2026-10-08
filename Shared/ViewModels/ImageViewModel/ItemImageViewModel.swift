@@ -154,7 +154,7 @@ final class ItemImageViewModel: ViewModel {
             try await send(request)
         }
 
-        item = try await item.getFullItem(userSession: requireUserSession())
+        $item = try await requireUserSession().getFullItem(item)
 
         try await _refresh()
         events.send(.deleted)

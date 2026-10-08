@@ -63,7 +63,7 @@ final class SessionViewModel: ViewModel, @preconcurrency Identifiable {
         }
         set {
             var value = newValue
-            // Remote playback progress belongs to that playback session, not this user's library state.
+            // Remote playback progress belongs to that playback session, not this user's library state
             nowPlayingItem = value.nowPlayingItem?.withoutUserData
             value.nowPlayingItem = nil
             sessionInfo = value

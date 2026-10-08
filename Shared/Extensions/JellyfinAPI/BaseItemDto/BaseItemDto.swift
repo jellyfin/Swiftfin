@@ -655,18 +655,6 @@ extension BaseItemDto {
         }
     }
 
-    /// Fetches a full item
-    @MainActor
-    func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
-        guard let id else {
-            throw ErrorMessage(L10n.unknownError)
-        }
-
-        // Plugins may return an item whose ID differs from the requested ID.
-        let request = Paths.getItem(itemID: id, userID: userSession.user.id)
-        return try await userSession.sendFullItem(request)
-    }
-
     var withoutUserData: BaseItemDto {
         with(self) {
             $0.currentProgram = currentProgram?.withoutUserData

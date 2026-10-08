@@ -56,7 +56,7 @@ extension ItemTrait: SupportedCaseIterable {
 
 extension UserItemDataDto {
 
-    /// Missing fields cannot disqualify a partial response.
+    /// Missing fields cannot disqualify a partial response
     func matches(_ filters: some Sequence<JellyfinAPI.ItemFilter>) -> Bool {
         filters.allSatisfy { filter in
             switch filter {

@@ -20,7 +20,7 @@ extension SessionInfoDto: BaseItemPatchProvider {
             throw CocoaError(.coderInvalidValue)
         }
 
-        // Other sessions' user data does not belong to the current signed-in user.
+        // Session playback data must not replace the signed-in user's item progress
         return [ItemPatch.decoded(
             nowPlayingItem.withoutUserData,
             object: removingUserData(from: fields),

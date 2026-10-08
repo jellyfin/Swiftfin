@@ -286,7 +286,7 @@ extension MediaInfoSupplement {
 
             try? await Task.sleep(for: .seconds(max(endDate.timeIntervalSinceNow + 1, 1)))
 
-            _ = try? await item.getFullItem(userSession: userSession)
+            _ = try? await userSession.getFullItem(item)
             await recordingViewModel.refresh()
         }
     }

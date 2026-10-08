@@ -8,10 +8,11 @@
 
 import Foundation
 
-/// Tracks field revisions so older partial responses cannot overwrite newer values.
+/// Tracks field revisions so older partial responses cannot overwrite newer values
 struct FieldRevisions {
 
     private var fields: [String: UInt64] = [:]
+    // A replacement blocks older responses even for fields it omitted
     private var replacement: UInt64 = 0
 
     var latest: UInt64 {
@@ -37,15 +38,19 @@ struct FieldRevisions {
         guard accepts(revision) else { return current }
 
         var result = current
+        // Full replacements also clear fields omitted by the response
         let candidates = replacing ? presentFields.union(current.keys) : presentFields
+
         for field in candidates where revision >= fields[field, default: 0] {
-            // A selected field missing from the encoded value removes the old key.
+            // A missing encoded value clears the selected field
             result[field] = incoming[field]
             fields[field] = revision
         }
+
         if replacing {
             replacement = revision
         }
+
         return result
     }
 }

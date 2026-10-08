@@ -81,7 +81,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         case refreshing
     }
 
-    // Collections own their items until they are replaced or this view model is released.
+    // Collections retain records that the session store holds weakly
     @Published
     private(set) var elements: IdentifiedArrayOf<Element>
     @Published
@@ -120,6 +120,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
     private var nextOffset = 0
     private var nextSearchOffset = 0
+    // Generations prevent responses for replaced collections from updating the store
     private var generation = 0
     private var searchGeneration = 0
     private var isInvalidated = false
@@ -176,7 +177,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
                 switch change {
                 case let .updated(update):
-                    // User data can change membership in other collections.
+                    // Confirmed progress can move items into or out of filtered collections
                     if update.userDataChanged,
                        self.library.shouldRefreshForUserDataChange(environment: self.environment)
                     {
@@ -189,7 +190,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
 
                 case let .deleted(id):
                     let removed = self.removeElements { self.matchesItemID($0.id, id) }
-                    // A deleted row can shift server offsets even when it was never loaded.
+                    // Deleting an unloaded row can still shift server page offsets
                     if removed || self.library.hasNextPage {
                         self.scheduleRefreshForStoreChange()
                     }
@@ -240,7 +241,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     }
 
     private func matchesItemID(_ elementID: Element.ID, _ itemID: String) -> Bool {
-        (elementID as? ItemEntry.ID)?.item.itemID == itemID ||
+        (elementID as? ItemEntry.ID)?.itemID == itemID ||
             (elementID as? String) == itemID || (elementID as? String?) == itemID
     }
 
@@ -270,6 +271,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         hasPendingStoreRefresh = true
         guard storeRefreshTask == nil else { return }
 
+        // Coalesce store changes and space automatic refreshes at least five seconds apart
         let delay = max(0.35, 5 - Date.now.timeIntervalSince(lastStoreRefresh))
         storeRefreshTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(delay))
@@ -288,7 +290,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             self.lastStoreRefresh = Date.now
             self.storeRefreshTask = nil
 
-            // Changes received during the request get another pass without retaining this owner while waiting.
+            // Changes received during this refresh need another pass
             if self.hasPendingStoreRefresh {
                 self.scheduleRefreshForStoreChange()
             }
@@ -326,11 +328,13 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
     private func loadPage(replacing: Bool) async throws {
         let requestGeneration = generation
         var replacing = replacing
+
         while !Task.isCancelled, !isInvalidated {
             let offset = replacing ? 0 : nextOffset
             let page = try pageState(offset: offset, pageSize: pageSize)
             let response = try await library.retrievePage(environment: environment, pageState: page)
 
+            // Reject stale pages before their patches can change shared records
             guard !Task.isCancelled, requestGeneration == generation, !isInvalidated,
                   replacing || offset == nextOffset else { return }
 
@@ -343,12 +347,15 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
             let progress = page.progress(returnedCount: response.count)
             nextOffset = progress.nextOffset
             hasNextPage = library.hasNextPage && progress.hasNextPage
+
             if replacing {
                 elements = items
                 replacing = false
             } else {
                 elements.append(contentsOf: items.filter { elements[id: $0.id] == nil })
             }
+
+            // Continue paging when filtered or duplicate rows add no visible items
             guard elements.count == previousCount, hasNextPage else { return }
         }
     }
@@ -396,6 +403,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
                 pageState: page
             )
 
+            // A changed query must not publish its previous search results to the store
             guard !Task.isCancelled,
                   query == normalizedSearchQuery,
                   requestGeneration == searchGeneration,

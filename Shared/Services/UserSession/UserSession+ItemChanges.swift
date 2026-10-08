@@ -35,13 +35,14 @@ extension UserSession {
                     for id in data.itemsRemoved ?? [] {
                         self.items.delete(id: id)
                     }
+                    // Unloaded items rely on their next collection fetch for metadata
                     for id in data.itemsUpdated ?? [] {
-                        guard let record = self.items.retainedRecord(id: id) else { continue }
+                        guard let record = self.items[id] else { continue }
 
                         Task { @MainActor [weak self] in
-                            guard let self, self.itemChanges != nil, let item = record.value else { return }
+                            guard let self, self.itemChanges != nil, record.value != nil else { return }
 
-                            _ = try? await item.getFullItem(userSession: self)
+                            _ = try? await self.getFullItem(id: record.id)
                         }
                     }
 

@@ -121,7 +121,7 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
         _ = try await send(request)
         try session.items.acceptMetadataDraft(newItem)
 
-        item = try await item.getFullItem(userSession: requireUserSession())
+        $item = try await session.getFullItem(item)
         events.send(.updated)
     }
 }

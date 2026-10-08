@@ -99,7 +99,7 @@ final class ItemSubtitlesViewModel: ViewModel {
     }
 
     private func refreshItem() async throws {
-        let item = try await item.getFullItem(userSession: requireUserSession())
+        $item = try await requireUserSession().getFullItem(item)
 
         let subtitles = (item.mediaSources ?? [])
             .compactMap(\.subtitleStreams)

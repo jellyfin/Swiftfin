@@ -11,6 +11,7 @@ import Foundation
 extension Array: BaseItemPatchProvider where Element: BaseItemPatchProvider {
 
     func patches(from object: Any, scope: ItemPatch.Scope) throws -> [ItemPatch] {
+        // DTOs and raw JSON must stay aligned to preserve field presence
         guard let objects = object as? [Any], objects.count == count else {
             throw CocoaError(.coderInvalidValue)
         }

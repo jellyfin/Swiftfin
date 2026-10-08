@@ -8,7 +8,7 @@
 
 import JellyfinAPI
 
-/// Pages an in-memory collection of shared media items.
+/// Pages an in-memory collection of shared media items
 struct StaticMediaLibrary: PagingLibrary {
 
     let elements: [ItemEntry]

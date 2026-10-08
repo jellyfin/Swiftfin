@@ -178,7 +178,7 @@ final class IdentifyItemViewModel: ViewModel {
         let request = Paths.applySearchCriteria(itemID: itemID, searchResult)
         _ = try await send(request)
 
-        _ = try await item.getFullItem(userSession: requireUserSession())
+        $item = try await requireUserSession().getFullItem(item)
 
         events.send(.updated)
     }
