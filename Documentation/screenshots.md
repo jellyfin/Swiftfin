@@ -40,8 +40,8 @@ Screenshots are written to `Documentation/Screenshots/<Platform>/<Language>/`:
 
 ## Structure
 
-- `Screenshots/ScreenshotTests.swift`: the flow
-- `Screenshots/Support/Screenshot.swift`: each screenshot with its headline and subtitle
+- `Screenshots/Support/Screenshot.swift`: each screenshot, in capture order, with its headline and subtitle
+- `Screenshots/Robots/ScreenshotRobot.swift`: how to reach and capture each screenshot
 - `Screenshots/Robots`: one robot per screen, shared by iOS and tvOS
 - `Scripts/Screenshots/ProcessScreenshots.swift`: builds `Framed` and `Cards`
 - `Scripts/Screenshots/Frames`: device frames, named by screenshot size (`<width>x<height>-frame.png`, optional `-mask.png`)
@@ -50,5 +50,5 @@ Screenshots are written to `Documentation/Screenshots/<Platform>/<Language>/`:
 ## Adding a screenshot
 
 1. Add `screenshotHeadline<Name>` and `screenshotSubtitle<Name>` to `Translations/en.lproj/Localizable.strings`.
-2. Add a case to `Screenshot` and return those `L10n` strings from `headline` and `subtitle`.
-3. Navigate to the screen with the robots and call `.screenshot(.<name>)`.
+2. Add a case to `Screenshot`, in capture order, and return those `L10n` strings from `headline` and `subtitle`.
+3. Add the case to `ScreenshotRobot.capture(_:)`: navigate with the robots and call `.screenshot(.<name>)`.

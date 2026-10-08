@@ -8,7 +8,7 @@
 
 import XCTest
 
-enum Screenshot: String {
+enum Screenshot: String, CaseIterable {
 
     case home = "Home"
     case media = "Media"
@@ -20,7 +20,7 @@ enum Screenshot: String {
     case userSelection = "UserSelection"
 
     var headline: String {
-        switch self {
+        let headline = switch self {
         case .home:
             L10n.screenshotHeadlineHome
         case .media:
@@ -38,6 +38,8 @@ enum Screenshot: String {
         case .userSelection:
             L10n.screenshotHeadlineUserSelection
         }
+
+        return headline.localizedCapitalized
     }
 
     var subtitle: String {

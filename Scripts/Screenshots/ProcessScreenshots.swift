@@ -221,12 +221,12 @@ struct Layout {
     let deviceWidth: CGFloat
 
     static let portrait = Layout(
-        textTop: 0.05,
-        textBottom: 0.2,
+        textTop: 0.04,
+        textBottom: 0.17,
         textWidth: 0.86,
         headlineSize: 0.095,
         subtitleSize: 0.045,
-        deviceTop: 0.22,
+        deviceTop: 0.19,
         deviceWidth: 0.92
     )
 

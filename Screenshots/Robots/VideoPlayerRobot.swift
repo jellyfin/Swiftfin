@@ -75,20 +75,24 @@ final class VideoPlayerRobot: Robot {
 
     #if os(tvOS)
     private func elapsedProgress() -> Double? {
-        guard remainingTime.exists else { return nil }
+        guard let root = try? app.snapshot() else { return nil }
 
-        let remaining = remainingTime
-        let elapsed = app.staticTexts
-            .allElementsBoundByIndex
-            .filter { abs($0.frame.midY - remaining.frame.midY) < 5 && $0.frame.maxX < remaining.frame.minX }
-            .min { $0.frame.minX < $1.frame.minX }
+        let texts = staticTexts(in: root)
 
-        guard let elapsed else { return nil }
+        guard let remaining = texts.first(where: { $0.label.hasPrefix("-") }),
+              let elapsed = texts
+                  .filter({ abs($0.frame.midY - remaining.frame.midY) < 5 && $0.frame.maxX < remaining.frame.minX })
+                  .min(by: { $0.frame.minX < $1.frame.minX })
+        else { return nil }
 
         let elapsedSeconds = seconds(elapsed.label)
         let totalSeconds = elapsedSeconds + seconds(remaining.label)
 
         return totalSeconds > 0 ? elapsedSeconds / totalSeconds : nil
+    }
+
+    private func staticTexts(in snapshot: XCUIElementSnapshot) -> [XCUIElementSnapshot] {
+        (snapshot.elementType == .staticText ? [snapshot] : []) + snapshot.children.flatMap(staticTexts)
     }
 
     private func seconds(_ timestamp: String) -> Double {
