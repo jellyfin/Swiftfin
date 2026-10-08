@@ -268,8 +268,8 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		8FED35935A4B40F4AF02F229 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		0E5C86560D5353A06E79ECD9 /* Tools */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tools; sourceTree = "<group>"; };
+		8FED35935A4B40F4AF02F229 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		E14560852DFCAE51008FF700 /* Swiftfin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14561A22DFCAE51008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Swiftfin; sourceTree = "<group>"; };
 		E14563272DFCAE6E008FF700 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E14565D92DFCAE6E008FF700 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 3002B5F683E649EFBCF37FED /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 24EBA6499E0C420F8E5B2D33 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		E14565DD2DFCAE78008FF700 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
@@ -425,15 +425,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		588169D1DE9DA4B4AC9DA475 /* Screenshots */ = {
-			isa = PBXGroup;
-			children = (
-				8FED35935A4B40F4AF02F229 /* Tests */,
-				0E5C86560D5353A06E79ECD9 /* Tools */,
-			);
-			path = Screenshots;
-			sourceTree = "<group>";
-		};
 		5377CBE8263B596A003A4E83 = {
 			isa = PBXGroup;
 			children = (
@@ -511,6 +502,15 @@
 				628B95232670CABD0091AF3B /* SwiftUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		588169D1DE9DA4B4AC9DA475 /* Screenshots */ = {
+			isa = PBXGroup;
+			children = (
+				8FED35935A4B40F4AF02F229 /* Tests */,
+				0E5C86560D5353A06E79ECD9 /* Tools */,
+			);
+			path = Screenshots;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

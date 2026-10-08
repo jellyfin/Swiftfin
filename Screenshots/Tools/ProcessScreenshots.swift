@@ -6,16 +6,7 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import CoreGraphics
-import CoreText
-import Foundation
-import ImageIO
-import UniformTypeIdentifiers
-
-struct Caption: Decodable {
-    let headline: String
-    let subtitle: String
-}
+import AppKit
 
 let arguments = CommandLine.arguments.dropFirst()
 
@@ -36,178 +27,54 @@ let scriptDirectory = URL(fileURLWithPath: CommandLine.arguments[0]).deletingLas
 let framesDirectory = scriptDirectory.appendingPathComponent("Frames")
 let fontsDirectory = scriptDirectory.appendingPathComponent("Fonts")
 
-let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
-
 // MARK: - Images
 
-func color(_ hex: UInt32, alpha: CGFloat = 1) -> CGColor {
-    CGColor(
-        colorSpace: colorSpace,
-        components: [
-            CGFloat((hex >> 16) & 0xFF) / 255,
-            CGFloat((hex >> 8) & 0xFF) / 255,
-            CGFloat(hex & 0xFF) / 255,
-            alpha,
-        ]
-    )!
+func loadImage(at url: URL) -> CGImage? {
+    (try? Data(contentsOf: url)).flatMap { NSBitmapImageRep(data: $0)?.cgImage }
 }
 
-func makeContext(width: Int, height: Int) -> CGContext? {
+func write(_ image: CGImage, to url: URL) throws {
+    try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+    try NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?.write(to: url)
+}
+
+func makeContext(width: Int, height: Int) -> CGContext {
     CGContext(
         data: nil,
         width: width,
         height: height,
         bitsPerComponent: 8,
         bytesPerRow: 0,
-        space: colorSpace,
+        space: CGColorSpace(name: CGColorSpace.sRGB)!,
         bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-    )
-}
-
-func loadImage(at url: URL) -> CGImage? {
-    guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
-
-    return CGImageSourceCreateImageAtIndex(source, 0, nil)
-}
-
-func write(_ image: CGImage, to url: URL) throws {
-    try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-
-    guard let destination = CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil) else {
-        throw CocoaError(.fileWriteUnknown)
-    }
-
-    CGImageDestinationAddImage(destination, image, nil)
-
-    guard CGImageDestinationFinalize(destination) else {
-        throw CocoaError(.fileWriteUnknown)
-    }
-}
-
-// MARK: - Framing
-
-func grayscale(_ image: CGImage) -> CGImage? {
-    guard let context = CGContext(
-        data: nil,
-        width: image.width,
-        height: image.height,
-        bitsPerComponent: 8,
-        bytesPerRow: 0,
-        space: CGColorSpaceCreateDeviceGray(),
-        bitmapInfo: CGImageAlphaInfo.none.rawValue
-    ) else { return nil }
-
-    context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
-    return context.makeImage()
-}
-
-func rotated(_ image: CGImage) -> CGImage? {
-    guard let context = makeContext(width: image.height, height: image.width) else { return nil }
-
-    context.translateBy(x: CGFloat(image.height), y: 0)
-    context.rotate(by: .pi / 2)
-    context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
-
-    return context.makeImage()
-}
-
-func frameAssets(width: Int, height: Int) -> (frame: CGImage, mask: CGImage?)? {
-    func load(_ size: String, _ kind: String) -> CGImage? {
-        loadImage(at: framesDirectory.appendingPathComponent("\(size)-\(kind).png"))
-    }
-
-    if let frame = load("\(width)x\(height)", "frame") {
-        return (frame, load("\(width)x\(height)", "mask"))
-    }
-
-    if let frame = load("\(height)x\(width)", "frame").flatMap(rotated) {
-        return (frame, load("\(height)x\(width)", "mask").flatMap(rotated))
-    }
-
-    return nil
+    )!
 }
 
 func framed(_ screenshot: CGImage) -> CGImage? {
-    guard let assets = frameAssets(width: screenshot.width, height: screenshot.height),
-          let context = makeContext(width: assets.frame.width, height: assets.frame.height)
-    else { return nil }
+    let size = "\(screenshot.width)x\(screenshot.height)"
 
+    guard let frame = loadImage(at: framesDirectory.appendingPathComponent("\(size).png")) else {
+        return nil
+    }
+
+    let context = makeContext(width: frame.width, height: frame.height)
     let screenshotRect = CGRect(
-        x: (assets.frame.width - screenshot.width) / 2,
-        y: (assets.frame.height - screenshot.height) / 2,
+        x: (frame.width - screenshot.width) / 2,
+        y: (frame.height - screenshot.height) / 2,
         width: screenshot.width,
         height: screenshot.height
     )
 
     context.saveGState()
-    if let mask = assets.mask.flatMap(grayscale) {
+    if let mask = loadImage(at: framesDirectory.appendingPathComponent("\(size)-mask.png")) {
         context.clip(to: screenshotRect, mask: mask)
     }
     context.draw(screenshot, in: screenshotRect)
     context.restoreGState()
 
-    context.draw(assets.frame, in: CGRect(x: 0, y: 0, width: assets.frame.width, height: assets.frame.height))
+    context.draw(frame, in: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
 
     return context.makeImage()
-}
-
-// MARK: - Text
-
-func font(_ file: String, size: CGFloat, weight: Int) -> CTFont {
-    guard let descriptor =
-        (CTFontManagerCreateFontDescriptorsFromURL(fontsDirectory.appendingPathComponent(file) as CFURL) as? [CTFontDescriptor])?.first
-    else {
-        print("Missing font \(fontsDirectory.path)/\(file)")
-        exit(1)
-    }
-
-    let weightAxis = 0x7767_6874
-    let weighted = CTFontDescriptorCreateCopyWithAttributes(
-        descriptor,
-        [kCTFontVariationAttribute: [weightAxis: weight]] as CFDictionary
-    )
-
-    return CTFontCreateWithFontDescriptor(weighted, size, nil)
-}
-
-func attributedText(_ text: String, font: CTFont, color: CGColor) -> NSAttributedString {
-    var alignment = CTTextAlignment.center
-    let paragraphStyle = withUnsafeBytes(of: &alignment) { pointer in
-        var setting = CTParagraphStyleSetting(
-            spec: .alignment,
-            valueSize: MemoryLayout<CTTextAlignment>.size,
-            value: pointer.baseAddress!
-        )
-        return CTParagraphStyleCreate(&setting, 1)
-    }
-
-    return NSAttributedString(
-        string: text,
-        attributes: [
-            NSAttributedString.Key(kCTFontAttributeName as String): font,
-            NSAttributedString.Key(kCTForegroundColorAttributeName as String): color,
-            NSAttributedString.Key(kCTParagraphStyleAttributeName as String): paragraphStyle,
-        ]
-    )
-}
-
-func textHeight(_ text: NSAttributedString, width: CGFloat) -> CGFloat {
-    let framesetter = CTFramesetterCreateWithAttributedString(text)
-    let size = CTFramesetterSuggestFrameSizeWithConstraints(
-        framesetter,
-        CFRange(location: 0, length: 0),
-        nil,
-        CGSize(width: width, height: .greatestFiniteMagnitude),
-        nil
-    )
-
-    return ceil(size.height)
-}
-
-func drawText(_ text: NSAttributedString, in context: CGContext, rect: CGRect) {
-    let framesetter = CTFramesetterCreateWithAttributedString(text)
-    let frame = CTFramesetterCreateFrame(framesetter, CFRange(location: 0, length: 0), CGPath(rect: rect, transform: nil), nil)
-    CTFrameDraw(frame, context)
 }
 
 // MARK: - Cards
@@ -250,70 +117,94 @@ extension Layout {
     }
 }
 
-struct CardText {
-
-    let headline: NSAttributedString
-    let subtitle: NSAttributedString
-    let headlineHeight: CGFloat
-    let subtitleHeight: CGFloat
-    let spacing: CGFloat
-
-    var height: CGFloat {
-        headlineHeight + spacing + subtitleHeight
+func font(_ file: String, size: CGFloat, weight: Int) -> NSFont {
+    guard let descriptor =
+        (CTFontManagerCreateFontDescriptorsFromURL(fontsDirectory.appendingPathComponent(file) as CFURL) as? [NSFontDescriptor])?.first,
+        let font = NSFont(descriptor: descriptor.addingAttributes([.variation: [0x7767_6874: weight]]), size: size)
+    else {
+        print("Missing font \(fontsDirectory.path)/\(file)")
+        exit(1)
     }
 
-    init(caption: Caption, size: CGSize, scale: CGFloat) {
-        let layout = Layout(size: size)
-        let unit = min(size.width, size.height)
-        let width = size.width * layout.textWidth
-
-        headline = attributedText(
-            caption.headline,
-            font: font("Figtree.ttf", size: unit * layout.headlineSize * scale, weight: 800),
-            color: color(0xFFFFFF)
-        )
-        subtitle = attributedText(
-            caption.subtitle,
-            font: font("Inter.ttf", size: unit * layout.subtitleSize * scale, weight: 400),
-            color: color(0xFFFFFF, alpha: 0.7)
-        )
-        headlineHeight = textHeight(headline, width: width)
-        subtitleHeight = textHeight(subtitle, width: width)
-        spacing = unit * layout.subtitleSize * scale * 0.5
-    }
-
-    static func fittingScale(for caption: Caption, size: CGSize) -> CGFloat {
-        let layout = Layout(size: size)
-        let boxHeight = size.height * (layout.textBottom - layout.textTop)
-        var scale: CGFloat = 1
-
-        while scale > 0.4, CardText(caption: caption, size: size, scale: scale).height > boxHeight {
-            scale *= 0.95
-        }
-
-        return scale
-    }
+    return font
 }
 
-func drawBackground(in context: CGContext, size: CGSize) {
-    let base = CGGradient(
-        colorsSpace: colorSpace,
-        colors: [color(0x1D1033), color(0x08070D)] as CFArray,
+func captionText(_ caption: [String: String], size: CGSize, scale: CGFloat) -> NSAttributedString {
+    let layout = Layout(size: size)
+    let unit = min(size.width, size.height)
+    let paragraphStyle = NSMutableParagraphStyle()
+
+    paragraphStyle.alignment = .center
+    paragraphStyle.paragraphSpacing = unit * layout.subtitleSize * scale * 0.5
+
+    let text = NSMutableAttributedString(
+        string: "\(caption["headline"] ?? "")\n",
+        attributes: [
+            .font: font("Figtree.ttf", size: unit * layout.headlineSize * scale, weight: 800),
+            .foregroundColor: NSColor.white,
+            .paragraphStyle: paragraphStyle,
+        ]
+    )
+
+    text.append(NSAttributedString(
+        string: caption["subtitle"] ?? "",
+        attributes: [
+            .font: font("Inter.ttf", size: unit * layout.subtitleSize * scale, weight: 400),
+            .foregroundColor: NSColor.white.withAlphaComponent(0.7),
+            .paragraphStyle: paragraphStyle,
+        ]
+    ))
+
+    return text
+}
+
+func height(of text: NSAttributedString, width: CGFloat) -> CGFloat {
+    ceil(text.boundingRect(with: CGSize(width: width, height: .greatestFiniteMagnitude), options: .usesLineFragmentOrigin).height)
+}
+
+func fittingScale(for caption: [String: String], size: CGSize) -> CGFloat {
+    let layout = Layout(size: size)
+    var scale: CGFloat = 1
+
+    while scale > 0.4,
+          height(of: captionText(caption, size: size, scale: scale), width: size.width * layout.textWidth) >
+          size.height * (layout.textBottom - layout.textTop)
+    {
+        scale *= 0.95
+    }
+
+    return scale
+}
+
+func card(caption: [String: String], raw: CGImage, framed: CGImage?, textScale: CGFloat) -> CGImage? {
+    let size = CGSize(width: raw.width, height: raw.height)
+    let layout = Layout(size: size)
+    let unit = min(size.width, size.height)
+    let context = makeContext(width: raw.width, height: raw.height)
+
+    let background = CGGradient(
+        colorsSpace: nil,
+        colors: [
+            CGColor(srgbRed: 0x1D / 255, green: 0x10 / 255, blue: 0x33 / 255, alpha: 1),
+            CGColor(srgbRed: 0x08 / 255, green: 0x07 / 255, blue: 0x0D / 255, alpha: 1),
+        ] as CFArray,
         locations: [0, 1]
     )!
-    context.drawLinearGradient(base, start: CGPoint(x: 0, y: size.height), end: .zero, options: [])
+    context.drawLinearGradient(background, start: CGPoint(x: 0, y: size.height), end: .zero, options: [])
 
-    let glows: [(UInt32, CGFloat, CGPoint)] = [
-        (0xAA5CC3, 0.55, CGPoint(x: size.width * 0.2, y: size.height * 0.9)),
-        (0x00A4DC, 0.35, CGPoint(x: size.width * 0.85, y: size.height * 0.75)),
+    let glows = [
+        (
+            CGColor(srgbRed: 0xAA / 255, green: 0x5C / 255, blue: 0xC3 / 255, alpha: 0.55),
+            CGPoint(x: size.width * 0.2, y: size.height * 0.9)
+        ),
+        (
+            CGColor(srgbRed: 0x00 / 255, green: 0xA4 / 255, blue: 0xDC / 255, alpha: 0.35),
+            CGPoint(x: size.width * 0.85, y: size.height * 0.75)
+        ),
     ]
 
-    for (hex, alpha, center) in glows {
-        let glow = CGGradient(
-            colorsSpace: colorSpace,
-            colors: [color(hex, alpha: alpha), color(hex, alpha: 0)] as CFArray,
-            locations: [0, 1]
-        )!
+    for (color, center) in glows {
+        let glow = CGGradient(colorsSpace: nil, colors: [color, color.copy(alpha: 0)!] as CFArray, locations: [0, 1])!
         context.drawRadialGradient(
             glow,
             startCenter: center,
@@ -323,36 +214,23 @@ func drawBackground(in context: CGContext, size: CGSize) {
             options: []
         )
     }
-}
 
-func card(caption: Caption, device: CGImage, isFramed: Bool, size: CGSize, textScale: CGFloat) -> CGImage? {
-    guard let context = makeContext(width: Int(size.width), height: Int(size.height)) else { return nil }
-
-    drawBackground(in: context, size: size)
-
-    let layout = Layout(size: size)
-    let unit = min(size.width, size.height)
+    let text = captionText(caption, size: size, scale: textScale)
     let textWidth = size.width * layout.textWidth
-    let textX = (size.width - textWidth) / 2
-    let text = CardText(caption: caption, size: size, scale: textScale)
+    let textHeight = height(of: text, width: textWidth)
 
-    let headlineTop = size.height * (1 - layout.textTop)
-    drawText(
-        text.headline,
-        in: context,
-        rect: CGRect(x: textX, y: headlineTop - text.headlineHeight, width: textWidth, height: text.headlineHeight)
-    )
-    drawText(
-        text.subtitle,
-        in: context,
-        rect: CGRect(
-            x: textX,
-            y: headlineTop - text.headlineHeight - text.spacing - text.subtitleHeight,
+    NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
+    text.draw(
+        with: CGRect(
+            x: (size.width - textWidth) / 2,
+            y: size.height * (1 - layout.textTop) - textHeight,
             width: textWidth,
-            height: text.subtitleHeight
-        )
+            height: textHeight
+        ),
+        options: .usesLineFragmentOrigin
     )
 
+    let device = framed ?? raw
     let deviceWidth = size.width * layout.deviceWidth
     let deviceHeight = deviceWidth * CGFloat(device.height) / CGFloat(device.width)
     let deviceRect = CGRect(
@@ -363,46 +241,28 @@ func card(caption: Caption, device: CGImage, isFramed: Bool, size: CGSize, textS
     )
 
     context.saveGState()
-    context.setShadow(offset: CGSize(width: 0, height: -unit * 0.01), blur: unit * 0.05, color: color(0x000000, alpha: 0.6))
+    context.setShadow(offset: CGSize(width: 0, height: -unit * 0.01), blur: unit * 0.05, color: CGColor(gray: 0, alpha: 0.6))
 
-    if isFramed {
-        context.draw(device, in: deviceRect)
-    } else {
+    if framed == nil {
         let radius = deviceRect.width * 0.02
         let path = CGPath(roundedRect: deviceRect, cornerWidth: radius, cornerHeight: radius, transform: nil)
 
         context.addPath(path)
-        context.setFillColor(color(0x000000))
+        context.setFillColor(.black)
         context.fillPath()
 
         context.setShadow(offset: .zero, blur: 0)
         context.addPath(path)
         context.clip()
-        context.draw(device, in: deviceRect)
     }
 
+    context.draw(device, in: deviceRect)
     context.restoreGState()
 
     return context.makeImage()
 }
 
 // MARK: - Process
-
-struct Capture {
-
-    let name: String
-    let raw: CGImage
-    let framed: CGImage?
-    let caption: Caption?
-
-    var size: CGSize {
-        CGSize(width: raw.width, height: raw.height)
-    }
-
-    var isPortrait: Bool {
-        size.height > size.width
-    }
-}
 
 func collect(_ language: URL) throws -> URL {
     let languageDirectory = outputDirectory.appendingPathComponent(language.lastPathComponent)
@@ -421,54 +281,48 @@ func collect(_ language: URL) throws -> URL {
 }
 
 func process(_ languageDirectory: URL) throws {
-    let rawDirectory = languageDirectory.appendingPathComponent("Raw")
-    let frameDirectory = languageDirectory.appendingPathComponent("Frame")
-    let cardDirectory = languageDirectory.appendingPathComponent("Card")
-
-    let captures = try FileManager.default
-        .contentsOfDirectory(at: rawDirectory, includingPropertiesForKeys: nil)
+    let screenshots = try FileManager.default
+        .contentsOfDirectory(at: languageDirectory.appendingPathComponent("Raw"), includingPropertiesForKeys: nil)
         .filter { $0.pathExtension == "png" }
-        .compactMap { url -> Capture? in
-            guard let raw = loadImage(at: url) else { return nil }
-
-            let name = url.deletingPathExtension().lastPathComponent
-            let caption = (try? Data(contentsOf: captionsDirectory.appendingPathComponent("\(name).json")))
-                .flatMap { try? JSONDecoder().decode(Caption.self, from: $0) }
-
-            return Capture(name: name, raw: raw, framed: framed(raw), caption: caption)
+        .compactMap { url in
+            loadImage(at: url).map { raw in
+                (name: url.deletingPathExtension().lastPathComponent, raw: raw, framed: framed(raw))
+            }
         }
 
-    for capture in captures {
-        if let framed = capture.framed {
-            try write(framed, to: frameDirectory.appendingPathComponent("\(capture.name).png"))
-        }
+    let captioned = screenshots.compactMap { screenshot in
+        (try? Data(contentsOf: captionsDirectory.appendingPathComponent("\(screenshot.name).json")))
+            .flatMap { try? JSONDecoder().decode([String: String].self, from: $0) }
+            .map { (screenshot: screenshot, caption: $0) }
     }
 
-    let captioned = captures.compactMap { capture in
-        capture.caption.map { (capture: capture, caption: $0) }
-    }
-
-    let textScales = Dictionary(grouping: captioned, by: \.capture.isPortrait)
+    let textScales = Dictionary(grouping: captioned) { $0.screenshot.raw.height > $0.screenshot.raw.width }
         .mapValues { group in
-            group.map { CardText.fittingScale(for: $0.caption, size: $0.capture.size) }.min() ?? 1
+            group.map { fittingScale(for: $0.caption, size: CGSize(width: $0.screenshot.raw.width, height: $0.screenshot.raw.height)) }
+                .min() ?? 1
         }
 
-    for (capture, caption) in captioned {
+    for screenshot in screenshots {
+        if let framed = screenshot.framed {
+            try write(framed, to: languageDirectory.appendingPathComponent("Frame/\(screenshot.name).png"))
+        }
+    }
+
+    for (screenshot, caption) in captioned {
         guard let image = card(
             caption: caption,
-            device: capture.framed ?? capture.raw,
-            isFramed: capture.framed != nil,
-            size: capture.size,
-            textScale: textScales[capture.isPortrait] ?? 1
+            raw: screenshot.raw,
+            framed: screenshot.framed,
+            textScale: textScales[screenshot.raw.height > screenshot.raw.width] ?? 1
         ) else {
-            print("Unable to make card for \(capture.name)")
+            print("Unable to make card for \(screenshot.name)")
             exit(1)
         }
 
-        try write(image, to: cardDirectory.appendingPathComponent("\(capture.name).png"))
+        try write(image, to: languageDirectory.appendingPathComponent("Card/\(screenshot.name).png"))
     }
 
-    print("Framed \(captures.count { $0.framed != nil }) and made \(captioned.count) cards in \(languageDirectory.path)")
+    print("Framed \(screenshots.count { $0.framed != nil }) and made \(captioned.count) cards in \(languageDirectory.path)")
 }
 
 try? FileManager.default.removeItem(at: outputDirectory)
