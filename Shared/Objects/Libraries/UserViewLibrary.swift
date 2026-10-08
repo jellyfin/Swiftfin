@@ -209,6 +209,7 @@ private struct UserViewLibraryGridElement: View {
             setImageSources()
         }
         .buttonStyle(.card)
+        .accessibilityLabel(element.displayTitle)
     }
 
     @ViewBuilder
