@@ -301,13 +301,8 @@ private struct ItemLibraryBody<Content: View>: View {
                     await filterViewModel.getQueryFilters()
                 }
             }
-            .onReceive(filterViewModel.$currentFilters.dropFirst()) { filters in
-                guard let id = viewModel.library.parent.id,
-                      Defaults[.Customization.Library.rememberFilters],
-                      filterViewModel.libraryItemTypes.isEmpty
-                else { return }
-
-                StoredValues[.User.libraryFilters(parentID: id)] = filters.mutating(\.query, with: nil)
+            .onChange(of: filterViewModel.currentFilters) {
+                rememberFilters(from: filterViewModel.currentFilters)
             }
             .onReceive(
                 filterViewModel.$currentFilters
@@ -345,5 +340,14 @@ private struct ItemLibraryBody<Content: View>: View {
                 types: filterTypes
             )
             #endif
+    }
+
+    private func rememberFilters(from filters: ItemFilterCollection) {
+        guard let id = viewModel.library.parent.id,
+              Defaults[.Customization.Library.rememberFilters],
+              filterViewModel.libraryItemTypes.isEmpty
+        else { return }
+
+        StoredValues[.User.libraryFilters(parentID: id)] = filters.mutating(\.query, with: nil)
     }
 }
