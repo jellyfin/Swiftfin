@@ -66,10 +66,7 @@ final class ServerActivityDetailViewModel: ViewModel {
     private func getItem(for itemID: String?) async throws -> BaseItemDto? {
         guard let itemID else { return nil }
 
-        let request = Paths.getItem(itemID: itemID)
-        let response = try await send(request)
-
-        return response.value
+        return try await BaseItemDto(id: itemID).getFullItem(userSession: requireUserSession())
     }
 
     private func getUser(for userID: String?) async throws -> UserDto? {

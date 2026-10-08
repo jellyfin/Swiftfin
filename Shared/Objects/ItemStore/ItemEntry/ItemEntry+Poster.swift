@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ItemEntry: @MainActor LibraryElement, @MainActor Poster {
+extension ItemEntry: @MainActor Poster {
 
     typealias Environment = BaseItemDto.Environment
 
@@ -27,10 +27,6 @@ extension ItemEntry: @MainActor LibraryElement, @MainActor Poster {
 
     var preferredPosterDisplayType: PosterDisplayType {
         snapshot.preferredPosterDisplayType
-    }
-
-    var supportedLibraryStyleOptions: LibraryStyleOptions {
-        snapshot.supportedLibraryStyleOptions
     }
 
     func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
@@ -59,18 +55,5 @@ extension ItemEntry: @MainActor LibraryElement, @MainActor Poster {
 
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         snapshot.posterOverlay(for: displayType)
-    }
-
-    func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {
-        guard let value else { return }
-
-        value.libraryDidSelectElement(router: router, in: namespace)
-    }
-
-    @ViewBuilder
-    func makeBody(libraryStyle: LibraryStyle, action: (() -> Void)?) -> some View {
-        if let value {
-            value.makeBody(libraryStyle: libraryStyle, action: action)
-        }
     }
 }

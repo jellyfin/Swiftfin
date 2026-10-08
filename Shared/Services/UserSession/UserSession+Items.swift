@@ -13,11 +13,35 @@ import JellyfinAPI
 @MainActor
 extension UserSession {
 
-    func send<Value: Decodable & Sendable>(_ request: Request<Value>) async throws -> (value: Value, items: [ItemRecord]) {
+    func send<Value: Decodable & Sendable>(
+        _ request: Request<Value>
+    ) async throws -> (value: Value, items: [ItemRecord]) {
+        try await send(request, itemScope: .partial)
+    }
+
+    /// Treats the returned item as the source of truth for all of its fields.
+    func sendFullItem(_ request: Request<BaseItemDto>) async throws -> BaseItemDto {
+        let response = try await send(request, itemScope: .fullItem)
+        return response.value
+    }
+
+    private func send<Value: Decodable & Sendable>(
+        _ request: Request<Value>,
+        itemScope: ItemPatch.Scope
+    ) async throws -> (value: Value, items: [ItemRecord]) {
         let token = try items.beginRequest()
         let response = try await client.send(request)
         try items.validate()
-        let records = try receiveItems(response, token: token)
+
+        let records: [ItemRecord]
+        if let provider = response.value as? any BaseItemPatchProvider {
+            let object = try JSONSerialization.jsonObject(with: response.data)
+            let patches = try provider.patches(from: object, scope: itemScope)
+            records = try patches.compactMap { try items.merge($0, token: token) }
+        } else {
+            records = []
+        }
+
         // Keep merged records alive until the caller takes ownership.
         return (response.value, records)
     }
@@ -28,29 +52,10 @@ extension UserSession {
         try items.validate()
     }
 
-    private func receiveItems(_ response: Response<some Any>, token: ItemStore.RequestToken) throws -> [ItemRecord] {
-        let patches: [ItemPatch]
-        if let value = response.value as? BaseItemDto {
-            patches = try [ItemPatch.item(from: response.map { _ in value })]
-        } else if let value = response.value as? BaseItemDtoQueryResult {
-            patches = try ItemPatch.items(from: response.map { _ in value })
-        } else if let value = response.value as? [BaseItemDto] {
-            patches = try ItemPatch.items(from: response.map { _ in value })
-        } else if let sessions = response.value as? [SessionInfoDto] {
-            patches = try ItemPatch.sessionItems(from: response.map { _ in sessions })
-        } else {
-            return []
-        }
-        return try patches.compactMap { try items.merge($0, token: token) }
-    }
-
     func receiveSessionItems(_ sessions: [SessionInfoDto]) throws -> [ItemRecord] {
         let token = try items.beginRequest()
-        return try sessions.compactMap { session in
-            guard let item = session.nowPlayingItem else { return nil }
-
-            return try items.merge(ItemPatch.snapshot(item.withoutUserData), token: token)
-        }
+        let patches = try sessions.patches()
+        return try patches.compactMap { try items.merge($0, token: token) }
     }
 
     func setFavorite(_ entry: ItemEntry, to isFavorite: Bool) async throws {

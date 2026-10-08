@@ -36,13 +36,13 @@ final class LibraryPageState {
     func items(from response: Response<BaseItemDtoQueryResult>) throws -> [ItemPatch] {
         consumedRows = response.value.items?.count ?? 0
         totalRows = response.value.totalRecordCount
-        return try ItemPatch.items(from: response)
+        return try response.patches()
     }
 
     func items(from response: Response<[BaseItemDto]>) throws -> [ItemPatch] {
         consumedRows = response.value.count
         totalRows = response.value.count
-        return try ItemPatch.items(from: response)
+        return try response.patches()
     }
 
     func progress(returnedCount: Int) -> (nextOffset: Int, hasNextPage: Bool) {

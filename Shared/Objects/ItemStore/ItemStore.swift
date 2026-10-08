@@ -32,7 +32,7 @@ final class ItemStore {
         case invalidated
     }
 
-    /// Identifies which part of a retained item changed.
+    /// Identifies which part of an item changed
     struct Update {
 
         let itemID: String
@@ -86,15 +86,19 @@ final class ItemStore {
         guard isActive else { throw StoreError.invalidSession }
 
         let id = try itemID(value)
+
         if let record = records[id]?.value {
             return record
         }
+
         let record = record(for: id)
+
         if !deletedIDs.contains(id) {
             let patch = try ItemPatch.snapshot(value)
             let program = try value.currentProgram.flatMap { $0.id == id ? nil : try reference(to: $0) }
             try record.merge(patch, revision: 0, program: program)
         }
+
         return record
     }
 
@@ -102,28 +106,35 @@ final class ItemStore {
     @discardableResult
     func merge(_ patch: ItemPatch, token: RequestToken) throws -> ItemRecord? {
         try validate()
+
         guard let id = try? itemID(patch.value) else { return nil }
         guard !deletedIDs.contains(id) else { return nil }
 
         let retained = retainedRecord(id: id)
         let record = retained ?? record(for: id)
+
         var program: ItemRecord?
-        if !patch.replacesMetadata, let value = patch.value.currentProgram, let object = patch.program,
+
+        if patch.scope != .metadataSnapshot, let value = patch.value.currentProgram, let object = patch.program,
            value.id != id
         {
-            program = try merge(ItemPatch.decoded(value, object: object), token: token)
+            program = try merge(ItemPatch.decoded(value, object: object, scope: patch.scope), token: token)
         }
+
         let update = try record.merge(patch, revision: token.revision, program: program)
+
         // Loading a new page establishes membership; it must not trigger another fetch.
         if retained != nil, update.hasChanges {
             changeSubject.send(.updated(update))
         }
+
         return record
     }
 
     /// HTTP replies supply raw field names; socket DTOs use their encoded fields.
     func mergeUserData(_ data: UserItemDataDto, fields: Set<String>? = nil, token: RequestToken) throws {
         try validate()
+
         guard let id = data.itemID, !deletedIDs.contains(id) else { return }
         guard id.nilIfBlank != nil else { throw StoreError.invalidItemID }
 
@@ -136,7 +147,7 @@ final class ItemStore {
         let patch = try ItemPatch(
             value: BaseItemDto(id: id, userData: data),
             fields: ["UserData"],
-            userDataFields: fields ?? Set(CodableFields.encode(data).keys)
+            userDataFields: fields ?? Set(JSONSerialization.encode(data).keys)
         )
         let update = try record.merge(patch, revision: token.revision, program: nil)
         // Actions and socket updates can affect collections even when the item isn't loaded.
@@ -148,8 +159,10 @@ final class ItemStore {
     /// Nil draft fields clear metadata; session user data is preserved.
     func acceptMetadataDraft(_ value: BaseItemDto) throws {
         try validate()
+
         _ = try itemID(value)
-        _ = try merge(ItemPatch.snapshot(value, replacesMetadata: true), token: beginRequest())
+        _ = try merge(ItemPatch.snapshot(value, scope: .metadataSnapshot), token: beginRequest())
+
         libraryDidChange()
     }
 
@@ -160,7 +173,6 @@ final class ItemStore {
         to value: Bool,
         operation: @escaping @MainActor () async throws -> (value: UserItemDataDto, fields: Set<String>)
     ) async throws {
-        // Item IDs can match across sessions; only this store's record may be mutated.
         guard isActive, retainedRecord(id: item.id.itemID) === item, item.value != nil else {
             throw StoreError.itemUnavailable
         }
@@ -169,17 +181,21 @@ final class ItemStore {
         let mutationID = UUID()
         let previous = mutations[itemID]?.last?.task
         item.beginChange(id: mutationID, field: field, value: value)
+
         let task = Task {
             defer {
                 item.endChange(id: mutationID)
                 mutations[itemID]?.removeAll { $0.id == mutationID }
+
                 if mutations[itemID]?.isEmpty == true {
                     mutations.removeValue(forKey: itemID)
                 }
             }
+
             if let previous {
                 _ = await previous.result
             }
+
             try validate()
             guard item.value != nil else { throw StoreError.itemUnavailable }
 
@@ -191,7 +207,9 @@ final class ItemStore {
             // A new revision prevents reads started during the write from restoring stale data.
             try mergeUserData(data.value, fields: data.fields, token: beginRequest())
         }
+
         mutations[itemID, default: []].append((mutationID, task))
+
         try await withTaskCancellationHandler {
             try await task.value
         } onCancel: {
@@ -211,6 +229,7 @@ final class ItemStore {
         for mutation in mutations.removeValue(forKey: id) ?? [] {
             mutation.task.cancel()
         }
+
         records[id]?.value?.invalidate()
         changeSubject.send(.deleted(id))
     }
@@ -219,13 +238,17 @@ final class ItemStore {
         guard isActive else { return }
 
         isActive = false
+
         for mutation in mutations.values.joined() {
             mutation.task.cancel()
         }
+
         mutations.removeAll()
+
         for record in records.values {
             record.value?.invalidate()
         }
+
         records.removeAll()
         deletedIDs.removeAll()
         changeSubject.send(.invalidated)
@@ -241,14 +264,17 @@ final class ItemStore {
         if let record = records[id]?.value {
             return record
         }
+
         // Only discard dead weak references. Space scans with the registry size so
         // loading a large, still-owned library does not repeatedly scan every item.
         if insertionsUntilPrune == 0 {
             prune()
         }
+
         let record = ItemRecord(id: ItemKey(itemID: id))
         records[id] = WeakBox(value: record)
         insertionsUntilPrune -= 1
+
         return record
     }
 

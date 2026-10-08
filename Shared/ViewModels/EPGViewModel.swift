@@ -271,7 +271,7 @@ final class EPGViewModel: ViewModel {
         parameters.sortBy = [.startDate]
         parameters.userID = userSession.user.id
         let response = try await userSession.client.send(Paths.getLiveTvPrograms(parameters: parameters))
-        return try ItemPatch.items(from: response)
+        return try response.patches()
     }
 
     private func endDate(startingAt startDate: Date) -> Date {

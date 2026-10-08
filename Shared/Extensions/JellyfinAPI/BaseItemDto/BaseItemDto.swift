@@ -655,19 +655,22 @@ extension BaseItemDto {
         }
     }
 
+    /// Fetches a full item
     @MainActor
     func getFullItem(userSession: UserSession) async throws -> BaseItemDto {
         guard let id else {
             throw ErrorMessage(L10n.unknownError)
         }
 
+        // Plugins may return an item whose ID differs from the requested ID.
         let request = Paths.getItem(itemID: id, userID: userSession.user.id)
-        let response = try await userSession.send(request)
+        return try await userSession.sendFullItem(request)
+    }
 
-        // A check against `id` would typically be done, but a plugin
-        // may have provided `self` or the response item and may not
-        // be invariant over `id`.
-
-        return response.value
+    var withoutUserData: BaseItemDto {
+        with(self) {
+            $0.currentProgram = currentProgram?.withoutUserData
+            $0.userData = nil
+        }
     }
 }

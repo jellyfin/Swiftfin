@@ -46,9 +46,11 @@ final class ItemRecord: Identifiable {
 
         if optimisticChanges.isNotEmpty {
             var data = value.userData ?? UserItemDataDto(key: id.itemID)
+
             for change in optimisticChanges {
                 data[keyPath: change.field] = change.value
             }
+
             value.userData = data
         }
 
@@ -86,43 +88,48 @@ final class ItemRecord: Identifiable {
         let previous = metadata ?? BaseItemDto(id: id.itemID)
         var previousMetadata = previous
         previousMetadata.userData = nil
+
         let excluded: Set<String> = ["Id", "UserData", "CurrentProgram", "PlaylistItemId"]
         let metadataFields = patch.fields.subtracting(excluded)
         var metadataRevisions = self.metadataRevisions
         var value = previous
 
-        if metadataFields.isNotEmpty || patch.replacesMetadata {
+        if metadataFields.isNotEmpty || patch.scope != .partial {
             var incomingMetadata = patch.value
             incomingMetadata.userData = nil
             incomingMetadata.currentProgram = nil
             incomingMetadata.playlistItemID = nil
-            let incoming = try CodableFields.encode(incomingMetadata).filter { !excluded.contains($0.key) }
-            let existing = try CodableFields.encode(previousMetadata).filter { !excluded.contains($0.key) }
+
+            let incoming = try JSONSerialization.encode(incomingMetadata).filter { !excluded.contains($0.key) }
+            let existing = try JSONSerialization.encode(previousMetadata).filter { !excluded.contains($0.key) }
             var merged = metadataRevisions.merge(
                 existing,
                 with: incoming,
                 presentFields: metadataFields,
                 revision: revision,
-                replacing: patch.replacesMetadata
+                replacing: patch.scope != .partial
             )
+
             merged["Id"] = id.itemID
-            value = try CodableFields.decode(BaseItemDto.self, from: merged)
+            value = try JSONSerialization.decode(BaseItemDto.self, from: merged)
             value.userData = previous.userData
         }
 
         var userDataRevisions = self.userDataRevisions
 
-        if !patch.replacesMetadata, patch.fields.contains("UserData") {
+        if patch.scope == .fullItem || (patch.scope == .partial && patch.fields.contains("UserData")) {
             if let incoming = patch.value.userData {
                 if userDataRevisions.accepts(revision) {
-                    let existing = try CodableFields.encode(previous.userData ?? UserItemDataDto(key: incoming.key))
+                    let existing = try JSONSerialization.encode(previous.userData ?? UserItemDataDto(key: incoming.key))
                     let merged = try userDataRevisions.merge(
                         existing,
-                        with: CodableFields.encode(incoming),
+                        with: JSONSerialization.encode(incoming),
                         presentFields: patch.userDataFields,
-                        revision: revision
+                        revision: revision,
+                        replacing: patch.scope == .fullItem
                     )
-                    value.userData = try CodableFields.decode(UserItemDataDto.self, from: merged)
+
+                    value.userData = try JSONSerialization.decode(UserItemDataDto.self, from: merged)
                     value.userData?.itemID = id.itemID
                 }
             } else if revision >= userDataRevisions.latest {
@@ -132,20 +139,25 @@ final class ItemRecord: Identifiable {
         }
 
         let previousProgramID = currentProgram?.id
-        if !patch.replacesMetadata, patch.fields.contains("CurrentProgram"), revision >= programRevision {
+        if (patch.scope == .fullItem || (patch.scope == .partial && patch.fields.contains("CurrentProgram"))) && revision >=
+            programRevision
+        {
             currentProgram = program?.references(self) == true ? nil : program
             programRevision = revision
         }
 
         self.metadataRevisions = metadataRevisions
         self.userDataRevisions = userDataRevisions
+
         var updatedMetadata = value
         updatedMetadata.userData = nil
+
         let update = ItemStore.Update(
             itemID: id.itemID,
             metadataChanged: previousMetadata != updatedMetadata || previousProgramID != currentProgram?.id,
             userDataChanged: previous.userData != value.userData
         )
+
         if value != metadata {
             metadata = value
         }
@@ -171,46 +183,5 @@ final class ItemRecord: Identifiable {
         item.playlistItemID = nil
         item.currentProgram = item.currentProgram.map(withoutPlaylistOccurrences)
         return item
-    }
-}
-
-/// The decoded DTO plus the fields actually present on the wire, including nulls.
-struct ItemPatch {
-
-    let value: BaseItemDto
-    let fields: Set<String>
-    let userDataFields: Set<String>
-    let program: [String: Any]?
-    let replacesMetadata: Bool
-
-    /// Builds a patch when field presence is already known, such as a user-data update.
-    init(
-        value: BaseItemDto,
-        fields: Set<String>,
-        userDataFields: Set<String> = [],
-        program: [String: Any]? = nil,
-        replacesMetadata: Bool = false
-    ) {
-        self.value = value
-        self.fields = fields
-        self.userDataFields = userDataFields
-        self.program = program
-        self.replacesMetadata = replacesMetadata
-    }
-
-    /// Preserves field presence from a decoded server response.
-    static func decoded(_ value: BaseItemDto, object: [String: Any], replacesMetadata: Bool = false) -> ItemPatch {
-        ItemPatch(
-            value: value,
-            fields: Set(object.keys),
-            userDataFields: Set((object["UserData"] as? [String: Any] ?? [:]).keys),
-            program: object["CurrentProgram"] as? [String: Any],
-            replacesMetadata: replacesMetadata
-        )
-    }
-
-    /// Uses encoded fields when a local snapshot has no raw response.
-    static func snapshot(_ value: BaseItemDto, replacesMetadata: Bool = false) throws -> ItemPatch {
-        try decoded(value, object: CodableFields.encode(value), replacesMetadata: replacesMetadata)
     }
 }

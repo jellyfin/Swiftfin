@@ -8,24 +8,6 @@
 
 import Foundation
 
-/// Converts DTOs to field dictionaries using their Codable mappings.
-enum CodableFields {
-
-    static func encode(_ value: some Encodable) throws -> [String: Any] {
-        let data = try JSONEncoder().encode(value)
-        guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            throw CocoaError(.coderInvalidValue)
-        }
-
-        return object
-    }
-
-    static func decode<Value: Decodable>(_ type: Value.Type, from object: [String: Any]) throws -> Value {
-        let data = try JSONSerialization.data(withJSONObject: object)
-        return try JSONDecoder().decode(type, from: data)
-    }
-}
-
 /// Tracks field revisions so older partial responses cannot overwrite newer values.
 struct FieldRevisions {
 
@@ -57,7 +39,7 @@ struct FieldRevisions {
         var result = current
         let candidates = replacing ? presentFields.union(current.keys) : presentFields
         for field in candidates where revision >= fields[field, default: 0] {
-            // A key present on the wire but absent from the encoded DTO is an explicit null.
+            // A selected field missing from the encoded value removes the old key.
             result[field] = incoming[field]
             fields[field] = revision
         }
