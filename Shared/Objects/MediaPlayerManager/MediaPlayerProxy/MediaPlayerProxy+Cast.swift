@@ -26,13 +26,13 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
     private(set) var isMuted: Bool = false
     @Published
     private(set) var isPaused: Bool = false
-    @Published
+    @OptionalSharedBaseItem
     private(set) var nowPlayingItem: BaseItemDto?
     @Published
     private(set) var queueCount: Int = 0
     @Published
     private(set) var queueIndex: Int?
-    @Published
+    @SharedBaseItems
     var queueItems: [BaseItemDto] = []
     @Published
     private(set) var repeatMode: RepeatMode = .repeatNone
@@ -303,13 +303,13 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
     func refreshNowPlayingItem() async {
         guard let userSession = session.userSession,
               let item = nowPlayingItem,
-              let fullItem = try? await userSession.getFullItem(item).value,
-              fullItem.id == nowPlayingItem?.id
+              let entry = try? await userSession.getFullItem(item),
+              entry.itemID == nowPlayingItem?.id
         else {
             return
         }
 
-        nowPlayingItem = fullItem
+        $nowPlayingItem = entry
     }
 }
 
@@ -474,8 +474,9 @@ private extension CastMediaPlayerProxy {
             parameters.userID = userID
 
             let request = Paths.getItems(parameters: parameters)
-            guard let items = try? await session.send(request).value.items else { return }
+            guard let response = try? await session.send(request), ids == queueItemIDs else { return }
 
+            let items = response.value.items ?? []
             queueItems = ids.compactMap { id in
                 items.first { $0.id == id }
             }

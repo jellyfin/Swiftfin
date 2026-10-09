@@ -77,8 +77,9 @@ final class CastViewModel: ViewModel {
         )
         let request = Paths.getSessions(parameters: parameters)
         let response = try await send(request)
+        defer { withExtendedLifetime(response) {} }
 
-        updateTargets(response.value)
+        updateTargets(response.value, mergeItems: false)
     }
 
     func select(_ target: SessionViewModel?) {
@@ -92,7 +93,7 @@ final class CastViewModel: ViewModel {
             .isPlaying(item: item)
     }
 
-    private func updateTargets(_ incomingSessions: [SessionInfoDto]) {
+    private func updateTargets(_ incomingSessions: [SessionInfoDto], mergeItems: Bool = true) {
         if let pausedSince, Date.now.timeIntervalSince(pausedSince) < 15 {
             return
         }
@@ -112,6 +113,9 @@ final class CastViewModel: ViewModel {
                     && session.playableMediaTypes?.contains(.video) == true
             }
             .sorted()
+
+        let records = mergeItems ? try? userSession.receiveSessionItems(controllableSessions) : nil
+        defer { withExtendedLifetime(records) {} }
 
         for session in controllableSessions {
             guard let id = session.id else { continue }
