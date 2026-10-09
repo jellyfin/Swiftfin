@@ -144,6 +144,7 @@ final class ItemPlaylistViewModel: ViewModel {
 
         let request = Paths.createPlaylist(parameters)
         _ = try await send(request)
+        userSession?.items.libraryDidChange()
 
         events.send(.updated)
     }
@@ -179,7 +180,7 @@ final class ItemPlaylistViewModel: ViewModel {
 
         _ = try await send(request)
 
-        Notifications[.itemShouldRefreshMetadata].post(playlistID)
+        userSession?.items.libraryDidChange()
     }
 
     private func removeItem(from playlistID: String) async throws {
@@ -193,6 +194,6 @@ final class ItemPlaylistViewModel: ViewModel {
         )
         _ = try await send(request)
 
-        Notifications[.itemShouldRefreshMetadata].post(playlistID)
+        userSession?.items.libraryDidChange()
     }
 }

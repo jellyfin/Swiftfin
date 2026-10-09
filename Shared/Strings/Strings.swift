@@ -880,6 +880,10 @@ internal enum L10n {
   internal static let invalidURL = L10n.tr("Localizable", "invalidURL", fallback: "Invalid URL")
   /// Invalid Wi-Fi name
   internal static let invalidWifiName = L10n.tr("Localizable", "invalidWifiName", fallback: "Invalid Wi-Fi name")
+  /// Inverted dark
+  internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted dark")
+  /// Inverted light
+  internal static let invertedLight = L10n.tr("Localizable", "invertedLight", fallback: "Inverted light")
   /// ISO type
   internal static let isoType = L10n.tr("Localizable", "isoType", fallback: "ISO type")
   /// Item already exists
@@ -914,6 +918,8 @@ internal enum L10n {
   internal static let landscape = L10n.tr("Localizable", "landscape", fallback: "Landscape")
   /// Language
   internal static let language = L10n.tr("Localizable", "language", fallback: "Language")
+  /// Large
+  internal static let large = L10n.tr("Localizable", "large", fallback: "Large")
   /// Larger
   internal static let larger = L10n.tr("Localizable", "larger", fallback: "Larger")
   /// Largest
@@ -1100,6 +1106,8 @@ internal enum L10n {
   internal static let name = L10n.tr("Localizable", "name", fallback: "Name")
   /// Narrator
   internal static let narrator = L10n.tr("Localizable", "narrator", fallback: "Narrator")
+  /// Native
+  internal static let native = L10n.tr("Localizable", "native", fallback: "Native")
   /// Network
   internal static let network = L10n.tr("Localizable", "network", fallback: "Network")
   /// Network timed out
@@ -1152,6 +1160,8 @@ internal enum L10n {
   internal static let noPublicUsers = L10n.tr("Localizable", "noPublicUsers", fallback: "No public users")
   /// No results
   internal static let noResults = L10n.tr("Localizable", "noResults", fallback: "No results")
+  /// Normal
+  internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
   /// No runtime limit
   internal static let noRuntimeLimit = L10n.tr("Localizable", "noRuntimeLimit", fallback: "No runtime limit")
   /// Official rating
@@ -1640,6 +1650,8 @@ internal enum L10n {
   internal static let showMissingEpisodes = L10n.tr("Localizable", "showMissingEpisodes", fallback: "Show missing episodes")
   /// Show missing seasons
   internal static let showMissingSeasons = L10n.tr("Localizable", "showMissingSeasons", fallback: "Show missing seasons")
+  /// Show poster labels
+  internal static let showPosterLabels = L10n.tr("Localizable", "showPosterLabels", fallback: "Show poster labels")
   /// Show progress
   internal static let showProgress = L10n.tr("Localizable", "showProgress", fallback: "Show progress")
   /// Show recommendations
@@ -1734,6 +1746,8 @@ internal enum L10n {
   internal static func streamInfoWithMethod(_ p1: Any) -> String {
     return L10n.tr("Localizable", "streamInfoWithMethod", String(describing: p1), fallback: "%@ Info")
   }
+  /// Streams
+  internal static let streams = L10n.tr("Localizable", "streams", fallback: "Streams")
   /// Studio
   internal static let studio = L10n.tr("Localizable", "studio", fallback: "Studio")
   /// Studios

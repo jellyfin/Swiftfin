@@ -44,6 +44,7 @@ struct ItemPlaylistView: View {
                             let name = alert.name.wrappedValue
 
                             guard name.isNotEmpty else { return }
+
                             viewModel.create(name: name)
                         }
 
