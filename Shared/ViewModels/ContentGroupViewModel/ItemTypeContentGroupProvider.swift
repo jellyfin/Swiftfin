@@ -20,12 +20,13 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
         }
     }
 
+    @OptionalSharedBaseItem
+    var parent: BaseItemDto?
+
     let id: String
     let displayTitle: String
     var environment: Environment
     let itemTypes: [BaseItemKind]
-    @OptionalSharedBaseItem
-    var parent: BaseItemDto?
 
     init(
         itemTypes: [BaseItemKind],

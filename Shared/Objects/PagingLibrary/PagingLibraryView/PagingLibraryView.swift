@@ -50,6 +50,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @TabItemSelected
     private var tabItemSelected
 
+    private let displayTitle: String?
+
     private var libraryStyleOptions: LibraryStyleOptions {
         viewModel.libraryStyleOptions
     }
@@ -75,7 +77,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         rememberIndividualLibraryStyle ? $parentLibraryStyle : $defaultLibraryStyle
     }
 
-    init(library: Library) {
+    init(library: Library, displayTitle: String? = nil) {
+        self.displayTitle = displayTitle
         self._parentLibraryStyle = StoredValue(.User.libraryStyle(id: library.parent.pagingLibraryID))
         self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(library: library))
     }
@@ -223,7 +226,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .animation(.linear(duration: 0.2), value: viewModel.background.is(.searching))
         .animation(.linear(duration: 0.2), value: viewModel.elements)
         .animation(.linear(duration: 0.2), value: viewModel.searchElements)
-        .navigationTitle(viewModel.library.parent.displayTitle)
+        .navigationTitle(displayTitle ?? viewModel.library.parent.displayTitle)
         .errorMessage($viewModel.error)
         .onPreferenceChange(IsSafeAreaBarApplied.self) { newValue in
             isSafeAreaBarApplied = newValue

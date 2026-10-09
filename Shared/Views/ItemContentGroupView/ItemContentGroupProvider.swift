@@ -18,13 +18,13 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
     private(set) var item: BaseItemDto
     @SharedBaseItems
     private(set) var localTrailers: [BaseItemDto] = []
-    @Published
-    private(set) var mediaPlayerItemProvider: MediaPlayerItemProvider?
     @OptionalSharedBaseItem
     private(set) var randomBackdropItem: BaseItemDto?
 
     @Published
     var isPresentingDeleteConfirmation = false
+    @Published
+    private(set) var mediaPlayerItemProvider: MediaPlayerItemProvider?
 
     let id: String
 

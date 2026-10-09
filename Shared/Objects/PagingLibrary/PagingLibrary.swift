@@ -30,31 +30,31 @@ final class LibraryPageState {
         self.itemRequest = try userSession.items.beginRequest()
     }
 
-    private var consumedRows: Int?
+    private var serverItemCount: Int?
     private var totalRows: Int?
 
     func items(from response: Response<BaseItemDtoQueryResult>) throws -> [ItemPatch] {
-        consumedRows = response.value.items?.count ?? 0
+        serverItemCount = response.value.items?.count ?? 0
         totalRows = response.value.totalRecordCount
         return try response.patches()
     }
 
     func items(from response: Response<[BaseItemDto]>) throws -> [ItemPatch] {
-        consumedRows = response.value.count
+        serverItemCount = response.value.count
         totalRows = response.value.count
         return try response.patches()
     }
 
     // Server offsets count rows that may be filtered out before they reach the collection
     func progress(returnedCount: Int) -> (nextOffset: Int, hasNextPage: Bool) {
-        let consumedRows = consumedRows ?? returnedCount
-        let nextOffset = pageOffset + consumedRows
-        guard consumedRows > 0 else { return (nextOffset, false) }
+        let serverItemCount = serverItemCount ?? returnedCount
+        let nextOffset = pageOffset + serverItemCount
+        guard serverItemCount > 0 else { return (nextOffset, false) }
 
         if let totalRows, totalRows >= nextOffset {
             return (nextOffset, nextOffset < totalRows)
         }
-        return (nextOffset, consumedRows >= pageSize)
+        return (nextOffset, serverItemCount >= pageSize)
     }
 }
 

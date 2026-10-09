@@ -37,13 +37,14 @@ extension NavigationRoute {
 
     @MainActor
     static func library<Library: PagingLibrary>(
-        library: Library
+        library: Library,
+        displayTitle: String? = nil
     ) -> NavigationRoute where Library.Element: LibraryElement {
         NavigationRoute(
             id: "library-\(library.parent.pagingLibraryID)",
             withNamespace: { .push(.zoom(sourceID: "item", namespace: $0)) }
         ) {
-            PagingLibraryView(library: library)
+            PagingLibraryView(library: library, displayTitle: displayTitle)
         }
     }
 }
