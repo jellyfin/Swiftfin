@@ -25,6 +25,8 @@ struct LatestInLibrary: BaseItemKindLibrary {
         environment: Empty,
         pageState: LibraryPageState
     ) async throws -> [BaseItemDto] {
+        guard pageState.pageOffset == 0 else { return [] }
+
         var parameters = Paths.GetLatestMediaParameters()
         parameters.enableUserData = true
         parameters.fields = PosterSubtitleField.itemFields
