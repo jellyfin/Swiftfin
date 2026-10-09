@@ -86,6 +86,7 @@ extension ExternalTrailerURL.Source {
         guard let match = url.absoluteString.firstMatch(of: pattern) else {
             return nil
         }
+
         let videoId = String(match.1)
         return URL(string: "vimeo://video/\(videoId)")
     }

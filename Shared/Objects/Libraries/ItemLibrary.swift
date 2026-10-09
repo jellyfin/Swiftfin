@@ -12,9 +12,10 @@ import JellyfinAPI
 import SwiftUI
 
 @MainActor
-struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLibrary {
+struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibrary {
 
     struct Environment: WithDefaultValue {
+
         var grouping: BaseItemDto.Grouping?
         var filters: ItemFilterCollection
 
@@ -26,28 +27,31 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
 
     let environment: Environment?
     let filterViewModel: FilterViewModel
-    let parent: BaseItemDto
+    @SharedBaseItem
+    var parent: BaseItemDto
 
     init(
         parent: BaseItemDto,
-        filters: ItemFilterCollection? = nil
+        filters: ItemFilterCollection? = nil,
+        staticFilters: ItemFilterCollection = .default
     ) {
-        var environment = Environment(
-            grouping: parent.groupings?.defaultSelection,
-            filters: filters ?? .default
-        )
+        var filters = filters ?? .default
 
         if let id = parent.id, Defaults[.Customization.Library.rememberSort] {
             let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
 
-            environment.filters.sortBy = storedFilters.sortBy
-            environment.filters.sortOrder = storedFilters.sortOrder
+            filters.sortBy = storedFilters.sortBy
+            filters.sortOrder = storedFilters.sortOrder
         }
 
-        self.environment = environment
+        self.environment = .init(
+            grouping: parent.groupings?.defaultSelection,
+            filters: staticFilters.union(filters)
+        )
         self.filterViewModel = .init(
             parent: parent,
-            currentFilters: environment.filters
+            currentFilters: filters,
+            staticFilters: staticFilters
         )
         self.parent = parent
     }
@@ -101,7 +105,7 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
     func retrievePage(
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(environment: environment),
@@ -114,13 +118,13 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         let request = Paths.getItems(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return normalize(response.value.items ?? [])
+        return try pageState.items(from: response)
     }
 
     func retrieveRandomElement(
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> BaseItemDto? {
+    ) async throws -> ItemPatch? {
         var parameters = attachFilters(
             to: makeBaseItemParameters(environment: environment),
             using: environment.filters
@@ -132,34 +136,34 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         let request = Paths.getItems(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value.items?.first
+        return try pageState.items(from: response).first
     }
 
     func retrieveSearchPage(
         query: String,
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = attachPage(
             to: attachFilters(
                 to: makeBaseItemParameters(environment: environment),
-                using: environment.filters,
-                isLetterFilterIncluded: false
+                using: environment.filters
             ),
             pageState: pageState
         )
-        parameters.searchTerm = query
+        parameters.searchTerm = filterViewModel.staticFilters.query ?? query
         parameters.userID = pageState.userSession.user.id
 
         let request = Paths.getItems(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return normalize(response.value.items ?? [])
+        return try pageState.items(from: response)
     }
 
     private func makeBaseItemParameters(environment: Environment) -> Paths.GetItemsParameters {
         var parameters = Paths.GetItemsParameters()
         parameters.enableUserData = true
+        parameters.fields = PosterSubtitleField.itemFields
         parameters.includeItemTypes = parent.supportedItemTypes(for: environment.grouping)
         parameters.isRecursive = parent.isRecursiveCollection(for: environment.grouping)
         parameters.sortBy = [.name]
@@ -167,14 +171,19 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
 
         guard let parentID = parent.id else { return parameters }
 
-        switch parent.libraryType {
-        case .folder:
+        if parent.isFolderCollection {
             parameters.parentID = parentID
             parameters.isRecursive = nil
+            return parameters
+        }
+
+        switch parent.libraryType {
         case .person:
             parameters.personIDs = [parentID]
+
         case .studio:
             parameters.studioIDs = [parentID]
+
         default:
             parameters.parentID = parentID
         }
@@ -182,28 +191,40 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
         return parameters
     }
 
-    private func normalize(_ items: [BaseItemDto]) -> [BaseItemDto] {
-        items
-            .filter { item in
-                if let collectionType = item.collectionType {
-                    return CollectionType.supportedCases.contains(collectionType)
-                }
-
-                return true
+    func materialize(_ page: [ItemPatch], pageState: LibraryPageState) throws -> [ItemEntry] {
+        try page.compactMap { patch in
+            if let type = patch.value.collectionType, !CollectionType.supportedCases.contains(type) {
+                return nil
             }
-            .map { item in
-                if parent.libraryType == .folder, item.type == .collectionFolder {
-                    return item.mutating(\.type, with: .folder)
-                }
-
-                return item
+            guard let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else {
+                return nil
             }
+
+            return ItemEntry(item: record, occurrence: patch.value.playlistItemID)
+        }
+    }
+
+    func includes(_ element: ItemEntry, environment: Environment) -> Bool {
+        element.item.confirmedUserData?.matches(environment.filters.traits) != false
+    }
+
+    func shouldRefreshForUserDataChange(environment: Environment) -> Bool {
+        environment.filters.traits.contains {
+            switch $0 {
+            case .isFavorite, .isPlayed, .isUnplayed, .isResumable, .likes, .dislikes, .isFavoriteOrLikes: true
+            default: false
+            }
+        } || environment.filters.sortBy.contains {
+            switch $0 {
+            case .datePlayed, .playCount, .isUnplayed, .isPlayed, .isFavoriteOrLiked, .seriesDatePlayed: true
+            default: false
+            }
+        }
     }
 
     private func attachFilters(
         to parameters: Paths.GetItemsParameters,
-        using filters: ItemFilterCollection,
-        isLetterFilterIncluded: Bool = true
+        using filters: ItemFilterCollection
     ) -> Paths.GetItemsParameters {
         var parameters = parameters
         parameters.audioLanguages = filters.audioLanguages.map(\.value)
@@ -230,15 +251,12 @@ struct ItemLibrary: PagingLibrary, SearchablePagingLibrary, WithRandomElementLib
             parameters.includeItemTypes = filters.itemTypes
         }
 
-        guard isLetterFilterIncluded else { return parameters }
-
-        if filters.letter.first?.value == "#" {
-            parameters.nameLessThan = "A"
-        } else {
-            parameters.nameStartsWith = filters.letter
-                .map(\.value)
-                .filter { $0 != "#" }
-                .first
+        if let letter = filters.letter.first {
+            if letter.value == "#" {
+                parameters.nameLessThan = "A"
+            } else {
+                parameters.nameStartsWith = letter.value
+            }
         }
 
         return parameters
@@ -269,6 +287,10 @@ private struct ItemLibraryBody<Content: View>: View {
     private let content: Content
     private let filterViewModel: FilterViewModel
 
+    private var filterTypes: [ItemFilterType] {
+        enabledDrawerFilters.filter { !filterViewModel.staticFilters.containsFilters(ofType: $0) }
+    }
+
     init(
         filterViewModel: FilterViewModel,
         viewModel: PagingLibraryViewModel<ItemLibrary>,
@@ -281,7 +303,6 @@ private struct ItemLibraryBody<Content: View>: View {
 
     var body: some View {
         content
-            .letterPickerBar(filterViewModel: filterViewModel)
             .onFirstAppear {
                 Task {
                     await filterViewModel.getQueryFilters()
@@ -292,12 +313,21 @@ private struct ItemLibraryBody<Content: View>: View {
             }
             .onReceive(
                 filterViewModel.$currentFilters
-                    .dropFirst()
+                    .map { filterViewModel.staticFilters.union($0) }
                     .removeDuplicates()
                     .debounce(for: 1, scheduler: RunLoop.main)
             ) { filters in
+                guard viewModel.environment.filters != filters else { return }
+
                 viewModel.environment.filters = filters
             }
+            #if os(tvOS)
+            .filterBar(
+                viewModel: filterViewModel,
+                types: filterTypes
+            )
+            #endif
+            .letterPickerBar(filterViewModel: filterViewModel)
             #if os(tvOS)
             .background(alignment: .top) {
                 if !router.isRootOfPath {
@@ -307,7 +337,7 @@ private struct ItemLibraryBody<Content: View>: View {
             #else
             .navigationBarFilterDrawer(
                 viewModel: filterViewModel,
-                types: enabledDrawerFilters
+                types: filterTypes
             )
             #endif
     }

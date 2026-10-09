@@ -51,8 +51,7 @@ struct QuickConnectAuthorizeView: View {
             Text(viewModel.user.name ?? L10n.unknown)
                 .fontWeight(.semibold)
                 .foregroundStyle(.primary)
-
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -123,6 +122,7 @@ struct QuickConnectAuthorizeView: View {
         }
         .onReceive(viewModel.$error) { error in
             guard error != nil else { return }
+
             UIDevice.feedback(.error)
         }
         .onReceive(viewModel.events) { event in

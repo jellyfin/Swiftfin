@@ -21,6 +21,7 @@ extension ChapterInfo {
 
     var startSeconds: Duration? {
         guard let startPositionTicks else { return nil }
+
         return Duration.ticks(startPositionTicks)
     }
 }
@@ -64,6 +65,14 @@ extension ChapterInfo {
             ChapterPosterLabel(chapter: self)
         }
 
+        func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
+            let startTime = PosterAccessibility.duration(chapterInfo.startSeconds ?? .zero)
+            return PosterAccessibility(
+                label: displayTitle,
+                value: L10n.posterAccessibilityStartTime(startTime)
+            )
+        }
+
         func posterOverlay(for displayType: PosterDisplayType) -> some View {
             PosterSelectionOverlay()
         }
@@ -79,6 +88,9 @@ extension ChapterInfo {
     }
 }
 
+// TODO: have label match what BaseItemDto does in PosterCollectionView
+//       - different height, causes clipping
+
 private struct ChapterPosterLabel: View {
 
     let chapter: ChapterInfo.FullInfo
@@ -86,7 +98,7 @@ private struct ChapterPosterLabel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(chapter.chapterInfo.displayTitle)
-                .font(.subheadline.weight(.semibold))
+                .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundStyle(.primary)
                 .lineLimit(1)

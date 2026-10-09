@@ -17,6 +17,7 @@ final class EPGViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case getNextPage
         case refresh(startDate: Date?)
         case setDate(date: Date)
@@ -27,11 +28,14 @@ final class EPGViewModel: ViewModel {
             switch self {
             case .getNextPage:
                 .none
+
             case .refresh:
                 .to(.refreshing, then: .content)
                     .onRepeat(.cancel)
+
             case .setDate:
                 .none
+
             case ._actuallyGetNextPage:
                 .background(.gettingNextPage)
             }
@@ -39,10 +43,12 @@ final class EPGViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case gettingNextPage
     }
 
     enum State {
+
         case content
         case error
         case initial
@@ -50,13 +56,15 @@ final class EPGViewModel: ViewModel {
     }
 
     private struct ChannelPage {
-        let channels: IdentifiedArrayOf<BaseItemDto>
+
+        let channels: [ItemPatch]
+        let pageState: LibraryPageState
         let nextOffset: Int
         let hasNextPage: Bool
     }
 
     @Published
-    private(set) var channels: IdentifiedArrayOf<BaseItemDto> = IdentifiedArray(
+    private(set) var channels: IdentifiedArrayOf<ItemEntry> = IdentifiedArray(
         [],
         uniquingIDsWith: { existing, _ in existing }
     )
@@ -96,6 +104,37 @@ final class EPGViewModel: ViewModel {
 
         self.startDate = defaultStartDate()
 
+        userSession?.items
+            .changes
+            .sink { [weak self] change in
+                guard let self else { return }
+
+                switch change {
+                case let .deleted(id):
+                    self.channels.removeAll { $0.itemID == id }
+                    self.programs.removeValue(forKey: id)
+                    for (channelID, blocks) in self.programs where blocks.contains(where: { $0.id.programIDs.contains(id) }) {
+                        // Rebuild grouped programs to recalculate their bounds after a deletion
+                        self.programs[channelID] = blocks.flatMap(\.programs).programBlocks(
+                            startDate: self.startDate,
+                            endDate: self.endDate
+                        )
+                    }
+                    self.programsRevision &+= 1
+
+                case .invalidated:
+                    self.requestGeneration += 1
+                    self.channels.removeAll()
+                    self.programs.removeAll()
+                    self.hasNextChannelPage = false
+                    self.programsRevision &+= 1
+
+                case .updated, .libraryChanged:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+
         Timer.publish(every: 60, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] date in
@@ -133,6 +172,7 @@ final class EPGViewModel: ViewModel {
             : calendar.startOfDay(for: date)
 
         guard newStartDate != startDate else { return }
+
         await refresh(startDate: newStartDate)
     }
 
@@ -140,121 +180,87 @@ final class EPGViewModel: ViewModel {
     private func __actuallyGetNextPage() async throws {
         guard hasNextChannelPage else { return }
 
-        let generation = requestGeneration
-        let requestStartDate = startDate
-        let requestEndDate = endDate
-        let page = try await getChannelPage(offset: nextChannelOffset)
-        let existingChannelIDs = Set(channels.compactMap(\.id))
-        let newChannels = IdentifiedArray(
-            page.channels.elements.filter { channel in
-                channel.id.map { !existingChannelIDs.contains($0) } ?? false
-            },
-            uniquingIDsWith: { existing, _ in existing }
-        )
-        let newPrograms = try await getProgramBlocks(
-            for: newChannels,
-            startDate: requestStartDate,
-            endDate: requestEndDate
-        )
-
-        guard !Task.isCancelled,
-              generation == requestGeneration,
-              startDate == requestStartDate
-        else { return }
-
-        channels = IdentifiedArray(
-            channels.elements + newChannels.elements,
-            uniquingIDsWith: { existing, _ in existing }
-        )
-        programs.merge(newPrograms) { _, new in new }
-        programsRevision &+= 1
-        nextChannelOffset = page.nextOffset
-        hasNextChannelPage = page.hasNextPage
+        try await loadChannels(replacing: false, from: startDate)
     }
 
     @Function(\Action.Cases.refresh)
     private func _refresh(_ requestedStartDate: Date?) async throws {
         requestGeneration += 1
+        try await loadChannels(replacing: true, from: requestedStartDate ?? refreshedStartDate())
+    }
+
+    private func loadChannels(replacing: Bool, from date: Date) async throws {
         let generation = requestGeneration
-        let requestStartDate = requestedStartDate ?? refreshedStartDate()
-        let requestEndDate = endDate(startingAt: requestStartDate)
-        let page = try await getChannelPage(offset: 0)
-        let newPrograms = try await getProgramBlocks(
-            for: page.channels,
-            startDate: requestStartDate,
-            endDate: requestEndDate
+        let offset = replacing ? 0 : nextChannelOffset
+        let end = endDate(startingAt: date)
+        let page = try await getChannelPage(offset: offset)
+        let existingIDs = replacing ? Set<String>() : Set(channels.map(\.itemID))
+        let patches = page.channels.filter { !existingIDs.contains($0.value.id ?? "") }
+        let programPatches = try await getPrograms(
+            channelIDs: patches.compactMap(\.value.id),
+            startDate: date,
+            endDate: end,
+            userSession: page.pageState.userSession
         )
 
-        guard !Task.isCancelled,
-              generation == requestGeneration
-        else { return }
+        guard !Task.isCancelled, generation == requestGeneration,
+              replacing || offset == nextChannelOffset else { return }
 
-        startDate = requestStartDate
-        channels = page.channels
-        programs = newPrograms
+        try page.pageState.userSession.items.validate()
+        let newChannels = try channelsLibrary.materialize(patches, pageState: page.pageState)
+        let newPrograms = try makeProgramBlocks(programPatches, pageState: page.pageState, startDate: date, endDate: end)
+        if replacing {
+            channels = IdentifiedArray(newChannels, uniquingIDsWith: { existing, _ in existing })
+            programs = newPrograms
+            startDate = date
+        } else {
+            for channel in newChannels {
+                channels.updateOrAppend(channel)
+            }
+            programs.merge(newPrograms) { _, new in new }
+        }
         programsRevision &+= 1
         nextChannelOffset = page.nextOffset
         hasNextChannelPage = page.hasNextPage
     }
 
     private func getChannelPage(offset: Int) async throws -> ChannelPage {
-        let items = try await channelsLibrary.retrievePage(
-            environment: Empty(),
-            pageState: LibraryPageState(
-                pageOffset: offset,
-                pageSize: channelPageSize,
-                userSession: requireUserSession()
-            )
-        )
-        let validChannels = items.filter { channel in
-            guard let id = channel.id else { return false }
-            return id.nilIfBlank == id
-        }
-
+        let pageState = try LibraryPageState(pageOffset: offset, pageSize: channelPageSize, userSession: requireUserSession())
+        let patches = try await channelsLibrary.retrievePage(environment: Empty(), pageState: pageState)
+        let progress = pageState.progress(returnedCount: patches.count)
         return ChannelPage(
-            channels: IdentifiedArray(
-                validChannels,
-                uniquingIDsWith: { existing, _ in existing }
-            ),
-            nextOffset: offset + items.count,
-            hasNextPage: items.count >= channelPageSize
+            channels: patches.filter { $0.value.id?.nilIfBlank != nil },
+            pageState: pageState,
+            nextOffset: progress.nextOffset,
+            hasNextPage: progress.hasNextPage
         )
     }
 
-    private func getProgramBlocks(
-        for channels: IdentifiedArrayOf<BaseItemDto>,
+    private func makeProgramBlocks(
+        _ patches: [ItemPatch],
+        pageState: LibraryPageState,
         startDate: Date,
         endDate: Date
-    ) async throws -> [String: [ProgramBlock]] {
-        let channelIDs = channels.compactMap(\.id)
-        guard channelIDs.isNotEmpty else { return [:] }
+    ) throws -> [String: [ProgramBlock]] {
+        let entries = try patches.compactMap { patch -> ItemEntry? in
+            guard let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else { return nil }
 
-        let fetchedPrograms = try await getPrograms(
-            channelIDs: channelIDs,
-            startDate: startDate,
-            endDate: endDate
-        )
-        let programsByChannel = fetchedPrograms.reduce(into: [String: [BaseItemDto]]()) { result, program in
-            guard let channelID = program.channelID,
-                  channelID.nilIfBlank == channelID
-            else { return }
-
-            result[channelID, default: []].append(program)
+            return ItemEntry(item: record)
         }
-
-        return programsByChannel.mapValues { channelPrograms in
-            channelPrograms.programBlocks(
-                startDate: startDate,
-                endDate: endDate
-            )
+        let byChannel = Dictionary(grouping: entries) { $0.snapshot.channelID ?? "" }
+        return byChannel.mapValues { entries in
+            entries.map(\.snapshot).programBlocks(startDate: startDate, endDate: endDate)
         }
     }
 
     private func getPrograms(
         channelIDs: [String],
         startDate: Date,
-        endDate: Date
-    ) async throws -> [BaseItemDto] {
+        endDate: Date,
+        userSession: UserSession
+    ) async throws -> [ItemPatch] {
+        guard channelIDs.isNotEmpty else { return [] }
+
         var parameters = Paths.GetLiveTvProgramsParameters()
         parameters.channelIDs = channelIDs
         parameters.enableImages = false
@@ -263,12 +269,9 @@ final class EPGViewModel: ViewModel {
         parameters.maxStartDate = endDate
         parameters.minEndDate = startDate
         parameters.sortBy = [.startDate]
-        parameters.userID = try authenticatedUser.id
-
-        let request = Paths.getLiveTvPrograms(parameters: parameters)
-        let response = try await send(request)
-
-        return response.value.items ?? []
+        parameters.userID = userSession.user.id
+        let response = try await userSession.client.send(Paths.getLiveTvPrograms(parameters: parameters))
+        return try response.patches()
     }
 
     private func endDate(startingAt startDate: Date) -> Date {

@@ -38,6 +38,7 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
                 case .portrait, .square:
                     60
                 }
+
             case .small:
                 switch displayType {
                 case .landscape:
@@ -45,8 +46,10 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImage
                 case .portrait, .square:
                     portraitMaxWidth
                 }
+
             case .medium:
                 landscapeMaxWidth
+
             case let .custom(width):
                 width
             }

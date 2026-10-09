@@ -20,7 +20,8 @@ struct ProgramBlock: Identifiable {
     }
 
     let id: ID
-    let programs: [BaseItemDto]
+    @SharedBaseItems
+    var programs: [BaseItemDto]
     let start: Date
     let end: Date
 
@@ -47,6 +48,7 @@ struct ProgramBlock: Identifiable {
     func isAiring(at date: Date) -> Bool {
         programs.contains { program in
             guard let start = program.startDate, let end = program.endDate else { return false }
+
             return start <= date && date < end
         }
     }
@@ -54,6 +56,7 @@ struct ProgramBlock: Identifiable {
 
 extension Collection<BaseItemDto> {
 
+    @MainActor
     func programBlocks(
         startDate: Date,
         endDate: Date

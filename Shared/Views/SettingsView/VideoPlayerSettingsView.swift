@@ -78,6 +78,7 @@ struct VideoPlayerSettingsView: View {
     private func updateConfiguration(_ modify: (inout UserConfiguration) -> Void) {
         guard viewModel.user.id != nil else { return }
         guard var configuration = viewModel.user.configuration else { return }
+
         modify(&configuration)
         viewModel.updateConfiguration(configuration)
     }
@@ -149,7 +150,7 @@ struct VideoPlayerSettingsView: View {
                 value: L10n.playerVlcDescription
             )
             LabeledContent(
-                L10n.native,
+                L10n.avPlayer,
                 value: L10n.playerNativeDescription
             )
         }
@@ -171,14 +172,36 @@ struct VideoPlayerSettingsView: View {
     // MARK: - Button Settings
 
     @ViewBuilder
+    private func jumpIntervalPicker(title: String, selection: Binding<MediaJumpInterval>) -> some View {
+        CustomAlertPicker(
+            title: title,
+            selection: selection,
+            customTitle: L10n.jump,
+            customDescription: L10n.customJumpIntervalDescription
+        ) { value in
+            TextField(
+                L10n.duration,
+                value: value
+                    .map(
+                        getter: { Int($0.rawValue.seconds) },
+                        setter: { MediaJumpInterval(rawValue: .seconds($0)) }
+                    )
+                    .clamp(min: 1, max: 600),
+                format: .number
+            )
+            .keyboardType(.numberPad)
+        }
+    }
+
+    @ViewBuilder
     private var buttonSettings: some View {
         Section(L10n.buttons) {
-            JumpIntervalPicker(
+            jumpIntervalPicker(
                 title: L10n.jumpBackwardLength,
                 selection: $jumpBackwardLength
             )
 
-            JumpIntervalPicker(
+            jumpIntervalPicker(
                 title: L10n.jumpForwardLength,
                 selection: $jumpForwardLength
             )

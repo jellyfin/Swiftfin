@@ -65,6 +65,7 @@ extension RemoteView.QueueView {
                         Text(seasonEpisodeLabel)
                             .foregroundStyle(.secondary)
                     }
+
                 case .audio:
                     if let artists = item.artists, artists.isNotEmpty {
                         Text(artists.joined(separator: ", "))
@@ -78,6 +79,7 @@ extension RemoteView.QueueView {
                         Text(runtime, format: .runtime)
                             .foregroundStyle(.secondary)
                     }
+
                 case .movie:
                     Text(item.displayTitle)
                         .font(.body)
@@ -86,6 +88,7 @@ extension RemoteView.QueueView {
                         Text(premiereDateYear)
                             .foregroundStyle(.secondary)
                     }
+
                 default:
                     Text(item.displayTitle)
                         .font(.body)

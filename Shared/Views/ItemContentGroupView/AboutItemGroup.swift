@@ -13,7 +13,8 @@ struct AboutItemGroup: ContentGroup {
 
     let displayTitle: String
     let id: String
-    let item: BaseItemDto
+    @SharedBaseItem
+    var item: BaseItemDto
 
     func body(with viewModel: Empty) -> Body {
         Body(item: item)
@@ -24,7 +25,8 @@ struct AboutItemGroup: ContentGroup {
         @Router
         private var router
 
-        let item: BaseItemDto
+        @SharedBaseItem
+        var item: BaseItemDto
 
         private struct AboutCard<Content: View>: View {
 
@@ -146,7 +148,7 @@ struct AboutItemGroup: ContentGroup {
                             } else {
                                 Image(.tomatoRotten)
                                     .symbolRenderingMode(.monochrome)
-                                    .foregroundColor(.green)
+                                    .foregroundStyle(.green)
                             }
                         }
                         .font(.largeTitle)

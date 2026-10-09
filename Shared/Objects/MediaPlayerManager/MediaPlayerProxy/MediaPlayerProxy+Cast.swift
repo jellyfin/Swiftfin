@@ -72,6 +72,7 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
 
     private var isSuspended: Bool {
         guard let syncSuspendedSince else { return false }
+
         return Date.now.timeIntervalSince(syncSuspendedSince) < 15
     }
 
@@ -101,7 +102,7 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
             suppressSyncUntil = Date.now.addingTimeInterval(3)
         }
 
-        session.$session
+        session.sessionPublisher
             .sink { [weak self] session in
                 self?.handle(session)
             }
@@ -145,7 +146,7 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
         setSeconds(self.seconds - seconds)
     }
 
-    func setRate(_ rate: Float) {}
+    func setRate(_ rate: Double) {}
 
     func setSeconds(_ seconds: Duration) {
         var newSeconds = max(.zero, seconds)
@@ -302,7 +303,7 @@ class CastMediaPlayerProxy: RemoteMediaPlayerProxy,
     func refreshNowPlayingItem() async {
         guard let userSession = session.userSession,
               let item = nowPlayingItem,
-              let fullItem = try? await item.getFullItem(userSession: userSession),
+              let fullItem = try? await userSession.getFullItem(item).value,
               fullItem.id == nowPlayingItem?.id
         else {
             return
@@ -358,6 +359,7 @@ private extension CastMediaPlayerProxy {
 
         if isStopping {
             guard session.nowPlayingItem == nil else { return }
+
             isStopping = false
         }
 
@@ -458,6 +460,7 @@ private extension CastMediaPlayerProxy {
     func fetchFullNowPlayingItem() {
         Task {
             guard nowPlayingItem?.mediaSources == nil else { return }
+
             await refreshNowPlayingItem()
         }
     }
@@ -486,6 +489,7 @@ private extension CastMediaPlayerProxy {
                 try? await Task.sleep(for: .seconds(1))
 
                 guard !Task.isCancelled, let self else { return }
+
                 self.tick()
             }
         }

@@ -47,6 +47,7 @@ extension Array {
     @discardableResult
     mutating func removeFirstSafe() -> Element? {
         guard count > 0 else { return nil }
+
         return removeFirst()
     }
 

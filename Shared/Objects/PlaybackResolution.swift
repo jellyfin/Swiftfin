@@ -27,6 +27,7 @@ enum PlaybackResolution: Int, CaseIterable, Displayable, Storable {
             return L10n.maximum
         default:
             guard rawValue > 0 else { return L10n.unknown }
+
             return "\(rawValue.description)p"
         }
     }

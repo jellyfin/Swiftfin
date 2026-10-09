@@ -12,6 +12,7 @@ extension URL {
 
     init?(string: String?) {
         guard let string else { return nil }
+
         self.init(string: string)
     }
 
@@ -37,6 +38,7 @@ extension URL {
         guard try resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true else {
             return false
         }
+
         return try checkResourceIsReachable()
     }
 
@@ -46,6 +48,7 @@ extension URL {
         if includingSubfolders {
             guard let urls = FileManager.default.enumerator(at: self, includingPropertiesForKeys: nil)?.allObjects as? [URL]
             else { return nil }
+
             return try urls.lazy.reduce(0) {
                 try ($1.resourceValues(forKeys: [.totalFileAllocatedSizeKey]).totalFileAllocatedSize ?? 0) + $0
             }
@@ -67,6 +70,7 @@ extension URL {
     var sizeOnDisk: Int {
         do {
             guard let size = try directoryTotalAllocatedSize(includingSubfolders: true) else { return -1 }
+
             return size
         } catch {
             return -1

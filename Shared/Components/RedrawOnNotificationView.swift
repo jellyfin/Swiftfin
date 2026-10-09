@@ -32,6 +32,7 @@ struct RedrawOnNotificationView<Content: View, P>: View {
             .id(id)
             .onNotification(key) { p in
                 guard filter(p) else { return }
+
                 id += 1
             }
     }

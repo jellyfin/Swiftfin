@@ -39,6 +39,7 @@ extension ItemActionButtons {
                 systemImage: systemImage
             ) {
                 guard let mediaPlayerItemProvider = provider.mediaPlayerItemProvider else { return }
+
                 router.route(to: .remoteControl(provider: mediaPlayerItemProvider))
             }
             .isSelected(isPlaying)

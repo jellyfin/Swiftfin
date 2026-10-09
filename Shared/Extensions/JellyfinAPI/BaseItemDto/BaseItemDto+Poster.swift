@@ -88,12 +88,12 @@ extension BaseItemDto: Poster {
     @ViewBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         ZStack {
-            PosterSelectionOverlay()
-
             PosterIndicatorsOverlay(
                 item: self,
                 posterDisplayType: displayType
             )
+
+            PosterSelectionOverlay()
         }
     }
 
@@ -194,6 +194,7 @@ extension BaseItemDto: Poster {
                 image
                     .aspectRatio(contentMode: .fit)
             }
+
         case .program:
             if displayType == .square {
                 ContainerRelativeView(ratio: 0.95) {
@@ -204,6 +205,7 @@ extension BaseItemDto: Poster {
                 image
                     .aspectRatio(contentMode: .fill)
             }
+
         default:
             image
                 .aspectRatio(contentMode: .fill)
@@ -216,7 +218,7 @@ private struct BaseItemDtoPosterContextMenu: View {
     @Router
     private var router
 
-    @State
+    @SharedBaseItem
     private var item: BaseItemDto
 
     init(item: BaseItemDto) {
@@ -263,199 +265,23 @@ private struct BaseItemDtoPosterContextMenu: View {
 
     @MainActor
     private func toggleIsPlayed() async {
-        let beforeIsPlayed = item.userData?.isPlayed ?? false
+        guard let session = Container.shared.currentUserSession() else { return }
 
-        item.userData?.isPlayed = !beforeIsPlayed
         do {
-            try await setIsPlayed(!beforeIsPlayed)
+            try await session.setPlayed($item, to: !isPlayed)
         } catch {
-            item.userData?.isPlayed = beforeIsPlayed
+            session.itemActionErrors.send(error)
         }
     }
 
     @MainActor
     private func toggleIsFavorite() async {
-        let beforeIsFavorite = item.userData?.isFavorite ?? false
+        guard let session = Container.shared.currentUserSession() else { return }
 
-        item.userData?.isFavorite = !beforeIsFavorite
         do {
-            try await setIsFavorite(!beforeIsFavorite)
+            try await session.setFavorite($item, to: !isFavorite)
         } catch {
-            item.userData?.isFavorite = beforeIsFavorite
-        }
-    }
-
-    private func setIsPlayed(_ isPlayed: Bool) async throws {
-        guard let itemID = item.id,
-              let userSession = Container.shared.currentUserSession()
-        else { return }
-
-        let request: Request<UserItemDataDto> = if isPlayed {
-            Paths.markPlayedItem(
-                itemID: itemID,
-                userID: userSession.user.id
-            )
-        } else {
-            Paths.markUnplayedItem(
-                itemID: itemID,
-                userID: userSession.user.id
-            )
-        }
-
-        let response = try await userSession.client.send(request)
-        item.userData = response.value
-        Notifications[.itemUserDataDidChange].post(response.value)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
-    }
-
-    private func setIsFavorite(_ isFavorite: Bool) async throws {
-        guard let itemID = item.id,
-              let userSession = Container.shared.currentUserSession()
-        else { return }
-
-        let request: Request<UserItemDataDto> = if isFavorite {
-            Paths.markFavoriteItem(
-                itemID: itemID,
-                userID: userSession.user.id
-            )
-        } else {
-            Paths.unmarkFavoriteItem(
-                itemID: itemID,
-                userID: userSession.user.id
-            )
-        }
-
-        let response = try await userSession.client.send(request)
-        item.userData = response.value
-        Notifications[.itemUserDataDidChange].post(response.value)
-        Notifications[.itemShouldRefreshMetadata].post(itemID)
-    }
-}
-
-private struct BaseItemDtoPosterLabel: View {
-
-    let item: BaseItemDto
-
-    var body: some View {
-        switch item.type {
-        case .episode:
-            Label {
-                if let seriesName = item.seriesName {
-                    Text(seriesName)
-                }
-                if let indexLabel = item.seasonEpisodeLabel {
-                    Text(indexLabel)
-                }
-
-                Text(item.displayTitle)
-            }
-        case .season:
-            Label {
-                Text(item.parentTitle ?? item.displayTitle)
-                Text(item.displayTitle)
-            }
-        case .program:
-            Label {
-                Text(item.displayTitle)
-
-                if let startDate = item.startDate {
-                    ViewThatFits {
-                        SeparatorHStack {
-                            Text(String.hyphen)
-                        } content: {
-                            if !Calendar.current.isDateInToday(startDate) {
-                                Text(startDate, format: .dateTime.weekday(.abbreviated).hour().minute())
-                            } else {
-                                Text(startDate, style: .time)
-                            }
-
-                            if let endDate = item.endDate {
-                                Text(endDate, style: .time)
-                            }
-                        }
-
-                        if !Calendar.current.isDateInToday(startDate) {
-                            Text(startDate, format: .dateTime.weekday(.abbreviated).hour().minute())
-                        } else {
-                            Text(startDate, style: .time)
-                        }
-                    }
-                } else {
-                    Text(String.emptyRuntime)
-                }
-
-                if let channelName = item.channelName {
-                    Text(channelName)
-                }
-            }
-        case .video where item.extraType != nil:
-            Label {
-                Text(item.displayTitle)
-
-                if let extraType = item.extraType, extraType != .unknown {
-                    Text(extraType.displayTitle)
-                }
-
-                if let runtime = item.runtime {
-                    Text(runtime, format: .runtime)
-                }
-            }
-        default:
-            Label {
-                Text(item.displayTitle)
-
-                if let subtitle = item.subtitle {
-                    Text(subtitle)
-                }
-            }
-        }
-    }
-
-    private struct Label: View {
-
-        @Environment(\.posterDisplayType)
-        private var posterDisplayType
-
-        private let content: [AnyView]
-
-        private var details: [AnyView] {
-            let details = content.dropFirst()
-
-            return posterDisplayType == .landscape ? details.asArray : details.prefix(1).asArray
-        }
-
-        init(@ArrayBuilder<any View> content: () -> [any View]) {
-            self.content = content().map { AnyView($0) }
-        }
-
-        var body: some View {
-            AlternateLayoutView(alignment: .topLeading) {
-                VStack(spacing: 2) {
-                    Text(String.space)
-                    Text(String.space)
-                }
-                .font(.footnote)
-                .frame(maxWidth: .infinity)
-            } content: {
-                VStack(alignment: .leading, spacing: 2) {
-                    content.first
-                        .font(.footnote)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(details.isEmpty ? 2 : 1, reservesSpace: true)
-
-                    DotHStack {
-                        ForEach(details.indices, id: \.self) { index in
-                            details[index]
-                                .layoutPriority(index == 0 ? 1 : 0)
-                        }
-                    }
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
+            session.itemActionErrors.send(error)
         }
     }
 }

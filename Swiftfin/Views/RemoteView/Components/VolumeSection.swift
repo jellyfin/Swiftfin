@@ -56,6 +56,7 @@ extension RemoteView {
                         .animation(.linear(duration: 0.1), value: isAdjustingVolume)
                         .onChange(of: proxy.volumeLevel) { _, newValue in
                             guard !isAdjustingVolume else { return }
+
                             volume = Double(newValue)
                         }
                 }

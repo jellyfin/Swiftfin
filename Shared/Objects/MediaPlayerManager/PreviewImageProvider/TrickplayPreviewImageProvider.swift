@@ -68,6 +68,7 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
 
         if let task = imageTasks[imageIndex] {
             guard let image = await task.value else { return nil }
+
             return image.tile(for: seconds)
         }
 
@@ -110,6 +111,7 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
         imageTasks[imageIndex] = currentImageTask
 
         guard let image = await currentImageTask.value else { return nil }
+
         return image.tile(for: seconds)
     }
 
@@ -123,8 +125,8 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
         Task<TrickplayImage?, Never> { [weak self] () -> TrickplayImage? in
             guard let tileWidth = self?.info.width else { return nil }
             guard let itemID = self?.itemID else { return nil }
-
             guard let client = Container.shared.currentUserSession()?.client else { return nil }
+
             let request = Paths.getTrickplayTileImage(
                 itemID: itemID,
                 width: tileWidth,

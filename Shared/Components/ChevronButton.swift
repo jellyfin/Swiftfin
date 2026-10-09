@@ -216,8 +216,7 @@ struct ChevronButtonValueContent<Label: View, Value: View>: View {
 
             label
                 .labelStyle(BoldIconLabelStyle())
-
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             value
                 .foregroundStyle(.secondary)

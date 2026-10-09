@@ -21,12 +21,14 @@ struct DefaultContentGroupProvider: ContentGroupProvider {
 
     func makeGroups(environment: Empty) async throws -> [any ContentGroup] {
         guard let userSession else { return [] }
+
         let parameters = Paths.GetUserViewsParameters(userID: userSession.user.id)
         let userViewsPath = Paths.getUserViews(parameters: parameters)
-        let userViews = try await userSession.client.send(userViewsPath)
+        let userViews = try await userSession.send(userViewsPath)
         let excludedLibraryIDs = userSession.user.data.configuration?.latestItemsExcludes ?? []
 
-        let resolvedUserViews = (userViews.value.items ?? []).subtracting(excludedLibraryIDs, using: \.id)
+        let resolvedUserViews = (userViews.value.items ?? [])
+            .subtracting(excludedLibraryIDs, using: \.id)
             .intersecting(
                 [
                     .homevideos,

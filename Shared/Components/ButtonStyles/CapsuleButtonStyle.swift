@@ -14,9 +14,10 @@ extension ButtonStyle where Self == CapsuleButtonStyle {
         CapsuleButtonStyle()
     }
 
-    static func capsule(selectionTint: Color = .white, isSelectionActive: Bool = true) -> Self {
+    static func capsule(selectionTint: Color = .white, focusTint: Color? = nil, isSelectionActive: Bool = true) -> Self {
         CapsuleButtonStyle(
             selectionTint: selectionTint,
+            focusTint: focusTint,
             isSelectionActive: isSelectionActive
         )
     }
@@ -40,30 +41,35 @@ struct CapsuleButtonStyle: ButtonStyle {
                 self.verticalPadding = 2
                 self.minimumHeight = 20
                 self.labelSpacing = 2
+
             case .small:
                 self.font = .footnote
                 self.horizontalPadding = 8
                 self.verticalPadding = 4
                 self.minimumHeight = 26
                 self.labelSpacing = 2
+
             case .regular:
                 self.font = .callout
                 self.horizontalPadding = 10
                 self.verticalPadding = 5
                 self.minimumHeight = 30
                 self.labelSpacing = 4
+
             case .large:
                 self.font = .headline
+                self.horizontalPadding = 12
+                self.verticalPadding = 6
+                self.minimumHeight = 36
+                self.labelSpacing = 5
+
+            case .extraLarge:
+                self.font = .title3
                 self.horizontalPadding = 16
                 self.verticalPadding = 8
                 self.minimumHeight = 44
                 self.labelSpacing = 6
-            case .extraLarge:
-                self.font = .title3
-                self.horizontalPadding = 20
-                self.verticalPadding = 10
-                self.minimumHeight = 52
-                self.labelSpacing = 8
+
             @unknown default:
                 self = CapsuleControlMetrics(.regular)
             }
@@ -82,6 +88,7 @@ struct CapsuleButtonStyle: ButtonStyle {
     private var font
 
     var selectionTint: Color = .white
+    var focusTint: Color?
     var isSelectionActive: Bool = true
 
     private var metrics: CapsuleControlMetrics {
@@ -92,12 +99,17 @@ struct CapsuleButtonStyle: ButtonStyle {
         isSelected || (isEnabled && isFocused)
     }
 
+    private var highlightTint: Color {
+        isEnabled && isFocused ? focusTint ?? selectionTint : selectionTint
+    }
+
     private var foregroundStyle: AnyShapeStyle {
-        isHighlighted ? AnyShapeStyle(selectionTint.overlayColor) : AnyShapeStyle(HierarchicalShapeStyle.primary)
+        isHighlighted ? AnyShapeStyle(highlightTint.overlayColor) : AnyShapeStyle(HierarchicalShapeStyle.primary)
     }
 
     private var highlightOpacity: Double {
         guard isHighlighted else { return 0 }
+
         return isFocused || isSelectionActive ? 1 : 0.8
     }
 
@@ -109,7 +121,7 @@ struct CapsuleButtonStyle: ButtonStyle {
             .glassEffect(.regular.interactive(isEnabled), in: .capsule)
             .overlay {
                 Capsule()
-                    .fill(selectionTint)
+                    .fill(highlightTint)
                     .opacity(highlightOpacity)
             }
     }
@@ -135,6 +147,7 @@ struct CapsuleButtonStyle: ButtonStyle {
             .padding(.horizontal, metrics.horizontalPadding)
             .padding(.vertical, metrics.verticalPadding)
             .frame(minHeight: metrics.minimumHeight)
+            .clipShape(.capsule)
             .background { background }
             .contentShape(.capsule)
             .scaleEffect(isEnabled && isFocused ? 1.05 : 1)

@@ -29,7 +29,7 @@ struct ChannelScheduleLibrary: BaseItemKindLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         var parameters = Paths.GetLiveTvProgramsParameters()
         parameters.channelIDs = [channelID].compactMap(\.self)
         parameters.fields = [.channelInfo]
@@ -42,6 +42,6 @@ struct ChannelScheduleLibrary: BaseItemKindLibrary {
         let request = Paths.getLiveTvPrograms(parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value.items ?? []
+        return try pageState.items(from: response)
     }
 }

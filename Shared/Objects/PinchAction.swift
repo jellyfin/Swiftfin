@@ -18,15 +18,15 @@ struct PinchAction {
 
     let action: (
         _ scale: CGFloat,
-        _ velocity: CGFloat,
+        _ location: CGPoint,
         _ state: UIGestureRecognizer.State
     ) -> Void
 
     func callAsFunction(
         scale: CGFloat,
-        velocity: CGFloat,
+        location: CGPoint,
         state: UIGestureRecognizer.State
     ) {
-        action(scale, velocity, state)
+        action(scale, location, state)
     }
 }

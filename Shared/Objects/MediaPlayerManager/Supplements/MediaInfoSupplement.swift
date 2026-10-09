@@ -15,7 +15,8 @@ import SwiftUI
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
     let displayTitle: String = L10n.info
-    let item: BaseItemDto
+    @SharedBaseItem
+    var item: BaseItemDto
 
     var id: String {
         "MediaInfo-\(item.id ?? "any")"
@@ -33,16 +34,20 @@ extension MediaInfoSupplement {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @State
+        @SharedBaseItem
         private var item: BaseItemDto
 
+        @StateObject
+        private var recordingViewModel: RecordingTimerViewModel
+
         init(item: BaseItemDto) {
-            self._item = State(initialValue: item)
+            self.item = item
+            self._recordingViewModel = StateObject(wrappedValue: RecordingTimerViewModel(item: item))
         }
 
         @ViewBuilder
@@ -72,11 +77,64 @@ extension MediaInfoSupplement {
         }
 
         @ViewBuilder
+        private var recordButtons: some View {
+            VStack {
+                Button(role: recordingViewModel.recordingTimer != nil ? .destructive : nil) {
+                    recordingViewModel.toggleRecording()
+                } label: {
+                    Group {
+                        if let recordingTimer = recordingViewModel.recordingTimer {
+                            Label(
+                                recordingTimer.status == .inProgress ? L10n.stopRecording : L10n.cancelRecording,
+                                systemImage: "record.circle.fill"
+                            )
+                        } else {
+                            Label(L10n.record, systemImage: "record.circle")
+                        }
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                }
+                .buttonStyle(.supplementAction)
+                .frame(height: UIDevice.isTV ? 80 : 40)
+
+                if recordingViewModel.program?.isSeries == true {
+                    Button(role: recordingViewModel.seriesRecordingTimer != nil ? .destructive : nil) {
+                        recordingViewModel.toggleSeriesRecording()
+                    } label: {
+                        Group {
+                            if recordingViewModel.seriesRecordingTimer != nil {
+                                Label(L10n.cancelSeriesRecording, systemImage: "smallcircle.filled.circle.fill")
+                            } else {
+                                Label(L10n.recordSeries, systemImage: "smallcircle.filled.circle")
+                            }
+                        }
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    }
+                    .buttonStyle(.supplementAction)
+                    .frame(height: UIDevice.isTV ? 80 : 40)
+                }
+            }
+            .enabled(recordingViewModel.canManageRecordings)
+            #if os(tvOS)
+            .focusSection()
+            #endif
+            .onAppear {
+                recordingViewModel.refresh()
+            }
+            .onReceive(Notifications[.recordingTimersDidChange].publisher) {
+                recordingViewModel.refresh()
+            }
+            .errorMessage($recordingViewModel.error)
+        }
+
+        @ViewBuilder
         private var fromBeginningButton: some View {
             Button {
                 manager.proxy?.setSeconds(.zero)
                 manager.setPlaybackRequestStatus(status: .playing)
-                containerState.select(supplement: nil)
+                viewState.selectedSupplementID = nil
             } label: {
                 Label(L10n.fromBeginning, systemImage: "play.fill")
                     .font(.subheadline)
@@ -90,7 +148,7 @@ extension MediaInfoSupplement {
         //       with scrolling if too long
         var iOSView: some View {
             CompactOrRegularView(
-                isCompact: containerState.isCompact
+                isCompact: viewState.isCompact
             ) {
                 iOSCompactView
             } regularView: {
@@ -134,6 +192,10 @@ extension MediaInfoSupplement {
                     fromBeginningButton
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
+                        .padding(.vertical)
+                } else if item.canBeRecorded {
+                    recordButtons
+                        .frame(maxWidth: .infinity)
                         .padding(.vertical)
                 }
             }
@@ -194,6 +256,8 @@ extension MediaInfoSupplement {
                     } content: {
                         fromBeginningButton
                     }
+                } else if item.canBeRecorded {
+                    recordButtons
                 }
             }
         }
@@ -222,9 +286,8 @@ extension MediaInfoSupplement {
 
             try? await Task.sleep(for: .seconds(max(endDate.timeIntervalSinceNow + 1, 1)))
 
-            guard let newItem = try? await item.getFullItem(userSession: userSession) else { return }
-
-            item = newItem
+            _ = try? await userSession.getFullItem(item)
+            await recordingViewModel.refresh()
         }
     }
 }

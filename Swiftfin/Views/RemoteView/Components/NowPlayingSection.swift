@@ -28,6 +28,7 @@ extension RemoteView {
 
         private var selectedItem: BaseItemDto {
             guard item.isLiveContent, let currentProgram = item.currentProgram else { return item }
+
             return currentProgram
         }
 
@@ -127,6 +128,7 @@ extension RemoteView {
             }
             .onChange(of: proxy.seconds) { _, newValue in
                 guard !isScrubbing else { return }
+
                 scrubbedSeconds = newValue.seconds
             }
             .task(id: item.currentProgram?.endDate) {

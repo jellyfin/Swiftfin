@@ -88,6 +88,7 @@ struct SliderContainer<Value: BinaryFloatingPoint>: View {
 
     private func setEditing(_ isEditing: Bool) {
         guard containerState.isEditing != isEditing else { return }
+
         containerState.isEditing = isEditing
         onEditingChanged(isEditing)
     }

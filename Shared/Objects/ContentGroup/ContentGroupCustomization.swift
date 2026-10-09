@@ -8,11 +8,12 @@
 
 import SwiftUI
 
-struct ContentGroupParentOption: OptionSet {
+@OptionSet<Int>
+struct ContentGroupParentOption {
 
-    let rawValue: Int
-
-    static let ignoreSafeAreaTop = Self(rawValue: 1 << 0)
+    private enum Options: Int {
+        case ignoreSafeAreaTop
+    }
 }
 
 struct ContentGroupCustomizationKey: PreferenceKey {

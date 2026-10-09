@@ -18,6 +18,7 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
 
     @CasePathable
     enum Action {
+
         case actuallySearch(String)
         case add([Element])
         case remove([Element])
@@ -37,20 +38,23 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
     }
 
     enum BackgroundState {
+
         case updating
         case searching
     }
 
     enum Event {
+
         case updated
     }
 
     enum State {
+
         case initial
         case error
     }
 
-    @Published
+    @SharedBaseItem
     private(set) var item: BaseItemDto
     @Published
     private(set) var matches: [Element] = []
@@ -68,6 +72,7 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] query in
                 guard let self else { return }
+
                 if query.isNotEmpty {
                     actuallySearch(query)
                 } else {
@@ -108,13 +113,15 @@ class ItemComponentEditorViewModel<Editor: ItemComponentEditor>: ViewModel {
     private func updateItem(_ newItem: BaseItemDto) async throws {
         guard let itemID = item.id else { return }
 
+        let session = try requireUserSession()
         var updateItem = newItem
         updateItem.trickplay = nil
 
         let request = Paths.updateItem(itemID: itemID, updateItem)
         _ = try await send(request)
+        try session.items.acceptMetadataDraft(newItem)
 
-        item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
+        $item = try await session.getFullItem(item)
         events.send(.updated)
     }
 }

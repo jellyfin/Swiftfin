@@ -16,6 +16,7 @@ final class ItemImageViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case deleteImage(ImageInfo)
         case refresh
         case saveRemoteImage(RemoteImageInfo)
@@ -35,22 +36,25 @@ final class ItemImageViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case deleting
         case updating
     }
 
     enum Event {
+
         case deleted
         case updated
     }
 
     enum State {
+
         case initial
         case content
         case error
     }
 
-    @Published
+    @SharedBaseItem
     var item: BaseItemDto
 
     @Published
@@ -68,10 +72,12 @@ final class ItemImageViewModel: ViewModel {
         let request = Paths.getItemImageInfos(itemID: itemID)
         let response = try await send(request)
 
-        images = response.value.grouped(by: \.imageType)
+        images = response.value
+            .grouped(by: \.imageType)
             .mapValues { $0.sorted(using: \.imageIndex) }
             .reduce(into: [:]) { partialResult, kv in
                 guard let k = kv.key else { return }
+
                 partialResult[k] = kv.value
             }
     }
@@ -90,6 +96,7 @@ final class ItemImageViewModel: ViewModel {
             logger.error("Unable to access file at \(file)")
             throw ErrorMessage(L10n.unknownError)
         }
+
         defer { file.stopAccessingSecurityScopedResource() }
 
         guard let image = try UIImage(data: Data(contentsOf: file)) else {
@@ -147,7 +154,7 @@ final class ItemImageViewModel: ViewModel {
             try await send(request)
         }
 
-        item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
+        $item = try await requireUserSession().getFullItem(item)
 
         try await _refresh()
         events.send(.deleted)

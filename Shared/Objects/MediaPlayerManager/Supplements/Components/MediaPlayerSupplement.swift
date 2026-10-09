@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import JellyfinAPI
 import SwiftUI
 
 enum MediaPlayerSupplementPresentationStyle: Equatable {
@@ -22,6 +21,9 @@ protocol MediaPlayerSupplement: Displayable, Identifiable {
 
     var id: String { get }
     var presentationStyle: MediaPlayerSupplementPresentationStyle { get }
+    var preferredFocusID: String { get }
+
+    var overlayActions: [VideoPlayerOverlayAction] { get }
 
     @MainActor
     @ViewBuilder
@@ -30,37 +32,15 @@ protocol MediaPlayerSupplement: Displayable, Identifiable {
 
 extension MediaPlayerSupplement {
 
+    var overlayActions: [VideoPlayerOverlayAction] {
+        []
+    }
+
     var presentationStyle: MediaPlayerSupplementPresentationStyle {
         .regular
     }
-}
 
-struct AnyMediaPlayerSupplement: MediaPlayerSupplement, Equatable {
-
-    let supplement: any MediaPlayerSupplement
-
-    var displayTitle: String {
-        supplement.displayTitle
-    }
-
-    var id: String {
-        supplement.id
-    }
-
-    var presentationStyle: MediaPlayerSupplementPresentationStyle {
-        supplement.presentationStyle
-    }
-
-    var videoPlayerBody: some PlatformView {
-        supplement.videoPlayerBody
-            .eraseToAnyView()
-    }
-
-    init(_ supplement: any MediaPlayerSupplement) {
-        self.supplement = supplement
-    }
-
-    static func == (lhs: AnyMediaPlayerSupplement, rhs: AnyMediaPlayerSupplement) -> Bool {
-        lhs.id == rhs.id
+    var preferredFocusID: String {
+        VideoPlayer.ViewState.Focus.supplementContent(id)
     }
 }

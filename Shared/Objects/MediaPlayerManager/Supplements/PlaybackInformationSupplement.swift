@@ -44,8 +44,8 @@ extension PlaybackInformationSupplement {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets: EdgeInsets
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(VideoPlayer.ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -62,6 +62,7 @@ extension PlaybackInformationSupplement {
 
         private var audioStream: MediaStream? {
             guard let playbackItem = manager.playbackItem else { return nil }
+
             if let selectedIndex = playbackItem.selectedAudioStreamIndex {
                 return playbackItem.audioStreams.first { $0.index == selectedIndex }
             }
@@ -214,7 +215,7 @@ extension PlaybackInformationSupplement {
 
         var iOSView: some View {
             CompactOrRegularView(
-                isCompact: containerState.isCompact
+                isCompact: viewState.isCompact
             ) {
                 compactView
             } regularView: {
@@ -282,7 +283,8 @@ class PlaybackInformationProvider: ViewModel, MediaPlayerObserver {
     init(itemID: String) {
         super.init()
 
-        Container.shared.userSessionManager()
+        Container.shared
+            .userSessionManager()
             .$currentSession
             .map { session -> AnyPublisher<[SessionInfoDto], Never> in
                 session?.serverSocketManager.sessions() ?? Combine.Empty<[SessionInfoDto], Never>().eraseToAnyPublisher()

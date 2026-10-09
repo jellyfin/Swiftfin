@@ -59,12 +59,14 @@ extension EPGCollectionView {
     final class Coordinator: NSObject, UICollectionViewDelegate {
 
         private struct ItemID: Hashable {
+
             let channelID: String
             let blockID: ProgramBlock.ID
             let duplicateIndex: Int
         }
 
         private struct RenderItem: Equatable {
+
             let id: ItemID
             let block: ProgramBlock
             let frame: CGRect
@@ -75,11 +77,13 @@ extension EPGCollectionView {
         }
 
         private struct RenderSection: Equatable {
+
             let id: String
             let items: [RenderItem]
         }
 
         private struct RenderContentSignature: Equatable {
+
             let channelIDs: [String]
             let programsRevision: Int
             let startDate: Date
@@ -87,6 +91,7 @@ extension EPGCollectionView {
         }
 
         private struct RenderState: Equatable {
+
             let sections: [RenderSection]
             let contentWidth: CGFloat
             let nowOffset: CGFloat?
@@ -157,7 +162,7 @@ extension EPGCollectionView {
             let viewModel = representable.viewModel
             let layout = representable.layout
             let contentSignature = RenderContentSignature(
-                channelIDs: viewModel.channels.compactMap(\.id),
+                channelIDs: viewModel.channels.map(\.itemID),
                 programsRevision: viewModel.programsRevision,
                 startDate: viewModel.startDate,
                 layout: layout
@@ -237,7 +242,7 @@ extension EPGCollectionView {
             layout: EPGLayout
         ) -> [RenderSection] {
             viewModel.channels.enumerated().compactMap { section, channel -> RenderSection? in
-                guard let channelID = channel.id else { return nil }
+                let channelID = channel.itemID
 
                 var occurrences: [ProgramBlock.ID: Int] = [:]
                 let items = (viewModel.programs[channelID] ?? []).map { block in
@@ -294,6 +299,7 @@ extension EPGCollectionView {
 
             let action = { [weak self] in
                 guard let self else { return }
+
                 select(itemID)
             }
 
@@ -354,6 +360,7 @@ extension EPGCollectionView {
             didSelectItemAt indexPath: IndexPath
         ) {
             guard let itemID = dataSource?.itemIdentifier(for: indexPath) else { return }
+
             select(itemID)
         }
 
@@ -376,7 +383,6 @@ extension EPGCollectionView {
                 didRequestNextPage = false
                 return
             }
-
             guard !didRequestNextPage,
                   !representable.viewModel.background.is(.gettingNextPage)
             else { return }

@@ -10,10 +10,6 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: feature implementations
-//       - PiP
-// TODO: Chromecast proxy
-
 /// The proxy for top-down communication to an
 /// underlying media player
 @MainActor
@@ -27,25 +23,29 @@ protocol MediaPlayerProxy: ObservableObject, MediaPlayerObserver {
 
     func jumpForward(_ seconds: Duration)
     func jumpBackward(_ seconds: Duration)
-    func setRate(_ rate: Float)
+    func setRate(_ rate: Double)
     func setSeconds(_ seconds: Duration)
 }
 
 @MainActor
 protocol VideoMediaPlayerProxy: MediaPlayerProxy, MediaPlayerAudioTrackConfigurable, MediaPlayerSubtitleTrackConfigurable {
 
-    associatedtype VideoPlayerBody: View
-
+    /// Display dimensions, including pixel aspect ratio and rotation when available.
     var videoSize: PublishedBox<CGSize> { get }
     var droppedFrames: PublishedBox<Int> { get }
     var corruptedFrames: PublishedBox<Int> { get }
+}
 
-    // TODO: remove when container view handles aspect fill
-    func setAspectFill(_ aspectFill: Bool)
+@MainActor
+protocol VideoMediaPlayerLayoutConfigurable: VideoMediaPlayerProxy {
 
+    associatedtype VideoPlayerBody: View
+
+    /// Apply the layout's scale or native fit/fill behavior to the renderer.
+    /// Overlays retain the viewport's size.
     @ViewBuilder
     @MainActor
-    var videoPlayerBody: Self.VideoPlayerBody { get }
+    func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> Self.VideoPlayerBody
 }
 
 @MainActor
@@ -96,6 +96,14 @@ protocol MediaPlayerQueueConfigurable {
 protocol MediaPlayerOffsetConfigurable {
     func setAudioOffset(_ seconds: Duration)
     func setSubtitleOffset(_ seconds: Duration)
+}
+
+@MainActor
+protocol MediaPlayerPictureInPictureCapable: AnyObject {
+    var isPiPActive: PublishedBox<Bool> { get }
+    var isPiPAvailable: PublishedBox<Bool> { get }
+    func startPiP()
+    func stopPiP()
 }
 
 @MainActor

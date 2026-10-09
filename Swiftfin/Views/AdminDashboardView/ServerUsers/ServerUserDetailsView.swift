@@ -55,6 +55,7 @@ struct ServerUserDetailsView: View {
                         case .updated:
                             UIDevice.feedback(.success)
                             isPhotoPickerPresented.wrappedValue = false
+
                         case .deleted:
                             UIDevice.feedback(.success)
                         }

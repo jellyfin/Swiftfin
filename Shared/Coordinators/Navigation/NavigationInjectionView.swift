@@ -72,6 +72,7 @@ struct NavigationInjectionView: View {
             NavigationInjectionView(coordinator: presentedRoute.coordinator) {
                 presentedRoute.route.destination
             }
+            .environment(\.tabSafeAreaInsets, .zero)
             .background(.regularMaterial)
         }
         .fullScreenCover(
@@ -80,6 +81,7 @@ struct NavigationInjectionView: View {
             NavigationInjectionView(coordinator: presentedRoute.coordinator) {
                 presentedRoute.route.destination
             }
+            .environment(\.tabSafeAreaInsets, .zero)
         }
         #else
         .sheet(
@@ -107,7 +109,9 @@ struct NavigationInjectionView: View {
         ) { presentedRouteBinding, _ in
             let vc = UIPreferencesHostingController {
                 NavigationInjectionView(coordinator: presentedRouteBinding.wrappedValue.coordinator) {
-                    presentedRouteBinding.wrappedValue.route.destination
+                    presentedRouteBinding.wrappedValue
+                        .route
+                        .destination
                         .onPreferenceChange(PresentationControllerShouldDismissPreferenceKey.self) { newValue in
                             isPresentationInteractive = newValue
                         }

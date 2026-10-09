@@ -14,9 +14,6 @@ struct LetterPickerBar: PlatformView {
     @Default(.accentColor)
     private var accentColor
 
-    @Default(.Customization.Library.letterPickerOrientation)
-    private var orientation
-
     @FocusState
     private var focusedLetter: ItemLetter?
 
@@ -35,10 +32,6 @@ struct LetterPickerBar: PlatformView {
     private enum Row: Hashable {
         case letter(ItemLetter)
         case dot
-    }
-
-    private var edge: HorizontalEdge {
-        orientation.edge ?? .trailing
     }
 
     private var dimension: CGFloat {
@@ -77,6 +70,7 @@ struct LetterPickerBar: PlatformView {
 
     private func letter(atY y: CGFloat) -> ItemLetter? {
         guard barHeight > 0, !letters.isEmpty else { return nil }
+
         let clamped = min(max(y - contentInset, 0), contentHeight - 1)
         let index = Int(clamped / contentHeight * CGFloat(letters.count))
         return letters[min(max(index, 0), letters.count - 1)]
@@ -85,6 +79,7 @@ struct LetterPickerBar: PlatformView {
     private func row(atY y: CGFloat) -> Row? {
         let localY = y - contentInset
         guard barHeight > 0, localY >= 0, localY < contentHeight else { return nil }
+
         let index = Int(localY / dimension)
         return rows.indices.contains(index) ? rows[index] : nil
     }
@@ -109,6 +104,7 @@ struct LetterPickerBar: PlatformView {
                     .frame(width: dimension, height: dimension)
                     .focused($focusedLetter, equals: letter)
                     .allowsHitTesting(UIDevice.isTV)
+
                 case .dot:
                     Circle()
                         .fill(accentColor.opacity(0.5))
@@ -142,13 +138,16 @@ struct LetterPickerBar: PlatformView {
                         switch state {
                         case .began, .changed:
                             guard let target = letter(atY: location.y), target != activeLetter else { return }
+
                             activeLetter = target
                             UIDevice.impact(.light)
+
                         case .ended, .cancelled, .failed:
                             if let target = letter(atY: location.y) {
                                 viewModel.currentFilters.letter = [target]
                             }
                             activeLetter = nil
+
                         default:
                             break
                         }
@@ -170,8 +169,6 @@ struct LetterPickerBar: PlatformView {
             }
             .frame(width: dimension)
             .padding(.vertical, EdgeInsets.edgePadding / 2)
-            .padding(.horizontal, 0)
-            .offset(x: orientation == .leading ? EdgeInsets.edgePadding / 2 : -EdgeInsets.edgePadding / 2)
             .preference(key: PresentationControllerShouldDismissPreferenceKey.self, value: activeLetter == nil)
             .preference(key: LetterPickerActiveLetterKey.self, value: activeLetter)
     }
@@ -186,13 +183,14 @@ struct LetterPickerBar: PlatformView {
                 selectedLetter ?? letters.first ?? "#",
                 priority: focusedLetter == nil ? .userInitiated : .automatic
             )
-            .offset(x: edge == .leading ? -EdgeInsets.edgePadding / 1.5 : EdgeInsets.edgePadding / 1.5)
             .focusSection()
             .task(id: focusedLetter) {
                 activeLetter = focusedLetter
                 guard focusedLetter != nil else { return }
+
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled else { return }
+
                 activeLetter = nil
             }
             .preference(key: LetterPickerActiveLetterKey.self, value: activeLetter)

@@ -29,10 +29,12 @@ final class ServerUsersViewModel: ViewModel, Identifiable {
                 .to(.content)
                     .whenBackground(.gettingUsers)
                     .onRepeat(.cancel)
+
             case .deleteUsers:
                 .to(.content)
                     .whenBackground(.deletingUsers)
                     .onRepeat(.cancel)
+
             case .appendUser:
                 .to(.content)
                     .whenBackground(.appendingUsers)

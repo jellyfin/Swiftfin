@@ -39,6 +39,7 @@ struct NowPlayingIndicator: View {
         .animation(isEnabled ? nil : .easeInOut(duration: 0.3), value: isEnabled)
         .onChange(of: isEnabled) { _, isEnabled in
             guard isEnabled else { return }
+
             resumedAt = .now
         }
     }

@@ -13,13 +13,15 @@ extension VideoPlayer {
 
     struct PlaybackControls: View {
 
+        typealias ViewState = VideoPlayer.ViewState
+
         // since this view ignores safe area, it must
         // get safe area insets from parent views
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
+        @Environment(ViewState.self)
+        private var viewState
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -29,21 +31,8 @@ extension VideoPlayer {
         @State
         private var bottomContentFrame: CGRect = .zero
 
-        private var isPresentingOverlay: Bool {
-            containerState.isPresentingOverlay
-        }
-
-        private var isPresentingSupplement: Bool {
-            containerState.isPresentingSupplement
-        }
-
         private var isScrubbing: Bool {
-            containerState.isScrubbing
-        }
-
-        private var isPresentingFullScreenSupplement: Bool {
-            !containerState.isCompact &&
-                containerState.selectedSupplement?.presentationStyle == .expanded
+            viewState.isScrubbing
         }
 
         // MARK: body
@@ -53,23 +42,25 @@ extension VideoPlayer {
                 VStack {
                     Toolbar()
                         .frame(height: 50)
-                        .isVisible(!isScrubbing && isPresentingOverlay && !isPresentingFullScreenSupplement)
+                        .isVisible(viewState.visibleElements.contains(.toolbar))
+                        .enabled(viewState.visibleElements.contains(.toolbar))
                         .padding(.top, safeAreaInsets.top)
                         .padding(.leading, safeAreaInsets.leading)
                         .padding(.trailing, safeAreaInsets.trailing)
-                        .offset(y: isPresentingOverlay ? 0 : -20)
+                        .offset(y: viewState.isPresentingControls ? 0 : -20)
 
                     Spacer()
                         .allowsHitTesting(false)
 
                     PlaybackProgress()
-                        .isVisible(isPresentingOverlay && !isPresentingSupplement)
+                        .isVisible(viewState.isPresentingProgress)
+                        .enabled(viewState.isPresentingProgress)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.leading, safeAreaInsets.leading)
                         .padding(.trailing, safeAreaInsets.trailing)
                         .trackingFrame($bottomContentFrame)
                         .background {
-                            if isPresentingOverlay && !isPresentingSupplement {
+                            if viewState.isPresentingProgress {
                                 EmptyHitTestView()
                             }
                         }
@@ -85,12 +76,13 @@ extension VideoPlayer {
                 }
 
                 PlaybackButtons()
-                    .isVisible(!isScrubbing && containerState.isPresentingPlaybackControls)
+                    .isVisible(viewState.visibleElements.contains(.playbackButtons))
+                    .enabled(viewState.visibleElements.contains(.playbackButtons))
             }
             .modifier(VideoPlayer.KeyCommandsModifier())
             .animation(.linear(duration: 0.1), value: isScrubbing)
-            .animation(.bouncy(duration: 0.4), value: containerState.isPresentingSupplement)
-            .animation(.bouncy(duration: 0.25), value: containerState.isPresentingOverlay)
+            .animation(.bouncy(duration: 0.4), value: viewState.isPresentingSupplement)
+            .animation(.bouncy(duration: 0.25), value: viewState.presentation)
             .onChange(of: manager.proxy?.isBuffering.value) {
                 activeIsBuffering = manager.proxy?.isBuffering.value ?? false
             }

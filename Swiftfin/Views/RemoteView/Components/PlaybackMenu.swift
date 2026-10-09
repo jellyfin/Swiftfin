@@ -27,6 +27,7 @@ extension RemoteView {
                             get: { proxy.session.session.playState?.mediaSourceID ?? "" },
                             set: { newValue in
                                 guard let mediaSource = proxy.activeItem?.mediaSources?.first(where: { $0.id == newValue }) else { return }
+
                                 perform { proxy.setMediaSource(mediaSource) }
                             }
                         )
@@ -86,6 +87,7 @@ extension RemoteView {
                 get: { selectedIndex },
                 set: { newValue in
                     guard let stream = streams.first(where: { ($0.index ?? -1) == newValue }) else { return }
+
                     perform { action(stream) }
                 }
             )

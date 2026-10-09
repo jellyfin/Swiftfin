@@ -76,8 +76,7 @@ extension EditAccessScheduleView {
                     isEditing ? (isSelected ? .primary : .secondary) : .primary,
                     .secondary
                 )
-
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 ListRowCheckbox()
             }

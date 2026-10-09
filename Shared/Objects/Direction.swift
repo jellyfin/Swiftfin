@@ -6,14 +6,15 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-struct Direction: OptionSet {
+@OptionSet<Int>
+struct Direction {
 
-    let rawValue: Int
-
-    static let up = Self(rawValue: 1 << 0)
-    static let down = Self(rawValue: 1 << 1)
-    static let left = Self(rawValue: 1 << 2)
-    static let right = Self(rawValue: 1 << 3)
+    private enum Options: Int {
+        case up
+        case down
+        case left
+        case right
+    }
 
     static var vertical: Self {
         [.up, .down]

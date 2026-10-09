@@ -223,6 +223,7 @@ struct RemoteView: View {
             isCastPending = false
 
             guard newValue != proxy?.session.id else { return }
+
             proxy = selectedTarget.map { CastMediaPlayerProxy(item: nil, session: $0) }
         }
         .onChange(of: selectedTarget?.session.nowPlayingItem?.id) { _, _ in
@@ -230,6 +231,7 @@ struct RemoteView: View {
         }
         .onChange(of: selectedTarget?.error != nil) { _, hasError in
             guard hasError else { return }
+
             isCastPending = false
         }
         .task(id: isCastPending) {

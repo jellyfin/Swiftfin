@@ -40,6 +40,7 @@ extension RemoteView {
 
         private func send(_ command: GeneralCommandType) {
             guard supportedCommands.contains(command) else { return }
+
             target.sendGeneralCommand(command)
         }
 

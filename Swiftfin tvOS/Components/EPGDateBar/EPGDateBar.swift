@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// TODO: Have pills use `SelectionTrack` instead
+
 struct EPGDateBar: View {
 
     @FocusState
@@ -34,7 +36,8 @@ struct EPGDateBar: View {
 
                 Image(systemName: "paintpalette")
             }
-            .font(.footnote.weight(.semibold))
+            .font(.footnote)
+            .fontWeight(.semibold)
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
         } content: { size in

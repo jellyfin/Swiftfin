@@ -43,6 +43,7 @@ final class _GenericStoredValueObservation<Value: Storable>: ObservableObject {
             observable = DefaultsObservable<Value>(key) { [weak self] in
                 self?.objectWillChange.send()
             }
+
         case .sql:
             observable = SQLObservable<Value>(key) { [weak self] in
                 self?.objectWillChange.send()

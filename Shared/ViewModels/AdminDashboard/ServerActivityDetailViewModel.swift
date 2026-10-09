@@ -16,6 +16,7 @@ final class ServerActivityDetailViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case refresh
 
         var transition: Transition {
@@ -25,10 +26,12 @@ final class ServerActivityDetailViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case refreshing
     }
 
     enum State {
+
         case initial
         case error
         case refreshing
@@ -38,7 +41,7 @@ final class ServerActivityDetailViewModel: ViewModel {
     var log: ActivityLogEntry
     @Published
     var user: UserDto?
-    @Published
+    @OptionalSharedBaseItem
     var item: BaseItemDto?
 
     init(log: ActivityLogEntry, user: UserDto?) {
@@ -48,22 +51,22 @@ final class ServerActivityDetailViewModel: ViewModel {
     }
 
     @Function(\Action.Cases.refresh)
-    private func _refresh() async {
-        async let fetchedItem: BaseItemDto? = getItem(for: log.itemID)
+    private func _refresh() async throws {
+        let session = try requireUserSession()
+        try session.items.validate()
+        async let fetchedItem: ItemEntry? = getItem(for: log.itemID, userSession: session)
         async let fetchedUser: UserDto? = getUser(for: log.userID)
 
         let results = try? await (fetchedItem, fetchedUser)
-        item = results?.0
+        try session.items.validate()
+        $item = results?.0
         user = results?.1
     }
 
-    private func getItem(for itemID: String?) async throws -> BaseItemDto? {
+    private func getItem(for itemID: String?, userSession: UserSession) async throws -> ItemEntry? {
         guard let itemID else { return nil }
 
-        let request = Paths.getItem(itemID: itemID)
-        let response = try await send(request)
-
-        return response.value
+        return try await userSession.getFullItem(id: itemID)
     }
 
     private func getUser(for userID: String?) async throws -> UserDto? {
