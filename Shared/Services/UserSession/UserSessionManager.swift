@@ -59,6 +59,9 @@ final class UserSessionManager: ObservableObject {
     @Published
     private(set) var pendingDeepLink: DeepLink?
 
+    /// The device id of the current remote control target
+    var castDeviceID: String?
+
     let routePublisher = PassthroughSubject<NavigationRoute, Never>()
 
     var cancellables = Set<AnyCancellable>()
@@ -330,6 +333,10 @@ final class UserSessionManager: ObservableObject {
         currentSession = newSession
         Container.shared.currentUserSession.reset()
         Container.shared.mediaPlayerManager.reset()
+
+        if previousSession?.server.id != newSession?.server.id || previousSession?.user.id != newSession?.user.id {
+            castDeviceID = nil
+        }
 
         if newSession == nil {
             state = .signedOut

@@ -20,14 +20,17 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
     private let menuContent: MenuContent
     private let isLoading: Bool
     private let isHidden: Bool
+    private let onPressed: ((Bool) -> Void)?
 
     init(
         isLoading: Bool = false,
         isHidden: Bool = false,
+        onPressed: ((Bool) -> Void)? = nil,
         @ViewBuilder menuContent: () -> MenuContent
     ) {
         self.isLoading = isLoading
         self.isHidden = isHidden
+        self.onPressed = onPressed
         self.menuContent = menuContent()
     }
 
@@ -49,6 +52,12 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
                             "ellipsis.circle"
                         }
 
+                        let foregroundStyle: Color = if #available(iOS 26, *) {
+                            .primary
+                        } else {
+                            accentColor
+                        }
+
                         Menu(L10n.options, systemImage: systemImage) {
                             menuContent
 
@@ -58,7 +67,15 @@ struct NavigationBarMenuButtonModifier<MenuContent: View>: ViewModifier {
                         }
                         .labelStyle(.iconOnly)
                         .fontWeight(.semibold)
-                        .foregroundStyle(accentColor)
+                        .foregroundStyle(foregroundStyle)
+                        .if(onPressed != nil) { view in
+                            view
+                                .menuStyle(.button)
+                                .buttonStyle(.isPressed { isPressed in
+                                    onPressed?(isPressed)
+                                })
+                                .tint(foregroundStyle)
+                        }
                     }
                 }
             }

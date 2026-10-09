@@ -19,6 +19,7 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
     case refresh
     case delete
     #if os(iOS)
+    case cast
     case editMetadata
     #endif
 
@@ -41,6 +42,8 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
         case .delete:
             L10n.delete
         #if os(iOS)
+        case .cast:
+            L10n.castToDevice
         case .editMetadata:
             L10n.edit
         #endif
@@ -70,6 +73,8 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
         case .delete:
             "trash"
         #if os(iOS)
+        case .cast:
+            "tv.badge.wifi.fill"
         case .editMetadata:
             "pencil"
         #endif
@@ -82,6 +87,10 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
             "heart"
         case .record:
             "record.circle"
+        #if os(iOS)
+        case .cast:
+            "tv.badge.wifi"
+        #endif
         default:
             systemImage
         }
@@ -95,6 +104,10 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
             .pink
         case .record:
             .red
+        #if os(iOS)
+        case .cast:
+            .blue
+        #endif
         default:
             nil
         }
@@ -107,6 +120,9 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
         .trailers,
         .playback
     ]
+        #if os(iOS)
+            .appending(.cast)
+        #endif
 
     static let defaultMenuActionButtons: [ItemActionButton] = [
         .refresh,

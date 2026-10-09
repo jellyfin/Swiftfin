@@ -54,6 +54,9 @@ final class ActiveSessionsViewModel: ViewModel {
         case initial
     }
 
+    @Injected(\.userSessionManager)
+    private var userSessionManager: UserSessionManager
+
     @Published
     var environment: Environment = .default {
         didSet {
@@ -73,9 +76,12 @@ final class ActiveSessionsViewModel: ViewModel {
     override init() {
         super.init()
 
-        userSession?
-            .serverSocketManager
-            .sessions()
+        userSessionManager
+            .$currentSession
+            .map { session -> AnyPublisher<[SessionInfoDto], Never> in
+                session?.serverSocketManager.sessions() ?? Combine.Empty<[SessionInfoDto], Never>().eraseToAnyPublisher()
+            }
+            .switchToLatest()
             .sink { [weak self] sessions in
                 Task { @MainActor in
                     self?.updateSessions(sessions)
