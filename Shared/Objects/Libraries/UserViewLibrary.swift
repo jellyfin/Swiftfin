@@ -15,6 +15,9 @@ private let userViewLibraryListImageWidth: CGFloat = 110
 
 struct UserViewLibrary: PagingLibrary {
 
+    typealias Element = UserViewLibraryElement
+    typealias PageElement = ItemPatch
+
     let hasNextPage: Bool = false
     let parent: TitledLibraryParent = .init(
         displayTitle: L10n.media,
@@ -28,7 +31,7 @@ struct UserViewLibrary: PagingLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [UserViewLibraryElement] {
+    ) async throws -> [ItemPatch] {
         guard pageState.pageOffset == 0 else { return [] }
 
         let parameters = Paths.GetUserViewsParameters(userID: pageState.userSession.user.id)
@@ -38,28 +41,28 @@ struct UserViewLibrary: PagingLibrary {
         async let currentUser = pageState.userSession.client.send(Paths.getCurrentUser)
 
         let excludedLibraryIDs = try await currentUser.value.configuration?.myMediaExcludes ?? []
-        let elements = try await (userViews.value.items ?? [])
-            .coalesced(property: \.collectionType, with: .folders)
-            .intersecting(CollectionType.supportedCases, using: \.collectionType)
-            .subtracting(excludedLibraryIDs, using: \.id)
-            .map { item in
-                if item.type == .userView, item.collectionType == .folders {
-                    return item.mutating(\.type, with: .folder)
-                }
-
-                return item
+        let response = try await userViews
+        return try pageState.items(from: response)
+            .filter { patch in
+                CollectionType.supportedCases.contains(patch.value.collectionType ?? .folders) &&
+                    !excludedLibraryIDs.contains(patch.value.id ?? "")
             }
-            .map(UserViewLibraryElement.userView)
+    }
 
-        return elements
-            .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
+    func materialize(_ page: [ItemPatch], pageState: LibraryPageState) throws -> [UserViewLibraryElement] {
+        let elements: [UserViewLibraryElement] = try page.compactMap { patch in
+            guard let record = try pageState.userSession.items.merge(patch, token: pageState.itemRequest) else { return nil }
+
+            return .userView(ItemEntry(item: record))
+        }
+        return elements.prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
     }
 }
 
 enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement, SystemImageable {
 
     case favorites
-    case userView(BaseItemDto)
+    case userView(ItemEntry)
 
     static var supportedLibraryStyleOptions: LibraryStyleOptions {
         BaseItemKind.libraryStyleOptions(for: [.userView])
@@ -79,7 +82,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         case .favorites:
             "favorites"
         case let .userView(item):
-            item.id ?? item.displayTitle
+            item.itemID
         }
     }
 
@@ -88,7 +91,7 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
         case .favorites:
             "heart.fill"
         case let .userView(item):
-            if item.collectionType == .livetv {
+            if item.snapshot.collectionType == .livetv {
                 "tv"
             } else {
                 "folder.fill"
@@ -125,11 +128,11 @@ enum UserViewLibraryElement: Displayable, Hashable, Identifiable, LibraryElement
             )
 
         case let .userView(item):
-            if item.collectionType == .livetv {
+            if item.snapshot.collectionType == .livetv {
                 router.route(to: .liveTV, in: namespace)
             } else {
                 router.route(
-                    to: .library(library: ItemLibrary(parent: item, filters: .default)),
+                    to: .library(library: ItemLibrary(parent: item.snapshot, filters: .default)),
                     in: namespace
                 )
             }
@@ -320,7 +323,8 @@ private extension UserViewLibraryElement {
                 return await (try? randomItemImageSources()) ?? []
             }
 
-            return [item.imageSource(.primary, itemID: item.id, environment: ImageSourceOptions(maxWidth: 500))].compactMap(\.self)
+            return [item.snapshot.imageSource(.primary, itemID: item.itemID, environment: ImageSourceOptions(maxWidth: 500))]
+                .compactMap(\.self)
         }
     }
 
@@ -338,10 +342,10 @@ private extension UserViewLibraryElement {
         case .favorites:
             filters = [.isFavorite]
         case let .userView(item):
-            if item.collectionType == .livetv {
+            if item.snapshot.collectionType == .livetv {
                 includeItemTypes = [.tvProgram, .liveTvProgram]
             } else {
-                parentID = item.id
+                parentID = item.itemID
             }
         }
 
@@ -355,7 +359,7 @@ private extension UserViewLibraryElement {
         parameters.userID = userSession.user.id
 
         let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await userSession.send(request)
 
         return (response.value.items ?? [])
             .flatMap { $0.imageSources(for: .landscape, size: .custom(width: 200)) }

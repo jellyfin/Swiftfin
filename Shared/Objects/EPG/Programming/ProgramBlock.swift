@@ -20,7 +20,8 @@ struct ProgramBlock: Identifiable {
     }
 
     let id: ID
-    let programs: [BaseItemDto]
+    @SharedBaseItems
+    var programs: [BaseItemDto]
     let start: Date
     let end: Date
 
@@ -55,6 +56,7 @@ struct ProgramBlock: Identifiable {
 
 extension Collection<BaseItemDto> {
 
+    @MainActor
     func programBlocks(
         startDate: Date,
         endDate: Date

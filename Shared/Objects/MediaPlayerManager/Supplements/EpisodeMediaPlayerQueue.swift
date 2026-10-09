@@ -123,7 +123,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
         if let nextItem {
             nextProvider = MediaPlayerItemProvider(item: nextItem) { [weak self] item, modifyItem in
-                let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+                let bitrate = self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
                 return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
                     item.userData?.playbackPositionTicks = .zero
                     modifyItem?(&item)
@@ -133,7 +133,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
         if let previousItem {
             previousProvider = MediaPlayerItemProvider(item: previousItem) { [weak self] item, modifyItem in
-                let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+                let bitrate = self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
                 return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
                     item.userData?.playbackPositionTicks = .zero
                     modifyItem?(&item)
@@ -195,10 +195,12 @@ extension EpisodeMediaPlayerQueue {
         }
 
         private func setSelectionIfNeeded(seasons: IdentifiedArrayOf<PagingLibraryViewModel<EpisodeLibrary>>) {
-            guard selection == nil, !seasons.isEmpty else { return }
-
-            selection = seasons.first?.id
-            seasons.first?.refresh()
+            if selection == nil || !seasons.contains(where: { $0.id == selection }) {
+                selection = seasons.first?.id
+            }
+            if let selection, let selectedSeason = seasons[id: selection], selectedSeason.state == .initial {
+                selectedSeason.refresh()
+            }
         }
 
         @ViewBuilder
@@ -245,9 +247,9 @@ extension EpisodeMediaPlayerQueue {
                 if viewModel.elements.isNotEmpty {
                     VideoPlayer.PosterCollectionView(
                         data: viewModel.elements,
-                        currentElementID: manager.item.id.map { .some($0) },
+                        currentElementID: viewModel.elements.first { $0.itemID == manager.item.id }?.id,
                         isCompact: viewState.isCompact,
-                        action: action
+                        action: { action($0.snapshot) }
                     ) { item in
                         VStack(alignment: .leading, spacing: 5) {
                             Text(item.displayTitle)
@@ -262,7 +264,7 @@ extension EpisodeMediaPlayerQueue {
                                     Text(subtitle)
                                 }
 
-                                if let runtime = item.runTimeLabel {
+                                if let runtime = item.snapshot.runTimeLabel {
                                     Text(runtime)
                                 }
                             }

@@ -12,6 +12,7 @@ import SwiftUI
 
 struct ScheduledRecordingsLibrary: BaseItemKindLibrary {
 
+    let hasNextPage = false
     let libraryItemTypes: [BaseItemKind] = [.program]
     let parent: TitledLibraryParent = .init(
         displayTitle: L10n.schedule,
@@ -21,16 +22,17 @@ struct ScheduledRecordingsLibrary: BaseItemKindLibrary {
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         guard pageState.pageOffset == 0 else { return [] }
 
         let request = Paths.getTimers()
         let response = try await pageState.userSession.client.send(request)
 
-        return (response.value.items ?? [])
+        return try (response.value.items ?? [])
             .filter(\.isScheduledRecording)
             .sorted(using: \.startDate)
             .compactMap(\.programInfo)
+            .map { try ItemPatch.snapshot($0) }
     }
 
     func makeLibraryBody(

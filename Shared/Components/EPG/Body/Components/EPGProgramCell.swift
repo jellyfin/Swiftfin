@@ -22,7 +22,10 @@ struct EPGProgramCell: View {
     let action: () -> Void
 
     private let leadingOffset: CGFloat
-    private let presentation: ProgramCellPresentation
+    private let block: ProgramBlock
+    private var presentation: ProgramCellPresentation {
+        ProgramCellPresentation(block: block)
+    }
 
     init(
         scrollState: EPGScrollState,
@@ -39,7 +42,7 @@ struct EPGProgramCell: View {
         self.accentColor = accentColor
         self.action = action
         self.leadingOffset = leadingOffset
-        self.presentation = ProgramCellPresentation(block: block)
+        self.block = block
         self._stickyOffset = State(
             initialValue: max(0, scrollState.visibleLeadingOffset - leadingOffset)
         )
@@ -106,6 +109,7 @@ private struct ProgramCellPresentation {
     let title: String
     let time: String
 
+    @MainActor
     init(block: ProgramBlock) {
         if block.isGroup {
             // swiftlint:disable:next hard_coded_display_string

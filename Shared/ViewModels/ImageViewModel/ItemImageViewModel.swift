@@ -16,6 +16,7 @@ final class ItemImageViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case deleteImage(ImageInfo)
         case refresh
         case saveRemoteImage(RemoteImageInfo)
@@ -35,22 +36,25 @@ final class ItemImageViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case deleting
         case updating
     }
 
     enum Event {
+
         case deleted
         case updated
     }
 
     enum State {
+
         case initial
         case content
         case error
     }
 
-    @Published
+    @SharedBaseItem
     var item: BaseItemDto
 
     @Published
@@ -150,7 +154,7 @@ final class ItemImageViewModel: ViewModel {
             try await send(request)
         }
 
-        item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: true)
+        $item = try await requireUserSession().getFullItem(item)
 
         try await _refresh()
         events.send(.deleted)
