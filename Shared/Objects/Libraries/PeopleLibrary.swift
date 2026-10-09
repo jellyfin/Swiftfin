@@ -32,6 +32,7 @@ struct PeopleLibrary: BaseItemKindLibrary {
     ) async throws -> [BaseItemDto] {
         var parameters = Paths.GetPersonsParameters()
         parameters.limit = pageState.pageSize
+        parameters.startIndex = pageState.pageOffset
         parameters.searchTerm = environment.query
 
         let request = Paths.getPersons(parameters: parameters)
