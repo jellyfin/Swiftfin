@@ -19,7 +19,8 @@ extension SeriesEpisodeContentGroup {
         @Router
         private var router
 
-        let episode: BaseItemDto
+        @SharedBaseItem
+        var episode: BaseItemDto
 
         private var episodeContent: String {
             if episode.isUnaired {
@@ -107,6 +108,7 @@ extension SeriesEpisodeContentGroup {
     private struct EpisodeCardLayout<Artwork: View>: View {
 
         private enum FocusedElement: Hashable {
+
             case artwork
             case content
         }
@@ -128,7 +130,8 @@ extension SeriesEpisodeContentGroup {
         let content: String
         let artworkAction: () -> Void
         let contentAction: () -> Void
-        let contextMenuItem: BaseItemDto?
+        @OptionalSharedBaseItem
+        var contextMenuItem: BaseItemDto?
         let artwork: Artwork
 
         private var contentAccessibilityLabel: String {

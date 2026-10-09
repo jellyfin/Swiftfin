@@ -16,7 +16,8 @@ extension ItemView {
         @Router
         private var router
 
-        let item: BaseItemDto
+        @SharedBaseItem
+        var item: BaseItemDto
 
         private var isPresented: Bool {
             item.taglines?.contains(where: \.isNotEmpty) == true ||

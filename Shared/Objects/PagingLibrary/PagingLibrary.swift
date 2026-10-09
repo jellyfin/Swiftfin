@@ -6,19 +6,63 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
+import Get
 import JellyfinAPI
 import SwiftUI
 
-struct LibraryPageState {
+/// Carries pagination counts and a request token until a page is accepted
+@MainActor
+final class LibraryPageState {
+
     let pageOffset: Int
     let pageSize: Int
     let userSession: UserSession
+    let itemRequest: ItemStore.RequestToken
+
+    init(
+        pageOffset: Int,
+        pageSize: Int,
+        userSession: UserSession
+    ) throws {
+        self.pageOffset = pageOffset
+        self.pageSize = pageSize
+        self.userSession = userSession
+        self.itemRequest = try userSession.items.beginRequest()
+    }
+
+    private var serverItemCount: Int?
+    private var totalRows: Int?
+
+    func items(from response: Response<BaseItemDtoQueryResult>) throws -> [ItemPatch] {
+        serverItemCount = response.value.items?.count ?? 0
+        totalRows = response.value.totalRecordCount
+        return try response.patches()
+    }
+
+    func items(from response: Response<[BaseItemDto]>) throws -> [ItemPatch] {
+        serverItemCount = response.value.count
+        totalRows = response.value.count
+        return try response.patches()
+    }
+
+    // Server offsets count rows that may be filtered out before they reach the collection
+    func progress(returnedCount: Int) -> (nextOffset: Int, hasNextPage: Bool) {
+        let serverItemCount = serverItemCount ?? returnedCount
+        let nextOffset = pageOffset + serverItemCount
+        guard serverItemCount > 0 else { return (nextOffset, false) }
+
+        if let totalRows, totalRows >= nextOffset {
+            return (nextOffset, nextOffset < totalRows)
+        }
+        return (nextOffset, serverItemCount >= pageSize)
+    }
 }
 
 @MainActor
 protocol PagingLibrary<Element> {
 
     associatedtype Element: Identifiable
+    associatedtype PageElement = Element
     associatedtype Environment: WithDefaultValue = Empty
     associatedtype Parent: LibraryParent = TitledLibraryParent
 
@@ -29,7 +73,14 @@ protocol PagingLibrary<Element> {
     func retrievePage(
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> [Element]
+    ) async throws -> [PageElement]
+
+    func materialize(_ page: [PageElement], pageState: LibraryPageState) throws -> [Element]
+
+    func includes(_ element: Element, environment: Environment) -> Bool
+
+    /// Reloads when user data can change this library's membership or ordering
+    func shouldRefreshForUserDataChange(environment: Environment) -> Bool
 
     @ViewBuilder
     func makeLibraryBody(
@@ -40,11 +91,6 @@ protocol PagingLibrary<Element> {
     func libraryStyleOptions(environment: Environment) -> LibraryStyleOptions
 
     func makeMenuContent(environment: Binding<Environment>) -> AnyView
-
-    func onItemUserDataChanged(
-        viewModel: PagingLibraryViewModel<Self>,
-        userData: UserItemDataDto
-    )
 }
 
 extension PagingLibrary where Element: LibraryElement {
@@ -65,6 +111,14 @@ extension PagingLibrary where Element: LibraryElement {
 }
 
 extension PagingLibrary {
+
+    func includes(_ element: Element, environment: Environment) -> Bool {
+        true
+    }
+
+    func shouldRefreshForUserDataChange(environment: Environment) -> Bool {
+        false
+    }
 
     var environment: Environment? {
         nil
@@ -90,26 +144,30 @@ extension PagingLibrary {
         EmptyView()
             .eraseToAnyView()
     }
-
-    func onItemUserDataChanged(
-        viewModel: PagingLibraryViewModel<Self>,
-        userData: UserItemDataDto
-    ) {}
 }
 
-protocol WithRandomElementLibrary<Element, Environment>: PagingLibrary {
+@MainActor
+protocol WithRandomElementLibrary<Element, Environment, PageElement>: PagingLibrary {
 
     func retrieveRandomElement(
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> Element?
+    ) async throws -> PageElement?
 }
 
-protocol SearchablePagingLibrary<Element, Environment>: PagingLibrary {
+@MainActor
+protocol SearchablePagingLibrary<Element, Environment, PageElement>: PagingLibrary {
 
     func retrieveSearchPage(
         query: String,
         environment: Environment,
         pageState: LibraryPageState
-    ) async throws -> [Element]
+    ) async throws -> [PageElement]
+}
+
+extension PagingLibrary where PageElement == Element {
+
+    func materialize(_ page: [Element], pageState: LibraryPageState) throws -> [Element] {
+        page
+    }
 }
