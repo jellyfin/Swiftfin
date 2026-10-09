@@ -44,7 +44,8 @@ struct ServerTaskTriggerView: View {
                 get: {
                     Duration.ticks(
                         taskTriggerInfo.timeOfDayTicks ?? 0
-                    ).timeOfDayDate
+                    )
+                    .timeOfDayDate
                 },
                 set: { date in
                     taskTriggerInfo.timeOfDayTicks = Duration.timeOfDay(date).ticks
@@ -78,17 +79,21 @@ struct ServerTaskTriggerView: View {
                 )
                 .onChange(of: taskTriggerInfo.type) {
                     guard let newValue = taskTriggerInfo.type else { return }
+
                     taskTriggerInfo = TaskTriggerInfo.make(type: newValue)
                 }
 
                 switch taskTriggerInfo.type {
                 case .dailyTrigger:
                     timePicker
+
                 case .weeklyTrigger:
                     dayPicker
                     timePicker
+
                 case .intervalTrigger:
                     intervalPicker
+
                 default:
                     EmptyView()
                 }

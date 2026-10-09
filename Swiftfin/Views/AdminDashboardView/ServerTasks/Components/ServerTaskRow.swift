@@ -64,14 +64,14 @@ extension ServerTasksView {
                             .foregroundStyle(.orange)
                             .fontWeight(.semibold)
                         }
+
                     default:
                         Text(viewModel.task.state?.displayTitle)
                             .foregroundStyle(.secondary)
                     }
                 }
                 .font(.subheadline)
-
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 if isRunning {
                     ProgressView(value: (viewModel.task.currentProgressPercentage ?? 0) / 100)

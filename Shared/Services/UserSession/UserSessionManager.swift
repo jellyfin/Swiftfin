@@ -30,17 +30,20 @@ extension Container {
 final class UserSessionManager: ObservableObject {
 
     enum State: Equatable {
+
         case initial
         case signedOut
         case signedIn
     }
 
     enum SignOutReason {
+
         case backgroundTimeout
         case explicit
     }
 
     enum AuthenticationError: Error {
+
         case missingAuthenticationAction
     }
 
@@ -65,8 +68,12 @@ final class UserSessionManager: ObservableObject {
     private(set) var mediaPlayerManager: MediaPlayerManager?
 
     @MainActor
+    private var sessionTransition: (id: UUID, task: Task<Void, Never>)?
+
+    @MainActor
     var hasActivePlayback: Bool {
         guard let mediaPlayerManager else { return false }
+
         return mediaPlayerManager.state != .stopped
     }
 
@@ -119,7 +126,7 @@ final class UserSessionManager: ObservableObject {
 
     @MainActor
     func signOut(reason: SignOutReason) async {
-        guard currentSession != nil else { return }
+        guard currentSession != nil || sessionTransition != nil else { return }
 
         Defaults[.lastSignedInUserID] = .signedOut
         await refreshCurrentSession()
@@ -159,10 +166,6 @@ final class UserSessionManager: ObservableObject {
                     user: deepLinkSession.user,
                     authenticationAction: authenticationAction
                 )
-
-                if hasActivePlayback {
-                    await stopActivePlayback()
-                }
 
                 try await signIn(userID: deepLinkSession.user.id)
             }
@@ -209,6 +212,7 @@ final class UserSessionManager: ObservableObject {
     }
 
     private enum ServerInformationRefreshReason {
+
         case explicitSignIn
         case stale
     }
@@ -217,7 +221,6 @@ final class UserSessionManager: ObservableObject {
         guard let server = StoredValues[.Server.servers].first(where: { $0.id == deepLink.serverID }) else {
             throw DeepLinkError.missingServer(deepLink.serverID)
         }
-
         guard let user = StoredValues[.User.users].first(where: { $0.id == deepLink.userID && $0.serverID == server.id }) else {
             throw DeepLinkError.missingUser(deepLink.userID)
         }
@@ -288,7 +291,8 @@ final class UserSessionManager: ObservableObject {
             }
             .store(in: &cancellables)
 
-        Container.shared.mediaPlayerManagerPublisher()
+        Container.shared
+            .mediaPlayerManagerPublisher()
             .sink { [weak self] manager in
                 Task { @MainActor in
                     self?.mediaPlayerManager = manager
@@ -301,17 +305,31 @@ final class UserSessionManager: ObservableObject {
 
     @MainActor
     private func updateCurrentSession(with newSession: UserSession?) async {
+        let previous = sessionTransition?.task
+        let id = UUID()
+        let task = Task {
+            await previous?.value
+            await applyCurrentSession(newSession)
+        }
+        sessionTransition = (id, task)
+        await task.value
+        if sessionTransition?.id == id {
+            sessionTransition = nil
+        }
+    }
+
+    /// Serialize transitions because starting and stopping session services can suspend
+    @MainActor
+    private func applyCurrentSession(_ newSession: UserSession?) async {
         let previousSession = currentSession
 
+        await stopActivePlayback()
         previousSession?.willStop()
         await newSession?.willStart()
 
         currentSession = newSession
         Container.shared.currentUserSession.reset()
-
-        if previousSession?.server.id != newSession?.server.id || previousSession?.user.id != newSession?.user.id {
-            Container.shared.mediaPlayerManager.reset()
-        }
+        Container.shared.mediaPlayerManager.reset()
 
         if newSession == nil {
             state = .signedOut
@@ -324,12 +342,10 @@ final class UserSessionManager: ObservableObject {
 
     private func resolveStoredSession() throws -> UserSession? {
         guard case let .signedIn(userId) = Defaults[.lastSignedInUserID] else { return nil }
-
         guard let user = StoredValues[.User.users].first(where: { $0.id == userId }) else {
             Defaults[.lastSignedInUserID] = .signedOut
             throw UserSessionError.invalidStoredSession(userID: userId)
         }
-
         guard let server = StoredValues[.Server.servers].first(where: { $0.id == user.serverID }) else {
             Defaults[.lastSignedInUserID] = .signedOut
             throw UserSessionError.invalidStoredSession(userID: userId)

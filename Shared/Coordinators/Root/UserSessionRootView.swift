@@ -23,10 +23,12 @@ struct UserSessionRootView: View {
             switch userSessionManager.state {
             case .initial:
                 ProgressView()
+
             case .signedOut:
                 NavigationInjectionView(coordinator: .init()) {
                     SelectUserView()
                 }
+
             case .signedIn:
                 PosterPreferencesEnvironment {
                     MainTabView()

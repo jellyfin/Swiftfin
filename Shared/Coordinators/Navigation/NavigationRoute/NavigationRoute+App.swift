@@ -30,15 +30,13 @@ extension NavigationRoute {
 
     #endif
 
-    #if os(iOS)
-    static func appIconSelector(viewModel: SettingsViewModel) -> NavigationRoute {
+    static var appIconSelector: NavigationRoute {
         NavigationRoute(
             id: "app-icon-selector"
         ) {
-            AppIconSelectorView(viewModel: viewModel)
+            AppIconSelectorView()
         }
     }
-    #endif
 
     static var appSettings: NavigationRoute {
         NavigationRoute(

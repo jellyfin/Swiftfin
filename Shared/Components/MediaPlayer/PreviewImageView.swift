@@ -6,22 +6,22 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import SwiftUI
 
 extension VideoPlayer.PlaybackControls {
 
     struct PreviewImageView: View {
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        private struct RequestID: Equatable {
+            let provider: ObjectIdentifier
+            let index: Int?
+        }
+
         @EnvironmentObject
         private var scrubbedSecondsBox: PublishedBox<Duration>
 
         @State
         private var image: (index: Int, image: UIImage)? = nil
-        @State
-        private var currentImageTask: AnyCancellable? = nil
 
         let previewImageProvider: any PreviewImageProvider
 
@@ -29,21 +29,11 @@ extension VideoPlayer.PlaybackControls {
             scrubbedSecondsBox.value
         }
 
-        private func getImage(for seconds: Duration) {
-            currentImageTask?.cancel()
-            currentImageTask = nil
-
-            let initialTask = Task(priority: .userInitiated) {
-                if let image = await previewImageProvider.image(for: seconds),
-                   let index = previewImageProvider.imageIndex(for: seconds)
-                {
-                    self.image = (index: index, image: image)
-                } else {
-                    self.image = nil
-                }
-            }
-
-            currentImageTask = initialTask.asAnyCancellable()
+        private var requestID: RequestID {
+            RequestID(
+                provider: ObjectIdentifier(previewImageProvider),
+                index: previewImageProvider.imageIndex(for: scrubbedSeconds)
+            )
         }
 
         var body: some View {
@@ -59,15 +49,18 @@ extension VideoPlayer.PlaybackControls {
                 }
                 .id(image?.index)
             }
-            .onAppear {
-                getImage(for: scrubbedSeconds)
-            }
-            .onChange(of: scrubbedSeconds) {
-                let newIndex = previewImageProvider.imageIndex(for: scrubbedSeconds)
-
-                if newIndex != image?.index {
-                    getImage(for: scrubbedSeconds)
+            .task(id: requestID, priority: .userInitiated) {
+                guard let index = requestID.index else {
+                    image = nil
+                    return
                 }
+
+                // Keep one request per thumbnail, including while it is loading.
+                let newImage = await previewImageProvider.image(for: scrubbedSeconds)
+                // Providers may finish shared cached work after this view's task is cancelled.
+                guard !Task.isCancelled else { return }
+
+                image = newImage.map { (index: index, image: $0) }
             }
         }
     }

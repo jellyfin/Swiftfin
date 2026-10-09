@@ -45,6 +45,7 @@ extension ConditionalMenu {
     ) where V: Identifiable {
         self.action = {
             guard let data else { return }
+
             action(data)
         }
         self.isMenu = data == nil

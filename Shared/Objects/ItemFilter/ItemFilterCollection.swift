@@ -8,7 +8,6 @@
 
 import JellyfinAPI
 
-/// A structure representing a collection of item filters
 struct ItemFilterCollection: Hashable, Storable {
 
     var audioLanguages: [ItemLanguage] = []
@@ -65,5 +64,42 @@ struct ItemFilterCollection: Hashable, Storable {
             traits.isNotEmpty ||
             years.isNotEmpty ||
             !query.isNilOrEmpty
+    }
+
+    func containsFilters(ofType type: ItemFilterType) -> Bool {
+        type.group.contains { group in
+            self[keyPath: group.keyPath] != Self.default[keyPath: group.keyPath]
+        }
+    }
+
+    /// The union of this collection and another collection, with
+    /// precedence given to this collection's values.
+    func union(_ other: Self) -> Self {
+        var result = other
+
+        func apply(_ keyPath: WritableKeyPath<Self, some Equatable>) {
+            if self[keyPath: keyPath] != Self.default[keyPath: keyPath] {
+                result[keyPath: keyPath] = self[keyPath: keyPath]
+            }
+        }
+
+        apply(\.audioLanguages)
+        apply(\.categories)
+        apply(\.genres)
+        apply(\.itemTypes)
+        apply(\.letter)
+        apply(\.officialRatings)
+        apply(\.subtitleLanguages)
+        apply(\.tags)
+        apply(\.traits)
+        apply(\.years)
+        apply(\.query)
+
+        if containsFilters(ofType: .sortBy) {
+            result.sortBy = sortBy
+            result.sortOrder = sortOrder
+        }
+
+        return result
     }
 }

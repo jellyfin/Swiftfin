@@ -35,10 +35,11 @@ struct ServerLogsView: View {
                 ForEach(viewModel.logs, id: \.self) { log in
                     ChevronButton(external: true) {
                         guard let url = log.url else { return }
+
                         UIApplication.shared.open(url)
                     } label: {
                         VStack(alignment: .leading) {
-                            Text(log.name ?? L10n.unknown)
+                            Text(log.name)
                                 .lineLimit(2)
                                 .multilineTextAlignment(.leading)
 

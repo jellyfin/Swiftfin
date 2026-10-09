@@ -12,22 +12,16 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct GestureLock: View {
 
-        @EnvironmentObject
-        private var containerState: VideoPlayerContainerState
-
-        private var isGestureLocked: Bool {
-            get { containerState.isGestureLocked }
-            nonmutating set { containerState.isGestureLocked = newValue }
-        }
+        @Environment(ViewState.self)
+        private var viewState
 
         var body: some View {
             Button(
                 L10n.gestureLock,
                 systemImage: VideoPlayerActionButton.gestureLock.systemImage
             ) {
-                isGestureLocked.toggle()
+                viewState.isGestureLocked.toggle()
             }
-            .videoPlayerActionButtonTransition()
         }
     }
 }

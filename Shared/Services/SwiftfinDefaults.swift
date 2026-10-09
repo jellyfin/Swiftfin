@@ -376,12 +376,12 @@ extension Defaults.Keys {
                 UserKey("customDeviceProfileAction", default: .add)
             }
 
-            static var rates: Key<[Float]> {
+            static var rates: Key<[Double]> {
                 UserKey("videoPlayerPlaybackRates", default: [0.5, 1.0, 1.25, 1.5, 2.0])
             }
 
-            static var playbackRate: Key<Float> {
-                UserKey("playbackRate", default: Float(1.0))
+            static var playbackRate: Key<Double> {
+                UserKey("playbackRate", default: 1.0)
             }
         }
 

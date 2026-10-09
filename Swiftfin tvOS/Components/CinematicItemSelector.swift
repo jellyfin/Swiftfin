@@ -51,6 +51,7 @@ struct CinematicItemSelector<Item: Poster, TopContent: View>: View {
 
     private func updateSelectedPoster() {
         guard isSectionFocused, let focusedPoster else { return }
+
         selectedPoster = focusedPoster
     }
 

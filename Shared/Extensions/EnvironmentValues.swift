@@ -14,9 +14,6 @@ extension EnvironmentValues {
     var posterConfiguration: PosterConfiguration = .default
 
     @Entry
-    var audioOffset: Binding<Duration> = .constant(.zero)
-
-    @Entry
     var frameForParentView: [CoordinateSpace: FrameAndSafeAreaInsets] = [:]
 
     @Entry
@@ -38,7 +35,7 @@ extension EnvironmentValues {
     var safeAreaInsets: EdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
 
     @Entry
-    var subtitleOffset: Binding<Duration> = .constant(.zero)
+    var tabSafeAreaInsets: EdgeInsets = .zero
 
     // TODO: figure out this directional response stuff
     @Entry

@@ -10,6 +10,7 @@ enum PinchGestureAction: String, GestureAction {
 
     case none
     case aspectFill
+    case zoom
 
     var displayTitle: String {
         switch self {
@@ -17,6 +18,8 @@ enum PinchGestureAction: String, GestureAction {
             L10n.none
         case .aspectFill:
             L10n.aspectFill
+        case .zoom:
+            L10n.zoom
         }
     }
 }

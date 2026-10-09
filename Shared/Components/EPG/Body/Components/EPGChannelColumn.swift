@@ -38,7 +38,8 @@ struct EPGChannelColumn: View {
                         )
                     } label: {
                         Text(L10n.onNow)
-                            .font(.caption2.weight(.semibold))
+                            .font(.caption2)
+                            .fontWeight(.semibold)
                             .lineLimit(1)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
@@ -60,10 +61,10 @@ struct EPGChannelColumn: View {
                 LazyVStack(spacing: 0) {
                     ForEach(viewModel.channels) { channel in
                         EPGChannelButton(
-                            channel: channel,
-                            action: { action(channel) }
+                            channel: channel.snapshot,
+                            action: { action(channel.snapshot) }
                         )
-                        .isSelected(channel.id != nil && channel.id == selectedChannelID)
+                        .isSelected(channel.itemID == selectedChannelID)
                     }
                 }
                 .tint(accentColor)

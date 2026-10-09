@@ -14,6 +14,7 @@ import JellyfinAPI
 import UIKit
 
 extension Container {
+
     var notificationCenter: Factory<NotificationCenter> {
         self { NotificationCenter.default }.singleton
     }
@@ -24,6 +25,7 @@ enum Notifications {
     typealias Keys = _AnyKey
 
     class _AnyKey {
+
         typealias Key = Notifications.Key
     }
 
@@ -113,35 +115,12 @@ extension Notifications.Key {
         Key("didChangeServerConnection")
     }
 
-    static var didSendStopReport: Key<Void> {
-        Key("didSendStopReport")
-    }
-
     static var didRequestGlobalRefresh: Key<Void> {
         Key("didRequestGlobalRefresh")
     }
 
-    // MARK: - Media Items
-
-    // TODO: come up with a cleaner, more defined way for item update notifications
-
-    static var itemUserDataDidChange: Key<UserItemDataDto> {
-        Key("itemUserDataDidChange")
-    }
-
-    /// - Payload: The new item with updated metadata.
-    static var itemMetadataDidChange: Key<BaseItemDto> {
-        Key("itemMetadataDidChange")
-    }
-
-    /// - Payload: The ID of the item that should refresh
-    static var itemShouldRefreshMetadata: Key<String> {
-        Key("itemShouldRefresh")
-    }
-
-    /// - Payload: The ID of the deleted item.
-    static var didDeleteItem: Key<String> {
-        Key("didDeleteItem")
+    static var recordingTimersDidChange: Key<Void> {
+        Key("recordingTimersDidChange")
     }
 
     // MARK: - Server
@@ -216,6 +195,7 @@ extension Notifications.Key {
             else {
                 return nil
             }
+
             let options = (userInfo[AVAudioSessionInterruptionOptionKey] as? UInt)
                 .map(AVAudioSession.InterruptionOptions.init(rawValue:)) ?? []
 

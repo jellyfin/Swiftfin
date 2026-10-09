@@ -14,7 +14,7 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
     case favorited
     case trailers
     case playback
-    case playlists
+    case record
     case subtitles
     case refresh
     case delete
@@ -32,8 +32,8 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
             L10n.trailers
         case .playback:
             L10n.playback
-        case .playlists:
-            L10n.playlists
+        case .record:
+            L10n.record
         case .refresh:
             L10n.refreshMetadata
         case .subtitles:
@@ -61,8 +61,8 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
             "movieclapper"
         case .playback:
             "list.and.film"
-        case .playlists:
-            "list.bullet"
+        case .record:
+            "record.circle.fill"
         case .refresh:
             "arrow.clockwise"
         case .subtitles:
@@ -80,6 +80,8 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
         switch self {
         case .favorited:
             "heart"
+        case .record:
+            "record.circle"
         default:
             systemImage
         }
@@ -91,6 +93,8 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
             .jellyfinPurple
         case .favorited:
             .pink
+        case .record:
+            .red
         default:
             nil
         }
@@ -99,12 +103,12 @@ enum ItemActionButton: String, CaseIterable, Displayable, Equatable, Identifiabl
     static let defaultBarActionButtons: [ItemActionButton] = [
         .played,
         .favorited,
+        .record,
         .trailers,
         .playback
     ]
 
     static let defaultMenuActionButtons: [ItemActionButton] = [
-        .playlists,
         .refresh,
         .subtitles,
         .delete

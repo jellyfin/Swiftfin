@@ -65,12 +65,15 @@ struct ServerConnection: Displayable, Hashable, Identifiable, Storable {
         switch interface {
         case .any:
             return context.isSatisfied
+
         case .wifi:
             guard context.interface == .wifi else { return false }
             guard wifiSSIDs.isNotEmpty else { return true }
+
             return wifiSSIDs.contains {
                 $0.caseInsensitiveCompare(context.wifiSSID ?? .empty) == .orderedSame
             }
+
         case .cellular:
             return context.interface == .cellular
         }

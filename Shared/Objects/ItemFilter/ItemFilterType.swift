@@ -63,6 +63,7 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
                 setter: { $1.currentFilters.audioLanguages = $0.map(ItemLanguage.init) },
                 selectorType: .multi
             )
+
         case .category:
             (
                 displayTitle: displayTitle,
@@ -70,6 +71,7 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
                 setter: { $1.currentFilters.categories = $0.map(ChannelCategory.init) },
                 selectorType: .multi
             )
+
         case .genres:
             (
                 displayTitle: displayTitle,
@@ -77,6 +79,7 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
                 setter: { $1.currentFilters.genres = $0.map(ItemGenre.init) },
                 selectorType: .multi
             )
+
         case .letter:
             (
                 displayTitle: displayTitle,
@@ -84,6 +87,7 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
                 setter: { $1.currentFilters.letter = $0.map(ItemLetter.init) },
                 selectorType: .single
             )
+
         case .officialRatings:
             (
                 displayTitle: displayTitle,
@@ -91,6 +95,7 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
                 setter: { $1.currentFilters.officialRatings = $0.map(ItemOfficialRating.init) },
                 selectorType: .multi
             )
+
         case .sortBy:
             (
                 displayTitle: L10n.order,
@@ -104,6 +109,7 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
                 setter: { $1.currentFilters.sortBy = $0.map(ItemSortBy.init) },
                 selectorType: .single
             )
+
         case .subtitleLanguage:
             (
                 displayTitle: displayTitle,
@@ -111,6 +117,7 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
                 setter: { $1.currentFilters.subtitleLanguages = $0.map(ItemLanguage.init) },
                 selectorType: .multi
             )
+
         case .tags:
             (
                 displayTitle: displayTitle,
@@ -118,6 +125,7 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
                 setter: { $1.currentFilters.tags = $0.map(ItemTag.init) },
                 selectorType: .multi
             )
+
         case .traits:
             (
                 displayTitle: displayTitle,
@@ -125,6 +133,7 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
                 setter: { $1.currentFilters.traits = $0.map(ItemTrait.init) },
                 selectorType: .multi
             )
+
         case .years:
             (
                 displayTitle: displayTitle,
@@ -152,7 +161,7 @@ enum ItemFilterType: String, CaseIterable, Displayable, Identifiable, Storable, 
         case .officialRatings:
             "person.badge.shield.checkmark"
         case .sortBy:
-            "line.3.horizontal.decrease"
+            "arrow.up.arrow.down"
         case .subtitleLanguage:
             "captions.bubble"
         case .tags:

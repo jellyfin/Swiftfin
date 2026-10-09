@@ -12,45 +12,52 @@ import JellyfinAPI
 struct SeasonViewModelLibrary: PagingLibrary {
 
     let hasNextPage = false
-    let parent: BaseItemDto
+    @SharedBaseItem
+    var parent: BaseItemDto
+
+    typealias Element = PagingLibraryViewModel<EpisodeLibrary>
 
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [PagingLibraryViewModel<EpisodeLibrary>] {
+    ) async throws -> [ItemPatch] {
         if parent.type == .season {
-            return [PagingLibraryViewModel(library: EpisodeLibrary(season: parent))]
+            return try [ItemPatch.snapshot(parent)]
         }
+        return try await SeasonLibrary(parent: parent).retrievePage(environment: environment, pageState: pageState)
+    }
 
-        return try await SeasonLibrary(parent: parent)
-            .retrievePage(
-                environment: environment,
-                pageState: pageState
-            )
-            .map { PagingLibraryViewModel(library: EpisodeLibrary(season: $0)) }
+    func materialize(_ page: [ItemPatch], pageState: LibraryPageState) throws -> [Element] {
+        try SeasonLibrary(parent: parent).materialize(page, pageState: pageState).map {
+            PagingLibraryViewModel(library: EpisodeLibrary(season: $0.snapshot), userSession: pageState.userSession)
+        }
     }
 }
 
 struct SeasonLibrary: BaseItemKindLibrary {
 
+    let hasNextPage = false
+
     let libraryItemTypes: [BaseItemKind] = [.season]
-    let parent: BaseItemDto
+    @SharedBaseItem
+    var parent: BaseItemDto
 
     func retrievePage(
         environment: Empty,
         pageState: LibraryPageState
-    ) async throws -> [BaseItemDto] {
+    ) async throws -> [ItemPatch] {
         guard let seriesID = parent.id else {
             throw ErrorMessage(L10n.unknownError)
         }
 
         var parameters = Paths.GetSeasonsParameters()
+        parameters.fields = PosterSubtitleField.itemFields
         parameters.isMissing = Defaults[.Customization.shouldShowMissingSeasons] ? nil : false
         parameters.userID = pageState.userSession.user.id
 
         let request = Paths.getSeasons(seriesID: seriesID, parameters: parameters)
         let response = try await pageState.userSession.client.send(request)
 
-        return response.value.items ?? []
+        return try pageState.items(from: response)
     }
 }

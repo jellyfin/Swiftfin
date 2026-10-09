@@ -61,7 +61,6 @@ extension ItemActionButtons {
                 error = ErrorMessage(L10n.unableToOpenTrailer)
                 return
             }
-
             guard externalURL.canBeOpened else {
                 error = ErrorMessage(L10n.unableToOpenTrailer)
                 return

@@ -17,6 +17,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
 
     @CasePathable
     enum Action {
+
         case cancel
         case refresh
         case getLibraries(isHidden: Bool? = false)
@@ -28,9 +29,11 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
             switch self {
             case .cancel:
                 .to(.initial)
+
             case .refresh, .getLibraries:
                 .to(.initial, then: .content)
                     .whenBackground(.refreshing)
+
             case .updatePolicy, .updateConfiguration, .updateUsername:
                 .background(.updating)
             }
@@ -38,15 +41,18 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
     }
 
     enum BackgroundState {
+
         case updating
         case refreshing
     }
 
     enum Event {
+
         case updated
     }
 
     enum State {
+
         case initial
         case content
         case error
@@ -54,7 +60,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
 
     @Published
     private(set) var user: UserDto
-    @Published
+    @SharedBaseItems
     var libraries: [BaseItemDto] = []
 
     init(user: UserDto) {
@@ -66,6 +72,7 @@ final class ServerUserAdminViewModel: ViewModel, Identifiable {
             .publisher
             .sink { [weak self] userID in
                 guard let self, userID == self.user.id else { return }
+
                 self.refresh()
             }
             .store(in: &cancellables)

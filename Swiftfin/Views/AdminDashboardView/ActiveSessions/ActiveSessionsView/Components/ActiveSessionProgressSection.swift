@@ -13,7 +13,8 @@ extension ActiveSessionsView {
 
     struct ProgressSection: View {
 
-        let item: BaseItemDto
+        @SharedBaseItem
+        var item: BaseItemDto
         let playState: PlayerStateInfo
         let transcodingInfo: TranscodingInfo?
         var showTranscodeReason: Bool = false
@@ -24,6 +25,7 @@ extension ActiveSessionsView {
 
         private var transcodingPercentage: Double? {
             guard let c = transcodingInfo?.completionPercentage else { return nil }
+
             return clamp(c / 100.0, min: 0, max: 1)
         }
 
@@ -65,16 +67,16 @@ extension ActiveSessionsView {
                             .foregroundStyle(.secondary)
                     }
                 }
-
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 HStack(spacing: 2) {
                     Text(playState.position ?? .zero, format: .runtime)
 
-                    // swiftlint:disable:next hard_coded_display_string
-                    Text("/")
-
-                    Text(item.runtime ?? .zero, format: .runtime)
+                    if let runtime = item.runtime {
+                        // swiftlint:disable:next hard_coded_display_string
+                        Text("/")
+                        Text(runtime, format: .runtime)
+                    }
                 }
                 .monospacedDigit()
                 .fixedSize(horizontal: true, vertical: true)

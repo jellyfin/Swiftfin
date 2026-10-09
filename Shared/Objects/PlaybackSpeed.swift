@@ -11,7 +11,7 @@ import Foundation
 
 enum PlaybackSpeed: CaseIterable, Displayable, Hashable, RawRepresentable, Storable {
 
-    typealias RawValue = Float
+    typealias RawValue = Double
 
     case quarter
     case half
@@ -21,9 +21,9 @@ enum PlaybackSpeed: CaseIterable, Displayable, Hashable, RawRepresentable, Stora
     case oneHalf
     case oneThreeQuarter
     case two
-    case custom(Float)
+    case custom(Double)
 
-    init(rawValue: Float) {
+    init(rawValue: Double) {
         switch rawValue {
         case 0.25:
             self = .quarter
@@ -46,7 +46,7 @@ enum PlaybackSpeed: CaseIterable, Displayable, Hashable, RawRepresentable, Stora
         }
     }
 
-    var rawValue: Float {
+    var rawValue: Double {
         switch self {
         case .quarter:
             0.25

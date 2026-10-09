@@ -10,9 +10,6 @@ import SwiftUI
 
 struct PosterButton<Item: Poster>: View {
 
-    @Environment(\.posterConfiguration)
-    private var posterConfiguration
-
     @Environment(\.viewContext)
     private var viewContext
 
@@ -22,7 +19,8 @@ struct PosterButton<Item: Poster>: View {
     @State
     private var posterSize: CGSize = .zero
 
-    let item: Item
+    @SharedPoster
+    var item: Item
     let displayType: PosterDisplayType
     let size: PosterDisplayType.Size
     let action: (Namespace.ID) -> Void
@@ -42,6 +40,7 @@ struct PosterButton<Item: Poster>: View {
     @ViewBuilder
     private var contextMenuPreview: some View {
         buttonLabel()
+            .posterAccessibility(for: item)
             .frame(width: posterSize.width)
             .padding(20)
             .backport
@@ -68,10 +67,8 @@ struct PosterButton<Item: Poster>: View {
         VStack(alignment: .leading) {
             posterImage(overlay: overlay)
 
-            if posterConfiguration.showLabels {
-                item.posterLabel
-                    .allowsHitTesting(false)
-            }
+            item.posterLabel
+                .allowsHitTesting(false)
         }
     }
 
@@ -84,13 +81,14 @@ struct PosterButton<Item: Poster>: View {
             posterImage(overlay: item.posterOverlay(for: displayType))
                 .posterAspectRatio(displayType, contentMode: .fit)
                 .frame(width: posterSize.width > 0 ? posterSize.width : nil)
+                .posterAccessibility(for: item)
 
-            if posterConfiguration.showLabels {
-                item.posterLabel
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
+            item.posterLabel
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityHidden(true)
             #else
             buttonLabel(overlay: item.posterOverlay(for: displayType))
+                .posterAccessibility(for: item)
             #endif
         }
         .environment(\.posterDisplayType, displayType)

@@ -1,6 +1,4 @@
-# version: 0.63.0
-
---swiftversion 6.2
+--swiftversion 6.4
 
 --assetliterals visual-width
 --computedvarattrs prev-line
@@ -20,20 +18,29 @@
 --wrapparameters before-first
 --xcodeindentation enabled
 
---enable blankLinesAroundMark,   \
-    isEmpty,                \
-    leadingDelimiters,      \
-    redundantInit,          \
-    redundantLet,           \
-    spaceInsideBraces,      \
-    spaceInsideBrackets,    \
-    spaceInsideComments,    \
-    spaceInsideGenerics,    \
-    spaceInsideParens,      \
-    trailingSpace,          \
-    typeSugar,              \
-    void,                   \
-    wrapEnumCases
+--enable blankLineAfterSwitchCase,     \
+    blankLinesAfterGuardStatements,    \
+    blankLinesAroundMark,              \
+    isEmpty,                            \
+    leadingDelimiters,                  \
+    preferContains,                     \
+    preferCountWhere,                   \
+    preferFirstWhere,                   \
+    preferFlatMap,                      \
+    preferMinOverSorted,                \
+    preferSwiftStringAPI,               \
+    redundantInit,                      \
+    redundantLet,                       \
+    spaceInsideBraces,                  \
+    spaceInsideBrackets,                \
+    spaceInsideComments,                \
+    spaceInsideGenerics,                \
+    spaceInsideParens,                  \
+    trailingSpace,                      \
+    typeSugar,                          \
+    void,                               \
+    wrapEnumCases,                      \
+    wrapMultilineFunctionChains
 
 --disable andOperator,       \
     blankLinesAtStartOfScope,\

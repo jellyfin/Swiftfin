@@ -15,6 +15,7 @@ extension BaseItemDto {
     /// Indicates whether the item can be downloaded by the current user
     var canBeDownloaded: Bool {
         guard let userPolicy = Container.shared.currentUserSession()?.user.data.policy else { return false }
+
         return userPolicy.enableContentDownloading == true && canDownload == true
     }
 

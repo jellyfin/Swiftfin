@@ -1,5 +1,6 @@
 excluded:
   - build
+  - "**/.build"
 
 only_rules:
   - custom_rules

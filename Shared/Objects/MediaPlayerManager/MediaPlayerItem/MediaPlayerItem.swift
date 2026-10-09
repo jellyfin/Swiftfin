@@ -24,6 +24,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     var selectedAudioStreamIndex: Int? = nil {
         didSet {
             guard let selectedAudioStreamIndex, selectedAudioStreamIndex != oldValue else { return }
+
             manager?.setTrack(type: .audio, from: oldValue, to: selectedAudioStreamIndex)
         }
     }
@@ -32,6 +33,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
     var selectedSubtitleStreamIndex: Int? = nil {
         didSet {
             guard selectedSubtitleStreamIndex != oldValue else { return }
+
             manager?.setTrack(type: .subtitle, from: oldValue, to: selectedSubtitleStreamIndex)
         }
     }
@@ -48,7 +50,23 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
 
     var observers: [any MediaPlayerObserver] = []
 
-    let baseItem: BaseItemDto
+    @SharedBaseItem
+    private var sharedItem: BaseItemDto
+    private let startPositionTicks: Int?
+    private let runtimeTicks: Int?
+
+    /// Applies local playback overrides to the latest shared metadata
+    var baseItem: BaseItemDto {
+        var value = sharedItem
+        value.runTimeTicks = runtimeTicks ?? value.runTimeTicks
+        if let startPositionTicks {
+            var data = value.userData ?? UserItemDataDto(key: value.id ?? "")
+            data.playbackPositionTicks = startPositionTicks
+            value.userData = data
+        }
+        return value
+    }
+
     let deviceProfile: DeviceProfile
     let mediaSource: MediaSourceInfo
     let playSessionID: String
@@ -76,7 +94,9 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         previewImageProvider: (any PreviewImageProvider)? = nil,
         thumbnailProvider: ThumbnailProvider? = nil
     ) {
-        self.baseItem = baseItem
+        self.sharedItem = baseItem
+        self.startPositionTicks = baseItem.userData?.playbackPositionTicks
+        self.runtimeTicks = mediaSource.runTimeTicks ?? baseItem.runTimeTicks
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
         self.requestedBitrate = requestedBitrate
@@ -99,7 +119,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
         } ?? []
         self.videoStreams = mediaStreams?.filter { $0.type == .video } ?? []
 
-        let resolvedAudioStreamIndex = initialAudioStreamIndex
+        let resolvedAudioStreamIndex: Int = initialAudioStreamIndex
             ?? mediaSource.defaultAudioStreamIndex
             ?? mediaSource.mediaStreams?.first(where: { $0.type == .audio })?.index ?? 0
 
@@ -182,11 +202,15 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
             guard let playerIndex,
                   let proxy = manager?.proxy as? any MediaPlayerAudioTrackConfigurable
             else { return }
+
             proxy.setAudioStream(.init(index: playerIndex))
+
         case .subtitle:
             guard let proxy = manager?.proxy as? any MediaPlayerSubtitleTrackConfigurable else { return }
+
             // Disable subtitles until the requested track is available.
             proxy.setSubtitleStream(.init(index: playerIndex ?? -1))
+
         default:
             return
         }
@@ -206,6 +230,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerObserver {
                   let client = manager?.userSession?.client,
                   let url = subtitle.url(with: client)
             else { return nil }
+
             return (jellyfinIndex, url)
         }
 

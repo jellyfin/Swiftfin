@@ -67,13 +67,17 @@ extension UserSessionManager {
                 startPositionTicks: playCommand.startPositionTicks,
                 userSession: currentSession
             )
+
         case .playNext:
             onReceive(playstateCommand: .init(command: .nextTrack, controllingUserID: playCommand.controllingUserID))
+
         case .playLast:
             onReceive(playstateCommand: .init(command: .previousTrack, controllingUserID: playCommand.controllingUserID))
+
         case .playInstantMix:
             // TODO: Implement instant mix
             return
+
         case .playShuffle:
             // TODO: Implement shuffle playback
             return
@@ -87,25 +91,37 @@ extension UserSessionManager {
         switch playstateCommand.command {
         case .fastForward:
             mediaPlayerManager.proxy?.jumpForward(Defaults[.VideoPlayer.jumpForwardInterval].rawValue)
+
         case .nextTrack:
             guard let nextItem = mediaPlayerManager.queue?.nextItem else { return }
+
             mediaPlayerManager.playNewItem(provider: nextItem)
+
         case .pause:
             mediaPlayerManager.setPlaybackRequestStatus(status: .paused)
+
         case .playPause:
             mediaPlayerManager.togglePlayPause()
+
         case .previousTrack:
             guard let previousItem = mediaPlayerManager.queue?.previousItem else { return }
+
             mediaPlayerManager.playNewItem(provider: previousItem)
+
         case .rewind:
             mediaPlayerManager.proxy?.jumpBackward(Defaults[.VideoPlayer.jumpBackwardInterval].rawValue)
+
         case .seek:
             guard let ticks = playstateCommand.seekPositionTicks else { return }
+
             mediaPlayerManager.proxy?.setSeconds(.ticks(ticks))
+
         case .stop:
             mediaPlayerManager.stop()
+
         case .unpause:
             mediaPlayerManager.setPlaybackRequestStatus(status: .playing)
+
         case .none:
             return
         }
@@ -118,35 +134,50 @@ extension UserSessionManager {
         switch generalCommand.name {
         case .setAudioStreamIndex:
             guard let index = generalCommand.arguments?["Index"], let index = Int(index) else { return }
+
             mediaPlayerManager?.playbackItem?.selectedAudioStreamIndex = index
+
         case .setMaxStreamingBitrate:
             guard let bitrate = generalCommand.arguments?["Bitrate"], let bitrate = Int(bitrate) else { return }
+
             mediaPlayerManager?.setBitrate(bitrate: PlaybackBitrate(for: bitrate))
+
         case .setSubtitleStreamIndex:
             guard let index = generalCommand.arguments?["Index"], let index = Int(index) else { return }
+
             mediaPlayerManager?.playbackItem?.selectedSubtitleStreamIndex = index
+
         case .displayContent:
             guard let itemID = generalCommand.arguments?["ItemId"] else { return }
+
             routePublisher.send(.item(id: itemID))
+
         case .playMediaSource:
             guard let itemID = generalCommand.arguments?["ItemId"] else { return }
+
             playItem(
                 id: itemID,
                 mediaSourceID: generalCommand.arguments?["MediaSourceId"],
                 userSession: currentSession
             )
+
         case .playTrailers:
             guard let itemID = generalCommand.arguments?["ItemId"] else { return }
+
             playTrailers(itemID: itemID, userSession: currentSession)
+
         case .displayMessage:
             // TODO: Implement via Toast
             return
+
         case .setPlaybackOrder, .setRepeatMode, .setShuffleQueue:
             // TODO: Implement when queue shuffling exists
             return
+
         case .mute, .setVolume, .toggleMute, .unmute, .volumeDown, .volumeUp:
             // Ignore volume commands since this would be iOS only
             return
+
         default:
             // Ignore navigation commands
             return
@@ -162,15 +193,18 @@ extension UserSessionManager {
     ) {
         Task { @MainActor in
             do {
-                let item = try await BaseItemDto(id: id).getFullItem(userSession: userSession)
-                let mediaSource = item.mediaSources?.first {
+                let entry = try await userSession.getFullItem(id: id)
+                let mediaSource = entry.value?.mediaSources?.first {
                     $0.id == mediaSourceID
                 }
 
-                guard var provider = item.getPlaybackItemProvider(
-                    userSession: userSession,
-                    mediaSource: mediaSource
-                ) else { return }
+                // Keep the record alive until the playback provider takes ownership
+                guard var provider = withExtendedLifetime(entry, {
+                    entry.snapshot.getPlaybackItemProvider(
+                        userSession: userSession,
+                        mediaSource: mediaSource
+                    )
+                }) else { return }
 
                 if let startPositionTicks {
                     provider = provider.modifyingItem { item in
@@ -200,15 +234,15 @@ extension UserSessionManager {
         Task { @MainActor in
             do {
                 let request = Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
-                let response = try await userSession.client.send(request)
+                let response = try await userSession.send(request)
 
                 if let trailerID = response.value.first?.id {
                     playItem(id: trailerID, userSession: userSession)
                     return
                 }
 
-                let item = try await BaseItemDto(id: itemID).getFullItem(userSession: userSession)
-                guard let urlString = item.remoteTrailers?.first?.url else { return }
+                let entry = try await userSession.getFullItem(id: itemID)
+                guard let urlString = entry.value?.remoteTrailers?.first?.url else { return }
 
                 #if os(tvOS)
                 guard let externalURL = ExternalTrailerURL(string: urlString),

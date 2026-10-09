@@ -37,6 +37,7 @@ extension BaseItemDto: LibraryElement {
                 to: .library(library: ItemLibrary(parent: self, filters: .default)),
                 in: namespace
             )
+
         default:
             router.route(to: .item(item: self), in: namespace)
         }
@@ -64,7 +65,8 @@ private struct BaseItemDtoLibraryGridElement: View {
     @Router
     private var router
 
-    let item: BaseItemDto
+    @SharedBaseItem
+    var item: BaseItemDto
     let libraryStyle: LibraryStyle
 
     private var resolvedLibraryStyle: LibraryStyle {
@@ -89,7 +91,8 @@ private struct BaseItemDtoLibraryListElement: View {
     @Router
     private var router
 
-    let item: BaseItemDto
+    @SharedBaseItem
+    var item: BaseItemDto
     let libraryStyle: LibraryStyle
 
     private var resolvedLibraryStyle: LibraryStyle {
@@ -116,6 +119,8 @@ private struct BaseItemDtoLibraryListElement: View {
 
                 if let program = item.currentProgram {
                     currentProgramView(program)
+                } else if item.type == .program {
+                    currentProgramView(item)
                 } else {
                     accessoryView
                         .font(.caption)
@@ -126,7 +131,9 @@ private struct BaseItemDtoLibraryListElement: View {
         } action: {
             item.libraryDidSelectElement(router: router, in: namespace)
         }
+        #if !os(tvOS)
         .matchedTransitionSource(id: "item", in: namespace)
+        #endif
         #if os(tvOS)
         .focusedValue(\.focusedPoster, AnyPoster(item))
         #endif
@@ -135,10 +142,12 @@ private struct BaseItemDtoLibraryListElement: View {
     @ViewBuilder
     private func currentProgramView(_ program: BaseItemDto) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(program.displayTitle)
-                .font(.subheadline)
-                .foregroundStyle(.primary)
-                .lineLimit(1)
+            if program.id != item.id {
+                Text(program.displayTitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+            }
 
             if let progress = program.progressPercentage {
                 ProgressView(value: progress)
@@ -149,8 +158,17 @@ private struct BaseItemDtoLibraryListElement: View {
 
             if let start = program.startDate, let end = program.endDate {
                 DotHStack {
+                    if !Calendar.current.isDateInToday(start) {
+                        Text(start, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
+                    }
+
                     Text(start, style: .time)
                     Text(end, style: .time)
+
+                    if program.isRecording && program.isAiring {
+                        Text(L10n.recording)
+                            .foregroundStyle(.red)
+                    }
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)

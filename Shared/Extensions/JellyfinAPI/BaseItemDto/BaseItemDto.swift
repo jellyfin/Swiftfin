@@ -120,21 +120,25 @@ extension BaseItemDto {
 
     var birthday: Date? {
         guard type == .person else { return nil }
+
         return premiereDate
     }
 
     var birthplace: String? {
         guard type == .person else { return nil }
+
         return productionLocations?.first { $0.isNotEmpty }
     }
 
     var deathday: Date? {
         guard type == .person else { return nil }
+
         return endDate
     }
 
     var episodeLocator: String? {
         guard let episodeNo = indexNumber else { return nil }
+
         return L10n.episodeNumber(episodeNo)
     }
 
@@ -164,6 +168,7 @@ extension BaseItemDto {
 
     var itemGenres: [ItemGenre]? {
         guard let genres else { return nil }
+
         return genres.map(ItemGenre.init)
     }
 
@@ -179,6 +184,7 @@ extension BaseItemDto {
         }
 
         guard let startDate, let endDate else { return false }
+
         return startDate <= .now && .now <= endDate
     }
 
@@ -232,6 +238,7 @@ extension BaseItemDto {
         return ImageRenderer(content: transformedImage).uiImage
     }
 
+    @MainActor
     func getPlaybackItemProvider(
         userSession: UserSession?,
         mediaSource: MediaSourceInfo? = nil,
@@ -256,6 +263,7 @@ extension BaseItemDto {
                     modifyItem: modifyItem
                 )
             }
+
         default:
             let selectedMediaSource = mediaSource ?? mediaSources?.first
 
@@ -278,6 +286,7 @@ extension BaseItemDto {
         }
     }
 
+    @MainActor
     func getChannel(
         for program: BaseItemDto,
         userSession: UserSession
@@ -288,23 +297,26 @@ extension BaseItemDto {
         parameters.ids = program.channelID.flatMap { [$0] }
 
         let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
+        let response = try await userSession.send(request)
 
         return response.value.items?.first
     }
 
     var runtime: Duration? {
         guard let ticks = runTimeTicks, ticks > 0 else { return nil }
+
         return Duration.ticks(ticks)
     }
 
     var startSeconds: Duration? {
         guard let ticks = userData?.playbackPositionTicks else { return nil }
+
         return Duration.ticks(ticks)
     }
 
     var seasonEpisodeLabel: String? {
         guard let seasonNo = parentIndexNumber, let episodeNo = indexNumber else { return nil }
+
         return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
     }
 
@@ -352,6 +364,7 @@ extension BaseItemDto {
 
     var programDuration: TimeInterval? {
         guard let startDate, let endDate else { return nil }
+
         return endDate.timeIntervalSince(startDate)
     }
 
@@ -408,6 +421,14 @@ extension BaseItemDto {
         mediaStreams?.filter { $0.type == .video } ?? []
     }
 
+    var isRecording: Bool {
+        if let currentProgram {
+            return currentProgram.isRecording
+        }
+
+        return timerID != nil
+    }
+
     // MARK: Missing and Unaired
 
     var isMissing: Bool {
@@ -428,11 +449,13 @@ extension BaseItemDto {
 
     var hasAired: Bool {
         guard let startDate, let endDate else { return false }
+
         return startDate <= Date.now && endDate < Date.now
     }
 
     var airDateLabel: String? {
         guard let premiereDateFormatted = premiereDateLabel else { return nil }
+
         return L10n.airWithDate(premiereDateFormatted)
     }
 
@@ -446,6 +469,7 @@ extension BaseItemDto {
 
     var premiereDateYear: String? {
         guard let premiereDate else { return nil }
+
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY"
         return dateFormatter.string(from: premiereDate)
@@ -453,6 +477,7 @@ extension BaseItemDto {
 
     var hasExternalLinks: Bool {
         guard let externalURLs else { return false }
+
         return externalURLs.isNotEmpty
     }
 
@@ -470,7 +495,6 @@ extension BaseItemDto {
         guard let chapters = chapters?
             .sorted(using: \.startPositionTicks)
             .compacted(using: \.startPositionTicks) else { return nil }
-
         guard let userSession = Container.shared.currentUserSession() else { return nil }
 
         return chapters
@@ -546,6 +570,20 @@ extension BaseItemDto {
         }
     }
 
+    /// Can this `BaseItemDto` be recorded
+    var canBeRecorded: Bool {
+        guard Container.shared.currentUserSession()?.user.data.policy?.enableLiveTvManagement == true else { return false }
+
+        switch type {
+        case .channel, .liveTvChannel, .tvChannel:
+            return true
+        case .program, .liveTvProgram, .tvProgram:
+            return (endDate ?? .distantPast) > Date()
+        default:
+            return false
+        }
+    }
+
     var playButtonLabel: String {
 
         if isUnaired {
@@ -617,22 +655,10 @@ extension BaseItemDto {
         }
     }
 
-    func getFullItem(userSession: UserSession, sendNotification: Bool = false) async throws -> BaseItemDto {
-        guard let id else {
-            throw ErrorMessage(L10n.unknownError)
+    var withoutUserData: BaseItemDto {
+        with(self) {
+            $0.currentProgram = currentProgram?.withoutUserData
+            $0.userData = nil
         }
-
-        let request = Paths.getItem(itemID: id, userID: userSession.user.id)
-        let response = try await userSession.client.send(request)
-
-        // A check against `id` would typically be done, but a plugin
-        // may have provided `self` or the response item and may not
-        // be invariant over `id`.
-
-        if sendNotification {
-            Notifications[.itemMetadataDidChange].post(response.value)
-        }
-
-        return response.value
     }
 }

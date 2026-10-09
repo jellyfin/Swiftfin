@@ -67,9 +67,11 @@ struct UserSignInView: View {
                 ),
                 evaluatedPolicyMap: .init(action: processEvaluatedPolicy)
             )
+
         case let .existingUser(existingUser):
             self.existingUser = existingUser
             self.isPresentingExistingUser = true
+
         case let .saved(user):
             Task { @MainActor in
                 do {
@@ -145,9 +147,11 @@ struct UserSignInView: View {
             case .requireDeviceAuthentication:
                 Label(L10n.userDeviceAuthRequiredDescription, systemImage: "exclamationmark.circle.fill")
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+
             case .requirePin:
                 Label(L10n.userPinRequiredDescription, systemImage: "exclamationmark.circle.fill")
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+
             case .none:
                 EmptyView()
             }

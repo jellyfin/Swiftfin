@@ -36,7 +36,7 @@ extension EdgeInsets {
 
     static let edgeInsets: EdgeInsets = .init(edgePadding)
 
-    /// The gap between collection items and rows, independent of content insets.
+    /// The gap between collection items
     static let itemSpacing: CGFloat = {
         #if os(tvOS)
         40

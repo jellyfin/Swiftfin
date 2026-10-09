@@ -11,14 +11,15 @@ import SwiftUI
 
 struct FormItemSection<Item: Poster>: PlatformView {
 
-    let item: Item
+    @SharedPoster
+    var item: Item
 
     var iOSView: some View {
         Section {
             HStack(alignment: .bottom, spacing: 12) {
                 PosterImage(
                     item: item,
-                    type: item.preferredPosterDisplayType,
+                    type: item.posterDisplayType(for: .compact),
                     contentMode: .fit
                 )
                 .frame(width: 100)

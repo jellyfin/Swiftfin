@@ -263,6 +263,7 @@ struct Marquee<Content: View>: View {
             distance = resetType == .loop
                 ? contentSize.width + gap(proxy)
                 : contentSize.width - proxy.size.width
+
         case .vertical:
             contentFits = contentSize.height <= proxy.size.height
             distance = resetType == .loop

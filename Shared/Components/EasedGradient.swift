@@ -71,6 +71,7 @@ struct EasedGradient: View, ShapeStyle {
                 let slope = derivative(x1, x2, t)
 
                 guard abs(slope) > 0.000001 else { break }
+
                 t = (t - dx / slope).clamped(to: 0 ... 1)
             }
 
@@ -176,11 +177,13 @@ struct EasedGradient: View, ShapeStyle {
                 Gradient.Stop(color: .clear, location: 0),
                 Gradient.Stop(color: .clear, location: 1),
             ]
+
         case 1:
             return [
                 Gradient.Stop(color: sortedStops[0].color, location: 0),
                 Gradient.Stop(color: sortedStops[0].color, location: 1),
             ]
+
         default:
             return sortedStops.map {
                 Gradient.Stop(color: $0.color, location: $0.location.clamped(to: 0 ... 1))

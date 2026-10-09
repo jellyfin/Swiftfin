@@ -37,18 +37,30 @@ extension BaseItemDto: LibraryParent {
         supportedItemTypes(for: nil)
     }
 
+    /// Folder libraries browse direct children, including nested folders
+    var isFolderCollection: Bool {
+        libraryType == .folder ||
+            ((libraryType == .collectionFolder || libraryType == .userView) && (collectionType ?? .folders) == .folders)
+    }
+
     func supportedItemTypes(for grouping: Grouping?) -> [BaseItemKind] {
-        switch (collectionType, libraryType) {
-        case (_, .folder):
+        if isFolderCollection {
+            return BaseItemKind.supportedCases.appending([.folder, .collectionFolder])
+        }
+
+        return switch (collectionType, libraryType) {
+        case (.boxsets, _):
             BaseItemKind.supportedCases
-                .appending([.folder, .collectionFolder])
+
         case (_, .channel), (_, .liveTvChannel), (_, .tvChannel):
             [.liveTvProgram]
-        case (_, .playlist):
-            BaseItemKind.supportedCases
-                .appending([.episode, .audio])
+
         case (.movies, _):
             [.movie]
+
+        case (.music, _):
+            [.audio, .musicAlbum, .musicArtist]
+
         case (.tvshows, _):
             switch grouping {
             case .episodes:
@@ -58,12 +70,7 @@ extension BaseItemDto: LibraryParent {
             default:
                 [.series]
             }
-        case (.music, _):
-            [.audio, .musicAlbum, .musicArtist]
-        case (.playlists, _):
-            [.playlist]
-        case (.boxsets, _):
-            BaseItemKind.supportedCases
+
         default:
             BaseItemKind.supportedCases
         }
@@ -74,6 +81,7 @@ extension BaseItemDto: LibraryParent {
     }
 
     func isRecursiveCollection(for grouping: Grouping?) -> Bool {
+        guard !isFolderCollection else { return false }
         guard let collectionType, libraryType != .userView else { return true }
 
         if grouping == .episodes || grouping == .seasons {

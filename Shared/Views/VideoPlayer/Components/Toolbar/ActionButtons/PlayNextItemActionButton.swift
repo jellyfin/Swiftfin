@@ -36,6 +36,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                 systemImage: VideoPlayerActionButton.playNextItem.systemImage
             ) {
                 guard let nextItem = queue.nextItem else { return }
+
                 manager.playNewItem(provider: nextItem)
             }
             .disabled(queue.nextItem == nil)

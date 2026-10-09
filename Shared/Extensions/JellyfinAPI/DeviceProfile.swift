@@ -111,6 +111,7 @@ extension DeviceProfile {
     /// Whether any `SubtitleProfile` allows this format to be delivered via the given method.
     func canPlay(subtitleFormat: String?, method: SubtitleDeliveryMethod) -> Bool {
         guard let subtitleFormat = subtitleFormat?.lowercased() else { return false }
+
         return (subtitleProfiles ?? []).contains { profile in
             profile.method == method
                 && profile.format?.lowercased() == subtitleFormat
@@ -121,6 +122,7 @@ extension DeviceProfile {
     private func profileContains(profile: String?, _ candidate: String?) -> Bool {
         guard let profile else { return true }
         guard let candidate = candidate?.lowercased() else { return false }
+
         return profile
             .lowercased()
             .split(separator: ",")

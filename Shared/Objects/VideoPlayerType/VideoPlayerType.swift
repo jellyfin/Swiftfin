@@ -11,14 +11,14 @@ import JellyfinAPI
 
 enum VideoPlayerType: String, CaseIterable, Displayable, SupportedCaseIterable, Storable {
 
-    case native
+    case avPlayer = "native"
     case vlc
     case mpv
 
     var displayTitle: String {
         switch self {
-        case .native:
-            L10n.native
+        case .avPlayer:
+            L10n.avPlayer
         case .vlc:
             L10n.vlc
         case .mpv:
@@ -28,8 +28,8 @@ enum VideoPlayerType: String, CaseIterable, Displayable, SupportedCaseIterable, 
 
     var directPlayProfiles: [DirectPlayProfile] {
         switch self {
-        case .native:
-            Self._nativeDirectPlayProfiles
+        case .avPlayer:
+            Self._avPlayerDirectPlayProfiles
         case .vlc, .mpv:
             Self._vlcDirectPlayProfiles
         }
@@ -37,8 +37,8 @@ enum VideoPlayerType: String, CaseIterable, Displayable, SupportedCaseIterable, 
 
     var transcodingProfiles: [TranscodingProfile] {
         switch self {
-        case .native:
-            Self._nativeTranscodingProfiles
+        case .avPlayer:
+            Self._avPlayerTranscodingProfiles
         case .vlc, .mpv:
             Self._vlcTranscodingProfiles
         }
@@ -46,8 +46,8 @@ enum VideoPlayerType: String, CaseIterable, Displayable, SupportedCaseIterable, 
 
     var subtitleProfiles: [SubtitleProfile] {
         switch self {
-        case .native:
-            Self._nativeSubtitleProfiles
+        case .avPlayer:
+            Self._avPlayerSubtitleProfiles
         case .vlc, .mpv:
             Self._vlcSubtitleProfiles
         }
@@ -55,7 +55,7 @@ enum VideoPlayerType: String, CaseIterable, Displayable, SupportedCaseIterable, 
 
     @ArrayBuilder<VideoPlayerType>
     static var supportedCases: [VideoPlayerType] {
-        VideoPlayerType.native
+        VideoPlayerType.avPlayer
         VideoPlayerType.vlc
 
         if Defaults[.Experimental.mpvPlayer] {

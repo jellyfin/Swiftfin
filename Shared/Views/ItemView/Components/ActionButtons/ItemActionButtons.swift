@@ -28,6 +28,14 @@ private struct ItemActionButtonLabelStyle: LabelStyle {
         return activeColor
     }
 
+    private var foregroundColor: Color {
+        guard isSelected, let activeColor else {
+            return .primary
+        }
+
+        return activeColor.overlayColor
+    }
+
     func makeBody(configuration: Configuration) -> some View {
         Label(configuration)
             .labelStyle(.iconOnly)
@@ -39,7 +47,7 @@ private struct ItemActionButtonLabelStyle: LabelStyle {
             .glassEffect(
                 .regular.selection(
                     tint: tint,
-                    foregroundColor: .primary
+                    foregroundColor: foregroundColor
                 ),
                 in: .capsule
             )
@@ -89,6 +97,8 @@ struct ItemActionButtons: View {
             provider.item.presentPlayButton && provider.mediaPlayerItemProvider?.mediaSource != nil
         case .playlists:
             provider.item.canBeInPlaylist
+        case .record:
+            provider.item.canBeRecorded
         case .refresh:
             provider.item.canEditMetadata
         case .subtitles:
@@ -146,6 +156,8 @@ struct ItemActionButtons: View {
                 Playback()
             case .playlists:
                 Playlists()
+            case .record:
+                Record()
             case .refresh:
                 Refresh()
             case .subtitles:

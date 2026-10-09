@@ -357,7 +357,8 @@ struct FlowLayout: Layout {
 
         let maxWidth = rows.map { row in
             computeRowWidth(indices: row, sizes: sizes)
-        }.max() ?? 0
+        }
+        .max() ?? 0
 
         return CGSize(width: maxWidth, height: totalHeight)
     }

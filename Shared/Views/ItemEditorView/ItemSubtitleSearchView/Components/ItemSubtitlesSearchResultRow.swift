@@ -45,8 +45,7 @@ extension ItemSubtitleSearchView {
                             LabeledContent(L10n.format, value: format)
                         }
                     }
-
-                    Spacer()
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     ListRowCheckbox()
                 }

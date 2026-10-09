@@ -15,6 +15,7 @@ import SwiftUI
 struct ItemView: View {
 
     enum Component {
+
         static let header = "itemView-header"
         static let menu = "itemView-menu"
         static let play = "itemView-play"
@@ -65,6 +66,7 @@ struct ItemView: View {
             }
 
             return provider.item.type != .person && provider.item.type != .season
+
         case .simple:
             return false
         }
@@ -107,12 +109,14 @@ struct ItemView: View {
             switch (isEnhanced, isCompact) {
             case (true, true):
                 blurredNavigationBarScrollView
+
             case (true, false):
                 InlinePlatformView {
                     blurredNavigationBarScrollView
                 } tvOSView: {
                     contentGroupScrollView(isEnhanced: true)
                 }
+
             default:
                 contentGroupScrollView()
             }
@@ -157,13 +161,13 @@ struct ItemView: View {
 
             Button(L10n.cancel, role: .cancel) {}
         }
-        .onNotification(.didDeleteItem) { itemID in
-            guard itemID == provider.item.id else { return }
-
-            UIDevice.feedback(.success)
-            router.dismiss()
+        .onChange(of: provider.$item.value == nil) { _, isUnavailable in
+            if isUnavailable {
+                router.dismiss()
+            }
         }
         .errorMessage($deleteViewModel.error)
+        .errorMessage($provider.actionError)
         #if os(tvOS)
         .toolbarVisibility(.hidden, for: .navigationBar)
         #else

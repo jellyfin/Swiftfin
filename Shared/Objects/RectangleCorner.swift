@@ -6,14 +6,15 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-struct RectangleCorner: OptionSet {
+@OptionSet<Int>
+struct RectangleCorner {
 
-    let rawValue: Int
-
-    static let topLeft = Self(rawValue: 1 << 0)
-    static let topRight = Self(rawValue: 1 << 1)
-    static let bottomLeft = Self(rawValue: 1 << 2)
-    static let bottomRight = Self(rawValue: 1 << 3)
+    private enum Options: Int {
+        case topLeft
+        case topRight
+        case bottomLeft
+        case bottomRight
+    }
 
     static var all: Self {
         [.topLeft, .topRight, .bottomLeft, .bottomRight]

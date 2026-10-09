@@ -126,6 +126,7 @@ struct ResetUserPasswordView: View {
         }
         .onReceive(viewModel.$error) { error in
             guard error != nil else { return }
+
             UIDevice.feedback(.error)
         }
         .onReceive(viewModel.events) { event in

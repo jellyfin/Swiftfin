@@ -160,4 +160,8 @@ extension L10n {
     static let webOS = "WebOS"
     static let windows = "Windows"
     static let xbox = "Xbox"
+
+    // MARK: - Video Players
+
+    static let avPlayer = "AVPlayer"
 }

@@ -62,6 +62,7 @@ for (index, rawLine) in content.components(separatedBy: .newlines).enumerated() 
         guard pendingComment == nil else {
             fail("Expected an entry after the preceding documentation comment.", line: lineNumber)
         }
+
         // Remove only the formatting space, preserving whitespace in the value.
         var text = String(line.dropFirst(3))
         if text.hasPrefix(" ") {
@@ -81,6 +82,7 @@ for (index, rawLine) in content.components(separatedBy: .newlines).enumerated() 
     guard let match = line.firstMatch(of: regex) else {
         fail("Invalid line format: \(line)", line: lineNumber)
     }
+
     let key = String(match.output.key)
     let value = String(match.output.value)
     guard entries[key] == nil else {
@@ -96,6 +98,7 @@ for (index, rawLine) in content.components(separatedBy: .newlines).enumerated() 
             guard !suffix.trimmingCharacters(in: .whitespaces).isEmpty else {
                 fail("Expected a comment after ' - '.", line: pending.line)
             }
+
             comment = suffix
         } else if pending.text.trimmingCharacters(in: .whitespaces) != value.trimmingCharacters(in: .whitespaces) {
             fail(
@@ -134,7 +137,8 @@ let newContent = sortedKeys.map { key in
     let entry = entries[key]!
     let suffix = entry.comment.map { " - \($0)" } ?? ""
     return "/// \(entry.value)\(suffix)\n\"\(key)\" = \"\(entry.value)\";"
-}.joined(separator: "\n\n")
+}
+.joined(separator: "\n\n")
 
 // Validate and render both outputs before writing either file.
 let generatedContent = generateSwift(keys: sortedKeys, entries: entries)
@@ -159,6 +163,7 @@ func decodedValue(_ raw: String, line: Int) -> String {
     ) as? [String: String], let value = dictionary["value"] else {
         fail("Invalid escaped string value.", line: line)
     }
+
     return value
 }
 
@@ -183,6 +188,7 @@ func generateSwift(keys: [String], entries: [String: Entry]) -> String {
         guard key.wholeMatch(of: #/[A-Za-z_][A-Za-z0-9_]*/#) != nil, key != "_", key != "tr" else {
             fail("Key '\(key)' must be a flat Swift identifier other than '_' or 'tr'.", line: entry.line)
         }
+
         let value = decodedValue(entry.value, line: entry.line)
         let types = argumentTypes(value, line: entry.line)
         let name = keywords.contains(key) ? "`\(key)`" : key
@@ -194,9 +200,11 @@ func generateSwift(keys: [String], entries: [String: Entry]) -> String {
             lines.append("  internal static let \(name) = \(lookup), \(fallback)")
         } else {
             let parameters = types.enumerated().map { "_ p\($0.offset + 1): \($0.element)" }.joined(separator: ", ")
-            let arguments = types.enumerated().map {
-                $0.element == "Any" ? "String(describing: p\($0.offset + 1))" : "p\($0.offset + 1)"
-            }.joined(separator: ", ")
+            let arguments = types.enumerated()
+                .map {
+                    $0.element == "Any" ? "String(describing: p\($0.offset + 1))" : "p\($0.offset + 1)"
+                }
+                .joined(separator: ", ")
             lines.append("  internal static func \(name)(\(parameters)) -> String {")
             lines.append("    return \(lookup), \(arguments), \(fallback)")
             lines.append("  }")
@@ -246,6 +254,7 @@ func argumentTypes(_ value: String, line: Int) -> [String] {
             guard let parsed = Int(position), parsed > 0, parsed <= 100 else {
                 fail("Format argument position must be between 1 and 100.", line: line)
             }
+
             index = parsed
         } else {
             index = nextPosition
@@ -259,6 +268,7 @@ func argumentTypes(_ value: String, line: Int) -> [String] {
 
     func addSize(_ size: Substring?) {
         guard let size, size.hasPrefix("*") else { return }
+
         add("Int", position: size.hasSuffix("$") ? size.dropFirst().dropLast() : nil)
     }
 
@@ -271,6 +281,7 @@ func argumentTypes(_ value: String, line: Int) -> [String] {
         guard let match = remaining.firstMatch(of: pattern) else {
             fail("Unsupported format near '\(remaining)'. Use '%%' for a literal percent sign.", line: line)
         }
+
         let length = String(match.output.length ?? "")
         let conversion = String(match.output.conversion)
         let type: String
@@ -279,18 +290,23 @@ func argumentTypes(_ value: String, line: Int) -> [String] {
             guard ["", "h", "hh", "l", "ll", "q", "z", "t", "j"].contains(length) else {
                 fail("Unsupported integer format length: \(length)", line: line)
             }
+
             let signed = conversion == "d" || conversion == "i"
             let wide = ["ll", "q", "j"].contains(length)
             type = signed ? (wide ? "Int64" : "Int") : (wide ? "UInt64" : "UInt")
+
         case "f", "F", "e", "E", "g", "G", "a", "A":
             guard length.isEmpty || length == "l" else {
                 fail("Unsupported floating-point format length: \(length)", line: line)
             }
+
             type = "Double"
+
         default:
             guard length.isEmpty else {
                 fail("Unsupported format length for %\(conversion): \(length)", line: line)
             }
+
             switch conversion {
             case "@": type = "Any"
             case "c": type = "CChar"
@@ -306,10 +322,12 @@ func argumentTypes(_ value: String, line: Int) -> [String] {
         remaining = remaining[match.range.upperBound...]
     }
     guard let maximum = arguments.keys.max() else { return [] }
+
     return (1 ... maximum).map { index in
         guard let type = arguments[index] else {
             fail("Missing format argument position \(index).", line: line)
         }
+
         return type
     }
 }
