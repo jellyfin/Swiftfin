@@ -23,7 +23,8 @@ struct PosterIndicatorsOverlay: View {
     @ViewContextContains(.isInResume)
     private var isInResume
 
-    let item: BaseItemDto
+    @SharedBaseItem
+    var item: BaseItemDto
     let posterDisplayType: PosterDisplayType
 
     private var indicators: PosterIndicator {

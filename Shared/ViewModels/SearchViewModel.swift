@@ -17,6 +17,7 @@ final class SearchViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case getSuggestions
         case search(query: String)
         case _actuallySearch
@@ -35,12 +36,13 @@ final class SearchViewModel: ViewModel {
     }
 
     enum State {
+
         case error
         case initial
         case searching
     }
 
-    @Published
+    @SharedBaseItems
     private(set) var suggestions: [BaseItemDto] = []
 
     let itemContentGroupViewModel: ContentGroupViewModel<SearchContentGroupProvider>
@@ -65,6 +67,10 @@ final class SearchViewModel: ViewModel {
         self.itemContentGroupViewModel = .init(provider: .init())
 
         super.init()
+
+        itemContentGroupViewModel.objectWillChange
+            .sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &cancellables)
 
         observeFilters()
     }

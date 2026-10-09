@@ -16,6 +16,7 @@ final class ItemSubtitlesViewModel: ViewModel {
 
     @CasePathable
     enum Action {
+
         case _actuallySearch(isPerfectMatch: Bool)
         case delete(Set<MediaStream>)
         case refresh
@@ -36,16 +37,19 @@ final class ItemSubtitlesViewModel: ViewModel {
     }
 
     enum BackgroundState {
+
         case updating
         case searching
     }
 
     enum Event {
+
         case deleted
         case uploaded
     }
 
     enum State {
+
         case initial
         case content
         case error
@@ -62,7 +66,8 @@ final class ItemSubtitlesViewModel: ViewModel {
     @Published
     var language: String? = Locale.current.language.languageCode?.identifier(.alpha3)
 
-    let item: BaseItemDto
+    @SharedBaseItem
+    var item: BaseItemDto
 
     private var query: CurrentValueSubject<Bool, Never> = .init(false)
 
@@ -90,11 +95,11 @@ final class ItemSubtitlesViewModel: ViewModel {
 
     @Function(\Action.Cases.refresh)
     private func _refresh() async throws {
-        try await refreshItem(sendNotification: false)
+        try await refreshItem()
     }
 
-    private func refreshItem(sendNotification: Bool = false) async throws {
-        let item = try await item.getFullItem(userSession: requireUserSession(), sendNotification: sendNotification)
+    private func refreshItem() async throws {
+        $item = try await requireUserSession().getFullItem(item)
 
         let subtitles = (item.mediaSources ?? [])
             .compactMap(\.subtitleStreams)
@@ -151,7 +156,7 @@ final class ItemSubtitlesViewModel: ViewModel {
             try await group.waitForAll()
         }
 
-        try await refreshItem(sendNotification: true)
+        try await refreshItem()
 
         events.send(.uploaded)
     }
@@ -179,7 +184,7 @@ final class ItemSubtitlesViewModel: ViewModel {
         let request = Paths.uploadSubtitle(itemID: itemID, subtitle)
         _ = try await send(request)
 
-        try await refreshItem(sendNotification: true)
+        try await refreshItem()
 
         events.send(.uploaded)
     }
@@ -202,7 +207,7 @@ final class ItemSubtitlesViewModel: ViewModel {
             }
         }
 
-        try await refreshItem(sendNotification: true)
+        try await refreshItem()
 
         events.send(.deleted)
     }

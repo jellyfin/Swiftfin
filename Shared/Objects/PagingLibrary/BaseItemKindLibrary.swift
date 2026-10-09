@@ -8,7 +8,7 @@
 
 import JellyfinAPI
 
-protocol BaseItemKindLibrary: PagingLibrary where Element == BaseItemDto {
+protocol BaseItemKindLibrary: MediaLibrary {
 
     var libraryItemTypes: [BaseItemKind] { get }
 }

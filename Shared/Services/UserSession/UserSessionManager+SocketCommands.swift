@@ -193,15 +193,18 @@ extension UserSessionManager {
     ) {
         Task { @MainActor in
             do {
-                let item = try await BaseItemDto(id: id).getFullItem(userSession: userSession)
-                let mediaSource = item.mediaSources?.first {
+                let entry = try await userSession.getFullItem(id: id)
+                let mediaSource = entry.value?.mediaSources?.first {
                     $0.id == mediaSourceID
                 }
 
-                guard var provider = item.getPlaybackItemProvider(
-                    userSession: userSession,
-                    mediaSource: mediaSource
-                ) else { return }
+                // Keep the record alive until the playback provider takes ownership
+                guard var provider = withExtendedLifetime(entry, {
+                    entry.snapshot.getPlaybackItemProvider(
+                        userSession: userSession,
+                        mediaSource: mediaSource
+                    )
+                }) else { return }
 
                 if let startPositionTicks {
                     provider = provider.modifyingItem { item in
@@ -231,15 +234,15 @@ extension UserSessionManager {
         Task { @MainActor in
             do {
                 let request = Paths.getLocalTrailers(itemID: itemID, userID: userSession.user.id)
-                let response = try await userSession.client.send(request)
+                let response = try await userSession.send(request)
 
                 if let trailerID = response.value.first?.id {
                     playItem(id: trailerID, userSession: userSession)
                     return
                 }
 
-                let item = try await BaseItemDto(id: itemID).getFullItem(userSession: userSession)
-                guard let urlString = item.remoteTrailers?.first?.url else { return }
+                let entry = try await userSession.getFullItem(id: itemID)
+                guard let urlString = entry.value?.remoteTrailers?.first?.url else { return }
 
                 #if os(tvOS)
                 guard let externalURL = ExternalTrailerURL(string: urlString),

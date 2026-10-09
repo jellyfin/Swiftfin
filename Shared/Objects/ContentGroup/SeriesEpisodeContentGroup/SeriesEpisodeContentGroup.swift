@@ -15,7 +15,8 @@ import SwiftUI
 struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
 
     let id: String
-    let playButtonItem: BaseItemDto?
+    @OptionalSharedBaseItem
+    var playButtonItem: BaseItemDto?
     let viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
     var _shouldBeResolved: Bool {
@@ -43,7 +44,8 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
         @ObservedObject
         var viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
-        let playButtonItem: BaseItemDto?
+        @OptionalSharedBaseItem
+        var playButtonItem: BaseItemDto?
 
         @State
         private var selection: PagingLibraryViewModel<EpisodeLibrary>.ID?
@@ -102,8 +104,9 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                 selectPreferredSeasonIfNeeded()
                 refreshSelectedSeasonIfNeeded()
             }
-            .onChange(of: viewModel.elements.count) {
+            .onChange(of: viewModel.elements.map(ObjectIdentifier.init)) {
                 selectPreferredSeasonIfNeeded()
+                refreshSelectedSeasonIfNeeded()
             }
             .onChange(of: selection) {
                 refreshSelectedSeasonIfNeeded()

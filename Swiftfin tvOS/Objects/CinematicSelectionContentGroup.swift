@@ -78,9 +78,9 @@ struct CinematicSelectionContentGroup: ContentGroup {
             CinematicItemSelector(
                 items: items
             ) { item in
-                router.route(to: .item(item: item))
+                router.route(to: .item(item: item.snapshot))
             } topContent: { item in
-                ImageView(itemSelectorImageSource(for: item))
+                ImageView(itemSelectorImageSource(for: item.snapshot))
                     .placeholder { _ in
                         EmptyView()
                     }
@@ -121,7 +121,20 @@ struct CinematicRecentlyAddedContentGroup: ContentGroup {
 
 final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
 
-    typealias Background = CinematicSelectionContentGroupViewModel
+    struct Background: WithRefresh {
+
+        let viewModel: CinematicSelectionContentGroupViewModel
+
+        func refresh() {
+            Task { await refresh() }
+        }
+
+        func refresh() async {
+            async let resume: Void = viewModel.resumeViewModel.background.refresh()
+            async let recentlyAdded: Void = viewModel.recentlyAddedViewModel.background.refresh()
+            _ = await (resume, recentlyAdded)
+        }
+    }
 
     let recentlyAddedGroup: PosterGroup<RecentlyAddedLibrary>
     let resumeViewModel: PagingLibraryViewModel<ResumeItemsLibrary>
@@ -130,8 +143,8 @@ final class CinematicSelectionContentGroupViewModel: ViewModel, WithRefresh {
         recentlyAddedGroup.viewModel
     }
 
-    var background: CinematicSelectionContentGroupViewModel {
-        get { self }
+    var background: Background {
+        get { Background(viewModel: self) }
         set {}
     }
 
