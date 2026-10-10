@@ -147,7 +147,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                     }
                 }
 
-                ToolbarItem(placement: .destructiveAction) {
+                ToolbarItem(placement: .bottomBar) {
                     Group {
                         if isEditing {
                             Button(L10n.delete, role: .destructive) {
