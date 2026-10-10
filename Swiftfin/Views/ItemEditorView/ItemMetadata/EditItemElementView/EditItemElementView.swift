@@ -76,7 +76,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                     )
                     .isEditing(isEditing)
                     .isSelected(selectedElements.contains(element))
-                    .listRowInsets(.edgeInsets)
+                    .listRowInsets(.zero)
                     .swipeActions {
                         Button(
                             L10n.delete,
@@ -95,6 +95,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                 }
             } else {
                 Text(L10n.none)
+                    .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                     .listRowSeparator(.hidden)
                     .listRowInsets(.zero)
@@ -131,6 +132,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                             UIDevice.impact(.light)
                             selectedElements.removeAll()
                         }
+                        .labelStyle(.iconOnly)
                         .foregroundStyle(.primary, .secondary)
                         .if(true) { view in
                             if #available(iOS 26.0, *) {
@@ -145,35 +147,33 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                     }
                 }
 
-                ToolbarItem(placement: .bottomBar) {
-                    if isEditing {
-                        Button(L10n.delete, role: .destructive) {
-                            isPresentingDeletionConfirmation = true
-                        }
-                        .backport
-                        .buttonStyle(.glassProminent)
-                        .disabled(selectedElements.isEmpty)
-                    }
+                ToolbarItem(placement: .destructiveAction) {
+                    Group {
+                        if isEditing {
+                            Button(L10n.delete, role: .destructive) {
+                                isPresentingDeletionConfirmation = true
+                            }
+                            .backport
+                            .buttonStyle(.glassProminent)
+                        } else if isReordering {
+                            let saveAction: () -> Void = {
+                                viewModel.reorder(elements)
+                                isReordering = false
+                            }
 
-                    if isReordering {
-                        let saveAction: () -> Void = {
-                            viewModel.reorder(elements)
-                            isReordering = false
-                        }
-
-                        Group {
                             if #available(iOS 26, *) {
                                 Button(L10n.save, role: .confirm, action: saveAction)
                             } else {
                                 Button(L10n.save, action: saveAction)
                                     .backport
                                     .buttonStyle(.glassProminent)
-                                    .controlSize(.small)
                             }
                         }
-                        .disabled(viewModel.editor.elements(in: viewModel.item) == elements)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
+                    .enabled(
+                        (isEditing && selectedElements.isNotEmpty) ||
+                            viewModel.editor.elements(in: viewModel.item) != elements
+                    )
                 }
             }
             .navigationBarMenuButton(

@@ -15,6 +15,8 @@ struct PosterIndicatorsOverlay: View {
     @Default(.accentColor)
     private var accentColor
 
+    @Environment(\.isEditing)
+    private var isEditing
     @Environment(\.isSelected)
     private var isSelected
     @Environment(\.posterConfiguration)
@@ -89,6 +91,16 @@ struct PosterIndicatorsOverlay: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
+                if isEditing, isSelected {
+                    Quadrant(.topLeading) {
+                        QuadrantItem(color: accentColor) {
+                            Text(Image(systemName: "checkmark"))
+                                .fontWeight(.bold)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                }
+
                 if showsUnplayedIndicator {
                     UnplayedIndicator(
                         count: posterConfiguration.unplayedStyle == .count ? item.userData?.unplayedItemCount : nil
