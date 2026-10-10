@@ -27,9 +27,7 @@ struct GenreComponentEditor: ItemComponentEditor {
 
     func adding(_ genres: [String], to item: BaseItemDto) -> BaseItemDto {
         var item = item
-        if item.genres == nil {
-            item.genres = []
-        }
+        item.genres ?= []
         item.genres?.append(contentsOf: genres)
         return item
     }

@@ -31,9 +31,7 @@ struct StudioComponentEditor: ItemComponentEditor {
 
     func adding(_ studios: [NameIDPair], to item: BaseItemDto) -> BaseItemDto {
         var item = item
-        if item.studios == nil {
-            item.studios = []
-        }
+        item.studios ?= []
         item.studios?.append(contentsOf: studios)
         return item
     }

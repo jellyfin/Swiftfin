@@ -159,10 +159,7 @@ private struct FirstTabSettingsBarButton: View {
         if router.isRootOfPath,
            let userSession
         {
-            SettingsBarButton(
-                server: userSession.server,
-                user: userSession.user
-            ) {
+            SettingsBarButton(userSession: userSession) {
                 router.route(to: .settings)
             }
         }

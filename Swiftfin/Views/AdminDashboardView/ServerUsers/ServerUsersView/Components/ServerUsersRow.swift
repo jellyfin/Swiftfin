@@ -33,7 +33,8 @@ extension ServerUsersView {
         @CurrentDate
         private var currentDate: Date
 
-        let user: UserDto
+        @SharedUser
+        var user: UserDto
 
         // MARK: - Actions
 

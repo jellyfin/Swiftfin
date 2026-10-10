@@ -123,9 +123,7 @@ extension VideoPlayer {
                 .focusSection()
             }
             .onChange(of: currentElementID) { _, newID in
-                if initialElementID == nil {
-                    initialElementID = newID
-                }
+                initialElementID ?= newID
             }
         }
 
