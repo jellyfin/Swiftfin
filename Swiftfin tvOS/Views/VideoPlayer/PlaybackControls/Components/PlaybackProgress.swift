@@ -173,10 +173,6 @@ extension VideoPlayer.PlaybackControls {
                     liveIndicator
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
-                    EndsAtText()
-                        .font(.callout)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-
                     videoPlayerSlider
 
                     SplitTimeStamp()
