@@ -44,6 +44,9 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
         @ObservedObject
         var viewModel: PagingLibraryViewModel<SeasonViewModelLibrary>
 
+        @Router
+        private var router
+
         @OptionalSharedBaseItem
         var playButtonItem: BaseItemDto?
 
@@ -54,11 +57,12 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
             viewModel.elements.first { $0.id == selection }
         }
 
-        private var seasonSelectorView: some View {
+        private var seasonSelector: some View {
             SeasonSelector(
                 seasons: Array(viewModel.elements),
                 selection: $selection,
-                preferredSelection: selection ?? preferredSeasonSelection()
+                preferredSelection: selection ?? preferredSeasonSelection(),
+                openEpisodeList: openEpisodeList
             )
         }
 
@@ -84,6 +88,45 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
             selectedSeasonViewModel.refresh()
         }
 
+        private func openEpisodeList(
+            for seasonViewModel: PagingLibraryViewModel<EpisodeLibrary>
+        ) {
+            router.route(
+                to: .library(
+                    library: seasonViewModel.library,
+                    displayType: .list
+                )
+            )
+        }
+
+        private func openSelectedEpisodeList() {
+            guard let selectedSeasonViewModel else { return }
+
+            openEpisodeList(for: selectedSeasonViewModel)
+        }
+
+        @ViewBuilder
+        private var episodeSectionHeader: some View {
+            #if os(iOS)
+            HStack {
+                seasonSelector
+
+                Spacer()
+
+                Button(
+                    L10n.allEpisodes,
+                    systemImage: "list.bullet",
+                    action: openSelectedEpisodeList
+                )
+                .buttonStyle(.capsule)
+                .padding(.trailing, EdgeInsets.edgePadding)
+                .disabled(selectedSeasonViewModel == nil)
+            }
+            #else
+            seasonSelector
+            #endif
+        }
+
         @ViewBuilder
         var body: some View {
             Group {
@@ -92,11 +135,11 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
                         seasonViewModel: selectedSeasonViewModel,
                         playButtonItem: playButtonItem
                     ) {
-                        seasonSelectorView
+                        episodeSectionHeader
                     }
                 } else {
                     LoadingEpisodesView {
-                        seasonSelectorView
+                        episodeSectionHeader
                     }
                 }
             }
