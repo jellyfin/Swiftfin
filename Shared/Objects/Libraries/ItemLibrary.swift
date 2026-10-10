@@ -37,15 +37,25 @@ struct ItemLibrary: MediaLibrary, SearchablePagingLibrary, WithRandomElementLibr
     ) {
         var filters = filters ?? .default
 
-        if let id = parent.id, Defaults[.Customization.Library.rememberSort] {
-            let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
+        if let id = parent.id,
+           Defaults[.Customization.Library.rememberFilters],
+           staticFilters.union(filters).itemTypes.isEmpty
+        {
+            filters = filters.union(StoredValues[.User.libraryFilters(parentID: id)])
+        }
 
-            filters.sortBy = storedFilters.sortBy
-            filters.sortOrder = storedFilters.sortOrder
+        var grouping = parent.groupings?.defaultSelection
+
+        if let groupings = parent.groupings, Defaults[.Customization.Library.rememberLayout] {
+            let storedGrouping = StoredValues[
+                .User.libraryGrouping(id: parent.pagingLibraryID, default: groupings.defaultSelection)
+            ]
+
+            grouping = groupings.elements.first { $0.id == storedGrouping.id } ?? grouping
         }
 
         self.environment = .init(
-            grouping: parent.groupings?.defaultSelection,
+            grouping: grouping,
             filters: staticFilters.union(filters)
         )
         self.filterViewModel = .init(
@@ -309,7 +319,7 @@ private struct ItemLibraryBody<Content: View>: View {
                 }
             }
             .onChange(of: filterViewModel.currentFilters) {
-                rememberSort(from: filterViewModel.currentFilters)
+                rememberFilters(from: filterViewModel.currentFilters)
             }
             .onReceive(
                 filterViewModel.$currentFilters
@@ -320,6 +330,13 @@ private struct ItemLibraryBody<Content: View>: View {
                 guard viewModel.environment.filters != filters else { return }
 
                 viewModel.environment.filters = filters
+            }
+            .onChange(of: viewModel.environment.grouping) { _, grouping in
+                guard let grouping, Defaults[.Customization.Library.rememberLayout] else { return }
+
+                StoredValues[
+                    .User.libraryGrouping(id: viewModel.library.parent.pagingLibraryID, default: grouping)
+                ] = grouping
             }
             #if os(tvOS)
             .filterBar(
@@ -342,15 +359,12 @@ private struct ItemLibraryBody<Content: View>: View {
             #endif
     }
 
-    private func rememberSort(from filters: ItemFilterCollection) {
+    private func rememberFilters(from filters: ItemFilterCollection) {
         guard let id = viewModel.library.parent.id,
-              Defaults[.Customization.Library.rememberSort]
+              Defaults[.Customization.Library.rememberFilters],
+              filterViewModel.libraryItemTypes.isEmpty
         else { return }
 
-        let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
-            .mutating(\.sortBy, with: filters.sortBy)
-            .mutating(\.sortOrder, with: filters.sortOrder)
-
-        StoredValues[.User.libraryFilters(parentID: id)] = storedFilters
+        StoredValues[.User.libraryFilters(parentID: id)] = filters.mutating(\.query, with: nil)
     }
 }

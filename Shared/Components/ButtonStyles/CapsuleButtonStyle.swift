@@ -14,11 +14,17 @@ extension ButtonStyle where Self == CapsuleButtonStyle {
         CapsuleButtonStyle()
     }
 
-    static func capsule(selectionTint: Color = .white, focusTint: Color? = nil, isSelectionActive: Bool = true) -> Self {
+    static func capsule(
+        selectionTint: Color = .white,
+        focusTint: Color? = nil,
+        isSelectionActive: Bool = true,
+        anchor: HorizontalEdge? = nil
+    ) -> Self {
         CapsuleButtonStyle(
             selectionTint: selectionTint,
             focusTint: focusTint,
-            isSelectionActive: isSelectionActive
+            isSelectionActive: isSelectionActive,
+            anchor: anchor
         )
     }
 }
@@ -90,6 +96,7 @@ struct CapsuleButtonStyle: ButtonStyle {
     var selectionTint: Color = .white
     var focusTint: Color?
     var isSelectionActive: Bool = true
+    var anchor: HorizontalEdge?
 
     private var metrics: CapsuleControlMetrics {
         CapsuleControlMetrics(controlSize)
@@ -158,5 +165,6 @@ struct CapsuleButtonStyle: ButtonStyle {
             .animation(.linear(duration: 0.1), value: isSelectionActive)
             .animation(.linear(duration: 0.1), value: configuration.isPressed)
             .accessibilityAddTraits(isSelected ? .isSelected : [])
+            .frame(width: anchor == nil ? nil : metrics.minimumHeight, alignment: anchor == .leading ? .leading : .trailing)
     }
 }
