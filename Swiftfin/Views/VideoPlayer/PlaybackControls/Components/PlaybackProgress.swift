@@ -175,6 +175,12 @@ extension VideoPlayer.PlaybackControls {
                     SplitTimeStamp()
                         .offset(y: isScrubbing ? 5 : 0)
                         .frame(maxWidth: isScrubbing ? nil : insetSliderWidth)
+                        .overlay {
+                            EndsAtText()
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                                .isVisible(!isScrubbing)
+                        }
                 }
             }
             .frame(maxWidth: .infinity)
