@@ -20,6 +20,8 @@ extension SeriesEpisodeContentGroup {
 
         let preferredSelection: PagingLibraryViewModel<EpisodeLibrary>.ID?
 
+        let openEpisodeList: (PagingLibraryViewModel<EpisodeLibrary>) -> Void
+
         @FocusState
         private var focusedSeason: PagingLibraryViewModel<EpisodeLibrary>.ID?
 
@@ -45,7 +47,7 @@ extension SeriesEpisodeContentGroup {
                         selection: selection,
                         focus: $focusedSeason
                     ) { season in
-                        selection = season.id
+                        openEpisodeList(season)
                     }
                     .controlSize(.large)
                     .edgePadding(.horizontal)
