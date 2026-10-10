@@ -132,7 +132,6 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
                             UIDevice.impact(.light)
                             selectedElements.removeAll()
                         }
-                        .labelStyle(.iconOnly)
                         .foregroundStyle(.primary, .secondary)
                         .if(true) { view in
                             if #available(iOS 26.0, *) {
