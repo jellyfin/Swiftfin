@@ -50,24 +50,25 @@ extension BaseItemDto: LibraryElement {
     ) -> some View {
         switch libraryStyle.displayType {
         case .grid:
-            BaseItemDtoLibraryGridElement(item: self, libraryStyle: libraryStyle)
+            BaseItemDtoLibraryGridElement(item: self, libraryStyle: libraryStyle, action: action)
         case .list:
-            BaseItemDtoLibraryListElement(item: self, libraryStyle: libraryStyle)
+            BaseItemDtoLibraryListElement(item: self, libraryStyle: libraryStyle, action: action)
         }
     }
 }
 
 private struct BaseItemDtoLibraryGridElement: View {
 
-    @Namespace
-    private var namespace
-
     @Router
     private var router
+
+    @Environment(\.isEditing)
+    private var isEditing
 
     @SharedBaseItem
     var item: BaseItemDto
     let libraryStyle: LibraryStyle
+    let action: (() -> Void)?
 
     private var resolvedLibraryStyle: LibraryStyle {
         item.resolvedLibraryStyle(libraryStyle)
@@ -78,7 +79,11 @@ private struct BaseItemDtoLibraryGridElement: View {
             item: item,
             displayType: resolvedLibraryStyle.posterDisplayType
         ) { namespace in
-            item.libraryDidSelectElement(router: router, in: namespace)
+            if isEditing {
+                action?()
+            } else {
+                item.libraryDidSelectElement(router: router, in: namespace)
+            }
         }
     }
 }
@@ -91,9 +96,15 @@ private struct BaseItemDtoLibraryListElement: View {
     @Router
     private var router
 
+    @Environment(\.isEditing)
+    private var isEditing
+    @Environment(\.isSelected)
+    private var isSelected
+
     @SharedBaseItem
     var item: BaseItemDto
     let libraryStyle: LibraryStyle
+    let action: (() -> Void)?
 
     private var resolvedLibraryStyle: LibraryStyle {
         item.resolvedLibraryStyle(libraryStyle)
@@ -108,34 +119,47 @@ private struct BaseItemDtoLibraryListElement: View {
             )
             .subtleShadow()
             .frame(width: resolvedLibraryStyle.posterDisplayType == .landscape ? baseItemListLandscapeWidth : baseItemListPortraitWidth)
-        } content: {
-            VStack(alignment: .leading, spacing: 5) {
-                Text(item.displayTitle)
-                    .font(.callout)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.primary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-
-                if let program = item.currentProgram {
-                    currentProgramView(program)
-                } else if item.type == .program {
-                    currentProgramView(item)
-                } else {
-                    accessoryView
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+            .overlay {
+                Color.black
+                    .opacity(isEditing && !isSelected ? 0.5 : 0.0)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+        } content: {
+            HStack {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(item.displayTitle)
+                        .font(.callout)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(
+                            isEditing ? (isSelected ? .primary : .secondary) : .primary
+                        )
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+
+                    if let program = item.currentProgram {
+                        currentProgramView(program)
+                    } else if item.type == .program {
+                        currentProgramView(item)
+                    } else {
+                        accessoryView
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                ListRowCheckbox()
+            }
         } action: {
-            item.libraryDidSelectElement(router: router, in: namespace)
+            if isEditing {
+                action?()
+            } else {
+                item.libraryDidSelectElement(router: router, in: namespace)
+            }
         }
-        #if !os(tvOS)
-        .matchedTransitionSource(id: "item", in: namespace)
-        #endif
         #if os(tvOS)
         .focusedValue(\.focusedPoster, AnyPoster(item))
+        #else
+            .matchedTransitionSource(id: "item", in: namespace)
         #endif
     }
 
