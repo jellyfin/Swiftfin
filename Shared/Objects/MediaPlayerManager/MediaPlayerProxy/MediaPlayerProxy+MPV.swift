@@ -64,7 +64,10 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerLayoutConfigurable,
     }
 
     func setAudioStream(_ stream: MediaStream) {
-        setTrack(stream.index, type: .audio)
+        // M3U Live TV reports -1 (unknown index); keep mpv's own audio selection.
+        guard let index = stream.index, index >= 0 else { return }
+
+        setTrack(index, type: .audio)
     }
 
     func setSubtitleStream(_ stream: MediaStream) {
