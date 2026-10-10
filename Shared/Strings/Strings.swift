@@ -1566,8 +1566,42 @@ internal enum L10n {
   internal static let score = L10n.tr("Localizable", "score", fallback: "Score")
   /// Screenshot
   internal static let screenshot = L10n.tr("Localizable", "screenshot", fallback: "Screenshot")
+  /// Stay up-to-date
+  internal static let screenshotHeadlineEpisode = L10n.tr("Localizable", "screenshotHeadlineEpisode", fallback: "Stay up-to-date")
+  /// Your server
+  internal static let screenshotHeadlineHome = L10n.tr("Localizable", "screenshotHeadlineHome", fallback: "Your server")
+  /// Browse everything
+  internal static let screenshotHeadlineLibrary = L10n.tr("Localizable", "screenshotHeadlineLibrary", fallback: "Browse everything")
+  /// All your media
+  internal static let screenshotHeadlineMedia = L10n.tr("Localizable", "screenshotHeadlineMedia", fallback: "All your media")
+  /// Don't miss a detail
+  internal static let screenshotHeadlineMovie = L10n.tr("Localizable", "screenshotHeadlineMovie", fallback: "Don\'t miss a detail")
+  /// Native playback
+  internal static let screenshotHeadlinePlayback = L10n.tr("Localizable", "screenshotHeadlinePlayback", fallback: "Native playback")
+  /// Ready to binge
+  internal static let screenshotHeadlineSeries = L10n.tr("Localizable", "screenshotHeadlineSeries", fallback: "Ready to binge")
+  /// For everyone
+  internal static let screenshotHeadlineUserSelection = L10n.tr("Localizable", "screenshotHeadlineUserSelection", fallback: "For everyone")
   /// A screenshot or still frame captured directly from the item's video content. Deprecated and no longer actively used.
   internal static let screenshotImageDescription = L10n.tr("Localizable", "screenshotImageDescription", fallback: "A screenshot or still frame captured directly from the item\'s video content. Deprecated and no longer actively used.")
+  /// Keep up with your latest episodes.
+  internal static let screenshotSubtitleEpisode = L10n.tr("Localizable", "screenshotSubtitleEpisode", fallback: "Keep up with your latest episodes.")
+  /// The home for everything you watch.
+  internal static let screenshotSubtitleHome = L10n.tr("Localizable", "screenshotSubtitleHome", fallback: "The home for everything you watch.")
+  /// Filter by genre, year, rating, and more.
+  internal static let screenshotSubtitleLibrary = L10n.tr("Localizable", "screenshotSubtitleLibrary", fallback: "Filter by genre, year, rating, and more.")
+  /// Movies, shows, live TV, and more from your server.
+  internal static let screenshotSubtitleMedia = L10n.tr("Localizable", "screenshotSubtitleMedia", fallback: "Movies, shows, live TV, and more from your server.")
+  /// Cast, genres, and ratings at a glance.
+  internal static let screenshotSubtitleMovie = L10n.tr("Localizable", "screenshotSubtitleMovie", fallback: "Cast, genres, and ratings at a glance.")
+  /// Beautiful playback built for %1$@.
+  internal static func screenshotSubtitlePlayback(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "screenshotSubtitlePlayback", String(describing: p1), fallback: "Beautiful playback built for %1$@.")
+  }
+  /// Jump to any season or episode.
+  internal static let screenshotSubtitleSeries = L10n.tr("Localizable", "screenshotSubtitleSeries", fallback: "Jump to any season or episode.")
+  /// Your users and servers all in one place.
+  internal static let screenshotSubtitleUserSelection = L10n.tr("Localizable", "screenshotSubtitleUserSelection", fallback: "Your users and servers all in one place.")
   /// Scrub
   internal static let scrub = L10n.tr("Localizable", "scrub", fallback: "Scrub")
   /// Search
