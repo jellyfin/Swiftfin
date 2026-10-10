@@ -18,6 +18,13 @@ struct ItemTypeContentGroupProvider: ContentGroupProvider {
         static var `default`: Self {
             .init(filters: .init())
         }
+
+        /// Folders where there is an indexed order that may matter to the user:
+        /// - Collections
+        /// - Playlists
+        static var orderedFolder: Self {
+            .init(filters: .init(sortBy: [.indexNumber]))
+        }
     }
 
     @OptionalSharedBaseItem

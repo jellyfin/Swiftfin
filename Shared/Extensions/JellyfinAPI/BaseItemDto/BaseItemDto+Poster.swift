@@ -70,6 +70,8 @@ extension BaseItemDto: Poster {
             "music.note.tv.fill"
         case .person:
             "person.fill"
+        case .playlist:
+            "list.bullet"
         default:
             "circle"
         }
