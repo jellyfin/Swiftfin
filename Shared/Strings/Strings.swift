@@ -652,6 +652,10 @@ internal enum L10n {
   internal static let endDate = L10n.tr("Localizable", "endDate", fallback: "End date")
   /// Ended
   internal static let ended = L10n.tr("Localizable", "ended", fallback: "Ended")
+  /// Ends at %@
+  internal static func endsAt(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "endsAt", String(describing: p1), fallback: "Ends at %@")
+  }
   /// End time
   internal static let endTime = L10n.tr("Localizable", "endTime", fallback: "End time")
   /// Engineer
