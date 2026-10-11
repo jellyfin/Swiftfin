@@ -91,12 +91,7 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
         private func openEpisodeList(
             for seasonViewModel: PagingLibraryViewModel<EpisodeLibrary>
         ) {
-            router.route(
-                to: .library(
-                    library: seasonViewModel.library,
-                    displayType: .list
-                )
-            )
+            router.route(to: .library(library: seasonViewModel.library))
         }
 
         private func openSelectedEpisodeList() {

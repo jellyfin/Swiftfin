@@ -51,16 +51,9 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     private var tabItemSelected
 
     private let displayTitle: String?
-    private let forcedDisplayType: LibraryDisplayType?
 
     private var libraryStyleOptions: LibraryStyleOptions {
-        var options = viewModel.libraryStyleOptions
-
-        if let forcedDisplayType {
-            options.displayTypes = [forcedDisplayType]
-        }
-
-        return options
+        viewModel.libraryStyleOptions
     }
 
     private var libraryStyle: LibraryStyle {
@@ -84,13 +77,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         rememberIndividualLibraryStyle ? $parentLibraryStyle : $defaultLibraryStyle
     }
 
-    init(
-        library: Library,
-        displayTitle: String? = nil,
-        forcedDisplayType: LibraryDisplayType? = nil
-    ) {
+    init(library: Library, displayTitle: String? = nil) {
         self.displayTitle = displayTitle
-        self.forcedDisplayType = forcedDisplayType
         self._parentLibraryStyle = StoredValue(.User.libraryStyle(id: library.parent.pagingLibraryID))
         self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(library: library))
     }
