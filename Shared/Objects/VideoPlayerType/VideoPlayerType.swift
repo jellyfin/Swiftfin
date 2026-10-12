@@ -30,8 +30,10 @@ enum VideoPlayerType: String, CaseIterable, Displayable, SupportedCaseIterable, 
         switch self {
         case .avPlayer:
             Self._avPlayerDirectPlayProfiles
-        case .vlc, .mpv:
+        case .vlc:
             Self._vlcDirectPlayProfiles
+        case .mpv:
+            Self._mpvDirectPlayProfiles
         }
     }
 
