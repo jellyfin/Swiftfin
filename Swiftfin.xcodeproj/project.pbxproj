@@ -97,6 +97,10 @@
 		E19005010000000000000002 /* MPVUI in Frameworks */ = {isa = PBXBuildFile; productRef = E19005010000000000000004 /* MPVUI */; };
 		E19005020000000000000001 /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19005020000000000000003 /* MediaAccessibilityKit */; };
 		E19005020000000000000002 /* MediaAccessibilityKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19005020000000000000004 /* MediaAccessibilityKit */; };
+		E19005030000000000000001 /* SpatialAudioBridge in Frameworks */ = {isa = PBXBuildFile; productRef = E19005030000000000000003 /* SpatialAudioBridge */; };
+		E19005030000000000000002 /* SpatialAudioBridge in Frameworks */ = {isa = PBXBuildFile; productRef = E19005030000000000000004 /* SpatialAudioBridge */; };
+		E19005040000000000000001 /* SpatialAudioPlayback in Frameworks */ = {isa = PBXBuildFile; productRef = E19005040000000000000003 /* SpatialAudioPlayback */; };
+		E19005040000000000000002 /* SpatialAudioPlayback in Frameworks */ = {isa = PBXBuildFile; productRef = E19005040000000000000004 /* SpatialAudioPlayback */; };
 		E19009260000000000000001 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000003 /* SwiftfinMacros */; };
 		E19009260000000000000002 /* SwiftfinMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19009260000000000000004 /* SwiftfinMacros */; };
 		E19138CA2E7E7FA20061E464 /* StatefulMacros in Frameworks */ = {isa = PBXBuildFile; productRef = E19138C92E7E7FA20061E464 /* StatefulMacros */; };
@@ -245,6 +249,8 @@
 				E144DBFA30464F3A009B85B5 /* SwiftVLC in Frameworks */,
 				E19005010000000000000002 /* MPVUI in Frameworks */,
 				E19005020000000000000002 /* MediaAccessibilityKit in Frameworks */,
+				E19005030000000000000002 /* SpatialAudioBridge in Frameworks */,
+				E19005040000000000000002 /* SpatialAudioPlayback in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
 				62666E2A27E5020A00EC0ECD /* OpenGLES.framework in Frameworks */,
@@ -324,6 +330,8 @@
 				E1575E3C293C6B15001665B1 /* Files in Frameworks */,
 				E19005010000000000000001 /* MPVUI in Frameworks */,
 				E19005020000000000000001 /* MediaAccessibilityKit in Frameworks */,
+				E19005030000000000000001 /* SpatialAudioBridge in Frameworks */,
+				E19005040000000000000001 /* SpatialAudioPlayback in Frameworks */,
 				E176EBE02D0502A6009F4CF1 /* CollectionHStack in Frameworks */,
 				E1FADDF12E84B63600FB310E /* StatefulMacros in Frameworks */,
 				E14EA1652BF70A8E00DE757A /* Mantis in Frameworks */,
@@ -494,6 +502,8 @@
 				BD88CB412D77E6A0006BB5E3 /* TVOSPicker */,
 				E19005010000000000000004 /* MPVUI */,
 				E19005020000000000000004 /* MediaAccessibilityKit */,
+				E19005030000000000000004 /* SpatialAudioBridge */,
+				E19005040000000000000004 /* SpatialAudioPlayback */,
 				E1E2D7BE2E3FD936004E2E5F /* Transmission */,
 				E1BD95B32FBE8E50001CDA57 /* JellyfinAPI */,
 				E1079FD92FC6FFCE004B5C54 /* StatefulMacros */,
@@ -563,6 +573,8 @@
 				E176EBE82D050925009F4CF1 /* CollectionVGrid */,
 				E19005010000000000000003 /* MPVUI */,
 				E19005020000000000000003 /* MediaAccessibilityKit */,
+				E19005030000000000000003 /* SpatialAudioBridge */,
+				E19005040000000000000003 /* SpatialAudioPlayback */,
 				E164308B2E3AA9710028D4E8 /* Transmission */,
 				E13CCE4B2E6C08710070965F /* LNPopupUI-Static */,
 				E11ADE832E7E73B6008074FC /* StatefulMacros */,
@@ -693,6 +705,7 @@
 				BD88CB402D77E6A0006BB5E3 /* XCRemoteSwiftPackageReference "TVOSPicker" */,
 				E19005010000000000000005 /* XCRemoteSwiftPackageReference "MPVUI" */,
 				E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */,
+				E19005030000000000000005 /* XCRemoteSwiftPackageReference "SpatialAudioBridge" */,
 				E164308A2E3AA9710028D4E8 /* XCRemoteSwiftPackageReference "Transmission" */,
 				E13CCE482E6C077D0070965F /* XCRemoteSwiftPackageReference "LNPopupUI" */,
 				E1BD95B02FBE8E44001CDA57 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
@@ -1362,10 +1375,10 @@
 		};
 		E19005010000000000000005 /* XCRemoteSwiftPackageReference "MPVUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/MPVUI";
+			repositoryURL = "https://github.com/kristofferR/MPVUI";
 			requirement = {
-				kind = exactVersion;
-				version = 0.5.0;
+				kind = revision;
+				revision = 4c83d1226fc5e741723a2b73dab7db621929fd99;
 			};
 		};
 		E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */ = {
@@ -1374,6 +1387,14 @@
 			requirement = {
 				kind = exactVersion;
 				version = 0.2.0;
+			};
+		};
+		E19005030000000000000005 /* XCRemoteSwiftPackageReference "SpatialAudioBridge" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kristofferR/SpatialAudioBridge";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.1;
 			};
 		};
 		E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */ = {
@@ -1703,6 +1724,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */;
 			productName = MediaAccessibilityKit;
+		};
+		E19005030000000000000003 /* SpatialAudioBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19005030000000000000005 /* XCRemoteSwiftPackageReference "SpatialAudioBridge" */;
+			productName = SpatialAudioBridge;
+		};
+		E19005030000000000000004 /* SpatialAudioBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19005030000000000000005 /* XCRemoteSwiftPackageReference "SpatialAudioBridge" */;
+			productName = SpatialAudioBridge;
+		};
+		E19005040000000000000003 /* SpatialAudioPlayback */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19005030000000000000005 /* XCRemoteSwiftPackageReference "SpatialAudioBridge" */;
+			productName = SpatialAudioPlayback;
+		};
+		E19005040000000000000004 /* SpatialAudioPlayback */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E19005030000000000000005 /* XCRemoteSwiftPackageReference "SpatialAudioBridge" */;
+			productName = SpatialAudioPlayback;
 		};
 		E19009260000000000000003 /* SwiftfinMacros */ = {
 			isa = XCSwiftPackageProductDependency;

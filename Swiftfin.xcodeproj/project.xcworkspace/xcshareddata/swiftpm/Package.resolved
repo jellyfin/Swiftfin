@@ -1,5 +1,5 @@
 {
-  "originHash" : "172fa81da963fb365f44b7771b055ebb784420e1a02316cadc96e02e818d401f",
+  "originHash" : "dad4389806e3b9d9f438ffc7c904aa51fbe066c18c882fa8d518d2660ded2b4d",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -166,10 +166,9 @@
     {
       "identity" : "mpvui",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/MPVUI",
+      "location" : "https://github.com/kristofferR/MPVUI",
       "state" : {
-        "revision" : "cf277d979465b919b34bbdb33d62fdb24c377fbe",
-        "version" : "0.5.0"
+        "revision" : "4c83d1226fc5e741723a2b73dab7db621929fd99"
       }
     },
     {
@@ -197,6 +196,15 @@
       "state" : {
         "revision" : "477e9ef76615f0b76b43bb502af432fe6750b704",
         "version" : "5.1.0"
+      }
+    },
+    {
+      "identity" : "spatialaudiobridge",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kristofferR/SpatialAudioBridge",
+      "state" : {
+        "revision" : "05a9f3b4947ee7235c29039b80b3f24e03b2f860",
+        "version" : "1.5.1"
       }
     },
     {
