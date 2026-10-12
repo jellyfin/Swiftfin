@@ -21,7 +21,10 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerLayoutConfigurable,
     // MPVUI does not currently expose frame statistics.
     let droppedFrames: PublishedBox<Int> = .init(initialValue: 0)
     let corruptedFrames: PublishedBox<Int> = .init(initialValue: 0)
-    let player = MPVPlayer(configuration: .init(audio: .init(audioSession: .hostManaged)))
+    let player = MPVPlayer(configuration: .init(audio: .init(
+        audioSession: .hostManaged,
+        passthroughSink: MPVMediaPlayerProxy.makeSpatialAudioSink()
+    )))
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -34,6 +37,13 @@ class MPVMediaPlayerProxy: @MainActor VideoMediaPlayerLayoutConfigurable,
     var observers: [any MediaPlayerObserver] = [
         NowPlayableObserver(audioSessionMode: .moviePlayback, supportsMultichannelContent: true),
     ]
+
+    /// Plays TrueHD and DTS-HD as spatial audio, when the setting allows it.
+    private static func makeSpatialAudioSink() -> (any MPVPassthroughAudioSink)? {
+        guard #available(iOS 26, tvOS 26, *), Defaults[.VideoPlayer.spatialAudio] else { return nil }
+
+        return SpatialAudioSink()
+    }
 
     func play() {
         player.play()

@@ -23,6 +23,8 @@ struct VideoPlayerSettingsView: View {
 
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
+    @Default(.VideoPlayer.spatialAudio)
+    private var spatialAudio
 
     // MARK: - Button Defaults
 
@@ -104,6 +106,8 @@ struct VideoPlayerSettingsView: View {
             timestampSettings
 
             audioSettings
+
+            spatialAudioSettings
 
             subtitleSettings
         }
@@ -321,6 +325,19 @@ struct VideoPlayerSettingsView: View {
                 L10n.rememberTrackSelection,
                 value: L10n.rememberTrackSelectionDescription
             )
+        }
+    }
+
+    // MARK: - Spatial Audio Settings
+
+    @ViewBuilder
+    private var spatialAudioSettings: some View {
+        if #available(iOS 26, tvOS 26, *) {
+            Section {
+                Toggle(L10n.spatialAudio, isOn: $spatialAudio)
+            } footer: {
+                Text(L10n.spatialAudioDescription)
+            }
         }
     }
 

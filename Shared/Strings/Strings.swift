@@ -1692,6 +1692,10 @@ internal enum L10n {
   internal static let source = L10n.tr("Localizable", "source", fallback: "Source")
   /// Source code
   internal static let sourceCode = L10n.tr("Localizable", "sourceCode", fallback: "Source code")
+  /// Spatial audio
+  internal static let spatialAudio = L10n.tr("Localizable", "spatialAudio", fallback: "Spatial audio")
+  /// Plays Dolby TrueHD Atmos and DTS:X tracks as spatial audio with MPV.
+  internal static let spatialAudioDescription = L10n.tr("Localizable", "spatialAudioDescription", fallback: "Plays Dolby TrueHD Atmos and DTS:X tracks as spatial audio with MPV.")
   /// Special features
   internal static let specialFeatures = L10n.tr("Localizable", "specialFeatures", fallback: "Special features")
   /// Splashscreen

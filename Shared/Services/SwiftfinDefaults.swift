@@ -290,6 +290,10 @@ extension Defaults.Keys {
             UserKey("resumeOffset", default: 0)
         }
 
+        static var spatialAudio: Key<Bool> {
+            UserKey("spatialAudio", default: true)
+        }
+
         static var supplements: Key<[VideoPlayerSupplement]> {
             UserKey(
                 "videoPlayerSupplements",
