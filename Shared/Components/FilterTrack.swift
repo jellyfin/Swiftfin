@@ -143,8 +143,9 @@ struct FilterTrack: View {
             button(for: target)
                 .fixedSize()
         }
-        .font(UIDevice.isTV ? .callout : .footnote)
-        .controlSize(UIDevice.isTV ? .large : .small)
+        .font(UIDevice.isTV ? .callout : .subheadline)
+        // `.extraLarge` gives a 44pt minimum height, the HIG minimum hit target on iOS.
+        .controlSize(UIDevice.isTV ? .large : .extraLarge)
         .buttonStyle(.capsule(selectionTint: accentColor, focusTint: UIDevice.isTV ? .white : nil))
         #if os(tvOS)
         .animation(.snappy(duration: 0.2), value: focus.wrappedValue)
