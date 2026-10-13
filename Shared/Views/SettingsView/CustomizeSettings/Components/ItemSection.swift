@@ -24,6 +24,8 @@ extension CustomizeSettingsView {
 
         @StoredValue(.User.enabledTrailers)
         private var enabledTrailers
+        @StoredValue(.User.itemViewAttributes)
+        private var itemViewAttributes
 
         @Default(.Customization.itemBarActionButtons)
         private var barActionButtons
@@ -44,6 +46,10 @@ extension CustomizeSettingsView {
             Form(systemImage: "gear") {
                 Section {
                     PlatformPicker(L10n.style, selection: $itemViewType)
+
+                    ChevronButton(L10n.mediaAttributes.localizedCapitalized) {
+                        router.route(to: .itemViewAttributes(selection: $itemViewAttributes))
+                    }
                 } header: {
                     Text(L10n.itemView.localizedCapitalized)
                 }

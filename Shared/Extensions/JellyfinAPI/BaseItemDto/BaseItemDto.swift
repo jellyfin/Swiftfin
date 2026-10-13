@@ -475,6 +475,88 @@ extension BaseItemDto {
         return dateFormatter.string(from: premiereDate)
     }
 
+    /// The years a series aired, ie: "2010–2015" or "2010–Present"
+    var seriesYearRange: String? {
+        guard type == .series else { return nil }
+
+        let calendar = Calendar.current
+
+        guard let startYear = productionYear ?? premiereDate.map({ calendar.component(.year, from: $0) }) else { return nil }
+
+        if status == "Continuing" {
+            return L10n.yearToPresent(String(startYear))
+        }
+
+        guard let endDate else { return String(startYear) }
+
+        let endYear = calendar.component(.year, from: endDate)
+
+        guard endYear != startYear else { return String(startYear) }
+
+        return "\(startYear)–\(endYear)"
+    }
+
+    /// The days and time a series airs, ie: "Monday and Thursday, 9:00 PM"
+    var airSchedule: String? {
+        guard type == .series else { return nil }
+
+        var components: [String] = []
+
+        if let airDays, airDays.isNotEmpty {
+            if airDays.count == 7 {
+                components.append(L10n.daily)
+            } else {
+                components.append(airDays.map(\.displayTitle).formatted(.list(type: .and)))
+            }
+        }
+
+        if let airTime, airTime.isNotEmpty {
+            components.append(airTime)
+        }
+
+        guard components.isNotEmpty else { return nil }
+
+        return components.joined(separator: ", ")
+    }
+
+    /// When playback would finish if started now, accounting for progress
+    var playbackEndDate: Date? {
+        guard isPlayable, mediaType == .video, !isLiveStream, let runtime else { return nil }
+
+        let remaining = runtime - (startSeconds ?? .zero)
+
+        guard remaining > .zero else { return nil }
+
+        return .now.addingTimeInterval(remaining / .seconds(1))
+    }
+
+    /// The original title, if it differs from the name
+    var distinctOriginalTitle: String? {
+        guard let originalTitle, originalTitle.isNotEmpty, originalTitle != name else { return nil }
+
+        return originalTitle
+    }
+
+    /// The custom rating, if it differs from the official rating
+    var distinctCustomRating: String? {
+        guard let customRating, customRating.isNotEmpty, customRating != officialRating else { return nil }
+
+        return customRating
+    }
+
+    func people(ofType kind: PersonKind) -> [BaseItemPerson] {
+        people?
+            .filter { $0.type == kind }
+            .uniqued(on: \.id) ?? []
+    }
+
+    /// External links with a valid URL
+    var validExternalURLs: [NamedURL] {
+        externalURLs?.filter { link in
+            link.name?.isNotEmpty == true && link.url.flatMap(URL.init(string:)) != nil
+        } ?? []
+    }
+
     var hasExternalLinks: Bool {
         guard let externalURLs else { return false }
 

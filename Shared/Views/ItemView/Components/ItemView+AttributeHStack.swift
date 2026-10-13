@@ -80,6 +80,11 @@ extension ItemView {
                 EmptyLabel(officialRating)
                     .labelStyle(.attributeBadgeOutline)
             }
+
+            if let customRating = item.distinctCustomRating {
+                EmptyLabel(customRating)
+                    .labelStyle(.attributeBadgeOutline)
+            }
         }
 
         @ViewBuilder
@@ -100,6 +105,11 @@ extension ItemView {
                     EmptyLabel("HDR")
                         .labelStyle(.attributeBadgeFill)
                 }
+            }
+
+            if item.video3DFormat != nil {
+                EmptyLabel("3D")
+                    .labelStyle(.attributeBadgeFill)
             }
         }
 

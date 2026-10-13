@@ -22,7 +22,9 @@ extension ItemView {
                     Text(firstGenre)
                 }
 
-                if let premiereYear = item.premiereDateYear {
+                if let seriesYearRange = item.seriesYearRange {
+                    Text(seriesYearRange)
+                } else if let premiereYear = item.premiereDateYear {
                     Text(premiereYear)
                 }
 
@@ -32,6 +34,10 @@ extension ItemView {
 
                 if let seasonEpisodeLabel = item.seasonEpisodeLabel {
                     Text(seasonEpisodeLabel)
+                }
+
+                if let playbackEndDate = item.playbackEndDate {
+                    Text(L10n.endsAtTime(playbackEndDate.formatted(date: .omitted, time: .shortened)))
                 }
             }
             .font(.caption)

@@ -20,13 +20,23 @@ extension ItemView {
         var item: BaseItemDto
 
         private var isPresented: Bool {
-            item.taglines?.contains(where: \.isNotEmpty) == true ||
+            item.distinctOriginalTitle != nil ||
+                item.taglines?.contains(where: \.isNotEmpty) == true ||
                 item.overview?.isNotEmpty == true
         }
 
         var body: some View {
             if isPresented {
                 VStack(alignment: .leading, spacing: 5) {
+                    if let originalTitle = item.distinctOriginalTitle {
+                        Text(originalTitle)
+                            .font(.subheadline)
+                            .italic()
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(2)
+                    }
+
                     if let firstTagline = item.taglines?.first(where: \.isNotEmpty) {
                         Text(firstTagline)
                             .fontWeight(.bold)

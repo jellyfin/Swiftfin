@@ -185,6 +185,77 @@ final class ItemContentGroupProvider: ViewModel, ContentGroupProvider {
             }
         }
 
+        let directors = item.people(ofType: .director)
+
+        if directors.isNotEmpty {
+            PillGroup(
+                displayTitle: L10n.directors,
+                id: "directors",
+                elements: directors
+            ) { router, element in
+                router.route(to: .item(item: BaseItemDto(person: element)))
+            }
+        }
+
+        let writers = item.people(ofType: .writer)
+
+        if writers.isNotEmpty {
+            PillGroup(
+                displayTitle: L10n.writers,
+                id: "writers",
+                elements: writers
+            ) { router, element in
+                router.route(to: .item(item: BaseItemDto(person: element)))
+            }
+        }
+
+        if let tags = item.tags?.filter(\.isNotEmpty), tags.isNotEmpty {
+            PillGroup(
+                displayTitle: L10n.tags,
+                id: "tags",
+                elements: tags.map(ItemTag.init)
+            ) { router, element in
+                router.route(
+                    to: .contentGroup(
+                        provider: ItemTypeContentGroupProvider(
+                            itemTypes: [
+                                BaseItemKind.movie,
+                                .series,
+                                .boxSet,
+                                .episode,
+                                .musicVideo,
+                                .video,
+                            ],
+                            parent: BaseItemDto(name: element.displayTitle),
+                            environment: .init(filters: .init(tags: [element]))
+                        )
+                    )
+                )
+            }
+        }
+
+        if let airSchedule = item.airSchedule {
+            LabeledContentGroup(
+                item.status == "Ended" ? L10n.aired : L10n.airs,
+                value: airSchedule
+            )
+        }
+
+        #if os(iOS)
+        let externalLinks = item.validExternalURLs
+
+        if externalLinks.isNotEmpty {
+            PillGroup(
+                displayTitle: L10n.externalLinks,
+                id: "external-links",
+                elements: externalLinks
+            ) { _, element in
+                guard let url = element.url.flatMap(URL.init(string:)) else { return }
+                UIApplication.shared.open(url)
+            }
+        }
+        #endif
+
         switch item.type {
         case .movie:
             if item.partCount ?? 0 > 1 {

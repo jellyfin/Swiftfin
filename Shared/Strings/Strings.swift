@@ -70,6 +70,8 @@ internal enum L10n {
   internal static let aired = L10n.tr("Localizable", "aired", fallback: "Aired")
   /// Aired episode order
   internal static let airedEpisodeOrder = L10n.tr("Localizable", "airedEpisodeOrder", fallback: "Aired episode order")
+  /// Airs - Label for a series air schedule
+  internal static let airs = L10n.tr("Localizable", "airs", fallback: "Airs")
   /// Air time
   internal static let airTime = L10n.tr("Localizable", "airTime", fallback: "Air time")
   /// Airs %s
@@ -584,6 +586,8 @@ internal enum L10n {
   internal static let directDescription = L10n.tr("Localizable", "directDescription", fallback: "Plays content in its original format. May cause playback issues on unsupported media types.")
   /// Director
   internal static let director = L10n.tr("Localizable", "director", fallback: "Director")
+  /// Directors
+  internal static let directors = L10n.tr("Localizable", "directors", fallback: "Directors")
   /// Direct play
   internal static let directPlay = L10n.tr("Localizable", "directPlay", fallback: "Direct play")
   /// An error occurred during direct play
@@ -652,6 +656,10 @@ internal enum L10n {
   internal static let endDate = L10n.tr("Localizable", "endDate", fallback: "End date")
   /// Ended
   internal static let ended = L10n.tr("Localizable", "ended", fallback: "Ended")
+  /// Ends at %@ - Time that playback would finish
+  internal static func endsAtTime(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "endsAtTime", String(describing: p1), fallback: "Ends at %@")
+  }
   /// End time
   internal static let endTime = L10n.tr("Localizable", "endTime", fallback: "End time")
   /// Engineer
@@ -708,6 +716,8 @@ internal enum L10n {
   internal static let experimental = L10n.tr("Localizable", "experimental", fallback: "Experimental")
   /// External
   internal static let external = L10n.tr("Localizable", "external", fallback: "External")
+  /// External links
+  internal static let externalLinks = L10n.tr("Localizable", "externalLinks", fallback: "External links")
   /// External URL
   internal static let externalURL = L10n.tr("Localizable", "externalURL", fallback: "External URL")
   /// Failed to delete item at index %1$@: %2$@
@@ -2016,6 +2026,8 @@ internal enum L10n {
   }
   /// Writer
   internal static let writer = L10n.tr("Localizable", "writer", fallback: "Writer")
+  /// Writers
+  internal static let writers = L10n.tr("Localizable", "writers", fallback: "Writers")
   /// Year
   internal static let year = L10n.tr("Localizable", "year", fallback: "Year")
   /// Years
@@ -2023,6 +2035,10 @@ internal enum L10n {
   /// %@ years old
   internal static func yearsOld(_ p1: Any) -> String {
     return L10n.tr("Localizable", "yearsOld", String(describing: p1), fallback: "%@ years old")
+  }
+  /// %@–Present - A range from a year until now
+  internal static func yearToPresent(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "yearToPresent", String(describing: p1), fallback: "%@–Present")
   }
   /// Yellow
   internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")

@@ -133,42 +133,64 @@ struct AboutItemGroup: ContentGroup {
         }
 
         @ViewBuilder
-        private func ratingsCard(criticRating: Float, communityRating: Float) -> some View {
+        private func ratingRow(
+            caption: String,
+            @ViewBuilder icon: () -> some View,
+            @ViewBuilder value: () -> some View
+        ) -> some View {
+            HStack {
+                icon()
+                    .font(.largeTitle)
+
+                VStack(alignment: .leading, spacing: 0) {
+                    value()
+                        .fontWeight(.semibold)
+
+                    Text(caption)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+            .accessibilityElement(children: .combine)
+        }
+
+        @ViewBuilder
+        private var ratingsCard: some View {
+            let parentalRatings = [item.officialRating, item.distinctCustomRating]
+                .compactMap { $0 }
+                .filter(\.isNotEmpty)
+
             AboutCard(
                 title: L10n.ratings,
+                subtitle: parentalRatings.joined(separator: " / "),
                 action: {}
             ) {
-                if criticRating > -1 {
-                    HStack {
-                        Group {
-                            if criticRating >= 60 {
-                                Image(.tomatoFresh)
-                                    .symbolRenderingMode(.multicolor)
-                                    .foregroundStyle(.green, .red)
-                            } else {
-                                Image(.tomatoRotten)
-                                    .symbolRenderingMode(.monochrome)
-                                    .foregroundStyle(.green)
-                            }
+                if let criticRating = item.criticRating {
+                    ratingRow(caption: L10n.criticRating) {
+                        if criticRating >= 60 {
+                            Image(.tomatoFresh)
+                                .symbolRenderingMode(.multicolor)
+                                .foregroundStyle(.green, .red)
+                        } else {
+                            Image(.tomatoRotten)
+                                .symbolRenderingMode(.monochrome)
+                                .foregroundStyle(.green)
                         }
-                        .font(.largeTitle)
-
+                    } value: {
                         // swiftlint:disable:next hard_coded_display_string
                         Text("\(criticRating, specifier: "%.0f")")
-                            .fontWeight(.semibold)
                     }
                 }
 
-                if communityRating > -1 {
-                    HStack {
+                if let communityRating = item.communityRating {
+                    ratingRow(caption: L10n.communityRating) {
                         Image(systemName: "star.fill")
                             .symbolRenderingMode(.multicolor)
                             .foregroundStyle(.yellow)
-                            .font(.largeTitle)
-
+                    } value: {
                         // swiftlint:disable:next hard_coded_display_string
                         Text("\(communityRating, specifier: "%.1f")")
-                            .fontWeight(.semibold)
                     }
                 }
             }
@@ -197,11 +219,8 @@ struct AboutItemGroup: ContentGroup {
                             }
                         }
 
-                        if item.criticRating != nil || item.communityRating != nil {
-                            ratingsCard(
-                                criticRating: item.criticRating ?? -1,
-                                communityRating: item.communityRating ?? -1
-                            )
+                        if item.hasRatings || item.officialRating?.isNotEmpty == true || item.distinctCustomRating != nil {
+                            ratingsCard
                         }
                     }
                     .edgePadding(.horizontal)
