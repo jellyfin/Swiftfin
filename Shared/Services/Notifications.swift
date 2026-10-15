@@ -123,6 +123,10 @@ extension Notifications.Key {
         Key("recordingTimersDidChange")
     }
 
+    static var savedFiltersDidChange: Key<Void> {
+        Key("savedFiltersDidChange")
+    }
+
     // MARK: - Server
 
     static var didConnectToServer: Key<ServerState> {

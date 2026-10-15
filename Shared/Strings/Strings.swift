@@ -306,6 +306,8 @@ internal enum L10n {
   internal static let chapters = L10n.tr("Localizable", "chapters", fallback: "Chapters")
   /// Chapter slider
   internal static let chapterSlider = L10n.tr("Localizable", "chapterSlider", fallback: "Chapter slider")
+  /// Clear
+  internal static let clear = L10n.tr("Localizable", "clear", fallback: "Clear")
   /// Client
   internal static let client = L10n.tr("Localizable", "client", fallback: "Client")
   /// Clip
@@ -952,6 +954,8 @@ internal enum L10n {
   internal static let likedItems = L10n.tr("Localizable", "likedItems", fallback: "Liked items")
   /// Likes
   internal static let likes = L10n.tr("Localizable", "likes", fallback: "Likes")
+  /// Limit to library
+  internal static let limitToLibrary = L10n.tr("Localizable", "limitToLibrary", fallback: "Limit to library")
   /// List
   internal static let list = L10n.tr("Localizable", "list", fallback: "List")
   /// Live
@@ -1448,10 +1452,10 @@ internal enum L10n {
   internal static let regular = L10n.tr("Localizable", "regular", fallback: "Regular")
   /// Release date
   internal static let releaseDate = L10n.tr("Localizable", "releaseDate", fallback: "Release date")
+  /// Remember filtering
+  internal static let rememberFiltering = L10n.tr("Localizable", "rememberFiltering", fallback: "Remember filtering")
   /// Remember layout
   internal static let rememberLayout = L10n.tr("Localizable", "rememberLayout", fallback: "Remember layout")
-  /// Remember sorting
-  internal static let rememberSorting = L10n.tr("Localizable", "rememberSorting", fallback: "Remember sorting")
   /// Remember track selection
   internal static let rememberTrackSelection = L10n.tr("Localizable", "rememberTrackSelection", fallback: "Remember track selection")
   /// Remembers your selected track the next time you play this item.
@@ -1552,6 +1556,8 @@ internal enum L10n {
   internal static let sampleRate = L10n.tr("Localizable", "sampleRate", fallback: "Sample rate")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
+  /// Saved filter
+  internal static let savedFilter = L10n.tr("Localizable", "savedFilter", fallback: "Saved filter")
   /// Save the user to this device without any local authentication.
   internal static let saveUserWithoutAuthDescription = L10n.tr("Localizable", "saveUserWithoutAuthDescription", fallback: "Save the user to this device without any local authentication.")
   /// Scan for new and update files
