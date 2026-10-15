@@ -61,6 +61,17 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 filteredButtons.removeAll { $0 == .playPreviousItem }
             }
 
+            let chapterCount = manager.supplements
+                .compactMap { $0 as? MediaChaptersSupplement }
+                .first?
+                .chapters
+                .count ?? 0
+
+            if chapterCount < 2 {
+                filteredButtons.removeAll { $0 == .nextChapter }
+                filteredButtons.removeAll { $0 == .previousChapter }
+            }
+
             if manager.item.isLiveStream {
                 filteredButtons.removeAll { $0 == .autoPlay }
                 filteredButtons.removeAll { $0 == .playbackSpeed }
@@ -111,6 +122,10 @@ extension VideoPlayer.PlaybackControls.Toolbar {
                 PlayNextItem()
             case .playPreviousItem:
                 PlayPreviousItem()
+            case .nextChapter:
+                NextChapter()
+            case .previousChapter:
+                PreviousChapter()
             case .subtitles:
                 Subtitles()
             #if os(iOS)

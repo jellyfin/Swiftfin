@@ -1114,6 +1114,8 @@ internal enum L10n {
   internal static let newUser = L10n.tr("Localizable", "newUser", fallback: "New user")
   /// Next
   internal static let next = L10n.tr("Localizable", "next", fallback: "Next")
+  /// Next chapter
+  internal static let nextChapter = L10n.tr("Localizable", "nextChapter", fallback: "Next chapter")
   /// Next item
   internal static let nextItem = L10n.tr("Localizable", "nextItem", fallback: "Next item")
   /// Next Up
@@ -1346,6 +1348,8 @@ internal enum L10n {
   internal static let previewImage = L10n.tr("Localizable", "previewImage", fallback: "Preview image")
   /// Previous
   internal static let previous = L10n.tr("Localizable", "previous", fallback: "Previous")
+  /// Previous chapter
+  internal static let previousChapter = L10n.tr("Localizable", "previousChapter", fallback: "Previous chapter")
   /// Previous item
   internal static let previousItem = L10n.tr("Localizable", "previousItem", fallback: "Previous item")
   /// Primaries - color primaries of a video stream
