@@ -66,3 +66,24 @@ extension SessionInfoDto: @retroactive Comparable {
         }
     }
 }
+
+extension SessionInfoDto {
+
+    func isPlaying(item: BaseItemDto) -> Bool {
+        guard let nowPlayingItem else { return false }
+
+        return nowPlayingItem.id == item.id
+            || (item.liveChannelID != nil && item.liveChannelID == nowPlayingItem.liveChannelID)
+    }
+}
+
+extension [SessionInfoDto] {
+
+    func playing(item: BaseItemDto) -> [SessionInfoDto] {
+        filter { $0.isPlaying(item: item) }
+    }
+
+    func isPlaying(item: BaseItemDto) -> Bool {
+        playing(item: item).isNotEmpty
+    }
+}

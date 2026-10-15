@@ -152,15 +152,28 @@ private struct FirstTabSettingsBarButton: View {
     @Router
     private var router
 
+    @State
+    private var isSocketConnected = false
+
     var body: some View {
         if router.isRootOfPath,
            let userSession
         {
+            if isSocketConnected {
+                Button(L10n.remoteControl, systemImage: "appletvremote.gen4") {
+                    router.route(to: .remoteControl())
+                }
+                .labelStyle(.iconOnly)
+            }
+
             SettingsBarButton(
                 server: userSession.server,
                 user: userSession.user
             ) {
                 router.route(to: .settings)
+            }
+            .onReceive(userSession.serverSocketManager.isConnected.receive(on: DispatchQueue.main)) { isConnected in
+                isSocketConnected = isConnected
             }
         }
     }
