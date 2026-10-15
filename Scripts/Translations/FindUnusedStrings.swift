@@ -9,7 +9,7 @@
 import Foundation
 
 let localizationFile = "./Translations/en.lproj/Localizable.strings"
-let directoriesToScan = ["./Shared", "./Swiftfin", "./Swiftfin tvOS"]
+let directoriesToScan = ["./Shared", "./Swiftfin", "./Swiftfin tvOS", "./Screenshots"]
 let excludedFile = "./Shared/Strings/Strings.swift"
 let keyRegex = #/^\s*"(?<key>[^"\n]+)"\s*=/#
 let usageRegex = #/L10n\.`?(?<key>[a-zA-Z0-9_]+)`?/#

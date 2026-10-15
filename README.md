@@ -18,7 +18,7 @@
 </div>
 
 <p align="center">
-  <b>Swiftfin</b> is a modern video client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Made using Swift to maximize direct play with the power of <b>VLC</b> and look <b>native</b> on all classes of Apple devices.
+  <b>Swiftfin</b> is a modern video client for the <a href="https://github.com/jellyfin/jellyfin">Jellyfin</a> media server. Made using Swift to maximize direct play with the power of <b>VLC</b> and <a href="./Documentation/Screenshots/platforms.md">look <b>native</b></a> on all classes of Apple devices.
 </p>
 
 ## ⚡️ Download
