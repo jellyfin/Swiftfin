@@ -229,6 +229,13 @@ extension String {
         let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
     }
+
+    var markdown: AttributedString {
+        (try? AttributedString(
+            markdown: self,
+            options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        )) ?? AttributedString(self)
+    }
 }
 
 extension String? {

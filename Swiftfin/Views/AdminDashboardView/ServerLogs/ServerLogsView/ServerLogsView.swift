@@ -15,6 +15,9 @@ import SwiftUI
 
 struct ServerLogsView: View {
 
+    @Router
+    private var router
+
     @State
     private var filter: ServerLogType?
 
@@ -34,9 +37,7 @@ struct ServerLogsView: View {
             if viewModel.logs.isNotEmpty {
                 ForEach(viewModel.logs, id: \.self) { log in
                     ChevronButton(external: true) {
-                        guard let url = log.url else { return }
-
-                        UIApplication.shared.open(url)
+                        router.route(to: .jellyfinWebPage("dashboard/logs/\(log.name)"))
                     } label: {
                         VStack(alignment: .leading) {
                             Text(log.name)
