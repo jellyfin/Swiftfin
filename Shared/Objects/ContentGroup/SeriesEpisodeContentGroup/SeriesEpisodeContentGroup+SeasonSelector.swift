@@ -13,14 +13,15 @@ extension SeriesEpisodeContentGroup {
 
     struct SeasonSelector: PlatformView {
 
+        @Router
+        private var router
+
         let seasons: [PagingLibraryViewModel<EpisodeLibrary>]
 
         @Binding
         var selection: PagingLibraryViewModel<EpisodeLibrary>.ID?
 
         let preferredSelection: PagingLibraryViewModel<EpisodeLibrary>.ID?
-
-        let openEpisodeList: (PagingLibraryViewModel<EpisodeLibrary>) -> Void
 
         @FocusState
         private var focusedSeason: PagingLibraryViewModel<EpisodeLibrary>.ID?
@@ -29,12 +30,37 @@ extension SeriesEpisodeContentGroup {
             seasons.first { $0.id == selection }
         }
 
+        private func openEpisodeList(
+            _ season: PagingLibraryViewModel<EpisodeLibrary>
+        ) {
+            router.route(to: .library(library: season.library))
+        }
+
         @ViewBuilder
         private func title(_ value: String) -> some View {
             Text(value)
                 .font(.title2)
                 .fontWeight(.semibold)
                 .edgePadding(.horizontal)
+        }
+
+        private func singleSeasonButton(
+            _ season: PagingLibraryViewModel<EpisodeLibrary>
+        ) -> some View {
+            Button(action: { openEpisodeList(season) }) {
+                HStack(spacing: 3) {
+                    Text(season.library.parent.displayTitle)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+
+                    Image(systemName: "chevron.forward")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .foregroundStyle(.primary, .secondary)
+            .edgePadding(.horizontal)
+            .accessibilityAction(named: Text(L10n.openLibrary)) { openEpisodeList(season) }
         }
 
         var tvOSView: some View {
@@ -87,8 +113,10 @@ extension SeriesEpisodeContentGroup {
         }
 
         var iOSView: some View {
-            if seasons.count <= 1 {
-                title(selectedSeason?.library.parent.displayTitle ?? L10n.episodes)
+            if seasons.isEmpty {
+                title(L10n.episodes)
+            } else if let season = seasons.first, seasons.count == 1 {
+                singleSeasonButton(season)
             } else {
                 Menu(
                     selectedSeason?.library.parent.displayTitle ?? L10n.episodes,
