@@ -122,6 +122,15 @@ extension SeriesEpisodeContentGroup {
                     selectedSeason?.library.parent.displayTitle ?? L10n.episodes,
                     systemImage: "chevron.down"
                 ) {
+                    Button(L10n.allEpisodes, systemImage: "list.bullet") {
+                        if let selectedSeason {
+                            openEpisodeList(selectedSeason)
+                        }
+                    }
+                    .disabled(selectedSeason == nil)
+
+                    Divider()
+
                     Picker(L10n.seasons, selection: $selection) {
                         ForEach(seasons) { season in
                             Text(season.library.parent.displayTitle)
