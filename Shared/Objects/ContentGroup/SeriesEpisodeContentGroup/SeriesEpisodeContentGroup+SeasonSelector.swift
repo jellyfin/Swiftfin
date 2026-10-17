@@ -13,41 +13,35 @@ extension SeriesEpisodeContentGroup {
 
     struct SeasonSelector: PlatformView {
 
+        @Binding
+        var selection: PagingLibraryViewModel<EpisodeLibrary>.ID?
+
+        @FocusState
+        private var focusedSeason: PagingLibraryViewModel<EpisodeLibrary>.ID?
+
         @Router
         private var router
 
         let seasons: [PagingLibraryViewModel<EpisodeLibrary>]
-
-        @Binding
-        var selection: PagingLibraryViewModel<EpisodeLibrary>.ID?
-
         let preferredSelection: PagingLibraryViewModel<EpisodeLibrary>.ID?
-
-        @FocusState
-        private var focusedSeason: PagingLibraryViewModel<EpisodeLibrary>.ID?
 
         private var selectedSeason: PagingLibraryViewModel<EpisodeLibrary>? {
             seasons.first { $0.id == selection }
         }
 
-        private func openEpisodeList(
-            _ season: PagingLibraryViewModel<EpisodeLibrary>
+        private func openEpisodes(
+            for season: PagingLibraryViewModel<EpisodeLibrary>
         ) {
             router.route(to: .library(library: season.library))
         }
 
         @ViewBuilder
-        private func title(_ value: String) -> some View {
-            Text(value)
-                .font(.title2)
-                .fontWeight(.semibold)
-                .edgePadding(.horizontal)
-        }
-
         private func singleSeasonButton(
             _ season: PagingLibraryViewModel<EpisodeLibrary>
         ) -> some View {
-            Button(action: { openEpisodeList(season) }) {
+            Button {
+                openEpisodes(for: season)
+            } label: {
                 HStack(spacing: 3) {
                     Text(season.library.parent.displayTitle)
                         .font(.title3)
@@ -60,39 +54,36 @@ extension SeriesEpisodeContentGroup {
             }
             .foregroundStyle(.primary, .secondary)
             .edgePadding(.horizontal)
-            .accessibilityAction(named: Text(L10n.openLibrary)) { openEpisodeList(season) }
-        }
-
-        var tvOSView: some View {
-            if seasons.isEmpty {
-                title(L10n.episodes)
-            } else {
-                ScrollView(.horizontal) {
-                    SelectionTrack(
-                        seasons,
-                        selection: selection,
-                        focus: $focusedSeason
-                    ) { season in
-                        openEpisodeList(season)
-                    }
-                    .controlSize(.large)
-                    .edgePadding(.horizontal)
-                }
-                .scrollIndicators(.hidden)
-                .scrollClipDisabled()
-                .focusSection()
-                .defaultFocus(
-                    $focusedSeason,
-                    preferredSelection,
-                    priority: .userInitiated
-                )
-                .task(id: focusedSeason) {
-                    await selectSeasonAfterFocusDebounce(focusedSeason)
-                }
+            .accessibilityAction(named: Text(L10n.openLibrary)) {
+                openEpisodes(for: season)
             }
         }
 
-        @MainActor
+        var tvOSView: some View {
+            ScrollView(.horizontal) {
+                SelectionTrack(
+                    seasons,
+                    selection: selection,
+                    focus: $focusedSeason
+                ) { season in
+                    openEpisodes(for: season)
+                }
+                .controlSize(.large)
+                .edgePadding(.horizontal)
+            }
+            .scrollIndicators(.hidden)
+            .scrollClipDisabled()
+            .focusSection()
+            .defaultFocus(
+                $focusedSeason,
+                preferredSelection,
+                priority: .userInitiated
+            )
+            .task(id: focusedSeason) {
+                await selectSeasonAfterFocusDebounce(focusedSeason)
+            }
+        }
+
         private func selectSeasonAfterFocusDebounce(
             _ seasonID: PagingLibraryViewModel<EpisodeLibrary>.ID?
         ) async {
@@ -113,9 +104,7 @@ extension SeriesEpisodeContentGroup {
         }
 
         var iOSView: some View {
-            if seasons.isEmpty {
-                title(L10n.episodes)
-            } else if let season = seasons.first, seasons.count == 1 {
+            if seasons.count == 1, let season = seasons.first {
                 singleSeasonButton(season)
             } else {
                 Menu(
@@ -124,7 +113,7 @@ extension SeriesEpisodeContentGroup {
                 ) {
                     Button(L10n.allEpisodes, systemImage: "list.bullet") {
                         if let selectedSeason {
-                            openEpisodeList(selectedSeason)
+                            openEpisodes(for: selectedSeason)
                         }
                     }
                     .disabled(selectedSeason == nil)

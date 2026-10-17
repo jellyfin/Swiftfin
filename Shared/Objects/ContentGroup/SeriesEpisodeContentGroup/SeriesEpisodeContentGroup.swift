@@ -54,10 +54,11 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
             viewModel.elements.first { $0.id == selection }
         }
 
+        @ViewBuilder
         private var seasonSelectorView: some View {
             SeasonSelector(
-                seasons: Array(viewModel.elements),
                 selection: $selection,
+                seasons: Array(viewModel.elements),
                 preferredSelection: selection ?? preferredSeasonSelection()
             )
         }
@@ -84,7 +85,6 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
             selectedSeasonViewModel.refresh()
         }
 
-        @ViewBuilder
         var body: some View {
             Group {
                 if let selectedSeasonViewModel {
