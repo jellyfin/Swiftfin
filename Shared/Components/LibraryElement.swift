@@ -61,6 +61,8 @@ extension LibraryElement {
 
     @ViewBuilder
     func makeBody(libraryStyle: LibraryStyle) -> Body {
+        // By default, have conformers determine action
+        // internally for navigation with their namespace
         makeBody(libraryStyle: libraryStyle, action: nil)
     }
 
