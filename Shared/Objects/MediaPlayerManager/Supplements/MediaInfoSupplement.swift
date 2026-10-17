@@ -45,6 +45,9 @@ extension MediaInfoSupplement {
         @StateObject
         private var recordingViewModel: RecordingTimerViewModel
 
+        @State
+        private var endsAtLabel: String?
+
         init(item: BaseItemDto) {
             self.item = item
             self._recordingViewModel = StateObject(wrappedValue: RecordingTimerViewModel(item: item))
@@ -72,6 +75,16 @@ extension MediaInfoSupplement {
                     if let officialRating = item.officialRating {
                         Text(officialRating)
                     }
+
+                    if let endsAtLabel {
+                        Text(endsAtLabel)
+                    }
+                }
+            }
+            .onReceive(manager.secondsBox.$value) { seconds in
+                let newLabel = makeEndsAtLabel(seconds: seconds)
+                if newLabel != endsAtLabel {
+                    endsAtLabel = newLabel
                 }
             }
         }
@@ -288,6 +301,19 @@ extension MediaInfoSupplement {
 
             _ = try? await userSession.getFullItem(item)
             await recordingViewModel.refresh()
+        }
+
+        private func makeEndsAtLabel(seconds: Duration) -> String? {
+            guard !item.isLiveStream,
+                  item.type != .recording,
+                  let runtime = item.runtime,
+                  runtime > .zero,
+                  manager.rate > 0
+            else { return nil }
+
+            let remaining = max(runtime - seconds, .zero)
+            let endDate = Date.now.addingTimeInterval(remaining.seconds / manager.rate)
+            return L10n.endsAt(endDate.formatted(date: .omitted, time: .shortened))
         }
     }
 }
