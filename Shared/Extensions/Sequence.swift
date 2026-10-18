@@ -18,7 +18,7 @@ extension Sequence {
         }
     }
 
-    func compacted(using keyPath: KeyPath<Element, (some Any)?>) -> [Element] {
+    func compacted(using keyPath: KeyPath<Element, some Any?>) -> [Element] {
         filter { $0[keyPath: keyPath] != nil }
     }
 
@@ -46,7 +46,7 @@ extension Sequence {
     /// at the given `KeyPath` of `Element`.
     ///
     /// `nil` values are considered the maximum.
-    func sorted(using keyPath: KeyPath<Element, (some Comparable)?>) -> [Element] {
+    func sorted(using keyPath: KeyPath<Element, some Comparable?>) -> [Element] {
         sorted {
             let x = $0[keyPath: keyPath]
             let y = $1[keyPath: keyPath]

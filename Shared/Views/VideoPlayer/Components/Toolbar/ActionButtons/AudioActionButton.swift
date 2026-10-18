@@ -29,7 +29,6 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
             }
         }
 
-        @ViewBuilder
         private func content(playbackItem: MediaPlayerItem) -> some View {
             Picker(selection: $selectedAudioStreamIndex) {
                 ForEach(playbackItem.audioStreams, id: \.index) { stream in

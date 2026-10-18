@@ -51,7 +51,7 @@ extension NavigationRoute {
     @MainActor
     static func videoPlayer(
         provider: MediaPlayerItemProvider,
-        queue: (any MediaPlayerQueue)? = nil
+        queue: any MediaPlayerQueue? = nil
     ) -> NavigationRoute {
         let manager = MediaPlayerManager(
             provider: provider,

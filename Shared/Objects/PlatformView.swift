@@ -21,17 +21,14 @@ protocol PlatformView: View {
     var tvOSView: Self.tvOSBody { get }
 }
 
+@MainActor
 extension PlatformView {
     #if os(iOS)
-    @ViewBuilder
-    @MainActor
     var body: some View {
         iOSView
     }
 
     #elseif os(tvOS)
-    @ViewBuilder
-    @MainActor
     var body: some View {
         tvOSView
     }

@@ -123,17 +123,15 @@ class TrickplayPreviewImageProvider: PreviewImageProvider {
         tileInterval: Duration
     ) -> Task<TrickplayImage?, Never> {
         Task<TrickplayImage?, Never> { [weak self] () -> TrickplayImage? in
-            guard let tileWidth = self?.info.width else { return nil }
-            guard let itemID = self?.itemID else { return nil }
-            guard let client = Container.shared.currentUserSession()?.client else { return nil }
+            guard let tileWidth = self?.info.width, let itemID = self?.itemID,
+                  let client = Container.shared.currentUserSession()?.client else { return nil }
 
             let request = Paths.getTrickplayTileImage(
                 itemID: itemID,
                 width: tileWidth,
                 index: imageIndex
             )
-            guard let response = try? await client.send(request) else { return nil }
-            guard let image = UIImage(data: response.value) else { return nil }
+            guard let response = try? await client.send(request), let image = UIImage(data: response.value) else { return nil }
 
             let secondsRangeStart = tileImageDuration * Double(imageIndex)
             let secondsRangeEnd = secondsRangeStart + tileImageDuration

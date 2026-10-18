@@ -20,8 +20,7 @@ extension VideoPlayer.UIContainerViewController {
             viewState.cancelTapGesture()
         }
 
-        guard checkGestureLock() else { return }
-        guard !viewState.isPresentingSupplement else { return }
+        guard checkGestureLock(), !viewState.isPresentingSupplement else { return }
 
         let action = Defaults[.VideoPlayer.Gesture.pinchGesture]
 

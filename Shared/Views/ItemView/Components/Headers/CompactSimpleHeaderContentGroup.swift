@@ -57,7 +57,6 @@ extension ItemView {
                 }
             }
 
-            @ViewBuilder
             private var peopleContent: some View {
                 HStack(alignment: .bottom, spacing: 12) {
                     PosterImage(

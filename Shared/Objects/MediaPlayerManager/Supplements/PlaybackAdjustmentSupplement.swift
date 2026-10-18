@@ -40,7 +40,6 @@ extension PlaybackAdjustmentSupplement {
 
         let supplement: PlaybackAdjustmentSupplement
 
-        @ViewBuilder
         private var content: some View {
             PlaybackAdjustmentSlider(
                 value: supplement.value(manager),

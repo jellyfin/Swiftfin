@@ -132,7 +132,6 @@ struct EditServerUserAccessTagsView: View {
         .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
     private func makeRow(tag: TagWithAccess) -> some View {
         EditAccessTagRow(tag: tag.tag) {
             if isEditing {
@@ -146,7 +145,6 @@ struct EditServerUserAccessTagsView: View {
         .isSelected(selectedTags.contains(tag))
     }
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(

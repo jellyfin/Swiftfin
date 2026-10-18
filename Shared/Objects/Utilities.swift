@@ -6,10 +6,9 @@
 // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
-
 @_exported import CasePaths
 @_exported import Engine
+import Foundation
 @_exported import StatefulMacros
 @_exported import SwiftfinMacros
 

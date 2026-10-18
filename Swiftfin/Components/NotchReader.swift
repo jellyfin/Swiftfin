@@ -143,9 +143,8 @@ enum NotchDeviceReader {
               let method = class_getInstanceMethod(type(of: screen), selector),
               method_getNumberOfArguments(method) == 2,
               returns(method, type: "@"),
-              let area = screen.perform(selector)?.takeUnretainedValue() as? NSObject
-        else { return nil }
-        guard let rectSelector = "cmVjdA==".base64Decoded?.asSelector(),
+              let area = screen.perform(selector)?.takeUnretainedValue() as? NSObject,
+              let rectSelector = "cmVjdA==".base64Decoded?.asSelector(),
               let rectMethod = class_getInstanceMethod(type(of: area), rectSelector),
               method_getNumberOfArguments(rectMethod) == 2,
               returns(rectMethod, type: String(cString: NSValue(cgRect: .zero).objCType))

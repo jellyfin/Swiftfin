@@ -96,7 +96,6 @@ extension VideoPlayer.PlaybackControls {
             return total
         }
 
-        @ViewBuilder
         private var liveIndicator: some View {
             Text(L10n.live)
                 .font(.subheadline)
@@ -110,7 +109,6 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
-        @ViewBuilder
         private var slowScrubbingIndicator: some View {
             HStack {
                 Image(systemName: "backward.fill")
@@ -120,7 +118,6 @@ extension VideoPlayer.PlaybackControls {
             .font(.caption)
         }
 
-        @ViewBuilder
         private var capsuleSlider: some View {
             AlternateLayoutView {
                 EmptyHitTestView()

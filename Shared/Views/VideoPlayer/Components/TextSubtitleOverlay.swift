@@ -48,7 +48,6 @@ private struct TextSubtitleOverlayContent: View {
         basePointSize * captionStyle.text.sizeScale.resolved(contentValue: nil)
     }
 
-    @ViewBuilder
     private func subtitleRegions(_ regions: [TextSubtitleRegion]) -> some View {
         SubtitleRegionsLayout(regions: regions, pointSize: pointSize, videoLayout: videoLayout) {
             ForEach(Array(regions.enumerated()), id: \.offset) { _, region in
@@ -224,7 +223,6 @@ private struct SubtitleRegionText: View {
             .joined(separator: "\n")
     }
 
-    @ViewBuilder
     private var styledText: some View {
         CaptionText(presentationText, baseSize: basePointSize, style: captionStyle)
             .multilineTextAlignment(alignment)

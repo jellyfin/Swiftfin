@@ -494,8 +494,7 @@ extension BaseItemDto {
 
         guard let chapters = chapters?
             .sorted(using: \.startPositionTicks)
-            .compacted(using: \.startPositionTicks) else { return nil }
-        guard let userSession = Container.shared.currentUserSession() else { return nil }
+            .compacted(using: \.startPositionTicks), let userSession = Container.shared.currentUserSession() else { return nil }
 
         return chapters
             .enumerated()

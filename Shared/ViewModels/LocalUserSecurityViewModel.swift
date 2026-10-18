@@ -18,10 +18,8 @@ final class LocalUserSecurityViewModel: ViewModel {
     func check(oldPin: String) throws {
         let user = try authenticatedUser
 
-        if let storedPin = keychain.get("\(user.id)-pin") {
-            if oldPin != storedPin {
-                throw ErrorMessage(L10n.incorrectPinForUser(user.username))
-            }
+        if let storedPin = keychain.get("\(user.id)-pin"), oldPin != storedPin {
+            throw ErrorMessage(L10n.incorrectPinForUser(user.username))
         }
     }
 

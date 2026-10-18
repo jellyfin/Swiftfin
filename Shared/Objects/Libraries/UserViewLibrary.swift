@@ -214,7 +214,6 @@ private struct UserViewLibraryGridElement: View {
         .buttonStyle(.card)
     }
 
-    @ViewBuilder
     private var titleLabel: some View {
         Text(element.displayTitle)
             .font(.title2)
@@ -224,7 +223,6 @@ private struct UserViewLibraryGridElement: View {
             .frame(alignment: .center)
     }
 
-    @ViewBuilder
     private func titleLabelOverlay(with content: some View) -> some View {
         ZStack {
             content
@@ -283,7 +281,6 @@ private struct UserViewLibraryListElement: View {
         }
     }
 
-    @ViewBuilder
     private var imageView: some View {
         ZStack {
             Color.secondarySystemFill
@@ -311,9 +308,9 @@ private struct UserViewLibraryListElement: View {
     }
 }
 
+@MainActor
 private extension UserViewLibraryElement {
 
-    @MainActor
     func libraryImageSources(useRandomImage: Bool) async -> [ImageSource] {
         switch self {
         case .favorites:
@@ -328,7 +325,6 @@ private extension UserViewLibraryElement {
         }
     }
 
-    @MainActor
     func randomItemImageSources() async throws -> [ImageSource] {
         guard let userSession = Container.shared.currentUserSession() else {
             throw UserSessionError.missingCurrentSession

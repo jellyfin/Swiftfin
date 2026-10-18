@@ -25,7 +25,6 @@ extension ServerUserPermissionsView {
 
         // MARK: - Failed Login Selection View
 
-        @ViewBuilder
         private var FailedLoginsView: some View {
             Section(
                 L10n.sessions,
@@ -66,7 +65,6 @@ extension ServerUserPermissionsView {
 
         // MARK: - Failed Login Selection Button
 
-        @ViewBuilder
         private func MaxFailedLoginsButton() -> some View {
             StateAdapter(initialValue: false) { isPresented in
                 ChevronButton(
@@ -92,7 +90,6 @@ extension ServerUserPermissionsView {
 
         // MARK: - Failed Login Validation
 
-        @ViewBuilder
         private var MaxSessionsView: some View {
             Section(
                 L10n.maximumSessionsPolicy,
@@ -121,7 +118,6 @@ extension ServerUserPermissionsView {
             }
         }
 
-        @ViewBuilder
         private func MaxSessionsButton() -> some View {
             StateAdapter(initialValue: false) { isPresented in
                 ChevronButton(

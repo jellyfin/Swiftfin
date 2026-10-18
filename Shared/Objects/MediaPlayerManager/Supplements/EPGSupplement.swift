@@ -40,7 +40,6 @@ extension EPGSupplement {
 
         private let refreshInterval: TimeInterval = 3 * 60
 
-        @ViewBuilder
         private var content: some View {
             EPGLoadableView(viewModel: viewModel) {
                 EPGContentView(

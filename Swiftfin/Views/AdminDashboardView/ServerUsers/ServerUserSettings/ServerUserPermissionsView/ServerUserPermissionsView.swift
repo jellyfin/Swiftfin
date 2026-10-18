@@ -86,7 +86,6 @@ struct ServerUserPermissionsView: View {
         .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             StatusSection(policy: $tempPolicy)

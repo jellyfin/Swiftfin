@@ -77,7 +77,6 @@ struct BackportGlassEffectModifier<BackgroundShape: Shape>: ViewModifier {
         Color.gray.opacity(0.3)
     }
 
-    @ViewBuilder
     func body(content: Content) -> some View {
         if glass.selectionAppearance != nil {
             appearanceBody(

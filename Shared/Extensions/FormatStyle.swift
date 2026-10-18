@@ -20,9 +20,9 @@ struct MinuteSecondsFormatStyle: FormatStyle {
     }
 }
 
+@available(*, deprecated, message: "Use `Duration` instead.")
 extension FormatStyle where Self == MinuteSecondsFormatStyle {
 
-    @available(*, deprecated, message: "Use `Duration` instead.")
     static var minuteSeconds: MinuteSecondsFormatStyle {
         MinuteSecondsFormatStyle()
     }

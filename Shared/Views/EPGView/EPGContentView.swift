@@ -25,7 +25,6 @@ struct EPGLoadableView<Content: View>: View {
         self.content = content()
     }
 
-    @ViewBuilder
     var body: some View {
         switch viewModel.state {
         case .initial, .refreshing:

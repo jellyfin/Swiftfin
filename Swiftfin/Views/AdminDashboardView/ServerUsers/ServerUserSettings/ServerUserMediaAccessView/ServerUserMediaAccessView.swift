@@ -76,7 +76,6 @@ struct ServerUserMediaAccessView: View {
             .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
     var contentView: some View {
         List {
             accessView

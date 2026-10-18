@@ -119,7 +119,6 @@ struct FilterTrack: View {
         #endif
     }
 
-    @ViewBuilder
     private func button(for target: FocusTarget) -> some View {
         Group {
             switch target {

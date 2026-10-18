@@ -58,7 +58,6 @@ extension VideoPlayer.PlaybackControls {
             scrubbedSecondsBox.value
         }
 
-        @ViewBuilder
         private var leadingTimestamp: some View {
             HStack(spacing: 2) {
 
@@ -75,7 +74,6 @@ extension VideoPlayer.PlaybackControls {
             }
         }
 
-        @ViewBuilder
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
                 Group {

@@ -150,7 +150,6 @@ struct ItemSubtitlesView: View {
         }
     }
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             ListTitleSection(

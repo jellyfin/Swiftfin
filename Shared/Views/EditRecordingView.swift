@@ -64,7 +64,6 @@ struct EditRecordingView: View {
         }
     }
 
-    @ViewBuilder
     private func seriesSections(_ seriesRecordingTimer: Binding<SeriesTimerInfoDto>) -> some View {
         Section {
             Picker(L10n.record, selection: seriesRecordingTimer.isRecordNewOnly.coalesce(false)) {

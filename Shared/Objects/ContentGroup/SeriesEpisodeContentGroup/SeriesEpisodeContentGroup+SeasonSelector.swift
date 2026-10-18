@@ -35,7 +35,6 @@ extension SeriesEpisodeContentGroup {
             router.route(to: .library(library: season.library))
         }
 
-        @ViewBuilder
         private func singleSeasonButton(
             _ season: PagingLibraryViewModel<EpisodeLibrary>
         ) -> some View {

@@ -26,7 +26,6 @@ extension VideoPlayer.UIContainerViewController {
         private var focusedElement: String?
 
         #if os(iOS)
-        @ViewBuilder
         private func closeButton(size: CGFloat) -> some View {
             Button {
                 viewState.selectedSupplementID = nil

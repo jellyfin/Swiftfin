@@ -148,7 +148,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             .withViewContext(.isInMenu)
         }
 
-        @ViewBuilder
         private var regularView: some View {
             HStack(spacing: Self.buttonSpacing) {
                 ForEach(barActionButtons) { button in

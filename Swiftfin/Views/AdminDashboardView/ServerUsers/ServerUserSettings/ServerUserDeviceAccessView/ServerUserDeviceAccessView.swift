@@ -80,7 +80,6 @@ struct ServerUserDeviceAccessView: View {
             .errorMessage($viewModel.error)
     }
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             ZStack {

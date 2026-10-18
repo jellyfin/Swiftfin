@@ -74,7 +74,6 @@ struct ItemSubtitleSearchView: View {
         }
     }
 
-    @ViewBuilder
     private var contentView: some View {
         Form(systemImage: "textformat") {
 

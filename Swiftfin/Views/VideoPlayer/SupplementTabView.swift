@@ -158,9 +158,7 @@ struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
                 return
             }
             guard swipeSelection == nil,
-                  let page = makePageController()
-            else { return }
-            guard page.viewControllers?.first !== target else { return }
+                  let page = makePageController(), page.viewControllers?.first !== target else { return }
 
             let direction = direction(from: page.viewControllers?.first, to: targetID)
             // The container can change height at the same time (regular/expanded

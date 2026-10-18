@@ -34,7 +34,6 @@ struct QuickConnectAuthorizeView: View {
         self._viewModel = StateObject(wrappedValue: QuickConnectAuthorizeViewModel(user: user))
     }
 
-    @ViewBuilder
     private var loginUserRow: some View {
         HStack {
             if let userSession = viewModel.userSession {

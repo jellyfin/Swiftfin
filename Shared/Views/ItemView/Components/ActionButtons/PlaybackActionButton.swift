@@ -62,7 +62,6 @@ extension ItemActionButtons {
             )
         }
 
-        @ViewBuilder
         private var versionPicker: some View {
             Picker(
                 selection: Binding(
@@ -82,7 +81,6 @@ extension ItemActionButtons {
             .pickerStyle(.menu)
         }
 
-        @ViewBuilder
         private var qualityPicker: some View {
             Picker(
                 selection: Binding(
@@ -101,7 +99,6 @@ extension ItemActionButtons {
             .pickerStyle(.menu)
         }
 
-        @ViewBuilder
         private func trackPicker(
             _ title: String,
             streams: [MediaStream],

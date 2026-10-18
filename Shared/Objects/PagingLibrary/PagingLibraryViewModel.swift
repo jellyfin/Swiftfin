@@ -149,7 +149,7 @@ class PagingLibraryViewModel<Library: PagingLibrary>: ViewModel, Identifiable {
         searchQuery.nilIfBlank ?? ""
     }
 
-    private var searchableLibrary: (any SearchablePagingLibrary<Element, Environment, PageElement>)? {
+    private var searchableLibrary: any SearchablePagingLibrary<Element, Environment, PageElement>? {
         library as? any SearchablePagingLibrary<Element, Environment, PageElement>
     }
 

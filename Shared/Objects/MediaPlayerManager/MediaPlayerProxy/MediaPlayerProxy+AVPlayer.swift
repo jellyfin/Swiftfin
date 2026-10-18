@@ -141,9 +141,7 @@ class AVMediaPlayerProxy: NSObject,
 
     func setAudioStream(_ stream: MediaStream) {
         guard let item = player.currentItem,
-              let group = cachedAudioGroup
-        else { return }
-        guard let index = stream.index, group.options.indices.contains(index) else { return }
+              let group = cachedAudioGroup, let index = stream.index, group.options.indices.contains(index) else { return }
 
         item.select(group.options[index], in: group)
     }
@@ -186,7 +184,6 @@ class AVMediaPlayerProxy: NSObject,
         return nil
     }
 
-    @ViewBuilder
     func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> some View {
         AVPlayerView(videoLayout: layout)
             .environmentObject(self)

@@ -426,8 +426,7 @@ extension VideoPlayer {
                 cancelSupplementPan()
                 return
             }
-            guard state == .began || isPanning else { return }
-            guard let supplementBottomAnchor,
+            guard state == .began || isPanning, let supplementBottomAnchor,
                   let supplementHeightAnchor,
                   let playerCompactBottomAnchor
             else { return }
@@ -534,8 +533,7 @@ extension VideoPlayer {
         // MARK: - present
 
         func presentSupplementContainer(_ didPresent: Bool) {
-            guard !isPanning else { return }
-            guard let supplementBottomAnchor,
+            guard !isPanning, let supplementBottomAnchor,
                   let supplementHeightAnchor,
                   let playerCompactBottomAnchor
             else { return }

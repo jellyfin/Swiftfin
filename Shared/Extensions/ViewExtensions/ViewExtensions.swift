@@ -17,21 +17,18 @@ extension View {
         Backport(content: self)
     }
 
-    @ViewBuilder
     func assign<P: Publisher>(_ publisher: P, to binding: Binding<P.Output>) -> some View where P.Failure == Never {
         onReceive(publisher) { output in
             binding.wrappedValue = output
         }
     }
 
-    @ViewBuilder
     func blurred(style: UIBlurEffect.Style = .regular) -> some View {
         overlay {
             BlurView(style: style)
         }
     }
 
-    @ViewBuilder
     func bottomEdgeGradient(bottomColor: Color) -> some View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
@@ -71,7 +68,6 @@ extension View {
     }
 
     /// Apply a corner radius as a ratio of a view's side
-    @ViewBuilder
     func cornerRadius(
         ratio: CGFloat,
         of side: KeyPath<CGSize, CGFloat>,
@@ -86,18 +82,15 @@ extension View {
         )
     }
 
-    @ViewBuilder
     func edgePadding(_ edges: Edge.Set = .all) -> some View {
         padding(edges, EdgeInsets.edgePadding)
     }
 
-    @ViewBuilder
     @inlinable
     func enabled(_ enabled: Bool) -> some View {
         disabled(!enabled)
     }
 
-    @ViewBuilder
     @inlinable
     func eraseToAnyView() -> AnyView {
         AnyView(self)
@@ -106,7 +99,6 @@ extension View {
     // TODO: rename `errorAlert`
 
     /// Error Message Alert
-    @ViewBuilder
     func errorMessage(
         _ error: Binding<Error?>,
         dismissAction: @escaping () -> Void = {}
@@ -200,7 +192,6 @@ extension View {
     }
 
     // TODO: rename `invertedMask`?
-    @ViewBuilder
     func inverseMask(alignment: Alignment = .center, @ViewBuilder _ content: @escaping () -> some View) -> some View {
         mask(alignment: alignment) {
             content()
@@ -211,37 +202,31 @@ extension View {
         }
     }
 
-    @ViewBuilder
     func isEditing(_ isEditing: Bool) -> some View {
         environment(\.isEditing, isEditing)
     }
 
-    @ViewBuilder
     func isHighlighted(_ isHighlighted: Bool) -> some View {
         environment(\.isHighlighted, isHighlighted)
     }
 
-    @ViewBuilder
     func isSelected(_ isSelected: Bool) -> some View {
         environment(\.isSelected, isSelected)
     }
 
     /// - Important: Do not use this to add or remove a view from the view heirarchy.
     ///              Use a conditional statement instead.
-    @ViewBuilder
     @inlinable
     func isVisible(_ isVisible: Bool) -> some View {
         opacity(isVisible ? 1 : 0)
     }
 
-    @ViewBuilder
     func letterPickerBar(filterViewModel: FilterViewModel?) -> some View {
         modifier(
             LetterPickerBarModifier(viewModel: filterViewModel)
         )
     }
 
-    @ViewBuilder
     func mask(
         gradient: MaskGradientModifier.Style,
         @ArrayBuilder<MaskGradientModifier.Stop> stops: () -> [MaskGradientModifier.Stop]
@@ -249,39 +234,32 @@ extension View {
         modifier(MaskGradientModifier(style: gradient, stops: stops()))
     }
 
-    @ViewBuilder
     func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
         onNotification(.applicationDidEnterBackground, perform: action)
     }
 
-    @ViewBuilder
     func onAppWillEnterForeground(_ action: @escaping () -> Void) -> some View {
         onNotification(.applicationWillEnterForeground, perform: action)
     }
 
-    @ViewBuilder
     func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
         onNotification(.applicationWillResignActive, perform: action)
     }
 
-    @ViewBuilder
     func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
         onNotification(.applicationWillTerminate, perform: action)
     }
 
     /// Perform an action on the final disappearance of a `View`.
-    @ViewBuilder
     func onFinalDisappear(perform action: @escaping () -> Void) -> some View {
         modifier(OnFinalDisappearModifier(action: action))
     }
 
     /// Perform an action on the first appearance of a `View`.
-    @ViewBuilder
     func onFirstAppear(perform action: @escaping () -> Void) -> some View {
         modifier(OnFirstAppearModifier(action: action))
     }
 
-    @ViewBuilder
     func onNotification<P>(_ key: Notifications.Key<P>, perform action: @escaping (P) -> Void) -> some View {
         modifier(
             OnReceiveNotificationModifier(
@@ -291,17 +269,14 @@ extension View {
         )
     }
 
-    @ViewBuilder
     func onSceneDidEnterBackground(_ action: @escaping () -> Void) -> some View {
         onNotification(.sceneDidEnterBackground, perform: action)
     }
 
-    @ViewBuilder
     func onScenePhase(_ phase: ScenePhase, _ action: @escaping () -> Void) -> some View {
         modifier(OnScenePhaseChangedModifier(phase: phase, action: action))
     }
 
-    @ViewBuilder
     func onSceneWillEnterForeground(_ action: @escaping () -> Void) -> some View {
         onNotification(.sceneWillEnterForeground, perform: action)
     }
@@ -321,7 +296,6 @@ extension View {
         }
     }
 
-    @ViewBuilder
     func posterBorder() -> some View {
         overlay {
             ContainerRelativeShape()
@@ -345,7 +319,6 @@ extension View {
         }
     }
 
-    @ViewBuilder
     func subtleShadow() -> some View {
         shadow(radius: 4, y: 2)
     }
@@ -382,7 +355,6 @@ extension View {
         }
     }
 
-    @ViewBuilder
     func preference<Key: PreferenceKey, V>(
         key: Key.Type,
         @ArrayBuilder<V> value: () -> [V]
@@ -390,24 +362,20 @@ extension View {
         preference(key: Key.self, value: value())
     }
 
-    @ViewBuilder
     func scrollIfLargerThanContainer(axes: Axis.Set = .vertical, padding: CGFloat = 0, alignment: Alignment = .center) -> some View {
         modifier(ScrollIfLargerThanContainerModifier(axes: axes, padding: padding, alignment: alignment))
     }
 
-    @ViewBuilder
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
         modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
     }
 
     /// Perform an action as the view appears given the time interval
     /// since the view last disappeared.
-    @ViewBuilder
     func sinceLastDisappear(perform action: @escaping (TimeInterval) -> Void) -> some View {
         modifier(SinceLastDisappearModifier(action: action))
     }
 
-    @ViewBuilder
     func topBarTrailing(@ViewBuilder content: @escaping () -> some View) -> some View {
         toolbar {
             ToolbarItemGroup(
@@ -422,7 +390,6 @@ extension View {
     // Useful modifiers during development for layout
 
     #if DEBUG
-    @ViewBuilder
     func debugBackground(_ fill: some ShapeStyle = .red.opacity(0.5)) -> some View {
         background {
             Rectangle()
@@ -430,13 +397,11 @@ extension View {
         }
     }
 
-    @ViewBuilder
     func debugCross(_ fill: some ShapeStyle = .red) -> some View {
         debugVLine(fill)
             .debugHLine(fill)
     }
 
-    @ViewBuilder
     func debugHLine(_ fill: some ShapeStyle) -> some View {
         overlay {
             Rectangle()
@@ -445,7 +410,6 @@ extension View {
         }
     }
 
-    @ViewBuilder
     func debugOverlay(_ fill: some ShapeStyle = .red.opacity(0.5)) -> some View {
         overlay {
             Rectangle()
@@ -454,7 +418,6 @@ extension View {
         }
     }
 
-    @ViewBuilder
     func debugVLine(_ fill: some ShapeStyle) -> some View {
         overlay {
             Rectangle()

@@ -201,9 +201,7 @@ final class UserSessionManager: ObservableObject {
             await refreshServerInformationIfNeeded(reason: .stale)
         }
 
-        guard currentSession != nil else { return }
-        guard Defaults[.signOutOnBackground] else { return }
-        guard !hasActivePlayback else { return }
+        guard currentSession != nil, Defaults[.signOutOnBackground], !hasActivePlayback else { return }
 
         let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
         if backgroundedInterval > Defaults[.backgroundSignOutInterval] {
@@ -342,11 +340,9 @@ final class UserSessionManager: ObservableObject {
 
     private func resolveStoredSession() throws -> UserSession? {
         guard case let .signedIn(userId) = Defaults[.lastSignedInUserID] else { return nil }
-        guard let user = StoredValues[.User.users].first(where: { $0.id == userId }) else {
-            Defaults[.lastSignedInUserID] = .signedOut
-            throw UserSessionError.invalidStoredSession(userID: userId)
-        }
-        guard let server = StoredValues[.Server.servers].first(where: { $0.id == user.serverID }) else {
+        guard let user = StoredValues[.User.users].first(where: { $0.id == userId }),
+              let server = StoredValues[.Server.servers].first(where: { $0.id == user.serverID })
+        else {
             Defaults[.lastSignedInUserID] = .signedOut
             throw UserSessionError.invalidStoredSession(userID: userId)
         }

@@ -175,14 +175,14 @@ extension VideoPlayer {
             }
         }
 
-        var selectedSupplement: (any MediaPlayerSupplement)? {
+        var selectedSupplement: any MediaPlayerSupplement? {
             guard let selectedSupplementID else { return nil }
 
             access(keyPath: \.selectedSupplement)
             return supplements.first { $0.id == selectedSupplementID }
         }
 
-        private(set) var guestSupplement: (any MediaPlayerSupplement)? {
+        private(set) var guestSupplement: any MediaPlayerSupplement? {
             didSet { observeSupplementActions() }
         }
 
@@ -194,7 +194,7 @@ extension VideoPlayer {
             return manager?.supplements ?? []
         }
 
-        var singleSupplement: (any MediaPlayerSupplement)? {
+        var singleSupplement: any MediaPlayerSupplement? {
             let supplements = supplements
             return supplements.count == 1 ? supplements.first : nil
         }
@@ -319,7 +319,7 @@ extension VideoPlayer {
         private var supplementActionCancellables: [AnyCancellable] = []
 
         #if os(iOS)
-        var panHandlingAction: (any _PanHandlingAction)?
+        var panHandlingAction: any _PanHandlingAction?
         var didSwipe: Bool = false
         var lastTapLocation: CGPoint?
 

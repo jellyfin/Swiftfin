@@ -46,7 +46,6 @@ extension ItemView {
                 UIDevice.isTV ? 100 : 70
             }
 
-            @ViewBuilder
             private var logo: some View {
                 ImageView(
                     provider.item.imageSource(

@@ -11,6 +11,7 @@ import Defaults
 import FactoryKit
 import Foundation
 import JellyfinAPI
+import StatefulMacros
 
 // TODO: proper error catching
 // TODO: be a UserSessionService?
@@ -44,8 +45,6 @@ extension Container {
         .scope(.session)
     }
 }
-
-import StatefulMacros
 
 @MainActor
 @Stateful
@@ -233,7 +232,7 @@ final class MediaPlayerManager: ViewModel {
     }
 
     /// Holds a weak reference to the current media player proxy.
-    weak var proxy: (any MediaPlayerProxy)? {
+    weak var proxy: any MediaPlayerProxy? {
         didSet {
             if var proxy {
                 proxy.manager = self
@@ -255,7 +254,7 @@ final class MediaPlayerManager: ViewModel {
 
     init(
         provider: MediaPlayerItemProvider,
-        queue: (any MediaPlayerQueue)? = nil
+        queue: any MediaPlayerQueue? = nil
     ) {
         self.selectedItem = provider.item
         self.queue = queue.map { AnyMediaPlayerQueue($0) }
@@ -268,7 +267,7 @@ final class MediaPlayerManager: ViewModel {
 
     init(
         playbackItem: MediaPlayerItem,
-        queue: (any MediaPlayerQueue)? = nil
+        queue: any MediaPlayerQueue? = nil
     ) {
         self.selectedItem = playbackItem.baseItem
         self.queue = queue.map { AnyMediaPlayerQueue($0) }

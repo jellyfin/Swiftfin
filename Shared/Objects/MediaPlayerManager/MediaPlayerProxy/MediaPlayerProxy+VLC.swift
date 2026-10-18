@@ -142,7 +142,6 @@ class VLCMediaPlayerProxy: VideoMediaPlayerLayoutConfigurable,
         player.setSubtitleScale(.init(approximatePoints: Double(25 - configuration.size)))
     }
 
-    @ViewBuilder
     func videoPlayerBody(layout: VideoPlayer.VideoLayout) -> some View {
         VLCPlayerView(proxy: self, videoLayout: layout)
     }
@@ -161,8 +160,7 @@ class VLCMediaPlayerProxy: VideoMediaPlayerLayoutConfigurable,
     /// inputs and makes the player's reported time relative to that offset.
     @discardableResult
     private func applyPendingStartTimeIfPossible() -> Bool {
-        guard let pendingStartTime else { return false }
-        guard player.isSeekable else { return false }
+        guard let pendingStartTime, player.isSeekable else { return false }
 
         self.pendingStartTime = nil
 

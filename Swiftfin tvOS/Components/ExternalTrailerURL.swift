@@ -26,10 +26,10 @@ struct ExternalTrailerURL {
         }
 
         for source in Source.allCases where source.hostPatterns.contains(where: { host.contains($0) }) {
-            if let requiredPathComponents = source.requiredPathComponents {
-                if !requiredPathComponents.contains(where: { url.path.contains($0) }) {
-                    continue
-                }
+            if let requiredPathComponents = source.requiredPathComponents,
+               !requiredPathComponents.contains(where: { url.path.contains($0) })
+            {
+                continue
             }
 
             guard let deepLink = source.buildDeepLink(url) else {

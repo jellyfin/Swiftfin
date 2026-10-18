@@ -52,13 +52,12 @@ class ChapterPreviewImageProvider: PreviewImageProvider {
         }
 
         let newTask = Task<UIImage?, Never> {
-            guard let client = Container.shared.currentUserSession()?.client else { return nil }
-            guard let chapterInfo = chapters[safe: chapterIndex], let imageUrl = chapterInfo.imageSource?.url else { return nil }
+            guard let client = Container.shared.currentUserSession()?.client, let chapterInfo = chapters[safe: chapterIndex],
+                  let imageUrl = chapterInfo.imageSource?.url else { return nil }
 
             let request: Request<Data> = .init(url: imageUrl)
 
-            guard let response = try? await client.send(request) else { return nil }
-            guard let image = UIImage(data: response.value) else { return nil }
+            guard let response = try? await client.send(request), let image = UIImage(data: response.value) else { return nil }
 
             return image
         }

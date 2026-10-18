@@ -43,7 +43,7 @@ final class FilterViewModel: ViewModel {
     /// Fixed filters, excluded from selection state and reset actions
     let staticFilters: ItemFilterCollection
 
-    private let parent: (any LibraryParent)?
+    private let parent: any LibraryParent?
 
     var hasActiveFilters: Bool {
         staticFilters.union(currentFilters) != staticFilters
@@ -56,7 +56,7 @@ final class FilterViewModel: ViewModel {
     }
 
     init(
-        parent: (any LibraryParent)? = nil,
+        parent: any LibraryParent? = nil,
         currentFilters: ItemFilterCollection = .default,
         staticFilters: ItemFilterCollection = .default
     ) {

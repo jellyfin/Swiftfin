@@ -31,7 +31,6 @@ extension VideoPlayer.PlaybackControls {
             !manager.item.isLiveStream
         }
 
-        @ViewBuilder
         private var playButton: some View {
             Button {
                 switch manager.playbackRequestStatus {

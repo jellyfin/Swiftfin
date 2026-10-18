@@ -134,7 +134,6 @@ extension RemoteImageSearchView {
             }
         }
 
-        @ViewBuilder
         private func imageButton(_ image: RemoteImageInfo) -> some View {
             PosterButton(
                 item: image,

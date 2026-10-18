@@ -59,7 +59,6 @@ extension MediaChaptersSupplement {
             manager.setPlaybackRequestStatus(status: .playing)
         }
 
-        @ViewBuilder
         private var content: some View {
             VideoPlayer.PosterCollectionView(
                 data: supplement.chapters,

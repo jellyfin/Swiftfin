@@ -25,7 +25,6 @@ extension VideoPlayer.PlaybackControls {
         @Router
         private var router
 
-        @ViewBuilder
         private var closeButton: some View {
             Button {
                 if viewState.isPresentingSupplement {
@@ -44,7 +43,6 @@ extension VideoPlayer.PlaybackControls {
             .frame(width: Self.buttonSize, height: Self.buttonSize)
         }
 
-        @ViewBuilder
         private var content: some View {
             HStack(alignment: UIDevice.isTV ? .bottom : .center) {
 
@@ -86,16 +84,13 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         var item: BaseItemDto
 
         private var _titleSubtitle: (title: String, subtitle: String?) {
-            if item.type == .episode {
-                if let parentTitle = item.parentTitle {
-                    return (title: parentTitle, subtitle: item.seasonEpisodeLabel)
-                }
+            if item.type == .episode, let parentTitle = item.parentTitle {
+                return (title: parentTitle, subtitle: item.seasonEpisodeLabel)
             }
 
             return (title: item.displayTitle, subtitle: nil)
         }
 
-        @ViewBuilder
         private func _subtitle(_ subtitle: String) -> some View {
             Text(subtitle)
                 .font(UIDevice.isTV ? .caption : .subheadline)

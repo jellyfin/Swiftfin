@@ -136,8 +136,7 @@ class NowPlayableObserver: ViewModel, MediaPlayerObserver {
 
         itemImageCancellable = Task {
             let currentBaseItem = newItem.baseItem
-            guard let image = await newItem.thumbnailProvider?() else { return }
-            guard manager?.item.id == currentBaseItem.id else { return }
+            guard let image = await newItem.thumbnailProvider?(), manager?.item.id == currentBaseItem.id else { return }
 
             await MainActor.run {
                 setNowPlayingMetadata(

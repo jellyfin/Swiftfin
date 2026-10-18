@@ -54,7 +54,6 @@ struct SeriesEpisodeContentGroup: ContentGroup, Identifiable {
             viewModel.elements.first { $0.id == selection }
         }
 
-        @ViewBuilder
         private var seasonSelectorView: some View {
             SeasonSelector(
                 selection: $selection,

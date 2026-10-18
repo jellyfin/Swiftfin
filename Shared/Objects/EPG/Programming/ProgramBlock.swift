@@ -54,9 +54,9 @@ struct ProgramBlock: Identifiable {
     }
 }
 
+@MainActor
 extension Collection<BaseItemDto> {
 
-    @MainActor
     func programBlocks(
         startDate: Date,
         endDate: Date

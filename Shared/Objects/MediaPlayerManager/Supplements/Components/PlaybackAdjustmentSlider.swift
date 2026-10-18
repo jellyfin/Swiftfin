@@ -58,7 +58,6 @@ struct PlaybackAdjustmentSlider: View {
         #endif
     }
 
-    @ViewBuilder
     private var presetButtons: some View {
         ForEach(presets, id: \.self) { preset in
             Button {

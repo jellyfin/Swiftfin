@@ -93,7 +93,6 @@ extension CustomDeviceProfilesView {
                 #endif
         }
 
-        @ViewBuilder
         private var contentView: some View {
             Form(systemImage: "doc") {
                 Section(L10n.behavior) {

@@ -130,7 +130,6 @@ private struct CoordinatedInitialFocusModifier: ViewModifier {
 
     let role: FocusCoordinator.InitialFocusRole
 
-    @ViewBuilder
     func body(content: Content) -> some View {
         switch role {
         case .placeholder:

@@ -108,7 +108,6 @@ private struct BaseItemDtoLibraryListElement: View {
         item.resolvedLibraryStyle(libraryStyle)
     }
 
-    @ViewBuilder
     private func currentProgramView(_ program: BaseItemDto) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             if program.id != item.id {
@@ -146,7 +145,6 @@ private struct BaseItemDtoLibraryListElement: View {
         }
     }
 
-    @ViewBuilder
     private var accessoryView: some View {
         DotHStack {
             if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLabel {

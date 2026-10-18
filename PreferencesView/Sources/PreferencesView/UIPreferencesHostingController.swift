@@ -139,8 +139,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
     private var _pressCommandActions: [PressCommandAction] = []
 
     override public func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-        guard let buttonPress = presses.first?.type else { return }
-        guard let action = _pressCommandActions
+        guard let buttonPress = presses.first?.type, let action = _pressCommandActions
             .first(where: { $0.press == buttonPress }) else { return }
 
         action.action()
