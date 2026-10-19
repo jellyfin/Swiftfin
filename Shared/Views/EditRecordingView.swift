@@ -64,12 +64,12 @@ struct EditRecordingView: View {
         }
     }
 
-    @ViewBuilder
     private func seriesSections(_ seriesRecordingTimer: Binding<SeriesTimerInfoDto>) -> some View {
         Section {
             Picker(L10n.record, selection: seriesRecordingTimer.isRecordNewOnly.coalesce(false)) {
                 Text(L10n.newEpisodesOnly)
                     .tag(true)
+
                 Text(L10n.allEpisodes)
                     .tag(false)
             }
@@ -77,6 +77,7 @@ struct EditRecordingView: View {
             Picker(L10n.channels, selection: seriesRecordingTimer.isRecordAnyChannel.coalesce(false)) {
                 Text(seriesRecordingTimer.wrappedValue.channelName ?? L10n.oneChannel)
                     .tag(false)
+
                 Text(L10n.allChannels)
                     .tag(true)
             }
@@ -84,6 +85,7 @@ struct EditRecordingView: View {
             Picker(L10n.airTime, selection: seriesRecordingTimer.isRecordAnyTime.coalesce(false)) {
                 Text(seriesRecordingTimer.wrappedValue.startDate?.formatted(date: .omitted, time: .shortened) ?? L10n.airTime)
                     .tag(false)
+
                 Text(L10n.anytime)
                     .tag(true)
             }

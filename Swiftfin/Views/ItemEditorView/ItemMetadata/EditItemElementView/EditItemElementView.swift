@@ -39,6 +39,7 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
     @ViewBuilder
     private var navigationBarSelectView: some View {
         let isAllSelected = selectedElements.count == (elements.count)
+
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
             selectedElements = isAllSelected ? [] : Set(elements)
         }
@@ -56,7 +57,6 @@ struct EditItemElementView<Editor: ItemComponentEditor>: View {
         .enabled(isEditing)
     }
 
-    @ViewBuilder
     private var contentView: some View {
         List {
             InsetGroupedListHeader(viewModel.editor.displayTitle, description: viewModel.editor.description)

@@ -26,11 +26,8 @@ extension VideoPlayer.PlaybackControls {
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var scrubbedSecondsBox: PublishedBox<Duration>
-
+        @Environment(MediaSession.self)
+        private var mediaSession
         @State
         private var sliderSize: CGSize = .zero
 
@@ -44,18 +41,13 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var isScrubbing: Bool {
-            get {
-                viewState.isScrubbing
-            }
-            nonmutating set {
-                viewState.isScrubbing = newValue
-            }
+            viewState.isScrubbing
         }
 
         private var scrubbedProgress: Double {
-            guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+            guard let runtime = mediaSession.item.runtime, runtime > .zero else { return 0 }
 
-            let progress = scrubbedSecondsBox.value / runtime
+            let progress = viewState.scrubbedSeconds / runtime
             guard progress.isFinite else { return 0 }
 
             return clamp(progress, min: 0, max: 1)
@@ -63,13 +55,13 @@ extension VideoPlayer.PlaybackControls {
 
         private var currentProgress: Double? {
             guard isScrubbing,
-                  let runtime = manager.item.runtime,
+                  let runtime = mediaSession.item.runtime,
                   runtime > .zero
             else {
                 return nil
             }
 
-            let currentSeconds = viewState.scrubOriginSeconds ?? manager.seconds
+            let currentSeconds = viewState.scrubOriginSeconds ?? mediaSession.seconds
             let progress = (currentSeconds / runtime) * 100
             guard progress.isFinite else { return nil }
 
@@ -77,9 +69,9 @@ extension VideoPlayer.PlaybackControls {
         }
 
         private var videoSizeAspectRatio: CGFloat {
-            guard let aspectRatio = (manager.proxy as? any VideoMediaPlayerProxy)?
+            guard let aspectRatio = (mediaSession.player as? any VideoMediaPlayer)?
+                .videoState
                 .videoSize
-                .value
                 .aspectRatio
             else {
                 return 1.77
@@ -93,10 +85,10 @@ extension VideoPlayer.PlaybackControls {
 
             let videoWidth = previewImageHeight * videoSizeAspectRatio
             let p = (sliderSize.width * scrubbedProgress) - (videoWidth / 2)
+
             return clamp(p, min: 0, max: max(0, sliderSize.width - videoWidth))
         }
 
-        @ViewBuilder
         private var liveIndicator: some View {
             Text(L10n.live)
                 .font(UIDevice.isTV ? .caption : .subheadline)
@@ -110,12 +102,11 @@ extension VideoPlayer.PlaybackControls {
                 }
         }
 
-        @ViewBuilder
         private var videoPlayerSlider: some View {
             SliderContainer(
-                value: $scrubbedSecondsBox.value.map(
+                value: Bindable(viewState).scrubbedSeconds.map(
                     getter: {
-                        guard let runtime = manager.item.runtime, runtime > .zero else { return 0 }
+                        guard let runtime = mediaSession.item.runtime, runtime > .zero else { return 0 }
 
                         let seconds = $0.seconds
                         let runtimeSeconds = runtime.seconds
@@ -126,37 +117,35 @@ extension VideoPlayer.PlaybackControls {
                     setter: {
                         guard $0.isFinite else { return .zero }
 
-                        return (manager.item.runtime ?? .zero) * (clamp($0, min: 0, max: 100) / 100)
+                        return (mediaSession.item.runtime ?? .zero) * (clamp($0, min: 0, max: 100) / 100)
                     }
                 ),
                 total: 100,
-                isScrollingEnabled: manager.playbackRequestStatus == .paused && manager.state != .loadingItem,
+                isScrollingEnabled: mediaSession.playbackRequestStatus == .paused && mediaSession.canSeek,
                 originProgress: currentProgress
             )
             .onEditingChanged { isEditing in
                 if isEditing {
-                    if viewState.scrubOriginSeconds == nil {
-                        viewState.scrubOriginSeconds = manager.seconds
-                    }
-                    isScrubbing = true
+                    viewState.beginScrub()
                 }
             }
             .sliderContainerStyle(.capsule(showsProgressWhenUnfocused: false))
             .if(chapterSlider) { view in
-                if let chapters = manager.item.chapters, chapters.isNotEmpty {
-                    view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: manager.item.runtime ?? .zero) }
+                if let chapters = mediaSession.item.chapters, chapters.isNotEmpty {
+                    view.inverseMask { ChapterTrackMask(chapters: chapters, runtime: mediaSession.item.runtime ?? .zero) }
                 } else {
                     view
                 }
             }
             .frame(height: sliderHeight)
             .trackingSize($sliderSize)
-            .foregroundStyle(manager.state == .loadingItem ? .gray : .primary)
+            .foregroundStyle(mediaSession.canSeek ? Color.primary : Color.gray)
+            .disabled(!mediaSession.canSeek)
         }
 
         @ViewBuilder
         private var previewImage: some View {
-            if isScrubbing, let previewImageProvider = manager.playbackItem?.previewImageProvider {
+            if isScrubbing, let previewImageProvider = mediaSession.playbackItem?.previewImageProvider {
                 PreviewImageView(previewImageProvider: previewImageProvider)
                     .aspectRatio(videoSizeAspectRatio, contentMode: .fit)
                     .frame(height: previewImageHeight)
@@ -169,7 +158,7 @@ extension VideoPlayer.PlaybackControls {
 
         var body: some View {
             VStack(spacing: 10) {
-                if manager.item.isLiveStream {
+                if mediaSession.item.isLiveStream {
                     liveIndicator
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {

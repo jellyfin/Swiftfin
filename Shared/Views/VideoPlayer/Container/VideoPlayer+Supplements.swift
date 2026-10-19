@@ -19,21 +19,20 @@ extension VideoPlayer.UIContainerViewController {
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         @FocusState
         private var focusedElement: String?
 
         #if os(iOS)
-        @ViewBuilder
         private func closeButton(size: CGFloat) -> some View {
             Button {
                 viewState.selectedSupplementID = nil
                 UIDevice.impact(.light)
             } label: {
                 Label(L10n.close, systemImage: "chevron.down")
-                    .contentShape(Rectangle())
+                    .contentShape(.circle)
             }
             .frame(width: size, height: size)
             .modifier(
@@ -56,16 +55,16 @@ extension VideoPlayer.UIContainerViewController {
         }
 
         @ViewBuilder
-        private func supplementContainer(for supplement: some MediaPlayerSupplement) -> some View {
+        private func supplementContainer(for supplement: some VideoPlayerSupplement) -> some View {
             AlternateLayoutView(alignment: .topLeading) {
                 Color.clear
             } content: {
-                supplement.videoPlayerBody
+                supplement.body
                     .coordinatedFocus(ViewState.Focus.supplementContent(supplement.id))
             }
             .environment(viewState)
             .environmentObject(viewState.focusCoordinator)
-            .environmentObject(manager)
+            .environment(mediaSession)
             #if os(iOS)
             .background {
                 GestureView()

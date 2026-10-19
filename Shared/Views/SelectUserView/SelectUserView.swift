@@ -112,6 +112,7 @@ struct SelectUserView: View {
                 items.sorted { lhs, rhs in
                     let lhsDate = lhs.user.data.lastActivityDate ?? .distantPast
                     let rhsDate = rhs.user.data.lastActivityDate ?? .distantPast
+
                     return lhsDate < rhsDate
                 }
             }
@@ -138,6 +139,7 @@ struct SelectUserView: View {
                     policy: user.accessPolicy,
                     reason: user.accessPolicy.authenticateReason(user: user)
                 )
+
                 let pin = (evaluatedPolicy as? PinEvaluatedUserAccessPolicy)?.pin ?? ""
 
                 await viewModel.signIn(user, pin: pin)
@@ -167,7 +169,6 @@ struct SelectUserView: View {
         }
     }
 
-    @ViewBuilder
     private var contentView: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -371,6 +372,7 @@ struct SelectUserView: View {
         }
         .onChange(of: viewModel.servers.keys) {
             let newValue = viewModel.servers.keys
+
             if case let SelectUserServerSelection.server(id: id) = serverSelection,
                !newValue.contains(where: { $0.id == id })
             {
@@ -384,11 +386,6 @@ struct SelectUserView: View {
                 }
             }
         }
-        .onReceive(viewModel.$error) { error in
-            guard error != nil else { return }
-
-            UIDevice.feedback(.error)
-        }
         .onReceive(viewModel.events) { event in
             switch event {
             case let .signedIn(user):
@@ -400,6 +397,9 @@ struct SelectUserView: View {
                         await viewModel.error(error)
                     }
                 }
+
+            case .error:
+                UIDevice.feedback(.error)
             }
         }
         .onNotification(.didConnectToServer) { server in

@@ -15,6 +15,7 @@ extension CustomizeSettingsView {
     struct PosterSection: View {
 
         enum PreviewItemState: CaseIterable, Displayable {
+
             case inProgress
             case rewatching
             case played
@@ -82,7 +83,6 @@ extension CustomizeSettingsView {
             return item
         }
 
-        @ViewBuilder
         private func posterPreview(type: PosterDisplayType) -> some View {
             VStack(alignment: .leading) {
                 PosterImage(

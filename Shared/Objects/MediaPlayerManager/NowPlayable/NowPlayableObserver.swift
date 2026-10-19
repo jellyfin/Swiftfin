@@ -7,329 +7,453 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import Logging
 import MediaPlayer
-import Nuke
-
-// TODO: ensure proper state handling
-//       - manager states
-//       - playback request states
-// TODO: have MediaPlayerItem report supported commands
+import UIKit
 
 @MainActor
-class NowPlayableObserver: ViewModel, MediaPlayerObserver {
+final class NowPlayableObserver: MediaSessionObserver {
 
-    private var defaultRegisteredCommands: [NowPlayableCommand] {
+    private var isActive = false
+    private let logger = Logger.swiftfin()
+    private weak var mediaSession: MediaSession?
+    private weak var observedItem: MediaPlayerItem?
+    private var ownsAudioSession = false
+    private var playbackRequestStateBeforeInterruption: MediaSession.PlaybackRequestStatus?
+
+    private var cancellables = Set<AnyCancellable>()
+    private var commandTargets: [NowPlayableCommand: Any] = [:]
+    private var itemImageCancellable: AnyCancellable?
+    private var programRefreshTask: AnyCancellable?
+    private var programEndDate: Date?
+    private var itemMetadata: NowPlayableStaticMetadata?
+    private var itemArtwork: UIImage?
+    private var artworkSources: [ImageSource]?
+    private var languageOptions = NowPlayableLanguageOptions()
+
+    private var registeredCommands: [NowPlayableCommand] {
         [
-            .play,
-            .pause,
-            .togglePausePlay,
-            .skipBackward,
-            .skipForward,
-            .changePlaybackPosition,
-            // TODO: only register next/previous if there is a queue
-//            .nextTrack,
-//            .previousTrack,
+            .play, .pause, .stop, .togglePausePlay,
+            .skipBackward, .skipForward, .changePlaybackPosition,
+            .nextTrack, .previousTrack, .changePlaybackRate,
+            .enableLanguageOption, .disableLanguageOption,
         ]
     }
 
-    private let audioSessionMode: AVAudioSession.Mode
-    private let supportsMultichannelContent: Bool?
+    private var supportedRates: [Double] {
+        Array(Set(Defaults[.VideoPlayer.Playback.rates] + [mediaSession?.rate ?? 1]))
+            .filter { $0.isFinite && $0 > 0 }
+            .sorted()
+    }
 
-    private var itemImageCancellable: AnyCancellable?
-    private var playbackRequestStateBeforeInterruption: MediaPlayerManager.PlaybackRequestStatus = .playing
+    func observe(_ mediaSession: MediaSession) -> AnyCancellable {
+        self.mediaSession = mediaSession
+        setup()
 
-    weak var manager: MediaPlayerManager? {
-        willSet {
-            guard let newValue else { return }
-
-            setup(with: newValue)
+        return AnyCancellable { [self] in
+            MainActor.assumeIsolated {
+                stop()
+                self.mediaSession = nil
+            }
         }
     }
 
-    init(audioSessionMode: AVAudioSession.Mode = .default, supportsMultichannelContent: Bool? = nil) {
-        self.audioSessionMode = audioSessionMode
-        self.supportsMultichannelContent = supportsMultichannelContent
-        super.init()
-    }
+    private func setup() {
+        isActive = true
 
-    private func setup(with manager: MediaPlayerManager) {
-        do {
-            try startSession()
-        } catch {
-            logger.critical("Unable to activate audio session: \(error.localizedDescription)")
+        for command in NowPlayableCommand.allCases {
+            command.isEnabled(false)
         }
 
-        cancellables = []
+        for command in registeredCommands {
+            commandTargets[command] = command.addHandler { [weak self] action in
+                self?.handle(action) ?? .commandFailed
+            }
+        }
 
-        manager.actions
-            .sink { [weak self] newValue in self?.actionDidChange(newValue) }
-            .store(in: &cancellables)
+        let observations = [
+            MediaPlayerObservation { [weak mediaSession] in
+                mediaSession?.playbackItem
+            } onChange: { [weak self] item in
+                self?.playbackItemDidChange(item)
+            },
+            MediaPlayerObservation { [weak mediaSession] in
+                mediaSession?.playbackItem?.baseItem
+            } onChange: { [weak self] _ in
+                self?.metadataDidChange()
+            },
+            MediaPlayerObservation { [weak mediaSession] in
+                (
+                    mediaSession?.state, mediaSession?.playbackRequestStatus, mediaSession?.playbackState,
+                    mediaSession?.isSeeking, mediaSession?.rate
+                )
+            } onChange: { [weak self] _ in
+                self?.updatePlaybackInfo()
+                self?.updateRemoteCommands()
+            },
+            MediaPlayerObservation { [weak mediaSession] in
+                (
+                    mediaSession?.playbackItem?.effectiveSubtitleStreamIndex,
+                    mediaSession?.playbackItem?.effectiveSecondarySubtitleStreamIndex,
+                    mediaSession?.playbackItem?.selectedAudioStreamIndex
+                )
+            } onChange: { [weak self] _ in
+                self?.updateLanguageOptions()
+            },
+            MediaPlayerObservation { [weak mediaSession] in
+                (mediaSession?.queue?.nextItem, mediaSession?.queue?.previousItem)
+            } onChange: { [weak self] _ in
+                self?.updateRemoteCommands()
+            },
+            MediaPlayerObservation { [weak mediaSession] in
+                mediaSession?.observedSeconds
+            } onChange: { [weak self] _ in
+                self?.updatePlaybackInfo()
+            },
+        ]
 
-        manager.$playbackItem
-            .sink { [weak self] newValue in self?.playbackItemDidChange(newValue) }
-            .store(in: &cancellables)
+        observations.forEach { $0.store(in: &cancellables) }
 
-        manager.$playbackRequestStatus
-            .sink { [weak self] newValue in self?.playbackRequestStatusDidChange(newValue) }
-            .store(in: &cancellables)
-
-        manager.secondsBox
-            .$value
-            .sink { [weak self] newValue in self?.secondsDidChange(newValue) }
+        Defaults.publisher(.VideoPlayer.Playback.rates)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.updateRemoteCommands() }
             .store(in: &cancellables)
 
         Notifications[.avAudioSessionInterruption]
             .publisher
-            .sink { i in
-                Task { @MainActor in
-                    self.handleInterruption(type: i.0, options: i.1)
-                }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] interruption in
+                self?.handleInterruption(type: interruption.0, options: interruption.1)
             }
             .store(in: &cancellables)
 
-        Task { @MainActor in
-            configureRemoteCommands(
-                defaultRegisteredCommands,
-                commandHandler: handleCommand
-            )
-        }
+        Notifications[.avAudioSessionRouteChange]
+            .publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] reason in
+                guard reason == .oldDeviceUnavailable else { return }
+
+                self?.playbackRequestStateBeforeInterruption = .paused
+                self?.mediaSession?.setPlaybackRequestStatus(status: .paused)
+            }
+            .store(in: &cancellables)
+
+        updateRemoteCommands()
     }
 
-    private func playbackRequestStatusDidChange(_ newStatus: MediaPlayerManager.PlaybackRequestStatus) {
-        handleNowPlayablePlaybackChange(
-            playing: newStatus == .playing,
-            metadata: .init(
-                position: manager?.seconds ?? .zero,
-                duration: manager?.item.runtime ?? .zero
-            )
-        )
-    }
+    private func playbackItemDidChange(_ item: MediaPlayerItem?) {
+        guard observedItem !== item else { return }
 
-    private func secondsDidChange(_ newSeconds: Duration) {
-        handleNowPlayablePlaybackChange(
-            playing: true,
-            metadata: .init(
-                position: newSeconds,
-                duration: manager?.item.runtime ?? .zero
-            )
-        )
-    }
-
-    private func actionDidChange(_ newAction: MediaPlayerManager._Action) {
-        switch newAction {
-        case .stop, .error:
-            handleStopAction()
-        default: ()
-        }
-    }
-
-    // TODO: remove and respond to manager action publisher instead
-    // TODO: register different commands based on item capabilities
-    private func playbackItemDidChange(_ newItem: MediaPlayerItem?) {
-        itemImageCancellable?.cancel()
+        observedItem = item
         itemImageCancellable = nil
-        guard let newItem else { return }
+        programRefreshTask = nil
+        programEndDate = nil
 
-        setNowPlayingMetadata(newItem.baseItem.nowPlayableStaticMetadata())
+        itemMetadata = nil
+        itemArtwork = nil
+        artworkSources = nil
+        languageOptions = NowPlayableLanguageOptions(item: item)
 
-        itemImageCancellable = Task {
-            let currentBaseItem = newItem.baseItem
-            guard let image = await newItem.thumbnailProvider?() else { return }
-            guard manager?.item.id == currentBaseItem.id else { return }
+        guard item != nil else {
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+            updateRemoteCommands()
+            return
+        }
 
-            await MainActor.run {
-                setNowPlayingMetadata(
-                    currentBaseItem.nowPlayableStaticMetadata(image)
-                )
+        configureAudioSession()
+        metadataDidChange()
+        updateRemoteCommands()
+    }
+
+    private func metadataDidChange() {
+        guard isActive, let item = mediaSession?.playbackItem, observedItem === item else { return }
+
+        let baseItem = item.baseItem
+        let metadata = baseItem.nowPlayableStaticMetadata()
+
+        if itemMetadata != metadata {
+            let previousType = itemMetadata?.mediaType
+            itemMetadata = metadata
+
+            if let previousType, previousType != metadata.mediaType {
+                configureAudioSession()
+            }
+
+            publishMetadata()
+        }
+
+        let sources = baseItem.nowPlayingImageSources
+
+        if artworkSources != sources {
+            itemImageCancellable = nil
+            artworkSources = sources
+            itemArtwork = nil
+            publishMetadata()
+
+            itemImageCancellable = Task { [weak self, weak item] in
+                guard let item else { return }
+
+                let image = await item.thumbnailProvider?()
+                guard !Task.isCancelled, let self, isActive, mediaSession?.playbackItem === item,
+                      item.baseItem.nowPlayingImageSources == sources else { return }
+
+                itemArtwork = image
+
+                // Read the current metadata after awaiting to avoid replacing an edit with an old snapshot.
+                itemMetadata = item.baseItem.nowPlayableStaticMetadata()
+                publishMetadata()
+            }
+            .asAnyCancellable()
+        }
+
+        scheduleProgramRefresh()
+        updatePlaybackInfo()
+    }
+
+    private func publishMetadata() {
+        guard isActive, let item = mediaSession?.playbackItem, observedItem === item else { return }
+
+        let center = MPNowPlayingInfoCenter.default()
+        var info = center.nowPlayingInfo ?? [:]
+        item.baseItem.nowPlayableStaticMetadata(itemArtwork).update(&info)
+        center.nowPlayingInfo = info
+
+        (mediaSession?.player as? MediaPlayerMetadataProviding)?.updateMetadata(for: item, artwork: itemArtwork)
+        updatePlaybackInfo()
+    }
+
+    private func scheduleProgramRefresh() {
+        guard let mediaSession, let item = mediaSession.playbackItem, item.baseItem.isLiveStream else { return }
+
+        let session = mediaSession.userSession
+
+        let endDate = item.baseItem.currentProgram?.endDate
+        guard programRefreshTask == nil || programEndDate != endDate else { return }
+
+        programRefreshTask = nil
+        programEndDate = endDate
+
+        programRefreshTask = Task { [weak self, weak item] in
+            var hasRefreshed = false
+
+            while !Task.isCancelled {
+                guard let item else { return }
+
+                let endDate = item.baseItem.currentProgram?.endDate
+                let minimumDelay: TimeInterval = hasRefreshed ? 30 : 1
+                let delay = endDate.map { max($0.timeIntervalSinceNow + 1, minimumDelay) } ?? 30
+
+                do {
+                    try await Task.sleep(for: .seconds(delay))
+                } catch {
+                    return
+                }
+
+                guard let self, isActive, self.mediaSession?.playbackItem === item else { return }
+
+                do {
+                    _ = try await session.getFullItem(item.baseItem)
+                } catch {
+                    guard !Task.isCancelled else { return }
+
+                    logger.debug("Unable to refresh current program: \(error.localizedDescription)")
+                }
+
+                hasRefreshed = true
             }
         }
         .asAnyCancellable()
+    }
 
-        handleNowPlayablePlaybackChange(
-            playing: true,
-            metadata: .init(
-                position: manager?.seconds ?? .zero,
-                duration: manager?.item.runtime ?? .zero
-            )
+    private func updateLanguageOptions() {
+        languageOptions = NowPlayableLanguageOptions(item: mediaSession?.playbackItem)
+        updatePlaybackInfo()
+        updateRemoteCommands()
+    }
+
+    private func updatePlaybackInfo() {
+        guard isActive, let mediaSession, let item = mediaSession.playbackItem else { return }
+
+        let state = mediaSession.playbackState
+        let isAdvancing = mediaSession.playbackRequestStatus == .playing && state.isPlaying
+            && !mediaSession.isSeeking && !state.isSeeking && !state.isBuffering && !state.isWaitingForDisplay
+
+        let metadata = NowPlayableDynamicMetadata(
+            rate: isAdvancing ? mediaSession.rate : 0,
+            defaultRate: mediaSession.rate,
+            position: mediaSession.observedSeconds,
+            duration: item.baseItem.isLiveStream ? nil : item.baseItem.runtime ?? state.duration,
+            currentLanguageOptions: languageOptions.current,
+            availableLanguageOptionGroups: languageOptions.groups
         )
+
+        let center = MPNowPlayingInfoCenter.default()
+        var info = center.nowPlayingInfo ?? [:]
+        metadata.update(&info)
+        center.nowPlayingInfo = info
     }
 
-    private func handleStopAction() {
-        cancellables = []
+    private func updateRemoteCommands() {
+        let canControl = mediaSession?.canControlPlayback == true
 
-        for command in defaultRegisteredCommands {
-            command.removeHandler()
+        for command in [NowPlayableCommand.play, .pause, .stop, .togglePausePlay] {
+            command.isEnabled(canControl)
         }
 
-        Task(priority: .userInitiated) {
-            // TODO: figure out way to not need delay
-            // Delay to wait for io to stop
-            try? await Task.sleep(for: .seconds(0.3))
-
-            do {
-                try stopSession()
-            } catch {
-                logger.critical("Unable to stop audio session: \(error.localizedDescription)")
-            }
+        for command in [NowPlayableCommand.skipBackward, .skipForward, .changePlaybackPosition] {
+            command.isEnabled(mediaSession?.canSeek == true)
         }
+
+        NowPlayableCommand.nextTrack.isEnabled(canControl && mediaSession?.queue?.hasNextItem == true)
+        NowPlayableCommand.previousTrack.isEnabled(canControl && mediaSession?.queue?.hasPreviousItem == true)
+
+        NowPlayableCommand.changePlaybackRate.isEnabled(canControl && mediaSession?.item.isLiveStream == false)
+        MPRemoteCommandCenter.shared().changePlaybackRateCommand.supportedPlaybackRates = supportedRates.map { NSNumber(value: $0) }
+
+        let canSelectLanguage = mediaSession?.playbackItem?.canSelectTracks == true && !languageOptions.groups.isEmpty
+        NowPlayableCommand.enableLanguageOption.isEnabled(canSelectLanguage)
+        NowPlayableCommand.disableLanguageOption
+            .isEnabled(canSelectLanguage && languageOptions.current.contains { $0.languageOptionType == .legible })
     }
 
-    // TODO: complete by referencing apple code
-    //       - restart
-    @MainActor
-    private func handleInterruption(
-        type: AVAudioSession.InterruptionType,
-        options: AVAudioSession.InterruptionOptions
-    ) {
-        switch type {
-        case .began:
-            playbackRequestStateBeforeInterruption = manager?.playbackRequestStatus ?? .playing
-            manager?.setPlaybackRequestStatus(status: .paused)
+    // Decode framework events at registration and keep transport decisions on the main actor.
+    func handle(_ action: NowPlayableCommand.Action) -> MPRemoteCommandHandlerStatus {
+        guard isActive, let mediaSession, mediaSession.canControlPlayback else { return .commandFailed }
 
-        case .ended:
-            do {
-                try startSession()
-
-                if playbackRequestStateBeforeInterruption == .playing {
-                    if options.contains(.shouldResume) {
-                        manager?.setPlaybackRequestStatus(status: .playing)
-                        manager?.proxy?.play()
-                    } else {
-                        manager?.setPlaybackRequestStatus(status: .paused)
-                    }
-                }
-            } catch {
-                logger.critical("Unable to reactivate audio session after interruption: \(error.localizedDescription)")
-                manager?.stop()
-            }
-
-        @unknown default: ()
-        }
-    }
-
-    @MainActor
-    private func handleCommand(
-        command: NowPlayableCommand,
-        event: MPRemoteCommandEvent
-    ) -> MPRemoteCommandHandlerStatus {
-        switch command {
+        switch action {
         case .pause:
-            manager?.setPlaybackRequestStatus(status: .paused)
+            if playbackRequestStateBeforeInterruption != nil {
+                playbackRequestStateBeforeInterruption = .paused
+            }
+
+            mediaSession.setPlaybackRequestStatus(status: .paused)
 
         case .play:
-            manager?.setPlaybackRequestStatus(status: .playing)
+            do {
+                try startSession()
+            } catch {
+                return .commandFailed
+            }
+
+            playbackRequestStateBeforeInterruption = nil
+            mediaSession.setPlaybackRequestStatus(status: .playing)
 
         case .togglePausePlay:
-            manager?.togglePlayPause()
+            return handle(mediaSession.playbackRequestStatus == .playing ? .pause : .play)
 
-        case .skipBackward:
-            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+        case .stop:
+            mediaSession.stop()
 
-            manager?.proxy?.jumpBackward(.seconds(event.interval))
+        case .nextTrack, .previousTrack:
+            let intent: PlaybackIntent? = if case .nextTrack = action {
+                mediaSession.queue?.nextItem
+            } else {
+                mediaSession.queue?.previousItem
+            }
 
-        case .skipForward:
-            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
+            guard let intent, mediaSession.playNewItem(intent: intent) != nil else { return .noSuchContent }
 
-            manager?.proxy?.jumpForward(.seconds(event.interval))
+        case let .skip(offset):
+            guard mediaSession.seek(by: offset) else { return .commandFailed }
 
-        case .changePlaybackPosition:
-            guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
+        case let .seek(position):
+            guard mediaSession.seek(to: position) else { return .commandFailed }
 
-            manager?.proxy?.setSeconds(Duration.seconds(event.positionTime))
+        case let .rate(rate):
+            guard rate.isFinite, rate > 0, !mediaSession.item.isLiveStream,
+                  let supported = supportedRates.first(where: { abs($0 - rate) < 0.0001 }) else { return .commandFailed }
 
-        case .nextTrack:
-            guard let nextItem = manager?.queue?.nextItem else { return .commandFailed }
+            mediaSession.rate = supported
 
-            manager?.playNewItem(provider: nextItem)
+        case let .language(option, enabled):
+            guard let item = mediaSession.playbackItem,
+                  NowPlayableLanguageOptions(item: item).select(option, enabled: enabled, on: item) else { return .commandFailed }
 
-        case .previousTrack:
-            guard let previousItem = manager?.queue?.previousItem else { return .commandFailed }
-
-            manager?.playNewItem(provider: previousItem)
-
-        default: ()
+            updateLanguageOptions()
         }
+
+        updatePlaybackInfo()
+        updateRemoteCommands()
 
         return .success
     }
 
-    private func handleNowPlayablePlaybackChange(
-        playing: Bool,
-        metadata: NowPlayableDynamicMetadata
-    ) {
-        setNowPlayingPlaybackInfo(metadata)
-        MPNowPlayingInfoCenter.default().playbackState = playing ? .playing : .paused
-    }
+    func stop() {
+        guard isActive else { return }
 
-    private func configureRemoteCommands(
-        _ commands: [NowPlayableCommand],
-        commandHandler: @escaping (NowPlayableCommand, MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus
-    ) {
-        guard commands.isNotEmpty else { return }
+        isActive = false
+        cancellables.removeAll()
+        itemImageCancellable = nil
+        programRefreshTask = nil
 
-        for command in commands {
-            command.addHandler(commandHandler)
-            command.isEnabled(true)
+        for (command, target) in commandTargets {
+            command.remoteCommand.removeTarget(target)
+            command.isEnabled(false)
+        }
+
+        commandTargets.removeAll()
+
+        itemMetadata = nil
+        itemArtwork = nil
+        artworkSources = nil
+        observedItem = nil
+        playbackRequestStateBeforeInterruption = nil
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+
+        do {
+            if ownsAudioSession {
+                try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+                ownsAudioSession = false
+            }
+        } catch {
+            logger.warning("Unable to stop audio session: \(error.localizedDescription)")
         }
     }
 
-    private func setNowPlayingMetadata(_ metadata: NowPlayableStaticMetadata) {
+    private func handleInterruption(type: AVAudioSession.InterruptionType, options: AVAudioSession.InterruptionOptions) {
+        guard ownsAudioSession else { return }
 
-        let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default()
-        var nowPlayingInfo: [String: Any] = [:]
+        switch type {
+        case .began:
+            playbackRequestStateBeforeInterruption = mediaSession?.playbackRequestStatus ?? .paused
+            mediaSession?.setPlaybackRequestStatus(status: .paused)
 
-        nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = metadata.mediaType.rawValue
-        nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = metadata.isLiveStream
-        nowPlayingInfo[MPMediaItemPropertyTitle] = metadata.title
-        nowPlayingInfo[MPMediaItemPropertyArtist] = metadata.artist
-        nowPlayingInfo[MPMediaItemPropertyArtwork] = metadata.artwork
-        nowPlayingInfo[MPMediaItemPropertyAlbumArtist] = metadata.albumArtist
-        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = metadata.albumTitle
+        case .ended:
+            let previous = playbackRequestStateBeforeInterruption
+            playbackRequestStateBeforeInterruption = nil
 
-        nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
+            guard previous == .playing, options.contains(.shouldResume) else { return }
+
+            do {
+                try startSession()
+                mediaSession?.setPlaybackRequestStatus(status: .playing)
+            } catch {
+                logger.error("Unable to reactivate audio session: \(error.localizedDescription)")
+            }
+
+        @unknown default:
+            break
+        }
     }
 
-    private func setNowPlayingPlaybackInfo(_ metadata: NowPlayableDynamicMetadata) {
-
-        let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default()
-        var nowPlayingInfo: [String: Any] = nowPlayingInfoCenter.nowPlayingInfo ?? [:]
-
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = Float(metadata.duration.seconds)
-        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = Float(metadata.position.seconds)
-        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = metadata.rate
-        nowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
-        nowPlayingInfo[MPNowPlayingInfoPropertyCurrentLanguageOptions] = metadata.currentLanguageOptions
-        nowPlayingInfo[MPNowPlayingInfoPropertyAvailableLanguageOptions] = metadata.availableLanguageOptionGroups
-
-        nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
+    private func configureAudioSession() {
+        do {
+            try startSession()
+        } catch {
+            logger.warning("Unable to update audio session: \(error.localizedDescription)")
+        }
     }
 
     private func startSession() throws {
+        let session = AVAudioSession.sharedInstance()
+        let isAudio = mediaSession?.item.nowPlayableStaticMetadata().mediaType == .audio
 
-        let audioSession = AVAudioSession.sharedInstance()
+        try session.setCategory(.playback, mode: isAudio ? .default : .moviePlayback)
+        try session.setSupportsMultichannelContent(true)
+        try session.setActive(true)
 
-        do {
-            try audioSession.setCategory(.playback, mode: audioSessionMode)
-            if let supportsMultichannelContent {
-                try audioSession.setSupportsMultichannelContent(supportsMultichannelContent)
-            }
-            try audioSession.setActive(true)
-            logger.trace("Started AVAudioSession")
-        } catch {
-            logger.critical("Unable to activate AVAudioSession instance: \(error.localizedDescription)")
-            throw error
-        }
-    }
-
-    private func stopSession() throws {
-        do {
-            try AVAudioSession.sharedInstance().setActive(false)
-            logger.trace("Stopped AVAudioSession")
-        } catch {
-            logger.critical("Unable to deactivate AVAudioSession instance: \(error.localizedDescription)")
-            throw error
-        }
+        ownsAudioSession = true
     }
 }

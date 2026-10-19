@@ -7,23 +7,20 @@
 //
 
 import Defaults
-import FactoryKit
 import Foundation
 import JellyfinAPI
 import Logging
 
-// TODO: build report of determined values for playback information
-//       - transcode, video stream, path
-
 extension MediaPlayerItem {
 
-    /// Builds a playback item from server metadata and playback information
     static func build(
         for initialItem: BaseItemDto,
+        userSession: UserSession,
         mediaSource _initialMediaSource: MediaSourceInfo? = nil,
         audioStreamIndex: Int? = nil,
         subtitleStreamIndex: Int? = nil,
-        videoPlayerType: VideoPlayerType = Defaults[.VideoPlayer.videoPlayerType],
+        secondarySubtitleStreamIndex: Int? = nil,
+        mediaPlayerType: MediaPlayerType,
         requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate],
         compatibilityMode: PlaybackCompatibility = Defaults[.VideoPlayer.Playback.compatibilityMode],
         modifyItem: ((inout BaseItemDto) -> Void)? = nil
@@ -35,19 +32,13 @@ extension MediaPlayerItem {
             logger.critical("No item ID!")
             throw ErrorMessage(L10n.unknownError)
         }
-        guard let userSession = Container.shared.currentUserSession() else {
-            logger.critical("No user session!")
-            throw ErrorMessage(L10n.unknownError)
-        }
 
         // Keep the shared record alive through playback setup
         let storedItem = try await userSession.getFullItem(initialItem)
         guard var item = storedItem.value else { throw ItemStore.StoreError.itemUnavailable }
 
         // Playback overrides apply to this copy without updating the shared record
-        if let modifyItem {
-            modifyItem(&item)
-        }
+        modifyItem?(&item)
 
         guard let initialMediaSource = {
             if let _initialMediaSource {
@@ -65,12 +56,18 @@ extension MediaPlayerItem {
             throw ErrorMessage(L10n.unknownError)
         }
 
-        let maxBitrate = try await MediaPlayerManager.getMaxBitrate(for: requestedBitrate)
+        let maxBitrate = try await getMaxBitrate(for: requestedBitrate, userSession: userSession)
 
         let deviceProfile = DeviceProfile.build(
-            for: videoPlayerType,
+            for: mediaPlayerType,
             compatibilityMode: compatibilityMode,
-            maxBitrate: maxBitrate
+            maxBitrate: maxBitrate,
+            mediaSource: initialMediaSource
+        )
+
+        // Resolve accessibility choices before negotiating a transcode or burned-in subtitles.
+        let selection = MediaPlaybackPreferences.current.selection(
+            in: initialMediaSource, audio: audioStreamIndex, subtitle: subtitleStreamIndex
         )
 
         var playbackInfo = PlaybackInfoDto()
@@ -79,8 +76,8 @@ extension MediaPlayerItem {
         playbackInfo.liveStreamID = initialMediaSource.liveStreamID
         playbackInfo.maxStreamingBitrate = maxBitrate
         playbackInfo.userID = userSession.user.id
-        playbackInfo.audioStreamIndex = audioStreamIndex
-        playbackInfo.subtitleStreamIndex = subtitleStreamIndex
+        playbackInfo.audioStreamIndex = selection.audio
+        playbackInfo.subtitleStreamIndex = selection.subtitle
 
         if !item.isLiveStream, initialMediaSource.type != .placeholder {
             playbackInfo.mediaSourceID = initialMediaSource.id
@@ -91,101 +88,142 @@ extension MediaPlayerItem {
             playbackInfo
         )
 
-        let response = try await userSession.send(request)
-        guard storedItem.value != nil else { throw ItemStore.StoreError.itemUnavailable }
+        try userSession.items.validate()
+        let client = userSession.client
 
-        let mediaSource: MediaSourceInfo? = {
+        // An opening request must return its live-stream IDs even if the intent is superseded.
+        let response = try await Task { try await client.send(request) }.value
 
-            guard let mediaSources = response.value.mediaSources else { return nil }
+        do {
+            try userSession.items.validate()
 
-            if let matchingTag = mediaSources.first(where: { $0.eTag == initialMediaSource.eTag }) {
-                return matchingTag
-            }
+            guard storedItem.value != nil else { throw ItemStore.StoreError.itemUnavailable }
 
-            for source in mediaSources {
-                if let openToken = source.openToken,
-                   let id = source.id,
-                   openToken.contains(id)
+            let mediaSource: MediaSourceInfo? = {
+
+                guard let mediaSources = response.value.mediaSources else { return nil }
+
+                if let tag = initialMediaSource.eTag,
+                   let matchingTag = mediaSources.first(where: { $0.eTag == tag })
                 {
-                    return source
+                    return matchingTag
                 }
-            }
 
-            if let initialID = initialMediaSource.id,
-               let matchingMediaSource = mediaSources.first(where: { $0.id == initialID })
-            {
-                return matchingMediaSource
-            }
-
-            logger.warning("Unable to find matching media source, defaulting to first media source")
-
-            return mediaSources.first
-        }()
-
-        guard let mediaSource else {
-            throw ErrorMessage("Unable to find media source for item")
-        }
-
-        item.runTimeTicks = mediaSource.runTimeTicks ?? item.runTimeTicks
-
-        guard let playSessionID = response.value.playSessionID else {
-            throw ErrorMessage("No associated play session ID")
-        }
-
-        let playbackURL = try Self.streamURL(
-            item: item,
-            mediaSource: mediaSource,
-            playSessionID: playSessionID,
-            userSession: userSession,
-            logger: logger
-        )
-
-        let previewImageProvider: (any PreviewImageProvider)? = {
-            let previewImageScrubbingSetting = StoredValues[.User.previewImageScrubbing]
-            lazy var chapterPreviewImageProvider: ChapterPreviewImageProvider? = {
-                if let chapters = item.fullChapterInfo, chapters.contains(where: { $0.imageSource?.url != nil }) {
-                    return ChapterPreviewImageProvider(chapters: chapters)
+                if let initialID = initialMediaSource.id,
+                   let matchingMediaSource = mediaSources.first(where: { $0.id == initialID })
+                {
+                    return matchingMediaSource
                 }
-                return nil
+
+                for source in mediaSources {
+                    if let openToken = source.openToken,
+                       let id = source.id,
+                       openToken.contains(id)
+                    {
+                        return source
+                    }
+                }
+
+                logger.warning("Unable to find matching media source, defaulting to first media source")
+
+                return mediaSources.first
             }()
 
-            if case let PreviewImageScrubbingOption.trickplay(fallbackToChapters: fallbackToChapters) = previewImageScrubbingSetting {
-                if let mediaSourceID = mediaSource.id,
-                   let trickplayInfo = item.trickplay?[mediaSourceID]?.first
-                {
-                    return TrickplayPreviewImageProvider(
-                        info: trickplayInfo.value,
-                        itemID: itemID,
-                        mediaSourceID: mediaSourceID,
-                        runtime: item.runtime ?? .zero
-                    )
-                }
-
-                if fallbackToChapters {
-                    return chapterPreviewImageProvider
-                }
-            } else if previewImageScrubbingSetting == .chapters {
-                return chapterPreviewImageProvider
+            guard let mediaSource else {
+                throw ErrorMessage("Unable to find media source for item")
             }
 
-            return nil
-        }()
+            item.runTimeTicks = mediaSource.runTimeTicks ?? item.runTimeTicks
 
-        return .init(
-            baseItem: item,
-            mediaSource: mediaSource,
-            playSessionID: playSessionID,
-            url: playbackURL,
-            requestedBitrate: requestedBitrate,
-            deviceProfile: deviceProfile,
-            initialAudioStreamIndex: audioStreamIndex,
-            initialSubtitleStreamIndex: subtitleStreamIndex,
-            previewImageProvider: previewImageProvider,
-            thumbnailProvider: { await storedItem.value?.getNowPlayingImage() }
-        )
+            guard let playSessionID = response.value.playSessionID else {
+                throw ErrorMessage("No associated play session ID")
+            }
+
+            let playbackURL = try Self.streamURL(
+                item: item,
+                mediaSource: mediaSource,
+                playSessionID: playSessionID,
+                userSession: userSession,
+                logger: logger
+            )
+
+            let automaticTrackDefaults = MediaPlaybackPreferences.Selection(
+                audio: initialMediaSource.defaultAudioStreamIndex
+                    ?? (selection.audio == nil ? mediaSource.defaultAudioStreamIndex : nil)
+                    ?? initialMediaSource.mediaStreams?.first(where: { $0.type == .audio && $0.isDefault == true })?.index
+                    ?? initialMediaSource.mediaStreams?.first(where: { $0.type == .audio && $0.isExternal != true })?.index,
+                subtitle: initialMediaSource.defaultSubtitleStreamIndex
+                    ?? (selection.subtitle == nil ? mediaSource.defaultSubtitleStreamIndex : -1)
+            )
+
+            let chapters = item.fullChapterInfo(using: client)
+            let temporaryFiles = PlaybackTemporaryFiles(accessToken: client.accessToken)
+
+            let previewImageProvider = PreviewImageProvider(
+                option: StoredValues[.User.previewImageScrubbing],
+                item: item,
+                mediaSourceID: mediaSource.id,
+                chapters: chapters,
+                client: client,
+                resolveImage: temporaryFiles.image(for:)
+            )
+
+            return .init(
+                baseItem: item,
+                mediaSource: mediaSource,
+                playSessionID: playSessionID,
+                url: playbackURL,
+                requestedBitrate: requestedBitrate,
+                deviceProfile: deviceProfile,
+                initialAudioStreamIndex: selection.audio,
+                initialSubtitleStreamIndex: selection.subtitle,
+                initialSecondarySubtitleStreamIndex: secondarySubtitleStreamIndex,
+                automaticTrackDefaults: automaticTrackDefaults,
+                chapters: chapters,
+                temporaryFiles: temporaryFiles,
+                previewImageProvider: previewImageProvider,
+                thumbnailProvider: { await storedItem.value?.getNowPlayingImage() }
+            )
+        } catch {
+            closeLiveStreams(response.value.mediaSources ?? [], userSession: userSession)
+            throw error
+        }
     }
 
-    // TODO: audio type stream
+    private static func getMaxBitrate(
+        for requestedBitrate: PlaybackBitrate,
+        userSession: UserSession,
+        testSize: PlaybackBitrateTestSize = Defaults[.VideoPlayer.Playback.appMaximumBitrateTest]
+    ) async throws -> Int {
+        guard requestedBitrate == .auto else { return requestedBitrate.rawValue }
+
+        let start = ContinuousClock.now
+        _ = try await userSession.send(Paths.getBitrateTestBytes(size: testSize.rawValue))
+
+        let seconds = max(start.duration(to: .now).seconds, 0.001)
+        let measuredBitrate = Double(testSize.rawValue * 8) / seconds
+
+        return Int(clamp(
+            measuredBitrate,
+            min: Double(PlaybackBitrate.kbps420.rawValue),
+            max: Double(Int32.max)
+        ))
+    }
+
+    /// An abandoned resolution can have opened a live stream before a player ever loads its URL.
+    static func closeLiveStreams(_ mediaSources: [MediaSourceInfo], userSession: UserSession) {
+        let streamIDs = Set(mediaSources.compactMap(\.liveStreamID))
+        guard !streamIDs.isEmpty else { return }
+
+        let client = userSession.client
+
+        Task {
+            for streamID in streamIDs {
+                _ = try? await client.send(Paths.closeLiveStream(liveStreamID: streamID))
+            }
+        }
+    }
+
     private static func streamURL(
         item: BaseItemDto,
         mediaSource: MediaSourceInfo,
@@ -225,18 +263,31 @@ extension MediaPlayerItem {
                 parameters: videoStreamParameters
             )
 
-            guard let videoStreamURL = userSession.client.url(with: videoStreamRequest)
+            guard let videoStreamURL = userSession.client.url(with: videoStreamRequest, queryAPIKey: true)
             else { throw ErrorMessage("Unable to make video stream URL") }
 
             return videoStreamURL
         }
 
-        logger.trace("Using media source path for item \(itemID)")
+        if item.mediaType == .audio {
+            logger.trace("Making audio stream URL for item \(itemID)")
 
-        guard let path = mediaSource.path, let streamURL = URL(
-            string: path
-        ) else { throw ErrorMessage("Unable to make stream URL") }
+            let parameters = Paths.GetAudioStreamParameters(
+                isStatic: true,
+                tag: mediaSource.eTag ?? item.etag,
+                playSessionID: playSessionID,
+                mediaSourceID: mediaSource.id ?? itemID,
+                liveStreamID: mediaSource.liveStreamID
+            )
 
-        return streamURL
+            let request = Paths.getAudioStream(itemID: itemID, parameters: parameters)
+            guard let url = userSession.client.url(with: request, queryAPIKey: true) else {
+                throw ErrorMessage("Unable to make audio stream URL")
+            }
+
+            return url
+        }
+
+        throw ErrorMessage("Unsupported playback media type")
     }
 }

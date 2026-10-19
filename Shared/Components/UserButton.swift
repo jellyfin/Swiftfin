@@ -72,7 +72,6 @@ struct UserButton: View {
         #endif
     }
 
-    @ViewBuilder
     private var imageView: some View {
         image
             .hoverEffect(.highlight)

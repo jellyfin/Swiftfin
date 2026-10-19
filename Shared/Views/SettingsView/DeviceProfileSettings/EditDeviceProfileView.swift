@@ -61,6 +61,7 @@ extension CustomDeviceProfilesView {
                         } else {
                             source?.wrappedValue = profile
                         }
+
                         UIDevice.impact(.light)
                         router.dismiss()
                     }
@@ -93,7 +94,6 @@ extension CustomDeviceProfilesView {
                 #endif
         }
 
-        @ViewBuilder
         private var contentView: some View {
             Form(systemImage: "doc") {
                 Section(L10n.behavior) {

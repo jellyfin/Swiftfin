@@ -55,6 +55,7 @@ struct ItemSubtitleSearchView: View {
             if viewModel.background.states.isNotEmpty {
                 ProgressView()
             }
+
             #if os(iOS)
             if #available(iOS 26, *) {
                 Button(L10n.save, role: .confirm, action: save)
@@ -74,7 +75,6 @@ struct ItemSubtitleSearchView: View {
         }
     }
 
-    @ViewBuilder
     private var contentView: some View {
         Form(systemImage: "textformat") {
 

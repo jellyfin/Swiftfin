@@ -27,7 +27,6 @@ struct ServerConnectionView: View {
         editMode.isEditing
     }
 
-    @ViewBuilder
     private func serverConnectionRow(_ connection: ServerConnection) -> some View {
         Button {
             guard !isEditing else { return }

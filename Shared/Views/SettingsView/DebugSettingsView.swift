@@ -30,46 +30,46 @@ struct DebugSettingsView: View {
             Section("Device Details") {
                 LabeledContent(
                     "SoC & GPU",
-                    value: PlaybackCapabilities.gpuName
+                    value: UIDevice.PlaybackCapabilities.gpuName
                 )
 
                 LabeledContent(
                     "Device Reports HDR Capabilities",
-                    value: PlaybackCapabilities.isDeviceHDRCapable ? L10n.yes : L10n.no
+                    value: UIDevice.PlaybackCapabilities.isDeviceHDRCapable ? L10n.yes : L10n.no
                 )
             }
 
             Section("Video Codec Support") {
                 LabeledContent(
                     VideoCodec.av1.displayTitle,
-                    value: PlaybackCapabilities.supportsAV1 ? L10n.yes : L10n.no
+                    value: UIDevice.PlaybackCapabilities.supportsAV1 ? L10n.yes : L10n.no
                 )
 
                 LabeledContent(
                     VideoCodec.hevc.displayTitle,
-                    value: PlaybackCapabilities.supportsHEVC ? L10n.yes : L10n.no
+                    value: UIDevice.PlaybackCapabilities.supportsHEVC ? L10n.yes : L10n.no
                 )
 
                 LabeledContent(
                     VideoCodec.vp9.displayTitle,
-                    value: PlaybackCapabilities.supportsVP9 ? L10n.yes : L10n.no
+                    value: UIDevice.PlaybackCapabilities.supportsVP9 ? L10n.yes : L10n.no
                 )
             }
 
             Section("Video Range Support") {
                 LabeledContent(
                     VideoRangeType.hdr10Plus.displayTitle,
-                    value: PlaybackCapabilities.supportsHDR10 ? L10n.yes : L10n.no
+                    value: UIDevice.PlaybackCapabilities.supportsHDR10 ? L10n.yes : L10n.no
                 )
 
                 LabeledContent(
                     VideoRangeType.hlg.displayTitle,
-                    value: PlaybackCapabilities.supportsHLG ? L10n.yes : L10n.no
+                    value: UIDevice.PlaybackCapabilities.supportsHLG ? L10n.yes : L10n.no
                 )
 
                 LabeledContent(
                     VideoRangeType.dovi.displayTitle,
-                    value: PlaybackCapabilities.supportsDolbyVision ? L10n.yes : L10n.no
+                    value: UIDevice.PlaybackCapabilities.supportsDolbyVision ? L10n.yes : L10n.no
                 )
             }
         }

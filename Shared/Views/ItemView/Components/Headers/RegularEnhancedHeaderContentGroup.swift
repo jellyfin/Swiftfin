@@ -46,7 +46,6 @@ extension ItemView {
                 UIDevice.isTV ? 100 : 70
             }
 
-            @ViewBuilder
             private var logo: some View {
                 ImageView(
                     provider.item.imageSource(
@@ -101,7 +100,7 @@ extension ItemView {
                             ItemView.AttributesHStack(
                                 attributes: attributes,
                                 item: provider.item,
-                                selectedMediaSource: provider.mediaPlayerItemProvider?.mediaSource,
+                                selectedMediaSource: provider.playbackIntent?.mediaSource,
                                 alignment: .leading
                             )
 

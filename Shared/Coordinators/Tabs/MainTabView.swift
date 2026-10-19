@@ -39,16 +39,19 @@ struct MainTabView: View {
         #else
         TabCoordinator {
             TabItem.contentGroup(provider: DefaultContentGroupProvider())
+
             TabItem.library(
                 title: L10n.tvShowsCapitalized,
                 systemName: "tv",
                 filters: .init(itemTypes: [.series])
             )
+
             TabItem.library(
                 title: L10n.movies,
                 systemName: "film",
                 filters: .init(itemTypes: [.movie])
             )
+
             TabItem.search
             TabItem.media
             TabItem.settings
@@ -65,7 +68,6 @@ struct MainTabView: View {
         }
     }
 
-    @ViewBuilder
     private func tabRoot(_ tab: TabCoordinator.TabData) -> some View {
         NavigationInjectionView(coordinator: tab.coordinator) {
             tab.item.content
@@ -81,7 +83,6 @@ struct MainTabView: View {
         .environment(\.tabItemSelected, tab.publisher)
     }
 
-    @ViewBuilder
     private func tabView() -> some View {
         TabView(selection: $tabCoordinator.selectedTabID) {
             ForEach(tabCoordinator.tabs, id: \.item.id) { tab in

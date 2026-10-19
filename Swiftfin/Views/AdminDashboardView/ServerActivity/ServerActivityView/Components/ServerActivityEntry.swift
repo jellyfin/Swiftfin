@@ -45,7 +45,6 @@ extension ServerActivityView {
             }
         }
 
-        @ViewBuilder
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {

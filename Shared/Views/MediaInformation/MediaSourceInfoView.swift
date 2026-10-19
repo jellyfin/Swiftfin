@@ -22,7 +22,6 @@ struct MediaSourceInfoView: PlatformView {
 
     let source: MediaSourceInfo
 
-    @ViewBuilder
     private func streamRow(_ stream: MediaStream) -> some View {
         ChevronButton(stream.displayTitle ?? .emptyDash) {
             router.route(to: .mediaStreamInfo(mediaStream: stream))
@@ -35,7 +34,6 @@ struct MediaSourceInfoView: PlatformView {
         }
     }
 
-    @ViewBuilder
     private var contentView: some View {
         Form {
             if let videoStreams = source.videoStreams,
