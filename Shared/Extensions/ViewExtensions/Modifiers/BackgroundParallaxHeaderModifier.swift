@@ -10,7 +10,6 @@ import SwiftUI
 
 extension View {
 
-    @ViewBuilder
     func backgroundParallaxHeader(
         multiplier: CGFloat = 1,
         @ViewBuilder header: @escaping () -> some View
@@ -104,6 +103,12 @@ struct BackgroundParallaxHeaderModifier<Background: View>: ViewModifier {
                             .offset(y: -scrollViewSafeAreaInsets.top)
                     }
                     .offset(y: offset)
+                    #if os(iOS)
+                    .mask(alignment: .bottom) {
+                        Rectangle()
+                            .frame(height: headerSize.height + scrollViewSafeAreaInsets.top)
+                    }
+                    #endif
             }
     }
 }

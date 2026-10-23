@@ -23,15 +23,19 @@ extension ItemView {
 
         struct Body: View {
 
+            @Environment(\.verticalSizeClass)
+            private var verticalSizeClass
+
             @ObservedObject
             var provider: ItemContentGroupProvider
 
             @StoredValue(.User.itemViewAttributes)
             private var attributes
 
-            private let headerAspectRatio = 1.6
+            private var headerAspectRatio: CGFloat {
+                verticalSizeClass == .compact ? 3 : 1.6
+            }
 
-            @ViewBuilder
             private var logo: some View {
                 ImageView(
                     provider.item.imageSource(
@@ -58,7 +62,6 @@ extension ItemView {
                 .accessibilityRemoveTraits(.isImage)
             }
 
-            @ViewBuilder
             private var overlay: some View {
                 VStack(alignment: .center, spacing: 10) {
                     AlternateLayoutView(alignment: .bottom) {

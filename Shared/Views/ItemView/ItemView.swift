@@ -10,7 +10,6 @@ import Defaults
 import SwiftUI
 
 // TODO: Add scrollTargetLayout and scrollTargetBehavior to the scroll views.
-// TODO: isCompact determination by available width
 
 struct ItemView: View {
 
@@ -87,7 +86,6 @@ struct ItemView: View {
         return [header] + viewModel.groups
     }
 
-    @ViewBuilder
     private func contentGroupScrollView(
         isEnhanced: Bool = false
     ) -> some View {
@@ -98,28 +96,30 @@ struct ItemView: View {
         )
     }
 
-    @ViewBuilder
     private var blurredNavigationBarScrollView: some View {
         BlurredNavigationBarScrollView(groups: contentGroups)
     }
 
-    @ViewBuilder
     private var content: some View {
         Group {
+            #if os(iOS)
+            if isEnhanced {
+                blurredNavigationBarScrollView
+            } else {
+                contentGroupScrollView()
+            }
+            #else
             switch (isEnhanced, isCompact) {
             case (true, true):
                 blurredNavigationBarScrollView
 
             case (true, false):
-                InlinePlatformView {
-                    blurredNavigationBarScrollView
-                } tvOSView: {
-                    contentGroupScrollView(isEnhanced: true)
-                }
+                contentGroupScrollView(isEnhanced: true)
 
             default:
                 contentGroupScrollView()
             }
+            #endif
         }
         .navigationTitle(provider.item.displayTitle)
     }
