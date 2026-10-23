@@ -37,6 +37,13 @@ protocol LibraryElement: Displayable, Hashable, Identifiable {
         options: LibraryStyleOptions,
         insets: EdgeInsets
     ) -> CollectionVGridLayout
+
+    static func layout(
+        for libraryStyle: LibraryStyle,
+        options: LibraryStyleOptions,
+        insets: EdgeInsets,
+        horizontalSizeClass: UserInterfaceSizeClass?
+    ) -> CollectionVGridLayout
 }
 
 extension LibraryElement {
@@ -59,7 +66,6 @@ extension LibraryElement {
 
     func libraryDidSelectElement(router: Router.Wrapper, in namespace: Namespace.ID) {}
 
-    @ViewBuilder
     func makeBody(libraryStyle: LibraryStyle) -> Body {
         // By default, have conformers determine action
         // internally for navigation with their namespace
@@ -71,12 +77,26 @@ extension LibraryElement {
         options: LibraryStyleOptions,
         insets: EdgeInsets
     ) -> CollectionVGridLayout {
+        layout(
+            for: libraryStyle,
+            options: options,
+            insets: insets,
+            horizontalSizeClass: UIDevice.isPhone ? .compact : .regular
+        )
+    }
+
+    static func layout(
+        for libraryStyle: LibraryStyle,
+        options: LibraryStyleOptions,
+        insets: EdgeInsets,
+        horizontalSizeClass: UserInterfaceSizeClass?
+    ) -> CollectionVGridLayout {
         let libraryStyle = options.normalized(libraryStyle)
 
         #if os(iOS)
         switch libraryStyle.displayType {
         case .grid:
-            if UIDevice.isPhone {
+            if horizontalSizeClass != .regular {
                 return .columns(
                     libraryStyle.posterDisplayType == .landscape ? 2 : 3,
                     insets: insets,

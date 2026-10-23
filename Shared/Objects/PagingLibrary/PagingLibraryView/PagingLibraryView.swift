@@ -25,6 +25,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @Default(.Customization.Library.style)
     private var defaultLibraryStyle
 
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
     @Environment(\.tabSafeAreaInsets)
     private var tabSafeAreaInsets
 
@@ -33,9 +35,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
 
     @Router
     private var router
-
-    @State
-    private var isSafeAreaBarApplied: Bool = false
 
     @StateObject
     private var focusCoordinator = FocusCoordinator(waitingFor: Focus.firstElement.rawValue)
@@ -91,28 +90,18 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         insets.top = max(insets.top, tabSafeAreaInsets.top)
         return insets + EdgeInsets.itemSpacing
         #else
-        var insets: EdgeInsets = if isSafeAreaBarApplied {
-            frame.safeAreaInsets + EdgeInsets.itemSpacing
-        } else {
-            EdgeInsets(
-                top: 0,
-                leading: frame.safeAreaInsets.leading,
-                bottom: 0,
-                trailing: frame.safeAreaInsets.trailing
-            ) + EdgeInsets.itemSpacing
-        }
-
-        // TODO: shouldn't need explicitly for list, find fix
-        if libraryStyle.displayType == .list {
-            insets.leading = frame.safeAreaInsets.leading
-            insets.trailing = frame.safeAreaInsets.trailing
-        }
-
-        return insets
+        // SwiftUI already constrains the collection to the horizontal safe area.
+        // The collection extends vertically, so account for those insets explicitly.
+        let horizontalInset: CGFloat = libraryStyle.displayType == .list ? 0 : EdgeInsets.itemSpacing
+        return EdgeInsets(
+            top: frame.safeAreaInsets.top + EdgeInsets.itemSpacing,
+            leading: horizontalInset,
+            bottom: frame.safeAreaInsets.bottom + EdgeInsets.itemSpacing,
+            trailing: horizontalInset
+        )
         #endif
     }
 
-    @ViewBuilder
     private var elementsView: some View {
         AlternateLayoutView {
             Color.clear
@@ -123,7 +112,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 layout: Element.layout(
                     for: libraryStyle,
                     options: libraryStyleOptions,
-                    insets: contentInsets(for: frame)
+                    insets: contentInsets(for: frame),
+                    horizontalSizeClass: horizontalSizeClass
                 )
             ) { element in
                 element.makeBody(libraryStyle: libraryStyle)
@@ -153,13 +143,23 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             .onRefresh {
                 await viewModel.background.refresh()
             }
+            .onChange(of: frame.frame.width) { oldWidth, newWidth in
+                guard oldWidth > 0, newWidth > 0 else { return }
+
+                gridProxy.redraw()
+            }
             #if os(tvOS)
             .introspect(.scrollView, on: .tvOS(.v26...)) { collectionView in
                 // TODO: CollectionVGrid option instead
                 collectionView.contentInsetAdjustmentBehavior = .never
             }
-            #endif
             .ignoresSafeArea()
+            #else
+            .introspect(.scrollView, on: .iOS(.v18...)) { collectionView in
+                collectionView.contentInsetAdjustmentBehavior = .never
+            }
+            .ignoresSafeArea(edges: .vertical)
+            #endif
         }
         .scrollIndicators(.hidden)
         .withViewContext(.isListRowSeparatorVisible)
@@ -228,9 +228,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         .animation(.linear(duration: 0.2), value: viewModel.searchElements)
         .navigationTitle(displayTitle ?? viewModel.library.parent.displayTitle)
         .errorMessage($viewModel.error)
-        .onPreferenceChange(IsSafeAreaBarApplied.self) { newValue in
-            isSafeAreaBarApplied = newValue
-        }
         #if os(iOS)
         .toolbarTitleDisplayMode(router.isRootOfPath ? .inlineLarge : .inline)
         #endif
@@ -238,9 +235,17 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             viewModel.refreshForEnvironmentChange()
         }
         .onChange(of: libraryStyle) { oldStyle, newStyle in
-            if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero) ==
-                Element.layout(for: newStyle, options: libraryStyleOptions, insets: .zero)
-            {
+            if Element.layout(
+                for: oldStyle,
+                options: libraryStyleOptions,
+                insets: .zero,
+                horizontalSizeClass: horizontalSizeClass
+            ) == Element.layout(
+                for: newStyle,
+                options: libraryStyleOptions,
+                insets: .zero,
+                horizontalSizeClass: horizontalSizeClass
+            ) {
                 gridProxy.redraw()
             }
         }

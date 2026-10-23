@@ -30,19 +30,11 @@ struct SwiftfinApp: App {
                 PreferencesView {
                     WithLocalUserAuthentication {
                         RootView()
-                            .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+                            .supportedOrientations(.allButUpsideDown)
                     }
                 }
             }
             .ignoresSafeArea()
         }
-    }
-}
-
-extension UINavigationController {
-
-    // Remove back button text
-    override open func viewWillLayoutSubviews() {
-        navigationBar.topItem?.backButtonDisplayMode = .minimal
     }
 }

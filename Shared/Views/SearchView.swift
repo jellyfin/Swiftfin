@@ -33,7 +33,6 @@ struct SearchView: View {
     @TabItemSelected
     private var tabItemSelected
 
-    @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
             ForEach(viewModel.suggestions) { item in
@@ -97,7 +96,9 @@ struct SearchView: View {
                 .focusSection()
             }
         }
+        #if os(tvOS)
         .ignoresSafeArea(edges: .horizontal)
+        #endif
         .scrollIndicators(.hidden)
         .animation(.linear(duration: 0.2), value: viewModel.state)
         .ignoresSafeArea(.keyboard)

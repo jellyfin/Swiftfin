@@ -12,11 +12,19 @@ extension SelectUserView {
 
     struct EmptyUserView: View {
 
+        @Environment(\.horizontalSizeClass)
+        private var horizontalSizeClass
+
         let action: () -> Void
 
-        private let columns: CGFloat = UIDevice.isPhone ? 2 : 5
+        private var columns: CGFloat {
+            #if os(tvOS)
+            5
+            #else
+            horizontalSizeClass == .regular ? 5 : 2
+            #endif
+        }
 
-        @ViewBuilder
         private var imageView: some View {
             RelativeSystemImageView(systemName: "plus")
                 .foregroundStyle(Color.secondary)

@@ -16,7 +16,6 @@ struct LetterPickerBarModifier: ViewModifier {
 
     let viewModel: FilterViewModel?
 
-    @ViewBuilder
     func body(content: Content) -> some View {
         if let edge = letterPickerOrientation.edge,
            let viewModel,
@@ -24,7 +23,9 @@ struct LetterPickerBarModifier: ViewModifier {
         {
             content
                 .focusSection()
+                #if os(tvOS)
                 .ignoresSafeArea(.all, edges: edge == .leading ? .trailing : .leading)
+                #endif
                 .safeAreaInset(edge: edge, alignment: .center, spacing: 0) {
                     LetterPickerBar(viewModel: viewModel)
                         #if os(tvOS)
@@ -46,7 +47,9 @@ struct LetterPickerBarModifier: ViewModifier {
                 }
         } else {
             content
-                .ignoresSafeArea(.all, edges: .horizontal)
+                #if os(tvOS)
+                    .ignoresSafeArea(.all, edges: .horizontal)
+                #endif
         }
     }
 }

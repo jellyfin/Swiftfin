@@ -18,17 +18,15 @@ struct NavigationBarFilterDrawerModifier: ViewModifier {
 
     let types: [ItemFilterType]
 
-    @ViewBuilder
     private var drawer: some View {
         ScrollView(.horizontal) {
             HStack {
                 FilterTrack(viewModel: viewModel, types: types, focus: $focusedFilter)
             }
         }
-        .contentMargins(.horizontal, 16, for: .scrollContent)
+        .padding(.horizontal, 16)
         .padding(.bottom, 5)
         .scrollIndicators(.hidden)
-        .scrollClipDisabled()
     }
 
     func body(content: Content) -> some View {
