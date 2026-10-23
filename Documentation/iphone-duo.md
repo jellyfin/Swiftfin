@@ -2,7 +2,7 @@
 
 Build the `Swiftfin` scheme with Xcode 27.1 and the iOS 27.1 SDK to adopt iPhone Duo's adaptive system bars and division-aware player layout. The minimum deployment version remains unchanged.
 
-The iOS 27.1 player API calls are compiled with Swift 6.4 or newer and require the iOS 27.1 SDK. Older toolchains use the existing player layout without hinge interactions or reserved-region queries.
+Build and TestFlight workflows select Xcode 27.1 on GitHub's `xcode-27` runners. PR validation also selects that toolchain explicitly. The iOS 27.1 player APIs remain guarded at runtime for devices running older supported iOS versions.
 
 ## Adaptive layout
 

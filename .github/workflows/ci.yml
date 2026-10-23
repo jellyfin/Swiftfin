@@ -29,10 +29,10 @@ jobs:
           - "Swiftfin"
           - "Swiftfin tvOS"
 
-    runs-on: macos-26
+    runs-on: xcode-27
 
     env:
-      XCODE_VERSION: "26.6"
+      XCODE_VERSION: "27.1"
 
     steps:
       - name: Checkout

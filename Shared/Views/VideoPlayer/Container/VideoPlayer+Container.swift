@@ -677,7 +677,7 @@ extension VideoPlayer {
                 viewState.centerOffsetBox.value = centerOffset
             }
 
-            #if os(iOS) && compiler(>=6.4)
+            #if os(iOS)
             if #available(iOS 27.1, *) {
                 view.addInteraction(UIHingeInteraction { [weak self] _, _ in
                     self?.view.setNeedsLayout()
@@ -863,7 +863,7 @@ extension VideoPlayer {
         }
 
         private func currentDivisionLayout() -> DivisionLayout? {
-            #if os(iOS) && compiler(>=6.4)
+            #if os(iOS)
             if #available(iOS 27.1, *) {
                 for region in view.reservedRegions(kind: .division) where region.isActive {
                     if let layout = DivisionLayout(bounds: view.bounds, division: region.frame) {

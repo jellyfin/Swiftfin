@@ -40,6 +40,8 @@ You can change the `PRODUCT_BUNDLE_IDENTIFIER` value to have multiple builds of 
 
 Swiftfin is built using the Xcode version pinned in our [CI workflow](https://github.com/jellyfin/Swiftfin/blob/main/.github/workflows/ci.yml#L27). This is the recommended version of Xcode for development.
 
+Xcode 27.1 or later is required to build the iOS 27.1 APIs used for iPhone Duo. This build-toolchain requirement does not raise the app's minimum deployment version.
+
 ### Testing
 
 Swiftfin can be tested using Xcode's built-in Simulator or on real hardware. See Apple's guide on [Running your app in Simulator or on a device](https://developer.apple.com/documentation/xcode/running-your-app-in-simulator-or-on-a-device/) for instructions on both approaches.
