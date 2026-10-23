@@ -309,7 +309,11 @@ extension VideoPlayer {
         // MARK: - Constants
 
         private var availableSupplementHeight: CGFloat {
-            max(0, view.bounds.height - view.safeAreaInsets.top)
+            if let divisionLayout {
+                return divisionLayout.controlsFrame.height
+            }
+
+            return max(0, view.bounds.height - view.safeAreaInsets.top)
         }
 
         private func supplementContainerOffset(
@@ -343,13 +347,64 @@ extension VideoPlayer {
 
         // MARK: - Constraints
 
+        private struct HorizontalConstraints {
+
+            let leading: NSLayoutConstraint
+            let trailing: NSLayoutConstraint
+
+            func update(for frame: CGRect, within parentFrame: CGRect, padding: CGFloat = 0) {
+                leading.constant = frame.minX - parentFrame.minX + padding
+                trailing.constant = frame.maxX - parentFrame.maxX - padding
+            }
+        }
+
+        private struct DivisionLayout: Equatable {
+
+            let playerFrame: CGRect
+            let controlsFrame: CGRect
+
+            init?(bounds: CGRect, division: CGRect) {
+                // System frames already include margins for interactive content.
+                let frame = division.intersection(bounds)
+                guard !frame.isNull, !frame.isEmpty else { return nil }
+
+                if frame.width >= bounds.width - 1,
+                   frame.minY > bounds.minY,
+                   frame.maxY < bounds.maxY
+                {
+                    playerFrame = CGRect(x: bounds.minX, y: bounds.minY, width: bounds.width, height: frame.minY - bounds.minY)
+                    controlsFrame = CGRect(x: bounds.minX, y: frame.maxY, width: bounds.width, height: bounds.maxY - frame.maxY)
+                } else if frame.height >= bounds.height - 1,
+                          frame.minX > bounds.minX,
+                          frame.maxX < bounds.maxX
+                {
+                    let left = CGRect(x: bounds.minX, y: bounds.minY, width: frame.minX - bounds.minX, height: bounds.height)
+                    let right = CGRect(x: frame.maxX, y: bounds.minY, width: bounds.maxX - frame.maxX, height: bounds.height)
+                    playerFrame = left.width >= right.width ? left : right
+                    controlsFrame = playerFrame
+                } else {
+                    return nil
+                }
+            }
+        }
+
+        private var playerHorizontalConstraints: HorizontalConstraints?
+        private var playerTopAnchor: NSLayoutConstraint?
+        private var playbackControlsHorizontalConstraints: HorizontalConstraints?
+        private var playbackControlsTopAnchor: NSLayoutConstraint?
+        private var supplementHorizontalConstraints: HorizontalConstraints?
+        private var overlayActionsHorizontalConstraints: HorizontalConstraints?
         private var playerCompactBottomAnchor: NSLayoutConstraint?
         private var playerRegularBottomAnchor: NSLayoutConstraint?
         private var supplementHeightAnchor: NSLayoutConstraint?
         private var supplementBottomAnchor: NSLayoutConstraint?
 
         private var centerOffset: CGFloat {
-            compactPlayerOverlap.map { max(50, $0) } ?? dismissedSupplementContainerOffset
+            if divisionLayout != nil {
+                return 0
+            }
+
+            return compactPlayerOverlap.map { max(50, $0) } ?? dismissedSupplementContainerOffset
         }
 
         private var compactPlayerBottomOffset: CGFloat {
@@ -378,7 +433,21 @@ extension VideoPlayer {
         let viewState: ViewState
 
         private var didInitiallyAppear: Bool = false
-        private var lastSupplementLayout: (size: CGSize, safeAreaInsets: UIEdgeInsets)?
+        private var divisionLayout: DivisionLayout?
+        private var lastSupplementLayout: (
+            size: CGSize,
+            safeAreaInsets: UIEdgeInsets,
+            isCompact: Bool,
+            divisionLayout: DivisionLayout?
+        )?
+
+        private var isCompactLayout: Bool {
+            #if os(iOS)
+            traitCollection.horizontalSizeClass == .compact && traitCollection.verticalSizeClass == .regular
+            #else
+            false
+            #endif
+        }
 
         #if os(tvOS)
         let onPressEvent = OnPressEvent()
@@ -426,8 +495,7 @@ extension VideoPlayer {
                 cancelSupplementPan()
                 return
             }
-            guard state == .began || isPanning else { return }
-            guard let supplementBottomAnchor,
+            guard state == .began || isPanning, let supplementBottomAnchor,
                   let supplementHeightAnchor,
                   let playerCompactBottomAnchor
             else { return }
@@ -534,8 +602,7 @@ extension VideoPlayer {
         // MARK: - present
 
         func presentSupplementContainer(_ didPresent: Bool) {
-            guard !isPanning else { return }
-            guard let supplementBottomAnchor,
+            guard !isPanning, let supplementBottomAnchor,
                   let supplementHeightAnchor,
                   let playerCompactBottomAnchor
             else { return }
@@ -602,15 +669,21 @@ extension VideoPlayer {
 
             view.backgroundColor = .black
 
-            let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
-
             setupOnLoadViews()
             setupOnLoadConstraints()
 
             Task { @MainActor in
-                viewState.isCompact = isCompact
+                viewState.isCompact = isCompactLayout
                 viewState.centerOffsetBox.value = centerOffset
             }
+
+            #if os(iOS) && compiler(>=6.4)
+            if #available(iOS 27.1, *) {
+                view.addInteraction(UIHingeInteraction { [weak self] _, _ in
+                    self?.view.setNeedsLayout()
+                })
+            }
+            #endif
 
             #if os(tvOS)
             let gesture = UITapGestureRecognizer(target: self, action: #selector(handleMenuEnded))
@@ -636,10 +709,18 @@ extension VideoPlayer {
             playerCompactBottomAnchor = bottomAnchor
             playerRegularBottomAnchor = playerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
 
+            let horizontalConstraints = HorizontalConstraints(
+                leading: playerView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                trailing: playerView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            )
+            playerHorizontalConstraints = horizontalConstraints
+            let topAnchor = playerView.topAnchor.constraint(equalTo: view.topAnchor)
+            playerTopAnchor = topAnchor
+
             NSLayoutConstraint.activate([
-                playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                playerView.topAnchor.constraint(equalTo: view.topAnchor),
+                horizontalConstraints.leading,
+                horizontalConstraints.trailing,
+                topAnchor,
             ])
 
             playerCompactBottomAnchor?.isActive = viewState.isCompact
@@ -668,7 +749,7 @@ extension VideoPlayer {
 
         private func setupOnLoadConstraints() {
 
-            let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
+            let isCompact = isCompactLayout
 
             let bottomAnchor = supplementContainerView.topAnchor.constraint(
                 equalTo: view.bottomAnchor,
@@ -680,9 +761,15 @@ extension VideoPlayer {
             let heightAnchor = supplementContainerView.heightAnchor.constraint(equalToConstant: constant)
             supplementHeightAnchor = heightAnchor
 
+            let supplementHorizontalConstraints = HorizontalConstraints(
+                leading: supplementContainerView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                trailing: supplementContainerView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            )
+            self.supplementHorizontalConstraints = supplementHorizontalConstraints
+
             NSLayoutConstraint.activate([
-                supplementContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                supplementContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                supplementHorizontalConstraints.leading,
+                supplementHorizontalConstraints.trailing,
                 bottomAnchor,
                 heightAnchor,
             ])
@@ -699,10 +786,18 @@ extension VideoPlayer {
             #endif
             playbackControlsBottomAnchor.priority = .defaultHigh
 
+            let playbackControlsHorizontalConstraints = HorizontalConstraints(
+                leading: playbackControlsView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                trailing: playbackControlsView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            )
+            self.playbackControlsHorizontalConstraints = playbackControlsHorizontalConstraints
+            let playbackControlsTopAnchor = playbackControlsView.topAnchor.constraint(equalTo: view.topAnchor)
+            self.playbackControlsTopAnchor = playbackControlsTopAnchor
+
             NSLayoutConstraint.activate([
-                playbackControlsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                playbackControlsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                playbackControlsView.topAnchor.constraint(equalTo: view.topAnchor),
+                playbackControlsHorizontalConstraints.leading,
+                playbackControlsHorizontalConstraints.trailing,
+                playbackControlsTopAnchor,
                 playbackControlsBottomAnchor,
                 playbackControlsView.bottomAnchor.constraint(
                     lessThanOrEqualTo: overlayActionsView.topAnchor,
@@ -717,15 +812,21 @@ extension VideoPlayer {
                 overlayActionsView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -EdgeInsets.edgePadding),
             ])
             #else
-            NSLayoutConstraint.activate([
-                overlayActionsView.leadingAnchor.constraint(
-                    equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+            let overlayActionsHorizontalConstraints = HorizontalConstraints(
+                leading: overlayActionsView.leftAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.leftAnchor,
                     constant: EdgeInsets.edgePadding
                 ),
-                overlayActionsView.trailingAnchor.constraint(
-                    equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                trailing: overlayActionsView.rightAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.rightAnchor,
                     constant: -EdgeInsets.edgePadding
-                ),
+                )
+            )
+            self.overlayActionsHorizontalConstraints = overlayActionsHorizontalConstraints
+
+            NSLayoutConstraint.activate([
+                overlayActionsHorizontalConstraints.leading,
+                overlayActionsHorizontalConstraints.trailing,
                 overlayActionsView.bottomAnchor.constraint(
                     equalTo: view.safeAreaLayoutGuide.bottomAnchor,
                     constant: -EdgeInsets.edgePadding
@@ -746,13 +847,54 @@ extension VideoPlayer {
 
             let size = view.bounds.size
             let safeAreaInsets = view.safeAreaInsets
+            let isCompact = isCompactLayout
+            let newDivisionLayout = currentDivisionLayout()
             guard playerCompactBottomAnchor != nil,
                   lastSupplementLayout?.size != size || lastSupplementLayout?.safeAreaInsets != safeAreaInsets
+                  || lastSupplementLayout?.isCompact != isCompact
+                  || lastSupplementLayout?.divisionLayout != newDivisionLayout
             else { return }
 
-            lastSupplementLayout = (size, safeAreaInsets)
+            lastSupplementLayout = (size, safeAreaInsets, isCompact, newDivisionLayout)
+            divisionLayout = newDivisionLayout
             cancelSupplementPan()
-            adjustConstraints(isCompact: UIDevice.isPhone && size.isPortrait)
+            updateDivisionConstraints()
+            adjustConstraints(isCompact: isCompact)
+        }
+
+        private func currentDivisionLayout() -> DivisionLayout? {
+            #if os(iOS) && compiler(>=6.4)
+            if #available(iOS 27.1, *) {
+                for region in view.reservedRegions(kind: .division) where region.isActive {
+                    if let layout = DivisionLayout(bounds: view.bounds, division: region.frame) {
+                        return layout
+                    }
+                }
+            }
+            #endif
+            return nil
+        }
+
+        private func updateDivisionConstraints() {
+            let bounds = view.bounds
+            let playerFrame = divisionLayout?.playerFrame ?? bounds
+            let controlsFrame = divisionLayout?.controlsFrame ?? bounds
+            playerHorizontalConstraints?.update(for: playerFrame, within: bounds)
+            playerTopAnchor?.constant = playerFrame.minY - bounds.minY
+            playerRegularBottomAnchor?.constant = playerFrame.maxY - bounds.maxY
+            playbackControlsHorizontalConstraints?.update(for: controlsFrame, within: bounds)
+            playbackControlsTopAnchor?.constant = controlsFrame.minY - bounds.minY
+            supplementHorizontalConstraints?.update(for: controlsFrame, within: bounds)
+
+            #if os(iOS)
+            let safeFrame = view.safeAreaLayoutGuide.layoutFrame
+            let controlsSafeFrame = controlsFrame.intersection(safeFrame)
+            overlayActionsHorizontalConstraints?.update(
+                for: controlsSafeFrame.isNull ? controlsFrame : controlsSafeFrame,
+                within: safeFrame,
+                padding: EdgeInsets.edgePadding
+            )
+            #endif
         }
 
         private func adjustConstraints(isCompact: Bool) {
@@ -765,7 +907,7 @@ extension VideoPlayer {
 
             let presentedOffset = supplementContainerOffset(isCompact: isCompact)
 
-            if isCompact {
+            if isCompact, divisionLayout == nil {
                 playerRegularBottomAnchor?.isActive = false
                 playerCompactBottomAnchor.isActive = true
             } else {
