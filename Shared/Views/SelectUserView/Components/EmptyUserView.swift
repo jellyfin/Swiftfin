@@ -51,6 +51,7 @@ extension SelectUserView {
             .buttonBorderShape(.circle)
             #if os(tvOS)
             .buttonStyle(.borderless)
+            .coordinatedFocus(Focus.focusedUserButton.rawValue)
             #endif
         }
 
