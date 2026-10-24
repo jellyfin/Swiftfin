@@ -10,50 +10,29 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: compatibility picker
-// TODO: don't present for offline/live items
-//       - value on media player item
 
 extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
     struct PlaybackSettings: View {
 
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
-        private func makeProvider(for mediaSource: MediaSourceInfo, playbackItem: MediaPlayerItem) -> MediaPlayerItemProvider {
-            var adjustedBaseItem = playbackItem.baseItem
-            adjustedBaseItem.userData?.playbackPositionTicks = manager.seconds.ticks
-            let requestedBitrate = playbackItem.requestedBitrate
+        static func isAvailable(for item: MediaPlayerItem?) -> Bool {
+            guard let item else { return false }
 
-            return MediaPlayerItemProvider(item: adjustedBaseItem, mediaSource: mediaSource) { baseItem, modifyItem in
-                try await MediaPlayerItem.build(
-                    for: baseItem,
-                    mediaSource: mediaSource,
-                    requestedBitrate: requestedBitrate,
-                    modifyItem: modifyItem
-                )
-            }
+            return (item.baseItem.mediaSources?.count ?? 0) > 1 || item.mediaSource.supportedBitrates.isNotEmpty
         }
 
         var body: some View {
-            if let playbackItem = manager.playbackItem {
+            if let playbackItem = mediaSession.playbackItem {
                 let bitrates = playbackItem.mediaSource.supportedBitrates
                 let versions = playbackItem.baseItem.mediaSources ?? []
                 let hasVersionSection = versions.count > 1
                 let hasBitrateSection = bitrates.isNotEmpty
-                let hasMultipleSections = hasVersionSection && hasBitrateSection
-                let menuTitle: String = {
-                    if hasMultipleSections {
-                        VideoPlayerActionButton.playbackSettings.displayTitle
-                    } else if hasVersionSection {
-                        L10n.version
-                    } else {
-                        L10n.playbackQuality
-                    }
-                }()
 
                 Menu(
-                    menuTitle,
+                    VideoPlayerActionButton.playbackSettings.displayTitle,
                     systemImage: VideoPlayerActionButton.playbackSettings.systemImage
                 ) {
                     if hasVersionSection {
@@ -66,7 +45,11 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                                           let newSource = versions.first(where: { $0.id == newID })
                                     else { return }
 
-                                    manager.playNewItem(provider: makeProvider(for: newSource, playbackItem: playbackItem))
+                                    mediaSession.playNewItem(
+                                        intent: mediaSession.intent
+                                            .selecting(mediaSource: newSource)
+                                            .updating(startSeconds: mediaSession.seconds)
+                                    )
                                 }
                             )
                         ) {
@@ -78,7 +61,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             Text(L10n.version)
                             Text(playbackItem.mediaSource.displayTitle)
                         }
-                        .pickerStyle(hasMultipleSections ? AnyPickerStyle(.menu) : AnyPickerStyle(.automatic))
+                        .pickerStyle(.menu)
                     }
 
                     if hasBitrateSection {
@@ -88,7 +71,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                                 set: { newBitrate in
                                     guard newBitrate != playbackItem.requestedBitrate else { return }
 
-                                    manager.setBitrate(bitrate: newBitrate)
+                                    mediaSession.setBitrate(bitrate: newBitrate)
                                 }
                             )
                         ) {
@@ -100,7 +83,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
                             Text(L10n.playbackQuality)
                             Text(playbackItem.requestedBitrate.displayTitle)
                         }
-                        .pickerStyle(hasMultipleSections ? AnyPickerStyle(.menu) : AnyPickerStyle(.automatic))
+                        .pickerStyle(.menu)
                     }
                 }
             }

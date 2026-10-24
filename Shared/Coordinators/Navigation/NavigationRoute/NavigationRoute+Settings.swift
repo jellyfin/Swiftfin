@@ -40,12 +40,12 @@ extension NavigationRoute {
         }
     }
 
-    static func supplementSelector(selectedSupplementsBinding: Binding<[VideoPlayerSupplement]>) -> NavigationRoute {
+    static func supplementSelector(selectedSupplementsBinding: Binding<[VideoPlayerSupplementType]>) -> NavigationRoute {
         NavigationRoute(id: "supplementSelector") {
             OrderedSectionSelectorView(
                 selection: selectedSupplementsBinding,
-                sources: VideoPlayerSupplement.allCases,
-                removable: VideoPlayerSupplement.allCases.subtracting(VideoPlayerSupplement.supportedCases)
+                sources: VideoPlayerSupplementType.allCases,
+                removable: VideoPlayerSupplementType.allCases.subtracting(VideoPlayerSupplementType.supportedCases)
             )
             .navigationTitle(L10n.supplements.localizedCapitalized)
         }
@@ -167,12 +167,6 @@ extension NavigationRoute {
             id: "experimentalSettings"
         ) {
             ExperimentalSettingsView()
-        }
-    }
-
-    static func fontPicker(selection: Binding<String>) -> NavigationRoute {
-        NavigationRoute(id: "fontPicker") {
-            FontPickerView(selection: selection)
         }
     }
 

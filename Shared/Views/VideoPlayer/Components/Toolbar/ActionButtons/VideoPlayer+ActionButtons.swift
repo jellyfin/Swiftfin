@@ -34,8 +34,8 @@ extension VideoPlayer.PlaybackControls.Toolbar {
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         @FocusState
         private var focusedButton: String?
@@ -43,25 +43,29 @@ extension VideoPlayer.PlaybackControls.Toolbar {
         private func resolvedActionButtons(_ rawButtons: [VideoPlayerActionButton]) -> [VideoPlayerActionButton] {
             var filteredButtons = rawButtons
 
-            if manager.playbackItem?.audioStreams.isEmpty == true {
+            if mediaSession.playbackItem?.audioStreams.isEmpty == true {
                 filteredButtons.removeAll { $0 == .audio || $0 == .audioOffset }
             }
 
-            if manager.playbackItem?.subtitleStreams.isEmpty == true {
+            if mediaSession.playbackItem?.subtitleStreams.isEmpty == true {
                 filteredButtons.removeAll { $0 == .subtitles || $0 == .subtitleOffset }
             }
 
-            if manager.playbackItem == nil || !(manager.proxy is MediaPlayerOffsetConfigurable) {
+            if mediaSession.playbackItem == nil || !(mediaSession.player is MediaPlayerOffsetProviding) {
                 filteredButtons.removeAll { $0 == .audioOffset || $0 == .subtitleOffset }
             }
 
-            if manager.queue == nil {
+            if !PlaybackSettings.isAvailable(for: mediaSession.playbackItem) {
+                filteredButtons.removeAll { $0 == .playbackSettings }
+            }
+
+            if mediaSession.queue == nil {
                 filteredButtons.removeAll { $0 == .autoPlay }
                 filteredButtons.removeAll { $0 == .playNextItem }
                 filteredButtons.removeAll { $0 == .playPreviousItem }
             }
 
-            if manager.item.isLiveStream {
+            if mediaSession.item.isLiveStream {
                 filteredButtons.removeAll { $0 == .autoPlay }
                 filteredButtons.removeAll { $0 == .playbackSpeed }
                 filteredButtons.removeAll { $0 == .playbackSettings }
@@ -148,7 +152,6 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             .withViewContext(.isInMenu)
         }
 
-        @ViewBuilder
         private var regularView: some View {
             HStack(spacing: Self.buttonSpacing) {
                 ForEach(barActionButtons) { button in

@@ -4,6 +4,7 @@
 
 > Even if you can't contribute code, you can still help Jellyfin (Swiftfin)! The two main things you can help with are testing and creating issues. Contributing to code, documentation, ..., and other non-code components are all outlined in the sections below.
 
+> [!IMPORTANT]
 > Please note [Jellyfin's LLM/AI Development Policy](https://jellyfin.org/docs/general/contributing/llm-policies/) applies to all Swiftfin contributions.
 
 ## Setup
@@ -11,7 +12,6 @@
 Fork the Swiftfin repo and install the necessary dependencies:
 
 ```bash
-# install homebrew dependencies
 $ brew bundle --file Brewfile
 ```
 
@@ -48,46 +48,32 @@ Swiftfin can be tested using Xcode's built-in Simulator or on real hardware. See
 
 ## Git Flow
 
-Swiftfin follows the same Pull Request Guidelines as outlined in the [Jellyfin Pull Request Guidelines](https://jellyfin.org/docs/general/contributing/development.html#pull-request-guidelines).
+- Swiftfin follows the same Pull Request Guidelines as outlined in the [Jellyfin Pull Request Guidelines](https://jellyfin.org/docs/general/contributing/development.html#pull-request-guidelines).
+- If a Pull Request relates to an Issue, mention the issue correctly in the PR description.
+- [SwiftFormat](https://github.com/nicklockwood/SwiftFormat) is our linter. `swiftformat .` can be run in the project directory or install SwiftFormat's Xcode extension.
+- [SwiftLint](https://github.com/realm/SwiftLint) enforces additional rules.
 
-If a Pull Request relates to an Issue, mention the issue correctly in the PR description.
+The following are necessary to merge a PR:
+- Automated builds succeed
+- Developer account is not attached
+- New strings that are not part of an experimental feature are localized
+- Applicable labels are attached
 
-[SwiftFormat](https://github.com/nicklockwood/SwiftFormat) is our linter. `swiftformat .` can be run in the project directory or install SwiftFormat's Xcode extension.
-
-[SwiftLint](https://github.com/realm/SwiftLint) enforces additional rules.
-
-The following must pass in order for a PR to be merged:
-- automated `iOS` and `tvOS` builds must succeed
-- developer account cannot be attached
-- SwiftFormat linting check must pass. If this does not pass, you may need to update your version of `swiftformat`
-- SwiftLint check must pass. If this does not pass, fix the violation or add a justified `swiftlint:disable` directive
-- new strings that are not part of an experimental feature must be localized
-- label(s) are attached, if applicable
-
-Labeling PRs with `enhancement`, `bug`, or `crash` will allow the PR to be tracked in GitHub's [automatically generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes). Small fixes (like minor UI adjustments) or non-user facing issues (like developer project clean up) can also have the `ignore-for-release` label because they may not be important to include in the release notes.
+PRs labeled with `enhancement`, `bug`, or `crash` will allow the PR to be in [release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes). Small fixes (like minor UI adjustments) or non-user facing issues (like developer project clean up) can also have the `ignore-for-release` label because they may not be important to include in the release notes.
 
 ## Documentation
+
 Documentation for advanced or complex features and other implementation reasoning is encouraged so that future developers may have insights and a better understand of the application. `// MARK:` comments are encouraged for organization, maintainability, and ease of navigation in Xcode's Minimap.
 
 ## Architecture
 
-Swiftfin is developed using SwiftUI. The iOS and tvOS Jellyfin clients share the same backend with each client containing their respective views. Due to this architecture, working on both clients at once may be necessary.
-
-The VLC player uses [SwiftVLC](https://github.com/harflabs/SwiftVLC) for its great codec support. Becoming familiar with SwiftVLC will be necessary for video playback development and debugging.
+Swiftfin is developed using SwiftUI, with shared components between platforms. Working on all platforms for a single feature may be necessary. See [Player Architecture](players.md#playback-architecture) for understanding playback.
 
 ## Design
 
 While there are no design guidelines for UI/UX features, Swiftfin has the goal to use native SwiftUI/UIKit components while adhering to a Jellyfin theme. If a feature creates new UI/UX components, it may receive feedback during the PR process or may be re-designed later on.
 
 User customizable UI/UX features are welcome and intended, however not all customization may be accepted for code maintainability and to also establish a distinct Swiftfin design. Taking inspiration, but not always copying, from other applications is encouraged.
-
-## App Icons
-
-Ideas for new icons and minor tweaks to existing icons can be presented however may not be accepted. Overall, app icons must follow these rules:
-
-- Must feature the Jellyfin logo.
-- Must be for general usage (i.e: holiday, hacker theme). Ideas for individual preferences or logos will not be accepted.
-- Must be unique. (i.e: cannot have two blue icons just with different gradients)
 
 ## New Features
 
@@ -98,9 +84,3 @@ If you would like to develop a new feature, create a Feature Request to discuss 
 Other code work like bug fixes, issues with `Developer` tags, localizations, and accessibility efforts are welcome to be picked up at any time.
 
 If you notice undesirable behavior, would like to make a UI/UX tweak, or have a question about implementations, create an issue or ask in the iOS Matrix/Discord channel for insights.
-
-## Intended Behaviors Due to Technical Limitations
-
-The following behaviors are intended due to current technical limitations with SwiftVLC:
-
-- Audio delay when starting or resuming playback may be fixed in VLCKit v4.

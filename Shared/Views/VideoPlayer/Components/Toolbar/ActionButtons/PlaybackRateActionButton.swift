@@ -18,25 +18,28 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
         var body: some View {
+            @Bindable
+            var mediaSession = mediaSession
+
             Menu(
                 L10n.playbackSpeed,
                 systemImage: VideoPlayerActionButton.playbackSpeed.systemImage
             ) {
-                Picker(L10n.playbackSpeed, selection: $manager.rate) {
+                Picker(L10n.playbackSpeed, selection: $mediaSession.rate) {
                     ForEach(rates, id: \.self) { rate in
                         Text(rate, format: .playbackRate)
                             .tag(rate)
                     }
 
-                    if !rates.contains(manager.rate) {
+                    if !rates.contains(mediaSession.rate) {
                         Divider()
 
-                        Text(manager.rate, format: .playbackRate)
-                            .tag(manager.rate)
+                        Text(mediaSession.rate, format: .playbackRate)
+                            .tag(mediaSession.rate)
                     }
                 }
 

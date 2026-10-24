@@ -27,6 +27,7 @@ extension BaseItemDto {
             name: person.name,
             type: .person
         )
+
         self.people = [person]
     }
 }
@@ -41,80 +42,45 @@ extension BaseItemDto: Displayable {
 extension BaseItemDto {
 
     var avMetadata: [AVMetadataItem] {
-        let title: String
-        var subtitle: String? = nil
-        let description = overview
-
-        if type == .episode,
-           let seriesName
-        {
-            title = seriesName
-            subtitle = displayTitle
-        } else {
-            title = displayTitle
-        }
-
-        return [
-            AVMetadataIdentifier.commonIdentifierTitle: title,
-            .iTunesMetadataTrackSubTitle: subtitle,
-            .commonIdentifierDescription: description,
-        ]
-            .compactMap { identifier, value in
-                let item = AVMutableMetadataItem()
-                item.identifier = identifier
-                item.value = value as? NSCopying & NSObjectProtocol
-                item.extendedLanguageTag = "und"
-
-                return item.copy() as? AVMetadataItem
-            }
+        nowPlayableStaticMetadata().avMetadata()
     }
 
     func nowPlayableStaticMetadata(_ image: UIImage? = nil) -> NowPlayableStaticMetadata {
 
-        let mediaType: MPNowPlayingInfoMediaType = {
-            switch type {
-            case .audio, .audioBook: .audio
-            default: .video
-            }
-        }()
+        let content = currentProgram ?? self
+        let isAudio = mediaType == .audio || (mediaType == nil && (type == .audio || type == .audioBook || channelType == .radio))
 
-        let title: String = {
-            if type == .episode,
-               let seriesName
-            {
-                seriesName
-            } else {
-                displayTitle
-            }
-        }()
+        func nonempty(_ text: String?) -> String? {
+            guard let text = text?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else { return nil }
 
-        let albumArtist: String? = {
-            switch type {
-            case .audio:
-                artists?.joined(separator: ", ")
-            default:
-                nil
-            }
-        }()
+            return text
+        }
 
-        let albumTitle: String? = {
-            switch type {
-            case .audio:
-                album
-            default:
-                nil
-            }
-        }()
+        func joined(_ texts: [String?], separator: String = ", ") -> String? {
+            nonempty(texts.compactMap(nonempty).joined(separator: separator))
+        }
 
-        // TODO: only fill artist, albumArtist, and albumTitle if audio type
+        let artist: String? = if content.type == .episode {
+            joined([content.seriesName, content.seasonEpisodeLabel], separator: " · ")
+        } else if currentProgram != nil {
+            nonempty(name)
+        } else if isAudio {
+            joined((content.artists ?? []).map(Optional.some))
+        } else {
+            nil
+        }
+
         return .init(
-            mediaType: mediaType,
+            mediaType: isAudio ? .audio : .video,
             isLiveStream: isLiveStream,
-            title: title,
-            artist: subtitle,
+            title: nonempty(content.name) ?? nonempty(name) ?? L10n.unknown,
+            artist: artist,
             artwork: image.map { image in MPMediaItemArtwork(boundsSize: image.size) { _ in image }},
-            albumArtist: albumArtist,
-            albumTitle: albumTitle
+            albumArtist: isAudio ? nonempty(content.albumArtist) ?? joined((content.albumArtists ?? []).map(\.name)) : nil,
+            albumTitle: isAudio ? nonempty(content.album) : nil,
+            overview: nonempty(content.overview) ?? nonempty(overview),
+            contentRating: nonempty(content.officialRating) ?? nonempty(officialRating),
+            genre: joined((content.genres ?? genres ?? []).map(Optional.some))
         )
     }
 
@@ -162,6 +128,7 @@ extension BaseItemDto {
 
             var person = person
             person.role = roles.isEmpty ? nil : roles
+
             return person
         }
     }
@@ -175,7 +142,7 @@ extension BaseItemDto {
     /// Differs from `isLive` to indicate an item
     /// would be streaming from a live source.
     var isLiveStream: Bool {
-        channelType == .tv
+        channelType == .tv || channelType == .radio
     }
 
     var isAiring: Bool {
@@ -204,86 +171,123 @@ extension BaseItemDto {
         }
     }
 
-    /// The primary image handler for building the
-    /// image used in the now playing system.
     @MainActor
-    func getNowPlayingImage() async -> UIImage? {
-        let imageSources = imageSources(
-            for: preferredPosterDisplayType,
+    var nowPlayingImageSources: [ImageSource] {
+        let content = currentProgram ?? self
+
+        let portraitEnvironment = Environment(
+            maxWidth: PosterDisplayType.Size.small.width(for: .portrait),
+            quality: PosterDisplayType.Size.small.quality,
+            useParent: true
+        )
+
+        @ImageSourceBuilder
+        var portraitSources: [ImageSource] {
+            if content.type == .episode {
+                content.imageSource(
+                    .primary,
+                    itemID: content.parentPrimaryImageItemID,
+                    tag: content.parentPrimaryImageTag,
+                    environment: portraitEnvironment
+                )
+
+                content.imageSource(
+                    .primary,
+                    itemID: content.seriesID,
+                    tag: content.seriesPrimaryImageTag,
+                    environment: portraitEnvironment
+                )
+            }
+
+            let hasPortraitPrimary = content.primaryImageAspectRatio.map { $0 > 0 && $0 < 1 }
+                ?? (content.preferredPosterDisplayType == .portrait)
+
+            if hasPortraitPrimary {
+                content.imageSource(.primary, itemID: content.id, environment: portraitEnvironment)
+            }
+
+            if content.type != .episode, content.preferredPosterDisplayType != .square {
+                content.imageSource(
+                    .primary,
+                    itemID: content.seriesID,
+                    tag: content.seriesPrimaryImageTag,
+                    environment: portraitEnvironment
+                )
+
+                content.imageSource(
+                    .primary,
+                    itemID: content.parentPrimaryImageItemID,
+                    tag: content.parentPrimaryImageTag,
+                    environment: portraitEnvironment
+                )
+            }
+        }
+
+        let sources = content.imageSources(
+            for: content.preferredPosterDisplayType,
             size: .small,
             environment: .init(useParent: true)
         )
 
-        guard let firstImage = await ImagePipeline.Swiftfin.other.loadFirstImage(from: imageSources) else {
+        let fallback = currentProgram == nil ? [] : imageSources(
+            for: content.preferredPosterDisplayType,
+            size: .small,
+            environment: .init(useParent: true)
+        )
+
+        return Array((portraitSources + sources + fallback).uniqued())
+    }
+
+    @MainActor
+    func getNowPlayingImage() async -> UIImage? {
+        let content = currentProgram ?? self
+
+        guard let firstImage = await ImagePipeline.Swiftfin.other.loadFirstImage(from: nowPlayingImageSources) else {
             let failedSystemContentView = SystemImageContentView(
                 systemName: systemImage
             )
-            .posterStyle(preferredPosterDisplayType)
+            .posterStyle(content.preferredPosterDisplayType)
             .frame(width: 400)
 
             return ImageRenderer(content: failedSystemContentView).uiImage
         }
 
+        let displayType: PosterDisplayType = firstImage.size.height > firstImage.size.width ? .portrait : content.preferredPosterDisplayType
+
         let image = Image(uiImage: firstImage)
             .resizable()
+
         let transformedImage = ZStack {
             Rectangle()
                 .fill(Color.secondarySystemFill)
 
-            transform(image: image, displayType: preferredPosterDisplayType)
+            content.transform(image: image, displayType: displayType)
         }
-        .posterAspectRatio(preferredPosterDisplayType, contentMode: .fit)
+        .posterAspectRatio(displayType, contentMode: .fit)
         .frame(width: 400)
 
         return ImageRenderer(content: transformedImage).uiImage
     }
 
     @MainActor
-    func getPlaybackItemProvider(
+    func getPlaybackIntent(
         userSession: UserSession?,
         mediaSource: MediaSourceInfo? = nil,
         audioStreamIndex: Int? = nil,
         subtitleStreamIndex: Int? = nil,
         requestedBitrate: PlaybackBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
-    ) -> MediaPlayerItemProvider? {
-        switch type {
-        case .program:
-            guard isAiring, let userSession else { return nil }
-
-            return MediaPlayerItemProvider(item: self) { program, modifyItem in
-                guard let channel = try? await program.getChannel(
-                    for: program,
-                    userSession: userSession
-                ) else {
-                    throw ErrorMessage(L10n.unknownError)
-                }
-
-                return try await MediaPlayerItem.build(
-                    for: channel,
-                    modifyItem: modifyItem
-                )
-            }
-
-        default:
-            let selectedMediaSource = mediaSource ?? mediaSources?.first
-
-            return MediaPlayerItemProvider(
-                item: self,
-                mediaSource: selectedMediaSource,
-                audioStreamIndex: audioStreamIndex,
-                subtitleStreamIndex: subtitleStreamIndex,
-                requestedBitrate: requestedBitrate
-            ) { item, modifyItem in
-                try await MediaPlayerItem.build(
-                    for: item,
-                    mediaSource: selectedMediaSource,
-                    audioStreamIndex: audioStreamIndex,
-                    subtitleStreamIndex: subtitleStreamIndex,
-                    requestedBitrate: requestedBitrate,
-                    modifyItem: modifyItem
-                )
-            }
+    ) -> PlaybackIntent? {
+        if type == .program, !isAiring || userSession == nil {
+            return nil
         }
+
+        return PlaybackIntent(
+            item: self,
+            mediaSource: mediaSource,
+            audioStreamIndex: audioStreamIndex,
+            subtitleStreamIndex: subtitleStreamIndex,
+            requestedBitrate: requestedBitrate
+        )
     }
 
     @MainActor
@@ -327,6 +331,7 @@ extension BaseItemDto {
             let formatter = DateComponentsFormatter()
             formatter.unitsStyle = .abbreviated
             formatter.allowedUnits = [.hour, .minute]
+
             return formatter
         }()
 
@@ -464,6 +469,7 @@ extension BaseItemDto {
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
+
         return dateFormatter.string(from: premiereDate)
     }
 
@@ -472,6 +478,7 @@ extension BaseItemDto {
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY"
+
         return dateFormatter.string(from: premiereDate)
     }
 
@@ -490,15 +497,11 @@ extension BaseItemDto {
 
     // MARK: Chapter Images
 
-    var fullChapterInfo: [ChapterInfo.FullInfo]? {
-
-        guard let chapters = chapters?
-            .sorted(using: \.startPositionTicks)
-            .compacted(using: \.startPositionTicks) else { return nil }
-        guard let userSession = Container.shared.currentUserSession() else { return nil }
-
-        return chapters
+    func fullChapterInfo(using client: JellyfinClient) -> [ChapterInfo.FullInfo] {
+        (chapters ?? [])
             .enumerated()
+            .filter { $0.element.startPositionTicks != nil }
+            .sorted { ($0.element.startPositionTicks ?? 0) < ($1.element.startPositionTicks ?? 0) }
             .map { i, chapter in
 
                 guard let imageTag = chapter.imageTag, imageTag.isNotEmpty else {
@@ -518,13 +521,9 @@ extension BaseItemDto {
                     parameters: parameters
                 )
 
-                let imageURL = userSession
-                    .client
-                    .url(with: request)
-
                 return .init(
                     chapterInfo: chapter,
-                    imageSource: .init(url: imageURL)
+                    imageSource: .init(url: client.url(with: request))
                 )
             }
     }

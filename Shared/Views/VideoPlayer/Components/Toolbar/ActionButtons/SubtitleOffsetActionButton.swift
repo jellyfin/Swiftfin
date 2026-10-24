@@ -17,21 +17,42 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
-        var body: some View {
+        private var primaryOffsetButton: some View {
             Button {
                 viewState.presentGuestSupplement(PlaybackAdjustmentSupplement.subtitleOffset)
             } label: {
-                Label(
-                    L10n.subtitleOffset,
-                    systemImage: VideoPlayerActionButton.subtitleOffset.systemImage
-                )
-
                 if isInMenu {
-                    Text(manager.subtitleOffset, format: .playbackOffset)
+                    Text(L10n.subtitleOffset)
+
+                    Text(mediaSession.playbackItem?.subtitleOffset ?? .zero, format: .playbackOffset)
+                } else {
+                    Label(
+                        L10n.subtitleOffset,
+                        systemImage: VideoPlayerActionButton.subtitleOffset.systemImage
+                    )
                 }
+            }
+        }
+
+        var body: some View {
+            if mediaSession.playbackItem?.supportsSecondarySubtitles == true {
+                Menu(L10n.subtitleOffset, systemImage: VideoPlayerActionButton.subtitleOffset.systemImage) {
+                    primaryOffsetButton
+
+                    Button {
+                        viewState.presentGuestSupplement(PlaybackAdjustmentSupplement.secondarySubtitleOffset)
+                    } label: {
+                        Text(L10n.secondarySubtitleOffset)
+
+                        Text(mediaSession.playbackItem?.secondarySubtitleOffset ?? .zero, format: .playbackOffset)
+                    }
+                }
+                .menuOrder(.fixed)
+            } else {
+                primaryOffsetButton
             }
         }
     }

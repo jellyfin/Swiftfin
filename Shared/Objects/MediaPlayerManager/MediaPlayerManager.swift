@@ -7,553 +7,109 @@
 //
 
 import Combine
-import Defaults
 import FactoryKit
 import Foundation
-import JellyfinAPI
-
-// TODO: proper error catching
-// TODO: be a UserSessionService?
-
-typealias MediaPlayerManagerPublisher = LegacyEventPublisher<MediaPlayerManager?>
-
-extension Scope {
-
-    static let session = Cached()
-}
+import Observation
 
 extension Container {
 
-    var mediaPlayerManagerPublisher: Factory<MediaPlayerManagerPublisher> {
-        self { MediaPlayerManagerPublisher() }
-            .singleton
-    }
-
     var mediaPlayerManager: Factory<MediaPlayerManager> {
-        self { @MainActor in
-            .init(
-                playbackItem: .init(
-                    baseItem: .init(),
-                    mediaSource: .init(),
-                    playSessionID: "",
-                    url: URL(string: "/")!,
-                    deviceProfile: .init()
-                )
-            )
-        }
-        .scope(.session)
+        self { MainActor.assumeIsolated { MediaPlayerManager() } }.singleton
     }
 }
 
-import StatefulMacros
-
+/// The app's permanent owner of playback sessions and system playback integration.
 @MainActor
-@Stateful
-final class MediaPlayerManager: ViewModel {
+@Observable
+final class MediaPlayerManager {
 
-    @CasePathable
-    enum Action {
+    private(set) var currentSession: MediaSession?
 
-        case ended
-        case error
-        case playNewItem(provider: MediaPlayerItemProvider)
-        case setBitrate(bitrate: PlaybackBitrate)
-        case setPlaybackRequestStatus(status: PlaybackRequestStatus)
-        case setRate(rate: Double)
-        case setTrack(type: MediaStreamType, from: Int?, to: Int? = nil)
-        case start
-        case stop
-        case togglePlayPause
+    @ObservationIgnored
+    private let nowPlayableObserver: any MediaSessionObserver
+    @ObservationIgnored
+    private let reportQueue = MediaPlaybackReportQueue()
+    @ObservationIgnored
+    private let resolveItem: MediaSession.ItemResolver
+    @ObservationIgnored
+    private var sessionObservation: AnyCancellable?
+    @ObservationIgnored
+    private var nowPlayingObservation: AnyCancellable?
+    @ObservationIgnored
+    private var lifecycleObservations: Set<AnyCancellable> = []
 
-        var transition: Transition {
-            switch self {
-            case .error:
-                .to(.error)
-                    .invalid(.stopped)
-
-            case .playNewItem, .start:
-                .to(.loadingItem, then: .playback)
-                    .invalid(.stopped)
-
-            case .stop:
-                .to(.stopped)
-
-            default:
-                .none
-                    .invalid(.stopped)
-            }
-        }
-    }
-
-    enum State {
-
-        case error
-        case initial
-        case loadingItem
-        case playback
-        case stopped
-    }
-
-    /// A status indicating the player's request for media playback.
-    enum PlaybackRequestStatus {
-
-        /// The player requests media playback
-        case playing
-
-        /// The player is paused
-        case paused
-    }
-
-    @Published
-    var playbackItem: MediaPlayerItem? = nil {
-        didSet {
-            if let playbackItem {
-                if oldValue?.baseItem.id != playbackItem.baseItem.id || oldValue == nil {
-                    resetPlaybackOffsets()
-                }
-                self.item = playbackItem.baseItem
-                seconds = playbackItem.baseItem.startSeconds ?? .zero
-                playbackItem.manager = self
-                setSupplements()
-
-                logger.info(
-                    "Playing new item",
-                    metadata: [
-                        "itemID": .stringConvertible(playbackItem.baseItem.id ?? "Unknown"),
-                        "itemTitle": .stringConvertible(playbackItem.baseItem.displayTitle),
-                        "url": .stringConvertible(playbackItem.url.absoluteString),
-                        "isTranscoding": .stringConvertible(playbackItem.mediaSource.transcodingURL != nil),
-                    ]
-                )
-
-                Task { _ = await playbackItem.previewImageProvider?.image(for: seconds) }
-            }
-        }
-    }
-
-    @SharedBaseItem
-    private var selectedItem: BaseItemDto
-
-    private(set) var item: BaseItemDto {
-        get {
-            if let playbackItem, playbackItem.baseItem.id == selectedItem.id {
-                return playbackItem.baseItem
-            }
-            return selectedItem
-        }
-        set { selectedItem = newValue }
-    }
-
-    @Published
-    private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
-    @Published
-    var rate: Double = Defaults[.VideoPlayer.Playback.playbackRate] {
-        didSet {
-            Defaults[.VideoPlayer.Playback.playbackRate] = rate
-        }
-    }
-
-    @Published
-    var audioOffset: Duration = .zero {
-        didSet {
-            (proxy as? MediaPlayerOffsetConfigurable)?.setAudioOffset(audioOffset)
-        }
-    }
-
-    @Published
-    var subtitleOffset: Duration = .zero {
-        didSet {
-            (proxy as? MediaPlayerOffsetConfigurable)?.setSubtitleOffset(subtitleOffset)
-        }
-    }
-
-    func applyPlaybackOffsets() {
-        guard let proxy = proxy as? MediaPlayerOffsetConfigurable else { return }
-
-        proxy.setAudioOffset(audioOffset)
-        proxy.setSubtitleOffset(subtitleOffset)
-    }
-
-    private func resetPlaybackOffsets() {
-        audioOffset = .zero
-        subtitleOffset = .zero
-    }
-
-    @Published
-    var queue: AnyMediaPlayerQueue? = nil
-
-    @Published
-    var supplements: [any MediaPlayerSupplement] = []
-
-    // TODO: replace with graph dependency package
-    private func setSupplements() {
-        var newSupplements = Defaults[.VideoPlayer.supplements].compactMap { kind -> (any MediaPlayerSupplement)? in
-            switch kind {
-            case .info:
-                return MediaInfoSupplement(item: item)
-
-            case .chapters:
-                guard let chapters = item.fullChapterInfo, chapters.isNotEmpty else { return nil }
-
-                return MediaChaptersSupplement(chapters: chapters)
-
-            case .queue:
-                return queue
-
-            case .people:
-                guard let people = item.mergedPeople?.filter({ $0.type?.isSupported == true }),
-                      people.isNotEmpty else { return nil }
-
-                return MediaPeopleSupplement(people: people)
-
-            case .playbackInformation:
-                guard let itemID = item.id else { return nil }
-
-                return PlaybackInformationSupplement(itemID: itemID)
-            }
-        }
-
-        if item.isLiveStream, Defaults[.Experimental.videoPlayerEPG] {
-            newSupplements.append(EPGSupplement())
-        }
-
-        self.supplements = newSupplements
-    }
-
-    /// The current seconds media playback is set to.
-    let secondsBox: PublishedBox<Duration> = .init(initialValue: .zero)
-
-    var seconds: Duration {
-        get { secondsBox.value }
-        set { secondsBox.value = newValue }
-    }
-
-    var playbackBitrate: PlaybackBitrate {
-        playbackItem?.requestedBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
-    }
-
-    /// Holds a weak reference to the current media player proxy.
-    weak var proxy: (any MediaPlayerProxy)? {
-        didSet {
-            if var proxy {
-                proxy.manager = self
-            }
-        }
-    }
-
-    private var initialMediaPlayerItemProvider: MediaPlayerItemProvider?
-
-    // MARK: init
-
-//    static let empty: MediaPlayerManager = .init()
-
-//    override private init() {
-//        self.item = .init()
-//        self.state = .stopped
-//        super.init()
-//    }
-
-    init(
-        provider: MediaPlayerItemProvider,
-        queue: (any MediaPlayerQueue)? = nil
-    ) {
-        self.selectedItem = provider.item
-        self.queue = queue.map { AnyMediaPlayerQueue($0) }
-        self.state = .loadingItem
-        self.initialMediaPlayerItemProvider = provider
-        super.init()
-
-        self.queue?.manager = self
+    var hasActivePlayback: Bool {
+        currentSession?.hasActivePlayback == true
     }
 
     init(
-        playbackItem: MediaPlayerItem,
-        queue: (any MediaPlayerQueue)? = nil
+        nowPlayableObserver: (any MediaSessionObserver)? = nil,
+        resolveItem: @escaping MediaSession.ItemResolver = { try await $0.resolve(for: $1, userSession: $2) }
     ) {
-        self.selectedItem = playbackItem.baseItem
-        self.queue = queue.map { AnyMediaPlayerQueue($0) }
-        self.state = .playback
-        super.init()
+        self.nowPlayableObserver = nowPlayableObserver ?? NowPlayableObserver()
+        self.resolveItem = resolveItem
 
-        self.queue?.manager = self
-        self.playbackItem = playbackItem
+        Notifications[.applicationWillTerminate]
+            .publisher
+            .sink { [weak self] _ in self?.stop() }
+            .store(in: &lifecycleObservations)
+
+        Notifications[.applicationDidEnterBackground]
+            .publisher
+            .sink { [weak self] _ in self?.currentSession?.sceneDidEnterBackground() }
+            .store(in: &lifecycleObservations)
+
+        Notifications[.applicationWillEnterForeground]
+            .publisher
+            .sink { [weak self] _ in self?.currentSession?.cancelBackgroundPause() }
+            .store(in: &lifecycleObservations)
     }
 
-    @Function(\Action.Cases.ended)
-    private func _ended() async throws {
-        // TODO: change to observe given seconds against runtime
-        //       instead of sent action?
-
-        // Ended should represent natural ending of playback, which
-        // is verifiable by given seconds being near item runtime.
-        // VLC proxy will send ended early.
-        guard let runtime = item.runtime else {
-            await self.stop()
-            return
-        }
-
-        let isNearEnd = (runtime - seconds) <= .seconds(1)
-
-        guard isNearEnd else {
-            // If not near end, ignore.
-            return
-        }
-
-        if let nextItem = queue?.nextItem, try authenticatedUser.data.configuration?.enableNextEpisodeAutoPlay == true {
-            await self.playNewItem(provider: nextItem)
-        } else {
-            await self.stop()
-        }
+    isolated deinit {
+        currentSession?.stop()
     }
 
-    @Function(\Action.Cases.error)
-    private func onError(_ error: Error) async throws {
-        if let playbackItem {
-            logger.error(
-                "Error while playing item",
-                metadata: [
-                    "error": .stringConvertible(error.localizedDescription),
-                    "itemID": .stringConvertible(playbackItem.baseItem.id ?? "Unknown"),
-                    "itemTitle": .stringConvertible(playbackItem.baseItem.displayTitle),
-                    "url": .stringConvertible(playbackItem.url.absoluteString),
-                ]
-            )
-        } else {
-            logger.error(
-                "Error with no playback item",
-                metadata: [
-                    "error": .stringConvertible(error.localizedDescription),
-                    "itemID": .stringConvertible(item.id ?? "Unknown"),
-                    "itemTitle": .stringConvertible(item.displayTitle),
-                ]
-            )
-        }
+    @discardableResult
+    func play(
+        intent: PlaybackIntent,
+        userSession: UserSession,
+        queue: (any MediaPlayerQueue)? = nil
+    ) -> MediaSession {
+        stop()
 
-        proxy?.stop()
-        Container.shared.mediaPlayerManagerPublisher().send(nil)
-        Container.shared.mediaPlayerManager.reset()
-    }
-
-    @Function(\Action.Cases.playNewItem)
-    private func _playNewItem(_ provider: MediaPlayerItemProvider) async throws {
-        resetPlaybackOffsets()
-        item = provider.item
-        setSupplements()
-        proxy?.stop()
-        playbackItem = try await provider()
-    }
-
-    @Function(\Action.Cases.setBitrate)
-    private func _setBitrate(_ requestedBitrate: PlaybackBitrate) async throws {
-        guard let currentItem = playbackItem else { return }
-
-        try await updateMediaPlayerItem(
-            currentItem: currentItem,
-            requestedBitrate: requestedBitrate
-        )
-    }
-
-    @Function(\Action.Cases.setPlaybackRequestStatus)
-    private func set(_ status: PlaybackRequestStatus) {
-        if self.playbackRequestStatus != status {
-            self.playbackRequestStatus = status
-
-            switch status {
-            case .paused:
-                proxy?.pause()
-            case .playing:
-                proxy?.play()
-            }
-        }
-    }
-
-    @Function(\Action.Cases.setRate)
-    private func set(_ rate: Double) {
-        if self.rate != rate {
-            self.rate = rate
-        }
-    }
-
-    @Function(\Action.Cases.setTrack)
-    private func _setTrack(_ type: MediaStreamType, _ oldIndex: Int?, _ newIndex: Int?) async throws {
-        guard let playbackItem else {
-            logger.warning("MediaPlayerManager.SetTrack call with an invalid playbackItem")
-            return
-        }
-
-        switch type {
-        case .audio:
-            guard playbackItem.audioStreams.contains(where: { $0.index == oldIndex }) else {
-                logger.warning("MediaPlayerManager.SetTrack call with an invalid audio track index")
-                return
-            }
-
-            if playbackItem.isRebuildRequired(type: .audio, from: oldIndex, to: newIndex) {
-                try await updateMediaPlayerItem(
-                    currentItem: playbackItem,
-                    audioStreamIndex: newIndex
-                )
-            } else {
-                playbackItem.switchTrack(type: .audio, index: newIndex)
-            }
-
-        case .subtitle:
-            guard newIndex == -1 || playbackItem.subtitleStreams.contains(where: { $0.index == newIndex }) else {
-                logger.warning("MediaPlayerManager.SetTrack call with an invalid subtitle track index")
-                return
-            }
-
-            if playbackItem.isRebuildRequired(type: .subtitle, from: oldIndex, to: newIndex) {
-                try await updateMediaPlayerItem(
-                    currentItem: playbackItem,
-                    subtitleStreamIndex: newIndex
-                )
-            } else {
-                playbackItem.switchTrack(type: .subtitle, index: newIndex)
-            }
-
-        default:
-            logger.warning("MediaPlayerManager.SetTrack called with unsupported type: \(String(describing: type))")
-        }
-    }
-
-    @Function(\Action.Cases.start)
-    private func _start() async throws {
-        guard let initialMediaPlayerItemProvider else {
-            await self.stop()
-            return
-        }
-
-        self.initialMediaPlayerItemProvider = nil
-        playbackItem = try await initialMediaPlayerItemProvider()
-    }
-
-    // TODO: remove playback item?
-    //       - check that observers would respond correctly to stopping
-    @Function(\Action.Cases.stop)
-    private func _stop() async throws {
-        await self.cancel()
-
-        proxy?.stop()
-        Container.shared.mediaPlayerManagerPublisher().send(nil)
-        Container.shared.mediaPlayerManager.reset()
-    }
-
-    @Function(\Action.Cases.togglePlayPause)
-    private func _togglePlayPause() {
-        switch playbackRequestStatus {
-        case .playing:
-            setPlaybackRequestStatus(status: .paused)
-        case .paused:
-            setPlaybackRequestStatus(status: .playing)
-        }
-    }
-
-    /// Rebuilds the playback item with new stream indexes / bitrate.
-    /// Stops the current proxy, requests new playback info from the server, and starts playback with the new configuration.
-    ///
-    /// Rebuilds the current item
-    private func updateMediaPlayerItem(
-        currentItem: MediaPlayerItem,
-        audioStreamIndex: Int? = nil,
-        subtitleStreamIndex: Int? = nil,
-        requestedBitrate: PlaybackBitrate? = nil
-    ) async throws {
-
-        // Capture the current playback position before stopping
-        let currentSeconds = self.seconds
-
-        logger.info(
-            "Rebuilding Media Player Item",
-            metadata: [
-                "audioIndex": "\(audioStreamIndex ?? -1)",
-                "subtitleIndex": "\(subtitleStreamIndex ?? -1)",
-                "currentSeconds": "\(currentSeconds)",
-            ]
+        let session = MediaSession(
+            intent: intent,
+            userSession: userSession,
+            queue: queue,
+            reportQueue: reportQueue,
+            resolveItem: resolveItem
         )
 
-        proxy?.stop()
+        currentSession = session
 
-        let newItem = try await MediaPlayerItem.build(
-            for: currentItem.baseItem,
-            mediaSource: currentItem.mediaSource,
-            audioStreamIndex: audioStreamIndex ?? currentItem.selectedAudioStreamIndex,
-            subtitleStreamIndex: subtitleStreamIndex ?? currentItem.selectedSubtitleStreamIndex,
-            requestedBitrate: requestedBitrate ?? currentItem.requestedBitrate,
-            modifyItem: { item in
-                if item.userData == nil {
-                    item.userData = UserItemDataDto(key: "")
+        sessionObservation = session.core.statePublisher.sink { [weak self, weak session] state in
+            guard let self, let session, currentSession === session else { return }
+
+            switch state {
+            case .preparing, .playback:
+                if nowPlayingObservation == nil {
+                    nowPlayingObservation = nowPlayableObserver.observe(session)
                 }
-                item.userData?.playbackPositionTicks = currentSeconds.ticks
+
+            case .initial, .loadingItem, .error:
+                nowPlayingObservation = nil
+
+            case .stopped:
+                nowPlayingObservation = nil
+                sessionObservation = nil
+                currentSession = nil
             }
-        )
-
-        logger.info(
-            "Built new playback item",
-            metadata: [
-                "playSessionID": "\(newItem.playSessionID)",
-                "isTranscoding": "\(newItem.mediaSource.transcodingURL != nil)",
-                "url": "\(newItem.url.absoluteString)",
-            ]
-        )
-
-        self.playbackItem = newItem
-        self.seconds = currentSeconds
-    }
-
-    nonisolated static func getMaxBitrate(
-        for requestedBitrate: PlaybackBitrate,
-        testSize: PlaybackBitrateTestSize = Defaults[.VideoPlayer.appMaximumBitrateTest]
-    ) async throws -> Int {
-
-        guard requestedBitrate == .auto else { return requestedBitrate.rawValue }
-        guard let userSession = Container.shared.currentUserSession() else {
-            throw UserSessionError.missingCurrentSession
         }
 
-        let testStartTime = Date()
-        let _ = try await userSession.send(Paths.getBitrateTestBytes(size: testSize.rawValue))
-        let testDuration = Date().timeIntervalSince(testStartTime)
-        let testSizeBits = Double(testSize.rawValue * 8)
-        let testBitrate = testSizeBits / testDuration
-
-        return clamp(
-            Int(testBitrate),
-            min: PlaybackBitrate.kbps420.rawValue,
-            max: Int(Int32.max)
-        )
-    }
-}
-
-// MARK: - Picture in Picture
-
-extension MediaPlayerManager {
-
-    func startPictureInPicture() {
-        guard proxy is any MediaPlayerPictureInPictureCapable else { return }
-
-        Task { await startPiPWhenReady(attemptsLeft: 5) }
+        return session
     }
 
-    func stopPictureInPicture() {
-        (proxy as? MediaPlayerPictureInPictureCapable)?.stopPiP()
-    }
-
-    // Retries because the proxy swap is async and AVKit ignores an early start.
-    private func startPiPWhenReady(attemptsLeft: Int) async {
-        guard attemptsLeft > 0,
-              let capable = proxy as? MediaPlayerPictureInPictureCapable
-        else { return }
-
-        if capable.isPiPActive.value {
-            return
-        }
-
-        if capable.isPiPAvailable.value {
-            capable.startPiP()
-        }
-
-        try? await Task.sleep(for: .milliseconds(300))
-        await startPiPWhenReady(attemptsLeft: attemptsLeft - 1)
+    func stop() {
+        currentSession?.stop()
     }
 }

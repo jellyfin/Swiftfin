@@ -75,17 +75,14 @@ extension BaseItemDto: Poster {
         }
     }
 
-    @ViewBuilder
     var posterLabel: some View {
         BaseItemDtoPosterLabel(item: self)
     }
 
-    @ViewBuilder
     var posterContextMenu: some View {
         BaseItemDtoPosterContextMenu(item: self)
     }
 
-    @ViewBuilder
     func posterOverlay(for displayType: PosterDisplayType) -> some View {
         ZStack {
             PosterIndicatorsOverlay(

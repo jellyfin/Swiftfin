@@ -11,22 +11,19 @@ import CollectionVGrid
 import JellyfinAPI
 import SwiftUI
 
-class MediaPeopleSupplement: ObservableObject, MediaPlayerSupplement {
+@MainActor
+struct MediaPeopleSupplement {
 
-    let people: [BaseItemPerson]
     let displayTitle: String = L10n.people
     let id: String = "People"
-
-    init(people: [BaseItemPerson]) {
-        self.people = people
-    }
-
-    var videoPlayerBody: some PlatformView {
-        PeopleOverlay(supplement: self)
-    }
+    let people: [BaseItemPerson]
 }
 
-extension MediaPeopleSupplement {
+extension MediaPeopleSupplement: VideoPlayerSupplement {
+
+    var body: some View {
+        PeopleOverlay(supplement: self)
+    }
 
     private struct PeopleOverlay: PlatformView {
 
@@ -36,7 +33,6 @@ extension MediaPeopleSupplement {
         @Environment(VideoPlayer.ViewState.self)
         private var viewState
 
-        @ObservedObject
         private var supplement: MediaPeopleSupplement
 
         init(supplement: MediaPeopleSupplement) {
@@ -57,7 +53,6 @@ extension MediaPeopleSupplement {
             }
         }
 
-        @ViewBuilder
         private var iOSCompactView: some View {
             CollectionVGrid(
                 uniqueElements: people,
@@ -73,7 +68,6 @@ extension MediaPeopleSupplement {
             }
         }
 
-        @ViewBuilder
         private func personView(for person: BaseItemPerson) -> some View {
             PosterButton(
                 item: person,
@@ -81,7 +75,6 @@ extension MediaPeopleSupplement {
             ) { _ in }
         }
 
-        @ViewBuilder
         private var iOSRegularView: some View {
             CollectionHStack(
                 uniqueElements: people,

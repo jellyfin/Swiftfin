@@ -20,7 +20,6 @@ struct ContentGroupVStack: View {
         #endif
     }
 
-    @ViewBuilder
     private func makeGroupBody(_ group: some ContentGroup) -> some View {
         group.body(with: group.viewModel)
     }

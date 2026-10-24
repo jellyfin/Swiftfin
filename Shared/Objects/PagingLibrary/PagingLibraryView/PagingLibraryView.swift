@@ -89,6 +89,7 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         // safe area (including filter bars) and the tab's measured top inset.
         var insets = frame.safeAreaInsets
         insets.top = max(insets.top, tabSafeAreaInsets.top)
+
         return insets + EdgeInsets.itemSpacing
         #else
         var insets: EdgeInsets = if isSafeAreaBarApplied {
@@ -112,7 +113,6 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         #endif
     }
 
-    @ViewBuilder
     private var elementsView: some View {
         AlternateLayoutView {
             Color.clear

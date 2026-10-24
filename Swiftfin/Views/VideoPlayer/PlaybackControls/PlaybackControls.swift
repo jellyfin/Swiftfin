@@ -22,12 +22,9 @@ extension VideoPlayer {
 
         @Environment(ViewState.self)
         private var viewState
-        @EnvironmentObject
-        private var manager: MediaPlayerManager
+        @Environment(MediaSession.self)
+        private var mediaSession
 
-        // TODO: do something with this value
-        @State
-        private var activeIsBuffering: Bool = false
         @State
         private var bottomContentFrame: CGRect = .zero
 
@@ -83,10 +80,7 @@ extension VideoPlayer {
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: viewState.isPresentingSupplement)
             .animation(.bouncy(duration: 0.25), value: viewState.presentation)
-            .onChange(of: manager.proxy?.isBuffering.value) {
-                activeIsBuffering = manager.proxy?.isBuffering.value ?? false
-            }
-            .disabled(manager.error != nil)
+            .disabled(mediaSession.state == .error)
         }
     }
 }

@@ -49,10 +49,6 @@
 	<string>${PRODUCT_NAME} uses the local network to connect to your Jellyfin server on your Wi-Fi network.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>${PRODUCT_NAME} uses your location to identify the current Wi-Fi network.</string>
-	<key>UIAppFonts</key>
-	<array>
-		<string>NotoSansCJK-Regular.ttc</string>
-	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

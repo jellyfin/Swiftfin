@@ -13,6 +13,7 @@ import UIKit
 
 extension BaseItemDto {
 
+    @MainActor
     func imageSource(
         _ type: ImageType,
         itemID: String?,

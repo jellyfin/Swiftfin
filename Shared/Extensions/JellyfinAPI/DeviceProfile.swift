@@ -12,24 +12,37 @@ import JellyfinAPI
 extension DeviceProfile {
 
     static func build(
-        for videoPlayer: VideoPlayerType,
+        for playerType: MediaPlayerType,
         compatibilityMode: PlaybackCompatibility,
         maxBitrate: Int? = nil,
-        maxResolution: PlaybackResolution = Defaults[.VideoPlayer.Playback.appMaximumResolution]
+        maxResolution: PlaybackResolution = Defaults[.VideoPlayer.Playback.appMaximumResolution],
+        mediaSource: MediaSourceInfo? = nil
     ) -> DeviceProfile {
 
         var deviceProfile: DeviceProfile = .init()
 
-        // MARK: - Video Player Specific Logic
+        // MARK: - Media Player Specific Logic
 
-        deviceProfile.codecProfiles = videoPlayer.codecProfiles
+        deviceProfile.codecProfiles = playerType.codecProfiles
 
         if StoredValues[.User.forceSubtitleBurnIn] {
             deviceProfile.subtitleProfiles = SubtitleProfile.build(method: .encode) {
                 SubtitleFormat.allCases
             }
         } else {
-            deviceProfile.subtitleProfiles = videoPlayer.subtitleProfiles
+            deviceProfile.subtitleProfiles = playerType.subtitleProfiles
+        }
+
+        // To preserve native Dolby Vision pixels in MPVUI, subtitles must use our text
+        // overlay or server burn-in instead of native ASS/bitmap composition.
+        if playerType == .mpv,
+           mediaSource?.mediaStreams?.contains(where: {
+               $0.type == .video && ($0.dvProfile != nil || $0.videoRangeType?.isDolbyVision == true)
+           }) == true
+        {
+            deviceProfile.subtitleProfiles = deviceProfile.subtitleProfiles?.filter {
+                $0.method == .encode || ($0.method == .external && ["subrip", "vtt"].contains($0.format ?? ""))
+            }
         }
 
         if let resolutionCodecProfile = maxResolution.codecProfile {
@@ -40,8 +53,8 @@ extension DeviceProfile {
 
         switch compatibilityMode {
         case .auto:
-            deviceProfile.directPlayProfiles = videoPlayer.directPlayProfiles
-            deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
+            deviceProfile.directPlayProfiles = playerType.directPlayProfiles
+            deviceProfile.transcodingProfiles = playerType.transcodingProfiles
 
         case .mostCompatible:
             deviceProfile.directPlayProfiles = PlaybackCompatibility.Video.compatibilityDirectPlayProfile
@@ -55,8 +68,8 @@ extension DeviceProfile {
             let playbackDeviceProfile = StoredValues[.User.customDeviceProfiles]
 
             if customProfileMode == .add {
-                deviceProfile.directPlayProfiles = videoPlayer.directPlayProfiles
-                deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
+                deviceProfile.directPlayProfiles = playerType.directPlayProfiles
+                deviceProfile.transcodingProfiles = playerType.transcodingProfiles
             } else {
                 deviceProfile.directPlayProfiles = []
 
@@ -64,7 +77,7 @@ extension DeviceProfile {
                 if playbackDeviceProfile.contains(where: { $0.useAsTranscodingProfile == true }) {
                     deviceProfile.transcodingProfiles = []
                 } else {
-                    deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
+                    deviceProfile.transcodingProfiles = playerType.transcodingProfiles
                 }
             }
 
@@ -75,6 +88,19 @@ extension DeviceProfile {
                     deviceProfile.transcodingProfiles?.append(profile.transcodingProfile)
                 }
             }
+        }
+
+        // Retain each engine's audio support when applying compatibility and custom video profile settings.
+        if deviceProfile.directPlayProfiles?.contains(where: { $0.type == .audio }) != true {
+            deviceProfile.directPlayProfiles = (deviceProfile.directPlayProfiles ?? [])
+                + playerType.directPlayProfiles.filter { $0.type == .audio }
+        }
+
+        if compatibilityMode != .directPlay,
+           deviceProfile.transcodingProfiles?.contains(where: { $0.type == .audio }) != true
+        {
+            deviceProfile.transcodingProfiles = (deviceProfile.transcodingProfiles ?? [])
+                + playerType.transcodingProfiles.filter { $0.type == .audio }
         }
 
         // MARK: - Assign the Bitrate if provided

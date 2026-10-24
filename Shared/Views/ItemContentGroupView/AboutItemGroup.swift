@@ -132,7 +132,6 @@ struct AboutItemGroup: ContentGroup {
             .aspectRatio(cardAspectRatio, contentMode: .fit)
         }
 
-        @ViewBuilder
         private func ratingsCard(criticRating: Float, communityRating: Float) -> some View {
             AboutCard(
                 title: L10n.ratings,
