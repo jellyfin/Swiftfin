@@ -27,7 +27,8 @@ struct VideoPlayer: View {
             Image(systemName: "tv")
                 .font(.system(size: 56))
 
-            Text(L10n.castingTo(mediaSession.player?.displayTitle ?? L10n.cast))
+            // swiftlint:disable:next nested_l10n
+            Text(L10n.castingTo(mediaSession.player?.displayTitle ?? L10n.unknown))
                 .font(.title2)
 
             if mediaSession.state == .playback, !mediaSession.playbackState.isReady {
