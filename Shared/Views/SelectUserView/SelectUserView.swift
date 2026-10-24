@@ -280,6 +280,7 @@ struct SelectUserView: View {
                     #if os(tvOS)
                         .coordinatedFocus(.placeholder)
                     #endif
+
             case .content:
                 if viewModel.servers.isEmpty {
                     ConnectToJellyfinView()
