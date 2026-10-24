@@ -20,7 +20,7 @@ struct VideoPlayer: View {
     private var viewState: ViewState = .init()
 
     let mediaSession: MediaSession
-    
+
     #if os(iOS)
     private var remotePlaybackBody: some View {
         VStack(spacing: 16) {

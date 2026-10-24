@@ -23,7 +23,7 @@ final class ChromecastController: NSObject, @preconcurrency GCKSessionManagerLis
         if let instance {
             return instance
         }
-        
+
         let controller = ChromecastController()
         instance = controller
         return controller
@@ -35,7 +35,7 @@ final class ChromecastController: NSObject, @preconcurrency GCKSessionManagerLis
 
     override private init() {
         super.init()
-        
+
         let criteria = GCKDiscoveryCriteria(applicationID: kGCKDefaultMediaReceiverApplicationID)
         let options = GCKCastOptions(discoveryCriteria: criteria)
         options.disableDiscoveryAutostart = true
@@ -43,9 +43,9 @@ final class ChromecastController: NSObject, @preconcurrency GCKSessionManagerLis
         options.suspendSessionsWhenBackgrounded = true
         options.stopReceiverApplicationWhenEndingSession = true
         GCKCastContext.setSharedInstanceWith(options)
-        
+
         let context = GCKCastContext.sharedInstance()
-        
+
         context.sessionManager.add(self)
         context.discoveryManager.add(self)
     }
@@ -67,10 +67,10 @@ final class ChromecastController: NSObject, @preconcurrency GCKSessionManagerLis
         let context = GCKCastContext.sharedInstance()
         context.discoveryManager.stopDiscovery()
         instance.devices = []
-        
+
         let mediaSession = instance.mediaSession
         instance.mediaSession = nil
-        
+
         Task {
             await mediaSession?.returnToLocalPlayback()?.value
             guard !Defaults[.Experimental.chromecast] else { return }
@@ -91,15 +91,15 @@ final class ChromecastController: NSObject, @preconcurrency GCKSessionManagerLis
               mediaSession.item.mediaType == .video else { return }
 
         self.mediaSession = mediaSession
-        
+
         Task {
             let sessions = GCKCastContext.sharedInstance().sessionManager
-            
+
             if let current = sessions.currentCastSession, current.device.uniqueID == device.uniqueID {
                 startPlayback(in: current)
                 return
             }
-            
+
             await mediaSession.returnToLocalPlayback()?.value
             guard Defaults[.Experimental.chromecast], self.mediaSession === mediaSession,
                   mediaSession.canControlPlayback else { return }
@@ -145,13 +145,13 @@ final class ChromecastController: NSObject, @preconcurrency GCKSessionManagerLis
         guard let mediaSession, let player = mediaSession.player as? ChromecastMediaPlayer, player.session === session else { return }
 
         player.sessionEnded(receiverStopped: error == nil)
-        
+
         if error != nil {
             mediaSession.setPlaybackRequestStatus(status: .paused)
         }
-        
+
         mediaSession.returnToLocalPlayback()
-        
+
         if error != nil {
             mediaSession.commandError = L10n.castConnectionFailed
         }

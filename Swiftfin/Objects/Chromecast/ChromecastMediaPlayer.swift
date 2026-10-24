@@ -66,7 +66,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
 
     func load(_ item: MediaPlayerItem) {
         stop()
-        
+
         guard session.connectionState == .connected, let client = session.remoteMediaClient else {
             mediaSession?.playerDidFail(ErrorMessage(L10n.castConnectionFailed), from: self)
             return
@@ -75,31 +75,31 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
         self.client = client
         receiverStopped = false
         client.add(self)
-        
+
         let playbackID = UUID().uuidString
         self.playbackID = playbackID
-        
+
         let metadata = GCKMediaMetadata(metadataType: item.baseItem.type == .episode ? .tvShow : .movie)
         metadata.setString(item.baseItem.displayTitle, forKey: kGCKMetadataKeyTitle)
-        
+
         let information = GCKMediaInformationBuilder(contentURL: item.url)
         information.contentType = "application/x-mpegURL"
         information.streamType = item.baseItem.isLiveStream ? .live : .buffered
         information.streamDuration = item.baseItem.isLiveStream ? .infinity : (item.baseItem.runtime?.seconds ?? 0)
         information.metadata = metadata
         information.customData = ["playbackID": playbackID]
-        
+
         let load = GCKMediaLoadRequestDataBuilder()
         load.mediaInformation = information.build()
         load.autoplay = NSNumber(value: mediaSession?.playbackRequestStatus == .playing)
         load.playbackRate = Float(mediaSession?.effectiveRate ?? 1)
-        
+
         if !item.baseItem.isLiveStream {
             load.startTime = item.baseItem.startSeconds?.seconds ?? 0
         }
-        
+
         track(client.loadMedia(with: load.build()), as: .load)
-        
+
         guard self.playbackID == playbackID else { return }
 
         loadTimeoutTask = Task { [weak self] in
@@ -108,7 +108,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
 
             mediaSession?.playerDidFail(ErrorMessage(L10n.castConnectionFailed), from: self)
         }
-        
+
         progressTask = Task { [weak self] in
             while !Task.isCancelled {
                 do { try await Task.sleep(for: .seconds(1)) } catch { return }
@@ -158,13 +158,13 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
         let shouldStop = !receiverStopped && owns(client?.mediaStatus)
         let pendingLoadID = !receiverStopped && !isReady ? playbackID : nil
         let continuation = transferContinuation
-        
+
         transferContinuation = nil
         transferTimeoutTask?.cancel()
         transferTimeoutTask = nil
-        
+
         let previousClient = client
-        
+
         client?.remove(self)
         client = nil
         playbackID = nil
@@ -177,21 +177,21 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
         progressTask = nil
         loadTimeoutTask?.cancel()
         loadTimeoutTask = nil
-        
+
         let requests = commands.values.map(\.request)
         commands.removeAll()
-        
+
         for request in requests {
             request.delegate = nil
             request.cancel()
         }
-        
+
         if shouldStop, previousClient?.connected == true {
             previousClient?.stop()
         } else if let pendingLoadID, let previousClient {
             Self.stopPendingLoad(pendingLoadID, on: previousClient)
         }
-        
+
         continuation?.resume(throwing: CancellationError())
     }
 
@@ -200,7 +200,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
     private static func stopPendingLoad(_ playbackID: String, on client: GCKRemoteMediaClient) {
         Task {
             let deadline = ContinuousClock.now.advanced(by: .seconds(30))
-            
+
             while ContinuousClock.now < deadline {
                 if client.connected, owns(client.mediaStatus, playbackID: playbackID) {
                     client.stop()
@@ -216,12 +216,10 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
             stop()
             return
         }
-        
         guard let client, client.connected else {
             stop()
             throw ErrorMessage(L10n.castConnectionFailed)
         }
-        
         guard owns(client.mediaStatus) || !isReady else {
             stop()
             return
@@ -237,7 +235,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
 
                     self?.finishTransfer(error: ErrorMessage(L10n.unableToStopRemotePlayback))
                 }
-                
+
                 stopOwnedMediaForTransfer()
             }
         } onCancel: {
@@ -283,11 +281,11 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
         }
 
         let options = GCKMediaSeekOptions()
-        
+
         options.interval = request.target.seconds
         options.relative = false
         options.resumeState = .unchanged
-        
+
         track(client.seek(with: options), as: .seek(request))
     }
 
@@ -299,7 +297,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
                 false
             }
         }
-        
+
         for (key, pending) in seeks {
             commands.removeValue(forKey: key)
             pending.request.delegate = nil
@@ -320,7 +318,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
         client?.add(self)
         isSuspended = false
         awaitingStatus = true
-        
+
         // Status, rather than another LOAD, determines where the receiver continued playing.
         guard let client else {
             mediaSession?.playerDidFail(ErrorMessage(L10n.castConnectionFailed), from: self)
@@ -333,7 +331,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
     private func track(_ request: GCKRequest, as command: Command) {
         commands[ObjectIdentifier(request)] = (request, command)
         request.delegate = self
-        
+
         if let error = request.error {
             self.request(request, didFailWithError: error)
         }
@@ -364,7 +362,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
             loadTimeoutTask = nil
         }
         let duration = status.mediaInformation?.streamDuration
-        
+
         mediaSession.playerDidUpdate(
             PlaybackState(
                 isReady: isReady,
@@ -375,9 +373,9 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
             ),
             from: self
         )
-        
+
         publishPosition()
-        
+
         guard mediaSession.player === self else { return }
 
         if !wasReady, isReady {
@@ -385,11 +383,11 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
             if mediaSession.playbackRequestStatus == .paused, status.playerState != .paused {
                 pause()
             }
-            
+
             if mediaSession.playbackRequestStatus == .playing, status.playerState == .paused {
                 play()
             }
-            
+
             setRate(mediaSession.effectiveRate)
         } else if !commands.values.contains(where: {
             if case .transport = $0.command {
@@ -401,7 +399,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
             if status.playerState == .playing {
                 mediaSession.playerDidRequestPlayback(.playing, from: self)
             }
-            
+
             if status.playerState == .paused {
                 mediaSession.playerDidRequestPlayback(.paused, from: self)
             }
@@ -409,7 +407,7 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
         guard status.playerState == .idle, !handledEnd else { return }
 
         handledEnd = true
-        
+
         switch status.idleReason {
         case .finished:
             // A seek completion may still be pending when the receiver reports idle.
@@ -434,17 +432,17 @@ final class ChromecastMediaPlayer: NSObject, MediaPlayer {
 
 // Google Cast delivers delegate callbacks on the main thread.
 extension ChromecastMediaPlayer: @preconcurrency GCKRemoteMediaClientListener, @preconcurrency GCKRequestDelegate {
-    
+
     func remoteMediaClient(_ client: GCKRemoteMediaClient, didUpdate mediaStatus: GCKMediaStatus?) {
         guard self.client === client else { return }
 
         awaitingStatus = false
-        
+
         if transferContinuation != nil {
             stopOwnedMediaForTransfer()
             return
         }
-        
+
         update(mediaStatus)
     }
 
