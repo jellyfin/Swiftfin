@@ -14,6 +14,11 @@ import SwiftUI
 
 struct SelectUserView: View {
 
+    enum Focus: String {
+
+        case focusedUserButton
+    }
+
     typealias UserItem = (user: UserState, server: ServerState)
 
     @Default(.accentColor)
@@ -47,6 +52,8 @@ struct SelectUserView: View {
     @State
     private var isPresentingConfirmDeleteUsers = false
 
+    @StateObject
+    private var focusCoordinator = FocusCoordinator(waitingFor: Focus.focusedUserButton.rawValue)
     @StateObject
     private var viewModel = SelectUserViewModel()
 
@@ -259,6 +266,9 @@ struct SelectUserView: View {
                 }
             )
             .focusSection()
+            #if os(tvOS)
+            .coordinatedFocus(.secondary)
+            #endif
         }
     }
 
@@ -267,9 +277,15 @@ struct SelectUserView: View {
             switch viewModel.state {
             case .initial, .loading:
                 ProgressView()
+                    #if os(tvOS)
+                        .coordinatedFocus(.placeholder)
+                    #endif
             case .content:
                 if viewModel.servers.isEmpty {
                     ConnectToJellyfinView()
+                        #if os(tvOS)
+                            .coordinatedFocus(.fallback)
+                        #endif
                 } else {
                     contentView
                 }
@@ -430,5 +446,6 @@ struct SelectUserView: View {
             }
         }
         .errorMessage($viewModel.error)
+        .environmentObject(focusCoordinator)
     }
 }
